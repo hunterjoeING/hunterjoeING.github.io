@@ -389,3 +389,55 @@ body {
   font-weight: 700;
   cursor: pointer;
 }
+
+/* Shared Quiz Tempo & No-Time-Limit Controls */
+.quiz-time-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.time-mode-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(15, 23, 42, 0.9);
+  color: #cbd5e1;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.14s;
+}
+.time-mode-pill:hover {
+  border-color: #7dd3fc;
+  color: #f8fafc;
+}
+.time-mode-pill.active {
+  background: rgba(14, 165, 233, 0.25);
+  border-color: #38bdf8;
+  color: #f0f9ff;
+}
+.time-mode-pill.relaxed.active {
+  background: rgba(20, 184, 166, 0.25);
+  border-color: #2dd4bf;
+  color: #ccfbf1;
+}
+.quiz-speed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  background: rgba(15, 23, 42, 0.85);
+  color: #e2e8f0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.quiz-speed-btn.relaxed {
+  border-color: rgba(45, 212, 191, 0.55);
+  color: #5eead4;
+}

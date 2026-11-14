@@ -147,7 +147,7 @@
     { id: 'quiz_emob', title: 'E-Mobilität & Tesla Quiz', icon: '⚡', lowerIsBetter: false },
     { id: 'quiz_pol', title: 'Politik & Ökonomie Quiz', icon: '⚖️', lowerIsBetter: false },
     { id: 'quiz_hist', title: 'Geschichte & Weltereignisse', icon: '🏛️', lowerIsBetter: false },
-    { id: 'quiz_china', title: 'Chinesische Geschichte Quiz', icon: '🏯', lowerIsBetter: false },
+    { id: 'quiz_china', title: 'Neuere Chinesische Geschichte', icon: '🏯', lowerIsBetter: false },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -706,6 +706,74 @@
     syncTopBestDom();
     window.ArcadeScores.fetchSummary();
   }
+
+  window.ArcadeQuizPrefs = {
+    isRelaxed: () => safeGet('arcade_quiz_relaxed') === '1',
+    setRelaxed: (relaxed) => {
+      try {
+        localStorage.setItem('arcade_quiz_relaxed', relaxed ? '1' : '0');
+      } catch (e) {}
+      return !!relaxed;
+    },
+    getDurationSec: (diff) => {
+      if (diff === 'pro' || diff === 'nerd') return 35;
+      if (diff === 'mid') return 30;
+      return 25;
+    },
+    initMenuBar: (barId) => {
+      const bar = document.getElementById(barId || 'time-mode-bar');
+      if (!bar) return;
+      const sync = () => {
+        const relaxed = window.ArcadeQuizPrefs.isRelaxed();
+        bar.querySelectorAll('.time-mode-pill').forEach(btn => {
+          btn.classList.toggle('active', (btn.dataset.relaxed === '1') === relaxed);
+        });
+      };
+      bar.addEventListener('click', (e) => {
+        const btn = e.target.closest('.time-mode-pill');
+        if (!btn) return;
+        window.ArcadeQuizPrefs.setRelaxed(btn.dataset.relaxed === '1');
+        if (window.ArcadeAudio) window.ArcadeAudio.click();
+        sync();
+      });
+      sync();
+    },
+    updateTimerUI: ({ btnEl, fillEl, jokerTimeEl, jokerTimeAvailable, timeLeft, maxTime, answered }) => {
+      const relaxed = window.ArcadeQuizPrefs.isRelaxed();
+      if (btnEl) {
+        if (relaxed) {
+          btnEl.textContent = '☕ Ohne Zeitlimit';
+          btnEl.classList.add('relaxed');
+        } else if (timeLeft <= 0) {
+          btnEl.innerHTML = '☕ <span>In Ruhe (Bonus 0)</span>';
+          btnEl.classList.add('relaxed');
+        } else {
+          btnEl.innerHTML = `⏱ <strong id="q-sec">${Math.ceil(timeLeft)}</strong>s`;
+          btnEl.classList.remove('relaxed');
+        }
+      }
+      if (fillEl) {
+        if (relaxed) {
+          fillEl.style.width = '100%';
+          fillEl.style.background = 'linear-gradient(90deg, rgba(45, 212, 191, 0.52), rgba(56, 189, 248, 0.42))';
+        } else if (timeLeft <= 0) {
+          fillEl.style.width = '0%';
+        } else {
+          const pct = Math.max(0, Math.min(100, (timeLeft / (maxTime || 25)) * 100));
+          fillEl.style.width = pct + '%';
+          fillEl.style.background = timeLeft <= 6
+            ? 'linear-gradient(90deg, #fb7185, #f59e0b)'
+            : 'linear-gradient(90deg, #38bdf8, #4ade80)';
+        }
+      }
+      if (jokerTimeEl) {
+        jokerTimeEl.disabled = !!answered || relaxed || !jokerTimeAvailable;
+        jokerTimeEl.title = relaxed
+          ? 'Im Modus „Ohne Zeitlimit“ hast du bereits unbegrenzt Zeit'
+          : '+10 Sekunden Zeitbonus-Nachschub';
+      }
+    }
+  };
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initSharedChrome);

@@ -8,24 +8,39 @@
   <style>
     html, body {
       height: 100%;
+      margin: 0;
       overflow: hidden;
     }
-    .roadster-shell {
+    body {
       display: flex;
       flex-direction: column;
-      height: calc(100dvh - 55px);
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+    }
+    .arcade-topbar {
+      flex: 0 0 auto;
+    }
+    .roadster-shell {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
       max-width: 1120px;
       margin: 0 auto;
-      padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
-      gap: 8px;
+      padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+      gap: 6px;
+      box-sizing: border-box;
     }
     .hud-strip {
+      flex: 0 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 8px;
-      padding: 8px 12px;
+      gap: 6px 10px;
+      padding: 7px 12px;
       border-radius: 12px;
       background: rgba(10, 20, 42, 0.88);
       border: 1px solid rgba(56, 189, 248, 0.35);
@@ -36,7 +51,7 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
     }
     .gas-bar-wrap {
       display: inline-flex;
@@ -44,7 +59,7 @@
       gap: 6px;
     }
     .gas-track {
-      width: 90px;
+      width: 84px;
       height: 10px;
       border-radius: 999px;
       background: rgba(148, 163, 184, 0.22);
@@ -58,8 +73,8 @@
     }
     .canvas-stage {
       position: relative;
-      flex: 1;
-      min-height: 240px;
+      flex: 1 1 0;
+      min-height: 140px;
       border-radius: 16px;
       overflow: hidden;
       border: 1px solid rgba(56, 189, 248, 0.4);
@@ -93,6 +108,7 @@
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
     }
     .controls-bar {
+      flex: 0 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -149,13 +165,110 @@
       border-color: rgba(148, 163, 184, 0.4);
       color: #cbd5e1;
     }
+    .stage-touch-layer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      z-index: 12;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+    }
+    .stage-touch-layer.hidden,
+    #overlay:not(.hidden) ~ #stage-controls {
+      display: none !important;
+    }
+    .stage-pad-cluster {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      pointer-events: none;
+    }
+    .stage-thumb-btn {
+      pointer-events: auto;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(125, 211, 252, 0.45);
+      background: rgba(15, 23, 42, 0.36);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      color: #f8fafc;
+      font-weight: 800;
+      font-size: 19px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.05;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.45);
+      transition: transform 0.06s, background 0.1s, border-color 0.1s;
+    }
+    .stage-thumb-btn small {
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #bae6fd;
+      margin-top: 2px;
+    }
+    .stage-thumb-btn.thrust {
+      width: 72px;
+      height: 72px;
+      border-color: rgba(56, 189, 248, 0.65);
+      background: rgba(14, 116, 144, 0.36);
+      font-size: 20px;
+    }
+    .stage-thumb-btn.active,
+    .stage-thumb-btn:active {
+      background: rgba(14, 165, 233, 0.68);
+      border-color: #f0f9ff;
+      transform: scale(0.94);
+    }
     .hint-desktop {
       font-size: 12px;
       color: var(--text-muted);
     }
     @media (max-width: 680px) {
+      .roadster-shell {
+        padding: 4px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+        gap: 5px;
+      }
+      .hud-strip {
+        padding: 6px 9px;
+        gap: 5px 8px;
+        font-size: 11px;
+      }
+      .hud-metrics {
+        gap: 6px 10px;
+      }
+      .assist-pill {
+        padding: 4px 8px;
+        font-size: 11px;
+      }
       .hint-desktop { display: none; }
-      .ctrl-touch-btn { padding: 12px 14px; font-size: 13px; }
+      .ctrl-touch-btn {
+        padding: 10px 12px;
+        font-size: 12.5px;
+        border-radius: 10px;
+      }
+      .stage-thumb-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 17px;
+      }
+      .stage-thumb-btn.thrust {
+        width: 66px;
+        height: 66px;
+        font-size: 18px;
+      }
     }
   </style>
 </head>
@@ -184,9 +297,10 @@
         <span>Sinken: <strong id="hud-vy">0.0</strong> m/s</span>
         <span>Winkel: <strong id="hud-ang">0°</strong></span>
       </div>
-      <div style="display:flex; gap:8px; align-items:center;">
+      <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
         <button id="btn-assist" class="assist-pill" onclick="toggleAssist()">🛰️ Stabilisator: AN</button>
-        <button class="secondary-btn" style="padding:5px 10px;font-size:12px;" onclick="restartLevel()">🔄 Neu</button>
+        <button id="btn-pads" class="assist-pill" onclick="toggleStagePads()">🎮 Bild-Pads: AN</button>
+        <button class="secondary-btn" style="padding:4px 9px;font-size:11.5px;" onclick="restartLevel()">🔄 Neu</button>
       </div>
     </div>
 
@@ -200,13 +314,23 @@
           <p id="ov-desc" style="margin:0 0 16px; color:#cbd5e1; font-size:13.5px; line-height:1.5;">
             Der Roadster rast die Rampe hinauf und hebt ab! Nutze die <strong>Kaltluftdüsen</strong>, um ihn weich und gerade auf dem grünen Landefeld aufzusetzen.<br><br>
             <strong>Steuerung:</strong><br>
-            <b>Leertaste / W / ↑</b> (oder rechter Button) = Brems-Schub nach oben<br>
-            <b>← / → / A / D</b> = In der Luft leicht neigen &amp; lenken
+            <b>Leertaste / W / ↑</b> oder <b>Bild-Pad rechts</b> = Brems-Schub nach oben<br>
+            <b>← / → / A / D</b> oder <b>Bild-Pads links</b> = In der Luft leicht neigen &amp; lenken
           </p>
           <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
             <button id="ov-btn" class="primary-btn" onclick="startCurrentMission()">🚀 Rampe starten!</button>
             <button id="ov-reset-all" class="secondary-btn hidden" onclick="startFromLevelOne()">Von Mission 1</button>
           </div>
+        </div>
+      </div>
+
+      <div id="stage-controls" class="stage-touch-layer" aria-label="Bildschirm-Steuerung">
+        <div class="stage-pad-cluster">
+          <button type="button" class="stage-thumb-btn" id="pad-left" aria-label="Links neigen">↺<small>LINKS</small></button>
+          <button type="button" class="stage-thumb-btn" id="pad-right" aria-label="Rechts neigen">↻<small>RECHTS</small></button>
+        </div>
+        <div class="stage-pad-cluster">
+          <button type="button" class="stage-thumb-btn thrust" id="pad-thrust" aria-label="Kaltluft-Schub">💨<small>SCHUB</small></button>
         </div>
       </div>
     </div>
@@ -274,6 +398,35 @@
       ArcadeAudio.click();
     }
 
+    const STAGE_PADS_KEY = 'roadster_stage_pads';
+    let stagePadsEnabled = (() => {
+      try {
+        const saved = localStorage.getItem(STAGE_PADS_KEY);
+        if (saved === '1') return true;
+        if (saved === '0') return false;
+      } catch (_) {}
+      const coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+      return Boolean(coarse || 'ontouchstart' in window || window.innerWidth <= 900);
+    })();
+
+    function applyStagePadsUI() {
+      const layer = document.getElementById('stage-controls');
+      const btn = document.getElementById('btn-pads');
+      if (layer) layer.classList.toggle('hidden', !stagePadsEnabled);
+      if (btn) {
+        btn.textContent = stagePadsEnabled ? '🎮 Bild-Pads: AN' : '🎮 Bild-Pads: AUS';
+        btn.classList.toggle('off', !stagePadsEnabled);
+      }
+    }
+
+    function toggleStagePads() {
+      stagePadsEnabled = !stagePadsEnabled;
+      try { localStorage.setItem(STAGE_PADS_KEY, stagePadsEnabled ? '1' : '0'); } catch (_) {}
+      applyStagePadsUI();
+      clearAllControls();
+      ArcadeAudio.click();
+    }
+
     function rampHeightAt(x) {
       if (x < 0) return 0;
       if (x <= 180) return 0;
@@ -292,6 +445,7 @@
     }
 
     function setupMission() {
+      clearAllControls();
       const cfg = LEVELS[lvlIdx];
       document.getElementById('hud-lvl').textContent = `${lvlIdx + 1}/${LEVELS.length}`;
       document.getElementById('hud-lvlname').textContent = cfg.name;
@@ -362,6 +516,9 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     window.addEventListener('resize', resize);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(resize).observe(stage);
+    }
     resize();
 
     function stepPhysics(dt) {
@@ -1031,38 +1188,69 @@
       requestAnimationFrame(loop);
     }
 
+    const heldSources = { left: new Set(), right: new Set(), thrust: new Set() };
+    function setControlActive(sourceId, keyName, on) {
+      if (on) heldSources[keyName].add(sourceId);
+      else heldSources[keyName].delete(sourceId);
+      keys[keyName] = heldSources[keyName].size > 0;
+    }
+
+    function clearAllControls() {
+      ['left', 'right', 'thrust'].forEach(k => {
+        heldSources[k].clear();
+        keys[k] = false;
+      });
+      document.querySelectorAll('.ctrl-touch-btn.active, .stage-thumb-btn.active')
+        .forEach(el => el.classList.remove('active'));
+    }
+
     // Bind Keyboard
     window.addEventListener('keydown', (e) => {
-      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = true;
-      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = true;
+      if (['ArrowLeft', 'a', 'A'].includes(e.key)) setControlActive('kbd', 'left', true);
+      if (['ArrowRight', 'd', 'D'].includes(e.key)) setControlActive('kbd', 'right', true);
       if ([' ', 'ArrowUp', 'w', 'W'].includes(e.key)) {
         e.preventDefault();
-        keys.thrust = true;
+        setControlActive('kbd', 'thrust', true);
       }
     });
     window.addEventListener('keyup', (e) => {
-      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = false;
-      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = false;
-      if ([' ', 'ArrowUp', 'w', 'W'].includes(e.key)) keys.thrust = false;
+      if (['ArrowLeft', 'a', 'A'].includes(e.key)) setControlActive('kbd', 'left', false);
+      if (['ArrowRight', 'd', 'D'].includes(e.key)) setControlActive('kbd', 'right', false);
+      if ([' ', 'ArrowUp', 'w', 'W'].includes(e.key)) setControlActive('kbd', 'thrust', false);
     });
+    window.addEventListener('blur', clearAllControls);
 
-    // Bind Multi-Touch / Pointer Hold Buttons
+    // Bind Multi-Touch / Pointer Hold Buttons (with pointer capture for smooth thumb drift)
     function bindHoldBtn(el, keyName) {
-      const setOn = (on) => (ev) => {
+      if (!el) return;
+      const sourceId = el.id || (keyName + '_' + Math.random().toString(36).slice(2, 6));
+      const press = (ev) => {
         ev.preventDefault();
-        keys[keyName] = on;
-        el.classList.toggle('active', on);
+        try {
+          if (ev.pointerId != null && el.setPointerCapture) el.setPointerCapture(ev.pointerId);
+        } catch (_) {}
+        setControlActive(sourceId, keyName, true);
+        el.classList.add('active');
       };
-      el.addEventListener('pointerdown', setOn(true));
-      el.addEventListener('pointerup', setOn(false));
-      el.addEventListener('pointercancel', setOn(false));
-      el.addEventListener('pointerleave', setOn(false));
+      const release = (ev) => {
+        if (ev) ev.preventDefault();
+        setControlActive(sourceId, keyName, false);
+        el.classList.remove('active');
+      };
+      el.addEventListener('pointerdown', press);
+      el.addEventListener('pointerup', release);
+      el.addEventListener('pointercancel', release);
+      el.addEventListener('lostpointercapture', release);
     }
     bindHoldBtn(document.getElementById('btn-left'), 'left');
     bindHoldBtn(document.getElementById('btn-right'), 'right');
     bindHoldBtn(document.getElementById('btn-thrust'), 'thrust');
+    bindHoldBtn(document.getElementById('pad-left'), 'left');
+    bindHoldBtn(document.getElementById('pad-right'), 'right');
+    bindHoldBtn(document.getElementById('pad-thrust'), 'thrust');
 
     ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    applyStagePadsUI();
     refreshTopBest();
     setupMission();
     requestAnimationFrame(loop);
