@@ -1,0 +1,184 @@
+:root {
+  --bg-deep: #040916;
+  --bg-surface: rgba(11, 20, 42, 0.86);
+  --bg-card: rgba(15, 28, 56, 0.90);
+  --border-glow: rgba(56, 189, 248, 0.35);
+  --accent-cyan: #38bdf8;
+  --accent-teal: #2dd4bf;
+  --accent-pink: #f472b6;
+  --accent-amber: #fbbf24;
+  --accent-green: #4ade80;
+  --accent-red: #fb7185;
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --font-ui: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: radial-gradient(circle at 20% 0%, #0b1b3a 0%, #040916 55%, #02050d 100%);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  overscroll-behavior: none;
+}
+
+.arcade-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: calc(10px + env(safe-area-inset-top, 0px)) calc(14px + env(safe-area-inset-right, 0px)) 10px calc(14px + env(safe-area-inset-left, 0px));
+  background: rgba(5, 11, 26, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-glow);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.back-hub-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 9px;
+  background: rgba(14, 116, 144, 0.28);
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  color: #e0f2fe;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: transform 0.12s, background 0.15s, border-color 0.15s;
+}
+.back-hub-btn:hover {
+  background: rgba(14, 165, 233, 0.42);
+  border-color: #7dd3fc;
+  transform: translateY(-1px);
+}
+
+.topbar-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pill-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #e2e8f0;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  border-radius: 9px;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #f8fafc;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.icon-btn:hover {
+  background: rgba(30, 58, 138, 0.55);
+  border-color: var(--accent-cyan);
+}
+.icon-btn.muted {
+  opacity: 0.55;
+}
+
+.primary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.75);
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
+  transition: transform 0.12s, filter 0.15s;
+}
+.primary-btn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+.secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 15px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.38);
+  background: rgba(15, 23, 42, 0.86);
+  color: #e2e8f0;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.secondary-btn:hover {
+  background: rgba(30, 41, 59, 0.95);
+  border-color: var(--accent-cyan);
+}
+
+.glass-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-glow);
+  border-radius: 16px;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.45);
+}
+
+@media (max-width: 560px) {
+  .topbar-title { font-size: 13.5px; }
+  .back-hub-btn { padding: 6px 9px; font-size: 12px; }
+  .pill-stat { padding: 4px 8px; font-size: 11px; }
+}

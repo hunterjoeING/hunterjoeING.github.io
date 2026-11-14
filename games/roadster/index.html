@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Hyper-Roadster – Kaltgas-Landung</title>
+  <link rel="stylesheet" href="../../shared/arcade.css">
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    .roadster-shell {
+      display: flex;
+      flex-direction: column;
+      height: calc(100dvh - 55px);
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+      gap: 8px;
+    }
+    .hud-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(10, 20, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .hud-metrics {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .gas-bar-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gas-track {
+      width: 90px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.22);
+      overflow: hidden;
+    }
+    .gas-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #38bdf8, #e0f2fe);
+      transition: width 0.08s;
+    }
+    .canvas-stage {
+      position: relative;
+      flex: 1;
+      min-height: 240px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      background: #030712;
+      touch-action: none;
+    }
+    canvas#gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .overlay-card {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(2, 6, 18, 0.68);
+      backdrop-filter: blur(6px);
+      z-index: 20;
+    }
+    .overlay-card.hidden { display: none !important; }
+    .modal-inner {
+      width: min(460px, 100%);
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(11, 20, 44, 0.96);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+    }
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .touch-pad-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      width: 100%;
+      justify-content: space-between;
+    }
+    .ctrl-touch-btn {
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      padding: 13px 18px;
+      border-radius: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      background: rgba(14, 34, 68, 0.9);
+      color: #f8fafc;
+      font-weight: 800;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .ctrl-touch-btn.active,
+    .ctrl-touch-btn:active {
+      background: rgba(14, 165, 233, 0.55);
+      border-color: #e0f2fe;
+      transform: scale(0.98);
+    }
+    .thrust-big {
+      flex: 1;
+      max-width: 280px;
+      background: linear-gradient(135deg, rgba(14, 116, 144, 0.7), rgba(56, 189, 248, 0.45));
+      border-color: #7dd3fc;
+    }
+    .assist-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(22, 163, 74, 0.22);
+      border: 1px solid rgba(74, 222, 128, 0.5);
+      color: #bbf7d0;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .assist-pill.off {
+      background: rgba(148, 163, 184, 0.16);
+      border-color: rgba(148, 163, 184, 0.4);
+      color: #cbd5e1;
+    }
+    .hint-desktop {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    @media (max-width: 680px) {
+      .hint-desktop { display: none; }
+      .ctrl-touch-btn { padding: 12px 14px; font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🚗💨 Hyper-Roadster: Kaltgas-Landung</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <div class="roadster-shell">
+    <div class="hud-strip">
+      <div class="hud-metrics">
+        <span>Mission <strong id="hud-lvl">1/5</strong> · <span id="hud-lvlname">Canyon-Rampe</span></span>
+        <span>Punkte: <strong id="hud-score">0</strong></span>
+        <span class="gas-bar-wrap">
+          💨 N₂:
+          <span class="gas-track"><span id="hud-gas" class="gas-fill"></span></span>
+          <strong id="hud-gas-pct">100%</strong>
+        </span>
+        <span>Sinken: <strong id="hud-vy">0.0</strong> m/s</span>
+        <span>Winkel: <strong id="hud-ang">0°</strong></span>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button id="btn-assist" class="assist-pill" onclick="toggleAssist()">🛰️ Stabilisator: AN</button>
+        <button class="secondary-btn" style="padding:5px 10px;font-size:12px;" onclick="restartLevel()">🔄 Neu</button>
+      </div>
+    </div>
+
+    <div class="canvas-stage" id="stage">
+      <canvas id="gameCanvas"></canvas>
+
+      <div id="overlay" class="overlay-card">
+        <div class="modal-inner">
+          <div style="font-size:40px; margin-bottom:6px;" id="ov-icon">🚗💨</div>
+          <h2 id="ov-title" style="margin:0 0 8px;">Kaltgas-Rampe bereit!</h2>
+          <p id="ov-desc" style="margin:0 0 16px; color:#cbd5e1; font-size:13.5px; line-height:1.5;">
+            Der Roadster rast die Rampe hinauf und hebt ab! Nutze die <strong>Kaltluftdüsen</strong>, um ihn weich und gerade auf dem grünen Landefeld aufzusetzen.<br><br>
+            <strong>Steuerung:</strong><br>
+            <b>Leertaste / W / ↑</b> (oder rechter Button) = Brems-Schub nach oben<br>
+            <b>← / → / A / D</b> = In der Luft leicht neigen &amp; lenken
+          </p>
+          <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+            <button id="ov-btn" class="primary-btn" onclick="startCurrentMission()">🚀 Rampe starten!</button>
+            <button id="ov-reset-all" class="secondary-btn hidden" onclick="startFromLevelOne()">Von Mission 1</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <div class="touch-pad-group">
+        <div style="display:flex; gap:8px;">
+          <button class="ctrl-touch-btn" id="btn-left">↺ Links</button>
+          <button class="ctrl-touch-btn" id="btn-right">Rechts ↻</button>
+        </div>
+        <span class="hint-desktop">Tastatur: <b>← / →</b> Neigen &amp; Lenken · <b>Leertaste / ↑</b> Kaltluft-Bodendüsen</span>
+        <button class="ctrl-touch-btn thrust-big" id="btn-thrust">💨 KALT-SCHUB (BREMSEN)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const stage = document.getElementById('stage');
+
+    const LEVELS = [
+      { name: 'Canyon-Rampe', gravity: 135, airDrag: 0.996, wind: 0, padX: 1150, padY: 120, padW: 210, moving: false, moon: false, launchV: 380 },
+      { name: 'Wolkenkratzer-Sprung', gravity: 155, airDrag: 0.996, wind: 0, padX: 1180, padY: 210, padW: 175, moving: false, moon: false, launchV: 415 },
+      { name: 'Drohnenschiff (Ozean)', gravity: 150, airDrag: 0.996, wind: -10, padX: 1230, padY: 95, padW: 175, moving: true, moon: false, launchV: 425 },
+      { name: 'Mondbasis-Sprung', gravity: 95, airDrag: 0.999, wind: 0, padX: 1460, padY: 130, padW: 175, moving: false, moon: true, launchV: 365 },
+      { name: 'Sturm-Schlucht (Finale)', gravity: 168, airDrag: 0.995, wind: -20, padX: 1160, padY: 180, padW: 155, moving: true, moon: false, launchV: 445 }
+    ];
+
+    let lvlIdx = 0;
+    let totalScore = 0;
+    let autoAssist = true;
+    let state = 'menu'; // 'menu' | 'ramp' | 'air' | 'landed' | 'crashed'
+    let phaseTime = 0;
+
+    // World coordinates: origin (0,0) at ground start of runway, +X right, +Y up
+    let car = {
+      x: 40, y: 12, vx: 0, vy: 0, angle: 0, angVel: 0,
+      gas: 100, wheelSpin: 0, rampBoost: false
+    };
+    let cam = { x: 160, y: 120, zoom: 1.45 };
+    let padCurrentX = 980;
+    let particles = [];
+    let stars = Array.from({ length: 75 }, () => ({
+      x: Math.random(),
+      y: Math.random() * 0.72,
+      r: 0.7 + Math.random() * 1.6,
+      a: 0.35 + Math.random() * 0.65
+    }));
+    const keys = { left: false, right: false, thrust: false };
+    let gasSoundCooldown = 0;
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('roadster');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function toggleAssist() {
+      autoAssist = !autoAssist;
+      const btn = document.getElementById('btn-assist');
+      btn.textContent = autoAssist ? '🛰️ Stabilisator: AN' : '⚡ Profi-Modus (Frei)';
+      btn.classList.toggle('off', !autoAssist);
+      ArcadeAudio.click();
+    }
+
+    function rampHeightAt(x) {
+      if (x < 0) return 0;
+      if (x <= 180) return 0;
+      if (x <= 420) {
+        const t = (x - 180) / 240;
+        return t * t * 145;
+      }
+      return -9999; // past ramp lip
+    }
+
+    function rampSlopeAt(x) {
+      if (x <= 180 || x > 420) return 0;
+      const t = (x - 180) / 240;
+      const dyDx = (2 * t * 145) / 240;
+      return Math.atan(dyDx);
+    }
+
+    function setupMission() {
+      const cfg = LEVELS[lvlIdx];
+      document.getElementById('hud-lvl').textContent = `${lvlIdx + 1}/${LEVELS.length}`;
+      document.getElementById('hud-lvlname').textContent = cfg.name;
+      document.getElementById('hud-score').textContent = totalScore;
+      car = { x: 30, y: 14, vx: 60, vy: 0, angle: 0, angVel: 0, gas: 100, wheelSpin: 0, rampBoost: false };
+      padCurrentX = cfg.padX;
+      cam = { x: 180, y: 110, zoom: 1.55 };
+      particles = [];
+      phaseTime = 0;
+    }
+
+    function startCurrentMission() {
+      ArcadeAudio.click();
+      document.getElementById('overlay').classList.add('hidden');
+      setupMission();
+      state = 'ramp';
+    }
+
+    function restartLevel() {
+      document.getElementById('overlay').classList.add('hidden');
+      setupMission();
+      state = 'ramp';
+      ArcadeAudio.click();
+    }
+
+    function startFromLevelOne() {
+      lvlIdx = 0;
+      totalScore = 0;
+      startCurrentMission();
+    }
+
+    function spawnColdGas(wx, wy, dirX, dirY, spread = 0.35, speed = 175, count = 2) {
+      for (let i = 0; i < count; i++) {
+        const ang = Math.atan2(dirY, dirX) + (Math.random() - 0.5) * spread;
+        const spd = speed * (0.75 + Math.random() * 0.55);
+        particles.push({
+          x: wx,
+          y: wy,
+          vx: car.vx * 0.4 + Math.cos(ang) * spd,
+          vy: car.vy * 0.4 + Math.sin(ang) * spd,
+          life: 0.34 + Math.random() * 0.22,
+          maxLife: 0.56,
+          size: 4 + Math.random() * 6,
+          kind: 'gas'
+        });
+      }
+    }
+
+    function spawnSpark(wx, wy, color = '#fbbf24') {
+      particles.push({
+        x: wx, y: wy,
+        vx: (Math.random() - 0.5) * 180,
+        vy: Math.random() * 140 + 40,
+        life: 0.45 + Math.random() * 0.3,
+        maxLife: 0.75,
+        size: 3 + Math.random() * 3,
+        kind: 'spark',
+        color
+      });
+    }
+
+    function resize() {
+      const r = stage.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(320, Math.floor(r.width * dpr));
+      canvas.height = Math.max(200, Math.floor(r.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function stepPhysics(dt) {
+      const cfg = LEVELS[lvlIdx];
+      phaseTime += dt;
+
+      if (cfg.moving) {
+        padCurrentX = cfg.padX + Math.sin(performance.now() * 0.0014) * 85;
+      }
+
+      if (state === 'ramp') {
+        const accel = keys.thrust ? 390 : 250;
+        const targetV = keys.thrust ? cfg.launchV * 1.14 : cfg.launchV;
+        car.vx = Math.min(targetV, car.vx + accel * dt);
+        car.x += car.vx * dt;
+        const groundY = rampHeightAt(car.x);
+        const slope = rampSlopeAt(car.x);
+
+        if (car.x <= 420) {
+          car.y = groundY + 13;
+          car.angle = slope;
+          car.wheelSpin += car.vx * dt * 0.14;
+          if (car.x > 180) {
+            spawnColdGas(car.x - 26 * Math.cos(car.angle), car.y - 26 * Math.sin(car.angle),
+              -Math.cos(car.angle), -Math.sin(car.angle), 0.25, 190, 2);
+            if (Math.random() < 0.4) spawnSpark(car.x - 18, groundY + 2, '#38bdf8');
+          }
+          // Smooth camera stays close during acceleration
+          cam.x += (car.x + 120 - cam.x) * 0.12;
+          cam.y += (car.y + 65 - cam.y) * 0.12;
+          cam.zoom += (1.35 - cam.zoom) * 0.08;
+        } else {
+          // Launch off the ramp lip!
+          const launchSlope = rampSlopeAt(419);
+          const totalSpd = car.vx;
+          car.vx = Math.cos(launchSlope) * totalSpd * 0.88;
+          car.vy = Math.sin(launchSlope) * totalSpd * 0.92;
+          state = 'air';
+          ArcadeAudio.pop();
+        }
+      } else if (state === 'air') {
+        const hasGas = car.gas > 0.2;
+        const cos = Math.cos(car.angle);
+        const sin = Math.sin(car.angle);
+
+        // Main upward / forward Cold-Gas Underbody Thrusters
+        if (keys.thrust && hasGas) {
+          const thrustPower = cfg.moon ? 335 : 390;
+          // Slightly blend upward assist if autoAssist is on so braking a fall feels intuitive!
+          const nx = -sin * 0.88;
+          const ny = cos * 0.96;
+          car.vx += nx * thrustPower * dt;
+          car.vy += ny * thrustPower * dt;
+          car.gas = Math.max(0, car.gas - 21 * dt);
+
+          // Front & rear underbody cold-gas nozzles
+          const fNozzleX = car.x + 16 * cos + 10 * sin;
+          const fNozzleY = car.y + 16 * sin - 10 * cos;
+          const rNozzleX = car.x - 16 * cos + 10 * sin;
+          const rNozzleY = car.y - 16 * sin - 10 * cos;
+          spawnColdGas(fNozzleX, fNozzleY, sin, -cos, 0.36, 220, 2);
+          spawnColdGas(rNozzleX, rNozzleY, sin, -cos, 0.36, 220, 2);
+
+          gasSoundCooldown -= dt;
+          if (gasSoundCooldown <= 0) {
+            ArcadeAudio.coldGas();
+            gasSoundCooldown = 0.08;
+          }
+        }
+
+        // Attitude + horizontal Cold-Gas RCS Thrusters
+        const tiltForce = autoAssist ? 4.2 : 5.4;
+        if (keys.left) {
+          car.angVel += tiltForce * dt;
+          if (hasGas) {
+            car.vx -= 140 * dt;
+            car.gas = Math.max(0, car.gas - 5 * dt);
+            spawnColdGas(car.x + 24 * cos, car.y + 24 * sin, sin, cos, 0.28, 130, 1);
+          }
+        } else if (keys.right) {
+          car.angVel -= tiltForce * dt;
+          if (hasGas) {
+            car.vx += 140 * dt;
+            car.gas = Math.max(0, car.gas - 5 * dt);
+            spawnColdGas(car.x - 24 * cos, car.y - 24 * sin, -sin, -cos, 0.28, 130, 1);
+          }
+        } else if (autoAssist) {
+          // Gentle gyro assist returns Roadster toward level flight automatically
+          car.angVel += (-car.angle * 5.2 - car.angVel * 3.8) * dt;
+        }
+
+        if (!autoAssist) car.angVel *= Math.pow(0.88, dt * 60);
+        car.angle += car.angVel * dt;
+        if (autoAssist) {
+          car.angle = Math.max(-0.62, Math.min(0.62, car.angle));
+        }
+
+        // Gravity & gentle wind
+        car.vy -= cfg.gravity * dt;
+        car.vx += cfg.wind * dt;
+        car.vx *= Math.pow(cfg.airDrag, dt * 60);
+
+        car.x += car.vx * dt;
+        car.y += car.vy * dt;
+        car.wheelSpin += 2.2 * dt;
+
+        // Dynamic Camera: zooms wide at high altitude, zooms close on landing approach!
+        const r = stage.getBoundingClientRect();
+        const midX = (car.x + padCurrentX) * 0.5;
+        const altAbovePad = Math.max(0, car.y - cfg.padY);
+        const horizSpan = Math.abs(padCurrentX - car.x) + 320;
+        const vertSpan = altAbovePad + 260;
+        const targetZoomX = Math.max(0.46, Math.min(1.42, r.width / horizSpan));
+        const targetZoomY = Math.max(0.46, Math.min(1.42, r.height / vertSpan));
+        const desiredZoom = Math.min(targetZoomX, targetZoomY);
+        const focusX = altAbovePad < 90 ? car.x * 0.72 + padCurrentX * 0.28 : midX;
+        const focusY = Math.max(120, (car.y + cfg.padY) * 0.5 + 30);
+
+        cam.zoom += (desiredZoom - cam.zoom) * 0.06;
+        cam.x += (focusX - cam.x) * 0.08;
+        cam.y += (focusY - cam.y) * 0.08;
+
+        // Check Landing Pad collision
+        const padLeft = padCurrentX - cfg.padW * 0.5;
+        const padRight = padCurrentX + cfg.padW * 0.5;
+        const padSurfaceY = cfg.padY + 13;
+
+        if (car.x >= padLeft - 10 && car.x <= padRight + 10 && car.y <= padSurfaceY && car.vy <= 0 && car.y >= cfg.padY - 22) {
+          const sinkSpeedMps = Math.abs(car.vy) / 28; // Scaled to readable m/s
+          const deg = Math.abs((car.angle * 180) / Math.PI);
+          if (sinkSpeedMps <= 5.2 && deg <= 26) {
+            // Safe landing!
+            car.y = padSurfaceY;
+            car.vy = 0;
+            car.vx = 0;
+            car.angle = 0;
+            state = 'landed';
+            onLanded(sinkSpeedMps, deg);
+          } else {
+            onCrashed(`Zu hart oder schräg aufgesetzt (${sinkSpeedMps.toFixed(1)} m/s, ${deg.toFixed(0)}°)!`);
+          }
+        } else if (car.y < -160) {
+          onCrashed('In die Tiefe gestürzt – Zielplattform verfehlt!');
+        } else if (car.x < 420 && car.y < rampHeightAt(car.x) + 8) {
+          onCrashed('Zurück auf der Rampe abgestürzt!');
+        }
+      }
+
+      // Update particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        if (p.kind === 'gas') {
+          p.vx *= 0.96;
+          p.vy *= 0.96;
+          p.size += 18 * dt;
+        } else {
+          p.vy -= 260 * dt;
+        }
+        p.life -= dt;
+        if (p.life <= 0) particles.splice(i, 1);
+      }
+
+      // Update HUD
+      const sinkMps = state === 'air' ? Math.max(0, -car.vy / 28) : 0;
+      const deg = Math.round((car.angle * 180) / Math.PI);
+      const vyEl = document.getElementById('hud-vy');
+      vyEl.textContent = sinkMps.toFixed(1);
+      vyEl.style.color = sinkMps > 5.0 ? '#fb7185' : (sinkMps > 3.5 ? '#fbbf24' : '#4ade80');
+      const angEl = document.getElementById('hud-ang');
+      angEl.textContent = deg + '°';
+      angEl.style.color = Math.abs(deg) > 22 ? '#fb7185' : '#4ade80';
+      document.getElementById('hud-gas').style.width = Math.round(car.gas) + '%';
+      document.getElementById('hud-gas-pct').textContent = Math.round(car.gas) + '%';
+    }
+
+    function onLanded(sinkMps, deg) {
+      for (let i = 0; i < 36; i++) {
+        spawnSpark(car.x, car.y - 8, i % 2 === 0 ? '#4ade80' : '#38bdf8');
+      }
+      ArcadeAudio.win();
+
+      const precisionBonus = Math.max(0, Math.round((5.2 - sinkMps) * 90));
+      const angleBonus = Math.max(0, Math.round((25 - deg) * 12));
+      const gasBonus = Math.round(car.gas * 6);
+      const pts = 300 + precisionBonus + angleBonus + gasBonus;
+      totalScore += pts;
+      document.getElementById('hud-score').textContent = totalScore;
+
+      ArcadeScores.record('roadster', totalScore, `${totalScore} Pkt (Mission ${lvlIdx + 1})`, false);
+      refreshTopBest();
+
+      const isFinal = lvlIdx >= LEVELS.length - 1;
+      document.getElementById('ov-icon').textContent = isFinal ? '🏆' : '🎯';
+      document.getElementById('ov-title').textContent = isFinal ? 'Alle 5 Missionen gemeistert!' : `Saubere Landung! (+${pts} Pkt)`;
+      document.getElementById('ov-desc').innerHTML =
+        `Sinkgeschwindigkeit: <strong>${sinkMps.toFixed(1)} m/s</strong> · Winkel: <strong>${deg.toFixed(0)}°</strong> · Rest-Gas: <strong>${Math.round(car.gas)}%</strong><br><br>` +
+        (isFinal ? `Gesamt-Highscore: <strong>${totalScore} Punkte</strong>` : `Bereit für die nächste Rampe: <strong>${LEVELS[lvlIdx + 1].name}</strong>?`);
+
+      const btn = document.getElementById('ov-btn');
+      if (isFinal) {
+        btn.textContent = '🔄 Neue Runde ab Mission 1';
+        btn.onclick = startFromLevelOne;
+        document.getElementById('ov-reset-all').classList.add('hidden');
+      } else {
+        btn.textContent = '🚀 Nächste Mission ▶';
+        btn.onclick = () => { lvlIdx++; startCurrentMission(); };
+        document.getElementById('ov-reset-all').classList.remove('hidden');
+      }
+      document.getElementById('overlay').classList.remove('hidden');
+    }
+
+    function onCrashed(reason) {
+      state = 'crashed';
+      ArcadeAudio.explosion();
+      for (let i = 0; i < 42; i++) {
+        spawnSpark(car.x, car.y, i % 2 === 0 ? '#fb7185' : '#fbbf24');
+      }
+      document.getElementById('ov-icon').textContent = '💥';
+      document.getElementById('ov-title').textContent = 'Bruchlandung!';
+      document.getElementById('ov-desc').textContent = reason + ' Tipp: Mit Leertaste/Kalt-Schub frühzeitig vor dem Pad abbremsen!';
+      const btn = document.getElementById('ov-btn');
+      btn.textContent = '🔄 Mission wiederholen';
+      btn.onclick = startCurrentMission;
+      document.getElementById('ov-reset-all').classList.remove('hidden');
+      document.getElementById('overlay').classList.remove('hidden');
+    }
+
+    function drawScene() {
+      const r = stage.getBoundingClientRect();
+      const w = r.width, h = r.height;
+      const cfg = LEVELS[lvlIdx];
+
+      // Sky gradient
+      const sky = ctx.createLinearGradient(0, 0, 0, h);
+      if (cfg.moon) {
+        sky.addColorStop(0, '#02040a');
+        sky.addColorStop(1, '#111827');
+      } else {
+        sky.addColorStop(0, '#040b1d');
+        sky.addColorStop(0.65, '#0b2248');
+        sky.addColorStop(1, '#1e1b4b');
+      }
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+
+      // Stars
+      stars.forEach(s => {
+        ctx.fillStyle = `rgba(226, 232, 240, ${s.a})`;
+        ctx.beginPath();
+        ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // World -> Screen transform
+      ctx.save();
+      ctx.translate(w * 0.5, h * 0.55);
+      ctx.scale(cam.zoom, -cam.zoom);
+      ctx.translate(-cam.x, -cam.y);
+
+      // Background horizon / water or canyon
+      if (cfg.moving) {
+        ctx.fillStyle = '#082f49';
+        ctx.fillRect(-1000, -400, 4500, 410);
+      } else {
+        ctx.fillStyle = cfg.moon ? '#1f2937' : '#0f172a';
+        ctx.fillRect(-1000, -400, 4500, 390);
+      }
+
+      // Draw Launch Ramp
+      ctx.beginPath();
+      ctx.moveTo(-400, -200);
+      ctx.lineTo(-400, 0);
+      ctx.lineTo(180, 0);
+      for (let x = 185; x <= 420; x += 10) {
+        ctx.lineTo(x, rampHeightAt(x));
+      }
+      ctx.lineTo(420, -200);
+      ctx.closePath();
+      ctx.fillStyle = '#1e293b';
+      ctx.fill();
+
+      // Neon Ramp Guide Strip
+      ctx.beginPath();
+      ctx.moveTo(0, 2);
+      ctx.lineTo(180, 2);
+      for (let x = 185; x <= 420; x += 10) {
+        ctx.lineTo(x, rampHeightAt(x) + 2);
+      }
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Draw Landing Target Platform
+      const pL = padCurrentX - cfg.padW * 0.5;
+      const pY = cfg.padY;
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(pL, pY - 22, cfg.padW, 22);
+      // Support pillar (unless ocean drone ship)
+      if (!cfg.moving) {
+        ctx.fillStyle = '#0f172a';
+        ctx.fillRect(padCurrentX - 24, -400, 48, pY + 378);
+      } else {
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(pL - 15, pY - 34, cfg.padW + 30, 14);
+      }
+      // Glowing Green Landing Strip
+      ctx.fillStyle = '#4ade80';
+      ctx.fillRect(pL + 8, pY - 4, cfg.padW - 16, 6);
+      // Landing Guide Beacons
+      const pulse = 0.45 + 0.35 * Math.sin(performance.now() * 0.008);
+      ctx.fillStyle = `rgba(74, 222, 128, ${pulse * 0.32})`;
+      ctx.beginPath();
+      ctx.moveTo(pL + 10, pY);
+      ctx.lineTo(pL + 26, pY + 120);
+      ctx.lineTo(pL + cfg.padW - 26, pY + 120);
+      ctx.lineTo(pL + cfg.padW - 10, pY);
+      ctx.closePath();
+      ctx.fill();
+
+      // Draw Cold-Gas & Spark Particles
+      particles.forEach(p => {
+        const alpha = Math.max(0, p.life / p.maxLife);
+        if (p.kind === 'gas') {
+          const gr = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, p.size);
+          gr.addColorStop(0, `rgba(224, 242, 254, ${alpha * 0.92})`);
+          gr.addColorStop(0.5, `rgba(56, 189, 248, ${alpha * 0.55})`);
+          gr.addColorStop(1, 'rgba(56, 189, 248, 0)');
+          ctx.fillStyle = gr;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = alpha;
+          ctx.fillRect(p.x - p.size * 0.5, p.y - p.size * 0.5, p.size, p.size);
+          ctx.globalAlpha = 1;
+        }
+      });
+
+      // Draw Sleek Hyper-Roadster Silhouette
+      ctx.save();
+      ctx.translate(car.x, car.y);
+      ctx.rotate(car.angle);
+
+      // Thruster Nozzle Glows when firing
+      if (state === 'air' && keys.thrust && car.gas > 0.2) {
+        ctx.fillStyle = 'rgba(186, 230, 253, 0.95)';
+        [-16, 16].forEach(nx => {
+          ctx.beginPath();
+          ctx.moveTo(nx - 5, -9);
+          ctx.lineTo(nx + 5, -9);
+          ctx.lineTo(nx, -34 - Math.random() * 14);
+          ctx.closePath();
+          ctx.fill();
+        });
+      }
+
+      // Main sculpted red chassis
+      ctx.beginPath();
+      ctx.moveTo(-29, -4);
+      ctx.lineTo(-27, 6);
+      ctx.lineTo(-14, 8);
+      ctx.lineTo(-4, 15);
+      ctx.lineTo(12, 14);
+      ctx.lineTo(29, 3);
+      ctx.lineTo(29, -4);
+      ctx.closePath();
+      const bodyGrad = ctx.createLinearGradient(0, -5, 0, 15);
+      bodyGrad.addColorStop(0, '#ef4444');
+      bodyGrad.addColorStop(0.5, '#dc2626');
+      bodyGrad.addColorStop(1, '#7f1d1d');
+      ctx.fillStyle = bodyGrad;
+      ctx.fill();
+
+      // Aero Glass Canopy
+      ctx.beginPath();
+      ctx.moveTo(-11, 7);
+      ctx.lineTo(-3, 14);
+      ctx.lineTo(11, 13);
+      ctx.lineTo(16, 6);
+      ctx.closePath();
+      ctx.fillStyle = '#0f172a';
+      ctx.fill();
+
+      // Headlight & Tail LED
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(25, 1, 5, 2.5);
+      ctx.fillStyle = '#fb7185';
+      ctx.fillRect(-30, 2, 4, 3);
+
+      // Cold-Gas Nozzle Ports
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(-19, -7, 6, 3);
+      ctx.fillRect(13, -7, 6, 3);
+
+      // Wheels
+      [-17, 17].forEach(wx => {
+        ctx.fillStyle = '#090d16';
+        ctx.beginPath();
+        ctx.arc(wx, -5, 7, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.arc(wx, -5, 4.2, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+
+      ctx.restore();
+      ctx.restore();
+
+      // Off-screen target pointer arrow if pad is off-edge
+      if (state === 'air') {
+        ctx.fillStyle = 'rgba(74, 222, 128, 0.9)';
+        ctx.font = 'bold 12px system-ui';
+        const dxMeters = Math.round((padCurrentX - car.x) / 10);
+        ctx.fillText(`🎯 Landezone: ${dxMeters >= 0 ? dxMeters + 'm voraus' : Math.abs(dxMeters) + 'm zurück'}`, 14, 22);
+      }
+    }
+
+    let lastFrame = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.04, (now - lastFrame) / 1000);
+      lastFrame = now;
+      if (state === 'ramp' || state === 'air' || particles.length > 0) {
+        stepPhysics(dt);
+      }
+      drawScene();
+      requestAnimationFrame(loop);
+    }
+
+    // Bind Keyboard
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = true;
+      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = true;
+      if ([' ', 'ArrowUp', 'w', 'W'].includes(e.key)) {
+        e.preventDefault();
+        keys.thrust = true;
+      }
+    });
+    window.addEventListener('keyup', (e) => {
+      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = false;
+      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = false;
+      if ([' ', 'ArrowUp', 'w', 'W'].includes(e.key)) keys.thrust = false;
+    });
+
+    // Bind Multi-Touch / Pointer Hold Buttons
+    function bindHoldBtn(el, keyName) {
+      const setOn = (on) => (ev) => {
+        ev.preventDefault();
+        keys[keyName] = on;
+        el.classList.toggle('active', on);
+      };
+      el.addEventListener('pointerdown', setOn(true));
+      el.addEventListener('pointerup', setOn(false));
+      el.addEventListener('pointercancel', setOn(false));
+      el.addEventListener('pointerleave', setOn(false));
+    }
+    bindHoldBtn(document.getElementById('btn-left'), 'left');
+    bindHoldBtn(document.getElementById('btn-right'), 'right');
+    bindHoldBtn(document.getElementById('btn-thrust'), 'thrust');
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    refreshTopBest();
+    setupMission();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>

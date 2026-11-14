@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Quiz Arena – Wissens- &amp; Schnellrate-Quiz</title>
+  <link rel="stylesheet" href="../../shared/arcade.css">
+  <style>
+    .quiz-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 18px 14px 36px;
+    }
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(15, 28, 56, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+      background: rgba(14, 116, 144, 0.28);
+    }
+    .cat-icon { font-size: 28px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; }
+    .cat-card.featured {
+      border-color: rgba(251, 191, 36, 0.55);
+      background: linear-gradient(135deg, rgba(120, 53, 15, 0.28), rgba(15, 28, 56, 0.92));
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #38bdf8, #4ade80);
+      transition: width 0.1s linear, background 0.2s;
+    }
+    .q-cat-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+      margin-bottom: 10px;
+    }
+    .q-text {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+    }
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: rgba(15, 23, 42, 0.9);
+      color: #f8fafc;
+      font-size: 14.5px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: var(--accent-cyan);
+      background: rgba(14, 116, 144, 0.3);
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.eliminated { opacity: 0.24; pointer-events: none; }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.34);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.18);
+      color: #7dd3fc;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .jokers-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      background: rgba(120, 53, 15, 0.25);
+      color: #fde68a;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled {
+      opacity: 0.32;
+      cursor: not-allowed;
+    }
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hidden { display: none !important; }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .stat-box {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      text-align: center;
+    }
+    .stat-box small { display: block; color: var(--text-muted); font-size: 11.5px; }
+    .stat-box strong { display: block; font-size: 22px; margin-top: 4px; color: #7dd3fc; font-family: var(--font-mono); }
+
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+      .q-text { font-size: 17.5px; }
+      .result-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🧠 Quiz Arena</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 Rekord: <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- Start / Category Screen -->
+    <section id="screen-menu" class="glass-card" style="padding: 20px;">
+      <h1 style="margin:0 0 6px; font-size: 23px;">Wähle deine Quiz-Runde</h1>
+      <p style="margin:0; color: var(--text-muted); font-size: 14px;">
+        10 Fragen pro Runde · 15 Sekunden pro Frage · Schnelligkeits- &amp; Serien-Bonus!
+      </p>
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- Active Question Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong> / <strong id="q-total">10</strong></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong>×</span>
+        <span>⭐ Punkte: <strong id="q-score">0</strong></span>
+        <span>⏱ <strong id="q-sec">15</strong>s</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+      <div id="q-cat" class="q-cat-pill">Kategorie</div>
+      <h2 id="q-text" class="q-text">Frage wird geladen...</h2>
+      <div id="answers-grid" class="answers-grid"></div>
+      <div class="jokers-row">
+        <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50 Joker</button>
+        <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10 Sek.</button>
+        <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        <button class="secondary-btn" style="margin-left:auto" onclick="backToMenu()">Abbrechen</button>
+      </div>
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1; min-width: 210px;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+    </section>
+
+    <!-- Results Screen -->
+    <section id="screen-result" class="glass-card quiz-stage hidden" style="text-align:center;">
+      <div style="font-size:44px; margin-bottom:6px;" id="res-emoji">🏆</div>
+      <h1 style="margin:0 0 6px; font-size:24px;" id="res-heading">Runde geschafft!</h1>
+      <p style="margin:0; color:var(--text-muted);" id="res-sub"></p>
+      <div class="result-grid">
+        <div class="stat-box"><small>Gesamtpunkte</small><strong id="res-score">0</strong></div>
+        <div class="stat-box"><small>Richtige Antworten</small><strong id="res-correct">0/10</strong></div>
+        <div class="stat-box"><small>Beste Serie</small><strong id="res-streak">0</strong></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Nochmal spielen</button>
+        <button class="secondary-btn" onclick="backToMenu()">📚 Andere Kategorie</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none;">🏠 Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const CATEGORIES = [
+      { id: 'mix', icon: '⚡', name: 'Gemischter Blitz-Mix', desc: '10 zufällige Fragen quer durch alle 5 Wissensgebiete', featured: true },
+      { id: 'tech', icon: '🚀', name: 'Technik & Raumfahrt', desc: 'E-Mobilität, Raketen, Computer & digitale Welt' },
+      { id: 'nature', icon: '🦁', name: 'Natur, Tiere & Ozeane', desc: 'Rekorde der Tierwelt, Dinos, Wälder & Meere' },
+      { id: 'geo', icon: '🌍', name: 'Geografie & Weltrekorde', desc: 'Hauptstädte, Gebirge, Flüsse & Staaten' },
+      { id: 'science', icon: '🔬', name: 'Wissenschaft & Physik', desc: 'Elemente, Energie, Licht & Naturgesetze' },
+      { id: 'history', icon: '🏛️', name: 'Geschichte & Erfindungen', desc: 'Meilensteine, Entdeckungen & Kultur' }
+    ];
+
+    const QUESTIONS = [
+      // TECH & SPACE (12)
+      { cat: 'tech', q: 'Welches Gas verwenden manche Raketen und Hochleistungs-Düsen als reine Kaltgas-Steuerdüse im Vakuum?', opts: ['Stickstoff', 'Propan', 'Chlor', 'Schwefeldioxid'], a: 0, fact: 'Reiner komprimierter Stickstoff (N₂) eignet sich perfekt für präzise, verbrennungsfreie Kaltgasdüsen.' },
+      { cat: 'tech', q: 'Wofür steht die Abkürzung „HTTP“ im Webbrowser?', opts: ['HyperText Transfer Protocol', 'High Tech Transport Port', 'Home Terminal Text Path', 'Hybrid Transmission Type Process'], a: 0, fact: 'HTTP steht für HyperText Transfer Protocol – das Standardprotokoll zum Laden von Webseiten.' },
+      { cat: 'tech', q: 'Welche Einheit gibt die elektrische Spannung an?', opts: ['Ampere', 'Watt', 'Volt', 'Ohm'], a: 2, fact: 'Volt (V) misst die elektrische Spannung, Ampere die Stromstärke und Watt die Leistung.' },
+      { cat: 'tech', q: 'Wie viele Bits bilden genau ein Byte?', opts: ['4', '8', '16', '32'], a: 1, fact: 'Ein Byte besteht aus genau 8 Bit und kann 256 verschiedene Werte (0–255) darstellen.' },
+      { cat: 'tech', q: 'Welcher Planet unseres Sonnensystems steht der Sonne am nächsten?', opts: ['Venus', 'Mars', 'Merkur', 'Jupiter'], a: 2, fact: 'Merkur kreist durchschnittlich nur rund 58 Millionen Kilometer von der Sonne entfernt.' },
+      { cat: 'tech', q: 'Was speichert ein Elektroauto hauptsächlich in einer LFP-Batterie?', opts: ['Lithium-Eisenphosphat', 'Blei-Fluorid', 'Silber-Zink', 'Natrium-Chlorid'], a: 0, fact: 'LFP steht für Lithium-Eisenphosphat – besonders langlebig und thermisch sehr stabil.' },
+      { cat: 'tech', q: 'Wie heißt das weltweite System von Navigationssatelliten aus Europa?', opts: ['Galileo', 'Kepler', 'Voyager', 'Cassini'], a: 0, fact: 'Galileo ist das europäische zivile Satellitennavigationssystem (Pendant zu GPS).' },
+      { cat: 'tech', q: 'Welche Tastenkombination macht auf Windows-PCs eine Aktion meist rückgängig?', opts: ['Strg + Z', 'Strg + P', 'Alt + F4', 'Strg + L'], a: 0, fact: 'Strg + Z („Undo“) macht den letzten Arbeitsschritt in fast jeder Software rückgängig.' },
+      { cat: 'tech', q: 'Mit welchem Begriff bezeichnet man die Geschwindigkeit von Licht in Glasfaserkabeln?', opts: ['Ca. 200.000 km/s', 'Ca. 1.200 km/h', 'Ca. 340 m/s', 'Ca. 50.000 km/s'], a: 0, fact: 'Durch die Brechzahl von Glas breitet sich Licht in Glasfasern mit rund 200.000 km/s aus.' },
+      { cat: 'tech', q: 'Welches Protokoll sichert Webseiten mit einem Schloss-Symbol („https://“)?', opts: ['TLS / SSL', 'FTP', 'POP3', 'Telnet'], a: 0, fact: 'HTTPS nutzt TLS-Verschlüsselung, damit Daten zwischen Browser und Server geschützt bleiben.' },
+      { cat: 'tech', q: 'Wie lange braucht das Licht ungefähr von der Sonne bis zur Erde?', opts: ['Rund 8 Minuten', 'Rund 1 Sekunde', 'Rund 2 Stunden', 'Rund 1 Tag'], a: 0, fact: 'Bei rund 150 Millionen km Entfernung dauert die Reise des Sonnenlichts etwa 8 Minuten und 20 Sekunden.' },
+      { cat: 'tech', q: 'Welches Unternehmen entwickelte 1976 den ersten Heimcomputer „Apple I“?', opts: ['Apple Computer', 'IBM', 'Microsoft', 'Commodore'], a: 0, fact: 'Steve Wozniak und Steve Jobs stellten den Apple I 1976 in Kalifornien vor.' },
+
+      // NATURE & ANIMALS (12)
+      { cat: 'nature', q: 'Welches Tier gilt als das schwerste jemals nachgewiesene Lebewesen der Erdgeschichte?', opts: ['Blauwal', 'Argentinosaurus', 'Megalodon', 'Afrikanischer Elefant'], a: 0, fact: 'Ein ausgewachsener Blauwal kann bis zu 150–200 Tonnen wiegen und über 30 Meter lang werden.' },
+      { cat: 'nature', q: 'Wie heißt das männliche Wildschwein in der Jägersprache?', opts: ['Keiler', 'Bock', 'Rüde', 'Ganter'], a: 0, fact: 'Ein männliches Wildschwein heißt Keiler, ein weibliches nennt man Bache.' },
+      { cat: 'nature', q: 'Was passiert beim Rothirsch jedes Jahr im späten Winter bzw. Vorfrühling mit dem Geweih?', opts: ['Es wird komplett abgeworfen und wächst neu', 'Es bleibt lebenslang gleich', 'Nur die Spitzen brechen ab', 'Es verfärbt sich blau'], a: 0, fact: 'Hirsche werfen ihr knöchernes Geweih jedes Jahr ab – im Sommer wächst es im Bast neu nach.' },
+      { cat: 'nature', q: 'Welcher Vogel kann als einziger dauerhaft rückwärts fliegen?', opts: ['Kolibri', 'Mauersegler', 'Eisvogel', 'Falke'], a: 0, fact: 'Dank ihres extrem beweglichen Schultergelenks schlagen Kolibris in einer Acht und fliegen auch rückwärts.' },
+      { cat: 'nature', q: 'Wie atmen erwachsene Wale und Delfine?', opts: ['Mit Lungen an der Wasseroberfläche', 'Mit Kiemen unter Wasser', 'Über ihre Haut', 'Gar nicht unter 100 m'], a: 0, fact: 'Wale sind Meeressäuger und müssen regelmäßig zum Luftholen an die Wasseroberfläche auftauchen.' },
+      { cat: 'nature', q: 'In welchem Erdzeitalter lebte der Tyrannosaurus rex?', opts: ['Späte Kreidezeit', 'Trias', 'Karbon', 'Eiszeit (Pleistozän)'], a: 0, fact: 'T-Rex lebte vor rund 68 bis 66 Millionen Jahren ganz am Ende der Kreidezeit in Nordamerika.' },
+      { cat: 'nature', q: 'Wie viele Herzen besitzt ein Oktopus (Krake)?', opts: ['3', '1', '2', '5'], a: 0, fact: 'Ein Oktopus hat ein Haupt- und zwei Kiemenherzen, die sauerstoffarmes Blut durch die Kiemen pumpen.' },
+      { cat: 'nature', q: 'Welches Säugetier erreicht an Land auf kurzen Sprints die höchste Geschwindigkeit?', opts: ['Gepard', 'Gabelbock', 'Windhund', 'Puma'], a: 0, fact: 'Geparden beschleunigen in wenigen Sekunden auf über 100 km/h.' },
+      { cat: 'nature', q: 'Welcher Baum verliert im Gegensatz zu fast allen anderen Nadelbäumen im Herbst seine Nadeln?', opts: ['Europäische Lärche', 'Gemeine Fichte', 'Waldkiefer', 'Weißtanne'], a: 0, fact: 'Die Lärche färbt sich im Herbst goldgelb und wirft ihre Nadeln vor dem Winter ab.' },
+      { cat: 'nature', q: 'Welches Vitamin bildet der menschliche Körper mithilfe von Sonnenlicht selbst?', opts: ['Vitamin D', 'Vitamin C', 'Vitamin B12', 'Vitamin K'], a: 0, fact: 'UV-B-Strahlung der Sonne regt die Vitamin-D-Synthese in unserer Haut an.' },
+      { cat: 'nature', q: 'Wie viele Beine hat eine echte Spinne (Webspinne)?', opts: ['8', '6', '10', '12'], a: 0, fact: 'Spinnentiere haben 8 Beine – Insekten hingegen besitzen 6 Beine.' },
+      { cat: 'nature', q: 'Welches Landtier hat die längste Tragzeit (ca. 22 Monate)?', opts: ['Afrikanischer Elefant', 'Giraffe', 'Nashorn', 'Flusspferd'], a: 0, fact: 'Elefantenkühe tragen ihr Junges rund 20 bis 22 Monate aus – Rekord unter den Landtieren.' },
+
+      // GEOGRAPHY (12)
+      { cat: 'geo', q: 'Welche Stadt ist die Hauptstadt von Australien?', opts: ['Canberra', 'Sydney', 'Melbourne', 'Brisbane'], a: 0, fact: 'Canberra wurde Anfang des 20. Jahrhunderts als Kompromiss zwischen Sydney und Melbourne geplant.' },
+      { cat: 'geo', q: 'Welcher Fluss ist mit Abstand der wasserreichste Fluss der Erde?', opts: ['Amazonas', 'Nil', 'Jangtse', 'Mississippi'], a: 0, fact: 'Der Amazonas führt rund ein Fünftel des gesamten weltweiten Süßwassers ins Meer.' },
+      { cat: 'geo', q: 'Welcher ist der höchste Berg Deutschlands?', opts: ['Zugspitze (2.962 m)', 'Watzmann', 'Feldberg', 'Brocken'], a: 0, fact: 'Die Zugspitze liegt im Wettersteingebirge an der Grenze zwischen Bayern und Tirol.' },
+      { cat: 'geo', q: 'Durch wie viele deutsche Bundesländer fließt die Elbe oder bildet ihre Grenze?', opts: ['7', '3', '2', '11'], a: 0, fact: 'Sachsen, Brandenburg, Sachsen-Anhalt, Niedersachsen, Mecklenburg-Vorpommern, Schleswig-Holstein und Hamburg (7).' },
+      { cat: 'geo', q: 'Welcher Ozean bedeckt etwa ein Drittel der gesamten Erdoberfläche?', opts: ['Pazifischer Ozean', 'Atlantischer Ozean', 'Indischer Ozean', 'Arktischer Ozean'], a: 0, fact: 'Der Pazifik ist größer als alle Landmassen der Erde zusammengenommen.' },
+      { cat: 'geo', q: 'In welchem Land liegt die antike Felsenstadt Petra?', opts: ['Jordanien', 'Ägypten', 'Marokko', 'Griechenland'], a: 0, fact: 'Petra war die Hauptstadt der Nabatäer im heutigen Süden Jordaniens.' },
+      { cat: 'geo', q: 'Welcher Staat hat die weltweit meisten Inseln (über 220.000)?', opts: ['Schweden', 'Indonesien', 'Philippinen', 'Japan'], a: 0, fact: 'Schweden führt die Statistik mit über 220.000 gezählten Inseln (inkl. Schären) vor Norwegen und Finnland an.' },
+      { cat: 'geo', q: 'Wie heißt die Meerenge zwischen Spanien und Marokko?', opts: ['Straße von Gibraltar', 'Bosporus', 'Straße von Hormus', 'Beringstraße'], a: 0, fact: 'An ihrer schmalsten Stelle ist die Straße von Gibraltar nur rund 14 Kilometer breit.' },
+      { cat: 'geo', q: 'Welche Wüste ist die größte Trockenwüste der Erde?', opts: ['Sahara', 'Gobi', 'Kalahari', 'Atacama'], a: 0, fact: 'Die Sahara erstreckt sich über rund 9 Millionen Quadratkilometer in Nordafrika.' },
+      { cat: 'geo', q: 'Welcher große Strom teilt die ungarische Hauptstadt Budapest in die Stadtteile Buda und Pest?', opts: ['Donau', 'Rhein', 'Elbe', 'Theiß'], a: 0, fact: 'Die Donau trennt die historischen Stadtteile Buda und Pest in Ungarns Hauptstadt.' },
+      { cat: 'geo', q: 'Welcher Kontinent hat die meisten souveränen Staaten?', opts: ['Afrika (54)', 'Asien', 'Europa', 'Südamerika'], a: 0, fact: 'Auf dem afrikanischen Kontinent liegen 54 international anerkannte Staaten.' },
+      { cat: 'geo', q: 'Welcher See liegt am tiefsten Punkt der Erde auf dem Festland (ca. −430 m)?', opts: ['Totes Meer', 'Baikalsee', 'Kaspisches Meer', 'Bodensee'], a: 0, fact: 'Das Ufer des Toten Meeres bildet die tiefste frei zugängliche Landstelle der Erde.' },
+
+      // SCIENCE & PHYSICS (12)
+      { cat: 'science', q: 'Welches chemische Symbol steht für Gold?', opts: ['Au', 'Ag', 'Fe', 'Gd'], a: 0, fact: '„Au“ leitet sich vom lateinischen Wort „aurum“ ab (Ag = Silber, argentum).' },
+      { cat: 'science', q: 'Bei welcher Temperatur siedet reines Wasser bei normalem Luftdruck auf Meereshöhe?', opts: ['100 °C', '90 °C', '112 °C', '80 °C'], a: 0, fact: 'Bei 1013,25 hPa Normaldruck liegt der Siedepunkt von reinem Wasser bei 100 °C (auf hohen Bergen niedriger).' },
+      { cat: 'science', q: 'Welches Gas macht mit rund 78 % den größten Anteil unserer Erdatmosphäre aus?', opts: ['Stickstoff', 'Sauerstoff', 'Kohlendioxid', 'Argon'], a: 0, fact: 'Trockene Luft besteht aus ca. 78 % Stickstoff, 21 % Sauerstoff und 1 % Edelgasen/CO₂.' },
+      { cat: 'science', q: 'Was bewegt sich in einem Gewitter schneller durch die Luft: Licht des Blitzes oder Schall des Donners?', opts: ['Licht (fast sofort)', 'Schall', 'Beide gleich schnell', 'Je nach Luftfeuchte unterschiedlich'], a: 0, fact: 'Licht erreicht das Auge praktisch sofort, Schall braucht rund 3 Sekunden pro Kilometer.' },
+      { cat: 'science', q: 'Welcher Aggregatzustand hat bei festem Druck ein festes Volumen, aber passt sich der Form seines Gefäßes an?', opts: ['Flüssig', 'Fest', 'Gasförmig', 'Kristallin'], a: 0, fact: 'Flüssigkeiten lassen sich kaum komprimieren, strömen aber frei in jede Behälterform.' },
+      { cat: 'science', q: 'Welches Element hat die Ordnungszahl 1 im Periodensystem?', opts: ['Wasserstoff', 'Helium', 'Kohlenstoff', 'Sauerstoff'], a: 0, fact: 'Wasserstoff (H) besitzt genau ein Proton im Atomkern und ist das häufigste Element im Universum.' },
+      { cat: 'science', q: 'Warum erscheint uns der wolkenlose Tageshimmel meistens blau?', opts: ['Rayleigh-Streuung von kurzem blauem Licht', 'Reflexion der blauen Ozeane', 'Sauerstoff ist tiefblau gefärbt', 'Ozon färbt den ganzen Himmel'], a: 0, fact: 'Luftmoleküle streuen kurzwelliges blaues Sonnenlicht deutlich stärker in alle Richtungen als rotes Licht.' },
+      { cat: 'science', q: 'Wie nennt man die kleinste unteilbare Einheit der elektrischen Ladung in Atomen (negativ)?', opts: ['Elektron', 'Proton', 'Neutron', 'Photon'], a: 0, fact: 'Elektronen tragen eine negative Elementarladung, Protonen eine positive.' },
+      { cat: 'science', q: 'Was passiert mit reinem Wasser genau beim Gefrieren zu Eis (Anomalie des Wassers)?', opts: ['Es dehnt sich aus (Dichte sinkt)', 'Es zieht sich stark zusammen', 'Es behält exakt gleiches Volumen', 'Es verliert Masse'], a: 0, fact: 'Eis hat eine geringere Dichte als flüssiges Wasser – deshalb schwimmen Eisberge.' },
+      { cat: 'science', q: 'Mit welchem Messgerät bestimmt man den Luftdruck?', opts: ['Barometer', 'Hygrometer', 'Anemometer', 'Voltmeter'], a: 0, fact: 'Ein Barometer misst den Luftdruck (in Hektopascal hPa), ein Hygrometer misst die Luftfeuchtigkeit.' },
+      { cat: 'science', q: 'Wie groß ist ungefähr die Erdbeschleunigung an der Erdoberfläche?', opts: ['9,81 m/s²', '3,7 m/s²', '24,8 m/s²', '1,62 m/s²'], a: 0, fact: 'Ohne Luftwiderstand wird ein fallender Gegenstand auf der Erde um rund 9,81 m/s pro Sekunde schneller.' },
+      { cat: 'science', q: 'Welcher Farbton entsteht, wenn man rotes, grünes und blaues Licht (RGB) voll mischt?', opts: ['Weiß', 'Braun', 'Schwarz', 'Violett'], a: 0, fact: 'Bei additiver Farbmischung (wie auf Bildschirmen) ergeben Rot + Grün + Blau zusammen reines Weiß.' },
+
+      // HISTORY & INVENTIONS (12)
+      { cat: 'history', q: 'In welchem Jahr landeten erstmals Menschen im Rahmen von Apollo 11 auf dem Mond?', opts: ['1969', '1961', '1975', '1957'], a: 0, fact: 'Am 20. Juli 1969 setzte die Mondlandefähre „Eagle“ mit Neil Armstrong und Buzz Aldrin auf dem Mond auf.' },
+      { cat: 'history', q: 'Wer erfand um 1450 in Mainz den europäischen Buchdruck mit beweglichen Metalllettern?', opts: ['Johannes Gutenberg', 'Galileo Galilei', 'Leonardo da Vinci', 'Martin Luther'], a: 0, fact: 'Johannes Gutenberg revolutionierte mit der Druckerpresse und gegossenen Bleilettern die Wissensverbreitung.' },
+      { cat: 'history', q: 'In welchem Jahr fiel die Berliner Mauer?', opts: ['1989', '1991', '1986', '1979'], a: 0, fact: 'Am Abend des 9. November 1989 öffneten sich die Grenzübergänge in Berlin.' },
+      { cat: 'history', q: 'Wer meldete 1886 in Mannheim den „Motorwagen“ mit Verbrennungsmotor zum Patent an?', opts: ['Carl Benz', 'Rudolf Diesel', 'Ferdinand Porsche', 'Henry Ford'], a: 0, fact: 'Carl Benz erhielt am 29. Januar 1886 das Patent DRP 37435 für den Benz Patent-Motorwagen Nummer 1.' },
+      { cat: 'history', q: 'Welches Weltwunder der Antike steht als einziges heute noch weitgehend erhalten?', opts: ['Cheops-Pyramide von Gizeh', 'Koloss von Rhodos', 'Hängende Gärten', 'Leuchtturm von Alexandria'], a: 0, fact: 'Die vor rund 4.500 Jahren erbaute Cheops-Pyramide ist das älteste und einzige erhaltene der sieben Weltwunder.' },
+      { cat: 'history', q: 'Wer entdeckte 1895 die später nach ihm benannten Strahlen in Würzburg?', opts: ['Wilhelm Conrad Röntgen', 'Marie Curie', 'Albert Einstein', 'Max Planck'], a: 0, fact: 'Wilhelm Conrad Röntgen erhielt dafür 1901 den allerersten Nobelpreis für Physik.' },
+      { cat: 'history', q: 'Aus welchem Land stammt das traditionelle Kartenspiel-Vorbild „Patience / Solitaire“ sprachlich?', opts: ['Französisch (Geduld)', 'Schwedisch', 'Japanisch', 'Griechisch'], a: 0, fact: '„Solitaire“ bedeutet auf Französisch „Einzelgänger“ und „Patience“ bedeutet „Geduld“.' },
+      { cat: 'history', q: 'Welcher Erfinder entwickelte das Prinzip des Wechselstrom-Induktionsmotors Ende des 19. Jahrhunderts entscheidend mit?', opts: ['Nikola Tesla', 'James Watt', 'Alexander Fleming', 'Otto Lilienthal'], a: 0, fact: 'Nikola Tesla patentierte 1888 den mehrphasigen Wechselstrom-Induktionsmotor.' },
+      { cat: 'history', q: 'In welchem Jahr entstand die erste E-Mail-Nachricht über das ARPANET durch Ray Tomlinson?', opts: ['1971', '1995', '1982', '1960'], a: 0, fact: '1971 führte Ray Tomlinson auch das „@“-Zeichen zur Trennung von Benutzer und Rechnernamen ein.' },
+      { cat: 'history', q: 'Welche berühmte Straße verband jahrhundertelang Ostasien mit dem Mittelmeerraum?', opts: ['Seidenstraße', 'Bernsteinstraße', 'Panamericana', 'Via Appia'], a: 0, fact: 'Auf der Seidenstraße wurden Gewürze, Papier, Seide und Ideen zwischen China, Zentralasien und Europa gehandelt.' },
+      { cat: 'history', q: 'Wofür erhielten die Brüder Wright 1903 weltweite Berühmtheit?', opts: ['Erster gesteuerter Motorflug', 'Erste U-Bahn', 'Erste Telegrafenleitung', 'Erste Dampflokomotive'], a: 0, fact: 'Am 17. Dezember 1903 hob der „Wright Flyer“ bei Kitty Hawk (North Carolina) ab.' },
+      { cat: 'history', q: 'Welcher Physiker formulierte die spezielle und allgemeine Relativitätstheorie?', opts: ['Albert Einstein', 'Isaac Newton', 'Niels Bohr', 'Werner Heisenberg'], a: 0, fact: 'Albert Einstein veröffentlichte 1905 die spezielle und 1915/16 die allgemeine Relativitätstheorie.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATEGORIES.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let answered = false;
+    let timeLeft = 15;
+    let timerId = null;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATEGORIES.map(c => {
+        const count = c.id === 'mix' ? QUESTIONS.length : QUESTIONS.filter(q => q.cat === c.id).length;
+        return `
+          <button class="cat-card ${c.featured ? 'featured' : ''}" onclick="startQuiz('${c.id}')">
+            <span class="cat-icon">${c.icon}</span>
+            <span class="cat-name">${c.name}</span>
+            <span class="cat-desc">${c.desc} (${count} Fragen im Pool)</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function startQuiz(catId) {
+      ArcadeAudio.click();
+      activeCat = catId;
+      const pool = catId === 'mix' ? QUESTIONS : QUESTIONS.filter(q => q.cat === catId);
+      deck = shuffle(pool).slice(0, Math.min(10, pool.length));
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      answered = false;
+      const item = deck[qIdx];
+      timeLeft = 15.0;
+
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || 'Wissen';
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-time').disabled = !jokers.time;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
+
+      // Shuffle answer positions while tracking original correct text
+      const indexedOpts = item.opts.map((txt, idx) => ({ txt, isRight: idx === item.a }));
+      const shuffledOpts = shuffle(indexedOpts);
+      item._rendered = shuffledOpts;
+
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = shuffledOpts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${i + 1}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      let lastTick = performance.now();
+      timerId = setInterval(() => {
+        const now = performance.now();
+        timeLeft -= (now - lastTick) / 1000;
+        lastTick = now;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          updateTimerUI();
+          clearInterval(timerId);
+          handleTimeout();
+        } else {
+          updateTimerUI();
+        }
+      }, 80);
+    }
+
+    function updateTimerUI() {
+      document.getElementById('q-sec').textContent = Math.ceil(timeLeft);
+      const pct = Math.max(0, Math.min(100, (timeLeft / 15) * 100));
+      const fill = document.getElementById('timer-fill');
+      fill.style.width = pct + '%';
+      fill.style.background = timeLeft < 5
+        ? 'linear-gradient(90deg, #fb7185, #f59e0b)'
+        : 'linear-gradient(90deg, #38bdf8, #4ade80)';
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+      const item = deck[qIdx];
+      const chosen = item._rendered[idx];
+      const buttons = Array.from(document.querySelectorAll('#answers-grid .ans-btn'));
+      buttons.forEach(b => (b.disabled = true));
+
+      if (chosen && chosen.isRight) {
+        buttons[idx].classList.add('correct');
+        streak++;
+        bestStreak = Math.max(bestStreak, streak);
+        correctCount++;
+        const speedBonus = Math.round(timeLeft * 8);
+        const mult = Math.min(4, 1 + (streak - 1) * 0.25);
+        score += Math.round((100 + speedBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        if (buttons[idx]) buttons[idx].classList.add('wrong');
+        streak = 0;
+        const rightIdx = item._rendered.findIndex(o => o.isRight);
+        if (rightIdx >= 0 && buttons[rightIdx]) buttons[rightIdx].classList.add('correct');
+        ArcadeAudio.perkBad();
+      }
+
+      revealFact();
+    }
+
+    function handleTimeout() {
+      if (answered) return;
+      answered = true;
+      streak = 0;
+      const item = deck[qIdx];
+      const buttons = Array.from(document.querySelectorAll('#answers-grid .ans-btn'));
+      buttons.forEach(b => (b.disabled = true));
+      const rightIdx = item._rendered.findIndex(o => o.isRight);
+      if (rightIdx >= 0 && buttons[rightIdx]) buttons[rightIdx].classList.add('correct');
+      ArcadeAudio.fail();
+      revealFact('⏱ Zeit abgelaufen! ');
+    }
+
+    function revealFact(prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-time').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
+      document.getElementById('fact-text').textContent = prefix + item.fact;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Ergebnis ansehen 🏆' : 'Nächste Frage ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) {
+        finishQuiz();
+      } else {
+        showQuestion();
+      }
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered) return;
+      jokers.time = false;
+      document.getElementById('joker-time').disabled = true;
+      timeLeft = Math.min(25, timeLeft + 10);
+      updateTimerUI();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const isNewRecord = ArcadeScores.record('quiz', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= 8 ? '🏆' : (correctCount >= 5 ? '👏' : '💡');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Quiz-Rekord!' : 'Runde abgeschlossen!';
+      document.getElementById('res-sub').textContent = CAT_NAMES[activeCat];
+      if (correctCount >= 5) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>

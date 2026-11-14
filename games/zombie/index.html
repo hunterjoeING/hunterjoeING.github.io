@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Zombie Horde: Gate Runner</title>
+  <link rel="stylesheet" href="../../shared/arcade.css">
+  <style>
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+    .zombie-shell {
+      display: flex;
+      flex-direction: column;
+      height: calc(100dvh - 55px);
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px));
+      gap: 8px;
+    }
+    .hud-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(12, 18, 38, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+    .hud-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .stage-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 280px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      background: #040814;
+      touch-action: none;
+    }
+    canvas#zCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    .overlay-card {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(2, 6, 18, 0.72);
+      backdrop-filter: blur(6px);
+      z-index: 20;
+    }
+    .overlay-card.hidden { display: none !important; }
+    .modal-inner {
+      width: min(440px, 100%);
+      padding: 20px;
+      border-radius: 16px;
+      background: rgba(11, 20, 44, 0.96);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+    }
+    .hint-foot {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🧟 Zombie Horde: Gate Runner</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <div class="zombie-shell">
+    <div class="hud-strip">
+      <div class="hud-group">
+        <span>👥 Trupp: <strong id="hud-squad">1</strong></span>
+        <span>🌊 Welle: <strong id="hud-wave">1</strong></span>
+        <span>⚡ Kadenz: <strong id="hud-rate">1.0×</strong></span>
+        <span>🔥 Waffe: <strong id="hud-weapon">Standard</strong></span>
+        <span>🛡️ Schild: <strong id="hud-shield">0</strong></span>
+        <span>⭐ Punkte: <strong id="hud-score">0</strong></span>
+      </div>
+      <button class="secondary-btn" style="padding:5px 10px;font-size:12px;" onclick="startGame()">🔄 Neustart</button>
+    </div>
+
+    <div class="stage-wrap" id="stage">
+      <canvas id="zCanvas"></canvas>
+
+      <div id="overlay" class="overlay-card">
+        <div class="modal-inner">
+          <div style="font-size:40px; margin-bottom:6px;" id="ov-emoji">🧟🔫</div>
+          <h2 id="ov-title" style="margin:0 0 8px;">Zombie Horde Survival</h2>
+          <p id="ov-desc" style="margin:0 0 16px; color:#cbd5e1; font-size:13.5px; line-height:1.5;">
+            Dein Trupp schießt automatisch nach vorn! Steuere <strong>links &amp; rechts</strong> über die Brücke, schieß auf rote Tore um sie ins <strong>Plus</strong> zu drehen und schnapp dir die besten Perks!<br><br>
+            <strong>Steuerung:</strong><br>
+            Finger / Maus direkt ziehen <b>oder</b> <b>← / → / A / D</b>
+          </p>
+          <button id="ov-btn" class="primary-btn" onclick="startGame()">🔥 Welle starten!</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint-foot">
+      Steuerung: Maus / Finger nach links &amp; rechts ziehen oder Tasten <b>← / → / A / D</b> · Rote Tore lassen sich mit Dauerfeuer hochleveln!
+    </div>
+  </div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const canvas = document.getElementById('zCanvas');
+    const ctx = canvas.getContext('2d');
+    const stage = document.getElementById('stage');
+
+    let running = false;
+    let gameOver = false;
+    let playerU = 0; // -0.85 .. +0.85
+    let targetU = 0;
+    let squad = 1;
+    let fireRate = 4.2; // shots/sec per shooter (clamped sensibly)
+    let spreadLevel = 1; // 1 = single, 2 = twin, 3 = triple
+    let dmgMult = 1.0;
+    let shield = 0;
+    let score = 0;
+    let kills = 0;
+    let wave = 1;
+    let elapsed = 0;
+    let roadScroll = 0;
+    let shootTimer = 0;
+    let gateTimer = 3.2;
+    let waveSpawnTimer = 0.6;
+    let bossCooldown = 18;
+    let sfxShotCd = 0;
+
+    let bullets = [];
+    let zombies = [];
+    let gates = [];
+    let barrels = [];
+    let fx = [];
+    let floaters = [];
+
+    const keys = { left: false, right: false };
+    let pointerActive = false;
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('zombie');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function resize() {
+      const r = stage.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(300, Math.floor(r.width * dpr));
+      canvas.height = Math.max(240, Math.floor(r.height * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // 2.5D Bridge Projection: z=1 far horizon, z=0 player line near bottom
+    function project(u, z) {
+      const r = stage.getBoundingClientRect();
+      const w = r.width, h = r.height;
+      const horizonY = h * 0.14;
+      const groundY = h * 0.89;
+      // Exponential perspective depth so close objects accelerate naturally
+      const depthCurve = Math.pow(1 - z, 1.55);
+      const y = horizonY + depthCurve * (groundY - horizonY);
+      const halfRoadTop = w * 0.14;
+      const halfRoadBot = Math.min(w * 0.45, 330);
+      const halfW = halfRoadTop + depthCurve * (halfRoadBot - halfRoadTop);
+      const x = w * 0.5 + u * halfW;
+      const scale = 0.25 + depthCurve * 0.95;
+      return { x, y, scale, halfW };
+    }
+
+    function startGame() {
+      ArcadeAudio.click();
+      document.getElementById('overlay').classList.add('hidden');
+      running = true;
+      gameOver = false;
+      playerU = 0;
+      targetU = 0;
+      squad = 1;
+      fireRate = 4.5;
+      spreadLevel = 1;
+      dmgMult = 1.0;
+      shield = 0;
+      score = 0;
+      kills = 0;
+      wave = 1;
+      elapsed = 0;
+      roadScroll = 0;
+      shootTimer = 0;
+      gateTimer = 2.6;
+      waveSpawnTimer = 0.5;
+      bossCooldown = 19;
+      bullets = [];
+      zombies = [];
+      gates = [];
+      barrels = [];
+      fx = [];
+      floaters = [];
+      spawnZombiePack(4);
+      updateHUD();
+    }
+
+    function spawnZombiePack(count) {
+      const sideBias = Math.random() < 0.5 ? -0.42 : 0.42;
+      for (let i = 0; i < count; i++) {
+        const fast = wave >= 2 && Math.random() < 0.24;
+        const brute = wave >= 3 && Math.random() < 0.14;
+        const hpBase = brute ? (5 + wave * 3.2) : (fast ? (1.5 + wave * 0.9) : (2.2 + wave * 1.4));
+        zombies.push({
+          u: Math.max(-0.88, Math.min(0.88, (Math.random() < 0.65 ? sideBias + (Math.random() - 0.5) * 0.6 : (Math.random() - 0.5) * 1.65))),
+          z: 0.95 + Math.random() * 0.14,
+          speed: fast ? 0.22 : (brute ? 0.11 : 0.155),
+          hp: hpBase,
+          maxHp: hpBase,
+          radius: brute ? 0.12 : 0.08,
+          kind: brute ? 'brute' : (fast ? 'fast' : 'normal'),
+          hitFlash: 0
+        });
+      }
+      if (Math.random() < 0.45) {
+        barrels.push({
+          u: (Math.random() - 0.5) * 1.45,
+          z: 0.98,
+          hp: 2.5 + wave * 0.6,
+          speed: 0.14
+        });
+      }
+    }
+
+    function spawnBoss() {
+      const hp = 28 + wave * 24 + squad * 4.5;
+      zombies.push({
+        u: (Math.random() - 0.5) * 0.7,
+        z: 1.0,
+        speed: 0.095,
+        hp,
+        maxHp: hp,
+        radius: 0.17,
+        kind: 'boss',
+        hitFlash: 0
+      });
+      floaters.push({ u: 0, z: 0.75, text: `⚠️ BOSS WELLE ${wave}!`, color: '#fb7185', life: 1.5 });
+    }
+
+    function makeRandomGatePair() {
+      const weaponTypes = [
+        { op: 'rate', val: 0.35, label: '⚡ +35% Kadenz', good: true },
+        { op: 'spread', val: 1, label: '🔥 Streuschuss', good: true },
+        { op: 'dmg', val: 0.45, label: '💥 +45% Schaden', good: true },
+        { op: 'shield', val: 1, label: '🛡️ +1 Schild', good: true }
+      ];
+      const leftShootable = Math.random() < 0.5;
+      const makeGate = (side, isNum) => {
+        if (isNum) {
+          const val = Math.random() < 0.55 ? -(Math.floor(Math.random() * 3) + 1) : (Math.floor(Math.random() * 3) + 1);
+          const mulGate = Math.random() < 0.18 && wave >= 2;
+          return {
+            side, // -1 or 1
+            uMin: side < 0 ? -0.94 : 0.05,
+            uMax: side < 0 ? -0.05 : 0.94,
+            z: 1.0,
+            kind: mulGate ? 'mult' : 'add',
+            val: mulGate ? 2 : val,
+            shootable: !mulGate
+          };
+        }
+        const wp = weaponTypes[Math.floor(Math.random() * weaponTypes.length)];
+        return {
+          side,
+          uMin: side < 0 ? -0.94 : 0.05,
+          uMax: side < 0 ? -0.05 : 0.94,
+          z: 1.0,
+          kind: wp.op,
+          val: wp.val,
+          label: wp.label,
+          shootable: false
+        };
+      };
+      gates.push(makeGate(-1, leftShootable || Math.random() < 0.6));
+      gates.push(makeGate(1, !leftShootable || Math.random() < 0.6));
+    }
+
+    function applyGate(g) {
+      let msg = '';
+      let good = true;
+      if (g.kind === 'add') {
+        const next = Math.max(0, squad + g.val);
+        good = g.val >= 0;
+        msg = (g.val >= 0 ? `+${g.val}` : `${g.val}`) + ' Schützen';
+        squad = Math.min(45, next);
+      } else if (g.kind === 'mult') {
+        squad = Math.min(45, squad * g.val);
+        msg = `×${g.val} Trupp!`;
+      } else if (g.kind === 'rate') {
+        fireRate = Math.min(13, fireRate * (1 + g.val));
+        msg = '⚡ Feuerrate!';
+      } else if (g.kind === 'spread') {
+        spreadLevel = Math.min(3, spreadLevel + 1);
+        msg = spreadLevel === 2 ? '🔥 Zwillings-Schuss' : '🔥 3-Fach Streuung!';
+      } else if (g.kind === 'dmg') {
+        dmgMult = Math.min(5, dmgMult + g.val);
+        msg = '💥 Stärkere Munition!';
+      } else if (g.kind === 'shield') {
+        shield = Math.min(3, shield + 1);
+        msg = '🛡️ Schild aktiv!';
+      }
+
+      if (squad <= 0) {
+        triggerGameOver('Trupp durch rotes Tor auf 0 gefallen!');
+        return;
+      }
+      if (good) ArcadeAudio.perkGood(); else ArcadeAudio.perkBad();
+      floaters.push({ u: playerU, z: 0.08, text: msg, color: good ? '#4ade80' : '#fb7185', life: 1.1 });
+      updateHUD();
+    }
+
+    function fireVolley() {
+      // Visual squad fires scaled streams so FPS stays rock-solid even with 40 squad members
+      const streams = Math.min(7, squad);
+      const dmgPerBullet = (1.0 * dmgMult) * (squad / streams);
+      const spreadAngles = spreadLevel === 1 ? [0] : (spreadLevel === 2 ? [-0.07, 0.07] : [-0.14, 0, 0.14]);
+      const span = Math.min(0.32, (streams - 1) * 0.055);
+      for (let i = 0; i < streams; i++) {
+        const uOff = streams === 1 ? 0 : -span + (2 * span * i) / (streams - 1);
+        for (const du of spreadAngles) {
+          bullets.push({
+            u: playerU + uOff,
+            z: 0.04,
+            du: du * 0.65,
+            dz: 1.45,
+            dmg: dmgPerBullet / spreadAngles.length
+          });
+        }
+      }
+      if (sfxShotCd <= 0) {
+        ArcadeAudio.laser();
+        sfxShotCd = 0.095;
+      }
+    }
+
+    function triggerGameOver(reason) {
+      running = false;
+      gameOver = true;
+      ArcadeAudio.fail();
+      const isNew = ArcadeScores.record('zombie', score, `${score} Pkt (Welle ${wave})`, false);
+      refreshTopBest();
+      document.getElementById('ov-emoji').textContent = isNew ? '🏆' : '💀';
+      document.getElementById('ov-title').textContent = isNew ? 'Neuer Zombie-Rekord!' : 'Überrannt!';
+      document.getElementById('ov-desc').innerHTML = `${reason}<br><br>Welle: <strong>${wave}</strong> · Erledigte Zombies: <strong>${kills}</strong> · Punkte: <strong>${score}</strong>`;
+      document.getElementById('ov-btn').textContent = '🔄 Nochmal kämpfen!';
+      document.getElementById('overlay').classList.remove('hidden');
+    }
+
+    function updateHUD() {
+      document.getElementById('hud-squad').textContent = squad;
+      document.getElementById('hud-wave').textContent = wave;
+      document.getElementById('hud-rate').textContent = (fireRate / 4.5).toFixed(1) + '×';
+      document.getElementById('hud-weapon').textContent = spreadLevel === 3 ? '3× Streu' : (spreadLevel === 2 ? 'Twin' : 'Single');
+      document.getElementById('hud-shield').textContent = shield;
+      document.getElementById('hud-score').textContent = score;
+    }
+
+    function step(dt) {
+      if (!running) return;
+      elapsed += dt;
+      roadScroll = (roadScroll + dt * 1.4) % 1;
+      sfxShotCd -= dt;
+
+      const moveSpd = 1.45;
+      if (keys.left) targetU -= moveSpd * dt;
+      if (keys.right) targetU += moveSpd * dt;
+      targetU = Math.max(-0.82, Math.min(0.82, targetU));
+      playerU += (targetU - playerU) * Math.min(1, dt * 18);
+
+      // Wave progression
+      const newWave = 1 + Math.floor(elapsed / 14);
+      if (newWave > wave) {
+        wave = newWave;
+        floaters.push({ u: 0, z: 0.65, text: `🌊 WELLE ${wave}!`, color: '#38bdf8', life: 1.3 });
+        updateHUD();
+      }
+
+      // Auto-fire
+      shootTimer -= dt;
+      if (shootTimer <= 0) {
+        fireVolley();
+        shootTimer = 1 / fireRate;
+      }
+
+      // Spawns
+      gateTimer -= dt;
+      if (gateTimer <= 0) {
+        makeRandomGatePair();
+        gateTimer = 6.2;
+      }
+      waveSpawnTimer -= dt;
+      if (waveSpawnTimer <= 0) {
+        spawnZombiePack(2 + Math.min(6, Math.floor(wave * 0.8 + Math.random() * 2)));
+        waveSpawnTimer = Math.max(0.85, 2.2 - wave * 0.14);
+      }
+      bossCooldown -= dt;
+      if (bossCooldown <= 0) {
+        spawnBoss();
+        bossCooldown = 22;
+      }
+
+      // Update Gates
+      for (let i = gates.length - 1; i >= 0; i--) {
+        const g = gates[i];
+        g.z -= 0.19 * dt;
+        if (g.z <= 0.05) {
+          const hit = playerU >= g.uMin && playerU <= g.uMax;
+          if (hit) applyGate(g);
+          gates.splice(i, 1);
+        }
+      }
+
+      // Update Barrels
+      for (let i = barrels.length - 1; i >= 0; i--) {
+        const b = barrels[i];
+        b.z -= b.speed * dt;
+        if (b.z <= 0.04) {
+          barrels.splice(i, 1);
+        }
+      }
+
+      // Update Bullets + Collisions
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        const b = bullets[i];
+        b.u += b.du * dt;
+        b.z += b.dz * dt;
+        if (b.z > 1.05 || Math.abs(b.u) > 1.1) {
+          bullets.splice(i, 1);
+          continue;
+        }
+        let consumed = false;
+
+        // Hit shootable Gates?
+        for (let gi = 0; gi < gates.length; gi++) {
+          const g = gates[gi];
+          if (g.shootable && Math.abs(b.z - g.z) < 0.045 && b.u >= g.uMin && b.u <= g.uMax) {
+            g.val += 1;
+            consumed = true;
+            fx.push({ u: b.u, z: g.z, color: '#38bdf8', life: 0.18 });
+            break;
+          }
+        }
+        if (consumed) { bullets.splice(i, 1); continue; }
+
+        // Hit explosive Barrels?
+        for (let bi = barrels.length - 1; bi >= 0; bi--) {
+          const br = barrels[bi];
+          if (Math.abs(b.z - br.z) < 0.055 && Math.abs(b.u - br.u) < 0.11) {
+            br.hp -= b.dmg;
+            consumed = true;
+            if (br.hp <= 0) {
+              ArcadeAudio.explosion();
+              fx.push({ u: br.u, z: br.z, color: '#fb923c', life: 0.45, big: true });
+              // Area blast damages nearby zombies
+              for (let zi = zombies.length - 1; zi >= 0; zi--) {
+                const zm = zombies[zi];
+                if (Math.hypot(zm.u - br.u, (zm.z - br.z) * 1.8) < 0.55) {
+                  zm.hp -= (12 + wave * 4);
+                  zm.hitFlash = 0.15;
+                }
+              }
+              barrels.splice(bi, 1);
+            }
+            break;
+          }
+        }
+        if (consumed) { bullets.splice(i, 1); continue; }
+
+        // Hit Zombies?
+        for (let zi = zombies.length - 1; zi >= 0; zi--) {
+          const zm = zombies[zi];
+          if (Math.abs(b.z - zm.z) < 0.055 && Math.abs(b.u - zm.u) < zm.radius + 0.04) {
+            zm.hp -= b.dmg;
+            zm.hitFlash = 0.08;
+            consumed = true;
+            fx.push({ u: b.u, z: zm.z, color: '#4ade80', life: 0.16 });
+            break;
+          }
+        }
+        if (consumed) bullets.splice(i, 1);
+      }
+
+      // Process dead or breaching Zombies
+      for (let i = zombies.length - 1; i >= 0; i--) {
+        const zm = zombies[i];
+        if (zm.hp <= 0) {
+          kills++;
+          const pts = zm.kind === 'boss' ? 400 : (zm.kind === 'brute' ? 45 : 15);
+          score += pts;
+          if (zm.kind === 'boss') {
+            ArcadeAudio.win();
+            dmgMult += 0.25;
+            floaters.push({ u: zm.u, z: zm.z, text: `🏆 BOSS BESIEGT +${pts}`, color: '#fbbf24', life: 1.4 });
+          }
+          fx.push({ u: zm.u, z: zm.z, color: '#ef4444', life: 0.26, big: zm.kind === 'boss' });
+          zombies.splice(i, 1);
+          updateHUD();
+          continue;
+        }
+        zm.z -= zm.speed * dt;
+        zm.hitFlash = Math.max(0, zm.hitFlash - dt);
+        if (zm.z <= 0.045) {
+          // Breach!
+          if (Math.abs(zm.u - playerU) < 0.34 + zm.radius) {
+            if (shield > 0) {
+              shield--;
+              ArcadeAudio.explosion();
+              floaters.push({ u: playerU, z: 0.08, text: '🛡️ Schild abgefangen!', color: '#38bdf8', life: 0.9 });
+            } else {
+              const loss = zm.kind === 'boss' ? Math.max(3, Math.ceil(squad * 0.5)) : (zm.kind === 'brute' ? 2 : 1);
+              squad -= loss;
+              ArcadeAudio.perkBad();
+              floaters.push({ u: playerU, z: 0.08, text: `-${loss} Trupp!`, color: '#fb7185', life: 0.9 });
+            }
+            zombies.splice(i, 1);
+            updateHUD();
+            if (squad <= 0) {
+              squad = 0;
+              updateHUD();
+              triggerGameOver('Die Zombie-Horde hat deinen Trupp überrannt!');
+              return;
+            }
+          } else {
+            zombies.splice(i, 1);
+          }
+        }
+      }
+
+      // FX & floaters
+      for (let i = fx.length - 1; i >= 0; i--) {
+        fx[i].life -= dt;
+        if (fx[i].life <= 0) fx.splice(i, 1);
+      }
+      for (let i = floaters.length - 1; i >= 0; i--) {
+        floaters[i].life -= dt;
+        floaters[i].z += 0.04 * dt;
+        if (floaters[i].life <= 0) floaters.splice(i, 1);
+      }
+    }
+
+    function draw() {
+      const r = stage.getBoundingClientRect();
+      const w = r.width, h = r.height;
+
+      // Apocalyptic Neon Sky
+      const sky = ctx.createLinearGradient(0, 0, 0, h * 0.25);
+      sky.addColorStop(0, '#020617');
+      sky.addColorStop(1, '#1e1b4b');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, w, h);
+
+      // Ground beyond bridge
+      ctx.fillStyle = '#070b18';
+      ctx.fillRect(0, h * 0.14, w, h * 0.86);
+
+      // Perspective Highway Bridge
+      const tl = project(-1, 1), tr = project(1, 1);
+      const bl = project(-1, 0), br = project(1, 0);
+      ctx.beginPath();
+      ctx.moveTo(tl.x, tl.y);
+      ctx.lineTo(tr.x, tr.y);
+      ctx.lineTo(br.x, br.y);
+      ctx.lineTo(bl.x, bl.y);
+      ctx.closePath();
+      const roadGrad = ctx.createLinearGradient(0, tl.y, 0, bl.y);
+      roadGrad.addColorStop(0, '#0f172a');
+      roadGrad.addColorStop(1, '#1e293b');
+      ctx.fillStyle = roadGrad;
+      ctx.fill();
+
+      // Side glowing guardrails
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(tl.x, tl.y); ctx.lineTo(bl.x, bl.y);
+      ctx.moveTo(tr.x, tr.y); ctx.lineTo(br.x, br.y);
+      ctx.stroke();
+
+      // Center scrolling dashed lane markers
+      ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+      ctx.lineWidth = 2;
+      for (let k = 0; k < 10; k++) {
+        const z1 = ((k / 10) - roadScroll * 0.1 + 1) % 1;
+        const z0 = Math.max(0, z1 - 0.045);
+        const p1 = project(0, z1);
+        const p0 = project(0, z0);
+        ctx.beginPath();
+        ctx.moveTo(p1.x, p1.y);
+        ctx.lineTo(p0.x, p0.y);
+        ctx.stroke();
+      }
+
+      // Draw far-to-near sorted entities
+      const drawables = [];
+      gates.forEach(g => drawables.push({ z: g.z, type: 'gate', obj: g }));
+      barrels.forEach(b => drawables.push({ z: b.z, type: 'barrel', obj: b }));
+      zombies.forEach(zm => drawables.push({ z: zm.z, type: 'zombie', obj: zm }));
+      drawables.sort((a, b) => b.z - a.z);
+
+      drawables.forEach(d => {
+        if (d.type === 'gate') {
+          const g = d.obj;
+          const pL = project(g.uMin, g.z);
+          const pR = project(g.uMax, g.z);
+          const gh = 54 * pL.scale;
+          const isGood = g.kind === 'mult' || g.kind !== 'add' || g.val >= 0;
+          ctx.fillStyle = isGood ? 'rgba(14, 165, 233, 0.34)' : 'rgba(244, 63, 94, 0.38)';
+          ctx.fillRect(pL.x, pL.y - gh, pR.x - pL.x, gh);
+          ctx.strokeStyle = isGood ? '#7dd3fc' : '#fda4af';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(pL.x, pL.y - gh, pR.x - pL.x, gh);
+
+          ctx.fillStyle = '#fff';
+          ctx.font = `800 ${Math.max(10, Math.round(16 * pL.scale))}px system-ui`;
+          ctx.textAlign = 'center';
+          const text = g.kind === 'add' ? (g.val >= 0 ? `+${g.val}` : `${g.val}`)
+            : (g.kind === 'mult' ? `×${g.val} 👥` : g.label);
+          ctx.fillText(text, (pL.x + pR.x) * 0.5, pL.y - gh * 0.42);
+        } else if (d.type === 'barrel') {
+          const br = d.obj;
+          const p = project(br.u, br.z);
+          const bw = 20 * p.scale, bh = 28 * p.scale;
+          ctx.fillStyle = '#dc2626';
+          ctx.fillRect(p.x - bw * 0.5, p.y - bh, bw, bh);
+          ctx.fillStyle = '#fbbf24';
+          ctx.fillRect(p.x - bw * 0.5, p.y - bh * 0.58, bw, bh * 0.16);
+        } else if (d.type === 'zombie') {
+          const zm = d.obj;
+          const p = project(zm.u, zm.z);
+          const sz = (zm.kind === 'boss' ? 42 : (zm.kind === 'brute' ? 28 : 20)) * p.scale;
+          const col = zm.hitFlash > 0 ? '#ffffff' : (zm.kind === 'boss' ? '#a855f7' : (zm.kind === 'fast' ? '#84cc16' : (zm.kind === 'brute' ? '#f97316' : '#22c55e')));
+          // Body + head + glowing eyes
+          ctx.fillStyle = col;
+          ctx.fillRect(p.x - sz * 0.38, p.y - sz * 0.95, sz * 0.76, sz * 0.68);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y - sz * 1.08, sz * 0.34, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(p.x - sz * 0.18, p.y - sz * 1.12, sz * 0.12, sz * 0.1);
+          ctx.fillRect(p.x + sz * 0.06, p.y - sz * 1.12, sz * 0.12, sz * 0.1);
+
+          if (zm.kind === 'boss' || zm.hp < zm.maxHp) {
+            const bw = Math.max(24, sz * 1.3);
+            ctx.fillStyle = 'rgba(0,0,0,0.6)';
+            ctx.fillRect(p.x - bw * 0.5, p.y - sz * 1.58, bw, 5);
+            ctx.fillStyle = zm.kind === 'boss' ? '#f472b6' : '#4ade80';
+            ctx.fillRect(p.x - bw * 0.5, p.y - sz * 1.58, bw * Math.max(0, zm.hp / zm.maxHp), 5);
+          }
+        }
+      });
+
+      // Bullets
+      bullets.forEach(b => {
+        const p = project(b.u, b.z);
+        ctx.fillStyle = dmgMult > 1.4 ? '#fbbf24' : '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y - 14 * p.scale, Math.max(2, 4 * p.scale), 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Squad Formation at bottom
+      const visCount = Math.min(24, squad);
+      for (let s = 0; s < visCount; s++) {
+        const row = Math.floor(s / 6);
+        const colIdx = s % 6;
+        const rowSize = Math.min(6, visCount - row * 6);
+        const uOff = (colIdx - (rowSize - 1) * 0.5) * 0.095;
+        const p = project(playerU + uOff, 0.02 + row * 0.028);
+        const sz = 19 * p.scale;
+        ctx.fillStyle = '#0ea5e9';
+        ctx.fillRect(p.x - sz * 0.35, p.y - sz * 0.9, sz * 0.7, sz * 0.65);
+        ctx.fillStyle = '#e0f2fe';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y - sz * 1.05, sz * 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      if (shield > 0) {
+        const ps = project(playerU, 0.03);
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.75)';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.arc(ps.x, ps.y - 15, 36, Math.PI, 0);
+        ctx.stroke();
+      }
+
+      // Impact & explosion FX
+      fx.forEach(f => {
+        const p = project(f.u, f.z);
+        const rad = (f.big ? 58 : 14) * p.scale * (1.2 - f.life);
+        ctx.fillStyle = f.color;
+        ctx.globalAlpha = Math.min(1, f.life * 2.5);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y - 10 * p.scale, Math.max(2, rad), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      });
+
+      // Floating texts
+      floaters.forEach(fl => {
+        const p = project(fl.u, fl.z);
+        ctx.fillStyle = fl.color;
+        ctx.globalAlpha = Math.min(1, fl.life * 1.5);
+        ctx.font = '800 15px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText(fl.text, p.x, p.y - 42);
+        ctx.globalAlpha = 1;
+      });
+    }
+
+    let last = performance.now();
+    function loop(now) {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      step(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    // Touch & Pointer Drag anywhere on canvas maps horizontally to bridge coordinate
+    function pointerToU(clientX) {
+      const r = stage.getBoundingClientRect();
+      const rel = ((clientX - r.left) / r.width) * 2 - 1;
+      targetU = Math.max(-0.82, Math.min(0.82, rel * 1.15));
+    }
+    stage.addEventListener('pointerdown', (e) => {
+      if (!running) return;
+      pointerActive = true;
+      pointerToU(e.clientX);
+    });
+    stage.addEventListener('pointermove', (e) => {
+      if (pointerActive && running) pointerToU(e.clientX);
+    });
+    window.addEventListener('pointerup', () => { pointerActive = false; });
+    window.addEventListener('pointercancel', () => { pointerActive = false; });
+
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = true;
+      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = true;
+    });
+    window.addEventListener('keyup', (e) => {
+      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = false;
+      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = false;
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    refreshTopBest();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
