@@ -593,195 +593,431 @@
       const r = stage.getBoundingClientRect();
       const w = r.width, h = r.height;
       const cfg = LEVELS[lvlIdx];
+      const nowSec = performance.now() * 0.001;
 
-      // Sky gradient
+      // 1. Multi-layer atmospheric sky gradient
       const sky = ctx.createLinearGradient(0, 0, 0, h);
       if (cfg.moon) {
-        sky.addColorStop(0, '#02040a');
-        sky.addColorStop(1, '#111827');
+        sky.addColorStop(0, '#01030a');
+        sky.addColorStop(0.55, '#091026');
+        sky.addColorStop(1, '#111b36');
+      } else if (cfg.moving) {
+        sky.addColorStop(0, '#020617');
+        sky.addColorStop(0.5, '#0b1936');
+        sky.addColorStop(1, '#0c4a6e');
+      } else if (cfg.wind !== 0) {
+        sky.addColorStop(0, '#060918');
+        sky.addColorStop(0.55, '#1e1b4b');
+        sky.addColorStop(1, '#312e81');
       } else {
-        sky.addColorStop(0, '#040b1d');
-        sky.addColorStop(0.65, '#0b2248');
-        sky.addColorStop(1, '#1e1b4b');
+        sky.addColorStop(0, '#040a1d');
+        sky.addColorStop(0.55, '#14234a');
+        sky.addColorStop(1, '#1e3a5f');
       }
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, w, h);
 
-      // Stars
-      stars.forEach(s => {
-        ctx.fillStyle = `rgba(226, 232, 240, ${s.a})`;
+      // Aurora / celestial nebula glow
+      const glowX = ((w * 0.72 - cam.x * 0.02) % w + w) % w;
+      const neb = ctx.createRadialGradient(glowX, h * 0.24, 8, glowX, h * 0.24, w * 0.45);
+      neb.addColorStop(0, cfg.moon ? 'rgba(56, 189, 248, 0.22)' : (cfg.wind ? 'rgba(168, 85, 247, 0.22)' : 'rgba(251, 146, 60, 0.16)'));
+      neb.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = neb;
+      ctx.fillRect(0, 0, w, h);
+
+      // Celestial body (Earth on Moon level / Moon Glow)
+      const orbX = w * 0.82 - cam.x * 0.015;
+      const orbY = h * 0.19;
+      ctx.save();
+      if (cfg.moon) {
+        const eGrad = ctx.createRadialGradient(orbX - 8, orbY - 8, 4, orbX, orbY, 34);
+        eGrad.addColorStop(0, '#93c5fd');
+        eGrad.addColorStop(0.55, '#0284c7');
+        eGrad.addColorStop(1, '#082f49');
+        ctx.fillStyle = eGrad;
         ctx.beginPath();
-        ctx.arc(s.x * w, s.y * h, s.r, 0, Math.PI * 2);
+        ctx.arc(orbX, orbY, 32, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      } else {
+        const mGrad = ctx.createRadialGradient(orbX - 5, orbY - 5, 2, orbX, orbY, 24);
+        mGrad.addColorStop(0, '#fef9c3');
+        mGrad.addColorStop(0.7, '#fde68a');
+        mGrad.addColorStop(1, 'rgba(253, 230, 138, 0.15)');
+        ctx.fillStyle = mGrad;
+        ctx.beginPath();
+        ctx.arc(orbX, orbY, 22, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+
+      // Twinkling parallax stars
+      stars.forEach((s, idx) => {
+        const tw = 0.5 + 0.5 * Math.sin(nowSec * 2.2 + idx * 1.7);
+        ctx.fillStyle = `rgba(226, 232, 240, ${(s.a * (0.55 + 0.45 * tw)).toFixed(2)})`;
+        ctx.beginPath();
+        ctx.arc(((s.x * w - cam.x * 0.03) % w + w) % w, s.y * h, s.r, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // World -> Screen transform
+      // Parallax distant skyline / mountains (screen space)
+      ctx.save();
+      const parFar = -(cam.x * 0.08) % 260;
+      ctx.fillStyle = cfg.moon ? '#0b132b' : (cfg.moving ? '#072238' : '#0b1834');
+      ctx.beginPath();
+      ctx.moveTo(0, h);
+      for (let x = -260; x <= w + 260; x += 65) {
+        const px = x + parFar;
+        const py = h * 0.68 - Math.abs(Math.sin(x * 0.013 + lvlIdx)) * (cfg.moon ? 38 : 66);
+        ctx.lineTo(px, py);
+      }
+      ctx.lineTo(w, h);
+      ctx.closePath();
+      ctx.fill();
+
+      if (lvlIdx === 1) {
+        const bScroll = -(cam.x * 0.14) % 180;
+        for (let bx = -180; bx < w + 180; bx += 90) {
+          const sx = bx + bScroll;
+          const bh = 95 + ((Math.abs(Math.round(bx / 90)) * 47) % 85);
+          ctx.fillStyle = '#09152b';
+          ctx.fillRect(sx, h - bh, 64, bh);
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.32)';
+          for (let wy = h - bh + 10; wy < h - 14; wy += 12) {
+            for (let wx = sx + 8; wx < sx + 54; wx += 11) {
+              if ((wx + wy) % 3 !== 0) ctx.fillRect(wx, wy, 5, 6);
+            }
+          }
+        }
+      }
+      ctx.restore();
+
+      // Storm wind streaks when wind active
+      if (cfg.wind !== 0) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(186, 230, 253, 0.25)';
+        ctx.lineWidth = 1.4;
+        for (let i = 0; i < 16; i++) {
+          const sy = ((i * 53 + nowSec * 14) % (h * 0.72));
+          const sx = (((i * 197 + nowSec * cfg.wind * 18) % w) + w) % w;
+          ctx.beginPath();
+          ctx.moveTo(sx, sy);
+          ctx.lineTo(sx - 38, sy + 5);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+
+      // 2. World transform
       ctx.save();
       ctx.translate(w * 0.5, h * 0.55);
       ctx.scale(cam.zoom, -cam.zoom);
       ctx.translate(-cam.x, -cam.y);
 
-      // Background horizon / water or canyon
       if (cfg.moving) {
-        ctx.fillStyle = '#082f49';
-        ctx.fillRect(-1000, -400, 4500, 410);
+        const waterGrad = ctx.createLinearGradient(0, -180, 0, 25);
+        waterGrad.addColorStop(0, '#021224');
+        waterGrad.addColorStop(0.6, '#082f49');
+        waterGrad.addColorStop(1, '#0e7490');
+        ctx.fillStyle = waterGrad;
+        ctx.fillRect(-1200, -1200, 5200, 1214);
+
+        ctx.strokeStyle = 'rgba(125, 211, 252, 0.48)';
+        ctx.lineWidth = 2.4;
+        ctx.beginPath();
+        for (let wx = -500; wx <= 2800; wx += 26) {
+          const wy = 10 + Math.sin(wx * 0.025 + nowSec * 3.1) * 5.2 + Math.cos(wx * 0.012 - nowSec * 1.8) * 2.6;
+          if (wx === -500) ctx.moveTo(wx, wy); else ctx.lineTo(wx, wy);
+        }
+        ctx.stroke();
       } else {
-        ctx.fillStyle = cfg.moon ? '#1f2937' : '#0f172a';
-        ctx.fillRect(-1000, -400, 4500, 390);
+        const grd = ctx.createLinearGradient(0, -120, 0, 10);
+        grd.addColorStop(0, cfg.moon ? '#1e293b' : '#0f172a');
+        grd.addColorStop(1, cfg.moon ? '#475569' : '#1e293b');
+        ctx.fillStyle = grd;
+        ctx.fillRect(-1200, -1200, 5200, 1200);
+
+        ctx.fillStyle = '#334155';
+        ctx.fillRect(-350, -8, 560, 9);
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
+        for (let rx = -120; rx < 170; rx += 32) {
+          ctx.fillRect(rx, -2.5, 16, 2);
+        }
       }
 
-      // Draw Launch Ramp
+      // Mega-Ramp Structure with Steel Lattice Truss + Speed Chevrons
+      const rampGrad = ctx.createLinearGradient(180, 0, 420, 150);
+      rampGrad.addColorStop(0, '#1e293b');
+      rampGrad.addColorStop(0.6, '#334155');
+      rampGrad.addColorStop(1, '#0ea5e9');
+      ctx.fillStyle = rampGrad;
       ctx.beginPath();
-      ctx.moveTo(-400, -200);
-      ctx.lineTo(-400, 0);
+      ctx.moveTo(0, 0);
       ctx.lineTo(180, 0);
-      for (let x = 185; x <= 420; x += 10) {
-        ctx.lineTo(x, rampHeightAt(x));
+      for (let rx = 185; rx <= 420; rx += 5) {
+        ctx.lineTo(rx, rampHeightAt(rx));
       }
-      ctx.lineTo(420, -200);
+      ctx.lineTo(420, -24);
+      ctx.lineTo(0, -24);
       ctx.closePath();
-      ctx.fillStyle = '#1e293b';
       ctx.fill();
 
-      // Neon Ramp Guide Strip
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(0, 2);
-      ctx.lineTo(180, 2);
-      for (let x = 185; x <= 420; x += 10) {
-        ctx.lineTo(x, rampHeightAt(x) + 2);
+      for (let rx = 200; rx <= 410; rx += 35) {
+        const ry = rampHeightAt(rx);
+        ctx.moveTo(rx, 0);
+        ctx.lineTo(rx, ry);
+        if (rx + 35 <= 420) ctx.lineTo(rx + 35, 0);
       }
-      ctx.strokeStyle = '#38bdf8';
-      ctx.lineWidth = 4;
       ctx.stroke();
 
-      // Draw Landing Target Platform
-      const pL = padCurrentX - cfg.padW * 0.5;
-      const pY = cfg.padY;
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(pL, pY - 22, cfg.padW, 22);
-      // Support pillar (unless ocean drone ship)
-      if (!cfg.moving) {
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(padCurrentX - 24, -400, 48, pY + 378);
-      } else {
-        ctx.fillStyle = '#334155';
-        ctx.fillRect(pL - 15, pY - 34, cfg.padW + 30, 14);
-      }
-      // Glowing Green Landing Strip
-      ctx.fillStyle = '#4ade80';
-      ctx.fillRect(pL + 8, pY - 4, cfg.padW - 16, 6);
-      // Landing Guide Beacons
-      const pulse = 0.45 + 0.35 * Math.sin(performance.now() * 0.008);
-      ctx.fillStyle = `rgba(74, 222, 128, ${pulse * 0.32})`;
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3.5;
       ctx.beginPath();
-      ctx.moveTo(pL + 10, pY);
-      ctx.lineTo(pL + 26, pY + 120);
-      ctx.lineTo(pL + cfg.padW - 26, pY + 120);
-      ctx.lineTo(pL + cfg.padW - 10, pY);
+      ctx.moveTo(15, 1);
+      ctx.lineTo(180, 1);
+      for (let rx = 185; rx <= 420; rx += 5) ctx.lineTo(rx, rampHeightAt(rx));
+      ctx.stroke();
+
+      const chevPhase = (nowSec * 3.5) % 1;
+      for (let ci = 0; ci < 5; ci++) {
+        const ct = (ci / 5 + chevPhase * 0.2) % 1;
+        const cx = 195 + ct * 215;
+        const cy = rampHeightAt(cx) + 7;
+        const sa = rampSlopeAt(cx);
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(sa);
+        ctx.fillStyle = `rgba(56, 189, 248, ${(0.35 + ct * 0.65).toFixed(2)})`;
+        ctx.beginPath();
+        ctx.moveTo(-6, -4); ctx.lineTo(4, 0); ctx.lineTo(-6, 4); ctx.lineTo(-3, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Pad & Platform (ASDS Drone Ship / Skyscraper Pillar / Landing Gantry)
+      const px0 = padCurrentX - cfg.padW * 0.5;
+      const py = cfg.padY;
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(px0 - 16, -240, cfg.padW + 32, py + 240);
+
+      ctx.strokeStyle = cfg.moving ? 'rgba(56, 189, 248, 0.35)' : 'rgba(148, 163, 184, 0.25)';
+      ctx.lineWidth = 2;
+      for (let sx = px0 + 10; sx < px0 + cfg.padW - 10; sx += 28) {
+        ctx.beginPath();
+        ctx.moveTo(sx, -40);
+        ctx.lineTo(sx, py - 8);
+        ctx.stroke();
+      }
+      if (cfg.moving) {
+        ctx.fillStyle = 'rgba(56, 189, 248, 0.35)';
+        ctx.fillRect(px0 - 18, 10, cfg.padW + 36, 7);
+      }
+
+      const coneAlpha = 0.08 + 0.06 * Math.sin(nowSec * 4.5);
+      const coneGrad = ctx.createLinearGradient(0, py, 0, py + 150);
+      coneGrad.addColorStop(0, `rgba(74, 222, 128, ${(coneAlpha * 2.4).toFixed(2)})`);
+      coneGrad.addColorStop(1, 'rgba(74, 222, 128, 0)');
+      ctx.fillStyle = coneGrad;
+      ctx.beginPath();
+      ctx.moveTo(px0 + 8, py);
+      ctx.lineTo(px0 + cfg.padW - 8, py);
+      ctx.lineTo(px0 + cfg.padW + 36, py + 150);
+      ctx.lineTo(px0 - 36, py + 150);
       ctx.closePath();
       ctx.fill();
 
-      // Draw Cold-Gas & Spark Particles
+      ctx.fillStyle = '#10b981';
+      ctx.fillRect(px0, py - 8, cfg.padW, 9);
+      ctx.fillStyle = '#a7f3d0';
+      ctx.fillRect(px0 + 10, py - 2, cfg.padW - 20, 3);
+      const blink = Math.sin(nowSec * 6) > 0;
+      ctx.fillStyle = blink ? '#4ade80' : '#059669';
+      ctx.beginPath();
+      ctx.arc(px0 + 6, py + 2, 4.5, 0, Math.PI * 2);
+      ctx.arc(px0 + cfg.padW - 6, py + 2, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(padCurrentX, py - 22);
+      ctx.scale(1, -1);
+      ctx.fillStyle = 'rgba(167, 243, 208, 0.72)';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(cfg.moving ? 'ASDS // LANDUNG' : 'ZIELZONE', 0, 0);
+      ctx.restore();
+
+      // 3. Cold-Gas & Spark Particles
       particles.forEach(p => {
         const alpha = Math.max(0, p.life / p.maxLife);
         if (p.kind === 'gas') {
-          const gr = ctx.createRadialGradient(p.x, p.y, 1, p.x, p.y, p.size);
-          gr.addColorStop(0, `rgba(224, 242, 254, ${alpha * 0.92})`);
-          gr.addColorStop(0.5, `rgba(56, 189, 248, ${alpha * 0.55})`);
+          const gr = ctx.createRadialGradient(p.x, p.y, 0.5, p.x, p.y, p.size * 1.25);
+          gr.addColorStop(0, `rgba(240, 249, 255, ${(alpha * 0.95).toFixed(2)})`);
+          gr.addColorStop(0.45, `rgba(56, 189, 248, ${(alpha * 0.62).toFixed(2)})`);
           gr.addColorStop(1, 'rgba(56, 189, 248, 0)');
           ctx.fillStyle = gr;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, p.size * 1.25, 0, Math.PI * 2);
           ctx.fill();
         } else {
           ctx.fillStyle = p.color;
           ctx.globalAlpha = alpha;
-          ctx.fillRect(p.x - p.size * 0.5, p.y - p.size * 0.5, p.size, p.size);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
           ctx.globalAlpha = 1;
         }
       });
 
-      // Draw Sleek Hyper-Roadster Silhouette
+      // 4. Sculpted Crimson Hyper-Roadster
       ctx.save();
       ctx.translate(car.x, car.y);
       ctx.rotate(car.angle);
 
-      // Thruster Nozzle Glows when firing
+      const beam = ctx.createLinearGradient(25, 0, 145, 0);
+      beam.addColorStop(0, 'rgba(224, 242, 254, 0.34)');
+      beam.addColorStop(1, 'rgba(224, 242, 254, 0)');
+      ctx.fillStyle = beam;
+      ctx.beginPath();
+      ctx.moveTo(26, 2);
+      ctx.lineTo(140, 26);
+      ctx.lineTo(140, -18);
+      ctx.lineTo(26, -3);
+      ctx.closePath();
+      ctx.fill();
+
+      const drawMachCone = (nx, ny, rot, len, col) => {
+        ctx.save();
+        ctx.translate(nx, ny);
+        ctx.rotate(rot);
+        const tg = ctx.createLinearGradient(0, 0, 0, -len);
+        tg.addColorStop(0, '#f0f9ff');
+        tg.addColorStop(0.4, col);
+        tg.addColorStop(1, 'rgba(56, 189, 248, 0)');
+        ctx.fillStyle = tg;
+        ctx.beginPath();
+        ctx.moveTo(-4, 0);
+        ctx.lineTo(0, -len);
+        ctx.lineTo(4, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      };
+
       if (state === 'air' && keys.thrust && car.gas > 0.2) {
-        ctx.fillStyle = 'rgba(186, 230, 253, 0.95)';
-        [-16, 16].forEach(nx => {
-          ctx.beginPath();
-          ctx.moveTo(nx - 5, -9);
-          ctx.lineTo(nx + 5, -9);
-          ctx.lineTo(nx, -34 - Math.random() * 14);
-          ctx.closePath();
-          ctx.fill();
-        });
+        drawMachCone(-13, -6, 0, 34 + Math.random() * 12, 'rgba(56, 189, 248, 0.85)');
+        drawMachCone(13, -6, 0, 34 + Math.random() * 12, 'rgba(56, 189, 248, 0.85)');
+      }
+      if (state === 'air' && keys.left && car.gas > 0.2) {
+        drawMachCone(24, 2, Math.PI * 0.5, 22 + Math.random() * 6, 'rgba(186, 230, 253, 0.8)');
+      }
+      if (state === 'air' && keys.right && car.gas > 0.2) {
+        drawMachCone(-24, 2, -Math.PI * 0.5, 22 + Math.random() * 6, 'rgba(186, 230, 253, 0.8)');
       }
 
-      // Main sculpted red chassis
+      ctx.fillStyle = '#090d16';
       ctx.beginPath();
-      ctx.moveTo(-29, -4);
-      ctx.lineTo(-27, 6);
-      ctx.lineTo(-14, 8);
-      ctx.lineTo(-4, 15);
-      ctx.lineTo(12, 14);
-      ctx.lineTo(29, 3);
-      ctx.lineTo(29, -4);
-      ctx.closePath();
-      const bodyGrad = ctx.createLinearGradient(0, -5, 0, 15);
-      bodyGrad.addColorStop(0, '#ef4444');
-      bodyGrad.addColorStop(0.5, '#dc2626');
-      bodyGrad.addColorStop(1, '#7f1d1d');
+      ctx.roundRect(-27, -6, 54, 5, 2);
+      ctx.fill();
+
+      const bodyGrad = ctx.createLinearGradient(0, -4, 0, 14);
+      bodyGrad.addColorStop(0, '#991b1b');
+      bodyGrad.addColorStop(0.55, '#ef4444');
+      bodyGrad.addColorStop(1, '#fecaca');
       ctx.fillStyle = bodyGrad;
-      ctx.fill();
-
-      // Aero Glass Canopy
       ctx.beginPath();
-      ctx.moveTo(-11, 7);
-      ctx.lineTo(-3, 14);
-      ctx.lineTo(11, 13);
-      ctx.lineTo(16, 6);
+      ctx.moveTo(-26, -2);
+      ctx.lineTo(25, -2);
+      ctx.quadraticCurveTo(28, 3, 21, 5);
+      ctx.lineTo(7, 7);
+      ctx.lineTo(-4, 13);
+      ctx.lineTo(-17, 12);
+      ctx.lineTo(-24, 6);
       ctx.closePath();
-      ctx.fillStyle = '#0f172a';
       ctx.fill();
 
-      // Headlight & Tail LED
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillRect(25, 1, 5, 2.5);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.42)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-18, 5);
+      ctx.lineTo(18, 4);
+      ctx.stroke();
+
+      const glassGrad = ctx.createLinearGradient(-14, 12, 8, 5);
+      glassGrad.addColorStop(0, '#020617');
+      glassGrad.addColorStop(1, '#38bdf8');
+      ctx.fillStyle = glassGrad;
+      ctx.beginPath();
+      ctx.moveTo(-14, 6);
+      ctx.lineTo(-11, 11.5);
+      ctx.lineTo(-1, 12);
+      ctx.lineTo(9, 6);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#f0f9ff';
+      ctx.fillRect(21, 1, 5, 2.6);
       ctx.fillStyle = '#fb7185';
-      ctx.fillRect(-30, 2, 4, 3);
+      ctx.fillRect(-26, 1.5, 4, 2.5);
 
-      // Cold-Gas Nozzle Ports
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillRect(-19, -7, 6, 3);
-      ctx.fillRect(13, -7, 6, 3);
-
-      // Wheels
-      [-17, 17].forEach(wx => {
-        ctx.fillStyle = '#090d16';
+      [-15, 16].forEach(wx => {
+        ctx.save();
+        ctx.translate(wx, -6);
+        ctx.fillStyle = '#0f172a';
         ctx.beginPath();
-        ctx.arc(wx, -5, 7, 0, Math.PI * 2);
+        ctx.arc(0, 0, 6.2, 0, Math.PI * 2);
         ctx.fill();
-        ctx.strokeStyle = '#cbd5e1';
-        ctx.lineWidth = 1.6;
-        ctx.beginPath();
-        ctx.arc(wx, -5, 4.2, 0, Math.PI * 2);
+        ctx.strokeStyle = '#94a3b8';
+        ctx.lineWidth = 1.4;
         ctx.stroke();
+        ctx.rotate(car.wheelSpin);
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.lineWidth = 1.1;
+        for (let k = 0; k < 5; k++) {
+          const ang = (k / 5) * Math.PI * 2;
+          ctx.beginPath();
+          ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(ang) * 4.2, Math.sin(ang) * 4.2);
+          ctx.stroke();
+        }
+        ctx.fillStyle = '#ef4444';
+        ctx.beginPath();
+        ctx.arc(0, 0, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
       });
 
-      ctx.restore();
-      ctx.restore();
+      ctx.restore(); // end car
+      ctx.restore(); // end world
 
-      // Off-screen target pointer arrow if pad is off-edge
-      if (state === 'air') {
-        ctx.fillStyle = 'rgba(74, 222, 128, 0.9)';
-        ctx.font = 'bold 12px system-ui';
+      // 5. Crisp Visor Landing Telemetry HUD
+      if (state === 'air' || state === 'ramp') {
         const dxMeters = Math.round((padCurrentX - car.x) / 10);
-        ctx.fillText(`🎯 Landezone: ${dxMeters >= 0 ? dxMeters + 'm voraus' : Math.abs(dxMeters) + 'm zurück'}`, 14, 22);
+        const vSpd = Math.round(Math.hypot(car.vx, car.vy) / 10);
+        const safeRate = Math.abs(car.vy) < 175 && Math.abs(((car.angle + Math.PI) % (Math.PI * 2)) - Math.PI) < 0.32;
+
+        ctx.fillStyle = 'rgba(2, 6, 23, 0.72)';
+        ctx.strokeStyle = safeRate ? 'rgba(74, 222, 128, 0.5)' : 'rgba(251, 146, 60, 0.5)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(12, 12, 236, 44, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#7dd3fc';
+        ctx.font = 'bold 12px monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`ZIEL: ${dxMeters >= 0 ? dxMeters + 'm voraus ->' : Math.abs(dxMeters) + 'm zurueck <-'}`, 22, 30);
+        ctx.fillStyle = safeRate ? '#4ade80' : '#fb923c';
+        ctx.font = '11px monospace';
+        ctx.fillText(`SPEED: ${vSpd} m/s · ${safeRate ? 'LAGE OK' : 'ABBREMSEN / NEIGEN'}`, 22, 47);
       }
     }
-
     let lastFrame = performance.now();
     function loop(now) {
       const dt = Math.min(0.04, (now - lastFrame) / 1000);

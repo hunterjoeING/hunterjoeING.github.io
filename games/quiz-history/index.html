@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Geschichte &amp; Weltereignisse Quiz · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(217, 119, 6, 0.36);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: #fbbf24;
+      color: #fffbeb;
+    }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #b45309, #f59e0b);
+      border-color: #fde68a;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.34);
+    }
+    .diff-pill.pro.active {
+      background: linear-gradient(135deg, #991b1b, #e11d48);
+      border-color: #fda4af;
+      box-shadow: 0 4px 16px rgba(225, 29, 72, 0.36);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(16, 24, 48, 0.9);
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: #fbbf24;
+      background: rgba(146, 64, 14, 0.28);
+    }
+    .cat-card.featured {
+      border-color: rgba(245, 158, 11, 0.56);
+      background: linear-gradient(135deg, rgba(146, 64, 14, 0.3), rgba(16, 24, 48, 0.94));
+    }
+    .cat-card.featured-modern {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: linear-gradient(135deg, rgba(14, 116, 144, 0.26), rgba(16, 24, 48, 0.94));
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.42; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+      margin-top: 4px;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #fbbf24, #4ade80);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill, .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .q-cat-pill {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.42);
+      color: #fde68a;
+    }
+    .q-diff-pill.easy {
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #86efac;
+    }
+    .q-diff-pill.mid {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      color: #7dd3fc;
+    }
+    .q-diff-pill.pro {
+      background: rgba(244, 63, 94, 0.18);
+      border: 1px solid rgba(251, 113, 133, 0.48);
+      color: #fda4af;
+    }
+
+    .q-text {
+      font-size: clamp(17.5px, 2.7vw, 22px);
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      color: #f1f5f9;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: #fbbf24;
+      background: rgba(180, 83, 9, 0.24);
+      transform: translateY(-1px);
+    }
+    .ans-key {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(148, 163, 184, 0.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.32);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-btn.eliminated {
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .joker-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      justify-content: space-between;
+      align-items: center;
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(251, 191, 36, 0.42);
+      color: #fde68a;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(11, 28, 56, 0.86);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      font-size: 13px;
+      line-height: 1.48;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .result-card {
+      text-align: center;
+      padding: 28px 20px;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 480px;
+      margin: 18px auto 22px;
+    }
+    .res-box {
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+    .res-box b {
+      display: block;
+      font-size: 20px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+    }
+    .res-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🏛️ Geschichte &amp; Weltereignisse</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Difficulty Menu -->
+    <section id="screen-menu" class="glass-card" style="padding:20px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">Epochen-Quiz: Welt- &amp; Zeitgeschichte</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
+        48 historische Meilensteine von der Antike bis zur Deutschen Einheit. Wähle zuerst deinen Anspruch und dann deine Epoche (10 Fragen pro Runde, Tasten <code>1–4</code> möglich).
+      </p>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Basiswissen</button>
+        <button class="diff-pill" data-diff="mid">🟡 Geschichts-Kenner</button>
+        <button class="diff-pill pro" data-diff="pro">🔴 Historiker-Nerd (1,5× Pkt)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">10</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <span>⏱ <strong id="q-sec">20</strong>s</span>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Epoche</span>
+        <span id="q-diff" class="q-diff-pill mid">Kenner</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Epochen</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div id="res-emoji" style="font-size:48px;">🏛️</div>
+      <h2 id="res-heading" style="margin:8px 0 4px;">Runde abgeschlossen!</h2>
+      <p id="res-sub" style="margin:0;color:var(--text-muted);font-size:13.5px;"></p>
+
+      <div class="result-stats">
+        <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
+        <div class="res-box"><b id="res-correct">0/10</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Nochmal spielen</button>
+        <button class="secondary-btn" onclick="backToMenu()">📚 Andere Epoche</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const CATS = [
+      { id: 'mix',       icon: '⏳', name: 'Epochen-Mix (Alle)',      cls: 'featured',        desc: 'Quer durch Jahrtausende: von Ägypten und Rom über Napoleon bis 1989.' },
+      { id: 'antike',    icon: '🏛️', name: 'Antike & Mittelalter',     cls: '',                desc: 'Athen, Rom, Karl der Große, Magna Carta, Goldene Bulle & 1453.' },
+      { id: 'neuzeit',   icon: '📜', name: 'Neuzeit & Revolutionen',   cls: '',                desc: 'Gutenberg, Reformation, Westfälischer Frieden, Montesquieu & 1789.' },
+      { id: 'industrie', icon: '⚙️', name: '19. Jh. & Industrialisierung', cls: '',            desc: 'Dampfmaschine, Zollverein, 1848, Bismarck, Carl Benz & Tesla vs. Edison.' },
+      { id: 'modern',    icon: '🕊️', name: '20. Jh. & Zeitgeschichte', cls: 'featured-modern', desc: '1923, 1948/49, Ludwig Erhard, Römische Verträge, 17. Juni & Mauerfall.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Basis',      cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Kenner',     cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Historiker', cls: 'pro',  mult: 1.5 }
+    };
+
+    // Index 0 of a[] is ALWAYS the correct answer (shuffled cleanly on render)
+    const QUESTIONS = [
+      // ── Antike & Mittelalter ──
+      {
+        cat: 'antike', diff: 'easy',
+        q: 'Welcher Fluss bildete über Jahrtausende die Lebensader und landwirtschaftliche Grundlage des Alten Ägypten?',
+        a: ['Der Nil', 'Der Euphrat', 'Der Jordan', 'Der Tiber'],
+        exp: 'Die jährlichen Nilüberschwemmungen lieferten fruchtbaren Schlamm und machten eine der frühesten Hochkulturen in Nordostafrika möglich.'
+      },
+      {
+        cat: 'antike', diff: 'easy',
+        q: 'Welcher griechische Stadtstaat gilt als Geburtsort der ersten klassischen Demokratie im 5. Jahrhundert v. Chr.?',
+        a: ['Athen', 'Sparta', 'Korinth', 'Theben'],
+        exp: 'In Athen stimmten freie männliche Vollbürger direkt in der Volksversammlung (Ekklesia) über Gesetze, Krieg und Frieden ab.'
+      },
+      {
+        cat: 'antike', diff: 'easy',
+        q: 'Welcher römische Feldherr und Diktator wurde am 15. März („Iden des März“) 44 v. Chr. von Senatoren ermordet?',
+        a: ['Gaius Julius Caesar', 'Augustus', 'Scipio Africanus', 'Mark Aurel'],
+        exp: 'Verschwörer um Brutus und Cassius wollten die Römische Republik retten – stattdessen folgte ein Bürgerkrieg und der Übergang zum Kaisertum.'
+      },
+      {
+        cat: 'antike', diff: 'easy',
+        q: 'Welches Großreich errichtete zwischen dem 1. und 3. Jahrhundert n. Chr. den Limes quer durch Mitteleuropa?',
+        a: ['Das Römische Reich', 'Das Frankenreich', 'Das Perserreich', 'Das Byzantinische Reich'],
+        exp: 'Der Obergermanisch-Rätische Limes markierte und sicherte über rund 550 km die Grenze zwischen den römischen Provinzen und Germania.'
+      },
+      {
+        cat: 'antike', diff: 'mid',
+        q: 'Wann krönte Papst Leo III. den fränkischen König Karl den Großen in Rom zum Kaiser?',
+        a: ['An Weihnachten im Jahr 800 n. Chr.', 'Im Jahr 476 n. Chr.', 'Im Jahr 962 n. Chr.', 'Im Jahr 1099 n. Chr.'],
+        exp: 'Mit der Kaiserkrönung Karls des Großen 800 n. Chr. erneuerte sich im Westen die weströmische Kaiseridee als christliches Universalkaisertum.'
+      },
+      {
+        cat: 'antike', diff: 'mid',
+        q: 'Welche Schlacht im Jahr 9 n. Chr. unter Führung des Cheruskers Arminius stoppte die römische Eroberung Germaniens?',
+        a: ['Die Varusschlacht (im Teutoburger Wald)', 'Die Schlacht auf den Katalaunischen Feldern', 'Die Schlacht bei Cannae', 'Die Schlacht auf dem Lechfeld'],
+        exp: 'Drei römische Legionen unter Publius Quinctilius Varus wurden vernichtend geschlagen; Rom zog sich weitgehend hinter den Rhein zurück.'
+      },
+      {
+        cat: 'antike', diff: 'mid',
+        q: 'Welchen jahrzehntelangen Konflikt beendete das Wormser Konkordat im Jahr 1122?',
+        a: ['Den Investiturstreit zwischen Kaiser und Papst über die Einsetzung von Bischöfen', 'Den Hundertjährigen Krieg zwischen England und Frankreich', 'Die Hussitenkriege in Böhmen', 'Den Kampf zwischen Venedig und Genua'],
+        exp: 'Kaiser Heinrich V. und Papst Calixt II. trennten geistliche (Ring und Stab) und weltliche Belehnung (Zepter) der Bischöfe und Reichsäbte.'
+      },
+      {
+        cat: 'antike', diff: 'mid',
+        q: 'Welcher englische König musste im Jahr 1215 unter Druck der Barone die „Magna Carta Libertatum“ besiegeln?',
+        a: ['König Johann Ohneland (John Lackland)', 'König Richard Löwenherz', 'König Heinrich VIII.', 'König Eduard III.'],
+        exp: 'Die Magna Carta gilt als Meilenstein der Verfassungsgeschichte, da auch der Monarch erstmals ausdrücklich an Recht und Gesetz gebunden wurde.'
+      },
+      {
+        cat: 'antike', diff: 'pro',
+        q: 'Mit welcher Seeschlacht im Jahr 31 v. Chr. besiegte Octavian (später Kaiser Augustus) Marcus Antonius und Kleopatra endgültig?',
+        a: ['Schlacht bei Actium', 'Schlacht bei Salamis', 'Schlacht bei Lepanto', 'Schlacht bei Zama'],
+        exp: 'Actium beendete die römischen Bürgerkriege und begründete das augusteische Prinzipat sowie die lange Friedensphase der „Pax Romana“.'
+      },
+      {
+        cat: 'antike', diff: 'pro',
+        q: 'Welche spätantike Gesetzessammlung aus den 530er Jahren unter Justinian I. prägte später das europäische Zivilrecht?',
+        a: ['Das Corpus Iuris Civilis', 'Der Sachsenspiegel', 'Die Constitutio Criminalis Carolina', 'Das Zwölftafelgesetz'],
+        exp: 'Durch die spätere Wiederentdeckung in Oberitalien (ab ca. 1080) wurde das römische Recht zur juristischen Grundlage weiter Teile Kontinentaleuropas.'
+      },
+      {
+        cat: 'antike', diff: 'pro',
+        q: 'Was legte Kaiser Karl IV. mit der „Goldenen Bulle“ im Jahr 1356 reichsrechtlich verbindlich fest?',
+        a: ['Die Wahl des römisch-deutschen Königs durch genau sieben Kurfürsten ohne päpstliche Bestätigung', 'Die Einführung einer reichsweiten Einkommensteuer', 'Das allgemeine Verbot der mittelalterlichen Zünfte', 'Die Teilung des Reiches zwischen Österreich und Schweden'],
+        exp: 'Die Goldene Bulle funktionierte bis 1806 faktisch als das wichtigste Verfassungsgesetz des Heiligen Römischen Reiches.'
+      },
+      {
+        cat: 'antike', diff: 'pro',
+        q: 'Welches Ereignis im Jahr 1453 markierte das endgültige Ende des Byzantinischen Reiches?',
+        a: ['Die Eroberung Konstantinopels durch Sultan Mehmed II.', 'Die Rückeroberung Granadas durch Kastilien', 'Das Konzil von Konstanz', 'Die Gründung der Hanse'],
+        exp: 'Nach dem Fall Konstantinopels flohen viele griechische Gelehrte nach Italien und beflügelten dort Humanismus und Renaissance.'
+      },
+
+      // ── Neuzeit & Revolutionen ──
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'Wer entwickelte um 1450 in Mainz den europäischen Buchdruck mit beweglichen Metall-Lettern und Druckerpresse?',
+        a: ['Johannes Gutenberg', 'Albrecht Dürer', 'Leonardo da Vinci', 'Lucas Cranach'],
+        exp: 'Gutenbergs Medienrevolution senkte die Kosten für Bücher drastisch und beschleunigte Wissenschaft, Bildung und Reformation in ganz Europa.'
+      },
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'Welches Datum und welcher Ort sind untrennbar mit dem Beginn von Martin Luthers Reformation verbunden?',
+        a: ['31. Oktober 1517 in Wittenberg (95 Thesen)', '24. Oktober 1648 in Münster', '14. Juli 1789 in Paris', '18. Mai 1848 in Frankfurt'],
+        exp: 'Luthers Thesen richteten sich ursprünglich gegen Missbräuche beim Ablasshandel, lösten aber rasch die Spaltung der westlichen Kirche aus.'
+      },
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'In welchem Jahr leitete der Sturm auf die Bastille in Paris den Ausbruch der Französischen Revolution ein?',
+        a: ['1789', '1776', '1804', '1815'],
+        exp: 'Noch im selben Sommer folgten die Abschaffung der Feudalrechte und die Erklärung der Menschen- und Bürgerrechte.'
+      },
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'Welcher Seefahrer landete am 12. Oktober 1492 im Auftrag Spaniens in der Karibik und stieß auf den amerikanischen Kontinent?',
+        a: ['Christoph Kolumbus', 'Ferdinand Magellan', 'Vasco da Gama', 'James Cook'],
+        exp: 'Kolumbus glaubte zunächst, einen westlichen Seeweg nach Asien gefunden zu haben – seine Fahrten lösten den „Columbian Exchange“ aus.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'Welches Vertragswerk beendete 1648 in Münster und Osnabrück den Dreißigjährigen Krieg?',
+        a: ['Der Westfälische Frieden', 'Der Friede von Utrecht', 'Der Vertrag von Verdun', 'Der Friede von Tilsit'],
+        exp: 'Der Westfälische Frieden schuf die Grundlage für das Prinzip souveräner Staaten in Europa und erkannte neben Katholiken und Lutheranern auch Reformierte an.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'Wer war der Hauptautor der amerikanischen Unabhängigkeitserklärung vom 4. Juli 1776?',
+        a: ['Thomas Jefferson', 'George Washington', 'Benjamin Franklin', 'Abraham Lincoln'],
+        exp: 'Jefferson formulierte darin die naturrechtlichen Ideale von Leben, Freiheit und Streben nach Glück sowie das Recht auf Regierungswechsel bei Tyrannei.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'Welche Staatstheorie entwickelte Charles de Montesquieu 1748 in seinem Hauptwerk „Vom Geist der Gesetze“?',
+        a: ['Die Gewaltenteilung zwischen Legislative, Exekutive und Judikative', 'Die Lehre vom absoluten Gottesgnadentum des Monarchen', 'Den totalen Verzicht auf jedes Privateigentum', 'Die Abschaffung geschriebener Verfassungen'],
+        exp: 'Montesquieus Prinzip „Le pouvoir arrête le pouvoir“ (Macht bremst Macht) prägte direkt die US-Verfassung und alle modernen Rechtsstaaten.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'In welcher berühmten Seeschlacht vom 21. Oktober 1805 sicherte Admiral Nelson Großbritannien die Vorherrschaft zur See über Napoleon?',
+        a: ['Schlacht von Trafalgar', 'Schlacht bei Austerlitz', 'Schlacht bei Waterloo', 'Schlacht bei Abukir'],
+        exp: 'Nelson fiel während der Schlacht vor Südspanien, doch eine Invasion Britanniens durch Napoleon war fortan endgültig unmöglich.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'Was besagte die berühmte Rechtsformel des Augsburger Religionsfriedens von 1555 („Cuius regio, eius religio“)?',
+        a: ['Der Landesherr bestimmte die Konfession seiner Untertanen; Andersgläubige erhielten ein Abzugsrecht', 'Jeder Bürger durfte frei eine beliebige Religion gründen', 'Nur der Kaiser allein durfte Bischöfe ernennen', 'Der Papst verzichtete auf alle Güter nördlich der Alpen'],
+        exp: 'Die Einigung zwischen König Ferdinand I. und den Reichsständen sicherte mehrere Jahrzehnte relativen Religionsfrieden vor dem Dreißigjährigen Krieg.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'Welche unblutige britische Umwälzung von 1688/89 führte zur „Bill of Rights“ und zur dauerhaften Stärkung des Parlaments?',
+        a: ['Die Glorreiche Revolution (Glorious Revolution)', 'Die Chartisten-Bewegung', 'Der Rosenkrieg', 'Die Industriereform von 1832'],
+        exp: 'König Wilhelm III. von Oranien akzeptierte feste Parlamentsrechte (Steuerbewilligung, Immunität, Gesetzgebungsprimat) – Modell einer konstitutionellen Monarchie.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'Wem bot Kurfürst Friedrich Wilhelm von Brandenburg mit dem Edikt von Potsdam im Jahr 1685 gezielt Schutz und Privilegien?',
+        a: ['Verfolgten französischen Protestanten (Hugenotten) nach Aufhebung des Edikts von Nantes', 'Englischen Puritanern vor ihrer Überfahrt nach Nordamerika', 'Vertriebenen spanischen Seefahrern', 'Italienischen Bankiers der Medici'],
+        exp: 'Rund 20.000 Hugenotten brachten Handwerk, Wissenschaft, Manufakturen und Handel nach Brandenburg-Preußen und prägten insbesondere Berlin.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'Durch welche Doppelschlacht am 14. Oktober 1806 besiegte Napoleon das Königreich Preußen vernichtend?',
+        a: ['Jena und Auerstedt', 'Leipzig und Bautzen', 'Königgrätz und Sedan', 'Marengo und Hohenlinden'],
+        exp: 'Die Niederlage führte zum Frieden von Tilsit, löste aber gleichzeitig die tiefgreifenden Stein-Hardenbergschen Reformen (Gewerbefreiheit, Bauernbefreiung) in Preußen aus.'
+      },
+
+      // ── 19. Jahrhundert & Industrialisierung ──
+      {
+        cat: 'industrie', diff: 'easy',
+        q: 'Welche Kraftmaschine, entscheidend weiterentwickelt von James Watt, trieb Fabriken, Bergwerke und Lokomotiven der Industrialisierung an?',
+        a: ['Die Dampfmaschine', 'Der Kernreaktor', 'Die Gasturbine', 'Der Elektromagnetische Induktor'],
+        exp: 'Watts getrennter Kondensator machte Dampfmaschinen wirtschaftlich nutzbar und löste die Produktion von begrenzter Wasserkraft und Muskelarbeit.'
+      },
+      {
+        cat: 'industrie', diff: 'easy',
+        q: 'Zwischen welchen beiden fränkischen Städten verkehrte 1835 mit dem „Adler“ die erste deutsche Dampfeisenbahn?',
+        a: ['Nürnberg und Fürth', 'Berlin und Potsdam', 'München und Augsburg', 'Leipzig und Dresden'],
+        exp: 'Die Ludwigsbahn auf einer 6 km langen Trasse zeigte schlagartig die Überlegenheit von Schienenverkehr für Personen und Güter.'
+      },
+      {
+        cat: 'industrie', diff: 'easy',
+        q: 'Welcher preußische Ministerpräsident und spätere Reichskanzler prägte ab 1871 als „Eiserner Kanzler“ das Deutsche Kaiserreich?',
+        a: ['Otto von Bismarck', 'Heinrich Friedrich Karl vom Stein', 'Clemens von Metternich', 'Gustav Stresemann'],
+        exp: 'Nach drei Einigungskriegen und komplexer Bündnisdiplomatie schuf Bismarck einen deutschen Nationalstaat unter preußischer Führung.'
+      },
+      {
+        cat: 'industrie', diff: 'easy',
+        q: 'Wer erhielt im Januar 1886 das Patent für den ersten benzingetriebenen Motorwagen („Patent-Motorwagen Nummer 1“)?',
+        a: ['Carl Benz', 'Rudolf Diesel', 'Henry Ford', 'Nikolaus Otto'],
+        exp: 'Mit der legendären Fernfahrt seiner Frau Bertha Benz von Mannheim nach Pforzheim im August 1888 bewies das Automobil erstmals seine Alltagstauglichkeit.'
+      },
+      {
+        cat: 'industrie', diff: 'mid',
+        q: 'In welchem Revolutionsjahr tagte in der Frankfurter Paulskirche das erste frei gewählte gesamtdeutsche Parlament?',
+        a: ['1848 (und 1849)', '1830', '1866', '1918'],
+        exp: 'Die Paulskirchenverfassung formulierte einen zukunftsweisenden Grundrechtekatalog, scheiterte aber 1849 am Machtwiderstand der großen Fürstenstaaten.'
+      },
+      {
+        cat: 'industrie', diff: 'mid',
+        q: 'Welcher wirtschaftliche Zusammenschluss trat am 1. Januar 1834 in Kraft und beseitigte Binnenzölle zwischen den meisten deutschen Staaten?',
+        a: ['Der Deutsche Zollverein', 'Der Rheinbund', 'Die Montanunion', 'Der Weimarer Wirtschaftsrat'],
+        exp: 'Durch den Wegfall dutzender Grenz- und Wegzölle entstand ein einheitlicher deutscher Binnenmarkt noch Jahrzehnte vor der politischen Reichsgründung.'
+      },
+      {
+        cat: 'industrie', diff: 'mid',
+        q: 'Welcher internationale Kongress zog 1814/15 nach der ersten Abdankung Napoleons die politischen Grenzen Europas neu?',
+        a: ['Der Wiener Kongress', 'Der Berliner Kongress', 'Die Konferenz von Jalta', 'Der Kongress von Aachen'],
+        exp: 'Unter maßgeblicher Regie Fürst Metternichs entstand das Mächtegleichgewicht der Restauration sowie der lose Deutsche Bund.'
+      },
+      {
+        cat: 'industrie', diff: 'mid',
+        q: 'Wodurch zeichnete sich die sogenannte „Gründerzeit“ in Deutschland unmittelbar nach 1871 aus?',
+        a: ['Einen Boom an Industrie-, Eisenbahn-, Bank- und Aktiengesellschaften, gefolgt vom Gründerkrach 1873', 'Ausschließlich eine Rückkehr zur mittelalterlichen Dreifelderwirtschaft', 'Die Verstaatlichung aller Bäckereien und Handwerksbetriebe', 'Das Ende des Städtewachstums in Berlin und dem Ruhrgebiet'],
+        exp: 'Französische Reparationsmilliarden und ein liberalisiertes Aktienrecht befeuerten eine beispiellose Investitionswelle samt spekulativer Überhitzung.'
+      },
+      {
+        cat: 'industrie', diff: 'pro',
+        q: 'Wofür kämpfte der schwäbische Ökonom Friedrich List in der ersten Hälfte des 19. Jahrhunderts in Deutschland besonders?',
+        a: ['Für ein gesamtdeutsches Eisenbahnnetz und einen einheitlichen Binnenmarkt mit befristeten Erziehungszöllen', 'Für das vollständige Verbot von Fabriken und Dampflokomotiven', 'Für eine Rückkehr zur kleinstaatlichen Zersplitterung ohne Zollverein', 'Für die Abschaffung des Papiergelds zugunsten von Muschelgeld'],
+        exp: 'List argumentierte, industrialisierungsrückständige Volkswirtschaften bräuchten zunächst Infrastruktur und Binnenzollfreiheit vor schrankenlosem Außenwettbewerb.'
+      },
+      {
+        cat: 'industrie', diff: 'pro',
+        q: 'In welcher Reihenfolge führte Bismarck in den 1880er Jahren die drei Säulen der Sozialversicherung im Deutschen Kaiserreich ein?',
+        a: ['Krankenversicherung (1883), Unfallversicherung (1884), Alters- und Invaliditätsversicherung (1889)', 'Erst Arbeitslosenversicherung (1881), zuletzt Krankenversicherung (1895)', 'Alle drei wurden gemeinsam erst nach dem Ersten Weltkrieg eingeführt', 'Nur Unfallversicherung existierte im 19. Jahrhundert'],
+        exp: 'Bismarck kombinierte das repressiv gegen Arbeiterparteien gerichtete Sozialistengesetz mit weltweit neuartigen, beitragspflichtigen Pflichtversicherungen.'
+      },
+      {
+        cat: 'industrie', diff: 'pro',
+        q: 'Wer lieferte Ende des 19. Jahrhunderts im berühmten „Stromkrieg“ gegen Thomas Edison die Patente für das überlegene Mehrphasen-Wechselstromsystem?',
+        a: ['Nikola Tesla (in Partnerschaft mit George Westinghouse)', 'Werner von Siemens allein mit reinen Gleichstrombatterien', 'Alessandro Volta', 'Heinrich Hertz'],
+        exp: 'Wechselstrom ließ sich über Transformatoren verlustarm auf hohe Spannungen transformieren – und versorgte bald Städte wie Buffalo von den Niagarafällen aus.'
+      },
+      {
+        cat: 'industrie', diff: 'pro',
+        q: 'Welche politische Konsequenz besiegelte der Prager Frieden vom August 1866 nach der Schlacht bei Königgrätz?',
+        a: ['Das Ausscheiden Österreichs aus den deutschen Angelegenheiten und die Auflösung des Deutschen Bundes zugunsten Preußens', 'Die Vereinigung Österreichs mit Bayern zu einer süddeutschen Republik', 'Den sofortigen Beitritt Frankreichs zum Zollverein', 'Die Krönung eines Habsburger Kaisers in Berlin'],
+        exp: 'Preußen gründete im Norden den Norddeutschen Bund und ebnete damit den Weg für die sogenannte kleindeutsche Lösung 1871.'
+      },
+
+      // ── 20. Jahrhundert & Deutsche / Europäische Geschichte ──
+      {
+        cat: 'modern', diff: 'easy',
+        q: 'An welchem Datum wurde mit der Verkündung des Grundgesetzes die Bundesrepublik Deutschland gegründet?',
+        a: ['23. Mai 1949', '9. November 1918', '17. Juni 1953', '3. Oktober 1990'],
+        exp: 'Das vom Parlamentarischen Rat in Bonn beschlossene Grundgesetz galt zunächst als Provisorium bis zur Wiedervereinigung und ist bis heute unsere Verfassung.'
+      },
+      {
+        cat: 'modern', diff: 'easy',
+        q: 'Welcher historische Abend markiert das Ende der deutschen Teilung Symbol schlechthin – den Fall der Berliner Mauer?',
+        a: ['Der 9. November 1989', 'Der 13. August 1961', 'Der 1. Juli 1990', 'Der 8. Mai 1945'],
+        exp: 'Nach wochenlangen friedlichen Montagsdemonstrationen in Leipzig und Missverständnissen bei einer Pressekonferenz öffneten Grenzer nachts die Übergänge.'
+      },
+      {
+        cat: 'modern', diff: 'easy',
+        q: 'Wer war von 1949 bis 1963 der erste Bundeskanzler der jungen Bundesrepublik Deutschland?',
+        a: ['Konrad Adenauer', 'Willy Brandt', 'Helmut Schmidt', 'Kurt Schumacher'],
+        exp: 'Adenauer verankerte Westdeutschland politisch in den westlichen Bündnissen und trug entscheidend zur deutsch-französischen Aussöhnung bei.'
+      },
+      {
+        cat: 'modern', diff: 'easy',
+        q: 'Welches US-amerikanische Wirtschaftsprogramm unterstützte ab 1948 den Wiederaufbau Westeuropas (auch der Westzonen)?',
+        a: ['Der Marshallplan (European Recovery Program)', 'Die Monroe-Doktrin', 'Der Schlieffen-Plan', 'Das Bretton-Woods-Embargo'],
+        exp: 'Neben Kapital, Rohstoffen und Maschinen förderte der Marshallplan vor allem grenzüberschreitenden europäischen Freihandel statt neuer Abschottung.'
+      },
+      {
+        cat: 'modern', diff: 'mid',
+        q: 'Wer hob im Juni 1948 begleitend zur D-Mark-Währungsreform viele Zwangsbewirtschaftungen auf und gilt als politischer Vater des Wirtschaftswunders?',
+        a: ['Ludwig Erhard', 'Gustav Stresemann', 'Walter Hallstein', 'Helmut Kohl'],
+        exp: 'Gegen Skepsis der Alliierten setzte Erhard über das Leitsätzegesetz auf freie Preise, Marktwirtschaft und Wettbewerb – Regale füllten sich binnen Tagen.'
+      },
+      {
+        cat: 'modern', diff: 'mid',
+        q: 'Welche Verträge von 1957 gelten mit der Gründung von EWG und Euratom als eigentlicher Urvertrag der heutigen Europäischen Union?',
+        a: ['Die Römischen Verträge', 'Die Verträge von Locarno', 'Der Vertrag von Rapallo', 'Die Haager Landkriegsordnung'],
+        exp: 'Sechs Gründerstaaten (Deutschland, Frankreich, Italien, Benelux) vereinbarten den schrittweisen Aufbau eines gemeinsamen Binnenmarktes ohne Binnenzölle.'
+      },
+      {
+        cat: 'modern', diff: 'mid',
+        q: 'Was löste im Oktober 1929 mit Kursstürzen am „Schwarzen Donnerstag / Schwarzen Freitag“ eine globale Rezession aus?',
+        a: ['Der New Yorker Börsencrash an der Wall Street', 'Die Eröffnung des Suezkanals', 'Die Währungsreform zur Einführung des Euro', 'Die Gründung des Völkerbundes in Genf'],
+        exp: 'Der Crash riss Banken, Welthandel und Kreditketten mit sich; Massenarbeitslosigkeit und Bankenkrisen destabilisierten weltweit junge Demokratien.'
+      },
+      {
+        cat: 'modern', diff: 'mid',
+        q: 'Welches internationale Dokument von 1975 verknüpfte Entspannung im Kalten Krieg mit Unverletzlichkeit der Grenzen UND Menschenrechten?',
+        a: ['Die Schlussakte von Helsinki (KSZE)', 'Das Potsdamer Abkommen', 'Der Hitler-Stalin-Pakt', 'Der Petersberg-Vertrag'],
+        exp: 'Auf die Menschenrechtsklauseln („Korb III“) beriefen sich in den 1980er Jahren später erfolgreich Bürgerrechtsbewegungen in Polen, der Tschechoslowakei und der DDR.'
+      },
+      {
+        cat: 'modern', diff: 'pro',
+        q: 'Welche Währungsreform beendete im November 1923 schlagartig die Hyperinflation der Weimarer Republik („1 Billion Papiermark“)?',
+        a: ['Die Einführung der Rentenmark (später abgelöst durch die Reichsmark)', 'Die direkte Einführung der Deutschen Mark', 'Die Übernahme des Schweizer Franken als gesetzliches Zahlungsmittel', 'Die komplette Abschaffung von Münz- und Scheingeld'],
+        exp: 'Weil die Notenpresse für den Ruhrkampf gestoppt wurde und das Vertrauen über streng limitierte Ausgabe („Wunder der Rentenmark“) zurückkehrte, stabilisierte sich die Währung sofort.'
+      },
+      {
+        cat: 'modern', diff: 'pro',
+        q: 'Welcher völkerrechtliche Vertrag vom 12. September 1990 besiegelte außenpolitisch die volle Souveränität des wiedervereinigten Deutschlands?',
+        a: ['Der Zwei-plus-Vier-Vertrag zwischen BRD, DDR und den vier Siegermächten', 'Der Elysée-Vertrag von 1963', 'Der Grundlagenvertrag von 1972', 'Der Vertrag von Lissabon'],
+        exp: 'Die USA, die Sowjetunion, Großbritannien und Frankreich verzichteten auf ihre alliierten Vorbehaltsrechte; die Oder-Neiße-Grenze wurde völkerrechtlich bestätigt.'
+      },
+      {
+        cat: 'modern', diff: 'pro',
+        q: 'Worauf beruhte das von 1944 bis Anfang der 1970er Jahre geltende Weltwährungssystem von Bretton Woods?',
+        a: ['Feste Wechselkurse zum US-Dollar bei gleichzeitiger Gold-Einlösepflicht der USA für ausländische Zentralbanken (35 $ pro Feinunze)', 'Einer weltweiten rein digitalen Einheitswährung ohne Goldbezug', 'Völlig freien Wechselkursen aller Staaten ohne Notenbank-Eingriffe seit 1945', 'Einer direkten Bindung aller Währungen an den Silberpreis'],
+        exp: 'Mit wachsenden US-Leistungsbilanzdefiziten beendete Präsident Richard Nixon im August 1971 das Goldfenster („Nixon-Schock“); die Welt ging zu frei schwankenden Fiat-Währungen über.'
+      },
+      {
+        cat: 'modern', diff: 'pro',
+        q: 'Was war der unmittelbare wirtschaftliche Auslöser für den Volksaufstand in der DDR am 17. Juni 1953?',
+        a: ['Eine verpflichtende Erhöhung der Arbeitsnormen um mindestens 10 % bei gleichem Lohn inmitten einer Versorgungskrise', 'Die sofortige Einführung der D-Mark in Ost-Berlin', 'Der Bau des Berliner Fernsehturms', 'Die Verabschiedung der Rentenreform in Bonn'],
+        exp: 'Aus Streiks Berliner Bauarbeiter entwickelte sich binnen Stunden ein DDR-weiter Aufstand für freie Wahlen, den sowjetische Panzer gewaltsam niederschlugen.'
+      }
+    ];
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 20;
+    const BASE_TIME = 20;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_hist');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const count = getMatchingPool(c.id).length;
+        const roundLen = Math.min(10, count);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const count = Math.min(10, pool.length);
+      deck = shuffle(pool).slice(0, count);
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      answered = false;
+      timeLeft = BASE_TIME;
+
+      const item = deck[qIdx];
+      const di = DIFF_INFO[item.diff];
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      timerId = setInterval(() => {
+        timeLeft = Math.max(0, +(timeLeft - 0.1).toFixed(1));
+        updateTimerUI();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          handleTimeout();
+        }
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      document.getElementById('q-sec').textContent = Math.ceil(timeLeft);
+      const pct = Math.max(0, Math.min(100, (timeLeft / BASE_TIME) * 100));
+      const fill = document.getElementById('timer-fill');
+      fill.style.width = pct + '%';
+      fill.style.background = timeLeft > 5
+        ? 'linear-gradient(90deg, #fbbf24, #4ade80)'
+        : 'linear-gradient(90deg, #fb7185, #f59e0b)';
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = DIFF_INFO[item.diff].mult;
+        const speedBonus = Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      showFact(chosen.isRight);
+    }
+
+    function handleTimeout() {
+      if (answered) return;
+      answered = true;
+      streak = 0;
+      const item = deck[qIdx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+      ArcadeAudio.fail();
+      document.getElementById('q-streak').textContent = 0;
+      showFact(false, '⏱ Zeit abgelaufen! ');
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Treffer! ' : '❌ Nicht ganz: ')}</strong>${item.exp}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered) return;
+      jokers.time = false;
+      document.getElementById('joker-time').disabled = true;
+      timeLeft = Math.min(30, timeLeft + 10);
+      updateTimerUI();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const isNewRecord = ArcadeScores.record('quiz_hist', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '📜' : '🏛️');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Geschichts-Rekord!' : 'Runde abgeschlossen!';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>

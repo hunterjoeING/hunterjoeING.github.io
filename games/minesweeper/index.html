@@ -13,8 +13,8 @@
   <meta name="theme-color" content="#00ccff">
   <style>
 /* ═══════════════════════════════════════════════════════════════════
-   MINESWEEPER 3D – AGENT EDITION (css/game.css)
-   Faithful reproduction of minesweeper3d.online v2.13 UI & z-index layers
+   MINESWEEPER 3D – ARCADE CRYSTAL EDITION (css/game.css)
+   Original 3D Minesweeper HUD, Glass Overlays & Z-Index Layers
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -1283,9 +1283,12 @@ body.mobile-mode #mob-showcase-bar {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
   transition: border-color 0.15s, background 0.15s;
 }
-.sc-3d-badge:hover {
-  background: rgba(14, 116, 144, 0.92);
+.sc-3d-badge:hover,
+.sc-3d-badge.is-hovered {
+  background: rgba(14, 116, 144, 0.96);
   border-color: #7dd3fc;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
+  transform: scale(1.06);
 }
 #shape-showcase-overlay {
   position: fixed;
@@ -1382,10 +1385,12 @@ body.mobile-mode #mob-showcase-bar {
   cursor: pointer;
   transition: transform 0.12s, border-color 0.12s, background 0.12s;
 }
-.sc-card:hover {
-  transform: translateY(-1px);
+.sc-card:hover,
+.sc-card.is-hovered {
+  transform: translateY(-2px);
   border-color: #38bdf8;
-  background: rgba(14, 116, 144, 0.38);
+  background: rgba(14, 116, 144, 0.44);
+  box-shadow: 0 6px 18px rgba(14, 165, 233, 0.25);
 }
 .sc-card-icon {
   font-size: 21px;
@@ -1786,7 +1791,7 @@ body.mobile-mode #mob-showcase-bar {
       <button class="pwa-btn" onclick="openModal('agent-vs-chat')" title="Warum KI-Agenten stärker sind als reine Chatbots">⚡ Agent &gt; Chatbot</button>
     </div>
     <div id="hud-bot-right">
-      © 2026 <a href="#" onclick="openModal('agent-vs-chat');return false;" id="link-contact">Verstand2Go · Agent Edition</a> –
+      © 2026 <a href="#" onclick="openModal('agent-vs-chat');return false;" id="link-contact">HunterJoe Arcade · 3D Edition</a> –
       <a href="#" onclick="openModal('news');return false;" style="color:rgba(160,210,255,.55)" title="Versions-Info">v2.13</a> ·
       <span style="white-space:nowrap">
         <a href="#" onclick="openModal('news');return false;" data-i18n="news_footer">News</a>
@@ -2060,8 +2065,6 @@ function setLang(lang) {
   }
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/audio.js — Web Audio API SFX & Ambient Sci-Fi Synth Music
 // ═══════════════════════════════════════════════════════════════════
@@ -2241,8 +2244,6 @@ function stopAmbientMusic() {
   }
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/backgrounds.js — 8 Ultra-Modern High-DPI Backgrounds with
 // Subtle Architectural & Telemetry Cues ("AI Agent > Pure Chatbot")
@@ -2809,8 +2810,6 @@ function drawSubtleAgentArchitectureHUD(ctx, w, h, bg, c2, c4) {
   ctx.restore();
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/three-setup.js — Three.js Scene, Showroom Studio EnvMap,
 // Beveled Crystal-Gloss Cubes (MeshPhysicalMaterial + Clearcoat),
@@ -3338,8 +3337,6 @@ window.addEventListener('resize', () => {
   renderer.setSize(_iW(), _iH());
 });
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/geometries.js — Cube Levels (4³–8³), Enterprise NCC-1701,
 // Custom Voxel Builder, AgentCore 3D, Icosahedron Frustum Shells,
@@ -4502,8 +4499,6 @@ function buildTriFrustumGeometry(v0, v1, v2, r0, r1) {
   return g;
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/sculptures.js — Photorealistic Ultra-HD Voxel Animal Sculptures (75,000–95,000+ Cubes!)
 // Uses shared createVoxelSculptor() primitives, 3D FBM surface grain &
@@ -5261,8 +5256,6 @@ function generateBlauwalCoords() {
   return extracted.shellCoords;
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/water.js — High-Volume 3D Fluid & Beer Foam Physics Engine
 // Uses THREE.InstancedMesh for up to 3,800 Liquid Parcels + 3,200
@@ -6083,8 +6076,6 @@ function stepWaterSimulation() {
   }
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/camera.js — 3D Orbit, Pan, Zoom, Axis Lock & Neighbor Outlines
 // Works seamlessly for Individual Meshes, Icosahedrons & 60k+ Instanced Boards
@@ -6352,8 +6343,6 @@ function highlightDeductionCells(targetCell, witnessCells) {
   }
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/solver.js — 3D Logical Deduction Solver & Autonomous Autopilot
 // ═══════════════════════════════════════════════════════════════════
@@ -6670,8 +6659,6 @@ function autopilotStep() {
   }
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/game.js — Core 3D Minesweeper State, Board Generator & Mechanics
 // Includes High-Performance InstancedMesh Renderer (up to 80,000+ Cubes!),
@@ -7672,8 +7659,6 @@ function animateScene() {
   }
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/input.js — Mouse, Ultra-Fast 3D-DDA Raycaster (for 60k+ Cubes),
 // Rock-Solid Android/iOS Touch Controls with Inertia & Keyboard Shortcuts
@@ -8065,7 +8050,15 @@ window.addEventListener('pointermove', (e) => {
   // Only raycast hover when over canvas
   if (e.target !== canvasEl) {
     hoverFrameMesh.visible = false;
+    if (typeof clearShowcaseCanvasHover === 'function') clearShowcaseCanvasHover();
     if (pill) pill.classList.add('hidden');
+    return;
+  }
+
+  if (typeof showcaseActive !== 'undefined' && showcaseActive) {
+    hoverFrameMesh.visible = false;
+    if (pill) pill.classList.add('hidden');
+    if (typeof updateShowcaseCanvasHover === 'function') updateShowcaseCanvasHover(e.clientX, e.clientY);
     return;
   }
 
@@ -8279,11 +8272,8 @@ function checkResponsiveLayout() {
 }
 window.addEventListener('resize', checkResponsiveLayout);
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
-// js/showcase.js — Far-Distance 3D Shape Constellation & Zoom-In Selector
-// Lets first-time players immediately discover all 3D geometries, sculptures & portals
+// js/showcase.js — Far-Distance High-Detail 3D Shape Constellation
 // ═══════════════════════════════════════════════════════════════════
 
 const SHOWCASE_SHAPES = [
@@ -8296,7 +8286,7 @@ const SHOWCASE_SHAPES = [
   { id: 'penrose',    geo: 'impossible',  level: 9,  icon: '📐', name: 'Penrose-Escher',    cat: 'Unmöglich', tag: 'Optische Illusion',     color: 0xf472b6 },
   { id: 'moebius',    geo: 'impossible',  level: 10, icon: '♾️', name: 'Möbius-Tesserakt',  cat: 'Unmöglich', tag: 'Wurmloch-Topologie',    color: 0xc084fc },
   { id: 'enterprise', geo: 'cube',        level: 6,  icon: '🛸', name: 'Enterprise',        cat: 'Objekte',   tag: 'Voxel-Raumschiff',      color: 0x94a3b8 },
-  { id: 'ico',        geo: 'icosahedron', level: 2,  icon: '⬨',  name: 'Ikosaeder',         cat: 'Klassik',   tag: '20 Dreiecksflächen',    color: 0x818cf8 },
+  { id: 'ico',        geo: 'icosahedron', level: 2,  icon: '⬨',  name: 'Ikosaeder',         cat: 'Klassik',   tag: 'Hochdetail-Kristall',   color: 0x818cf8 },
   { id: 'cube_4',     geo: 'cube',        level: 1,  icon: '🧊', name: 'Würfel 4³',         cat: 'Klassik',   tag: '64 Zellen · Einstieg',  color: 0x00e5ff },
   { id: 'cube_6',     geo: 'cube',        level: 3,  icon: '💠', name: 'Würfel 6³',         cat: 'Klassik',   tag: '216 Zellen · Mittel',   color: 0x38bdf8 },
   { id: 'custom',     geo: 'cube',        level: 7,  icon: '🏗️', name: 'Eigene Form',       cat: 'Klassik',   tag: 'Selbst entwerfen',      color: 0x34d399 }
@@ -8304,121 +8294,416 @@ const SHOWCASE_SHAPES = [
 
 let showcaseActive = false;
 let showcaseGroup = null;
-let showcaseNodes = []; // { cfg, group, baseAngle, phase, labelEl }
+let showcaseNodes = []; // { cfg, group, mat, baseAngle, yOff, ringRadius, labelEl, hoverScale }
 let showcaseFilter = 'Alle';
 let showcaseClock = 0;
+let showcaseLastTick = 0;
+let showcaseSpeedMult = 1.0;
+let showcaseCanvasHoverId = null;
+let showcaseUiHoverId = null;
+let _showcaseDisposables = [];
 
-function _buildShowcaseMiniMesh(cfg) {
-  const g = new THREE.Group();
-  const baseMat = new THREE.MeshStandardMaterial({
-    color: cfg.color,
-    emissive: cfg.color,
-    emissiveIntensity: 0.24,
-    roughness: 0.25,
-    metalness: 0.35
-  });
-  const trimMat = new THREE.MeshStandardMaterial({
-    color: 0x0f172a,
-    roughness: 0.4,
-    metalness: 0.5
-  });
-  const addBox = (w, h, d, x, y, z, mat = baseMat, rx = 0, ry = 0, rz = 0) => {
-    const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
-    m.position.set(x, y, z);
-    m.rotation.set(rx, ry, rz);
-    g.add(m);
-    return m;
-  };
+function _trackShowcaseDisp(obj) {
+  if (obj) _showcaseDisposables.push(obj);
+  return obj;
+}
 
-  if (cfg.id === 'cube_4' || cfg.id === 'cube_6') {
-    const n = cfg.id === 'cube_4' ? 2 : 3;
-    const step = 0.85;
-    const off = ((n - 1) * step) / 2;
-    for (let x = 0; x < n; x++) {
-      for (let y = 0; y < n; y++) {
-        for (let z = 0; z < n; z++) {
-          addBox(0.72, 0.72, 0.72, x * step - off, y * step - off, z * step - off);
+function _makeShowcaseCrystalMat(opts = {}) {
+  const mat = new THREE.MeshPhysicalMaterial(Object.assign({
+    color: 0xffffff,
+    emissive: 0x061a2e,
+    emissiveIntensity: 0.14,
+    roughness: 0.16,
+    metalness: 0.18,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.08,
+    reflectivity: 0.92
+  }, opts));
+  if (typeof getStudioEnvMap === 'function') {
+    mat.envMap = getStudioEnvMap();
+    mat.envMapIntensity = 1.05;
+  }
+  if (typeof getBevelNormalTex === 'function') {
+    mat.normalMap = getBevelNormalTex();
+    mat.normalScale = new THREE.Vector2(0.16, 0.16);
+  }
+  return _trackShowcaseDisp(mat);
+}
+
+function _makeShowcaseBevelGeo(side) {
+  if (typeof createBeveledCubeGeometry === 'function') {
+    return _trackShowcaseDisp(createBeveledCubeGeometry(side, side * 0.13));
+  }
+  return _trackShowcaseDisp(new THREE.BoxGeometry(side, side, side));
+}
+
+function _buildShowcaseInstancedVoxelGroup(rawCoords, colorMap, vScale, cfg, targetRes, maxInstances, supersampleIfSmall) {
+  const group = new THREE.Group();
+  const baseClr = new THREE.Color(cfg.color);
+
+  // Convert to scaled coordinates + resolve colors
+  let pts = rawCoords.map(([x, y, z]) => {
+    const key = `${x},${y},${z}`;
+    const hex = colorMap ? colorMap.get(key) : null;
+    return {
+      x: x * vScale,
+      y: y * vScale,
+      z: z * vScale,
+      hex: hex != null ? hex : null
+    };
+  });
+
+  if (pts.length === 0) return null;
+
+  // Compute bounds
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, minZ = Infinity, maxZ = -Infinity;
+  for (const p of pts) {
+    if (p.x < minX) minX = p.x; if (p.x > maxX) maxX = p.x;
+    if (p.y < minY) minY = p.y; if (p.y > maxY) maxY = p.y;
+    if (p.z < minZ) minZ = p.z; if (p.z > maxZ) maxZ = p.z;
+  }
+  const cx = (minX + maxX) * 0.5;
+  const cy = (minY + maxY) * 0.5;
+  const cz = (minZ + maxZ) * 0.5;
+  const spanX = (maxX - minX) || 1;
+  const spanY = (maxY - minY) || 1;
+  const spanZ = (maxZ - minZ) || 1;
+  const maxSpan = Math.max(spanX, spanY, spanZ);
+
+  let finalPts = [];
+  let voxelSpacing = 1;
+
+  if (supersampleIfSmall && pts.length <= 280) {
+    // Subdivide each macro cube into 2x2x2 beveled micro-cubes for rich faceted density
+    const step = vScale * 0.5;
+    const offsets = [-0.25, 0.25];
+    const subMap = new Map();
+    for (const p of pts) {
+      for (const ox of offsets) {
+        for (const oy of offsets) {
+          for (const oz of offsets) {
+            const sx = +(p.x + ox * vScale).toFixed(3);
+            const sy = +(p.y + oy * vScale).toFixed(3);
+            const sz = +(p.z + oz * vScale).toFixed(3);
+            const sk = `${Math.round(sx / step)},${Math.round(sy / step)},${Math.round(sz / step)}`;
+            if (!subMap.has(sk)) {
+              subMap.set(sk, { x: sx, y: sy, z: sz, hex: p.hex });
+            }
+          }
         }
       }
     }
-  } else if (cfg.id === 'ico') {
-    const m = new THREE.Mesh(new THREE.IcosahedronGeometry(1.5, 0), baseMat);
-    const wire = new THREE.Mesh(
-      new THREE.IcosahedronGeometry(1.53, 0),
-      new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.35 })
-    );
-    g.add(m, wire);
-  } else if (cfg.id === 'penrose') {
-    addBox(2.4, 0.48, 0.48, 0, -0.9, 0);
-    addBox(0.48, 2.2, 0.48, -0.95, 0.0, 0, baseMat, 0, 0, -0.45);
-    addBox(0.48, 2.2, 0.48, 0.95, 0.0, 0, baseMat, 0, 0, 0.45);
-  } else if (cfg.id === 'moebius') {
-    const m = new THREE.Mesh(new THREE.TorusKnotGeometry(1.05, 0.28, 48, 8, 2, 3), baseMat);
-    g.add(m);
-  } else if (cfg.id === 'enterprise') {
-    const saucer = new THREE.Mesh(new THREE.CylinderGeometry(1.25, 1.25, 0.26, 20), baseMat);
-    saucer.position.set(0, 0.2, 0.8);
-    g.add(saucer);
-    addBox(0.45, 0.5, 1.6, 0, -0.2, -0.4);
-    addBox(0.24, 0.24, 1.7, -0.9, 0.45, -1.0);
-    addBox(0.24, 0.24, 1.7, 0.9, 0.45, -1.0);
-  } else if (cfg.id === 'elmo') {
-    addBox(1.5, 0.5, 3.2, 0, -0.15, 0);
-    addBox(1.22, 0.45, 1.7, 0, 0.28, -0.1, trimMat);
-    [[-0.78, -0.4, 0.95], [0.78, -0.4, 0.95], [-0.78, -0.4, -0.95], [0.78, -0.4, -0.95]].forEach(([wx, wy, wz]) => {
-      const w = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 0.22, 16), trimMat);
-      w.rotation.z = Math.PI / 2;
-      w.position.set(wx, wy, wz);
-      g.add(w);
-    });
-  } else if (cfg.id === 'amica') {
-    addBox(0.9, 0.75, 1.8, 0, -0.1, 0);
-    addBox(0.75, 0.65, 0.7, 0, 0.55, 0.85);
-    addBox(0.18, 0.35, 0.16, -0.25, 1.0, 0.9);
-    addBox(0.18, 0.35, 0.16, 0.25, 1.0, 0.9);
-    addBox(0.18, 0.18, 1.2, 0, 0.4, -1.25, baseMat, 0.55, 0, 0);
-  } else if (cfg.id === 'wildschwein') {
-    addBox(1.15, 0.95, 2.0, 0, 0.0, 0);
-    addBox(0.8, 0.68, 0.95, 0, -0.05, 1.2);
-    addBox(0.12, 0.42, 0.12, -0.35, 0.12, 1.55, new THREE.MeshStandardMaterial({ color: 0xf8fafc }), 0.4, 0, -0.3);
-    addBox(0.12, 0.42, 0.12, 0.35, 0.12, 1.55, new THREE.MeshStandardMaterial({ color: 0xf8fafc }), 0.4, 0, 0.3);
-  } else if (cfg.id === 'hirsch') {
-    addBox(0.85, 0.9, 2.0, 0, 0.0, 0);
-    addBox(0.48, 0.9, 0.55, 0, 0.68, 0.85);
-    addBox(0.45, 0.4, 0.75, 0, 1.15, 1.05);
-    [-0.45, 0.45].forEach((sx) => {
-      addBox(0.12, 0.95, 0.12, sx, 1.65, 0.95, baseMat, -0.2, 0, sx * -0.5);
-      addBox(0.45, 0.1, 0.1, sx * 1.4, 1.9, 0.95);
-    });
-    addBox(0.18, 0.95, 0.18, -0.3, -0.85, 0.65);
-    addBox(0.18, 0.95, 0.18, 0.3, -0.85, 0.65);
-    addBox(0.18, 0.95, 0.18, -0.3, -0.85, -0.65);
-    addBox(0.18, 0.95, 0.18, 0.3, -0.85, -0.65);
-  } else if (cfg.id === 'trex') {
-    addBox(0.95, 1.0, 1.65, 0, 0.15, 0, baseMat, -0.35, 0, 0);
-    addBox(0.72, 0.65, 1.05, 0, 0.95, 1.0);
-    addBox(0.68, 0.25, 0.9, 0, 0.48, 1.05, baseMat, 0.28, 0, 0);
-    addBox(0.35, 0.4, 1.85, 0, 0.0, -1.45, baseMat, -0.2, 0, 0);
-    addBox(0.28, 1.0, 0.36, -0.45, -0.75, -0.1);
-    addBox(0.28, 1.0, 0.36, 0.45, -0.75, -0.1);
-  } else if (cfg.id === 'blauwal') {
-    addBox(1.1, 0.85, 3.2, 0, 0.0, 0);
-    addBox(2.2, 0.16, 0.75, 0, 0.05, -1.65);
-    addBox(1.6, 0.14, 0.55, 0, -0.15, 0.45);
+    finalPts = Array.from(subMap.values());
+    voxelSpacing = (step / Math.max(maxSpan, vScale)) * 3.5;
+  } else if (pts.length > maxInstances) {
+    // High-detail spatial hash downsampling + interior culling
+    const gridMap = new Map();
+    const cellSize = (maxSpan + vScale) / targetRes;
+    for (const p of pts) {
+      const gx = Math.round((p.x - minX) / cellSize);
+      const gy = Math.round((p.y - minY) / cellSize);
+      const gz = Math.round((p.z - minZ) / cellSize);
+      const gk = `${gx},${gy},${gz}`;
+      if (!gridMap.has(gk)) {
+        gridMap.set(gk, { gx, gy, gz, hex: p.hex, count: 1 });
+      }
+    }
+    // Keep only exposed surface cells
+    const surf = [];
+    const dirs = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]];
+    for (const entry of gridMap.values()) {
+      let enclosed = true;
+      for (const [dx, dy, dz] of dirs) {
+        if (!gridMap.has(`${entry.gx + dx},${entry.gy + dy},${entry.gz + dz}`)) {
+          enclosed = false;
+          break;
+        }
+      }
+      if (!enclosed) surf.push(entry);
+    }
+    const picked = surf.length > 0 ? surf : Array.from(gridMap.values());
+    const stride = picked.length > maxInstances ? Math.ceil(picked.length / maxInstances) : 1;
+    let bMinX = Infinity, bMaxX = -Infinity, bMinY = Infinity, bMaxY = -Infinity, bMinZ = Infinity, bMaxZ = -Infinity;
+    for (let i = 0; i < picked.length; i += stride) {
+      const e = picked[i];
+      if (e.gx < bMinX) bMinX = e.gx; if (e.gx > bMaxX) bMaxX = e.gx;
+      if (e.gy < bMinY) bMinY = e.gy; if (e.gy > bMaxY) bMaxY = e.gy;
+      if (e.gz < bMinZ) bMinZ = e.gz; if (e.gz > bMaxZ) bMaxZ = e.gz;
+      finalPts.push(e);
+    }
+    const bx = (bMinX + bMaxX) * 0.5;
+    const by = (bMinY + bMaxY) * 0.5;
+    const bz = (bMinZ + bMaxZ) * 0.5;
+    const bMaxSpan = Math.max(bMaxX - bMinX + 1, bMaxY - bMinY + 1, bMaxZ - bMinZ + 1) || 1;
+    const scaleNorm = 3.6 / bMaxSpan;
+    voxelSpacing = scaleNorm;
+    finalPts = finalPts.map((e) => ({
+      nx: (e.gx - bx) * scaleNorm,
+      ny: (e.gy - by) * scaleNorm,
+      nz: (e.gz - bz) * scaleNorm,
+      hex: e.hex
+    }));
   } else {
-    const wire = new THREE.Mesh(
-      new THREE.BoxGeometry(1.8, 1.8, 1.8),
-      new THREE.MeshBasicMaterial({ color: cfg.color, wireframe: true })
-    );
-    g.add(wire);
-    addBox(0.9, 0.9, 0.9, 0, 0, 0);
+    voxelSpacing = (vScale / Math.max(maxSpan, vScale)) * 3.45;
   }
 
-  g.userData.showcaseCfg = cfg;
-  g.traverse((obj) => {
-    obj.userData.showcaseCfg = cfg;
+  // Normalize un-normalized finalPts into ~3.6 diameter sphere
+  if (finalPts.length && finalPts[0].nx === undefined) {
+    const normScale = 3.55 / Math.max(maxSpan + vScale * 0.4, 0.5);
+    voxelSpacing = (supersampleIfSmall && pts.length <= 280 ? vScale * 0.5 : vScale) * normScale;
+    finalPts = finalPts.map((p) => ({
+      nx: (p.x - cx) * normScale,
+      ny: (p.y - cy) * normScale,
+      nz: (p.z - cz) * normScale,
+      hex: p.hex
+    }));
+  }
+
+  const cubeSide = Math.max(0.08, Math.min(0.68, voxelSpacing * 0.91));
+  const geom = _makeShowcaseBevelGeo(cubeSide);
+  const mat = _makeShowcaseCrystalMat({
+    color: 0xffffff,
+    emissive: baseClr.clone().multiplyScalar(0.18),
+    emissiveIntensity: 0.42
   });
-  return g;
+
+  const inst = _trackShowcaseDisp(new THREE.InstancedMesh(geom, mat, finalPts.length));
+  const dummy = new THREE.Object3D();
+  const cTmp = new THREE.Color();
+
+  for (let i = 0; i < finalPts.length; i++) {
+    const pt = finalPts[i];
+    dummy.position.set(pt.nx, pt.ny, pt.nz);
+    dummy.rotation.set(0, 0, 0);
+    dummy.updateMatrix();
+    inst.setMatrixAt(i, dummy.matrix);
+
+    if (pt.hex != null) {
+      cTmp.setHex(pt.hex);
+    } else {
+      const shade = 0.78 + Math.max(-0.22, Math.min(0.28, pt.ny * 0.14));
+      cTmp.copy(baseClr).multiplyScalar(shade);
+    }
+    inst.setColorAt(i, cTmp);
+  }
+  inst.instanceMatrix.needsUpdate = true;
+  if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+
+  inst.userData.showcaseCfg = cfg;
+  group.add(inst);
+  return { group, mat };
+}
+
+function _buildShowcaseIcoCrystal(cfg) {
+  const group = new THREE.Group();
+  const prevPairs = typeof currentWormholePairs !== 'undefined' ? currentWormholePairs : [];
+  const prevColors = typeof currentVoxelPartColors !== 'undefined' ? new Map(currentVoxelPartColors) : new Map();
+
+  let built = false;
+  try {
+    if (typeof generateIcosahedronCells === 'function') {
+      const cells = generateIcosahedronCells(3); // level 3 -> detail 1 -> 80 triangles/shell -> 240 crystal frustums!
+      const mergedGeos = [];
+      // Use outermost shell (shell === maxShell) for crisp high-poly crystal wedges + inner shell
+      let maxShell = 0;
+      for (const c of cells) if (c.shell > maxShell) maxShell = c.shell;
+      const outerCells = cells.filter((c) => c.shell === maxShell);
+      let maxR = 0;
+      for (const c of outerCells) if (c.baseRadius > maxR) maxR = c.baseRadius;
+      const normFactor = 1.62 / (maxR || 1);
+
+      let totalVerts = 0;
+      for (const c of outerCells) {
+        totalVerts += c.geometry.attributes.position.count;
+      }
+      const mergedPos = new Float32Array(totalVerts * 3);
+      const mergedNorm = new Float32Array(totalVerts * 3);
+      let offset = 0;
+      for (const c of outerCells) {
+        const pos = c.geometry.attributes.position.array;
+        const nrm = c.geometry.attributes.normal.array;
+        for (let k = 0; k < pos.length; k++) {
+          mergedPos[offset + k] = pos[k] * normFactor;
+          mergedNorm[offset + k] = nrm[k];
+        }
+        offset += pos.length;
+      }
+      // Dispose all temp cell geometries
+      for (const c of cells) c.geometry.dispose();
+
+      const crystalGeo = _trackShowcaseDisp(new THREE.BufferGeometry());
+      crystalGeo.setAttribute('position', new THREE.BufferAttribute(mergedPos, 3));
+      crystalGeo.setAttribute('normal', new THREE.BufferAttribute(mergedNorm, 3));
+
+      const crystalMat = _makeShowcaseCrystalMat({
+        color: cfg.color,
+        emissive: 0x312e81,
+        emissiveIntensity: 0.35,
+        transparent: true,
+        opacity: 0.94
+      });
+      const outerMesh = new THREE.Mesh(crystalGeo, crystalMat);
+      outerMesh.userData.showcaseCfg = cfg;
+      group.add(outerMesh);
+
+      const coreGeo = _trackShowcaseDisp(new THREE.IcosahedronGeometry(1.18, 2));
+      const coreMat = _makeShowcaseCrystalMat({
+        color: 0x38bdf8,
+        emissive: 0x0ea5e9,
+        emissiveIntensity: 0.48
+      });
+      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+      coreMesh.userData.showcaseCfg = cfg;
+      group.add(coreMesh);
+
+      const wireGeo = _trackShowcaseDisp(new THREE.IcosahedronGeometry(1.74, 2));
+      const wireMat = _trackShowcaseDisp(new THREE.MeshBasicMaterial({
+        color: 0xa5b4fc,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.45
+      }));
+      const wireMesh = new THREE.Mesh(wireGeo, wireMat);
+      wireMesh.userData.showcaseCfg = cfg;
+      group.add(wireMesh);
+      group._hoverMat = crystalMat;
+      built = true;
+    }
+  } catch (e) {
+    built = false;
+  } finally {
+    if (typeof currentWormholePairs !== 'undefined') currentWormholePairs = prevPairs;
+    if (typeof currentVoxelPartColors !== 'undefined') currentVoxelPartColors = prevColors;
+  }
+
+  if (built) return group;
+  const fallbackGeo = _trackShowcaseDisp(new THREE.IcosahedronGeometry(1.6, 2));
+  const fallbackMat = _makeShowcaseCrystalMat({ color: cfg.color, emissive: cfg.color, emissiveIntensity: 0.25 });
+  const m = new THREE.Mesh(fallbackGeo, fallbackMat);
+  m.userData.showcaseCfg = cfg;
+  group.add(m);
+  group._hoverMat = fallbackMat;
+  return group;
+}
+
+function _buildShowcaseMiniMesh(cfg) {
+  if (cfg.id === 'ico') {
+    return _buildShowcaseIcoCrystal(cfg);
+  }
+
+  // Snapshot global state safely while invoking real geometry generators
+  const prevPairs = typeof currentWormholePairs !== 'undefined' ? currentWormholePairs : [];
+  const prevColors = typeof currentVoxelPartColors !== 'undefined' ? new Map(currentVoxelPartColors) : new Map();
+  const prevScale = typeof currentBoardVoxelScale !== 'undefined' ? currentBoardVoxelScale : 1.0;
+
+  try {
+    let rawCoords = null;
+    let targetRes = 21;
+    let maxInstances = 1150;
+    let supersample = false;
+
+    if (cfg.id === 'elmo' && typeof generateElmoModelYCoords === 'function') {
+      rawCoords = generateElmoModelYCoords();
+      targetRes = 23;
+      maxInstances = 1350;
+    } else if (cfg.id === 'trex' && typeof generateTRexCoords === 'function') {
+      rawCoords = generateTRexCoords();
+      targetRes = 22;
+      maxInstances = 1200;
+    } else if (cfg.id === 'hirsch' && typeof generateHirschCoords === 'function') {
+      rawCoords = generateHirschCoords();
+      targetRes = 23;
+      maxInstances = 1250;
+    } else if (cfg.id === 'blauwal' && typeof generateBlauwalCoords === 'function') {
+      rawCoords = generateBlauwalCoords();
+      targetRes = 23;
+      maxInstances = 1250;
+    } else if (cfg.id === 'wildschwein' && typeof generateWildschweinCoords === 'function') {
+      rawCoords = generateWildschweinCoords();
+      targetRes = 21;
+      maxInstances = 1150;
+    } else if (cfg.id === 'amica' && typeof generateAmicaCatCoords === 'function') {
+      rawCoords = generateAmicaCatCoords();
+      targetRes = 21;
+      maxInstances = 1150;
+    } else if (cfg.id === 'penrose' && typeof generatePenroseImpossibleCoords === 'function') {
+      rawCoords = generatePenroseImpossibleCoords();
+      supersample = true;
+    } else if (cfg.id === 'moebius' && typeof generateMoebiusInfiniteCoords === 'function') {
+      rawCoords = generateMoebiusInfiniteCoords();
+      supersample = true;
+    } else if (cfg.id === 'enterprise' && typeof generateEnterpriseCoords === 'function') {
+      rawCoords = generateEnterpriseCoords();
+      supersample = true;
+    } else if (cfg.id === 'custom' && typeof getCustomGeoCoords === 'function') {
+      rawCoords = getCustomGeoCoords();
+      supersample = true;
+    } else if (cfg.id === 'cube_4' || cfg.id === 'cube_6') {
+      const dim = cfg.id === 'cube_4' ? 4 : 6;
+      const half = (dim - 1) * 0.5;
+      rawCoords = [];
+      for (let x = 0; x < dim; x++) {
+        for (let y = 0; y < dim; y++) {
+          for (let z = 0; z < dim; z++) {
+            rawCoords.push([x - half, y - half, z - half]);
+            const palette = dim === 4
+              ? ((x + y + z) % 2 === 0 ? 0x00e5ff : 0x38bdf8)
+              : ((x === 0 || x === dim - 1 || y === 0 || y === dim - 1 || z === 0 || z === dim - 1) ? 0x0ea5e9 : 0x67e8f9);
+            currentVoxelPartColors.set(`${x - half},${y - half},${z - half}`, palette);
+          }
+        }
+      }
+      currentBoardVoxelScale = 1.0;
+    }
+
+    if (rawCoords && rawCoords.length > 0) {
+      const res = _buildShowcaseInstancedVoxelGroup(
+        rawCoords,
+        currentVoxelPartColors,
+        currentBoardVoxelScale || 1.0,
+        cfg,
+        targetRes,
+        maxInstances,
+        supersample
+      );
+      if (res) {
+        const g = res.group;
+        g._hoverMat = res.mat;
+
+        // Add subtle signature halo accents for custom & classic cubes
+        if (cfg.id === 'cube_4' || cfg.id === 'cube_6') {
+          const cageGeo = _trackShowcaseDisp(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.4, 3.4, 3.4)));
+          const cageMat = _trackShowcaseDisp(new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.35 }));
+          g.add(new THREE.LineSegments(cageGeo, cageMat));
+        } else if (cfg.id === 'custom') {
+          const haloGeo = _trackShowcaseDisp(new THREE.TorusGeometry(2.1, 0.055, 12, 64));
+          const haloMat = _trackShowcaseDisp(new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.72 }));
+          const halo = new THREE.Mesh(haloGeo, haloMat);
+          halo.rotation.x = Math.PI * 0.38;
+          halo.userData.showcaseCfg = cfg;
+          g.add(halo);
+        }
+
+        g.userData.showcaseCfg = cfg;
+        return g;
+      }
+    }
+  } finally {
+    if (typeof currentWormholePairs !== 'undefined') currentWormholePairs = prevPairs;
+    if (typeof currentVoxelPartColors !== 'undefined') currentVoxelPartColors = prevColors;
+    if (typeof currentBoardVoxelScale !== 'undefined') currentBoardVoxelScale = prevScale;
+  }
+
+  // Fallback high-detail crystal cluster
+  const fg = new THREE.Group();
+  const fGeo = _makeShowcaseBevelGeo(1.65);
+  const fMat = _makeShowcaseCrystalMat({ color: cfg.color });
+  const fm = new THREE.Mesh(fGeo, fMat);
+  fm.userData.showcaseCfg = cfg;
+  fg.add(fm);
+  fg._hoverMat = fMat;
+  fg.userData.showcaseCfg = cfg;
+  return fg;
 }
 
 function _clearCurrentBoardForShowcase() {
@@ -8449,9 +8734,19 @@ function _clearCurrentBoardForShowcase() {
 
 function _removeShowcaseSceneOnly() {
   showcaseActive = false;
+  showcaseCanvasHoverId = null;
+  showcaseUiHoverId = null;
+  if (typeof canvasEl !== 'undefined' && canvasEl) canvasEl.style.cursor = '';
+
   if (showcaseGroup) {
     scene.remove(showcaseGroup);
     showcaseGroup = null;
+  }
+  while (_showcaseDisposables.length > 0) {
+    const item = _showcaseDisposables.pop();
+    try {
+      if (item && typeof item.dispose === 'function') item.dispose();
+    } catch (e) {}
   }
   const badgesEl = document.getElementById('showcase-3d-badges');
   if (badgesEl) badgesEl.innerHTML = '';
@@ -8465,16 +8760,18 @@ function openShapeShowcase(instantFar = false) {
   _clearCurrentBoardForShowcase();
   showcaseActive = true;
   showcaseClock = 0;
+  showcaseLastTick = 0;
+  showcaseSpeedMult = 1.0;
 
   showcaseGroup = new THREE.Group();
   const badgesEl = document.getElementById('showcase-3d-badges');
-  const ringRadius = _iW() < 640 ? 10.5 : 13.5;
+  const ringRadius = _iW() < 640 ? 11.4 : 14.8;
 
   SHOWCASE_SHAPES.forEach((cfg, idx) => {
     const mini = _buildShowcaseMiniMesh(cfg);
     const angle = (idx / SHOWCASE_SHAPES.length) * Math.PI * 2;
-    const yOff = ((idx % 3) - 1) * 2.2;
-    mini.position.set(Math.cos(angle) * ringRadius, yOff + 2.0, Math.sin(angle) * ringRadius);
+    const yOff = ((idx % 3) - 1) * 2.25;
+    mini.position.set(Math.cos(angle) * ringRadius, yOff + 2.1, Math.sin(angle) * ringRadius);
     showcaseGroup.add(mini);
 
     let labelEl = null;
@@ -8482,31 +8779,44 @@ function openShapeShowcase(instantFar = false) {
       labelEl = document.createElement('button');
       labelEl.type = 'button';
       labelEl.className = 'sc-3d-badge';
+      labelEl.dataset.shapeId = cfg.id;
       labelEl.innerHTML = `<span>${cfg.icon}</span><span>${cfg.name}</span>`;
+      labelEl.onmouseenter = () => setShowcaseUiHover(cfg.id);
+      labelEl.onmouseleave = () => setShowcaseUiHover(null);
       labelEl.onclick = (ev) => {
         ev.stopPropagation();
         selectShowcaseShape(cfg.id);
       };
       badgesEl.appendChild(labelEl);
     }
-    showcaseNodes.push({ cfg, group: mini, baseAngle: angle, yOff, ringRadius, labelEl });
+    showcaseNodes.push({
+      cfg,
+      group: mini,
+      mat: mini._hoverMat || null,
+      baseEmissive: mini._hoverMat ? mini._hoverMat.emissiveIntensity : 0.25,
+      baseAngle: angle,
+      yOff,
+      ringRadius,
+      labelEl,
+      hoverScale: 1.0
+    });
   });
 
-  // Subtle central glowing ring beneath constellation
-  const ring = new THREE.Mesh(
-    new THREE.RingGeometry(ringRadius - 0.3, ringRadius + 0.3, 64),
-    new THREE.MeshBasicMaterial({ color: 0x00e5ff, side: THREE.DoubleSide, transparent: true, opacity: 0.22 })
-  );
+  // Subtle orbital ring underneath constellation
+  const ringGeo = _trackShowcaseDisp(new THREE.RingGeometry(ringRadius - 0.15, ringRadius + 0.15, 96));
+  const ringMat = _trackShowcaseDisp(new THREE.MeshBasicMaterial({
+    color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.22
+  }));
+  const ring = new THREE.Mesh(ringGeo, ringMat);
   ring.rotation.x = Math.PI / 2;
-  ring.position.y = -2.2;
+  ring.position.y = -0.6;
   showcaseGroup.add(ring);
 
   scene.add(showcaseGroup);
-  ORBIT_CENTER.set(0, 0, 0);
 
-  const aspect = Math.max(0.45, _iW() / _iH());
-  const targetR = aspect < 0.85 ? 42 : 32;
-  const startR = instantFar ? targetR : (aspect < 0.85 ? 96 : 82);
+  const startR = instantFar ? 38 : 66;
+  const targetR = _iW() < 640 ? 31 : 27;
+  if (typeof ORBIT_CENTER !== 'undefined') ORBIT_CENTER.set(0, 1.0, 0);
   startCameraZoomIntro(startR, targetR, instantFar ? 400 : 1900, 1.10, 0.35);
 
   _renderShowcaseCards();
@@ -8517,7 +8827,7 @@ function openShapeShowcase(instantFar = false) {
 function setShowcaseFilter(cat) {
   showcaseFilter = cat;
   document.querySelectorAll('.sc-filter-btn').forEach((b) => {
-    b.classList.toggle('active', b.getAttribute('data-cat') === cat);
+    b.classList.toggle('active', b.dataset.cat === cat);
   });
   _renderShowcaseCards();
 }
@@ -8529,7 +8839,10 @@ function _renderShowcaseCards() {
     ? SHOWCASE_SHAPES
     : SHOWCASE_SHAPES.filter((s) => s.cat === showcaseFilter);
   wrap.innerHTML = list.map((s) => `
-    <button type="button" class="sc-card" onclick="selectShowcaseShape('${s.id}')">
+    <button type="button" class="sc-card" data-shape-id="${s.id}"
+      onmouseenter="setShowcaseUiHover('${s.id}')"
+      onmouseleave="setShowcaseUiHover(null)"
+      onclick="selectShowcaseShape('${s.id}')">
       <div class="sc-card-icon">${s.icon}</div>
       <div class="sc-card-meta">
         <div class="sc-card-name">${s.name}</div>
@@ -8538,6 +8851,51 @@ function _renderShowcaseCards() {
       <span class="sc-card-go">▶</span>
     </button>
   `).join('');
+}
+
+function setShowcaseUiHover(id) {
+  showcaseUiHoverId = id || null;
+  _syncShowcaseHoverClasses();
+}
+
+function clearShowcaseCanvasHover() {
+  if (showcaseCanvasHoverId !== null) {
+    showcaseCanvasHoverId = null;
+    if (typeof canvasEl !== 'undefined' && canvasEl) canvasEl.style.cursor = '';
+    _syncShowcaseHoverClasses();
+  }
+}
+
+function updateShowcaseCanvasHover(clientX, clientY) {
+  if (!showcaseActive || !showcaseGroup) return;
+  const rect = canvasEl.getBoundingClientRect();
+  pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  raycaster.setFromCamera(pointerNDC, camera);
+  const hits = raycaster.intersectObjects(showcaseGroup.children, true);
+  let foundId = null;
+  for (let i = 0; i < hits.length; i++) {
+    const obj = hits[i].object;
+    if (obj && obj.userData && obj.userData.showcaseCfg) {
+      foundId = obj.userData.showcaseCfg.id;
+      break;
+    }
+  }
+  if (foundId !== showcaseCanvasHoverId) {
+    showcaseCanvasHoverId = foundId;
+    canvasEl.style.cursor = foundId ? 'pointer' : '';
+    _syncShowcaseHoverClasses();
+  }
+}
+
+function _syncShowcaseHoverClasses() {
+  const activeId = showcaseCanvasHoverId || showcaseUiHoverId;
+  document.querySelectorAll('.sc-3d-badge').forEach((el) => {
+    el.classList.toggle('is-hovered', !!activeId && el.dataset.shapeId === activeId);
+  });
+  document.querySelectorAll('.sc-card').forEach((el) => {
+    el.classList.toggle('is-hovered', !!activeId && el.dataset.shapeId === activeId);
+  });
 }
 
 function selectShowcaseShape(id) {
@@ -8571,29 +8929,54 @@ function selectShowcaseShape(id) {
 
 function stepShowcaseConstellation() {
   if (!showcaseActive || !showcaseGroup) return;
-  showcaseClock += 0.0045;
+
+  const now = performance.now();
+  const dtFactor = showcaseLastTick > 0
+    ? Math.max(0.2, Math.min(2.5, (now - showcaseLastTick) / 16.667))
+    : 1.0;
+  showcaseLastTick = now;
+
+  // Hovering any 3D shape mesh, badge, or card dramatically slows orbit + spin to a calm inspection drift!
+  const hoveredId = showcaseCanvasHoverId || showcaseUiHoverId;
+  const targetMult = hoveredId ? 0.075 : 1.0;
+  showcaseSpeedMult += (targetMult - showcaseSpeedMult) * Math.min(1, 0.14 * dtFactor);
+
+  // Calm default speed (normalized for 60Hz+ displays)
+  const orbitStep = 0.00125 * dtFactor * showcaseSpeedMult;
+  const selfSpinStep = 0.0038 * dtFactor * showcaseSpeedMult;
+  showcaseClock += orbitStep;
+
   const w = _iW();
   const h = _iH();
   const proj = new THREE.Vector3();
 
   showcaseNodes.forEach((node, i) => {
+    const isThisHovered = hoveredId === node.cfg.id;
+    const targetScale = isThisHovered ? 1.18 : 1.0;
+    node.hoverScale += (targetScale - node.hoverScale) * Math.min(1, 0.16 * dtFactor);
+    node.group.scale.setScalar(node.hoverScale);
+
+    if (node.mat) {
+      const targetEmissive = isThisHovered ? Math.max(0.45, node.baseEmissive * 2.1) : node.baseEmissive;
+      node.mat.emissiveIntensity += (targetEmissive - node.mat.emissiveIntensity) * 0.16;
+    }
+
     const a = node.baseAngle + showcaseClock;
     node.group.position.x = Math.cos(a) * node.ringRadius;
     node.group.position.z = Math.sin(a) * node.ringRadius;
-    node.group.position.y = node.yOff + 2.0 + Math.sin(showcaseClock * 3 + i) * 0.45;
-    node.group.rotation.y += 0.012;
+    node.group.position.y = node.yOff + 2.1 + Math.sin(showcaseClock * 2.1 + i * 0.9) * 0.25;
+    node.group.rotation.y += selfSpinStep * (isThisHovered ? 0.75 : 1.0);
 
     if (node.labelEl) {
       proj.copy(node.group.position);
-      proj.y += 1.65;
+      proj.y += 2.15;
       proj.project(camera);
       if (proj.z > 1 || proj.z < -1) {
         node.labelEl.style.display = 'none';
       } else {
         const sx = (proj.x * 0.5 + 0.5) * w;
         const sy = (-proj.y * 0.5 + 0.5) * h;
-        // Keep top badges away from bottom selector panel & out-of-bounds
-        const visible = sx > 45 && sx < w - 45 && sy > 58 && sy < h * 0.62;
+        const visible = sx > 45 && sx < w - 45 && sy > 58 && sy < h * 0.63;
         node.labelEl.style.display = visible ? 'inline-flex' : 'none';
         if (visible) {
           node.labelEl.style.transform = `translate3d(${sx.toFixed(1)}px, ${sy.toFixed(1)}px, 0) translate(-50%, -100%)`;
@@ -8605,7 +8988,7 @@ function stepShowcaseConstellation() {
 
 function tryShowcaseCanvasClick(clientX, clientY) {
   if (!showcaseActive || !showcaseGroup) return false;
-  const rect = renderer.domElement.getBoundingClientRect();
+  const rect = canvasEl.getBoundingClientRect();
   pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
   pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(pointerNDC, camera);
@@ -8617,8 +9000,6 @@ function tryShowcaseCanvasClick(clientX, clientY) {
   return false;
 }
 
-</script>
-  <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/modals.js — Modals (Instructions, Design Editor, Highscore,
 // Savegame, Voxel Builder, News & Subtle Agent > Chatbot Insights)

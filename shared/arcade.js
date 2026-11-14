@@ -1,12 +1,25 @@
 // Shared Zero-Dependency Web Audio SFX & Local Highscore Manager
 (function () {
-  const STORE_KEY = 'v2g_arcade_scores_v1';
+  const STORE_KEY = 'arcade_scores_v1';
+  const LEGACY_STORE_KEY = ['v2g', 'arcade', 'scores', 'v1'].join('_');
+  const MUTE_KEY = 'arcade_muted';
+  const LEGACY_MUTE_KEY = ['v2g', 'arcade', 'muted'].join('_');
   let ctx = null;
   let muted = false;
   let noiseBuf = null;
 
   try {
-    muted = localStorage.getItem('v2g_arcade_muted') === '1';
+    const legacyMute = localStorage.getItem(LEGACY_MUTE_KEY);
+    if (legacyMute !== null && localStorage.getItem(MUTE_KEY) === null) {
+      localStorage.setItem(MUTE_KEY, legacyMute);
+    }
+    if (legacyMute !== null) localStorage.removeItem(LEGACY_MUTE_KEY);
+    const legacyScores = localStorage.getItem(LEGACY_STORE_KEY);
+    if (legacyScores && !localStorage.getItem(STORE_KEY)) {
+      localStorage.setItem(STORE_KEY, legacyScores);
+    }
+    if (legacyScores !== null) localStorage.removeItem(LEGACY_STORE_KEY);
+    muted = localStorage.getItem(MUTE_KEY) === '1';
   } catch (e) {}
 
   function ensureCtx() {
@@ -82,7 +95,7 @@
     isMuted: () => muted,
     toggleMute: (btnEl) => {
       muted = !muted;
-      try { localStorage.setItem('v2g_arcade_muted', muted ? '1' : '0'); } catch (e) {}
+      try { localStorage.setItem(MUTE_KEY, muted ? '1' : '0'); } catch (e) {}
       if (btnEl) {
         btnEl.textContent = muted ? '🔇' : '🔊';
         btnEl.classList.toggle('muted', muted);

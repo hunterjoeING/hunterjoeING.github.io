@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Verstand2Go Arcade · Spiele- &amp; Quiz-Dashboard</title>
+  <title>HunterJoe Arcade · Spiele- &amp; Quiz-Dashboard</title>
   <link rel="stylesheet" href="./shared/arcade.css" />
   <style>
     :root {
@@ -526,7 +526,7 @@
           </svg>
         </div>
         <div>
-          <h1 class="brand-title">Verstand2Go Arcade</h1>
+          <h1 class="brand-title">HunterJoe Arcade</h1>
           <div class="brand-sub">Spiele- &amp; Quiz-Dashboard · Desktop &amp; Mobil</div>
         </div>
       </div>
@@ -540,19 +540,19 @@
     <section class="hub-hero">
       <div class="hero-copy">
         <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Minesweeper 3D mit Fern-Zoom, Hyper-Roadster, Zombie Horde, Tower Defense, Solitaire, 2048) und unseren <strong>Quiz-Welten</strong> (E-Mobilität &amp; Tesla TFF-Nerdwissen, Politik &amp; Ökonomie nach Roland Baader, Allgemeinwissen).</p>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Weltereignisse, Politik &amp; Ökonomie sowie Allgemeinwissen).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">9</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-games">10</b><span>Module</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all">✨ Alles (9)</button>
+      <button class="domain-tab active" data-domain="all">✨ Alles (10)</button>
       <button class="domain-tab" data-domain="games">🎮 Games (6)</button>
-      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (3)</button>
+      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (4)</button>
     </div>
 
     <section class="section-block" id="sec-games">
@@ -570,13 +570,13 @@
 
     <section class="section-block" id="sec-quizzes">
       <div class="section-head">
-        <h2>🧠 Quiz-Welten <span class="section-count quiz">3 Quiz-Arenen</span></h2>
+        <h2>🧠 Quiz-Welten <span class="section-count quiz">4 Quiz-Arenen</span></h2>
       </div>
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
 
     <footer class="hub-footer">
-      Verstand2Go Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Highscores werden lokal im Browser gespeichert
+      HunterJoe Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Highscores werden lokal im Browser gespeichert
     </footer>
   </div>
 
@@ -590,11 +590,10 @@
           href: './games/minesweeper/index.html',
           cat: 'logic',
           catLabel: '3D & Logik',
-          badge: '✨ Fern-Zoom & 13 Formen',
-          featured: true,
+          badge: '3D-Logik · 13 Formen',
           cta: 'Spielen →',
           title: 'Minesweeper 3D',
-          desc: 'Entdecke beim Start zuerst alle 13 3D-Skulpturen (Würfel, Kugel, T-Rex, Rakete, Elmo…) aus der Distanz, wähle deine Form und zoome direkt ans Spielfeld.',
+          desc: 'Räumliches Logik-Puzzle in echtem 3D über 13 wählbare Geometrien und Skulpturen — wahlweise klassisch oder mit Solver-Assistenz.',
           accent: '#38bdf8',
           glow: 'rgba(56, 189, 248, 0.28)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -734,6 +733,23 @@
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
             <path d="M20 7v24M11 31h18M9 13h22" stroke="#fde68a" stroke-width="2" stroke-linecap="round"/>
             <path d="M9 13l-4 8h8l-4-8zM31 13l-4 8h8l-4-8z" fill="rgba(251,191,36,0.35)" stroke="#fbbf24" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>`
+        },
+        {
+          id: 'quiz_hist',
+          href: './games/quiz-history/index.html',
+          catLabel: 'Geschichte',
+          badge: '48 Fragen · 3 Stufen · Epochen',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Geschichte & Weltereignisse',
+          desc: '48 historische Meilensteine von Antike & Mittelalter über Neuzeit & Industrialisierung bis zum 20. Jahrhundert (u. a. 1848, Währungsreform 1948, Zwei-plus-Vier & Mauerfall).',
+          accent: '#f59e0b',
+          glow: 'rgba(245, 158, 11, 0.28)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <polygon points="20,5 6,13 34,13" fill="rgba(251,191,36,0.3)" stroke="#fbbf24" stroke-width="1.8" stroke-linejoin="round"/>
+            <rect x="8" y="29" width="24" height="4" rx="1.5" fill="#d97706"/>
+            <path d="M12 13v16M20 13v16M28 13v16" stroke="#fde68a" stroke-width="2.6" stroke-linecap="round"/>
           </svg>`
         },
         {
@@ -973,12 +989,12 @@
 
         const totems = [];
         const totemDefs = [
-          { geo: new THREE.BoxGeometry(2.1, 2.1, 2.1), color: 0x38bdf8, r: 9.5, a: 0, y: 1.2 },
-          { geo: new THREE.OctahedronGeometry(1.5, 0), color: 0xfbbf24, r: 9.5, a: 1.05, y: -1.1 },
-          { geo: new THREE.ConeGeometry(1.2, 2.6, 5), color: 0xf43f5e, r: 9.5, a: 2.1, y: 1.6 },
-          { geo: new THREE.DodecahedronGeometry(1.35, 0), color: 0x4ade80, r: 9.5, a: 3.15, y: -0.9 },
-          { geo: new THREE.CylinderGeometry(1.0, 1.35, 2.2, 6), color: 0xa78bfa, r: 9.5, a: 4.2, y: 1.0 },
-          { geo: new THREE.IcosahedronGeometry(1.3, 0), color: 0xf472b6, r: 9.5, a: 5.25, y: -1.4 }
+          { geo: new THREE.TorusKnotGeometry(1.05, 0.34, 96, 16), color: 0x38bdf8, r: 9.8, a: 0, y: 1.2 },
+          { geo: new THREE.IcosahedronGeometry(1.45, 2), color: 0xfbbf24, r: 9.8, a: 1.05, y: -1.1 },
+          { geo: new THREE.TorusKnotGeometry(0.95, 0.3, 84, 14, 3, 2), color: 0xf43f5e, r: 9.8, a: 2.1, y: 1.5 },
+          { geo: new THREE.DodecahedronGeometry(1.4, 1), color: 0x4ade80, r: 9.8, a: 3.15, y: -0.9 },
+          { geo: new THREE.OctahedronGeometry(1.45, 2), color: 0xa78bfa, r: 9.8, a: 4.2, y: 1.0 },
+          { geo: new THREE.IcosahedronGeometry(1.35, 1), color: 0xf472b6, r: 9.8, a: 5.25, y: -1.3 }
         ];
         totemDefs.forEach((d, idx) => {
           const mat = new THREE.MeshStandardMaterial({
@@ -1018,14 +1034,14 @@
           camera.lookAt(0, 0, 0);
 
           const sec = now * 0.001;
-          centerGroup.rotation.y = sec * 0.14;
-          ring1.rotation.z = sec * 0.22;
-          ring2.rotation.z = -sec * 0.16;
-          stars.rotation.y = sec * 0.015;
+          centerGroup.rotation.y = sec * 0.065;
+          ring1.rotation.z = sec * 0.11;
+          ring2.rotation.z = -sec * 0.08;
+          stars.rotation.y = sec * 0.01;
           totems.forEach(m => {
-            m.rotation.x = sec * m.userData.speed;
-            m.rotation.y = sec * (m.userData.speed * 0.8);
-            m.position.y = m.userData.baseY + Math.sin(sec * 1.4 + m.userData.phase) * 0.55;
+            m.rotation.x = sec * (m.userData.speed * 0.45);
+            m.rotation.y = sec * (m.userData.speed * 0.38);
+            m.position.y = m.userData.baseY + Math.sin(sec * 0.9 + m.userData.phase) * 0.38;
           });
 
           renderer.render(scene, camera);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Klondike Solitaire · Verstand2Go Arcade</title>
+  <title>Klondike Solitaire · HunterJoe Arcade</title>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     :root {
@@ -15,7 +15,10 @@
     }
 
     body {
-      background: radial-gradient(ellipse at 50% 10%, var(--felt-top) 0%, #051c20 48%, var(--felt-bot) 100%);
+      background:
+        repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 4px),
+        repeating-linear-gradient(-60deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 4px),
+        radial-gradient(ellipse at 50% 8%, #0f4c46 0%, #07272c 48%, #030d18 100%);
       min-height: 100vh;
       overflow-x: hidden;
       user-select: none;
@@ -186,8 +189,10 @@
     }
 
     .card.face-up {
-      background: linear-gradient(165deg, #ffffff 0%, #f1f5f9 75%, #e2e8f0 100%);
+      background:
+        radial-gradient(circle at 50% 30%, #ffffff 0%, #f8fafc 68%, #e2e8f0 100%);
       border: 1px solid #cbd5e1;
+      box-shadow: 0 3px 10px rgba(2, 6, 23, 0.44), inset 0 1px 0 rgba(255, 255, 255, 0.9);
       cursor: grab;
     }
     .card.face-up:active {
@@ -196,21 +201,25 @@
 
     .card.face-down {
       background:
-        repeating-linear-gradient(45deg, rgba(56, 189, 248, 0.14) 0 4px, transparent 4px 8px),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.16), transparent 62%),
+        repeating-linear-gradient(45deg, rgba(56, 189, 248, 0.16) 0 3px, transparent 3px 7px),
+        repeating-linear-gradient(-45deg, rgba(251, 191, 36, 0.10) 0 3px, transparent 3px 7px),
         linear-gradient(145deg, #172554 0%, #0f172a 55%, #1e1b4b 100%);
-      border: 1px solid rgba(96, 165, 250, 0.45);
+      border: 1px solid rgba(147, 197, 253, 0.55);
+      box-shadow: 0 3px 8px rgba(2, 6, 23, 0.5), inset 0 0 0 2px rgba(255, 255, 255, 0.12);
       cursor: default;
     }
     .card.face-down::after {
-      content: '✦';
+      content: '❖';
       position: absolute;
       inset: 4px;
       border-radius: clamp(4px, 0.9vw, 7px);
-      border: 1px solid rgba(56, 189, 248, 0.28);
+      border: 1px solid rgba(251, 191, 36, 0.36);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: rgba(125, 211, 252, 0.35);
+      color: rgba(251, 191, 36, 0.55);
+      text-shadow: 0 0 8px rgba(56, 189, 248, 0.55);
       font-size: clamp(14px, 3vw, 24px);
     }
 
@@ -243,22 +252,41 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding-top: clamp(12px, 3vw, 22px);
+      padding: clamp(16px, 3.6vw, 26px) 5px 5px;
       font-size: clamp(22px, 5.8vw, 44px);
-      opacity: 0.9;
+      opacity: 0.94;
       pointer-events: none;
     }
-    .card-face-badge {
-      font-size: clamp(18px, 4.8vw, 34px);
-      font-weight: 900;
+    .card-court-frame {
+      width: 78%;
+      height: 76%;
+      border-radius: 6px;
+      border: 1.5px solid rgba(217, 119, 6, 0.48);
+      background: linear-gradient(160deg, rgba(254, 243, 199, 0.45), rgba(241, 245, 249, 0.85));
       display: flex;
       flex-direction: column;
       align-items: center;
-      line-height: 1;
+      justify-content: center;
+      box-shadow: inset 0 0 10px rgba(217, 119, 6, 0.16);
+      position: relative;
+      overflow: hidden;
     }
-    .card-face-badge small {
-      font-size: clamp(11px, 2.8vw, 18px);
-      opacity: 0.72;
+    .card-court-frame svg {
+      width: 72%;
+      height: 72%;
+      filter: drop-shadow(0 1px 2px rgba(15, 23, 42, 0.22));
+    }
+    .card-ace-medallion {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: clamp(28px, 6.8vw, 54px);
+      height: clamp(28px, 6.8vw, 54px);
+      border-radius: 50%;
+      border: 1.5px solid rgba(217, 119, 6, 0.45);
+      background: radial-gradient(circle at 35% 30%, rgba(254, 243, 199, 0.65), rgba(226, 232, 240, 0.25));
+      font-size: clamp(20px, 5.2vw, 38px);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.14);
     }
 
     .card.hint-glow {
@@ -824,6 +852,37 @@
         return true;
       }
 
+      function renderCourtSvg(rank, suit) {
+        const ink = suit.color === 'red' ? '#dc2626' : '#0f172a';
+        const gold = '#d97706';
+        if (rank === 1) {
+          return `<div class="card-ace-medallion" style="color:${ink}">${suit.sym}</div>`;
+        }
+        if (rank === 11) {
+          return `<div class="card-court-frame"><svg viewBox="0 0 64 64" fill="none">
+            <path d="M18 46L46 18M46 46L18 18" stroke="${gold}" stroke-width="3.2" stroke-linecap="round"/>
+            <path d="M22 24C22 15 42 15 42 24V38L32 45L22 38V24Z" fill="${ink}" fill-opacity="0.16" stroke="${ink}" stroke-width="2.6"/>
+            <path d="M27 27H37M32 23V37" stroke="${gold}" stroke-width="2.6" stroke-linecap="round"/>
+            <circle cx="32" cy="52" r="4" fill="${ink}"/>
+          </svg></div>`;
+        }
+        if (rank === 12) {
+          return `<div class="card-court-frame"><svg viewBox="0 0 64 64" fill="none">
+            <path d="M14 42L18 22L27 31L32 16L37 31L46 22L50 42H14Z" fill="${gold}" fill-opacity="0.28" stroke="${gold}" stroke-width="2.6" stroke-linejoin="round"/>
+            <circle cx="32" cy="14" r="3" fill="${ink}"/>
+            <circle cx="18" cy="20" r="2.5" fill="${ink}"/>
+            <circle cx="46" cy="20" r="2.5" fill="${ink}"/>
+            <rect x="15" y="45" width="34" height="5" rx="2.5" fill="${ink}"/>
+          </svg></div>`;
+        }
+        return `<div class="card-court-frame"><svg viewBox="0 0 64 64" fill="none">
+          <path d="M12 41L16 19L25 29L32 13L39 29L48 19L52 41H12Z" fill="${gold}" fill-opacity="0.34" stroke="${gold}" stroke-width="2.8" stroke-linejoin="round"/>
+          <path d="M32 6V12M29 9H35" stroke="${gold}" stroke-width="2.6" stroke-linecap="round"/>
+          <rect x="13" y="44" width="38" height="6" rx="2.5" fill="${ink}"/>
+          <circle cx="32" cy="34" r="4" fill="${ink}"/>
+        </svg></div>`;
+      }
+
       function createCardElement(card, zIndex = 1) {
         const el = document.createElement('div');
         const suit = SUITS[card.suit];
@@ -833,8 +892,8 @@
 
         if (card.faceUp) {
           const rankTxt = RANKS[card.rank];
-          const centerHtml = card.rank >= 11
-            ? `<div class="card-face-badge">${FACE_BADGES[card.rank]}<small>${suit.sym}</small></div>`
+          const centerHtml = (card.rank >= 11 || card.rank === 1)
+            ? renderCourtSvg(card.rank, suit)
             : suit.sym;
           el.innerHTML =
             `<div class="card-corner"><span>${rankTxt}</span><span>${suit.sym}</span></div>` +

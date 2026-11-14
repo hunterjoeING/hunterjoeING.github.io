@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>2048 Prism · Verstand2Go Arcade</title>
+  <title>2048 Prism · HunterJoe Arcade</title>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     body {
@@ -72,9 +72,15 @@
       height: min(92vw, 440px);
       padding: 10px;
       border-radius: 18px;
-      background: linear-gradient(155deg, rgba(15, 29, 58, 0.96), rgba(7, 15, 34, 0.98));
-      border: 1.5px solid rgba(56, 189, 248, 0.4);
-      box-shadow: 0 20px 52px rgba(0, 0, 0, 0.55), 0 0 36px rgba(14, 165, 233, 0.14);
+      background:
+        radial-gradient(circle at 20% 15%, rgba(56, 189, 248, 0.16), transparent 55%),
+        radial-gradient(circle at 80% 85%, rgba(168, 85, 247, 0.14), transparent 55%),
+        linear-gradient(155deg, rgba(15, 29, 58, 0.96), rgba(7, 15, 34, 0.98));
+      border: 1.5px solid rgba(56, 189, 248, 0.48);
+      box-shadow:
+        0 20px 56px rgba(0, 0, 0, 0.65),
+        0 0 42px rgba(14, 165, 233, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
       touch-action: none;
     }
 
@@ -112,12 +118,26 @@
     }
 
     .tile-inner {
+      position: relative;
       width: 100%;
       height: 100%;
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow:
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.34),
+        inset 0 -3px 6px rgba(2, 6, 23, 0.26);
+      text-shadow: 0 1.5px 4px rgba(2, 6, 23, 0.35);
+    }
+    .tile-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.06) 44%, transparent 50%);
+      pointer-events: none;
     }
 
     .tile.is-new .tile-inner {
@@ -230,6 +250,7 @@
     <div class="board-stage" id="board-stage">
       <div class="grid-bg" id="grid-bg"></div>
       <div class="tile-layer" id="tile-layer"></div>
+      <canvas id="fx-canvas" style="position:absolute;inset:10px;width:calc(100% - 20px);height:calc(100% - 20px);pointer-events:none;z-index:6;border-radius:12px;"></canvas>
 
       <div class="board-overlay" id="overlay">
         <h2 id="ov-title">🎉 2048 erreicht!</h2>
@@ -464,6 +485,76 @@
         return false;
       }
 
+      const fxCanvas = document.getElementById('fx-canvas');
+      const fxCtx = fxCanvas ? fxCanvas.getContext('2d') : null;
+      let fxParts = [];
+      let fxRaf = null;
+      const FX_PALETTE = {
+        4: '#38bdf8', 8: '#2dd4bf', 16: '#34d399', 32: '#facc15',
+        64: '#fb923c', 128: '#f43f5e', 256: '#c084fc', 512: '#a855f7',
+        1024: '#818cf8', 2048: '#fde047'
+      };
+      function spawnMergeFx(cx, cy, val) {
+        if (!fxCanvas || !fxCtx) return;
+        const rect = elTileLayer.getBoundingClientRect();
+        if (fxCanvas.width !== Math.round(rect.width) || fxCanvas.height !== Math.round(rect.height)) {
+          fxCanvas.width = Math.max(1, Math.round(rect.width));
+          fxCanvas.height = Math.max(1, Math.round(rect.height));
+        }
+        const clr = FX_PALETTE[val] || '#22d3ee';
+        const cnt = val >= 256 ? 18 : 10;
+        for (let i = 0; i < cnt; i++) {
+          const ang = (i / cnt) * Math.PI * 2 + Math.random() * 0.4;
+          const spd = 65 + Math.random() * 145;
+          fxParts.push({
+            x: cx, y: cy,
+            vx: Math.cos(ang) * spd,
+            vy: Math.sin(ang) * spd,
+            size: 2.5 + Math.random() * 3.5,
+            life: 0.42 + Math.random() * 0.22,
+            maxLife: 0.64,
+            color: clr
+          });
+        }
+        fxParts.push({ ring: true, x: cx, y: cy, r: 8, maxR: val >= 256 ? 68 : 48, life: 0.34, maxLife: 0.34, color: clr });
+        if (!fxRaf) {
+          let lastT = performance.now();
+          const tick = (now) => {
+            const dt = Math.min(0.05, (now - lastT) / 1000);
+            lastT = now;
+            fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+            for (let i = fxParts.length - 1; i >= 0; i--) {
+              const p = fxParts[i];
+              p.life -= dt;
+              if (p.life <= 0) { fxParts.splice(i, 1); continue; }
+              const a = p.life / p.maxLife;
+              fxCtx.globalAlpha = a;
+              if (p.ring) {
+                const rad = p.r + (1 - a) * p.maxR;
+                fxCtx.strokeStyle = p.color;
+                fxCtx.lineWidth = 2.5 * a;
+                fxCtx.beginPath();
+                fxCtx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+                fxCtx.stroke();
+              } else {
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.vx *= 0.92;
+                p.vy *= 0.92;
+                fxCtx.fillStyle = p.color;
+                fxCtx.beginPath();
+                fxCtx.arc(p.x, p.y, p.size * a, 0, Math.PI * 2);
+                fxCtx.fill();
+              }
+            }
+            fxCtx.globalAlpha = 1;
+            if (fxParts.length > 0) fxRaf = requestAnimationFrame(tick);
+            else fxRaf = null;
+          };
+          fxRaf = requestAnimationFrame(tick);
+        }
+      }
+
       function renderTiles() {
         const layerW = elTileLayer.clientWidth;
         const gap = 10;
@@ -499,6 +590,9 @@
             const baseFont = cellSize * (digits <= 2 ? 0.44 : digits === 3 ? 0.36 : 0.28);
             inner.style.fontSize = Math.round(baseFont) + 'px';
 
+            if (cell.isMerged) {
+              spawnMergeFx(tx + cellSize * 0.5, ty + cellSize * 0.5, cell.val);
+            }
             delete cell.isNew;
             delete cell.isMerged;
           }
