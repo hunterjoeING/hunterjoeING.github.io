@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Chinesische Geschichte Quiz · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+      touch-action: pan-y;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 63, 94, 0.38);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: #fb7185;
+      color: #fff1f2;
+    }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #be123c, #f43f5e);
+      border-color: #fda4af;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(244, 63, 94, 0.36);
+    }
+    .diff-pill.pro.active {
+      background: linear-gradient(135deg, #b45309, #f59e0b);
+      border-color: #fde68a;
+      color: #fffbeb;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.36);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(16, 24, 48, 0.9);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: #fb7185;
+      background: rgba(136, 19, 55, 0.32);
+    }
+    .cat-card.featured {
+      border-color: rgba(244, 63, 94, 0.58);
+      background: linear-gradient(135deg, rgba(136, 19, 55, 0.34), rgba(16, 24, 48, 0.94));
+    }
+    .cat-card.featured-gold {
+      border-color: rgba(251, 191, 36, 0.52);
+      background: linear-gradient(135deg, rgba(146, 64, 14, 0.28), rgba(16, 24, 48, 0.94));
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.42; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+      margin-top: 4px;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #fb7185, #fbbf24);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill, .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .q-cat-pill {
+      background: rgba(244, 63, 94, 0.16);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      color: #fecdd3;
+    }
+    .q-diff-pill.easy {
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #86efac;
+    }
+    .q-diff-pill.mid {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      color: #7dd3fc;
+    }
+    .q-diff-pill.pro {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(251, 191, 36, 0.48);
+      color: #fde68a;
+    }
+
+    .q-text {
+      font-size: clamp(17.5px, 2.7vw, 22px);
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      color: #f1f5f9;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: #fb7185;
+      background: rgba(159, 18, 57, 0.28);
+      transform: translateY(-1px);
+    }
+    .ans-key {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(148, 163, 184, 0.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.34);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-btn.eliminated {
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .joker-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      justify-content: space-between;
+      align-items: center;
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(251, 191, 36, 0.42);
+      color: #fde68a;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(11, 28, 56, 0.86);
+      border: 1px solid rgba(251, 113, 133, 0.38);
+      font-size: 13px;
+      line-height: 1.48;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .result-card {
+      text-align: center;
+      padding: 28px 20px;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 480px;
+      margin: 18px auto 22px;
+    }
+    .res-box {
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(244, 63, 94, 0.32);
+    }
+    .res-box b {
+      display: block;
+      font-size: 20px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+    }
+    .res-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🐉 Chinesische Geschichte Quiz</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Difficulty Menu -->
+    <section id="screen-menu" class="glass-card" style="padding:20px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">Reich der Mitte: Chinesische Geschichte</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
+        48 Fragen über mehr als 3.000 Jahre chinesische Geschichte – von Shang-Orakelknochen, Konfuzius und Qin Shi Huangdi über Tang, Song &amp; Ming bis zur Republik und Moderne (10 Fragen pro Runde, Tasten <code>1–4</code> möglich).
+      </p>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Basiswissen</button>
+        <button class="diff-pill" data-diff="mid">🟡 Kenner</button>
+        <button class="diff-pill pro" data-diff="pro">🔴 Sinologe-Nerd (1,5× Pkt)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">10</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <span>⏱ <strong id="q-sec">20</strong>s</span>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Epoche</span>
+        <span id="q-diff" class="q-diff-pill mid">Kenner</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Epochen</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div id="res-emoji" style="font-size:48px;">🐉</div>
+      <h2 id="res-heading" style="margin:8px 0 4px;">Runde abgeschlossen!</h2>
+      <p id="res-sub" style="margin:0;color:var(--text-muted);font-size:13.5px;"></p>
+
+      <div class="result-stats">
+        <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
+        <div class="res-box"><b id="res-correct">0/10</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Nochmal spielen</button>
+        <button class="secondary-btn" onclick="backToMenu()">📚 Andere Epoche</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const CATS = [
+      { id: 'mix',         icon: '🐉', name: 'Dynastien-Mix (Alle)',      cls: 'featured',      desc: 'Über drei Jahrtausende quer durch alle Dynastien bis zur Moderne.' },
+      { id: 'fruehzeit',   icon: '🏺', name: 'Frühzeit, Qin & Han',        cls: '',              desc: 'Shang-Orakelknochen, Konfuzius, Legalismus, Erster Kaiser & Seidenstraße.' },
+      { id: 'bluetzeit',   icon: '🏮', name: 'Tang, Song & Erfindungen',   cls: '',              desc: 'Kaiserkanal, Wu Zetian, Lyrik, Papiergeld, Lettern-Druck & Schwarzpulver.' },
+      { id: 'kaiserreich', icon: '🏯', name: 'Yuan, Ming & Qing',          cls: 'featured-gold', desc: 'Kublai Khan, Verbotene Stadt, Zheng He, Großer Mauerbau & Opiumkriege.' },
+      { id: 'moderne',     icon: '⛩️', name: 'Republik & Moderne (1911+)', cls: '',              desc: 'Sun Yat-sen, 4. Mai, Langer Marsch, 1949, Deng Xiaoping & 1997/99.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Basis',    cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Kenner',   cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Sinologe', cls: 'pro',  mult: 1.5 }
+    };
+
+    // Index 0 of a[] is ALWAYS the correct answer (shuffled cleanly on render)
+    const QUESTIONS = [
+      // ── Frühzeit, Qin & Han (12) ──
+      {
+        cat: 'fruehzeit', diff: 'easy',
+        q: 'Welcher Fluss gilt als „Wiege der chinesischen Zivilisation“ und trägt wegen verheerender Überschwemmungen zugleich den Beinamen „Kummer Chinas“?',
+        a: ['Der Gelbe Fluss (Huang He)', 'Der Mekong', 'Der Perlfluss', 'Der Yalu'],
+        exp: 'Im fruchtbaren Lössbecken des Huang He entstanden bereits vor über 4.000 Jahren die frühesten sesshaften Hochkulturen Chinas.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'easy',
+        q: 'Welcher Philosoph (ca. 551–479 v. Chr.) stellte Tugend, Sitte (Li), Harmonie und familiäre Achtung (Xiao) in das Zentrum seiner Staats- und Lebenslehre?',
+        a: ['Konfuzius (Kongzi)', 'Mozi', 'Meng Huo', 'Sunzi'],
+        exp: 'Der Konfuzianismus prägte ab der Han-Dynastie über zwei Jahrtausende lang Gesellschaft, Moral und Verwaltung des chinesischen Kaiserreichs.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'easy',
+        q: 'Welcher Herrscher einte 221 v. Chr. die Streitenden Reiche, nannte sich Erster Kaiser und ließ nahe Xi’an die berühmte Terrakotta-Armee errichten?',
+        a: ['Qin Shi Huangdi', 'Liu Bang', 'Han Wudi', 'Tang Taizong'],
+        exp: 'Qin Shi Huangdi vereinheitlichte innerhalb weniger Jahre Schriftzeichen, Maße, Gewichte, Münzen und sogar Wagen-Achsenbreiten im ganzen Reich.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'easy',
+        q: 'Welches weitverzweigte Handelsnetz verband seit der Han-Dynastie das Kaiserreich China quer durch Zentralasien bis in den Mittelmeerraum?',
+        a: ['Die Seidenstraße', 'Die Weihrauchstraße', 'Die Bernsteinstraße', 'Die Gewürzroute um Kap Hoorn'],
+        exp: 'Über Karawanenstädte wie Dunhuang, Kaschgar und Samarkand wanderten neben chinesischer Seide auch Porzellan, Ideen und Religionen wie der Buddhismus.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'mid',
+        q: 'Auf welchem Material aus der späten Shang-Dynastie (ca. 1250–1046 v. Chr.) sind die ältesten sicher entzifferten chinesischen Schriftzeichen überliefert?',
+        a: ['Auf Orakelknochen (Rinderschulterblätter und Schildkrötenpanzer)', 'Auf gebrannten Tontafeln aus Dunhuang', 'Auf Seidenrollen aus Kaifeng', 'Auf eisernen Münzplatten aus Sichuan'],
+        exp: 'Priester ritzten Fragen an Ahnen und Gottheiten in Knochen oder Panzer, erhitzten sie und deuteten die entstandenen Risse.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'mid',
+        q: 'Welcher Hofbeamte der Östlichen Han-Dynastie stellte um 105 n. Chr. eine standardisierte und deutlich verbesserte Methode zur Papierherstellung aus Pflanzenfasern und Rinde vor?',
+        a: ['Cai Lun', 'Sima Qian', 'Zheng Xuan', 'Ban Chao'],
+        exp: 'Zwar existierten einfache Vorläufer aus Hanf schon früher, doch Cai Luns verfeinerte Rezeptur aus Maulbeerrinde und Textilresten verhalf Papier zum Durchbruch.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'mid',
+        q: 'Welches politische Legitimationskonzept begründete ab der Zhou-Dynastie (ab ca. 1046 v. Chr.) das Recht zum Herrschen – und zugleich das Recht auf Dynastiewechsel bei Misswirtschaft?',
+        a: ['Das Mandat des Himmels (Tianming)', 'Das Erbliche Gottesrecht ohne Rücknahme', 'Die Verfassung der Fünf Provinzen', 'Das Losverfahren der Ältesten'],
+        exp: 'Naturkatastrophen und Unruhen wurden als Zeichen gedeutet, dass der Himmel einem unfähigen Herrscher das Mandat entzogen habe.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'mid',
+        q: 'Welcher kaiserliche Gesandte brach 138 v. Chr. im Auftrag von Han-Kaiser Wudi nach Zentralasien auf und erkundete über 13 Jahre hinweg die Gebiete der späteren Seidenstraße?',
+        a: ['Zhang Qian', 'Faxian', 'Wang Mang', 'Zhuge Liang'],
+        exp: 'Ursprünglich suchte Zhang Qian Verbündete gegen die Xiongnu – seine Berichte öffneten China politisch und wirtschaftlich nach Westen.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'pro',
+        q: 'Welche Denkschule der Streitenden Reiche (mit Denkern wie Shang Yang und Han Feizi) machte den Staat Qin durch strikte Gesetzgebung, Anreiz- und Strafsysteme übermächtig?',
+        a: ['Der Legalismus (Fajia)', 'Der Mohismus (Mojia)', 'Der Zen-Buddhismus (Chan)', 'Die Schule der Namen (Mingjia)'],
+        exp: 'Im Gegensatz zum Konfuzianismus misstraute der Legalismus der menschlichen Güte und setzte ganz auf präzise Gesetze, Kontrollen und klares Belohnen/Strafen.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'pro',
+        q: 'Welcher Universalgelehrte der Östlichen Han-Dynastie baute im Jahr 132 n. Chr. das erste überlieferte Seismoskop, mit dem sich die Richtung ferner Erdbeben bestimmen ließ?',
+        a: ['Zhang Heng', 'Zu Chongzhi', 'Shen Kuo', 'Liu Xin'],
+        exp: 'Sein Bronzegefäß mit acht außen sitzenden Drachen und Fröschen ließ beim Erzittern eine Metallkugel genau in Richtung des Epizentrums fallen.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'pro',
+        q: 'Welches Geschichtswerk verfasste der Hofhistoriker Sima Qian um 100 v. Chr., das über zweieinhalb Jahrtausende abhandelte und Maßstab aller späteren Dynastiechroniken wurde?',
+        a: ['Das Shiji („Aufzeichnungen des Chronisten“)', 'Die Frühlings- und Herbstannalen des Konfuzius', 'Das Buch der Riten (Liji)', 'Den Kommentar von Zuo (Zuozhuan)'],
+        exp: 'Trotz persönlicher Demütigung durch Han Wudi vollendete Sima Qian das Werk mit Annalen, Biografien und Kulturabhandlungen als Meisterwerk der Weltgeschichte.'
+      },
+      {
+        cat: 'fruehzeit', diff: 'pro',
+        q: 'Welcher große religiös-bäuerliche Aufstand brach 184 n. Chr. unter Führung der Brüder Zhang aus und leitete den Niedergang der Han-Dynastie in die Zeit der Drei Reiche ein?',
+        a: ['Der Aufstand der Gelben Turbane', 'Der Aufstand der Roten Augenbrauen', 'Die Rebellion der Sieben Staaten', 'Der An-Lushan-Aufstand'],
+        exp: 'Da die Zentralarmee überfordert war, erhielten regionale Kriegsherren wie Cao Cao oder Liu Bei enorme Macht – das Han-Reich zerfiel.'
+      },
+
+      // ── Tang, Song & Erfindungen (12) ──
+      {
+        cat: 'bluetzeit', diff: 'easy',
+        q: 'Welches gewaltige Kanalbauprojekt der Sui-Dynastie verband ab dem frühen 7. Jahrhundert erstmals das fruchtbare Jangtse-Delta schiffbar mit Nordchina?',
+        a: ['Der Kaiserkanal (Großer Kanal)', 'Der Dujiangyan-Staudamm', 'Der Drei-Schluchten-Kanal', 'Der Ordos-Graben'],
+        exp: 'Der Kaiserkanal sicherte über Jahrhunderte die Getreideversorgung der nördlichen Hauptstädte und zählt zu den längsten künstlichen Wasserstraßen der Erde.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'easy',
+        q: 'Welche zwischen 618 und 907 regierende Dynastie prägte eine weltstädtische Metropole Chang’an und gilt als kultureller Höhepunkt von Lyrik, Keramik und Offenheit entlang der Seidenstraße?',
+        a: ['Die Tang-Dynastie', 'Die Westliche Jin-Dynastie', 'Die Nördliche Wei-Dynastie', 'Die Liao-Dynastie'],
+        exp: 'In Chang’an lebten über eine Million Menschen aus ganz Asien; das Tang-Reich galt in Ostasien bis nach Japan als bewundertes Vorbild.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'easy',
+        q: 'Welche Finanzinnovation kam während der Song-Dynastie in Sichuan auf und breitete sich anschließend staatlich ausgegeben als Weltneuheit im Handel aus?',
+        a: ['Das erste Papiergeld (Jiaozi)', 'Die erste Doppelte Buchführung auf Leder', 'Die goldgedeckte Silberunze nach Londoner Vorbild', 'Der elektronische Wechselbrief'],
+        exp: 'Schwere eiserne und kupferne Münzschnüre waren für Fernhändler unhandlich – zunächst private Quittungen wandelte der Song-Staat 1024 in offizielles Papiergeld um.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'easy',
+        q: 'Welche weltverändernde Substanz aus Salpeter, Holzkohle und Schwefel entdeckten chinesische Alchemisten auf der Suche nach Unsterblichkeits-Elixieren bereits um das 9. Jahrhundert?',
+        a: ['Schwarzpulver (Schießpulver)', 'Dynamit auf Nitroglycerin-Basis', 'Raffiniertes Kerosin', 'Flüssigen Phosphor'],
+        exp: 'Bald nutzten Song- und Tang-Heere Brandpfeile, Explosivbomben und frühe Bambus-Feuerlanzen; später gelangte das Wissen über den eurasischen Raum nach Europa.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'mid',
+        q: 'Wer bestieg 690 n. Chr. offiziell den Kaiserthron und rief ihre eigene „Zhou“-Herrschaft aus – als einzige regulär in eigenem Namen regierende Kaiserin in der Geschichte Chinas?',
+        a: ['Wu Zetian', 'Kaiserinwitwe Cixi', 'Lü Zhi', 'Prinzessin Wencheng'],
+        exp: 'Wu Zetian förderte das Prüfungswesen gegen den alten Hochadel, stärkte die Landwirtschaft und sicherte Chinas Zentralverwaltung über Jahrzehnte.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'mid',
+        q: 'Welches landesweite Ausleseverfahren sorgte von der Tang-/Song-Zeit bis 1905 dafür, dass Beamte durch anonyme schriftliche Prüfungen statt allein über Geburt ernannt wurden?',
+        a: ['Das System der kaiserlichen Beamtenprüfungen (Keju)', 'Das Losverfahren der Provinzgouverneure', 'Die Wahl durch Kaufleute der Seestädte', 'Der Rat der acht Banner'],
+        exp: 'Wer alle Stufen von der Kreis- bis zur Palastprüfung bestand, stieg unabhängig vom Stand als Gelehrten-Beamter (Mandarin) in die höchste Reichselite auf.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'mid',
+        q: 'Wer erfand um 1040 während der Nördlichen Song-Dynastie den Buchdruck mit beweglichen Lettern aus gebranntem Ton?',
+        a: ['Bi Sheng', 'Wang Zhen', 'Cai Lun', 'Zheng He'],
+        exp: 'Obwohl wegen tausender Schriftzeichen der Holzblockdruck lange dominierte, dokumentierte Shen Kuo Bi Shengs bewegliche Lettern rund 400 Jahre vor Gutenberg.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'mid',
+        q: 'Welche beiden Poeten der Tang-Zeit werden traditionell Seite an Seite als „Unsterblicher Dichter“ und „Heiliger Dichter“ verehrt?',
+        a: ['Li Bai (Li Bo) und Du Fu', 'Lu Xun und Hu Shi', 'Su Shi und Qu Yuan', 'Konfuzius und Laozi'],
+        exp: 'Li Bais freiheitsliebende Natur- und Weinlyrik steht neben Du Fus tief empfundener Sozialkritik in den Kriegswirren des 8. Jahrhunderts.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'pro',
+        q: 'Welcher Gelehrte der Südlichen Song-Dynastie fasste im 12. Jh. den Neo-Konfuzianismus im Kanon der „Vier Bücher“ (Sishu) zusammen und definierte so bis 1905 den Prüfungsstoff?',
+        a: ['Zhu Xi', 'Wang Yangming', 'Kang Youwei', 'Han Yu'],
+        exp: 'Zhu Xis Kommentare zu „Große Lehre“, „Maß und Mitte“, den „Gesprächen“ des Konfuzius und „Mengzi“ bildeten über 700 Jahre lang das intellektuelle Rückgrat des Reiches.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'pro',
+        q: 'Welches dramatische Ereignis („Jingkang-Vorfall“ 1127) zwang das Song-Kaiserhaus dazu, den Norden aufzugeben und in Hangzhou die Südliche Song-Dynastie fortzuführen?',
+        a: ['Die Einnahme der Hauptstadt Kaifeng durch die Jurchen (Jin-Dynastie)', 'Die Landung portugiesischer Karacken vor Kanton', 'Ein verheerender Dammbruch mit anschließendem Volksentscheid', 'Der Sieg der Ming-Flotte bei Nanjing'],
+        exp: 'Trotz des Gebietsverlustes erlebte die Südliche Song-Dynastie eine beispiellose Blüte von Seehandel, Urbanisierung, Kompass-Navigation und Schiffbau.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'pro',
+        q: 'Welcher buddhistische Tang-Mönch reiste 629–645 heimlich trotz Ausreiseverbot durch Taklamakan, Hindukusch und ganz Indien und kehrte mit hunderten Schriften nach Chang’an zurück?',
+        a: ['Xuanzang', 'Bodhidharma', 'Kumārajīva', 'Jianzhen'],
+        exp: 'Kaiser Tang Taizong empfing den zurückgekehrten Übersetzer feierlich; sein Reisebericht diente später als historischer Kern des Romans „Die Reise in den Westen“.'
+      },
+      {
+        cat: 'bluetzeit', diff: 'pro',
+        q: 'Welcher Staatsmann und Kanzler versuchte Ende des 11. Jahrhunderts unter den Nördlichen Song mit seiner „Neuen Politik“ (Xinfa) Staatskredite für Bauern und Marktregulierungen durchzusetzen?',
+        a: ['Wang Anshi', 'Sima Guang', 'Li Hongzhang', 'Zhang Juzheng'],
+        exp: 'Wang Anshis ehrgeizige Reformen lösten einen heftigen Parteienstreit zwischen Reformern und Konservativen um Historiker Sima Guang aus.'
+      },
+
+      // ── Yuan, Ming & Qing (12) ──
+      {
+        cat: 'kaiserreich', diff: 'easy',
+        q: 'Welcher Enkel Dschingis Khans besiegte 1279 die Südliche Song-Dynastie, begründete die Yuan-Dynastie und empfing in seiner Hauptstadt Dadu (Peking) laut Berichten auch Marco Polo?',
+        a: ['Kublai Khan', 'Ögedei Khan', 'Tamerlan (Timur)', 'Nurhaci'],
+        exp: 'Als Großkhan und chinesischer Kaiser zugleich verband Kublai Khan mongolische Militärmacht mit der Verwaltungstradition des chinesischen Staatswesens.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'easy',
+        q: 'Welcher weltberühmte kaiserliche Palastkomplex im Herzen Pekings entstand von 1406 bis 1420 unter Ming-Kaiser Yongle?',
+        a: ['Die Verbotene Stadt', 'Der Alte Sommerpalast (Yuanmingyuan)', 'Der Potala-Palast', 'Die Sommerresidenz Chengde'],
+        exp: 'Knapp 500 Jahre lang lebten und regierten 24 Kaiser der Ming- und Qing-Dynastien hinter den roten Mauern der Verbotenen Stadt.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'easy',
+        q: 'Welcher kaiserliche Admiral leitete zwischen 1405 und 1433 sieben riesige Flottenexpeditionen mit riesigen Schatzschiffen über Südostasien und Indien bis nach Ostafrika?',
+        a: ['Zheng He', 'Qi Jiguang', 'Koxinga (Zheng Chenggong)', 'Shi Lang'],
+        exp: 'Zheng Hes über 100 Meter lange „Schatzschiffe“ zeigten Chinas maritime Spitzenstellung Jahrzehnte vor den ersten portugiesischen Indienfahrten.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'easy',
+        q: 'Aus welchem nordostasiatischen Volk ging 1644 die Qing-Dynastie hervor, die bis zum Jahr 1912 Chinas letztes Kaiserhaus stellte?',
+        a: ['Die Mandschu', 'Die Xiongnu', 'Die Tanguten', 'Die Uiguren'],
+        exp: 'Unter Nutzung einer inneren Krise am Ende der Ming überschritten die Mandschu-Bannertruppen den Shanhai-Pass und errichteten ein riesiges Vielvölkerreich.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'mid',
+        q: 'Unter welcher Dynastie erhielt die Große Mauer nördlich von Peking weitgehend ihren heutigen steinernen und gemauerten Ausbau samt Wachtürmen?',
+        a: ['Unter der Ming-Dynastie (ab dem späten 14. Jahrhundert)', 'Ausschließlich unter den Han um 100 v. Chr.', 'Unter der mongolischen Yuan-Dynastie', 'Erst unter der Republik ab 1915'],
+        exp: 'Um ein erneutes Eindringen mongolischer Reiterheere zu verhindern, bauten die Ming die zuvor oft aus Stampferde bestehenden Grenzwälle massiv aus Ziegeln und Granit neu.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'mid',
+        q: 'Welcher kaiserliche Sondergesandte ließ 1839 in Humen (bei Kanton) rund 1.200 Tonnen illegales britisches Opium öffentlich zerstören, worauf London militärisch eingriff?',
+        a: ['Lin Zexu', 'Zeng Guofan', 'Yuan Shikai', 'Kang Youwei'],
+        exp: 'Lin Zexu wollte den Silberabfluss und die Opiumsucht stoppen; der britische Gegenschlag im Ersten Opiumkrieg zwang China in die „ungleichen Verträge“.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'mid',
+        q: 'Welche Stadt bzw. Insel musste das Qing-Reich im Vertrag von Nanking 1842 nach der Niederlage im Ersten Opiumkrieg dauerhaft an das Britische Empire abtreten?',
+        a: ['Die Insel Hongkong', 'Die Halbinsel Shandong', 'Die Hafenstadt Dalian', 'Die Insel Hainan'],
+        exp: 'Außerdem musste China fünf Vertragshäfen (darunter Shanghai und Kanton) öffnen und hohe Reparationen zahlen.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'mid',
+        q: 'Wer führte als verarmter Bauernsohn eine große Rebellion gegen die Mongolenherrschaft an und bestieg 1368 als Kaiser Hongwu den Thron der neuen Ming-Dynastie?',
+        a: ['Zhu Yuanzhang', 'Li Zicheng', 'Yue Fei', 'Taizong'],
+        exp: 'Zhu Yuanzhang (Hongwu) schränkte die Macht der Minister stark ein, förderte bäuerliche Selbstversorgung und legte strikte Hofregeln fest.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'pro',
+        q: 'Welcher Bürgerkrieg kostete zwischen 1850 und 1864 geschätzt 20 bis 30 Millionen Menschen das Leben, als der Anführer Hong Xiuquan ein „Himmlisches Reich des Großen Friedens“ ausrief?',
+        a: ['Der Taiping-Aufstand', 'Der Dungan-Aufstand', 'Der Nian-Aufstand', 'Die Rebellion der Weißen Lotos-Sekte'],
+        exp: 'Die Taiping eroberten Nanjing als ihre Hauptstadt und konnten erst nach über einem Jahrzehnt durch regionale Armeen wie Zeng Guofans Xiang-Armee niedergeschlagen werden.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'pro',
+        q: 'Welche antiwestliche Bewegung belagerte 1900 unter Duldung des Qing-Hofes das Gesandtschaftsviertel in Peking und rief das Eingreifen einer internationalen Allianz von acht Staaten hervor?',
+        a: ['Der Boxeraufstand (Yihetuan-Bewegung)', 'Die Hundert-Tage-Reform', 'Der Taiping-Aufstand', 'Die Tongmenghui-Verschwörung'],
+        exp: 'Das anschließende Boxerprotokoll (1901) verpflichtete China zu gigantischen Entschädigungszahlungen und schwächte die Qing-Monarchie unumkehrbar.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'pro',
+        q: 'Welche Mammut-Enzyklopädie ließ Ming-Kaiser Yongle bis 1408 in über 11.000 handgeschriebenen Bänden zusammenstellen – als das gesamte klassische Wissen Chinas seiner Zeit?',
+        a: ['Die Yongle Dadian', 'Das Gujin Tushu Jicheng', 'Das Compendium der Materia Medica (Bencao Gangmu)', 'Das Huainanzi'],
+        exp: 'Durch Brände und Wirren am Ende der Ming und Qing überlebten heute nur wenige hundert Originalbände der einst weltgrößten Enzyklopädie.'
+      },
+      {
+        cat: 'kaiserreich', diff: 'pro',
+        q: 'Unter welchen beiden außerordentlich langlebigen Qing-Kaisern erreichte China im 17. und 18. Jahrhundert seine größte territoriale Ausdehnung inklusive Tibet, Xinjiang und der Mongolei?',
+        a: ['Unter Kangxi (1661–1722) und seinem Enkel Qianlong (1735–1796)', 'Unter Tongzhi und Guangxu', 'Unter Jiaqing und Daoguang', 'Unter Chongzhen und Tianqi'],
+        exp: 'Zusammen mit Kaiser Yongzheng dazwischen wird diese Epoche als „Blütezeit Kang-Qian“ bezeichnet – bevor Bevölkerungsdruck und Stagnation ab 1800 einsetzten.'
+      },
+
+      // ── Republik & Moderne (ab 1911) (12) ──
+      {
+        cat: 'moderne', diff: 'easy',
+        q: 'Welcher revolutionäre Umsturz begann am 10. Oktober 1911 mit dem Wuchang-Aufstand und beendete Chinas über zweitausend Jahre altes Kaisertum?',
+        a: ['Die Xinhai-Revolution', 'Die Kulturrevolution', 'Der 4.-Mai-Kongress', 'Die Taiping-Erhebung'],
+        exp: 'Benannt nach dem Jahr „Xinhai“ im chinesischen Sexagesimalzyklus führte sie Anfang 1912 zur Gründung der Republik China.'
+      },
+      {
+        cat: 'moderne', diff: 'easy',
+        q: 'Welcher Arzt, Denker und Revolutionär gilt wegen seiner „Drei Prinzipien des Volkes“ sowohl auf dem Festland als auch auf Taiwan als „Vater des modernen China“?',
+        a: ['Sun Yat-sen', 'Hu Shi', 'Zhou Enlai', 'Yuan Shikai'],
+        exp: 'Sun Yat-sen gründete den Revolutionsbund Tongmenghui und prägte mit Nationalismus, Demokratie und Volkswohlstand die Idee eines modernen Nationalstaats.'
+      },
+      {
+        cat: 'moderne', diff: 'easy',
+        q: 'An welchem Datum rief Mao Zedong auf dem Tor des Himmlischen Friedens in Peking offiziell die Volksrepublik China aus?',
+        a: ['Am 1. Oktober 1949', 'Am 1. Januar 1912', 'Am 4. Mai 1919', 'Am 15. August 1945'],
+        exp: 'Seitdem ist der 1. Oktober der Nationalfeiertag der Volksrepublik China, mit dem eine einwöchige Festwoche („Goldene Woche“) beginnt.'
+      },
+      {
+        cat: 'moderne', diff: 'easy',
+        q: 'Wie hieß der letzte Kaiser der Qing-Dynastie, der im Februar 1912 als sechsjähriges Kind abdanken musste?',
+        a: ['Puyi (Kaiser Xuantong)', 'Guangxu', 'Qianlong', 'Yongzheng'],
+        exp: 'Puyis wechselhaftes Leben vom Kaiser über den japanischen Marionettenstaat Mandschukuo bis zum Gärtner in Peking diente später dem Film „Der letzte Kaiser“ als Vorlage.'
+      },
+      {
+        cat: 'moderne', diff: 'mid',
+        q: 'Wohin zog sich die geschlagene Regierung der Republik China (Kuomintang unter Chiang Kai-shek) Ende 1949 im Bürgerkrieg gegen Maos Truppen zurück?',
+        a: ['Auf die Insel Taiwan (Hauptstadt Taipeh)', 'Nach Chongqing im Südwesten', 'In das britische Krongebiet Hongkong', 'Auf die Halbinsel Liaodong'],
+        exp: 'Aus dieser Spaltung entstand der bis heute ungelöste politische Statuskonflikt entlang der Taiwanstraße.'
+      },
+      {
+        cat: 'moderne', diff: 'mid',
+        q: 'Welche Wirtschaftskampagne rief Mao Zedong 1958 aus, bei der Volkskommunen und ländliche Kleinhochöfen binnen kurzer Zeit Großbritannien einholen sollten – was jedoch eine verheerende Hungersnot auslöste?',
+        a: ['Der „Große Sprung nach vorn“', 'Die Hundert-Blumen-Kampagne', 'Die Vier Modernisierungen', 'Das Drei-Schluchten-Programm'],
+        exp: 'Unbrauchbarer Schrott-Stahl aus Hinterhoföfen, erzwungene Zwangskollektivierung und gefälschte Erntequoten führten zwischen 1959 und 1961 zu zig Millionen Hungertoten.'
+      },
+      {
+        cat: 'moderne', diff: 'mid',
+        q: 'Warum brachen am 4. Mai 1919 in Peking massive Studentenproteste aus, die den Auftakt zu einer tiefgreifenden kulturellen Erneuerungsbewegung bildeten?',
+        a: ['Weil der Vertrag von Versailles frühere deutsche Gebiete in Shandong Japan statt China zusprach', 'Weil die Eisenbahn nach Shanghai verstaatlicht werden sollte', 'Weil der Kaiserkanal geschlossen wurde', 'Weil das Papiergeld über Nacht abgeschafft wurde'],
+        exp: 'Aus dem politischen Protest ging die Bewegung für moderne Umgangssprache (Baihua), Wissenschaft und Gleichberechtigung hervor.'
+      },
+      {
+        cat: 'moderne', diff: 'mid',
+        q: 'Wer leitete ab Ende 1978 („Drittes Plenum“) die Politik der „Reform und Öffnung“ ein, erlaubte bäuerliche Eigenverantwortung und schuf Sonderwirtschaftszonen wie Shenzhen?',
+        a: ['Deng Xiaoping', 'Hua Guofeng', 'Liu Shaoqi', 'Lin Biao'],
+        exp: 'Unter dem pragmatischen Kurs von „Reform und Öffnung“ verwandelte sich China innerhalb weniger Jahrzehnte von einem Agrarland in eine industrielle Weltmacht.'
+      },
+      {
+        cat: 'moderne', diff: 'pro',
+        q: 'Welches zentrale historische Ereignis verbergen die Geschichtsbücher hinter dem „Langen Marsch“ (1934–1935)?',
+        a: ['Den rund 9.000 km langen strategischen Rückzug der Roten Armee aus Jiangxi nach Nordwestchina (Yan’an) unter wachsender Führung Maos', 'Den Feldzug der Kuomintang zur Einigung des Nordens gegen Kriegsherren', 'Die Evakuierung von Fabriken vor den Japanern ins Innere Chinas', 'Eine diplomatische Delegation zu den Völkerbund-Verhandlungen in Genf'],
+        exp: 'Unter enormen Verlusten erreichte nur ein Bruchteil der Kämpfer Shaanxi; auf der Konferenz von Zunyi übernahm Mao Zedong faktisch die militärische Führung.'
+      },
+      {
+        cat: 'moderne', diff: 'pro',
+        q: 'In welchen beiden Jahren gingen die ehemaligen europäischen Kolonien Hongkong und Macau unter dem Modell „Ein Land, zwei Systeme“ als Sonderverwaltungszonen an China über?',
+        a: ['Hongkong am 1. Juli 1997 und Macau am 20. Dezember 1999', 'Beide gemeinsam am 1. Januar 2000', 'Hongkong 1984 und Macau 1997', 'Hongkong 1999 und Macau 2004'],
+        exp: 'Die zugrunde liegenden Gemeinsamen Erklärungen hatten Großbritannien (1984) und Portugal (1987) jeweils mit Peking vereinbart.'
+      },
+      {
+        cat: 'moderne', diff: 'pro',
+        q: 'Was brachte ab 1937 vorübergehend die verfeindeten Lager der Kuomintang (Chiang Kai-shek) und der Kommunisten (Mao Zedong) in der „Zweiten Einheitsfront“ zusammen?',
+        a: ['Der Beginn des umfassenden Krieges gegen das Kaiserreich Japan (Zwischenfall an der Marco-Polo-Brücke / Xi’an-Zwischenfall)', 'Ein gemeinsamer Handelspakt mit der Weimarer Republik', 'Die Rückgabe der Mandschurei ohne Kampfhandlungen', 'Die Wahl eines gemeinsamen Premierministers in Nanjing'],
+        exp: 'Nach der Entführung Chiang Kai-sheks im Xi’an-Zwischenfall Ende 1936 und der japanischen Großinvasion 1937 kämpften beide Seiten vorübergehend gemeinsam gegen Japan.'
+      },
+      {
+        cat: 'moderne', diff: 'pro',
+        q: 'Wodurch begann im Mai/August 1966 offiziell die zehnjährige „Kulturrevolution“, bei der jugendliche „Rote Garden“ gegen Parteifunktionäre, Lehrkräfte und alte Kulturgüter vorgingen?',
+        a: ['Durch Maos „Rundschreiben vom 16. Mai“ und die darauffolgende Mobilisierung gegen „vier alte Übel“ und angebliche Revisionisten', 'Durch ein Bündnis mit Taiwan nach dem Tod Sun Yat-sens', 'Durch die Schließung aller Bauernmärkte im Jahr 1979', 'Durch die Gründung der Sonderwirtschaftszone Pudong in Shanghai'],
+        exp: 'Die Kulturrevolution legte Schulen, Universitäten und Teile des Staatsapparats jahrelang lahm und endete erst nach Maos Tod und der Entmachtung der „Viererbande“ 1976.'
+      }
+    ];
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 20;
+    const BASE_TIME = 20;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_china');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const count = getMatchingPool(c.id).length;
+        const roundLen = Math.min(10, count);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const count = Math.min(10, pool.length);
+      deck = shuffle(pool).slice(0, count);
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      answered = false;
+      timeLeft = BASE_TIME;
+
+      const item = deck[qIdx];
+      const di = DIFF_INFO[item.diff];
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      timerId = setInterval(() => {
+        timeLeft = Math.max(0, +(timeLeft - 0.1).toFixed(1));
+        updateTimerUI();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          handleTimeout();
+        }
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      document.getElementById('q-sec').textContent = Math.ceil(timeLeft);
+      const pct = Math.max(0, Math.min(100, (timeLeft / BASE_TIME) * 100));
+      const fill = document.getElementById('timer-fill');
+      fill.style.width = pct + '%';
+      fill.style.background = timeLeft > 5
+        ? 'linear-gradient(90deg, #fb7185, #fbbf24)'
+        : 'linear-gradient(90deg, #ef4444, #f97316)';
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = DIFF_INFO[item.diff].mult;
+        const speedBonus = Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      showFact(chosen.isRight);
+    }
+
+    function handleTimeout() {
+      if (answered) return;
+      answered = true;
+      streak = 0;
+      const item = deck[qIdx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+      ArcadeAudio.fail();
+      document.getElementById('q-streak').textContent = 0;
+      showFact(false, '⏱ Zeit abgelaufen! ');
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Treffer! ' : '❌ Nicht ganz: ')}</strong>${item.exp}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered) return;
+      jokers.time = false;
+      document.getElementById('joker-time').disabled = true;
+      timeLeft = Math.min(30, timeLeft + 10);
+      updateTimerUI();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const isNewRecord = ArcadeScores.record('quiz_china', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '🏮' : '🐉');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer China-Rekord!' : 'Runde abgeschlossen!';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>
