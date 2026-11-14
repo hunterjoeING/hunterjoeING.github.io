@@ -281,6 +281,7 @@
       let grid = [];
       let score = 0;
       let bestScore = (ArcadeScores.getBest('p2048') && ArcadeScores.getBest('p2048').best) || 0;
+      let currentRunId = ArcadeScores.newRunId('p2048');
       let nextTileId = 1;
       let undoStack = [];
       let reached2048 = false;
@@ -322,13 +323,24 @@
       function updateBest() {
         if (score > bestScore) {
           bestScore = score;
-          ArcadeScores.record('p2048', bestScore, bestScore + ' Pkt (' + maxTileVal() + ')', false);
+          ArcadeScores.record('p2048', bestScore, bestScore + ' Pkt (' + maxTileVal() + ')', false, { sync: false });
         }
         elScore.textContent = '⭐ ' + score;
         elBest.textContent = '🏆 ' + bestScore;
       }
 
+      window.addEventListener('arcade:scores-updated', () => {
+        const b = ArcadeScores.getBest('p2048');
+        if (b && b.best > bestScore) {
+          bestScore = b.best;
+          elBest.textContent = '🏆 ' + bestScore;
+        }
+      });
+
       function initBoard() {
+        currentRunId = ArcadeScores.newRunId('p2048');
+        const b = ArcadeScores.getBest('p2048');
+        if (b && b.best > bestScore) bestScore = b.best;
         elGridBg.style.gridTemplateColumns = `repeat(${size}, 1fr)`;
         elGridBg.style.gridTemplateRows = `repeat(${size}, 1fr)`;
         elGridBg.innerHTML = '';
@@ -452,7 +464,7 @@
         if (!reached2048 && maxTileVal() >= 2048) {
           reached2048 = true;
           ArcadeAudio.win();
-          ArcadeScores.record('p2048', score, score + ' Pkt (2048!)', false);
+          ArcadeScores.record('p2048', score, score + ' Pkt (2048!)', false, { runId: currentRunId });
           elOvTitle.textContent = '🎉 2048 erreicht!';
           elOvTitle.style.color = '#fbbf24';
           elOvDesc.textContent = 'Du kannst endlos weiterspielen oder eine neue Runde starten.';
@@ -464,7 +476,7 @@
         if (!hasMoves()) {
           gameOver = true;
           ArcadeAudio.fail();
-          ArcadeScores.record('p2048', score, score + ' Pkt (' + maxTileVal() + ')', false);
+          ArcadeScores.record('p2048', score, score + ' Pkt (' + maxTileVal() + ')', false, { runId: currentRunId });
           elOvTitle.textContent = '💥 Keine Züge mehr';
           elOvTitle.style.color = '#fb7185';
           elOvDesc.textContent = `Endstand: ${score} Punkte · Höchstes Prisma: ${maxTileVal()}`;

@@ -187,7 +187,205 @@ body {
 }
 
 @media (max-width: 560px) {
+  .arcade-topbar { padding: 8px 10px; gap: 6px; flex-wrap: wrap; }
   .topbar-title { font-size: 13.5px; }
   .back-hub-btn { padding: 6px 9px; font-size: 12px; }
   .pill-stat { padding: 4px 8px; font-size: 11px; }
+  .arcade-nav-pill .arcade-nav-label { display: none; }
+}
+
+.arcade-nav-pill {
+  gap: 6px;
+  padding: 0 11px;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  max-width: 155px;
+}
+.arcade-nav-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pill-stat.clickable {
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.pill-stat.clickable:hover {
+  border-color: var(--accent-cyan);
+  background: rgba(14, 116, 144, 0.3);
+}
+
+/* Global Leaderboard & Player Name Modals */
+.arcade-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.arcade-modal-card {
+  width: min(640px, 100%);
+  max-height: min(86vh, 720px);
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 18, 34, 0.96);
+  border: 1px solid rgba(56, 189, 248, 0.38);
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7);
+  color: var(--text-main);
+  overflow: hidden;
+}
+.arcade-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 18px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+.arcade-modal-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.arcade-modal-sub {
+  padding: 10px 18px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.arcade-modal-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 10px 18px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.arcade-modal-tabs::-webkit-scrollbar { display: none; }
+.arcade-tab-btn {
+  flex: 0 0 auto;
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.85);
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.arcade-tab-btn.active {
+  background: rgba(14, 165, 233, 0.22);
+  border-color: rgba(56, 189, 248, 0.72);
+  color: #f8fafc;
+}
+.arcade-modal-body {
+  padding: 12px 18px 18px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  -webkit-overflow-scrolling: touch;
+}
+.arcade-board-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.arcade-board-table th {
+  text-align: left;
+  padding: 8px 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+.arcade-board-table td {
+  padding: 9px 8px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+.arcade-board-table tr.is-me td {
+  background: rgba(14, 165, 233, 0.14);
+  color: #e0f2fe;
+}
+.arcade-board-rank {
+  font-family: var(--font-mono);
+  font-weight: 800;
+  width: 44px;
+}
+.arcade-board-name {
+  font-weight: 700;
+}
+.arcade-board-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: #fbbf24;
+  text-align: right;
+  white-space: nowrap;
+}
+.arcade-board-date {
+  color: #64748b;
+  font-size: 11.5px;
+  text-align: right;
+  white-space: nowrap;
+}
+.arcade-name-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: rgba(15, 23, 42, 0.92);
+  color: #f8fafc;
+  font-size: 15px;
+  font-weight: 600;
+  outline: none;
+}
+.arcade-name-input:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+}
+
+.arcade-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 9980;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: min(92vw, 540px);
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: rgba(9, 15, 30, 0.94);
+  border: 1px solid rgba(56, 189, 248, 0.48);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.6);
+  color: #f1f5f9;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+.arcade-toast-btn {
+  padding: 4px 9px;
+  border-radius: 8px;
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  background: rgba(14, 165, 233, 0.22);
+  color: #e0f2fe;
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
 }

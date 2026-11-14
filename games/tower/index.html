@@ -237,6 +237,7 @@
     let projectiles = [];
     let beams = [];
     let particles = [];
+    let currentRunId = ArcadeScores.newRunId('tower');
 
     function refreshTopBest() {
       const b = ArcadeScores.getBest('tower');
@@ -262,6 +263,7 @@
 
     function resetTD(newMapIdx) {
       if (newMapIdx !== undefined) mapIdx = parseInt(newMapIdx, 10) || 0;
+      currentRunId = ArcadeScores.newRunId('tower');
       buildPathSet(mapIdx);
       gold = 150;
       lives = 20;
@@ -528,7 +530,7 @@
           if (lives <= 0) {
             gameOver = true;
             ArcadeAudio.fail();
-            const isNew = ArcadeScores.record('tower', score, `${score} Pkt (Welle ${wave})`, false);
+            const isNew = ArcadeScores.record('tower', score, `${score} Pkt (Welle ${wave})`, false, { runId: currentRunId });
             refreshTopBest();
             document.getElementById('ov-emoji').textContent = isNew ? '🏆' : '💥';
             document.getElementById('ov-title').textContent = isNew ? 'Neuer Bastion-Rekord!' : 'Basis überrannt!';
@@ -612,7 +614,7 @@
       if (waveQueue.length === 0 && enemies.length === 0 && wave > 0) {
         const prevBtnDisabled = document.getElementById('btn-wave').disabled;
         if (prevBtnDisabled) {
-          ArcadeScores.record('tower', score, `${score} Pkt (Welle ${wave})`, false);
+          ArcadeScores.record('tower', score, `${score} Pkt (Welle ${wave})`, false, { runId: currentRunId, silent: true });
           refreshTopBest();
           changedStats = true;
         }

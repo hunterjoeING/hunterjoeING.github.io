@@ -259,6 +259,7 @@
     }));
     const keys = { left: false, right: false, thrust: false };
     let gasSoundCooldown = 0;
+    let currentRunId = ArcadeScores.newRunId('roadster');
 
     function refreshTopBest() {
       const b = ArcadeScores.getBest('roadster');
@@ -319,6 +320,7 @@
     function startFromLevelOne() {
       lvlIdx = 0;
       totalScore = 0;
+      currentRunId = ArcadeScores.newRunId('roadster');
       startCurrentMission();
     }
 
@@ -550,7 +552,7 @@
       totalScore += pts;
       document.getElementById('hud-score').textContent = totalScore;
 
-      ArcadeScores.record('roadster', totalScore, `${totalScore} Pkt (Mission ${lvlIdx + 1})`, false);
+      ArcadeScores.record('roadster', totalScore, `${totalScore} Pkt (Mission ${lvlIdx + 1})`, false, { runId: currentRunId });
       refreshTopBest();
 
       const isFinal = lvlIdx >= LEVELS.length - 1;

@@ -7621,17 +7621,50 @@ function resetSliceFilter() {
   refreshAllCellMaterials();
 }
 
+const MS3D_SCORE_API = 'https://hunterjoe-scores.hunterjoeing.workers.dev';
+let lastMsSubmission = null;
+
+function getMsPlayerName() {
+  try {
+    const raw = (localStorage.getItem('arcade_player_name') || '').replace(/\s+/g, ' ').trim().slice(0, 24);
+    return raw || 'Spieler';
+  } catch (e) {
+    return 'Spieler';
+  }
+}
+
+function setMsPlayerName(name) {
+  const cleaned = String(name || '').replace(/[\u0000-\u001F\u007F]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 24);
+  try {
+    if (cleaned) localStorage.setItem('arcade_player_name', cleaned);
+    else localStorage.removeItem('arcade_player_name');
+  } catch (e) {}
+  if (cleaned && lastMsSubmission && (Date.now() - lastMsSubmission.ts) < 120000) {
+    fetch(`${MS3D_SCORE_API}/api/scores`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify({ ...lastMsSubmission.payload, playerName: cleaned })
+    }).catch(() => {});
+  }
+  return cleaned || 'Spieler';
+}
+
 function saveHighscoreIfEligible() {
   if (usedAutopilot) return;
+  const playerName = getMsPlayerName();
+  const sculpLabel = SCULPTURE_MODES[geoMode]?.label;
+  const geoLabel = geoMode === 'icosahedron' ? 'Ikosaeder' : (geoMode === 'impossible' ? 'Unmöglich/Unendlich' : (sculpLabel || 'Würfel'));
+  const levelTag = `L${level}`;
+  const densityTag = `${Math.round(density * 100)}%`;
+
   try {
     const raw = localStorage.getItem('ms3d_highscores_v1');
     const list = raw ? JSON.parse(raw) : [];
-    const sculpLabel = SCULPTURE_MODES[geoMode]?.label;
-    const geoLabel = geoMode === 'icosahedron' ? 'Ikosaeder' : (geoMode === 'impossible' ? 'Unmöglich/Unendlich' : (sculpLabel || 'Würfel'));
     list.push({
-      player: 'Du (Mensch + Agent-UI)',
-      level: `L${level}`,
-      density: `${Math.round(density * 100)}%`,
+      player: playerName,
+      level: levelTag,
+      density: densityTag,
       geo: geoLabel,
       time: timer,
       date: new Date().toISOString().slice(0, 10)
@@ -7639,6 +7672,32 @@ function saveHighscoreIfEligible() {
     list.sort((a, b) => a.time - b.time);
     localStorage.setItem('ms3d_highscores_v1', JSON.stringify(list.slice(0, 25)));
   } catch (e) {}
+
+  const payload = {
+    gameId: 'minesweeper',
+    playerName,
+    score: timer,
+    label: `${timer}s · ${geoLabel} (${levelTag})`,
+    runId: `ms_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`,
+    meta: { level: levelTag, density: densityTag, geo: geoLabel }
+  };
+  lastMsSubmission = { payload, ts: Date.now() };
+
+  fetch(`${MS3D_SCORE_API}/api/scores`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    keepalive: true,
+    body: JSON.stringify(payload)
+  })
+    .then(r => r.ok ? r.json() : null)
+    .then(res => {
+      if (res && res.ok && typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('ms3d_global_top_v1', JSON.stringify(res.top || []));
+        } catch (e) {}
+      }
+    })
+    .catch(() => {});
 }
 
 // Main Three.js Render Loop
@@ -9031,6 +9090,7 @@ function openModal(type) {
     content.innerHTML = renderDesignModalHTML();
   } else if (type === 'highscore') {
     content.innerHTML = renderHighscoreModalHTML();
+    refreshGlobalMinesweeperScores();
   } else if (type === 'savegame') {
     content.innerHTML = renderSavegameModalHTML();
   } else if (type === 'customgeo') {
@@ -9232,50 +9292,133 @@ function applyDesignPreset(preset) {
   openModal('design');
 }
 
-// 4. Highscore & Agent vs. Chatbot Benchmark Modal
-function renderHighscoreModalHTML() {
-  let userScores = [];
-  try {
-    const raw = localStorage.getItem('ms3d_highscores_v1');
-    if (raw) userScores = JSON.parse(raw);
-  } catch (e) {}
+// 4. Highscore & Agent vs. Chatbot Benchmark Modal (Global Cloudflare Sync + Local Fallback)
+function escapeMsHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function buildHighscoreRowsHTML(globalRows) {
+  let rows = Array.isArray(globalRows) ? globalRows : null;
+  if (!rows) {
+    try {
+      const cached = JSON.parse(localStorage.getItem('ms3d_global_top_v1') || 'null');
+      if (Array.isArray(cached) && cached.length > 0) rows = cached;
+    } catch (e) {}
+  }
+
+  let mappedUserRows = [];
+  if (rows && rows.length > 0) {
+    mappedUserRows = rows.map((r, idx) => {
+      const meta = r.meta || {};
+      const lvl = meta.level ? `${meta.level}${meta.density ? ' (' + meta.density + ')' : ''}` : '3D';
+      const geoNote = meta.geo || r.label || '';
+      const dateStr = r.createdAt ? String(r.createdAt).slice(0, 10) : '';
+      return {
+        rank: `#${idx + 1}`,
+        name: `🌍 ${escapeMsHtml(r.playerName || 'Spieler')}`,
+        level: escapeMsHtml(lvl),
+        time: `${String(r.score).padStart(3, '0')}s`,
+        note: escapeMsHtml([geoNote, dateStr].filter(Boolean).join(' · '))
+      };
+    });
+  } else if (rows && rows.length === 0) {
+    mappedUserRows = [{
+      rank: '—',
+      name: 'Noch keine globalen Zeiten',
+      level: '—',
+      time: '—',
+      note: 'Schließe ein Level ohne Autopilot ab für Platz #1 weltweit!'
+    }];
+  } else {
+    let localScores = [];
+    try {
+      const raw = localStorage.getItem('ms3d_highscores_v1');
+      if (raw) localScores = JSON.parse(raw);
+    } catch (e) {}
+    mappedUserRows = localScores.map((s, idx) => ({
+      rank: `#${idx + 1}`,
+      name: `🌟 ${escapeMsHtml(s.player || 'Spieler')}`,
+      level: escapeMsHtml(`${s.level} (${s.density})`),
+      time: `${String(s.time).padStart(3, '0')}s`,
+      note: escapeMsHtml(`${s.geo} · ${s.date}`)
+    }));
+  }
 
   const benchmarkRows = [
-    { rank: '🥇 1', name: '⚡ Antigravity_KI_Agent', level: 'L9 · 📐 Penrose', time: '006s', note: 'Löst nicht-euklidische Wurmloch-Nachbarschaften in Echtzeit' },
-    { rank: '🥈 2', name: '🛠️ Autonomous_Tool_Agent', level: 'L10 · ♾️ Möbius', time: '015s', note: '4D-Tesserakt & Möbius-Schleife mit 0 Fehltritten' },
-    { rank: '🥉 3', name: '🚀 Agent_Commander_NCC1701', level: 'L6 · 🛸', time: '042s', note: 'Steuert die Enterprise autonom durch 741 Voxel' },
-    ...userScores.map((s, idx) => ({
-      rank: `#${idx + 4}`,
-      name: `🌟 ${s.player}`,
-      level: `${s.level} (${s.density})`,
-      time: `${String(s.time).padStart(3, '0')}s`,
-      note: `${s.geo} · ${s.date}`
-    })),
-    { rank: '💤 999', name: '💬 Reiner_Text_Chatbot_v1', level: 'L1 · 4³', time: '∞', note: 'Schreibt noch eine 500-Wörter-Antwort darüber, dass er leider keine Maus bedienen kann.' }
+    ...mappedUserRows,
+    { rank: '🤖 A1', name: '⚡ Antigravity_KI_Agent', level: 'L9 · 📐 Penrose', time: '006s', note: 'Referenz: Löst nicht-euklidische Nachbarschaften' },
+    { rank: '🤖 A2', name: '🛠️ Autonomous_Tool_Agent', level: 'L10 · ♾️ Möbius', time: '015s', note: 'Referenz: 4D-Tesserakt & Möbius mit 0 Fehltritten' },
+    { rank: '💤 999', name: '💬 Reiner_Text_Chatbot_v1', level: 'L1 · 4³', time: '∞', note: 'Schreibt noch eine 500-Wörter-Antwort darüber, dass er keine Maus bedienen kann.' }
   ];
 
+  return benchmarkRows.map(r => `
+    <tr>
+      <td>${r.rank}</td>
+      <td>${r.name}</td>
+      <td>${r.level}</td>
+      <td style="color:var(--neon-yellow);font-weight:bold;">${r.time}</td>
+      <td style="font-size:11.5px;color:var(--text-muted);">${r.note}</td>
+    </tr>
+  `).join('');
+}
+
+function saveMsPlayerNameFromModal() {
+  const inp = document.getElementById('ms3d-player-input');
+  if (!inp || typeof setMsPlayerName !== 'function') return;
+  const saved = setMsPlayerName(inp.value);
+  inp.value = saved;
+  const st = document.getElementById('ms3d-player-status');
+  if (st) st.textContent = `Gespeichert: ${saved}`;
+  setTimeout(() => refreshGlobalMinesweeperScores(), 250);
+}
+
+function refreshGlobalMinesweeperScores() {
+  const tbody = document.getElementById('ms3d-highscore-tbody');
+  const statusEl = document.getElementById('ms3d-global-status');
+  if (statusEl) statusEl.textContent = 'Synchronisiere weltweite Bestenliste…';
+  fetch('https://hunterjoe-scores.hunterjoeing.workers.dev/api/scores?game=minesweeper&limit=25', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data || !data.ok) throw new Error('bad response');
+      try {
+        localStorage.setItem('ms3d_global_top_v1', JSON.stringify(data.top || []));
+      } catch (e) {}
+      if (tbody) tbody.innerHTML = buildHighscoreRowsHTML(data.top || []);
+      if (statusEl) statusEl.textContent = `🌍 Weltweite Bestenliste · ${data.plays || 0} Runden gespielt`;
+    })
+    .catch(() => {
+      if (statusEl) statusEl.textContent = 'Offline-Modus · Lokaler Zwischenspeicher aktiv';
+    });
+}
+
+function renderHighscoreModalHTML() {
+  const curName = typeof getMsPlayerName === 'function' ? getMsPlayerName() : 'Spieler';
   return `
-    <h2>🏆 Bestenliste &amp; Fähigkeits-Benchmark</h2>
-    <p style="text-align:center;color:var(--text-muted);font-size:12px;">
-      Lokale Bestzeiten &amp; Vergleich zwischen aktiven KI-Agenten und passiven Chatbots
+    <h2>🏆 Globale Bestenliste &amp; Benchmark</h2>
+    <p id="ms3d-global-status" style="text-align:center;color:var(--text-muted);font-size:12px;">
+      Lade weltweite Bestzeiten…
     </p>
+    <div style="display:flex;gap:8px;align-items:center;justify-content:center;flex-wrap:wrap;margin:10px 0 14px;">
+      <span style="font-size:12px;color:var(--text-muted);">👤 Dein Name:</span>
+      <input id="ms3d-player-input" type="text" maxlength="24" value="${escapeMsHtml(curName)}" style="padding:6px 10px;border-radius:8px;border:1px solid rgba(56,189,248,0.45);background:rgba(15,23,42,0.9);color:#f8fafc;font-size:13px;width:170px;" onkeydown="if(event.key==='Enter')saveMsPlayerNameFromModal()">
+      <button class="secondary-glow-btn" onclick="saveMsPlayerNameFromModal()">Speichern</button>
+      <span id="ms3d-player-status" style="font-size:11.5px;color:var(--neon-green);"></span>
+    </div>
     <table class="ctrl-table">
       <thead>
         <tr><th>Rang</th><th>Spieler / Entität</th><th>Level</th><th>Zeit</th><th>Status / Telemetrie</th></tr>
       </thead>
-      <tbody>
-        ${benchmarkRows.map(r => `
-          <tr>
-            <td>${r.rank}</td>
-            <td>${r.name}</td>
-            <td>${r.level}</td>
-            <td style="color:var(--neon-yellow);font-weight:bold;">${r.time}</td>
-            <td style="font-size:11.5px;color:var(--text-muted);">${r.note}</td>
-          </tr>
-        `).join('')}
+      <tbody id="ms3d-highscore-tbody">
+        ${buildHighscoreRowsHTML(null)}
       </tbody>
     </table>
-    <div style="text-align:center;margin-top:18px;">
+    <div style="text-align:center;margin-top:18px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <button class="secondary-glow-btn" onclick="refreshGlobalMinesweeperScores()">↻ Aktualisieren</button>
       <button class="primary-glow-btn" onclick="closeModal()">Schließen ✕</button>
     </div>
   `;

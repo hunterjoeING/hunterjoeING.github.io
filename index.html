@@ -364,7 +364,7 @@
     /* Cards Grid */
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(100%, 285px), 1fr));
       gap: 15px;
     }
 
@@ -480,9 +480,9 @@
       font-size: 11.5px;
       font-weight: 700;
       color: #fde68a;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.32;
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
     .card-best.empty {
       color: #64748b;
@@ -553,6 +553,8 @@
       </div>
 
       <div class="header-actions">
+        <button class="hub-action-btn arcade-nav-pill" id="btn-arcade-player" title="Spielername für globale Bestenlisten">👤 Name setzen</button>
+        <button class="hub-action-btn" id="btn-hub-leaderboard" title="Globale Bestenliste aller Spiele öffnen">🏆 Bestenliste</button>
         <button class="hub-action-btn" id="btn-replay-zoom" title="5-Sekunden-Kamerafahrt erneut abspielen">🔭 5s-Anflug</button>
         <button class="icon-btn" id="btn-mute" title="Ton an/aus">🔊</button>
       </div>
@@ -597,7 +599,7 @@
     </section>
 
     <footer class="hub-footer">
-      HunterJoe Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Highscores werden lokal im Browser gespeichert
+      HunterJoe Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Weltweite Bestenlisten (Cloudflare Workers &amp; D1)
     </footer>
   </div>
 
@@ -822,22 +824,38 @@
       ArcadeAudio.syncButton(elMute);
       elMute.addEventListener('click', () => ArcadeAudio.toggleMute(elMute));
 
+      function escapeHubHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
       function readItemBest(id) {
         if (id === 'minesweeper') {
           const ms = ArcadeScores.getMinesweeperBest();
           if (!ms) return null;
-          return `${ms.time}s · ${ms.geo || ms.level || 'Klassik'}`;
+          const geo = ms.geo || ms.level || 'Klassik';
+          return ms.player ? `${ms.player}: ${ms.time}s · ${geo}` : `${ms.time}s · ${geo}`;
         }
         const entry = ArcadeScores.getBest(id);
-        return entry ? entry.label : null;
+        if (!entry) return null;
+        return entry.playerName ? `${entry.playerName}: ${entry.label}` : entry.label;
       }
 
       function updateHeaderStats() {
+        const summary = ArcadeScores.getSummaryCache ? ArcadeScores.getSummaryCache() : null;
+        document.getElementById('stat-games').textContent = GAMES.length + QUIZZES.length;
+        if (summary && summary.games) {
+          document.getElementById('stat-records').textContent = Number(summary.totalRecords || 0);
+          document.getElementById('stat-plays').textContent = Number(summary.totalPlays || 0);
+          return;
+        }
         const all = ArcadeScores.getAll();
         const ms = ArcadeScores.getMinesweeperBest();
-        let records = Object.keys(all).length + (ms ? 1 : 0);
-        let plays = Object.values(all).reduce((s, item) => s + (item.plays || 0), 0) + (ms ? 1 : 0);
-        document.getElementById('stat-games').textContent = GAMES.length + QUIZZES.length;
+        const records = Object.keys(all).length + (ms ? 1 : 0);
+        const plays = Object.values(all).reduce((s, item) => s + (item.plays || 0), 0) + (ms ? 1 : 0);
         document.getElementById('stat-records').textContent = records;
         document.getElementById('stat-plays').textContent = plays;
       }
@@ -860,7 +878,7 @@
           <h3 class="card-title">${g.title}</h3>
           <p class="card-desc">${g.desc}</p>
           <div class="card-footer">
-            <span class="card-best ${best ? '' : 'empty'}">${best ? '🏆 ' + best : 'Noch kein Rekord'}</span>
+            <span class="card-best ${best ? '' : 'empty'}">${best ? '🏆 ' + escapeHubHtml(best) : 'Noch kein globaler Rekord'}</span>
             <span class="play-cta">${g.cta || 'Spielen →'}</span>
           </div>
         `;
@@ -1126,6 +1144,19 @@
         };
         requestAnimationFrame(step2d);
       }
+
+      document.getElementById('btn-arcade-player').addEventListener('click', () => {
+        ArcadeAudio.click();
+        ArcadeScores.openPlayerNameModal();
+      });
+      document.getElementById('btn-hub-leaderboard').addEventListener('click', () => {
+        ArcadeAudio.click();
+        ArcadeScores.openLeaderboardModal('minesweeper');
+      });
+      window.addEventListener('arcade:scores-updated', () => {
+        updateHeaderStats();
+        renderHub();
+      });
 
       updateHeaderStats();
       renderHub();
