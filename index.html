@@ -555,7 +555,7 @@
       <div class="header-actions">
         <button class="hub-action-btn arcade-nav-pill" id="btn-arcade-player" title="Spielername für globale Bestenlisten">👤 Name setzen</button>
         <button class="hub-action-btn" id="btn-hub-leaderboard" title="Globale Bestenliste aller Spiele öffnen">🏆 Bestenliste</button>
-        <button class="hub-action-btn" id="btn-replay-zoom" title="5-Sekunden-Kamerafahrt erneut abspielen">🔭 5s-Anflug</button>
+        <button class="hub-action-btn" id="btn-replay-zoom" title="2-Sekunden-Kamerafahrt erneut abspielen">🔭 2s-Anflug</button>
         <button class="icon-btn" id="btn-mute" title="Ton an/aus">🔊</button>
       </div>
     </header>
@@ -917,11 +917,11 @@
       });
 
       // ============================================================
-      // 3D Cosmic Sanctuary & 4.8-Second Zoom-In Intro Animation
+      // 3D Cosmic Sanctuary & 2-Second Zoom-In Intro Animation
       // ============================================================
       const canvas = document.getElementById('cosmos-canvas');
       let introStart = 0;
-      const INTRO_DURATION = 4800; // ~5 Sekunden Anflug
+      const INTRO_DURATION = 2000; // 2 Sekunden Anflug
       let introFinished = false;
       let mouseNX = 0, mouseNY = 0;
 
@@ -931,17 +931,17 @@
 
       function applyShellTransform(t) {
         if (introFinished) return;
-        // Starts far away & dim, smoothly expands into full dashboard during the approach
-        const reveal = Math.max(0, Math.min(1, (t - 0.34) / 0.66));
+        // Starts far away & dim, smoothly expands into full dashboard during the 2s approach
+        const reveal = Math.max(0, Math.min(1, (t - 0.16) / 0.84));
         const eased = easeOutCubic(reveal);
-        const scale = 0.68 + 0.32 * eased;
-        const ty = (1 - eased) * 28;
+        const scale = 0.72 + 0.28 * eased;
+        const ty = (1 - eased) * 24;
         elShell.style.opacity = eased.toFixed(3);
         elShell.style.transform = eased >= 0.999
           ? 'none'
           : `scale(${scale.toFixed(4)}) translateY(${ty.toFixed(1)}px)`;
 
-        if (t >= 0.55) elShell.classList.add('interactive');
+        if (t >= 0.35) elShell.classList.add('interactive');
         elIntroBar.style.width = Math.round(t * 100) + '%';
         if (t >= 1) {
           introFinished = true;
