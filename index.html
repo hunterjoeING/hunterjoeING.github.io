@@ -236,20 +236,94 @@
       color: var(--text-muted);
     }
 
-    /* Filter Pills */
-    .filter-row {
+    /* Main Domain Switcher (Games vs Quizze) */
+    .domain-tabs {
       margin-top: 16px;
       display: flex;
       flex-wrap: wrap;
+      gap: 9px;
+    }
+    .domain-tab {
+      padding: 10px 18px;
+      border-radius: 13px;
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      background: rgba(11, 20, 42, 0.84);
+      color: #cbd5e1;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.16s;
+      backdrop-filter: blur(8px);
+    }
+    .domain-tab:hover {
+      border-color: rgba(56, 189, 248, 0.65);
+      color: #f8fafc;
+    }
+    .domain-tab.active {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #7dd3fc;
+      color: #fff;
+      box-shadow: 0 6px 22px rgba(14, 165, 233, 0.36);
+    }
+    .domain-tab.quiz-tab.active {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      border-color: #fde68a;
+      color: #0f172a;
+      box-shadow: 0 6px 22px rgba(245, 158, 11, 0.34);
+    }
+
+    .section-block {
+      margin-top: 22px;
+    }
+    .section-block.hidden {
+      display: none;
+    }
+    .section-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .section-head h2 {
+      margin: 0;
+      font-size: 19px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
+    .section-count {
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+    }
+    .section-count.quiz {
+      background: rgba(251, 191, 36, 0.16);
+      border-color: rgba(251, 191, 36, 0.45);
+      color: #fde68a;
+    }
+
+    /* Filter Pills */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
     .filter-pill {
-      padding: 8px 14px;
+      padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid rgba(148, 163, 184, 0.28);
       background: rgba(11, 20, 42, 0.78);
       color: #cbd5e1;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.15s;
@@ -263,12 +337,11 @@
       background: linear-gradient(135deg, #0284c7, #0ea5e9);
       border-color: #7dd3fc;
       color: #fff;
-      box-shadow: 0 6px 18px rgba(14, 165, 233, 0.35);
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
     }
 
-    /* Games Grid */
+    /* Cards Grid */
     .games-grid {
-      margin-top: 16px;
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
       gap: 15px;
@@ -466,28 +539,44 @@
 
     <section class="hub-hero">
       <div class="hero-copy">
-        <h2>Wähle dein Spiel oder starte ein Quiz</h2>
-        <p>Direkt im Browser ohne Installation spielbar – von räumlichem <strong>Minesweeper 3D</strong> mit allen 13 Formen im Fern-Zoom bis hin zu <strong>Kaltgas-Landungen</strong>, <strong>Zombie-Horden</strong>, <strong>Tower Defense</strong>, <strong>Solitaire</strong> &amp; <strong>Quiz Arena</strong>.</p>
+        <h2>Games &amp; Quiz-Welten</h2>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Minesweeper 3D mit Fern-Zoom, Hyper-Roadster, Zombie Horde, Tower Defense, Solitaire, 2048) und unseren <strong>Quiz-Welten</strong> (E-Mobilität &amp; Tesla TFF-Nerdwissen, Politik &amp; Ökonomie nach Roland Baader, Allgemeinwissen).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">7</b><span>Spiele</span></div>
+        <div class="hero-stat-box"><b id="stat-games">9</b><span>Module</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
-    <nav class="filter-row" id="filter-row" aria-label="Spielkategorien">
-      <button class="filter-pill active" data-cat="all">Alle (7)</button>
-      <button class="filter-pill" data-cat="logic">3D &amp; Logik</button>
-      <button class="filter-pill" data-cat="action">Action &amp; Arcade</button>
-      <button class="filter-pill" data-cat="strategy">Strategie &amp; Karten</button>
-      <button class="filter-pill" data-cat="quiz">Quiz</button>
-    </nav>
+    <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
+      <button class="domain-tab active" data-domain="all">✨ Alles (9)</button>
+      <button class="domain-tab" data-domain="games">🎮 Games (6)</button>
+      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (3)</button>
+    </div>
 
-    <section class="games-grid" id="games-grid"></section>
+    <section class="section-block" id="sec-games">
+      <div class="section-head">
+        <h2>🎮 Games <span class="section-count">6 Spiele</span></h2>
+        <nav class="filter-row" id="filter-row" aria-label="Spiele filtern">
+          <button class="filter-pill active" data-cat="all">Alle Games (6)</button>
+          <button class="filter-pill" data-cat="logic">3D &amp; Logik</button>
+          <button class="filter-pill" data-cat="action">Action &amp; Arcade</button>
+          <button class="filter-pill" data-cat="strategy">Strategie &amp; Karten</button>
+        </nav>
+      </div>
+      <div class="games-grid" id="games-grid"></div>
+    </section>
+
+    <section class="section-block" id="sec-quizzes">
+      <div class="section-head">
+        <h2>🧠 Quiz-Welten <span class="section-count quiz">3 Quiz-Arenen</span></h2>
+      </div>
+      <div class="games-grid" id="quizzes-grid"></div>
+    </section>
 
     <footer class="hub-footer">
-      Verstand2Go Arcade · 100 % eigenständige Web-Spiele · Highscores werden lokal im Browser gespeichert
+      Verstand2Go Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Highscores werden lokal im Browser gespeichert
     </footer>
   </div>
 
@@ -503,6 +592,7 @@
           catLabel: '3D & Logik',
           badge: '✨ Fern-Zoom & 13 Formen',
           featured: true,
+          cta: 'Spielen →',
           title: 'Minesweeper 3D',
           desc: 'Entdecke beim Start zuerst alle 13 3D-Skulpturen (Würfel, Kugel, T-Rex, Rakete, Elmo…) aus der Distanz, wähle deine Form und zoome direkt ans Spielfeld.',
           accent: '#38bdf8',
@@ -516,27 +606,12 @@
           </svg>`
         },
         {
-          id: 'quiz',
-          href: './games/quiz/index.html',
-          cat: 'quiz',
-          catLabel: 'Quiz',
-          badge: '60 Fragen · 3 Joker',
-          title: 'Quiz Arena',
-          desc: 'Tritt gegen die 15-Sekunden-Uhr an: Technik & Raumfahrt, Physik, Natur, Geschichte, Geografie oder der schnelle Blitz-Mix mit Streak-Multiplikator.',
-          accent: '#fbbf24',
-          glow: 'rgba(251, 191, 36, 0.25)',
-          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
-            <polygon points="20,4 33,20 20,36 7,20" fill="url(#qg)" stroke="#fde68a" stroke-width="1.6"/>
-            <path d="M17.5 15.5c0-1.6 1.2-2.7 2.8-2.7 1.7 0 2.8 1.1 2.8 2.5 0 1.4-.9 2-2.1 2.8-.9.6-1.2 1.1-1.2 2.2v.6M19.8 24.8v1.2" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
-            <defs><linearGradient id="qg" x1="7" y1="4" x2="33" y2="36"><stop stop-color="#fde047"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
-          </svg>`
-        },
-        {
           id: 'roadster',
           href: './games/roadster/index.html',
           cat: 'action',
           catLabel: 'Action & Arcade',
           badge: 'N₂-Kaltgasdüsen',
+          cta: 'Spielen →',
           title: 'Hyper-Roadster',
           desc: 'Starte über die Mega-Rampe in den Himmel und steuere den Hyper-Roadster mit eiskalten Stickstoff-Düsen und Gyro-Hilfe präzise auf die Landeplattform.',
           accent: '#f43f5e',
@@ -555,6 +630,7 @@
           cat: 'action',
           catLabel: 'Action & Arcade',
           badge: 'Brücken-Horden',
+          cta: 'Spielen →',
           title: 'Zombie Horde: Gate Runner',
           desc: 'Weiche Zombie-Wellen auf der Perspektiv-Brücke aus, schieße Energietore hoch (+Soldaten, +Feuerrate, Streuschuss) und sprenge Fässer.',
           accent: '#4ade80',
@@ -574,6 +650,7 @@
           cat: 'strategy',
           catLabel: 'Strategie & Karten',
           badge: '3 Karten · 4 Türme',
+          cta: 'Spielen →',
           title: 'Bastion Tower Defense',
           desc: 'Baue und verbessere Puls-, Frost-, Mörser- und Railgun-Türme entlang dreier taktischer Verteidigungsrouten – inklusive 2×-Tempo & Boss-Wellen.',
           accent: '#a78bfa',
@@ -591,6 +668,7 @@
           cat: 'strategy',
           catLabel: 'Strategie & Karten',
           badge: '1-/3-Zug · Drag & Tap',
+          cta: 'Spielen →',
           title: 'Klondike Solitaire',
           desc: 'Der edle Kartenklassiker mit 1- und 3-Karten-Zug, fließendem Drag & Drop oder 1-Tap-Zug, unbegrenztem Rückgängig, Tipps & Sieges-Kaskade.',
           accent: '#2dd4bf',
@@ -607,6 +685,7 @@
           cat: 'logic',
           catLabel: '3D & Logik',
           badge: '4×4 & 5×5 Modus',
+          cta: 'Spielen →',
           title: '2048 Prism',
           desc: 'Verschmelze leuchtende Zahlen-Prismen flüssig per Wischgeste oder Pfeiltasten bis zur 2048 und darüber hinaus – wahlweise klassisch 4×4 oder 5×5.',
           accent: '#f472b6',
@@ -624,17 +703,72 @@
         }
       ];
 
+      const QUIZZES = [
+        {
+          id: 'quiz_emob',
+          href: './games/quiz-emobility/index.html',
+          catLabel: 'E-Mobilität & Laden',
+          badge: '54 Fragen · 3 Stufen · TFF',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'E-Mobilität & Tesla Nerd-Quiz',
+          desc: 'Allgemeine E-Technik (800V Taycan-Pionier, E-GMP Booster), Tesla-TFF-Insiderwissen (BYD Blade vs. CATL LFP, Octovalve, HW4, MCU, Plaid) & Schnelllade-Protokolle (IEC 61851, ISO 15118, V2–V4).',
+          accent: '#38bdf8',
+          glow: 'rgba(56, 189, 248, 0.28)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="15" fill="rgba(14,165,233,0.16)" stroke="#38bdf8" stroke-width="1.8"/>
+            <polygon points="22,7 12,22 19,22 17,33 28,18 21,18" fill="#38bdf8" stroke="#e0f2fe" stroke-width="1.2" stroke-linejoin="round"/>
+          </svg>`
+        },
+        {
+          id: 'quiz_pol',
+          href: './games/quiz-politics/index.html',
+          catLabel: 'Politik & Ökonomie',
+          badge: '36 Fragen · 3 Stufen · Baader',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Politik & Ökonomie: Freiheitliches Denken',
+          desc: 'Thesen von Roland Baader („Geldsozialismus“, Wohlstand durch Innovation & weniger Umverteilung), Österreichische Schule (Mises, Hayek, Cantillon, Bastiat) & Vergleich wirtschaftspolitischer Denkschulen.',
+          accent: '#fbbf24',
+          glow: 'rgba(251, 191, 36, 0.26)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <path d="M20 7v24M11 31h18M9 13h22" stroke="#fde68a" stroke-width="2" stroke-linecap="round"/>
+            <path d="M9 13l-4 8h8l-4-8zM31 13l-4 8h8l-4-8z" fill="rgba(251,191,36,0.35)" stroke="#fbbf24" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>`
+        },
+        {
+          id: 'quiz',
+          href: './games/quiz/index.html',
+          catLabel: 'Allgemeinwissen',
+          badge: '60 Fragen · 5 Themen',
+          cta: 'Quiz starten →',
+          title: 'Quiz Arena: Klassik',
+          desc: 'Das schnelle Wissensquiz gegen die 15-Sekunden-Uhr: Technik & Raumfahrt, Naturwissenschaften, Geschichte, Geografie oder Blitz-Mix mit Streak-Multiplikator.',
+          accent: '#2dd4bf',
+          glow: 'rgba(45, 212, 191, 0.24)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <polygon points="20,4 33,20 20,36 7,20" fill="url(#qg)" stroke="#fde68a" stroke-width="1.6"/>
+            <path d="M17.5 15.5c0-1.6 1.2-2.7 2.8-2.7 1.7 0 2.8 1.1 2.8 2.5 0 1.4-.9 2-2.1 2.8-.9.6-1.2 1.1-1.2 2.2v.6M19.8 24.8v1.2" stroke="#0f172a" stroke-width="2.5" stroke-linecap="round"/>
+            <defs><linearGradient id="qg" x1="7" y1="4" x2="33" y2="36"><stop stop-color="#fde047"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs>
+          </svg>`
+        }
+      ];
+
       const elMute = document.getElementById('btn-mute');
-      const elGrid = document.getElementById('games-grid');
+      const elGamesGrid = document.getElementById('games-grid');
+      const elQuizzesGrid = document.getElementById('quizzes-grid');
+      const elSecGames = document.getElementById('sec-games');
+      const elSecQuizzes = document.getElementById('sec-quizzes');
       const elShell = document.getElementById('hub-shell');
       const elIntroHud = document.getElementById('intro-hud');
       const elIntroBar = document.getElementById('intro-bar-fill');
-      let currentCat = 'all';
+      let currentDomain = 'all';
+      let currentGameCat = 'all';
 
       ArcadeAudio.syncButton(elMute);
       elMute.addEventListener('click', () => ArcadeAudio.toggleMute(elMute));
 
-      function readGameBest(id) {
+      function readItemBest(id) {
         if (id === 'minesweeper') {
           const ms = ArcadeScores.getMinesweeperBest();
           if (!ms) return null;
@@ -649,48 +783,65 @@
         const ms = ArcadeScores.getMinesweeperBest();
         let records = Object.keys(all).length + (ms ? 1 : 0);
         let plays = Object.values(all).reduce((s, item) => s + (item.plays || 0), 0) + (ms ? 1 : 0);
-        document.getElementById('stat-games').textContent = GAMES.length;
+        document.getElementById('stat-games').textContent = GAMES.length + QUIZZES.length;
         document.getElementById('stat-records').textContent = records;
         document.getElementById('stat-plays').textContent = plays;
       }
 
-      function renderCards() {
-        elGrid.innerHTML = '';
-        const list = currentCat === 'all' ? GAMES : GAMES.filter(g => g.cat === currentCat);
-        list.forEach(g => {
-          const best = readGameBest(g.id);
-          const a = document.createElement('a');
-          a.href = g.href;
-          a.className = 'game-card' + (g.featured ? ' featured' : '');
-          a.style.setProperty('--card-accent', g.accent);
-          a.style.setProperty('--card-glow', g.glow);
-          a.innerHTML = `
-            <div class="card-top">
-              <div class="game-icon-box">${g.icon}</div>
-              <div class="card-badges">
-                <span class="badge-cat">${g.catLabel}</span>
-                <span class="badge-new">${g.badge}</span>
-              </div>
+      function buildCard(g) {
+        const best = readItemBest(g.id);
+        const a = document.createElement('a');
+        a.href = g.href;
+        a.className = 'game-card' + (g.featured ? ' featured' : '');
+        a.style.setProperty('--card-accent', g.accent);
+        a.style.setProperty('--card-glow', g.glow);
+        a.innerHTML = `
+          <div class="card-top">
+            <div class="game-icon-box">${g.icon}</div>
+            <div class="card-badges">
+              <span class="badge-cat">${g.catLabel}</span>
+              <span class="badge-new">${g.badge}</span>
             </div>
-            <h3 class="card-title">${g.title}</h3>
-            <p class="card-desc">${g.desc}</p>
-            <div class="card-footer">
-              <span class="card-best ${best ? '' : 'empty'}">${best ? '🏆 ' + best : 'Noch kein Rekord'}</span>
-              <span class="play-cta">Spielen →</span>
-            </div>
-          `;
-          a.addEventListener('click', () => ArcadeAudio.click());
-          elGrid.appendChild(a);
-        });
+          </div>
+          <h3 class="card-title">${g.title}</h3>
+          <p class="card-desc">${g.desc}</p>
+          <div class="card-footer">
+            <span class="card-best ${best ? '' : 'empty'}">${best ? '🏆 ' + best : 'Noch kein Rekord'}</span>
+            <span class="play-cta">${g.cta || 'Spielen →'}</span>
+          </div>
+        `;
+        a.addEventListener('click', () => ArcadeAudio.click());
+        return a;
       }
+
+      function renderHub() {
+        elSecGames.classList.toggle('hidden', currentDomain === 'quizzes');
+        elSecQuizzes.classList.toggle('hidden', currentDomain === 'games');
+
+        elGamesGrid.innerHTML = '';
+        const gList = currentGameCat === 'all' ? GAMES : GAMES.filter(g => g.cat === currentGameCat);
+        gList.forEach(g => elGamesGrid.appendChild(buildCard(g)));
+
+        elQuizzesGrid.innerHTML = '';
+        QUIZZES.forEach(q => elQuizzesGrid.appendChild(buildCard(q)));
+      }
+
+      document.getElementById('domain-tabs').addEventListener('click', (e) => {
+        const btn = e.target.closest('.domain-tab');
+        if (!btn) return;
+        currentDomain = btn.dataset.domain;
+        document.querySelectorAll('.domain-tab').forEach(b => b.classList.toggle('active', b === btn));
+        ArcadeAudio.click();
+        renderHub();
+      });
 
       document.getElementById('filter-row').addEventListener('click', (e) => {
         const btn = e.target.closest('.filter-pill');
         if (!btn) return;
-        currentCat = btn.dataset.cat;
+        currentGameCat = btn.dataset.cat;
         document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p === btn));
         ArcadeAudio.click();
-        renderCards();
+        renderHub();
       });
 
       // ============================================================
@@ -919,7 +1070,7 @@
       }
 
       updateHeaderStats();
-      renderCards();
+      renderHub();
     })();
   </script>
 </body>

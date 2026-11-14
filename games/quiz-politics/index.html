@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Politik &amp; Ökonomie Quiz · Freiheitliches Denken</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      background: rgba(15, 23, 42, 0.88);
+      color: #cbd5e1;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover { border-color: var(--accent-amber); color: #f8fafc; }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      border-color: #fde68a;
+      color: #0f172a;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.32);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(15, 28, 56, 0.9);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-amber);
+      background: rgba(120, 53, 15, 0.25);
+    }
+    .cat-card.featured {
+      border-color: rgba(251, 191, 36, 0.58);
+      background: linear-gradient(135deg, rgba(120, 53, 15, 0.3), rgba(15, 28, 56, 0.92));
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.42; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+      margin-top: 4px;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #fbbf24, #4ade80);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      color: #fde68a;
+    }
+    .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+    .q-diff-pill.easy { background: rgba(22, 163, 74, 0.22); border-color: #4ade80; color: #bbf7d0; }
+    .q-diff-pill.mid  { background: rgba(234, 179, 8, 0.22); border-color: #facc15; color: #fef08a; }
+    .q-diff-pill.pro  { background: rgba(168, 85, 247, 0.25); border-color: #c084fc; color: #f3e8ff; }
+
+    .q-text {
+      font-size: 19px;
+      font-weight: 800;
+      line-height: 1.4;
+      margin: 0 0 18px;
+    }
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: rgba(15, 23, 42, 0.9);
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: var(--accent-amber);
+      background: rgba(120, 53, 15, 0.28);
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.eliminated { opacity: 0.22; pointer-events: none; }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.34);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(251, 191, 36, 0.18);
+      color: #fde68a;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .jokers-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      background: rgba(120, 53, 15, 0.25);
+      color: #fde68a;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled { opacity: 0.32; cursor: not-allowed; }
+    .fact-box {
+      margin-top: 14px;
+      padding: 13px 15px;
+      border-radius: 11px;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hidden { display: none !important; }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .stat-box {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      text-align: center;
+    }
+    .stat-box small { display: block; color: var(--text-muted); font-size: 11.5px; }
+    .stat-box strong { display: block; font-size: 22px; margin-top: 4px; color: #fde68a; font-family: var(--font-mono); }
+
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+      .q-text { font-size: 17px; }
+      .result-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">⚖️ Ökonomie &amp; Freiheit Quiz</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 Rekord: <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <section id="screen-menu" class="glass-card" style="padding: 20px;">
+      <h1 style="margin:0 0 6px; font-size: 22.5px;">Politik &amp; Ökonomie: Freiheitliches Denken</h1>
+      <p style="margin:0; color: var(--text-muted); font-size: 14px; line-height:1.45;">
+        Ideengeschichte und Argumente rund um <strong>Roland Baader</strong>, die <strong>Österreichische Schule</strong>
+        (Mises, Hayek) und klassischen Liberalismus (Bastiat) – samt Einordnung wirtschaftspolitischer Gegenpositionen.
+      </p>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎲 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Einsteiger (1,0×)</button>
+        <button class="diff-pill" data-diff="mid">🟡 Kenner (1,25×)</button>
+        <button class="diff-pill" data-diff="pro">🟣 Baader/Mises-Profi (1,5×)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong> / <strong id="q-total">10</strong></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong>×</span>
+        <span>⭐ Punkte: <strong id="q-score">0</strong></span>
+        <span>⏱ <strong id="q-sec">20</strong>s</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Kategorie</span>
+        <span id="q-diff" class="q-diff-pill easy">Einsteiger</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+      <div id="answers-grid" class="answers-grid"></div>
+      <div class="jokers-row">
+        <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50 Joker</button>
+        <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10 Sek.</button>
+        <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        <button class="secondary-btn" style="margin-left:auto" onclick="backToMenu()">Abbrechen</button>
+      </div>
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1; min-width: 210px;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+    </section>
+
+    <section id="screen-result" class="glass-card quiz-stage hidden" style="text-align:center;">
+      <div style="font-size:44px; margin-bottom:6px;" id="res-emoji">🏆</div>
+      <h1 style="margin:0 0 6px; font-size:24px;" id="res-heading">Runde geschafft!</h1>
+      <p style="margin:0; color:var(--text-muted);" id="res-sub"></p>
+      <div class="result-grid">
+        <div class="stat-box"><small>Gesamtpunkte</small><strong id="res-score">0</strong></div>
+        <div class="stat-box"><small>Richtige Antworten</small><strong id="res-correct">0/10</strong></div>
+        <div class="stat-box"><small>Beste Serie</small><strong id="res-streak">0</strong></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Nochmal spielen</button>
+        <button class="secondary-btn" onclick="backToMenu()">📚 Thema / Stufe ändern</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none;">🏠 Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const CATS = [
+      { id: 'baader',    icon: '💡', name: 'Roland Baader & Wohlstand',  desc: 'Wohlstandsentstehung, Geldsozialismus, Steuer- & Staatskritik nach Roland Baader.', cls: 'featured' },
+      { id: 'austrian',  icon: '🏛️', name: 'Österreichische Schule',     desc: 'Hayek („Anmaßung von Wissen“), Mises, Cantillon-Effekt & Konjunkturtheorie.' },
+      { id: 'debatte',   icon: '⚖️', name: 'Markt & Denkschulen',        desc: 'Bastiat, Eigentumsrechte, Preissignale & Vergleich mit Keynesianismus.' },
+      { id: 'mix',       icon: '🔥', name: 'Freiheitlicher Gesamt-Mix',  desc: 'Das Beste aus allen drei ökonomischen & politischen Themenfeldern.', cls: 'featured' }
+    ];
+
+    const CAT_NAMES = {
+      baader: '💡 Roland Baader & Wohlstand',
+      austrian: '🏛️ Österreichische Schule',
+      debatte: '⚖️ Markt & Denkschulen',
+      mix: '🔥 Freiheitlicher Gesamt-Mix'
+    };
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Einsteiger', cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Kenner', cls: 'mid', mult: 1.25 },
+      pro:  { label: '🟣 Baader/Mises-Profi', cls: 'pro', mult: 1.5 }
+    };
+
+    // 36 quellengestützte, klar attribuierte Fragen (12 je Kategorie, jeweils 4 pro Stufe)
+    const QUESTIONS = [
+      // ==================== ROLAND BAADER & WOHLSTAND ====================
+      {
+        cat: 'baader', diff: 'easy',
+        q: 'Was schafft laut Roland Baader und klassisch-liberalen Ökonomen nachhaltig gesellschaftlichen Wohlstand?',
+        a: ['Innovation, Kapitalbildung und Wirtschaftswachstum bei geringerer Umverteilung und niedrigeren Steuern', 'Stetig steigende Steuern zur Finanzierung staatlicher Transfers', 'Umfassende staatliche Umverteilung bestehender Ersparnisse', 'Möglichst viel frisch geschöpftes Papiergeld ohne Produktivitätszuwachs'],
+        exp: 'Nach Roland Baader und der Österreichischen Schule entsteht Wohlstand nur durch Wertschöpfung, Sparen, Kapitalakkumulation und Unternehmertum. Umverteilungspfründe und wohlfahrtsstaatliche Ansätze halten dagegen oft soziale Absicherung und Nachfrage für stabilisierend.'
+      },
+      {
+        cat: 'baader', diff: 'easy',
+        q: 'Welchen Begriff prägte Roland Baader als Buchtitel für ein System mit staatlichem Geldmonopol und ungedecktem Fiat-Papiergeld?',
+        a: ['Geldsozialismus', 'Goldkapitalismus', 'Steuerwunder', 'Bürgergeld-Ordnung'],
+        exp: 'In „Geldsozialismus – Die wirklichen Ursachen der neuen globalen Depression“ argumentiert Baader, ein zentralbankgelenktes Monopolgeld ermögliche staatliche Kaufkraftabschöpfung über Inflation und Kreditausweitung.'
+      },
+      {
+        cat: 'baader', diff: 'easy',
+        q: 'Welcher bekannte Freiburger Ökonom und Nobelpreisträger war ein direkter akademischer Lehrer von Roland Baader?',
+        a: ['Friedrich August von Hayek', 'John Maynard Keynes', 'Karl Marx', 'Thomas Piketty'],
+        exp: 'Roland Baader studierte bei Friedrich August von Hayek an der Universität Freiburg und blieb zeitlebens eng mit der Österreichischen Schule (Mises, Hayek) verbunden.'
+      },
+      {
+        cat: 'baader', diff: 'easy',
+        q: 'Welche politische und persönliche Konsequenz tritt nach Roland Baader ein, wenn der Staat als angebliche „Quelle des Wohlstands“ agiert?',
+        a: ['Sinkende Leistungsmotivation bei gleichzeitig wachsender Anspruchsmentalität', 'Automatische Schuldenfreiheit aller öffentlichen Haushalte', 'Verdoppelte private Sparquote im Niedriglohnsektor', 'Ende jeder Bürokratie innerhalb von fünf Jahren'],
+        exp: 'Baader beschrieb den Wohlfahrtsstaat als „Prellbock“ zwischen sinkender Leistungsbereitschaft und steigender Anspruchshaltung; Befürworter des Sozialstaats entgegnen, Grundsicherung schaffe erst gesellschaftlichen Zusammenhalt und Chancen.'
+      },
+      {
+        cat: 'baader', diff: 'mid',
+        q: 'Wie vervollständigt sich Baaders berühmter Aphorismus: „Je größer der Papiergeld-Reichtum der Welt, desto größer …“?',
+        a: ['„… die Armut, die ihm folgen wird.“', '„… der reale Wohlstand für alle Generationen.“', '„… die Preisstabilität über 100 Jahre.“', '„… das Vertrauen in langfristige Staatsanleihen.“'],
+        exp: 'Baader unterschied strikt zwischen realen Gütern/Kapital und bloß vermehrtem Papiergeld („papierenem Kreditrausch“), das nach seiner These lediglich Scheingewinne und Fehlallokationen erzeugt.'
+      },
+      {
+        cat: 'baader', diff: 'mid',
+        q: 'Wie argumentiert Roland Baader grundsätzlich zum Verhältnis zwischen individueller politischer Freiheit und freier Marktwirtschaft?',
+        a: ['Persönliche Freiheit ist langfristig nicht ohne eine echte, möglichst staatsfreie Marktwirtschaft denkbar', 'Freie Meinungsäußerung funktioniert am besten in einer reinen Zentralverwaltungswirtschaft', 'Marktwirtschaft und Bürgerrechte schließen sich gegenseitig aus', 'Wirtschaftliche Regulierung stärkt grundsätzlich private Eigentumsrechte'],
+        exp: 'Wie Hayek („Der Weg zur Knechtschaft“) sah Baader Eigentums- und Vertragsfreiheit als Fundament politischer Freiheit. Sozialdemokratische und regulierungsfreundliche Denker betonen hingegen Schutz vor privater Marktmacht.'
+      },
+      {
+        cat: 'baader', diff: 'mid',
+        q: 'Welches dieser Bücher zählt NICHT zu den bekannten Schriften Roland Baaders?',
+        a: ['Allgemeine Theorie der Beschäftigung, des Zinses und des Geldes', 'Kreide für den Wolf', 'Das Kapital am Pranger', 'Markt oder Befehl'],
+        exp: '„Kreide für den Wolf“, „Das Kapital am Pranger“, „Markt oder Befehl“ und „Freiheitsfunken“ stammen von Roland Baader; die „Allgemeine Theorie…“ (1936) ist das Hauptwerk seines großen Gegenspielers John Maynard Keynes.'
+      },
+      {
+        cat: 'baader', diff: 'mid',
+        q: 'Welche Reform des Geldwesens favorisierte Roland Baader als Gegenmittel zum staatlichen Papiergeldmonopol?',
+        a: ['Rückkehr zu einem harten (Gold-/Waren-)Geld oder Entnationalisierung im freien Währungswettbewerb', 'Einführung eines globalen digitalen Zentralbankgeldes mit Negativzins', 'Jährliche Erhöhung des gesetzlichen Mindestpreises für Staatsanleihen', 'Verdopplung der Geldschöpfung bei jeder Rezession'],
+        exp: 'In Anlehnung an Ludwig von Mises (Goldstandard) und Hayek („Entnationalisierung des Geldes“) forderte Baader eine Begrenzung staatlicher Notenbankmacht durch marktwirtschaftliche Geldstandards.'
+      },
+      {
+        cat: 'baader', diff: 'pro',
+        q: 'Worauf zielt Baaders Vergleich ab, dass Eltern ihren Nachbarn privat nicht für kostenlose Nachhilfestunden bestehlen würden – dies aber politisch als „gesellschaftliche Leistung“ akzeptiert sei?',
+        a: ['Kritik an einer Moralspaltung: Zwangsabgaben und Umverteilung würden über den Staat ethisch legitimiert, obwohl sie privat als Eingriff ins Eigentum gelten', 'Forderung nach Abschaffung jeglicher privater Hausaufgaben', 'Befürwortung höherer Grundsteuern zur Schulfinanzierung', 'Beweis dafür, dass private Schenkungen immer ineffizient sind'],
+        exp: 'In klassisch-libertärer Tradition trennt Baader freiwillige Nächstenliebe von staatlichem Steuerzwang. Demgegenüber sehen Bildungsökonomen der Wohlfahrtstheorie öffentliche Finanzierung als unverzichtbares öffentliches Gut für Chancengleichheit.'
+      },
+      {
+        cat: 'baader', diff: 'pro',
+        q: 'Welche Funktion erfüllt nach Baaders Buch „Das Kapital am Pranger“ eine Dekonstruktion politischer Schlagworte wie „soziale Gerechtigkeit“?',
+        a: ['Solche Begriffe dienten oft als „Begriffsnebel“, um Interventionismus und Umverteilung gegen Marktprozesse durchzusetzen', 'Sie sollen belegen, dass Kapitalbildung ein Fehler der Industrialisierung war', 'Sie empfehlen eine komplette Verstaatlichung aller Aktiengesellschaften', 'Sie erklären mathematisch die optimale Einkommensteuer bei 75 %'],
+        exp: 'Ähnlich wie Hayek in „Recht, Gesetz und Freiheit“ kritisierte Baader den Begriff „soziale Gerechtigkeit“ als inhaltlich beliebig und einfallstor für willkürliche Eingriffe – Befürworter verteidigen ihn hingegen als Korrektiv starker Vermögensungleichheit.'
+      },
+      {
+        cat: 'baader', diff: 'pro',
+        q: 'Was bezeichnete Baader mit dem Warnruf, man werde das „im papierenen Kreditrausch Vorausgefressene“ künftig wieder „nachhungern“ müssen?',
+        a: ['Künstliche Konjunkturprogramme auf Kredit erzeugen heute Konsum ohne reale Ersparnis – was später Bereinigungskrisen und Wohlstandsverlust erzwingt', 'Staatsschulden verschwinden durch Wirtschaftswachstum automatisch ohne Nebenwirkungen', 'Goldreserven vervielfachen sich bei hoher Inflation von selbst', 'Jede Sparmaßnahme verringert das Kapitalangebot im Land'],
+        exp: 'Dies spiegelt die Kapital- und Zinstheorie der Österreichischen Schule wider: Konsum vor vorangegangener Ersparnis zehrt den Kapitalstock auf. Keynesianer argumentieren in Rezessionen genau umgekehrt für antizyklische Defizite.'
+      },
+      {
+        cat: 'baader', diff: 'pro',
+        q: 'Welches Institut vergibt seit Baaders Tod die „Roland-Baader-Auszeichnung“ für Vordenker der Österreichischen Schule und Freiheit?',
+        a: ['Ein Umfeld rund um das Ludwig von Mises Institut Deutschland / Roland-Baader-Freundeskreis', 'Die Europäische Zentralbank (EZB)', 'Das Wirtschaftsministerium in Berlin', 'Die Bank für Internationalen Zahlungsausgleich (BIZ)'],
+        exp: 'Das Ludwig von Mises Institut Deutschland und verwandte libertäre Initiativen erinnern mit der Roland-Baader-Auszeichnung an seinen Einsatz für klassisch-liberale Ideen im deutschsprachigen Raum.'
+      },
+
+      // ==================== ÖSTERREICHISCHE SCHULE & GELD ====================
+      {
+        cat: 'austrian', diff: 'easy',
+        q: 'Wer gilt historisch als Begründer der Österreichischen Schule der Nationalökonomie (1871, „Grundsätze der Volkswirtschaftslehre“)?',
+        a: ['Carl Menger', 'John Maynard Keynes', 'David Ricardo', 'Paul Samuelson'],
+        exp: 'Carl Menger begründete 1871 mit der subjektiven Wertlehre (Grenznutzen) die Österreichische Schule, die von Eugen von Böhm-Bawerk, Mises und Hayek fortgeführt wurde.'
+      },
+      {
+        cat: 'austrian', diff: 'easy',
+        q: 'Welche zentrale Rolle spielen freie Marktpreise nach Friedrich August von Hayek?',
+        a: ['Sie bündeln blitzschnell dezentrales Wissen über Knappheiten und Wünsche von Millionen Menschen', 'Sie werden am besten einmal jährlich von einer Preisbehörde festgelegt', 'Sie dienen ausschließlich als Verzierung im Einzelhandel', 'Sie entstehen nur bei Monopolbetrieben'],
+        exp: 'Für Hayek ist das Preissystem ein gewachsenes Informations- und Koordinationsnetzwerk („Der Gebrauch des Wissens in der Gesellschaft“), das keine Zentralbehörde ersetzen kann.'
+      },
+      {
+        cat: 'austrian', diff: 'easy',
+        q: 'Wie heißt Hayeks berühmte Nobelpreisrede aus dem Jahr 1974 über die Grenzen zentraler Wirtschaftsplanung?',
+        a: ['Die Anmaßung von Wissen („The Pretence of Knowledge“)', 'Das Ende des freien Marktes', 'Die perfekte Zentralbank', 'Vollbeschäftigung durch Staatsquote'],
+        exp: 'In „Die Anmaßung von Wissen“ warnte Hayek vor szientistischer Hybris in der Politik: Komplexe gesellschaftliche Systeme ließen sich nicht wie physikalische Maschinen exakt steuern.'
+      },
+      {
+        cat: 'austrian', diff: 'easy',
+        q: 'Was besagt die subjektive Wertlehre der Österreichischen Schule über den Wert eines Gutes (z. B. eines Glases Wasser)?',
+        a: ['Wert hängt von der subjektiven Einschätzung und dem Nutzen der nächsten verfügbaren Einheit (Grenznutzen) ab', 'Wert richtet sich starr nach den hineingesteckten Arbeitsstunden', 'Der Staat legt den objektiven Wert per Gesetz fest', 'Diamanten sind objektiv nutzloser als Sand und daher billiger'],
+        exp: 'Die subjektive Wert- und Grenznutzenlehre löste das klassische Wasser-Diamanten-Paradoxon und widerspricht der marxistischen Arbeitswertlehre.'
+      },
+      {
+        cat: 'austrian', diff: 'mid',
+        q: 'Was beschreibt der sogenannte „Cantillon-Effekt“ bei einer Ausweitung der Geldmenge durch Zentralbanken?',
+        a: ['Neues Geld erreicht Akteure ungleichmäßig: Erstempfänger (Banken/Staat/Großkunden) profitieren noch zu alten Preisen, Spätempfänger zahlen bereits gestiegene Preise', 'Inflation trifft exakt im selben Moment jeden Bürger prozentual völlig gleich', 'Jede Geldschöpfung senkt automatisch die Konsumgüterpreise', 'Die Löhne steigen grundsätzlich schneller als Immobilien- und Aktienpreise'],
+        exp: 'Benannt nach Richard Cantillon (18. Jh.): Geld ist nicht neutral – durch gestaffelte Verteilung entstehen Vermögensverschiebungen und Preisverzerrungen.'
+      },
+      {
+        cat: 'austrian', diff: 'mid',
+        q: 'Was wollte Ludwig von Mises 1920 in „Die Wirtschaftsrechnung im sozialistischen Gemeinwesen“ nachweisen?',
+        a: ['Ohne Privateigentum an Produktionsmitteln und echte Marktpreise für Kapitalgüter fehlt zentralen Planern ein rationaler Kosten-Nutzen-Maßstab', 'Sozialistische Planer müssten lediglich schnellere Rechenmaschinen verwenden', 'Geld ist in Industriegesellschaften generell überflüssig', 'Nur Konsumgüterpreise sollten schwanken, Maschinenpreise nie'],
+        exp: 'Im „Wirtschaftsrechnungs-Problem“ zeigte Mises, dass selbst gutwillige Planer ohne echte Marktpreise für Stahl, Energie oder Fabriken volkswirtschaftlich im Blindflug handeln.'
+      },
+      {
+        cat: 'austrian', diff: 'mid',
+        q: 'Wodurch entstehen laut Österreichischer Konjunkturtheorie (Mises/Hayek) spekulative Scheinbooms und nachfolgende Krisen („Boom & Bust“)?',
+        a: ['Durch künstlich niedrig gehaltene Zinsen und Kreditexpansion der Notenbanken statt echter vorangegangener Ersparnis', 'Allein durch Sonnenflecken und Wetterzyklen', 'Durch zu hohe Sparquoten privater Haushalte', 'Weil Unternehmen ihre Gewinne nicht schnell genug versteuern'],
+        exp: 'Künstlich gedrückte Zinsen täuschen Unternehmen mehr reale Ersparnisse vor, als existieren – daraus resultieren Fehlinvestitionen („Malinvestments“), die sich im Bust schmerzhaft bereinigen. Keynesianer führen Krisen eher auf Nachfrageschocks und „Animal Spirits“ zurück.'
+      },
+      {
+        cat: 'austrian', diff: 'mid',
+        q: 'Was bedeutet „Zeitpräferenz“ in der österreichischen Kapital- und Zinstheorie?',
+        a: ['Die menschliche Neigung, ein Gut in der Gegenwart höher zu bewerten als dasselbe Gut weiter in der Zukunft', 'Die Vorliebe von Zentralbanken für halbjährliche Pressekonferenzen', 'Die gesetzliche Öffnungszeit von Bankfilialen', 'Der Wunsch nach möglichst langsamen Lieferketten'],
+        exp: 'Eine niedrigere Zeitpräferenz führt zu mehr Sparen und Investitionen in produktivere „Umwegproduktion“ (Mises, Böhm-Bawerk, Hoppe) – die Grundlage von langfristigem Kapitalaufbau.'
+      },
+      {
+        cat: 'austrian', diff: 'pro',
+        q: 'Was meint der Begriff „methodologischer Individualismus“, auf dem die Österreichische Schule aufbaut?',
+        a: ['Soziale und ökonomische Phänomene lassen sich nur aus dem zielgerichteten Handeln einzelner Individuen erklären, nicht aus Kollektiven wie „die Klasse“', 'Jeder Mensch muss in einer geschlossenen Einzelwirtschaft ohne Arbeitsteilung leben', 'Alle Statistiken müssen manuell ohne Mathematik geschätzt werden', 'Nur Aktiengesellschaften dürfen am Markt teilnehmen'],
+        exp: 'Mises nannte diese Wissenschaft vom menschlichen Handeln „Praxeologie“: Nur Einzelmenschen werten, entscheiden und tauschen; Makrogrößen sind bloß Aggregate.'
+      },
+      {
+        cat: 'austrian', diff: 'pro',
+        q: 'Welches Buch Hayeks aus dem Jahr 1976 schlägt als radikalen Reformansatz „Free Banking“ vor – also Konkurrenz privater Währungen statt Staatsmonopol?',
+        a: ['Die Entnationalisierung des Geldes („Denationalisation of Money“)', 'Der Weg zur Knechtschaft', 'Das Elend des Historizismus', 'Die Verfassung der Freiheit'],
+        exp: '1976 argumentierte Hayek, wenn private Emittenten im Wettbewerb um wertstabiles Geld stünden, hätten schlechte (inflationäre) Währungen keine Überlebenschance.'
+      },
+      {
+        cat: 'austrian', diff: 'pro',
+        q: 'Was bezeichnet Mises‘ „Interventionsspirale“ (Dynamik des Interventionismus)?',
+        a: ['Ein staatlicher Markteingriff erzeugt unbeabsichtigte Nebenwirkungen, die zu immer weiteren Gegen-Eingriffen führen – bis zur faktischen Lenkungswirtschaft', 'Steigende Zinsen senken von selbst die Staatsverschuldung auf null', 'Jede Deregulierung löst zwingend neue Subventionen aus', 'Freie Preisbildung dreht sich immer im Kreis ohne Gleichgewicht'],
+        exp: 'Ein Beispiel der Österreichischen Schule: Mietpreisdeckel mindern Neubau -> Wohnungsnot wächst -> es folgen Quoten, Bauzwang oder Subventionen. Befürworter von Eingriffen betonen dagegen deren akute soziale Schutzfunktion.'
+      },
+      {
+        cat: 'austrian', diff: 'pro',
+        q: 'Welches Phänomen beschreibt das „Greshamsche Gesetz“ im Kontext konkurrierender Geldordnungen – und wann dreht es sich nach Hayek um?',
+        a: ['Bei gesetzlichen Zwangskursen verdrängt „schlechtes“ Geld das „gute“ (gehortete); bei freier Währungswahl verdrängt hingegen gutes Geld das schlechte', 'Schlechtes Geld verwandelt sich durch Inflation automatisch in Gold', 'Silbermünzen werden immer nur von Banken genutzt', 'Kreditkarten schlagen grundsätzlich jedes Bargeld'],
+        exp: 'Wenn der Staat einen festen Zwangskurs diktiert, bezahlt jeder mit dem minderwertigen Geld und hortet gutes Geld; im freien Wettbewerb (Thiers‘sches Gesetz) lehnen Händler schlechtes Geld dagegen ab.'
+      },
+
+      // ==================== MARKTWIRTSCHAFT & KONTROVERSEN ====================
+      {
+        cat: 'debatte', diff: 'easy',
+        q: 'Worum geht es in Frédéric Bastiats berühmter Parabel vom „zerbrochenen Fenster“?',
+        a: ['Die Zerstörung eines Fensters schafft netto keinen Wohlstand: Man sieht nur den Umsatz des Glasers, aber nicht die entgangene Ausgabe für den Schuhmacher („was man nicht sieht“)', 'Kaputte Glasscheiben sollten staatlich gefördert werden, um das BIP dauerhaft zu steigern', 'Handwerker profitieren niemals von Reparaturen', 'Glas ist volkswirtschaftlich wertvoller als Schuhe'],
+        exp: 'Bastiat lehrte (1850), gute Ökonomie müsse nicht nur die sichtbare Erstfolge einer Maßnahme („ce qu‘on voit“), sondern auch die verdrängten Alternativen („ce qu‘on ne voit pas“) mitdenken.'
+      },
+      {
+        cat: 'debatte', diff: 'easy',
+        q: 'Welche Hauptgefahr sehen klassisch-liberale Ökonomen bei staatlichen Preisobergrenzen (z. B. strikten Preis- oder Mietdeckeln)?',
+        a: ['Angebotsverknappung, sinkende Investitionsanreize und Warteschlangen/Qualitätsverlust', 'Plötzliche Explosion des Neubaus durch höhere Gewinnmargen', 'Abschaffung von Knappheit durch bloßes Gesetz', 'Dauerhafte Deflation bei gleichzeitiger Überproduktion'],
+        exp: 'Preise deckeln verändert nach klassischer Mikroökonomie nichts an der realen Knappheit, senkt aber den Anreiz zu bauen/produzieren. Sozialpolitische Gegenstimmen verweisen auf akuten Schutz von Haushalten mit kleinem Einkommen in angespannten Märkten.'
+      },
+      {
+        cat: 'debatte', diff: 'easy',
+        q: 'Was beschreibt die sogenannte „Laffer-Kurve“ in der Finanzwissenschaft?',
+        a: ['Jenseits eines bestimmten Steuersatzes können weitere Steuererhöhungen das gesamte Steueraufkommen wieder sinken lassen (Leistungszurückhaltung/Ausweichen)', 'Steuereinnahmen steigen immer linear bis zu einem Steuersatz von exakt 100 %', 'Niedrigere Steuern bringen grundsätzlich null Einnahmen', 'Nur Verbrauchssteuern beeinflussen Arbeitsanreize'],
+        exp: 'Sowohl bei 0 % als auch bei 100 % Steuersatz wäre das Steueraufkommen langfristig null; die genaue Lage des Maximums ist empirisch zwischen angebots- und nachfrageorientierten Ökonomen stark umstritten.'
+      },
+      {
+        cat: 'debatte', diff: 'easy',
+        q: 'Was versteht Adam Smith im „Wohlstand der Nationen“ (1776) unter der Metapher der „unsichtbaren Hand“?',
+        a: ['Dass Akteure in einem Rechtsrahmen bei Verfolgung eigener Interessen über Wettbewerb und Arbeitsteilung häufig unbeabsichtigt auch dem Gemeinwohl dienen', 'Dass ein geheimer Staatsrat alle Löhne im Hintergrund festlegt', 'Dass Marktteilnehmer aus reinem Altruismus arbeiten müssen', 'Dass Zölle und Protektionismus den Handel beflügeln'],
+        exp: 'Smith betonte ausdrücklich das Zusammenspiel von Eigeninteresse, Konkurrenz und verlässlichen Spielregeln („nicht vom Wohlwollen des Metzgers erwarten wir unser Abendessen…“).'
+      },
+      {
+        cat: 'debatte', diff: 'mid',
+        q: 'Worin liegt ein zentraler Gegensatz zwischen Keynesianismus und der Österreichischen Schule bei einer Wirtschaftskrise?',
+        a: ['Keynesianer plädieren für schuldenfinanzierte staatliche Nachfrageimpulse; „Österreicher“ setzen auf Bereinigung von Fehlinvestitionen, Sparen und niedrige Staatsquote', 'Keynesianer fordern den strikten Goldstandard und Abschaffung der Zentralbank', 'Die Österreichische Schule empfiehlt in jeder Krise 80 % Einkommensteuer', 'Beide Schulen fordern exakt die gleichen Konjunkturprogramme'],
+        exp: 'Während John Maynard Keynes bei „Liquiditätsfallen“ aktive Fiskalpolitik forderte, warnen Mises, Hayek und Baader vor struktureller Verschuldung und weiterer Verzerrung der Preis- und Kapitalstruktur.'
+      },
+      {
+        cat: 'debatte', diff: 'mid',
+        q: 'Was besagt das „Subsidiaritätsprinzip“ in der Staats- und Gesellschaftsphilosophie?',
+        a: ['Aufgaben sollen zunächst eigenverantwortlich von Individuum, Familie oder kleineren Gemeinschaften gelöst werden; höhere staatliche Ebenen greifen erst hilfsweise ein', 'Alle lokalen Entscheidungen müssen zentral in einer Bundesbehörde gebündelt werden', 'Unternehmen dürfen keine Zweigstellen gründen', 'Nur der Zentralstaat darf lokale Straßen pflegen'],
+        exp: 'Das Subsidiaritätsprinzip vereint liberale Skepsis gegen Zentralismus mit bürgernaher Verantwortung; umstritten bleibt oft, ab wann eine Aufgabe „nur noch zentral“ lösbar erscheint.'
+      },
+      {
+        cat: 'debatte', diff: 'mid',
+        q: 'Was kritisiert Frédéric Bastiats berühmte satirische „Petition der Kerzenmacher“ (1845) an Politik und Wirtschaft?',
+        a: ['Protektionismus und Handelshemmnisse – weil Kerzenhersteller dort satirisch gegen den unfairen Wettbewerb der kostenlosen „Sonne“ Zölle fordern', 'Dass Kerzen zu hell leuchten', 'Dass Freihandel die Preise für Verbraucher künstlich senkt', 'Dass Importe grundsätzlich mehr Arbeit schaffen als Exporte'],
+        exp: 'Bastiat entlarvte mit beißendem Spott Schutzzölle für Produzenten zu Lasten von Konsumenten – in der modernen Debatte halten Befürworter strategischer Zölle jedoch etwa Versorgungssicherheit und Fairness gegen Subventionen entgegen.'
+      },
+      {
+        cat: 'debatte', diff: 'mid',
+        q: 'Wie bezeichnet Milton Friedman (Monetarismus) das Phänomen, dass einst befristete staatliche Behörden oder Programme kaum je abgeschafft werden?',
+        a: ['„Nichts ist so dauerhaft wie ein vorübergehendes Regierungsprogramm“', '„Die automatische Schlankheitskur der Ministerien“', '„Die schnelle Selbstauflösung des Budgets“', '„Das eiserne Gesetz der Steuersenkung“'],
+        exp: 'Mit der Public-Choice-Theorie (James Buchanan) zeigten marktwirtschaftliche Ökonomen, dass auch Politiker und Bürokraten Eigeninteressen verfolgen (Wiederwahl, Budgetwachstum).'
+      },
+      {
+        cat: 'debatte', diff: 'pro',
+        q: 'Welches Kriterium formuliert die „Public-Choice-Schule“ (Buchanan / Tullock) gegen den naiven Glauben an rein gemeinwohlorientierte Staatslenkung?',
+        a: ['Politische Akteure bleiben Eigennutz-Maximierer wie Marktteilnehmer – es kann daher neben Marktversagen ebenso systematisches Staatsversagen geben', 'Nur Menschen im Privatsektor handeln aus Eigeninteresse', 'Demokratische Wahlen korrigieren jeden Bürokratiefehler sofort kostenlos', 'Lobbyismus existiert ausschließlich bei fehlendem Steuerrecht'],
+        exp: 'James Buchanan (Nobelpreis 1986) hob die Trennung von „perfektem Staat“ vs. „unvollkommenem Markt“ auf und analysierte Verfassungsregeln zur Machtbegrenzung.'
+      },
+      {
+        cat: 'debatte', diff: 'pro',
+        q: 'Was beschreibt Garrett Hardins „Tragik der Allmende“ (Tragedy of the Commons) – und welche marktwirtschaftliche Lösung schlugen Eigentumstheoretiker wie Coase oder Mises oft vor?',
+        a: ['Frei zugängliche Gemeingüter drohen durch Übernutzung zu verarmen; klar definierte, durchsetzbare Eigentumsrechte internalisieren Verantwortung', 'Nur komplett verstaatlichte Ozeane ohne Nutzungserlaubnis funktionieren weltweit', 'Jede Ressource ohne Eigentümer regeneriert sich bei maximalem Abbau sofort', 'Steuern auf Privateigentum beheben jedes Allmende-Problem'],
+        exp: 'Während Eigentumstheoretiker auf Privateigentum setzen, ergänzte Nobelpreisträgerin Elinor Ostrom empirisch, dass lokal selbstverwaltete Gemeinschaftsregeln Allmenden unter klaren Bedingungen ebenfalls nachhaltig schützen können.'
+      },
+      {
+        cat: 'debatte', diff: 'pro',
+        q: 'Worin unterscheiden sich klassischer Liberalismus (z. B. Locke, Smith, Hayek) und Anarchokapitalismus (z. B. Murray Rothbard) in der Staatsfrage?',
+        a: ['Klassische Liberale/Minarchisten bejahen einen begrenzten Minimalstaat (Recht, Polizei, Justiz); Anarchokapitalisten möchten selbst Rechtsschutz privatwettbewerblich organisieren', 'Beide fordern eine 90-%-Staatsquote für Infrastruktur', 'Klassische Liberale lehnen jedes Privateigentum ab', 'Anarchokapitalisten befürworten eine einzige Weltzentralbank'],
+        exp: 'Ludwig von Mises und Hayek blieben Befürworter eines begrenzten Rechtsstaats („Nachtwächterstaat“/Ordnungsrahmen), während Rothbard und Hans-Hermann Hoppe die konsequent staatsfreie Privatrechtsgesellschaft vertraten.'
+      },
+      {
+        cat: 'debatte', diff: 'pro',
+        q: 'Was besagt das „Saysche Theorem“ (Jean-Baptiste Say) im Kern – und woran setzte Keynes‘ Kritik daran an?',
+        a: ['Jedes Angebot schafft sich über entstandene Einkommen grundsätzlich seine eigene Nachfrage (Erst produzieren, dann konsumieren); Keynes wandte ein, gehortetes Geld könne Nachfragelücken erzeugen', 'Nur Staatsausgaben erzeugen jemals Warenangebot', 'Produktion und Einkommen stehen in keinerlei Zusammenhang', 'Exporte verringern immer das Inlandseinkommen'],
+        exp: 'Angebotsökonomen und Baader betonen im Einklang mit Say den Vorrang produktiver Wertschöpfung vor bloßer Konsumankurbelung; Keynes rückte dagegen mögliche kurzfristige Nachfrageschwächen und Hortung ins Zentrum.'
+      }
+    ];
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 20;
+    const BASE_TIME = 20;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_pol');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const count = getMatchingPool(c.id).length;
+        const roundLen = Math.min(10, count);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const count = Math.min(10, pool.length);
+      deck = shuffle(pool).slice(0, count);
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      answered = false;
+      timeLeft = BASE_TIME;
+
+      const item = deck[qIdx];
+      const di = DIFF_INFO[item.diff];
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      timerId = setInterval(() => {
+        timeLeft = Math.max(0, +(timeLeft - 0.1).toFixed(1));
+        updateTimerUI();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          handleTimeout();
+        }
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      document.getElementById('q-sec').textContent = Math.ceil(timeLeft);
+      const pct = Math.max(0, Math.min(100, (timeLeft / BASE_TIME) * 100));
+      const fill = document.getElementById('timer-fill');
+      fill.style.width = pct + '%';
+      fill.style.background = timeLeft > 5
+        ? 'linear-gradient(90deg, #fbbf24, #4ade80)'
+        : 'linear-gradient(90deg, #fb7185, #f59e0b)';
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = DIFF_INFO[item.diff].mult;
+        const speedBonus = Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      showFact(chosen.isRight);
+    }
+
+    function handleTimeout() {
+      if (answered) return;
+      answered = true;
+      streak = 0;
+      const item = deck[qIdx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+      ArcadeAudio.fail();
+      document.getElementById('q-streak').textContent = 0;
+      showFact(false, '⏱ Zeit abgelaufen! ');
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Treffer! ' : '❌ Nicht ganz: ')}</strong>${item.exp}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered) return;
+      jokers.time = false;
+      document.getElementById('joker-time').disabled = true;
+      timeLeft = Math.min(30, timeLeft + 10);
+      updateTimerUI();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const isNewRecord = ArcadeScores.record('quiz_pol', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '💡' : '⚖️');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Ökonomie-Rekord!' : 'Runde abgeschlossen!';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>

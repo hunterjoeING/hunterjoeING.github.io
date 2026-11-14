@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>E-Mobilität &amp; Tesla Nerd-Quiz · Verstand2Go Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      background: rgba(15, 23, 42, 0.88);
+      color: #cbd5e1;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: var(--accent-cyan);
+      color: #f8fafc;
+    }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #7dd3fc;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.35);
+    }
+    .diff-pill.nerd.active {
+      background: linear-gradient(135deg, #dc2626, #f43f5e);
+      border-color: #fda4af;
+      box-shadow: 0 4px 16px rgba(244, 63, 94, 0.35);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(15, 28, 56, 0.9);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+      background: rgba(14, 116, 144, 0.28);
+    }
+    .cat-card.featured {
+      border-color: rgba(244, 63, 94, 0.55);
+      background: linear-gradient(135deg, rgba(136, 19, 55, 0.28), rgba(15, 28, 56, 0.92));
+    }
+    .cat-card.featured-mix {
+      border-color: rgba(45, 212, 191, 0.55);
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.24), rgba(15, 28, 56, 0.92));
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.42; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #7dd3fc;
+      margin-top: 4px;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #38bdf8, #4ade80);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      color: #7dd3fc;
+    }
+    .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+    }
+    .q-diff-pill.easy { background: rgba(22, 163, 74, 0.22); border-color: #4ade80; color: #bbf7d0; }
+    .q-diff-pill.mid  { background: rgba(234, 179, 8, 0.22); border-color: #facc15; color: #fef08a; }
+    .q-diff-pill.nerd { background: rgba(225, 29, 72, 0.26); border-color: #fb7185; color: #ffe4e6; }
+
+    .q-text {
+      font-size: 19.5px;
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+    }
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: rgba(15, 23, 42, 0.9);
+      color: #f8fafc;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: var(--accent-cyan);
+      background: rgba(14, 116, 144, 0.3);
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.eliminated { opacity: 0.22; pointer-events: none; }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.34);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.18);
+      color: #7dd3fc;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .jokers-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      border: 1px solid rgba(251, 191, 36, 0.45);
+      background: rgba(120, 53, 15, 0.25);
+      color: #fde68a;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled { opacity: 0.32; cursor: not-allowed; }
+    .fact-box {
+      margin-top: 14px;
+      padding: 13px 15px;
+      border-radius: 11px;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      font-size: 13.5px;
+      line-height: 1.48;
+      color: #cbd5e1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .hidden { display: none !important; }
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 18px 0;
+    }
+    .stat-box {
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      text-align: center;
+    }
+    .stat-box small { display: block; color: var(--text-muted); font-size: 11.5px; }
+    .stat-box strong { display: block; font-size: 22px; margin-top: 4px; color: #7dd3fc; font-family: var(--font-mono); }
+
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+      .q-text { font-size: 17px; }
+      .result-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">⚡ E-Mobilität &amp; Tesla Quiz</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 Rekord: <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <section id="screen-menu" class="glass-card" style="padding: 20px;">
+      <h1 style="margin:0 0 6px; font-size: 23px;">E-Mobilität, Tesla &amp; Schnellladen</h1>
+      <p style="margin:0; color: var(--text-muted); font-size: 14px; line-height:1.45;">
+        Vom 800-Volt-Pionier bis zum TFF-Expertenwissen zu Zellchemie, Octovalve, PWM-Protokoll &amp; Superchargern.
+        Härtere Stufen geben bis zu <strong>1,5× Punkte</strong>!
+      </p>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎲 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Einsteiger (1,0×)</button>
+        <button class="diff-pill" data-diff="mid">🟡 Fortgeschritten (1,25×)</button>
+        <button class="diff-pill nerd" data-diff="nerd">🔴 Profi / Nerd (1,5×)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong> / <strong id="q-total">10</strong></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong>×</span>
+        <span>⭐ Punkte: <strong id="q-score">0</strong></span>
+        <span>⏱ <strong id="q-sec">18</strong>s</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Kategorie</span>
+        <span id="q-diff" class="q-diff-pill easy">Einsteiger</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+      <div id="answers-grid" class="answers-grid"></div>
+      <div class="jokers-row">
+        <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50 Joker</button>
+        <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10 Sek.</button>
+        <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        <button class="secondary-btn" style="margin-left:auto" onclick="backToMenu()">Abbrechen</button>
+      </div>
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1; min-width: 210px;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+    </section>
+
+    <section id="screen-result" class="glass-card quiz-stage hidden" style="text-align:center;">
+      <div style="font-size:44px; margin-bottom:6px;" id="res-emoji">🏆</div>
+      <h1 style="margin:0 0 6px; font-size:24px;" id="res-heading">Runde geschafft!</h1>
+      <p style="margin:0; color:var(--text-muted);" id="res-sub"></p>
+      <div class="result-grid">
+        <div class="stat-box"><small>Gesamtpunkte</small><strong id="res-score">0</strong></div>
+        <div class="stat-box"><small>Richtige Antworten</small><strong id="res-correct">0/10</strong></div>
+        <div class="stat-box"><small>Beste Serie</small><strong id="res-streak">0</strong></div>
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Nochmal spielen</button>
+        <button class="secondary-btn" onclick="backToMenu()">📚 Thema / Stufe ändern</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none;">🏠 Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const CATS = [
+      { id: 'allgemein', icon: '⚡', name: 'E-Mobilität Allgemein', desc: '800-Volt-Technik, Rekuperation, Wärmepumpen, cW-Wert & Fahrzeugtechnik.' },
+      { id: 'tesla',     icon: '🚗', name: 'Tesla & TFF-Insider',   desc: 'LFP vs. BYD Blade, Octovalve, HW4, MCU, Wächtermodus, Plaid & Cybertruck.', cls: 'featured' },
+      { id: 'laden',     icon: '🔌', name: 'Laden & Schnellladen',  desc: 'Supercharger V2/V3/V4, CP-PWM-Formel, ISO 15118, Autocharge & Vorkonditionierung.' },
+      { id: 'mix',       icon: '🔥', name: 'Nerd-Blitz-Mix',        desc: 'Querbeet aus allen 3 Bereichen – perfekt zum Messen mit Freunden.', cls: 'featured-mix' }
+    ];
+
+    const CAT_NAMES = {
+      allgemein: '⚡ E-Mobilität Allgemein',
+      tesla: '🚗 Tesla & TFF-Insider',
+      laden: '🔌 Laden & Schnellladen',
+      mix: '🔥 Nerd-Blitz-Mix'
+    };
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Einsteiger', cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Fortgeschritten', cls: 'mid', mult: 1.25 },
+      nerd: { label: '🔴 Profi / Nerd', cls: 'nerd', mult: 1.5 }
+    };
+
+    // 54 kuratierte Fragen: 18 pro Themenbereich (je 6 Einsteiger, 6 Fortgeschritten, 6 Nerd)
+    const QUESTIONS = [
+      // ==================== E-MOBILITÄT ALLGEMEIN ====================
+      {
+        cat: 'allgemein', diff: 'easy',
+        q: 'Welches Serien-Elektroauto kam 2019 als erstes mit 800-Volt-Architektur und signifikant über 250 kW (bis zu 270 kW) Ladeleistung auf den Markt?',
+        a: ['Porsche Taycan', 'Tesla Model S Raven', 'Audi e-tron 55', 'Mercedes EQC'],
+        exp: 'Der Porsche Taycan (2019) führte als weltweit erstes Serien-E-Auto das 800-Volt-System ein und lud mit bis zu 270 kW Peak an HPC-Säulen.'
+      },
+      {
+        cat: 'allgemein', diff: 'easy',
+        q: 'Was bezeichnet beim Elektroauto die Rekuperation?',
+        a: ['Rückgewinnung von Bremsenergie in den Akku', 'Vorheizen der Batterie über Nacht', 'Automatische Spurführung auf der Autobahn', 'Kühlung des Ladekabels mit Wasser'],
+        exp: 'Beim Verzögern arbeitet der Elektromotor als Generator und speist kinetische Energie wieder als Strom in die Hochvoltbatterie ein.'
+      },
+      {
+        cat: 'allgemein', diff: 'easy',
+        q: 'Welche Einheit gibt beim Elektroauto direkt den Energieinhalt (die „Tankgröße“) der Batterie an?',
+        a: ['Kilowattstunden (kWh)', 'Kilowatt (kW)', 'Volt (V)', 'Ampere (A)'],
+        exp: 'Kilowattstunden (kWh) beschreiben die gespeicherte Energiemenge, während Kilowatt (kW) die momentane Fahr- oder Ladeleistung angeben.'
+      },
+      {
+        cat: 'allgemein', diff: 'easy',
+        q: 'Welcher Hauptvorteil entsteht bei einer Wärmepumpe gegenüber einem klassischen PTC-Heizstab im Winter?',
+        a: ['Deutlich geringerer Stromverbrauch beim Heizen des Innenraums', 'Doppelte Höchstgeschwindigkeit auf Schnee', 'Aufladen ohne Ladekabel', 'Vollständiger Verzicht auf Kühlmittel'],
+        exp: 'Eine Wärmepumpe nutzt vorhandene Umgebungs- und Abwärme statt elektrischen Strom 1:1 in Wärme umzuwandeln – das spart besonders im Teillastbereich Reichweite.'
+      },
+      {
+        cat: 'allgemein', diff: 'easy',
+        q: 'Warum gilt der cW-Wert (Luftwiderstandsbeiwert) bei E-Autos auf der Autobahn als so entscheidend?',
+        a: ['Der Luftwiderstand steigt im Quadrat zur Geschwindigkeit', 'Er senkt die Mehrwertsteuer beim Kauf', 'Er verhindert das Entladen bei Frost', 'Er bestimmt die Anzahl der Bremsbeläge'],
+        exp: 'Bei Autobahntempo dominiert der Luftwiderstand (proportional zu v²) den Verbrauch – ein guter cW-Wert × Stirnfläche bringt direkt mehr Reichweite.'
+      },
+      {
+        cat: 'allgemein', diff: 'easy',
+        q: 'Was ist typisch für die Leistungsabgabe eines Elektromotors direkt aus dem Stand?',
+        a: ['Volles maximales Drehmoment nahezu ab 0 U/min', 'Drehmoment entsteht erst ab 4.000 U/min', 'Er benötigt mindestens ein 8-Gang-Schaltgetriebe', 'Er kann im Rückwärtsgang nicht beschleunigen'],
+        exp: 'Elektromotoren liefern ihr hohes Drehmoment direkt ab der ersten Umdrehung – deshalb fahren fast alle E-Autos ohne klassisches Schaltgetriebe.'
+      },
+      {
+        cat: 'allgemein', diff: 'mid',
+        q: 'Welcher physikalische Hauptgrund macht 800-Volt-Systeme gegenüber 400-Volt-Systemen bei gleicher Ladeleistung effizienter?',
+        a: ['Halbierter Strom (A), dadurch nur ein Viertel der I²R-Wärmeverluste im Kabel', 'Verdoppelte Kapazität durch doppelte Spannung ohne Zellenänderung', 'Kein Isolationswiderstand mehr nötig', 'Strom fließt automatisch rückwärts ins Netz'],
+        exp: 'Bei P = U × I halbiert doppelte Spannung den Strom. Da Wärmeverluste nach P_verlust = I² × R quadratisch mit dem Strom steigen, entstehen deutlich dünnere Kabel und weniger Hitze.'
+      },
+      {
+        cat: 'allgemein', diff: 'mid',
+        q: 'Wie realisiert die Hyundai/Kia E-GMP-Plattform (z. B. Ioniq 5, EV6) schnelles Laden an älteren 400-Volt-DC-Säulen trotz 800-Volt-Akku?',
+        a: ['Sie nutzt den hinteren Motor-Inverter und Motorwicklungen als Aufwärtswandler (Booster)', 'Sie schaltet den Akku mechanisch in 16 Einzelzellen um', 'Sie speist die Energie zuerst in die 12V-Bleibatterie', 'Sie lädt an 400V-Säulen grundsätzlich nur über den Typ-2-AC-Port'],
+        exp: 'Das patentierte E-GMP-Multicharging nutzt ohne teuren Zusatz-DC/DC-Wandler den ohnehin verbauten Heckmotor samt Inverter, um 400 V auf die 800-V-Batteriespannung hochzusetzen.'
+      },
+      {
+        cat: 'allgemein', diff: 'mid',
+        q: 'Worin liegt ein typischer Unterschied zwischen einem PSM (Permanentmagnet-Synchronmotor) und einer ASM (Asynchronmaschine)?',
+        a: ['ASM hat im Leerlauf ohne Ansteuerung praktisch keine Schleppverluste (gut als Zweitmotor)', 'PSM hat gar keine Magnete im Rotor', 'ASM benötigt zwangsläufig seltene Erden wie Neodym', 'PSM kann grundsätzlich nicht rekuperieren'],
+        exp: 'Darum kombinieren viele Allrad-E-Autos (auch Tesla Dual Motor) einen hocheffizienten PSM mit einer ASM als bedarfsgerecht zuschaltbarem Zweitmotor ohne Permanentmagnet-Schleppverlust.'
+      },
+      {
+        cat: 'allgemein', diff: 'mid',
+        q: 'Warum bremst sich bei fast vollem Akku (z. B. 98–100 %) oder großer Kälte die Rekuperation spürbar ein?',
+        a: ['Die Batterie kann hohe Rückströme dann nicht ohne Zellschäden bzw. Lithium-Plating aufnehmen', 'Die Elektromotoren drehen im Kalten falsch herum', 'Das ABS schaltet Rekuperation gesetzlich über 80 % ab', 'Der Onboard-AC-Lader blockiert die Hinterachse'],
+        exp: 'Bei vollem oder sehr kaltem Akku steigt das Risiko von Lithium-Plating auf der Anode – das BMS drosselt daher automatisch die Rekuperationsleistung.'
+      },
+      {
+        cat: 'allgemein', diff: 'mid',
+        q: 'Welcher Fahrzyklus ermittelt in den USA typischerweise realistischere, niedrigere Reichweitenwerte als der europäische WLTP?',
+        a: ['EPA-Zyklus', 'NEFZ-Zyklus', 'NEDC-Zyklus', 'Euro-7-Zyklus'],
+        exp: 'Der US-amerikanische EPA-Standard umfasst härtere Beschleunigungen und Autobahngeschwindigkeiten und liegt meist 10–20 % näher am Realverbrauch als WLTP.'
+      },
+      {
+        cat: 'allgemein', diff: 'mid',
+        q: 'Welche drei Buchstaben stehen bei modernen Halbleiter-Invertern für den Effizienzsprung gegenüber herkömmlichem Silizium (IGBT)?',
+        a: ['SiC (Siliziumkarbid)', 'LTO (Lithium-Titanat)', 'PVC (Polyvinylchlorid)', 'LED (Leuchtdiode)'],
+        exp: 'Siliziumkarbid-MOSFETs (SiC) schalten deutlich schneller und mit geringeren Durchlass- und Schaltverlusten – Tesla führte SiC großflächig schon beim Model 3 ein.'
+      },
+      {
+        cat: 'allgemein', diff: 'nerd',
+        q: 'Was bezeichnet der Begriff „Lithium-Plating“ bei Schnellladung im tiefkalten Zustand?',
+        a: ['Metallische Lithium-Ablagerung auf der Graphit-Anode statt regulärer Interkalation', 'Galvanische Verchromung der Alufelgen durch Streusalz', 'Korrosion am Typ-2-Pilotkontakt', 'Verdampfen des flüssigen Elektrolyts im DC-Kabel'],
+        exp: 'Wenn Lithium-Ionen bei Frost und hohem Ladestrom nicht schnell genug in die Graphitschichten einlagern können, scheidet sich metallisches Lithium dauerhaft ab – das mindert Kapazität und kann Dendriten bilden.'
+      },
+      {
+        cat: 'allgemein', diff: 'nerd',
+        q: 'Warum besitzen E-Autos wie Lucid Air oder frühe Porsche Taycan bzw. EQS besonders niedrige cW × A Werte – was ist „A“ in dieser Kennzahl?',
+        a: ['Die Stirnfläche (projizierte Frontfläche in m²)', 'Die Batterieoberfläche in m²', 'Der Anpressdruck am Heckspoiler in N', 'Die Achsbreite zwischen den Bremsscheiben'],
+        exp: 'Der wahre Luftwiderstand hängt vom Produkt cW × A (Stirnfläche in m²) ab: Ein großer SUV mit cW 0,25 verdrängt auf der Autobahn trotzdem viel mehr Luft als eine flache Limousine mit cW 0,22.'
+      },
+      {
+        cat: 'allgemein', diff: 'nerd',
+        q: 'Welchen entscheidenden Vorteil bietet ein Silizium-Anteil in modernen Graphit-Anoden, und worin liegt sein mechanisches Problem?',
+        a: ['Deutlich höhere spezifische Kapazität, aber starkes Volumen-Quellen (bis ~300 %) beim Laden', 'Kein Thermal Runaway mehr, aber 0 Volt Zellspannung', 'Verdoppelte AC-Ladegeschwindigkeit ohne Onboard-Lader', 'Vermeidet jeden Bedarf an Separatorfolien'],
+        exp: 'Silizium speichert rund zehnmal mehr Lithium pro Gramm als reines Graphit, dehnt sich beim Einlagern aber extrem aus – daher mischen Hersteller bislang meist kleine SiOx- oder Si-Nanopartikel-Anteile bei.'
+      },
+      {
+        cat: 'allgemein', diff: 'nerd',
+        q: 'Was unterscheidet das „Cell-to-Pack“ (CTP) oder „Structural Pack“ Konzept klassisch vom Modul-Pack?',
+        a: ['Zellen sitzen ohne zwischengeschaltete Kleinmodule direkt im Batteriegehäuse – mehr Energiedichte', 'Jede Einzelzelle erhält einen eigenen 12V-Bleiakku', 'Die Batterie wird auf dem Fahrzeugdach verschraubt', 'Zellen sind nur noch verklebt und gar nicht mehr elektrisch verbunden'],
+        exp: 'Der Verzicht auf Modulgehäuse und Zwischenverkabelung erhöht den Pack-to-Cell-Volumennutzungsgrad deutlich; beim Structural Pack wird der Block zusätzlich mittragendes Bodenelement.'
+      },
+      {
+        cat: 'allgemein', diff: 'nerd',
+        q: 'Welche Nennspannung besitzt eine einzelne klassische NMC-/NCA-Lithium-Ionen-Zelle ungefähr gegenüber einer LFP-Zelle?',
+        a: ['NMC/NCA ~3,6–3,7 V vs. LFP ~3,2 V', 'NMC/NCA ~1,2 V vs. LFP ~12,0 V', 'Beide exakt 6,0 V Nennspannung', 'NMC/NCA ~48 V vs. LFP ~24 V'],
+        exp: 'LFP-Zellen liegen bei ~3,2 V Nennspannung (~3,65 V Ladeschlussspannung), während NMC/NCA bei ~3,6–3,7 V Nennspannung und ~4,2 V Vollladespannung arbeiten.'
+      },
+      {
+        cat: 'allgemein', diff: 'nerd',
+        q: 'Warum nutzt Porsche beim Taycan (und e-tron GT) an der Hinterachse ein 2-Gang-Getriebe?',
+        a: ['Gang 1 für maximale Anfahrbeschleunigung, länger übersetzter Gang 2 für Autobahn-Effizienz & Vmax', 'Weil Synchronmotoren keinen Rückwärtsgang kennen', 'Zur Kühlung der Keramikbremse bei Regen', 'Um ein 400V-Netz auf 800V mechanisch hochzudrehen'],
+        exp: 'Der kürzer übersetzte erste Gang ermöglicht extreme Launch-Control-Beschleunigung, während der zweite Gang die Motordrehzahl bei hohem Autobahntempo senkt.'
+      },
+
+      // ==================== TESLA & TFF-INSIDER ====================
+      {
+        cat: 'tesla', diff: 'easy',
+        q: 'Welche Ladelimit-Empfehlung gilt im TFF-Forum & bei Tesla für LFP-Akkus im Model 3/Y Standard Range (Hinterradantrieb)?',
+        a: ['Mindestens 1× pro Woche auf 100 % laden zur BMS-Kalibrierung', 'Niemals über 50 % laden', 'Nur mit Haushaltssteckdose laden, sonst erlischt die Garantie', 'Immer bei genau 63 % abstecken'],
+        exp: 'Durch die flache LFP-Spannungskurve braucht das BMS regelmäßig den Vollladepunkt (100 %) zur exakten SoC-Kalibrierung – bei NMC/NCA gilt im Alltag dagegen meist max. 80 %.'
+      },
+      {
+        cat: 'tesla', diff: 'easy',
+        q: 'Wie wird beim Tesla die Akku-Vorkonditionierung für maximales Schnellladen automatisch gestartet?',
+        a: ['Indem man den Supercharger direkt als Ziel ins Tesla-Navi eingibt', 'Durch dreimaliges Betätigen der Lichthupe', 'Nur durch Drücken eines physischen roten Knopfes im Kofferraum', 'Durch Aktivieren des Scheibenwischers auf Stufe IV'],
+        exp: 'Sobald ein Supercharger (oder erkannter Schnelllader) als Navigationsziel gewählt ist, temperiert das System die Batterie rechtzeitig vor Ankunft vor.'
+      },
+      {
+        cat: 'tesla', diff: 'easy',
+        q: 'Was ist der Tesla „Wächtermodus“ (Sentry Mode)?',
+        a: ['Kamera-Überwachung im geparkten Zustand, die Bewegungen ums Auto aufzeichnet', 'Autopilot-Spurwechsel auf deutschen Autobahnen', 'Kindersicherung für das Handschuhfach', 'Automatischer Abblend-Assistent bei Nebel'],
+        exp: 'Der Wächtermodus nutzt alle Außenkameras als Alarmanlage und Dashcam im Stand – kostet wegen des aktiven Autopilot-Rechners aber spürbar Standby-Strom.'
+      },
+      {
+        cat: 'tesla', diff: 'easy',
+        q: 'Unter welchem internen Codenamen kennt die Community das umfassende 2023er Facelift des Tesla Model 3 (mit Ambientelicht & ohne Blinkerhebel)?',
+        a: ['Highland', 'Juniper', 'Palladium', 'Raven'],
+        exp: 'Das Model-3-Facelift lief unter „Highland“ (Entfall Blinker-/Ganghebel, Akustikglas rundum, Heckdisplay); „Juniper“ bezeichnet das Model-Y-Facelift, „Palladium“ Model S/X Plaid.'
+      },
+      {
+        cat: 'tesla', diff: 'easy',
+        q: 'Was bedeutet beim Tesla im Winter das Schneeflocken-Symbol (blau) neben der Akku-Anzeige?',
+        a: ['Ein Teil der Batteriekapazität ist durch Kälte vorübergehend eingeschränkt bzw. nicht voll abrufbar', 'Schneeketten sind montiert', 'Die Reifendruckkontrolle wurde zurückgesetzt', 'Die Anhängerkupplung ist ausgefahren'],
+        exp: 'Bei sehr kaltem Akku sinkt die momentan entnehmbare Energie und die Rekuperation; mit Erwärmung der Zellen verschwindet das Schneeflocken-Symbol und die gesperrte Kapazität wird wieder frei.'
+      },
+      {
+        cat: 'tesla', diff: 'easy',
+        q: 'Wofür steht beim Tesla die App-Funktion „Camp Mode“?',
+        a: ['Klimaanlage/Heizung, Innenbelüftung und USB/12V bleiben dauerhaft aktiv (bei >20 % SoC)', 'Offroad-Federung für Waldwege', 'Automatisches Aufstellen eines Dachzelts', 'Abschalten aller Scheinwerfer während der Fahrt'],
+        exp: 'Camp Mode hält den Innenraum temperaturstabil und lässt Entertainment/Steckdosen an, bis der Ladestand auf 20 % sinkt – im Unterschied zum Dog Mode mit großem Hinweis-Screen.'
+      },
+      {
+        cat: 'tesla', diff: 'mid',
+        q: 'Was zeichnet die im Grünheide Model Y Standard Range verbaute BYD Blade LFP-Batterie im Vergleich zu vielen früheren CATL-LFP-Akkus im Schnellladetest aus?',
+        a: ['Eine deutlich bessere Ladekurve: hält die ~170 kW Peak bis ca. 50 % SoC konstant', 'Sie lädt an V3-Superchargern konstant mit 350 kW bis 95 %', 'Sie nutzt gar keinen Flüssigkeitskreislauf zur Kühlung', 'Sie hat 800 Volt Systemspannung wie der Cybertruck'],
+        exp: 'Im TFF-Forum vielfach dokumentiert: Der strukturelle BYD-Blade-Akku hält ein beeindruckendes ~170-kW-Plateau bis rund 50 % SoC und knackt 10–80 % meist in ~20–25 Min.'
+      },
+      {
+        cat: 'tesla', diff: 'mid',
+        q: 'Was steckt technisch hinter Teslas „Octovalve“, das ab Model Y bzw. Model 3 Refresh verbaut wird?',
+        a: ['Ein intelligentes 8-Wege-Kühlmittelventil für Wärmepumpe zwischen Akku, Motoren und Kabine', 'Ein 8-Zylinder-Range-Extender unter dem Frunk', 'Ein 8-fach unterteilter Bremssattel für den Track Mode', 'Ein spezieller 8-Pin-Typ-2-Adapter'],
+        exp: 'Das Octovalve verschaltet sämtliche Heiz- und Kühlkreisläufe hochflexibel, sodass Abwärme der Statorheizung oder Leistungselektronik direkt für Akku und Kabine genutzt wird.'
+      },
+      {
+        cat: 'tesla', diff: 'mid',
+        q: 'Welche drei MCU-Prozessoren folgten bei Tesla in der Media Control Unit historisch aufeinander?',
+        a: ['MCU1 (Nvidia Tegra) -> MCU2 (Intel Atom) -> MCU3 (AMD Ryzen)', 'MCU1 (Apple M1) -> MCU2 (Qualcomm) -> MCU3 (Exynos)', 'MCU1 (Intel i9) -> MCU2 (ARM M4) -> MCU3 (Nvidia H100)', 'Es gab seit 2012 nur ein einziges unverändertes Steuergerät'],
+        exp: 'MCU1 basierte auf Nvidia Tegra, ab 2018 kam MCU2 mit Intel Atom (Netflix, Dashcam-Viewer), und seit Ende 2021/2022 treibt der schnelle AMD Ryzen (MCU3) das Infotainment an.'
+      },
+      {
+        cat: 'tesla', diff: 'mid',
+        q: 'Welche Energie verbraucht der aktive Tesla Wächtermodus (Sentry Mode) laut TFF-Erfahrungen im Schnitt ungefähr?',
+        a: ['Rund 130 bis 300 Watt (ca. 3–7 % Akkuverlust pro Tag)', 'Nur ca. 2 Watt (unter 0,1 % pro Woche)', 'Über 2.500 Watt wie ein Schnellkocher', 'Er erzeugt über Photovoltaik im Glasdach sogar Netto-Strom'],
+        exp: 'Da FSD-Computer und Kameras wach bleiben, zieht Sentry rund 130–300 W bzw. ~2,5–5,5 kWh in 24 Stunden.'
+      },
+      {
+        cat: 'tesla', diff: 'mid',
+        q: 'Wie lassen sich im Alltag Fahrzeuge mit Autopilot Hardware 4 (HW4 / AI4) äußerlich oft am schnellsten an den Kameras von HW3 unterscheiden?',
+        a: ['Deutlich rötlich-violett schimmernde Kameralinsen (ca. 5 MP statt 1,2 MP)', 'Durch zwei klappbare LiDAR-Türme auf den Außenspiegeln', 'Gelbe Rundumleuchten am B-Holm', 'Durch komplett entfernte Frontscheibenkamera'],
+        exp: 'HW4 verbaut ~5-Megapixel-Kameras mit größerem Sichtfeld und markantem rot-violetten Objektivschimmer statt der ~1,2-MP-Kameras von HW3.'
+      },
+      {
+        cat: 'tesla', diff: 'mid',
+        q: 'Welche zwei Hersteller dominieren bei europäischen Tesla Model 3/Y Long Range und Performance (NMC/NCA) primär die Zulieferer-Praxis?',
+        a: ['Panasonic (NCA) und LG Energy Solution (NMC)', 'Duracell (Alkaline) und Varta (NiMH)', 'Rolls-Royce und Bosch Brennstoffzellen', 'Nur Samsung Blei-Säure'],
+        exp: 'Je nach Baujahr und Produktionswerk (Fremont vs. Shanghai/Grünheide) finden sich im Long Range/Performance vor allem Panasonic-NCA- oder LG-NMC-Zellen (z. B. LG 5L/5M).'
+      },
+      {
+        cat: 'tesla', diff: 'nerd',
+        q: 'Warum fielen bei alten Tesla Model S/X mit MCU1 (Tegra) reihenweise die Bildschirme mit Bootloops oder Ausfällen aus?',
+        a: ['Verschlissener 8-GB-eMMC-Flashspeicher durch exzessive permanente System-Logs', 'Durchgebrannte 800-Volt-Sicherung im Lenkrad', 'Abgelaufene SIM-Karte der Wegfahrsperre', 'Korrosion am Typ-2-Ladestecker'],
+        exp: 'Ein TFF-Klassiker: Die MCU1 schrieb unentwegt Debug-Logs auf einen nicht tauschbar verlöteten eMMC-Chip bis zum Schreibzyklen-Tod („eMMC Bug“, später per Rückruf/Upgrade behoben).'
+      },
+      {
+        cat: 'tesla', diff: 'nerd',
+        q: 'Welches Konstruktionsmerkmal erlaubt den Elektromotoren des Tesla Model S Plaid extreme Drehzahlen bis ~20.000 U/min?',
+        a: ['Eine unter hoher Zugspannung gewickelte Kohlefaser-Hülle (Carbon-Sleeved Rotor)', 'Flüssigstickstoff-Kühlung direkt aus der Klima-Anlage', 'Reine Kunststoff-Magnete ohne Metallanteil', 'Ein mechanisches 4-Gang-Getriebe an der Vorderachse'],
+        exp: 'Die Kohlefaser-Bandage presst Rotor und Permanentmagnete auch bei enormen Zentrifugalkräften zusammen und erlaubt einen winzigen, hocheffizienten Luftspalt zum Stator.'
+      },
+      {
+        cat: 'tesla', diff: 'nerd',
+        q: 'Welchen typischen internen Code trägt eine LG-Energy-Solution-Batterie im europäischen Model 3/Y Long Range oft im CoC-Dokument oder bei ScanMyTesla (z. B. M50-Zellen)?',
+        a: ['„E5LD“ / „5L“ (~79 kWh) – erkennbar z. B. am „E5LD“-Schlüssel in der Typgenehmigung', '„BYD60“ für 120-kWh-LFP', '„900D“ für die alte Blei-Starterbatterie', '„HW4-C“ für die Ladesäule'],
+        exp: 'TFF-Kenner lesen die Variant/Version-Zeile im CoC-Papier: E3LD / E5LD stehen dort etwa für LG-NMC-Packs, E6LR/Y6CR für bestimmte CATL-LFP bzw. BYD-Varianten.'
+      },
+      {
+        cat: 'tesla', diff: 'nerd',
+        q: 'Was änderte Tesla beim Cybertruck sowohl im Niedervolt-Bordnetz als auch bei der Lenkung grundlegend gegenüber Model 3/Y?',
+        a: ['Umstellung auf ein 48-Volt-Bordnetz sowie rein elektronisches Steer-by-Wire ohne Lenksäule', 'Rückkehr zu 6-Volt-Bordnetz mit mechanischer Seilzuglenkung', 'Nur noch 24-Volt-LKW-Technik mit Druckluftbremse', 'Wegfall jeglicher Hinterachslenkung bei gleichzeitiger Verdopplung des Lenkrad-Einschlags'],
+        exp: 'Mit dem 48-V-Netz reduziert Tesla Niedervolt-Ströme und Kabelgewicht drastisch – gleichzeitig erlaubt Steer-by-Wire variable Lenkübersetzungen samt Allradlenkung ohne mechanische Welle.'
+      },
+      {
+        cat: 'tesla', diff: 'nerd',
+        q: 'Was ist bei Teslas 4680-Rundzelle im Vergleich zur bekannten 2170-Zelle mit dem „Tabless“-Design gemeint?',
+        a: ['Durchgehende gelaserte Kontaktfahnen („Shingled Electrodes“) reduzieren Innenwiderstand & Wärmestau', 'Verzicht auf jegliche Elektrode innerhalb des Stahlbechers', 'Zelle lässt sich drahtlos per Induktion laden', 'Jede Zelle besitzt eine abziehbare USB-C-Buchse'],
+        exp: 'Statt nur eines einzelnen Stromabnehmers am Streifenende fließt der Strom über das gesamte umgelegte Folienende („table-less“), was den Pfad verkürzt und Hitze deutlich senkt.'
+      },
+      {
+        cat: 'tesla', diff: 'nerd',
+        q: 'Warum zeigt ein brandneues Fahrzeug oder lange nicht genutztes E-Auto auf LFP-Basis manchmal plötzlich unerwartete „SoC-Sprünge“ (z. B. von 18 % auf 8 %), wenn es nie auf 100 % war?',
+        a: ['Auf der flachen LFP-Spannungskurve summiert sich die Coulomb-Counting-Messdrift ohne 100%-Ankerpunkt', 'Weil LFP-Zellen bei Regen Strom verlieren', 'Weil der Tacho von Meilen auf Kilometer umschaltet', 'Wegen des Reifendrucksensors an der Hinterachse'],
+        exp: 'Im Plateau zwischen ~20 % und 85 % ändert sich die Zellspannung um wenige Millivolt; nur Coulomb-Counting läuft mit der Zeit auseinander, bis eine Vollladung (inkl. Balancing) wieder kalibriert.'
+      },
+
+      // ==================== LADEN & SCHNELLLADEN ====================
+      {
+        cat: 'laden', diff: 'easy',
+        q: 'Welcher Schnelllade-Steckerstandard dominiert in Europa öffentlich an fast allen HPC-Ladesäulen (Ionity, EnBW, Supercharger)?',
+        a: ['CCS2 (Combined Charging System Combo 2)', 'CHAdeMO', 'Schuko-Stecker', 'CEE Rot 16A'],
+        exp: 'CCS2 kombiniert den oberen Typ-2-Teil (Kommunikation + AC) mit zwei kräftigen DC-Kontakten darunter und ist gesetzlicher EU-Standard für Schnelllader.'
+      },
+      {
+        cat: 'laden', diff: 'easy',
+        q: 'Warum werden die meisten Schnellladetests (und Herstellernormen) für den Bereich 10 % bis 80 % angegeben statt 0 % bis 100 %?',
+        a: ['Ab etwa 80 % SoC regelt das BMS die Leistung stark herunter, um die Zellen zu schonen', 'Nach 80 % fließt an DC-Säulen gesetzlich gar kein Strom mehr', 'Oberhalb von 80 % schalten alle Ladesäulen auf Wechselstrom um', 'Weil Batterien oberhalb 80 % physisch entladen'],
+        exp: 'Auf der Langstrecke ist es oft schneller, bis ca. 60–80 % im Bereich der hohen Ladekurve nachzuladen und weiterzufahren, als auf die letzten langsamen Prozent zu warten.'
+      },
+      {
+        cat: 'laden', diff: 'easy',
+        q: 'Mit wie viel kW lädt eine Standard-Wallbox in Deutschland typischerweise dreiphasig zu Hause?',
+        a: ['11 kW (3 × 230 V × 16 A)', '3,7 kW (1 × 230 V × 16 A)', '150 kW Gleichstrom', '500 kW Hochspannung'],
+        exp: '11 kW (16 A auf 3 Phasen) ist Standard für private Wallboxen in Deutschland – seit 2019 in der Regel nur meldepflichtig, während 22 kW meist genehmigungspflichtig ist.'
+      },
+      {
+        cat: 'laden', diff: 'easy',
+        q: 'Was ist der typische Unterschied zwischen AC-Laden und DC-Schnellladen für die Fahrzeugelektronik?',
+        a: ['Beim AC-Laden wandelt der Onboard-Lader im Auto; beim DC-Laden liefert die Säule Gleichstrom direkt in den Akku', 'Beim DC-Laden lädt nur die 12-Volt-Batterie', 'AC-Laden passiert ohne Stecker über WLAN', 'DC-Säulen können prinzipiell keine Elektroautos laden'],
+        exp: 'Das Auto-OBC begrenzt AC meist auf 11 oder 22 kW; bei DC übernimmt die große Gleichrichter-Technik in der Ladesäule und speist bis zu mehrere Hundert kW direkt ein.'
+      },
+      {
+        cat: 'laden', diff: 'easy',
+        q: 'Welche Batterie-Temperatur benötigt ein moderner Lithium-Ionen-Akku ungefähr für volle 250-kW-Spitzenleistung am V3-Supercharger?',
+        a: ['Etwa 45 °C bis knapp über 50 °C', 'Genau 0 °C (Gefrierpunkt)', 'Mindestens 110 °C', 'Unter -15 °C'],
+        exp: 'In den TFF-Datenlogs sieht man beim V3-Peak fast immer Akkutemperaturen im Fenster ~45–55 °C – daher heizt die Vorkonditionierung so stark vor.'
+      },
+      {
+        cat: 'laden', diff: 'easy',
+        q: 'Wann fällt bei öffentlichen Ladesäulen eine „Blockiergebühr“ an?',
+        a: ['Wenn das Auto deutlich länger angesteckt bleibt als ein festgelegtes Zeitlimit (oft nach 4 Std. bei AC bzw. 45–60 Min. am DC)', 'Immer direkt beim Einstecken des Kabels', 'Nur wenn man bei Regen lädt', 'Sobald man über 50 km/h fährt'],
+        exp: 'Blockiergebühren sollen verhindern, dass vollgeladene Fahrzeuge öffentliche Ladepunkte stundenlang als kostenlosen Parkplatz blockieren.'
+      },
+      {
+        cat: 'laden', diff: 'mid',
+        q: 'Wie sollte man sich als erfahrener Tesla-Fahrer an älteren V2-Superchargern (max. 150 kW) mit beschrifteten Paaren wie 1A / 1B verhalten?',
+        a: ['Einen Stall mit freiem Partner wählen (z. B. 2A statt 1B neben einem ladenden 1A), um Power Sharing zu vermeiden', 'Immer direkt neben den anderen Tesla an 1B fahren für doppelten Boost', 'Das Kabel an beiden Buchsen gleichzeitig einstecken', 'Bei V2 teilt die ganze Station 150 kW auf alle 16 Plätze'],
+        exp: 'Bei V2 teilen sich je zwei Stalls (A/B) einen 150-kW-Gleichrichter – kommt ein Zweiter ans selbe Paar, bricht die Ladeleistung drastisch ein.'
+      },
+      {
+        cat: 'laden', diff: 'mid',
+        q: 'Was ist ein Hauptvorteil von Tesla Supercharger V3 gegenüber V2?',
+        a: ['Bis zu 250 kW Peak, flüssigkeitsgekühlte schlanke Kabel und kein A/B-Power-Sharing pro Stall-Paar', 'V3 lädt ausschließlich mit Wechselstrom über Typ 2', 'V3 bietet zwar nur 75 kW, dafür mit Benzin-Notstrom', 'V3 hat längere 8-Meter-Kabel auf der linken Seite'],
+        exp: 'V3 nutzt eine zentrale Power-Unit-Architektur mit dedizierter Ausgangsleistung pro Stall bis 250 kW – ein Parknachbar halbiert deine Leistung nicht mehr wie bei V2.'
+      },
+      {
+        cat: 'laden', diff: 'mid',
+        q: 'Wodurch sticht der Tesla Supercharger V4-Dispenser optisch & praktisch sofort ins Auge (wichtig auch für Fremdmarken)?',
+        a: ['Höheres geschlossenes Gehäuse mit längerem (~3 m) Ladekabel und Kartenleser-Vorbereitung', 'Halbierter Preis für Verbrenner', 'Ein 400-kg-Schwungrad oben auf der Säule', 'Er hat überhaupt kein Kabel mehr und nutzt einen Roboterarm'],
+        exp: 'Das deutlich längere Kabel des V4-Dispensers löst das Problem vieler Fremdmarken, deren Ladeport nicht hinten links sitzt, ohne zwei Stalls blockieren zu müssen.'
+      },
+      {
+        cat: 'laden', diff: 'mid',
+        q: 'Was versteht man unter der „Schieflastgrenze“ in Deutschland (VDE-AR-N 4100) beim einphasigen Laden an einer 22-kW-Wallbox?',
+        a: ['Ein einphasiger Lader darf maximal 20 A (~4,6 kW) ziehen statt volle 32 A (7,4 kW)', 'Das Auto darf nicht schief auf einer Auffahrt stehen', 'Dreiphasiges Laden ist nur nachts erlaubt', 'Die Wallbox muss mindestens 45° geneigt montiert werden'],
+        exp: 'Wegen Schieflastbegrenzung auf max. 4,6 kVA (20 A) laden viele einphasige Bordlader an 22-kW-Boxen in Deutschland maximal mit ca. 4,6 kW (außer bei älteren 3,7-kW-OBCs).'
+      },
+      {
+        cat: 'laden', diff: 'mid',
+        q: 'Worin besteht der entscheidende Unterschied zwischen „Plug & Charge“ (ISO 15118) und „Autocharge“?',
+        a: ['ISO 15118 authentifiziert kryptografisch per Zertifikat, Autocharge nur per unveränderter Fahrzeug-MAC-Adresse', 'Plug & Charge funktioniert nur bei Verbrennern', 'Autocharge überträgt Geldscheine über den Typ-2-Stecker', 'Es gibt technisch überhaupt keinen Unterschied'],
+        exp: 'Autocharge (z. B. EnBW, Fastned) ist einfach über die MAC-Adresse des EVCC umgesetzt – versagt aber bei E-Autos mit zufälliger/rotierender MAC-Adresse (wie vielen MEB-Modellen).'
+      },
+      {
+        cat: 'laden', diff: 'mid',
+        q: 'Was prüft eine DC-Schnellladesäule direkt nach dem Einstecken noch bevor der eigentliche hohe Ladestrom fließt?',
+        a: ['Die Isolationsprüfung (mit Prüfspannung) und den Spannungsabgleich (Precharge)', 'Den Reifendruck und das Restprofil', 'Ob die Sonnenblende heruntergeklappt ist', 'Die aktuelle Öltemperatur'],
+        exp: 'Erst wenn PLC-Handshake, Isolationsmessung der Hochvoltleitung und Precharge auf Batteriespannungs-Niveau erfolgreich sind, schließen die Schütze im Fahrzeug.'
+      },
+      {
+        cat: 'laden', diff: 'nerd',
+        q: 'Nach welcher Formel nach IEC 61851-1 berechnet ein Elektroauto beim AC-Laden die zulässige Stromstärke aus dem 1-kHz-PWM-Signal (zwischen 10 % und 85 % Duty Cycle)?',
+        a: ['I_max = Duty Cycle (%) × 0,6 A (z. B. 50 % = 30 A)', 'I_max = Duty Cycle (%) ÷ 2 A', 'I_max = 400 V ÷ Duty Cycle', 'I_max = Duty Cycle² × 0,01 A'],
+        exp: 'Die IEC-61851-Formel I = D × 0,6 A ist der Klassiker im Ladestandard: 10 % = 6 A (Minimalstrom!), 25 % = 15 A, 50 % = 30 A.'
+      },
+      {
+        cat: 'laden', diff: 'nerd',
+        q: 'Welche besondere Bedeutung hat exakt 5 % PWM Duty Cycle auf dem Control-Pilot-Pin (CP) eines Typ-2- / CCS2-Anschlusses?',
+        a: ['Wechsel in den digitalen Modus (High-Level-Communication via PLC nach DIN 70121 / ISO 15118 für DC-Laden)', 'Sofortige Abschaltung auf maximal 3 Ampere Notstrom', 'Erzwungene Entladung in das Hausnetz (V2H)', 'Fehlercode für unterbrochenen Schutzleiter'],
+        exp: '5 % Duty Cycle heißt nicht 3 A! Er signalisiert dem Fahrzeug: PWM-Stromlimit wird ignoriert, Kommunikation läuft ab jetzt digital per Power Line Communication auf der CP-Leitung.'
+      },
+      {
+        cat: 'laden', diff: 'nerd',
+        q: 'Wozu dient bei einem rein passiven Typ-2-Ladekabel der eingebaute Widerstand am PP-Pin (Proximity Pilot) gegen PE?',
+        a: ['Er codiert dem Fahrzeug und der Säule die maximale Strombelastbarkeit (Querschnitt) des Kabels (z. B. 220 Ω = 32 A)', 'Er misst die Außentemperatur des Gehäuses', 'Er ersetzt die Hauptsicherung im Zählerschrank', 'Er schaltet die Fahrzeug-Blinker bei Volladung ein'],
+        exp: 'Über den PP-Kodierwiderstand (typisch 1,5 kΩ = 13 A, 680 Ω = 20 A, 220 Ω = 32 A, 100 Ω = 63 A) verhindert das System eine Überhitzung zu dünner Kabel.'
+      },
+      {
+        cat: 'laden', diff: 'nerd',
+        q: 'Was sagt die sogenannte „C-Rate“ beim Laden eines 80-kWh-Akkus aus, wenn mit konstanten 240 kW geladen wird?',
+        a: ['Eine Laderate von 3C (240 kW ÷ 80 kWh = 3, theoretisch 1/3 Stunde für Vollhub)', 'Eine Laderate von 0,3C', '300 °C Zelltemperatur', '3 Prozent Verlust pro Minute'],
+        exp: '1C bedeutet Ladeleistung in kW gleich Kapazität in kWh (80 kW bei 80 kWh). 240 kW auf 80 kWh entspricht einem Peak von 3C!'
+      },
+      {
+        cat: 'laden', diff: 'nerd',
+        q: 'Wie viele Volt liegen beim Ruhe- bzw. Ladezustand auf dem Control-Pilot-(CP)-Pin gemäß IEC 61851 typischerweise positiv an (Zustand A -> B -> C)?',
+        a: ['+12 V (Standby) -> +9 V (Fahrzeug erkannt) -> +6 V (Laden angefordert)', '+230 V -> +400 V -> +800 V', '+3,3 V -> +1,8 V -> 0 V', '+48 V -> +24 V -> +12 V'],
+        exp: 'Durch definierte Dioden- und Widerstandskombinationen im Fahrzeug sinkt die positive PWM-Amplitude von +12 V (A) auf +9 V (B: gesteckt) und +6 V (C: bereit zum Laden, ggf. +3 V für Belüftung).'
+      },
+      {
+        cat: 'laden', diff: 'nerd',
+        q: 'Warum begrenzen viele ungekühlte CCS2-Ladesäulen auf 400-Volt-Fahrzeuge die Leistung rechnerisch auf maximal ~200 kW oder darunter?',
+        a: ['Ungekühlte Kabel sind oft auf ~500 A (kurz) bzw. 200–350 A limitiert; 400 V × 500 A = 200 kW (bei Tesla-V3 kurz >600 A dank Flüssigkühlung)', 'Weil 400V-Fahrzeuge keinen DC-Stecker besitzen', 'Weil über 200 kW immer Wechselstrom fließt', 'Wegen eines fehlenden PE-Schutzleiters'],
+        exp: 'Im CCS2-Standard war der Dauerstrom lange bei 500 A gedeckelt (~200 kW bei 400 V). Erst flüssigkeitsgekühlte Kabel mit höherem Kurzzeitstrom (oder 800 V!) drücken über diese Schwelle.'
+      }
+    ];
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 18;
+    const BASE_TIME = 18;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_emob');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const count = getMatchingPool(c.id).length;
+        const roundLen = Math.min(10, count);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const count = Math.min(10, pool.length);
+      deck = shuffle(pool).slice(0, count);
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      answered = false;
+      timeLeft = BASE_TIME;
+
+      const item = deck[qIdx];
+      const di = DIFF_INFO[item.diff];
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      timerId = setInterval(() => {
+        timeLeft = Math.max(0, +(timeLeft - 0.1).toFixed(1));
+        updateTimerUI();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          handleTimeout();
+        }
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      document.getElementById('q-sec').textContent = Math.ceil(timeLeft);
+      const pct = Math.max(0, Math.min(100, (timeLeft / BASE_TIME) * 100));
+      const fill = document.getElementById('timer-fill');
+      fill.style.width = pct + '%';
+      fill.style.background = timeLeft > 5
+        ? 'linear-gradient(90deg, #38bdf8, #4ade80)'
+        : 'linear-gradient(90deg, #fb7185, #f59e0b)';
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = DIFF_INFO[item.diff].mult;
+        const speedBonus = Math.round(timeLeft * 6);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        const gained = Math.round((100 + speedBonus + streakBonus) * mult);
+        score += gained;
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      showFact(chosen.isRight);
+    }
+
+    function handleTimeout() {
+      if (answered) return;
+      answered = true;
+      streak = 0;
+      const item = deck[qIdx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+      ArcadeAudio.fail();
+      document.getElementById('q-streak').textContent = 0;
+      showFact(false, '⏱ Zeit abgelaufen! ');
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Stark! ' : '❌ Knapp daneben: ')}</strong>${item.exp}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered) return;
+      jokers.time = false;
+      document.getElementById('joker-time').disabled = true;
+      timeLeft = Math.min(28, timeLeft + 10);
+      updateTimerUI();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const isNewRecord = ArcadeScores.record('quiz_emob', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '⚡' : '🔌');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer E-Mobilitäts-Rekord!' : 'Runde abgeschlossen!';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>
