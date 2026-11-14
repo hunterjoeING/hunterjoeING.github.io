@@ -19,8 +19,9 @@
         repeating-linear-gradient(60deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 4px),
         repeating-linear-gradient(-60deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 4px),
         radial-gradient(ellipse at 50% 8%, #0f4c46 0%, #07272c 48%, #030d18 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
+      min-height: 100%;
+      overflow: visible;
+      touch-action: pan-y;
       user-select: none;
       -webkit-user-select: none;
     }

@@ -1440,7 +1440,7 @@ body.mobile-mode #mob-showcase-bar {
   display: none !important;
 }
 
-</style>
+  </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body class="">
@@ -8444,13 +8444,15 @@ function _buildShowcaseInstancedVoxelGroup(rawCoords, colorMap, vScale, cfg, tar
       hex: e.hex
     }));
   } else {
-    voxelSpacing = (vScale / Math.max(maxSpan, vScale)) * 3.45;
+    finalPts = pts.map((p) => ({ x: p.x, y: p.y, z: p.z, hex: p.hex }));
+    voxelSpacing = (vScale / Math.max(maxSpan + vScale, 0.8)) * 3.45;
   }
 
-  // Normalize un-normalized finalPts into ~3.6 diameter sphere
+  // Normalize un-normalized finalPts into ~3.45 diameter sphere
   if (finalPts.length && finalPts[0].nx === undefined) {
-    const normScale = 3.55 / Math.max(maxSpan + vScale * 0.4, 0.5);
-    voxelSpacing = (supersampleIfSmall && pts.length <= 280 ? vScale * 0.5 : vScale) * normScale;
+    const stepUnit = (supersampleIfSmall && pts.length <= 280) ? vScale * 0.5 : vScale;
+    const normScale = 3.45 / Math.max(maxSpan + stepUnit, 0.8);
+    voxelSpacing = stepUnit * normScale;
     finalPts = finalPts.map((p) => ({
       nx: (p.x - cx) * normScale,
       ny: (p.y - cy) * normScale,
@@ -8459,7 +8461,7 @@ function _buildShowcaseInstancedVoxelGroup(rawCoords, colorMap, vScale, cfg, tar
     }));
   }
 
-  const cubeSide = Math.max(0.08, Math.min(0.68, voxelSpacing * 0.91));
+  const cubeSide = Math.max(0.08, Math.min(0.82, voxelSpacing * 0.88));
   const geom = _makeShowcaseBevelGeo(cubeSide);
   const mat = _makeShowcaseCrystalMat({
     color: 0xffffff,
@@ -8488,6 +8490,7 @@ function _buildShowcaseInstancedVoxelGroup(rawCoords, colorMap, vScale, cfg, tar
   }
   inst.instanceMatrix.needsUpdate = true;
   if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+  inst.frustumCulled = false;
 
   inst.userData.showcaseCfg = cfg;
   group.add(inst);
@@ -8634,7 +8637,21 @@ function _buildShowcaseMiniMesh(cfg) {
       supersample = true;
     } else if (cfg.id === 'enterprise' && typeof generateEnterpriseCoords === 'function') {
       rawCoords = generateEnterpriseCoords();
-      supersample = true;
+      // Give the starship distinct glowing nacelles, bridge & deflector dish highlights
+      rawCoords.forEach(([x, y, z]) => {
+        let clr = 0xe2e8f0;
+        if (Math.abs(x) >= 5 && y >= 1 && z <= -1) {
+          clr = (z <= -8 || z === -1) ? 0x38bdf8 : 0x7dd3fc; // Warp nacelles
+        } else if (y === 4 && z >= 2 && z <= 6 && Math.abs(x) <= 2) {
+          clr = 0x38bdf8; // Bridge dome
+        } else if (y <= -2 && z === 1 && Math.abs(x) <= 1) {
+          clr = 0xfbbf24; // Deflector dish
+        } else if (y === 2 && Math.hypot(x, z - 4) > 4.2) {
+          clr = 0xcbd5e1; // Saucer rim
+        }
+        currentVoxelPartColors.set(`${x},${y},${z}`, clr);
+      });
+      currentBoardVoxelScale = 1.0;
     } else if (cfg.id === 'custom' && typeof getCustomGeoCoords === 'function') {
       rawCoords = getCustomGeoCoords();
       supersample = true;
@@ -8647,8 +8664,8 @@ function _buildShowcaseMiniMesh(cfg) {
           for (let z = 0; z < dim; z++) {
             rawCoords.push([x - half, y - half, z - half]);
             const palette = dim === 4
-              ? ((x + y + z) % 2 === 0 ? 0x00e5ff : 0x38bdf8)
-              : ((x === 0 || x === dim - 1 || y === 0 || y === dim - 1 || z === 0 || z === dim - 1) ? 0x0ea5e9 : 0x67e8f9);
+              ? ((x + y + z) % 2 === 0 ? 0x0ea5e9 : 0x67e8f9)
+              : ((x + y + z) % 2 === 0 ? 0x0284c7 : 0x38bdf8);
             currentVoxelPartColors.set(`${x - half},${y - half},${z - half}`, palette);
           }
         }
@@ -8670,12 +8687,8 @@ function _buildShowcaseMiniMesh(cfg) {
         const g = res.group;
         g._hoverMat = res.mat;
 
-        // Add subtle signature halo accents for custom & classic cubes
-        if (cfg.id === 'cube_4' || cfg.id === 'cube_6') {
-          const cageGeo = _trackShowcaseDisp(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.4, 3.4, 3.4)));
-          const cageMat = _trackShowcaseDisp(new THREE.LineBasicMaterial({ color: 0x7dd3fc, transparent: true, opacity: 0.35 }));
-          g.add(new THREE.LineSegments(cageGeo, cageMat));
-        } else if (cfg.id === 'custom') {
+        // Add subtle signature halo accent only for Custom Builder
+        if (cfg.id === 'custom') {
           const haloGeo = _trackShowcaseDisp(new THREE.TorusGeometry(2.1, 0.055, 12, 64));
           const haloMat = _trackShowcaseDisp(new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.72 }));
           const halo = new THREE.Mesh(haloGeo, haloMat);
@@ -9557,6 +9570,6 @@ window.addEventListener('DOMContentLoaded', () => {
   animateScene();
 });
 
-</script>
+  </script>
 </body>
 </html>
