@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Ägyptische Geschichte Quiz · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.38);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: #fbbf24;
+      color: #fffbeb;
+    }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #b45309, #f59e0b);
+      border-color: #fde68a;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.34);
+    }
+    .diff-pill.pro.active {
+      background: linear-gradient(135deg, #991b1b, #e11d48);
+      border-color: #fda4af;
+      box-shadow: 0 4px 16px rgba(225, 29, 72, 0.36);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(16, 24, 48, 0.9);
+      border: 1px solid rgba(251, 191, 36, 0.28);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: #fbbf24;
+      background: rgba(146, 64, 14, 0.28);
+    }
+    .cat-card.featured {
+      border-color: rgba(245, 158, 11, 0.56);
+      background: linear-gradient(135deg, rgba(146, 64, 14, 0.3), rgba(16, 24, 48, 0.94));
+    }
+    .cat-card.featured-nile {
+      border-color: rgba(45, 212, 191, 0.48);
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.22), rgba(16, 24, 48, 0.94));
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.42; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+      margin-top: 4px;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #fbbf24, #4ade80);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill, .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .q-cat-pill {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.42);
+      color: #fde68a;
+    }
+    .q-diff-pill.easy {
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #86efac;
+    }
+    .q-diff-pill.mid {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      color: #7dd3fc;
+    }
+    .q-diff-pill.pro {
+      background: rgba(244, 63, 94, 0.18);
+      border: 1px solid rgba(251, 113, 133, 0.48);
+      color: #fda4af;
+    }
+
+    .q-text {
+      font-size: clamp(17.5px, 2.7vw, 22px);
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      color: #f1f5f9;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: #fbbf24;
+      background: rgba(180, 83, 9, 0.24);
+      transform: translateY(-1px);
+    }
+    .ans-key {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(148, 163, 184, 0.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.32);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-btn.eliminated {
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .joker-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      justify-content: space-between;
+      align-items: center;
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(251, 191, 36, 0.42);
+      color: #fde68a;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(11, 28, 56, 0.86);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      font-size: 13px;
+      line-height: 1.48;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .result-card {
+      text-align: center;
+      padding: 28px 20px;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 480px;
+      margin: 18px auto 22px;
+    }
+    .res-box {
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+    }
+    .res-box b {
+      display: block;
+      font-size: 20px;
+      font-family: var(--font-mono);
+      color: #fde68a;
+    }
+    .res-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🏺 Ägyptische Geschichte</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Difficulty Menu -->
+    <section id="screen-menu" class="glass-card" style="padding:20px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">5.000 Jahre am Nil: Ägyptische Geschichte</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
+        48 historische Fragen von Narmer und den Pyramiden von Gizeh über Hatschepsut, Echnaton, Ramses II. und Kleopatra bis zum Suezkanal und modernen Ägypten (10 Fragen pro Runde, Tasten <code>1–4</code> möglich).
+      </p>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Basiswissen</button>
+        <button class="diff-pill" data-diff="mid">🟡 Ägypten-Kenner</button>
+        <button class="diff-pill pro" data-diff="pro">🔴 Ägyptologen-Nerd (1,5× Pkt)</button>
+      </div>
+
+      <div class="quiz-time-bar" id="time-mode-bar">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700;">Tempo:</span>
+        <button type="button" class="time-mode-pill active" data-relaxed="0">⚡ Mit Zeitbonus (25–35s, sanfter Ablauf)</button>
+        <button type="button" class="time-mode-pill relaxed" data-relaxed="1">☕ Ohne Zeitlimit (in Ruhe überlegen)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">10</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Ohne Zeitlimit umschalten">⏱ <strong id="q-sec">25</strong>s</button>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Epoche</span>
+        <span id="q-diff" class="q-diff-pill mid">Kenner</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Epochen</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div id="res-emoji" style="font-size:48px;">🏺</div>
+      <h2 id="res-heading" style="margin:8px 0 4px;">Runde abgeschlossen!</h2>
+      <p id="res-sub" style="margin:0;color:var(--text-muted);font-size:13.5px;"></p>
+
+      <div class="result-stats">
+        <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
+        <div class="res-box"><b id="res-correct">0/10</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Nochmal spielen</button>
+        <button class="secondary-btn" onclick="backToMenu()">📚 Andere Epoche</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const CATS = [
+      { id: 'mix',         icon: '🏺', name: 'Nil-Chronik (Alle)',         cls: 'featured',      desc: 'Quer durch fünf Jahrtausende: von den ersten Pharaonen über Alexandria bis in die Moderne.' },
+      { id: 'altes_reich', icon: '🔺', name: 'Altes Reich & Pyramiden',    cls: '',              desc: 'Narmer, Djoser & Imhotep, Gizeh, Große Sphinx, Mumifizierung & Totenbuch.' },
+      { id: 'neues_reich', icon: '👑', name: 'Mittleres & Neues Reich',    cls: '',              desc: 'Hyksos, Hatschepsut, Echnaton, Tutanchamun, Ramses II. & Tal der Könige.' },
+      { id: 'ptolemaeer',  icon: '🏛️', name: 'Spätzeit & Ptolemäer',       cls: '',              desc: 'Nubische Pharaonen, Alexander, Pharos, Stein von Rosette & Kleopatra VII.' },
+      { id: 'neuzeit',     icon: '⛵', name: 'Islamisches & Modernes Ägypten', cls: 'featured-nile', desc: 'Kairo & Saladin, Napoleon 1798, Muhammad Ali, Suezkanal, 1952 & Assuan.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Basis',      cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Kenner',     cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Ägyptologe', cls: 'pro',  mult: 1.5 }
+    };
+
+    // Index 0 of a[] is ALWAYS the correct answer
+    const QUESTIONS = [
+      // ── Altes Reich & Pyramiden ──
+      {
+        cat: 'altes_reich', diff: 'easy',
+        q: 'Welche der drei großen Pyramiden auf dem Plateau von Gizeh ist die größte und älteste?',
+        a: ['Die Cheops-Pyramide (Chufu)', 'Die Chephren-Pyramide (Chafre)', 'Die Mykerinos-Pyramide (Menkaure)', 'Die Stufenpyramide von Sakkara'],
+        exp: 'Die um 2580 v. Chr. erbaute Cheops-Pyramide erreichte ursprünglich etwa 146,6 m Höhe und gilt als einziges weitgehend erhaltenes der Sieben Weltwunder der Antike.'
+      },
+      {
+        cat: 'altes_reich', diff: 'easy',
+        q: 'Welches berühmte Monument in Gizeh vereint den Körper eines liegenden Löwen mit einem Menschenkopf?',
+        a: ['Die Große Sphinx von Gizeh', 'Der Koloss von Rhodos', 'Die Memnonkolosse', 'Der Obelisk von Luxor'],
+        exp: 'Die rund 73 m lange Große Sphinx wurde direkt aus dem anstehenden Kalksteinfels geschlagen und symbolisiert königliche Stärke und Weisheit.'
+      },
+      {
+        cat: 'altes_reich', diff: 'easy',
+        q: 'Wozu dienten im Alten Ägypten die sogenannten Kanopenkrüge bei einer Bestattung?',
+        a: ['Zur Aufbewahrung der einbalsamierten inneren Organe (Leber, Lunge, Magen, Gedärme)', 'Als Öllampen für die Arbeiter im Grabgang', 'Zur Lagerung von Nilwasser für das Jenseits', 'Als Sammelgefäße für Steuern aus den Provinzen'],
+        exp: 'Die vier Krüge standen unter dem Schutz der vier Horussöhne; das Herz als Sitz des Verstandes verblieb dagegen im mumifizierten Körper.'
+      },
+      {
+        cat: 'altes_reich', diff: 'easy',
+        q: 'Welcher schakalköpfige Gott begleitete im altägyptischen Glauben die Toten und wachte über die Mumifizierung?',
+        a: ['Anubis', 'Horus', 'Sobek', 'Chnum'],
+        exp: 'Anubis überwachte die Einbalsamierung und führte die Verstorbenen zur Halle des Totengerichts vor Osiris.'
+      },
+      {
+        cat: 'altes_reich', diff: 'mid',
+        q: 'Welcher legendäre Baumeister entwarf um 2650 v. Chr. in Sakkara für Pharao Djoser die erste monumentale Stufenpyramide aus Stein?',
+        a: ['Imhotep', 'Senenmut', 'Hemiunu', 'Amenhotep, Sohn des Hapu'],
+        exp: 'Imhotep war Wesir, Arzt und Architekt unter Djoser (3. Dynastie); spätere Generationen verehrten ihn sogar als Gott der Heilkunst und Weisheit.'
+      },
+      {
+        cat: 'altes_reich', diff: 'mid',
+        q: 'Was stellt die berühmte „Narmer-Palette“ (um 3100–3000 v. Chr.) symbolisch dar?',
+        a: ['Die Reichseinigung von Ober- und Unterägypten unter einem Herrscher', 'Den Bauplan der Cheops-Pyramide', 'Den Friedensvertrag mit den Hethitern', 'Die Eroberung Zyperns durch die ägyptische Flotte'],
+        exp: 'Pharao Narmer trägt auf der einen Seite die weiße Krone Oberägyptens und auf der anderen die rote Krone Unterägyptens – Beginn der 1. Dynastie.'
+      },
+      {
+        cat: 'altes_reich', diff: 'mid',
+        q: 'Gegen welches Symbol wurde beim altägyptischen Totengericht das Herz des Verstorbenen auf der Waage aufgewogen?',
+        a: ['Gegen die Feder der Ma’at (Wahrheit und kosmische Ordnung)', 'Gegen ein goldenes Ankh-Kreuz', 'Gegen einen Skarabäus aus Lapislazuli', 'Gegen einen Krug Nilwasser'],
+        exp: 'War das Herz durch Sünden schwerer als die Feder der Göttin Ma’at, verschlang es die Mischwesen-Göttin Ammit; andernfalls ging man in die Gefilde der Seligen ein.'
+      },
+      {
+        cat: 'altes_reich', diff: 'mid',
+        q: 'Aus welchem Material fertigten die Ägypter bereits im 3. Jahrtausend v. Chr. ihr wichtigstes leichtes Schreibmaterial?',
+        a: ['Aus dem Mark der Papyrusstaude aus dem Nildelta', 'Aus gegerbtem Krokodilleder', 'Aus gewalztem Goldblech', 'Aus gebrannter Seidenrinde'],
+        exp: 'Dünne Streifen des Papyrusmarks wurden kreuzweise übereinandergelegt, gepresst und geglättet – die pflanzlichen Säfte verklebten das Blatt dauerhaft.'
+      },
+      {
+        cat: 'altes_reich', diff: 'pro',
+        q: 'Welcher Pharao der 4. Dynastie (Vater des Cheops) ließ gleich drei Großpyramiden errichten, darunter die Knickpyramide und die Rote Pyramide von Dahschur?',
+        a: ['Snofru', 'Djoser', 'Menkaure', 'Unas'],
+        exp: 'Snofru experimentierte in Meidum und Dahschur mit den Neigungswinkeln – die Rote Pyramide gilt als erste echte Pyramide mit glatten Seitenflächen.'
+      },
+      {
+        cat: 'altes_reich', diff: 'pro',
+        q: 'Welches in den Pyramidentexten (ab Pharao Unas, Ende 5. Dynastie) erstmals überlieferte Textkorpus zählt zu den ältesten religiösen Schriften der Menschheit?',
+        a: ['Die Pyramidentexte an den Wänden der Grabkammern von Sakkara', 'Das Amduat auf Papyrus', 'Die Lehre des Amenemope', 'Die Rosetta-Dekrete'],
+        exp: 'Ursprünglich nur dem Pharao vorbehalten, entwickelten sich daraus später die Sargtexte des Mittleren Reiches und schließlich das Totenbuch für eine breitere Elite.'
+      },
+      {
+        cat: 'altes_reich', diff: 'pro',
+        q: 'Wie hieß das bis 2021 im eigenen Museum neben der Großen Pyramide ausgestellte, rund 43 m lange Zedernholzboot aus einer versiegelten Grube von 1954?',
+        a: ['Die Cheops-Sonnenbarke (Chufu-Schiff)', 'Die Barke der Kleopatra', 'Das Punt-Schiff der Hatschepsut', 'Die Bireme von Abukir'],
+        exp: 'Das rund 4.500 Jahre alte zerlegte Zedernboot wurde aus über 1.200 Einzelteilen rekonstruiert und zog 2021 ins Grand Egyptian Museum um.'
+      },
+      {
+        cat: 'altes_reich', diff: 'pro',
+        q: 'Welche zwei Hauptstädte bzw. Zentren prägten das Alte Reich politisch und religiös im Großraum des Nildelta-Eingangs?',
+        a: ['Memphis (Regierungssitz) und Heliopolis (Zentrum des Sonnengotts Re)', 'Alexandria und Berenike', 'Auaris und Tanis', 'Assuan und Philae'],
+        exp: 'Das an der Grenze zwischen Ober- und Unterägypten gelegene Memphis („Weiße Mauern“) war die Königsresidenz nahe der großen Nekropolen Sakkara und Gizeh.'
+      },
+
+      // ── Mittleres & Neues Reich ──
+      {
+        cat: 'neues_reich', diff: 'easy',
+        q: 'Welchem britischen Archäologen gelang im November 1922 die Entdeckung des fast unversehrten Grabes von Pharao Tutanchamun (KV62)?',
+        a: ['Howard Carter', 'Flinders Petrie', 'Heinrich Schliemann', 'Giovanni Belzoni'],
+        exp: 'Nach jahrelanger Suche im Tal der Könige (finanziert von Lord Carnarvon) stieß Carter auf den versiegelten Eingang samt der berühmten goldenen Totenmaske.'
+      },
+      {
+        cat: 'neues_reich', diff: 'easy',
+        q: 'Welche weibliche Herrscherin der 18. Dynastie regierte rund zwei Jahrzehnte als vollberechtigter Pharao und ließ den Terrassentempel von Deir el-Bahari errichten?',
+        a: ['Hatschepsut', 'Nofretete', 'Kleopatra VII.', 'Teje'],
+        exp: 'Hatschepsut stellte sich auf Statuen oft mit Königskrone und Zeremonialbart dar und entsandte eine berühmte Friedens- und Handelsexpedition nach Punt.'
+      },
+      {
+        cat: 'neues_reich', diff: 'easy',
+        q: 'Welche imposante Tempelanlage Ramses’ II. wurde in den 1960er Jahren komplett zersägt und höher wieder aufgebaut, um sie vor dem Nassersee zu retten?',
+        a: ['Die Felsentempel von Abu Simbel', 'Der Luxor-Tempel', 'Der Tempel von Dendera', 'Die Pyramiden von Meroe'],
+        exp: 'In einer spektakulären UNESCO-Rettungsaktion wurden beide Felsentempel Block für Block um rund 65 Meter höher versetzt.'
+      },
+      {
+        cat: 'neues_reich', diff: 'easy',
+        q: 'Wie heißt das berühmte Felsental am Westufer des Nils gegenüber von Luxor (Theben), in dem die Pharaonen des Neuen Reiches bestattet wurden?',
+        a: ['Das Tal der Könige', 'Das Wadi Natrun', 'Die Oase Siwa', 'Das Fayyum-Becken'],
+        exp: 'Um Grabräubern zu entgehen, gaben die Pharaonen des Neuen Reiches ab Thutmosis I. die sichtbaren Pyramiden auf und wählten verborgene Felsengräber.'
+      },
+      {
+        cat: 'neues_reich', diff: 'mid',
+        q: 'Welchen radikalen religiösen und politischen Umbruch vollzog Pharao Amenophis IV., besser bekannt als Echnaton?',
+        a: ['Er verlegte die Residenz nach Amarna und konzentrierte den Staatskult auf die Sonnenscheibe Aton', 'Er erklärte den Stiergott Apis zum alleinigen Herrscher über Memphis', 'Er schaffte das Königtum zugunsten eines Senats ab', 'Er führte das griechische Alphabet als Staatsschrift ein'],
+        exp: 'Gemeinsam mit seiner Frau Nofretete brach Echnaton die Macht der Amun-Priesterschaft von Theben; nach seinem Tod kehrte Tutanchamun zur alten Ordnung zurück.'
+      },
+      {
+        cat: 'neues_reich', diff: 'mid',
+        q: 'Wer waren die „Hyksos“, die während der Zweiten Zwischenzeit über Unterägypten herrschten?',
+        a: ['Aus Westasien stammende Herrscher mit Zentrum in Auaris, die u. a. Streitwagen und Kompositbögen verbreiteten', 'Eine Seemacht von der Insel Kreta', 'Römische Hilfstruppen aus Gallien', 'Berggemeinschaften aus dem südlichen Äthiopien'],
+        exp: 'Erst Ahmose I. gelang um 1550 v. Chr. die Vertreibung der Hyksos, womit die militärisch expansive Epoche des Neuen Reiches begann.'
+      },
+      {
+        cat: 'neues_reich', diff: 'mid',
+        q: 'Zwischen welchen beiden Großmächten wurde nach der Schlacht bei Kadesch unter Ramses II. einer der ältesten überlieferten Friedensverträge (1259 v. Chr.) geschlossen?',
+        a: ['Zwischen Ägypten und dem Hethiterreich (König Hattusili III.)', 'Zwischen Ägypten und dem Römischen Senat', 'Zwischen Ägypten und den Phöniziern von Karthago', 'Zwischen Ägypten und Sparta'],
+        exp: 'Kopien dieses paritätischen Beistands- und Nichtangriffspakts sind sowohl auf ägyptischen Tempelwänden als auch auf Keilschrifttafeln aus Hattusa erhalten.'
+      },
+      {
+        cat: 'neues_reich', diff: 'mid',
+        q: 'Welcher Pharao der 18. Dynastie gilt wegen seiner 17 Feldzüge bis zum Euphrat als der bedeutendste Feldherr des Neuen Reiches („Napoleon Ägyptens“)?',
+        a: ['Thutmosis III.', 'Tutanchamun', 'Sneferu', 'Psammetich I.'],
+        exp: 'Nach dem Tod seiner Stiefmutter und Mitregentin Hatschepsut dehnte Thutmosis III. (u. a. Sieg bei Megiddo) das ägyptische Einflussgebiet auf seine größte Ausdehnung aus.'
+      },
+      {
+        cat: 'neues_reich', diff: 'pro',
+        q: 'Welches Handwerkerdorf bei Theben-West ist berühmt für tausende erhaltene Ostraka – und für den ersten dokumentierten Arbeiterstreik der Weltgeschichte unter Ramses III.?',
+        a: ['Deir el-Medina', 'el-Lahun', 'Tell el-Daba', 'Kom Ombo'],
+        exp: 'Weil um 1152 v. Chr. die Getreidelieferungen ausblieben, legten die Grabmaler und Steinmetze von Deir el-Medina die Arbeit nieder und zogen vor die Totentempel.'
+      },
+      {
+        cat: 'neues_reich', diff: 'pro',
+        q: 'Welche große Bedrohung wehrte Pharao Ramses III. im Jahr 1177 v. Chr. in einer gewaltigen Land- und Nildelta-Seeschlacht ab (dargestellt in Medinet Habu)?',
+        a: ['Die sogenannten „Seevölker“ im Zuge des spätbronzezeitlichen Kollapses', 'Die Legionen Julius Caesars', 'Die Armeen des Kyros II.', 'Die Flotte von Karthago'],
+        exp: 'Während das Hethiterreich und mykenische Zentren zerfielen, behauptete Ägypten zwar seine Unabhängigkeit, verlor jedoch langfristig seine Großmachtstellung in der Levante.'
+      },
+      {
+        cat: 'neues_reich', diff: 'pro',
+        q: 'Wie hieß das sagenhafte Weihrauch-, Myrrhe- und Ebenholzland am Horn von Afrika bzw. Roten Meer, zu dem Hatschepsut eine große Seeexpedition sandte?',
+        a: ['Punt', 'Baktrien', 'Tartessos', 'Phrygien'],
+        exp: 'Die Reliefs im Tempel von Deir el-Bahari zeigen detailliert die Schiffsbeladung mit lebenden Weihrauchbäumen, Gold, Elfenbein und exotischen Tieren.'
+      },
+      {
+        cat: 'neues_reich', diff: 'pro',
+        q: 'Welchem Herrscher des Mittleren Reiches (12. Dynastie) wird die systematische Trockenlegung und landwirtschaftliche Erschließung des Fayyum-Beckens zugeschrieben?',
+        a: ['Amenemhet III. (und Sesostris II.)', 'Echnaton', 'Djoser', 'Necho II.'],
+        exp: 'Durch Deiche und Kanäle am Bahr Yusuf entstand im Fayyum eine fruchtbare Kornkammer, deren antike Stätten später den berühmten „Fayyum-Mumienporträts“ ihren Namen gaben.'
+      },
+
+      // ── Spätzeit, Alexander & Ptolemäer ──
+      {
+        cat: 'ptolemaeer', diff: 'easy',
+        q: 'Welcher historische Fund von 1799 ermöglichte schließlich die Entzifferung der ägyptischen Hieroglyphen?',
+        a: ['Der Stein von Rosette (Rosetta Stone)', 'Die Behistun-Inschrift', 'Der Codex Hammurapi', 'Die Kupferrolle von Qumran'],
+        exp: 'Der Basaltstein enthält dasselbe Priesterdekret für Ptolemaios V. (196 v. Chr.) in drei Schriften: Hieroglyphen, Demotisch und Altgriechisch.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'easy',
+        q: 'Welche Sprache sprach das Königshaus der Ptolemäer – einschließlich Kleopatra VII. – ursprünglich als Muttersprache?',
+        a: ['Altgriechisch (Makedonisch)', 'Latein', 'Babylonisch-Akkadisch', 'Altpersisch'],
+        exp: 'Die Ptolemäer stammten vom makedonischen General Ptolemaios ab; Kleopatra VII. war angeblich die erste ihrer Dynastie, die auch fließend Ägyptisch sprach.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'easy',
+        q: 'Welches Bauwerk auf einer Insel vor Alexandria zählte zu den Sieben Weltwundern der Antike?',
+        a: ['Der Leuchtturm von Pharos', 'Die Hängenden Gärten', 'Das Mausoleum von Halikarnassos', 'Der Tempel der Artemis'],
+        exp: 'Der über 100 m hohe Turm wies Seefahrern im flachen Nildelta mithilfe eines Feuers und Spiegeln über Jahrhunderte sicher den Weg in den Hafen.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'easy',
+        q: 'Welcher berühmte makedonische Eroberer gründete im Jahr 331 v. Chr. an der Mittelmeerküste die Stadt Alexandria?',
+        a: ['Alexander der Große', 'Seleukos I.', 'Perikles', 'Philipp V.'],
+        exp: 'Ägypten empfing Alexander 332 v. Chr. als Befreier von der Perserherrschaft; in der Oase Siwa ließ er sich zudem als Sohn des Ammon-Zeus bestätigen.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'mid',
+        q: 'Welchem französischen Sprachforscher gelang 1822 der entscheidende Durchbruch bei der Entzifferung der ägyptischen Hieroglyphen?',
+        a: ['Jean-François Champollion', 'Auguste Mariette', 'Richard Lepsius', 'Gaston Maspero'],
+        exp: 'Champollion erkannte anhand der Königskartuschen von „Ptolemaios“ und „Kleopatra“ sowie des Koptischen, dass Hieroglyphen sowohl Laut- als auch Sinnzeichen sind.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'mid',
+        q: 'Wann und unter wem endete die fast 300-jährige Herrschaft der Ptolemäer und Ägypten wurde direkt römische Provinz?',
+        a: ['30 v. Chr. nach der Niederlage von Kleopatra VII. und Marcus Antonius gegen Octavian', '44 v. Chr. direkt beim Tod Julius Caesars', '117 n. Chr. unter Kaiser Trajan', '313 n. Chr. unter Konstantin dem Großen'],
+        exp: 'Nach der Seeschlacht bei Actium (31 v. Chr.) rückte Octavian in Alexandria ein; fortan war Ägypten als kaiserliche Sonderprovinz die wichtigste Kornkammer Roms.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'mid',
+        q: 'Wer stellte in der 25. Dynastie (ca. 747–656 v. Chr.) als sogenannte „Schwarze Pharaonen“ die Herrscher über ganz Ägypten?',
+        a: ['Die Könige des nubischen Reiches von Kusch (z. B. Pije und Taharqa)', 'Phönizische Stadtfürsten aus Tyros', 'Lydische Herrscher unter Krösus', 'Skythische Reiterkrieger'],
+        exp: 'Die kuschitischen Herrscher aus dem heutigen Nordsudan verehrten den Gott Amun und belebten klassische altägyptische Bau- und Kunsttraditionen neu.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'mid',
+        q: 'Welche berühmte wissenschaftliche Einrichtung machte Alexandria unter den ersten Ptolemäern zum geistigen Zentrum der hellenistischen Welt?',
+        a: ['Das Museion mit der Großen Bibliothek von Alexandria', 'Die Platonische Akademie von Athen', 'Das Haus der Weisheit von Bagdad', 'Die Universität von Bologna'],
+        exp: 'Gelehrte wie Euklid, Archimedes (zeitweilig), Kallimachos und Eratosthenes forschten und lehrten dort auf Kosten des Königshauses.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'pro',
+        q: 'Wie berechnete der Bibliotheksleiter Eratosthenes um 240 v. Chr. erstaunlich präzise den Umfang der Erde?',
+        a: ['Durch Vergleich des Mittagsschattens zur Sommersonnenwende in Syene (Assuan) und Alexandria', 'Durch Umsegelung Afrikas entlang des Roten Meeres', 'Durch Beobachtung einer Mondfinsternis von Memphis bis Karthago', 'Mit einem Pendel auf der Spitze der Cheops-Pyramide'],
+        exp: 'Da die Sonne in Syene mittags senkrecht in einen tiefen Brunnen schien, in Alexandria aber einen Winkel von 1/50 eines Vollkreises warf, multiplizierte er die Distanz mit 50.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'pro',
+        q: 'Welche schriftliche Tradition des späten Ägyptens nutzte das griechische Alphabet (ergänzt um demotische Zusatzzeichen) und überlebte bis heute als Liturgiesprache?',
+        a: ['Das Koptische', 'Das Aramäische', 'Das Linearschrift B', 'Das Meroitische'],
+        exp: 'Das Koptische ist die direkte Endstufe der altägyptischen Sprache und war ein entscheidender Schlüssel für Champollions Entzifferung der Hieroglyphen.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'pro',
+        q: 'Welcher persische Großkönig eroberte Ägypten im Jahr 525 v. Chr. nach dem Sieg bei Pelusium und begründete die erste Perserherrschaft (27. Dynastie)?',
+        a: ['Kambyses II.', 'Xerxes I.', 'Darius III.', 'Artaxerxes II.'],
+        exp: 'In Ägypten wird Kambyses’ Herrschaft in griechischen Quellen (Herodot) oft hart dargestellt, während ägyptische Inschriften (Udjahorresnet) auch Anpassung an lokale Riten zeigen.'
+      },
+      {
+        cat: 'ptolemaeer', diff: 'pro',
+        q: 'Welcher Saiten-Pharao der 26. Dynastie soll um 600 v. Chr. einen Kanal vom Nil zum Roten Meer begonnen und laut Herodot Phönizier zur Umsegelung Afrikas ausgesandt haben?',
+        a: ['Necho II.', 'Psammetich III.', 'Amasis', 'Nektanebos II.'],
+        exp: 'Der von Necho II. begonnene „Bubastis-Kanal“ wurde später unter dem Perserkönig Darius I. vollendet – ein früher Vorläufer einer Nil-Rotmeer-Verbindung.'
+      },
+
+      // ── Islamisches & Modernes Ägypten ──
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'Welcher 193 km lange künstliche Seeweg durch Ägypten wurde 1869 feierlich eröffnet und verkürzte den Seeweg zwischen Europa und Asien drastisch?',
+        a: ['Der Suezkanal', 'Der Assuan-Kanal', 'Der Panamakanal', 'Der Korinthkanal'],
+        exp: 'Geplant und vorangetrieben von Ferdinand de Lesseps, verbindet der Suezkanal Port Said am Mittelmeer mit Suez am Roten Meer ohne jede Schleuse.'
+      },
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'Welches gigantische Wasserbauprojekt zwischen 1960 und 1970 bändigte die jährlichen Nilüberschwemmungen und schuf den Nassersee?',
+        a: ['Der Assuan-Hochdamm', 'Der Toshka-Kanal', 'Die Nilschleusen von Kairo', 'Das Delta-Stauwehr von Damiette'],
+        exp: 'Der Hochdamm versorgt Ägypten mit Elektrizität und planbarer Bewässerung, hält jedoch auch den fruchtbaren Nilschlamm zurück.'
+      },
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'Welcher europäische Feldherr landete 1798 mit einer Armee und über 160 Gelehrten in Ägypten und begründete damit indirekt die moderne Ägyptologie?',
+        a: ['Napoleon Bonaparte', 'Herzog von Wellington', 'Friedrich der Große', 'Giuseppe Garibaldi'],
+        exp: 'Zwar verlor Frankreich die Seeschlacht bei Abukir gegen Admiral Nelson, doch die Arbeit der Wissenschaftler in der „Description de l’Égypte“ faszinierte ganz Europa.'
+      },
+      {
+        cat: 'neuzeit', diff: 'easy',
+        q: 'Wie heißt das neue, riesige archäologische Großmuseum direkt nahe den Pyramiden von Gizeh?',
+        a: ['Grand Egyptian Museum (GEM)', 'Pergamon-Zentrum Kairo', 'Alexandria-Palast', 'Nubia-Dome'],
+        exp: 'Das Grand Egyptian Museum beherbergt unter anderem erstmals alle über 5.000 Objekte aus dem Grabschatz Tutanchamuns gemeinsam.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'Welche Dynastie begründete Kairo („al-Qahira“) im Jahr 969 n. Chr. sowie die berühmte Al-Azhar-Moschee und -Universität?',
+        a: ['Die Fatimiden', 'Die Umayyaden', 'Die Osmanen', 'Die Abbasiden von Bagdad'],
+        exp: 'Die schiitischen Fatimiden machten Kairo zur Kalifenresidenz neben der älteren Siedlung Fustat; die Al-Azhar zählt zu den ältesten durchgängig lehrenden Hochschulen der Welt.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'Wer gilt als Vater des modernen ägyptischen Staates im frühen 19. Jahrhundert (ab 1805), der Armee, Verwaltung, Bildung und Baumwollwirtschaft radikal reformierte?',
+        a: ['Muhammad Ali Pascha', 'Gamal Abdel Nasser', 'Ahmed Urabi', 'Anwar as-Sadat'],
+        exp: 'Der aus dem osmanischen Militär aufgestiegene Albaner machte Ägypten faktisch autonom und begründete die bis 1953 regierende Dynastie.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'Welche militärische und politische Umwälzung im Juli 1952 beendete die ägyptische Monarchie unter König Faruq?',
+        a: ['Der Staatsstreich der „Freien Offiziere“ um Muhammad Nagib und Gamal Abdel Nasser', 'Die Wahl der ersten verfassunggebenden Versammlung in Alexandria', 'Die Landung der Vereinten Nationen am Suezkanal', 'Der Rückzug des Römischen Reiches'],
+        exp: '1953 wurde offiziell die Republik ausgerufen; bald darauf trat Gamal Abdel Nasser als prägende Führungsfigur Ägyptens und der arabischen Welt hervor.'
+      },
+      {
+        cat: 'neuzeit', diff: 'mid',
+        q: 'Was löste im Herbst 1956 die internationale Suezkrise aus, in der Großbritannien, Frankreich und Israel militärisch intervenierten?',
+        a: ['Die Verstaatlichung der bisher britisch-französisch kontrollierten Suezkanal-Gesellschaft durch Nasser', 'Die Schließung der Pyramiden für ausländische Archäologen', 'Ein Handelsabkommen Ägyptens mit Japan', 'Die Entdeckung von Erdöl in der Oase Bahariya'],
+        exp: 'Politischer und wirtschaftlicher Druck der USA und der Sowjetunion zwang die Interventionsmächte zum Rückzug – Nasser ging daraus in der arabischen Welt als Triumphator hervor.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'In welcher Schlacht im Jahr 1260 besiegten die ägyptischen Mamluken unter Qutuz und Baibars erstmals ein mongolisches Heer im offenen Feld?',
+        a: ['Schlacht bei Ain Dschalut (in Galiläa)', 'Schlacht bei Hattin', 'Schlacht bei Mansura', 'Schlacht bei Lepanto'],
+        exp: 'Dieser Sieg stoppte die westwärtige Expansion des Mongolischen Reiches und sicherte dem Mamluken-Sultanat von Kairo über 250 Jahre Großmachtstatus.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'Welche Zitadelle und Dynastie errichtete Saladin (Salah ad-Din) Ende des 12. Jahrhunderts nach Ablösung des Fatimiden-Kalifats?',
+        a: ['Die Zitadelle von Kairo und die Dynastie der Ayyubiden', 'Die Festung Qaitbay und die Dynastie der Tuluniden', 'Das Serail von Luxor und die Hamdaniden', 'Die Mauer von Pelusium und die Seldschuken'],
+        exp: 'Saladin vereinigte Ägypten und Syrien unter sunnitischer Herrschaft und baute Kairo befestigungstechnisch stark aus.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'Welcher Aufstand ägyptischer Offiziere und Nationalisten von 1881/82 („Ägypten den Ägyptern“) führte unmittelbar zur britischen Besetzung des Landes?',
+        a: ['Die Urabi-Bewegung unter Oberst Ahmed Urabi (niedergeschlagen bei Tel-el-Kebir)', 'Der Mahdi-Aufstand im Nildelta', 'Die Revolte von Port Said 1901', 'Der Aufstand von Tanta 1854'],
+        exp: 'Großbritannien nutzte die Krise und die hohe Staatsverschuldung des Khediven, um ab 1882 faktisch die Kontrolle über Ägypten und den Suezkanal zu übernehmen.'
+      },
+      {
+        cat: 'neuzeit', diff: 'pro',
+        q: 'Welches Abkommen handelte Präsident Anwar as-Sadat 1978/79 aus, das Ägypten als erstem arabischen Staat Frieden mit Israel und die Rückgabe der Sinai-Halbinsel brachte?',
+        a: ['Das Camp-David-Abkommen (1978) und der Ägyptisch-Israelische Friedensvertrag (1979)', 'Das Abkommen von Lausanne', 'Die Konferenz von Bandung', 'Der Vertrag von Taif'],
+        exp: 'Sadat erhielt dafür gemeinsam mit Menachem Begin den Friedensnobelpreis, wurde jedoch 1981 während einer Militärparade in Kairo ermordet.'
+      }
+    ];
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 25;
+    let questionMaxTime = 25;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_egypt');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const count = getMatchingPool(c.id).length;
+        const roundLen = Math.min(10, count);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const count = Math.min(10, pool.length);
+      deck = shuffle(pool).slice(0, count);
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      timerId = null;
+      answered = false;
+
+      const item = deck[qIdx];
+      questionMaxTime = ArcadeQuizPrefs.getDurationSec(item.diff);
+      timeLeft = ArcadeQuizPrefs.isRelaxed() ? 0 : questionMaxTime;
+      const di = DIFF_INFO[item.diff];
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      if (!ArcadeQuizPrefs.isRelaxed()) startBonusTimer();
+    }
+
+    function startBonusTimer() {
+      clearInterval(timerId);
+      let lastTick = performance.now();
+      timerId = setInterval(() => {
+        const now = performance.now();
+        timeLeft = Math.max(0, timeLeft - (now - lastTick) / 1000);
+        lastTick = now;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          clearInterval(timerId);
+          timerId = null;
+        }
+        updateTimerUI();
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      ArcadeQuizPrefs.updateTimerUI({
+        btnEl: document.getElementById('btn-timer-mode'),
+        fillEl: document.getElementById('timer-fill'),
+        jokerTimeEl: document.getElementById('joker-time'),
+        jokerTimeAvailable: jokers.time,
+        timeLeft,
+        maxTime: questionMaxTime,
+        answered
+      });
+    }
+
+    function toggleTimerModeInPlay() {
+      const nextRelaxed = !ArcadeQuizPrefs.isRelaxed();
+      ArcadeQuizPrefs.setRelaxed(nextRelaxed);
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      clearInterval(timerId);
+      timerId = null;
+      ArcadeAudio.click();
+      if (nextRelaxed) {
+        timeLeft = 0;
+        updateTimerUI();
+      } else if (!answered) {
+        if (timeLeft <= 0) timeLeft = questionMaxTime;
+        updateTimerUI();
+        startBonusTimer();
+      } else {
+        updateTimerUI();
+      }
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = DIFF_INFO[item.diff].mult;
+        const speedBonus = Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      showFact(chosen.isRight);
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Treffer! ' : '❌ Nicht ganz: ')}</strong>${item.exp}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered || ArcadeQuizPrefs.isRelaxed()) return;
+      jokers.time = false;
+      timeLeft = Math.min(questionMaxTime + 10, timeLeft + 10);
+      updateTimerUI();
+      startBonusTimer();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const isNewRecord = ArcadeScores.record('quiz_egypt', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '👑' : '🏺');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Pharaonen-Rekord!' : 'Runde abgeschlossen!';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>

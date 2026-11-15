@@ -563,19 +563,19 @@
     <section class="hub-hero">
       <div class="hero-copy">
         <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (Prozessoren, Grafikkarten &amp; Handys/Smartphones der letzten 25 Jahre mit Fotos, Pilz-Sammler-Quiz Region Aachen, Schweizer Eisenbahnloks, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Politik).</p>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Prozessoren, Grafikkarten &amp; Handys/Smartphones der letzten 25 Jahre mit Fotos, Pilz-Sammler-Quiz Region Aachen, Schweizer Eisenbahnloks, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Politik).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">17</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-games">19</b><span>Module</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all">✨ Alles (17)</button>
+      <button class="domain-tab active" data-domain="all">✨ Alles (19)</button>
       <button class="domain-tab" data-domain="games">🎮 Games (7)</button>
-      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (10)</button>
+      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (12)</button>
     </div>
 
     <section class="section-block" id="sec-games">
@@ -593,7 +593,7 @@
 
     <section class="section-block" id="sec-quizzes">
       <div class="section-head">
-        <h2>🧠 Quiz-Welten <span class="section-count quiz">10 Quiz-Arenen</span></h2>
+        <h2>🧠 Quiz-Welten <span class="section-count quiz">12 Quiz-Arenen</span></h2>
       </div>
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
@@ -747,6 +747,43 @@
       ];
 
       const QUIZZES = [
+        {
+          id: 'quiz_egypt',
+          href: './games/quiz-egypt/index.html',
+          catLabel: 'Geschichte · Ägypten',
+          badge: '48 Fragen · 3 Stufen · Neu',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Ägyptische Geschichte Quiz',
+          desc: '5.000 Jahre am Nil: Von Narmer, Djoser & den Pyramiden von Gizeh über Hatschepsut, Tutanchamun & Ramses II. bis zu Kleopatra, Suezkanal und Moderne.',
+          accent: '#f59e0b',
+          glow: 'rgba(245, 158, 11, 0.28)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <circle cx="29" cy="11" r="4" fill="#fde047" opacity="0.9"/>
+            <polygon points="18,8 32,32 4,32" fill="#f59e0b" stroke="#fde68a" stroke-width="1.4" stroke-linejoin="round"/>
+            <polygon points="18,8 32,32 18,32" fill="#b45309" opacity="0.82"/>
+            <polygon points="28,17 36,32 20,32" fill="#d97706" stroke="#fde68a" stroke-width="1.1" stroke-linejoin="round"/>
+          </svg>`
+        },
+        {
+          id: 'quiz_diving',
+          href: './games/quiz-diving/index.html',
+          catLabel: 'Tauchsport · Scuba Diving',
+          badge: '48 Fragen · 3 Stufen · Neu',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Tauchen &amp; Scuba Diving Quiz',
+          desc: 'Gerätetauchen von Open Water bis Divemaster: Atemregler &amp; DIN/INT, Boyle/Dalton/Henry, Nitrox/MOD, Handzeichen, Tarierung &amp; legendäre Tauchspots.',
+          accent: '#06b6d4',
+          glow: 'rgba(6, 182, 212, 0.28)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <rect x="6" y="13" width="24" height="14" rx="5.5" fill="rgba(6,182,212,0.28)" stroke="#38bdf8" stroke-width="2"/>
+            <path d="M18 27v-6c0-1.5 1.5-1.5 1.5 0v6" fill="#0ea5e9"/>
+            <path d="M32 8v15c0 4-3 6-6 6h-5" stroke="#fde047" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+            <circle cx="13" cy="8" r="2" fill="#7dd3fc"/>
+            <circle cx="17" cy="5.5" r="1.4" fill="#bae6fd"/>
+          </svg>`
+        },
         {
           id: 'quiz_cpus',
           href: './games/quiz-cpus/index.html',
