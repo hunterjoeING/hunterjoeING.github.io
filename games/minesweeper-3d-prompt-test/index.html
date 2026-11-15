@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minesweeper 3d prompt Version</title>
+  <style>
+    :root {
+      --bg-dark: #070b19;
+      --panel-bg: rgba(15, 23, 42, 0.82);
+      --panel-border: rgba(56, 189, 248, 0.32);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.25);
+      --danger: #f43f5e;
+      --success: #22c55e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 35%, #111c38 0%, #070b19 75%, #03060e 100%);
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    #canvas-container {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      cursor: grab;
+    }
+
+    #canvas-container.dragging {
+      cursor: grabbing;
+    }
+
+    /* Top HUD */
+    .top-bar {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 18px;
+      border-radius: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      pointer-events: auto;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 13px;
+      border-radius: 10px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      border-color: var(--accent);
+      background: rgba(14, 165, 233, 0.2);
+    }
+
+    .game-title {
+      margin: 0;
+      font-size: clamp(16px, 2.2vw, 21px);
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      background: linear-gradient(90deg, #f8fafc, #7dd3fc, #38bdf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stats-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 13px;
+      border-radius: 11px;
+      background: rgba(7, 11, 25, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .stat-pill b {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 15px;
+      color: var(--accent);
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    select, .btn {
+      padding: 8px 13px;
+      border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.38);
+      background: rgba(15, 23, 42, 0.92);
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    select:hover, .btn:hover {
+      border-color: var(--accent);
+      background: rgba(14, 165, 233, 0.22);
+    }
+
+    .btn.active-mode {
+      background: linear-gradient(135deg, #e11d48, #f43f5e);
+      border-color: #fda4af;
+      color: #fff;
+      box-shadow: 0 0 16px rgba(244, 63, 94, 0.4);
+    }
+
+    .btn.primary {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #7dd3fc;
+      color: #fff;
+    }
+
+    /* Bottom HUD: Exploded View (Mousewheel Pull-Apart) & Instructions */
+    .bottom-hud {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 12px 20px;
+      border-radius: 16px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.48);
+      max-width: calc(100vw - 32px);
+    }
+
+    .spread-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    .spread-control input[type="range"] {
+      width: 140px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .spread-val {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #7dd3fc;
+      min-width: 44px;
+    }
+
+    .hint-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .hint-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .key-badge {
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #bae6fd;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Status Banner Overlay */
+    .status-banner {
+      position: fixed;
+      top: 88px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 12;
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid var(--panel-border);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-banner.show {
+      display: inline-flex;
+    }
+
+    .status-banner.win {
+      border-color: #4ade80;
+      color: #86efac;
+      box-shadow: 0 0 25px rgba(34, 197, 94, 0.35);
+    }
+
+    .status-banner.lose {
+      border-color: #fb7185;
+      color: #fda4af;
+      box-shadow: 0 0 25px rgba(244, 63, 94, 0.35);
+    }
+
+    #coord-readout {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      color: #cbd5e1;
+      font-size: 12.5px;
+    }
+
+    @media (max-width: 720px) {
+      .top-bar {
+        padding: 10px 12px;
+        gap: 8px;
+      }
+      .bottom-hud {
+        padding: 10px 14px;
+        gap: 10px;
+      }
+      .hint-bar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+
+  <header class="top-bar">
+    <div class="brand-group">
+      <a class="back-link" href="../../index.html">← Dashboard</a>
+      <h1 class="game-title">Minesweeper 3d prompt Version</h1>
+      <a class="back-link" href="../../Nachweis_Minesweeper_3D_Prompt_Test.pdf" target="_blank" rel="noopener" title="Unabhängigkeits-Nachweis als PDF öffnen">📄 Nachweis-PDF</a>
+    </div>
+
+    <div class="stats-group">
+      <div class="stat-pill" title="Verbleibende Minen">
+        <span>💣 Minen:</span>
+        <b id="stat-mines">10</b>
+      </div>
+      <div class="stat-pill" title="Verbleibende sichere Felder">
+        <span>🧊 Offen:</span>
+        <b id="stat-safe">54</b>
+      </div>
+      <div class="stat-pill" title="Spielzeit">
+        <span>⏱️ Zeit:</span>
+        <b id="stat-time">0s</b>
+      </div>
+      <div class="stat-pill" id="coord-readout">XYZ: –</div>
+    </div>
+
+    <div class="controls-group">
+      <select id="select-difficulty" aria-label="Würfelgröße wählen">
+        <option value="3-5">3×3×3 Würfel (5 Minen)</option>
+        <option value="4-10" selected>4×4×4 Würfel (10 Minen)</option>
+        <option value="5-20">5×5×5 Würfel (20 Minen)</option>
+      </select>
+      <button class="btn" id="btn-flag-mode" title="Umschalten zwischen Aufdecken und Flagge setzen">🚩 Flaggen-Modus: AUS</button>
+      <button class="btn primary" id="btn-new-game">🔄 Neues Spiel</button>
+    </div>
+  </header>
+
+  <div class="status-banner" id="status-banner">
+    <span id="status-text"></span>
+    <button class="btn primary" id="btn-banner-restart">Nochmal spielen</button>
+  </div>
+
+  <footer class="bottom-hud">
+    <div class="spread-control">
+      <span>🔍 Mausrad-Explosion (Auseinanderziehen):</span>
+      <input type="range" id="slider-spread" min="100" max="320" value="115" />
+      <span class="spread-val" id="spread-label">1.15×</span>
+      <button class="btn" id="btn-reset-view" style="padding: 5px 10px; font-size: 12px;">Kompakt</button>
+    </div>
+    <div class="hint-bar">
+      <span class="hint-item"><span class="key-badge">Maus ziehen</span> Würfel drehen</span>
+      <span class="hint-item"><span class="key-badge">Mausrad</span> Würfel auseinanderziehen</span>
+      <span class="hint-item"><span class="key-badge">Linksklick</span> Aufdecken</span>
+      <span class="hint-item"><span class="key-badge">Rechtsklick</span> Flagge 🚩</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    (function () {
+      // =========================================================================
+      // Minesweeper 3d prompt test — Standalone 3D Cube Minesweeper
+      // =========================================================================
+      const container = document.getElementById('canvas-container');
+      const elMines = document.getElementById('stat-mines');
+      const elSafe = document.getElementById('stat-safe');
+      const elTime = document.getElementById('stat-time');
+      const elCoord = document.getElementById('coord-readout');
+      const elDifficulty = document.getElementById('select-difficulty');
+      const elFlagBtn = document.getElementById('btn-flag-mode');
+      const elNewGameBtn = document.getElementById('btn-new-game');
+      const elBanner = document.getElementById('status-banner');
+      const elBannerText = document.getElementById('status-text');
+      const elBannerRestart = document.getElementById('btn-banner-restart');
+      const elSpreadSlider = document.getElementById('slider-spread');
+      const elSpreadLabel = document.getElementById('spread-label');
+      const elResetViewBtn = document.getElementById('btn-reset-view');
+
+      // Scene, Camera, Renderer
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
+      camera.position.set(0, 0, 14);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      container.appendChild(renderer.domElement);
+
+      // Lighting
+      const ambientLight = new THREE.AmbientLight(0xdbeafe, 0.72);
+      scene.add(ambientLight);
+
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
+      dirLight1.position.set(12, 18, 16);
+      scene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.4);
+      dirLight2.position.set(-14, -12, -10);
+      scene.add(dirLight2);
+
+      // Root pivot group that the user rotates with the mouse
+      const cubePivot = new THREE.Group();
+      cubePivot.rotation.x = 0.48;
+      cubePivot.rotation.y = -0.62;
+      scene.add(cubePivot);
+
+      // Subtle guide wireframe around the outer bounds
+      let coreGuideMesh = null;
+
+      // Game state
+      let gridSize = 4;
+      let totalMines = 10;
+      let cells = []; // 1D array of cell objects
+      let cellMap = new Map(); // "x,y,z" -> cell
+      let pickableMeshes = []; // Meshes for raycasting
+      let firstClick = true;
+      let gameOver = false;
+      let flagMode = false;
+      let flagsCount = 0;
+      let revealedCount = 0;
+      let startTime = 0;
+      let timerInterval = null;
+
+      // Explosion / pull-apart state controlled via mouse wheel
+      let targetSpread = 1.15;
+      let currentSpread = 1.15;
+      const MIN_SPREAD = 1.0;
+      const MAX_SPREAD = 3.2;
+
+      // Shared geometries & materials
+      const boxGeo = new THREE.BoxGeometry(0.84, 0.84, 0.84);
+      const edgesGeo = new THREE.EdgesGeometry(boxGeo);
+      const revealedFrameGeo = new THREE.BoxGeometry(0.28, 0.28, 0.28);
+      const mineSphereGeo = new THREE.SphereGeometry(0.32, 20, 20);
+
+      const matUnrevealed = new THREE.MeshStandardMaterial({
+        color: 0x1e3a5f,
+        roughness: 0.28,
+        metalness: 0.18,
+        transparent: true,
+        opacity: 0.94
+      });
+
+      const matHover = new THREE.MeshStandardMaterial({
+        color: 0x38bdf8,
+        emissive: 0x0284c7,
+        emissiveIntensity: 0.35,
+        roughness: 0.2,
+        metalness: 0.2,
+        transparent: true,
+        opacity: 0.98
+      });
+
+      const matFlagged = new THREE.MeshStandardMaterial({
+        color: 0xe11d48,
+        emissive: 0x881337,
+        emissiveIntensity: 0.35,
+        roughness: 0.25,
+        metalness: 0.2
+      });
+
+      const matMine = new THREE.MeshStandardMaterial({
+        color: 0xef4444,
+        emissive: 0x991b1b,
+        emissiveIntensity: 0.5,
+        roughness: 0.25,
+        metalness: 0.4
+      });
+
+      const matNumberGlass = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        roughness: 0.15,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.34,
+        depthWrite: false
+      });
+
+      const lineMatDefault = new THREE.LineBasicMaterial({
+        color: 0x7dd3fc,
+        transparent: true,
+        opacity: 0.42
+      });
+
+      // Number color palette
+      const NUMBER_COLORS = [
+        '#94a3b8', // 0
+        '#38bdf8', // 1 - sky blue
+        '#4ade80', // 2 - green
+        '#facc15', // 3 - yellow
+        '#fb923c', // 4 - orange
+        '#f43f5e', // 5 - rose
+        '#c084fc', // 6 - purple
+        '#2dd4bf', // 7 - teal
+        '#f472b6', // 8 - pink
+        '#ffffff'  // 9+
+      ];
+
+      const spriteMaterialCache = new Map();
+
+      function getTextSpriteMaterial(label, colorHex) {
+        const key = label + '_' + colorHex;
+        if (spriteMaterialCache.has(key)) return spriteMaterialCache.get(key);
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 128;
+        canvas.height = 128;
+        const ctx = canvas.getContext('2d');
+
+        // Subtle circular badge behind number for legibility at any angle
+        ctx.beginPath();
+        ctx.arc(64, 64, 48, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(7, 11, 25, 0.78)';
+        ctx.fill();
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = colorHex;
+        ctx.stroke();
+
+        ctx.fillStyle = colorHex;
+        ctx.font = '900 64px system-ui, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(label), 64, 67);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.needsUpdate = true;
+        const mat = new THREE.SpriteMaterial({
+          map: texture,
+          transparent: true,
+          depthTest: true
+        });
+        spriteMaterialCache.set(key, mat);
+        return mat;
+      }
+
+      function coordKey(x, y, z) {
+        return `${x},${y},${z}`;
+      }
+
+      function getNeighbors(cell) {
+        const result = [];
+        for (let dx = -1; dx <= 1; dx++) {
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dz = -1; dz <= 1; dz++) {
+              if (dx === 0 && dy === 0 && dz === 0) continue;
+              const nb = cellMap.get(coordKey(cell.x + dx, cell.y + dy, cell.z + dz));
+              if (nb) result.push(nb);
+            }
+          }
+        }
+        return result;
+      }
+
+      function clearCubeGroup() {
+        while (cubePivot.children.length > 0) {
+          cubePivot.remove(cubePivot.children[0]);
+        }
+        cells = [];
+        cellMap.clear();
+        pickableMeshes = [];
+      }
+
+      function updateCameraDistance() {
+        // Adjust camera distance smoothly for gridSize
+        const baseDist = gridSize * 3.1 + 2.5;
+        camera.position.set(0, 0, baseDist);
+      }
+
+      function initGame() {
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+
+        const [sizeStr, minesStr] = elDifficulty.value.split('-');
+        gridSize = parseInt(sizeStr, 10);
+        totalMines = parseInt(minesStr, 10);
+
+        firstClick = true;
+        gameOver = false;
+        flagsCount = 0;
+        revealedCount = 0;
+        startTime = 0;
+        elTime.textContent = '0s';
+        elBanner.className = 'status-banner';
+
+        clearCubeGroup();
+        updateCameraDistance();
+
+        const offset = (gridSize - 1) / 2;
+
+        for (let x = 0; x < gridSize; x++) {
+          for (let y = 0; y < gridSize; y++) {
+            for (let z = 0; z < gridSize; z++) {
+              const bx = x - offset;
+              const by = y - offset;
+              const bz = z - offset;
+
+              const cellGroup = new THREE.Group();
+              cellGroup.position.set(bx * currentSpread, by * currentSpread, bz * currentSpread);
+
+              const mesh = new THREE.Mesh(boxGeo, matUnrevealed.clone());
+              const wireframe = new THREE.LineSegments(edgesGeo, lineMatDefault);
+              mesh.add(wireframe);
+              cellGroup.add(mesh);
+
+              const cell = {
+                x, y, z,
+                bx, by, bz,
+                isMine: false,
+                revealed: false,
+                flagged: false,
+                neighborMines: 0,
+                group: cellGroup,
+                mesh,
+                wireframe,
+                sprite: null
+              };
+
+              mesh.userData.cell = cell;
+              cubePivot.add(cellGroup);
+              cells.push(cell);
+              cellMap.set(coordKey(x, y, z), cell);
+              pickableMeshes.push(mesh);
+            }
+          }
+        }
+
+        updateStatsHUD();
+      }
+
+      function placeMines(safeCell) {
+        // Exclude clicked cell and its direct 26-neighbors if enough cells exist
+        const forbidden = new Set([coordKey(safeCell.x, safeCell.y, safeCell.z)]);
+        const safeNeighbors = getNeighbors(safeCell);
+        if (cells.length - (1 + safeNeighbors.length) >= totalMines) {
+          safeNeighbors.forEach(nb => forbidden.add(coordKey(nb.x, nb.y, nb.z)));
+        }
+
+        const candidates = cells.filter(c => !forbidden.has(coordKey(c.x, c.y, c.z)));
+        for (let i = candidates.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = candidates[i];
+          candidates[i] = candidates[j];
+          candidates[j] = tmp;
+        }
+
+        for (let i = 0; i < totalMines && i < candidates.length; i++) {
+          candidates[i].isMine = true;
+        }
+
+        cells.forEach(c => {
+          if (!c.isMine) {
+            c.neighborMines = getNeighbors(c).filter(nb => nb.isMine).length;
+          }
+        });
+      }
+
+      function startTimer() {
+        startTime = Date.now();
+        timerInterval = setInterval(() => {
+          const sec = Math.floor((Date.now() - startTime) / 1000);
+          elTime.textContent = sec + 's';
+        }, 250);
+      }
+
+      function updateStatsHUD() {
+        elMines.textContent = String(Math.max(0, totalMines - flagsCount));
+        const totalSafe = cells.length - totalMines;
+        elSafe.textContent = String(Math.max(0, totalSafe - revealedCount));
+      }
+
+      function setCellVisual(cell) {
+        // Remove previous sprite if any
+        if (cell.sprite) {
+          cell.group.remove(cell.sprite);
+          cell.sprite = null;
+        }
+
+        if (!cell.revealed) {
+          cell.mesh.visible = true;
+          cell.mesh.geometry = boxGeo;
+          cell.wireframe.visible = true;
+          if (cell.flagged) {
+            cell.mesh.material = matFlagged;
+            const flagSpriteMat = getTextSpriteMaterial('🚩', '#fda4af');
+            const sp = new THREE.Sprite(flagSpriteMat);
+            sp.scale.set(0.68, 0.68, 0.68);
+            cell.group.add(sp);
+            cell.sprite = sp;
+          } else {
+            cell.mesh.material = matUnrevealed.clone();
+          }
+          return;
+        }
+
+        // Cell is revealed
+        if (cell.isMine) {
+          cell.mesh.visible = true;
+          cell.mesh.geometry = mineSphereGeo;
+          cell.mesh.material = matMine;
+          cell.wireframe.visible = false;
+          const mineSpriteMat = getTextSpriteMaterial('💣', '#ef4444');
+          const sp = new THREE.Sprite(mineSpriteMat);
+          sp.scale.set(0.85, 0.85, 0.85);
+          cell.group.add(sp);
+          cell.sprite = sp;
+          return;
+        }
+
+        if (cell.neighborMines === 0) {
+          // Completely empty cell: hide mesh so player can see deep inside the cube
+          cell.mesh.visible = false;
+        } else {
+          // Show translucent mini-cube + crisp 3D billboard number sprite
+          cell.mesh.visible = true;
+          cell.mesh.geometry = revealedFrameGeo;
+          cell.mesh.material = matNumberGlass;
+          cell.wireframe.visible = false;
+
+          const color = NUMBER_COLORS[Math.min(cell.neighborMines, NUMBER_COLORS.length - 1)];
+          const numMat = getTextSpriteMaterial(String(cell.neighborMines), color);
+          const sp = new THREE.Sprite(numMat);
+          sp.scale.set(0.76, 0.76, 0.76);
+          cell.group.add(sp);
+          cell.sprite = sp;
+        }
+      }
+
+      function revealCell(startCell) {
+        if (gameOver || startCell.revealed || startCell.flagged) return;
+
+        if (firstClick) {
+          firstClick = false;
+          placeMines(startCell);
+          startTimer();
+        }
+
+        if (startCell.isMine) {
+          startCell.revealed = true;
+          setCellVisual(startCell);
+          triggerGameOver(false);
+          return;
+        }
+
+        // BFS flood-fill for 0-mine cells in 3D
+        const queue = [startCell];
+        while (queue.length > 0) {
+          const curr = queue.shift();
+          if (curr.revealed || curr.isMine) continue;
+
+          if (curr.flagged) {
+            curr.flagged = false;
+            flagsCount--;
+          }
+
+          curr.revealed = true;
+          revealedCount++;
+          setCellVisual(curr);
+
+          if (curr.neighborMines === 0) {
+            const neighbors = getNeighbors(curr);
+            for (const nb of neighbors) {
+              if (!nb.revealed && !nb.isMine) {
+                queue.push(nb);
+              }
+            }
+          }
+        }
+
+        updateStatsHUD();
+
+        if (revealedCount >= cells.length - totalMines) {
+          triggerGameOver(true);
+        }
+      }
+
+      function toggleFlag(cell) {
+        if (gameOver || cell.revealed) return;
+        cell.flagged = !cell.flagged;
+        flagsCount += cell.flagged ? 1 : -1;
+        setCellVisual(cell);
+        updateStatsHUD();
+      }
+
+      function triggerGameOver(won) {
+        gameOver = true;
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+        }
+
+        if (!won) {
+          // Reveal all mines
+          cells.forEach(c => {
+            if (c.isMine && !c.revealed) {
+              c.revealed = true;
+              setCellVisual(c);
+            }
+          });
+          elBanner.className = 'status-banner show lose';
+          elBannerText.textContent = '💥 Boom! Du hast eine Mine im 3D-Würfel getroffen.';
+        } else {
+          elBanner.className = 'status-banner show win';
+          elBannerText.textContent = `🏆 Gelöst! Alle sicheren Felder in ${elTime.textContent} aufgedeckt!`;
+        }
+      }
+
+      // =========================================================================
+      // Mouse Rotation, Raycasting & Mousewheel Pull-Apart (Explosion)
+      // =========================================================================
+      const raycaster = new THREE.Raycaster();
+      const mouse = new THREE.Vector2();
+      let isPointerDown = false;
+      let downButton = 0;
+      let downX = 0;
+      let downY = 0;
+      let prevX = 0;
+      let prevY = 0;
+      let draggedDistance = 0;
+      let hoveredCell = null;
+
+      function updateMouseNormalized(clientX, clientY) {
+        mouse.x = (clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(clientY / window.innerHeight) * 2 + 1;
+      }
+
+      function getIntersectedCell(clientX, clientY) {
+        updateMouseNormalized(clientX, clientY);
+        raycaster.setFromCamera(mouse, camera);
+        const activeMeshes = pickableMeshes.filter(
+          m => m.visible && !m.userData.cell.revealed
+        );
+        const hits = raycaster.intersectObjects(activeMeshes, false);
+        return hits.length > 0 ? hits[0].object.userData.cell : null;
+      }
+
+      function updateHoverHighlight(clientX, clientY) {
+        if (isPointerDown && draggedDistance > 5) {
+          clearHover();
+          return;
+        }
+        const hitCell = getIntersectedCell(clientX, clientY);
+        if (hitCell === hoveredCell) return;
+
+        clearHover();
+        if (hitCell && !hitCell.revealed && !hitCell.flagged) {
+          hoveredCell = hitCell;
+          hoveredCell.mesh.material = matHover;
+          elCoord.textContent = `XYZ: (${hitCell.x + 1}, ${hitCell.y + 1}, ${hitCell.z + 1})`;
+        } else if (hitCell) {
+          elCoord.textContent = `XYZ: (${hitCell.x + 1}, ${hitCell.y + 1}, ${hitCell.z + 1})`;
+        } else {
+          elCoord.textContent = 'XYZ: –';
+        }
+      }
+
+      function clearHover() {
+        if (hoveredCell && !hoveredCell.revealed && !hoveredCell.flagged) {
+          hoveredCell.mesh.material = matUnrevealed.clone();
+        }
+        hoveredCell = null;
+      }
+
+      container.addEventListener('pointerdown', (e) => {
+        isPointerDown = true;
+        downButton = e.button;
+        downX = prevX = e.clientX;
+        downY = prevY = e.clientY;
+        draggedDistance = 0;
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (isPointerDown) {
+          const dx = e.clientX - prevX;
+          const dy = e.clientY - prevY;
+          prevX = e.clientX;
+          prevY = e.clientY;
+          draggedDistance += Math.hypot(dx, dy);
+
+          if (draggedDistance > 4) {
+            container.classList.add('dragging');
+            // Rotate the 3D cube smoothly with the mouse
+            cubePivot.rotation.y += dx * 0.0085;
+            cubePivot.rotation.x += dy * 0.0085;
+          }
+        }
+        updateHoverHighlight(e.clientX, e.clientY);
+      });
+
+      window.addEventListener('pointerup', (e) => {
+        if (!isPointerDown) return;
+        isPointerDown = false;
+        container.classList.remove('dragging');
+
+        // Distinguish click from rotation drag
+        if (draggedDistance < 7) {
+          const cell = getIntersectedCell(e.clientX, e.clientY);
+          if (cell) {
+            if (downButton === 2 || flagMode || e.shiftKey) {
+              toggleFlag(cell);
+            } else if (downButton === 0) {
+              revealCell(cell);
+            }
+          }
+        }
+      });
+
+      container.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      // Mousewheel pulls the cube apart / pushes it back together
+      function setTargetSpread(newVal) {
+        targetSpread = Math.max(MIN_SPREAD, Math.min(MAX_SPREAD, newVal));
+        elSpreadSlider.value = String(Math.round(targetSpread * 100));
+        elSpreadLabel.textContent = targetSpread.toFixed(2) + '×';
+      }
+
+      container.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        // Scrolling wheel pulls apart or compacts the 3D cube layers
+        const delta = Math.sign(e.deltaY) * 0.14;
+        setTargetSpread(targetSpread + delta);
+      }, { passive: false });
+
+      elSpreadSlider.addEventListener('input', () => {
+        const val = parseInt(elSpreadSlider.value, 10) / 100;
+        setTargetSpread(val);
+      });
+
+      elResetViewBtn.addEventListener('click', () => {
+        setTargetSpread(1.15);
+      });
+
+      // UI Controls
+      elFlagBtn.addEventListener('click', () => {
+        flagMode = !flagMode;
+        elFlagBtn.classList.toggle('active-mode', flagMode);
+        elFlagBtn.textContent = flagMode ? '🚩 Flaggen-Modus: AN' : '🚩 Flaggen-Modus: AUS';
+      });
+
+      elDifficulty.addEventListener('change', initGame);
+      elNewGameBtn.addEventListener('click', initGame);
+      elBannerRestart.addEventListener('click', initGame);
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Render Loop with smooth interpolation of the cube pull-apart factor
+      function animate() {
+        requestAnimationFrame(animate);
+
+        if (Math.abs(currentSpread - targetSpread) > 0.001) {
+          currentSpread += (targetSpread - currentSpread) * 0.18;
+          for (let i = 0; i < cells.length; i++) {
+            const c = cells[i];
+            c.group.position.set(
+              c.bx * currentSpread,
+              c.by * currentSpread,
+              c.bz * currentSpread
+            );
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      initGame();
+      animate();
+    })();
+  </script>
+</body>
+</html>

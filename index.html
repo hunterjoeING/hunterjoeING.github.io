@@ -566,23 +566,23 @@
         <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (Schweizer Eisenbahnloks mit Bildern, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Weltereignisse, Neuere Chinesische Geschichte, Politik &amp; Ökonomie sowie Allgemeinwissen).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">12</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-games">13</b><span>Module</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all">✨ Alles (12)</button>
-      <button class="domain-tab" data-domain="games">🎮 Games (6)</button>
+      <button class="domain-tab active" data-domain="all">✨ Alles (13)</button>
+      <button class="domain-tab" data-domain="games">🎮 Games (7)</button>
       <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (6)</button>
     </div>
 
     <section class="section-block" id="sec-games">
       <div class="section-head">
-        <h2>🎮 Games <span class="section-count">6 Spiele</span></h2>
+        <h2>🎮 Games <span class="section-count">7 Spiele</span></h2>
         <nav class="filter-row" id="filter-row" aria-label="Spiele filtern">
-          <button class="filter-pill active" data-cat="all">Alle Games (6)</button>
+          <button class="filter-pill active" data-cat="all">Alle Games (7)</button>
           <button class="filter-pill" data-cat="logic">3D &amp; Logik</button>
           <button class="filter-pill" data-cat="action">Action &amp; Arcade</button>
           <button class="filter-pill" data-cat="strategy">Strategie &amp; Karten</button>
@@ -608,6 +608,26 @@
   <script>
     (function () {
       const GAMES = [
+        {
+          id: 'minesweeper_3d_prompt_test',
+          href: './games/minesweeper-3d-prompt-test/index.html',
+          cat: 'logic',
+          catLabel: '3D & Logik',
+          badge: 'Mausrad-Explosion · Neu',
+          featured: true,
+          cta: 'Spielen →',
+          title: 'Minesweeper 3d prompt Version',
+          desc: 'Komplett unabhängig entwickeltes 3D-Würfel-Minesweeper: Drehe den Würfel frei mit der Maus und ziehe ihn mit dem Mausrad stufenlos auseinander.',
+          accent: '#22d3ee',
+          glow: 'rgba(34, 211, 238, 0.28)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <rect x="7" y="7" width="11" height="11" rx="2.5" fill="#22d3ee" opacity="0.9"/>
+            <rect x="22" y="7" width="11" height="11" rx="2.5" fill="#0284c7" opacity="0.9"/>
+            <rect x="7" y="22" width="11" height="11" rx="2.5" fill="#0369a1" opacity="0.9"/>
+            <rect x="22" y="22" width="11" height="11" rx="2.5" fill="#38bdf8" opacity="0.9"/>
+            <circle cx="20" cy="20" r="4.2" fill="#f43f5e" stroke="#fff" stroke-width="1.4"/>
+          </svg>`
+        },
         {
           id: 'minesweeper',
           href: './games/minesweeper/index.html',

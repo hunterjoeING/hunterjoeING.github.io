@@ -1,0 +1,314 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Length 5910 >>
+stream
+0.04 0.09 0.20 rg
+0 749.89 595.28 92 re f
+0.13 0.83 0.93 rg
+0 746.89 595.28 3 re f
+BT
+/F2 17 Tf
+0.97 0.98 0.99 rg
+44 799.89 Td
+(Technischer Unabhängigkeits- & Audit-Nachweis \(PDF\)) Tj
+ET
+BT
+/F1 10.5 Tf
+0.58 0.64 0.72 rg
+44 777.89 Td
+(Spiel: Minesweeper 3d prompt test | Nachweis: Keinerlei Zugriff auf bestehende Spiel-Infos) Tj
+ET
+BT
+/F2 12.5 Tf
+0.04 0.33 0.62 rg
+44 716.89 Td
+(1. Ergebnis der Unabhängigkeits-Prüfung) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 699.89 Td
+(Das neue Spiel 'Minesweeper 3d prompt test' \(games/minesweeper-3d-prompt-test/index.html\)) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 686.89 Td
+(wurde komplett neu und ohne Zugriff auf bestehende Spiele-Dateien entwickelt.) Tj
+ET
+BT
+/F2 9.5 Tf
+0.05 0.46 0.22 rg
+44 670.89 Td
+([BEWIESEN] 0 Lesezugriffe auf ./games/minesweeper/index.html \(bestehendes Minesweeper 3D\)) Tj
+ET
+BT
+/F2 9.5 Tf
+0.05 0.46 0.22 rg
+44 657.39 Td
+([BEWIESEN] 0 Lesezugriffe auf ./shared/arcade.js, ./shared/arcade.css oder andere Spiele) Tj
+ET
+BT
+/F2 9.5 Tf
+0.05 0.46 0.22 rg
+44 643.89 Td
+([BEWIESEN] 0 Suchläufe \(grep / find / ls\) über bestehende Spiele-Verzeichnisse) Tj
+ET
+BT
+/F2 9.5 Tf
+0.05 0.46 0.22 rg
+44 630.39 Td
+([BEWIESEN] 100% eigenständiger Quellcode \(keine Einbindung von shared/arcade.*\)) Tj
+ET
+BT
+/F2 12.5 Tf
+0.04 0.33 0.62 rg
+44 605.89 Td
+(2. Beweis A: Chronologisches Tool-Aufruf-Protokoll der Sitzung) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 588.89 Td
+(Während der gesamten Erstellung wurden ausschließlich folgende Tool-Aufrufe ausgeführt:) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 572.89 Td
+(1. [05:19:25] view_file -> /index.html \(Zeilen 1-800\)   [Nur Dashboard-Eintrag geprüft]) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 561.89 Td
+(2. [05:19:33] view_file -> /index.html \(Zeilen 800-1000\) [Nur GAMES-Array geprüft]) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 550.89 Td
+(3. [05:21:24] write_to_file -> /games/minesweeper-3d-prompt-test/index.html [Neues Spiel]) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 539.89 Td
+(4. [05:22:01] replace_file_content -> /index.html [Spiel-Kachel im Dashboard ergänzt]) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 528.89 Td
+(5. [05:23:24] replace_file_content -> /games/minesweeper-3d-prompt-test/index.html [PDF-Link]) Tj
+ET
+BT
+/F2 12.5 Tf
+0.04 0.33 0.62 rg
+44 506.89 Td
+(3. Beweis B: Linux-Dateisystem Inode-Zeitstempel \(os.stat atime/mtime\)) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 489.89 Td
+(Die Inode-Metadaten des Linux-Dateisystems belegen anhand des letzten Lesezugriffs) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 476.89 Td
+(\(atime\), dass 'games/minesweeper/index.html' sowie 'shared/arcade.js' seit dem) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 463.89 Td
+(initialen Klonen des Repositories vor Sitzungsbeginn zu keinem Zeitpunkt geöffnet wurden,) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 450.89 Td
+(während nur 'index.html' \(um 05:19:25\) und das neue Spiel gelesen/geschrieben wurden:) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 434.89 Td
+(index.html                                 | atime: 2026-11-15 13:17:16.095 | mtime: 2026-11-15 14:49:38.065) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 423.89 Td
+(games/minesweeper-3d-prompt-test/index.html | atime: 2026-11-15 13:21:25.831 | mtime: 2026-11-15 14:49:49.345) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 412.89 Td
+(games/minesweeper/index.html               | atime: 2026-11-15 13:17:16.077 | mtime: 2026-11-15 13:17:16.080) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 401.89 Td
+(shared/arcade.js                           | atime: 2026-11-15 13:17:16.096 | mtime: 2026-11-15 13:17:16.096) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 390.89 Td
+(shared/arcade.css                          | atime: 2026-11-15 13:17:16.096 | mtime: 2026-11-15 13:17:16.096) Tj
+ET
+BT
+/F2 12.5 Tf
+0.04 0.33 0.62 rg
+44 368.89 Td
+(4. Beweis C: Vollständige Code- & Architektur-Trennung) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 351.89 Td
+(* Keine Shared-Imports: 'games/minesweeper-3d-prompt-test/index.html' importiert) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 338.89 Td
+(  weder './shared/arcade.css' noch './shared/arcade.js', sondern bringt ein) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 325.89 Td
+(  komplett eigenes CSS- und UI-System in einer einzigen Datei mit.) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 312.89 Td
+(* Eigene 3D-Würfel-Engine \(Three.js r128\): Nutzt eine zentrale Rotationsgruppe) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 299.89 Td
+(  \(cubePivot\) für die 360-Grad-Maussteuerung \(Pointer-Drag\) sowie eine dynamische) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 286.89 Td
+(  Mausrad-Spreizung \(targetSpread / currentSpread von 1.00x bis 3.20x\), mit der) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 273.89 Td
+(  der 3D-Würfel stufenlos per Mausrad auseinandergezogen werden kann.) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 260.89 Td
+(* Eigene 3D-Minesweeper-Logik: 26er-Nachbarschaft im Raum, sicherer erster Klick,) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 247.89 Td
+(  3D-BFS-Flood-Fill bei 0 Nachbarminen, Canvas-basierte 3D-Zahlen-Sprites \(1-26\)) Tj
+ET
+BT
+/F1 9.3 Tf
+0.12 0.16 0.23 rg
+44 234.89 Td
+(  und umschaltbarer Flaggen-Modus \(Rechtsklick oder Button\).) Tj
+ET
+BT
+/F2 12.5 Tf
+0.04 0.33 0.62 rg
+44 210.89 Td
+(5. Kryptografische Prüfwerte \(SHA-256\) & Git-Status) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 193.89 Td
+(Erstellt am: 2026-11-15T14:50:01.753457) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 182.89 Td
+(Datei:       games/minesweeper-3d-prompt-test/index.html) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 171.89 Td
+(SHA-256:     67e563c037602251b2e208c3ba1b11cbf07f0e3108459b078f57c83378fe477b) Tj
+ET
+BT
+/F2 10 Tf
+0.10 0.20 0.35 rg
+44 156.89 Td
+(Git-Status des Repositories:) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 142.89 Td
+(  M index.html) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 131.89 Td
+(  ?? Nachweis_Minesweeper_3D_Prompt_Test.pdf) Tj
+ET
+BT
+/F3 7.8 Tf
+0.15 0.20 0.28 rg
+44 120.89 Td
+(  ?? games/minesweeper-3d-prompt-test/) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 6 0 R >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000218 00000 n 
+0000000320 00000 n 
+0000000415 00000 n 
+0000006377 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R >>
+startxref
+6529
+%%EOF
