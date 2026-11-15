@@ -160,6 +160,7 @@
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬', lowerIsBetter: false },
     { id: 'quiz_ai', title: 'KI: Entstehung & Technik Quiz', icon: '🤖', lowerIsBetter: false },
     { id: 'quiz_china', title: 'Neuere Chinesische Geschichte', icon: '🏯', lowerIsBetter: false },
+    { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿', lowerIsBetter: false },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -195,6 +196,7 @@
       if (p.includes('/games/quiz-phones')) return 'quiz_phones';
       if (p.includes('/games/quiz-pilze-aachen')) return 'quiz_pilze_aachen';
       if (p.includes('/games/quiz-swiss-trains')) return 'quiz_swiss_trains';
+      if (p.includes('/games/quiz-waldgarten')) return 'quiz_waldgarten';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
@@ -770,6 +772,7 @@
     { id: 'solitaire', title: 'Klondike Solitaire', icon: '🃏' },
     { id: 'p2048', title: '2048 Prism', icon: '🔷' },
     { id: 'quiz_ai', title: 'KI: Entstehung & Funktionsweise Quiz', icon: '🤖' },
+    { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },

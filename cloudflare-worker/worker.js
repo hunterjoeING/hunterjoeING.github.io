@@ -44,6 +44,7 @@ const GAMES_META = {
   quiz_phones: { title: 'Handys & Smartphones Quiz', lowerIsBetter: false },
   quiz_pilze_aachen: { title: 'Pilz-Sammler-Quiz: Region Aachen', lowerIsBetter: false },
   quiz_swiss_trains: { title: 'Schweizer Eisenbahnloks', lowerIsBetter: false },
+  quiz_waldgarten: { title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
 
