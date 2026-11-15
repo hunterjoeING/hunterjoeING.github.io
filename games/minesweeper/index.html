@@ -835,6 +835,34 @@ body > canvas:not(#bg-canvas) {
   line-height: 1.4;
 }
 
+.res-flag-legend {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 10px 0;
+  font-size: 11px;
+}
+.res-flag-legend-item {
+  background: rgba(2, 16, 40, 0.72);
+  border-radius: 7px;
+  padding: 6px 5px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.res-flag-legend-item.hit { border-color: rgba(74, 222, 128, 0.55); color: #86efac; }
+.res-flag-legend-item.wrong { border-color: rgba(251, 146, 60, 0.6); color: #fdba74; }
+.res-flag-legend-item.miss { border-color: rgba(248, 113, 113, 0.55); color: #fca5a5; }
+.res-flag-legend-item strong { font-size: 15px; color: #fff; }
+.res-flag-legend-note {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: #cbd5e1;
+  margin-top: 2px;
+}
+
 .res-actions {
   display: flex;
   gap: 8px;
@@ -1097,6 +1125,18 @@ body.mobile-mode #zoom-dock {
   right: calc(12px + env(safe-area-inset-right, 0px));
 }
 
+body.mobile-mode #result-panel {
+  top: calc(92px + env(safe-area-inset-top, 0px));
+  left: calc(12px + env(safe-area-inset-left, 0px));
+  right: calc(58px + env(safe-area-inset-right, 0px));
+  max-height: calc(100vh - 165px);
+  overflow-y: auto;
+}
+body.mobile-mode .result-card {
+  max-width: 100%;
+  padding: 16px 14px;
+}
+
 /* Narrow smartphone portrait (e.g. iPhone SE 375px / iPhone 390px): prevent #hud-mini & #mode-toggle overlap */
 @media (max-width: 560px) {
   body.mobile-mode #hud-mini {
@@ -1112,6 +1152,20 @@ body.mobile-mode #zoom-dock {
   }
   body.mobile-mode #bg-watermark {
     display: none;
+  }
+  #result-panel,
+  body.mobile-mode #result-panel {
+    top: calc(88px + env(safe-area-inset-top, 0px));
+    left: 12px;
+    right: 54px;
+  }
+  .result-card {
+    max-width: 100%;
+    padding: 14px 12px;
+  }
+  .res-flag-legend {
+    font-size: 10.5px;
+    gap: 4px;
   }
 }
 
@@ -1770,6 +1824,7 @@ body.mobile-mode #mob-showcase-bar {
         <div><span data-i18n="lbl_level">Level</span><strong id="res-level">L1 · 4³</strong></div>
         <div><span>Modus</span><strong id="res-mode">Manuell</strong></div>
       </div>
+      <div id="res-flag-legend" class="res-flag-legend hidden"></div>
       <div id="res-agent-remark" class="res-agent-remark">
         ⚡ Echte räumliche Problemlösung – genau wie ein KI-Agent, der Werkzeuge nutzt statt nur Textbausteine zu wiederholen.
       </div>
@@ -1899,6 +1954,12 @@ const I18N = {
     win_sub: 'Alle Minen im 3D-Raum präzise entschärft.',
     lose_title: '💥 Mine ausgelöst!',
     lose_sub: 'Ein Würfel im 3D-Gitter war vermint.',
+    flag_hit_lbl: '✅ War Mine',
+    flag_wrong_lbl: '❌ Keine Mine',
+    flag_miss_lbl: '💣 Übersehen',
+    flag_legend_note: '🟢 Grün ✓ = Geflaggt & war Mine · 🟠 ✕ = Fehlflagge (keine Mine) · 🔴 💣 = Ungeflaggte Mine',
+    hover_flag_hit: '✅ Flagge richtig: Hier war eine Mine 💣',
+    hover_flag_wrong: '❌ Fehlflagge: Hier war KEINE Mine',
     hints_footer: '<b>🖱 Doppelklick (links)</b> = Öffnen · <b>Rechtsklick</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> → leer · <b>Strg/Cmd + Hover</b> = Nachbarn · <b>Mausrad</b> = Auseinanderfahren · <b>Taste W</b> = 💧 Wasserstrom · <b>Taste C</b> = Zentrieren',
     agent_quotes: [
       '💡 Ein reiner Chatbot erklärt dir nur die Regeln – ein KI-Agent inspiziert alle Nachbarn (sogar über nicht-euklidische Wurmlöcher!) und führt den Zug direkt aus.',
@@ -1963,6 +2024,12 @@ const I18N = {
     win_sub: 'All mines in 3D space neutralized with precision.',
     lose_title: '💥 Mine Detonated!',
     lose_sub: 'A voxel in the 3D lattice contained a mine.',
+    flag_hit_lbl: '✅ Was Mine',
+    flag_wrong_lbl: '❌ No Mine',
+    flag_miss_lbl: '💣 Missed',
+    flag_legend_note: '🟢 Green ✓ = Flagged mine · 🟠 ✕ = False flag (no mine) · 🔴 💣 = Unflagged mine',
+    hover_flag_hit: '✅ Correct flag: Mine was here 💣',
+    hover_flag_wrong: '❌ False flag: NO mine here',
     hints_footer: '<b>🖱 Double-click (left)</b> = Open · <b>Right-click</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> → reset · <b>Ctrl/Cmd + hover</b> = Neighbours · <b>Wheel</b> = Spread · <b>Key W</b> = 💧 Water stream · <b>Key C</b> = Reset view',
     agent_quotes: [
       '💡 A mere chatbot only explains the rules — an AI agent inspects all neighbors (even across non-Euclidean wormholes!) and executes the move directly.',
@@ -2026,6 +2093,12 @@ const I18N = {
     win_sub: 'Todas las minas en el espacio 3D fueron desactivadas.',
     lose_title: '💥 ¡Mina activada!',
     lose_sub: 'Un cubo de la red 3D contenía una mina.',
+    flag_hit_lbl: '✅ Había mina',
+    flag_wrong_lbl: '❌ Sin mina',
+    flag_miss_lbl: '💣 Omitidas',
+    flag_legend_note: '🟢 Verde ✓ = Bandera con mina · 🟠 ✕ = Falsa bandera (sin mina) · 🔴 💣 = Mina sin marcar',
+    hover_flag_hit: '✅ Bandera correcta: Aquí había mina 💣',
+    hover_flag_wrong: '❌ Falsa bandera: Aquí NO había mina',
     hints_footer: '<b>🖱 Doble clic</b> = Abrir · <b>Clic der.</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> · <b>Ctrl + hover</b> = Vecinos · <b>Rueda</b> = Separar · <b>Tecla W</b> = 💧 Agua · <b>Tecla C</b> = Centrar',
     agent_quotes: [
       '💡 Un simple chatbot solo charla sobre las reglas; un Agente IA analiza los vecinos y ejecuta la jugada.',
@@ -2069,6 +2142,10 @@ function setLang(lang) {
   }
   if (typeof updateBackgroundWatermark === 'function') {
     updateBackgroundWatermark();
+  }
+  const rp = document.getElementById('result-panel');
+  if (typeof gameOver !== 'undefined' && gameOver && rp && !rp.classList.contains('hidden')) {
+    showResult(!gameLost);
   }
 }
 
@@ -3122,6 +3199,8 @@ let MAT_HIDDEN = facedMats(designConfig.hiddenHex, 1.0);
 let MAT_OPEN = facedMats(designConfig.openHex, 0.45);
 let MAT_MINE = facedMats(designConfig.mineHex, 1.0);
 let MAT_FLAG = facedMats(designConfig.flagHex, 1.0);
+let MAT_FLAG_HIT = facedMats('#15803d', 1.0);
+let MAT_FLAG_WRONG = facedMats('#c2410c', 1.0);
 let MAT_QUESTION = facedMats(designConfig.questionHex, 1.0);
 
 const _partMatCache = {};
@@ -3137,6 +3216,8 @@ let ISO_MAT_HIDDEN = singleMat(designConfig.hiddenHex, 1.0);
 let ISO_MAT_OPEN = singleMat(designConfig.openHex, 0.45);
 let ISO_MAT_MINE = singleMat(designConfig.mineHex, 1.0);
 let ISO_MAT_FLAG = singleMat(designConfig.flagHex, 1.0);
+let ISO_MAT_FLAG_HIT = singleMat('#15803d', 1.0);
+let ISO_MAT_FLAG_WRONG = singleMat('#c2410c', 1.0);
 let ISO_MAT_QUESTION = singleMat(designConfig.questionHex, 1.0);
 
 // Physically beveled standard cube geometry + lightweight instanced cube geometry for ultra-HD sculptures
@@ -3276,6 +3357,125 @@ function questionGroup(isIso = false) {
 
 function mineGroup(isIso = false) {
   const g = faceOverlayGroup(getMineTex(), 0.74, isIso);
+  g.userData._isOverlay = true;
+  return g;
+}
+
+let _flagHitTex = null;
+function getFlagHitTex() {
+  if (_flagHitTex) return _flagHitTex;
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+  ctx.beginPath();
+  ctx.arc(64, 64, 52, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(5, 46, 22, 0.56)';
+  ctx.fill();
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = '#86efac';
+  ctx.stroke();
+
+  const cx = 56, cy = 70, r = 20, spike = 32;
+  ctx.strokeStyle = '#f8fafc';
+  ctx.lineWidth = 4.5;
+  ctx.lineCap = 'round';
+  for (let a = 0; a < 8; a++) {
+    const ang = (a / 8) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(ang) * r, cy + Math.sin(ang) * r);
+    ctx.lineTo(cx + Math.cos(ang) * spike, cy + Math.sin(ang) * spike);
+    ctx.stroke();
+  }
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = '#0f172a';
+  ctx.fill();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx - 6, cy - 6, 6, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(92, 36, 21, 0, Math.PI * 2);
+  ctx.fillStyle = '#22c55e';
+  ctx.fill();
+  ctx.lineWidth = 3.5;
+  ctx.strokeStyle = '#ffffff';
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(81, 37);
+  ctx.lineTo(89, 45);
+  ctx.lineTo(103, 27);
+  ctx.lineWidth = 5.5;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#ffffff';
+  ctx.stroke();
+
+  _flagHitTex = new THREE.CanvasTexture(c);
+  return _flagHitTex;
+}
+
+let _flagWrongTex = null;
+function getFlagWrongTex() {
+  if (_flagWrongTex) return _flagWrongTex;
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const ctx = c.getContext('2d');
+  ctx.beginPath();
+  ctx.arc(64, 64, 52, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(28, 12, 8, 0.62)';
+  ctx.fill();
+  ctx.lineWidth = 5;
+  ctx.strokeStyle = '#fdba74';
+  ctx.stroke();
+
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(46, 30);
+  ctx.lineTo(46, 98);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(48, 30);
+  ctx.lineTo(94, 46);
+  ctx.lineTo(48, 64);
+  ctx.closePath();
+  ctx.fillStyle = '#fbbf24';
+  ctx.fill();
+
+  const drawCross = (w, col) => {
+    ctx.beginPath();
+    ctx.moveTo(32, 32);
+    ctx.lineTo(96, 96);
+    ctx.moveTo(96, 32);
+    ctx.lineTo(32, 96);
+    ctx.lineWidth = w;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = col;
+    ctx.stroke();
+  };
+  drawCross(15, '#ffffff');
+  drawCross(9, '#ef4444');
+
+  _flagWrongTex = new THREE.CanvasTexture(c);
+  return _flagWrongTex;
+}
+
+function flagHitGroup(isIso = false) {
+  const g = faceOverlayGroup(getFlagHitTex(), 0.78, isIso);
+  g.userData._isOverlay = true;
+  return g;
+}
+
+function flagWrongGroup(isIso = false) {
+  const g = faceOverlayGroup(getFlagWrongTex(), 0.78, isIso);
   g.userData._isOverlay = true;
   return g;
 }
@@ -6702,6 +6902,7 @@ const _instCol = new THREE.Color();
 
 let firstClick = true;
 let gameOver = false;
+let gameLost = false;
 let isPaused = false;
 let usedAutopilot = false;
 let revealed = 0;
@@ -6767,6 +6968,7 @@ function initGame() {
   timer = 0;
   firstClick = true;
   gameOver = false;
+  gameLost = false;
   isPaused = false;
   usedAutopilot = false;
   revealed = 0;
@@ -7158,6 +7360,11 @@ function revealCell(cell) {
   if (cell.mine) {
     cell.revealed = true;
     gameOver = true;
+    gameLost = true;
+    if (timerInt) {
+      clearInterval(timerInt);
+      timerInt = null;
+    }
     playExplosion();
     revealAllMinesOnLoss(cell);
     showResult(false);
@@ -7311,10 +7518,15 @@ function updateCellVisual(cell, deferFlush = false) {
     } else if (cell.flagged) {
       cell._visible = true;
       _setInstancedMatrix(cell, false);
-      const m = new THREE.Mesh(GEO, MAT_FLAG);
+      const flagMat = gameLost
+        ? (cell.mine ? MAT_FLAG_HIT : MAT_FLAG_WRONG)
+        : MAT_FLAG;
+      const m = new THREE.Mesh(GEO, flagMat);
       m.scale.setScalar(vs);
       m.position.copy(cell._worldPos);
-      m.add(flagGroup(false));
+      m.add(gameLost
+        ? (cell.mine ? flagHitGroup(false) : flagWrongGroup(false))
+        : flagGroup(false));
       m.userData.cell = cell;
       scene.add(m);
       cell.overlayMesh = m;
@@ -7367,8 +7579,15 @@ function updateCellVisual(cell, deferFlush = false) {
     }
   } else if (cell.flagged) {
     cell.mesh.visible = true;
-    cell.mesh.material = isIso ? ISO_MAT_FLAG : MAT_FLAG;
-    cell.overlay = flagGroup(isIso);
+    if (gameLost) {
+      cell.mesh.material = cell.mine
+        ? (isIso ? ISO_MAT_FLAG_HIT : MAT_FLAG_HIT)
+        : (isIso ? ISO_MAT_FLAG_WRONG : MAT_FLAG_WRONG);
+      cell.overlay = cell.mine ? flagHitGroup(isIso) : flagWrongGroup(isIso);
+    } else {
+      cell.mesh.material = isIso ? ISO_MAT_FLAG : MAT_FLAG;
+      cell.overlay = flagGroup(isIso);
+    }
     cell.mesh.add(cell.overlay);
   } else if (cell.question) {
     cell.mesh.visible = true;
@@ -7393,17 +7612,38 @@ function refreshAllCellMaterials() {
   if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
 }
 
-function revealAllMinesOnLoss() {
+function revealAllMinesOnLoss(hitCell) {
   // Cap simultaneous mine mesh spawns on giant 60,000-cube boards to avoid browser freeze, or recolor instances directly!
   let spawned = 0;
   for (let i = 0; i < grid.length; i++) {
     const c = grid[i];
+    const inSlice = !sliceBounds.active || (
+      c.x >= sliceBounds.xMin && c.x <= sliceBounds.xMax &&
+      c.y >= sliceBounds.yMin && c.y <= sliceBounds.yMax &&
+      c.z >= sliceBounds.zMin && c.z <= sliceBounds.zMax
+    );
     if (c.mine && !c.flagged) {
       c.revealed = true;
-      if (isInstancedBoard && spawned > 350 && boardInstancedMesh) {
+      if (isInstancedBoard && c !== hitCell && spawned > 350 && boardInstancedMesh) {
+        c._visible = inSlice;
         _instCol.setHex(0xcc001c);
         boardInstancedMesh.setColorAt(c.instId, _instCol);
-        _setInstancedMatrix(c, true);
+        _setInstancedMatrix(c, inSlice);
+      } else {
+        updateCellVisual(c, true);
+        spawned++;
+      }
+    } else if (c.flagged) {
+      // Explicitly refresh all flagged cells so players see which flags hid a mine vs. false flags
+      if (isInstancedBoard && spawned > 500 && boardInstancedMesh) {
+        if (c.overlayMesh) {
+          scene.remove(c.overlayMesh);
+          c.overlayMesh = null;
+        }
+        c._visible = inSlice;
+        _instCol.setHex(c.mine ? 0x15803d : 0xc2410c);
+        boardInstancedMesh.setColorAt(c.instId, _instCol);
+        _setInstancedMatrix(c, inSlice);
       } else {
         updateCellVisual(c, true);
         spawned++;
@@ -7572,6 +7812,7 @@ function showResult(won) {
   const rTime = document.getElementById('res-time');
   const rLvl = document.getElementById('res-level');
   const rMode = document.getElementById('res-mode');
+  const legendEl = document.getElementById('res-flag-legend');
   if (!panel) return;
 
   title.textContent = won ? t('win_title') : t('lose_title');
@@ -7580,6 +7821,33 @@ function showResult(won) {
   rTime.textContent = `${timer}s`;
   rLvl.textContent = `L${level} · ${Math.round(density * 100)}%`;
   rMode.textContent = usedAutopilot ? '🤖 Agent-Solver' : '🧠 Manuell';
+
+  if (legendEl) {
+    if (!won && Array.isArray(grid)) {
+      let correctFlags = 0;
+      let wrongFlags = 0;
+      let missedMines = 0;
+      for (let i = 0; i < grid.length; i++) {
+        const c = grid[i];
+        if (c.flagged) {
+          if (c.mine) correctFlags++;
+          else wrongFlags++;
+        } else if (c.mine) {
+          missedMines++;
+        }
+      }
+      legendEl.innerHTML = `
+        <div class="res-flag-legend-item hit"><span>${t('flag_hit_lbl')}</span><strong>${correctFlags}</strong></div>
+        <div class="res-flag-legend-item wrong"><span>${t('flag_wrong_lbl')}</span><strong>${wrongFlags}</strong></div>
+        <div class="res-flag-legend-item miss"><span>${t('flag_miss_lbl')}</span><strong>${missedMines}</strong></div>
+        <div class="res-flag-legend-note">${t('flag_legend_note')}</div>
+      `;
+      legendEl.classList.remove('hidden');
+    } else {
+      legendEl.classList.add('hidden');
+      legendEl.innerHTML = '';
+    }
+  }
   panel.classList.remove('hidden');
 }
 
@@ -8140,7 +8408,12 @@ window.addEventListener('pointermove', (e) => {
   }
 
   if (pill) {
-    if (cell && cell.revealed && cell.mines > 0) {
+    if (gameLost && cell && cell.flagged) {
+      pill.innerHTML = cell.mine ? t('hover_flag_hit') : t('hover_flag_wrong');
+      pill.style.left = `${e.clientX + 14}px`;
+      pill.style.top = `${e.clientY + 14}px`;
+      pill.classList.remove('hidden');
+    } else if (cell && cell.revealed && cell.mines > 0) {
       const nbs = getCellNeighbors(cell);
       const flg = nbs.filter(n => n.flagged).length;
       const closed = nbs.filter(n => !n.revealed && !n.flagged).length;
