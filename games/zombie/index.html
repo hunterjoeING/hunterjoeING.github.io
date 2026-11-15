@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b19'/%3E%3Ccircle cx='32' cy='32' r='20' fill='%2316a34a'/%3E%3Ccircle cx='25' cy='28' r='3.5' fill='%23f87171'/%3E%3Ccircle cx='39' cy='28' r='3.5' fill='%23f87171'/%3E%3Crect x='23' y='38' width='18' height='4' rx='2' fill='%230f172a'/%3E%3C/svg%3E">
   <title>Zombie Horde: Gate Runner</title>
   <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css">
@@ -177,7 +178,7 @@
     let targetU = 0;
     let squad = 1;
     let fireRate = 4.5; // shots/sec per shooter (clamped sensibly)
-    let spreadLevel = 1; // 1 = single, 2 = twin, 3 = triple
+    let spreadLevel = 1; // 1 = standard, 2 = 3-way spread, 3 = 5-way mega-spread
     let dmgMult = 1.0;
     let shield = 0;
     let score = 0;
@@ -463,7 +464,7 @@
         msg = '⚠️ -20% Kadenz!';
       } else if (g.kind === 'spread') {
         spreadLevel = Math.min(3, spreadLevel + 1);
-        msg = spreadLevel === 2 ? '🔥 Zwillings-Schuss' : '🔥 3-Fach Streuung!';
+        msg = spreadLevel === 2 ? '🔥 3× Streuschuss!' : '🔥 5× Mega-Streu!';
       } else if (g.kind === 'dmg') {
         dmgMult = Math.min(MAX_DMG, dmgMult + g.val);
         msg = '💥 Stärkere Munition!';
@@ -487,7 +488,11 @@
       // Visual squad fires scaled streams so FPS stays rock-solid even with 30 squad members
       const streams = Math.min(7, squad);
       const dmgPerBullet = (1.0 * dmgMult) * (squad / streams);
-      const spreadAngles = spreadLevel === 1 ? [0] : (spreadLevel === 2 ? [-0.07, 0.07] : [-0.14, 0, 0.14]);
+      const spreadAngles = spreadLevel === 1
+        ? [0]
+        : (spreadLevel === 2 ? [-0.85, 0, 0.85] : [-1.55, -0.78, 0, 0.78, 1.55]);
+      const volleyMult = spreadLevel === 1 ? 1.0 : (spreadLevel === 2 ? 1.35 : 1.70);
+      const pelletDmg = (dmgPerBullet * volleyMult) / spreadAngles.length;
       const span = Math.min(0.32, (streams - 1) * 0.055);
       for (let i = 0; i < streams; i++) {
         const uOff = streams === 1 ? 0 : -span + (2 * span * i) / (streams - 1);
@@ -495,9 +500,10 @@
           bullets.push({
             u: playerU + uOff,
             z: 0.04,
-            du: du * 0.65,
+            du,
             dz: 1.45,
-            dmg: dmgPerBullet / spreadAngles.length
+            dmg: pelletDmg,
+            isSpread: du !== 0
           });
         }
       }
@@ -524,7 +530,7 @@
       document.getElementById('hud-squad').textContent = squad;
       document.getElementById('hud-wave').textContent = wave;
       document.getElementById('hud-rate').textContent = (fireRate / 4.5).toFixed(1) + '×';
-      document.getElementById('hud-weapon').textContent = spreadLevel === 3 ? '3× Streu' : (spreadLevel === 2 ? 'Twin' : 'Single');
+      document.getElementById('hud-weapon').textContent = spreadLevel === 3 ? '5× Streu' : (spreadLevel === 2 ? '3× Streu' : 'Standard');
       document.getElementById('hud-shield').textContent = shield;
       document.getElementById('hud-score').textContent = score;
     }
@@ -1621,14 +1627,14 @@
       ctx.fillRect(5.2, -31 - bob + recoil, 5.2, 13.5);
       ctx.fillStyle = '#94a3b8';
       ctx.fillRect(6.8, -36 - bob + recoil, 2.4, 7.5);
-      ctx.fillStyle = dmgMult >= 2 ? '#f472b6' : '#22d3ee';
+      ctx.fillStyle = dmgMult >= 2 ? '#f472b6' : (spreadLevel >= 2 ? '#fb923c' : '#22d3ee');
       ctx.fillRect(6.2, -29 - bob + recoil, 1.5, 8);
       ctx.fillStyle = '#ef4444';
       ctx.fillRect(8.4, -27 - bob + recoil, 1.4, 1.4);
 
       if (firingGlow && ((idx + Math.floor(nowSec * 30)) % 2 === 0)) {
         const mx = 8, my = -37.5 - bob + recoil;
-        ctx.fillStyle = dmgMult >= 2 ? '#f472b6' : '#fde047';
+        ctx.fillStyle = dmgMult >= 2 ? '#f472b6' : (spreadLevel >= 2 ? '#fb923c' : '#fde047');
         ctx.beginPath();
         ctx.moveTo(mx, my - 7); ctx.lineTo(mx + 2, my - 2);
         ctx.lineTo(mx + 7, my); ctx.lineTo(mx + 2, my + 2);
@@ -1705,13 +1711,19 @@
       });
 
       // 3. Laser Plasma Tracer Bolts
+      const tailDt = 0.032;
       bullets.forEach(b => {
         const p = project(b.u, b.z);
-        const pTail = project(b.u - b.du * 0.032, Math.min(1, b.z - 0.04));
-        const boltCol = dmgMult >= 2 ? '#f472b6' : '#38bdf8';
+        const pTail = project(b.u - b.du * tailDt, Math.max(0.01, b.z - b.dz * tailDt));
+        const boltCol = b.isSpread
+          ? (dmgMult >= 2 ? '#fb7185' : '#fb923c')
+          : (dmgMult >= 2 ? '#f472b6' : '#38bdf8');
+        const haloCol = b.isSpread
+          ? (dmgMult >= 2 ? 'rgba(251, 113, 133, 0.38)' : 'rgba(251, 146, 60, 0.42)')
+          : (dmgMult >= 2 ? 'rgba(244, 114, 182, 0.38)' : 'rgba(56, 189, 248, 0.38)');
 
         ctx.lineCap = 'round';
-        ctx.strokeStyle = dmgMult >= 2 ? 'rgba(244, 114, 182, 0.38)' : 'rgba(56, 189, 248, 0.38)';
+        ctx.strokeStyle = haloCol;
         ctx.lineWidth = Math.max(5, 8.5 * p.scale);
         ctx.beginPath();
         ctx.moveTo(pTail.x, pTail.y); ctx.lineTo(p.x, p.y); ctx.stroke();
@@ -1721,7 +1733,7 @@
         ctx.beginPath();
         ctx.moveTo(pTail.x, pTail.y); ctx.lineTo(p.x, p.y); ctx.stroke();
 
-        ctx.fillStyle = '#ffffff';
+        ctx.fillStyle = b.isSpread ? '#fef08a' : '#ffffff';
         ctx.beginPath();
         ctx.arc(p.x, p.y, Math.max(1.8, 2.8 * p.scale), 0, Math.PI * 2);
         ctx.fill();
