@@ -676,6 +676,9 @@
   };
 
   function initSharedChrome() {
+    if (document.body && document.body.dataset && document.body.dataset.noLeaderboard === '1') {
+      return;
+    }
     const topbarRight = document.querySelector('.arcade-topbar .topbar-right');
     const gameId = detectGameId();
     if (topbarRight && !document.getElementById('btn-arcade-board')) {

@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Bild-Quiz über Schweizer Eisenbahnloks und Triebzüge der letzten 50 Jahre (ca. 1970–Heute) – mit ausführlichem Was-das-ist-Steckbrief, ohne Highscores und ohne Zeitdruck." />
+  <title>Schweizer Eisenbahnloks · Bild-Quiz · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    :root {
+      --rail-bg: #070d18;
+      --rail-panel: rgba(13, 22, 38, 0.94);
+      --rail-inset: rgba(8, 15, 28, 0.86);
+      --rail-border: rgba(148, 163, 184, 0.18);
+      --rail-border-strong: rgba(203, 213, 225, 0.34);
+      --rail-red: #dc2626;
+      --rail-red-hover: #ef4444;
+      --rail-gold: #f59e0b;
+      --rail-teal: #2dd4bf;
+      --rail-green: #4ade80;
+      --rail-rose: #fb7185;
+      --rail-text: #f8fafc;
+      --rail-muted: #94a3b8;
+    }
+
+    html, body {
+      background:
+        radial-gradient(ellipse at 18% 0%, rgba(30, 58, 95, 0.38) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 12%, rgba(153, 27, 27, 0.16) 0%, transparent 45%),
+        linear-gradient(180deg, #0b1424 0%, #070d18 60%, #040811 100%);
+      color: var(--rail-text);
+      min-height: 100%;
+    }
+
+    .arcade-topbar {
+      background: rgba(7, 13, 24, 0.92);
+      border-bottom: 1px solid var(--rail-border);
+    }
+
+    .back-hub-btn {
+      background: rgba(30, 41, 59, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.32);
+      color: #f1f5f9;
+    }
+    .back-hub-btn:hover {
+      background: rgba(51, 65, 85, 0.85);
+      border-color: rgba(226, 232, 240, 0.55);
+    }
+
+    .icon-btn {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: var(--rail-border);
+    }
+    .icon-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: rgba(226, 232, 240, 0.5);
+    }
+
+    .quiz-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 56px;
+    }
+
+    .surface-panel {
+      background: var(--rail-panel);
+      border: 1px solid var(--rail-border);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    .hidden { display: none !important; }
+
+    /* Menu Header */
+    .menu-panel {
+      padding: 26px 24px 24px;
+    }
+
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .swiss-crest-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #dc2626, #991b1b);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(153, 27, 27, 0.38);
+    }
+
+    .hero-title {
+      margin: 0 0 6px;
+      font-size: clamp(22px, 3.2vw, 28px);
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      color: #f8fafc;
+    }
+
+    .hero-lead {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.55;
+      color: #cbd5e1;
+      max-width: 68ch;
+    }
+
+    /* Calm Controls Band (No nested cards — clean divider rows) */
+    .settings-band {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--rail-border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .setting-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+    }
+
+    .setting-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--rail-muted);
+      min-width: 118px;
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .opt-pill {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--rail-border);
+      background: rgba(15, 23, 42, 0.72);
+      color: #cbd5e1;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s;
+    }
+    .opt-pill:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: var(--rail-border-strong);
+      color: #f8fafc;
+    }
+    .opt-pill.active-relaxed {
+      background: rgba(13, 148, 136, 0.24);
+      border-color: rgba(45, 212, 191, 0.65);
+      color: #ccfbf1;
+      font-weight: 700;
+    }
+    .opt-pill.active-timer {
+      background: rgba(217, 119, 6, 0.24);
+      border-color: rgba(245, 158, 11, 0.65);
+      color: #fef3c7;
+      font-weight: 700;
+    }
+    .opt-pill.active-len {
+      background: rgba(220, 38, 38, 0.22);
+      border-color: rgba(248, 113, 113, 0.6);
+      color: #fee2e2;
+      font-weight: 700;
+    }
+
+    .setting-hint {
+      font-size: 13px;
+      color: var(--rail-muted);
+      line-height: 1.45;
+    }
+
+    /* Category Selector Grid */
+    .cat-section-title {
+      margin: 22px 0 12px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--rail-muted);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .cat-card {
+      text-align: left;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(20, 32, 54, 0.92), rgba(10, 18, 32, 0.96));
+      border: 1px solid var(--rail-border);
+      color: var(--rail-text);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(226, 232, 240, 0.36);
+      background: linear-gradient(160deg, rgba(26, 41, 68, 0.96), rgba(13, 23, 40, 0.98));
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.36);
+    }
+    .cat-card.main-tour {
+      border-color: rgba(220, 38, 38, 0.38);
+      background: linear-gradient(155deg, rgba(127, 29, 29, 0.24), rgba(13, 22, 38, 0.96));
+    }
+    .cat-card.main-tour:hover {
+      border-color: rgba(248, 113, 113, 0.65);
+    }
+
+    .cat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .cat-era {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #fcd34d;
+      font-variant-numeric: tabular-nums;
+    }
+    .cat-name {
+      font-size: 16.5px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+    .cat-desc {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.48;
+      flex: 1;
+    }
+    .cat-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.12);
+      font-size: 12.5px;
+      color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+    .cat-go {
+      font-weight: 700;
+      color: #fca5a5;
+    }
+
+    /* Play Stage */
+    .stage-panel {
+      padding: 20px 22px 24px;
+    }
+
+    .stage-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--rail-border);
+      margin-bottom: 14px;
+    }
+
+    .progress-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-cluster strong {
+      color: #f8fafc;
+    }
+    .recognized-tag {
+      color: #86efac;
+      font-weight: 700;
+    }
+
+    .timer-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(45, 212, 191, 0.42);
+      background: rgba(13, 148, 136, 0.18);
+      color: #99f6e4;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      font-variant-numeric: tabular-nums;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .timer-toggle-btn:hover {
+      background: rgba(13, 148, 136, 0.3);
+    }
+    .timer-toggle-btn.countdown-running {
+      border-color: rgba(245, 158, 11, 0.55);
+      background: rgba(180, 83, 9, 0.22);
+      color: #fde68a;
+    }
+    .timer-toggle-btn.countdown-expired {
+      border-color: rgba(148, 163, 184, 0.4);
+      background: rgba(30, 41, 59, 0.72);
+      color: #e2e8f0;
+    }
+
+    .timer-track {
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #f59e0b, #ef4444);
+      transition: width 0.12s linear;
+    }
+
+    /* Locomotive Photo Viewer */
+    .loco-figure {
+      margin: 0 0 14px;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      max-height: clamp(230px, 37vh, 355px);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #040811;
+      border: 1px solid var(--rail-border);
+      cursor: zoom-in;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.28s ease;
+    }
+    .photo-frame:hover img {
+      transform: scale(1.015);
+    }
+
+    .photo-zoom-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(7, 13, 24, 0.84);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #f8fafc;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .photo-zoom-btn:hover {
+      background: rgba(15, 23, 42, 0.96);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .photo-credit {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--rail-muted);
+    }
+    .photo-credit a {
+      color: #93c5fd;
+      text-decoration: none;
+    }
+    .photo-credit a:hover {
+      text-decoration: underline;
+    }
+
+    /* Question & Answer Grid */
+    .q-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .meta-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid var(--rail-border);
+      color: #e2e8f0;
+    }
+    .meta-tag.era {
+      color: #fde68a;
+      background: rgba(120, 53, 15, 0.24);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    .q-text {
+      margin: 0 0 18px;
+      font-size: clamp(18px, 2.3vw, 21px);
+      font-weight: 800;
+      line-height: 1.4;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .ans-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--rail-border);
+      background: var(--rail-inset);
+      color: #f8fafc;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      background: rgba(30, 41, 59, 0.92);
+      border-color: rgba(226, 232, 240, 0.45);
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.eliminated { opacity: 0.22; pointer-events: none; }
+    .ans-btn.correct {
+      background: rgba(22, 101, 52, 0.42);
+      border-color: rgba(74, 222, 128, 0.78);
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(159, 18, 57, 0.36);
+      border-color: rgba(251, 113, 133, 0.72);
+      color: #ffe4e6;
+    }
+
+    .ans-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(51, 65, 85, 0.75);
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .ans-btn.correct .ans-key {
+      background: rgba(34, 197, 94, 0.35);
+      color: #bbf7d0;
+    }
+    .ans-btn.wrong .ans-key {
+      background: rgba(244, 63, 94, 0.35);
+      color: #fecdd3;
+    }
+
+    /* Utility Row */
+    .helpers-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--rail-border);
+    }
+
+    .helper-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--rail-border);
+      background: rgba(15, 23, 42, 0.85);
+      color: #e2e8f0;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s;
+    }
+    .helper-btn:hover:not(:disabled) {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: var(--rail-border-strong);
+    }
+    .helper-btn:disabled {
+      opacity: 0.36;
+      cursor: not-allowed;
+    }
+
+    /* Post-Answer "Was das ist"-Steckbrief (Flat dossier structure, zero over-nesting) */
+    .steckbrief {
+      margin-top: 20px;
+      padding: 20px 20px 18px;
+      border-radius: 14px;
+      background: rgba(8, 15, 28, 0.9);
+      border: 1px solid var(--rail-border);
+      border-left: 4px solid var(--rail-red);
+      animation: fadeSlideUp 0.22s ease;
+    }
+    .steckbrief.is-right {
+      border-left-color: var(--rail-green);
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .sb-verdict {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .sb-verdict.ok { color: #86efac; }
+    .sb-verdict.miss { color: #fda4af; }
+    .sb-verdict.skip { color: #fde68a; }
+
+    .sb-heading-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .sb-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 850;
+      color: #f8fafc;
+    }
+    .sb-nick {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #fcd34d;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 10px 16px;
+      margin: 0 0 14px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+    .spec-item dt {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--rail-muted);
+      margin-bottom: 2px;
+    }
+    .spec-item dd {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .sb-trivia {
+      margin: 0 0 16px;
+      font-size: 15px;
+      line-height: 1.58;
+      color: #dbeafe;
+    }
+
+    .sb-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sb-commons-link {
+      font-size: 12.5px;
+      color: #93c5fd;
+      text-decoration: none;
+    }
+    .sb-commons-link:hover {
+      text-decoration: underline;
+    }
+
+    .rail-primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(248, 113, 113, 0.55);
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(185, 28, 28, 0.32);
+      transition: transform 0.12s, filter 0.15s;
+    }
+    .rail-primary-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    /* End Screen & Gallery */
+    .result-panel {
+      padding: 26px 24px 28px;
+    }
+    .result-head {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--rail-border);
+    }
+    .result-summary-pill {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(13, 148, 136, 0.2);
+      border: 1px solid rgba(45, 212, 191, 0.45);
+      color: #99f6e4;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .result-score-line {
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 850;
+      margin: 0 0 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .result-sub {
+      margin: 0 0 18px;
+      font-size: 14.5px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .result-cta-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .gallery-heading {
+      margin: 22px 0 14px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    .gallery-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .gallery-row {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(8, 15, 28, 0.78);
+      border: 1px solid var(--rail-border);
+      align-items: start;
+    }
+
+    .gallery-thumb {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--rail-border);
+      padding: 0;
+      background: #040811;
+      cursor: zoom-in;
+    }
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-info h3 {
+      margin: 0 0 4px;
+      font-size: 16.5px;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+    .gallery-meta {
+      font-size: 12.5px;
+      color: #fcd34d;
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .gallery-trivia {
+      margin: 0 0 8px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+    .gallery-status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--rail-muted);
+    }
+    .outcome-badge {
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11.5px;
+    }
+    .outcome-badge.ok { background: rgba(22, 101, 52, 0.4); color: #86efac; }
+    .outcome-badge.miss { background: rgba(159, 18, 57, 0.35); color: #fda4af; }
+    .outcome-badge.skip { background: rgba(120, 53, 15, 0.38); color: #fde68a; }
+
+    /* Lightbox Modal */
+    .lightbox-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9995;
+      background: rgba(2, 6, 15, 0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .lightbox-inner {
+      position: relative;
+      max-width: min(1160px, 96vw);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      background: #030712;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.75);
+    }
+    .lightbox-bar {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13.5px;
+      color: #e2e8f0;
+    }
+
+    @media (max-width: 680px) {
+      .arcade-topbar { flex-wrap: nowrap; }
+      .topbar-left { min-width: 0; flex: 1; }
+      .menu-panel, .stage-panel, .result-panel { padding: 16px 14px 20px; }
+      .cat-grid { grid-template-columns: 1fr; }
+      .answers-grid { grid-template-columns: 1fr; }
+      .gallery-row { grid-template-columns: 1fr; }
+      .hero-head { flex-direction: column; gap: 12px; }
+      .photo-frame { max-height: 260px; }
+    }
+  </style>
+</head>
+<body data-no-leaderboard="1">
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🚂 Schweizer Eisenbahnloks</div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- START MENU -->
+    <section id="screen-menu" class="surface-panel menu-panel">
+      <div class="hero-head">
+        <div class="swiss-crest-badge" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none">
+            <rect x="3" y="3" width="26" height="26" rx="6" fill="rgba(255,255,255,0.12)"/>
+            <path d="M16 8v16M8 16h16" stroke="#ffffff" stroke-width="4.4" stroke-linecap="square"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="hero-title">Schweizer Eisenbahnloks: Die letzten 50 Jahre</h1>
+          <p class="hero-lead">
+            Von klassischen Gotthard-Maschinen wie der Re 4/4 II und Re 6/6 über die braunen BLS-Legenden und die Rhätische Bahn bis hin zu Giruno, Traverso und MIKA.
+            Sieh dir jedes Foto in Ruhe an — nach jeder Frage erfährst du im <strong>„Was das ist“-Steckbrief</strong> alles über Technik, Baujahre und Geschichte.
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-band">
+        <div class="setting-row">
+          <span class="setting-label">Zeitmodus</span>
+          <div class="pill-group" id="countdown-bar" role="group" aria-label="Zeitmodus wählen">
+            <button type="button" id="opt-timer-off" class="opt-pill active-relaxed" data-timer="0">☕ Ohne Zeitlimit (Standard)</button>
+            <button type="button" id="opt-timer-on" class="opt-pill" data-timer="1">⏱ Optionaler Countdown (35s)</button>
+          </div>
+        </div>
+        <div id="countdown-hint" class="setting-hint">
+          Kein Timer aktiv — du kannst jedes Lok-Foto beliebig lange in Ruhe betrachten und vergrößern. Es werden keine Highscores gespeichert.
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-label">Rundenlänge</span>
+          <div class="pill-group" id="length-bar" role="group" aria-label="Anzahl der Fragen">
+            <button type="button" id="opt-len-8" class="opt-pill active-len" data-len="8">8 Loks</button>
+            <button type="button" id="opt-len-12" class="opt-pill" data-len="12">12 Loks</button>
+            <button type="button" id="opt-len-all" class="opt-pill" data-len="all">Alle Loks der Auswahl</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cat-section-title">Strecke / Thema wählen &amp; losfahren</div>
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- PLAY STAGE -->
+    <section id="screen-play" class="surface-panel stage-panel hidden">
+      <div class="stage-topbar">
+        <div class="progress-cluster">
+          <span>Lok <strong id="q-num">1</strong> von <strong id="q-total">8</strong></span>
+          <span class="recognized-tag">✓ Erkannt: <span id="q-correct-count">0</span></span>
+        </div>
+        <button type="button" id="btn-play-timer" class="timer-toggle-btn" title="Optionalen 35s-Countdown ein- oder ausschalten">
+          ☕ Kein Zeitlimit
+        </button>
+      </div>
+
+      <div id="timer-track" class="timer-track hidden">
+        <div id="timer-fill" class="timer-fill"></div>
+      </div>
+
+      <figure class="loco-figure">
+        <div id="photo-frame" class="photo-frame" title="Klicken zum Vergrößern">
+          <img id="loco-img" src="" alt="Schweizer Eisenbahnfahrzeug – Bild zur Quizfrage" decoding="async" />
+          <button type="button" id="btn-zoom-photo" class="photo-zoom-btn">🔍 Foto vergrößern</button>
+        </div>
+        <figcaption class="photo-credit">
+          <span id="photo-attribution">Foto wird geladen…</span>
+          <span id="photo-status-note">Klick aufs Bild öffnet Vollansicht</span>
+        </figcaption>
+      </figure>
+
+      <div class="q-meta-tags">
+        <span id="q-cat-pill" class="meta-tag">Epoche</span>
+        <span id="q-era-pill" class="meta-tag era">ca. 1970er–Heute</span>
+      </div>
+
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div class="helpers-row">
+        <button type="button" id="joker-50" class="helper-btn">🎯 50:50 Tipp</button>
+        <button type="button" id="joker-skip" class="helper-btn">⏭ Auflösen &amp; weiter</button>
+        <button type="button" id="btn-back-menu" class="helper-btn" style="margin-left:auto;">← Themenauswahl</button>
+      </div>
+
+      <div id="fact-sheet" class="steckbrief hidden" aria-live="polite">
+        <div id="sb-verdict" class="sb-verdict ok"></div>
+        <div class="sb-heading-row">
+          <h3 id="sb-title" class="sb-title"></h3>
+          <span id="sb-nick" class="sb-nick"></span>
+        </div>
+        <dl id="sb-specs" class="spec-grid"></dl>
+        <p id="sb-trivia" class="sb-trivia"></p>
+        <div class="sb-actions">
+          <a id="sb-commons-link" class="sb-commons-link" href="#" target="_blank" rel="noopener noreferrer">Wikimedia Commons Bildquelle ↗</a>
+          <button type="button" id="btn-next-q" class="rail-primary-btn">Nächste Lok ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT & ROUND GALLERY -->
+    <section id="screen-result" class="surface-panel result-panel hidden">
+      <div class="result-head">
+        <div class="result-summary-pill">☕ Entspannte Fahrt · Kein Highscore gespeichert</div>
+        <h2 id="res-score-line" class="result-score-line">8 von 8 Loks richtig erkannt</h2>
+        <p id="res-sub" class="result-sub"></p>
+        <div class="result-cta-row">
+          <button type="button" id="btn-replay" class="rail-primary-btn">🔄 Strecke nochmal fahren</button>
+          <button type="button" id="btn-change-cat" class="secondary-btn">🚂 Andere Kategorie wählen</button>
+          <a href="../../index.html" class="secondary-btn" style="text-decoration:none;">🏠 Dashboard</a>
+        </div>
+      </div>
+
+      <h3 class="gallery-heading">📖 Alle Loks &amp; Züge dieser Runde im Überblick</h3>
+      <div id="gallery-list" class="gallery-list"></div>
+    </section>
+  </main>
+
+  <!-- LIGHTBOX MODAL -->
+  <div id="lightbox-modal" class="lightbox-backdrop hidden" role="dialog" aria-modal="true" aria-label="Lok-Foto Großansicht">
+    <div class="lightbox-inner">
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Großansicht des Eisenbahnfahrzeugs" />
+      <div class="lightbox-bar">
+        <span id="lightbox-caption"></span>
+        <button type="button" id="btn-lightbox-close" class="secondary-btn">✕ Schließen (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    (function () {
+      const COUNTDOWN_KEY = 'arcade_swiss_trains_countdown';
+      const COUNTDOWN_SEC = 35;
+
+      const CATEGORIES = [
+        {
+          id: 'alle',
+          era: 'ca. 1970–Heute · 24 Bilder',
+          name: 'Große Rundfahrt durch 50 Jahre',
+          desc: 'Die gesamte Vielfalt der Schweizer Schiene gemischt: SBB-Klassiker, Hochgeschwindigkeitszüge, BLS, RhB und Güterloks.',
+          cls: 'main-tour'
+        },
+        {
+          id: 'klassiker',
+          era: '1970er–1990er · 8 Bilder',
+          name: 'SBB-Klassiker & Gotthard-Legenden',
+          desc: 'Die prägenden Loks und Triebwagen der grünen und roten SBB-Epoche: Re 4/4 II, Re 6/6, Ae 6/6, Lok 2000, Kolibri & Co.',
+          cls: ''
+        },
+        {
+          id: 'modern',
+          era: '2000–Heute · 8 Bilder',
+          name: 'Moderne Triebzüge & Schnellverkehr',
+          desc: 'Vom Expo.02-Neigezug ICN bis zu Giruno, Twindexx, Astoro, KISS, FLIRT, Traverso und MIKA.',
+          cls: ''
+        },
+        {
+          id: 'spezial',
+          era: 'Privatbahnen, Meterspur & Cargo · 8 Bilder',
+          name: 'BLS, Rhätische Bahn, Güter & Diesel',
+          desc: 'Braune Lötschberg-Klassiker, Bündner Bergmaschinen am Landwasserviadukt und Bernina, Vectron, TRAXX & Am 843.',
+          cls: ''
+        }
+      ];
+
+      const QUESTIONS = [
+        // ==================== KLASSIKER & GOTTHARD-LEGENDEN (1-8) ====================
+        {
+          id: 1,
+          cat: 'klassiker',
+          eraLabel: 'Baujahre 1964–1985',
+          img: './img/lok-01.jpg',
+          q: 'Welche SBB-Lokomotive wurde mit 277 gebauten Exemplaren zur größten Baureihe der SBB-Geschichte und prägte über Jahrzehnte Schnell- und Güterzüge?',
+          a: ['SBB Re 4/4 II (Re 420)', 'SBB Ae 8/14', 'SBB Be 4/6', 'BLS Re 485'],
+          wasDasIst: {
+            title: 'SBB Re 4/4 II (UIC: Re 420)',
+            nick: '„Bo’Bo’“ („Bobò“)',
+            operator: 'SBB CFF FFS (später teils BLS / SOB)',
+            built: '1964 (Prototypen), Serie 1967–1985',
+            builder: 'SLM Winterthur · BBC / MFO / SAAS',
+            power: '4.700 kW (ca. 6.390 PS)',
+            vmax: '140 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Das Foto zeigt Lok 11153 der ersten Serie – gut erkennbar am einzelnen Einholm-Stromabnehmer und den runden Stirnlampen. Durch ihre hohe Zuverlässigkeit und Zugkraft ist die Bo’Bo’ seit über 50 Jahren ein vertrautes Bild am Gotthard wie im Mittelland.'
+          },
+          credit: {
+            artist: 'JoachimKohler-HB',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:SBB Re 4-4 II Nr. 11153 bei Tägerwilen TG (2016).jpg'
+          }
+        },
+        {
+          id: 2,
+          cat: 'klassiker',
+          eraLabel: 'Baujahre 1972–1980',
+          img: './img/lok-02.jpg',
+          q: 'Welche Gotthard-Kraftmaschine läuft als Besonderheit auf drei getrennten zweiachsigen Drehgestellen (Bo’Bo’Bo’) statt auf zwei dreiachsigen Drehgestellen?',
+          a: ['SBB Re 6/6 (Re 620)', 'SBB Ae 6/6 (Ae 610)', 'SBB Re 4/4 II (Re 420)', 'SBB Re 460'],
+          wasDasIst: {
+            title: 'SBB Re 6/6 (UIC: Re 620)',
+            nick: '„Gotthard-Königin“',
+            operator: 'SBB CFF FFS / SBB Cargo',
+            built: '1972 (Prototypen), Serie 1975–1980 (89 Loks)',
+            builder: 'SLM Winterthur · BBC / SAAS',
+            power: '7.850 kW (10.670 PS Stundenleistung)',
+            vmax: '140 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Damit eine sechsachsige Lok die engen Kurven der Gotthard-Rampen gleisschonend meistert, erhielt sie drei bewegliche zweiachsige Drehgestelle – beim zweiten Blick ins Foto deutlich zu sehen. In Doppeltraktion mit einer Re 4/4 II bildete sie legendäre „Re 10/10“-Gespanne.'
+          },
+          credit: {
+            artist: 'JoachimKohler-HB',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Re 6-6 (Re 620) Nr. 11631 "Dulliken" in Bellinzona.jpg'
+          }
+        },
+        {
+          id: 3,
+          cat: 'klassiker',
+          eraLabel: 'Im Dienst 1952–2013',
+          img: './img/lok-03.jpg',
+          q: 'Welche schwere Gotthard-Lokomotive trug traditionell Kantons- oder Gemeindewappen (hier „Brugg“), silberne Zierstreifen und diente bei den SBB bis 2013?',
+          a: ['SBB Ae 6/6 (Ae 610)', 'SBB Ce 6/8 II („Krokodil“)', 'SBB Re 450', 'RhB Ge 6/6 II'],
+          wasDasIst: {
+            title: 'SBB Ae 6/6 (UIC: Ae 610)',
+            nick: '„Kantonslok“ / „Städtelok“',
+            operator: 'SBB CFF FFS / SBB Cargo',
+            built: '1952–1966 (120 Stück, im Dienst bis 2013)',
+            builder: 'SLM Winterthur · BBC / MFO',
+            power: '4.300 kW (ca. 5.850 PS)',
+            vmax: '125 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Die ersten 25 Maschinen erhielten die Wappen der Schweizer Kantone plus silbernen „Schnauz“ (Zierstreifen), die übrigen 95 bekamen Stadtwappen wie hier die 11470 „Brugg“. Bis in die 2010er-Jahre zog sie noch Güterzüge durch die ganze Schweiz.'
+          },
+          credit: {
+            artist: 'JoachimKohler-HB',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:SBB Ae 6-6 Nr. 11470 "Brugg" in Weinfelden (2011).jpg'
+          }
+        },
+        {
+          id: 4,
+          cat: 'klassiker',
+          eraLabel: 'Baujahre 1991–1997',
+          img: './img/lok-04.jpg',
+          q: 'Welche SBB-Schnellzuglok der 1990er Jahre („Lok 2000“) entwarf das italienische Designstudio Pininfarina speziell für das Konzept Bahn 2000?',
+          a: ['SBB Re 460', 'SBB Re 4/4 IV', 'SBB Am 843', 'SBB Re 482'],
+          wasDasIst: {
+            title: 'SBB Re 460 („Lok 2000“)',
+            nick: '„Lok 2000“ / „Werbelok“',
+            operator: 'SBB CFF FFS',
+            built: '1991–1997 (119 Loks)',
+            builder: 'SLM Winterthur · ABB (Umrichtertechnik)',
+            power: '6.100 kW',
+            vmax: '200 km/h (Auslegung bis 230 km/h)',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Mit ihrem markanten roten Pininfarina-Kasten, Drehstrom-Asynchronmotoren und der Wendezugsteuerung für Doppelstock-IC2000-Kompositionen wurde die Re 460 ab den 1990ern das Rückgrat des Schweizer InterCity-Verkehrs.'
+          },
+          credit: {
+            artist: 'Bahnfrend',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Re 460 058-1 + IC 2000 St. Gallen, 2014 (1).JPG'
+          }
+        },
+        {
+          id: 5,
+          cat: 'klassiker',
+          eraLabel: 'Baujahre 1989–1997',
+          img: './img/lok-05.jpg',
+          q: 'Welche SBB-Lokomotive hat ab Werk nur einen einzigen Führerstand plus Gepäckabteil und wurde maßgeschneidert für die Doppelstock-Pendelzüge der S-Bahn Zürich gebaut?',
+          a: ['SBB Re 450 (DPZ)', 'SBB Re 420', 'SBB Ee 922', 'BLS Re 465'],
+          wasDasIst: {
+            title: 'SBB Re 450 (Doppelstock-Pendelzug)',
+            nick: '„DPZ-Lok“',
+            operator: 'SBB CFF FFS (S-Bahn Zürich / ZVV)',
+            built: '1989–1997 (115 Stück)',
+            builder: 'SLM · ABB · SIG · SWP',
+            power: '3.200 kW',
+            vmax: '130 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Die markant blau-weiß-gelben S-Bahn-Züge fahren seit 1990 im Raum Zürich: Weil ein Doppelstock-Pendelzug (DPZ) immer fest gekuppelt bleibt und am anderen Ende ein Steuerwagen hängt, konnte die Re 450 mit nur einem Führerstand und einem praktischen Gepäck-/Postraum ausgestattet werden.'
+          },
+          credit: {
+            artist: 'Kabelleger / David Gubler',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:SBB Re 450 060 ZVV Pfäffikon - Kempten.jpg'
+          }
+        },
+        {
+          id: 6,
+          cat: 'klassiker',
+          eraLabel: 'Baujahre 1984–1996',
+          img: './img/lok-06.jpg',
+          q: 'Welchen Spitznamen trug dieser farbenfrohe Regionalzug-Triebwagen (SBB RBDe 560, „Neuer Pendelzug“) wegen seines blauen, roten und gelben Anstrichs im Volksmund?',
+          a: ['„Kolibri“', '„Roter Pfeil“', '„Gotthard-Fuchs“', '„Glacier-Zwerg“'],
+          wasDasIst: {
+            title: 'SBB RBDe 560 (NPZ – Neuer Pendelzug)',
+            nick: '„Kolibri“ (heute modernisiert als „Domino“)',
+            operator: 'SBB CFF FFS · Regionalverkehr',
+            built: '1984–1996 (Modernisierung zu „Domino“ 2008–2013)',
+            builder: 'FFA · SIG · SWP · BBC / ABB',
+            power: '1.650 kW',
+            vmax: '140 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Wegen seiner grauen Wände, blauen Streifen, roten Fronten und knallgelben Einstiegstüren nannte ihn die Schweiz liebevoll „Kolibri“. Später bekamen viele Triebwagen neue Niederflur-Zwischenwagen und fahren seither modernisiert als „Domino“.'
+          },
+          credit: {
+            artist: 'NAC',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:FFS RBDe 560 100-9 Wohlen 111110.jpg'
+          }
+        },
+        {
+          id: 7,
+          cat: 'klassiker',
+          eraLabel: 'Im Dienst 1959–2014',
+          img: './img/lok-07.jpg',
+          q: 'Dieser äußerst spurtstarke Personentriebwagen zog bis 2014 ganze Regional- und Schnellzug-Pendel – welche offizielle SBB-Bezeichnung trägt er?',
+          a: ['SBB RBe 4/4 (später RBe 540)', 'SBB De 4/4', 'SBB Ae 3/6 I', 'SBB RABDe 12/12'],
+          wasDasIst: {
+            title: 'SBB RBe 4/4 (UIC: RBe 540)',
+            nick: '„Seetal-Sprinter“ / Klassischer Pendel-Triebwagen',
+            operator: 'SBB CFF FFS (bis 2014)',
+            built: '1959–1966 (82 Triebwagen, Umbau ab 1992 zu RBe 540)',
+            builder: 'SIG · SWS · BBC · MFO',
+            power: '1.988 kW (ca. 2.700 PS)',
+            vmax: '125 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Mit knapp 2.000 kW auf nur vier angetriebenen Achsen bot der RBe 4/4 sowohl Sitzplätze als auch die Zugkraft einer kleinen Lok – bis weit in die 2000er Jahre blieb er auf Neben- und Hauptlinien unverzichtbar. Der hier abgebildete 1405 ist historisch erhalten.'
+          },
+          credit: {
+            artist: 'Markus Eigenheer',
+            license: 'CC BY-SA 2.0',
+            commons: 'File:Ex SBB CFF FFS RBe 4 4 1405 2019-07-21.jpg'
+          }
+        },
+        {
+          id: 8,
+          cat: 'klassiker',
+          eraLabel: 'Baujahr 1982 (4 Prototypen)',
+          img: './img/lok-08.jpg',
+          q: 'Von der Versuchslok SBB Re 4/4 IV (10101–10104) entstanden 1982 nur vier Stück. An welche Privatbahn verkauften die SBB alle vier Loks ab 1994 (heute Re 446)?',
+          a: ['Schweizerische Südostbahn (SOB)', 'Rhätische Bahn (RhB)', 'Appenzeller Bahnen (AB)', 'Zentralbahn (zb)'],
+          wasDasIst: {
+            title: 'SBB Re 4/4 IV · heute SOB Re 446',
+            nick: '„Bahn-2000-Prototyp“',
+            operator: 'SBB (bis 1994), seither Südostbahn (SOB) / EDG',
+            built: '1982 (nur 4 Exemplare: 10101–10104)',
+            builder: 'SLM Winterthur · BBC',
+            power: '4.960 kW',
+            vmax: '160 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Mit Thyristor-Phasenanschnittsteuerung und 160 km/h ebnete die Re 4/4 IV den Weg für moderne Hochleistungsloks, doch statt ihr folgte in Großserie schon bald die noch fortschrittlichere Drehstrom-Re 460. Bei der SOB bewährten sich alle vier Exemplare über Jahrzehnte am steilen Voralpen-Express (bis zu 50 ‰ Steigung!).'
+          },
+          credit: {
+            artist: 'Joachim Lutz',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:SBB Re 4-4 IV (10103 A W).jpg'
+          }
+        },
+
+        // ==================== MODERNE TRIEBZÜGE & SCHNELLVERKEHR (9-16) ====================
+        {
+          id: 9,
+          cat: 'modern',
+          eraLabel: 'Baujahre 1999–2005',
+          img: './img/lok-09.jpg',
+          q: 'Welcher siebenteilige Schweizer Neigezug (Neigung bis 8°) wurde für die Expo.02 in Betrieb genommen und prägt die kurvige Jurasüdfuß-Linie sowie lange Zeit den Gotthard?',
+          a: ['SBB RABDe 500 („ICN“)', 'SBB RABe 501 („Giruno“)', 'SBB RABe 511 („KISS“)', 'BLS RABe 535 („Lötschberger“)'],
+          wasDasIst: {
+            title: 'SBB RABDe 500 („ICN“ – InterCity-Neigezug)',
+            nick: '„ICN“',
+            operator: 'SBB CFF FFS',
+            built: '1999–2005 (44 Züge)',
+            builder: 'Adtranz / Bombardier · Alstom · Design: Pininfarina',
+            power: '5.200 kW',
+            vmax: '200 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Dank aktiver hydraulischer Neigetechnik bis 8° (wie auf dem Foto schön in der Kurve am Bielersee zu sehen) verkürzte der ICN die Fahrzeiten zwischen Genf, Biel, Basel, Zürich und St. Gallen spürbar. Zurzeit erhalten alle Züge eine umfassende Modernisierung für weitere Betriebsjahre.'
+          },
+          credit: {
+            artist: 'Kabelleger / David Gubler',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:SBB RABDe 500 Twann - Ligerz.jpg'
+          }
+        },
+        {
+          id: 10,
+          cat: 'modern',
+          eraLabel: 'Seit 2017 / Einsatz ab 2019',
+          img: './img/lok-10.jpg',
+          q: 'Welcher elfteilige 250-km/h-Schnellzug von Stadler Rail fährt seit 2019/2020 als moderner Gotthard-Basistunnel-Zug bis nach Mailand (und teils nach Deutschland)?',
+          a: ['SBB RABe 501 („Giruno“)', 'SBB RABe 503 („Astoro“)', 'SBB RABe 502 („FV-Dosto“)', 'SOB RABe 526 („Traverso“)'],
+          wasDasIst: {
+            title: 'SBB RABe 501 („Giruno“ / Stadler SMILE)',
+            nick: '„Giruno“ (rätoromanisch: Mäusebussard)',
+            operator: 'SBB CFF FFS',
+            built: 'seit 2017 (29 + nachbestellte Züge)',
+            builder: 'Stadler Rail (Thurgau)',
+            power: '6.000 kW Max. (4.720 kW Dauer)',
+            vmax: '250 km/h',
+            system: '3 Stromsysteme (CH/DE 15 kV AC · IT 3 kV DC & 25 kV AC)',
+            trivia: 'Der über 200 m lange Giruno war der erste in Serie gebaute Hochgeschwindigkeitszug von Stadler und verbindet komplett niederflurigen Einstieg bei 55/76 cm Bahnsteighöhe mit druckertüchtigtem Wagenkasten für die 57 km lange Röhre des Gotthard-Basistunnels.'
+          },
+          credit: {
+            artist: 'Nelso Silva',
+            license: 'CC BY-SA 2.0',
+            commons: 'File:SBB RABe 501 017.jpg'
+          }
+        },
+        {
+          id: 11,
+          cat: 'modern',
+          eraLabel: 'Baujahre 2015–2022',
+          img: './img/lok-11.jpg',
+          q: 'Welcher InterCity-Doppelstockzug von Bombardier sorgt mit seinen wuchtigen Fronten auf den Linien zwischen Genf, Bern, Zürich und St. Gallen für hohe Sitzplatzkapazität?',
+          a: ['SBB RABe 502 („FV-Dosto“ / Twindexx)', 'SBB RABe 511 („KISS“)', 'SBB RABe 523 („FLIRT“)', 'SBB Re 450 (DPZ)'],
+          wasDasIst: {
+            title: 'SBB RABe 502 („FV-Dosto“ / Twindexx Swiss Express)',
+            nick: '„FV-Dosto“',
+            operator: 'SBB CFF FFS',
+            built: '2015–2022 (62 Züge: IC200 / IR200 / IR100)',
+            builder: 'Bombardier Transportation (heute Alstom)',
+            power: '3.750 kW (4-teilig) bzw. 7.500 kW (8-teilig)',
+            vmax: '200 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Nach einem holprigen Start bei Software und Wankkompensation fahren die Doppelstöcker heute zuverlässig auf den meistbefahrenen InterCity- und InterRegio-Achsen der Schweiz – mit bis zu über 600 Sitzplätzen in einer 200-Meter-Einheit.'
+          },
+          credit: {
+            artist: 'Kabelleger / David Gubler',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:SBB RABe 502 203 Ossingen.jpg'
+          }
+        },
+        {
+          id: 12,
+          cat: 'modern',
+          eraLabel: 'Seit 2007 (SBB 2. Serie ab 2014)',
+          img: './img/lok-12.jpg',
+          q: 'Welcher internationale 250-km/h-Neigezug aus der Pendolino-Familie verkehrt für die SBB grenzüberschreitend über den Gotthard und Simplon Richtung Mailand sowie bis Frankfurt?',
+          a: ['SBB RABe 503 / ETR 610 („Astoro“)', 'SBB RABDe 500 („ICN“)', 'BLS RABe 528 („MIKA“)', 'SBB RABe 501 („Giruno“)'],
+          wasDasIst: {
+            title: 'SBB RABe 503 / ETR 610 („Astoro“)',
+            nick: '„Astoro“ (lat. „Habicht“ / „New Pendolino“)',
+            operator: 'SBB CFF FFS (anfangs teils Cisalpino) · Trenitalia',
+            built: 'seit 2007 (1. Serie ETR 610) / 2014–2017 (2. Serie RABe 503)',
+            builder: 'Alstom (Savigliano, ehemals Fiat Ferroviaria)',
+            power: '5.500 kW',
+            vmax: '250 km/h',
+            system: '4 Stromsysteme (CH/DE/AT/IT) · Normalspur',
+            trivia: 'Dank aktiver Neigetechnik und Viersystemausrüstung verbindet der Astoro die Schweiz nicht nur mit Mailand und Venedig, sondern fährt am anderen Ende des Korridors auch durch das Rheintal bis nach Frankfurt am Main.'
+          },
+          credit: {
+            artist: 'Chme82',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:SBB ETR 610-013 Astoro Brig.jpg'
+          }
+        },
+        {
+          id: 13,
+          cat: 'modern',
+          eraLabel: 'Baujahre 2010–2016',
+          img: './img/lok-13.jpg',
+          q: 'Stadler benannte diesen modernen Doppelstockzug (SBB RABe 511) „KISS“. Wofür steht dieses bekannte Schweizer Eisenbahn-Kürzel?',
+          a: ['Komfortabler Innovativer Spurtstarker S-Bahn-Zug', 'Kraftvoller Internationaler Schnell-Sprinter', 'Kurvenfähiger Intercity-Systemzug Schweiz', 'Kompakter Interregio-Sonder-Schlitten'],
+          wasDasIst: {
+            title: 'SBB RABe 511 (Stadler „KISS“)',
+            nick: '„KISS“ / „Regio-Dosto“',
+            operator: 'SBB CFF FFS (S-Bahn & RegioExpress)',
+            built: '2010–2016 (und Folgebestellungen)',
+            builder: 'Stadler Rail',
+            power: '4.000 kW Dauer / 6.000 kW Stundenleistung',
+            vmax: '160 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Ursprünglich noch nüchtern „DOSTO“ genannt, landete Stadler mit „KISS“ („Komfortabler Innovativer Spurtstarker S-Bahn-Zug“) einen Marketing-Volltreffer: Durch hohe Beschleunigung macht der Zweistöcker auch bei vielen kurzen S-Bahn-Halten ordentlich Boden gut.'
+          },
+          credit: {
+            artist: 'Remontees',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Rabe-511-kiss-gare-annemasse1.jpg'
+          }
+        },
+        {
+          id: 14,
+          cat: 'modern',
+          eraLabel: 'Seit 2004 (Globaler Bestseller)',
+          img: './img/lok-14.jpg',
+          q: 'Welche Baureihe des Thurgauer Herstellers Stadler Rail (hier als SBB RABe 523) wurde mit über 2.500 verkauften Zügen zu einem der weltweit erfolgreichsten Regionalzüge?',
+          a: ['FLIRT (Flinker Leichter Innovativer Regional-Triebzug)', 'ICN (InterCity-Neigezug)', 'KISS (Komfortabler Innovativer S-Bahn-Zug)', 'GTW (Gelenktriebwagen)'],
+          wasDasIst: {
+            title: 'SBB RABe 523 (Stadler „FLIRT“)',
+            nick: '„FLIRT“',
+            operator: 'SBB CFF FFS (Stadtbahn Zug, Léman Express, TILO, S-Bahnen)',
+            built: 'seit 2004 in mehreren Generationen',
+            builder: 'Stadler Rail (Bussnang)',
+            power: '2.000 kW (2.600 kW Max.)',
+            vmax: '160 km/h',
+            system: '15 kV / 16,7 Hz AC (u. a. auch Zweisystem CH/FR oder CH/IT)',
+            trivia: '2004 debütierte der FLIRT bei den SBB für die Stadtbahn Zug – heute fährt er in über 20 Ländern von Norwegen bis in die USA. Charakteristisch sind die beiden starken End-Drehgestelle unter den Führerständen und dazwischen liegende Jacobs-Drehgestelle.'
+          },
+          credit: {
+            artist: 'JoachimKohler-HB',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Bahnhof Yverdon-les-Bains mit SBB RABe 523 109 (2026).jpg'
+          }
+        },
+        {
+          id: 15,
+          cat: 'modern',
+          eraLabel: 'Bau ab 2017 · Einsatz ab 2019',
+          img: './img/lok-15.jpg',
+          q: 'Unter welchem Namen verkehrt dieser markant kupferfarbene Fernverkehrszug der Südostbahn (SOB RABe 526) als „Voralpen-Express“ und „Treno Gottardo“ über die alte Gotthard-Bergstrecke?',
+          a: ['„Traverso“', '„Allegra“', '„MIKA“', '„Astoro“'],
+          wasDasIst: {
+            title: 'SOB RABe 526 („Traverso“ · Stadler FLIRT 3)',
+            nick: '„Traverso“ (ital./rätorom. „Querung“)',
+            operator: 'Schweizerische Südostbahn (SOB)',
+            built: 'ab 2017, Einsatz ab 2019/2020',
+            builder: 'Stadler Rail',
+            power: '4.000 kW Stunde (5.200 kW Max.)',
+            vmax: '160 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Während Fernzüge heute meist unten durch den Gotthard-Basistunnel rauschen, schraubt sich der kupfergoldene Traverso bewusst über die historische Panoramastrecke mit den Kehrtunnels bei Wassen und der Kirche von Göschenen (wie hier im Bild!).'
+          },
+          credit: {
+            artist: 'NAC',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:SOB RABe 526 121 Goeschenen 021223.jpg'
+          }
+        },
+        {
+          id: 16,
+          cat: 'modern',
+          eraLabel: 'Seit 2020/2021',
+          img: './img/lok-16.jpg',
+          q: 'Aus welcher bewährten Stadler-Triebzugfamilie stammt der moderne bordeauxrote „MIKA“ (BLS RABe 528) für RegioExpress und S-Bahn Bern?',
+          a: ['Stadler FLIRT (4. / neueste Generation)', 'Stadler KISS Doppelstockfamilie', 'Bombardier Twindexx Plattform', 'Alstom Coradia Duplex'],
+          wasDasIst: {
+            title: 'BLS RABe 528 („MIKA“ – Moderner Innovativer Kompakter Alleskönner)',
+            nick: '„MIKA“',
+            operator: 'BLS AG',
+            built: 'seit 2020/2021 (RegioExpress- und S-Bahn-Varianten)',
+            builder: 'Stadler Rail',
+            power: '2.000 kW am Rad',
+            vmax: '160 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Die BLS beschafft gleich 58+ MIKA-Züge auf Basis der modernisierten FLIRT-Generation (unter anderem mit der neuen crashoptimierten Kopfform und Bistrozone im RegioExpress) als Nachfolger alter Re-465-/EW-III- und NINA-Flotten.'
+          },
+          credit: {
+            artist: 'Vsler',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:BLS MIKA 105 Burgdorf.jpg'
+          }
+        },
+
+        // ==================== BLS, RHÄTISCHE BAHN, GÜTER & DIESEL (17-24) ====================
+        {
+          id: 17,
+          cat: 'spezial',
+          eraLabel: 'Baujahre 1964–1983',
+          img: './img/lok-17.jpg',
+          q: 'Auf welcher berühmten Schweizer Alpen-Transversale schrieb diese legendäre braune BLS-Lokomotive (Re 4/4 bzw. Re 425, 6.800 PS!) über Jahrzehnte Eisenbahngeschichte?',
+          a: ['Lötschberg-Simplon-Bergstrecke', 'Albula-Bernina-Schmalspurstrecke', 'Brünigbahn über den Brünigpass', 'Gotthard-Südrampe der RhB'],
+          wasDasIst: {
+            title: 'BLS Re 4/4 (UIC: Re 425)',
+            nick: '„Braune BLS“ / „Bruneli“',
+            operator: 'Bern-Lötschberg-Simplon-Bahn (BLS)',
+            built: '1964–1983 (35 Loks)',
+            builder: 'SLM Winterthur · BBC',
+            power: '4.990 kW (ca. 6.785 PS)',
+            vmax: '140 km/h',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Obwohl sie wie die SBB Re 4/4 II nur vier Achsen besaß, kitzelten die BLS-Ingenieure dank höherem Reibungsgewicht und Silizium-Gleichrichtertechnik (Spannungsregelung mit feinstufigen Wellenstrom-Motoren) nochmals mehr Leistung heraus – ideal für steile 27-‰-Lötschberg-Züge.'
+          },
+          credit: {
+            artist: 'NAC',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:5 BLS Re 4-4 180 Kandersteg 120818.jpg'
+          }
+        },
+        {
+          id: 18,
+          cat: 'spezial',
+          eraLabel: 'Baujahre 1994–1997',
+          img: './img/lok-18.jpg',
+          q: 'Worin unterschied sich die dunkelblaue BLS Re 465 technisch entscheidend von ihrer äußerlich fast gleichen Schwesterlok, der roten SBB Re 460?',
+          a: ['Einzelachssteuerung & stärkere Leistung (7.000 kW Stunde) für schwere Güterzüge', 'Sie besaß einen Diesel-Hilfsmotor statt Stromabnehmer', 'Sie wurde schmalspurig für 1.000 mm gebaut', 'Sie hatte statt Drehstrom noch mechanische Stufenschalter'],
+          wasDasIst: {
+            title: 'BLS Re 465',
+            nick: '„Blaue Lok 2000“ / Alpenlok',
+            operator: 'BLS / BLS Cargo (18 Loks)',
+            built: '1994–1997',
+            builder: 'SLM Winterthur · ABB',
+            power: '6.400 kW Dauer / 7.000 kW Stunde',
+            vmax: '160 km/h (Auslegung 230 km/h)',
+            system: '15 kV / 16,7 Hz AC · Normalspur (1.435 mm)',
+            trivia: 'Während bei der SBB Re 460 je ein Umrichter ein ganzes Drehgestell speist, lässt sich bei der BLS Re 465 jede der vier Achsen einzeln ansteuern (Einzelachsregelung). So schöpft sie beim Anfahren schwerer Güterzüge auf nassen Bergschienen noch mehr Zugkraft heraus.'
+          },
+          credit: {
+            artist: 'Titane8226',
+            license: 'CC BY 3.0',
+            commons: 'File:Re465 012-3.jpg'
+          }
+        },
+        {
+          id: 19,
+          cat: 'spezial',
+          eraLabel: 'Baujahre 1973 & 1984–1985',
+          img: './img/lok-19.jpg',
+          q: 'Auf welcher Spurweite und unter welchem Bahnstrom-System arbeitet diese rote Gebirgslokomotive (Ge 4/4 II) der Rhätischen Bahn in Graubünden?',
+          a: ['1.000 mm Meterspur · 11 kV / 16,7 Hz Wechselstrom', '1.435 mm Normalspur · 15 kV / 16,7 Hz Wechselstrom', '800 mm Schmalspur · 1.500 V Gleichstrom', '1.000 mm Meterspur · 3.000 V Gleichstrom'],
+          wasDasIst: {
+            title: 'RhB Ge 4/4 II (Nr. 611–633)',
+            nick: '„Bündner Bo’Bo’“',
+            operator: 'Rhätische Bahn (RhB · Stammnetz)',
+            built: '1973 (1. Serie) und 1984–1985 (2. Serie, 23 Loks)',
+            builder: 'SLM Winterthur · BBC',
+            power: '1.700 kW (ca. 2.310 PS)',
+            vmax: '90 km/h',
+            system: '11 kV / 16,7 Hz AC · Meterspur (1.000 mm)',
+            trivia: 'Das Bündner Stammnetz nutzt wie die SBB Einphasen-Wechselstrom mit 16,7 Hz, jedoch mit 11.000 Volt statt 15.000 Volt – angepasst an enge Tunnels und das 1.000-mm-Schmalspurgleis. Alle 23 Loks tragen Namen Bündner Gemeinden oder Berge.'
+          },
+          credit: {
+            artist: 'Valo139',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:RhB - Ge 4-4 II 632 (valo139).jpg'
+          }
+        },
+        {
+          id: 20,
+          cat: 'spezial',
+          eraLabel: 'Baujahre 1993–1999',
+          img: './img/lok-20.jpg',
+          q: 'Welches weltberühmte Schweizer Eisenbahn-Bauwerk überquert diese RhB Ge 4/4 III („Lok 2000 für Schmalspur“) hier direkt vor dem Landwassertunnel?',
+          a: ['Landwasserviadukt bei Filisur (Albulabahn)', 'Brusio-Kreisviadukt (Berninabahn)', 'Bietschtalbrücke (Lötschberg-Südrampe)', 'Grandfey-Viadukt bei Fribourg'],
+          wasDasIst: {
+            title: 'RhB Ge 4/4 III (Nr. 641–652)',
+            nick: '„Kleine Lok 2000“',
+            operator: 'Rhätische Bahn (RhB)',
+            built: '1993–1999 (12 Stück)',
+            builder: 'SLM Winterthur · ABB / Adtranz',
+            power: '2.400 kW Dauer (3.100 kW Max.)',
+            vmax: '100 km/h',
+            system: '11 kV / 16,7 Hz AC · Meterspur (1.000 mm)',
+            trivia: 'Die elegant geschwungene 65 Meter hohe Kalksteinbrücke aus dem Jahr 1902 ist das Wahrzeichen der UNESCO-Albulabahn: Die Gleise biegen im Radius von 100 Metern direkt in den senkrechten Fels des Landwassertunnels. Die 1990er-Ge 4/4 III übertrug die Drehstromtechnik der SBB Re 460 erstmals auf Schmalspur (Glacier Express, Autozug Vereina).'
+          },
+          credit: {
+            artist: 'Kabelleger / David Gubler',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:RhB Ge 4-4 III UNESCO Weltkulturerbe auf Landwasserviadukt.jpg'
+          }
+        },
+        {
+          id: 21,
+          cat: 'spezial',
+          eraLabel: 'Baujahre 2009–2010',
+          img: './img/lok-21.jpg',
+          q: 'Wie bezwingt dieser rote RhB-Triebzug („Allegra“ ABe 8/12) sogar die bis zu 70 ‰ steilen Rampen am Berninapass komplett ohne Zahnrad?',
+          a: ['Als Zweisystem-Triebzug (11 kV AC & 1.000 V DC) mit 8 von 12 Achsen angetrieben', 'Durch zuschaltbare Düsentriebwerke im Gepäckabteil', 'Er fährt auf dem Bernina nur talwärts', 'Mit Hilfe einer magnetischen Linearschiene im Gleisbett'],
+          wasDasIst: {
+            title: 'RhB ABe 8/12 („Allegra“)',
+            nick: '„Allegra“ (rätorom. Begrüßung)',
+            operator: 'Rhätische Bahn (RhB · Bernina & Stammnetz)',
+            built: '2009–2010 (15 dreiteilige Züge)',
+            builder: 'Stadler Rail',
+            power: 'ca. 2.600 kW unter 11 kV AC · ca. 2.320 kW Dauer',
+            vmax: '100 km/h',
+            system: 'Zweisystem: 11 kV AC (Stammnetz) & 1.000 V DC (Bernina) · 1.000 mm',
+            trivia: 'Damit Züge von Chur oder St. Moritz ohne Lokwechsel über den 2.253 m hohen Ospizio Bernina (auf 1.000 V Gleichstrom!) bis Tirano durchfahren können, vereint der Allegra beide Stromsysteme. Mit 8 angetriebenen Achsen zieht er zusätzlich noch klassische Panoramawagen die 70-‰-Steigung hinauf.'
+          },
+          credit: {
+            artist: 'Kabelleger / David Gubler',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:RhB ABe 8-12 Allegra between Lagalb and Ospizio Bernina.jpg'
+          }
+        },
+        {
+          id: 22,
+          cat: 'spezial',
+          eraLabel: 'Baujahre 2002–2006',
+          img: './img/lok-22.jpg',
+          q: 'Zu welcher in ganz Europa verbreiteten Lokomotivfamilie gehört diese Güterlok von SBB Cargo (Re 482) für den grenzüberschreitenden Verkehr nach Deutschland?',
+          a: ['Bombardier TRAXX (F140 AC)', 'Siemens EuroSprinter / Taurus', 'Alstom Prima', 'SLM Lok 2000'],
+          wasDasIst: {
+            title: 'SBB Cargo Re 482 (Bombardier TRAXX F140 AC)',
+            nick: '„TRAXX“ / DE-Güterlok',
+            operator: 'SBB Cargo (50 Stück)',
+            built: '2002–2006',
+            builder: 'Bombardier Transportation (Kassel)',
+            power: '5.600 kW',
+            vmax: '140 km/h',
+            system: '15 kV / 16,7 Hz AC (Zulassung CH & DE)',
+            trivia: 'Um Güterzüge von Basel oder Zürich ohne Umspannen bis ins Ruhrgebiet oder nach Hamburg fahren zu können, bestellte SBB Cargo ab 2002 die zweiländertaugliche TRAXX-Plattform mit Schweizer und deutschen Zugsicherungen (ETCS / Integra / PZB / LZB).'
+          },
+          credit: {
+            artist: 'Kabelleger / David Gubler',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Re 482 mit Containerzug bei Oberrüti.jpg'
+          }
+        },
+        {
+          id: 23,
+          cat: 'spezial',
+          eraLabel: 'Seit 2016 im Einsatz',
+          img: './img/lok-23.jpg',
+          q: 'Welcher Hersteller liefert diese Mehrsystem-Güterlokomotive Re 475 („Die Alpinisten“) für den Nord-Süd-Transitverkehr der BLS Cargo zwischen Rotterdam und Italien?',
+          a: ['Siemens Mobility (Siemens Vectron MS)', 'Stadler Rail (EuroDual)', 'Bombardier (TRAXX 3)', 'SLM Winterthur (Lok 2000)'],
+          wasDasIst: {
+            title: 'BLS Cargo Re 475 (Siemens Vectron MS)',
+            nick: '„Die Alpinisten“ / Vectron',
+            operator: 'BLS Cargo',
+            built: 'seit 2016 (kontinuierlich nachbestellt)',
+            builder: 'Siemens Mobility (München-Allach)',
+            power: '6.400 kW',
+            vmax: '160–200 km/h (Güterzug-Zulassung meist 160)',
+            system: 'Mehrsystem (15 kV AC · 25 kV AC · 3 kV DC · 1,5 kV DC)',
+            trivia: 'Mit vier Stromabnehmern auf dem Dach und den Ländersignalen für D-A-CH-I-NL (später teils auch Belgien) rollt die Re 475 von Nordseehäfen ohne Lokwechsel durch den Lötschberg- und Gotthard-Basistunnel bis nach Norditalien.'
+          },
+          credit: {
+            artist: 'Nelso Silva from Porto, Portugal',
+            license: 'CC BY-SA 2.0',
+            commons: 'File:BLS Cargo Re 475 402 (51422211111).jpg'
+          }
+        },
+        {
+          id: 24,
+          cat: 'spezial',
+          eraLabel: 'Baujahre 2003–2009',
+          img: './img/lok-24.jpg',
+          q: 'Wofür stehen im traditionellen Schweizer Bezeichnungsschema die beiden Buchstaben „Am“ auf dieser roten 1.500-kW-Maschine (Am 843 / MaK G 1700 BB)?',
+          a: ['Diesellokomotive (Verbrennungsmotor) mit über 80 km/h Höchstgeschwindigkeit', 'Zahnrad-Schmalspurlokomotive für reine Bergbahnen', 'Akku-Arbeitsfahrzeug ohne eigenen Führerstand', 'Wechselstrom-Schnellzuglok mit 200 km/h'],
+          wasDasIst: {
+            title: 'SBB Am 843 (Vossloh / MaK G 1700 BB)',
+            nick: '„Schwere Rangier- & Baulok“',
+            operator: 'SBB Cargo & SBB Infrastruktur (73+ Loks)',
+            built: '2003–2009',
+            builder: 'Vossloh Locomotives (Kiel)',
+            power: '1.500 kW (Caterpillar V12 Diesel)',
+            vmax: '100 km/h',
+            system: 'Dieselhydraulisch · Normalspur (1.435 mm)',
+            trivia: 'In der Schweiz bedeutet „A“ (früher für schnelle Hauptstreckenloks > 80 km/h, während reine Rangierloks „E“ tragen) kombiniert mit „m“ für motorbetrieben (Verbrennungsmotor) schlicht eine schnelle Diesellok: Mit Partikelfilter und Funkfernsteuerung zieht die Am 843 Bauzüge, Cargo-Übergaben und Rangiereinsätze.'
+          },
+          credit: {
+            artist: 'Lord Koxinga',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Rotkreuz Am 843 MaK 1700 3283.JPG'
+          }
+        }
+      ];
+
+      // State
+      let selectedLen = '8';
+      let activeCat = 'alle';
+      let deck = [];
+      let qIdx = 0;
+      let correctCount = 0;
+      let resultsLog = [];
+      let answered = false;
+      let f50Available = true;
+      let timerId = null;
+      let timeLeft = COUNTDOWN_SEC;
+      let countdownExpired = false;
+
+      function isCountdownEnabled() {
+        try {
+          return localStorage.getItem(COUNTDOWN_KEY) === '1';
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function setCountdownEnabled(enabled) {
+        try {
+          localStorage.setItem(COUNTDOWN_KEY, enabled ? '1' : '0');
+        } catch (e) {}
+      }
+
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function commonsUrl(fileTitle) {
+        const clean = String(fileTitle || '').replace(/^File:/i, '').trim().replace(/ /g, '_');
+        return 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(clean);
+      }
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function getPool(catId) {
+        return catId === 'alle' ? QUESTIONS.slice() : QUESTIONS.filter(q => q.cat === catId);
+      }
+
+      function computeRoundCount(poolLen) {
+        if (selectedLen === 'all') return poolLen;
+        const n = parseInt(selectedLen, 10) || 8;
+        return Math.min(n, poolLen);
+      }
+
+      function syncMenuControls() {
+        const timerOn = isCountdownEnabled();
+        document.getElementById('opt-timer-off').classList.toggle('active-relaxed', !timerOn);
+        document.getElementById('opt-timer-on').classList.toggle('active-timer', timerOn);
+        document.getElementById('countdown-hint').textContent = timerOn
+          ? 'Optionaler 35-Sekunden-Countdown aktiv — selbst wenn die Zeit abläuft, bleibt die Frage ganz entspannt offen.'
+          : 'Kein Timer aktiv — du kannst jedes Lok-Foto beliebig lange in Ruhe betrachten und vergrößern. Es werden keine Highscores gespeichert.';
+
+        document.querySelectorAll('#length-bar .opt-pill').forEach(btn => {
+          btn.classList.toggle('active-len', btn.dataset.len === selectedLen);
+        });
+      }
+
+      function renderMenu() {
+        syncMenuControls();
+        const grid = document.getElementById('cat-grid');
+        grid.innerHTML = CATEGORIES.map(cat => {
+          const pool = getPool(cat.id);
+          const roundCount = computeRoundCount(pool.length);
+          return `
+            <button type="button" class="cat-card ${cat.cls}" data-cat="${cat.id}">
+              <div class="cat-top">
+                <span class="cat-era">${escapeHtml(cat.era)}</span>
+              </div>
+              <div class="cat-name">${escapeHtml(cat.name)}</div>
+              <div class="cat-desc">${escapeHtml(cat.desc)}</div>
+              <div class="cat-foot">
+                <span>Runde: ${roundCount} von ${pool.length} Loks</span>
+                <span class="cat-go">Starten →</span>
+              </div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('countdown-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        setCountdownEnabled(btn.dataset.timer === '1');
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        syncMenuControls();
+      });
+
+      document.getElementById('length-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        selectedLen = btn.dataset.len;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        renderMenu();
+      });
+
+      document.getElementById('cat-grid').addEventListener('click', (e) => {
+        const card = e.target.closest('.cat-card');
+        if (!card) return;
+        startQuiz(card.dataset.cat);
+      });
+
+      function stopTimer() {
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      function updatePlayTimerUI() {
+        const btn = document.getElementById('btn-play-timer');
+        const track = document.getElementById('timer-track');
+        const fill = document.getElementById('timer-fill');
+        const on = isCountdownEnabled();
+
+        if (!on) {
+          track.classList.add('hidden');
+          btn.className = 'timer-toggle-btn';
+          btn.textContent = '☕ Kein Zeitlimit (Timer einschalten)';
+          return;
+        }
+
+        track.classList.remove('hidden');
+        if (countdownExpired || timeLeft <= 0) {
+          fill.style.width = '0%';
+          btn.className = 'timer-toggle-btn countdown-expired';
+          btn.textContent = '⏱ 35s um — gern in Ruhe weiter antworten';
+        } else {
+          const pct = Math.max(0, Math.min(100, (timeLeft / COUNTDOWN_SEC) * 100));
+          fill.style.width = pct + '%';
+          btn.className = 'timer-toggle-btn countdown-running';
+          btn.textContent = `⏱ ${Math.ceil(timeLeft)}s (Timer ausschalten)`;
+        }
+      }
+
+      function startGentleCountdown() {
+        stopTimer();
+        if (!isCountdownEnabled() || answered) {
+          updatePlayTimerUI();
+          return;
+        }
+        let lastTs = performance.now();
+        updatePlayTimerUI();
+        timerId = setInterval(() => {
+          const now = performance.now();
+          timeLeft = Math.max(0, timeLeft - (now - lastTs) / 1000);
+          lastTs = now;
+          if (timeLeft <= 0) {
+            timeLeft = 0;
+            countdownExpired = true;
+            stopTimer();
+          }
+          updatePlayTimerUI();
+        }, 120);
+      }
+
+      document.getElementById('btn-play-timer').addEventListener('click', () => {
+        const nextOn = !isCountdownEnabled();
+        setCountdownEnabled(nextOn);
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        if (nextOn) {
+          if (timeLeft <= 0) {
+            timeLeft = COUNTDOWN_SEC;
+            countdownExpired = false;
+          }
+          startGentleCountdown();
+        } else {
+          stopTimer();
+          updatePlayTimerUI();
+        }
+      });
+
+      function startQuiz(catId) {
+        activeCat = catId || 'alle';
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const pool = getPool(activeCat);
+        const count = computeRoundCount(pool.length);
+        deck = shuffle(pool).slice(0, count);
+        qIdx = 0;
+        correctCount = 0;
+        resultsLog = [];
+
+        document.getElementById('screen-menu').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-play').classList.remove('hidden');
+
+        showQuestion();
+      }
+
+      function showQuestion() {
+        stopTimer();
+        answered = false;
+        f50Available = true;
+        timeLeft = COUNTDOWN_SEC;
+        countdownExpired = false;
+
+        const item = deck[qIdx];
+        const catObj = CATEGORIES.find(c => c.id === item.cat);
+
+        document.getElementById('q-num').textContent = qIdx + 1;
+        document.getElementById('q-total').textContent = deck.length;
+        document.getElementById('q-correct-count').textContent = correctCount;
+        document.getElementById('q-cat-pill').textContent = catObj ? catObj.name : 'Schweizer Bahn';
+        document.getElementById('q-era-pill').textContent = item.eraLabel;
+
+        // Photo (spoiler-free alt & caption before answer)
+        const imgEl = document.getElementById('loco-img');
+        imgEl.alt = 'Schweizer Eisenbahnfahrzeug – Foto zur aktuellen Quizfrage';
+        imgEl.src = item.img;
+        document.getElementById('photo-attribution').textContent =
+          `📷 Foto: ${item.credit.artist} · ${item.credit.license} (Wikimedia Commons)`;
+        document.getElementById('photo-status-note').textContent = 'Klick aufs Bild öffnet Vollansicht';
+
+        // Quietly preload next locomotive image
+        if (qIdx + 1 < deck.length) {
+          const pre = new Image();
+          pre.src = deck[qIdx + 1].img;
+        }
+
+        document.getElementById('q-text').textContent = item.q;
+        document.getElementById('fact-sheet').classList.add('hidden');
+        document.getElementById('joker-50').disabled = false;
+        document.getElementById('joker-skip').disabled = false;
+
+        const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+        item._rendered = opts;
+        const letters = ['A', 'B', 'C', 'D'];
+        document.getElementById('answers-grid').innerHTML = opts.map((o, i) => `
+          <button type="button" class="ans-btn" data-idx="${i}">
+            <span class="ans-key">${letters[i]}</span>
+            <span>${escapeHtml(o.txt)}</span>
+          </button>
+        `).join('');
+
+        updatePlayTimerUI();
+        if (isCountdownEnabled()) {
+          startGentleCountdown();
+        }
+      }
+
+      document.getElementById('answers-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.ans-btn');
+        if (!btn || answered || btn.classList.contains('eliminated')) return;
+        pickAnswer(parseInt(btn.dataset.idx, 10));
+      });
+
+      function pickAnswer(idx) {
+        if (answered) return;
+        answered = true;
+        stopTimer();
+
+        const item = deck[qIdx];
+        const chosen = item._rendered[idx];
+        const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+        buttons.forEach((b, i) => {
+          b.disabled = true;
+          if (item._rendered[i].isRight) b.classList.add('correct');
+        });
+
+        let status = 'miss';
+        if (chosen && chosen.isRight) {
+          correctCount++;
+          status = 'ok';
+          if (window.ArcadeAudio) ArcadeAudio.perkGood();
+        } else {
+          if (buttons[idx]) buttons[idx].classList.add('wrong');
+          if (window.ArcadeAudio) ArcadeAudio.perkBad();
+        }
+
+        resultsLog.push({ item, status });
+        document.getElementById('q-correct-count').textContent = correctCount;
+        document.getElementById('joker-50').disabled = true;
+        document.getElementById('joker-skip').disabled = true;
+        revealSteckbrief(item, status);
+      }
+
+      function revealSteckbrief(item, status) {
+        const info = item.wasDasIst;
+        const sheet = document.getElementById('fact-sheet');
+        sheet.classList.toggle('is-right', status === 'ok');
+
+        // Safe now to enrich alt text & attribution note
+        document.getElementById('loco-img').alt = info.title;
+        document.getElementById('photo-status-note').textContent = info.title;
+
+        const verdictEl = document.getElementById('sb-verdict');
+        if (status === 'ok') {
+          verdictEl.className = 'sb-verdict ok';
+          verdictEl.textContent = '✓ Richtig erkannt — Was das ist:';
+        } else if (status === 'skip') {
+          verdictEl.className = 'sb-verdict skip';
+          verdictEl.textContent = 'ℹ Aufgelöst — Was das ist:';
+        } else {
+          verdictEl.className = 'sb-verdict miss';
+          verdictEl.textContent = '✗ Knapp daneben — Was das ist:';
+        }
+
+        document.getElementById('sb-title').textContent = info.title;
+        document.getElementById('sb-nick').textContent = info.nick || '';
+
+        const specs = [
+          { k: 'Bahngesellschaft', v: info.operator },
+          { k: 'Baujahre', v: info.built },
+          { k: 'Hersteller', v: info.builder },
+          { k: 'Leistung', v: info.power },
+          { k: 'Höchstgeschwindigkeit', v: info.vmax },
+          { k: 'System & Spur', v: info.system }
+        ];
+        document.getElementById('sb-specs').innerHTML = specs.map(s => `
+          <div class="spec-item">
+            <dt>${escapeHtml(s.k)}</dt>
+            <dd>${escapeHtml(s.v)}</dd>
+          </div>
+        `).join('');
+
+        document.getElementById('sb-trivia').textContent = info.trivia;
+        const cLink = document.getElementById('sb-commons-link');
+        cLink.href = commonsUrl(item.credit.commons);
+        cLink.textContent = `Fotoquelle: ${item.credit.artist} · ${item.credit.license} ↗`;
+
+        const nextBtn = document.getElementById('btn-next-q');
+        nextBtn.textContent = qIdx + 1 >= deck.length ? 'Zur Runden-Übersicht ▶' : 'Nächste Lok ▶';
+
+        sheet.classList.remove('hidden');
+        sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function nextQuestion() {
+        if (!answered) return;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        qIdx++;
+        if (qIdx >= deck.length) {
+          finishQuiz();
+        } else {
+          showQuestion();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      document.getElementById('btn-next-q').addEventListener('click', nextQuestion);
+
+      document.getElementById('joker-50').addEventListener('click', () => {
+        if (!f50Available || answered) return;
+        f50Available = false;
+        document.getElementById('joker-50').disabled = true;
+        if (window.ArcadeAudio) ArcadeAudio.pop();
+        const item = deck[qIdx];
+        const wrongIndices = shuffle(
+          item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)
+        ).slice(0, 2);
+        const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+        wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+      });
+
+      document.getElementById('joker-skip').addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const item = deck[qIdx];
+        const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+        buttons.forEach((b, i) => {
+          b.disabled = true;
+          if (item._rendered[i].isRight) b.classList.add('correct');
+        });
+        document.getElementById('joker-50').disabled = true;
+        document.getElementById('joker-skip').disabled = true;
+        resultsLog.push({ item, status: 'skip' });
+        revealSteckbrief(item, 'skip');
+      });
+
+      function finishQuiz() {
+        stopTimer();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+
+        const catObj = CATEGORIES.find(c => c.id === activeCat);
+        document.getElementById('res-score-line').textContent =
+          `${correctCount} von ${deck.length} Loks richtig erkannt`;
+        document.getElementById('res-sub').textContent =
+          `Kategorie: ${catObj ? catObj.name : activeCat} — unten findest du alle gezeigten Züge noch einmal zum Nachlesen und Vergrößern.`;
+
+        if (window.ArcadeAudio) {
+          if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win();
+          else ArcadeAudio.click();
+        }
+
+        const gallery = document.getElementById('gallery-list');
+        gallery.innerHTML = resultsLog.map((entry, idx) => {
+          const it = entry.item;
+          const info = it.wasDasIst;
+          const badgeTxt = entry.status === 'ok'
+            ? '✓ Richtig erkannt'
+            : (entry.status === 'skip' ? 'ℹ Übersprungen' : '✗ Verwechselt');
+          return `
+            <article class="gallery-row">
+              <button type="button" class="gallery-thumb" data-gidx="${idx}" title="Foto vergrößern">
+                <img src="${escapeHtml(it.img)}" alt="${escapeHtml(info.title)}" loading="lazy" />
+              </button>
+              <div class="gallery-info">
+                <h3>${escapeHtml(info.title)}</h3>
+                <div class="gallery-meta">${escapeHtml(info.built)} · ${escapeHtml(info.builder)} · ${escapeHtml(info.power)} · ${escapeHtml(info.vmax)}</div>
+                <p class="gallery-trivia">${escapeHtml(info.trivia)}</p>
+                <div class="gallery-status">
+                  <span class="outcome-badge ${entry.status}">${badgeTxt}</span>
+                  <a class="sb-commons-link" href="${escapeHtml(commonsUrl(it.credit.commons))}" target="_blank" rel="noopener noreferrer">
+                    Foto: ${escapeHtml(it.credit.artist)} (${escapeHtml(it.credit.license)}) ↗
+                  </a>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('gallery-list').addEventListener('click', (e) => {
+        const thumb = e.target.closest('.gallery-thumb');
+        if (!thumb) return;
+        const entry = resultsLog[parseInt(thumb.dataset.gidx, 10)];
+        if (entry) openLightbox(entry.item, true);
+      });
+
+      function backToMenu() {
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-menu').classList.remove('hidden');
+        renderMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('btn-back-menu').addEventListener('click', backToMenu);
+      document.getElementById('btn-change-cat').addEventListener('click', backToMenu);
+      document.getElementById('btn-replay').addEventListener('click', () => startQuiz(activeCat));
+
+      // Lightbox
+      function openLightbox(item, allowTitleReveal) {
+        const modal = document.getElementById('lightbox-modal');
+        const img = document.getElementById('lightbox-img');
+        const cap = document.getElementById('lightbox-caption');
+        img.src = item.img;
+        const revealed = allowTitleReveal || answered;
+        img.alt = revealed ? item.wasDasIst.title : 'Vergrößerte Ansicht des Eisenbahnfahrzeugs';
+        cap.textContent = revealed
+          ? `${item.wasDasIst.title} — Foto: ${item.credit.artist} (${item.credit.license})`
+          : `Foto: ${item.credit.artist} · ${item.credit.license} (Wikimedia Commons)`;
+        modal.classList.remove('hidden');
+      }
+
+      function closeLightbox() {
+        document.getElementById('lightbox-modal').classList.add('hidden');
+      }
+
+      document.getElementById('photo-frame').addEventListener('click', () => {
+        if (deck[qIdx]) openLightbox(deck[qIdx], false);
+      });
+      document.getElementById('btn-lightbox-close').addEventListener('click', closeLightbox);
+      document.getElementById('lightbox-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeLightbox();
+      });
+
+      // Keyboard navigation
+      window.addEventListener('keydown', (e) => {
+        const lb = document.getElementById('lightbox-modal');
+        if (!lb.classList.contains('hidden')) {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeLightbox();
+          }
+          return;
+        }
+        if (document.getElementById('screen-play').classList.contains('hidden')) return;
+
+        if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+          const idx = parseInt(e.key, 10) - 1;
+          const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+          if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+        } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+          if (e.target.closest('a, #btn-back-menu, #btn-mute, #btn-zoom-photo, #btn-play-timer')) return;
+          e.preventDefault();
+          nextQuestion();
+        }
+      });
+
+      if (window.ArcadeAudio) {
+        ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+      }
+      renderMenu();
+    })();
+  </script>
+</body>
+</html>

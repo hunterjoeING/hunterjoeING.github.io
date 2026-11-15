@@ -563,19 +563,19 @@
     <section class="hub-hero">
       <div class="hero-copy">
         <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Weltereignisse, Neuere Chinesische Geschichte, Politik &amp; Ökonomie sowie Allgemeinwissen).</p>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (Schweizer Eisenbahnloks mit Bildern, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Weltereignisse, Neuere Chinesische Geschichte, Politik &amp; Ökonomie sowie Allgemeinwissen).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">11</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-games">12</b><span>Module</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all">✨ Alles (11)</button>
+      <button class="domain-tab active" data-domain="all">✨ Alles (12)</button>
       <button class="domain-tab" data-domain="games">🎮 Games (6)</button>
-      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (5)</button>
+      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (6)</button>
     </div>
 
     <section class="section-block" id="sec-games">
@@ -593,7 +593,7 @@
 
     <section class="section-block" id="sec-quizzes">
       <div class="section-head">
-        <h2>🧠 Quiz-Welten <span class="section-count quiz">5 Quiz-Arenen</span></h2>
+        <h2>🧠 Quiz-Welten <span class="section-count quiz">6 Quiz-Arenen</span></h2>
       </div>
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
@@ -726,6 +726,28 @@
       ];
 
       const QUIZZES = [
+        {
+          id: 'quiz_swiss_trains',
+          href: './games/quiz-swiss-trains/index.html',
+          catLabel: 'Schweizer Eisenbahn · Fotos',
+          badge: '24 Loks · Ohne Zeitdruck',
+          featured: true,
+          noHighscore: true,
+          footerNote: '☕ Ohne Zeitdruck · Ohne Highscore',
+          cta: 'Entdecken →',
+          title: 'Schweizer Eisenbahnloks (ca. 1970–Heute)',
+          desc: 'Fotoreise durch 50 Jahre Schweizer Schienengeschichte – von SBB Re 4/4 II, Re 6/6 & BLS Re 4/4 bis Giruno, MIKA & Allegra mit ausführlichem „Was das ist“-Steckbrief.',
+          accent: '#ef4444',
+          glow: 'rgba(239, 68, 68, 0.24)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <rect x="8" y="7" width="24" height="23" rx="5" fill="#dc2626" stroke="#fca5a5" stroke-width="1.5"/>
+            <rect x="11.5" y="10.5" width="17" height="8" rx="2" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.2"/>
+            <path d="M20 20.5v5M17.5 23h5" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="13" cy="26.5" r="1.8" fill="#fde047"/>
+            <circle cx="27" cy="26.5" r="1.8" fill="#fde047"/>
+            <path d="M12 31l-3 4M28 31l3 4M10 34h20" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+          </svg>`
+        },
         {
           id: 'quiz_emob',
           href: './games/quiz-emobility/index.html',
@@ -861,12 +883,15 @@
       }
 
       function buildCard(g) {
-        const best = readItemBest(g.id);
+        const best = g.noHighscore ? null : readItemBest(g.id);
         const a = document.createElement('a');
         a.href = g.href;
         a.className = 'game-card' + (g.featured ? ' featured' : '');
         a.style.setProperty('--card-accent', g.accent);
         a.style.setProperty('--card-glow', g.glow);
+        const footerLeft = g.noHighscore
+          ? `<span class="card-best empty" style="color:#94a3b8;">${escapeHubHtml(g.footerNote || '☕ Ohne Zeitdruck · Ohne Highscore')}</span>`
+          : `<span class="card-best ${best ? '' : 'empty'}">${best ? '🏆 ' + escapeHubHtml(best) : 'Noch kein globaler Rekord'}</span>`;
         a.innerHTML = `
           <div class="card-top">
             <div class="game-icon-box">${g.icon}</div>
@@ -878,7 +903,7 @@
           <h3 class="card-title">${g.title}</h3>
           <p class="card-desc">${g.desc}</p>
           <div class="card-footer">
-            <span class="card-best ${best ? '' : 'empty'}">${best ? '🏆 ' + escapeHubHtml(best) : 'Noch kein globaler Rekord'}</span>
+            ${footerLeft}
             <span class="play-cta">${g.cta || 'Spielen →'}</span>
           </div>
         `;
