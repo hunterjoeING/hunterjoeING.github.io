@@ -563,19 +563,19 @@
     <section class="hub-hero">
       <div class="hero-copy">
         <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (Kino &amp; Filme ohne RomComs, Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Prozessoren, Grafikkarten &amp; Handys/Smartphones der letzten 25 Jahre mit Fotos, Pilz-Sammler-Quiz Region Aachen, Schweizer Eisenbahnloks, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Politik).</p>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (KI-Entstehung &amp; Funktionsweise, Kino &amp; Filme ohne RomComs, Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Prozessoren, Grafikkarten &amp; Handys/Smartphones der letzten 25 Jahre mit Fotos, Pilz-Sammler-Quiz Region Aachen, Schweizer Eisenbahnloks, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Politik).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">20</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-games">21</b><span>Module</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all">✨ Alles (20)</button>
+      <button class="domain-tab active" data-domain="all">✨ Alles (21)</button>
       <button class="domain-tab" data-domain="games">🎮 Games (7)</button>
-      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (13)</button>
+      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (14)</button>
     </div>
 
     <section class="section-block" id="sec-games">
@@ -593,7 +593,7 @@
 
     <section class="section-block" id="sec-quizzes">
       <div class="section-head">
-        <h2>🧠 Quiz-Welten <span class="section-count quiz">13 Quiz-Arenen</span></h2>
+        <h2>🧠 Quiz-Welten <span class="section-count quiz">14 Quiz-Arenen</span></h2>
       </div>
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
@@ -747,6 +747,33 @@
       ];
 
       const QUIZZES = [
+        {
+          id: 'quiz_ai',
+          href: './games/quiz-ai/index.html',
+          catLabel: 'Künstliche Intelligenz',
+          badge: '48 Fragen · 3 Stufen · Neu',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'KI: Entstehung &amp; Funktionsweise Quiz',
+          desc: 'Vom Turing-Test &amp; Perzeptron über Backpropagation, Gewichte &amp; Embeddings bis zu Transformern, Self-Attention, RLHF, Diffusion &amp; Hardware.',
+          accent: '#8b5cf6',
+          glow: 'rgba(139, 92, 246, 0.30)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <line x1="9" y1="12" x2="20" y2="9" stroke="#a78bfa" stroke-width="1.6"/>
+            <line x1="9" y1="12" x2="20" y2="20" stroke="#a78bfa" stroke-width="1.6"/>
+            <line x1="9" y1="28" x2="20" y2="20" stroke="#a78bfa" stroke-width="1.6"/>
+            <line x1="9" y1="28" x2="20" y2="31" stroke="#a78bfa" stroke-width="1.6"/>
+            <line x1="20" y1="9" x2="31" y2="20" stroke="#2dd4bf" stroke-width="1.7"/>
+            <line x1="20" y1="20" x2="31" y2="20" stroke="#2dd4bf" stroke-width="1.7"/>
+            <line x1="20" y1="31" x2="31" y2="20" stroke="#2dd4bf" stroke-width="1.7"/>
+            <circle cx="9" cy="12" r="3" fill="#c4b5fd"/>
+            <circle cx="9" cy="28" r="3" fill="#c4b5fd"/>
+            <circle cx="20" cy="9" r="3" fill="#8b5cf6" stroke="#ddd6fe" stroke-width="1.2"/>
+            <circle cx="20" cy="20" r="3.4" fill="#8b5cf6" stroke="#ddd6fe" stroke-width="1.2"/>
+            <circle cx="20" cy="31" r="3" fill="#8b5cf6" stroke="#ddd6fe" stroke-width="1.2"/>
+            <circle cx="31" cy="20" r="3.6" fill="#2dd4bf" stroke="#ccfbf1" stroke-width="1.2"/>
+          </svg>`
+        },
         {
           id: 'quiz_movies',
           href: './games/quiz-movies/index.html',

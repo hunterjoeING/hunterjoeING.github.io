@@ -150,6 +150,7 @@
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺', lowerIsBetter: false },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿', lowerIsBetter: false },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬', lowerIsBetter: false },
+    { id: 'quiz_ai', title: 'KI: Entstehung & Technik Quiz', icon: '🤖', lowerIsBetter: false },
     { id: 'quiz_china', title: 'Neuere Chinesische Geschichte', icon: '🏯', lowerIsBetter: false },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
@@ -179,6 +180,7 @@
       if (p.includes('/games/quiz-egypt')) return 'quiz_egypt';
       if (p.includes('/games/quiz-diving')) return 'quiz_diving';
       if (p.includes('/games/quiz-movies')) return 'quiz_movies';
+      if (p.includes('/games/quiz-ai')) return 'quiz_ai';
       if (p.includes('/games/quiz-china')) return 'quiz_china';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
