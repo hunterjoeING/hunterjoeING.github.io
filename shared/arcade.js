@@ -4,9 +4,11 @@
   const LEGACY_STORE_KEY = ['v2g', 'arcade', 'scores', 'v1'].join('_');
   const MUTE_KEY = 'arcade_muted';
   const LEGACY_MUTE_KEY = ['v2g', 'arcade', 'muted'].join('_');
+  const THEME_KEY = 'arcade_theme';
   let ctx = null;
   let muted = false;
   let noiseBuf = null;
+  let currentTheme = 'dark';
 
   try {
     const legacyMute = localStorage.getItem(LEGACY_MUTE_KEY);
@@ -20,6 +22,12 @@
     }
     if (legacyScores !== null) localStorage.removeItem(LEGACY_STORE_KEY);
     muted = localStorage.getItem(MUTE_KEY) === '1';
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    currentTheme = savedTheme === 'light' ? 'light' : 'dark';
+  } catch (e) {}
+
+  try {
+    document.documentElement.setAttribute('data-theme', currentTheme);
   } catch (e) {}
 
   function ensureCtx() {
@@ -690,12 +698,81 @@
     }
   };
 
+  window.ArcadeTheme = {
+    get: () => currentTheme,
+    isLight: () => currentTheme === 'light',
+    set: (theme) => {
+      const next = theme === 'light' ? 'light' : 'dark';
+      currentTheme = next;
+      try {
+        const root = document.documentElement;
+        root.classList.add('arcade-theme-snap');
+        localStorage.setItem(THEME_KEY, next);
+        root.setAttribute('data-theme', next);
+        void root.offsetHeight;
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          try { root.classList.remove('arcade-theme-snap'); } catch (e) {}
+        }));
+      } catch (e) {}
+      window.ArcadeTheme.syncButtons();
+      try {
+        window.dispatchEvent(new CustomEvent('arcade:theme-changed', { detail: next }));
+      } catch (e) {}
+      return next;
+    },
+    toggle: () => {
+      const next = currentTheme === 'light' ? 'dark' : 'light';
+      if (window.ArcadeAudio) window.ArcadeAudio.click();
+      return window.ArcadeTheme.set(next);
+    },
+    syncButtons: () => {
+      const isLight = currentTheme === 'light';
+      document.querySelectorAll('#btn-arcade-theme, [data-arcade-theme-btn]').forEach(btn => {
+        const showLabel = btn.classList.contains('hub-action-btn') || btn.dataset.withLabel === '1';
+        btn.innerHTML = showLabel
+          ? (isLight ? '🌙 <span>Dunkel</span>' : '☀️ <span>Hell</span>')
+          : (isLight ? '🌙' : '☀️');
+        btn.title = isLight
+          ? 'In den Dunkelmodus wechseln'
+          : 'In den Hellmodus wechseln';
+        btn.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+        btn.classList.toggle('is-light-mode', isLight);
+      });
+    }
+  };
+
+  function bindThemeButton(btn) {
+    if (!btn || btn.dataset.themeBound) return;
+    btn.dataset.themeBound = '1';
+    btn.addEventListener('click', () => window.ArcadeTheme.toggle());
+  }
+
   function initSharedChrome() {
-    if (document.body && document.body.dataset && document.body.dataset.noLeaderboard === '1') {
+    const topbarRight = document.querySelector('.arcade-topbar .topbar-right');
+    const noBoard = !!(document.body && document.body.dataset && document.body.dataset.noLeaderboard === '1');
+    const gameId = detectGameId();
+
+    if (topbarRight && !document.getElementById('btn-arcade-theme')) {
+      const themeBtn = document.createElement('button');
+      themeBtn.type = 'button';
+      themeBtn.className = 'icon-btn';
+      themeBtn.id = 'btn-arcade-theme';
+      bindThemeButton(themeBtn);
+      const muteBtn = document.getElementById('btn-mute');
+      if (muteBtn && muteBtn.parentNode === topbarRight) {
+        topbarRight.insertBefore(themeBtn, muteBtn);
+      } else {
+        topbarRight.appendChild(themeBtn);
+      }
+    }
+
+    document.querySelectorAll('#btn-arcade-theme, [data-arcade-theme-btn]').forEach(bindThemeButton);
+    window.ArcadeTheme.syncButtons();
+
+    if (noBoard) {
       return;
     }
-    const topbarRight = document.querySelector('.arcade-topbar .topbar-right');
-    const gameId = detectGameId();
+
     if (topbarRight && !document.getElementById('btn-arcade-board')) {
       const playerBtn = document.createElement('button');
       playerBtn.type = 'button';
@@ -711,10 +788,14 @@
       boardBtn.textContent = '🏆';
       boardBtn.addEventListener('click', () => window.ArcadeScores.openLeaderboardModal(gameId));
 
+      const themeEl = document.getElementById('btn-arcade-theme');
       const muteBtn = document.getElementById('btn-mute');
-      if (muteBtn && muteBtn.parentNode === topbarRight) {
-        topbarRight.insertBefore(playerBtn, muteBtn);
-        topbarRight.insertBefore(boardBtn, muteBtn);
+      const anchor = (themeEl && themeEl.parentNode === topbarRight)
+        ? themeEl
+        : (muteBtn && muteBtn.parentNode === topbarRight ? muteBtn : null);
+      if (anchor) {
+        topbarRight.insertBefore(playerBtn, anchor);
+        topbarRight.insertBefore(boardBtn, anchor);
       } else {
         topbarRight.appendChild(playerBtn);
         topbarRight.appendChild(boardBtn);

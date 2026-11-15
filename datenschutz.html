@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Datenschutzerklärung · HunterJoe Arcade</title>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
   <link rel="stylesheet" href="./shared/arcade.css" />
   <style>
     .legal-shell {
@@ -94,6 +95,23 @@
     .legal-footer-links a:hover {
       text-decoration: underline;
     }
+    html[data-theme="light"] .legal-card h1 { color: #0f172a; }
+    html[data-theme="light"] .legal-card h2 { color: #0369a1; }
+    html[data-theme="light"] .legal-card p,
+    html[data-theme="light"] .legal-card li { color: #334155; }
+    html[data-theme="light"] .legal-card a { color: #0284c7; }
+    html[data-theme="light"] .legal-card a:hover { color: #0c4a6e; }
+    html[data-theme="light"] .legal-card code {
+      background: #e2e8f0;
+      border-color: rgba(15, 23, 42, 0.16);
+      color: #0f172a;
+    }
+    html[data-theme="light"] .legal-box {
+      background: #f0f9ff;
+      border-color: rgba(2, 132, 199, 0.32);
+      color: #0f172a;
+    }
+    html[data-theme="light"] .legal-footer-links a { color: #0369a1; }
     @media (max-width: 560px) {
       .legal-card { padding: 18px 16px; }
     }
@@ -106,6 +124,7 @@
       <div class="topbar-title">🔒 Datenschutz</div>
     </div>
     <div class="topbar-right">
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkelmodus wechseln"></button>
       <a href="./impressum.html" class="back-hub-btn">⚖️ Impressum</a>
     </div>
   </header>
@@ -151,10 +170,11 @@
       <ul>
         <li>deine lokalen Bestleistungen, gespielten Runden und 3D-Minesweeper-Spielstände,</li>
         <li>deinen optional gewählten Spielernamen für die Bestenliste,</li>
-        <li>Komfort-Einstellungen (z. B. Ton an/aus, Quiz-Zeitmodus „Ohne Zeitlimit“).</li>
+        <li>Komfort- und Darstellungseinstellungen (z. B. Hell-/Dunkelmodus unter <code>arcade_theme</code>, Ton an/aus unter <code>arcade_muted</code>),</li>
+        <li>Quiz-Einstellungen sowie deinen lokalen Anti-Wiederholungs-Verlauf bereits gezeigter Fragen-IDs (<code>arcade_quiz_seen_v1:*</code>, Rundenlänge <code>arcade_quiz_len</code>, Zeitmodus „Ohne Zeitlimit“ unter <code>arcade_quiz_relaxed</code>), damit dir bei großen Fragenpools möglichst selten doppelte Fragen direkt nacheinander begegnen.</li>
       </ul>
       <p>
-        Diese Speicherung erfolgt auf Grundlage von § 25 Abs. 2 Nr. 2 TDDDG, da sie für die gewünschte Funktion des Spiel- und Quiz-Dashboards erforderlich ist. Du kannst den lokalen Speicher jederzeit vollständig über deine Browser-Einstellungen löschen.
+        Diese Speicherung erfolgt auf Grundlage von § 25 Abs. 2 Nr. 2 TDDDG, da sie für die gewünschte Funktion des Spiel- und Quiz-Dashboards erforderlich ist. Du kannst den lokalen Speicher jederzeit vollständig über deine Browser-Einstellungen oder in den Quiz-Modulen über „Verlauf zurücksetzen“ löschen.
       </p>
 
       <h2>6. Kontaktaufnahme per E-Mail oder Telefon</h2>
@@ -174,5 +194,6 @@
       <a href="./impressum.html">Impressum</a>
     </footer>
   </main>
+  <script src="./shared/arcade.js"></script>
 </body>
 </html>

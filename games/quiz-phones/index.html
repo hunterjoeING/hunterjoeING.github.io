@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Bild-Quiz über Handys & Smartphones der letzten 25 Jahre (2000–Heute): Vom unzerstörbaren Nokia 3310, Sony Ericsson T68i, N-Gage & Motorola RAZR V3 über das erste iPhone, Nokia N95, T-Mobile G1 & HTC HD2 bis Galaxy Note, Lumia 1020, OnePlus One, iPhone X & Galaxy Fold." />
   <title>Handys &amp; Smartphones der letzten 25 Jahre · Bild-Quiz · HunterJoe Arcade</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     :root {
@@ -667,6 +668,7 @@
             <button type="button" class="opt-pill" data-len="all">Alle 16 Geräte</button>
           </div>
         </div>
+        <div id="pool-status-bar" class="pool-status-bar"></div>
       </div>
 
       <div class="cat-section-title">Ära wählen &amp; starten</div>
@@ -754,8 +756,10 @@
   </div>
 
   <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
   <script>
     (function () {
+      const QUIZ_ID = 'phones';
       const COUNTDOWN_KEY = 'arcade_phones_countdown';
       const COUNTDOWN_SEC = 35;
 
@@ -1205,11 +1209,26 @@
         });
       }
 
+      function renderPoolStatus() {
+        const bar = document.getElementById('pool-status-bar');
+        if (!bar) return;
+        const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, QUESTIONS);
+        const effCount = computeRoundCount(stats.total);
+        bar.innerHTML = `
+          <span class="pool-status-text">
+            📚 Pool: <strong>${stats.total}</strong> Geräte · ✨ Noch neu: <strong>${stats.unseen}</strong> · 🎯 Nächste Runde (Alle): <strong>${effCount}</strong>
+          </span>
+          <button type="button" class="pool-reset-btn" id="btn-pool-reset" ${stats.seen === 0 ? 'disabled style="opacity:0.45;cursor:default;"' : ''}>🔄 Verlauf zurücksetzen (${stats.seen})</button>
+        `;
+      }
+
       function renderMenu() {
         syncMenuControls();
+        renderPoolStatus();
         const grid = document.getElementById('cat-grid');
         grid.innerHTML = CATEGORIES.map(cat => {
           const pool = getPool(cat.id);
+          const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, pool);
           const roundCount = computeRoundCount(pool.length);
           return `
             <button type="button" class="cat-card ${cat.cls}" data-cat="${cat.id}">
@@ -1217,13 +1236,21 @@
               <div class="cat-name">${escapeHtml(cat.name)}</div>
               <div class="cat-desc">${escapeHtml(cat.desc)}</div>
               <div class="cat-foot">
-                <span>Runde: ${roundCount} von ${pool.length} Geräten</span>
+                <span>Runde: ${roundCount} von ${pool.length} Geräten (${stats.unseen} neu)</span>
                 <span class="cat-go">Starten →</span>
               </div>
             </button>
           `;
         }).join('');
       }
+
+      document.getElementById('pool-status-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('#btn-pool-reset');
+        if (!btn || btn.disabled) return;
+        ArcadeQuizEngine.resetSeen(QUIZ_ID, QUESTIONS);
+        if (window.ArcadeAudio) ArcadeAudio.pop();
+        renderMenu();
+      });
 
       document.getElementById('countdown-bar').addEventListener('click', (e) => {
         const btn = e.target.closest('.opt-pill');
@@ -1301,7 +1328,8 @@
         activeCat = catId || 'alle';
         if (window.ArcadeAudio) ArcadeAudio.click();
         const pool = getPool(activeCat);
-        deck = shuffle(pool).slice(0, computeRoundCount(pool.length));
+        const reqCount = selectedLen === 'all' ? 'all' : (parseInt(selectedLen, 10) || 8);
+        deck = ArcadeQuizEngine.drawDeck(QUIZ_ID, pool, reqCount, 8).deck;
         qIdx = 0;
         correctCount = 0;
         resultsLog = [];
@@ -1393,6 +1421,7 @@
         }
 
         resultsLog.push({ item, status });
+        ArcadeQuizEngine.markSeen(QUIZ_ID, item);
         document.getElementById('q-correct-count').textContent = correctCount;
         document.getElementById('joker-50').disabled = true;
         document.getElementById('joker-skip').disabled = true;
@@ -1474,6 +1503,7 @@
         document.getElementById('joker-50').disabled = true;
         document.getElementById('joker-skip').disabled = true;
         resultsLog.push({ item, status: 'skip' });
+        ArcadeQuizEngine.markSeen(QUIZ_ID, item);
         revealSteckbrief(item, 'skip');
       });
 

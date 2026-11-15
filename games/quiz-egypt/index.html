@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Ägyptische Geschichte Quiz · HunterJoe Arcade</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .quiz-wrap {
@@ -298,7 +299,7 @@
     <section id="screen-menu" class="glass-card" style="padding:20px;">
       <h1 style="margin:0 0 6px; font-size:22px;">5.000 Jahre am Nil: Ägyptische Geschichte</h1>
       <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
-        48 historische Fragen von Narmer und den Pyramiden von Gizeh über Hatschepsut, Echnaton, Ramses II. und Kleopatra bis zum Suezkanal und modernen Ägypten (10 Fragen pro Runde, Tasten <code>1–4</code> möglich).
+        108 historische Fragen von Narmer und den Pyramiden von Gizeh über Hatschepsut, Echnaton, Ramses II. und Kleopatra bis zum Suezkanal und modernen Ägypten (Standard: 20 Fragen pro Runde, Tasten <code>1–4</code> möglich · Anti-Wiederholungs-Pool).
       </p>
 
       <div class="diff-bar" id="diff-bar">
@@ -320,7 +321,7 @@
     <!-- 2. Play Screen -->
     <section id="screen-play" class="glass-card quiz-stage hidden">
       <div class="quiz-meta-row">
-        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">10</span></span>
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">20</span></span>
         <span>🔥 Serie: <strong id="q-streak">0</strong></span>
         <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Ohne Zeitlimit umschalten">⏱ <strong id="q-sec">25</strong>s</button>
         <span>⭐ <strong id="q-score">0</strong> Pkt</span>
@@ -358,7 +359,7 @@
 
       <div class="result-stats">
         <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
-        <div class="res-box"><b id="res-correct">0/10</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-correct">0/20</b><span>Treffer</span></div>
         <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
       </div>
 
@@ -371,6 +372,8 @@
   </main>
 
   <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-egypt.js"></script>
   <script>
     const CATS = [
       { id: 'mix',         icon: '🏺', name: 'Nil-Chronik (Alle)',         cls: 'featured',      desc: 'Quer durch fünf Jahrtausende: von den ersten Pharaonen über Alexandria bis in die Moderne.' },
@@ -388,307 +391,12 @@
       pro:  { label: '🔴 Ägyptologe', cls: 'pro',  mult: 1.5 }
     };
 
-    // Index 0 of a[] is ALWAYS the correct answer
-    const QUESTIONS = [
-      // ── Altes Reich & Pyramiden ──
-      {
-        cat: 'altes_reich', diff: 'easy',
-        q: 'Welche der drei großen Pyramiden auf dem Plateau von Gizeh ist die größte und älteste?',
-        a: ['Die Cheops-Pyramide (Chufu)', 'Die Chephren-Pyramide (Chafre)', 'Die Mykerinos-Pyramide (Menkaure)', 'Die Stufenpyramide von Sakkara'],
-        exp: 'Die um 2580 v. Chr. erbaute Cheops-Pyramide erreichte ursprünglich etwa 146,6 m Höhe und gilt als einziges weitgehend erhaltenes der Sieben Weltwunder der Antike.'
-      },
-      {
-        cat: 'altes_reich', diff: 'easy',
-        q: 'Welches berühmte Monument in Gizeh vereint den Körper eines liegenden Löwen mit einem Menschenkopf?',
-        a: ['Die Große Sphinx von Gizeh', 'Der Koloss von Rhodos', 'Die Memnonkolosse', 'Der Obelisk von Luxor'],
-        exp: 'Die rund 73 m lange Große Sphinx wurde direkt aus dem anstehenden Kalksteinfels geschlagen und symbolisiert königliche Stärke und Weisheit.'
-      },
-      {
-        cat: 'altes_reich', diff: 'easy',
-        q: 'Wozu dienten im Alten Ägypten die sogenannten Kanopenkrüge bei einer Bestattung?',
-        a: ['Zur Aufbewahrung der einbalsamierten inneren Organe (Leber, Lunge, Magen, Gedärme)', 'Als Öllampen für die Arbeiter im Grabgang', 'Zur Lagerung von Nilwasser für das Jenseits', 'Als Sammelgefäße für Steuern aus den Provinzen'],
-        exp: 'Die vier Krüge standen unter dem Schutz der vier Horussöhne; das Herz als Sitz des Verstandes verblieb dagegen im mumifizierten Körper.'
-      },
-      {
-        cat: 'altes_reich', diff: 'easy',
-        q: 'Welcher schakalköpfige Gott begleitete im altägyptischen Glauben die Toten und wachte über die Mumifizierung?',
-        a: ['Anubis', 'Horus', 'Sobek', 'Chnum'],
-        exp: 'Anubis überwachte die Einbalsamierung und führte die Verstorbenen zur Halle des Totengerichts vor Osiris.'
-      },
-      {
-        cat: 'altes_reich', diff: 'mid',
-        q: 'Welcher legendäre Baumeister entwarf um 2650 v. Chr. in Sakkara für Pharao Djoser die erste monumentale Stufenpyramide aus Stein?',
-        a: ['Imhotep', 'Senenmut', 'Hemiunu', 'Amenhotep, Sohn des Hapu'],
-        exp: 'Imhotep war Wesir, Arzt und Architekt unter Djoser (3. Dynastie); spätere Generationen verehrten ihn sogar als Gott der Heilkunst und Weisheit.'
-      },
-      {
-        cat: 'altes_reich', diff: 'mid',
-        q: 'Was stellt die berühmte „Narmer-Palette“ (um 3100–3000 v. Chr.) symbolisch dar?',
-        a: ['Die Reichseinigung von Ober- und Unterägypten unter einem Herrscher', 'Den Bauplan der Cheops-Pyramide', 'Den Friedensvertrag mit den Hethitern', 'Die Eroberung Zyperns durch die ägyptische Flotte'],
-        exp: 'Pharao Narmer trägt auf der einen Seite die weiße Krone Oberägyptens und auf der anderen die rote Krone Unterägyptens – Beginn der 1. Dynastie.'
-      },
-      {
-        cat: 'altes_reich', diff: 'mid',
-        q: 'Gegen welches Symbol wurde beim altägyptischen Totengericht das Herz des Verstorbenen auf der Waage aufgewogen?',
-        a: ['Gegen die Feder der Ma’at (Wahrheit und kosmische Ordnung)', 'Gegen ein goldenes Ankh-Kreuz', 'Gegen einen Skarabäus aus Lapislazuli', 'Gegen einen Krug Nilwasser'],
-        exp: 'War das Herz durch Sünden schwerer als die Feder der Göttin Ma’at, verschlang es die Mischwesen-Göttin Ammit; andernfalls ging man in die Gefilde der Seligen ein.'
-      },
-      {
-        cat: 'altes_reich', diff: 'mid',
-        q: 'Aus welchem Material fertigten die Ägypter bereits im 3. Jahrtausend v. Chr. ihr wichtigstes leichtes Schreibmaterial?',
-        a: ['Aus dem Mark der Papyrusstaude aus dem Nildelta', 'Aus gegerbtem Krokodilleder', 'Aus gewalztem Goldblech', 'Aus gebrannter Seidenrinde'],
-        exp: 'Dünne Streifen des Papyrusmarks wurden kreuzweise übereinandergelegt, gepresst und geglättet – die pflanzlichen Säfte verklebten das Blatt dauerhaft.'
-      },
-      {
-        cat: 'altes_reich', diff: 'pro',
-        q: 'Welcher Pharao der 4. Dynastie (Vater des Cheops) ließ gleich drei Großpyramiden errichten, darunter die Knickpyramide und die Rote Pyramide von Dahschur?',
-        a: ['Snofru', 'Djoser', 'Menkaure', 'Unas'],
-        exp: 'Snofru experimentierte in Meidum und Dahschur mit den Neigungswinkeln – die Rote Pyramide gilt als erste echte Pyramide mit glatten Seitenflächen.'
-      },
-      {
-        cat: 'altes_reich', diff: 'pro',
-        q: 'Welches in den Pyramidentexten (ab Pharao Unas, Ende 5. Dynastie) erstmals überlieferte Textkorpus zählt zu den ältesten religiösen Schriften der Menschheit?',
-        a: ['Die Pyramidentexte an den Wänden der Grabkammern von Sakkara', 'Das Amduat auf Papyrus', 'Die Lehre des Amenemope', 'Die Rosetta-Dekrete'],
-        exp: 'Ursprünglich nur dem Pharao vorbehalten, entwickelten sich daraus später die Sargtexte des Mittleren Reiches und schließlich das Totenbuch für eine breitere Elite.'
-      },
-      {
-        cat: 'altes_reich', diff: 'pro',
-        q: 'Wie hieß das bis 2021 im eigenen Museum neben der Großen Pyramide ausgestellte, rund 43 m lange Zedernholzboot aus einer versiegelten Grube von 1954?',
-        a: ['Die Cheops-Sonnenbarke (Chufu-Schiff)', 'Die Barke der Kleopatra', 'Das Punt-Schiff der Hatschepsut', 'Die Bireme von Abukir'],
-        exp: 'Das rund 4.500 Jahre alte zerlegte Zedernboot wurde aus über 1.200 Einzelteilen rekonstruiert und zog 2021 ins Grand Egyptian Museum um.'
-      },
-      {
-        cat: 'altes_reich', diff: 'pro',
-        q: 'Welche zwei Hauptstädte bzw. Zentren prägten das Alte Reich politisch und religiös im Großraum des Nildelta-Eingangs?',
-        a: ['Memphis (Regierungssitz) und Heliopolis (Zentrum des Sonnengotts Re)', 'Alexandria und Berenike', 'Auaris und Tanis', 'Assuan und Philae'],
-        exp: 'Das an der Grenze zwischen Ober- und Unterägypten gelegene Memphis („Weiße Mauern“) war die Königsresidenz nahe der großen Nekropolen Sakkara und Gizeh.'
-      },
-
-      // ── Mittleres & Neues Reich ──
-      {
-        cat: 'neues_reich', diff: 'easy',
-        q: 'Welchem britischen Archäologen gelang im November 1922 die Entdeckung des fast unversehrten Grabes von Pharao Tutanchamun (KV62)?',
-        a: ['Howard Carter', 'Flinders Petrie', 'Heinrich Schliemann', 'Giovanni Belzoni'],
-        exp: 'Nach jahrelanger Suche im Tal der Könige (finanziert von Lord Carnarvon) stieß Carter auf den versiegelten Eingang samt der berühmten goldenen Totenmaske.'
-      },
-      {
-        cat: 'neues_reich', diff: 'easy',
-        q: 'Welche weibliche Herrscherin der 18. Dynastie regierte rund zwei Jahrzehnte als vollberechtigter Pharao und ließ den Terrassentempel von Deir el-Bahari errichten?',
-        a: ['Hatschepsut', 'Nofretete', 'Kleopatra VII.', 'Teje'],
-        exp: 'Hatschepsut stellte sich auf Statuen oft mit Königskrone und Zeremonialbart dar und entsandte eine berühmte Friedens- und Handelsexpedition nach Punt.'
-      },
-      {
-        cat: 'neues_reich', diff: 'easy',
-        q: 'Welche imposante Tempelanlage Ramses’ II. wurde in den 1960er Jahren komplett zersägt und höher wieder aufgebaut, um sie vor dem Nassersee zu retten?',
-        a: ['Die Felsentempel von Abu Simbel', 'Der Luxor-Tempel', 'Der Tempel von Dendera', 'Die Pyramiden von Meroe'],
-        exp: 'In einer spektakulären UNESCO-Rettungsaktion wurden beide Felsentempel Block für Block um rund 65 Meter höher versetzt.'
-      },
-      {
-        cat: 'neues_reich', diff: 'easy',
-        q: 'Wie heißt das berühmte Felsental am Westufer des Nils gegenüber von Luxor (Theben), in dem die Pharaonen des Neuen Reiches bestattet wurden?',
-        a: ['Das Tal der Könige', 'Das Wadi Natrun', 'Die Oase Siwa', 'Das Fayyum-Becken'],
-        exp: 'Um Grabräubern zu entgehen, gaben die Pharaonen des Neuen Reiches ab Thutmosis I. die sichtbaren Pyramiden auf und wählten verborgene Felsengräber.'
-      },
-      {
-        cat: 'neues_reich', diff: 'mid',
-        q: 'Welchen radikalen religiösen und politischen Umbruch vollzog Pharao Amenophis IV., besser bekannt als Echnaton?',
-        a: ['Er verlegte die Residenz nach Amarna und konzentrierte den Staatskult auf die Sonnenscheibe Aton', 'Er erklärte den Stiergott Apis zum alleinigen Herrscher über Memphis', 'Er schaffte das Königtum zugunsten eines Senats ab', 'Er führte das griechische Alphabet als Staatsschrift ein'],
-        exp: 'Gemeinsam mit seiner Frau Nofretete brach Echnaton die Macht der Amun-Priesterschaft von Theben; nach seinem Tod kehrte Tutanchamun zur alten Ordnung zurück.'
-      },
-      {
-        cat: 'neues_reich', diff: 'mid',
-        q: 'Wer waren die „Hyksos“, die während der Zweiten Zwischenzeit über Unterägypten herrschten?',
-        a: ['Aus Westasien stammende Herrscher mit Zentrum in Auaris, die u. a. Streitwagen und Kompositbögen verbreiteten', 'Eine Seemacht von der Insel Kreta', 'Römische Hilfstruppen aus Gallien', 'Berggemeinschaften aus dem südlichen Äthiopien'],
-        exp: 'Erst Ahmose I. gelang um 1550 v. Chr. die Vertreibung der Hyksos, womit die militärisch expansive Epoche des Neuen Reiches begann.'
-      },
-      {
-        cat: 'neues_reich', diff: 'mid',
-        q: 'Zwischen welchen beiden Großmächten wurde nach der Schlacht bei Kadesch unter Ramses II. einer der ältesten überlieferten Friedensverträge (1259 v. Chr.) geschlossen?',
-        a: ['Zwischen Ägypten und dem Hethiterreich (König Hattusili III.)', 'Zwischen Ägypten und dem Römischen Senat', 'Zwischen Ägypten und den Phöniziern von Karthago', 'Zwischen Ägypten und Sparta'],
-        exp: 'Kopien dieses paritätischen Beistands- und Nichtangriffspakts sind sowohl auf ägyptischen Tempelwänden als auch auf Keilschrifttafeln aus Hattusa erhalten.'
-      },
-      {
-        cat: 'neues_reich', diff: 'mid',
-        q: 'Welcher Pharao der 18. Dynastie gilt wegen seiner 17 Feldzüge bis zum Euphrat als der bedeutendste Feldherr des Neuen Reiches („Napoleon Ägyptens“)?',
-        a: ['Thutmosis III.', 'Tutanchamun', 'Sneferu', 'Psammetich I.'],
-        exp: 'Nach dem Tod seiner Stiefmutter und Mitregentin Hatschepsut dehnte Thutmosis III. (u. a. Sieg bei Megiddo) das ägyptische Einflussgebiet auf seine größte Ausdehnung aus.'
-      },
-      {
-        cat: 'neues_reich', diff: 'pro',
-        q: 'Welches Handwerkerdorf bei Theben-West ist berühmt für tausende erhaltene Ostraka – und für den ersten dokumentierten Arbeiterstreik der Weltgeschichte unter Ramses III.?',
-        a: ['Deir el-Medina', 'el-Lahun', 'Tell el-Daba', 'Kom Ombo'],
-        exp: 'Weil um 1152 v. Chr. die Getreidelieferungen ausblieben, legten die Grabmaler und Steinmetze von Deir el-Medina die Arbeit nieder und zogen vor die Totentempel.'
-      },
-      {
-        cat: 'neues_reich', diff: 'pro',
-        q: 'Welche große Bedrohung wehrte Pharao Ramses III. im Jahr 1177 v. Chr. in einer gewaltigen Land- und Nildelta-Seeschlacht ab (dargestellt in Medinet Habu)?',
-        a: ['Die sogenannten „Seevölker“ im Zuge des spätbronzezeitlichen Kollapses', 'Die Legionen Julius Caesars', 'Die Armeen des Kyros II.', 'Die Flotte von Karthago'],
-        exp: 'Während das Hethiterreich und mykenische Zentren zerfielen, behauptete Ägypten zwar seine Unabhängigkeit, verlor jedoch langfristig seine Großmachtstellung in der Levante.'
-      },
-      {
-        cat: 'neues_reich', diff: 'pro',
-        q: 'Wie hieß das sagenhafte Weihrauch-, Myrrhe- und Ebenholzland am Horn von Afrika bzw. Roten Meer, zu dem Hatschepsut eine große Seeexpedition sandte?',
-        a: ['Punt', 'Baktrien', 'Tartessos', 'Phrygien'],
-        exp: 'Die Reliefs im Tempel von Deir el-Bahari zeigen detailliert die Schiffsbeladung mit lebenden Weihrauchbäumen, Gold, Elfenbein und exotischen Tieren.'
-      },
-      {
-        cat: 'neues_reich', diff: 'pro',
-        q: 'Welchem Herrscher des Mittleren Reiches (12. Dynastie) wird die systematische Trockenlegung und landwirtschaftliche Erschließung des Fayyum-Beckens zugeschrieben?',
-        a: ['Amenemhet III. (und Sesostris II.)', 'Echnaton', 'Djoser', 'Necho II.'],
-        exp: 'Durch Deiche und Kanäle am Bahr Yusuf entstand im Fayyum eine fruchtbare Kornkammer, deren antike Stätten später den berühmten „Fayyum-Mumienporträts“ ihren Namen gaben.'
-      },
-
-      // ── Spätzeit, Alexander & Ptolemäer ──
-      {
-        cat: 'ptolemaeer', diff: 'easy',
-        q: 'Welcher historische Fund von 1799 ermöglichte schließlich die Entzifferung der ägyptischen Hieroglyphen?',
-        a: ['Der Stein von Rosette (Rosetta Stone)', 'Die Behistun-Inschrift', 'Der Codex Hammurapi', 'Die Kupferrolle von Qumran'],
-        exp: 'Der Basaltstein enthält dasselbe Priesterdekret für Ptolemaios V. (196 v. Chr.) in drei Schriften: Hieroglyphen, Demotisch und Altgriechisch.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'easy',
-        q: 'Welche Sprache sprach das Königshaus der Ptolemäer – einschließlich Kleopatra VII. – ursprünglich als Muttersprache?',
-        a: ['Altgriechisch (Makedonisch)', 'Latein', 'Babylonisch-Akkadisch', 'Altpersisch'],
-        exp: 'Die Ptolemäer stammten vom makedonischen General Ptolemaios ab; Kleopatra VII. war angeblich die erste ihrer Dynastie, die auch fließend Ägyptisch sprach.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'easy',
-        q: 'Welches Bauwerk auf einer Insel vor Alexandria zählte zu den Sieben Weltwundern der Antike?',
-        a: ['Der Leuchtturm von Pharos', 'Die Hängenden Gärten', 'Das Mausoleum von Halikarnassos', 'Der Tempel der Artemis'],
-        exp: 'Der über 100 m hohe Turm wies Seefahrern im flachen Nildelta mithilfe eines Feuers und Spiegeln über Jahrhunderte sicher den Weg in den Hafen.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'easy',
-        q: 'Welcher berühmte makedonische Eroberer gründete im Jahr 331 v. Chr. an der Mittelmeerküste die Stadt Alexandria?',
-        a: ['Alexander der Große', 'Seleukos I.', 'Perikles', 'Philipp V.'],
-        exp: 'Ägypten empfing Alexander 332 v. Chr. als Befreier von der Perserherrschaft; in der Oase Siwa ließ er sich zudem als Sohn des Ammon-Zeus bestätigen.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'mid',
-        q: 'Welchem französischen Sprachforscher gelang 1822 der entscheidende Durchbruch bei der Entzifferung der ägyptischen Hieroglyphen?',
-        a: ['Jean-François Champollion', 'Auguste Mariette', 'Richard Lepsius', 'Gaston Maspero'],
-        exp: 'Champollion erkannte anhand der Königskartuschen von „Ptolemaios“ und „Kleopatra“ sowie des Koptischen, dass Hieroglyphen sowohl Laut- als auch Sinnzeichen sind.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'mid',
-        q: 'Wann und unter wem endete die fast 300-jährige Herrschaft der Ptolemäer und Ägypten wurde direkt römische Provinz?',
-        a: ['30 v. Chr. nach der Niederlage von Kleopatra VII. und Marcus Antonius gegen Octavian', '44 v. Chr. direkt beim Tod Julius Caesars', '117 n. Chr. unter Kaiser Trajan', '313 n. Chr. unter Konstantin dem Großen'],
-        exp: 'Nach der Seeschlacht bei Actium (31 v. Chr.) rückte Octavian in Alexandria ein; fortan war Ägypten als kaiserliche Sonderprovinz die wichtigste Kornkammer Roms.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'mid',
-        q: 'Wer stellte in der 25. Dynastie (ca. 747–656 v. Chr.) als sogenannte „Schwarze Pharaonen“ die Herrscher über ganz Ägypten?',
-        a: ['Die Könige des nubischen Reiches von Kusch (z. B. Pije und Taharqa)', 'Phönizische Stadtfürsten aus Tyros', 'Lydische Herrscher unter Krösus', 'Skythische Reiterkrieger'],
-        exp: 'Die kuschitischen Herrscher aus dem heutigen Nordsudan verehrten den Gott Amun und belebten klassische altägyptische Bau- und Kunsttraditionen neu.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'mid',
-        q: 'Welche berühmte wissenschaftliche Einrichtung machte Alexandria unter den ersten Ptolemäern zum geistigen Zentrum der hellenistischen Welt?',
-        a: ['Das Museion mit der Großen Bibliothek von Alexandria', 'Die Platonische Akademie von Athen', 'Das Haus der Weisheit von Bagdad', 'Die Universität von Bologna'],
-        exp: 'Gelehrte wie Euklid, Archimedes (zeitweilig), Kallimachos und Eratosthenes forschten und lehrten dort auf Kosten des Königshauses.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'pro',
-        q: 'Wie berechnete der Bibliotheksleiter Eratosthenes um 240 v. Chr. erstaunlich präzise den Umfang der Erde?',
-        a: ['Durch Vergleich des Mittagsschattens zur Sommersonnenwende in Syene (Assuan) und Alexandria', 'Durch Umsegelung Afrikas entlang des Roten Meeres', 'Durch Beobachtung einer Mondfinsternis von Memphis bis Karthago', 'Mit einem Pendel auf der Spitze der Cheops-Pyramide'],
-        exp: 'Da die Sonne in Syene mittags senkrecht in einen tiefen Brunnen schien, in Alexandria aber einen Winkel von 1/50 eines Vollkreises warf, multiplizierte er die Distanz mit 50.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'pro',
-        q: 'Welche schriftliche Tradition des späten Ägyptens nutzte das griechische Alphabet (ergänzt um demotische Zusatzzeichen) und überlebte bis heute als Liturgiesprache?',
-        a: ['Das Koptische', 'Das Aramäische', 'Das Linearschrift B', 'Das Meroitische'],
-        exp: 'Das Koptische ist die direkte Endstufe der altägyptischen Sprache und war ein entscheidender Schlüssel für Champollions Entzifferung der Hieroglyphen.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'pro',
-        q: 'Welcher persische Großkönig eroberte Ägypten im Jahr 525 v. Chr. nach dem Sieg bei Pelusium und begründete die erste Perserherrschaft (27. Dynastie)?',
-        a: ['Kambyses II.', 'Xerxes I.', 'Darius III.', 'Artaxerxes II.'],
-        exp: 'In Ägypten wird Kambyses’ Herrschaft in griechischen Quellen (Herodot) oft hart dargestellt, während ägyptische Inschriften (Udjahorresnet) auch Anpassung an lokale Riten zeigen.'
-      },
-      {
-        cat: 'ptolemaeer', diff: 'pro',
-        q: 'Welcher Saiten-Pharao der 26. Dynastie soll um 600 v. Chr. einen Kanal vom Nil zum Roten Meer begonnen und laut Herodot Phönizier zur Umsegelung Afrikas ausgesandt haben?',
-        a: ['Necho II.', 'Psammetich III.', 'Amasis', 'Nektanebos II.'],
-        exp: 'Der von Necho II. begonnene „Bubastis-Kanal“ wurde später unter dem Perserkönig Darius I. vollendet – ein früher Vorläufer einer Nil-Rotmeer-Verbindung.'
-      },
-
-      // ── Islamisches & Modernes Ägypten ──
-      {
-        cat: 'neuzeit', diff: 'easy',
-        q: 'Welcher 193 km lange künstliche Seeweg durch Ägypten wurde 1869 feierlich eröffnet und verkürzte den Seeweg zwischen Europa und Asien drastisch?',
-        a: ['Der Suezkanal', 'Der Assuan-Kanal', 'Der Panamakanal', 'Der Korinthkanal'],
-        exp: 'Geplant und vorangetrieben von Ferdinand de Lesseps, verbindet der Suezkanal Port Said am Mittelmeer mit Suez am Roten Meer ohne jede Schleuse.'
-      },
-      {
-        cat: 'neuzeit', diff: 'easy',
-        q: 'Welches gigantische Wasserbauprojekt zwischen 1960 und 1970 bändigte die jährlichen Nilüberschwemmungen und schuf den Nassersee?',
-        a: ['Der Assuan-Hochdamm', 'Der Toshka-Kanal', 'Die Nilschleusen von Kairo', 'Das Delta-Stauwehr von Damiette'],
-        exp: 'Der Hochdamm versorgt Ägypten mit Elektrizität und planbarer Bewässerung, hält jedoch auch den fruchtbaren Nilschlamm zurück.'
-      },
-      {
-        cat: 'neuzeit', diff: 'easy',
-        q: 'Welcher europäische Feldherr landete 1798 mit einer Armee und über 160 Gelehrten in Ägypten und begründete damit indirekt die moderne Ägyptologie?',
-        a: ['Napoleon Bonaparte', 'Herzog von Wellington', 'Friedrich der Große', 'Giuseppe Garibaldi'],
-        exp: 'Zwar verlor Frankreich die Seeschlacht bei Abukir gegen Admiral Nelson, doch die Arbeit der Wissenschaftler in der „Description de l’Égypte“ faszinierte ganz Europa.'
-      },
-      {
-        cat: 'neuzeit', diff: 'easy',
-        q: 'Wie heißt das neue, riesige archäologische Großmuseum direkt nahe den Pyramiden von Gizeh?',
-        a: ['Grand Egyptian Museum (GEM)', 'Pergamon-Zentrum Kairo', 'Alexandria-Palast', 'Nubia-Dome'],
-        exp: 'Das Grand Egyptian Museum beherbergt unter anderem erstmals alle über 5.000 Objekte aus dem Grabschatz Tutanchamuns gemeinsam.'
-      },
-      {
-        cat: 'neuzeit', diff: 'mid',
-        q: 'Welche Dynastie begründete Kairo („al-Qahira“) im Jahr 969 n. Chr. sowie die berühmte Al-Azhar-Moschee und -Universität?',
-        a: ['Die Fatimiden', 'Die Umayyaden', 'Die Osmanen', 'Die Abbasiden von Bagdad'],
-        exp: 'Die schiitischen Fatimiden machten Kairo zur Kalifenresidenz neben der älteren Siedlung Fustat; die Al-Azhar zählt zu den ältesten durchgängig lehrenden Hochschulen der Welt.'
-      },
-      {
-        cat: 'neuzeit', diff: 'mid',
-        q: 'Wer gilt als Vater des modernen ägyptischen Staates im frühen 19. Jahrhundert (ab 1805), der Armee, Verwaltung, Bildung und Baumwollwirtschaft radikal reformierte?',
-        a: ['Muhammad Ali Pascha', 'Gamal Abdel Nasser', 'Ahmed Urabi', 'Anwar as-Sadat'],
-        exp: 'Der aus dem osmanischen Militär aufgestiegene Albaner machte Ägypten faktisch autonom und begründete die bis 1953 regierende Dynastie.'
-      },
-      {
-        cat: 'neuzeit', diff: 'mid',
-        q: 'Welche militärische und politische Umwälzung im Juli 1952 beendete die ägyptische Monarchie unter König Faruq?',
-        a: ['Der Staatsstreich der „Freien Offiziere“ um Muhammad Nagib und Gamal Abdel Nasser', 'Die Wahl der ersten verfassunggebenden Versammlung in Alexandria', 'Die Landung der Vereinten Nationen am Suezkanal', 'Der Rückzug des Römischen Reiches'],
-        exp: '1953 wurde offiziell die Republik ausgerufen; bald darauf trat Gamal Abdel Nasser als prägende Führungsfigur Ägyptens und der arabischen Welt hervor.'
-      },
-      {
-        cat: 'neuzeit', diff: 'mid',
-        q: 'Was löste im Herbst 1956 die internationale Suezkrise aus, in der Großbritannien, Frankreich und Israel militärisch intervenierten?',
-        a: ['Die Verstaatlichung der bisher britisch-französisch kontrollierten Suezkanal-Gesellschaft durch Nasser', 'Die Schließung der Pyramiden für ausländische Archäologen', 'Ein Handelsabkommen Ägyptens mit Japan', 'Die Entdeckung von Erdöl in der Oase Bahariya'],
-        exp: 'Politischer und wirtschaftlicher Druck der USA und der Sowjetunion zwang die Interventionsmächte zum Rückzug – Nasser ging daraus in der arabischen Welt als Triumphator hervor.'
-      },
-      {
-        cat: 'neuzeit', diff: 'pro',
-        q: 'In welcher Schlacht im Jahr 1260 besiegten die ägyptischen Mamluken unter Qutuz und Baibars erstmals ein mongolisches Heer im offenen Feld?',
-        a: ['Schlacht bei Ain Dschalut (in Galiläa)', 'Schlacht bei Hattin', 'Schlacht bei Mansura', 'Schlacht bei Lepanto'],
-        exp: 'Dieser Sieg stoppte die westwärtige Expansion des Mongolischen Reiches und sicherte dem Mamluken-Sultanat von Kairo über 250 Jahre Großmachtstatus.'
-      },
-      {
-        cat: 'neuzeit', diff: 'pro',
-        q: 'Welche Zitadelle und Dynastie errichtete Saladin (Salah ad-Din) Ende des 12. Jahrhunderts nach Ablösung des Fatimiden-Kalifats?',
-        a: ['Die Zitadelle von Kairo und die Dynastie der Ayyubiden', 'Die Festung Qaitbay und die Dynastie der Tuluniden', 'Das Serail von Luxor und die Hamdaniden', 'Die Mauer von Pelusium und die Seldschuken'],
-        exp: 'Saladin vereinigte Ägypten und Syrien unter sunnitischer Herrschaft und baute Kairo befestigungstechnisch stark aus.'
-      },
-      {
-        cat: 'neuzeit', diff: 'pro',
-        q: 'Welcher Aufstand ägyptischer Offiziere und Nationalisten von 1881/82 („Ägypten den Ägyptern“) führte unmittelbar zur britischen Besetzung des Landes?',
-        a: ['Die Urabi-Bewegung unter Oberst Ahmed Urabi (niedergeschlagen bei Tel-el-Kebir)', 'Der Mahdi-Aufstand im Nildelta', 'Die Revolte von Port Said 1901', 'Der Aufstand von Tanta 1854'],
-        exp: 'Großbritannien nutzte die Krise und die hohe Staatsverschuldung des Khediven, um ab 1882 faktisch die Kontrolle über Ägypten und den Suezkanal zu übernehmen.'
-      },
-      {
-        cat: 'neuzeit', diff: 'pro',
-        q: 'Welches Abkommen handelte Präsident Anwar as-Sadat 1978/79 aus, das Ägypten als erstem arabischen Staat Frieden mit Israel und die Rückgabe der Sinai-Halbinsel brachte?',
-        a: ['Das Camp-David-Abkommen (1978) und der Ägyptisch-Israelische Friedensvertrag (1979)', 'Das Abkommen von Lausanne', 'Die Konferenz von Bandung', 'Der Vertrag von Taif'],
-        exp: 'Sadat erhielt dafür gemeinsam mit Menachem Begin den Friedensnobelpreis, wurde jedoch 1981 während einer Militärparade in Kairo ermordet.'
-      }
-    ];
+    // Unified question bank (108 questions, index 0 of a[] is always correct)
+    const QUESTIONS = ArcadeQuizEngine.getBank('egypt');
 
     let selectedDiff = 'all';
     let activeCat = 'mix';
+    let menuControls = null;
     let deck = [];
     let qIdx = 0;
     let score = 0;
@@ -724,16 +432,18 @@
     }
 
     function renderMenu() {
+      const reqLen = menuControls ? menuControls.getLength() : 20;
       const grid = document.getElementById('cat-grid');
       grid.innerHTML = CATS.map(c => {
-        const count = getMatchingPool(c.id).length;
-        const roundLen = Math.min(10, count);
+        const pool = getMatchingPool(c.id);
+        const stats = ArcadeQuizEngine.getSeenStats('quiz_egypt', pool);
+        const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 20);
         return `
           <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
             <div class="cat-icon">${c.icon}</div>
             <div class="cat-name">${c.name}</div>
             <div class="cat-desc">${c.desc}</div>
-            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
           </button>
         `;
       }).join('');
@@ -745,6 +455,7 @@
       selectedDiff = btn.dataset.diff;
       document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
       ArcadeAudio.click();
+      if (menuControls) menuControls.refresh();
       renderMenu();
     });
 
@@ -752,8 +463,10 @@
       activeCat = catId;
       ArcadeAudio.click();
       const pool = getMatchingPool(catId);
-      const count = Math.min(10, pool.length);
-      deck = shuffle(pool).slice(0, count);
+      const reqLen = menuControls ? menuControls.getLength() : 20;
+      const drawn = ArcadeQuizEngine.drawDeck('quiz_egypt', pool, reqLen, 20);
+      deck = drawn.deck;
+      if (!deck.length) return;
       qIdx = 0;
       score = 0;
       streak = 0;
@@ -792,6 +505,8 @@
 
       document.getElementById('q-text').textContent = item.q;
       document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
 
       const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
       item._rendered = opts;
@@ -862,6 +577,7 @@
       clearInterval(timerId);
 
       const item = deck[qIdx];
+      ArcadeQuizEngine.markSeen('quiz_egypt', item);
       const chosen = item._rendered[idx];
       const buttons = document.querySelectorAll('#answers-grid .ans-btn');
       buttons.forEach((b, i) => {
@@ -874,7 +590,7 @@
         if (streak > bestStreak) bestStreak = streak;
         correctCount++;
         const mult = DIFF_INFO[item.diff].mult;
-        const speedBonus = Math.round(timeLeft * 5);
+        const speedBonus = (ArcadeQuizPrefs.isRelaxed() || timeLeft <= 0) ? 0 : Math.round(timeLeft * 5);
         const streakBonus = Math.min(4, streak - 1) * 25;
         score += Math.round((100 + speedBonus + streakBonus) * mult);
         ArcadeAudio.perkGood();
@@ -886,6 +602,9 @@
 
       document.getElementById('q-streak').textContent = streak;
       document.getElementById('q-score').textContent = score;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
+      updateTimerUI();
       showFact(chosen.isRight);
     }
 
@@ -930,6 +649,7 @@
       document.getElementById('joker-skip').disabled = true;
       clearInterval(timerId);
       answered = true;
+      ArcadeQuizEngine.markSeen('quiz_egypt', deck[qIdx]);
       ArcadeAudio.click();
       nextQuestion();
     }
@@ -940,7 +660,11 @@
       document.getElementById('screen-result').classList.remove('hidden');
 
       const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
-      const isNewRecord = ArcadeScores.record('quiz_egypt', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore('quiz_egypt', score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      const isNewRecord = scoreRes.isNewRecord;
       refreshTopBest();
 
       document.getElementById('res-score').textContent = score;
@@ -948,7 +672,8 @@
       document.getElementById('res-streak').textContent = `${bestStreak}×`;
       document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '👑' : '🏺');
       document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Pharaonen-Rekord!' : 'Runde abgeschlossen!';
-      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      const normNote = scoreRes.normalized ? ` · Bestenliste (20er-Norm): ${scoreRes.recordedScore} Pkt` : '';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}${normNote}`;
       if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
     }
 
@@ -962,6 +687,8 @@
       document.getElementById('screen-play').classList.add('hidden');
       document.getElementById('screen-result').classList.add('hidden');
       document.getElementById('screen-menu').classList.remove('hidden');
+      if (menuControls) menuControls.refresh();
+      renderMenu();
     }
 
     window.addEventListener('keydown', (e) => {
@@ -978,6 +705,14 @@
 
     ArcadeAudio.syncButton(document.getElementById('btn-mute'));
     ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    menuControls = ArcadeQuizEngine.initMenuControls({
+      quizId: 'quiz_egypt',
+      getPool: () => getMatchingPool('mix'),
+      onUpdate: () => renderMenu(),
+      lengths: [10, 20, 30, 'all'],
+      defaultLen: 20,
+      showAllLabel: 'Alle'
+    });
     refreshTopBest();
     renderMenu();
   </script>

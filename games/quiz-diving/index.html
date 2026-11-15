@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Tauchen &amp; Scuba Diving Quiz · HunterJoe Arcade</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .quiz-wrap {
@@ -298,7 +299,7 @@
     <section id="screen-menu" class="glass-card" style="padding:20px;">
       <h1 style="margin:0 0 6px; font-size:22px;">Tauch-Wissen: Gerätetauchen &amp; Scuba Diving</h1>
       <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
-        48 Fragen rund um Atemregler, Tarierung, Tauchphysik (Boyle, Dalton, Henry, Nitrox), Handzeichen, Sicherheit und berühmte Tauchspots weltweit (10 Fragen pro Runde, Tasten <code>1–4</code> möglich).
+        108 Fragen rund um Atemregler, Tarierung, Tauchphysik (Boyle, Dalton, Henry, Nitrox), Handzeichen, Sicherheit und berühmte Tauchspots weltweit (Standard: 20 Fragen pro Runde, Tasten <code>1–4</code> möglich · Anti-Wiederholungs-Pool).
       </p>
 
       <div class="diff-bar" id="diff-bar">
@@ -320,7 +321,7 @@
     <!-- 2. Play Screen -->
     <section id="screen-play" class="glass-card quiz-stage hidden">
       <div class="quiz-meta-row">
-        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">10</span></span>
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">20</span></span>
         <span>🔥 Serie: <strong id="q-streak">0</strong></span>
         <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Ohne Zeitlimit umschalten">⏱ <strong id="q-sec">25</strong>s</button>
         <span>⭐ <strong id="q-score">0</strong> Pkt</span>
@@ -358,7 +359,7 @@
 
       <div class="result-stats">
         <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
-        <div class="res-box"><b id="res-correct">0/10</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-correct">0/20</b><span>Treffer</span></div>
         <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
       </div>
 
@@ -371,6 +372,8 @@
   </main>
 
   <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-diving.js"></script>
   <script>
     const CATS = [
       { id: 'mix',         icon: '🌊', name: 'Tauch-Mix (Alle Themen)',     cls: 'featured',      desc: 'Quer durch Ausrüstung, Tauchphysik, Praxis & berühmte Meereswelten.' },
@@ -388,307 +391,12 @@
       pro:  { label: '🔴 Divemaster', cls: 'pro',  mult: 1.5 }
     };
 
-    // Index 0 of a[] is ALWAYS the correct answer
-    const QUESTIONS = [
-      // ── Ausrüstung & Technik ──
-      {
-        cat: 'ausruestung', diff: 'easy',
-        q: 'Wozu steht die Abkürzung „SCUBA“ im Englischen, die heute weltweit für das Gerätetauchen verwendet wird?',
-        a: ['Self-Contained Underwater Breathing Apparatus', 'Surface-Controlled Underwater Buoyancy Aid', 'Standard Compressed Undersea Breathing Air', 'Submersible Carbon Underwater Breathing Assembly'],
-        exp: 'Der Begriff beschreibt ein autonomes Unterwasser-Atemgerät, bei dem der Taucher seinen Atemgasvorrat unabhängig von der Oberfläche mitführt.'
-      },
-      {
-        cat: 'ausruestung', diff: 'easy',
-        q: 'Welche Hauptaufgabe hat das Tarierjacket (BCD – Buoyancy Control Device) beim Gerätetauchen?',
-        a: ['Das kontrollierte Einstellen des Auftriebs (neutrales Schweben unter Wasser, Schwimmen an der Oberfläche)', 'Das Filtern von Stickstoff aus der Atemluft', 'Die Erwärmung der Atemluft im Kaltwasser', 'Das Messen der aktuellen Tauchtiefe'],
-        exp: 'Über Inflator und Schnellablässe wird Luft ins Jacket gegeben oder abgelassen, um in jeder Tiefe exakt neutral zu tarieren (weder sinken noch steigen).'
-      },
-      {
-        cat: 'ausruestung', diff: 'easy',
-        q: 'Welches Messinstrument zeigt dem Taucher jederzeit zuverlässig an, wie viel Restdruck (in bar) noch in seiner Tauchflasche ist?',
-        a: ['Das Finimeter (bzw. ein Sender für den luftintegrierten Tauchcomputer)', 'Das Barometer', 'Der Tiefenmesser', 'Das Hygrometer'],
-        exp: 'Das Finimeter hängt am Hochdruckabgang der 1. Stufe und gibt den aktuellen Flaschendruck direkt in bar oder psi an.'
-      },
-      {
-        cat: 'ausruestung', diff: 'easy',
-        q: 'Was bezeichnet man beim Atemregler-System klassisch als „Oktopus“?',
-        a: ['Die alternative bzw. zweite 2. Stufe (Ersatzatemregler, meist mit gelbem Schlauch/Deckel)', 'Eine spezielle achtfach gefaltete Tarierblase', 'Den Tiefenmesser an der Konsole', 'Einen Unterwasser-Scooter mit acht Propellern'],
-        exp: 'Der Oktopus dient im Notfall (z. B. bei Luftmangel des Tauchpartners) zur schnellen und gut sichtbaren Wechselatmung.'
-      },
-      {
-        cat: 'ausruestung', diff: 'mid',
-        q: 'Wie arbeiten 1. Stufe und 2. Stufe eines modernen Pressluft-Atemreglers technisch zusammen?',
-        a: ['Die 1. Stufe senkt den Flaschendruck auf einen konstanten Mitteldruck (~9–10 bar über Umgebungsdruck), die 2. Stufe auf den exakten Umgebungsdruck', 'Die 1. Stufe kühlt die Luft ab, die 2. Stufe verdichtet sie wieder auf 200 bar', 'Die 1. Stufe ist nur für die Maske, die 2. Stufe für das Jacket zuständig', 'Beide Stufen liefern konstant 5 bar unabhängig von der Tauchtiefe'],
-        exp: 'Durch dieses zweistufige Demand-Prinzip (Lungenautomat) atmet der Taucher auf 30 m Tiefe genauso leicht wie an der Oberfläche.'
-      },
-      {
-        cat: 'ausruestung', diff: 'mid',
-        q: 'Worin besteht der wesentliche Unterschied zwischen einem DIN- und einem INT-Anschluss (Yoke/Bügel) am Flaschenventil?',
-        a: ['DIN wird direkt ins Flaschenventil eingeschraubt (bis 200/300 bar, O-Ring sitzt am Regler); INT nutzt einen Klemmbügel (bis ~232 bar, O-Ring im Ventil)', 'DIN ist nur für Nitrox, INT nur für reinen Sauerstoff zugelassen', 'INT besitzt keinen Hochdruckabgang für ein Finimeter', 'DIN funktioniert ausschließlich unter Süßwasser'],
-        exp: 'DIN-Gewinde sind mechanisch robuster gegen Stöße und für 300-bar-Flaschen ausgelegt; viele Reisebasen nutzen jedoch noch INT-Ventile mit herausnehmbarem Einsatz.'
-      },
-      {
-        cat: 'ausruestung', diff: 'mid',
-        q: 'Warum umschließt eine Tauchmaske – anders als eine Schwimmbrille – auch immer die Nase des Tauchers?',
-        a: ['Damit beim Abtauchen durch Ausatmen durch die Nase ein Druckausgleich im Maskenraum möglich ist', 'Damit man unter Wasser besser riechen kann', 'Damit das Glas automatisch von innen gekühlt wird', 'Um den Atemregler über die Nase zu fixieren'],
-        exp: 'Ohne Druckausgleich in der Maske entsteht bei steigendem Wasserdruck ein Unterdruck („Masken-Squeeze“), der schmerzhafte Einblutungen an Augen und Gesicht verursachen kann.'
-      },
-      {
-        cat: 'ausruestung', diff: 'mid',
-        q: 'Wodurch unterscheidet sich ein Trockentauchanzug (Drysuit) grundsätzlich von einem Nasstauchanzug?',
-        a: ['Ein Trockentauchanzug dichtet komplett ab, hält den Körper trocken und wird über ein Einlassventil zum Druckausgleich zusätzlich tariert', 'Ein Trockentauchanzug besteht immer aus dünnem Lycra ohne Unterzieher', 'Ein Trockentauchanzug darf nur bis maximal 5 m Tiefe genutzt werden', 'Beim Trockentauchanzug benötigt man grundsätzlich überhaupt kein Blei'],
-        exp: 'Die Wärmeisolation übernimmt beim Trockentauchen vor allem der Unterzieher und die eingeschlossene Luftschicht – bei falscher Tarierung oder zu viel Luft in den Füßen besteht jedoch „Aufschieß“-Risiko.'
-      },
-      {
-        cat: 'ausruestung', diff: 'pro',
-        q: 'Wie viel Liter entspannte Luft auf Oberflächendruck (1 bar) enthält eine Standard-12-Liter-Tauchflasche bei 200 bar Fülldruck näherungsweise (ideales Gas)?',
-        a: ['Ca. 2.400 Liter', 'Ca. 200 Liter', 'Ca. 1.200 Liter', 'Ca. 4.800 Liter'],
-        exp: 'Nach p · V = const. gilt: 12 L × 200 bar = 2.400 Liter (bei sehr hohen Drücken wie 300 bar weicht reales Gas wegen der Kompressibilität etwas nach unten ab).'
-      },
-      {
-        cat: 'ausruestung', diff: 'pro',
-        q: 'Warum können Atemregler beim Tauchen in kaltem Wasser (< 4–10 °C) vereisen und plötzlich unkontrolliert abblasen?',
-        a: ['Durch den Joule-Thomson-Effekt kühlt expandierende Luft stark ab und lässt Restfeuchte im Ventil oder Umgebungswasser anfrieren', 'Weil der Stickstoff im Pressluftgemisch bereits bei +8 °C gefriert', 'Weil das Finimeter bei Kälte den Mitteldruck auf 200 bar erhöht', 'Weil Silikonmundstücke bei unter 10 °C schmelzen'],
-        exp: 'In Kaltwasser sind speziell gekapselte (membrangesteuerte) kaltwassertaugliche Regler und – je nach Standard – zwei getrennte 1. Stufen an Doppelventilen Pflicht.'
-      },
-      {
-        cat: 'ausruestung', diff: 'pro',
-        q: 'Welche Hauptfunktion erfüllt die „Membran“ bzw. „Kapselung“ in einer membrangesteuerten 1. Stufe (im Gegensatz zu ungekapselten Kolbenreglern)?',
-        a: ['Sie trennt die empfindliche Hochdruckmechanik hermetisch vom schmutzigen oder kalten Umgebungswasser', 'Sie mischt automatisch Helium ins Atemgas', 'Sie erhöht die Sauerstoffkonzentration auf 32 %', 'Sie ersetzt die 2. Stufe komplett'],
-        exp: 'Eine trockene (oder mit Öl/Silikon gefüllte) Kammer schützt Feder und Ventilsitz vor Vereisung, Sand und Korrosion.'
-      },
-      {
-        cat: 'ausruestung', diff: 'pro',
-        q: 'Wie verändert sich typischerweise der benötigte Bleibedarf beim Wechsel vom Süßwassersee ins Salzwasser (bei sonst identischer Ausrüstung)?',
-        a: ['Im Salzwasser benötigt man mehr Blei (ca. 2–3 kg zusätzlich), weil Salzwasser eine höhere Dichte (~1,025 kg/L) und damit stärkeren Auftrieb besitzt', 'Im Salzwasser benötigt man deutlich weniger Blei, weil Salz nach unten zieht', 'Der Bleibedarf ist exakt identisch', 'Im Salzwasser darf kein Blei am Gürtel getragen werden'],
-        exp: 'Salzwasser ist rund 2,5 % dichter als Süßwasser; ein verdrängtes Körper-/Ausrüstungsvolumen von 80–100 Litern erzeugt dadurch etwa 2–2,5 kg mehr Auftrieb.'
-      },
-
-      // ── Physik, Medizin & Sicherheit ──
-      {
-        cat: 'physik', diff: 'easy',
-        q: 'Wie stark steigt der Wasserdruck zusätzlich zum Luftdruck (1 bar) pro 10 Meter Wassertiefe?',
-        a: ['Um jeweils ca. 1 bar (auf 20 m herrschen also ca. 3 bar Gesamtdruck)', 'Um jeweils 0,1 bar', 'Um jeweils 10 bar', 'Der Druck verdoppelt sich erst ab 50 Metern'],
-        exp: 'An der Oberfläche herrscht 1 bar Atmosphärendruck; auf 10 m sind es 2 bar, auf 20 m 3 bar, auf 30 m 4 bar Gesamtdruck.'
-      },
-      {
-        cat: 'physik', diff: 'easy',
-        q: 'Welche oberste Grundregel des Gerätetauchens verhindert eine gefährliche Lungenüberdehnung beim Auftauchen?',
-        a: ['Niemals beim Tauchen die Luft anhalten – jederzeit ruhig und kontinuierlich weiteratmen', 'Beim Auftauchen immer so schnell wie möglich nach oben schießen', 'Vor dem Abtauchen die gesamte Luft aus dem Jacket ablassen', 'Unter Wasser nur alle 30 Sekunden einmal tief einatmen'],
-        exp: 'Nach dem Gesetz von Boyle-Mariotte dehnt sich eingeschlossene Luft bei Druckabnahme aus – schon wenige Meter Auftauchen mit geschlossener Stimmritze können die Lunge schwer verletzen.'
-      },
-      {
-        cat: 'physik', diff: 'easy',
-        q: 'Welcher Standard-Sicherheitsstopp wird bei Sporttauchgängen (insbesondere tiefer als 10 m) am Ende des Tauchgangs empfohlen?',
-        a: ['Etwa 3 Minuten auf rund 5 Metern Tiefe', '15 Minuten auf 20 Metern Tiefe', '10 Sekunden auf 1 Meter Tiefe', 'Kein Stopp, sondern direkt an der Wasseroberfläche abwarten'],
-        exp: 'Der Sicherheitsstopp auf ca. 5 m gibt dem Körper zusätzliche Zeit, überschüssigen Stickstoff kontrolliert über die Lunge abzuatmen.'
-      },
-      {
-        cat: 'physik', diff: 'easy',
-        q: 'Was versteht man unter einem „Druckausgleich“ (z. B. Valsalva-Manöver) beim Abtauchen?',
-        a: ['Das vorsichtige Zuführen von Luft über die Ohrtrompete (Eustachische Röhre) ins Mittelohr, um dem steigenden Wasserdruck auf das Trommelfell entgegenzuwirken', 'Das Ablassen von Luft aus der Tauchflasche ins Meer', 'Das Nachfüllen von Wasser in den Tauchanzug', 'Das Kalibrieren des Kompasses auf Null'],
-        exp: 'Man sollte frühzeitig und oft schon ab dem ersten Meter ausgleichen – noch bevor überhaupt ein unangenehmer Druck auf dem Ohr spürbar wird.'
-      },
-      {
-        cat: 'physik', diff: 'mid',
-        q: 'Zwischen welchen zwei Tiefenbereichen tritt prozentual die größte Volumenänderung (Verdopplung bzw. Halbierung) eines gasgefüllten Hohlraums auf?',
-        a: ['Zwischen 0 Metern (1 bar) und 10 Metern (2 bar)', 'Zwischen 20 Metern (3 bar) und 30 Metern (4 bar)', 'Zwischen 30 Metern (4 bar) und 40 Metern (5 bar)', 'Die Volumenänderung ist in jeder Tiefe prozentual exakt gleich'],
-        exp: 'Von 0 m auf 10 m verdoppelt sich der Druck (1 -> 2 bar), das Volumen halbiert sich (-50 %). Von 30 m auf 40 m sinkt es nur noch von 1/4 auf 1/5 (-20 %).'
-      },
-      {
-        cat: 'physik', diff: 'mid',
-        q: 'Welches Gas verursacht bei tieferen Pressluft-Tauchgängen (typischerweise ab ~30 m) den sogenannten „Tiefenrausch“ (Narkosewirkung)?',
-        a: ['Der erhöhte Partialdruck des Stickstoffs (N₂)', 'Das fehlende Kohlendioxid (CO₂) in der Flasche', 'Eine Reaktion von Salzwasser mit Aluminium', 'Das Helium im normalen Atemgas'],
-        exp: 'Der Tiefenrausch äußert sich ähnlich wie Alkoholrausch (Euphorie oder Angst, Tunnelblick, Rechenfehler) und verschwindet beim Aufsteigen in geringere Tiefe rasch.'
-      },
-      {
-        cat: 'physik', diff: 'mid',
-        q: 'Was ist der Hauptvorteil von „Nitrox“ (z. B. EAN32 mit 32 % Sauerstoff und 68 % Stickstoff) im Sporttauchbereich?',
-        a: ['Weniger Stickstoffanteil verlängert die Nullzeiten bzw. erhöht die Sicherheitsmarge gegen Dekompressionsstress', 'Mit Nitrox darf man viel tiefer tauchen als mit normaler Pressluft', 'Nitrox verhindert jeden Druckausgleich im Ohr', 'Nitrox senkt den Luftverbrauch auf genau die Hälfte'],
-        exp: 'Weil Nitrox mehr Sauerstoff enthält, sinkt die maximale Tauchtiefe (MOD) sogar deutlich gegenüber Pressluft – man gewinnt aber längere Grundzeiten im Flach-/Mittelbereich.'
-      },
-      {
-        cat: 'physik', diff: 'mid',
-        q: 'Warum muss nach einem Tauchgang eine ausreichend lange Pause (meist 12–18+ Stunden) vor einem Linienflug eingehalten werden?',
-        a: ['Weil der reduzierte Kabinendruck im Flugzeug (~0,75–0,8 bar) noch gelösten Reststickstoff im Gewebe zu gefährlichen Gasblasen ausperlen lassen kann', 'Weil Salzwasser sonst die Gepäckscanner stört', 'Weil das Trommelfell erst nach 24 Stunden wieder durchlässig wird', 'Weil Taucheruhren im Flugzeug stehen bleiben'],
-        exp: 'Die Flugzeugkabine entspricht etwa 2.000–2.400 m Höhe – nach einem einzelnen Nullzeittauchgang empfiehlt DAN mindestens 12 Stunden, nach mehreren Tauchgängen mindestens 18 Stunden.'
-      },
-      {
-        cat: 'physik', diff: 'pro',
-        q: 'Welches physikalische Gasgesetz erklärt unmittelbar die Stickstoffaufsättigung im Blut und Gewebe unter Druck sowie die Ausgasung beim Auftauchen (DCS)?',
-        a: ['Das Gesetz von Henry (gelöste Gasmenge ist proportional zum Partialdruck über der Flüssigkeit)', 'Das Gesetz von Archimedes', 'Das Ohmsche Gesetz', 'Die Snellius-Brechungsregel'],
-        exp: 'Steigt der Stickstoffpartialdruck in der Tiefe, löst sich mehr N₂ im Gewebe; fällt der Druck beim Aufstieg zu schnell, bilden sich Bläschen (Dekompressionskrankheit / DCS).'
-      },
-      {
-        cat: 'physik', diff: 'pro',
-        q: 'Wie hoch liegt die maximale Einsatztiefe (MOD) für Nitrox EAN32 (32 % O₂) beim konservativen Sporttauch-Limit von pO₂ = 1,4 bar?',
-        a: ['Ca. 33,7 Meter (gerundet 33 m)', 'Ca. 21 Meter', 'Ca. 56 Meter', 'Ca. 66 Meter'],
-        exp: 'Nach Dalton: p_max = 1,4 bar / 0,32 = 4,375 bar Gesamtdruck. Abzüglich 1 bar Oberflächendruck bleiben 3,375 bar Wasserdruck = ca. 33,7 m Tiefe.'
-      },
-      {
-        cat: 'physik', diff: 'pro',
-        q: 'Was bezeichnet beim Tauchen ein sogenannter „Reverse Block“ (umgekehrter Block)?',
-        a: ['Schmerzhafte Blockade, wenn sich Luft beim Auftauchen in Mittelohr oder Nebenhöhlen ausdehnt, aber nicht mehr entweichen kann', 'Ein Defekt der Flaschenreserve', 'Das Rückwärts-Schwimmen mit Flossen', 'Das zu schnelle Absinken zu Tauchbeginn'],
-        exp: 'Lässt z. B. abschwellendes Nasenspray nach oder schwillt Schleimhaut an, darf man nicht weiter aufsteigen, sondern sinkt leicht ab und versucht sanften Ausgleich (ohne starkes Pressen).'
-      },
-      {
-        cat: 'physik', diff: 'pro',
-        q: 'Welche zwei unterschiedlichen Gasgefahren werden durch das Gesetz von Dalton (Summe der Partialdrücke) auf 40 m Tiefe (5 bar) bei normaler Pressluft verdeutlicht?',
-        a: ['Der Stickstoffpartialdruck steigt auf ~3,95 bar (Narkoserisiko) und der Sauerstoffpartialdruck auf ~1,05 bar (unterhalb des 1,4-bar-Limits)', 'Sauerstoff und Stickstoff trennen sich vollständig in der Flasche', 'Beide Gase fallen unter 0,2 bar ab', 'Kohlendioxid wird in Helium umgewandelt'],
-        exp: 'Daltons Gesetz zeigt: 5 bar × 0,79 = 3,95 bar pN₂ und 5 bar × 0,21 = 1,05 bar pO₂. Die prozentuale Mischung bleibt gleich, aber die wirksame Menge pro Atemzug verfünffacht sich.'
-      },
-
-      // ── Tauchpraxis & Signale ──
-      {
-        cat: 'praxis', diff: 'easy',
-        q: 'Was bedeutet unter Wasser das Handzeichen „Daumen nach oben“?',
-        a: ['„Auftauchen / nach oben!“ (Beenden des Tauchgangs oder Höhergehen)', '„Alles super / OK!“', '„Ich habe noch 100 bar Luft“', '„Schau mal diesen Hai an!“'],
-        exp: 'Ein häufiger Anfängerfehler! „Alles OK“ zeigt man unter Wasser ausschließlich durch einen Kreis aus Daumen und Zeigefinger (andere Finger abgespreizt).'
-      },
-      {
-        cat: 'praxis', diff: 'easy',
-        q: 'Welches Handzeichen steht im internationalen Tauchsport eindeutig für „Alles OK!“?',
-        a: ['Daumen und Zeigefinger bilden ein „O“, die anderen drei Finger sind gespreizt', 'Beide Daumen nach oben', 'Flache Hand waagerecht hin und her kippen', 'Kreisende Bewegung mit dem Zeigefinger'],
-        exp: 'Nachts zeigt man das „OK“-Zeichen mit der Hand vor der Brust und leuchtet mit der Tauchlampe kurz darauf – niemals dem Buddy direkt in die Augen leuchten!'
-      },
-      {
-        cat: 'praxis', diff: 'easy',
-        q: 'Was überprüft man beim klassischen Partnercheck (Buddy-Check nach PADI-Merksatz „BWRAF“)?',
-        a: ['BCD (Jacket), Weights (Blei), Releases (Schnallen/Verschlüsse), Air (Luft/Atemregler/Finimeter) und Final OK', 'Batterie, Wetter, Riffschutz, Anker, Flossen', 'Brille, Weste, Ruder, Anker, Funk', 'Breite, Weite, Richtung, Auftrieb, Foto'],
-        exp: 'Ein konsequenter Buddy-Check vor jedem Einstieg deckt vergessene Bleigurte, geschlossene Flaschenventile oder verdrehte Schnallen sofort auf.'
-      },
-      {
-        cat: 'praxis', diff: 'easy',
-        q: 'Wie sollte man sich verhalten, wenn unter Wasser Wasser in die Tauchmaske eindringt?',
-        a: ['Ruhig durch den Atemregler weiteratmen, oberen Maskenrahmen leicht andrücken, nach oben schauen und sanft durch die Nase ausatmen', 'Sofort die Maske ganz abnehmen und schnell auftauchen', 'Den Atemregler aus dem Mund nehmen und Luft anhalten', 'Mit den Händen unter der Maske Wasser ausschöpfen'],
-        exp: 'Die ausgeatmete Luft steigt oben in die Maske und verdrängt das Wasser am unteren Dichtrand nach außen – eine der wichtigsten Basisübungen.'
-      },
-      {
-        cat: 'praxis', diff: 'mid',
-        q: 'Was signalisiert ein Taucher, der seine flache Hand quer hin und her kippt („Waage“)?',
-        a: ['„Etwas stimmt nicht / ich habe ein Problem“ (danach zeigt man meist auf die betroffene Stelle, z. B. Ohr oder Finimeter)', '„Alles perfekt, lass uns tiefer gehen“', '„Dort hinten ist ein Wrack“', '„Sicherheitsstopp abgeschlossen“'],
-        exp: 'Klare Kommunikation vor dem Tauchgang sorgt dafür, dass beide Buddys sofort richtig auf Warnsignale reagieren.'
-      },
-      {
-        cat: 'praxis', diff: 'mid',
-        q: 'Woran erkennt man beim Blei-Check an der Wasseroberfläche eine korrekt austarierte Bleimenge?',
-        a: ['Mit entleertem Jacket (BCD) und normalem Atemzug treibt man ruhig auf Augenhöhe; beim Ausatmen sinkt man leicht ab', 'Man geht auch mit voll aufgeblasenem Jacket sofort wie ein Stein unter', 'Man liegt mit den Schultern komplett über der Wasserlinie bei leerem Jacket', 'Man schwebt exakt 2 Meter über der Oberfläche'],
-        exp: 'Weil eine Standard-Alu- oder Stahlflasche am Ende des Tauchgangs durch die veratmete Luft (~2 kg leichter!) mehr Auftrieb hat, prüft man möglichst so, dass man auch bei 50 bar auf 5 m stabil bleibt.'
-      },
-      {
-        cat: 'praxis', diff: 'mid',
-        q: 'Warum taucht man bei Strömungstauchgängen (sofern möglich) am besten zunächst GEGEN die Strömung ab und lässt sich auf dem Rückweg treiben?',
-        a: ['Damit man zu Beginn noch volle Kräfte und ausreichend Luft hat und am Ende mühelos zum Boot/Ausstieg zurückgetragen wird', 'Weil man nur gegen die Strömung tarieren kann', 'Weil Tauchcomputer sonst falsch zählen', 'Weil Fische ausschließlich gegen die Strömung schlafen'],
-        exp: 'Ausnahme sind reine One-Way-Strömungstauchgänge (Drift Dives), bei denen das Boot die Tauchgruppe am Ende anhand der Oberflächenboje (SMB) einsammelt.'
-      },
-      {
-        cat: 'praxis', diff: 'mid',
-        q: 'Welche maximale Aufstiegsgeschwindigkeit gilt heute als gängiger Standard bei den meisten Tauchverbänden und Tauchcomputern?',
-        a: ['Maximal etwa 9 bis 10 Meter pro Minute (oft noch langsamer in den letzten 10 Metern)', 'Maximal 30 Meter pro Minute', 'Maximal 60 Meter pro Minute (1 m/s)', 'Die Geschwindigkeit spielt bis 40 m überhaupt keine Rolle'],
-        exp: 'Als einfache Faustregel für die Praxis gilt: Nie schneller aufsteigen als die kleinsten eigenen ausgeatmeten Luftblasen!'
-      },
-      {
-        cat: 'praxis', diff: 'pro',
-        q: 'Wozu dient eine Signalboje („SMB“ / „DSMB“ – Delayed Surface Marker Buoy), die am Ende oder im Notfall unter Wasser mit Luft gefüllt wird?',
-        a: ['Sie markiert während des Sicherheitsstopps und Aufstiegs für Boote sichtbar die Position der Taucher an der Oberfläche', 'Sie dient als Zusatzflasche zum Atmen auf 30 m', 'Sie misst die Wassertemperatur in der Tiefe', 'Sie vertreibt Quallen durch Ultraschall'],
-        exp: 'Beim Setzen einer DSMB aus der Tiefe achtet man strikt darauf, dass sich die Schnur (Spool/Reel) nicht am Körper verheddert und einen unkontrollierten Mitriss auslöst.'
-      },
-      {
-        cat: 'praxis', diff: 'pro',
-        q: 'Wie reagiert man korrekt, falls die 2. Stufe des Atemreglers unter Wasser durch Vereisung oder Defekt stark abbläst (Freeflow)?',
-        a: ['Regler NICHT aus dem Mund nehmen, sondern die Zunge/Lippen leicht öffnen („Luft schlucken“ / überschüssige Luft vorbeiströmen lassen) und sofort auf die Reserve-2.-Stufe oder Buddy-Luft wechseln und kontrolliert aufsteigen', 'Sofort den Atemregler komplett aus dem Mund ziehen und die Luft bis oben anhalten', 'Den Inflatorschlauch abreißen', 'Unter Wasser die Flasche selbst zudrehen, ohne Ersatzregler im Mund zu haben'],
-        exp: 'Aus einem abblasenden Regler kann man bei entspannt geöffneter Lippe problemlos weiteratmen, während man Ruhe bewahrt und den Tauchgang sicher beendet.'
-      },
-      {
-        cat: 'praxis', diff: 'pro',
-        q: 'Wie lässt sich bei einem Tauchgang mit sauberer Tarierung der eigene Atemluft-Verbrauch am präzisesten über die Atmung feinregulieren?',
-        a: ['Kleine Tiefenkorrekturen über das Lungenvolumen vornehmen und das Jacket (BCD) nur für grobe Änderungen nutzen, statt ständig Luft nachzugeben und abzulassen', 'Alle 10 Sekunden komplett ausblasen und neu aufblasen', 'Übergewicht mitnehmen und mit prallem Jacket dagegenhalten', 'Nur über den Flossenschlag nach unten drücken'],
-        exp: 'Durch die zeitliche Verzögerung des Lungenvolumens (ca. 1–2 Sekunden) schweben geübte Taucher im Riff vollkommen ruhig im „Trim“ – das spart enorm viel Luft.'
-      },
-      {
-        cat: 'praxis', diff: 'pro',
-        q: 'Was bezeichnet der „SAC-Wert“ (Surface Air Consumption / Oberflächen-Atemminutenvolumen, AMV) bei der Tauchplanung?',
-        a: ['Den persönlichen Atemgasverbrauch umgerechnet auf 1 bar Oberflächendruck pro Minute (in bar/min oder Liter/min)', 'Den maximalen Druck der Sicherheitsboje', 'Die Sauerstoff-Sättigung des Blutes in Prozent', 'Die Länge des Sicherheitsstopps bei Strömung'],
-        exp: 'Kennt man sein eigenes AMV (z. B. 15–20 L/min), lässt sich exakt vorausberechnen, wie lange ein Gasvorrat auf 20 m oder 30 m Tiefe inklusive Reserve reicht.'
-      },
-
-      // ── Spots, Wracks & Meeresbiologie ──
-      {
-        cat: 'welten', diff: 'easy',
-        q: 'Warum erscheinen unter Wasser Gegenstände durch die Tauchmaske hindurch optisch verändert?',
-        a: ['Sie wirken um etwa ein Drittel (~33 %) größer und entsprechend (~25 %) näher als sie tatsächlich sind', 'Sie wirken um die Hälfte kleiner und weiter weg', 'Sie stehen komplett auf dem Kopf', 'Sie verändern ihre Größe überhaupt nicht'],
-        exp: 'Ursache ist die Lichtbrechung an der Grenzfläche zwischen Wasser (Brechungsindex ~1,33) und der Luftschicht innerhalb der Maske (~1,0).'
-      },
-      {
-        cat: 'welten', diff: 'easy',
-        q: 'Welche Farbe des sichtbaren Sonnenlichts wird beim Abtauchen vom Wasser als ERSTES absorbiert und wirkt schon nach wenigen Metern bräunlich-grau?',
-        a: ['Rot (bereits ab ca. 5 Metern Tiefe)', 'Blau', 'Violett', 'Grün'],
-        exp: 'Langwelliges rotes Licht verliert im Wasser am schnellsten Energie, gefolgt von Orange und Gelb – erst durch eine Tauchlampe erstrahlen Korallen wieder in Rot.'
-      },
-      {
-        cat: 'welten', diff: 'easy',
-        q: 'In welchem Meer liegt eines der berühmtesten Betauch-Wracks der Welt – die im Zweiten Weltkrieg gesunkene „SS Thistlegorm“?',
-        a: ['Im Roten Meer (Ägypten)', 'In der Ostsee vor Rügen', 'Im Nordpazifik vor Alaska', 'Im Bodensee'],
-        exp: 'Der 1941 durch deutsche Bomber versenkte britische Frachter liegt auf ca. 16–30 m Tiefe und transportierte Motorräder, LKW und Dampflokomotiven.'
-      },
-      {
-        cat: 'welten', diff: 'easy',
-        q: 'Welcher französische Meeresforscher entwickelte 1943 gemeinsam mit Émile Gagnan die legendäre „Aqua-Lung“ (erster erfolgreicher Pressluft-Lungenautomat)?',
-        a: ['Jacques-Yves Cousteau', 'Hans Hass', 'Jules Verne', 'Robert Ballard'],
-        exp: 'Die Erfindung von Cousteau und Gagnan machte das freie, unabhängige Sporttauchen ohne schwere Helmtauchanzüge und Luftschläuche überhaupt erst möglich.'
-      },
-      {
-        cat: 'welten', diff: 'mid',
-        q: 'Was sind die berühmten „Cenoten“ auf der mexikanischen Halbinsel Yucatán, die unter Tauchern weltbekannt sind?',
-        a: ['Mit kristallklarem Süßwasser gefüllte Kalkstein-Dolinen und unterirdische Höhlensysteme (oft mit Halokline zum Salzwasser)', 'Künstliche Schiffswracks vor Cancún', 'Heiße Tiefsee-Vulkanschlote im Pazifik', 'Mangroven-Inseln im Amazonas'],
-        exp: 'Wo Süßwasser über schwererem Salzwasser liegt, entsteht in manchen Cenoten eine beeindruckende, wabernde Grenzschicht – die sogenannte Halokline.'
-      },
-      {
-        cat: 'welten', diff: 'mid',
-        q: 'Worin unterscheidet sich das Auftriebssystem von Haien und Rochen (Knorpelfische) grundsätzlich von den meisten Knochenfischen?',
-        a: ['Haie besitzen keine Schwimmblase, sondern nutzen ihre große, ölreiche Leber (Squalen) sowie dynamischen Auftrieb durch Brustflossen', 'Haie füllen ihre Kiemen regelmäßig mit Luft an der Oberfläche', 'Knochenfische haben überhaupt keinen Auftrieb', 'Haie tragen Luftblasen in ihren Rückenflossen'],
-        exp: 'Weil Haie keine gasgefüllte Schwimmblase haben, können sie rasch zwischen verschiedenen Tiefen wechseln, ohne ein Barotrauma ihrer Schwimmblase zu erleiden.'
-      },
-      {
-        cat: 'welten', diff: 'mid',
-        q: 'Was löst das dramatische Phänomen der „Korallenbleiche“ an tropischen Riffen hauptsächlich aus?',
-        a: ['Dauerhaft zu hohe Wassertemperaturen versetzen Korallen in Stress, sodass sie ihre lebensnotwendigen symbiotischen Algen (Zooxanthellen) abstoßen', 'Zu viel Mondlicht in Neumondnächten', 'Das Ausatmen von Stickstoffblasen durch Sporttaucher', 'Die normale jährliche Häutung von Steinkorallen'],
-        exp: 'Die Zooxanthellen verleihen Korallen sowohl ihre bunten Farben als auch bis zu 90 % ihrer Energie durch Photosynthese – hält die Hitze an, stirbt das Kalkskelett ab.'
-      },
-      {
-        cat: 'welten', diff: 'mid',
-        q: 'Welches Tauchverhalten gilt beim Fotografieren und Beobachten empfindlicher Riffe und Wracks als oberstes Gebot (Green Fins / Umweltcodex)?',
-        a: ['Perfekte Tarierung halten, nichts berühren oder aufwirbeln, Abstand halten und niemals Meeresbewohner jagen oder füttern', 'Sich zum ruhigen Fotografieren mit den Knien auf Tischkorallen abstützen', 'Kleine Seesterne für das Foto kurz an die Oberfläche bringen', 'Alte Bleigewichte als Souvenir am Riff ablegen'],
-        exp: 'Steinkorallen wachsen oft nur wenige Millimeter bis Zentimeter pro Jahr – ein einziger unachtsamer Flossenschlag kann jahrzehntealtes Wachstum zerstören.'
-      },
-      {
-        cat: 'welten', diff: 'pro',
-        q: 'Was bezeichnet der Begriff „Thermokline“ (Sprungschicht), den Taucher besonders in Seen oder vor Strömungskanten spüren?',
-        a: ['Eine relativ scharfe Grenzschicht zwischen wärmerem Oberflächenwasser und deutlich kälterem Tiefenwasser', 'Die elektrische Leitfähigkeit einer Tauchlampe', 'Die maximale Tauchtiefe eines Nitrox-Gemischs', 'Ein medizinisches Gerät in der Druckkammer'],
-        exp: 'Durch den Dichteunterschied mischen sich warme und kalte Wasserschichten kaum; an der Thermokline ändert sich die Temperatur oft innerhalb eines Meters um mehrere Grad.'
-      },
-      {
-        cat: 'welten', diff: 'pro',
-        q: 'Warum können manche bunt gefärbte Nacktschnecken (Nudibranchia) am Riff Fressfeinde wirksam abwehren, obwohl sie weich und ohne Schale sind?',
-        a: ['Viele speichern Nesselzellen (Kleptocniden) oder Giftstoffe aus ihrer Nahrung (z. B. Schwämmen oder Hydroidpolypen) in ihren Rückenanhängen', 'Sie besitzen ein stählernes Innen-Skelett', 'Sie tauchen bei Gefahr sofort auf 200 m Tiefe ab', 'Sie stoßen Hochspannungsblitze aus'],
-        exp: 'Ihre grellen Warnfarben (Aposematismus) signalisieren Fischen eindeutig: „Ungenießbar und giftig!“'
-      },
-      {
-        cat: 'welten', diff: 'pro',
-        q: 'Warum erfordert das Tauchen in hochgelegenen Bergseen (z. B. auf 1.500 m Höhe) spezielle „Bergsee-Tabellen“ bzw. einen Höhenmodus am Tauchcomputer?',
-        a: ['Wegen des geringeren Luftdrucks an der Oberfläche beginnt die Dekompressionsberechnung auf niedrigerem Ausgangsniveau und Tiefenmesser müssen teils kalibriert werden', 'Weil Süßwasser über 1.000 m Höhe keinen Sauerstoff enthält', 'Weil dort die Schwerkraft um 50 % höher ist', 'Weil Neoprenanzüge in Bergseen nicht isolieren'],
-        exp: 'Auch direkt nach der Autofahrt von Meereshöhe zu einem hochgelegenen Bergsee wirkt die Höhe bereits ähnlich wie ein leichter Druckabfall – moderne Computer messen den Luftdruck vor dem Tauchgang automatisch.'
-      },
-      {
-        cat: 'welten', diff: 'pro',
-        q: 'Welcher bekannte Tauchspot in Belize ist eine kreisrunde, über 300 m breite und rund 124 m tiefe Karst-Doline mitten im Leuchtturm-Riff?',
-        a: ['Das Great Blue Hole', 'Der Silfra-Spalt (Island)', 'Die Barracuda Point (Sipadan)', 'Das Richelieu Rock (Thailand)'],
-        exp: 'Während der Eiszeiten entstand dort eine riesige Kalksteinhöhle über dem Meeresspiegel, deren Decke später einstürzte – unter Wasser sieht man noch mächtige Stalaktiten.'
-      }
-    ];
+    // Unified question bank (108 questions, index 0 of a[] is always correct)
+    const QUESTIONS = ArcadeQuizEngine.getBank('diving');
 
     let selectedDiff = 'all';
     let activeCat = 'mix';
+    let menuControls = null;
     let deck = [];
     let qIdx = 0;
     let score = 0;
@@ -724,16 +432,18 @@
     }
 
     function renderMenu() {
+      const reqLen = menuControls ? menuControls.getLength() : 20;
       const grid = document.getElementById('cat-grid');
       grid.innerHTML = CATS.map(c => {
-        const count = getMatchingPool(c.id).length;
-        const roundLen = Math.min(10, count);
+        const pool = getMatchingPool(c.id);
+        const stats = ArcadeQuizEngine.getSeenStats('quiz_diving', pool);
+        const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 20);
         return `
           <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
             <div class="cat-icon">${c.icon}</div>
             <div class="cat-name">${c.name}</div>
             <div class="cat-desc">${c.desc}</div>
-            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
           </button>
         `;
       }).join('');
@@ -745,6 +455,7 @@
       selectedDiff = btn.dataset.diff;
       document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
       ArcadeAudio.click();
+      if (menuControls) menuControls.refresh();
       renderMenu();
     });
 
@@ -752,8 +463,10 @@
       activeCat = catId;
       ArcadeAudio.click();
       const pool = getMatchingPool(catId);
-      const count = Math.min(10, pool.length);
-      deck = shuffle(pool).slice(0, count);
+      const reqLen = menuControls ? menuControls.getLength() : 20;
+      const drawn = ArcadeQuizEngine.drawDeck('quiz_diving', pool, reqLen, 20);
+      deck = drawn.deck;
+      if (!deck.length) return;
       qIdx = 0;
       score = 0;
       streak = 0;
@@ -792,6 +505,8 @@
 
       document.getElementById('q-text').textContent = item.q;
       document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
 
       const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
       item._rendered = opts;
@@ -862,6 +577,7 @@
       clearInterval(timerId);
 
       const item = deck[qIdx];
+      ArcadeQuizEngine.markSeen('quiz_diving', item);
       const chosen = item._rendered[idx];
       const buttons = document.querySelectorAll('#answers-grid .ans-btn');
       buttons.forEach((b, i) => {
@@ -874,7 +590,7 @@
         if (streak > bestStreak) bestStreak = streak;
         correctCount++;
         const mult = DIFF_INFO[item.diff].mult;
-        const speedBonus = Math.round(timeLeft * 5);
+        const speedBonus = (ArcadeQuizPrefs.isRelaxed() || timeLeft <= 0) ? 0 : Math.round(timeLeft * 5);
         const streakBonus = Math.min(4, streak - 1) * 25;
         score += Math.round((100 + speedBonus + streakBonus) * mult);
         ArcadeAudio.perkGood();
@@ -886,6 +602,9 @@
 
       document.getElementById('q-streak').textContent = streak;
       document.getElementById('q-score').textContent = score;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
+      updateTimerUI();
       showFact(chosen.isRight);
     }
 
@@ -930,6 +649,7 @@
       document.getElementById('joker-skip').disabled = true;
       clearInterval(timerId);
       answered = true;
+      ArcadeQuizEngine.markSeen('quiz_diving', deck[qIdx]);
       ArcadeAudio.click();
       nextQuestion();
     }
@@ -940,7 +660,11 @@
       document.getElementById('screen-result').classList.remove('hidden');
 
       const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
-      const isNewRecord = ArcadeScores.record('quiz_diving', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore('quiz_diving', score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      const isNewRecord = scoreRes.isNewRecord;
       refreshTopBest();
 
       document.getElementById('res-score').textContent = score;
@@ -948,7 +672,8 @@
       document.getElementById('res-streak').textContent = `${bestStreak}×`;
       document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '🤿' : '🌊');
       document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Tiefen-Rekord!' : 'Tauchgang beendet!';
-      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      const normNote = scoreRes.normalized ? ` · Bestenliste (20er-Norm): ${scoreRes.recordedScore} Pkt` : '';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}${normNote}`;
       if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
     }
 
@@ -962,6 +687,8 @@
       document.getElementById('screen-play').classList.add('hidden');
       document.getElementById('screen-result').classList.add('hidden');
       document.getElementById('screen-menu').classList.remove('hidden');
+      if (menuControls) menuControls.refresh();
+      renderMenu();
     }
 
     window.addEventListener('keydown', (e) => {
@@ -978,6 +705,14 @@
 
     ArcadeAudio.syncButton(document.getElementById('btn-mute'));
     ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    menuControls = ArcadeQuizEngine.initMenuControls({
+      quizId: 'quiz_diving',
+      getPool: () => getMatchingPool('mix'),
+      onUpdate: () => renderMenu(),
+      lengths: [10, 20, 30, 'all'],
+      defaultLen: 20,
+      showAllLabel: 'Alle'
+    });
     refreshTopBest();
     renderMenu();
   </script>

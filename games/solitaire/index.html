@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Klondike Solitaire · HunterJoe Arcade</title>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     :root {
@@ -362,6 +363,65 @@
     .win-stat span {
       font-size: 11px;
       color: var(--text-muted);
+    }
+
+    html[data-theme="light"] body {
+      background:
+        repeating-linear-gradient(60deg, rgba(15, 23, 42, 0.024) 0 1px, transparent 1px 4px),
+        repeating-linear-gradient(-60deg, rgba(15, 23, 42, 0.024) 0 1px, transparent 1px 4px),
+        radial-gradient(ellipse at 50% 8%, #d1fae5 0%, #bae6fd 52%, #dbeafe 100%);
+    }
+    html[data-theme="light"] .sol-toolbar {
+      background: rgba(255, 255, 255, 0.90);
+      border-color: rgba(13, 148, 136, 0.30);
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+    html[data-theme="light"] .sol-btn {
+      background: #f8fafc;
+      border-color: rgba(15, 23, 42, 0.18);
+      color: #1e293b;
+    }
+    html[data-theme="light"] .sol-btn:hover:not(:disabled) {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0f172a;
+    }
+    html[data-theme="light"] .sol-btn.active {
+      background: #0d9488;
+      border-color: #0f766e;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .pile-slot {
+      border-color: rgba(15, 23, 42, 0.28);
+      background: rgba(255, 255, 255, 0.44);
+    }
+    html[data-theme="light"] .waste-slot {
+      border-color: transparent;
+      background: transparent;
+    }
+    html[data-theme="light"] .slot-emblem {
+      color: rgba(15, 23, 42, 0.38);
+    }
+    html[data-theme="light"] .foundation-slot[data-f="1"] .slot-emblem,
+    html[data-theme="light"] .foundation-slot[data-f="3"] .slot-emblem {
+      color: rgba(220, 38, 38, 0.56) !important;
+    }
+    html[data-theme="light"] .card.face-up {
+      border-color: #94a3b8;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    html[data-theme="light"] .win-modal {
+      background: rgba(15, 23, 42, 0.45);
+    }
+    html[data-theme="light"] .win-card h2 {
+      color: #15803d;
+    }
+    html[data-theme="light"] .win-stat {
+      background: #f8fafc;
+      border-color: rgba(2, 132, 199, 0.25);
+    }
+    html[data-theme="light"] .win-stat b {
+      color: #0f172a;
     }
 
     @media (max-width: 480px) {
@@ -1159,7 +1219,9 @@
 
         const step = () => {
           if (!won) return;
-          ctx.fillStyle = 'rgba(2, 6, 23, 0.04)';
+          ctx.fillStyle = (window.ArcadeTheme && ArcadeTheme.isLight())
+            ? 'rgba(219, 234, 254, 0.08)'
+            : 'rgba(2, 6, 23, 0.04)';
           ctx.fillRect(0, 0, elWinCanvas.width, elWinCanvas.height);
 
           if (active) {

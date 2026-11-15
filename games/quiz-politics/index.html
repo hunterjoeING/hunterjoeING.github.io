@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Politik &amp; Ökonomie Quiz · Freiheitliches Denken</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .quiz-wrap {
@@ -259,8 +260,8 @@
     <section id="screen-menu" class="glass-card" style="padding: 20px;">
       <h1 style="margin:0 0 6px; font-size: 22.5px;">Politik &amp; Ökonomie: Freiheitliches Denken</h1>
       <p style="margin:0; color: var(--text-muted); font-size: 14px; line-height:1.45;">
-        Ideengeschichte und Argumente rund um <strong>Roland Baader</strong>, die <strong>Österreichische Schule</strong>
-        (Mises, Hayek) und klassischen Liberalismus (Bastiat) – samt Einordnung wirtschaftspolitischer Gegenpositionen.
+        84 quellengestützte Fragen zur Ideengeschichte und Argumenten rund um <strong>Roland Baader</strong>, die <strong>Österreichische Schule</strong>
+        (Mises, Hayek) und klassischen Liberalismus (Bastiat) – samt Einordnung wirtschaftspolitischer Gegenpositionen (Standard: 20 Fragen pro Runde).
       </p>
 
       <div class="diff-bar" id="diff-bar">
@@ -281,7 +282,7 @@
 
     <section id="screen-play" class="glass-card quiz-stage hidden">
       <div class="quiz-meta-row">
-        <span>Frage <strong id="q-num">1</strong> / <strong id="q-total">10</strong></span>
+        <span>Frage <strong id="q-num">1</strong> / <strong id="q-total">20</strong></span>
         <span>🔥 Serie: <strong id="q-streak">0</strong>×</span>
         <span>⭐ Punkte: <strong id="q-score">0</strong></span>
         <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Ohne Zeitlimit umschalten">⏱ <strong id="q-sec">25</strong>s</button>
@@ -311,7 +312,7 @@
       <p style="margin:0; color:var(--text-muted);" id="res-sub"></p>
       <div class="result-grid">
         <div class="stat-box"><small>Gesamtpunkte</small><strong id="res-score">0</strong></div>
-        <div class="stat-box"><small>Richtige Antworten</small><strong id="res-correct">0/10</strong></div>
+        <div class="stat-box"><small>Richtige Antworten</small><strong id="res-correct">0/20</strong></div>
         <div class="stat-box"><small>Beste Serie</small><strong id="res-streak">0</strong></div>
       </div>
       <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
@@ -323,6 +324,8 @@
   </main>
 
   <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-politics.js"></script>
   <script>
     const CATS = [
       { id: 'baader',    icon: '💡', name: 'Roland Baader & Wohlstand',  desc: 'Wohlstandsentstehung, Geldsozialismus, Steuer- & Staatskritik nach Roland Baader.', cls: 'featured' },
@@ -344,233 +347,12 @@
       pro:  { label: '🟣 Baader/Mises-Profi', cls: 'pro', mult: 1.5 }
     };
 
-    // 36 quellengestützte, klar attribuierte Fragen (12 je Kategorie, jeweils 4 pro Stufe)
-    const QUESTIONS = [
-      // ==================== ROLAND BAADER & WOHLSTAND ====================
-      {
-        cat: 'baader', diff: 'easy',
-        q: 'Was schafft laut Roland Baader und klassisch-liberalen Ökonomen nachhaltig gesellschaftlichen Wohlstand?',
-        a: ['Innovation, Kapitalbildung und Wirtschaftswachstum bei geringerer Umverteilung und niedrigeren Steuern', 'Stetig steigende Steuern zur Finanzierung staatlicher Transfers', 'Umfassende staatliche Umverteilung bestehender Ersparnisse', 'Möglichst viel frisch geschöpftes Papiergeld ohne Produktivitätszuwachs'],
-        exp: 'Nach Roland Baader und der Österreichischen Schule entsteht Wohlstand nur durch Wertschöpfung, Sparen, Kapitalakkumulation und Unternehmertum. Umverteilungspfründe und wohlfahrtsstaatliche Ansätze halten dagegen oft soziale Absicherung und Nachfrage für stabilisierend.'
-      },
-      {
-        cat: 'baader', diff: 'easy',
-        q: 'Welchen Begriff prägte Roland Baader als Buchtitel für ein System mit staatlichem Geldmonopol und ungedecktem Fiat-Papiergeld?',
-        a: ['Geldsozialismus', 'Goldkapitalismus', 'Steuerwunder', 'Bürgergeld-Ordnung'],
-        exp: 'In „Geldsozialismus – Die wirklichen Ursachen der neuen globalen Depression“ argumentiert Baader, ein zentralbankgelenktes Monopolgeld ermögliche staatliche Kaufkraftabschöpfung über Inflation und Kreditausweitung.'
-      },
-      {
-        cat: 'baader', diff: 'easy',
-        q: 'Welcher bekannte Freiburger Ökonom und Nobelpreisträger war ein direkter akademischer Lehrer von Roland Baader?',
-        a: ['Friedrich August von Hayek', 'John Maynard Keynes', 'Karl Marx', 'Thomas Piketty'],
-        exp: 'Roland Baader studierte bei Friedrich August von Hayek an der Universität Freiburg und blieb zeitlebens eng mit der Österreichischen Schule (Mises, Hayek) verbunden.'
-      },
-      {
-        cat: 'baader', diff: 'easy',
-        q: 'Welche politische und persönliche Konsequenz tritt nach Roland Baader ein, wenn der Staat als angebliche „Quelle des Wohlstands“ agiert?',
-        a: ['Sinkende Leistungsmotivation bei gleichzeitig wachsender Anspruchsmentalität', 'Automatische Schuldenfreiheit aller öffentlichen Haushalte', 'Verdoppelte private Sparquote im Niedriglohnsektor', 'Ende jeder Bürokratie innerhalb von fünf Jahren'],
-        exp: 'Baader beschrieb den Wohlfahrtsstaat als „Prellbock“ zwischen sinkender Leistungsbereitschaft und steigender Anspruchshaltung; Befürworter des Sozialstaats entgegnen, Grundsicherung schaffe erst gesellschaftlichen Zusammenhalt und Chancen.'
-      },
-      {
-        cat: 'baader', diff: 'mid',
-        q: 'Wie vervollständigt sich Baaders berühmter Aphorismus: „Je größer der Papiergeld-Reichtum der Welt, desto größer …“?',
-        a: ['„… die Armut, die ihm folgen wird.“', '„… der reale Wohlstand für alle Generationen.“', '„… die Preisstabilität über 100 Jahre.“', '„… das Vertrauen in langfristige Staatsanleihen.“'],
-        exp: 'Baader unterschied strikt zwischen realen Gütern/Kapital und bloß vermehrtem Papiergeld („papierenem Kreditrausch“), das nach seiner These lediglich Scheingewinne und Fehlallokationen erzeugt.'
-      },
-      {
-        cat: 'baader', diff: 'mid',
-        q: 'Wie argumentiert Roland Baader grundsätzlich zum Verhältnis zwischen individueller politischer Freiheit und freier Marktwirtschaft?',
-        a: ['Persönliche Freiheit ist langfristig nicht ohne eine echte, möglichst staatsfreie Marktwirtschaft denkbar', 'Freie Meinungsäußerung funktioniert am besten in einer reinen Zentralverwaltungswirtschaft', 'Marktwirtschaft und Bürgerrechte schließen sich gegenseitig aus', 'Wirtschaftliche Regulierung stärkt grundsätzlich private Eigentumsrechte'],
-        exp: 'Wie Hayek („Der Weg zur Knechtschaft“) sah Baader Eigentums- und Vertragsfreiheit als Fundament politischer Freiheit. Sozialdemokratische und regulierungsfreundliche Denker betonen hingegen Schutz vor privater Marktmacht.'
-      },
-      {
-        cat: 'baader', diff: 'mid',
-        q: 'Welches dieser Bücher zählt NICHT zu den bekannten Schriften Roland Baaders?',
-        a: ['Allgemeine Theorie der Beschäftigung, des Zinses und des Geldes', 'Kreide für den Wolf', 'Das Kapital am Pranger', 'Markt oder Befehl'],
-        exp: '„Kreide für den Wolf“, „Das Kapital am Pranger“, „Markt oder Befehl“ und „Freiheitsfunken“ stammen von Roland Baader; die „Allgemeine Theorie…“ (1936) ist das Hauptwerk seines großen Gegenspielers John Maynard Keynes.'
-      },
-      {
-        cat: 'baader', diff: 'mid',
-        q: 'Welche Reform des Geldwesens favorisierte Roland Baader als Gegenmittel zum staatlichen Papiergeldmonopol?',
-        a: ['Rückkehr zu einem harten (Gold-/Waren-)Geld oder Entnationalisierung im freien Währungswettbewerb', 'Einführung eines globalen digitalen Zentralbankgeldes mit Negativzins', 'Jährliche Erhöhung des gesetzlichen Mindestpreises für Staatsanleihen', 'Verdopplung der Geldschöpfung bei jeder Rezession'],
-        exp: 'In Anlehnung an Ludwig von Mises (Goldstandard) und Hayek („Entnationalisierung des Geldes“) forderte Baader eine Begrenzung staatlicher Notenbankmacht durch marktwirtschaftliche Geldstandards.'
-      },
-      {
-        cat: 'baader', diff: 'pro',
-        q: 'Worauf zielt Baaders Vergleich ab, dass Eltern ihren Nachbarn privat nicht für kostenlose Nachhilfestunden bestehlen würden – dies aber politisch als „gesellschaftliche Leistung“ akzeptiert sei?',
-        a: ['Kritik an einer Moralspaltung: Zwangsabgaben und Umverteilung würden über den Staat ethisch legitimiert, obwohl sie privat als Eingriff ins Eigentum gelten', 'Forderung nach Abschaffung jeglicher privater Hausaufgaben', 'Befürwortung höherer Grundsteuern zur Schulfinanzierung', 'Beweis dafür, dass private Schenkungen immer ineffizient sind'],
-        exp: 'In klassisch-libertärer Tradition trennt Baader freiwillige Nächstenliebe von staatlichem Steuerzwang. Demgegenüber sehen Bildungsökonomen der Wohlfahrtstheorie öffentliche Finanzierung als unverzichtbares öffentliches Gut für Chancengleichheit.'
-      },
-      {
-        cat: 'baader', diff: 'pro',
-        q: 'Welche Funktion erfüllt nach Baaders Buch „Das Kapital am Pranger“ eine Dekonstruktion politischer Schlagworte wie „soziale Gerechtigkeit“?',
-        a: ['Solche Begriffe dienten oft als „Begriffsnebel“, um Interventionismus und Umverteilung gegen Marktprozesse durchzusetzen', 'Sie sollen belegen, dass Kapitalbildung ein Fehler der Industrialisierung war', 'Sie empfehlen eine komplette Verstaatlichung aller Aktiengesellschaften', 'Sie erklären mathematisch die optimale Einkommensteuer bei 75 %'],
-        exp: 'Ähnlich wie Hayek in „Recht, Gesetz und Freiheit“ kritisierte Baader den Begriff „soziale Gerechtigkeit“ als inhaltlich beliebig und einfallstor für willkürliche Eingriffe – Befürworter verteidigen ihn hingegen als Korrektiv starker Vermögensungleichheit.'
-      },
-      {
-        cat: 'baader', diff: 'pro',
-        q: 'Was bezeichnete Baader mit dem Warnruf, man werde das „im papierenen Kreditrausch Vorausgefressene“ künftig wieder „nachhungern“ müssen?',
-        a: ['Künstliche Konjunkturprogramme auf Kredit erzeugen heute Konsum ohne reale Ersparnis – was später Bereinigungskrisen und Wohlstandsverlust erzwingt', 'Staatsschulden verschwinden durch Wirtschaftswachstum automatisch ohne Nebenwirkungen', 'Goldreserven vervielfachen sich bei hoher Inflation von selbst', 'Jede Sparmaßnahme verringert das Kapitalangebot im Land'],
-        exp: 'Dies spiegelt die Kapital- und Zinstheorie der Österreichischen Schule wider: Konsum vor vorangegangener Ersparnis zehrt den Kapitalstock auf. Keynesianer argumentieren in Rezessionen genau umgekehrt für antizyklische Defizite.'
-      },
-      {
-        cat: 'baader', diff: 'pro',
-        q: 'Welches Institut vergibt seit Baaders Tod die „Roland-Baader-Auszeichnung“ für Vordenker der Österreichischen Schule und Freiheit?',
-        a: ['Ein Umfeld rund um das Ludwig von Mises Institut Deutschland / Roland-Baader-Freundeskreis', 'Die Europäische Zentralbank (EZB)', 'Das Wirtschaftsministerium in Berlin', 'Die Bank für Internationalen Zahlungsausgleich (BIZ)'],
-        exp: 'Das Ludwig von Mises Institut Deutschland und verwandte libertäre Initiativen erinnern mit der Roland-Baader-Auszeichnung an seinen Einsatz für klassisch-liberale Ideen im deutschsprachigen Raum.'
-      },
-
-      // ==================== ÖSTERREICHISCHE SCHULE & GELD ====================
-      {
-        cat: 'austrian', diff: 'easy',
-        q: 'Wer gilt historisch als Begründer der Österreichischen Schule der Nationalökonomie (1871, „Grundsätze der Volkswirtschaftslehre“)?',
-        a: ['Carl Menger', 'John Maynard Keynes', 'David Ricardo', 'Paul Samuelson'],
-        exp: 'Carl Menger begründete 1871 mit der subjektiven Wertlehre (Grenznutzen) die Österreichische Schule, die von Eugen von Böhm-Bawerk, Mises und Hayek fortgeführt wurde.'
-      },
-      {
-        cat: 'austrian', diff: 'easy',
-        q: 'Welche zentrale Rolle spielen freie Marktpreise nach Friedrich August von Hayek?',
-        a: ['Sie bündeln blitzschnell dezentrales Wissen über Knappheiten und Wünsche von Millionen Menschen', 'Sie werden am besten einmal jährlich von einer Preisbehörde festgelegt', 'Sie dienen ausschließlich als Verzierung im Einzelhandel', 'Sie entstehen nur bei Monopolbetrieben'],
-        exp: 'Für Hayek ist das Preissystem ein gewachsenes Informations- und Koordinationsnetzwerk („Der Gebrauch des Wissens in der Gesellschaft“), das keine Zentralbehörde ersetzen kann.'
-      },
-      {
-        cat: 'austrian', diff: 'easy',
-        q: 'Wie heißt Hayeks berühmte Nobelpreisrede aus dem Jahr 1974 über die Grenzen zentraler Wirtschaftsplanung?',
-        a: ['Die Anmaßung von Wissen („The Pretence of Knowledge“)', 'Das Ende des freien Marktes', 'Die perfekte Zentralbank', 'Vollbeschäftigung durch Staatsquote'],
-        exp: 'In „Die Anmaßung von Wissen“ warnte Hayek vor szientistischer Hybris in der Politik: Komplexe gesellschaftliche Systeme ließen sich nicht wie physikalische Maschinen exakt steuern.'
-      },
-      {
-        cat: 'austrian', diff: 'easy',
-        q: 'Was besagt die subjektive Wertlehre der Österreichischen Schule über den Wert eines Gutes (z. B. eines Glases Wasser)?',
-        a: ['Wert hängt von der subjektiven Einschätzung und dem Nutzen der nächsten verfügbaren Einheit (Grenznutzen) ab', 'Wert richtet sich starr nach den hineingesteckten Arbeitsstunden', 'Der Staat legt den objektiven Wert per Gesetz fest', 'Diamanten sind objektiv nutzloser als Sand und daher billiger'],
-        exp: 'Die subjektive Wert- und Grenznutzenlehre löste das klassische Wasser-Diamanten-Paradoxon und widerspricht der marxistischen Arbeitswertlehre.'
-      },
-      {
-        cat: 'austrian', diff: 'mid',
-        q: 'Was beschreibt der sogenannte „Cantillon-Effekt“ bei einer Ausweitung der Geldmenge durch Zentralbanken?',
-        a: ['Neues Geld erreicht Akteure ungleichmäßig: Erstempfänger (Banken/Staat/Großkunden) profitieren noch zu alten Preisen, Spätempfänger zahlen bereits gestiegene Preise', 'Inflation trifft exakt im selben Moment jeden Bürger prozentual völlig gleich', 'Jede Geldschöpfung senkt automatisch die Konsumgüterpreise', 'Die Löhne steigen grundsätzlich schneller als Immobilien- und Aktienpreise'],
-        exp: 'Benannt nach Richard Cantillon (18. Jh.): Geld ist nicht neutral – durch gestaffelte Verteilung entstehen Vermögensverschiebungen und Preisverzerrungen.'
-      },
-      {
-        cat: 'austrian', diff: 'mid',
-        q: 'Was wollte Ludwig von Mises 1920 in „Die Wirtschaftsrechnung im sozialistischen Gemeinwesen“ nachweisen?',
-        a: ['Ohne Privateigentum an Produktionsmitteln und echte Marktpreise für Kapitalgüter fehlt zentralen Planern ein rationaler Kosten-Nutzen-Maßstab', 'Sozialistische Planer müssten lediglich schnellere Rechenmaschinen verwenden', 'Geld ist in Industriegesellschaften generell überflüssig', 'Nur Konsumgüterpreise sollten schwanken, Maschinenpreise nie'],
-        exp: 'Im „Wirtschaftsrechnungs-Problem“ zeigte Mises, dass selbst gutwillige Planer ohne echte Marktpreise für Stahl, Energie oder Fabriken volkswirtschaftlich im Blindflug handeln.'
-      },
-      {
-        cat: 'austrian', diff: 'mid',
-        q: 'Wodurch entstehen laut Österreichischer Konjunkturtheorie (Mises/Hayek) spekulative Scheinbooms und nachfolgende Krisen („Boom & Bust“)?',
-        a: ['Durch künstlich niedrig gehaltene Zinsen und Kreditexpansion der Notenbanken statt echter vorangegangener Ersparnis', 'Allein durch Sonnenflecken und Wetterzyklen', 'Durch zu hohe Sparquoten privater Haushalte', 'Weil Unternehmen ihre Gewinne nicht schnell genug versteuern'],
-        exp: 'Künstlich gedrückte Zinsen täuschen Unternehmen mehr reale Ersparnisse vor, als existieren – daraus resultieren Fehlinvestitionen („Malinvestments“), die sich im Bust schmerzhaft bereinigen. Keynesianer führen Krisen eher auf Nachfrageschocks und „Animal Spirits“ zurück.'
-      },
-      {
-        cat: 'austrian', diff: 'mid',
-        q: 'Was bedeutet „Zeitpräferenz“ in der österreichischen Kapital- und Zinstheorie?',
-        a: ['Die menschliche Neigung, ein Gut in der Gegenwart höher zu bewerten als dasselbe Gut weiter in der Zukunft', 'Die Vorliebe von Zentralbanken für halbjährliche Pressekonferenzen', 'Die gesetzliche Öffnungszeit von Bankfilialen', 'Der Wunsch nach möglichst langsamen Lieferketten'],
-        exp: 'Eine niedrigere Zeitpräferenz führt zu mehr Sparen und Investitionen in produktivere „Umwegproduktion“ (Mises, Böhm-Bawerk, Hoppe) – die Grundlage von langfristigem Kapitalaufbau.'
-      },
-      {
-        cat: 'austrian', diff: 'pro',
-        q: 'Was meint der Begriff „methodologischer Individualismus“, auf dem die Österreichische Schule aufbaut?',
-        a: ['Soziale und ökonomische Phänomene lassen sich nur aus dem zielgerichteten Handeln einzelner Individuen erklären, nicht aus Kollektiven wie „die Klasse“', 'Jeder Mensch muss in einer geschlossenen Einzelwirtschaft ohne Arbeitsteilung leben', 'Alle Statistiken müssen manuell ohne Mathematik geschätzt werden', 'Nur Aktiengesellschaften dürfen am Markt teilnehmen'],
-        exp: 'Mises nannte diese Wissenschaft vom menschlichen Handeln „Praxeologie“: Nur Einzelmenschen werten, entscheiden und tauschen; Makrogrößen sind bloß Aggregate.'
-      },
-      {
-        cat: 'austrian', diff: 'pro',
-        q: 'Welches Buch Hayeks aus dem Jahr 1976 schlägt als radikalen Reformansatz „Free Banking“ vor – also Konkurrenz privater Währungen statt Staatsmonopol?',
-        a: ['Die Entnationalisierung des Geldes („Denationalisation of Money“)', 'Der Weg zur Knechtschaft', 'Das Elend des Historizismus', 'Die Verfassung der Freiheit'],
-        exp: '1976 argumentierte Hayek, wenn private Emittenten im Wettbewerb um wertstabiles Geld stünden, hätten schlechte (inflationäre) Währungen keine Überlebenschance.'
-      },
-      {
-        cat: 'austrian', diff: 'pro',
-        q: 'Was bezeichnet Mises‘ „Interventionsspirale“ (Dynamik des Interventionismus)?',
-        a: ['Ein staatlicher Markteingriff erzeugt unbeabsichtigte Nebenwirkungen, die zu immer weiteren Gegen-Eingriffen führen – bis zur faktischen Lenkungswirtschaft', 'Steigende Zinsen senken von selbst die Staatsverschuldung auf null', 'Jede Deregulierung löst zwingend neue Subventionen aus', 'Freie Preisbildung dreht sich immer im Kreis ohne Gleichgewicht'],
-        exp: 'Ein Beispiel der Österreichischen Schule: Mietpreisdeckel mindern Neubau -> Wohnungsnot wächst -> es folgen Quoten, Bauzwang oder Subventionen. Befürworter von Eingriffen betonen dagegen deren akute soziale Schutzfunktion.'
-      },
-      {
-        cat: 'austrian', diff: 'pro',
-        q: 'Welches Phänomen beschreibt das „Greshamsche Gesetz“ im Kontext konkurrierender Geldordnungen – und wann dreht es sich nach Hayek um?',
-        a: ['Bei gesetzlichen Zwangskursen verdrängt „schlechtes“ Geld das „gute“ (gehortete); bei freier Währungswahl verdrängt hingegen gutes Geld das schlechte', 'Schlechtes Geld verwandelt sich durch Inflation automatisch in Gold', 'Silbermünzen werden immer nur von Banken genutzt', 'Kreditkarten schlagen grundsätzlich jedes Bargeld'],
-        exp: 'Wenn der Staat einen festen Zwangskurs diktiert, bezahlt jeder mit dem minderwertigen Geld und hortet gutes Geld; im freien Wettbewerb (Thiers‘sches Gesetz) lehnen Händler schlechtes Geld dagegen ab.'
-      },
-
-      // ==================== MARKTWIRTSCHAFT & KONTROVERSEN ====================
-      {
-        cat: 'debatte', diff: 'easy',
-        q: 'Worum geht es in Frédéric Bastiats berühmter Parabel vom „zerbrochenen Fenster“?',
-        a: ['Die Zerstörung eines Fensters schafft netto keinen Wohlstand: Man sieht nur den Umsatz des Glasers, aber nicht die entgangene Ausgabe für den Schuhmacher („was man nicht sieht“)', 'Kaputte Glasscheiben sollten staatlich gefördert werden, um das BIP dauerhaft zu steigern', 'Handwerker profitieren niemals von Reparaturen', 'Glas ist volkswirtschaftlich wertvoller als Schuhe'],
-        exp: 'Bastiat lehrte (1850), gute Ökonomie müsse nicht nur die sichtbare Erstfolge einer Maßnahme („ce qu‘on voit“), sondern auch die verdrängten Alternativen („ce qu‘on ne voit pas“) mitdenken.'
-      },
-      {
-        cat: 'debatte', diff: 'easy',
-        q: 'Welche Hauptgefahr sehen klassisch-liberale Ökonomen bei staatlichen Preisobergrenzen (z. B. strikten Preis- oder Mietdeckeln)?',
-        a: ['Angebotsverknappung, sinkende Investitionsanreize und Warteschlangen/Qualitätsverlust', 'Plötzliche Explosion des Neubaus durch höhere Gewinnmargen', 'Abschaffung von Knappheit durch bloßes Gesetz', 'Dauerhafte Deflation bei gleichzeitiger Überproduktion'],
-        exp: 'Preise deckeln verändert nach klassischer Mikroökonomie nichts an der realen Knappheit, senkt aber den Anreiz zu bauen/produzieren. Sozialpolitische Gegenstimmen verweisen auf akuten Schutz von Haushalten mit kleinem Einkommen in angespannten Märkten.'
-      },
-      {
-        cat: 'debatte', diff: 'easy',
-        q: 'Was beschreibt die sogenannte „Laffer-Kurve“ in der Finanzwissenschaft?',
-        a: ['Jenseits eines bestimmten Steuersatzes können weitere Steuererhöhungen das gesamte Steueraufkommen wieder sinken lassen (Leistungszurückhaltung/Ausweichen)', 'Steuereinnahmen steigen immer linear bis zu einem Steuersatz von exakt 100 %', 'Niedrigere Steuern bringen grundsätzlich null Einnahmen', 'Nur Verbrauchssteuern beeinflussen Arbeitsanreize'],
-        exp: 'Sowohl bei 0 % als auch bei 100 % Steuersatz wäre das Steueraufkommen langfristig null; die genaue Lage des Maximums ist empirisch zwischen angebots- und nachfrageorientierten Ökonomen stark umstritten.'
-      },
-      {
-        cat: 'debatte', diff: 'easy',
-        q: 'Was versteht Adam Smith im „Wohlstand der Nationen“ (1776) unter der Metapher der „unsichtbaren Hand“?',
-        a: ['Dass Akteure in einem Rechtsrahmen bei Verfolgung eigener Interessen über Wettbewerb und Arbeitsteilung häufig unbeabsichtigt auch dem Gemeinwohl dienen', 'Dass ein geheimer Staatsrat alle Löhne im Hintergrund festlegt', 'Dass Marktteilnehmer aus reinem Altruismus arbeiten müssen', 'Dass Zölle und Protektionismus den Handel beflügeln'],
-        exp: 'Smith betonte ausdrücklich das Zusammenspiel von Eigeninteresse, Konkurrenz und verlässlichen Spielregeln („nicht vom Wohlwollen des Metzgers erwarten wir unser Abendessen…“).'
-      },
-      {
-        cat: 'debatte', diff: 'mid',
-        q: 'Worin liegt ein zentraler Gegensatz zwischen Keynesianismus und der Österreichischen Schule bei einer Wirtschaftskrise?',
-        a: ['Keynesianer plädieren für schuldenfinanzierte staatliche Nachfrageimpulse; „Österreicher“ setzen auf Bereinigung von Fehlinvestitionen, Sparen und niedrige Staatsquote', 'Keynesianer fordern den strikten Goldstandard und Abschaffung der Zentralbank', 'Die Österreichische Schule empfiehlt in jeder Krise 80 % Einkommensteuer', 'Beide Schulen fordern exakt die gleichen Konjunkturprogramme'],
-        exp: 'Während John Maynard Keynes bei „Liquiditätsfallen“ aktive Fiskalpolitik forderte, warnen Mises, Hayek und Baader vor struktureller Verschuldung und weiterer Verzerrung der Preis- und Kapitalstruktur.'
-      },
-      {
-        cat: 'debatte', diff: 'mid',
-        q: 'Was besagt das „Subsidiaritätsprinzip“ in der Staats- und Gesellschaftsphilosophie?',
-        a: ['Aufgaben sollen zunächst eigenverantwortlich von Individuum, Familie oder kleineren Gemeinschaften gelöst werden; höhere staatliche Ebenen greifen erst hilfsweise ein', 'Alle lokalen Entscheidungen müssen zentral in einer Bundesbehörde gebündelt werden', 'Unternehmen dürfen keine Zweigstellen gründen', 'Nur der Zentralstaat darf lokale Straßen pflegen'],
-        exp: 'Das Subsidiaritätsprinzip vereint liberale Skepsis gegen Zentralismus mit bürgernaher Verantwortung; umstritten bleibt oft, ab wann eine Aufgabe „nur noch zentral“ lösbar erscheint.'
-      },
-      {
-        cat: 'debatte', diff: 'mid',
-        q: 'Was kritisiert Frédéric Bastiats berühmte satirische „Petition der Kerzenmacher“ (1845) an Politik und Wirtschaft?',
-        a: ['Protektionismus und Handelshemmnisse – weil Kerzenhersteller dort satirisch gegen den unfairen Wettbewerb der kostenlosen „Sonne“ Zölle fordern', 'Dass Kerzen zu hell leuchten', 'Dass Freihandel die Preise für Verbraucher künstlich senkt', 'Dass Importe grundsätzlich mehr Arbeit schaffen als Exporte'],
-        exp: 'Bastiat entlarvte mit beißendem Spott Schutzzölle für Produzenten zu Lasten von Konsumenten – in der modernen Debatte halten Befürworter strategischer Zölle jedoch etwa Versorgungssicherheit und Fairness gegen Subventionen entgegen.'
-      },
-      {
-        cat: 'debatte', diff: 'mid',
-        q: 'Wie bezeichnet Milton Friedman (Monetarismus) das Phänomen, dass einst befristete staatliche Behörden oder Programme kaum je abgeschafft werden?',
-        a: ['„Nichts ist so dauerhaft wie ein vorübergehendes Regierungsprogramm“', '„Die automatische Schlankheitskur der Ministerien“', '„Die schnelle Selbstauflösung des Budgets“', '„Das eiserne Gesetz der Steuersenkung“'],
-        exp: 'Mit der Public-Choice-Theorie (James Buchanan) zeigten marktwirtschaftliche Ökonomen, dass auch Politiker und Bürokraten Eigeninteressen verfolgen (Wiederwahl, Budgetwachstum).'
-      },
-      {
-        cat: 'debatte', diff: 'pro',
-        q: 'Welches Kriterium formuliert die „Public-Choice-Schule“ (Buchanan / Tullock) gegen den naiven Glauben an rein gemeinwohlorientierte Staatslenkung?',
-        a: ['Politische Akteure bleiben Eigennutz-Maximierer wie Marktteilnehmer – es kann daher neben Marktversagen ebenso systematisches Staatsversagen geben', 'Nur Menschen im Privatsektor handeln aus Eigeninteresse', 'Demokratische Wahlen korrigieren jeden Bürokratiefehler sofort kostenlos', 'Lobbyismus existiert ausschließlich bei fehlendem Steuerrecht'],
-        exp: 'James Buchanan (Nobelpreis 1986) hob die Trennung von „perfektem Staat“ vs. „unvollkommenem Markt“ auf und analysierte Verfassungsregeln zur Machtbegrenzung.'
-      },
-      {
-        cat: 'debatte', diff: 'pro',
-        q: 'Was beschreibt Garrett Hardins „Tragik der Allmende“ (Tragedy of the Commons) – und welche marktwirtschaftliche Lösung schlugen Eigentumstheoretiker wie Coase oder Mises oft vor?',
-        a: ['Frei zugängliche Gemeingüter drohen durch Übernutzung zu verarmen; klar definierte, durchsetzbare Eigentumsrechte internalisieren Verantwortung', 'Nur komplett verstaatlichte Ozeane ohne Nutzungserlaubnis funktionieren weltweit', 'Jede Ressource ohne Eigentümer regeneriert sich bei maximalem Abbau sofort', 'Steuern auf Privateigentum beheben jedes Allmende-Problem'],
-        exp: 'Während Eigentumstheoretiker auf Privateigentum setzen, ergänzte Nobelpreisträgerin Elinor Ostrom empirisch, dass lokal selbstverwaltete Gemeinschaftsregeln Allmenden unter klaren Bedingungen ebenfalls nachhaltig schützen können.'
-      },
-      {
-        cat: 'debatte', diff: 'pro',
-        q: 'Worin unterscheiden sich klassischer Liberalismus (z. B. Locke, Smith, Hayek) und Anarchokapitalismus (z. B. Murray Rothbard) in der Staatsfrage?',
-        a: ['Klassische Liberale/Minarchisten bejahen einen begrenzten Minimalstaat (Recht, Polizei, Justiz); Anarchokapitalisten möchten selbst Rechtsschutz privatwettbewerblich organisieren', 'Beide fordern eine 90-%-Staatsquote für Infrastruktur', 'Klassische Liberale lehnen jedes Privateigentum ab', 'Anarchokapitalisten befürworten eine einzige Weltzentralbank'],
-        exp: 'Ludwig von Mises und Hayek blieben Befürworter eines begrenzten Rechtsstaats („Nachtwächterstaat“/Ordnungsrahmen), während Rothbard und Hans-Hermann Hoppe die konsequent staatsfreie Privatrechtsgesellschaft vertraten.'
-      },
-      {
-        cat: 'debatte', diff: 'pro',
-        q: 'Was besagt das „Saysche Theorem“ (Jean-Baptiste Say) im Kern – und woran setzte Keynes‘ Kritik daran an?',
-        a: ['Jedes Angebot schafft sich über entstandene Einkommen grundsätzlich seine eigene Nachfrage (Erst produzieren, dann konsumieren); Keynes wandte ein, gehortetes Geld könne Nachfragelücken erzeugen', 'Nur Staatsausgaben erzeugen jemals Warenangebot', 'Produktion und Einkommen stehen in keinerlei Zusammenhang', 'Exporte verringern immer das Inlandseinkommen'],
-        exp: 'Angebotsökonomen und Baader betonen im Einklang mit Say den Vorrang produktiver Wertschöpfung vor bloßer Konsumankurbelung; Keynes rückte dagegen mögliche kurzfristige Nachfrageschwächen und Hortung ins Zentrum.'
-      }
-    ];
+    // Unified question bank (84 questions, index 0 of a[] is always correct)
+    const QUESTIONS = ArcadeQuizEngine.getBank('politics');
 
     let selectedDiff = 'all';
     let activeCat = 'mix';
+    let menuControls = null;
     let deck = [];
     let qIdx = 0;
     let score = 0;
@@ -606,16 +388,18 @@
     }
 
     function renderMenu() {
+      const reqLen = menuControls ? menuControls.getLength() : 20;
       const grid = document.getElementById('cat-grid');
       grid.innerHTML = CATS.map(c => {
-        const count = getMatchingPool(c.id).length;
-        const roundLen = Math.min(10, count);
+        const pool = getMatchingPool(c.id);
+        const stats = ArcadeQuizEngine.getSeenStats('quiz_pol', pool);
+        const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 20);
         return `
           <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
             <div class="cat-icon">${c.icon}</div>
             <div class="cat-name">${c.name}</div>
             <div class="cat-desc">${c.desc}</div>
-            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
           </button>
         `;
       }).join('');
@@ -627,6 +411,7 @@
       selectedDiff = btn.dataset.diff;
       document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
       ArcadeAudio.click();
+      if (menuControls) menuControls.refresh();
       renderMenu();
     });
 
@@ -634,8 +419,10 @@
       activeCat = catId;
       ArcadeAudio.click();
       const pool = getMatchingPool(catId);
-      const count = Math.min(10, pool.length);
-      deck = shuffle(pool).slice(0, count);
+      const reqLen = menuControls ? menuControls.getLength() : 20;
+      const drawn = ArcadeQuizEngine.drawDeck('quiz_pol', pool, reqLen, 20);
+      deck = drawn.deck;
+      if (!deck.length) return;
       qIdx = 0;
       score = 0;
       streak = 0;
@@ -674,6 +461,8 @@
 
       document.getElementById('q-text').textContent = item.q;
       document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
 
       const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
       item._rendered = opts;
@@ -744,6 +533,7 @@
       clearInterval(timerId);
 
       const item = deck[qIdx];
+      ArcadeQuizEngine.markSeen('quiz_pol', item);
       const chosen = item._rendered[idx];
       const buttons = document.querySelectorAll('#answers-grid .ans-btn');
       buttons.forEach((b, i) => {
@@ -756,7 +546,7 @@
         if (streak > bestStreak) bestStreak = streak;
         correctCount++;
         const mult = DIFF_INFO[item.diff].mult;
-        const speedBonus = Math.round(timeLeft * 5);
+        const speedBonus = (ArcadeQuizPrefs.isRelaxed() || timeLeft <= 0) ? 0 : Math.round(timeLeft * 5);
         const streakBonus = Math.min(4, streak - 1) * 25;
         score += Math.round((100 + speedBonus + streakBonus) * mult);
         ArcadeAudio.perkGood();
@@ -768,6 +558,9 @@
 
       document.getElementById('q-streak').textContent = streak;
       document.getElementById('q-score').textContent = score;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
+      updateTimerUI();
       showFact(chosen.isRight);
     }
 
@@ -812,6 +605,7 @@
       document.getElementById('joker-skip').disabled = true;
       clearInterval(timerId);
       answered = true;
+      ArcadeQuizEngine.markSeen('quiz_pol', deck[qIdx]);
       ArcadeAudio.click();
       nextQuestion();
     }
@@ -822,7 +616,11 @@
       document.getElementById('screen-result').classList.remove('hidden');
 
       const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
-      const isNewRecord = ArcadeScores.record('quiz_pol', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore('quiz_pol', score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      const isNewRecord = scoreRes.isNewRecord;
       refreshTopBest();
 
       document.getElementById('res-score').textContent = score;
@@ -830,7 +628,8 @@
       document.getElementById('res-streak').textContent = `${bestStreak}×`;
       document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '💡' : '⚖️');
       document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Ökonomie-Rekord!' : 'Runde abgeschlossen!';
-      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      const normNote = scoreRes.normalized ? ` · Bestenliste (20er-Norm): ${scoreRes.recordedScore} Pkt` : '';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}${normNote}`;
       if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
     }
 
@@ -844,6 +643,8 @@
       document.getElementById('screen-play').classList.add('hidden');
       document.getElementById('screen-result').classList.add('hidden');
       document.getElementById('screen-menu').classList.remove('hidden');
+      if (menuControls) menuControls.refresh();
+      renderMenu();
     }
 
     window.addEventListener('keydown', (e) => {
@@ -860,6 +661,14 @@
 
     ArcadeAudio.syncButton(document.getElementById('btn-mute'));
     ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    menuControls = ArcadeQuizEngine.initMenuControls({
+      quizId: 'quiz_pol',
+      getPool: () => getMatchingPool('mix'),
+      onUpdate: () => renderMenu(),
+      lengths: [10, 20, 30, 'all'],
+      defaultLen: 20,
+      showAllLabel: 'Alle'
+    });
     refreshTopBest();
     renderMenu();
   </script>

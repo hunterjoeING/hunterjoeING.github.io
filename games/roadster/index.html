@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Hyper-Roadster – Kaltgas-Landung</title>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css">
   <style>
     html, body {
@@ -236,6 +237,49 @@
       font-size: 12px;
       color: var(--text-muted);
     }
+
+    html[data-theme="light"] .hud-strip {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(2, 132, 199, 0.28);
+      color: #0f172a;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+    html[data-theme="light"] .gas-track { background: rgba(15, 23, 42, 0.14); }
+    html[data-theme="light"] .canvas-stage {
+      background: #bae6fd;
+      border-color: rgba(2, 132, 199, 0.45);
+    }
+    html[data-theme="light"] .overlay-card {
+      background: rgba(15, 23, 42, 0.38);
+    }
+    html[data-theme="light"] .modal-inner {
+      background: rgba(255, 255, 255, 0.96);
+      border-color: rgba(2, 132, 199, 0.45);
+      color: #0f172a;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
+    }
+    html[data-theme="light"] #ov-desc { color: #334155 !important; }
+    html[data-theme="light"] .ctrl-touch-btn {
+      background: #ffffff;
+      border-color: rgba(2, 132, 199, 0.42);
+      color: #0f172a;
+    }
+    html[data-theme="light"] .ctrl-touch-btn.thrust-big {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #0369a1;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .assist-pill {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #166534;
+    }
+    html[data-theme="light"] .assist-pill.off {
+      background: #f1f5f9;
+      border-color: rgba(15, 23, 42, 0.22);
+      color: #334155;
+    }
+
     @media (max-width: 680px) {
       .roadster-shell {
         padding: 4px 8px calc(8px + env(safe-area-inset-bottom, 0px));
@@ -686,12 +730,17 @@
       // Update HUD
       const sinkMps = state === 'air' ? Math.max(0, -car.vy / 28) : 0;
       const deg = Math.round((car.angle * 180) / Math.PI);
+      const isLightHud = window.ArcadeTheme && ArcadeTheme.isLight();
       const vyEl = document.getElementById('hud-vy');
       vyEl.textContent = sinkMps.toFixed(1);
-      vyEl.style.color = sinkMps > 5.0 ? '#fb7185' : (sinkMps > 3.5 ? '#fbbf24' : '#4ade80');
+      vyEl.style.color = sinkMps > 5.0
+        ? (isLightHud ? '#be123c' : '#fb7185')
+        : (sinkMps > 3.5 ? (isLightHud ? '#b45309' : '#fbbf24') : (isLightHud ? '#15803d' : '#4ade80'));
       const angEl = document.getElementById('hud-ang');
       angEl.textContent = deg + '°';
-      angEl.style.color = Math.abs(deg) > 22 ? '#fb7185' : '#4ade80';
+      angEl.style.color = Math.abs(deg) > 22
+        ? (isLightHud ? '#be123c' : '#fb7185')
+        : (isLightHud ? '#15803d' : '#4ade80');
       document.getElementById('hud-gas').style.width = Math.round(car.gas) + '%';
       document.getElementById('hud-gas-pct').textContent = Math.round(car.gas) + '%';
     }
@@ -753,6 +802,8 @@
       const w = r.width, h = r.height;
       const cfg = LEVELS[lvlIdx];
       const nowSec = performance.now() * 0.001;
+      const isLight = window.ArcadeTheme && ArcadeTheme.isLight();
+      const daylight = isLight && !cfg.moon;
 
       // 1. Multi-layer atmospheric sky gradient
       const sky = ctx.createLinearGradient(0, 0, 0, h);
@@ -760,6 +811,20 @@
         sky.addColorStop(0, '#01030a');
         sky.addColorStop(0.55, '#091026');
         sky.addColorStop(1, '#111b36');
+      } else if (daylight) {
+        if (cfg.moving) {
+          sky.addColorStop(0, '#0284c7');
+          sky.addColorStop(0.55, '#7dd3fc');
+          sky.addColorStop(1, '#e0f2fe');
+        } else if (cfg.wind !== 0) {
+          sky.addColorStop(0, '#1e3a8a');
+          sky.addColorStop(0.55, '#60a5fa');
+          sky.addColorStop(1, '#cbd5e1');
+        } else {
+          sky.addColorStop(0, '#0369a1');
+          sky.addColorStop(0.55, '#7dd3fc');
+          sky.addColorStop(1, '#f0f9ff');
+        }
       } else if (cfg.moving) {
         sky.addColorStop(0, '#020617');
         sky.addColorStop(0.5, '#0b1936');
@@ -776,15 +841,19 @@
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, w, h);
 
-      // Aurora / celestial nebula glow
+      // Aurora / celestial / solar glow
       const glowX = ((w * 0.72 - cam.x * 0.02) % w + w) % w;
       const neb = ctx.createRadialGradient(glowX, h * 0.24, 8, glowX, h * 0.24, w * 0.45);
-      neb.addColorStop(0, cfg.moon ? 'rgba(56, 189, 248, 0.22)' : (cfg.wind ? 'rgba(168, 85, 247, 0.22)' : 'rgba(251, 146, 60, 0.16)'));
+      neb.addColorStop(0, cfg.moon
+        ? 'rgba(56, 189, 248, 0.22)'
+        : daylight
+          ? 'rgba(253, 224, 71, 0.28)'
+          : (cfg.wind ? 'rgba(168, 85, 247, 0.22)' : 'rgba(251, 146, 60, 0.16)'));
       neb.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = neb;
       ctx.fillRect(0, 0, w, h);
 
-      // Celestial body (Earth on Moon level / Moon Glow)
+      // Celestial body (Earth on Moon level / Daytime Sun / Night Moon)
       const orbX = w * 0.82 - cam.x * 0.015;
       const orbY = h * 0.19;
       ctx.save();
@@ -800,6 +869,15 @@
         ctx.strokeStyle = 'rgba(125, 211, 252, 0.45)';
         ctx.lineWidth = 2;
         ctx.stroke();
+      } else if (daylight) {
+        const sGrad = ctx.createRadialGradient(orbX - 6, orbY - 6, 4, orbX, orbY, 30);
+        sGrad.addColorStop(0, '#ffffff');
+        sGrad.addColorStop(0.55, '#fde047');
+        sGrad.addColorStop(1, 'rgba(250, 204, 21, 0)');
+        ctx.fillStyle = sGrad;
+        ctx.beginPath();
+        ctx.arc(orbX, orbY, 30, 0, Math.PI * 2);
+        ctx.fill();
       } else {
         const mGrad = ctx.createRadialGradient(orbX - 5, orbY - 5, 2, orbX, orbY, 24);
         mGrad.addColorStop(0, '#fef9c3');
@@ -812,19 +890,38 @@
       }
       ctx.restore();
 
-      // Twinkling parallax stars
-      stars.forEach((s, idx) => {
-        const tw = 0.5 + 0.5 * Math.sin(nowSec * 2.2 + idx * 1.7);
-        ctx.fillStyle = `rgba(226, 232, 240, ${(s.a * (0.55 + 0.45 * tw)).toFixed(2)})`;
-        ctx.beginPath();
-        ctx.arc(((s.x * w - cam.x * 0.03) % w + w) % w, s.y * h, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
+      if (daylight) {
+        // Soft sunlit clouds in Light Mode
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+        for (let ci = 0; ci < 6; ci++) {
+          const cx = (((ci * 210 + nowSec * 6 - cam.x * 0.04) % (w + 180)) + (w + 180)) % (w + 180) - 90;
+          const cy = h * (0.14 + (ci % 3) * 0.11);
+          const sc = 0.85 + (ci % 2) * 0.35;
+          ctx.beginPath();
+          ctx.arc(cx, cy, 20 * sc, 0, Math.PI * 2);
+          ctx.arc(cx + 22 * sc, cy - 6 * sc, 24 * sc, 0, Math.PI * 2);
+          ctx.arc(cx + 46 * sc, cy + 2 * sc, 18 * sc, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      } else {
+        // Twinkling parallax stars
+        stars.forEach((s, idx) => {
+          const tw = 0.5 + 0.5 * Math.sin(nowSec * 2.2 + idx * 1.7);
+          ctx.fillStyle = `rgba(226, 232, 240, ${(s.a * (0.55 + 0.45 * tw)).toFixed(2)})`;
+          ctx.beginPath();
+          ctx.arc(((s.x * w - cam.x * 0.03) % w + w) % w, s.y * h, s.r, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
 
       // Parallax distant skyline / mountains (screen space)
       ctx.save();
       const parFar = -(cam.x * 0.08) % 260;
-      ctx.fillStyle = cfg.moon ? '#0b132b' : (cfg.moving ? '#072238' : '#0b1834');
+      ctx.fillStyle = cfg.moon
+        ? '#0b132b'
+        : daylight
+          ? (cfg.moving ? '#475569' : '#64748b')
+          : (cfg.moving ? '#072238' : '#0b1834');
       ctx.beginPath();
       ctx.moveTo(0, h);
       for (let x = -260; x <= w + 260; x += 65) {
@@ -841,9 +938,9 @@
         for (let bx = -180; bx < w + 180; bx += 90) {
           const sx = bx + bScroll;
           const bh = 95 + ((Math.abs(Math.round(bx / 90)) * 47) % 85);
-          ctx.fillStyle = '#09152b';
+          ctx.fillStyle = daylight ? '#334155' : '#09152b';
           ctx.fillRect(sx, h - bh, 64, bh);
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.32)';
+          ctx.fillStyle = daylight ? 'rgba(186, 230, 253, 0.72)' : 'rgba(56, 189, 248, 0.32)';
           for (let wy = h - bh + 10; wy < h - 14; wy += 12) {
             for (let wx = sx + 8; wx < sx + 54; wx += 11) {
               if ((wx + wy) % 3 !== 0) ctx.fillRect(wx, wy, 5, 6);
@@ -856,7 +953,7 @@
       // Storm wind streaks when wind active
       if (cfg.wind !== 0) {
         ctx.save();
-        ctx.strokeStyle = 'rgba(186, 230, 253, 0.25)';
+        ctx.strokeStyle = daylight ? 'rgba(15, 23, 42, 0.25)' : 'rgba(186, 230, 253, 0.25)';
         ctx.lineWidth = 1.4;
         for (let i = 0; i < 16; i++) {
           const sy = ((i * 53 + nowSec * 14) % (h * 0.72));
@@ -877,13 +974,19 @@
 
       if (cfg.moving) {
         const waterGrad = ctx.createLinearGradient(0, -180, 0, 25);
-        waterGrad.addColorStop(0, '#021224');
-        waterGrad.addColorStop(0.6, '#082f49');
-        waterGrad.addColorStop(1, '#0e7490');
+        if (daylight) {
+          waterGrad.addColorStop(0, '#075985');
+          waterGrad.addColorStop(0.6, '#0284c7');
+          waterGrad.addColorStop(1, '#38bdf8');
+        } else {
+          waterGrad.addColorStop(0, '#021224');
+          waterGrad.addColorStop(0.6, '#082f49');
+          waterGrad.addColorStop(1, '#0e7490');
+        }
         ctx.fillStyle = waterGrad;
         ctx.fillRect(-1200, -1200, 5200, 1214);
 
-        ctx.strokeStyle = 'rgba(125, 211, 252, 0.48)';
+        ctx.strokeStyle = daylight ? 'rgba(240, 249, 255, 0.80)' : 'rgba(125, 211, 252, 0.48)';
         ctx.lineWidth = 2.4;
         ctx.beginPath();
         for (let wx = -500; wx <= 2800; wx += 26) {
@@ -893,14 +996,22 @@
         ctx.stroke();
       } else {
         const grd = ctx.createLinearGradient(0, -120, 0, 10);
-        grd.addColorStop(0, cfg.moon ? '#1e293b' : '#0f172a');
-        grd.addColorStop(1, cfg.moon ? '#475569' : '#1e293b');
+        if (cfg.moon) {
+          grd.addColorStop(0, '#1e293b');
+          grd.addColorStop(1, '#475569');
+        } else if (daylight) {
+          grd.addColorStop(0, '#334155');
+          grd.addColorStop(1, '#475569');
+        } else {
+          grd.addColorStop(0, '#0f172a');
+          grd.addColorStop(1, '#1e293b');
+        }
         ctx.fillStyle = grd;
         ctx.fillRect(-1200, -1200, 5200, 1200);
 
-        ctx.fillStyle = '#334155';
+        ctx.fillStyle = daylight ? '#475569' : '#334155';
         ctx.fillRect(-350, -8, 560, 9);
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.45)';
+        ctx.fillStyle = daylight ? 'rgba(224, 242, 254, 0.78)' : 'rgba(56, 189, 248, 0.45)';
         for (let rx = -120; rx < 170; rx += 32) {
           ctx.fillRect(rx, -2.5, 16, 2);
         }
@@ -962,7 +1073,7 @@
       // Pad & Platform (ASDS Drone Ship / Skyscraper Pillar / Landing Gantry)
       const px0 = padCurrentX - cfg.padW * 0.5;
       const py = cfg.padY;
-      ctx.fillStyle = '#0f172a';
+      ctx.fillStyle = daylight ? '#1e293b' : '#0f172a';
       ctx.fillRect(px0 - 16, -240, cfg.padW + 32, py + 240);
 
       ctx.strokeStyle = cfg.moving ? 'rgba(56, 189, 248, 0.35)' : 'rgba(148, 163, 184, 0.25)';
@@ -980,7 +1091,7 @@
 
       const coneAlpha = 0.08 + 0.06 * Math.sin(nowSec * 4.5);
       const coneGrad = ctx.createLinearGradient(0, py, 0, py + 150);
-      coneGrad.addColorStop(0, `rgba(74, 222, 128, ${(coneAlpha * 2.4).toFixed(2)})`);
+      coneGrad.addColorStop(0, `rgba(74, 222, 128, ${(coneAlpha * (daylight ? 3.2 : 2.4)).toFixed(2)})`);
       coneGrad.addColorStop(1, 'rgba(74, 222, 128, 0)');
       ctx.fillStyle = coneGrad;
       ctx.beginPath();
@@ -1005,9 +1116,12 @@
       ctx.save();
       ctx.translate(padCurrentX, py - 22);
       ctx.scale(1, -1);
-      ctx.fillStyle = 'rgba(167, 243, 208, 0.72)';
+      ctx.fillStyle = 'rgba(167, 243, 208, 0.88)';
+      ctx.strokeStyle = 'rgba(2, 6, 23, 0.72)';
+      ctx.lineWidth = 2.5;
       ctx.font = 'bold 11px monospace';
       ctx.textAlign = 'center';
+      ctx.strokeText(cfg.moving ? 'ASDS // LANDUNG' : 'ZIELZONE', 0, 0);
       ctx.fillText(cfg.moving ? 'ASDS // LANDUNG' : 'ZIELZONE', 0, 0);
       ctx.restore();
 
@@ -1039,7 +1153,7 @@
       ctx.rotate(car.angle);
 
       const beam = ctx.createLinearGradient(25, 0, 145, 0);
-      beam.addColorStop(0, 'rgba(224, 242, 254, 0.34)');
+      beam.addColorStop(0, daylight ? 'rgba(254, 249, 195, 0.28)' : 'rgba(224, 242, 254, 0.34)');
       beam.addColorStop(1, 'rgba(224, 242, 254, 0)');
       ctx.fillStyle = beam;
       ctx.beginPath();
@@ -1160,19 +1274,21 @@
         const vSpd = Math.round(Math.hypot(car.vx, car.vy) / 10);
         const safeRate = Math.abs(car.vy) < 175 && Math.abs(((car.angle + Math.PI) % (Math.PI * 2)) - Math.PI) < 0.32;
 
-        ctx.fillStyle = 'rgba(2, 6, 23, 0.72)';
-        ctx.strokeStyle = safeRate ? 'rgba(74, 222, 128, 0.5)' : 'rgba(251, 146, 60, 0.5)';
+        ctx.fillStyle = isLight ? 'rgba(255, 255, 255, 0.90)' : 'rgba(2, 6, 23, 0.72)';
+        ctx.strokeStyle = isLight
+          ? (safeRate ? 'rgba(21, 128, 61, 0.68)' : 'rgba(194, 65, 12, 0.68)')
+          : (safeRate ? 'rgba(74, 222, 128, 0.5)' : 'rgba(251, 146, 60, 0.5)');
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.roundRect(12, 12, 236, 44, 10);
         ctx.fill();
         ctx.stroke();
 
-        ctx.fillStyle = '#7dd3fc';
+        ctx.fillStyle = isLight ? '#0369a1' : '#7dd3fc';
         ctx.font = 'bold 12px monospace';
         ctx.textAlign = 'left';
         ctx.fillText(`ZIEL: ${dxMeters >= 0 ? dxMeters + 'm voraus ->' : Math.abs(dxMeters) + 'm zurueck <-'}`, 22, 30);
-        ctx.fillStyle = safeRate ? '#4ade80' : '#fb923c';
+        ctx.fillStyle = isLight ? (safeRate ? '#15803d' : '#c2410c') : (safeRate ? '#4ade80' : '#fb923c');
         ctx.font = '11px monospace';
         ctx.fillText(`SPEED: ${vSpd} m/s · ${safeRate ? 'LAGE OK' : 'ABBREMSEN / NEIGEN'}`, 22, 47);
       }

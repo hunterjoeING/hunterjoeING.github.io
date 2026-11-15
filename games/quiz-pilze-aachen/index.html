@@ -5,7 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Interaktives Pilz-Sammler-Quiz mit Fotos für die Region Aachen (Aachener Wald / Öcher Bösch, Stolberger Kalktriften, Eifel & Hohes Venn) – Pilznamen bestimmen & Giftigkeit / Speisewert prüfen." />
   <title>Pilz-Sammler-Quiz Region Aachen · Namen &amp; Giftigkeit · HunterJoe Arcade</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .gallery-latin { font-weight: 500; color: #a7f3d0; font-size: 14px; }
+    html[data-theme="light"] .gallery-latin { color: #0f766e; }
+    html[data-theme="light"] .timer-toggle-btn.countdown-expired {
+      background: #e2e8f0;
+      border-color: rgba(15, 23, 42, 0.25);
+      color: #334155;
+    }
+  </style>
   <style>
     :root {
       --forest-bg: #07110c;
@@ -1026,9 +1036,11 @@
           <div class="pill-group" id="length-bar" role="group" aria-label="Anzahl der Pilze">
             <button type="button" class="opt-pill active-len" data-len="8">8 Pilze</button>
             <button type="button" class="opt-pill" data-len="12">12 Pilze</button>
-            <button type="button" class="opt-pill" data-len="all">Alle Pilze der Auswahl</button>
+            <button type="button" class="opt-pill" data-len="20">20 Pilze</button>
+            <button type="button" class="opt-pill" data-len="all">Alle 24 Pilze</button>
           </div>
         </div>
+        <div id="pool-status-bar" class="pool-status-bar"></div>
       </div>
 
       <div class="cat-section-title">Sammelgebiet / Schwerpunkt wählen &amp; Exkursion starten</div>
@@ -1142,8 +1154,10 @@
   </div>
 
   <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
   <script>
     (function () {
+      const QUIZ_ID = 'pilze-aachen';
       const COUNTDOWN_KEY = 'arcade_pilze_aachen_countdown';
       const COUNTDOWN_SEC = 35;
 
@@ -2124,11 +2138,26 @@
         });
       }
 
+      function renderPoolStatus() {
+        const bar = document.getElementById('pool-status-bar');
+        if (!bar) return;
+        const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, MUSHROOMS);
+        const effCount = computeRoundCount(stats.total);
+        bar.innerHTML = `
+          <span class="pool-status-text">
+            📚 Pool: <strong>${stats.total}</strong> Pilz-Arten · ✨ Noch neu: <strong>${stats.unseen}</strong> · 🎯 Nächste Runde (Alle): <strong>${effCount}</strong>
+          </span>
+          <button type="button" class="pool-reset-btn" id="btn-pool-reset" ${stats.seen === 0 ? 'disabled style="opacity:0.45;cursor:default;"' : ''}>🔄 Verlauf zurücksetzen (${stats.seen})</button>
+        `;
+      }
+
       function renderMenu() {
         syncMenuControls();
+        renderPoolStatus();
         const grid = document.getElementById('cat-grid');
         grid.innerHTML = CATEGORIES.map(cat => {
           const pool = getPool(cat.id);
+          const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, pool);
           const roundCount = computeRoundCount(pool.length);
           return `
             <button type="button" class="cat-card ${cat.cls}" data-cat="${cat.id}">
@@ -2138,13 +2167,21 @@
               <div class="cat-name">${escapeHtml(cat.name)}</div>
               <div class="cat-desc">${escapeHtml(cat.desc)}</div>
               <div class="cat-foot">
-                <span>Exkursion: ${roundCount} von ${pool.length} Pilzen</span>
+                <span>Exkursion: ${roundCount} von ${pool.length} Pilzen (${stats.unseen} neu)</span>
                 <span class="cat-go">Starten →</span>
               </div>
             </button>
           `;
         }).join('');
       }
+
+      document.getElementById('pool-status-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('#btn-pool-reset');
+        if (!btn || btn.disabled) return;
+        ArcadeQuizEngine.resetSeen(QUIZ_ID, MUSHROOMS);
+        if (window.ArcadeAudio) ArcadeAudio.pop();
+        renderMenu();
+      });
 
       document.getElementById('mode-bar').addEventListener('click', (e) => {
         const btn = e.target.closest('.opt-pill');
@@ -2250,8 +2287,8 @@
         activeCat = catId || 'alle';
         if (window.ArcadeAudio) ArcadeAudio.click();
         const pool = getPool(activeCat);
-        const count = computeRoundCount(pool.length);
-        deck = shuffle(pool).slice(0, count);
+        const reqCount = selectedLen === 'all' ? 'all' : (parseInt(selectedLen, 10) || 8);
+        deck = ArcadeQuizEngine.drawDeck(QUIZ_ID, pool, reqCount, 8).deck;
         qIdx = 0;
         nameCorrectCount = 0;
         toxCorrectCount = 0;
@@ -2415,6 +2452,7 @@
             else overallStatus = 'miss';
           }
           resultsLog.push({ item, status: overallStatus });
+          ArcadeQuizEngine.markSeen(QUIZ_ID, item);
           revealSteckbrief(item, overallStatus);
         } else if (step === 'name' && !toxAnswered) {
           document.getElementById('step-tox-block').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -2546,6 +2584,7 @@
         document.getElementById('joker-50').disabled = true;
         document.getElementById('joker-skip').disabled = true;
         resultsLog.push({ item, status: 'skip' });
+        ArcadeQuizEngine.markSeen(QUIZ_ID, item);
         revealSteckbrief(item, 'skip');
       });
 
@@ -2588,7 +2627,7 @@
               </button>
               <div class="gallery-info">
                 <h3>
-                  <span>${escapeHtml(info.title)} <em style="font-weight:500;color:#a7f3d0;font-size:14px;">(${escapeHtml(info.latin)})</em></span>
+                  <span>${escapeHtml(info.title)} <em class="gallery-latin">(${escapeHtml(info.latin)})</em></span>
                   <span class="tox-pill ${it.toxClass}">${escapeHtml(it.toxBadge)}</span>
                 </h3>
                 <div class="gallery-meta">${escapeHtml(it.habitat)} · Saison: ${escapeHtml(it.season)}</div>

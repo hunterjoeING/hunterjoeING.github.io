@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Minesweeper 3d prompt Version</title>
+  <script>try{if(localStorage.getItem('arcade_theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(_){}</script>
   <style>
     :root {
       --bg-dark: #070b19;
@@ -241,6 +242,15 @@
       gap: 5px;
     }
 
+    .footer-legal-links a {
+      color: #7dd3fc;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .footer-legal-links a:hover {
+      text-decoration: underline;
+    }
+
     .key-badge {
       padding: 2px 7px;
       border-radius: 6px;
@@ -296,6 +306,89 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       color: #cbd5e1;
       font-size: 12.5px;
+    }
+
+    /* Standalone Light Mode Overrides */
+    html[data-theme="light"] {
+      --bg-dark: #eaf2fb;
+      --panel-bg: rgba(255, 255, 255, 0.90);
+      --panel-border: rgba(2, 132, 199, 0.28);
+      --accent: #0284c7;
+      --accent-glow: rgba(2, 132, 199, 0.2);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+    }
+    html[data-theme="light"],
+    html[data-theme="light"] body {
+      background: radial-gradient(circle at 50% 35%, #ffffff 0%, #e6f0fa 58%, #cbdbe9 100%);
+      color: #0f172a;
+    }
+    html[data-theme="light"] .top-bar,
+    html[data-theme="light"] .bottom-hud {
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+    }
+    html[data-theme="light"] .back-link {
+      background: #f1f5f9;
+      border-color: rgba(15, 23, 42, 0.16);
+      color: #0f172a;
+    }
+    html[data-theme="light"] .back-link:hover {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0369a1;
+    }
+    html[data-theme="light"] .game-title {
+      background: linear-gradient(90deg, #0f172a, #0369a1, #0284c7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    html[data-theme="light"] .stat-pill {
+      background: #f8fafc;
+      border-color: rgba(15, 23, 42, 0.14);
+      color: #0f172a;
+    }
+    html[data-theme="light"] select,
+    html[data-theme="light"] .btn {
+      background: #ffffff;
+      border-color: rgba(15, 23, 42, 0.18);
+      color: #0f172a;
+    }
+    html[data-theme="light"] select:hover,
+    html[data-theme="light"] .btn:hover {
+      background: #e0f2fe;
+      border-color: #0284c7;
+    }
+    html[data-theme="light"] .btn.primary {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #0369a1;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .btn.active-mode {
+      background: linear-gradient(135deg, #e11d48, #f43f5e);
+      border-color: #be123c;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .spread-control { color: #0f172a; }
+    html[data-theme="light"] .spread-val { color: #0369a1; }
+    html[data-theme="light"] .key-badge {
+      background: #e0f2fe;
+      border-color: rgba(2, 132, 199, 0.35);
+      color: #0369a1;
+    }
+    html[data-theme="light"] .footer-legal-links a { color: #0369a1; }
+    html[data-theme="light"] #coord-readout { color: #334155; }
+    html[data-theme="light"] .status-banner {
+      background: rgba(255, 255, 255, 0.96);
+      color: #0f172a;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+    }
+    html[data-theme="light"] .status-banner.win {
+      border-color: #16a34a;
+      color: #15803d;
+    }
+    html[data-theme="light"] .status-banner.lose {
+      border-color: #e11d48;
+      color: #be123c;
     }
 
     @media (max-width: 720px) {
@@ -403,6 +496,7 @@
       </select>
       <button class="btn" id="btn-flag-mode" title="Umschalten zwischen Aufdecken und Flagge setzen">🚩 Flaggen-Modus: AUS</button>
       <button class="btn primary" id="btn-new-game">🔄 Neues Spiel</button>
+      <button class="btn" id="btn-theme-toggle" title="Hell-/Dunkel-Modus wechseln">☀️</button>
     </div>
   </header>
 
@@ -423,7 +517,7 @@
       <span class="hint-item"><span class="key-badge">2 Finger / Mausrad</span> Auseinanderziehen</span>
       <span class="hint-item"><span class="key-badge">Tippen / Klick</span> Aufdecken</span>
       <span class="hint-item hint-desktop-only"><span class="key-badge">Rechtsklick</span> Flagge 🚩</span>
-      <span class="hint-item"><a href="../../impressum.html" style="color:#7dd3fc;text-decoration:none;font-weight:700;">Impressum</a> · <a href="../../datenschutz.html" style="color:#7dd3fc;text-decoration:none;font-weight:700;">Datenschutz</a></span>
+      <span class="hint-item footer-legal-links"><a href="../../impressum.html">Impressum</a> · <a href="../../datenschutz.html">Datenschutz</a></span>
     </div>
   </footer>
 
@@ -447,6 +541,18 @@
       const elSpreadSlider = document.getElementById('slider-spread');
       const elSpreadLabel = document.getElementById('spread-label');
       const elResetViewBtn = document.getElementById('btn-reset-view');
+
+      const elThemeBtn = document.getElementById('btn-theme-toggle');
+      let currentTheme = (function () {
+        try {
+          return localStorage.getItem('arcade_theme') === 'light' ? 'light' : 'dark';
+        } catch (_) {
+          return 'dark';
+        }
+      })();
+      function isLightTheme() {
+        return currentTheme === 'light';
+      }
 
       // Scene, Camera, Renderer
       const scene = new THREE.Scene();
@@ -583,8 +689,8 @@
         opacity: 0.78
       });
 
-      // Number color palette
-      const NUMBER_COLORS = [
+      // Number color palette (dark vs. light high-contrast)
+      const NUMBER_COLORS_DARK = [
         '#94a3b8', // 0
         '#38bdf8', // 1 - sky blue
         '#4ade80', // 2 - green
@@ -596,11 +702,27 @@
         '#f472b6', // 8 - pink
         '#ffffff'  // 9+
       ];
+      const NUMBER_COLORS_LIGHT = [
+        '#64748b', // 0
+        '#0284c7', // 1 - deep azure
+        '#15803d', // 2 - forest green
+        '#b45309', // 3 - warm amber
+        '#c2410c', // 4 - burnt orange
+        '#be123c', // 5 - crimson
+        '#7e22ce', // 6 - deep violet
+        '#0f766e', // 7 - deep teal
+        '#be185d', // 8 - magenta
+        '#0f172a'  // 9+
+      ];
+      function getNumberPalette() {
+        return isLightTheme() ? NUMBER_COLORS_LIGHT : NUMBER_COLORS_DARK;
+      }
 
       const spriteMaterialCache = new Map();
 
       function getTextSpriteMaterial(label, colorHex) {
-        const key = label + '_' + colorHex;
+        const light = isLightTheme();
+        const key = (light ? 'L_' : 'D_') + label + '_' + colorHex;
         if (spriteMaterialCache.has(key)) return spriteMaterialCache.get(key);
 
         const canvas = document.createElement('canvas');
@@ -608,12 +730,12 @@
         canvas.height = 128;
         const ctx = canvas.getContext('2d');
 
-        // Subtle circular badge behind number for legibility at any angle
+        // High-contrast circular pill badge behind number/icon for legibility
         ctx.beginPath();
         ctx.arc(64, 64, 48, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(7, 11, 25, 0.78)';
+        ctx.fillStyle = light ? 'rgba(255, 255, 255, 0.94)' : 'rgba(7, 11, 25, 0.78)';
         ctx.fill();
-        ctx.lineWidth = 4;
+        ctx.lineWidth = light ? 5 : 4;
         ctx.strokeStyle = colorHex;
         ctx.stroke();
 
@@ -635,7 +757,8 @@
       }
 
       function getFlagOutcomeSpriteMaterial(hadMine) {
-        const key = hadMine ? 'outcome_flag_hit' : 'outcome_flag_wrong';
+        const light = isLightTheme();
+        const key = (light ? 'L_' : 'D_') + (hadMine ? 'outcome_flag_hit' : 'outcome_flag_wrong');
         if (spriteMaterialCache.has(key)) return spriteMaterialCache.get(key);
 
         const canvas = document.createElement('canvas');
@@ -645,15 +768,17 @@
 
         ctx.beginPath();
         ctx.arc(64, 64, 52, 0, Math.PI * 2);
-        ctx.fillStyle = hadMine ? 'rgba(5, 46, 22, 0.88)' : 'rgba(40, 14, 8, 0.88)';
+        ctx.fillStyle = light
+          ? (hadMine ? 'rgba(240, 253, 244, 0.96)' : 'rgba(255, 247, 237, 0.96)')
+          : (hadMine ? 'rgba(5, 46, 22, 0.88)' : 'rgba(40, 14, 8, 0.88)');
         ctx.fill();
         ctx.lineWidth = 5;
-        ctx.strokeStyle = hadMine ? '#4ade80' : '#fb923c';
+        ctx.strokeStyle = hadMine ? (light ? '#16a34a' : '#4ade80') : (light ? '#ea580c' : '#fb923c');
         ctx.stroke();
 
         if (hadMine) {
           const cx = 56, cy = 70, r = 20, spike = 32;
-          ctx.strokeStyle = '#f8fafc';
+          ctx.strokeStyle = light ? '#0f172a' : '#f8fafc';
           ctx.lineWidth = 4.5;
           ctx.lineCap = 'round';
           for (let a = 0; a < 8; a++) {
@@ -690,7 +815,7 @@
           ctx.strokeStyle = '#ffffff';
           ctx.stroke();
         } else {
-          ctx.strokeStyle = '#e2e8f0';
+          ctx.strokeStyle = light ? '#334155' : '#e2e8f0';
           ctx.lineWidth = 6;
           ctx.lineCap = 'round';
           ctx.beginPath();
@@ -703,7 +828,7 @@
           ctx.lineTo(94, 46);
           ctx.lineTo(48, 64);
           ctx.closePath();
-          ctx.fillStyle = '#fbbf24';
+          ctx.fillStyle = '#f59e0b';
           ctx.fill();
 
           const drawCross = (w, col) => {
@@ -730,6 +855,41 @@
         });
         spriteMaterialCache.set(key, mat);
         return mat;
+      }
+
+      function applySceneTheme(themeName) {
+        currentTheme = themeName === 'light' ? 'light' : 'dark';
+        if (currentTheme === 'light') {
+          document.documentElement.setAttribute('data-theme', 'light');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
+        try { localStorage.setItem('arcade_theme', currentTheme); } catch (_) {}
+
+        const light = isLightTheme();
+        if (elThemeBtn) {
+          elThemeBtn.textContent = light ? '🌙' : '☀️';
+          elThemeBtn.title = light ? 'Zum Dunkel-Modus wechseln' : 'Zum Hell-Modus wechseln';
+        }
+
+        ambientLight.color.setHex(light ? 0xffffff : 0xdbeafe);
+        ambientLight.intensity = light ? 0.98 : 0.72;
+        dirLight1.intensity = light ? 1.0 : 0.85;
+        dirLight2.color.setHex(light ? 0x0284c7 : 0x38bdf8);
+        dirLight2.intensity = light ? 0.35 : 0.4;
+
+        matUnrevealed.color.setHex(light ? 0x2563eb : 0x1e3a5f);
+        matUnrevealed.roughness = light ? 0.32 : 0.28;
+        matUnrevealed.opacity = light ? 0.92 : 0.94;
+        matHover.color.setHex(light ? 0x0ea5e9 : 0x38bdf8);
+        matNumberGlass.color.setHex(light ? 0xcbd5e1 : 0x0f172a);
+        matNumberGlass.opacity = light ? 0.42 : 0.34;
+        lineMatDefault.color.setHex(light ? 0x0369a1 : 0x7dd3fc);
+        lineMatDefault.opacity = light ? 0.58 : 0.42;
+
+        if (cells.length) {
+          cells.forEach(setCellVisual);
+        }
       }
 
       function coordKey(x, y, z) {
@@ -895,7 +1055,7 @@
             } else {
               cell.mesh.material = matFlagged;
               cell.wireframe.material = lineMatDefault;
-              const flagSpriteMat = getTextSpriteMaterial('🚩', '#fda4af');
+              const flagSpriteMat = getTextSpriteMaterial('🚩', isLightTheme() ? '#e11d48' : '#fda4af');
               const sp = new THREE.Sprite(flagSpriteMat);
               sp.scale.set(0.68, 0.68, 0.68);
               cell.group.add(sp);
@@ -914,7 +1074,7 @@
           cell.mesh.geometry = mineSphereGeo;
           cell.mesh.material = matMine;
           cell.wireframe.visible = false;
-          const mineSpriteMat = getTextSpriteMaterial('💣', '#ef4444');
+          const mineSpriteMat = getTextSpriteMaterial('💣', isLightTheme() ? '#b91c1c' : '#ef4444');
           const sp = new THREE.Sprite(mineSpriteMat);
           sp.scale.set(0.85, 0.85, 0.85);
           cell.group.add(sp);
@@ -932,7 +1092,8 @@
           cell.mesh.material = matNumberGlass;
           cell.wireframe.visible = false;
 
-          const color = NUMBER_COLORS[Math.min(cell.neighborMines, NUMBER_COLORS.length - 1)];
+          const palette = getNumberPalette();
+          const color = palette[Math.min(cell.neighborMines, palette.length - 1)];
           const numMat = getTextSpriteMaterial(String(cell.neighborMines), color);
           const sp = new THREE.Sprite(numMat);
           sp.scale.set(0.76, 0.76, 0.76);
@@ -1356,6 +1517,14 @@
         renderer.render(scene, camera);
       }
 
+      if (elThemeBtn) {
+        elThemeBtn.addEventListener('click', () => {
+          clearHover();
+          applySceneTheme(isLightTheme() ? 'dark' : 'light');
+        });
+      }
+
+      applySceneTheme(currentTheme);
       initGame();
       animate();
     })();

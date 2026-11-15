@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="Bild-Quiz über Schweizer Eisenbahnloks und Triebzüge der letzten 50 Jahre (ca. 1970–Heute) – mit ausführlichem Was-das-ist-Steckbrief, ohne Highscores und ohne Zeitdruck." />
   <title>Schweizer Eisenbahnloks · Bild-Quiz · HunterJoe Arcade</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    html[data-theme="light"] .timer-toggle-btn.countdown-expired {
+      background: #e2e8f0;
+      border-color: rgba(15, 23, 42, 0.25);
+      color: #334155;
+    }
+  </style>
   <style>
     :root {
       --rail-bg: #070d18;
@@ -874,9 +882,11 @@
           <div class="pill-group" id="length-bar" role="group" aria-label="Anzahl der Fragen">
             <button type="button" id="opt-len-8" class="opt-pill active-len" data-len="8">8 Loks</button>
             <button type="button" id="opt-len-12" class="opt-pill" data-len="12">12 Loks</button>
-            <button type="button" id="opt-len-all" class="opt-pill" data-len="all">Alle Loks der Auswahl</button>
+            <button type="button" id="opt-len-20" class="opt-pill" data-len="20">20 Loks</button>
+            <button type="button" id="opt-len-all" class="opt-pill" data-len="all">Alle 24 Loks</button>
           </div>
         </div>
+        <div id="pool-status-bar" class="pool-status-bar"></div>
       </div>
 
       <div class="cat-section-title">Strecke / Thema wählen &amp; losfahren</div>
@@ -970,8 +980,10 @@
   </div>
 
   <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
   <script>
     (function () {
+      const QUIZ_ID = 'swiss-trains';
       const COUNTDOWN_KEY = 'arcade_swiss_trains_countdown';
       const COUNTDOWN_SEC = 35;
 
@@ -1684,11 +1696,26 @@
         });
       }
 
+      function renderPoolStatus() {
+        const bar = document.getElementById('pool-status-bar');
+        if (!bar) return;
+        const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, QUESTIONS);
+        const effCount = computeRoundCount(stats.total);
+        bar.innerHTML = `
+          <span class="pool-status-text">
+            📚 Pool: <strong>${stats.total}</strong> Loks &amp; Züge · ✨ Noch neu: <strong>${stats.unseen}</strong> · 🎯 Nächste Runde (Alle): <strong>${effCount}</strong>
+          </span>
+          <button type="button" class="pool-reset-btn" id="btn-pool-reset" ${stats.seen === 0 ? 'disabled style="opacity:0.45;cursor:default;"' : ''}>🔄 Verlauf zurücksetzen (${stats.seen})</button>
+        `;
+      }
+
       function renderMenu() {
         syncMenuControls();
+        renderPoolStatus();
         const grid = document.getElementById('cat-grid');
         grid.innerHTML = CATEGORIES.map(cat => {
           const pool = getPool(cat.id);
+          const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, pool);
           const roundCount = computeRoundCount(pool.length);
           return `
             <button type="button" class="cat-card ${cat.cls}" data-cat="${cat.id}">
@@ -1698,13 +1725,21 @@
               <div class="cat-name">${escapeHtml(cat.name)}</div>
               <div class="cat-desc">${escapeHtml(cat.desc)}</div>
               <div class="cat-foot">
-                <span>Runde: ${roundCount} von ${pool.length} Loks</span>
+                <span>Runde: ${roundCount} von ${pool.length} Loks (${stats.unseen} neu)</span>
                 <span class="cat-go">Starten →</span>
               </div>
             </button>
           `;
         }).join('');
       }
+
+      document.getElementById('pool-status-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('#btn-pool-reset');
+        if (!btn || btn.disabled) return;
+        ArcadeQuizEngine.resetSeen(QUIZ_ID, QUESTIONS);
+        if (window.ArcadeAudio) ArcadeAudio.pop();
+        renderMenu();
+      });
 
       document.getElementById('countdown-bar').addEventListener('click', (e) => {
         const btn = e.target.closest('.opt-pill');
@@ -1802,8 +1837,8 @@
         activeCat = catId || 'alle';
         if (window.ArcadeAudio) ArcadeAudio.click();
         const pool = getPool(activeCat);
-        const count = computeRoundCount(pool.length);
-        deck = shuffle(pool).slice(0, count);
+        const reqCount = selectedLen === 'all' ? 'all' : (parseInt(selectedLen, 10) || 8);
+        deck = ArcadeQuizEngine.drawDeck(QUIZ_ID, pool, reqCount, 8).deck;
         qIdx = 0;
         correctCount = 0;
         resultsLog = [];
@@ -1895,6 +1930,7 @@
         }
 
         resultsLog.push({ item, status });
+        ArcadeQuizEngine.markSeen(QUIZ_ID, item);
         document.getElementById('q-correct-count').textContent = correctCount;
         document.getElementById('joker-50').disabled = true;
         document.getElementById('joker-skip').disabled = true;
@@ -1993,6 +2029,7 @@
         document.getElementById('joker-50').disabled = true;
         document.getElementById('joker-skip').disabled = true;
         resultsLog.push({ item, status: 'skip' });
+        ArcadeQuizEngine.markSeen(QUIZ_ID, item);
         revealSteckbrief(item, 'skip');
       });
 

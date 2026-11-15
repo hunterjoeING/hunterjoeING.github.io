@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Zombie Horde: Gate Runner</title>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css">
   <style>
     html, body {
@@ -89,6 +90,27 @@
       font-size: 11px;
       color: var(--text-muted);
     }
+
+    html[data-theme="light"] .hud-strip {
+      background: rgba(255, 255, 255, 0.94);
+      border-color: rgba(2, 132, 199, 0.28);
+      color: #0f172a;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+    html[data-theme="light"] .stage-wrap {
+      background: #bae6fd;
+      border-color: rgba(2, 132, 199, 0.45);
+    }
+    html[data-theme="light"] .overlay-card {
+      background: rgba(15, 23, 42, 0.38);
+    }
+    html[data-theme="light"] .modal-inner {
+      background: rgba(255, 255, 255, 0.96);
+      border-color: rgba(2, 132, 199, 0.45);
+      color: #0f172a;
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
+    }
+    html[data-theme="light"] #ov-desc { color: #334155 !important; }
   </style>
 </head>
 <body>
@@ -723,6 +745,121 @@
     }
 
     function drawSceneBackdrop(w, h, horizonY, nowSec) {
+      const isLight = window.ArcadeTheme && ArcadeTheme.isLight();
+      if (isLight) {
+        const sky = ctx.createLinearGradient(0, 0, 0, horizonY + 42);
+        sky.addColorStop(0, '#0284c7');
+        sky.addColorStop(0.5, '#38bdf8');
+        sky.addColorStop(0.84, '#bae6fd');
+        sky.addColorStop(1, '#fed7aa');
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, w, horizonY + 42);
+
+        const sunX = w * 0.78, sunY = horizonY * 0.44;
+        const sunR = Math.max(16, Math.min(28, w * 0.035));
+        const corona = ctx.createRadialGradient(sunX, sunY, sunR * 0.3, sunX, sunY, sunR * 4.5);
+        corona.addColorStop(0, 'rgba(254, 240, 138, 0.78)');
+        corona.addColorStop(0.45, 'rgba(253, 224, 71, 0.25)');
+        corona.addColorStop(1, 'rgba(253, 224, 71, 0)');
+        ctx.fillStyle = corona;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunR * 4.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        const sunBody = ctx.createRadialGradient(sunX - sunR * 0.2, sunY - sunR * 0.2, 2, sunX, sunY, sunR);
+        sunBody.addColorStop(0, '#fefce8');
+        sunBody.addColorStop(0.65, '#fde047');
+        sunBody.addColorStop(1, '#f59e0b');
+        ctx.fillStyle = sunBody;
+        ctx.beginPath();
+        ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Soft drifting clouds
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
+        for (let ci = 0; ci < 4; ci++) {
+          const cxPos = (((ci * 230 + nowSec * 9) % (w + 140)) + (w + 140)) % (w + 140) - 70;
+          const cyPos = horizonY * (0.24 + (ci % 3) * 0.16);
+          ctx.beginPath();
+          ctx.ellipse(cxPos, cyPos, 38, 12, 0, 0, Math.PI * 2);
+          ctx.ellipse(cxPos + 20, cyPos - 4, 24, 10, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Far sunlit skyline
+        const farWidths = [34, 24, 42, 26, 48, 28, 36];
+        let fxPos = 0, fi = 0;
+        ctx.fillStyle = '#64748b';
+        while (fxPos < w) {
+          const bw = farWidths[fi % farWidths.length];
+          const bh = 22 + ((fi * 23) % 38);
+          ctx.fillRect(fxPos, horizonY + 10 - bh, bw - 2, bh);
+          fxPos += bw;
+          fi++;
+        }
+
+        // Near skyline with daytime glass highlights
+        const nearWidths = [26, 18, 34, 22, 38, 20, 30, 24, 36, 19];
+        let sx = 0, bi = 0;
+        while (sx < w) {
+          const bw = nearWidths[bi % nearWidths.length];
+          const bh = 16 + ((bi * 19) % 34);
+          const topY = horizonY + 8 - bh;
+          ctx.fillStyle = '#334155';
+          ctx.fillRect(sx, topY, bw - 2, bh);
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+          ctx.fillRect(sx, topY, bw - 2, 1.5);
+          if (bw >= 22) {
+            for (let wy = topY + 5; wy < horizonY + 2; wy += 6) {
+              for (let wx = sx + 4; wx < sx + bw - 7; wx += 6) {
+                if (((wx * 7 + wy * 13 + bi) % 5) === 0) {
+                  ctx.fillStyle = 'rgba(186, 230, 253, 0.65)';
+                  ctx.fillRect(wx, wy, 2.5, 2.5);
+                }
+              }
+            }
+          }
+          if (bi % 4 === 1) {
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(sx + bw * 0.45, topY - 9, 1.5, 9);
+          }
+          sx += bw;
+          bi++;
+        }
+
+        // Bright sunlit river canyon
+        const waterGrad = ctx.createLinearGradient(0, horizonY + 6, 0, h);
+        waterGrad.addColorStop(0, '#0284c7');
+        waterGrad.addColorStop(0.4, '#0e7490');
+        waterGrad.addColorStop(1, '#0369a1');
+        ctx.fillStyle = waterGrad;
+        ctx.fillRect(0, horizonY + 6, w, h - horizonY);
+
+        const refCenterX = w * 0.78;
+        const refHalfW = w * 0.11;
+        const sunRefH = ctx.createLinearGradient(refCenterX - refHalfW, 0, refCenterX + refHalfW, 0);
+        sunRefH.addColorStop(0, 'rgba(254, 240, 138, 0)');
+        sunRefH.addColorStop(0.5, 'rgba(254, 240, 138, 0.35)');
+        sunRefH.addColorStop(1, 'rgba(254, 240, 138, 0)');
+        ctx.fillStyle = sunRefH;
+        ctx.fillRect(refCenterX - refHalfW, horizonY + 6, refHalfW * 2, (h - horizonY) * 0.58);
+
+        for (let i = 0; i < 36; i++) {
+          const z = 0.04 + ((i / 36 + (roadScroll * 0.07)) % 0.94);
+          const depth = Math.pow(1 - z, 1.55);
+          const ry = horizonY + depth * (h * 0.89 - horizonY);
+          const side = i % 2 === 0 ? -1 : 1;
+          const spread = ((i * 37) % 100) / 100;
+          const rx = side < 0 ? w * (0.02 + spread * 0.22) : w * (0.74 + spread * 0.22);
+          const rw = (14 + depth * 42);
+          ctx.fillStyle = (side > 0 && rx < w * 0.88)
+            ? `rgba(254, 249, 195, ${(0.28 + 0.25 * (1 - z)).toFixed(2)})`
+            : `rgba(224, 242, 254, ${(0.24 + 0.26 * (1 - z)).toFixed(2)})`;
+          ctx.fillRect(rx, ry, rw, 1.4 + depth * 2.0);
+        }
+        return;
+      }
+
       // Deep cyber-apocalypse twilight sky
       const sky = ctx.createLinearGradient(0, 0, 0, horizonY + 42);
       sky.addColorStop(0, '#020617');
@@ -862,13 +999,14 @@
     }
 
     function drawBridge(w, h, horizonY, nowSec) {
+      const isLight = window.ArcadeTheme && ArcadeTheme.isLight();
       const tl = project(-1, 1), tr = project(1, 1);
       const bl = project(-1, 0), br = project(1, 0);
       const otl = project(-1.14, 1), otr = project(1.14, 1);
       const obl = project(-1.14, 0), obr = project(1.14, 0);
 
       // Steel bridge deck outer aprons & structural under-girder walls dropping toward river
-      ctx.fillStyle = '#060c1c';
+      ctx.fillStyle = isLight ? '#334155' : '#060c1c';
       ctx.beginPath();
       ctx.moveTo(otl.x, otl.y); ctx.lineTo(obl.x, obl.y); ctx.lineTo(obl.x - 28, h); ctx.lineTo(otl.x - 6, otl.y + 18);
       ctx.closePath(); ctx.fill();
@@ -877,14 +1015,14 @@
       ctx.closePath(); ctx.fill();
 
       // Raised steel pedestrian catwalks flanking asphalt deck
-      ctx.fillStyle = '#141e38';
+      ctx.fillStyle = isLight ? '#64748b' : '#141e38';
       ctx.beginPath();
       ctx.moveTo(otl.x, otl.y); ctx.lineTo(tl.x, tl.y); ctx.lineTo(bl.x, bl.y); ctx.lineTo(obl.x, obl.y);
       ctx.closePath(); ctx.fill();
       ctx.beginPath();
       ctx.moveTo(tr.x, tr.y); ctx.lineTo(otr.x, otr.y); ctx.lineTo(obr.x, obr.y); ctx.lineTo(br.x, br.y);
       ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.25)';
+      ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.28)' : 'rgba(148, 163, 184, 0.25)';
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(otl.x, otl.y); ctx.lineTo(obl.x, obl.y);
@@ -893,10 +1031,17 @@
 
       // Weathered asphalt roadway deck
       const deckGrad = ctx.createLinearGradient(0, tl.y, 0, h);
-      deckGrad.addColorStop(0, '#1e1b4b');
-      deckGrad.addColorStop(0.35, '#131d36');
-      deckGrad.addColorStop(0.75, '#0b1224');
-      deckGrad.addColorStop(1, '#060a14');
+      if (isLight) {
+        deckGrad.addColorStop(0, '#64748b');
+        deckGrad.addColorStop(0.35, '#475569');
+        deckGrad.addColorStop(0.75, '#334155');
+        deckGrad.addColorStop(1, '#1e293b');
+      } else {
+        deckGrad.addColorStop(0, '#1e1b4b');
+        deckGrad.addColorStop(0.35, '#131d36');
+        deckGrad.addColorStop(0.75, '#0b1224');
+        deckGrad.addColorStop(1, '#060a14');
+      }
       ctx.fillStyle = deckGrad;
       ctx.beginPath();
       ctx.moveTo(tl.x, tl.y); ctx.lineTo(tr.x, tr.y); ctx.lineTo(br.x, br.y); ctx.lineTo(bl.x, bl.y);
@@ -905,7 +1050,7 @@
       // Worn tire tracks down both lanes
       [-0.46, 0.46].forEach(uTrack => {
         const ttTop = project(uTrack, 1), ttBot = project(uTrack, 0);
-        ctx.strokeStyle = 'rgba(2, 6, 23, 0.42)';
+        ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.24)' : 'rgba(2, 6, 23, 0.42)';
         ctx.lineWidth = Math.max(4, 28 * ttBot.scale);
         ctx.beginPath();
         ctx.moveTo(ttTop.x, ttTop.y);
@@ -921,7 +1066,9 @@
         if (z <= 0.01 || z >= 0.99) continue;
         const pL = project(-1, z);
         const pR = project(1, z);
-        ctx.strokeStyle = `rgba(148, 163, 184, ${(0.06 + (1 - z) * 0.14).toFixed(2)})`;
+        ctx.strokeStyle = isLight
+          ? `rgba(241, 245, 249, ${(0.14 + (1 - z) * 0.18).toFixed(2)})`
+          : `rgba(148, 163, 184, ${(0.06 + (1 - z) * 0.14).toFixed(2)})`;
         ctx.lineWidth = Math.max(1, 2.2 * pL.scale);
         ctx.beginPath();
         ctx.moveTo(pL.x, pL.y);
@@ -931,7 +1078,9 @@
         const zPrev = Math.min(1, z + 0.045);
         const qL0 = project(-1.04, zPrev), qL1 = project(-1.04, z);
         const qR0 = project(1.04, zPrev), qR1 = project(1.04, z);
-        ctx.strokeStyle = (i % 2 === 0) ? 'rgba(245, 158, 11, 0.72)' : 'rgba(30, 41, 59, 0.85)';
+        ctx.strokeStyle = (i % 2 === 0)
+          ? (isLight ? 'rgba(217, 119, 6, 0.88)' : 'rgba(245, 158, 11, 0.72)')
+          : (isLight ? 'rgba(226, 232, 240, 0.85)' : 'rgba(30, 41, 59, 0.85)');
         ctx.lineWidth = Math.max(2, 5.5 * qL1.scale);
         ctx.beginPath();
         ctx.moveTo(qL0.x, qL0.y); ctx.lineTo(qL1.x, qL1.y);
@@ -947,7 +1096,7 @@
         if (z1 <= z0 || z1 < 0) continue;
         const p1 = project(0, z1);
         const p0 = project(0, z0);
-        ctx.strokeStyle = 'rgba(125, 211, 252, 0.42)';
+        ctx.strokeStyle = isLight ? 'rgba(248, 250, 252, 0.72)' : 'rgba(125, 211, 252, 0.42)';
         ctx.lineWidth = Math.max(1.5, 4.2 * p0.scale);
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
@@ -956,7 +1105,7 @@
       }
 
       // Glowing bridge rail neon guide strips
-      ctx.strokeStyle = '#38bdf8';
+      ctx.strokeStyle = isLight ? '#0284c7' : '#38bdf8';
       ctx.lineWidth = 2.6;
       ctx.beginPath();
       ctx.moveTo(tl.x, tl.y); ctx.lineTo(bl.x, bl.y);
@@ -976,15 +1125,15 @@
           ctx.globalAlpha = alpha;
 
           const colW = Math.max(3, 11 * sc);
-          ctx.fillStyle = '#1e293b';
+          ctx.fillStyle = isLight ? '#475569' : '#1e293b';
           ctx.fillRect(pL.x - colW * 0.5, pL.y - archH, colW, archH);
           ctx.fillRect(pR.x - colW * 0.5, pR.y - archH, colW, archH);
-          ctx.fillStyle = '#38bdf8';
+          ctx.fillStyle = isLight ? '#0284c7' : '#38bdf8';
           ctx.fillRect(pL.x + colW * 0.25, pL.y - archH, Math.max(1, 2 * sc), archH);
           ctx.fillRect(pR.x - colW * 0.45, pR.y - archH, Math.max(1, 2 * sc), archH);
 
-          ctx.fillStyle = '#0f172a';
-          ctx.strokeStyle = '#0ea5e9';
+          ctx.fillStyle = isLight ? '#334155' : '#0f172a';
+          ctx.strokeStyle = isLight ? '#0284c7' : '#0ea5e9';
           ctx.lineWidth = Math.max(1.2, 2.2 * sc);
           const beamY1 = pL.y - archH + 4 * sc;
           const beamY2 = pL.y - archH * 0.76;
@@ -992,7 +1141,7 @@
           ctx.strokeRect(pL.x, beamY1, pR.x - pL.x, 9 * sc);
           ctx.fillRect(pL.x, beamY2, pR.x - pL.x, 5 * sc);
 
-          ctx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+          ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.36)' : 'rgba(56, 189, 248, 0.45)';
           ctx.lineWidth = Math.max(1, 1.4 * sc);
           for (let c = 1; c <= 3; c++) {
             const zSpan = Math.max(0.02, pz - c * 0.08);

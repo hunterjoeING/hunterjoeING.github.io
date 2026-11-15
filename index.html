@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>HunterJoe Arcade · Spiele- &amp; Quiz-Dashboard</title>
+  <script>try{if(localStorage.getItem('arcade_theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(_){}</script>
   <link rel="stylesheet" href="./shared/arcade.css" />
   <style>
     :root {
@@ -458,6 +459,13 @@
       letter-spacing: -0.2px;
       color: #f8fafc;
     }
+    .card-subtitle-note {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-top: 4px;
+    }
     .card-desc {
       margin: 0;
       font-size: 13px;
@@ -486,6 +494,10 @@
     }
     .card-best.empty {
       color: #64748b;
+      font-weight: 600;
+    }
+    .card-best.note-info {
+      color: #94a3b8;
       font-weight: 600;
     }
     .play-cta {
@@ -540,6 +552,158 @@
       text-decoration: underline;
     }
 
+    /* Hub Light Mode Theme */
+    html[data-theme="light"],
+    html[data-theme="light"] body {
+      background: #eef4fb;
+      color: #0f172a;
+    }
+    html[data-theme="light"] .cosmos-vignette {
+      background: radial-gradient(circle at 50% 25%, transparent 32%, rgba(226, 236, 248, 0.48) 78%, rgba(203, 218, 236, 0.82) 100%);
+    }
+    html[data-theme="light"] #intro-hud {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(2, 132, 199, 0.35);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+    }
+    html[data-theme="light"] .intro-hud-row { color: #0f172a; }
+    html[data-theme="light"] .intro-skip-pill {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0369a1;
+    }
+    html[data-theme="light"] .hub-header {
+      background: rgba(255, 255, 255, 0.86);
+      border-color: rgba(2, 132, 199, 0.25);
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .brand-logo {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.14), rgba(139, 92, 246, 0.14));
+      border-color: rgba(2, 132, 199, 0.42);
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.14);
+    }
+    html[data-theme="light"] .brand-title {
+      background: linear-gradient(95deg, #0f172a 0%, #0369a1 55%, #0f766e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    html[data-theme="light"] .hub-action-btn {
+      background: rgba(248, 250, 252, 0.95);
+      border-color: rgba(15, 23, 42, 0.16);
+      color: #0f172a;
+    }
+    html[data-theme="light"] .hub-action-btn:hover {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0369a1;
+    }
+    html[data-theme="light"] .hub-hero {
+      background: linear-gradient(120deg, rgba(224, 242, 254, 0.85) 0%, rgba(255, 255, 255, 0.9) 55%, rgba(243, 232, 255, 0.82) 100%);
+      border-color: rgba(2, 132, 199, 0.24);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+    }
+    html[data-theme="light"] .hero-copy p { color: #334155; }
+    html[data-theme="light"] .hero-stat-box {
+      background: rgba(255, 255, 255, 0.92);
+      border-color: rgba(15, 23, 42, 0.12);
+    }
+    html[data-theme="light"] .hero-stat-box b { color: #0369a1; }
+    html[data-theme="light"] .domain-tab {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: rgba(15, 23, 42, 0.16);
+      color: #334155;
+    }
+    html[data-theme="light"] .domain-tab:hover {
+      border-color: #0284c7;
+      color: #0f172a;
+    }
+    html[data-theme="light"] .domain-tab.active {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #0369a1;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .domain-tab.quiz-tab.active {
+      background: linear-gradient(135deg, #d97706, #f59e0b);
+      border-color: #b45309;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .section-head { border-bottom-color: rgba(15, 23, 42, 0.12); }
+    html[data-theme="light"] .section-count {
+      background: rgba(2, 132, 199, 0.12);
+      border-color: rgba(2, 132, 199, 0.35);
+      color: #0369a1;
+    }
+    html[data-theme="light"] .section-count.quiz {
+      background: rgba(217, 119, 6, 0.12);
+      border-color: rgba(217, 119, 6, 0.4);
+      color: #b45309;
+    }
+    html[data-theme="light"] .filter-pill {
+      background: rgba(255, 255, 255, 0.88);
+      border-color: rgba(15, 23, 42, 0.16);
+      color: #334155;
+    }
+    html[data-theme="light"] .filter-pill:hover {
+      border-color: #0284c7;
+      color: #0f172a;
+    }
+    html[data-theme="light"] .filter-pill.active {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #0369a1;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .game-card {
+      background: rgba(255, 255, 255, 0.90);
+      border-color: rgba(15, 23, 42, 0.14);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    }
+    html[data-theme="light"] .game-card.featured {
+      border-color: rgba(2, 132, 199, 0.36);
+    }
+    html[data-theme="light"] .game-card:hover {
+      background: rgba(255, 255, 255, 0.98);
+      border-color: var(--card-accent, #0284c7);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.14), 0 0 22px var(--card-glow, rgba(2, 132, 199, 0.18));
+    }
+    html[data-theme="light"] .game-icon-box {
+      background: #0f172a;
+      border-color: rgba(15, 23, 42, 0.25);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.15);
+    }
+    html[data-theme="light"] .badge-cat {
+      background: #f1f5f9;
+      border-color: rgba(15, 23, 42, 0.14);
+      color: #334155;
+    }
+    html[data-theme="light"] .badge-new {
+      background: linear-gradient(135deg, #e0f2fe, #ccfbf1);
+      border-color: rgba(2, 132, 199, 0.45);
+      color: #0369a1;
+    }
+    html[data-theme="light"] .card-title { color: #0f172a; }
+    html[data-theme="light"] .card-subtitle-note { color: #0369a1; }
+    html[data-theme="light"] .card-desc { color: #475569; }
+    html[data-theme="light"] .card-footer { border-top-color: rgba(15, 23, 42, 0.1); }
+    html[data-theme="light"] .card-best { color: #b45309; }
+    html[data-theme="light"] .card-best.empty { color: #64748b; }
+    html[data-theme="light"] .card-best.note-info { color: #475569; }
+    html[data-theme="light"] .play-cta {
+      background: #e0f2fe;
+      border-color: #0284c7;
+      color: #0369a1;
+    }
+    html[data-theme="light"] .game-card:hover .play-cta {
+      background: #0284c7;
+      border-color: #0369a1;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .hub-footer { color: #475569; }
+    html[data-theme="light"] .hub-legal-nav a { color: #0369a1; }
+    html[data-theme="light"] .hub-legal-nav a:hover {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0f172a;
+    }
+
     @media (max-width: 560px) {
       #hub-shell { padding: calc(10px + env(safe-area-inset-top, 0px)) 11px 36px; }
       .hub-header { padding: 12px 13px; }
@@ -580,6 +744,7 @@
         <button class="hub-action-btn arcade-nav-pill" id="btn-arcade-player" title="Spielername für globale Bestenlisten">👤 Name setzen</button>
         <button class="hub-action-btn" id="btn-hub-leaderboard" title="Globale Bestenliste aller Spiele öffnen">🏆 Bestenliste</button>
         <button class="hub-action-btn" id="btn-replay-zoom" title="2-Sekunden-Kamerafahrt erneut abspielen">🔭 2s-Anflug</button>
+        <button type="button" class="hub-action-btn" id="btn-arcade-theme" data-with-label="1" title="Hell-/Dunkel-Modus wechseln">☀️ Hell</button>
         <button class="icon-btn" id="btn-mute" title="Ton an/aus">🔊</button>
       </div>
     </header>
@@ -587,10 +752,11 @@
     <section class="hub-hero">
       <div class="hero-copy">
         <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (KI-Entstehung &amp; Funktionsweise, Kino &amp; Filme ohne RomComs, Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Prozessoren, Grafikkarten &amp; Handys/Smartphones der letzten 25 Jahre mit Fotos, Pilz-Sammler-Quiz Region Aachen, Schweizer Eisenbahnloks, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Politik).</p>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>14 Quiz-Welten mit über 1.250 Fragen &amp; Motiven</strong> (standardmäßig <strong>20 Fragen/Runde</strong> &amp; Wiederholschutz: KI-Entstehung &amp; Funktionsweise, Kino ohne RomComs, Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Hardware-Fotos der letzten 25 Jahre, Pilze der Region Aachen, Schweizer Loks, E-Mobilität &amp; TFF, Geschichte, Politik &amp; der 1.156-Fragen Mega-Mix).</p>
       </div>
       <div class="hero-stats">
         <div class="hero-stat-box"><b id="stat-games">21</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-questions">1.252</b><span>Quiz-Pool</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
@@ -617,7 +783,7 @@
 
     <section class="section-block" id="sec-quizzes">
       <div class="section-head">
-        <h2>🧠 Quiz-Welten <span class="section-count quiz">14 Quiz-Arenen</span></h2>
+        <h2>🧠 Quiz-Welten <span class="section-count quiz">14 Quiz-Arenen · 1.252 Pool-Items</span></h2>
       </div>
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
@@ -665,7 +831,7 @@
           badge: 'Tech Demo KI-Agent · 13 Formen',
           featured: true,
           cta: 'Spielen →',
-          title: 'Minesweeper 3D – Tech Demo KI-Agent <span style="display:block;font-size:13.5px;font-weight:700;color:#38bdf8;margin-top:4px;">🙏 Danke an Verstand2Go · minesweeper3d.online</span>',
+          title: 'Minesweeper 3D – Tech Demo KI-Agent <span class="card-subtitle-note">🙏 Danke an Verstand2Go · minesweeper3d.online</span>',
           desc: 'Tech Demo KI-Agent — Danke an Verstand2Go (minesweeper3d.online)! Räumliches Logik-Puzzle in echtem 3D über 13 wählbare Geometrien und Skulpturen — wahlweise klassisch oder mit Solver-Assistenz.',
           accent: '#38bdf8',
           glow: 'rgba(56, 189, 248, 0.28)',
@@ -780,11 +946,11 @@
           id: 'quiz_ai',
           href: './games/quiz-ai/index.html',
           catLabel: 'Künstliche Intelligenz',
-          badge: '48 Fragen · 3 Stufen · Neu',
+          badge: '108 Fragen · 3 Stufen',
           featured: true,
           cta: 'Quiz starten →',
           title: 'KI: Entstehung &amp; Funktionsweise Quiz',
-          desc: 'Vom Turing-Test &amp; Perzeptron über Backpropagation, Gewichte &amp; Embeddings bis zu Transformern, Self-Attention, RLHF, Diffusion &amp; Hardware.',
+          desc: '108 Fragen vom Turing-Test &amp; Perzeptron über Backpropagation, Gewichte &amp; Embeddings bis zu Transformern, Self-Attention, RLHF, Diffusion &amp; Hardware.',
           accent: '#8b5cf6',
           glow: 'rgba(139, 92, 246, 0.30)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -807,11 +973,11 @@
           id: 'quiz_movies',
           href: './games/quiz-movies/index.html',
           catLabel: 'Kino · Alles ohne RomComs',
-          badge: '48 Fragen · 3 Stufen · Neu',
+          badge: '108 Fragen · 3 Stufen',
           featured: true,
           cta: 'Quiz starten →',
           title: 'Kino &amp; Filme Quiz (ohne RomComs)',
-          desc: '48 Fragen quer durch Action, Sci-Fi, Thriller, Horror, Drama, Animation &amp; Filmtechnik — von Matrix, Alien &amp; Sieben über Ghibli &amp; Die Verurteilten bis Bullet Time &amp; 70mm IMAX.',
+          desc: '108 Fragen quer durch Action, Sci-Fi, Thriller, Horror, Drama, Animation &amp; Filmtechnik — von Matrix, Alien &amp; Sieben über Ghibli &amp; Die Verurteilten bis Bullet Time &amp; 70mm IMAX.',
           accent: '#f43f5e',
           glow: 'rgba(244, 63, 94, 0.28)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -825,11 +991,11 @@
           id: 'quiz_egypt',
           href: './games/quiz-egypt/index.html',
           catLabel: 'Geschichte · Ägypten',
-          badge: '48 Fragen · 3 Stufen · Neu',
+          badge: '108 Fragen · 3 Stufen',
           featured: true,
           cta: 'Quiz starten →',
           title: 'Ägyptische Geschichte Quiz',
-          desc: '5.000 Jahre am Nil: Von Narmer, Djoser & den Pyramiden von Gizeh über Hatschepsut, Tutanchamun & Ramses II. bis zu Kleopatra, Suezkanal und Moderne.',
+          desc: '108 Fragen aus 5.000 Jahren am Nil: Von Narmer, Djoser &amp; den Pyramiden von Gizeh über Hatschepsut, Tutanchamun &amp; Ramses II. bis zu Kleopatra, Suezkanal und Moderne.',
           accent: '#f59e0b',
           glow: 'rgba(245, 158, 11, 0.28)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -843,11 +1009,11 @@
           id: 'quiz_diving',
           href: './games/quiz-diving/index.html',
           catLabel: 'Tauchsport · Scuba Diving',
-          badge: '48 Fragen · 3 Stufen · Neu',
+          badge: '108 Fragen · 3 Stufen',
           featured: true,
           cta: 'Quiz starten →',
           title: 'Tauchen &amp; Scuba Diving Quiz',
-          desc: 'Gerätetauchen von Open Water bis Divemaster: Atemregler &amp; DIN/INT, Boyle/Dalton/Henry, Nitrox/MOD, Handzeichen, Tarierung &amp; legendäre Tauchspots.',
+          desc: '108 Fragen zum Gerätetauchen von Open Water bis Divemaster: Atemregler &amp; DIN/INT, Boyle/Dalton/Henry, Nitrox/MOD, Handzeichen, Tarierung &amp; legendäre Tauchspots.',
           accent: '#06b6d4',
           glow: 'rgba(6, 182, 212, 0.28)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -963,11 +1129,11 @@
           id: 'quiz_emob',
           href: './games/quiz-emobility/index.html',
           catLabel: 'E-Mobilität & Laden',
-          badge: '54 Fragen · 3 Stufen · TFF',
+          badge: '108 Fragen · 3 Stufen · TFF',
           featured: true,
           cta: 'Quiz starten →',
           title: 'E-Mobilität & Tesla Nerd-Quiz',
-          desc: 'Allgemeine E-Technik (800V Taycan-Pionier, E-GMP Booster), Tesla-TFF-Insiderwissen (BYD Blade vs. CATL LFP, Octovalve, HW4, MCU, Plaid) & Schnelllade-Protokolle (IEC 61851, ISO 15118, V2–V4).',
+          desc: '108 Fragen zu E-Technik (800V Taycan-Pionier, E-GMP Booster), Tesla-TFF-Insiderwissen (BYD Blade vs. CATL LFP, Octovalve, HW4, MCU, Plaid) &amp; Schnelllade-Protokollen (IEC 61851, ISO 15118, V2–V4).',
           accent: '#38bdf8',
           glow: 'rgba(56, 189, 248, 0.28)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -979,11 +1145,11 @@
           id: 'quiz_pol',
           href: './games/quiz-politics/index.html',
           catLabel: 'Politik & Ökonomie',
-          badge: '36 Fragen · 3 Stufen · Baader',
+          badge: '84 Fragen · 3 Stufen · Baader',
           featured: true,
           cta: 'Quiz starten →',
           title: 'Politik & Ökonomie: Freiheitliches Denken',
-          desc: 'Thesen von Roland Baader („Geldsozialismus“, Wohlstand durch Innovation & weniger Umverteilung), Österreichische Schule (Mises, Hayek, Cantillon, Bastiat) & Vergleich wirtschaftspolitischer Denkschulen.',
+          desc: '84 Fragen zu Roland Baader („Geldsozialismus“, Wohlstand durch Innovation &amp; weniger Umverteilung), Österreichischer Schule (Mises, Hayek, Cantillon, Bastiat) &amp; Denkschulen im Vergleich.',
           accent: '#fbbf24',
           glow: 'rgba(251, 191, 36, 0.26)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -995,11 +1161,11 @@
           id: 'quiz_hist',
           href: './games/quiz-history/index.html',
           catLabel: 'Geschichte',
-          badge: '48 Fragen · 3 Stufen · Epochen',
+          badge: '108 Fragen · 3 Stufen · Epochen',
           featured: true,
           cta: 'Quiz starten →',
           title: 'Geschichte & Weltereignisse',
-          desc: '48 historische Meilensteine von Antike & Mittelalter über Neuzeit & Industrialisierung bis zum 20. Jahrhundert (u. a. 1848, Währungsreform 1948, Zwei-plus-Vier & Mauerfall).',
+          desc: '108 historische Meilensteine von Antike &amp; Mittelalter über Neuzeit &amp; Industrialisierung bis zum 20. Jahrhundert (u. a. 1848, Währungsreform 1948, Zwei-plus-Vier &amp; Mauerfall).',
           accent: '#f59e0b',
           glow: 'rgba(245, 158, 11, 0.28)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -1012,11 +1178,11 @@
           id: 'quiz_china',
           href: './games/quiz-china/index.html',
           catLabel: 'Neuere Geschichte · China',
-          badge: '48 Fragen · 1840–Heute',
+          badge: '100 Fragen · 1840–Heute',
           featured: true,
           cta: 'Quiz starten →',
           title: 'Neuere Chinesische Geschichte Quiz',
-          desc: 'Vom Umbruch im späten Qing-Reich über Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen, Sonderwirtschaftszonen &amp; China im 21. Jahrhundert.',
+          desc: '100 Fragen vom Umbruch im späten Qing-Reich über Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen, Sonderwirtschaftszonen &amp; China im 21. Jahrhundert.',
           accent: '#f43f5e',
           glow: 'rgba(244, 63, 94, 0.26)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -1029,10 +1195,10 @@
           id: 'quiz',
           href: './games/quiz/index.html',
           catLabel: 'Allgemeinwissen',
-          badge: '60 Fragen · 5 Themen',
+          badge: '324 Fragen · 1.156 Mega-Mix',
           cta: 'Quiz starten →',
           title: 'Quiz Arena: Klassik',
-          desc: 'Das schnelle Wissensquiz mit entspanntem 25s-Zeitbonus (oder komplett ohne Zeitlimit): Technik & Raumfahrt, Naturwissenschaften, Geschichte, Geografie oder Blitz-Mix mit Streak-Multiplikator.',
+          desc: 'Das schnelle Wissensquiz mit entspanntem 25s-Zeitbonus (oder ohne Zeitlimit): 20 Fragen/Runde, Anti-Wiederholungsschutz &amp; „Mega-Mix“ aus allen 9 Themenwelten (1.156 Fragen) mit Streak-Multiplikator.',
           accent: '#2dd4bf',
           glow: 'rgba(45, 212, 191, 0.24)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -1101,7 +1267,7 @@
         a.style.setProperty('--card-accent', g.accent);
         a.style.setProperty('--card-glow', g.glow);
         const footerLeft = g.noHighscore
-          ? `<span class="card-best empty" style="color:#94a3b8;">${escapeHubHtml(g.footerNote || '☕ Ohne Zeitdruck · Ohne Highscore')}</span>`
+          ? `<span class="card-best note-info">${escapeHubHtml(g.footerNote || '☕ Ohne Zeitdruck · Ohne Highscore')}</span>`
           : `<span class="card-best ${best ? '' : 'empty'}">${best ? '🏆 ' + escapeHubHtml(best) : 'Noch kein globaler Rekord'}</span>`;
         a.innerHTML = `
           <div class="card-top">
@@ -1244,24 +1410,27 @@
         const starGeo = new THREE.BufferGeometry();
         const starPos = new Float32Array(starCount * 3);
         const starCol = new Float32Array(starCount * 3);
-        const palette = [new THREE.Color(0x7dd3fc), new THREE.Color(0x2dd4bf), new THREE.Color(0xfde68a), new THREE.Color(0xf8fafc)];
+        const darkPalette = [new THREE.Color(0x7dd3fc), new THREE.Color(0x2dd4bf), new THREE.Color(0xfde68a), new THREE.Color(0xf8fafc)];
+        const lightPalette = [new THREE.Color(0x0284c7), new THREE.Color(0x0d9488), new THREE.Color(0x6366f1), new THREE.Color(0xd97706)];
         for (let i = 0; i < starCount; i++) {
           starPos[i * 3] = (Math.random() - 0.5) * 280;
           starPos[i * 3 + 1] = (Math.random() - 0.5) * 190;
           starPos[i * 3 + 2] = (Math.random() - 0.5) * 280;
-          const c = palette[i % palette.length];
+          const c = darkPalette[i % darkPalette.length];
           starCol[i * 3] = c.r;
           starCol[i * 3 + 1] = c.g;
           starCol[i * 3 + 2] = c.b;
         }
         starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        starGeo.setAttribute('color', new THREE.BufferAttribute(starCol, 3));
-        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({
+        const starColorAttr = new THREE.BufferAttribute(starCol, 3);
+        starGeo.setAttribute('color', starColorAttr);
+        const starMat = new THREE.PointsMaterial({
           size: 0.72,
           vertexColors: true,
           transparent: true,
           opacity: 0.85
-        }));
+        });
+        const stars = new THREE.Points(starGeo, starMat);
         scene.add(stars);
 
         // Distant glowing Sanctuary Ring & Mini Game Totems
@@ -1306,6 +1475,56 @@
           centerGroup.add(m);
           totems.push(m);
         });
+
+        function applyThreeTheme() {
+          const light = !!(window.ArcadeTheme && ArcadeTheme.isLight());
+          const pal = light ? lightPalette : darkPalette;
+          for (let i = 0; i < starCount; i++) {
+            const c = pal[i % pal.length];
+            starCol[i * 3] = c.r;
+            starCol[i * 3 + 1] = c.g;
+            starCol[i * 3 + 2] = c.b;
+          }
+          starColorAttr.needsUpdate = true;
+
+          if (light) {
+            scene.fog.color.setHex(0xeaf2fb);
+            scene.fog.density = 0.0038;
+            renderer.setClearColor(0xeaf2fb, 1);
+            amb.color.setHex(0xffffff);
+            amb.intensity = 1.05;
+            keyLight.color.setHex(0x0284c7);
+            keyLight.intensity = 1.85;
+            rimLight.color.setHex(0x7c3aed);
+            rimLight.intensity = 1.45;
+            starMat.size = 0.86;
+            starMat.opacity = 0.72;
+            ring1.material.color.setHex(0x0284c7);
+            ring1.material.opacity = 0.55;
+            ring2.material.color.setHex(0x0d9488);
+            ring2.material.opacity = 0.42;
+            totems.forEach(m => { m.material.emissiveIntensity = 0.14; });
+          } else {
+            scene.fog.color.setHex(0x020612);
+            scene.fog.density = 0.0052;
+            renderer.setClearColor(0x020612, 1);
+            amb.color.setHex(0x93c5fd);
+            amb.intensity = 0.65;
+            keyLight.color.setHex(0x38bdf8);
+            keyLight.intensity = 2.2;
+            rimLight.color.setHex(0xa855f7);
+            rimLight.intensity = 1.8;
+            starMat.size = 0.72;
+            starMat.opacity = 0.85;
+            ring1.material.color.setHex(0x38bdf8);
+            ring1.material.opacity = 0.45;
+            ring2.material.color.setHex(0x2dd4bf);
+            ring2.material.opacity = 0.3;
+            totems.forEach(m => { m.material.emissiveIntensity = 0.35; });
+          }
+        }
+        applyThreeTheme();
+        window.addEventListener('arcade:theme-changed', applyThreeTheme);
 
         window.addEventListener('resize', () => {
           camera.aspect = window.innerWidth / window.innerHeight;
@@ -1362,11 +1581,12 @@
           requestAnimationFrame(step2d);
           const rawT = Math.min(1, Math.max(0, (now - introStart) / INTRO_DURATION));
           applyShellTransform(rawT);
-          ctx.fillStyle = '#020612';
+          const light = !!(window.ArcadeTheme && ArcadeTheme.isLight());
+          ctx.fillStyle = light ? '#eaf2fb' : '#020612';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
           const spd = 0.018 * (1 - 0.78 * easeOutCubic(rawT));
           const cx = canvas.width / 2, cy = canvas.height / 2;
-          ctx.fillStyle = '#7dd3fc';
+          ctx.fillStyle = light ? '#0284c7' : '#7dd3fc';
           stars2d.forEach(s => {
             s.z -= spd;
             if (s.z <= 0.02) s.z = 1;

@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Impressum · HunterJoe Arcade</title>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
   <link rel="stylesheet" href="./shared/arcade.css" />
   <style>
     .legal-shell {
@@ -76,6 +77,17 @@
     .legal-footer-links a:hover {
       text-decoration: underline;
     }
+    html[data-theme="light"] .legal-card h1 { color: #0f172a; }
+    html[data-theme="light"] .legal-card h2 { color: #0369a1; }
+    html[data-theme="light"] .legal-card p { color: #334155; }
+    html[data-theme="light"] .legal-card a { color: #0284c7; }
+    html[data-theme="light"] .legal-card a:hover { color: #0c4a6e; }
+    html[data-theme="light"] .legal-box {
+      background: #f0f9ff;
+      border-color: rgba(2, 132, 199, 0.32);
+      color: #0f172a;
+    }
+    html[data-theme="light"] .legal-footer-links a { color: #0369a1; }
     @media (max-width: 560px) {
       .legal-card { padding: 18px 16px; }
     }
@@ -88,6 +100,7 @@
       <div class="topbar-title">⚖️ Impressum</div>
     </div>
     <div class="topbar-right">
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkelmodus wechseln"></button>
       <a href="./datenschutz.html" class="back-hub-btn">🔒 Datenschutz</a>
     </div>
   </header>
@@ -139,5 +152,6 @@
       <a href="./datenschutz.html">Datenschutzerklärung</a>
     </footer>
   </main>
+  <script src="./shared/arcade.js"></script>
 </body>
 </html>

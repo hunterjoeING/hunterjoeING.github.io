@@ -11,6 +11,7 @@
   <title>Minesweeper 3D – Tech Demo KI-Agent · Danke an Verstand2Go, minesweeper3d.online</title>
   <meta name="description" content="Minesweeper 3D – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online). Spiele ein ästhetisches 3D Minesweeper kostenlos online – echter 3D-Würfel, unmögliche &amp; unendliche Formen, 26 Nachbarn, No-Guess &amp; autonomer KI-Agent-Solver.">
   <meta name="theme-color" content="#00ccff">
+  <script>try{if(localStorage.getItem('arcade_theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(_){}</script>
   <style>
 /* ═══════════════════════════════════════════════════════════════════
    MINESWEEPER 3D – ARCADE CRYSTAL EDITION (css/game.css)
@@ -1494,6 +1495,337 @@ body.mobile-mode #mob-showcase-bar {
   display: none !important;
 }
 
+/* ─── Light Mode Theme Overrides (Standalone) ─── */
+html[data-theme="light"] {
+  --bg-hud: rgba(255, 255, 255, 0.90);
+  --bg-modal: rgba(255, 255, 255, 0.97);
+  --border-cyan: rgba(2, 132, 199, 0.34);
+  --border-glow: rgba(2, 132, 199, 0.65);
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --neon-cyan: #0369a1;
+  --neon-yellow: #b45309;
+  --neon-green: #15803d;
+  --neon-red: #be123c;
+  --neon-blue: #1d4ed8;
+}
+html[data-theme="light"],
+html[data-theme="light"] body {
+  background-color: #eaf2fb;
+  color: #0f172a;
+}
+html[data-theme="light"] #hud-top {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 247, 255, 0.88) 100%);
+  border-bottom-color: rgba(2, 132, 199, 0.28);
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.10);
+}
+html[data-theme="light"] #hud-bot {
+  background: linear-gradient(0deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 247, 255, 0.88) 100%);
+  border-top-color: rgba(2, 132, 199, 0.25);
+  color: #334155;
+}
+html[data-theme="light"] .hl {
+  color: #475569;
+}
+html[data-theme="light"] #h-mines {
+  color: #b45309;
+  text-shadow: none;
+}
+html[data-theme="light"] #h-time {
+  color: #0369a1;
+  text-shadow: none;
+}
+html[data-theme="light"] #h-ng.ng-yes { color: #15803d; text-shadow: none; }
+html[data-theme="light"] #h-ng.ng-no { color: #be123c; text-shadow: none; }
+html[data-theme="light"] #h-ng.ng-wait { color: #475569; }
+html[data-theme="light"] #hud-top select,
+html[data-theme="light"] #mobile-menu select,
+html[data-theme="light"] #demo-panel select {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(2, 132, 199, 0.38);
+  box-shadow: none;
+}
+html[data-theme="light"] .hud-btn-ic,
+html[data-theme="light"] .hud-btn {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.18);
+}
+html[data-theme="light"] .hud-btn-ic:hover,
+html[data-theme="light"] .hud-btn:hover {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0369a1;
+  box-shadow: 0 2px 10px rgba(2, 132, 199, 0.18);
+}
+html[data-theme="light"] .fluid-ctrl-pill {
+  background: #ffffff;
+  border-color: rgba(2, 132, 199, 0.34);
+}
+html[data-theme="light"] .fluid-int-lbl {
+  color: #0369a1;
+}
+html[data-theme="light"] #btn-autopilot {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0369a1;
+  box-shadow: none;
+}
+html[data-theme="light"] #btn-autopilot.active {
+  background: #15803d;
+  border-color: #166534;
+  color: #ffffff;
+}
+html[data-theme="light"] .showcase-trigger-btn {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9) !important;
+  border-color: #0369a1 !important;
+  color: #ffffff !important;
+}
+html[data-theme="light"] #agent-telemetry-pill {
+  background: #ecfdf5;
+  border-color: rgba(21, 128, 61, 0.38);
+  color: #166534;
+  box-shadow: none;
+}
+html[data-theme="light"] #mode-toggle button {
+  background: rgba(255, 255, 255, 0.94);
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.18);
+}
+html[data-theme="light"] #mode-toggle button:hover,
+html[data-theme="light"] #mode-toggle button.active {
+  background: #0284c7;
+  border-color: #0369a1;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.28);
+}
+html[data-theme="light"] .hub-back-pill {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(2, 132, 199, 0.42);
+  color: #0369a1;
+}
+html[data-theme="light"] .hub-back-pill:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+html[data-theme="light"] #bg-watermark {
+  background: rgba(255, 255, 255, 0.84);
+  border-color: rgba(2, 132, 199, 0.25);
+  color: #334155;
+}
+html[data-theme="light"] .bg-wm-badge {
+  color: #0369a1;
+  background: #e0f2fe;
+  border-color: rgba(2, 132, 199, 0.35);
+}
+html[data-theme="light"] #bg-wm-title { color: #0f172a; }
+html[data-theme="light"] #bg-wm-hint { color: #475569; }
+html[data-theme="light"] #zoom-dock,
+html[data-theme="light"] #explode-ctrl,
+html[data-theme="light"] #btn-recenter,
+html[data-theme="light"] .axis-lock-btn,
+html[data-theme="light"] #btn-strg {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(2, 132, 199, 0.34);
+  color: #0f172a;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.12);
+}
+html[data-theme="light"] .zoom-dock-btn {
+  background: #f1f5f9;
+  border-color: rgba(2, 132, 199, 0.3);
+  color: #0369a1;
+}
+html[data-theme="light"] .zoom-dock-btn:hover,
+html[data-theme="light"] .zoom-dock-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+}
+html[data-theme="light"] #btn-axis-lock-x { color: #dc2626; }
+html[data-theme="light"] #btn-axis-lock-y { color: #16a34a; }
+html[data-theme="light"] #btn-axis-lock-z { color: #2563eb; }
+html[data-theme="light"] .axis-lock-btn.active {
+  background: #0284c7;
+  border-color: #0369a1;
+  color: #ffffff !important;
+}
+html[data-theme="light"] #btn-strg.active {
+  background: #0284c7;
+  color: #ffffff;
+}
+html[data-theme="light"] #hover-counter-pill {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  border-color: #0284c7;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.16);
+}
+html[data-theme="light"] #hud-hints b {
+  color: #0369a1;
+  font-weight: 700;
+}
+html[data-theme="light"] .pwa-btn {
+  background: #ecfdf5;
+  color: #15803d;
+  border-color: rgba(21, 128, 61, 0.4);
+  text-shadow: none;
+}
+html[data-theme="light"] #hud-bot-right,
+html[data-theme="light"] #hud-bot-right a {
+  color: #0369a1 !important;
+}
+html[data-theme="light"] #btn-hamburger,
+html[data-theme="light"] #hud-mini,
+html[data-theme="light"] #mob-showcase-bar button {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(2, 132, 199, 0.36);
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+}
+html[data-theme="light"] #btn-hamburger { color: #0369a1; }
+html[data-theme="light"] body.mobile-mode #mobile-menu.open {
+  background: rgba(255, 255, 255, 0.98);
+  border-right-color: #0284c7;
+  color: #0f172a;
+}
+html[data-theme="light"] .mob-btn-grid button,
+html[data-theme="light"] .mob-close-btn {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.16);
+}
+html[data-theme="light"] .badge-agent {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #0284c7;
+}
+html[data-theme="light"] .agent-quote-mini { color: #15803d; }
+html[data-theme="light"] #mobile-menu a { color: #0369a1 !important; }
+html[data-theme="light"] #demo-panel,
+html[data-theme="light"] #sub-minimap-wrap {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(2, 132, 199, 0.42);
+  color: #0f172a;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.15);
+}
+html[data-theme="light"] .demo-explain {
+  background: #f0f9ff;
+  color: #0f172a;
+}
+html[data-theme="light"] .demo-agent-note { color: #0369a1; }
+html[data-theme="light"] .demo-badge {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: rgba(21, 128, 61, 0.35);
+}
+html[data-theme="light"] .sub-reset-btn {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #0284c7;
+}
+html[data-theme="light"] #pause-overlay {
+  background: rgba(226, 238, 250, 0.88);
+}
+html[data-theme="light"] .pause-card,
+html[data-theme="light"] .result-card,
+html[data-theme="light"] .modal-box {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: rgba(2, 132, 199, 0.42);
+  box-shadow: 0 16px 42px rgba(15, 23, 42, 0.18);
+}
+html[data-theme="light"] .res-stats {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.12);
+}
+html[data-theme="light"] .res-stats strong { color: #0369a1; }
+html[data-theme="light"] .res-agent-remark,
+html[data-theme="light"] .agent-subtle-hint {
+  color: #166534;
+  background: #f0fdf4;
+  border-color: rgba(21, 128, 61, 0.3);
+}
+html[data-theme="light"] .res-flag-legend-item {
+  background: #f8fafc;
+  color: #0f172a;
+}
+html[data-theme="light"] .res-flag-legend-item.hit { color: #15803d; }
+html[data-theme="light"] .res-flag-legend-item.wrong { color: #c2410c; }
+html[data-theme="light"] .res-flag-legend-item.miss { color: #be123c; }
+html[data-theme="light"] .res-flag-legend-item strong { color: #0f172a; }
+html[data-theme="light"] .res-flag-legend-note { color: #475569; }
+html[data-theme="light"] .secondary-glow-btn {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.18);
+}
+html[data-theme="light"] .modal-overlay {
+  background: rgba(15, 23, 42, 0.38);
+}
+html[data-theme="light"] #modal-content h2 { text-shadow: none; color: #0369a1; }
+html[data-theme="light"] #modal-content h3 { color: #0369a1; }
+html[data-theme="light"] .modal-pill {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.18);
+}
+html[data-theme="light"] .modal-pill.active,
+html[data-theme="light"] .modal-pill:hover {
+  background: #0284c7;
+  color: #ffffff;
+}
+html[data-theme="light"] .ctrl-table th {
+  color: #0369a1;
+  background: #f0f9ff;
+}
+html[data-theme="light"] .ctrl-table td:nth-child(2) { color: #0369a1; }
+html[data-theme="light"] .welcome-opt-btn,
+html[data-theme="light"] .design-item {
+  background: #f8fafc;
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.16);
+}
+html[data-theme="light"] .welcome-opt-btn:hover { background: #e0f2fe; }
+html[data-theme="light"] .sc-3d-badge {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(2, 132, 199, 0.48);
+  color: #0f172a;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.14);
+}
+html[data-theme="light"] .sc-3d-badge:hover,
+html[data-theme="light"] .sc-3d-badge.is-hovered {
+  background: #0284c7;
+  color: #ffffff;
+}
+html[data-theme="light"] .sc-panel {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(2, 132, 199, 0.36);
+  box-shadow: 0 18px 44px rgba(15, 23, 42, 0.16);
+}
+html[data-theme="light"] .sc-header h2 { color: #0369a1; }
+html[data-theme="light"] .sc-header p { color: #475569; }
+html[data-theme="light"] .sc-filter-btn {
+  background: #f1f5f9;
+  color: #334155;
+  border-color: rgba(15, 23, 42, 0.15);
+}
+html[data-theme="light"] .sc-filter-btn.active {
+  background: #0284c7;
+  border-color: #0369a1;
+  color: #ffffff;
+}
+html[data-theme="light"] .sc-card {
+  background: #f8fafc;
+  border-color: rgba(15, 23, 42, 0.14);
+  color: #0f172a;
+}
+html[data-theme="light"] .sc-card:hover,
+html[data-theme="light"] .sc-card.is-hovered {
+  background: #e0f2fe;
+  border-color: #0284c7;
+}
+html[data-theme="light"] .sc-card-tag { color: #475569; }
+html[data-theme="light"] .sc-card-go { color: #0369a1; }
+
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -1516,6 +1848,7 @@ body.mobile-mode #mob-showcase-bar {
     <button class="lang-btn active" id="lang-de" onclick="setLang('de')" title="Deutsch" style="margin-left:auto">🇩🇪</button>
     <button class="lang-btn" id="lang-en" onclick="setLang('en')" title="English">🇬🇧</button>
     <button class="lang-btn" id="lang-es" onclick="setLang('es')" title="Español">🇪🇸</button>
+    <button id="btn-mode-theme" onclick="toggleMsTheme()" title="Hell-/Dunkel-Modus wechseln">☀️</button>
     <button id="btn-mode-fs" onclick="toggleFullscreen()" title="Vollbild / Fullscreen (F)">⛶</button>
     <button id="btn-mode-desktop" onclick="setMobileMode(false)" title="Desktop-Modus / Desktop mode" class="active">💻</button>
     <button id="btn-mode-mobile" onclick="setMobileMode(true)" title="Mobil-Modus / Mobile mode">📱</button>
@@ -1641,7 +1974,7 @@ body.mobile-mode #mob-showcase-bar {
   <!-- Mobile Slide-Out Sidebar Menu -->
   <div id="mob-overlay" onclick="toggleMobileMenu(false)"></div>
   <div id="mobile-menu">
-    <h3>3D Minesweeper <span class="badge-agent">TECH DEMO KI-AGENT</span><div style="font-size:11px;font-weight:700;color:#38bdf8;margin-top:4px;">🙏 Danke an Verstand2Go · <a href="https://minesweeper3d.online" target="_blank" rel="noopener" style="color:#fde047;text-decoration:underline;">minesweeper3d.online</a></div></h3>
+    <h3>3D Minesweeper <span class="badge-agent">TECH DEMO KI-AGENT</span><div style="font-size:11px;font-weight:700;color:var(--neon-cyan);margin-top:4px;">🙏 Danke an Verstand2Go · <a href="https://minesweeper3d.online" target="_blank" rel="noopener" style="color:var(--neon-yellow);text-decoration:underline;">minesweeper3d.online</a></div></h3>
     <div class="mob-selects">
       <label><span data-i18n="lbl_geo">Geometrie</span>
         <select id="mob-geo-sel" onchange="changeGeometry(this.value)">
@@ -1705,6 +2038,7 @@ body.mobile-mode #mob-showcase-bar {
       <button id="mob-btn-music" onclick="toggleMusic()">🎵 Musik AUS</button>
       <button id="mob-btn-water" onclick="toggleWaterStream()">💧 Wasser AUS</button>
       <button onclick="switchBackground()">🌄 <span data-i18n="btn_bg">Hintergrund</span></button>
+      <button id="mob-btn-theme" onclick="toggleMsTheme()">☀️ Hell-Modus</button>
       <button id="mob-btn-open" onclick="toggleOpenCubes()">🧊 geöff. AN</button>
       <button onclick="toggleAutopilotPanel();toggleMobileMenu(false)">🤖 Autopilot</button>
       <button onclick="openModal('highscore');toggleMobileMenu(false)">🏆 Highscore</button>
@@ -2518,6 +2852,50 @@ function initBackgroundCanvas() {
   animateBg();
 }
 
+function isMsLight() {
+  return document.documentElement.getAttribute('data-theme') === 'light';
+}
+
+function syncMsThemeBtn() {
+  const light = isMsLight();
+  const btn = document.getElementById('btn-mode-theme');
+  if (btn) {
+    btn.textContent = light ? '🌙' : '☀️';
+    btn.title = light ? 'Zum Dunkel-Modus wechseln' : 'Zum Hell-Modus wechseln';
+  }
+  const mob = document.getElementById('mob-btn-theme');
+  if (mob) {
+    mob.textContent = light ? '🌙 Dunkel-Modus' : '☀️ Hell-Modus';
+  }
+}
+
+function toggleMsTheme() {
+  const next = isMsLight() ? 'dark' : 'light';
+  if (next === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  try { localStorage.setItem('arcade_theme', next); } catch (_) {}
+  if (typeof playClick === 'function') playClick();
+  syncMsThemeBtn();
+  renderBackgroundFrame(true);
+  if (typeof applyCustomDesignColors === 'function') {
+    applyCustomDesignColors();
+  }
+}
+
+const LIGHT_BACKGROUNDS = [
+  ['#f1f5f9', '#e0f2fe', '#0284c7', '#4f46e5', '#0f766e'],
+  ['#f0f9ff', '#e0f2fe', '#0d9488', '#0284c7', '#7c3aed'],
+  ['#fff7ed', '#fce7f3', '#be123c', '#0284c7', '#d97706'],
+  ['#eef2ff', '#e0e7ff', '#2563eb', '#7c3aed', '#0284c7'],
+  ['#f8fafc', '#e2e8f0', '#0284c7', '#475569', '#15803d'],
+  ['#ecfdf5', '#d1fae5', '#0f766e', '#0284c7', '#16a34a'],
+  ['#fffbeb', '#fef3c7', '#d97706', '#c2410c', '#0284c7'],
+  ['#f0f9ff', '#dbeafe', '#0284c7', '#1d4ed8', '#0f766e']
+];
+
 function renderBackgroundFrame() {
   const canvas = document.getElementById('bg-canvas');
   if (!canvas) return;
@@ -2532,8 +2910,11 @@ function renderBackgroundFrame() {
   ctx.save();
   ctx.scale(dpr, dpr);
 
+  const light = isMsLight();
   const bg = MODERN_BACKGROUNDS[currentBgIndex];
-  const [c0, c1, c2, c3, c4] = bg.palette;
+  const [c0, c1, c2, c3, c4] = light
+    ? LIGHT_BACKGROUNDS[currentBgIndex % LIGHT_BACKGROUNDS.length]
+    : bg.palette;
 
   // 1. Deep multi-stop atmospheric gradient
   const grad = ctx.createLinearGradient(0, 0, w * 0.4, h);
@@ -2560,9 +2941,9 @@ function renderBackgroundFrame() {
   const ox2 = w * 0.78 + Math.cos(_bgTime * 0.6) * 45;
   const oy2 = h * 0.68 + Math.sin(_bgTime * 0.4) * 35;
 
-  drawOrb(ox1, oy1, Math.max(w, h) * 0.45, c2, 0.16);
-  drawOrb(ox2, oy2, Math.max(w, h) * 0.48, c3, 0.15);
-  drawOrb(w * 0.5, h * 0.5, Math.max(w, h) * 0.35, c4, 0.07);
+  drawOrb(ox1, oy1, Math.max(w, h) * 0.45, c2, light ? 0.11 : 0.16);
+  drawOrb(ox2, oy2, Math.max(w, h) * 0.48, c3, light ? 0.10 : 0.15);
+  drawOrb(w * 0.5, h * 0.5, Math.max(w, h) * 0.35, c4, light ? 0.06 : 0.07);
 
   // 3. Theme-Specific Modern Architectural & Sci-Fi Artwork
   if (currentBgIndex === 0) {
@@ -2600,7 +2981,7 @@ function hexToRgba(hex, alpha) {
 
 // Theme 1: Quantum Neural Mesh
 function drawQuantumMeshArt(ctx, w, h, c2, c3, c4) {
-  ctx.strokeStyle = hexToRgba(c2, 0.12);
+  ctx.strokeStyle = hexToRgba(c2, isMsLight() ? 0.16 : 0.12);
   ctx.lineWidth = 1;
   const rows = 7;
   const cols = 12;
@@ -2648,6 +3029,7 @@ function drawQuantumMeshArt(ctx, w, h, c2, c3, c4) {
 
 // Theme 2: Nordic Cyber-Aurora & Monolith
 function drawAuroraMonolithArt(ctx, w, h, c2, c3) {
+  const light = isMsLight();
   // Aurora ribbons
   for (let band = 0; band < 3; band++) {
     ctx.beginPath();
@@ -2662,7 +3044,7 @@ function drawAuroraMonolithArt(ctx, w, h, c2, c3) {
     ctx.closePath();
     const ag = ctx.createLinearGradient(0, baseY - 80, 0, baseY + 60);
     ag.addColorStop(0, 'rgba(0,0,0,0)');
-    ag.addColorStop(0.5, hexToRgba(band % 2 === 0 ? c2 : c3, 0.11));
+    ag.addColorStop(0.5, hexToRgba(band % 2 === 0 ? c2 : c3, light ? 0.14 : 0.11));
     ag.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = ag;
     ctx.fill();
@@ -2672,9 +3054,9 @@ function drawAuroraMonolithArt(ctx, w, h, c2, c3) {
   const drawMonolith = (mx, my, mw, mh) => {
     const mg = ctx.createLinearGradient(mx, my, mx + mw, my + mh);
     mg.addColorStop(0, hexToRgba(c2, 0.12));
-    mg.addColorStop(1, 'rgba(4,12,26,0.4)');
+    mg.addColorStop(1, light ? 'rgba(203, 213, 225, 0.45)' : 'rgba(4,12,26,0.4)');
     ctx.fillStyle = mg;
-    ctx.strokeStyle = hexToRgba(c2, 0.28);
+    ctx.strokeStyle = hexToRgba(c2, light ? 0.34 : 0.28);
     ctx.lineWidth = 1;
     ctx.fillRect(mx, my, mw, mh);
     ctx.strokeRect(mx, my, mw, mh);
@@ -2721,7 +3103,7 @@ function drawSynthHorizonArt(ctx, w, h, c2, c3, c4) {
 function drawOrbitalNebulaArt(ctx, w, h, c2, c3, c4) {
   // Subtle starfield & constellation lines
   const starCount = 70;
-  ctx.fillStyle = 'rgba(220, 240, 255, 0.55)';
+  ctx.fillStyle = isMsLight() ? 'rgba(37, 99, 235, 0.32)' : 'rgba(220, 240, 255, 0.55)';
   for (let i = 0; i < starCount; i++) {
     const sx = ((i * 1973) % 997) / 997 * w;
     const sy = ((i * 3541) % 991) / 991 * h;
@@ -2845,11 +3227,12 @@ function drawBlueprintGridArt(ctx, w, h, c2, c3, c4) {
 function drawSubtleAgentArchitectureHUD(ctx, w, h, bg, c2, c4) {
   if (w < 700) return; // Keep mobile view uncluttered
 
+  const light = isMsLight();
   ctx.save();
   ctx.font = '10.5px "Courier New", Consolas, monospace';
-  ctx.fillStyle = hexToRgba(c2, 0.38);
+  ctx.fillStyle = hexToRgba(c2, light ? 0.68 : 0.38);
   ctx.fillText(bg.watermarkTop, 18, h - 102);
-  ctx.fillStyle = 'rgba(180, 225, 255, 0.28)';
+  ctx.fillStyle = light ? 'rgba(51, 65, 85, 0.62)' : 'rgba(180, 225, 255, 0.28)';
   ctx.fillText(bg.watermarkSub, 18, h - 87);
 
   // Subtle comparison diagram on the left side (middle-left margin, outside the 3D cube)
@@ -2858,37 +3241,37 @@ function drawSubtleAgentArchitectureHUD(ctx, w, h, bg, c2, c4) {
   const boxW = 215;
   const boxH = 128;
 
-  ctx.fillStyle = 'rgba(3, 12, 28, 0.42)';
-  ctx.strokeStyle = hexToRgba(c2, 0.22);
+  ctx.fillStyle = light ? 'rgba(255, 255, 255, 0.84)' : 'rgba(3, 12, 28, 0.42)';
+  ctx.strokeStyle = hexToRgba(c2, light ? 0.36 : 0.22);
   ctx.lineWidth = 1;
   ctx.fillRect(boxX, boxY, boxW, boxH);
   ctx.strokeRect(boxX, boxY, boxW, boxH);
 
-  ctx.fillStyle = hexToRgba(c2, 0.65);
+  ctx.fillStyle = hexToRgba(c2, light ? 0.90 : 0.65);
   ctx.font = 'bold 10px "Courier New", monospace';
   ctx.fillText('TELEMETRY // PARADIGM SHIFT', boxX + 10, boxY + 18);
 
   // 1. Chatbot row (dimmed, passive)
-  ctx.fillStyle = 'rgba(180, 195, 215, 0.45)';
+  ctx.fillStyle = light ? 'rgba(71, 85, 105, 0.85)' : 'rgba(180, 195, 215, 0.45)';
   ctx.font = '10px "Courier New", monospace';
   ctx.fillText('Reiner Chatbot (1D Text):', boxX + 10, boxY + 38);
   ctx.fillText('[Prompt] ──► "Bla bla..." ✗', boxX + 10, boxY + 52);
 
   // Divider
-  ctx.strokeStyle = hexToRgba(c2, 0.15);
+  ctx.strokeStyle = hexToRgba(c2, light ? 0.25 : 0.15);
   ctx.beginPath();
   ctx.moveTo(boxX + 10, boxY + 64);
   ctx.lineTo(boxX + boxW - 10, boxY + 64);
   ctx.stroke();
 
   // 2. AI Agent row (glowing, active)
-  ctx.fillStyle = hexToRgba(c4, 0.82);
+  ctx.fillStyle = hexToRgba(c4, light ? 0.95 : 0.82);
   ctx.font = 'bold 10px "Courier New", monospace';
   ctx.fillText('KI-Agent (Autonom & Tools):', boxX + 10, boxY + 82);
-  ctx.fillStyle = 'rgba(210, 245, 255, 0.75)';
+  ctx.fillStyle = light ? 'rgba(15, 23, 42, 0.90)' : 'rgba(210, 245, 255, 0.75)';
   ctx.font = '10px "Courier New", monospace';
   ctx.fillText('Browser ──► 3D-Bau ──► Solver ✓', boxX + 10, boxY + 98);
-  ctx.fillStyle = hexToRgba(c2, 0.68);
+  ctx.fillStyle = hexToRgba(c2, light ? 0.88 : 0.68);
   ctx.fillText('Status: 26 Nachbarn im Blick', boxX + 10, boxY + 114);
 
   ctx.restore();
@@ -3246,6 +3629,12 @@ function getNumberTexture(n) {
   ctx.font = `bold ${fontSize}px Tahoma, Arial, sans-serif`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
+  ctx.lineJoin = 'round';
+  ctx.miterLimit = 2;
+  ctx.lineWidth = Math.max(4, Math.round(fontSize * 0.105));
+  ctx.strokeStyle = 'rgba(2, 6, 23, 0.78)';
+  ctx.shadowBlur = 0;
+  ctx.strokeText(String(n), 64, 66);
   ctx.fillStyle = color;
   ctx.shadowColor = color;
   ctx.shadowBlur = designConfig.numGlow;
@@ -9981,6 +10370,7 @@ function renderAgentVsChatbotModalHTML() {
 // Bootstrap on window load
 window.addEventListener('DOMContentLoaded', () => {
   initBackgroundCanvas();
+  syncMsThemeBtn();
   if (typeof initWaterSystem === 'function') initWaterSystem();
   checkResponsiveLayout();
   setLang('de');

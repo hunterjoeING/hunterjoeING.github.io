@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Neuere Chinesische Geschichte Quiz · HunterJoe Arcade</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .quiz-wrap {
@@ -300,7 +301,7 @@
     <section id="screen-menu" class="glass-card" style="padding:20px;">
       <h1 style="margin:0 0 6px; font-size:22px;">Neuere Chinesische Geschichte (1840–Heute)</h1>
       <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
-        48 Fragen zur modernen Geschichte Chinas – von Opiumkriegen &amp; Xinhai-Revolution über Mao-Ära und Dengs Reformen bis ins 21. Jahrhundert (10 Fragen pro Runde, Tasten <code>1–4</code> möglich · auch ohne Zeitdruck spielbar).
+        100 Fragen zur modernen Geschichte Chinas – von Opiumkriegen &amp; Xinhai-Revolution über Mao-Ära und Dengs Reformen bis ins 21. Jahrhundert (Standard: 20 Fragen pro Runde, Tasten <code>1–4</code> möglich · Anti-Wiederholungs-Pool &amp; ohne Zeitdruck spielbar).
       </p>
 
       <div class="diff-bar" id="diff-bar">
@@ -322,7 +323,7 @@
     <!-- 2. Play Screen -->
     <section id="screen-play" class="glass-card quiz-stage hidden">
       <div class="quiz-meta-row">
-        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">10</span></span>
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">20</span></span>
         <span>🔥 Serie: <strong id="q-streak">0</strong></span>
         <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()">⚡ 25s</button>
         <span>⭐ <strong id="q-score">0</strong> Pkt</span>
@@ -360,7 +361,7 @@
 
       <div class="result-stats">
         <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
-        <div class="res-box"><b id="res-correct">0/10</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-correct">0/20</b><span>Treffer</span></div>
         <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
       </div>
 
@@ -373,9 +374,11 @@
   </main>
 
   <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-china.js"></script>
   <script>
     const CATS = [
-      { id: 'mix',                 icon: '🏮', name: 'Gesamt-Mix (1840–Heute)',        cls: 'featured',      desc: '48 Fragen quer durch die neuere chinesische Geschichte bis in die Gegenwart.' },
+      { id: 'mix',                 icon: '🏮', name: 'Gesamt-Mix (1840–Heute)',        cls: 'featured',      desc: '100 Fragen quer durch die neuere chinesische Geschichte bis in die Gegenwart.' },
       { id: 'spate_qing_republik', icon: '⚔️', name: 'Späte Qing & Republik',           cls: '',              desc: '1840–1949: Opiumkriege, Taiping, Xinhai 1911, Sun Yat-sen, 4. Mai & Bürgerkrieg.' },
       { id: 'mao_aera',            icon: '🚩', name: 'Mao-Ära & Volksrepublik',         cls: '',              desc: '1949–1976: Staatsgründung, Koreakrieg, Großer Sprung, Kulturrevolution & UN 1971.' },
       { id: 'reform_boom',         icon: '🏗️', name: 'Reform, Öffnung & Aufstieg',      cls: 'featured-gold', desc: '1978–2000: Deng Xiaoping, Shenzhen, Ein-Kind-Politik, Tian’anmen & Hongkong 1997.' },
@@ -390,307 +393,12 @@
       pro:  { label: '🔴 Historiker', cls: 'pro',  mult: 1.5 }
     };
 
-    // Index 0 of a[] is ALWAYS the correct answer (shuffled cleanly on render)
-    const QUESTIONS = [
-      // ── Späte Qing & Republik (1840–1949) (12) ──
-      {
-        cat: 'spate_qing_republik', diff: 'easy',
-        q: 'Was löste ab 1839 den Ersten Opiumkrieg zwischen Großbritannien und dem chinesischen Qing-Reich unmittelbar aus?',
-        a: ['Die Beschlagnahmung und öffentliche Vernichtung von rund 1.200 Tonnen britischen Opiums in Humen durch Lin Zexu', 'Ein Streit über die Verlängerung der Transsibirischen Eisenbahn', 'Die Verstaatlichung des Hongkonger Containerhafens', 'Ein Boykott chinesischer Seide durch das Deutsche Kaiserreich'],
-        exp: 'Der kaiserliche Sondergesandte Lin Zexu wollte Silberabfluss und Opiumsucht stoppen; Großbritannien antwortete militärisch mit überlegenen Kriegsschiffen.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'easy',
-        q: 'Welches Gebiet musste China nach der Niederlage im Ersten Opiumkrieg im Vertrag von Nanking 1842 dauerhaft an Großbritannien abtreten?',
-        a: ['Die Insel Hongkong', 'Die Insel Hainan', 'Die Halbinsel Shandong', 'Die Hafenstadt Dalian'],
-        exp: 'Der Vertrag von Nanking (1842) war der erste sogenannte „ungleiche Vertrag“, öffnete fünf Vertragshäfen (u. a. Shanghai) und trat Hongkong ab.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'easy',
-        q: 'Welcher politische Umsturz begann am 10. Oktober 1911 mit dem Wuchang-Aufstand und beendete Chinas über 2.000 Jahre altes Kaisertum?',
-        a: ['Die Xinhai-Revolution', 'Die Kulturrevolution', 'Die Taiping-Erhebung', 'Der Boxeraufstand'],
-        exp: 'Benannt nach dem Jahr „Xinhai“ im traditionellen Kalender führte diese Revolution Anfang 1912 zur Ausrufung der Republik China.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'easy',
-        q: 'Wie hieß der letzte Kaiser der Qing-Dynastie, der im Februar 1912 als sechsjähriges Kind abdanken musste?',
-        a: ['Puyi (Kaiser Xuantong)', 'Guangxu', 'Qianlong', 'Yuan Shikai'],
-        exp: 'Puyis Lebensweg vom Kindkaiser in der Verbotenen Stadt über Mandschukuo bis zum Gärtner in der Volksrepublik inspirierte später den Film „Der letzte Kaiser“.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'mid',
-        q: 'Welcher Arzt und Revolutionär formulierte die „Drei Prinzipien des Volkes“ und gilt sowohl in der VR China als auch auf Taiwan als Wegbereiter des modernen China?',
-        a: ['Sun Yat-sen', 'Hu Shi', 'Lu Xun', 'Kang Youwei'],
-        exp: 'Sun Yat-sen (Nationalismus, Demokratie, Volkswohlstand) wurde am 1. Januar 1912 erster provisorischer Präsident der Republik China.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'mid',
-        q: 'Warum brachen am 4. Mai 1919 in Peking massive Studentenproteste aus, aus denen die „Bewegung des Vierten Mai“ hervorging?',
-        a: ['Weil der Vertrag von Versailles frühere deutsche Gebiete in Shandong Japan statt China zusprach', 'Weil die Qing-Monarchie in Peking wieder eingesetzt werden sollte', 'Weil die Hauptstadt über Nacht nach Harbin verlegt wurde', 'Weil ausländische Banken chinesisches Papiergeld verboten'],
-        exp: 'Obwohl China auf Seite der Alliierten am Ersten Weltkrieg teilgenommen hatte, erhielt Japan die deutschen Rechte in Tsingtau/Shandong – ein nationales Trauma.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'mid',
-        q: 'Welcher verheerende Bürgerkrieg erschütterte Zentral- und Südchina von 1850 bis 1864 unter Hong Xiuquan („Himmlisches Reich des Großen Friedens“)?',
-        a: ['Der Taiping-Aufstand', 'Der Boxeraufstand', 'Der Dungan-Aufstand', 'Der Nian-Aufstand'],
-        exp: 'Die Taiping beherrschten über ein Jahrzehnt Teile des Jangtse-Tals mit Hauptstadt Nanjing; Schätzungen gehen von 20 bis 30 Millionen Todesopfern aus.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'mid',
-        q: 'Welcher mächtige General und Präsident der jungen Republik China versuchte 1915/16 kurzzeitig, die Monarchie mit sich selbst als Kaiser wiederherzustellen?',
-        a: ['Yuan Shikai', 'Chiang Kai-shek', 'Zhang Xueliang', 'Duan Qirui'],
-        exp: 'Sein Kaisertum scheiterte binnen Monaten am Widerstand fast aller Provinzen; nach Yuan Shikais Tod 1916 zerfiel China in die Ära der Kriegsherren (Warlords).'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'pro',
-        q: 'Was beschreibt der „Lange Marsch“ der chinesischen Roten Armee in den Jahren 1934–1935?',
-        a: ['Den rund 9.000 km langen strategischen Rückzug aus Jiangxi bis nach Yan’an in Nordwestchina unter wachsender Führung Mao Zedongs', 'Die Nordexpedition der Kuomintang gegen regionale Kriegsherren 1926', 'Die Verlegung schwerindustrieller Fabriken nach Chongqing im Jahr 1938', 'Den Vorstoß chinesischer Truppen durch die Mandschurei im Jahr 1945'],
-        exp: 'Von über 80.000 Aufbrechenden erreichte nur ein kleiner Teil Yan’an in Shaanxi; auf der Konferenz von Zunyi (Januar 1935) stieg Mao faktisch an die Spitze auf.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'pro',
-        q: 'Welches Ereignis im Dezember 1936 zwang Chiang Kai-shek dazu, den Bürgerkrieg vorläufig auszusetzen und eine „Zweite Einheitsfront“ gegen Japan zu bilden?',
-        a: ['Der Xi’an-Zwischenfall (Festsetzung Chiang Kai-sheks durch den eigenen General Zhang Xueliang)', 'Das Abkommen von Shimonoseki', 'Die Unterzeichnung des Antikominternpakts', 'Der Rückzug der japanischen Kwantung-Armee aus Mukden'],
-        exp: 'Zhang Xueliang forderte „erst Widerstand gegen Japan, dann innere Konflikte“ – ab 1937 kämpften Nationalisten (KMT) und Kommunisten (KPCh) formal gemeinsam gegen Japan.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'pro',
-        q: 'Welcher militärische Zwischenfall am 7. Juli 1937 gilt allgemein als Beginn des umfassenden Zweiten Chinesisch-Japanischen Krieges?',
-        a: ['Der Zwischenfall an der Marco-Polo-Brücke (Lugou-Brücke) nahe Peking', 'Die Sprengung der Bahnstrecke von Mukden (1931)', 'Die Versenkung des Kreuzers Ping Hai vor Shanghai', 'Der Überfall auf den Hafen von Lushun'],
-        exp: 'Auf das Gefecht an der Marco-Polo-Brücke folgte binnen Wochen die japanische Großoffensive auf Peking, Tianjin, Shanghai und Ende 1937 Nanjing.'
-      },
-      {
-        cat: 'spate_qing_republik', diff: 'pro',
-        q: 'Welche ambitionierte Reformbewegung scheiterte 1898 nach nur gut drei Monaten am Staatsstreich konservativer Hofkreise um Kaiserinwitwe Cixi?',
-        a: ['Die Hundert-Tage-Reform unter Kaiser Guangxu und Kang Youwei', 'Die Selbststärkungsbewegung der Sieben Provinzen', 'Die Neukulturbewegung von Hu Shi', 'Die Verfassungsreform von Wuhan'],
-        exp: 'Kaiser Guangxu wollte Verwaltung, Militär, Bildung und Wirtschaft nach modernem Vorbild umbauen – Cixi ließ ihn daraufhin bis zu seinem Tod unter Hausarrest stellen.'
-      },
-
-      // ── Mao-Ära & Volksrepublik (1949–1976) (12) ──
-      {
-        cat: 'mao_aera', diff: 'easy',
-        q: 'An welchem historischen Datum rief Mao Zedong auf dem Tor des Himmlischen Friedens in Peking offiziell die Volksrepublik China aus?',
-        a: ['Am 1. Oktober 1949', 'Am 1. Januar 1949', 'Am 9. November 1950', 'Am 4. Mai 1945'],
-        exp: 'Der 1. Oktober ist seither Nationalfeiertag der Volksrepublik China und Auftakt der jährlichen „Goldenen Woche“.'
-      },
-      {
-        cat: 'mao_aera', diff: 'easy',
-        q: 'Wohin zog sich die geschlagene Regierung der Republik China (Kuomintang unter Chiang Kai-shek) Ende 1949 im Bürgerkrieg zurück?',
-        a: ['Auf die Insel Taiwan (Hauptstadt Taipeh)', 'Nach Chongqing in Westchina', 'In die portugiesische Kolonie Macau', 'Auf die Halbinsel Liaodong'],
-        exp: 'Die Flucht der KMT-Regierung nach Taipeh begründete die bis heute bestehende faktische politische Trennung zwischen Festlandchina und Taiwan.'
-      },
-      {
-        cat: 'mao_aera', diff: 'easy',
-        q: 'Wer bekleidete von 1949 bis zu seinem Tod 1976 ununterbrochen das Amt des ersten Ministerpräsidenten der Volksrepublik und prägte als Chefunterhändler auch die Öffnung zu den USA?',
-        a: ['Zhou Enlai', 'Liu Shaoqi', 'Lin Biao', 'Zhu De'],
-        exp: 'Zhou Enlai galt als pragmatischer Staatsmann hinter Mao und führte unter anderem 1972 maßgeblich die Gespräche mit Richard Nixon und Henry Kissinger.'
-      },
-      {
-        cat: 'mao_aera', diff: 'easy',
-        q: 'Welche weltberühmte Zitatensammlung im roten Tascheneinband wurde ab Mitte der 1960er Jahre während der Kulturrevolution hundertmillionenfach verbreitet?',
-        a: ['Die „Worte des Vorsitzenden Mao Tse-tung“ („Kleine Rote Bibel“)', 'Das Kommunistische Manifest mit Anmerkungen von Sun Yat-sen', 'Die Chronik von Yan’an', 'Die Zehn Gebote der Volkskommunen'],
-        exp: 'Ursprünglich von Lin Biao für die Volksbefreiungsarmee zusammengestellt, wurde das kleine rote Buch zur allgegenwärtigen Pflichtlektüre im Alltag.'
-      },
-      {
-        cat: 'mao_aera', diff: 'mid',
-        q: 'Welche 1958 gestartete Kampagne wollte per Volkskommunen und ländlichen Kleinhochöfen binnen weniger Jahre Großbritannien überholen – löste jedoch eine verheerende Hungersnot aus?',
-        a: ['Der „Große Sprung nach vorn“', 'Die Hundert-Blumen-Kampagne', 'Die Vier Modernisierungen', 'Das Dritte Front-Programm'],
-        exp: 'Unbrauchbarer Kleinhochofen-Stahl, zwangskollektivierte Landwirtschaft und beschönigte Erntezahlen führten 1959–1961 zu schätzungsweise 30–45 Millionen Hungertoten.'
-      },
-      {
-        cat: 'mao_aera', diff: 'mid',
-        q: 'Wie hießen die ab 1966 mobilisierten Jugend- und Studentenverbände der Kulturrevolution, die gegen angebliche „vier alte Übel“ und Parteikader vorgingen?',
-        a: ['Die Roten Garden', 'Die Gelben Turbane', 'Die Jungen Pioniere von Shanghai', 'Die Weißgardisten der Mandschurei'],
-        exp: 'Rote Garden stürmten Tempel, Bibliotheken und Schulen, demütigten Lehrer wie Funktionäre öffentlich und stürzten ganze Städte ins Chaos, bevor die Armee eingriff.'
-      },
-      {
-        cat: 'mao_aera', diff: 'mid',
-        q: 'In welchem großen Krieg von 1950 bis 1953 kämpften chinesische „Freiwilligenverbände“ direkt an der Seite eines Nachbarstaates gegen UN- und US-Streitkräfte?',
-        a: ['Im Koreakrieg', 'Im Ersten Indochinakrieg in Laos', 'Im Sechstagekrieg', 'Im Sowjetisch-Afghanischen Krieg'],
-        exp: 'Als UN-Truppen an den Grenzfluss Yalu vorrückten, griff Peking massiv ein – ein Konflikt, der das Verhältnis zu Washington über zwei Jahrzehnte einfror.'
-      },
-      {
-        cat: 'mao_aera', diff: 'mid',
-        q: 'Welcher US-Präsident reiste im Februar 1972 überraschend nach Peking und leitete mit dem „Shanghai-Kommuniqué“ die historische Annäherung zwischen den USA und der Volksrepublik ein?',
-        a: ['Richard Nixon', 'John F. Kennedy', 'Jimmy Carter', 'Gerald Ford'],
-        exp: 'Vorausgegangen war 1971 die berühmte „Ping-Pong-Diplomatie“ sowie eine Geheimreise von Sicherheitsberater Henry Kissinger nach Peking.'
-      },
-      {
-        cat: 'mao_aera', diff: 'pro',
-        q: 'Welche Statusänderung erreichte die Volksrepublik China im Oktober 1971 durch die UN-Resolution 2758 in New York?',
-        a: ['Sie übernahm den offiziellen China-Sitz samt ständigem Veto-Platz im UN-Sicherheitsrat anstelle der Regierung in Taipeh (Republik China)', 'Sie trat erstmals als Beobachter ohne Stimmrecht dem IWF bei', 'Sie schloss mit Taiwan ein gemeinsames Doppelmandat nach deutschem Vorbild', 'Sie erhielt den vorübergehenden Vorsitz über die ASEAN-Staaten'],
-        exp: 'Seit 1971 vertritt ausschließlich Peking „China“ in den Vereinten Nationen; Taiwan schied im selben Zug aus der UN aus.'
-      },
-      {
-        cat: 'mao_aera', diff: 'pro',
-        q: 'Welcher sicherheitspolitische Durchbruch gelang der Volksrepublik China im Oktober 1964 auf dem Testgelände Lop Nor in Xinjiang?',
-        a: ['Die erfolgreiche Zündung der ersten eigenen chinesischen Atombombe (Projekt 596)', 'Der Start der ersten chinesischen bemannten Raumkapsel', 'Die Eröffnung der ersten Transkontinentalbahn nach Kasachstan', 'Der Stapellauf des ersten Flugzeugträgers „Liaoning“'],
-        exp: 'Nach dem Abzug sowjetischer Atomberater 1959 entwickelte China innerhalb von fünf Jahren eigene Kernwaffen – und 1967 die erste Wasserstoffbombe.'
-      },
-      {
-        cat: 'mao_aera', diff: 'pro',
-        q: 'Was markierte im Oktober 1976 – weniger als einen Monat nach Mao Zedongs Tod – das politische Ende der zehnjährigen Kulturrevolution?',
-        a: ['Die Verhaftung und Entmachtung der radikalen „Viererbande“ um Maos Witwe Jiang Qing', 'Der freiwillige Rücktritt des gesamten Politbüros zugunsten freier Wahlen', 'Die Unterzeichnung des Handelsvertrags von Shenzhen mit Großbritannien', 'Ein gesamtchinesischer Volksentscheid über die Hochschulöffnung'],
-        exp: 'Hua Guofeng und Parteiveteranen ließen Jiang Qing, Zhang Chunqiao, Yao Wenyuan und Wang Hongwen verhaften – damit war der Weg für neue Kräfte frei.'
-      },
-      {
-        cat: 'mao_aera', diff: 'pro',
-        q: 'Was verbirgt sich hinter dem „chinesisch-sowjetischen Zerwürfnis“ (Sino-Soviet Split), das sich in den 1960er Jahren bis zu bewaffneten Gefechten zuspitzte?',
-        a: ['Der tiefgreifende ideologische und geopolitische Bruch zwischen Peking und Moskau, der 1969 in Kämpfen an der Ussuri-Grenze (Insel Zhenbao/Damanski) eskalierte', 'Ein gemeinsamer Boykott Pekings und Moskaus gegen den Völkerbund 1952', 'Ein rein wirtschaftlicher Patentstreit über Teemaschinen im Jahr 1975', 'Eine vereinbarte Teilung Sibiriens zwischen Mao und Breschnew'],
-        exp: 'Entstalinisierung, Chruschtschows „friedliche Koexistenz“ und Großmachtrivalität machten aus einstigen Brüderländern scharfe Rivalen – genau das nutzten die USA 1971/72 diplomatisch.'
-      },
-
-      // ── Reform, Öffnung & Aufstieg (1978–2000) (12) ──
-      {
-        cat: 'reform_boom', diff: 'easy',
-        q: 'Welcher pragmatische Spitzenpolitiker gilt ab Dezember 1978 als maßgeblicher Architekt der Politik von „Reform und Öffnung“?',
-        a: ['Deng Xiaoping', 'Hua Guofeng', 'Zhao Ziyang', 'Hu Yaobang'],
-        exp: 'Unter Dengs Leitspruch „Es ist egal, ob eine Katze schwarz oder weiß ist, solange sie Mäuse fängt“ rückte wirtschaftliche Modernisierung in den Mittelpunkt.'
-      },
-      {
-        cat: 'reform_boom', diff: 'easy',
-        q: 'Welcher Ort direkt an der Grenze zu Hongkong verwandelte sich ab 1980 als Chinas erste Sonderwirtschaftszone vom Fischerstädtchen in eine Technologie-Metropole?',
-        a: ['Shenzhen', 'Qingdao', 'Wuhan', 'Xi’an'],
-        exp: 'In Shenzhen durften erstmals ausländische Unternehmen investieren, Löhne flexibel gestaltet und moderne Marktinstrumente erprobt werden.'
-      },
-      {
-        cat: 'reform_boom', diff: 'easy',
-        q: 'Welche weitreichende Familienpolitik führte China um 1979/1980 flächendeckend ein, um das schnelle Bevölkerungswachstum abzubremsen?',
-        a: ['Die Ein-Kind-Politik', 'Die Verpflichtung zur Rückkehr auf das Land', 'Die allgemeine Wehrpflicht für Töchter und Söhne', 'Das Zweitwohnungsverbot in Küstenstädten'],
-        exp: 'Durch hohe Strafen, Geburtenquoten und Ausnahmen vor allem auf dem Land bremste China das Wachstum radikal – schuf aber zugleich eine rasch alternde Gesellschaft.'
-      },
-      {
-        cat: 'reform_boom', diff: 'easy',
-        q: 'Unter welcher bekannten Formel wurde Hongkong 1997 wieder Teil der Volksrepublik China, behielt aber zunächst eigene Währung, Rechtsstaat und Pressefreiheit?',
-        a: ['„Ein Land, zwei Systeme“', '„Ein Staat, vier Zonen“', '„Wohlstand ohne Grenzen“', '„Harmonische Konföderation“'],
-        exp: 'Das noch von Deng Xiaoping entworfene Konzept sah mindestens 50 Jahre weitgehende innere Autonomie (bis 2047) vor.'
-      },
-      {
-        cat: 'reform_boom', diff: 'mid',
-        q: 'Welche vier Politikfelder standen im Zentrum der „Vier Modernisierungen“, die ab 1978 das Reformprogramm der Volksrepublik definierten?',
-        a: ['Landwirtschaft, Industrie, Landesverteidigung sowie Wissenschaft & Technik', 'Banken, Tourismus, Raumfahrt und Sport', 'Justiz, Parteiwahlen, Pressewesen und Religion', 'Schifffahrt, Kohlebergbau, Rundfunk und Zollwesen'],
-        exp: 'Bereits 1963/1975 von Zhou Enlai formuliert, machte Deng Xiaoping die Vier Modernisierungen zur konkreten Staatsdoktrin nach der Kulturrevolution.'
-      },
-      {
-        cat: 'reform_boom', diff: 'mid',
-        q: 'Welches tragische Datum steht für die gewaltsame Niederschlagung der wochenlangen Studenten- und Arbeiterproteste rund um den Tian’anmen-Platz in Peking?',
-        a: ['Der 4. Juni 1989', 'Der 1. Mai 1987', 'Der 9. November 1991', 'Der 1. Juli 1993'],
-        exp: 'In der Nacht vom 3. auf den 4. Juni 1989 ging die Volksbefreiungsarmee mit Panzern gegen Demonstrierende vor – ein Einschnitt, der im Festland bis heute stark zensiert wird.'
-      },
-      {
-        cat: 'reform_boom', diff: 'mid',
-        q: 'Welches neu ausgewiesene Entwicklungsgebiet von Shanghai östlich des Huangpu-Flusses stieg ab 1990 in Rekordzeit zum glitzernden Finanzzentrum Lujiazui auf?',
-        a: ['Pudong', 'Kowloon', 'Binjiang', 'Xiamen-Nord'],
-        exp: 'Wo 1990 noch überwiegend Ackerland und Lagerhäuser standen, prägen heute Oriental Pearl Tower, Jin Mao Tower und Shanghai Tower die Skyline.'
-      },
-      {
-        cat: 'reform_boom', diff: 'mid',
-        q: 'Welcher Unternehmenssektor jenseits starrer Staatskombinate trug in den 1980er- und 1990er-Jahren besonders stark zum industriellen Job- und Exportwunder auf dem Land bei?',
-        a: ['Ländliche Gemeinde- und Dorfbetriebe (TVEs / Township and Village Enterprises)', 'Ausschließlich internationale Großbanken in Peking', 'Staatliche Ölkonzerne im Tarimbecken', 'Private Fluggesellschaften in Tibet'],
-        exp: 'Die flexiblen Gemeinde- und Dorfbetriebe beschäftigten zeitweise über 120 Millionen Menschen und zeigten früh, wie Marktdruck Produktivität entfesselte.'
-      },
-      {
-        cat: 'reform_boom', diff: 'pro',
-        q: 'Auf welchem entscheidenden Parteigremium im Dezember 1978 setzte sich Deng Xiaopings pragmatischer Reformkurs endgültig gegen Hua Guofengs Mao-Dogmatismus durch?',
-        a: ['Auf dem 3. Plenum des XI. Zentralkomitees der KPCh', 'Auf dem Gründungskongress in Shanghai 1982', 'Auf der Wirtschaftskonferenz von Beidaihe 1985', 'Auf dem Sonderparteitag von Shenzhen 1979'],
-        exp: 'Das 3. Plenum im Dezember 1978 gilt bis heute als offizielle Geburtsstunde der Ära von „Reform und Öffnung“.'
-      },
-      {
-        cat: 'reform_boom', diff: 'pro',
-        q: 'Was bewirkte Deng Xiaopings berühmte „Südreise“ (Nanxun) Anfang 1992 nach Shenzhen und Zhuhai?',
-        a: ['Sie durchbrach konservative Blockaden nach 1989 und öffnete die Schleusen für privaten Handel, ausländisches Kapital und „sozialistische Marktwirtschaft“', 'Sie leitete den Rückkauf Taiwans durch chinesische Staatsfonds ein', 'Sie führte die sofortige Schließung sämtlicher Börsen in Shanghai ein', 'Sie beschloss den Ausstieg aus dem Hongkong-Vertrag mit London'],
-        exp: 'Nach der Tian’anmen-Krise hatten Hardliner Reformen gebremst – Dengs Reise ins boomende Guangdong mobilisierte Provinzchefs und entfesselte den Investitionsboom der 1990er.'
-      },
-      {
-        cat: 'reform_boom', diff: 'pro',
-        q: 'An welchen beiden historischen Tagen kehrten die ehemalige britische Kronkolonie Hongkong und das portugiesisch verwaltete Macau jeweils an China zurück?',
-        a: ['Hongkong am 1. Juli 1997 und Macau am 20. Dezember 1999', 'Hongkong am 1. Januar 1995 und Macau am 1. Oktober 1999', 'Beide gemeinsam zum Jahrtausendwechsel am 1. Januar 2000', 'Hongkong 1984 und Macau 1997'],
-        exp: 'Die zugrunde liegenden Übergabe-Erklärungen hatten Peking jeweils 1984 mit London und 1987 mit Lissabon unterzeichnet.'
-      },
-      {
-        cat: 'reform_boom', diff: 'pro',
-        q: 'Welches Agrar-Reformmodell beendete ab ca. 1978–1982 stillschweigend die unproduktiven Volkskommunen und führte auf dem Land rasch zu besseren Ernten?',
-        a: ['Das Haushaltsverantwortlichkeitssystem (Familienvertragssystem), bei dem Bauern nach Abgabequoten frei auf Märkten verkaufen durften', 'Die Vollverstaatlichung aller Bauernhöfe durch die Zentralbank', 'Die Einführung einer staatlichen Landrente in US-Dollar', 'Die Abgabe sämtlicher Traktoren an Hongkonger Händler'],
-        exp: 'Ursprünglich von Bauern im Dorf Xiaogang (Anhui) heimlich erprobt, explodierten durch den Eigenanreiz binnen wenigen Jahren Erträge und ländliche Einkommen.'
-      },
-
-      // ── 21. Jahrhundert & Gegenwart (2001–Heute) (12) ──
-      {
-        cat: 'gegenwart', diff: 'easy',
-        q: 'Welcher wichtigen globalen Wirtschaftsorganisation trat China am 11. Dezember 2001 nach 15-jährigen Verhandlungen offiziell bei?',
-        a: ['Der Welthandelsorganisation (WTO)', 'Der Organisation Erdöl exportierender Länder (OPEC)', 'Der OECD mit Sitz in Paris', 'Dem Nordatlantikpakt (NATO)'],
-        exp: 'Der WTO-Beitritt senkte Zölle, öffnete Exportmärkte weltweit und machte China in den folgenden Jahren zur „Werkbank der Welt“.'
-      },
-      {
-        cat: 'gegenwart', diff: 'easy',
-        q: 'Welches sportliche Großereignis richtete Peking im August 2008 unter riesiger weltweiter Aufmerksamkeit erstmals selbst aus?',
-        a: ['Die Olympischen Sommerspiele (u. a. im Nationalstadion „Vogelnest“)', 'Die Fußball-Weltmeisterschaft der Männer', 'Die ersten gemeinsamen Asienspiele mit Japan', 'Den America’s Cup vor Shanghai'],
-        exp: 'Olympia 2008 symbolisierte für viele in China den endgültigen Wiederaufstieg auf die globale Bühne; 2022 folgten in Peking als erster Stadt auch Winterspiele.'
-      },
-      {
-        cat: 'gegenwart', diff: 'easy',
-        q: 'Welches riesige Staudamm- und Wasserkraftprojekt am Jangtsekiang erreichte Mitte der 2000er/2012 seine volle Ausbaustufe und ist das größte Kraftwerk der Erde?',
-        a: ['Der Drei-Schluchten-Staudamm', 'Der Assuan-Damm am Perlfluss', 'Der Gelbe-Fluss-Tunnel', 'Das Dujiangyan-Wehr der Gegenwart'],
-        exp: 'Das Projekt liefert enorme Mengen Strom und soll Hochwasser regulieren, erforderte jedoch die Umsiedlung von über einer Million Menschen.'
-      },
-      {
-        cat: 'gegenwart', diff: 'easy',
-        q: 'In welcher Landverkehrs-Technologie baute China seit 2008 mit über 45.000 Kilometern Streckenlänge das bei Weitem weltgrößte Netz auf?',
-        a: ['Im Hochgeschwindigkeits-Eisenbahnnetz (CRH / Fuxing-Züge)', 'In kommerziellen Hyperloop-Vakuumröhren zwischen Städten', 'In ausschließlich solarbetriebenen Überland-Straßenbahnen', 'In unterirdischen Autotunnels zwischen allen Provinzhauptstädten'],
-        exp: 'Hochgeschwindigkeitszüge verbinden heute fast alle chinesischen Millionenstädte mit Tempo 300–350 km/h im Taktverkehr.'
-      },
-      {
-        cat: 'gegenwart', diff: 'mid',
-        q: 'Wie heißt das 2013 von Staatspräsident Xi Jinping angestoßene globale Milliardenprogramm für Häfen, Bahnlinien, Energie- und Handelskorridore durch Asien, Afrika und Europa?',
-        a: ['Belt and Road Initiative („Neue Seidenstraße“)', 'Der Asiatische Marshallplan der Vereinten Nationen', 'Die APEC-Freihandelsunion 2020', 'Die ASEAN-Nordbahn'],
-        exp: 'Über Kredite, Staatskonzerne und Infrastrukturprojekte baute Peking damit seinen wirtschaftlichen wie geopolitischen Einfluss im Globalen Süden stark aus.'
-      },
-      {
-        cat: 'gegenwart', diff: 'mid',
-        q: 'Welcher chinesische Raumfahrer (Taikonaut) umkreiste im Oktober 2003 an Bord von „Shenzhou 5“ als erster Mensch in einem rein chinesischen Raumschiff die Erde?',
-        a: ['Yang Liwei', 'Liu Yang', 'Qian Xuesen', 'Zhai Zhigang'],
-        exp: 'Mit Shenzhou 5 stieg China nach der UdSSR/Russland und den USA als dritte Nation zur eigenständigen bemannten Raumfahrtnation auf.'
-      },
-      {
-        cat: 'gegenwart', diff: 'mid',
-        q: 'In welchem Jahr überholte die Volksrepublik China beim nominalen Bruttoinlandsprodukt (BIP) Japan und stieg zur zweitgrößten Volkswirtschaft der Welt hinter den USA auf?',
-        a: ['Im Jahr 2010', 'Bereits 1998 während der Asienkrise', 'Erst im Pandemiejahr 2021', 'Schon im Jahr 2002'],
-        exp: 'Durch massives Wachstum nach der globalen Finanzkrise 2008/09 löste China 2010 das jahrzehntelang zweitplatzierte Japan ab.'
-      },
-      {
-        cat: 'gegenwart', diff: 'mid',
-        q: 'Wann ersetzte Peking angesichts sinkender Geburtenraten und schneller Alterung offiziell die langjährige Ein-Kind-Politik durch eine allgemeine Zwei-Kind-Erlaubnis?',
-        a: ['Mit Wirkung zum 1. Januar 2016 (später 2021 auf drei Kinder erweitert)', 'Bereits unmittelbar nach dem Tian’anmen-Jahr 1991', 'Schon zur Jahrtausendwende 2000', 'Erst Anfang 2025 per Volksentscheid'],
-        exp: 'Trotz Drei-Kind-Freigabe seit 2021 schrumpft Chinas Gesamtbevölkerung seit 2022 aufgrund hoher Lebenshaltungskosten und gesellschaftlichem Wandel.'
-      },
-      {
-        cat: 'gegenwart', diff: 'pro',
-        q: 'Welcher Meilenstein der unbemannten Raumfahrt gelang der chinesischen Mondsonde „Chang’e 4“ im Januar 2019 (später 2024 ergänzt durch Rückkehrproben von Chang’e 6)?',
-        a: ['Die weltweit erste weiche Landung eines Raumfahrzeugs auf der erdabgewandten Rückseite des Mondes', 'Der Aufbau einer dauerhaften menschlichen Mondbasis am Südpol', 'Die erste bemannte Umrundung des Mars', 'Das Einfangen eines Asteroiden in den Erdorbit'],
-        exp: 'Über den Relais-Satelliten Queqiao konnte Chang’e 4 den Rover Yutu-2 sicher im Von-Kármán-Krater auf der Mondrückseite landen lassen.'
-      },
-      {
-        cat: 'gegenwart', diff: 'pro',
-        q: 'Welcher 2015 von der Regierung vorgestellte Zehn-Jahres-Industrieplan sollte China vom Billig-Montagestandort zur führenden Macht bei Batterien, E-Autos, Robotik und Chips formen?',
-        a: ['Made in China 2025', 'Projekt 985 für Agrarwissenschaften', 'Der Fünfjahresplan für Kohleexport', 'Die Initiative Grüner Jangtse 2012'],
-        exp: 'Unterstützt durch enorme Subventionen stieg China tatsächlich bei E-Autos (u. a. BYD), Solarmodulen und Akkus (CATL) weltweit an die Spitze auf – was westliche Zollkonflikte verschärfte.'
-      },
-      {
-        cat: 'gegenwart', diff: 'pro',
-        q: 'Welcher einst größte chinesische Immobilienentwickler geriet ab 2021 in eine historisch beispiellose Schuldenkrise (über 300 Mrd. USD Verbindlichkeiten) und musste 2024 gerichtlich abgewickelt werden?',
-        a: ['Die Evergrande Group (Hengda)', 'Der Elektronikkonzern Lenovo', 'Die Reederei COSCO Shipping', 'Der Staatsölkonzern Sinopec'],
-        exp: 'Der Kollaps von Evergrande und Probleme bei Country Garden enthüllten eine tiefe Strukturkrise auf dem chinesischen Wohnungsmarkt.'
-      },
-      {
-        cat: 'gegenwart', diff: 'pro',
-        q: 'Welches ab 2020 formulierte wirtschaftspolitische Leitkonzept betont, China solle wegen geopolitischer Spannungen stärker vom eigenen Binnenmarkt statt einseitig vom Export abhängen?',
-        a: ['„Dual Circulation“ (Doppelter Wirtschaftskreislauf aus Binnen- und Außenkreislauf)', 'Die vollständige Rückkehr zu den Volkskommunen von 1960', 'Die Bindung des Renminbi 1:1 an den Euro', 'Die Privatisierung sämtlicher Staatsbanken an US-Investoren'],
-        exp: 'Das Konzept setzt auf technologische Autarkie („Self-Reliance“) und heimischen Konsum als Hauptmotor, während Exporte weiterhin als Ergänzung dienen.'
-      }
-    ];
+    // Unified question bank (100 questions, index 0 of a[] is always correct)
+    const QUESTIONS = ArcadeQuizEngine.getBank('china');
 
     let selectedDiff = 'all';
     let activeCat = 'mix';
+    let menuControls = null;
     let deck = [];
     let qIdx = 0;
     let score = 0;
@@ -726,16 +434,18 @@
     }
 
     function renderMenu() {
+      const reqLen = menuControls ? menuControls.getLength() : 20;
       const grid = document.getElementById('cat-grid');
       grid.innerHTML = CATS.map(c => {
-        const count = getMatchingPool(c.id).length;
-        const roundLen = Math.min(10, count);
+        const pool = getMatchingPool(c.id);
+        const stats = ArcadeQuizEngine.getSeenStats('quiz_china', pool);
+        const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 20);
         return `
           <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
             <div class="cat-icon">${c.icon}</div>
             <div class="cat-name">${c.name}</div>
             <div class="cat-desc">${c.desc}</div>
-            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
           </button>
         `;
       }).join('');
@@ -747,6 +457,7 @@
       selectedDiff = btn.dataset.diff;
       document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
       ArcadeAudio.click();
+      if (menuControls) menuControls.refresh();
       renderMenu();
     });
 
@@ -754,8 +465,10 @@
       activeCat = catId;
       ArcadeAudio.click();
       const pool = getMatchingPool(catId);
-      const count = Math.min(10, pool.length);
-      deck = shuffle(pool).slice(0, count);
+      const reqLen = menuControls ? menuControls.getLength() : 20;
+      const drawn = ArcadeQuizEngine.drawDeck('quiz_china', pool, reqLen, 20);
+      deck = drawn.deck;
+      if (!deck.length) return;
       qIdx = 0;
       score = 0;
       streak = 0;
@@ -793,6 +506,8 @@
 
       document.getElementById('q-text').textContent = item.q;
       document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
 
       const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
       item._rendered = opts;
@@ -857,6 +572,7 @@
       clearInterval(timerId);
 
       const item = deck[qIdx];
+      ArcadeQuizEngine.markSeen('quiz_china', item);
       const chosen = item._rendered[idx];
       const buttons = document.querySelectorAll('#answers-grid .ans-btn');
       buttons.forEach((b, i) => {
@@ -881,6 +597,8 @@
 
       document.getElementById('q-streak').textContent = streak;
       document.getElementById('q-score').textContent = score;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
       updateTimerUI();
       showFact(chosen.isRight);
     }
@@ -925,6 +643,7 @@
       document.getElementById('joker-skip').disabled = true;
       clearInterval(timerId);
       answered = true;
+      ArcadeQuizEngine.markSeen('quiz_china', deck[qIdx]);
       ArcadeAudio.click();
       nextQuestion();
     }
@@ -935,7 +654,11 @@
       document.getElementById('screen-result').classList.remove('hidden');
 
       const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
-      const isNewRecord = ArcadeScores.record('quiz_china', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore('quiz_china', score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      const isNewRecord = scoreRes.isNewRecord;
       refreshTopBest();
 
       document.getElementById('res-score').textContent = score;
@@ -943,7 +666,8 @@
       document.getElementById('res-streak').textContent = `${bestStreak}×`;
       document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '🏮' : '🐉');
       document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer China-Rekord!' : 'Runde abgeschlossen!';
-      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      const normNote = scoreRes.normalized ? ` · Bestenliste (20er-Norm): ${scoreRes.recordedScore} Pkt` : '';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}${normNote}`;
       if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
     }
 
@@ -957,6 +681,8 @@
       document.getElementById('screen-play').classList.add('hidden');
       document.getElementById('screen-result').classList.add('hidden');
       document.getElementById('screen-menu').classList.remove('hidden');
+      if (menuControls) menuControls.refresh();
+      renderMenu();
     }
 
     window.addEventListener('keydown', (e) => {
@@ -973,6 +699,14 @@
 
     ArcadeAudio.syncButton(document.getElementById('btn-mute'));
     ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    menuControls = ArcadeQuizEngine.initMenuControls({
+      quizId: 'quiz_china',
+      getPool: () => getMatchingPool('mix'),
+      onUpdate: () => renderMenu(),
+      lengths: [10, 20, 30, 'all'],
+      defaultLen: 20,
+      showAllLabel: 'Alle'
+    });
     refreshTopBest();
     renderMenu();
   </script>
