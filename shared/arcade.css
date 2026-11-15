@@ -151,12 +151,19 @@ body {
   box-shadow: 0 6px 20px rgba(14, 165, 233, 0.35);
   transition: transform 0.12s, filter 0.15s;
 }
-.primary-btn:hover {
+.primary-btn:hover:not(:disabled) {
   filter: brightness(1.08);
   transform: translateY(-1px);
 }
-.primary-btn:active {
+.primary-btn:active:not(:disabled) {
   transform: translateY(0);
+}
+.primary-btn:disabled {
+  opacity: 0.42;
+  filter: grayscale(0.45);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 .secondary-btn {
@@ -174,9 +181,13 @@ body {
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
 }
-.secondary-btn:hover {
+.secondary-btn:hover:not(:disabled) {
   background: rgba(30, 41, 59, 0.95);
   border-color: var(--accent-cyan);
+}
+.secondary-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 .glass-card {
