@@ -33,18 +33,23 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 ├── shared/
 │   ├── arcade.css                   # Globales Design-System, Dark/Light-Theme, Nav, Modals, Feedback-UI
 │   ├── arcade.js                    # Globale Services (ArcadeAudio, ArcadeTheme, ArcadeScores, ArcadeAuth, ArcadeFeedback)
+│   ├── burger-menu.js               # Modulares Top-Right Burger-Menü (☰) + Slide-Over-Drawer (Dark/Light)
 │   ├── quiz-engine.js               # Zentrale Quiz-Logik (Seen-Tracking, 1.000+-Fragen-Generator, Rundenlänge, Timer/Entspannt)
 │   └── quiz-data/                   # Reine Quiz-Fragendatenbanken (strikt getrennt von der UI-Logik)
 │       ├── bank-waldgarten.js       # 1.000 Fragen: Natur, Vögel, Wildtiere & Geschichte Schwarzenburg (Heideblick)
-│       ├── bank-ai.js               # Fragenpool: Künstliche Intelligenz
-│       ├── bank-movies.js           # Fragenpool: Kino & Filme (ohne RomComs)
-│       ├── bank-egypt.js            # Fragenpool: Ägyptische Geschichte
-│       ├── bank-diving.js           # Fragenpool: Tauchen & Scuba Diving
-│       ├── bank-emobility.js        # Fragenpool: E-Mobilität & Tesla
-│       ├── bank-history.js          # Fragenpool: Weltgeschichte
-│       ├── bank-china.js            # Fragenpool: Neuere Chinesische Geschichte
-│       ├── bank-politics.js         # Fragenpool: Politik & Ökonomie
-│       └── bank-general.js          # Fragenpool: Quiz-Arena Klassik
+│       ├── bank-military-aircraft.js # 1.000 Fragen: Militärflugzeuge (Jets, Historie, Bomber/AWACS, Technik)
+│       ├── bank-airliners.js        # 1.000 Fragen: Passagierflugzeuge (Widebody, Narrowbody, Klassiker, Technik)
+│       ├── bank-etfs.js             # 1.000 Fragen: Passives Investieren, ETFs & deutsches Steuerrecht
+│       ├── bank-ai.js               # Fragenpool: Künstliche Intelligenz (108)
+│       ├── bank-movies.js           # Fragenpool: Kino & Filme ohne RomComs (108)
+│       ├── bank-egypt.js            # Fragenpool: Ägyptische Geschichte (108)
+│       ├── bank-diving.js           # Fragenpool: Tauchen & Scuba Diving (108)
+│       ├── bank-emobility.js        # Fragenpool: E-Mobilität & Tesla (108)
+│       ├── bank-history.js          # Fragenpool: Weltgeschichte (108)
+│       ├── bank-china.js            # Fragenpool: Neuere Chinesische Geschichte (100)
+│       ├── bank-politics.js         # Fragenpool: Politik & Ökonomie (84)
+│       ├── bank-general.js          # Fragenpool: Quiz-Arena Klassik (324)
+│       └── bank-{cpus,gpus,phones,pilze-aachen,swiss-trains}.js # Ausgelagerte Foto-Quiz-Daten (96)
 ├── games/
 │   ├── minesweeper/                 # 3D Minesweeper – Tech Demo KI-Agent
 │   ├── minesweeper-3d-prompt-test/  # Minesweeper 3D Prompt-Vergleichsversion
@@ -55,7 +60,10 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 │   ├── 2048/                        # 2048 Prism
 │   ├── quiz/                        # Quiz Arena: Klassik & Mega-Mix
 │   ├── quiz-waldgarten/             # Waldgarten Quiz (Schwarzenburg/Heideblick) + druckfertiges QR-PDF
-│   └── quiz-*/                      # Weitere Themen-Quizzes
+│   ├── quiz-military-aircraft/      # Militärflugzeuge Quiz (1.000 Fragen)
+│   ├── quiz-airliners/              # Passagierflugzeuge Quiz (1.000 Fragen)
+│   ├── quiz-etfs/                   # Passives Investieren & ETFs Quiz (1.000 Fragen)
+│   └── quiz-*/                      # Weitere Themen- & Foto-Quizzes
 └── cloudflare-worker/
     ├── worker.js                    # Cloudflare Worker API (Highscores, Auth, Turnstile CAPTCHA, Feedback & KI-Antworten)
     ├── schema.sql                   # Cloudflare D1 Datenbank-Schema

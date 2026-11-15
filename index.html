@@ -753,20 +753,20 @@
     <section class="hub-hero">
       <div class="hero-copy">
         <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>14 Quiz-Welten mit über 1.250 Fragen &amp; Motiven</strong> (standardmäßig <strong>20 Fragen/Runde</strong> &amp; Wiederholschutz: KI-Entstehung &amp; Funktionsweise, Kino ohne RomComs, Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Hardware-Fotos der letzten 25 Jahre, Pilze der Region Aachen, Schweizer Loks, E-Mobilität &amp; TFF, Geschichte, Politik &amp; der 1.156-Fragen Mega-Mix).</p>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>18 Quiz-Welten mit 5.252 Fragen &amp; Motiven</strong> (standardmäßig <strong>20 Fragen/Runde</strong> &amp; Wiederholschutz: Waldgarten, Militärflugzeuge, Passagierflugzeuge &amp; ETFs/Passives Investieren mit je <strong>1.000 Fragen</strong>, dazu KI, Kino, Ägypten, Tauchen, Hardware- &amp; Pilz-Fotos, Schweizer Loks, E-Mobilität, Geschichte, Politik &amp; der 1.156-Fragen Mega-Mix).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">21</b><span>Module</span></div>
-        <div class="hero-stat-box"><b id="stat-questions">1.252</b><span>Quiz-Pool</span></div>
+        <div class="hero-stat-box"><b id="stat-games">25</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-questions">5.252</b><span>Quiz-Pool</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all">✨ Alles (21)</button>
-      <button class="domain-tab" data-domain="games">🎮 Games (7)</button>
-      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (14)</button>
+      <button class="domain-tab active" data-domain="all" id="tab-all">✨ Alles (25)</button>
+      <button class="domain-tab" data-domain="games" id="tab-games">🎮 Games (7)</button>
+      <button class="domain-tab quiz-tab" data-domain="quizzes" id="tab-quizzes">🧠 Quiz-Welten (18)</button>
       <button class="domain-tab" data-domain="feedback">💬 Wünsche &amp; Bug-Melder</button>
     </div>
 
@@ -785,7 +785,7 @@
 
     <section class="section-block" id="sec-quizzes">
       <div class="section-head">
-        <h2>🧠 Quiz-Welten <span class="section-count quiz">14 Quiz-Arenen · 1.252 Pool-Items</span></h2>
+        <h2>🧠 Quiz-Welten <span class="section-count quiz" id="sec-quiz-count">18 Quiz-Arenen · 5.252 Pool-Items</span></h2>
       </div>
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
@@ -970,6 +970,58 @@
             <polygon points="15,15 27,30 3,30" fill="#10b981" stroke="#a7f3d0" stroke-width="1.2" stroke-linejoin="round"/>
             <rect x="13" y="30" width="4" height="5" rx="1" fill="#92400e"/>
             <path d="M27 28c2.8-3.8 6.5-4.5 9-3.2-1.2 3.2-4.2 5.5-9 3.2z" fill="#6ee7b7"/>
+          </svg>`
+        },
+        {
+          id: 'quiz_mil_air',
+          href: './games/quiz-military-aircraft/index.html',
+          catLabel: 'Militärluftfahrt · Jets &amp; Historie',
+          badge: '1.000 Fragen · 3 Stufen',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Militärflugzeuge Quiz: Kampfjets bis Pionierzeit',
+          desc: '1.000 Fragen über moderne Kampfjets (F-22, F-35, Eurofighter, Rafale, Gripen), WK-I/WK-II- &amp; Kalter-Krieg-Legenden (Spitfire, Me 262, SR-71), Bomber/AWACS/Drohnen sowie Radar, Stealth &amp; Luft-Luft-Waffen.',
+          accent: '#38bdf8',
+          glow: 'rgba(56, 189, 248, 0.30)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <path d="M20 4L24.5 14L36 23L35 26.5L24.5 23.5L23.5 31L28 34.5V37L20 35L12 37V34.5L16.5 31L15.5 23.5L5 26.5L4 23L15.5 14L20 4Z" fill="#1e293b" stroke="#38bdf8" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M20 9.5C21.2 9.5 22 12 22 15.5H18C18 12 18.8 9.5 20 9.5Z" fill="#7dd3fc"/>
+            <circle cx="20" cy="36" r="1.8" fill="#fb923c"/>
+          </svg>`
+        },
+        {
+          id: 'quiz_airliners',
+          href: './games/quiz-airliners/index.html',
+          catLabel: 'Zivilluftfahrt · Airbus, Boeing &amp; Co.',
+          badge: '1.000 Fragen · 3 Stufen',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Passagierflugzeuge Quiz: A380 bis Concorde',
+          desc: '1.000 Fragen zu Widebodies (A350, A380, B777, B787, B747), Narrowbodies &amp; Regionaljets (A320neo, 737, E195-E2, A220), ikonischen Klassikern (Concorde, Ju 52, 707) sowie Avionik, Mantelstromtriebwerken, ETOPS &amp; ATC.',
+          accent: '#0ea5e9',
+          glow: 'rgba(14, 165, 233, 0.30)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="15" stroke="#0284c7" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7"/>
+            <path d="M33 9L24.5 17.5L32 30L28.5 32.5L19.5 22.5L14 28L15 33L12.5 34.5L9.5 29.5L4.5 26.5L6 24L11 25L16.5 19.5L6.5 10.5L9 7L21.5 14.5L30 6C31.5 4.8 34.2 7.5 33 9Z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="1.4" stroke-linejoin="round"/>
+          </svg>`
+        },
+        {
+          id: 'quiz_etfs',
+          href: './games/quiz-etfs/index.html',
+          catLabel: 'Finanzbildung · Weltportfolio (DE)',
+          badge: '1.000 Fragen · 3 Stufen',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Passives Investieren &amp; ETFs Quiz',
+          desc: '1.000 Fragen rund um ETF-Mechanik (TER, Tracking Difference, UCITS-Sondervermögen, Swap vs. Physisch), Weltindizes (MSCI ACWI, FTSE All-World, Faktoren), Zinseszins &amp; Entsparphase sowie deutsches Steuerrecht (InvStG, Vorabpauschale, TFS, Pauschbetrag).',
+          accent: '#10b981',
+          glow: 'rgba(16, 185, 129, 0.30)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <rect x="5" y="7" width="30" height="26" rx="4" fill="#064e3b" stroke="#34d399" stroke-width="1.6"/>
+            <path d="M9 27L16 21L22 23.5L30 13" stroke="#a7f3d0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M25.5 13H30V17.5" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="16" cy="21" r="2" fill="#34d399"/>
+            <circle cx="22" cy="23.5" r="2" fill="#34d399"/>
           </svg>`
         },
         {
@@ -1276,7 +1328,19 @@
 
       function updateHeaderStats() {
         const summary = ArcadeScores.getSummaryCache ? ArcadeScores.getSummaryCache() : null;
-        document.getElementById('stat-games').textContent = GAMES.length + QUIZZES.length;
+        const totalMods = GAMES.length + QUIZZES.length;
+        const poolTotal = 5252;
+        document.getElementById('stat-games').textContent = totalMods;
+        const elQ = document.getElementById('stat-questions');
+        if (elQ) elQ.textContent = poolTotal.toLocaleString('de-DE');
+        const elTabAll = document.getElementById('tab-all');
+        if (elTabAll) elTabAll.textContent = `✨ Alles (${totalMods})`;
+        const elTabGames = document.getElementById('tab-games');
+        if (elTabGames) elTabGames.textContent = `🎮 Games (${GAMES.length})`;
+        const elTabQuizzes = document.getElementById('tab-quizzes');
+        if (elTabQuizzes) elTabQuizzes.textContent = `🧠 Quiz-Welten (${QUIZZES.length})`;
+        const elSecQ = document.getElementById('sec-quiz-count');
+        if (elSecQ) elSecQ.textContent = `${QUIZZES.length} Quiz-Arenen · ${poolTotal.toLocaleString('de-DE')} Pool-Items`;
         if (window.ArcadeFeedback) {
           const fbCnt = ArcadeFeedback.getCountsForTarget('all');
           const elFbCnt = document.getElementById('hub-fb-count');

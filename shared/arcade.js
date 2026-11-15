@@ -1,5 +1,6 @@
 // Shared Zero-Dependency Web Audio SFX & Local Highscore Manager
 (function () {
+  const ARCADE_SCRIPT_SRC = (document.currentScript && document.currentScript.src) || '';
   const STORE_KEY = 'arcade_scores_v1';
   const LEGACY_STORE_KEY = ['v2g', 'arcade', 'scores', 'v1'].join('_');
   const MUTE_KEY = 'arcade_muted';
@@ -161,6 +162,9 @@
     { id: 'quiz_ai', title: 'KI: Entstehung & Technik Quiz', icon: '🤖', lowerIsBetter: false },
     { id: 'quiz_china', title: 'Neuere Chinesische Geschichte', icon: '🏯', lowerIsBetter: false },
     { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿', lowerIsBetter: false },
+    { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz', icon: '🛩️', lowerIsBetter: false },
+    { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz', icon: '✈️', lowerIsBetter: false },
+    { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz', icon: '📈', lowerIsBetter: false },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -197,6 +201,9 @@
       if (p.includes('/games/quiz-pilze-aachen')) return 'quiz_pilze_aachen';
       if (p.includes('/games/quiz-swiss-trains')) return 'quiz_swiss_trains';
       if (p.includes('/games/quiz-waldgarten')) return 'quiz_waldgarten';
+      if (p.includes('/games/quiz-military-aircraft')) return 'quiz_mil_air';
+      if (p.includes('/games/quiz-airliners')) return 'quiz_airliners';
+      if (p.includes('/games/quiz-etfs')) return 'quiz_etfs';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
@@ -773,6 +780,9 @@
     { id: 'p2048', title: '2048 Prism', icon: '🔷' },
     { id: 'quiz_ai', title: 'KI: Entstehung & Funktionsweise Quiz', icon: '🤖' },
     { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿' },
+    { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz (1.000 Fragen)', icon: '🛩️' },
+    { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz (1.000 Fragen)', icon: '✈️' },
+    { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz (1.000 Fragen)', icon: '📈' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },
@@ -1916,6 +1926,20 @@
       } else {
         topbarRight.appendChild(fbBtn);
       }
+    }
+
+    if (!window.ArcadeBurger && !document.getElementById('arcade-burger-script')) {
+      try {
+        const s = document.createElement('script');
+        s.id = 'arcade-burger-script';
+        s.async = false;
+        s.src = ARCADE_SCRIPT_SRC
+          ? new URL('./burger-menu.js', ARCADE_SCRIPT_SRC).href
+          : ((window.location.pathname || '').toLowerCase().includes('/games/') ? '../../shared/burger-menu.js' : './shared/burger-menu.js');
+        document.head.appendChild(s);
+      } catch (e) {}
+    } else if (window.ArcadeBurger && typeof window.ArcadeBurger.init === 'function') {
+      window.ArcadeBurger.init();
     }
 
     if (noBoard) {

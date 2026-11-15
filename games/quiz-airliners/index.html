@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Passagierflugzeuge Quiz · 1.000 Fragen zur Zivilluftfahrt</title>
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 18px 14px 44px;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(14, 165, 233, 0.38);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: #7dd3fc;
+      color: #f0f9ff;
+    }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #bae6fd;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(14, 165, 233, 0.38);
+    }
+    .diff-pill.pro.active {
+      background: linear-gradient(135deg, #b45309, #f59e0b);
+      border-color: #fde68a;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.36);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(14, 165, 233, 0.28);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: #38bdf8;
+      background: rgba(7, 89, 133, 0.34);
+    }
+    .cat-card.featured {
+      grid-column: 1 / -1;
+      border-color: rgba(14, 165, 233, 0.62);
+      background: linear-gradient(135deg, rgba(3, 105, 161, 0.42), rgba(15, 23, 42, 0.95));
+    }
+    .cat-card.featured-teal {
+      border-color: rgba(45, 212, 191, 0.48);
+      background: linear-gradient(135deg, rgba(13, 148, 136, 0.24), rgba(15, 23, 42, 0.94));
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.44; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #7dd3fc;
+      margin-top: 4px;
+    }
+    html[data-theme="light"] .cat-meta {
+      color: #0369a1;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #2dd4bf);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill, .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .q-cat-pill {
+      background: rgba(14, 165, 233, 0.18);
+      border: 1px solid rgba(56, 189, 248, 0.44);
+      color: #bae6fd;
+    }
+    html[data-theme="light"] .q-cat-pill {
+      color: #0369a1;
+      background: #e0f2fe;
+    }
+    .q-diff-pill.easy {
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #86efac;
+    }
+    .q-diff-pill.mid {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      color: #7dd3fc;
+    }
+    .q-diff-pill.pro {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(251, 191, 36, 0.48);
+      color: #fde68a;
+    }
+
+    .q-text {
+      font-size: clamp(17.5px, 2.7vw, 22px);
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      color: #f1f5f9;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: #38bdf8;
+      background: rgba(7, 89, 133, 0.32);
+      transform: translateY(-1px);
+    }
+    .ans-key {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(148, 163, 184, 0.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.32);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-btn.eliminated {
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .joker-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      justify-content: space-between;
+      align-items: center;
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      color: #bae6fd;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(56, 189, 248, 0.36);
+      font-size: 13px;
+      line-height: 1.48;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .result-card {
+      text-align: center;
+      padding: 28px 20px;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 480px;
+      margin: 18px auto 22px;
+    }
+    .res-box {
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(14, 165, 233, 0.32);
+    }
+    .res-box b {
+      display: block;
+      font-size: 20px;
+      font-family: var(--font-mono);
+      color: #7dd3fc;
+    }
+    .res-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">✈️ Passagierflugzeuge Quiz · 1.000 Fragen</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Difficulty Menu -->
+    <section id="screen-menu" class="glass-card" style="padding:20px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">✈️ Passagierflugzeuge Quiz · Von Ju 52 bis Airbus A350</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
+        <strong>1.000 einzigartige Fragen</strong> rund um die internationale Zivilluftfahrt (je 250 Fragen in 4 Gebieten): Von Boeing 747, Airbus A380 &amp; 787 Dreamliner über A320neo, Boeing 737, Concorde &amp; DC-3 bis Turbofan-Technik, ETOPS, Druckkabine, Fly-by-Wire &amp; Cockpit-Systeme.
+      </p>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Vielflieger</button>
+        <button class="diff-pill" data-diff="mid">🟡 Copilot</button>
+        <button class="diff-pill pro" data-diff="pro">🔴 Flugkapitän (1,5× Pkt)</button>
+      </div>
+
+      <div class="quiz-time-bar" id="time-mode-bar">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700;">Tempo:</span>
+        <button type="button" class="time-mode-pill active" data-relaxed="0">⚡ Mit Zeitbonus (25–35s, sanfter Ablauf)</button>
+        <button type="button" class="time-mode-pill relaxed" data-relaxed="1">☕ Ohne Zeitlimit (entspannt im Flugmodus)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">20</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Ohne Zeitlimit umschalten">⏱ <strong id="q-sec">25</strong>s</button>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Thema</span>
+        <span id="q-diff" class="q-diff-pill mid">Copilot</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Themen</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div id="res-emoji" style="font-size:48px;">✈️</div>
+      <h2 id="res-heading" style="margin:8px 0 4px;">Flug-Runde sicher gelandet!</h2>
+      <p id="res-sub" style="margin:0;color:var(--text-muted);font-size:13.5px;"></p>
+
+      <div class="result-stats">
+        <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
+        <div class="res-box"><b id="res-correct">0/20</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Erneut abheben</button>
+        <button class="secondary-btn" onclick="backToMenu()">✈️ Anderes Themengebiet</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-airliners.js"></script>
+  <script>
+    const CATS = [
+      { id: 'mix',                 icon: '✈️', name: 'Zivilluftfahrt Komplett-Mix (Alle 1.000 Fragen)', cls: 'featured',      desc: 'Alle Flotten & Systeme kombiniert: Langstrecken-Giganten, Kurz-/Mittelstrecke, Klassiker & Luftfahrttechnik.' },
+      { id: 'widebody',            icon: '🌐', name: 'Großraum- & Langstreckenjets (Widebodies)',       cls: '',              desc: 'Boeing 747, 777, 787 Dreamliner, Airbus A380, A350 XWB, A330neo, A340 & DC-10.' },
+      { id: 'narrowbody_regional', icon: '🛫', name: 'Kurz-/Mittelstrecke & Regionaljets',              cls: '',              desc: 'Airbus A320/A321XLR, A220, Boeing 737 NG/MAX, Embraer E-Jets E2, CRJ, ATR 72 & Dash 8.' },
+      { id: 'klassiker',           icon: '🕰️', name: 'Meilensteine, Klassiker & Concorde',              cls: 'featured-teal', desc: 'Concorde, Tupolew Tu-144, Comet, Boeing 707, 727, Caravelle, Ju 52, DC-3, Lockheed Super Constellation & Comet.' },
+      { id: 'technik_betrieb',     icon: '⚙️', name: 'Triebwerke, ETOPS & Flugbetrieb',                 cls: '',              desc: 'Turbofans & Nebenstromverhältnis, Winglets, Druckkabine, ILS CAT III, TCAS, Machzahl & Reichweitenphysik.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Vielflieger',  cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Copilot',      cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Flugkapitän',  cls: 'pro',  mult: 1.5 }
+    };
+
+    const QUESTIONS = ArcadeQuizEngine.getBank('airliners');
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let menuControls = null;
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 25;
+    let questionMaxTime = 25;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_airliners');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const reqLen = menuControls ? menuControls.getLength() : 20;
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const pool = getMatchingPool(c.id);
+        const stats = ArcadeQuizEngine.getSeenStats('quiz_airliners', pool);
+        const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 20);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      if (menuControls) menuControls.refresh();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const reqLen = menuControls ? menuControls.getLength() : 20;
+      const drawn = ArcadeQuizEngine.drawDeck('quiz_airliners', pool, reqLen, 20);
+      deck = drawn.deck;
+      if (!deck.length) return;
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      timerId = null;
+      answered = false;
+
+      const item = deck[qIdx];
+      questionMaxTime = ArcadeQuizPrefs.getDurationSec(item.diff);
+      timeLeft = ArcadeQuizPrefs.isRelaxed() ? 0 : questionMaxTime;
+      const di = DIFF_INFO[item.diff] || DIFF_INFO.mid;
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      if (!ArcadeQuizPrefs.isRelaxed()) startBonusTimer();
+    }
+
+    function startBonusTimer() {
+      clearInterval(timerId);
+      let lastTick = performance.now();
+      timerId = setInterval(() => {
+        const now = performance.now();
+        timeLeft = Math.max(0, timeLeft - (now - lastTick) / 1000);
+        lastTick = now;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          clearInterval(timerId);
+          timerId = null;
+        }
+        updateTimerUI();
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      ArcadeQuizPrefs.updateTimerUI({
+        btnEl: document.getElementById('btn-timer-mode'),
+        fillEl: document.getElementById('timer-fill'),
+        jokerTimeEl: document.getElementById('joker-time'),
+        jokerTimeAvailable: jokers.time,
+        timeLeft,
+        maxTime: questionMaxTime,
+        answered
+      });
+    }
+
+    function toggleTimerModeInPlay() {
+      const nextRelaxed = !ArcadeQuizPrefs.isRelaxed();
+      ArcadeQuizPrefs.setRelaxed(nextRelaxed);
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      clearInterval(timerId);
+      timerId = null;
+      ArcadeAudio.click();
+      if (nextRelaxed) {
+        timeLeft = 0;
+        updateTimerUI();
+      } else if (!answered) {
+        if (timeLeft <= 0) timeLeft = questionMaxTime;
+        updateTimerUI();
+        startBonusTimer();
+      } else {
+        updateTimerUI();
+      }
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      ArcadeQuizEngine.markSeen('quiz_airliners', item);
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = (DIFF_INFO[item.diff] || DIFF_INFO.mid).mult;
+        const speedBonus = (ArcadeQuizPrefs.isRelaxed() || timeLeft <= 0) ? 0 : Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
+      updateTimerUI();
+      showFact(chosen.isRight);
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Richtig! ' : '❌ Nicht ganz: ')}</strong>${item.exp}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered || ArcadeQuizPrefs.isRelaxed()) return;
+      jokers.time = false;
+      timeLeft = Math.min(questionMaxTime + 10, timeLeft + 10);
+      updateTimerUI();
+      startBonusTimer();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeQuizEngine.markSeen('quiz_airliners', deck[qIdx]);
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore('quiz_airliners', score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      const isNewRecord = scoreRes.isNewRecord;
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '✈️' : '🛫');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Flugkapitän-Rekord!' : 'Zivilluftfahrt-Runde abgeschlossen!';
+      const normNote = scoreRes.normalized ? ` · Bestenliste (20er-Norm): ${scoreRes.recordedScore} Pkt` : '';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}${normNote}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+      if (menuControls) menuControls.refresh();
+      renderMenu();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    menuControls = ArcadeQuizEngine.initMenuControls({
+      quizId: 'quiz_airliners',
+      getPool: () => getMatchingPool('mix'),
+      onUpdate: () => renderMenu(),
+      lengths: [10, 20, 30, 50, 'all'],
+      defaultLen: 20,
+      showAllLabel: 'Alle (1.000)'
+    });
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>
