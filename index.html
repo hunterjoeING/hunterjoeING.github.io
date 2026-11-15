@@ -1379,6 +1379,16 @@
       const INTRO_DURATION = 2000; // 2 Sekunden Anflug
       let introFinished = false;
       let mouseNX = 0, mouseNY = 0;
+      let smoothNX = 0, smoothNY = 0;
+      let lastVpW = window.innerWidth;
+      let lastVpH = canvas.clientHeight || window.innerHeight;
+
+      function getCanvasWidth() {
+        return canvas.clientWidth || window.innerWidth;
+      }
+      function getCanvasHeight() {
+        return canvas.clientHeight || window.innerHeight;
+      }
 
       function easeOutCubic(t) {
         return 1 - Math.pow(1 - t, 3);
@@ -1433,20 +1443,28 @@
         if (!introFinished && (e.key === 'Escape' || e.key === ' ')) skipIntro();
       });
       window.addEventListener('pointermove', (e) => {
-        mouseNX = (e.clientX / window.innerWidth) * 2 - 1;
-        mouseNY = (e.clientY / window.innerHeight) * 2 - 1;
+        // Auf Touch-Geräten (Android/iOS) beim Wischen/Scrollen keine Kamera-Verschiebung auslösen,
+        // da sonst beim ersten Scrollen die Kamera ruckartig in Y-Richtung springt.
+        if (e.pointerType && e.pointerType !== 'mouse') return;
+        mouseNX = (e.clientX / Math.max(1, getCanvasWidth())) * 2 - 1;
+        mouseNY = (e.clientY / Math.max(1, getCanvasHeight())) * 2 - 1;
       }, { passive: true });
 
       // Build Three.js scene if available, otherwise clean 2D star zoom fallback
       if (typeof THREE !== 'undefined') {
+        const initW = getCanvasWidth();
+        const initH = getCanvasHeight();
+        lastVpW = initW;
+        lastVpH = initH;
+
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
         renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setSize(initW, initH, false);
 
         const scene = new THREE.Scene();
         scene.fog = new THREE.FogExp2(0x020612, 0.0052);
 
-        const camera = new THREE.PerspectiveCamera(56, window.innerWidth / window.innerHeight, 0.5, 500);
+        const camera = new THREE.PerspectiveCamera(56, initW / initH, 0.5, 500);
         camera.position.set(0, 56, 178);
 
         const amb = new THREE.AmbientLight(0x93c5fd, 0.65);
@@ -1580,9 +1598,15 @@
         window.addEventListener('arcade:theme-changed', applyThreeTheme);
 
         window.addEventListener('resize', () => {
-          camera.aspect = window.innerWidth / window.innerHeight;
+          const w = getCanvasWidth();
+          const h = getCanvasHeight();
+          // Ignoriere reine Höhen-Änderungen < 180px bei gleicher Breite (Android-Adressleiste beim ersten Scrollen)
+          if (Math.abs(w - lastVpW) < 2 && Math.abs(h - lastVpH) < 180) return;
+          lastVpW = w;
+          lastVpH = h;
+          camera.aspect = w / h;
           camera.updateProjectionMatrix();
-          renderer.setSize(window.innerWidth, window.innerHeight);
+          renderer.setSize(w, h, false);
         });
 
         startZoomIntro();
@@ -1594,11 +1618,15 @@
 
           applyShellTransform(rawT);
 
-          // Camera zooms from (0, 56, 178) right in toward (mouseNX*2.4, 3.2 - mouseNY*1.2, 16.5)
+          // Sanftes Lerping für Maus-Parallaxe (auf Desktop) verhindert jegliche Sprünge
+          smoothNX += (mouseNX - smoothNX) * 0.08;
+          smoothNY += (mouseNY - smoothNY) * 0.08;
+
+          // Camera zooms from (0, 56, 178) right in toward (smoothNX*2.5, 3.0 - smoothNY*1.1, 17.5)
           const targetZ = 178 + (17.5 - 178) * easeT;
           const targetY = 56 + (3.0 - 56) * easeT;
-          const targetX = mouseNX * 2.5 * easeT;
-          camera.position.set(targetX, targetY - mouseNY * 1.1 * easeT, targetZ);
+          const targetX = smoothNX * 2.5 * easeT;
+          camera.position.set(targetX, targetY - smoothNY * 1.1 * easeT, targetZ);
           camera.lookAt(0, 0, 0);
 
           const sec = now * 0.001;
@@ -1624,8 +1652,13 @@
           z: Math.random()
         }));
         const resize2d = () => {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
+          const w = getCanvasWidth();
+          const h = getCanvasHeight();
+          if (canvas.width > 0 && Math.abs(w - lastVpW) < 2 && Math.abs(h - lastVpH) < 180) return;
+          lastVpW = w;
+          lastVpH = h;
+          canvas.width = w;
+          canvas.height = h;
         };
         window.addEventListener('resize', resize2d);
         resize2d();
