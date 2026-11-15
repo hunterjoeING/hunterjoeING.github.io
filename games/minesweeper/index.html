@@ -773,6 +773,189 @@ body > canvas:not(#bg-canvas) {
   cursor: pointer;
 }
 
+/* Reversible Per-Block Visibility (Hide Mode & Undo/Ghost Toolbar) */
+#btn-hide-blocks.active {
+  background: rgba(14, 165, 233, 0.38);
+  border-color: #38bdf8;
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+}
+
+#btn-hide-blocks.has-hidden:not(.active) {
+  border-color: rgba(251, 191, 36, 0.72);
+  color: #fde68a;
+}
+
+.hide-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #0f172a;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+#mob-showcase-bar button.active {
+  background: rgba(2, 132, 199, 0.85);
+  border-color: #7dd3fc;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.48);
+}
+
+#mob-showcase-bar button.has-hidden:not(.active) {
+  border-color: #fbbf24;
+  color: #fde68a;
+}
+
+#mob-btn-hide.active {
+  background: rgba(2, 132, 199, 0.48);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+body.hide-blocks-active > canvas:not(#bg-canvas) {
+  cursor: crosshair;
+}
+
+body.ghost-hidden-active > canvas:not(#bg-canvas) {
+  cursor: copy;
+}
+
+#hide-blocks-bar {
+  position: fixed;
+  bottom: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9750;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 10px;
+  max-width: min(740px, calc(100vw - 24px));
+  background: rgba(3, 14, 34, 0.92);
+  border: 1px solid rgba(56, 189, 248, 0.52);
+  border-radius: 12px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.62), 0 0 16px rgba(0, 229, 255, 0.16);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-size: 11.5px;
+}
+
+#hide-blocks-bar.mode-on {
+  border-color: #38bdf8;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.66), 0 0 20px rgba(56, 189, 248, 0.28);
+}
+
+.hb-count-txt {
+  color: #fde68a;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.hb-sep {
+  color: rgba(148, 163, 184, 0.5);
+}
+
+.hb-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 7px;
+  background: rgba(6, 26, 58, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.42);
+  color: #e0f2fe;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.14s ease;
+}
+
+.hb-pill-btn:hover:not(:disabled) {
+  background: rgba(14, 116, 144, 0.55);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.hb-pill-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.hb-mode-btn.active {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  border-color: #7dd3fc;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+#btn-hide-ghost.active {
+  background: rgba(99, 102, 241, 0.62);
+  border-color: #a5b4fc;
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.45);
+}
+
+.hb-restore-btn:not(:disabled) {
+  border-color: rgba(74, 222, 128, 0.55);
+  color: #86efac;
+}
+
+.hb-restore-btn:hover:not(:disabled) {
+  background: rgba(21, 128, 61, 0.55);
+  border-color: #4ade80;
+  color: #ffffff;
+}
+
+.hb-close-btn {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  border-radius: 6px;
+  color: var(--text-muted);
+  padding: 3px 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.hb-close-btn:hover {
+  border-color: var(--neon-cyan);
+  color: #ffffff;
+}
+
+body.mobile-mode #hide-blocks-bar {
+  bottom: auto;
+  top: calc(82px + env(safe-area-inset-top, 0px));
+  padding: 4px 7px;
+  gap: 4px;
+  font-size: 10.5px;
+  max-width: calc(100vw - 14px);
+}
+
+body.mobile-mode #hide-blocks-bar .hb-sep {
+  display: none;
+}
+
+body.mobile-mode .hb-pill-btn {
+  padding: 3px 6px;
+  font-size: 10.5px;
+}
+
+body.mobile-mode .hb-close-btn {
+  padding: 3px 6px;
+  font-size: 10.5px;
+}
+
 /* Pause & Result Panels */
 #pause-overlay {
   position: fixed;
@@ -1825,6 +2008,80 @@ html[data-theme="light"] .sc-card.is-hovered {
 }
 html[data-theme="light"] .sc-card-tag { color: #475569; }
 html[data-theme="light"] .sc-card-go { color: #0369a1; }
+html[data-theme="light"] #btn-hide-blocks.active {
+  background: #0284c7;
+  border-color: #0369a1;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+}
+html[data-theme="light"] #btn-hide-blocks.has-hidden:not(.active) {
+  border-color: #d97706;
+  background: #fffbeb;
+  color: #b45309;
+}
+html[data-theme="light"] #mob-showcase-bar button.active {
+  background: #0284c7;
+  border-color: #0369a1;
+  color: #ffffff;
+}
+html[data-theme="light"] #mob-showcase-bar button.has-hidden:not(.active) {
+  border-color: #d97706;
+  background: #fffbeb;
+  color: #b45309;
+}
+html[data-theme="light"] #mob-btn-hide.active {
+  background: #0284c7;
+  border-color: #0369a1;
+  color: #ffffff;
+}
+html[data-theme="light"] #hide-blocks-bar {
+  background: rgba(255, 255, 255, 0.96);
+  border-color: rgba(2, 132, 199, 0.45);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+}
+html[data-theme="light"] #hide-blocks-bar.mode-on {
+  border-color: #0284c7;
+  box-shadow: 0 10px 28px rgba(2, 132, 199, 0.24);
+}
+html[data-theme="light"] .hb-count-txt { color: #b45309; }
+html[data-theme="light"] .hb-pill-btn {
+  background: #f1f5f9;
+  border-color: rgba(15, 23, 42, 0.16);
+  color: #0f172a;
+}
+html[data-theme="light"] .hb-pill-btn:hover:not(:disabled) {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  color: #0369a1;
+}
+html[data-theme="light"] .hb-mode-btn.active {
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
+  border-color: #0369a1;
+  color: #ffffff;
+}
+html[data-theme="light"] #btn-hide-ghost.active {
+  background: #4f46e5;
+  border-color: #4338ca;
+  color: #ffffff;
+}
+html[data-theme="light"] .hb-restore-btn:not(:disabled) {
+  background: #ecfdf5;
+  border-color: rgba(21, 128, 61, 0.45);
+  color: #15803d;
+}
+html[data-theme="light"] .hb-restore-btn:hover:not(:disabled) {
+  background: #15803d;
+  border-color: #166534;
+  color: #ffffff;
+}
+html[data-theme="light"] .hb-close-btn {
+  color: #475569;
+  border-color: rgba(15, 23, 42, 0.18);
+}
+html[data-theme="light"] .hb-close-btn:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
 
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1951,6 +2208,7 @@ html[data-theme="light"] .sc-card-go { color: #0369a1; }
         <button class="hud-btn showcase-trigger-btn" id="btn-showcase-open" onclick="openShapeShowcase()" title="Alle 13+ 3D-Formen aus der Ferne ansehen &amp; wählen">⬡ Alle 3D-Formen</button>
         <button class="hud-btn" id="btn-autopilot" onclick="toggleAutopilotPanel()" title="Autonomer 3D-Logik-Agent (statt passivem Chatbot)">🤖 Autopilot</button>
         <button class="hud-btn-ic" id="btn-subregion-top" onclick="toggleSubregionPanel()" title="Teilbereich / Schicht-Filter (Ebenen isolieren)">🔪</button>
+        <button class="hud-btn" id="btn-hide-blocks" onclick="toggleHideBlocksMode()" title="Blöcke einzeln ausblenden / wiederherstellen (Taste H · oder Alt+Klick)">👁️‍🗨️ <span data-i18n="btn_hide_short">Ausblenden</span> <span id="hide-count-badge" class="hide-count-badge hidden">0</span></button>
         <div id="agent-telemetry-pill" onclick="openModal('agent-vs-chat')" title="Klicken für Vergleich: Warum ein KI-Agent stärker ist als ein reiner Chatbot">
           <span class="pulse-dot"></span>
           <span id="telemetry-text">TECH DEMO KI-AGENT · DANKE AN VERSTAND2GO (MINESWEEPER3D.ONLINE)</span>
@@ -1968,6 +2226,7 @@ html[data-theme="light"] .sc-card-go { color: #0369a1; }
     <span>🧠 <strong id="m-ng">–</strong></span>
   </div>
   <div id="mob-showcase-bar">
+    <button type="button" id="mob-top-hide-btn" onclick="toggleHideBlocksMode()" title="Blöcke einzeln ausblenden / einblenden">👁️‍🗨️ <span id="mob-hide-badge" class="hide-count-badge hidden">0</span></button>
     <button type="button" onclick="openShapeShowcase()" title="3D-Formen wählen">⬡ Formen</button>
   </div>
 
@@ -2040,6 +2299,7 @@ html[data-theme="light"] .sc-card-go { color: #0369a1; }
       <button onclick="switchBackground()">🌄 <span data-i18n="btn_bg">Hintergrund</span></button>
       <button id="mob-btn-theme" onclick="toggleMsTheme()">☀️ Hell-Modus</button>
       <button id="mob-btn-open" onclick="toggleOpenCubes()">🧊 geöff. AN</button>
+      <button id="mob-btn-hide" onclick="toggleHideBlocksMode();toggleMobileMenu(false)">👁️‍🗨️ Blöcke: AUS</button>
       <button onclick="toggleAutopilotPanel();toggleMobileMenu(false)">🤖 Autopilot</button>
       <button onclick="openModal('highscore');toggleMobileMenu(false)">🏆 Highscore</button>
       <button onclick="openModal('savegame');toggleMobileMenu(false)">💾 Spielstand</button>
@@ -2104,6 +2364,19 @@ html[data-theme="light"] .sc-card-go { color: #0369a1; }
       <input type="range" id="slice-z-max" min="0" max="10" value="10" oninput="updateSliceFilter()">
     </div>
     <button class="sub-reset-btn" onclick="resetSliceFilter()" data-i18n="sub_reset">Alle Schichten zeigen</button>
+  </div>
+
+  <!-- Reversible Per-Block Visibility Toolbar -->
+  <div id="hide-blocks-bar" class="hidden" role="toolbar" aria-label="Blöcke ausblenden &amp; wiederherstellen">
+    <button type="button" id="hide-bar-mode-btn" class="hb-pill-btn hb-mode-btn" onclick="toggleHideBlocksMode()" title="Klick/Tap auf beliebigen Würfel schaltet ihn unsichtbar (Taste H)">
+      <span id="hide-bar-mode-lbl">👁️‍🗨️ Pinsel: AN</span>
+    </button>
+    <span class="hb-sep">·</span>
+    <span id="hide-bar-count" class="hb-count-txt">0 verborgen</span>
+    <button type="button" id="btn-hide-undo" class="hb-pill-btn" onclick="undoLastUserHide()" title="Letzten ausgeblendeten Block zurückholen (U / Strg+Z)" disabled>↩ <span data-i18n="hide_undo">Zurück</span></button>
+    <button type="button" id="btn-hide-ghost" class="hb-pill-btn" onclick="toggleGhostHiddenPreview()" title="Versteckte Blöcke als Geister zeigen &amp; einzeln zurückholen (Taste G)" disabled>👻 <span data-i18n="hide_ghost">Geister</span></button>
+    <button type="button" id="btn-hide-restore-all" class="hb-pill-btn hb-restore-btn" onclick="clearAllUserHidden()" title="Alle ausgeblendeten Blöcke sofort wieder anzeigen (Shift+H)" disabled>👁 <span data-i18n="hide_restore_all">Alle</span></button>
+    <button type="button" id="btn-hide-done" class="hb-close-btn" onclick="setHideBlocksMode(false)" title="Ausblend-Modus beenden (Blöcke bleiben verborgen)">✕</button>
   </div>
 
   <!-- Right-Side Camera Zoom + Wheel Mode & Spread Slider -->
@@ -2294,7 +2567,18 @@ const I18N = {
     flag_legend_note: '🟢 Grün ✓ = Geflaggt & war Mine · 🟠 ✕ = Fehlflagge (keine Mine) · 🔴 💣 = Ungeflaggte Mine',
     hover_flag_hit: '✅ Flagge richtig: Hier war eine Mine 💣',
     hover_flag_wrong: '❌ Fehlflagge: Hier war KEINE Mine',
-    hints_footer: '<b>🖱 Doppelklick (links)</b> = Öffnen · <b>Rechtsklick</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> → leer · <b>Strg/Cmd + Hover</b> = Nachbarn · <b>Mausrad</b> = Auseinanderfahren · <b>Taste W</b> = 💧 Wasserstrom · <b>Taste C</b> = Zentrieren',
+    btn_hide_short: 'Ausblenden',
+    hide_mode_on: '👁️‍🗨️ Pinsel: AN',
+    hide_mode_off: '👁️‍🗨️ Pinsel: AUS',
+    mob_hide_on: '👁️‍🗨️ Blöcke: AN',
+    mob_hide_off: '👁️‍🗨️ Blöcke: AUS',
+    hide_count_lbl: '{n} verborgen',
+    hide_undo: 'Zurück',
+    hide_ghost: 'Geister',
+    hide_restore_all: 'Alle',
+    hover_hide_hint: '👁️‍🗨️ Klick/Tap: Block ausblenden',
+    hover_ghost_hint: '👻 Klick/Tap: Block wieder einblenden',
+    hints_footer: '<b>🖱 Doppelklick (links)</b> = Öffnen · <b>Rechtsklick</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> → leer · <b>Taste H / Alt+Klick</b> = Verbergen · <b>G</b> = Geister · <b>Strg/Cmd + Hover</b> = Nachbarn · <b>Taste W</b> = 💧 Wasserstrom · <b>Taste C</b> = Zentrieren',
     agent_quotes: [
       '💡 Ein reiner Chatbot erklärt dir nur die Regeln – ein KI-Agent inspiziert alle Nachbarn (sogar über nicht-euklidische Wurmlöcher!) und führt den Zug direkt aus.',
       '⚡ Während ein Chatbot im Textfenster auf Prompts wartet, navigiert ein KI-Agent autonom durch unmögliche 3D-Geometrien.',
@@ -2364,7 +2648,18 @@ const I18N = {
     flag_legend_note: '🟢 Green ✓ = Flagged mine · 🟠 ✕ = False flag (no mine) · 🔴 💣 = Unflagged mine',
     hover_flag_hit: '✅ Correct flag: Mine was here 💣',
     hover_flag_wrong: '❌ False flag: NO mine here',
-    hints_footer: '<b>🖱 Double-click (left)</b> = Open · <b>Right-click</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> → reset · <b>Ctrl/Cmd + hover</b> = Neighbours · <b>Wheel</b> = Spread · <b>Key W</b> = 💧 Water stream · <b>Key C</b> = Reset view',
+    btn_hide_short: 'Hide Blocks',
+    hide_mode_on: '👁️‍🗨️ Hide: ON',
+    hide_mode_off: '👁️‍🗨️ Hide: OFF',
+    mob_hide_on: '👁️‍🗨️ Hide: ON',
+    mob_hide_off: '👁️‍🗨️ Hide: OFF',
+    hide_count_lbl: '{n} hidden',
+    hide_undo: 'Undo',
+    hide_ghost: 'Ghosts',
+    hide_restore_all: 'All',
+    hover_hide_hint: '👁️‍🗨️ Click/Tap: Hide block',
+    hover_ghost_hint: '👻 Click/Tap: Restore this block',
+    hints_footer: '<b>🖱 Double-click (left)</b> = Open · <b>Right-click</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> → reset · <b>Key H / Alt+Click</b> = Hide · <b>G</b> = Ghosts · <b>Ctrl/Cmd + hover</b> = Neighbours · <b>Key W</b> = 💧 Water stream · <b>Key C</b> = Reset view',
     agent_quotes: [
       '💡 A mere chatbot only explains the rules — an AI agent inspects all neighbors (even across non-Euclidean wormholes!) and executes the move directly.',
       '⚡ While a chatbot sits passively in a text box, an AI agent autonomously navigates impossible 3D geometries.',
@@ -2433,7 +2728,18 @@ const I18N = {
     flag_legend_note: '🟢 Verde ✓ = Bandera con mina · 🟠 ✕ = Falsa bandera (sin mina) · 🔴 💣 = Mina sin marcar',
     hover_flag_hit: '✅ Bandera correcta: Aquí había mina 💣',
     hover_flag_wrong: '❌ Falsa bandera: Aquí NO había mina',
-    hints_footer: '<b>🖱 Doble clic</b> = Abrir · <b>Clic der.</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> · <b>Ctrl + hover</b> = Vecinos · <b>Rueda</b> = Separar · <b>Tecla W</b> = 💧 Agua · <b>Tecla C</b> = Centrar',
+    btn_hide_short: 'Ocultar',
+    hide_mode_on: '👁️‍🗨️ Ocultar: ON',
+    hide_mode_off: '👁️‍🗨️ Ocultar: OFF',
+    mob_hide_on: '👁️‍🗨️ Ocultar: ON',
+    mob_hide_off: '👁️‍🗨️ Ocultar: OFF',
+    hide_count_lbl: '{n} ocultos',
+    hide_undo: 'Deshacer',
+    hide_ghost: 'Fantasmas',
+    hide_restore_all: 'Todos',
+    hover_hide_hint: '👁️‍🗨️ Clic/Tap: Ocultar bloque',
+    hover_ghost_hint: '👻 Clic/Tap: Mostrar este bloque',
+    hints_footer: '<b>🖱 Doble clic</b> = Abrir · <b>Clic der.</b> = <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> · <b>Tecla H / Alt+Clic</b> = Ocultar · <b>G</b> = Fantasmas · <b>Ctrl + hover</b> = Vecinos · <b>Tecla W</b> = 💧 Agua · <b>Tecla C</b> = Centrar',
     agent_quotes: [
       '💡 Un simple chatbot solo charla sobre las reglas; un Agente IA analiza los vecinos y ejecuta la jugada.',
       '🛠️ Los chatbots generan texto. Los Agentes IA simulan agua en 3D, geometrías imposibles y resuelven problemas reales.'
@@ -2471,6 +2777,9 @@ function setLang(lang) {
     strgBtn.textContent = stickyCtrl ? t('strg_on') : t('strg_off');
   }
 
+  if (typeof syncHideBlocksUI === 'function') {
+    syncHideBlocksUI();
+  }
   if (typeof updateLogicalStatusUI === 'function') {
     updateLogicalStatusUI();
   }
@@ -3586,6 +3895,38 @@ let MAT_FLAG_HIT = facedMats('#15803d', 1.0);
 let MAT_FLAG_WRONG = facedMats('#c2410c', 1.0);
 let MAT_QUESTION = facedMats(designConfig.questionHex, 1.0);
 
+function _makeGhostBoxMats(hex, opacity) {
+  return FACE_BRIGHT.map(m => {
+    const col = new THREE.Color(hex).multiplyScalar(Math.min(1.08, m));
+    return new THREE.MeshPhysicalMaterial({
+      color: col,
+      emissive: col.clone().multiplyScalar(0.24),
+      roughness: 0.16,
+      metalness: 0.08,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+      depthTest: true
+    });
+  });
+}
+
+function _makeGhostIsoMat(hex, opacity) {
+  const col = new THREE.Color(hex);
+  return new THREE.MeshPhysicalMaterial({
+    color: col,
+    emissive: col.clone().multiplyScalar(0.24),
+    roughness: 0.18,
+    metalness: 0.08,
+    transparent: true,
+    opacity,
+    depthWrite: false,
+    flatShading: true
+  });
+}
+
+let MAT_GHOST_HIDDEN = _makeGhostBoxMats(isMsLight() ? '#0284c7' : '#38bdf8', isMsLight() ? 0.32 : 0.26);
+
 const _partMatCache = {};
 function getPartClosedMat(hex) {
   if (!hex) return MAT_HIDDEN;
@@ -3602,6 +3943,7 @@ let ISO_MAT_FLAG = singleMat(designConfig.flagHex, 1.0);
 let ISO_MAT_FLAG_HIT = singleMat('#15803d', 1.0);
 let ISO_MAT_FLAG_WRONG = singleMat('#c2410c', 1.0);
 let ISO_MAT_QUESTION = singleMat(designConfig.questionHex, 1.0);
+let ISO_MAT_GHOST_HIDDEN = _makeGhostIsoMat(isMsLight() ? '#0284c7' : '#38bdf8', isMsLight() ? 0.34 : 0.28);
 
 // Physically beveled standard cube geometry + lightweight instanced cube geometry for ultra-HD sculptures
 const GEO = createBeveledCubeGeometry(0.96, 0.085);
@@ -3898,6 +4240,35 @@ const HOVER_FRAME_MAT = new THREE.MeshBasicMaterial({ color: 0xffff00 });
 const NEIGHBOR_FRAME_MAT_OPEN = new THREE.MeshBasicMaterial({ color: 0x00ffff });
 const NEIGHBOR_FRAME_MAT_CLOSED = new THREE.MeshBasicMaterial({ color: 0xff4444 });
 const NEIGHBOR_FRAME_MAT_FLAGGED = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+const GHOST_WIRE_MAT = new THREE.MeshBasicMaterial({
+  color: isMsLight() ? 0x0369a1 : 0x7dd3fc,
+  transparent: true,
+  opacity: isMsLight() ? 0.85 : 0.78,
+  depthWrite: false
+});
+
+function syncGhostMaterialsTheme() {
+  const light = typeof isMsLight === 'function' && isMsLight();
+  const hex = light ? '#0284c7' : '#38bdf8';
+  const op = light ? 0.32 : 0.26;
+  const col = new THREE.Color(hex);
+  const em = col.clone().multiplyScalar(light ? 0.18 : 0.24);
+  if (Array.isArray(MAT_GHOST_HIDDEN)) {
+    MAT_GHOST_HIDDEN.forEach((mat, i) => {
+      const mCol = col.clone().multiplyScalar(Math.min(1.08, FACE_BRIGHT[i] || 1));
+      mat.color.copy(mCol);
+      mat.emissive.copy(em);
+      mat.opacity = op;
+    });
+  }
+  if (ISO_MAT_GHOST_HIDDEN) {
+    ISO_MAT_GHOST_HIDDEN.color.copy(col);
+    ISO_MAT_GHOST_HIDDEN.emissive.copy(em);
+    ISO_MAT_GHOST_HIDDEN.opacity = op + 0.02;
+  }
+  GHOST_WIRE_MAT.color.setHex(light ? 0x0369a1 : 0x7dd3fc);
+  GHOST_WIRE_MAT.opacity = light ? 0.85 : 0.78;
+}
 
 const hoverFrameMesh = new THREE.Mesh(HOVER_FRAME_GEO, HOVER_FRAME_MAT);
 hoverFrameMesh.visible = false;
@@ -3915,6 +4286,8 @@ function applyCustomDesignColors() {
   ISO_MAT_MINE = singleMat(designConfig.mineHex, 1.0);
   ISO_MAT_FLAG = singleMat(designConfig.flagHex, 1.0);
   ISO_MAT_QUESTION = singleMat(designConfig.questionHex, 1.0);
+
+  syncGhostMaterialsTheme();
 
   HOVER_FRAME_MAT.color.set(designConfig.hoverHex);
   NEIGHBOR_FRAME_MAT_OPEN.color.set(designConfig.nbOpenHex);
@@ -6202,6 +6575,7 @@ function rebuildSpatialLookup() {
 
   for (let i = 0; i < grid.length; i++) {
     const c = grid[i];
+    if (c.userHidden) continue;
     const vis = (typeof isCellVisible === 'function') ? isCellVisible(c) : (c.mesh && c.mesh.visible);
     if (!vis) continue;
     const p = (typeof getCellWorldPos === 'function') ? getCellWorldPos(c) : (c.mesh && c.mesh.position);
@@ -6480,7 +6854,7 @@ function stepWaterSimulation() {
 
     } else if (p.state === 1) {
       // STATE 1: Surface Sheet Flow across top of cube (and onto neighboring cubes!)
-      if (!p.targetCell || !isCellVisible(p.targetCell)) {
+      if (!p.targetCell || p.targetCell.userHidden || !isCellVisible(p.targetCell)) {
         p.state = 0;
         p.vel.set(0, -2.5, 0);
         continue;
@@ -6528,7 +6902,7 @@ function stepWaterSimulation() {
 
     } else if (p.state === 2) {
       // STATE 2: Cascading down the vertical side face of a cube
-      if (!p.targetCell || !isCellVisible(p.targetCell)) {
+      if (!p.targetCell || p.targetCell.userHidden || !isCellVisible(p.targetCell)) {
         p.state = 0;
         continue;
       }
@@ -6570,7 +6944,7 @@ function stepWaterSimulation() {
 
     } else if (p.state === 3) {
       // STATE 3: Hanging & swelling droplet at bottom edge before dripping off
-      if (!p.targetCell || !isCellVisible(p.targetCell)) {
+      if (!p.targetCell || p.targetCell.userHidden || !isCellVisible(p.targetCell)) {
         p.state = 0;
         p.vel.set(0, -1.5, 0);
         continue;
@@ -7299,6 +7673,13 @@ let flags = 0;
 let explodeFactor = 1.15;
 let openCubesVisible = true;
 
+let hideBlocksMode = false;
+let ghostHiddenVisible = false;
+let userHiddenHistory = [];
+let _userHiddenCount = 0;
+let _lastHideOpTime = 0;
+let _hideBarDismissed = false;
+
 let timer = 0;
 let timerInt = null;
 let boardCenter = new THREE.Vector3(0, 0, 0);
@@ -7322,6 +7703,240 @@ function isCellVisible(cell) {
   if (!cell) return false;
   if (cell.mesh) return cell.mesh.visible;
   return !!cell._visible;
+}
+
+function updateHideBlocksBarPosition() {
+  const bar = document.getElementById('hide-blocks-bar');
+  if (!bar || bar.classList.contains('hidden')) return;
+  const isMob = document.body.classList.contains('mobile-mode');
+  if (isMob) {
+    const ids = ['hud-mini', 'mode-toggle', 'mob-showcase-bar', 'btn-hamburger'];
+    let topMax = 0;
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const cs = getComputedStyle(el);
+      const r = el.getBoundingClientRect();
+      if (cs.display !== 'none' && cs.visibility !== 'hidden' && r.width > 0 && r.height > 0) {
+        topMax = Math.max(topMax, r.bottom);
+      }
+    }
+    bar.style.bottom = 'auto';
+    bar.style.top = `${Math.max(82, Math.ceil(topMax + 8))}px`;
+  } else {
+    const hudBot = document.getElementById('hud-bot');
+    const botTop = hudBot ? hudBot.getBoundingClientRect().top : (window.innerHeight - 64);
+    bar.style.top = 'auto';
+    bar.style.bottom = `${Math.max(58, Math.ceil(window.innerHeight - botTop + 10))}px`;
+  }
+}
+
+function syncHideBlocksUI() {
+  document.body.classList.toggle('hide-blocks-active', hideBlocksMode);
+  document.body.classList.toggle('ghost-hidden-active', ghostHiddenVisible && _userHiddenCount > 0);
+
+  const btn = document.getElementById('btn-hide-blocks');
+  if (btn) {
+    btn.classList.toggle('active', hideBlocksMode);
+    btn.classList.toggle('has-hidden', _userHiddenCount > 0);
+  }
+  const badge = document.getElementById('hide-count-badge');
+  if (badge) {
+    badge.textContent = String(_userHiddenCount);
+    badge.classList.toggle('hidden', _userHiddenCount <= 0);
+  }
+
+  const mobTopBtn = document.getElementById('mob-top-hide-btn');
+  if (mobTopBtn) {
+    mobTopBtn.classList.toggle('active', hideBlocksMode);
+    mobTopBtn.classList.toggle('has-hidden', _userHiddenCount > 0);
+  }
+  const mobBadge = document.getElementById('mob-hide-badge');
+  if (mobBadge) {
+    mobBadge.textContent = String(_userHiddenCount);
+    mobBadge.classList.toggle('hidden', _userHiddenCount <= 0);
+  }
+
+  const mobMenuBtn = document.getElementById('mob-btn-hide');
+  if (mobMenuBtn) {
+    mobMenuBtn.classList.toggle('active', hideBlocksMode);
+    mobMenuBtn.textContent = hideBlocksMode ? t('mob_hide_on') : t('mob_hide_off');
+  }
+
+  const bar = document.getElementById('hide-blocks-bar');
+  if (bar) {
+    const inShowcase = typeof showcaseActive !== 'undefined' && showcaseActive;
+    const showBar = !isPaused && !inShowcase && (hideBlocksMode || (_userHiddenCount > 0 && !_hideBarDismissed));
+    bar.classList.toggle('hidden', !showBar);
+    bar.classList.toggle('mode-on', hideBlocksMode);
+  }
+
+  const barModeBtn = document.getElementById('hide-bar-mode-btn');
+  if (barModeBtn) barModeBtn.classList.toggle('active', hideBlocksMode);
+  const barModeLbl = document.getElementById('hide-bar-mode-lbl');
+  if (barModeLbl) barModeLbl.textContent = hideBlocksMode ? t('hide_mode_on') : t('hide_mode_off');
+
+  const countLbl = document.getElementById('hide-bar-count');
+  if (countLbl) {
+    countLbl.textContent = t('hide_count_lbl').replace('{n}', String(_userHiddenCount));
+  }
+
+  const undoBtn = document.getElementById('btn-hide-undo');
+  if (undoBtn) undoBtn.disabled = _userHiddenCount <= 0 || userHiddenHistory.length === 0;
+
+  const ghostBtn = document.getElementById('btn-hide-ghost');
+  if (ghostBtn) {
+    ghostBtn.disabled = _userHiddenCount <= 0;
+    ghostBtn.classList.toggle('active', ghostHiddenVisible && _userHiddenCount > 0);
+  }
+
+  const restoreBtn = document.getElementById('btn-hide-restore-all');
+  if (restoreBtn) restoreBtn.disabled = _userHiddenCount <= 0;
+
+  updateHideBlocksBarPosition();
+}
+
+function hideCellBlock(cell) {
+  if (!cell || cell.userHidden) return false;
+  cell.userHidden = true;
+  _userHiddenCount++;
+  userHiddenHistory.push([cell]);
+  _lastHideOpTime = performance.now();
+  _hideBarDismissed = false;
+  if (hoveredCell === cell && typeof _applyHoverToCell === 'function') {
+    _applyHoverToCell(null);
+  }
+  updateCellVisual(cell);
+  if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
+  syncHideBlocksUI();
+  if (typeof tone === 'function') tone(320, 0.06, 'sine', 0.08);
+  return true;
+}
+
+function unhideCellBlock(cell) {
+  if (!cell || !cell.userHidden) return false;
+  cell.userHidden = false;
+  _userHiddenCount = Math.max(0, _userHiddenCount - 1);
+  for (let i = userHiddenHistory.length - 1; i >= 0; i--) {
+    const batch = userHiddenHistory[i];
+    const idx = batch.indexOf(cell);
+    if (idx !== -1) batch.splice(idx, 1);
+    if (batch.length === 0) userHiddenHistory.splice(i, 1);
+  }
+  _lastHideOpTime = performance.now();
+  if (hoveredCell === cell && typeof _applyHoverToCell === 'function') {
+    _applyHoverToCell(null);
+  }
+  if (_userHiddenCount === 0) ghostHiddenVisible = false;
+  updateCellVisual(cell);
+  if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
+  syncHideBlocksUI();
+  if (typeof tone === 'function') tone(580, 0.06, 'sine', 0.08);
+  return true;
+}
+
+function undoLastUserHide() {
+  if (!Array.isArray(grid) || grid.length === 0) return false;
+  while (userHiddenHistory.length > 0) {
+    const batch = userHiddenHistory.pop();
+    let anyRestored = false;
+    for (let i = 0; i < batch.length; i++) {
+      const c = batch[i];
+      if (c && c.userHidden) {
+        c.userHidden = false;
+        _userHiddenCount = Math.max(0, _userHiddenCount - 1);
+        updateCellVisual(c, true);
+        anyRestored = true;
+      }
+    }
+    if (anyRestored) {
+      if (isInstancedBoard && boardInstancedMesh) {
+        boardInstancedMesh.instanceMatrix.needsUpdate = true;
+      }
+      if (_userHiddenCount === 0) ghostHiddenVisible = false;
+      _lastHideOpTime = performance.now();
+      if (hoveredCell && typeof _applyHoverToCell === 'function') {
+        _applyHoverToCell(null);
+      }
+      if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
+      syncHideBlocksUI();
+      if (typeof tone === 'function') tone(580, 0.06, 'sine', 0.08);
+      return true;
+    }
+  }
+  syncHideBlocksUI();
+  return false;
+}
+
+function toggleGhostHiddenPreview(force) {
+  if (_userHiddenCount <= 0 && force !== false) return false;
+  const next = typeof force === 'boolean' ? force : !ghostHiddenVisible;
+  if (next === ghostHiddenVisible) return ghostHiddenVisible;
+  ghostHiddenVisible = next && _userHiddenCount > 0;
+  _hideBarDismissed = false;
+  _lastHideOpTime = performance.now();
+  if (Array.isArray(grid)) {
+    for (let i = 0; i < grid.length; i++) {
+      if (grid[i].userHidden) updateCellVisual(grid[i], true);
+    }
+    if (isInstancedBoard && boardInstancedMesh) {
+      boardInstancedMesh.instanceMatrix.needsUpdate = true;
+    }
+  }
+  if (hoveredCell && hoveredCell.userHidden && !ghostHiddenVisible && typeof _applyHoverToCell === 'function') {
+    _applyHoverToCell(null);
+  }
+  syncHideBlocksUI();
+  if (typeof playClick === 'function') playClick();
+  return ghostHiddenVisible;
+}
+
+function clearAllUserHidden(opts = {}) {
+  const silent = !!(opts && opts.silent);
+  let changed = false;
+  ghostHiddenVisible = false;
+  userHiddenHistory = [];
+  _userHiddenCount = 0;
+  if (Array.isArray(grid)) {
+    for (let i = 0; i < grid.length; i++) {
+      const c = grid[i];
+      if (c.userHidden) {
+        c.userHidden = false;
+        updateCellVisual(c, true);
+        changed = true;
+      }
+    }
+    if (changed && isInstancedBoard && boardInstancedMesh) {
+      boardInstancedMesh.instanceMatrix.needsUpdate = true;
+    }
+  }
+  if (changed) {
+    _lastHideOpTime = performance.now();
+    if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
+    if (!silent && typeof tone === 'function') tone(660, 0.08, 'triangle', 0.09);
+  }
+  syncHideBlocksUI();
+  return changed;
+}
+
+function setHideBlocksMode(enable) {
+  const next = !!enable;
+  const wasOn = hideBlocksMode;
+  hideBlocksMode = next;
+  if (next) {
+    _hideBarDismissed = false;
+  } else if (!wasOn && _userHiddenCount > 0) {
+    _hideBarDismissed = true;
+  }
+  syncHideBlocksUI();
+}
+
+function toggleHideBlocksMode() {
+  if (!hideBlocksMode && _hideBarDismissed && _userHiddenCount > 0) {
+    _hideBarDismissed = false;
+  }
+  setHideBlocksMode(!hideBlocksMode);
+  if (typeof playClick === 'function') playClick();
 }
 
 function getIdealCameraRadius() {
@@ -7349,6 +7964,12 @@ function initGame() {
   hoverFrameMesh.visible = false;
   hoveredCell = null;
   hideResult();
+
+  hideBlocksMode = false;
+  ghostHiddenVisible = false;
+  userHiddenHistory = [];
+  _userHiddenCount = 0;
+  _hideBarDismissed = false;
 
   if (timerInt) {
     clearInterval(timerInt);
@@ -7398,6 +8019,7 @@ function initGame() {
   updateLogicalStatusUI();
   setupSliceSliders();
   resetCameraView();
+  if (typeof syncHideBlocksUI === 'function') syncHideBlocksUI();
   if (typeof updateWheelModeUI === 'function') updateWheelModeUI();
   if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
 
@@ -7490,6 +8112,7 @@ function buildCubeOrVoxelBoard() {
         revealed: false,
         flagged: false,
         question: false,
+        userHidden: false,
         mesh: null,
         overlayMesh: null,
         overlay: null
@@ -7529,6 +8152,7 @@ function buildCubeOrVoxelBoard() {
         revealed: false,
         flagged: false,
         question: false,
+        userHidden: false,
         mesh,
         overlay: null
       };
@@ -7566,6 +8190,7 @@ function buildIcosahedronBoard() {
       revealed: false,
       flagged: false,
       question: false,
+      userHidden: false,
       mesh,
       overlay: null
     };
@@ -7754,6 +8379,8 @@ function revealCell(cell) {
       clearInterval(timerInt);
       timerInt = null;
     }
+    setHideBlocksMode(false);
+    clearAllUserHidden({ silent: true });
     playExplosion();
     revealAllMinesOnLoss(cell);
     showResult(false);
@@ -7765,12 +8392,18 @@ function revealCell(cell) {
   const queue = [cell];
   let qHead = 0;
   let cascadeCount = 0;
+  let unhidInFlood = false;
 
   while (qHead < queue.length) {
     const curr = queue[qHead++];
     if (curr.revealed || curr.flagged || curr.mine) continue;
     curr.revealed = true;
     curr.question = false;
+    if (curr.userHidden) {
+      curr.userHidden = false;
+      _userHiddenCount = Math.max(0, _userHiddenCount - 1);
+      unhidInFlood = true;
+    }
     revealed++;
     cascadeCount++;
     updateCellVisual(curr, true);
@@ -7784,6 +8417,11 @@ function revealCell(cell) {
         }
       }
     }
+  }
+
+  if (unhidInFlood) {
+    if (_userHiddenCount === 0) ghostHiddenVisible = false;
+    syncHideBlocksUI();
   }
 
   if (isInstancedBoard && boardInstancedMesh) {
@@ -7877,6 +8515,38 @@ function updateCellVisual(cell, deferFlush = false) {
       return;
     }
 
+    if (cell.userHidden) {
+      if (!ghostHiddenVisible) {
+        cell._visible = false;
+        _setInstancedMatrix(cell, false);
+      } else if (_userHiddenCount <= 600) {
+        cell._visible = true;
+        _setInstancedMatrix(cell, false);
+        const m = new THREE.Mesh(GEO, MAT_GHOST_HIDDEN);
+        m.scale.setScalar(vs);
+        m.position.copy(cell._worldPos);
+        const gw = new THREE.Mesh(HOVER_FRAME_GEO, GHOST_WIRE_MAT);
+        gw.userData._isOverlay = true;
+        m.add(gw);
+        m.userData.cell = cell;
+        scene.add(m);
+        cell.overlayMesh = m;
+      } else {
+        cell._visible = true;
+        if (boardInstancedMesh && boardInstancedMesh.instanceColor) {
+          _instCol.setHex(isMsLight() ? 0x0284c7 : 0x38bdf8);
+          boardInstancedMesh.setColorAt(cell.instId, _instCol);
+          boardInstancedMesh.instanceColor.needsUpdate = true;
+        }
+        cell._ghostTinted = true;
+        _setInstancedMatrix(cell, true);
+      }
+      if (!deferFlush && boardInstancedMesh) {
+        boardInstancedMesh.instanceMatrix.needsUpdate = true;
+      }
+      return;
+    }
+
     if (cell.revealed) {
       if (cell.mine) {
         cell._visible = true;
@@ -7930,6 +8600,12 @@ function updateCellVisual(cell, deferFlush = false) {
       scene.add(m);
       cell.overlayMesh = m;
     } else {
+      if (cell._ghostTinted && boardInstancedMesh && boardInstancedMesh.instanceColor) {
+        _instCol.setHex(cell.partColor || 0x354866);
+        boardInstancedMesh.setColorAt(cell.instId, _instCol);
+        boardInstancedMesh.instanceColor.needsUpdate = true;
+        cell._ghostTinted = false;
+      }
       cell._visible = true;
       _setInstancedMatrix(cell, true);
     }
@@ -7949,6 +8625,22 @@ function updateCellVisual(cell, deferFlush = false) {
 
   if (!inSlice) {
     cell.mesh.visible = false;
+    return;
+  }
+
+  if (cell.userHidden) {
+    if (!ghostHiddenVisible) {
+      cell.mesh.visible = false;
+    } else {
+      cell.mesh.visible = true;
+      cell.mesh.material = isIso ? ISO_MAT_GHOST_HIDDEN : MAT_GHOST_HIDDEN;
+      if (!isIso) {
+        const gw = new THREE.Mesh(HOVER_FRAME_GEO, GHOST_WIRE_MAT);
+        gw.userData._isOverlay = true;
+        cell.overlay = gw;
+        cell.mesh.add(gw);
+      }
+    }
     return;
   }
 
@@ -8054,6 +8746,8 @@ function checkVictoryCondition() {
       clearInterval(timerInt);
       timerInt = null;
     }
+    setHideBlocksMode(false);
+    clearAllUserHidden({ silent: true });
     let spawned = 0;
     for (let i = 0; i < grid.length; i++) {
       const c = grid[i];
@@ -8113,6 +8807,7 @@ function togglePause() {
   isPaused = !isPaused;
   const ov = document.getElementById('pause-overlay');
   if (ov) ov.classList.toggle('hidden', !isPaused);
+  if (typeof syncHideBlocksUI === 'function') syncHideBlocksUI();
   playClick();
 }
 
@@ -8600,7 +9295,7 @@ canvasEl.addEventListener('touchstart', (e) => {
     _longPressTimer = setTimeout(() => {
       if (_touchMode === 'orbit' && _touchDragDist < 12 && !isPaused && !gameOver) {
         const cell = getIntersectedCell(startX, startY);
-        if (cell) {
+        if (cell && !hideBlocksMode && !cell.userHidden) {
           _longPressTriggered = true;
           toggleCellFlag(cell);
           if (navigator.vibrate) navigator.vibrate(25);
@@ -8707,6 +9402,24 @@ canvasEl.addEventListener('touchend', (e) => {
       if (!cell) return;
 
       const now = performance.now();
+      if (cell.userHidden) {
+        _lastTapTime = 0;
+        _lastTapCell = null;
+        unhideCellBlock(cell);
+        return;
+      }
+      if (hideBlocksMode) {
+        _lastTapTime = 0;
+        _lastTapCell = null;
+        hideCellBlock(cell);
+        return;
+      }
+      if ((now - _lastHideOpTime) < 550) {
+        _lastTapTime = 0;
+        _lastTapCell = null;
+        return;
+      }
+
       if (_lastTapCell === cell && (now - _lastTapTime) < 360) {
         _lastTapTime = 0;
         _lastTapCell = null;
@@ -8773,6 +9486,9 @@ window.addEventListener('pointermove', (e) => {
   // Only raycast hover when over canvas
   if (e.target !== canvasEl) {
     hoverFrameMesh.visible = false;
+    if (!hideBlocksMode && document.body.classList.contains('hide-blocks-active')) {
+      document.body.classList.remove('hide-blocks-active');
+    }
     if (typeof clearShowcaseCanvasHover === 'function') clearShowcaseCanvasHover();
     if (pill) pill.classList.add('hidden');
     return;
@@ -8791,14 +9507,35 @@ window.addEventListener('pointermove', (e) => {
     if (!ctrlDown) clearNeighborOutlines();
   }
 
+  const wantHideCursor = hideBlocksMode || e.altKey;
+  if (document.body.classList.contains('hide-blocks-active') !== wantHideCursor) {
+    document.body.classList.toggle('hide-blocks-active', wantHideCursor);
+  }
+
   const cell = getIntersectedCell(e.clientX, e.clientY);
   if (cell !== hoveredCell) {
     _applyHoverToCell(cell);
   }
 
   if (pill) {
-    if (gameLost && cell && cell.flagged) {
+    if (cell && cell.userHidden) {
+      pill.innerHTML = t('hover_ghost_hint');
+      pill.style.left = `${e.clientX + 14}px`;
+      pill.style.top = `${e.clientY + 14}px`;
+      pill.classList.remove('hidden');
+    } else if (gameLost && cell && cell.flagged) {
       pill.innerHTML = cell.mine ? t('hover_flag_hit') : t('hover_flag_wrong');
+      pill.style.left = `${e.clientX + 14}px`;
+      pill.style.top = `${e.clientY + 14}px`;
+      pill.classList.remove('hidden');
+    } else if (cell && (hideBlocksMode || e.altKey)) {
+      let extra = '';
+      if (cell.revealed && cell.mines > 0) {
+        const nbs = getCellNeighbors(cell);
+        const flg = nbs.filter(n => n.flagged).length;
+        extra = ` · 🚩 <b>${flg}/${cell.mines}</b>`;
+      }
+      pill.innerHTML = `${t('hover_hide_hint')}${extra}`;
       pill.style.left = `${e.clientX + 14}px`;
       pill.style.top = `${e.clientY + 14}px`;
       pill.classList.remove('hidden');
@@ -8806,7 +9543,9 @@ window.addEventListener('pointermove', (e) => {
       const nbs = getCellNeighbors(cell);
       const flg = nbs.filter(n => n.flagged).length;
       const closed = nbs.filter(n => !n.revealed && !n.flagged).length;
-      pill.innerHTML = `🚩 <b>${flg}/${cell.mines}</b> · ⬛ ${closed} offen`;
+      const hid = nbs.filter(n => n.userHidden).length;
+      const hidNote = hid > 0 ? ` · 👁️‍🗨️ ${hid}` : '';
+      pill.innerHTML = `🚩 <b>${flg}/${cell.mines}</b> · ⬛ ${closed} offen${hidNote}`;
       pill.style.left = `${e.clientX + 14}px`;
       pill.style.top = `${e.clientY + 14}px`;
       pill.classList.remove('hidden');
@@ -8842,16 +9581,25 @@ window.addEventListener('pointerup', (e) => {
   }
 
   if (btn === 2) {
-    toggleCellFlag(cell);
+    if (!cell.userHidden) {
+      toggleCellFlag(cell);
+    }
   } else if (btn === 0) {
-    _applyHoverToCell(cell);
+    if (cell.userHidden) {
+      unhideCellBlock(cell);
+    } else if (hideBlocksMode || e.altKey) {
+      hideCellBlock(cell);
+    } else {
+      _applyHoverToCell(cell);
+    }
   }
 });
 
 canvasEl.addEventListener('dblclick', (e) => {
   if (isPaused || gameOver) return;
+  if (hideBlocksMode || e.altKey || (performance.now() - _lastHideOpTime) < 550) return;
   const cell = getIntersectedCell(e.clientX, e.clientY);
-  if (!cell) return;
+  if (!cell || cell.userHidden) return;
   if (cell.revealed && cell.mines > 0) {
     chordCell(cell);
   } else if (!cell.revealed && !cell.flagged) {
@@ -8907,9 +9655,41 @@ window.addEventListener('keydown', (e) => {
     updateNeighborOutlines(hoveredCell);
     return;
   }
+  if (e.key === 'Alt') {
+    document.body.classList.add('hide-blocks-active');
+    return;
+  }
   const k = e.key.toLowerCase();
+  if ((e.ctrlKey || e.metaKey) && k === 'z') {
+    e.preventDefault();
+    undoLastUserHide();
+    return;
+  }
+  if (e.key === 'Escape') {
+    const backdrop = document.getElementById('modal-backdrop');
+    if (backdrop && !backdrop.classList.contains('hidden')) {
+      closeModal();
+    } else if (ghostHiddenVisible) {
+      toggleGhostHiddenPreview(false);
+    } else if (hideBlocksMode) {
+      setHideBlocksMode(false);
+    }
+    return;
+  }
+  if ((e.key === 'Delete' || e.key === 'Backspace') && hoveredCell) {
+    e.preventDefault();
+    if (hoveredCell.userHidden) unhideCellBlock(hoveredCell);
+    else hideCellBlock(hoveredCell);
+    return;
+  }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+
   if (e.key === '+' || e.key === '=') stepZoom(-1);
   else if (e.key === '-' || e.key === '_') stepZoom(1);
+  else if (k === 'h' && e.shiftKey) clearAllUserHidden();
+  else if (k === 'h') toggleHideBlocksMode();
+  else if (k === 'g') toggleGhostHiddenPreview();
+  else if (k === 'u') undoLastUserHide();
   else if (k === 'b') switchBackground();
   else if (k === 'w' && typeof toggleWaterStream === 'function') toggleWaterStream();
   else if (k === 's') toggleSound();
@@ -8928,6 +9708,8 @@ window.addEventListener('keyup', (e) => {
   if (e.key === 'Control' || e.key === 'Meta') {
     ctrlDown = stickyCtrl;
     if (!ctrlDown) clearNeighborOutlines();
+  } else if (e.key === 'Alt') {
+    document.body.classList.toggle('hide-blocks-active', hideBlocksMode);
   }
 });
 
@@ -8996,6 +9778,9 @@ function checkResponsiveLayout() {
     const el = document.documentElement;
     const canFs = !!(el.requestFullscreen || el.webkitRequestFullscreen);
     fsBtn.style.display = canFs ? 'inline-flex' : 'none';
+  }
+  if (typeof updateHideBlocksBarPosition === 'function') {
+    updateHideBlocksBarPosition();
   }
 }
 window.addEventListener('resize', checkResponsiveLayout);
@@ -9451,6 +10236,12 @@ function _clearCurrentBoardForShowcase() {
   stopAutopilotLoop();
   clearNeighborOutlines();
   isPaused = false;
+  hideBlocksMode = false;
+  ghostHiddenVisible = false;
+  userHiddenHistory = [];
+  _userHiddenCount = 0;
+  _hideBarDismissed = false;
+  if (typeof syncHideBlocksUI === 'function') syncHideBlocksUI();
   const pov = document.getElementById('pause-overlay');
   if (pov) pov.classList.add('hidden');
   if (typeof clearImpossiblePortals === 'function') clearImpossiblePortals();
@@ -9838,6 +10629,9 @@ function renderHelpModalHTML() {
         <tr><td>Würfel öffnen</td><td>Doppelklick (links)</td></tr>
         <tr><td>Chording (Nachbarn öffnen)</td><td>Doppelklick auf geöffnete Zahl (wenn Flaggenzahl stimmt)</td></tr>
         <tr><td>Flagge <span style="color:#ff4444">🚩</span> → <span style="color:#3f7cff">❓</span> → leer</td><td>Rechtsklick</td></tr>
+        <tr><td>Beliebigen Block unsichtbar schalten (Pinsel-Modus)</td><td>Button <b>👁️‍🗨️</b> / Taste <b>H</b> oder <b>Alt + Linksklick</b> (dahinter wird anklickbar!)</td></tr>
+        <tr><td>Geister-Vorschau (einzelnen Block zurückholen)</td><td>Taste <b>G</b> / Button <b>👻</b> → Klick/Tap auf durchsichtigen Geister-Block</td></tr>
+        <tr><td>Letzten ausgeblendeten Block zurück / Alle zeigen</td><td><b>U</b> / <b>Strg+Z</b> (Einzelschritt) · <b>Shift+H</b> / Button <b>👁 Alle</b></td></tr>
         <tr><td>Nachbarn hervorheben (auch über Wurmlöcher!)</td><td>Strg / Cmd + Hover (oder Button „Strg“ unten links)</td></tr>
         <tr><td>Flaggen-/Restzähler (🚩 x/y)</td><td>Hover über eine geöffnete Zahl</td></tr>
         <tr><td>Ansicht drehen</td><td>Linke Maustaste halten + ziehen</td></tr>
@@ -10149,7 +10943,8 @@ function saveGameToSlot(slotId) {
       mines: c.mines,
       revealed: c.revealed,
       flagged: c.flagged,
-      question: c.question
+      question: c.question,
+      userHidden: !!c.userHidden
     }))
   };
   try {
@@ -10175,9 +10970,20 @@ function loadGameFromSlot(slotId) {
     if (Array.isArray(data.cells) && data.cells.length === grid.length) {
       data.cells.forEach((sc, idx) => {
         Object.assign(grid[idx], sc);
-        updateCellVisual(grid[idx]);
+        grid[idx].userHidden = !!sc.userHidden;
+        if (grid[idx].userHidden) {
+          _userHiddenCount++;
+          userHiddenHistory.push([grid[idx]]);
+        }
+        updateCellVisual(grid[idx], true);
       });
+      if (isInstancedBoard && boardInstancedMesh) {
+        boardInstancedMesh.instanceMatrix.needsUpdate = true;
+      }
     }
+    _hideBarDismissed = _userHiddenCount === 0;
+    if (typeof syncHideBlocksUI === 'function') syncHideBlocksUI();
+    if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
     if (!firstClick) startTimerIfNeeded();
     updateHUDCounters();
     updateLogicalStatusUI();

@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b19'/%3E%3Cpolygon points='32,8 54,20 32,32 10,20' fill='%2338bdf8'/%3E%3Cpolygon points='10,20 32,32 32,56 10,44' fill='%230284c7'/%3E%3Cpolygon points='54,20 54,44 32,56 32,32' fill='%230369a1'/%3E%3C/svg%3E" />
   <title>Minesweeper 3d prompt Version</title>
   <script>try{if(localStorage.getItem('arcade_theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(_){}</script>
   <style>
@@ -368,6 +369,111 @@
       border-color: #be123c;
       color: #ffffff;
     }
+
+    /* Reversible Per-Block Hide Mode & Ghost Toolbar */
+    #canvas-container.hide-cursor { cursor: crosshair; }
+    #canvas-container.ghost-cursor { cursor: copy; }
+
+    .btn.active-hide {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #7dd3fc;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.45);
+    }
+    .btn.has-hidden:not(.active-hide) {
+      border-color: rgba(251, 191, 36, 0.78);
+      color: #fde68a;
+    }
+    html[data-theme="light"] .btn.active-hide {
+      background: linear-gradient(135deg, #0284c7, #0ea5e9);
+      border-color: #0369a1;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .btn.has-hidden:not(.active-hide) {
+      border-color: #d97706;
+      background: #fffbeb;
+      color: #b45309;
+    }
+
+    .hide-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 17px;
+      padding: 0 5px;
+      margin-left: 4px;
+      border-radius: 999px;
+      background: #f59e0b;
+      color: #0f172a;
+      font-size: 11px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .hide-badge.hidden { display: none; }
+
+    .hide-bar {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 11;
+      display: inline-flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 13px;
+      background: var(--panel-bg);
+      border: 1px solid var(--panel-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.48);
+      max-width: calc(100vw - 24px);
+    }
+    .hide-bar.hidden { display: none; }
+    .hide-bar.mode-on {
+      border-color: var(--accent);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.52), 0 0 18px rgba(56, 189, 248, 0.25);
+    }
+    .hb-count {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fde68a;
+      padding: 0 4px;
+      white-space: nowrap;
+    }
+    html[data-theme="light"] .hb-count { color: #b45309; }
+    .hb-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .hb-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+    .hb-btn.active-ghost {
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      border-color: #a5b4fc;
+      color: #ffffff;
+    }
+    .hb-btn.hb-restore:not(:disabled) {
+      border-color: rgba(74, 222, 128, 0.55);
+      color: #86efac;
+    }
+    html[data-theme="light"] .hb-btn.hb-restore:not(:disabled) {
+      background: #ecfdf5;
+      border-color: rgba(21, 128, 61, 0.45);
+      color: #15803d;
+    }
+    .hb-close {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    html[data-theme="light"] .hide-bar {
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+    }
     html[data-theme="light"] .spread-control { color: #0f172a; }
     html[data-theme="light"] .spread-val { color: #0369a1; }
     html[data-theme="light"] .key-badge {
@@ -429,6 +535,16 @@
       select, .btn {
         padding: 6px 9px;
         font-size: 11.5px;
+      }
+      .hide-bar {
+        bottom: 92px;
+        padding: 5px 8px;
+        gap: 5px;
+        max-width: calc(100vw - 16px);
+      }
+      .hb-btn {
+        padding: 5px 8px;
+        font-size: 11px;
       }
       .status-banner {
         top: 132px;
@@ -495,6 +611,7 @@
         <option value="5-20">5×5×5 Würfel (20 Minen)</option>
       </select>
       <button class="btn" id="btn-flag-mode" title="Umschalten zwischen Aufdecken und Flagge setzen">🚩 Flaggen-Modus: AUS</button>
+      <button class="btn" id="btn-hide-mode" title="Blöcke einzeln ausblenden / wiederherstellen (Taste H · oder Alt+Klick)">👁️‍🗨️ Verbergen: AUS<span class="hide-badge hidden" id="hide-count-badge">0</span></button>
       <button class="btn primary" id="btn-new-game">🔄 Neues Spiel</button>
       <button class="btn" id="btn-theme-toggle" title="Hell-/Dunkel-Modus wechseln">☀️</button>
     </div>
@@ -503,6 +620,14 @@
   <div class="status-banner" id="status-banner">
     <span id="status-text"></span>
     <button class="btn primary" id="btn-banner-restart">Nochmal spielen</button>
+  </div>
+
+  <div class="hide-bar hidden" id="hide-bar" role="toolbar" aria-label="Blöcke ausblenden &amp; wiederherstellen">
+    <span class="hb-count" id="hide-bar-count">0 verborgen</span>
+    <button class="btn hb-btn" id="btn-hide-undo" title="Letzten ausgeblendeten Block zurückholen (U / Strg+Z)" disabled>↩ Zurück</button>
+    <button class="btn hb-btn" id="btn-hide-ghost" title="Ausgeblendete Blöcke als Geister anzeigen &amp; einzeln zurückholen (Taste G)" disabled>👻 Geister</button>
+    <button class="btn hb-btn hb-restore" id="btn-hide-restore-all" title="Alle ausgeblendeten Blöcke sofort wieder einblenden (Shift+H)" disabled>👁 Alle</button>
+    <button class="btn hb-close" id="btn-hide-done" title="Verbergen-Modus beenden (Blöcke bleiben unsichtbar)">✕</button>
   </div>
 
   <footer class="bottom-hud">
@@ -517,6 +642,7 @@
       <span class="hint-item"><span class="key-badge">2 Finger / Mausrad</span> Auseinanderziehen</span>
       <span class="hint-item"><span class="key-badge">Tippen / Klick</span> Aufdecken</span>
       <span class="hint-item hint-desktop-only"><span class="key-badge">Rechtsklick</span> Flagge 🚩</span>
+      <span class="hint-item hint-desktop-only"><span class="key-badge">H / Alt+Klick</span> Verbergen</span>
       <span class="hint-item footer-legal-links"><a href="../../impressum.html">Impressum</a> · <a href="../../datenschutz.html">Datenschutz</a></span>
     </div>
   </footer>
@@ -534,6 +660,15 @@
       const elCoord = document.getElementById('coord-readout');
       const elDifficulty = document.getElementById('select-difficulty');
       const elFlagBtn = document.getElementById('btn-flag-mode');
+      const elHideBtn = document.getElementById('btn-hide-mode');
+      const elHideBadge = document.getElementById('hide-count-badge');
+      const elHideBar = document.getElementById('hide-bar');
+      const elHideBarCount = document.getElementById('hide-bar-count');
+      const elHideUndoBtn = document.getElementById('btn-hide-undo');
+      const elHideGhostBtn = document.getElementById('btn-hide-ghost');
+      const elHideRestoreBtn = document.getElementById('btn-hide-restore-all');
+      const elHideDoneBtn = document.getElementById('btn-hide-done');
+      const elBottomHud = document.querySelector('.bottom-hud');
       const elNewGameBtn = document.getElementById('btn-new-game');
       const elBanner = document.getElementById('status-banner');
       const elBannerText = document.getElementById('status-text');
@@ -595,6 +730,16 @@
       let gameOver = false;
       let gameLost = false;
       let flagMode = false;
+      let hideMode = false;
+      let ghostMode = false;
+      let altKeyHeld = false;
+      let hideBarDismissed = false;
+      let hiddenHistory = [];
+      let hiddenCount = 0;
+      let lastHideOpTime = 0;
+      let hoveredCell = null;
+      let hoveredPrevMeshMat = null;
+      let hoveredPrevWireMat = null;
       let flagsCount = 0;
       let revealedCount = 0;
       let startTime = 0;
@@ -671,10 +816,33 @@
         depthWrite: false
       });
 
+      const matGhost = new THREE.MeshStandardMaterial({
+        color: 0x38bdf8,
+        emissive: 0x0284c7,
+        emissiveIntensity: 0.25,
+        roughness: 0.2,
+        metalness: 0.1,
+        transparent: true,
+        opacity: 0.24,
+        depthWrite: false
+      });
+
       const lineMatDefault = new THREE.LineBasicMaterial({
         color: 0x7dd3fc,
         transparent: true,
         opacity: 0.42
+      });
+
+      const lineMatGhost = new THREE.LineBasicMaterial({
+        color: 0x7dd3fc,
+        transparent: true,
+        opacity: 0.78
+      });
+
+      const lineMatGhostHover = new THREE.LineBasicMaterial({
+        color: 0xfde047,
+        transparent: true,
+        opacity: 0.96
       });
 
       const lineMatCorrect = new THREE.LineBasicMaterial({
@@ -887,8 +1055,18 @@
         lineMatDefault.color.setHex(light ? 0x0369a1 : 0x7dd3fc);
         lineMatDefault.opacity = light ? 0.58 : 0.42;
 
+        matGhost.color.setHex(light ? 0x0284c7 : 0x38bdf8);
+        matGhost.emissive.setHex(light ? 0x0369a1 : 0x0284c7);
+        matGhost.opacity = light ? 0.30 : 0.24;
+        lineMatGhost.color.setHex(light ? 0x0369a1 : 0x7dd3fc);
+        lineMatGhost.opacity = light ? 0.85 : 0.78;
+        lineMatGhostHover.color.setHex(light ? 0xd97706 : 0xfde047);
+
         if (cells.length) {
           cells.forEach(setCellVisual);
+        }
+        if (typeof updateHideBarPosition === 'function') {
+          updateHideBarPosition();
         }
       }
 
@@ -940,9 +1118,17 @@
         firstClick = true;
         gameOver = false;
         gameLost = false;
+        hideMode = false;
+        ghostMode = false;
+        hideBarDismissed = false;
+        hiddenHistory = [];
+        hiddenCount = 0;
         flagsCount = 0;
         revealedCount = 0;
         startTime = 0;
+        hoveredCell = null;
+        hoveredPrevMeshMat = null;
+        hoveredPrevWireMat = null;
         elTime.textContent = '0s';
         elBanner.className = 'status-banner';
 
@@ -972,6 +1158,7 @@
                 isMine: false,
                 revealed: false,
                 flagged: false,
+                userHidden: false,
                 neighborMines: 0,
                 group: cellGroup,
                 mesh,
@@ -989,6 +1176,7 @@
         }
 
         updateStatsHUD();
+        syncHideUI();
       }
 
       function placeMines(safeCell) {
@@ -1032,11 +1220,169 @@
         elSafe.textContent = String(Math.max(0, totalSafe - revealedCount));
       }
 
+      function updateHideBarPosition() {
+        if (!elHideBar || !elBottomHud) return;
+        const rect = elBottomHud.getBoundingClientRect();
+        if (rect.top > 0) {
+          elHideBar.style.bottom = `${Math.ceil(window.innerHeight - rect.top + 10)}px`;
+        }
+      }
+
+      function syncHideUI() {
+        if (elHideBtn) {
+          elHideBtn.classList.toggle('active-hide', hideMode);
+          elHideBtn.classList.toggle('has-hidden', hiddenCount > 0);
+          if (elHideBtn.firstChild && elHideBtn.firstChild.nodeType === 3) {
+            elHideBtn.firstChild.nodeValue = hideMode ? '👁️‍🗨️ Verbergen: AN' : '👁️‍🗨️ Verbergen: AUS';
+          }
+        }
+        if (elHideBadge) {
+          elHideBadge.textContent = String(hiddenCount);
+          elHideBadge.classList.toggle('hidden', hiddenCount === 0);
+        }
+        if (container) {
+          container.classList.toggle('hide-cursor', !gameOver && (hideMode || altKeyHeld) && !ghostMode);
+          container.classList.toggle('ghost-cursor', !gameOver && ghostMode && hiddenCount > 0);
+        }
+        if (elHideBar) {
+          const showBar = !gameOver && (hideMode || ghostMode || (hiddenCount > 0 && !hideBarDismissed));
+          elHideBar.classList.toggle('hidden', !showBar);
+          elHideBar.classList.toggle('mode-on', hideMode);
+        }
+        if (elHideBarCount) {
+          elHideBarCount.textContent = hiddenCount === 1 ? '1 verborgen' : `${hiddenCount} verborgen`;
+        }
+        if (elHideUndoBtn) elHideUndoBtn.disabled = hiddenHistory.length === 0;
+        if (elHideGhostBtn) {
+          elHideGhostBtn.disabled = hiddenCount === 0;
+          elHideGhostBtn.classList.toggle('active-ghost', ghostMode && hiddenCount > 0);
+        }
+        if (elHideRestoreBtn) elHideRestoreBtn.disabled = hiddenCount === 0;
+        if (elHideBar && !elHideBar.classList.contains('hidden')) {
+          updateHideBarPosition();
+        }
+      }
+
+      function setHideMode(enabled) {
+        const next = Boolean(enabled) && !gameOver;
+        if (next === hideMode) {
+          syncHideUI();
+          return;
+        }
+        hideMode = next;
+        if (hideMode) {
+          hideBarDismissed = false;
+          if (flagMode) {
+            flagMode = false;
+            elFlagBtn.classList.remove('active-mode');
+            elFlagBtn.textContent = '🚩 Flaggen-Modus: AUS';
+          }
+        }
+        clearHover();
+        syncHideUI();
+      }
+
+      function hideCell(cell) {
+        if (!cell || gameOver || cell.userHidden) return false;
+        if (cell.revealed && !cell.isMine && cell.neighborMines === 0) return false;
+        cell.userHidden = true;
+        hiddenCount++;
+        hiddenHistory.push(cell);
+        hideBarDismissed = false;
+        lastHideOpTime = Date.now();
+        clearHover();
+        setCellVisual(cell);
+        syncHideUI();
+        return true;
+      }
+
+      function unhideCell(cell) {
+        if (!cell || !cell.userHidden) return false;
+        cell.userHidden = false;
+        hiddenCount = Math.max(0, hiddenCount - 1);
+        hiddenHistory = hiddenHistory.filter(c => c !== cell);
+        if (hiddenCount === 0) {
+          ghostMode = false;
+        }
+        lastHideOpTime = Date.now();
+        clearHover();
+        setCellVisual(cell);
+        syncHideUI();
+        return true;
+      }
+
+      function undoHide() {
+        while (hiddenHistory.length > 0) {
+          const lastCell = hiddenHistory.pop();
+          if (lastCell && lastCell.userHidden) {
+            lastCell.userHidden = false;
+            hiddenCount = Math.max(0, hiddenCount - 1);
+            if (hiddenCount === 0) {
+              ghostMode = false;
+            }
+            lastHideOpTime = Date.now();
+            clearHover();
+            setCellVisual(lastCell);
+            syncHideUI();
+            return true;
+          }
+        }
+        syncHideUI();
+        return false;
+      }
+
+      function toggleGhostMode() {
+        if (hiddenCount === 0 && !ghostMode) return;
+        ghostMode = !ghostMode;
+        clearHover();
+        cells.forEach(c => {
+          if (c.userHidden) setCellVisual(c);
+        });
+        syncHideUI();
+      }
+
+      function restoreAllHidden(silent) {
+        if (hiddenCount === 0 && !ghostMode) {
+          if (!silent) syncHideUI();
+          return;
+        }
+        const hadHidden = hiddenCount > 0;
+        ghostMode = false;
+        hiddenHistory = [];
+        hiddenCount = 0;
+        hideBarDismissed = false;
+        clearHover();
+        cells.forEach(c => {
+          if (c.userHidden) {
+            c.userHidden = false;
+            setCellVisual(c);
+          }
+        });
+        if (hadHidden) {
+          lastHideOpTime = Date.now();
+        }
+        if (!silent) syncHideUI();
+      }
+
       function setCellVisual(cell) {
         // Remove previous sprite if any
         if (cell.sprite) {
           cell.group.remove(cell.sprite);
           cell.sprite = null;
+        }
+
+        if (cell.userHidden) {
+          if (ghostMode) {
+            cell.mesh.visible = true;
+            cell.mesh.geometry = boxGeo;
+            cell.mesh.material = matGhost;
+            cell.wireframe.visible = true;
+            cell.wireframe.material = lineMatGhost;
+          } else {
+            cell.mesh.visible = false;
+            cell.wireframe.visible = false;
+          }
+          return;
         }
 
         if (!cell.revealed) {
@@ -1096,6 +1442,7 @@
           const color = palette[Math.min(cell.neighborMines, palette.length - 1)];
           const numMat = getTextSpriteMaterial(String(cell.neighborMines), color);
           const sp = new THREE.Sprite(numMat);
+          sp.userData.cell = cell;
           sp.scale.set(0.76, 0.76, 0.76);
           cell.group.add(sp);
           cell.sprite = sp;
@@ -1103,7 +1450,7 @@
       }
 
       function revealCell(startCell) {
-        if (gameOver || startCell.revealed || startCell.flagged) return;
+        if (gameOver || startCell.revealed || startCell.flagged || startCell.userHidden) return;
 
         if (firstClick) {
           firstClick = false;
@@ -1118,6 +1465,7 @@
           return;
         }
 
+        let unhidByReveal = false;
         // BFS flood-fill for 0-mine cells in 3D
         const queue = [startCell];
         while (queue.length > 0) {
@@ -1127,6 +1475,12 @@
           if (curr.flagged) {
             curr.flagged = false;
             flagsCount--;
+          }
+          if (curr.userHidden) {
+            curr.userHidden = false;
+            hiddenCount = Math.max(0, hiddenCount - 1);
+            hiddenHistory = hiddenHistory.filter(c => c !== curr);
+            unhidByReveal = true;
           }
 
           curr.revealed = true;
@@ -1143,6 +1497,11 @@
           }
         }
 
+        if (unhidByReveal) {
+          if (hiddenCount === 0) ghostMode = false;
+          syncHideUI();
+        }
+
         updateStatsHUD();
 
         if (revealedCount >= cells.length - totalMines) {
@@ -1151,7 +1510,7 @@
       }
 
       function toggleFlag(cell) {
-        if (gameOver || cell.revealed) return;
+        if (gameOver || cell.revealed || cell.userHidden) return;
         cell.flagged = !cell.flagged;
         flagsCount += cell.flagged ? 1 : -1;
         setCellVisual(cell);
@@ -1173,6 +1532,8 @@
           clearInterval(timerInterval);
           timerInterval = null;
         }
+        setHideMode(false);
+        restoreAllHidden(false);
 
         if (!won) {
           gameLost = true;
@@ -1226,7 +1587,6 @@
       let prevX = 0;
       let prevY = 0;
       let draggedDistance = 0;
-      let hoveredCell = null;
 
       // Mobile touch state
       let touchMode = 'none'; // 'none' | 'single' | 'pinch'
@@ -1241,13 +1601,26 @@
         mouse.y = -(clientY / window.innerHeight) * 2 + 1;
       }
 
-      function getIntersectedCell(clientX, clientY) {
+      function getIntersectedCell(clientX, clientY, includeRevealed) {
         updateMouseNormalized(clientX, clientY);
         raycaster.setFromCamera(mouse, camera);
-        const activeMeshes = pickableMeshes.filter(
-          m => m.visible && !m.userData.cell.revealed
-        );
-        const hits = raycaster.intersectObjects(activeMeshes, false);
+        const targets = [];
+        for (let i = 0; i < cells.length; i++) {
+          const c = cells[i];
+          if (c.userHidden) {
+            if (ghostMode && c.mesh.visible) {
+              targets.push(c.mesh);
+            }
+            continue;
+          }
+          if (!c.revealed) {
+            if (c.mesh.visible) targets.push(c.mesh);
+          } else if (includeRevealed) {
+            if (c.mesh.visible) targets.push(c.mesh);
+            if (c.sprite && c.sprite.visible) targets.push(c.sprite);
+          }
+        }
+        const hits = raycaster.intersectObjects(targets, false);
         return hits.length > 0 ? hits[0].object.userData.cell : null;
       }
 
@@ -1256,32 +1629,66 @@
           clearHover();
           return;
         }
-        const hitCell = getIntersectedCell(clientX, clientY);
+        const wantHide = !gameOver && (hideMode || altKeyHeld);
+        const hitCell = getIntersectedCell(clientX, clientY, wantHide);
+        const coordPrefix = hitCell ? `XYZ: (${hitCell.x + 1}, ${hitCell.y + 1}, ${hitCell.z + 1})` : 'XYZ: –';
+
         if (hitCell === hoveredCell) {
-          if (hitCell && hitCell.flagged && gameLost) {
-            elCoord.textContent = `XYZ: (${hitCell.x + 1}, ${hitCell.y + 1}, ${hitCell.z + 1}) · ${hitCell.isMine ? '✅ Mine' : '❌ Keine Mine'}`;
+          if (!hitCell) {
+            elCoord.textContent = 'XYZ: –';
+          } else if (hitCell.userHidden && ghostMode && !gameOver) {
+            elCoord.textContent = `${coordPrefix} · 👻 Einblenden`;
+          } else if (wantHide && !hitCell.userHidden && !gameOver) {
+            elCoord.textContent = `${coordPrefix} · 👁️ Verbergen`;
+          } else if (hitCell.flagged && gameLost) {
+            elCoord.textContent = `${coordPrefix} · ${hitCell.isMine ? '✅ Mine' : '❌ Keine Mine'}`;
+          } else {
+            elCoord.textContent = coordPrefix;
           }
           return;
         }
 
         clearHover();
-        if (hitCell && !gameOver && !hitCell.revealed && !hitCell.flagged) {
+        if (hitCell && !gameOver && hitCell.userHidden && ghostMode) {
           hoveredCell = hitCell;
+          hoveredPrevWireMat = hoveredCell.wireframe.material;
+          hoveredCell.wireframe.material = lineMatGhostHover;
+          elCoord.textContent = `${coordPrefix} · 👻 Einblenden`;
+        } else if (hitCell && !gameOver && wantHide && !hitCell.userHidden) {
+          hoveredCell = hitCell;
+          if (hitCell.flagged) {
+            hoveredPrevWireMat = hoveredCell.wireframe.material;
+            hoveredCell.wireframe.material = lineMatGhostHover;
+          } else {
+            hoveredPrevMeshMat = hoveredCell.mesh.material;
+            hoveredCell.mesh.material = matHover;
+          }
+          elCoord.textContent = `${coordPrefix} · 👁️ Verbergen`;
+        } else if (hitCell && !gameOver && !hitCell.revealed && !hitCell.flagged && !hitCell.userHidden) {
+          hoveredCell = hitCell;
+          hoveredPrevMeshMat = hoveredCell.mesh.material;
           hoveredCell.mesh.material = matHover;
-          elCoord.textContent = `XYZ: (${hitCell.x + 1}, ${hitCell.y + 1}, ${hitCell.z + 1})`;
+          elCoord.textContent = coordPrefix;
         } else if (hitCell) {
           const suffix = (gameLost && hitCell.flagged) ? (hitCell.isMine ? ' · ✅ Mine' : ' · ❌ Keine Mine') : '';
-          elCoord.textContent = `XYZ: (${hitCell.x + 1}, ${hitCell.y + 1}, ${hitCell.z + 1})${suffix}`;
+          elCoord.textContent = `${coordPrefix}${suffix}`;
         } else {
           elCoord.textContent = 'XYZ: –';
         }
       }
 
       function clearHover() {
-        if (hoveredCell && !hoveredCell.revealed && !hoveredCell.flagged) {
-          hoveredCell.mesh.material = matUnrevealed.clone();
+        if (hoveredCell) {
+          if (hoveredPrevMeshMat !== null) {
+            hoveredCell.mesh.material = hoveredPrevMeshMat;
+          }
+          if (hoveredPrevWireMat !== null) {
+            hoveredCell.wireframe.material = hoveredPrevWireMat;
+          }
         }
         hoveredCell = null;
+        hoveredPrevMeshMat = null;
+        hoveredPrevWireMat = null;
       }
 
       function getPinchDistance(t1, t2) {
@@ -1304,6 +1711,12 @@
 
       window.addEventListener('pointermove', (e) => {
         if (e.pointerType === 'touch') return;
+        if (Boolean(e.altKey) !== altKeyHeld) {
+          altKeyHeld = Boolean(e.altKey);
+          if (container) {
+            container.classList.toggle('hide-cursor', !gameOver && (hideMode || altKeyHeld) && !ghostMode);
+          }
+        }
         if (isPointerDown && e.pointerId === activePointerId) {
           const dx = e.clientX - prevX;
           const dy = e.clientY - prevY;
@@ -1331,12 +1744,23 @@
         }
 
         if (allowClick && draggedDistance < 7) {
-          const cell = getIntersectedCell(e.clientX, e.clientY);
+          const wantHide = !gameOver && (hideMode || e.altKey);
+          const cell = getIntersectedCell(e.clientX, e.clientY, wantHide);
           if (cell) {
-            if (downButton === 2 || flagMode || e.shiftKey) {
-              toggleFlag(cell);
+            if (cell.userHidden) {
+              if (ghostMode && downButton === 0) {
+                unhideCell(cell);
+                updateHoverHighlight(e.clientX, e.clientY);
+              }
+            } else if (downButton === 2 || (!wantHide && (flagMode || e.shiftKey))) {
+              if (!cell.revealed) toggleFlag(cell);
             } else if (downButton === 0) {
-              revealCell(cell);
+              if (wantHide) {
+                hideCell(cell);
+                updateHoverHighlight(e.clientX, e.clientY);
+              } else if (!(e.detail >= 2 && (Date.now() - lastHideOpTime) < 450)) {
+                revealCell(cell);
+              }
             }
           }
         }
@@ -1381,10 +1805,15 @@
         if (e.touches.length === 0 && !wasMultiTouch && touchDraggedDist < 12) {
           const changed = e.changedTouches[0];
           if (changed) {
-            const cell = getIntersectedCell(changed.clientX, changed.clientY);
+            const wantHide = !gameOver && hideMode;
+            const cell = getIntersectedCell(changed.clientX, changed.clientY, wantHide);
             if (cell) {
               elCoord.textContent = `XYZ: (${cell.x + 1}, ${cell.y + 1}, ${cell.z + 1})`;
-              if (flagMode) {
+              if (cell.userHidden) {
+                if (ghostMode) unhideCell(cell);
+              } else if (wantHide) {
+                hideCell(cell);
+              } else if (flagMode) {
                 toggleFlag(cell);
               } else {
                 revealCell(cell);
@@ -1481,11 +1910,120 @@
       // UI Controls
       elFlagBtn.addEventListener('click', () => {
         flagMode = !flagMode;
+        if (flagMode && hideMode) {
+          setHideMode(false);
+        }
         elFlagBtn.classList.toggle('active-mode', flagMode);
         elFlagBtn.textContent = flagMode ? '🚩 Flaggen-Modus: AN' : '🚩 Flaggen-Modus: AUS';
       });
 
-      elDifficulty.addEventListener('change', initGame);
+      if (elHideBtn) {
+        elHideBtn.addEventListener('click', () => {
+          if (gameOver) return;
+          if (!hideMode) {
+            hideBarDismissed = false;
+            setHideMode(true);
+          } else {
+            setHideMode(false);
+          }
+        });
+      }
+      if (elHideUndoBtn) {
+        elHideUndoBtn.addEventListener('click', undoHide);
+      }
+      if (elHideGhostBtn) {
+        elHideGhostBtn.addEventListener('click', toggleGhostMode);
+      }
+      if (elHideRestoreBtn) {
+        elHideRestoreBtn.addEventListener('click', () => restoreAllHidden(false));
+      }
+      if (elHideDoneBtn) {
+        elHideDoneBtn.addEventListener('click', () => {
+          hideBarDismissed = true;
+          hideMode = false;
+          ghostMode = false;
+          clearHover();
+          cells.forEach(c => {
+            if (c.userHidden) setCellVisual(c);
+          });
+          syncHideUI();
+        });
+      }
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Alt') {
+          if (!altKeyHeld) {
+            altKeyHeld = true;
+            syncHideUI();
+          }
+          return;
+        }
+        const tag = document.activeElement && document.activeElement.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+        if ((e.key === 'u' || e.key === 'U') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          if (hiddenHistory.length > 0) {
+            e.preventDefault();
+            undoHide();
+          }
+          return;
+        }
+        if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'z') {
+          if (hiddenHistory.length > 0) {
+            e.preventDefault();
+            undoHide();
+          }
+          return;
+        }
+        if (e.key === 'h' || e.key === 'H') {
+          if (e.ctrlKey || e.metaKey || e.altKey) return;
+          e.preventDefault();
+          if (e.shiftKey) {
+            restoreAllHidden(false);
+          } else {
+            setHideMode(!hideMode);
+          }
+          return;
+        }
+        if ((e.key === 'g' || e.key === 'G') && !e.ctrlKey && !e.metaKey && !e.altKey) {
+          if (hiddenCount > 0 || ghostMode) {
+            e.preventDefault();
+            toggleGhostMode();
+          }
+          return;
+        }
+        if (e.key === 'Escape' && (hideMode || ghostMode)) {
+          e.preventDefault();
+          hideMode = false;
+          ghostMode = false;
+          clearHover();
+          cells.forEach(c => {
+            if (c.userHidden) setCellVisual(c);
+          });
+          syncHideUI();
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'Alt' && altKeyHeld) {
+          altKeyHeld = false;
+          clearHover();
+          syncHideUI();
+        }
+      });
+
+      window.addEventListener('blur', () => {
+        if (altKeyHeld) {
+          altKeyHeld = false;
+          clearHover();
+          syncHideUI();
+        }
+      });
+
+      elDifficulty.addEventListener('change', () => {
+        elDifficulty.blur();
+        initGame();
+      });
       elNewGameBtn.addEventListener('click', initGame);
       elBannerRestart.addEventListener('click', initGame);
 
@@ -1495,6 +2033,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         updateCameraDistance();
         updateBannerPosition();
+        updateHideBarPosition();
       });
 
       // Render Loop with smooth interpolation of the cube pull-apart factor
@@ -1526,6 +2065,8 @@
 
       applySceneTheme(currentTheme);
       initGame();
+      updateBannerPosition();
+      updateHideBarPosition();
       animate();
     })();
   </script>
