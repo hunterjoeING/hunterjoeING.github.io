@@ -437,6 +437,13 @@
       font-size: 12px;
       color: var(--forest-muted);
     }
+    .photo-credit a {
+      color: #86efac;
+      text-decoration: none;
+    }
+    .photo-credit a:hover {
+      text-decoration: underline;
+    }
 
     /* Question & Answer Grid */
     .q-meta-tags {
@@ -2049,6 +2056,27 @@
         return 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(clean);
       }
 
+      function resolveLicenseUrl(lic) {
+        const s = String(lic || '').toUpperCase();
+        if (s.includes('CC0')) return 'https://creativecommons.org/publicdomain/zero/1.0/';
+        if (s.includes('PUBLIC DOMAIN') || s.includes('PD')) return 'https://creativecommons.org/publicdomain/mark/1.0/';
+        if (s.includes('BY-SA 4.0')) return 'https://creativecommons.org/licenses/by-sa/4.0/';
+        if (s.includes('BY-SA 3.0')) return 'https://creativecommons.org/licenses/by-sa/3.0/';
+        if (s.includes('BY-SA 2.5')) return 'https://creativecommons.org/licenses/by-sa/2.5/';
+        if (s.includes('BY-SA 2.0')) return 'https://creativecommons.org/licenses/by-sa/2.0/';
+        if (s.includes('BY 4.0')) return 'https://creativecommons.org/licenses/by/4.0/';
+        if (s.includes('BY 3.0')) return 'https://creativecommons.org/licenses/by/3.0/';
+        if (s.includes('BY 2.5')) return 'https://creativecommons.org/licenses/by/2.5/';
+        if (s.includes('BY 2.0')) return 'https://creativecommons.org/licenses/by/2.0/';
+        return 'https://creativecommons.org/licenses/by-sa/4.0/';
+      }
+
+      function renderTulluAttribution(credit) {
+        const cUrl = commonsUrl(credit.commons);
+        const lUrl = credit.licenseUrl || resolveLicenseUrl(credit.license);
+        return `📷 Urheber: ${escapeHtml(credit.artist)} · Lizenz: <a href="${escapeHtml(lUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit.license)} ↗</a> · <a href="${escapeHtml(cUrl)}" target="_blank" rel="noopener noreferrer">Quelle (Wikimedia Commons) ↗</a> · (Web-Skalierung)`;
+      }
+
       function shuffle(arr) {
         const a = arr.slice();
         for (let i = a.length - 1; i > 0; i--) {
@@ -2258,12 +2286,11 @@
         document.getElementById('q-habitat-pill').textContent = item.habitat;
         document.getElementById('q-season-pill').textContent = '🍂 ' + item.season;
 
-        // Spoiler-free photo caption before reveal
+        // Spoiler-free TULLU-compliant photo caption before reveal
         const imgEl = document.getElementById('pilz-img');
         imgEl.alt = 'Pilz-Foto zur aktuellen Bestimmungsfrage';
         imgEl.src = item.img;
-        document.getElementById('photo-attribution').textContent =
-          `📷 Foto: ${item.credit.artist} · ${item.credit.license} (Wikimedia Commons)`;
+        document.getElementById('photo-attribution').innerHTML = renderTulluAttribution(item.credit);
         document.getElementById('photo-status-note').textContent = 'Klick aufs Bild öffnet die Lupe / Vollansicht';
 
         if (qIdx + 1 < deck.length) {

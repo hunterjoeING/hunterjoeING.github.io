@@ -1,0 +1,1688 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Bild-Quiz über Prozessoren (CPUs) der letzten 25 Jahre (2000–Heute): Vom 1-GHz-Rennen (Athlon Thunderbird & Pentium 4) über Athlon 64, Core 2 Duo, Nehalem & Sandy Bridge bis Ryzen, Threadripper, Apple M1 & 3D V-Cache." />
+  <title>Prozessoren (CPUs) der letzten 25 Jahre · Bild-Quiz · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    :root {
+      --cpu-bg: #050b16;
+      --cpu-panel: rgba(11, 20, 38, 0.94);
+      --cpu-inset: rgba(7, 13, 26, 0.88);
+      --cpu-border: rgba(56, 189, 248, 0.22);
+      --cpu-border-strong: rgba(125, 211, 252, 0.45);
+      --cpu-accent: #0ea5e9;
+      --cpu-gold: #f59e0b;
+      --cpu-green: #4ade80;
+      --cpu-rose: #fb7185;
+      --cpu-text: #f8fafc;
+      --cpu-muted: #94a3b8;
+    }
+
+    html, body {
+      background:
+        radial-gradient(ellipse at 18% 0%, rgba(14, 165, 233, 0.26) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 12%, rgba(249, 115, 22, 0.16) 0%, transparent 45%),
+        linear-gradient(180deg, #091326 0%, #050b16 60%, #03070e 100%);
+      color: var(--cpu-text);
+      min-height: 100%;
+    }
+
+    .arcade-topbar {
+      background: rgba(5, 11, 22, 0.92);
+      border-bottom: 1px solid var(--cpu-border);
+    }
+
+    .back-hub-btn {
+      background: rgba(15, 29, 54, 0.78);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #f1f5f9;
+    }
+    .back-hub-btn:hover {
+      background: rgba(23, 43, 77, 0.92);
+      border-color: rgba(125, 211, 252, 0.65);
+    }
+
+    .icon-btn {
+      background: rgba(11, 20, 38, 0.85);
+      border-color: var(--cpu-border);
+    }
+
+    .quiz-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 56px;
+    }
+
+    .surface-panel {
+      background: var(--cpu-panel);
+      border: 1px solid var(--cpu-border);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.48);
+    }
+
+    .hidden { display: none !important; }
+
+    .menu-panel { padding: 26px 24px 24px; }
+
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .cpu-crest-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #0284c7, #ea580c);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(14, 165, 233, 0.32);
+    }
+
+    .hero-title {
+      margin: 0 0 6px;
+      font-size: clamp(22px, 3.2vw, 28px);
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      color: #f8fafc;
+    }
+
+    .hero-lead {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.55;
+      color: #cbd5e1;
+      max-width: 68ch;
+    }
+
+    .settings-band {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--cpu-border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .setting-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+    }
+
+    .setting-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--cpu-muted);
+      min-width: 118px;
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .opt-pill {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--cpu-border);
+      background: rgba(15, 23, 42, 0.72);
+      color: #cbd5e1;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .opt-pill:hover {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: var(--cpu-border-strong);
+      color: #f8fafc;
+    }
+    .opt-pill.active-relaxed {
+      background: rgba(14, 165, 233, 0.24);
+      border-color: rgba(56, 189, 248, 0.7);
+      color: #e0f2fe;
+      font-weight: 700;
+    }
+    .opt-pill.active-timer {
+      background: rgba(217, 119, 6, 0.24);
+      border-color: rgba(245, 158, 11, 0.65);
+      color: #fef3c7;
+      font-weight: 700;
+    }
+    .opt-pill.active-len {
+      background: rgba(234, 88, 12, 0.24);
+      border-color: rgba(251, 146, 60, 0.68);
+      color: #ffedd5;
+      font-weight: 700;
+    }
+
+    .setting-hint {
+      font-size: 13px;
+      color: var(--cpu-muted);
+      line-height: 1.45;
+    }
+
+    .cat-section-title {
+      margin: 22px 0 12px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--cpu-muted);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .cat-card {
+      text-align: left;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(16, 30, 56, 0.92), rgba(8, 15, 30, 0.96));
+      border: 1px solid var(--cpu-border);
+      color: var(--cpu-text);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--cpu-border-strong);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.38);
+    }
+    .cat-card.main-tour {
+      border-color: rgba(56, 189, 248, 0.45);
+      background: linear-gradient(155deg, rgba(2, 132, 199, 0.24), rgba(11, 20, 38, 0.96));
+    }
+
+    .cat-era {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fcd34d;
+    }
+    .cat-name {
+      font-size: 16.5px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+    .cat-desc {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.48;
+      flex: 1;
+    }
+    .cat-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      font-size: 12.5px;
+      color: #cbd5e1;
+    }
+    .cat-go {
+      font-weight: 700;
+      color: #7dd3fc;
+    }
+
+    .stage-panel { padding: 20px 22px 24px; }
+
+    .stage-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--cpu-border);
+      margin-bottom: 14px;
+    }
+
+    .progress-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+    .recognized-tag {
+      color: #86efac;
+      font-weight: 700;
+    }
+
+    .timer-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      background: rgba(14, 165, 233, 0.18);
+      color: #bae6fd;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .timer-track {
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #f59e0b, #ef4444);
+      transition: width 0.12s linear;
+    }
+
+    .hw-figure { margin: 0 0 14px; }
+
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      max-height: clamp(235px, 38vh, 360px);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #030711;
+      border: 1px solid var(--cpu-border);
+      cursor: zoom-in;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: radial-gradient(circle at center, #0f1b33 0%, #030711 100%);
+      transition: transform 0.28s ease;
+    }
+    .photo-frame:hover img {
+      transform: scale(1.02);
+    }
+
+    .photo-zoom-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(5, 11, 22, 0.86);
+      backdrop-filter: blur(8px);
+      color: #f8fafc;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .photo-credit {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.8px;
+      color: var(--cpu-muted);
+    }
+    .photo-credit a {
+      color: #7dd3fc;
+      text-decoration: underline;
+    }
+
+    .q-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .meta-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(15, 29, 54, 0.88);
+      border: 1px solid var(--cpu-border);
+      color: #e2e8f0;
+    }
+    .meta-tag.era {
+      color: #fde68a;
+      background: rgba(120, 53, 15, 0.26);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .q-text {
+      margin: 0 0 18px;
+      font-size: clamp(18px, 2.3vw, 21px);
+      font-weight: 800;
+      line-height: 1.4;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .ans-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--cpu-border);
+      background: var(--cpu-inset);
+      color: #f8fafc;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      background: rgba(20, 36, 66, 0.92);
+      border-color: var(--cpu-border-strong);
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.eliminated { opacity: 0.22; pointer-events: none; }
+    .ans-btn.correct {
+      background: rgba(22, 101, 52, 0.44);
+      border-color: rgba(74, 222, 128, 0.82);
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(159, 18, 57, 0.38);
+      border-color: rgba(251, 113, 133, 0.75);
+      color: #ffe4e6;
+    }
+
+    .ans-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(30, 58, 95, 0.8);
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .helpers-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--cpu-border);
+    }
+
+    .helper-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--cpu-border);
+      background: rgba(11, 20, 38, 0.85);
+      color: #e2e8f0;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .helper-btn:disabled { opacity: 0.36; cursor: not-allowed; }
+
+    .steckbrief {
+      margin-top: 20px;
+      padding: 20px 20px 18px;
+      border-radius: 14px;
+      background: rgba(6, 12, 24, 0.94);
+      border: 1px solid var(--cpu-border);
+      border-left: 4px solid var(--cpu-accent);
+      animation: fadeSlideUp 0.22s ease;
+    }
+    .steckbrief.is-right { border-left-color: var(--cpu-green); }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .sb-verdict {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .sb-verdict.ok { color: #86efac; }
+    .sb-verdict.miss { color: #fda4af; }
+    .sb-verdict.skip { color: #fde68a; }
+
+    .sb-heading-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .sb-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 850;
+      color: #f8fafc;
+    }
+    .sb-nick {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #fcd34d;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 10px 16px;
+      margin: 0 0 14px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(148, 163, 184, 0.14);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+    .spec-item dt {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cpu-muted);
+      margin-bottom: 2px;
+    }
+    .spec-item dd {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .sb-trivia {
+      margin: 0 0 16px;
+      font-size: 15px;
+      line-height: 1.58;
+      color: #dbeafe;
+    }
+
+    .sb-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sb-commons-link {
+      font-size: 12.5px;
+      color: #7dd3fc;
+      text-decoration: none;
+    }
+    .sb-commons-link:hover { text-decoration: underline; }
+
+    .cpu-primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(56, 189, 248, 0.6);
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(2, 132, 199, 0.34);
+    }
+
+    .result-panel { padding: 26px 24px 28px; }
+    .result-head {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--cpu-border);
+    }
+    .result-summary-pill {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(14, 165, 233, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: #bae6fd;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .result-score-line {
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 850;
+      margin: 0 0 6px;
+    }
+    .result-sub {
+      margin: 0 0 18px;
+      font-size: 14.5px;
+      color: #cbd5e1;
+    }
+    .result-cta-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .gallery-heading {
+      margin: 22px 0 14px;
+      font-size: 17px;
+      font-weight: 800;
+    }
+    .gallery-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .gallery-row {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(7, 13, 26, 0.82);
+      border: 1px solid var(--cpu-border);
+      align-items: start;
+    }
+    .gallery-thumb {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--cpu-border);
+      padding: 0;
+      background: #030711;
+      cursor: zoom-in;
+    }
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .gallery-info h3 {
+      margin: 0 0 4px;
+      font-size: 16.5px;
+      font-weight: 800;
+    }
+    .gallery-meta {
+      font-size: 12.5px;
+      color: #fcd34d;
+      margin-bottom: 6px;
+    }
+    .gallery-trivia {
+      margin: 0 0 8px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+    .gallery-status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--cpu-muted);
+    }
+    .outcome-badge {
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11.5px;
+    }
+    .outcome-badge.ok { background: rgba(22, 101, 52, 0.4); color: #86efac; }
+    .outcome-badge.miss { background: rgba(159, 18, 57, 0.35); color: #fda4af; }
+    .outcome-badge.skip { background: rgba(120, 53, 15, 0.38); color: #fde68a; }
+
+    .lightbox-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9995;
+      background: rgba(2, 6, 15, 0.92);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .lightbox-inner {
+      position: relative;
+      max-width: min(1160px, 96vw);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      background: #030712;
+    }
+    .lightbox-bar {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13.5px;
+      color: #e2e8f0;
+    }
+
+    @media (max-width: 680px) {
+      .menu-panel, .stage-panel, .result-panel { padding: 16px 14px 20px; }
+      .cat-grid, .answers-grid, .gallery-row { grid-template-columns: 1fr; }
+      .hero-head { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body data-no-leaderboard="1">
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🔬 Prozessoren (CPUs) · 25 Jahre</div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <section id="screen-menu" class="surface-panel menu-panel">
+      <div class="hero-head">
+        <div class="cpu-crest-badge" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+            <rect x="9" y="9" width="18" height="18" rx="3" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <rect x="13" y="13" width="10" height="10" rx="1.5" fill="#38bdf8"/>
+            <path d="M13 4v5M18 4v5M23 4v5M13 27v5M18 27v5M23 27v5M4 13h5M4 18h5M4 23h5M27 13h5M27 18h5M27 23h5" stroke="#fde047" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="hero-title">Prozessoren (CPUs) der letzten 25 Jahre (2000–Heute)</h1>
+          <p class="hero-lead">
+            Vom historischen 1-GHz-Duell im Jahr 2000 über AMD Athlon 64, Intel Core 2 Duo, Q6600, Nehalem und Sandy Bridge bis zur Ryzen-Chiplet-Revolution, Apple Silicon M1 und 3D V-Cache:
+            Erkenne die legendärsten Prozessoren anhand ihrer Fotos und Architektur-Meilensteine!
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-band">
+        <div class="setting-row">
+          <span class="setting-label">Zeitmodus</span>
+          <div class="pill-group" id="countdown-bar">
+            <button type="button" id="opt-timer-off" class="opt-pill active-relaxed" data-timer="0">☕ Ohne Zeitlimit (Standard)</button>
+            <button type="button" id="opt-timer-on" class="opt-pill" data-timer="1">⏱ Optionaler Countdown (35s)</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Rundenlänge</span>
+          <div class="pill-group" id="length-bar">
+            <button type="button" class="opt-pill active-len" data-len="8">8 CPUs</button>
+            <button type="button" class="opt-pill" data-len="12">12 CPUs</button>
+            <button type="button" class="opt-pill" data-len="all">Alle 16 CPUs</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cat-section-title">Epoche wählen &amp; starten</div>
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <section id="screen-play" class="surface-panel stage-panel hidden">
+      <div class="stage-topbar">
+        <div class="progress-cluster">
+          <span>CPU <strong id="q-num">1</strong> von <strong id="q-total">8</strong></span>
+          <span class="recognized-tag">✓ Erkannt: <span id="q-correct-count">0</span></span>
+        </div>
+        <button type="button" id="btn-play-timer" class="timer-toggle-btn">☕ Kein Zeitlimit</button>
+      </div>
+
+      <div id="timer-track" class="timer-track hidden">
+        <div id="timer-fill" class="timer-fill"></div>
+      </div>
+
+      <figure class="hw-figure">
+        <div id="photo-frame" class="photo-frame" title="Klicken zum Vergrößern">
+          <img id="hw-img" src="" alt="Prozessor-Foto zur aktuellen Frage" decoding="async" />
+          <button type="button" id="btn-zoom-photo" class="photo-zoom-btn">🔍 Foto vergrößern</button>
+        </div>
+        <figcaption class="photo-credit">
+          <span id="photo-attribution"></span>
+          <span id="photo-status-note">Klick aufs Bild öffnet Vollansicht</span>
+        </figcaption>
+      </figure>
+
+      <div class="q-meta-tags">
+        <span id="q-cat-pill" class="meta-tag">Ära</span>
+        <span id="q-era-pill" class="meta-tag era">Jahr</span>
+      </div>
+
+      <h2 id="q-text" class="q-text"></h2>
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div class="helpers-row">
+        <button type="button" id="joker-50" class="helper-btn">🎯 50:50 Tipp</button>
+        <button type="button" id="joker-skip" class="helper-btn">⏭ Auflösen &amp; weiter</button>
+        <button type="button" id="btn-back-menu" class="helper-btn" style="margin-left:auto;">← Epochenauswahl</button>
+      </div>
+
+      <div id="fact-sheet" class="steckbrief hidden" aria-live="polite">
+        <div id="sb-verdict" class="sb-verdict ok"></div>
+        <div class="sb-heading-row">
+          <h3 id="sb-title" class="sb-title"></h3>
+          <span id="sb-nick" class="sb-nick"></span>
+        </div>
+        <dl id="sb-specs" class="spec-grid"></dl>
+        <p id="sb-trivia" class="sb-trivia"></p>
+        <div class="sb-actions">
+          <span id="sb-commons-wrap"></span>
+          <button type="button" id="btn-next-q" class="cpu-primary-btn">Nächste CPU ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-result" class="surface-panel result-panel hidden">
+      <div class="result-head">
+        <div class="result-summary-pill">🔬 CPU-Historie 2000–Heute · Bild-Auswertung</div>
+        <h2 id="res-score-line" class="result-score-line"></h2>
+        <p id="res-sub" class="result-sub"></p>
+        <div class="result-cta-row">
+          <button type="button" id="btn-replay" class="cpu-primary-btn">🔄 Noch einmal spielen</button>
+          <button type="button" id="btn-change-cat" class="secondary-btn">🔬 Andere Epoche</button>
+          <a href="../../index.html" class="secondary-btn" style="text-decoration:none;">🏠 Dashboard</a>
+        </div>
+      </div>
+
+      <h3 class="gallery-heading">📖 Alle Prozessoren dieser Runde im Architektur-Überblick</h3>
+      <div id="gallery-list" class="gallery-list"></div>
+    </section>
+  </main>
+
+  <div id="lightbox-modal" class="lightbox-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="lightbox-inner">
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Großansicht" />
+      <div class="lightbox-bar">
+        <span id="lightbox-caption"></span>
+        <button type="button" id="btn-lightbox-close" class="secondary-btn">✕ Schließen (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    (function () {
+      const COUNTDOWN_KEY = 'arcade_cpus_countdown';
+      const COUNTDOWN_SEC = 35;
+
+      const CATEGORIES = [
+        {
+          id: 'alle',
+          era: '2000–Heute · Alle 16 CPUs',
+          name: 'Große Reise durch 25 Jahre Prozessor-Geschichte',
+          desc: 'Vom offenen Keramik-Die des Athlon Thunderbird über Pentium 4, Core 2 Quad Q6600 und Sandy Bridge bis Ryzen, Threadripper, Apple M1 und 3D V-Cache.',
+          cls: 'main-tour'
+        },
+        {
+          id: 'ghz_64bit',
+          era: '2000–2007 · 8 CPUs',
+          name: 'Gigahertz-Rennen, 64-Bit & erste Multicore-Ära',
+          desc: 'Athlon Thunderbird, Pentium 4, Athlon 64, Pentium M, Athlon 64 X2, Core 2 Duo E6600, Core 2 Quad Q6600 und der PlayStation-3-Cell-Prozessor.',
+          cls: ''
+        },
+        {
+          id: 'modern_chiplets',
+          era: '2008–Heute · 8 CPUs',
+          name: 'Core-i-Ära, ARM-SoCs, Chiplets & 3D V-Cache',
+          desc: 'Core i7-920 (Nehalem), i7-2600K (Sandy Bridge), AMD FX Bulldozer, Raspberry Pi ARM, Ryzen 7 1800X, Threadripper, Apple M1 und Ryzen 7 5800X3D.',
+          cls: ''
+        }
+      ];
+
+      const QUESTIONS = [
+        {
+          id: 1,
+          cat: 'ghz_64bit',
+          eraLabel: 'Jahr 2000 · Sockel A (462)',
+          img: './img/cpu-01.jpg',
+          q: 'Welcher AMD-Prozessor im Keramik-Gehäuse (Sockel A) integrierte im Juni 2000 erstmals 256 KB Full-Speed-On-Die-L2-Cache, besaß keinen Heatspreader und erlaubte das berühmte „Bleistift-Overclocking“ über die L1-Brücken?',
+          a: ['AMD Athlon „Thunderbird“ (K7)', 'AMD K6-2 (Super Socket 7)', 'Intel Pentium III „Coppermine“', 'VIA Cyrix III'],
+          wasDasIst: {
+            title: 'AMD Athlon „Thunderbird“ (K7)',
+            nick: '„T-Bird“ · Der Bleistift-Trick-Klassiker',
+            year: 'Juni 2000 (700 MHz – 1,4 GHz)',
+            node: '180 nm (Austin / Fab 30 Dresden mit Kupfer-Interconnects)',
+            socket: 'Sockel A (PGA 462)',
+            cores: '1 Kern · 1 Thread (3-fach Superskalar)',
+            trivia: 'Beim Athlon Thunderbird lag das empfindliche Silizium-Die noch völlig offen auf dem Keramikträger (vier Moosgummi-Pads schützten vor verkanteten Kühlern). Legendär wurde er, weil man die lasergeschnittenen L1-Brücken auf der Oberseite einfach mit einem Graphit-Bleistift nachzeichnen konnte, um den Multiplikator freizuschalten!'
+          },
+          credit: {
+            artist: 'Krdan',
+            license: 'CC BY 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by/3.0/',
+            commons: 'File:AMD Athlon 1.1Ghz Thunderbird.jpg'
+          }
+        },
+        {
+          id: 2,
+          cat: 'ghz_64bit',
+          eraLabel: '2000–2004 · NetBurst-Ära',
+          img: './img/cpu-02.jpg',
+          q: 'Mit welcher Prozessorfamilie setzte Intel ab 2000 auf die extrem langstufige „NetBurst“-Pipeline (20 bis 31 Stufen), um Taktraten bis fast 4 GHz zu erreichen, und führte den vernickelten Kupfer-Heatspreader (IHS) im Mainstream ein?',
+          a: ['Intel Pentium 4 (Willamette / Northwood / Prescott)', 'Intel Pentium Pro', 'Intel Itanium (IA-64)', 'AMD Sempron'],
+          wasDasIst: {
+            title: 'Intel Pentium 4 („Northwood“ / NetBurst)',
+            nick: 'Das Gigahertz-Wettrennen',
+            year: '2000–2006 (hier 2,80 GHz Northwood, Sockel 478)',
+            node: '180 nm → 130 nm (Northwood) → 90 nm (Prescott)',
+            socket: 'Sockel 423 / Sockel 478 / LGA 775',
+            cores: '1 Kern (ab 3,06 GHz mit Hyper-Threading = 2 Threads)',
+            trivia: 'Intels NetBurst-Architektur war ursprünglich für bis zu 10 GHz entworfen. Während der 130-nm-„Northwood“ (im Bild) sehr beliebt und kühl blieb, stieß der nachfolgende 90-nm-„Prescott“ mit 31-stufiger Pipeline an die physikalische Abwärmemauer („Power Wall“) und leitete die Wende hin zu Multicore-Prozessoren ein.'
+          },
+          credit: {
+            artist: 'Raimond Spekking',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:Intel Pentium 4 2.80A-4014.jpg'
+          }
+        },
+        {
+          id: 3,
+          cat: 'ghz_64bit',
+          eraLabel: 'September 2003 · K8-Revolution',
+          img: './img/cpu-03.jpg',
+          q: 'Welcher Meilenstein-Prozessor von AMD brachte im September 2003 erstmals die abwärtskompatible 64-Bit-Erweiterung (AMD64 / x86-64) UND einen direkt im Prozessor integrierten Speichercontroller auf den Desktop?',
+          a: ['AMD Athlon 64 („ClawHammer“ / K8)', 'AMD Phenom X4', 'Intel Core Duo „Yonah“', 'Transmeta Crusoe'],
+          wasDasIst: {
+            title: 'AMD Athlon 64 3200+ („ClawHammer“)',
+            nick: 'Begründer von x86-64 (AMD64)',
+            year: 'September 2003',
+            node: '130 nm SOI (Silicon on Insulator)',
+            socket: 'Sockel 754 / Sockel 939',
+            cores: '1 Kern · Integrierter DDR-Speichercontroller & HyperTransport',
+            trivia: 'Während Intel mit dem inkompatiblen Itanium (IA-64) scheiterte, erweiterte AMD den klassischen x86-Befehlssatz elegant auf 64 Bit (AMD64) – sodass Intel ihn später als „Intel 64“ (EM64T) lizenzieren musste. Zudem wanderte der RAM-Controller aus der langsamen Northbridge direkt in die CPU.'
+          },
+          credit: {
+            artist: 'Thomas Nguyen',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:AMD Athlon 64 3200+ ADA3200AEP5AP.jpg'
+          }
+        },
+        {
+          id: 4,
+          cat: 'ghz_64bit',
+          eraLabel: 'März 2003 · Centrino-Plattform',
+          img: './img/cpu-04.jpg',
+          q: 'Welcher von Intels Forschungszentrum in Haifa (Israel) entwickelte Notebook-Prozessor kehrte 2003 zur effizienten P6/Pentium-III-Basis zurück und wurde zum direkten Urahn der späteren Core-Architektur?',
+          a: ['Intel Pentium M („Banias“ / „Dothan“)', 'Intel Atom N270', 'Intel Celeron „Mendocino“', 'VIA C7-M'],
+          wasDasIst: {
+            title: 'Intel Pentium M („Banias“ / „Dothan“)',
+            nick: 'Der heimliche Retter von Intel',
+            year: '2003–2005 (Herzstück der „Intel Centrino“-Notebooks)',
+            node: '130 nm (Banias) / 90 nm (Dothan)',
+            socket: 'Sockel 479',
+            cores: '1 Kern · Hohe Pro-Takt-Leistung (IPC) bei nur 21–27 W TDP',
+            trivia: 'Ein Pentium M mit 1,7 GHz schlug in vielen Spielen und Anwendungen einen 2,8 GHz schnellen Pentium 4 bei einem Bruchteil des Stromverbrauchs. Enthusiasten bauten ihn per Adapter (ASUS CT-479) sogar in Desktop-Mainboards ein, bevor Intel die Architektur zu Core Duo und Core 2 Duo weiterentwickelte.'
+          },
+          credit: {
+            artist: 'Christiaan Colen',
+            license: 'CC BY-SA 2.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.0/',
+            commons: 'File:Intel Pentium M processor.jpg'
+          }
+        },
+        {
+          id: 5,
+          cat: 'ghz_64bit',
+          eraLabel: 'Mai 2005 · Dual-Core-Pionier',
+          img: './img/cpu-05.jpg',
+          q: 'Welcher Desktop-Prozessor von AMD vereinte 2005 zwei vollwertige K8-Rechenkerne samt System Request Queue und Crossbar-Switch nativ auf einem gemeinsamen Silizium-Die?',
+          a: ['AMD Athlon 64 X2', 'AMD Duron „Spitfire“', 'Intel Pentium II OverDrive', 'IBM PowerPC G5'],
+          wasDasIst: {
+            title: 'AMD Athlon 64 X2',
+            nick: 'Nativer Dual-Core für Sockel 939 & AM2',
+            year: 'Mai 2005 (Manchester / Toledo / Windsor)',
+            node: '90 nm / 65 nm SOI',
+            socket: 'Sockel 939 / Sockel AM2',
+            cores: '2 Kerne · 2 Threads',
+            trivia: 'Während Intels erster Dual-Core (Pentium D „Smithfield“) noch zwei getrennte Pentium-4-Dies über den langsamen Front-Side-Bus koppelte, kommunizierten die beiden Kerne des Athlon 64 X2 direkt auf dem Chip mit minimaler Latenz.'
+          },
+          credit: {
+            artist: 'Trio3D',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:AMD Athlon 64 X2 3800+ (Windsor AM2).png'
+          }
+        },
+        {
+          id: 6,
+          cat: 'ghz_64bit',
+          eraLabel: 'Juli 2006 · Conroe-Durchbruch',
+          img: './img/cpu-06.jpg',
+          q: 'Mit welchem Dual-Core-Prozessor (Codename „Conroe“, hier das beliebte Modell E6600 mit 4 MB L2-Cache) gelang Intel im Sommer 2006 ein gewaltiger Leistungssprung von +40 % bei gleichzeitig 40 % weniger Energiebedarf?',
+          a: ['Intel Core 2 Duo (E6600 „Conroe“)', 'Intel Pentium D 820', 'Intel Core i3-530', 'AMD Athlon XP 3200+'],
+          wasDasIst: {
+            title: 'Intel Core 2 Duo E6600 („Conroe“)',
+            nick: 'Intels großes Architektur-Comeback',
+            year: 'Juli 2006',
+            node: '65 nm',
+            socket: 'LGA 775',
+            cores: '2 Kerne · 2,40 GHz · 4 MB geteilter Smart-L2-Cache (65 W TDP)',
+            trivia: 'Der Core 2 Duo E6600 beendete die NetBurst-Ära endgültig: Mit 4-fach superskalarer Ausführung (Wide Dynamic Execution) und Macro-Fusion ließ er sich auf vielen LGA-775-Boards mühelos von 2,4 auf über 3,2 GHz übertakten.'
+          },
+          credit: {
+            artist: 'Lance Fisher',
+            license: 'CC BY-SA 2.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.0/',
+            commons: 'File:Intel Core 2 Duo 6600 in Package.jpg'
+          }
+        },
+        {
+          id: 7,
+          cat: 'ghz_64bit',
+          eraLabel: 'Januar 2007 · Quad-Core-Legende',
+          img: './img/cpu-07.jpg',
+          q: 'Welcher legendäre erste Mainstream-Quad-Core von Intel (2,40 GHz, 8 MB L2-Cache, berühmt im „G0-Stepping“ SLACR) hielt sich dank Übertaktung auf 3,2–3,6 GHz oft über 7 Jahre lang in Gaming-PCs?',
+          a: ['Intel Core 2 Quad Q6600 („Kentsfield“)', 'Intel Core 2 Extreme QX9770', 'AMD Phenom II X4 955', 'Intel Xeon E5450'],
+          wasDasIst: {
+            title: 'Intel Core 2 Quad Q6600 („Kentsfield“)',
+            nick: 'Der unsterbliche „G0-Stepping“-Vierkerner',
+            year: 'Januar 2007',
+            node: '65 nm (Multi-Chip-Modul aus zwei Conroe-Dual-Core-Dies)',
+            socket: 'LGA 775',
+            cores: '4 Kerne · 4 Threads · 2,40 GHz · 2× 4 MB L2-Cache',
+            trivia: 'Unter dem Heatspreader des Q6600 saßen zwei eng benachbarte Dual-Core-Dies. Sobald im Sommer 2007 das kühlere 95-Watt-„G0-Stepping“ (S-Spec SLACR) erschien und der Preis auf rund 200 € fiel, wurde der Q6600 zum wohl langlebigsten Preis-Leistungs-Prozessor der 2000er Jahre.'
+          },
+          credit: {
+            artist: 'Trio3D',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:Intel Core 2 Quad Q6600.png'
+          }
+        },
+        {
+          id: 8,
+          cat: 'ghz_64bit',
+          eraLabel: 'November 2006 · STI-Allianz (PS3)',
+          img: './img/cpu-08.jpg',
+          q: 'Welcher von Sony, Toshiba und IBM gemeinsam entwickelte heterogene Prozessor kombinierte einen PowerPC-Hauptkern (PPE) mit acht pfeilschnellen Vektor-Co-Prozessoren (SPEs) für die PlayStation 3 und Supercomputer?',
+          a: ['Cell Broadband Engine (Cell BE)', 'IBM PowerPC 970 (Apple G5)', 'Sun UltraSPARC T1', 'MIPS R10000'],
+          wasDasIst: {
+            title: 'STI Cell Broadband Engine (Cell BE)',
+            nick: 'Das heterogene Herz der PlayStation 3',
+            year: '2006',
+            node: '90 nm → 65 nm → 45 nm SOI',
+            socket: 'BGA auf dem PlayStation-3-Mainboard / Blade-Server',
+            cores: '1× PPE (Power Processing Element) + 8× SPE (Synergistic Processing Elements) @ 3,2 GHz',
+            trivia: 'Für Spieleentwickler war die Cell-CPU anfangs ein Albtraum zu programmieren, bot aber bei sauberer Nutzung der lokalen 256-KB-Speicher (Local Stores) der SPEs und des 200 GB/s schnellen Element Interconnect Bus (EIB) eine für 2006 atemberaubende Gleitkommaleistung (u. a. für Folding@home und den ersten PetaFLOPS-Supercomputer Roadrunner).'
+          },
+          credit: {
+            artist: 'Greenpro',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:CELL BE processor PS3 board.jpg'
+          }
+        },
+        {
+          id: 9,
+          cat: 'modern_chiplets',
+          eraLabel: 'November 2008 · Beginn der Core-i-Serie',
+          img: './img/cpu-09.jpg',
+          q: 'Welcher Prozessor (Codename „Bloomfield“ / Nehalem, Sockel LGA 1366) begründete Ende 2008 die „Core i7“-Marke, verabschiedete den Front-Side-Bus zugunsten von QPI und brachte einen integrierten Triple-Channel-DDR3-Controller mit?',
+          a: ['Intel Core i7-920 („Nehalem / Bloomfield“)', 'Intel Core i5-750 („Lynnfield“)', 'Intel Core i7-4770K („Haswell“)', 'AMD Phenom X4 9850'],
+          wasDasIst: {
+            title: 'Intel Core i7-920 („Bloomfield“ / Nehalem)',
+            nick: 'Der erste Core i7 der Geschichte',
+            year: 'November 2008',
+            node: '45 nm High-k Metal Gate',
+            socket: 'LGA 1366',
+            cores: '4 Kerne · 8 Threads (SMT / Hyper-Threading) · 2,66 GHz',
+            trivia: 'Mit Nehalem vereinte Intel vier Kerne monolithisch auf einem Die, holte Hyper-Threading in stark verbesserter Form zurück und integrierte erstmals auch bei Intel den Speichercontroller direkt in die CPU (mit gleich drei DDR3-Kanälen auf X58-Mainboards).'
+          },
+          credit: {
+            artist: 'Alan Lorenzo',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:Intel Core I7-920 Boxed - 14.JPG'
+          }
+        },
+        {
+          id: 10,
+          cat: 'modern_chiplets',
+          eraLabel: 'Januar 2011 · Die 5-GHz-Übertakter-Ikone',
+          img: './img/cpu-10.jpg',
+          q: 'Welche 32-nm-Prozessorgeneration von Intel (hier der legendäre Core i7-2600K neben dem i5-2500K) führte 2011 den Ringbus, AVX-Befehle, verlöteten Heatspreader und ein „K“-Suffix für offene Multiplikatoren bis ~5 GHz mit Luftkühlung ein?',
+          a: ['Intel Core i7-2600K („Sandy Bridge“)', 'Intel Core i7-3770K („Ivy Bridge“)', 'Intel Core i7-6700K („Skylake“)', 'Intel Core i7-7700K („Kaby Lake“)'],
+          wasDasIst: {
+            title: 'Intel Core i7-2600K („Sandy Bridge“)',
+            nick: 'Meisterwerk der 32-nm-Ära (mit verlötetem IHS!)',
+            year: 'Januar 2011',
+            node: '32 nm',
+            socket: 'LGA 1155',
+            cores: '4 Kerne · 8 Threads · 3,40 GHz (Boost 3,80 GHz, OC oft 4,8–5,0 GHz)',
+            trivia: 'Sandy Bridge führte einen internen Micro-Op-Cache, den schnellen Ringbus zwischen Kernen, L3-Cache und iGPU sowie einen mit Indium verlöteten Heatspreader ein (ab Ivy Bridge nutzte Intel jahrelang nur noch Wärmeleitpaste). Deshalb blieben i5-2500K und i7-2600K bei 4,8 GHz kühl und hielten fast ein Jahrzehnt durch.'
+          },
+          credit: {
+            artist: 'Laineema',
+            license: 'CC BY 2.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by/2.0/',
+            commons: 'File:Intel Core i7 2600K CPU.jpg'
+          }
+        },
+        {
+          id: 11,
+          cat: 'modern_chiplets',
+          eraLabel: '2011/2012 · Sockel AM3+ & CMT-Module',
+          img: './img/cpu-11.jpg',
+          q: 'Mit welcher Prozessorfamilie für Sockel AM3+ experimentierte AMD ab 2011 mit „Clustered Multithreading“-Modulen (je zwei Integer-Kerne teilten sich eine Gleitkommaeinheit/FPU) und stellte Taktraten-Weltrekorde von über 8,4 GHz unter Flüssigstickstoff auf?',
+          a: ['AMD FX-Serie („Bulldozer“ / „Piledriver“)', 'AMD Phenom II X6 („Thuban“)', 'AMD A10-7850K („Kaveri“)', 'AMD Opteron „Magny-Cours“'],
+          wasDasIst: {
+            title: 'AMD FX-Serie („Bulldozer“ / „Piledriver“ · AM3+)',
+            nick: 'Taktraten-Rekordhalter mit Modul-Architektur',
+            year: 'Oktober 2011 (Bulldozer) / Oktober 2012 (Vishera / Piledriver)',
+            node: '32 nm SOI (GlobalFoundries Dresden)',
+            socket: 'Sockel AM3+ (PGA 942)',
+            cores: 'Bis zu 4 Module / 8 Integer-Kerne (FX-8150 / FX-8350)',
+            trivia: 'Obwohl die geteilten Decoder und Gleitkommaeinheiten in damaligen Single-Thread-Spielen zu einer niedrigen Pro-Takt-Leistung (IPC) führten, erreichte der Bulldozer-Chip extreme Taktraten (8.429 MHz Guinness-Weltrekord 2011) und legte den Grundstein für AMDs Entscheidung, für „Zen“ ein komplett neues Design vom weißen Blatt Papier zu starten.'
+          },
+          credit: {
+            artist: 'Raimond Spekking',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:MSI 760GM-E51 (FX) - AMD FX-4100 (FD4100WMW4KGU) in socket AM3b-5364.jpg'
+          }
+        },
+        {
+          id: 12,
+          cat: 'modern_chiplets',
+          eraLabel: 'Seit 2012 · ARM-Einplatinen-Revolution',
+          img: './img/cpu-12.jpg',
+          q: 'Welcher kreditkartengroße Einplatinencomputer mit Broadcom-ARM-SoC startete 2012 für 35 US-Dollar, um Schülern das Programmieren beizubringen, und wurde mit über 60 Millionen verkauften Boards zum Kult-Rechner für Maker, Server und Heimautomation?',
+          a: ['Raspberry Pi (Broadcom BCM-ARM-SoC)', 'Arduino Uno (ATmega328P)', 'Intel Galileo (Quark SoC)', 'BBC Micro:bit'],
+          wasDasIst: {
+            title: 'Raspberry Pi (Broadcom ARM SoC)',
+            nick: 'Der 35-Dollar-Rechner, der ARM auf den Schreibtisch brachte',
+            year: '2012 (Model B mit BCM2835) bis heute (hier Pi 4 Model B mit BCM2711 Cortex-A72)',
+            node: '40 nm (Pi 1) → 28 nm (Pi 4) → 16 nm (Pi 5)',
+            socket: 'BGA System-on-a-Chip (SoC)',
+            cores: '1× ARM11 @ 700 MHz (Pi 1) bis 4× Cortex-A76 @ 2,4 GHz (Pi 5)',
+            trivia: 'Eben Upton und die Raspberry Pi Foundation rechneten 2012 ursprünglich mit insgesamt 10.000 verkauften Platinen – allein am ersten Tag brachen die Webshops der Distributoren unter Hunderttausenden Bestellungen zusammen.'
+          },
+          credit: {
+            artist: 'Laserlicht',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:Raspberry Pi 4 Model B - Side.jpg'
+          }
+        },
+        {
+          id: 13,
+          cat: 'modern_chiplets',
+          eraLabel: 'März 2017 · Das +52-%-IPC-Comeback',
+          img: './img/cpu-13.jpg',
+          q: 'Mit welchem Achtkern-Prozessor (16 Threads, Sockel AM4) feierte AMD im März 2017 unter Chefarchitekt Jim Keller einen historischen IPC-Sprung von über +52 % gegenüber „Excavator“ und beendete die jahrelange Vierkern-Stagnation im Mainstream?',
+          a: ['AMD Ryzen 7 1800X („Zen 1“ / Summit Ridge)', 'AMD Ryzen 9 3950X („Zen 2“)', 'Intel Core i7-8700K („Coffee Lake“)', 'AMD Athlon 200GE'],
+          wasDasIst: {
+            title: 'AMD Ryzen 7 1800X („Summit Ridge“ / Zen 1)',
+            nick: 'Der Startschuss der langlebigen AM4-Plattform',
+            year: 'März 2017',
+            node: '14 nm LPP (GlobalFoundries)',
+            socket: 'Sockel AM4 (PGA 1331)',
+            cores: '8 Kerne · 16 Threads (2 CCX à 4 Kerne verbunden über Infinity Fabric)',
+            trivia: 'Bis Februar 2017 kostete ein Achtkern-Prozessor von Intel (Core i7-6900K) über 1.000 Euro. Der Ryzen 7 1800X lieferte vergleichbare Multithreading-Leistung zum halben Preis auf der Mainstream-Plattform AM4 – auf der Nutzer später sogar noch bis zum Ryzen 7 5800X3D aufrüsten konnten!'
+          },
+          credit: {
+            artist: 'Brian Wong',
+            license: 'CC BY-SA 2.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.0/',
+            commons: 'File:AMD Ryzen 7 1800X.jpg'
+          }
+        },
+        {
+          id: 14,
+          cat: 'modern_chiplets',
+          eraLabel: '2017–Heute · HEDT & Workstation-Gigant',
+          img: './img/cpu-14.jpg',
+          q: 'Welche riesige Workstation-Prozessorfamilie von AMD nutzt ein handtellergroßes LGA-Package (über 4.000 bis 4.844 Kontakte!) und kombiniert bis zu 64 oder 96 Zen-Kerne als Chiplets rund um einen zentralen I/O-Die?',
+          a: ['AMD Ryzen Threadripper (TR4 / sTRX4 / sTR5)', 'Intel Xeon Phi „Knights Landing“', 'AMD Opteron 6386 SE', 'Intel Core i9-7980XE'],
+          wasDasIst: {
+            title: 'AMD Ryzen Threadripper (hier 7970X Unterseite)',
+            nick: 'Das Multi-Chiplet-Kraftwerk im Server-Format',
+            year: 'seit August 2017 (1950X mit 16 Kernen bis 7995WX mit 96 Kernen)',
+            node: '14 nm → 7 nm → 5 nm TSMC (Chiplets / CCDs)',
+            socket: 'TR4 / sTRX4 / sTR5 (LGA 4094 / LGA 4844)',
+            cores: '16 bis 96 Kerne (32 bis 192 Threads) · Quad- bis Octa-Channel-RAM',
+            trivia: 'Threadripper entstand ursprünglich als Feierabend-Projekt („Skunkworks“) einiger AMD-Ingenieure auf Basis des EPYC-Server-Gehäuses. Durch den modularen Aufbau aus kompakten 8-Kern-Chiplets (CCDs) und einem zentralen I/O-Die revolutionierte AMD die Ausbeute (Yield-Rate) bei Hochleistungsprozessoren.'
+          },
+          credit: {
+            artist: 'PantheraLeo1359531',
+            license: 'CC BY 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+            commons: 'File:Unterseite des AMD Ryzen Threadripper 7970X 20240407 074.jpg'
+          }
+        },
+        {
+          id: 15,
+          cat: 'modern_chiplets',
+          eraLabel: 'November 2020 · Apple Silicon Wende',
+          img: './img/cpu-15.jpg',
+          q: 'Mit welchem 5-nm-ARM64-System-on-a-Chip (inklusive direkt auf dem Package verlötetem Unified-Memory-LPDDR4X-RAM) verabschiedete sich Apple im November 2020 bei MacBook Air, Pro und Mac mini von Intel-x86-Prozessoren?',
+          a: ['Apple M1 (Apple Silicon)', 'Qualcomm Snapdragon 8cx', 'Apple A4', 'NVIDIA Tegra X1'],
+          wasDasIst: {
+            title: 'Apple M1 (Apple Silicon SoC)',
+            nick: 'Unified Memory & lüfterlose 5-nm-Effizienz',
+            year: 'November 2020',
+            node: '5 nm (TSMC N5 · 16 Milliarden Transistoren)',
+            socket: 'BGA mit integriertem Unified Memory (zwei DRAM-Chips direkt neben dem Die)',
+            cores: '8 CPU-Kerne (4× „Firestorm“ Performance + 4× „Icestorm“ Efficiency) + 8-Kern-GPU + 16-Kern-NPU',
+            trivia: 'Auf dem Foto erkennt man links das glänzende M1-Silizium-Die und rechts direkt daneben auf demselben Träger die beiden LPDDR4X-Speicherpakete (Unified Memory Architecture). Durch seinen enorm breiten 8-fach-Befehlsdecoder im Firestorm-Kern schlug das lüfterlose MacBook Air M1 viele laute High-End-Laptops.'
+          },
+          credit: {
+            artist: 'Sonic8400',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:Mac Mini M1 chip.jpg'
+          }
+        },
+        {
+          id: 16,
+          cat: 'modern_chiplets',
+          eraLabel: 'April 2022 · Gestapelter 3D-Cache',
+          img: './img/cpu-16.jpg',
+          q: 'Welcher Gaming-Prozessor für Sockel AM4 nutzte im Frühjahr 2022 als erster Desktop-Chip ein vertikal per Kupfer-Hybrid-Bonding auf das CCD aufgeschweißtes 64-MB-SRAM-Siliziumstück („3D V-Cache“ für insgesamt 96 MB L3-Cache)?',
+          a: ['AMD Ryzen 7 5800X3D', 'Intel Core i9-12900KS', 'AMD Ryzen 9 5950X', 'Intel Core i7-5775C (eDRAM)'],
+          wasDasIst: {
+            title: 'AMD Ryzen 7 5800X3D (mit 3D V-Cache)',
+            nick: 'Das krönende Finale für Sockel AM4',
+            year: 'April 2022',
+            node: '7 nm TSMC + gestapelter 7-nm-SRAM-Die (TSMC SoIC Hybrid Bonding)',
+            socket: 'Sockel AM4',
+            cores: '8 Kerne · 16 Threads · 96 MB L3-Cache (32 MB Basis + 64 MB 3D V-Cache)',
+            trivia: 'Durch das direkte Kupfer-zu-Kupfer-Bonding ohne Lötkugeln wächst der L3-Cache mit über 2 TB/s Bandbreite in die dritte Dimension. Da Spiele extrem empfindlich auf Speicherlatenzen reagieren, bescherte der 5800X3D Besitzern fünf Jahre alter B350/X370-Mainboards aus dem Jahr 2017 plötzlich wieder Spitzen-Gaming-Leistung.'
+          },
+          credit: {
+            artist: 'Phiarc',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:AMD Ryzen 7 5800X3D.jpg'
+          }
+        }
+      ];
+
+      let selectedLen = '8';
+      let activeCat = 'alle';
+      let deck = [];
+      let qIdx = 0;
+      let correctCount = 0;
+      let resultsLog = [];
+      let answered = false;
+      let f50Available = true;
+      let timerId = null;
+      let timeLeft = COUNTDOWN_SEC;
+      let countdownExpired = false;
+
+      function isCountdownEnabled() {
+        try { return localStorage.getItem(COUNTDOWN_KEY) === '1'; } catch (e) { return false; }
+      }
+      function setCountdownEnabled(enabled) {
+        try { localStorage.setItem(COUNTDOWN_KEY, enabled ? '1' : '0'); } catch (e) {}
+      }
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+      function commonsUrl(fileTitle) {
+        const clean = String(fileTitle || '').replace(/^File:/i, '').trim().replace(/ /g, '_');
+        return 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(clean);
+      }
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+      function getPool(catId) {
+        return catId === 'alle' ? QUESTIONS.slice() : QUESTIONS.filter(q => q.cat === catId);
+      }
+      function computeRoundCount(poolLen) {
+        if (selectedLen === 'all') return poolLen;
+        return Math.min(parseInt(selectedLen, 10) || 8, poolLen);
+      }
+
+      function syncMenuControls() {
+        const timerOn = isCountdownEnabled();
+        document.getElementById('opt-timer-off').classList.toggle('active-relaxed', !timerOn);
+        document.getElementById('opt-timer-on').classList.toggle('active-timer', timerOn);
+        document.querySelectorAll('#length-bar .opt-pill').forEach(btn => {
+          btn.classList.toggle('active-len', btn.dataset.len === selectedLen);
+        });
+      }
+
+      function renderMenu() {
+        syncMenuControls();
+        const grid = document.getElementById('cat-grid');
+        grid.innerHTML = CATEGORIES.map(cat => {
+          const pool = getPool(cat.id);
+          const roundCount = computeRoundCount(pool.length);
+          return `
+            <button type="button" class="cat-card ${cat.cls}" data-cat="${cat.id}">
+              <div class="cat-top"><span class="cat-era">${escapeHtml(cat.era)}</span></div>
+              <div class="cat-name">${escapeHtml(cat.name)}</div>
+              <div class="cat-desc">${escapeHtml(cat.desc)}</div>
+              <div class="cat-foot">
+                <span>Runde: ${roundCount} von ${pool.length} CPUs</span>
+                <span class="cat-go">Starten →</span>
+              </div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('countdown-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        setCountdownEnabled(btn.dataset.timer === '1');
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        syncMenuControls();
+      });
+
+      document.getElementById('length-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        selectedLen = btn.dataset.len;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        renderMenu();
+      });
+
+      document.getElementById('cat-grid').addEventListener('click', (e) => {
+        const card = e.target.closest('.cat-card');
+        if (card) startQuiz(card.dataset.cat);
+      });
+
+      function stopTimer() {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+      }
+
+      function updatePlayTimerUI() {
+        const btn = document.getElementById('btn-play-timer');
+        const track = document.getElementById('timer-track');
+        const fill = document.getElementById('timer-fill');
+        if (!isCountdownEnabled()) {
+          track.classList.add('hidden');
+          btn.className = 'timer-toggle-btn';
+          btn.textContent = '☕ Kein Zeitlimit (Timer einschalten)';
+          return;
+        }
+        track.classList.remove('hidden');
+        if (countdownExpired || timeLeft <= 0) {
+          fill.style.width = '0%';
+          btn.textContent = '⏱ 35s um — in Ruhe weiter antworten';
+        } else {
+          fill.style.width = Math.max(0, Math.min(100, (timeLeft / COUNTDOWN_SEC) * 100)) + '%';
+          btn.textContent = `⏱ ${Math.ceil(timeLeft)}s (Timer ausschalten)`;
+        }
+      }
+
+      function startGentleCountdown() {
+        stopTimer();
+        if (!isCountdownEnabled() || answered) { updatePlayTimerUI(); return; }
+        let lastTs = performance.now();
+        updatePlayTimerUI();
+        timerId = setInterval(() => {
+          const now = performance.now();
+          timeLeft = Math.max(0, timeLeft - (now - lastTs) / 1000);
+          lastTs = now;
+          if (timeLeft <= 0) { timeLeft = 0; countdownExpired = true; stopTimer(); }
+          updatePlayTimerUI();
+        }, 120);
+      }
+
+      document.getElementById('btn-play-timer').addEventListener('click', () => {
+        const nextOn = !isCountdownEnabled();
+        setCountdownEnabled(nextOn);
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        if (nextOn) {
+          if (timeLeft <= 0) { timeLeft = COUNTDOWN_SEC; countdownExpired = false; }
+          startGentleCountdown();
+        } else {
+          stopTimer();
+          updatePlayTimerUI();
+        }
+      });
+
+      function startQuiz(catId) {
+        activeCat = catId || 'alle';
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const pool = getPool(activeCat);
+        deck = shuffle(pool).slice(0, computeRoundCount(pool.length));
+        qIdx = 0;
+        correctCount = 0;
+        resultsLog = [];
+        document.getElementById('screen-menu').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-play').classList.remove('hidden');
+        showQuestion();
+      }
+
+      function renderTulluAttribution(credit) {
+        const cUrl = commonsUrl(credit.commons);
+        const lUrl = credit.licenseUrl || 'https://creativecommons.org/licenses/by-sa/4.0/';
+        return `📷 Urheber: ${escapeHtml(credit.artist)} · Lizenz: <a href="${escapeHtml(lUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit.license)} ↗</a> · <a href="${escapeHtml(cUrl)}" target="_blank" rel="noopener noreferrer">Quelle (Wikimedia Commons) ↗</a> · (Web-Skalierung)`;
+      }
+
+      function showQuestion() {
+        stopTimer();
+        answered = false;
+        f50Available = true;
+        timeLeft = COUNTDOWN_SEC;
+        countdownExpired = false;
+
+        const item = deck[qIdx];
+        const catObj = CATEGORIES.find(c => c.id === item.cat);
+
+        document.getElementById('q-num').textContent = qIdx + 1;
+        document.getElementById('q-total').textContent = deck.length;
+        document.getElementById('q-correct-count').textContent = correctCount;
+        document.getElementById('q-cat-pill').textContent = catObj ? catObj.name : 'Prozessoren';
+        document.getElementById('q-era-pill').textContent = item.eraLabel;
+
+        const imgEl = document.getElementById('hw-img');
+        imgEl.alt = 'Prozessor-Foto zur aktuellen Frage';
+        imgEl.src = item.img;
+        document.getElementById('photo-attribution').innerHTML = renderTulluAttribution(item.credit);
+        document.getElementById('photo-status-note').textContent = 'Klick aufs Bild öffnet Vollansicht';
+
+        if (qIdx + 1 < deck.length) {
+          const pre = new Image();
+          pre.src = deck[qIdx + 1].img;
+        }
+
+        document.getElementById('q-text').textContent = item.q;
+        document.getElementById('fact-sheet').classList.add('hidden');
+        document.getElementById('joker-50').disabled = false;
+        document.getElementById('joker-skip').disabled = false;
+
+        const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+        item._rendered = opts;
+        const letters = ['A', 'B', 'C', 'D'];
+        document.getElementById('answers-grid').innerHTML = opts.map((o, i) => `
+          <button type="button" class="ans-btn" data-idx="${i}">
+            <span class="ans-key">${letters[i]}</span>
+            <span>${escapeHtml(o.txt)}</span>
+          </button>
+        `).join('');
+
+        updatePlayTimerUI();
+        if (isCountdownEnabled()) startGentleCountdown();
+      }
+
+      document.getElementById('answers-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.ans-btn');
+        if (!btn || answered || btn.classList.contains('eliminated')) return;
+        pickAnswer(parseInt(btn.dataset.idx, 10));
+      });
+
+      function pickAnswer(idx) {
+        if (answered) return;
+        answered = true;
+        stopTimer();
+
+        const item = deck[qIdx];
+        const chosen = item._rendered[idx];
+        const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+        buttons.forEach((b, i) => {
+          b.disabled = true;
+          if (item._rendered[i].isRight) b.classList.add('correct');
+        });
+
+        let status = 'miss';
+        if (chosen && chosen.isRight) {
+          correctCount++;
+          status = 'ok';
+          if (window.ArcadeAudio) ArcadeAudio.perkGood();
+        } else {
+          if (buttons[idx]) buttons[idx].classList.add('wrong');
+          if (window.ArcadeAudio) ArcadeAudio.perkBad();
+        }
+
+        resultsLog.push({ item, status });
+        document.getElementById('q-correct-count').textContent = correctCount;
+        document.getElementById('joker-50').disabled = true;
+        document.getElementById('joker-skip').disabled = true;
+        revealSteckbrief(item, status);
+      }
+
+      function revealSteckbrief(item, status) {
+        const info = item.wasDasIst;
+        const sheet = document.getElementById('fact-sheet');
+        sheet.classList.toggle('is-right', status === 'ok');
+
+        document.getElementById('hw-img').alt = info.title;
+        document.getElementById('photo-status-note').textContent = info.title;
+
+        const verdictEl = document.getElementById('sb-verdict');
+        verdictEl.className = 'sb-verdict ' + status;
+        verdictEl.textContent = status === 'ok'
+          ? '✓ Richtig erkannt — Technik-Steckbrief:'
+          : (status === 'skip' ? 'ℹ Aufgelöst — Technik-Steckbrief:' : '✗ Knapp daneben — Technik-Steckbrief:');
+
+        document.getElementById('sb-title').textContent = info.title;
+        document.getElementById('sb-nick').textContent = info.nick || '';
+
+        const specs = [
+          { k: 'Erscheinungsjahr', v: info.year },
+          { k: 'Fertigung (Node)', v: info.node },
+          { k: 'Sockel / Package', v: info.socket },
+          { k: 'Kerne & Architektur', v: info.cores }
+        ];
+        document.getElementById('sb-specs').innerHTML = specs.map(s => `
+          <div class="spec-item"><dt>${escapeHtml(s.k)}</dt><dd>${escapeHtml(s.v)}</dd></div>
+        `).join('');
+
+        document.getElementById('sb-trivia').textContent = info.trivia;
+        document.getElementById('sb-commons-wrap').innerHTML = `
+          <a class="sb-commons-link" href="${escapeHtml(commonsUrl(item.credit.commons))}" target="_blank" rel="noopener noreferrer">
+            Originaldatei: ${escapeHtml(item.credit.commons.replace(/^File:/, ''))} · ${escapeHtml(item.credit.artist)} ↗
+          </a>
+        `;
+
+        document.getElementById('btn-next-q').textContent =
+          qIdx + 1 >= deck.length ? 'Zur Runden-Übersicht ▶' : 'Nächste CPU ▶';
+
+        sheet.classList.remove('hidden');
+        sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function nextQuestion() {
+        if (!answered) return;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        qIdx++;
+        if (qIdx >= deck.length) finishQuiz();
+        else { showQuestion(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      }
+
+      document.getElementById('btn-next-q').addEventListener('click', nextQuestion);
+
+      document.getElementById('joker-50').addEventListener('click', () => {
+        if (!f50Available || answered) return;
+        f50Available = false;
+        document.getElementById('joker-50').disabled = true;
+        if (window.ArcadeAudio) ArcadeAudio.pop();
+        const item = deck[qIdx];
+        const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+        const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+        wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+      });
+
+      document.getElementById('joker-skip').addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const item = deck[qIdx];
+        document.querySelectorAll('#answers-grid .ans-btn').forEach((b, i) => {
+          b.disabled = true;
+          if (item._rendered[i].isRight) b.classList.add('correct');
+        });
+        document.getElementById('joker-50').disabled = true;
+        document.getElementById('joker-skip').disabled = true;
+        resultsLog.push({ item, status: 'skip' });
+        revealSteckbrief(item, 'skip');
+      });
+
+      function finishQuiz() {
+        stopTimer();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+
+        const catObj = CATEGORIES.find(c => c.id === activeCat);
+        document.getElementById('res-score-line').textContent =
+          `${correctCount} von ${deck.length} Prozessoren richtig erkannt`;
+        document.getElementById('res-sub').textContent =
+          `Epoche: ${catObj ? catObj.name : activeCat} — unten findest du alle gezeigten CPUs mit Architektur-Details und Lizenzlinks.`;
+
+        if (window.ArcadeAudio) ArcadeAudio.win();
+
+        document.getElementById('gallery-list').innerHTML = resultsLog.map((entry, idx) => {
+          const it = entry.item;
+          const info = it.wasDasIst;
+          const badgeTxt = entry.status === 'ok' ? '✓ Richtig erkannt' : (entry.status === 'skip' ? 'ℹ Aufgelöst' : '✗ Verwechselt');
+          return `
+            <article class="gallery-row">
+              <button type="button" class="gallery-thumb" data-gidx="${idx}" title="Foto vergrößern">
+                <img src="${escapeHtml(it.img)}" alt="${escapeHtml(info.title)}" loading="lazy" />
+              </button>
+              <div class="gallery-info">
+                <h3>${escapeHtml(info.title)}</h3>
+                <div class="gallery-meta">${escapeHtml(info.year)} · ${escapeHtml(info.node)} · ${escapeHtml(info.socket)} · ${escapeHtml(info.cores)}</div>
+                <p class="gallery-trivia">${escapeHtml(info.trivia)}</p>
+                <div class="gallery-status">
+                  <span class="outcome-badge ${entry.status}">${badgeTxt}</span>
+                  <span>${renderTulluAttribution(it.credit)}</span>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('gallery-list').addEventListener('click', (e) => {
+        const thumb = e.target.closest('.gallery-thumb');
+        if (!thumb) return;
+        const entry = resultsLog[parseInt(thumb.dataset.gidx, 10)];
+        if (entry) openLightbox(entry.item, true);
+      });
+
+      function backToMenu() {
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-menu').classList.remove('hidden');
+        renderMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('btn-back-menu').addEventListener('click', backToMenu);
+      document.getElementById('btn-change-cat').addEventListener('click', backToMenu);
+      document.getElementById('btn-replay').addEventListener('click', () => startQuiz(activeCat));
+
+      function openLightbox(item, allowTitleReveal) {
+        const modal = document.getElementById('lightbox-modal');
+        const img = document.getElementById('lightbox-img');
+        const cap = document.getElementById('lightbox-caption');
+        img.src = item.img;
+        const revealed = allowTitleReveal || answered;
+        img.alt = revealed ? item.wasDasIst.title : 'Vergrößerte Ansicht des Prozessors';
+        cap.textContent = revealed
+          ? `${item.wasDasIst.title} — Foto: ${item.credit.artist} (${item.credit.license})`
+          : `Foto: ${item.credit.artist} · ${item.credit.license} (Wikimedia Commons)`;
+        modal.classList.remove('hidden');
+      }
+
+      function closeLightbox() {
+        document.getElementById('lightbox-modal').classList.add('hidden');
+      }
+
+      document.getElementById('photo-frame').addEventListener('click', () => {
+        if (deck[qIdx]) openLightbox(deck[qIdx], false);
+      });
+      document.getElementById('btn-lightbox-close').addEventListener('click', closeLightbox);
+      document.getElementById('lightbox-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeLightbox();
+      });
+
+      window.addEventListener('keydown', (e) => {
+        const lb = document.getElementById('lightbox-modal');
+        if (!lb.classList.contains('hidden')) {
+          if (e.key === 'Escape') { e.preventDefault(); closeLightbox(); }
+          return;
+        }
+        if (document.getElementById('screen-play').classList.contains('hidden')) return;
+        if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+          const idx = parseInt(e.key, 10) - 1;
+          const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+          if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+        } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+          if (e.target.closest('a, #btn-back-menu, #btn-mute, #btn-zoom-photo, #btn-play-timer')) return;
+          e.preventDefault();
+          nextQuestion();
+        }
+      });
+
+      if (window.ArcadeAudio) ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+      renderMenu();
+    })();
+  </script>
+</body>
+</html>

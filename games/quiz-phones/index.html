@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Bild-Quiz über Handys & Smartphones der letzten 25 Jahre (2000–Heute): Vom unzerstörbaren Nokia 3310, Sony Ericsson T68i, N-Gage & Motorola RAZR V3 über das erste iPhone, Nokia N95, T-Mobile G1 & HTC HD2 bis Galaxy Note, Lumia 1020, OnePlus One, iPhone X & Galaxy Fold." />
+  <title>Handys &amp; Smartphones der letzten 25 Jahre · Bild-Quiz · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    :root {
+      --ph-bg: #070d16;
+      --ph-panel: rgba(12, 22, 36, 0.94);
+      --ph-inset: rgba(8, 15, 26, 0.88);
+      --ph-border: rgba(45, 212, 191, 0.24);
+      --ph-border-strong: rgba(94, 234, 212, 0.48);
+      --ph-accent: #14b8a6;
+      --ph-green: #4ade80;
+      --ph-text: #f8fafc;
+      --ph-muted: #94a3b8;
+    }
+
+    html, body {
+      background:
+        radial-gradient(ellipse at 18% 0%, rgba(20, 184, 166, 0.24) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 12%, rgba(56, 189, 248, 0.16) 0%, transparent 45%),
+        linear-gradient(180deg, #0a1626 0%, #070d16 60%, #04070d 100%);
+      color: var(--ph-text);
+      min-height: 100%;
+    }
+
+    .arcade-topbar {
+      background: rgba(6, 12, 22, 0.92);
+      border-bottom: 1px solid var(--ph-border);
+    }
+
+    .back-hub-btn {
+      background: rgba(15, 34, 46, 0.78);
+      border: 1px solid rgba(45, 212, 191, 0.36);
+      color: #f1f5f9;
+    }
+    .back-hub-btn:hover {
+      background: rgba(22, 50, 66, 0.92);
+      border-color: rgba(94, 234, 212, 0.65);
+    }
+
+    .icon-btn {
+      background: rgba(12, 22, 36, 0.85);
+      border-color: var(--ph-border);
+    }
+
+    .quiz-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px 16px 56px;
+    }
+
+    .surface-panel {
+      background: var(--ph-panel);
+      border: 1px solid var(--ph-border);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.48);
+    }
+
+    .hidden { display: none !important; }
+    .menu-panel { padding: 26px 24px 24px; }
+
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .ph-crest-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #0d9488, #0284c7);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(13, 148, 136, 0.35);
+    }
+
+    .hero-title {
+      margin: 0 0 6px;
+      font-size: clamp(22px, 3.2vw, 28px);
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      color: #f8fafc;
+    }
+
+    .hero-lead {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.55;
+      color: #cbd5e1;
+      max-width: 68ch;
+    }
+
+    .settings-band {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--ph-border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .setting-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+    }
+
+    .setting-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--ph-muted);
+      min-width: 118px;
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .opt-pill {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--ph-border);
+      background: rgba(12, 24, 38, 0.72);
+      color: #cbd5e1;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .opt-pill:hover {
+      background: rgba(20, 40, 58, 0.9);
+      border-color: var(--ph-border-strong);
+      color: #f8fafc;
+    }
+    .opt-pill.active-relaxed {
+      background: rgba(20, 184, 166, 0.25);
+      border-color: rgba(94, 234, 212, 0.7);
+      color: #ccfbf1;
+      font-weight: 700;
+    }
+    .opt-pill.active-timer {
+      background: rgba(217, 119, 6, 0.24);
+      border-color: rgba(245, 158, 11, 0.65);
+      color: #fef3c7;
+      font-weight: 700;
+    }
+    .opt-pill.active-len {
+      background: rgba(14, 165, 233, 0.24);
+      border-color: rgba(56, 189, 248, 0.68);
+      color: #e0f2fe;
+      font-weight: 700;
+    }
+
+    .cat-section-title {
+      margin: 22px 0 12px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ph-muted);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .cat-card {
+      text-align: left;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(16, 32, 48, 0.92), rgba(8, 16, 28, 0.96));
+      border: 1px solid var(--ph-border);
+      color: var(--ph-text);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--ph-border-strong);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.38);
+    }
+    .cat-card.main-tour {
+      border-color: rgba(45, 212, 191, 0.5);
+      background: linear-gradient(155deg, rgba(13, 148, 136, 0.26), rgba(12, 22, 36, 0.96));
+    }
+
+    .cat-era { font-size: 11.5px; font-weight: 700; color: #fcd34d; }
+    .cat-name { font-size: 16.5px; font-weight: 800; line-height: 1.3; }
+    .cat-desc { font-size: 13.5px; color: #94a3b8; line-height: 1.48; flex: 1; }
+    .cat-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid rgba(45, 212, 191, 0.15);
+      font-size: 12.5px;
+      color: #cbd5e1;
+    }
+    .cat-go { font-weight: 700; color: #5eead4; }
+
+    .stage-panel { padding: 20px 22px 24px; }
+
+    .stage-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--ph-border);
+      margin-bottom: 14px;
+    }
+
+    .progress-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+    .recognized-tag { color: #86efac; font-weight: 700; }
+
+    .timer-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(45, 212, 191, 0.42);
+      background: rgba(13, 148, 136, 0.18);
+      color: #99f6e4;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .timer-track {
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #14b8a6, #f59e0b, #ef4444);
+      transition: width 0.12s linear;
+    }
+
+    .hw-figure { margin: 0 0 14px; }
+
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      max-height: clamp(235px, 38vh, 360px);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #03070d;
+      border: 1px solid var(--ph-border);
+      cursor: zoom-in;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+      background: radial-gradient(circle at center, #0e2235 0%, #03070d 100%);
+      transition: transform 0.28s ease;
+    }
+    .photo-frame:hover img { transform: scale(1.02); }
+
+    .photo-zoom-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(6, 12, 22, 0.86);
+      backdrop-filter: blur(8px);
+      color: #f8fafc;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .photo-credit {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.8px;
+      color: var(--ph-muted);
+    }
+    .photo-credit a { color: #5eead4; text-decoration: underline; }
+
+    .q-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .meta-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(15, 34, 46, 0.88);
+      border: 1px solid var(--ph-border);
+      color: #e2e8f0;
+    }
+    .meta-tag.era {
+      color: #fde68a;
+      background: rgba(120, 53, 15, 0.26);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    .q-text {
+      margin: 0 0 18px;
+      font-size: clamp(18px, 2.3vw, 21px);
+      font-weight: 800;
+      line-height: 1.4;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .ans-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 15px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--ph-border);
+      background: var(--ph-inset);
+      color: #f8fafc;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      background: rgba(18, 42, 58, 0.92);
+      border-color: var(--ph-border-strong);
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.eliminated { opacity: 0.22; pointer-events: none; }
+    .ans-btn.correct {
+      background: rgba(22, 101, 52, 0.44);
+      border-color: rgba(74, 222, 128, 0.82);
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(159, 18, 57, 0.38);
+      border-color: rgba(251, 113, 133, 0.75);
+      color: #ffe4e6;
+    }
+
+    .ans-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(20, 68, 76, 0.8);
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .helpers-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--ph-border);
+    }
+
+    .helper-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--ph-border);
+      background: rgba(12, 22, 36, 0.85);
+      color: #e2e8f0;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .helper-btn:disabled { opacity: 0.36; cursor: not-allowed; }
+
+    .steckbrief {
+      margin-top: 20px;
+      padding: 20px 20px 18px;
+      border-radius: 14px;
+      background: rgba(6, 12, 22, 0.94);
+      border: 1px solid var(--ph-border);
+      border-left: 4px solid var(--ph-accent);
+      animation: fadeSlideUp 0.22s ease;
+    }
+    .steckbrief.is-right { border-left-color: var(--ph-green); }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .sb-verdict {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .sb-verdict.ok { color: #86efac; }
+    .sb-verdict.miss { color: #fda4af; }
+    .sb-verdict.skip { color: #fde68a; }
+
+    .sb-heading-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .sb-title { margin: 0; font-size: 20px; font-weight: 850; color: #f8fafc; }
+    .sb-nick { font-size: 13.5px; font-weight: 600; color: #fcd34d; }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 10px 16px;
+      margin: 0 0 14px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(45, 212, 191, 0.16);
+      border-bottom: 1px solid rgba(45, 212, 191, 0.16);
+    }
+    .spec-item dt {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--ph-muted);
+      margin-bottom: 2px;
+    }
+    .spec-item dd { margin: 0; font-size: 14px; font-weight: 700; color: #f1f5f9; }
+
+    .sb-trivia { margin: 0 0 16px; font-size: 15px; line-height: 1.58; color: #ccfbf1; }
+
+    .sb-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sb-commons-link { font-size: 12.5px; color: #5eead4; text-decoration: none; }
+    .sb-commons-link:hover { text-decoration: underline; }
+
+    .ph-primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(94, 234, 212, 0.6);
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(13, 148, 136, 0.34);
+    }
+
+    .result-panel { padding: 26px 24px 28px; }
+    .result-head {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--ph-border);
+    }
+    .result-summary-pill {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(13, 148, 136, 0.22);
+      border: 1px solid rgba(94, 234, 212, 0.45);
+      color: #ccfbf1;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .result-score-line { font-size: clamp(24px, 4vw, 32px); font-weight: 850; margin: 0 0 6px; }
+    .result-sub { margin: 0 0 18px; font-size: 14.5px; color: #cbd5e1; }
+    .result-cta-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    .gallery-heading { margin: 22px 0 14px; font-size: 17px; font-weight: 800; }
+    .gallery-list { display: flex; flex-direction: column; gap: 14px; }
+    .gallery-row {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(8, 15, 26, 0.82);
+      border: 1px solid var(--ph-border);
+      align-items: start;
+    }
+    .gallery-thumb {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--ph-border);
+      padding: 0;
+      background: #03070d;
+      cursor: zoom-in;
+    }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .gallery-info h3 { margin: 0 0 4px; font-size: 16.5px; font-weight: 800; }
+    .gallery-meta { font-size: 12.5px; color: #fcd34d; margin-bottom: 6px; }
+    .gallery-trivia { margin: 0 0 8px; font-size: 13.5px; line-height: 1.5; color: #cbd5e1; }
+    .gallery-status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--ph-muted);
+    }
+    .outcome-badge { padding: 2px 9px; border-radius: 6px; font-weight: 700; font-size: 11.5px; }
+    .outcome-badge.ok { background: rgba(22, 101, 52, 0.4); color: #86efac; }
+    .outcome-badge.miss { background: rgba(159, 18, 57, 0.35); color: #fda4af; }
+    .outcome-badge.skip { background: rgba(120, 53, 15, 0.38); color: #fde68a; }
+
+    .lightbox-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9995;
+      background: rgba(2, 6, 15, 0.92);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .lightbox-inner {
+      position: relative;
+      max-width: min(1160px, 96vw);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      background: #030712;
+    }
+    .lightbox-bar {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13.5px;
+      color: #e2e8f0;
+    }
+
+    @media (max-width: 680px) {
+      .menu-panel, .stage-panel, .result-panel { padding: 16px 14px 20px; }
+      .cat-grid, .answers-grid, .gallery-row { grid-template-columns: 1fr; }
+      .hero-head { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body data-no-leaderboard="1">
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">📱 Handys &amp; Smartphones · 25 Jahre</div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <section id="screen-menu" class="surface-panel menu-panel">
+      <div class="hero-head">
+        <div class="ph-crest-badge" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 36 36" fill="none">
+            <rect x="10" y="4" width="16" height="28" rx="3.5" fill="#0f172a" stroke="#5eead4" stroke-width="2"/>
+            <rect x="12.5" y="7.5" width="11" height="17" rx="1.5" fill="#14b8a6" opacity="0.35"/>
+            <circle cx="18" cy="28" r="1.8" fill="#fde047"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="hero-title">Handys &amp; Smartphones der letzten 25 Jahre (2000–Heute)</h1>
+          <p class="hero-lead">
+            Vom unzerstörbaren Nokia 3310, Sony Ericsson T68i, N-Gage und dem hauchdünnen Motorola RAZR V3 über das erste iPhone (2007), Nokia N95, T-Mobile G1 und HTC HD2 bis zu Galaxy Note, S III, Lumia 1020, OnePlus One, iPhone X und Galaxy Fold!
+          </p>
+        </div>
+      </div>
+
+      <div class="settings-band">
+        <div class="setting-row">
+          <span class="setting-label">Zeitmodus</span>
+          <div class="pill-group" id="countdown-bar">
+            <button type="button" id="opt-timer-off" class="opt-pill active-relaxed" data-timer="0">☕ Ohne Zeitlimit (Standard)</button>
+            <button type="button" id="opt-timer-on" class="opt-pill" data-timer="1">⏱ Optionaler Countdown (35s)</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <span class="setting-label">Rundenlänge</span>
+          <div class="pill-group" id="length-bar">
+            <button type="button" class="opt-pill active-len" data-len="8">8 Geräte</button>
+            <button type="button" class="opt-pill" data-len="12">12 Geräte</button>
+            <button type="button" class="opt-pill" data-len="all">Alle 16 Geräte</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cat-section-title">Ära wählen &amp; starten</div>
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <section id="screen-play" class="surface-panel stage-panel hidden">
+      <div class="stage-topbar">
+        <div class="progress-cluster">
+          <span>Gerät <strong id="q-num">1</strong> von <strong id="q-total">8</strong></span>
+          <span class="recognized-tag">✓ Erkannt: <span id="q-correct-count">0</span></span>
+        </div>
+        <button type="button" id="btn-play-timer" class="timer-toggle-btn">☕ Kein Zeitlimit</button>
+      </div>
+
+      <div id="timer-track" class="timer-track hidden">
+        <div id="timer-fill" class="timer-fill"></div>
+      </div>
+
+      <figure class="hw-figure">
+        <div id="photo-frame" class="photo-frame" title="Klicken zum Vergrößern">
+          <img id="hw-img" src="" alt="Handy/Smartphone-Foto zur aktuellen Frage" decoding="async" />
+          <button type="button" id="btn-zoom-photo" class="photo-zoom-btn">🔍 Foto vergrößern</button>
+        </div>
+        <figcaption class="photo-credit">
+          <span id="photo-attribution"></span>
+          <span id="photo-status-note">Klick aufs Bild öffnet Vollansicht</span>
+        </figcaption>
+      </figure>
+
+      <div class="q-meta-tags">
+        <span id="q-cat-pill" class="meta-tag">Ära</span>
+        <span id="q-era-pill" class="meta-tag era">Jahr</span>
+      </div>
+
+      <h2 id="q-text" class="q-text"></h2>
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div class="helpers-row">
+        <button type="button" id="joker-50" class="helper-btn">🎯 50:50 Tipp</button>
+        <button type="button" id="joker-skip" class="helper-btn">⏭ Auflösen &amp; weiter</button>
+        <button type="button" id="btn-back-menu" class="helper-btn" style="margin-left:auto;">← Epochenauswahl</button>
+      </div>
+
+      <div id="fact-sheet" class="steckbrief hidden" aria-live="polite">
+        <div id="sb-verdict" class="sb-verdict ok"></div>
+        <div class="sb-heading-row">
+          <h3 id="sb-title" class="sb-title"></h3>
+          <span id="sb-nick" class="sb-nick"></span>
+        </div>
+        <dl id="sb-specs" class="spec-grid"></dl>
+        <p id="sb-trivia" class="sb-trivia"></p>
+        <div class="sb-actions">
+          <span id="sb-commons-wrap"></span>
+          <button type="button" id="btn-next-q" class="ph-primary-btn">Nächstes Gerät ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-result" class="surface-panel result-panel hidden">
+      <div class="result-head">
+        <div class="result-summary-pill">📱 Mobilfunk-Historie 2000–Heute · Bild-Auswertung</div>
+        <h2 id="res-score-line" class="result-score-line"></h2>
+        <p id="res-sub" class="result-sub"></p>
+        <div class="result-cta-row">
+          <button type="button" id="btn-replay" class="ph-primary-btn">🔄 Noch einmal spielen</button>
+          <button type="button" id="btn-change-cat" class="secondary-btn">📱 Andere Epoche</button>
+          <a href="../../index.html" class="secondary-btn" style="text-decoration:none;">🏠 Dashboard</a>
+        </div>
+      </div>
+
+      <h3 class="gallery-heading">📖 Alle Handys &amp; Smartphones dieser Runde im Überblick</h3>
+      <div id="gallery-list" class="gallery-list"></div>
+    </section>
+  </main>
+
+  <div id="lightbox-modal" class="lightbox-backdrop hidden" role="dialog" aria-modal="true">
+    <div class="lightbox-inner">
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Großansicht" />
+      <div class="lightbox-bar">
+        <span id="lightbox-caption"></span>
+        <button type="button" id="btn-lightbox-close" class="secondary-btn">✕ Schließen (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    (function () {
+      const COUNTDOWN_KEY = 'arcade_phones_countdown';
+      const COUNTDOWN_SEC = 35;
+
+      const CATEGORIES = [
+        {
+          id: 'alle',
+          era: '2000–Heute · Alle 16 Kult-Geräte',
+          name: 'Große Zeitreise durch 25 Jahre Handys & Smartphones',
+          desc: 'Vom Nokia 3310, RAZR V3, iPhone (2007), Nokia N95 und T-Mobile G1 über HTC HD2, iPhone 4 und Galaxy S III bis Lumia 1020, OnePlus One, iPhone X und Galaxy Fold.',
+          cls: 'main-tour'
+        },
+        {
+          id: 'kult_umbruch',
+          era: '2000–2008 · 8 Geräte',
+          name: 'Kult-Handys, Klapptelefone & die Smartphone-Geburt',
+          desc: 'Nokia 3310, Sony Ericsson T68i, Nokia N-Gage, Motorola RAZR V3, BlackBerry Bold 9000, das erste iPhone (2007), Nokia N95 und das erste Android-Handy T-Mobile G1.',
+          cls: ''
+        },
+        {
+          id: 'touch_fold',
+          era: '2009–Heute · 8 Geräte',
+          name: 'Retina, Phablets, Kamera-Giganten, Flagship-Killer & Foldables',
+          desc: 'HTC HD2, iPhone 4, Samsung Galaxy Note, Galaxy S III, Nokia Lumia 1020 (41 MP!), OnePlus One, iPhone X und Samsung Galaxy Fold.',
+          cls: ''
+        }
+      ];
+
+      const QUESTIONS = [
+        {
+          id: 1,
+          cat: 'kult_umbruch',
+          eraLabel: 'September 2000 · 126 Millionen Mal verkauft',
+          img: './img/phone-01.jpg',
+          q: 'Welches legendäre finnische Mobiltelefon des Jahres 2000 mit interner Antenne, „Xpress-on“-Wechselschalen, grün beleuchtetem 84×48-Pixel-Monochromdisplay und dem Spiel „Snake II“ gilt im Internet-Kult bis heute als „unzerstörbar“?',
+          a: ['Nokia 3310', 'Siemens S35i', 'Nokia 5110', 'Ericsson T28s'],
+          wasDasIst: {
+            title: 'Nokia 3310',
+            nick: 'Der „unzerstörbare“ Klassiker mit Snake II',
+            year: 'September 2000 (ca. 126 Mio. verkaufte Einheiten)',
+            os: 'Nokia Series 20',
+            display: '84 × 48 Pixel Monochrom-LCD (grün hinterleuchtet)',
+            feature: 'Snake II, Klingelton-Komponist, verkettete SMS (bis 459 Zeichen) & Xpress-on-Schalen',
+            trivia: 'Als Nachfolger des 3210 verzichtete das Nokia 3310 auf jede abstehende Stummelantenne, überstand Stürze auf Asphalt (meist sprang nur die Rückschale ab und ließ sich in 3 Sekunden wieder einklipsen) und prägte eine ganze Jugendgeneration.'
+          },
+          credit: {
+            artist: 'Multicherry',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:Nokia 3310 grey front (tidied and enhanced).jpg'
+          }
+        },
+        {
+          id: 2,
+          cat: 'kult_umbruch',
+          eraLabel: '2002 · Farbdisplay, MMS & Ansteck-Kamera',
+          img: './img/phone-02.jpg',
+          q: 'Welches kompakte Handy in „Arctic Blue“ war 2002 das erste Gerät nach dem Zusammenschluss von Sony und Ericsson, bot ein 256-Farben-Display, Bluetooth, Joystick-Steuerung und eine unten ansteckbare Kamera („CommuniCam MCA-20“)?',
+          a: ['Sony Ericsson T68i', 'Siemens SL45', 'Nokia 6310i', 'Sony CMD-J5'],
+          wasDasIst: {
+            title: 'Sony Ericsson T68i (Weiterentwicklung des Ericsson T68m)',
+            nick: 'Pionier für Farbdisplay, Bluetooth, MMS & Ansteck-Kamera',
+            year: 'Frühjahr 2002',
+            os: 'Proprietär (mit XHTML-WAP-2.0-Browser)',
+            display: '101 × 80 Pixel · 256 Farben STN-LCD',
+            feature: 'Bluetooth 1.0b, Infrarot, Tri-Band-GSM, MMS & optionale Ansteck-Kamera MCA-20',
+            trivia: 'Bevor Kameras fest in Handys verbaut wurden, steckte man beim T68i die kleine „CommuniCam“ unten an den Systemanschluss, schaute durch einen winzigen optischen Sucher und verschickte das 640×480-Foto per MMS oder Bluetooth.'
+          },
+          credit: {
+            artist: 'Beamish4',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:Sony Ericsson T68i (Arctic Blue) - Label.jpg'
+          }
+        },
+        {
+          id: 3,
+          cat: 'kult_umbruch',
+          eraLabel: 'Oktober 2003 · „Side-Talking“ & Symbian-Konsole',
+          img: './img/phone-03.jpg',
+          q: 'Mit welchem mutigen Hybrid aus Symbian-S60-Smartphone und tragbarer Spielekonsole versuchte Nokia 2003 gegen den Game Boy Advance anzutreten – wurde aber wegen des seitlich an der schmalen Gehäusekante sitzenden Hörers als „Taco-Phone“ („Side-Talking“) verspottet?',
+          a: ['Nokia N-Gage', 'Sony Ericsson Xperia Play', 'Nokia 3650', 'Gizmondo'],
+          wasDasIst: {
+            title: 'Nokia N-Gage (NEM-4)',
+            nick: '„Taco-Phone“ · Seiner Zeit voraus als Mobile-Gaming-Smartphone',
+            year: 'Oktober 2003',
+            os: 'Symbian OS 6.1 (Series 60 1st Edition) · 104 MHz ARM9',
+            display: '2,1 Zoll · 176 × 208 Pixel (4.096 Farben)',
+            feature: '3D-Spiele (Tony Hawk, Tomb Raider, Pandemonium) auf MMC-Speicherkarten + Bluetooth-Multiplayer',
+            trivia: 'Um ein Spielmodul (MMC-Karte) zu wechseln, musste man beim ersten N-Gage die Rückabdeckung öffnen und den Akku herausnehmen – und zum Telefonieren hielt man sich das Gerät mit der schmalen Oberkante ans Ohr. Erst der Nachfolger „N-Gage QD“ (2004) behob beides.'
+          },
+          credit: {
+            artist: 'Evan-Amos',
+            license: 'Public domain',
+            licenseUrl: 'https://creativecommons.org/publicdomain/mark/1.0/',
+            commons: 'File:Nokia-NGage-LL.jpg'
+          }
+        },
+        {
+          id: 4,
+          cat: 'kult_umbruch',
+          eraLabel: 'Herbst 2004 · Das meistverkaufte Klapphandy',
+          img: './img/phone-04.jpg',
+          q: 'Welches nur 13,9 Millimeter flache Klapphandy aus Flugzeug-Aluminium mit lasergeätzter, blau hinterleuchteter Metall-Tastatur verkaufte sich ab 2004 über 130 Millionen Mal und wurde zum ultimativen Design-Statussymbol vor dem iPhone?',
+          a: ['Motorola RAZR V3', 'Samsung SGH-E700', 'Sony Ericsson W800i Walkman', 'LG Chocolate KG800'],
+          wasDasIst: {
+            title: 'Motorola RAZR V3',
+            nick: 'Die 13,9-mm-Design-Ikone mit Elektrolumineszenz-Tastatur',
+            year: 'Q3 2004 (über 130 Mio. verkaufte Einheiten)',
+            os: 'Motorola Synergy',
+            display: '2,2 Zoll Innendisplay (176 × 220) + 96 × 80 Außendisplay für Anrufer-ID',
+            feature: 'Eloxiertes Aluminiumgehäuse, chemisch geätzte vernickelte Kupferlegierungs-Tastatur aus einem Stück',
+            trivia: 'Ursprünglich als sündhaft teures Luxus-Modehandy für rund 600 Euro gestartet, entwickelte sich das RAZR V3 (in Silber, Schwarz und „ Hot Pink“) zum erfolgreichsten Klapphandy der Weltgeschichte.'
+          },
+          credit: {
+            artist: 'Raimond Spekking',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:Motorola RAZR V3-4899.jpg'
+          }
+        },
+        {
+          id: 5,
+          cat: 'kult_umbruch',
+          eraLabel: '2007/2008 · „CrackBerry“-Ära',
+          img: './img/phone-05.jpg',
+          q: 'Welcher kanadische Hersteller (Research In Motion / RIM) dominierte in den 2000ern die Geschäftswelt mit verschlüsselter Push-E-Mail, dem Messenger „BBM“ (mit eigener PIN), einem zentralen Trackball und einer abgeschrägten physischen QWERTZ-Daumentastatur?',
+          a: ['BlackBerry (hier BlackBerry Bold 9000)', 'Palm Treo 650', 'Nokia E71 Communicator', 'Siemens SX1'],
+          wasDasIst: {
+            title: 'BlackBerry Bold 9000 (Research In Motion)',
+            nick: '„CrackBerry“ · König der physischen Daumentastatur',
+            year: 'August 2008',
+            os: 'BlackBerry OS 4.6 / 5.0',
+            display: '2,6 Zoll · 480 × 320 Pixel (Half-VGA)',
+            feature: 'Physische QWERTZ-Tastatur mit Bundstäbchen, leuchtender Trackball, Kunstleder-Rückseite, Push-Mail & BBM',
+            trivia: 'Die schräg angeschliffenen Tasten des BlackBerry Bold erlaubten blindes Tippen langer E-Mails in Rekordgeschwindigkeit. Wegen des hohen Suchtfaktors der blinkenden roten Benachrichtigungs-LED bürgerte sich der Spitzname „CrackBerry“ bis ins Weiße Haus ein.'
+          },
+          credit: {
+            artist: 'Metrónomo',
+            license: 'CC BY-SA 2.5 ar',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/2.5/ar/deed.en',
+            commons: 'File:BlackBerry Bold 9000.JPG'
+          }
+        },
+        {
+          id: 6,
+          cat: 'kult_umbruch',
+          eraLabel: '9. Januar 2007 · Macworld San Francisco',
+          img: './img/phone-06.jpg',
+          q: 'Mit den berühmten Worten „An iPod, a phone, and an internet communicator … are you getting it? These are not three separate devices!“ präsentierte Steve Jobs im Januar 2007 welches Gerät, das kapazitives Multi-Touch-Glas und „Pinch-to-Zoom“ zum Smartphone-Standard machte?',
+          a: ['Apple iPhone (1. Generation / „iPhone 2G“)', 'LG Prada (KE850)', 'Apple iPod touch', 'Palm Pre'],
+          wasDasIst: {
+            title: 'Apple iPhone (1. Generation · 2007)',
+            nick: 'Die Geburt des modernen Touch-Smartphones',
+            year: 'Vorstellung 9. Januar 2007 · Verkauf ab Juni/November 2007',
+            os: 'iPhone OS 1.0 (noch ohne App Store, mit Desktop-Klasse Safari-Browser)',
+            display: '3,5 Zoll · 320 × 480 Pixel · Kapazitives Multi-Touch unter Echtglas',
+            feature: 'Inertial Scrolling, Pinch-to-Zoom, Beschleunigungs- & Näherungssensor, Aluminium-Rückseite',
+            trivia: 'Obwohl dem ersten iPhone noch UMTS (nur EDGE/2G), GPS und bis Sommer 2008 auch ein App Store fehlten, veränderte seine flüssige Finger-Bedienung ohne Plastik-Stylus und ohne Hardware-Tastatur die gesamte Mobilfunkindustrie für immer.'
+          },
+          credit: {
+            artist: 'Blake Patterson',
+            license: 'CC BY 2.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by/2.0/',
+            commons: 'File:Steve Jobs presents iPhone.jpg'
+          }
+        },
+        {
+          id: 7,
+          cat: 'kult_umbruch',
+          eraLabel: 'März 2007 · Das Schweizer Taschenmesser unter den Handys',
+          img: './img/phone-07.jpg',
+          q: 'Welches Flaggschiff von Nokia aus dem Jahr 2007 besaß einen raffinierten „Zwei-Wege-Slider“ (nach oben für die Zifferntastatur, nach unten für dedizierte Musik-Tasten) und vereinte schon 2007 eine 5-MP-Carl-Zeiss-Kamera, GPS, WLAN, HSDPA und einen 3D-Grafikbeschleuniger?',
+          a: ['Nokia N95', 'Nokia 5800 XpressMusic', 'Sony Ericsson K800i Cyber-shot', 'Nokia N900'],
+          wasDasIst: {
+            title: 'Nokia N95 (Symbian S60 3rd Edition)',
+            nick: 'Der ultimative „Alles-Könner“ des Jahres 2007',
+            year: 'März 2007 (später auch als schwarzes N95 8GB)',
+            os: 'Symbian OS 9.2 (S60 3rd Edition FP1) · Dual-ARM11 @ 332 MHz + PowerVR MBX GPU',
+            display: '2,6 Zoll · 240 × 320 Pixel (16 Mio. Farben)',
+            feature: '2-Wege-Multimedia-Slider, 5 MP Carl-Zeiss-Autofokus + VGA-30fps-Video, integriertes A-GPS, WLAN, TV-Out & 3,5-mm-Klinke',
+            trivia: 'Rein von den technischen Daten her war das Nokia N95 dem gleichzeitig erscheinenden ersten iPhone haushoch überlegen (UMTS/HSDPA, GPS-Navigation, 5-MP-Autofokus, Videotelefonie, Multitasking) und verkaufte sich über 10 Millionen Mal.'
+          },
+          credit: {
+            artist: 'Asim18',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:Nokia N95 Front 1.jpg'
+          }
+        },
+        {
+          id: 8,
+          cat: 'kult_umbruch',
+          eraLabel: 'Oktober 2008 · Das weltweit erste Android-Smartphone',
+          img: './img/phone-08.jpg',
+          q: 'Welches Smartphone mit seitlich ausschwenkbarem Touchscreen, fünfreihiger QWERTZ-Tastatur, Trackball und „Kinn“-Knick kam im Herbst 2008 als weltweit erstes kommerzielles Gerät mit Googles neuem Betriebssystem Android 1.0 auf den Markt?',
+          a: ['HTC Dream / T-Mobile G1', 'Motorola Milestone (Droid)', 'Google Nexus One', 'Samsung Galaxy i7500'],
+          wasDasIst: {
+            title: 'HTC Dream (vermarktet als T-Mobile G1)',
+            nick: 'Das allererste Android-Smartphone der Welt',
+            year: 'Oktober 2008 (USA) / Februar 2009 (Deutschland)',
+            os: 'Android 1.0 → 1.5 „Cupcake“ → 1.6 „Donut“',
+            display: '3,2 Zoll · 320 × 480 Pixel (Kapazitiver Touchscreen auf Schwenkmechanismus)',
+            feature: 'Ausklappbare QWERTZ-Tastatur, klickbarer Trackball, digitaler Kompass (für Google Street View!), herabziehbare Benachrichtigungsleiste',
+            trivia: 'Da Android 1.0 anfangs noch gar keine virtuelle Bildschirmtastatur besaß, war die physische Ausschiebe-Tastatur des G1 unverzichtbar – erst das Update auf Android 1.5 „Cupcake“ im Frühjahr 2009 brachte ein On-Screen-Keyboard mit!'
+          },
+          credit: {
+            artist: 'Luis Alberto Arjona Chin',
+            license: 'CC BY 2.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by/2.0/',
+            commons: 'File:HTC Android T-Mobile G1.jpg'
+          }
+        },
+        {
+          id: 9,
+          cat: 'touch_fold',
+          eraLabel: 'November 2009 · Der König der Custom-ROM-Modder',
+          img: './img/phone-09.jpg',
+          q: 'Welches legendäre 4,3-Zoll-Smartphone (Codename „Leo“) wurde Ende 2009 zwar noch mit Windows Mobile 6.5 ausgeliefert, ging aber in die Technikgeschichte ein, weil Entwickler auf XDA-Developers über ein Jahrzehnt lang Android (von 2.1 bis Android 11!), Windows Phone 7/8, Ubuntu und sogar Windows RT darauf portierten?',
+          a: ['HTC HD2 („Leo“)', 'HTC Desire', 'Samsung Omnia II', 'Sony Ericsson Xperia X1'],
+          wasDasIst: {
+            title: 'HTC HD2 („Leo“)',
+            nick: 'Das unsterblichste Smartphone der XDA-Developers-Geschichte',
+            year: 'November 2009',
+            os: 'Ab Werk Windows Mobile 6.5 (mit HTC Sense) · durch Community: Android 2.1–11, WP7/8, MeeGo, Ubuntu, Firefox OS',
+            display: '4,3 Zoll · 480 × 800 Pixel (WVGA · damals gigantisch!)',
+            feature: '1 GHz Qualcomm Snapdragon S1 (QSD8250), 512 MB ROM (EU) / 1 GB ROM (T-Mobile US), Metall-Akkudeckel',
+            trivia: 'Dank des Bootloaders „MAGLDR“ von Cotulla und der gängigen Qualcomm-Snapdragon-Plattform lief auf dem HTC HD2 fast jedes mobile Betriebssystem der 2010er Jahre – es weigerte sich buchstäblich, alt zu werden!'
+          },
+          credit: {
+            artist: 'Beamish4',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:HTC HD2 - Front.jpg'
+          }
+        },
+        {
+          id: 10,
+          cat: 'touch_fold',
+          eraLabel: 'Juni 2010 · Retina-Display & „Antennagate“',
+          img: './img/phone-10.jpg',
+          q: 'Mit welchem Modell wechselte Apple 2010 auf ein kantiges Sandwich-Design aus Aluminosilikat-Glas und umlaufendem Edelstahlrahmen (der gleichzeitig als Antenne diente und das berühmte „You’re holding it wrong / Antennagate“ auslöste) und führte das 326-ppi-„Retina-Display“ ein?',
+          a: ['Apple iPhone 4', 'Apple iPhone 3GS', 'Apple iPhone 5c', 'Apple iPhone 6 Plus'],
+          wasDasIst: {
+            title: 'Apple iPhone 4',
+            nick: 'Meilenstein für Industriedesign, Retina-Schärfe & FaceTime',
+            year: 'Juni 2010',
+            os: 'iOS 4.0 (Einführung von Multitasking & Ordnern) bis iOS 7.1.2',
+            display: '3,5 Zoll IPS „Retina Display“ · 960 × 640 Pixel (326 ppi – vierfache Pixelzahl des 3GS)',
+            feature: 'Apple A4 SoC, Frontkamera für FaceTime, 5-MP-Kamera mit LED-Blitz, 3-Achsen-Gyroskop',
+            trivia: 'Wenn man den schmalen Spalt unten links im Edelstahlrahmen mit der bloßen Hand überbrückte („Todesgriff“), sank in schwachen Netzen die Empfangsanzeige – woraufhin Apple eine eigene Pressekonferenz abhielt und kostenlose Gummirahmen („Bumper“) verteilte.'
+          },
+          credit: {
+            artist: 'DanielZanetti / Saibo',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:Iphone 4G-3 black screen.png'
+          }
+        },
+        {
+          id: 11,
+          cat: 'touch_fold',
+          eraLabel: 'IFA Berlin 2011 · Geburt der „Phablet“-Kategorie',
+          img: './img/phone-11.jpg',
+          q: 'Welches auf der IFA 2011 in Berlin vorgestellte 5,3-Zoll-Smartphone mit im Gehäuse versenkbarem Wacom-Stift („S Pen“) wurde von Kritikern zunächst als „viel zu groß – sieht am Ohr aus wie ein Stück Toastbrot“ belächelt, machte große Displays ab 5,5+ Zoll aber wenig später zum weltweiten Standard?',
+          a: ['Samsung Galaxy Note (GT-N7000)', 'Dell Streak 5', 'Samsung Galaxy S II (i9100)', 'LG Optimus Vu'],
+          wasDasIst: {
+            title: 'Samsung Galaxy Note (GT-N7000)',
+            nick: 'Der belächelte Pionier, der alle Smartphones groß machte',
+            year: 'September / Oktober 2011',
+            os: 'Android 2.3 „Gingerbread“ → Android 4.1 „Jelly Bean“',
+            display: '5,3 Zoll HD Super-AMOLED · 1.280 × 800 Pixel (16:10)',
+            feature: 'Druckempfindlicher Wacom S-Pen im Gehäuse, Dual-Core Exynos 4210 (1,4 GHz), austauschbarer 2.500-mAh-Akku',
+            trivia: 'Im Jahr 2011 galten 3,5 bis 4,3 Zoll als ideale Smartphone-Größe. Heute ist selbst ein kompaktes Standard-Smartphone deutlich größer als das ursprüngliche 5,3-Zoll-Galaxy-Note!'
+          },
+          credit: {
+            artist: 'Rwxrwxrwx',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:Samsung Galaxy Note (original).JPG'
+          }
+        },
+        {
+          id: 12,
+          cat: 'touch_fold',
+          eraLabel: 'Mai 2012 · 70-Millionen-Bestseller im Kieselstein-Look',
+          img: './img/phone-12.jpg',
+          q: 'Welches Android-Flaggschiff von 2012 im organischen „Pebble Blue / Marble White“-Design („Designed for Humans“, mit Wassergeräusch-Entsperrbildschirm, „Smart Stay“-Augenerkennung, microSD-Slot und Wechselakku) wurde mit rund 70 Millionen verkauften Geräten zu einem der erfolgreichsten Smartphones aller Zeiten?',
+          a: ['Samsung Galaxy S III (GT-I9300)', 'HTC One X', 'LG Nexus 4', 'Sony Xperia Z'],
+          wasDasIst: {
+            title: 'Samsung Galaxy S III (GT-I9300)',
+            nick: 'Der Höhepunkt der Ära mit Wechselakku & Status-LED',
+            year: 'Mai 2012 (~70 Mio. verkaufte Einheiten)',
+            os: 'Android 4.0.4 „Ice Cream Sandwich“ mit TouchWiz „Nature UX“',
+            display: '4,8 Zoll HD Super-AMOLED (1.280 × 720 Pixel)',
+            feature: 'Quad-Core Exynos 4412 (1,4 GHz), Smart Stay, S-Beam (NFC), Benachrichtigungs-LED, microSD & wechselbarer 2.100-mAh-Akku',
+            trivia: 'Mit dem Galaxy S III zog Samsung bei den Verkaufszahlen endgültig mit dem iPhone gleich. Jeder, der 2012 in Bus oder Bahn saß, kannte das typische „Plätschern“ beim Wischen über den Löwenzahn-Sperrbildschirm und den „Whistle“-Nachrichtenton!'
+          },
+          credit: {
+            artist: 'Köf3',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:Samsung Galaxy S3 (GT-I9300) 16GB Pebble blue.jpg'
+          }
+        },
+        {
+          id: 13,
+          cat: 'touch_fold',
+          eraLabel: 'Juli 2013 · Das 41-Megapixel-Kameramonster',
+          img: './img/phone-13.jpg',
+          q: 'Welches oft in knalligem Gelb gefertigte Windows-Phone-8-Smartphone von 2013 besaß auf der Rückseite einen runden Kamera-Buckel mit einem riesigen 41-Megapixel-PureView-Sensor (1/1,5 Zoll), mechanischem Verschluss, optischer Bildstabilisierung (OIS) und echtem Xenon-Blitz?',
+          a: ['Nokia Lumia 1020', 'Nokia 808 PureView (Symbian)', 'Samsung Galaxy S4 Zoom', 'HTC One (M7) UltraPixel'],
+          wasDasIst: {
+            title: 'Nokia Lumia 1020 (41 MP PureView)',
+            nick: 'Das unübertroffene Kamera-Wunder der Windows-Phone-Ära',
+            year: 'Juli 2013',
+            os: 'Windows Phone 8 (upgradefähig auf Windows Phone 8.1 „Lumia Denim“)',
+            display: '4,5 Zoll AMOLED PureMotion HD+ (1.280 × 768)',
+            feature: '41-MP-BSI-Sensor mit 6-linsiger Carl-Zeiss-Optik, Verlustfreier Digitalzoom durch Pixel-Oversampling (38 MP + 5 MP DNG-RAW), Xenon-Blitz',
+            trivia: 'Während konkurrierende Smartphones 2013 mit 8 bis 13 Megapixeln arbeiteten, kombinierte das Lumia 1020 bis zu sieben benachbarte Pixel zu einem rauschfreien „Superpixel“ und erlaubte verlustfreies Heranzoomen per Fingerstreich.'
+          },
+          credit: {
+            artist: 'Kārlis Dambrāns',
+            license: 'CC BY-SA 3.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/3.0/',
+            commons: 'File:Nokia Lumia 1020 BG removed.png'
+          }
+        },
+        {
+          id: 14,
+          cat: 'touch_fold',
+          eraLabel: 'April 2014 · Der 269/299-Euro-„Flagship Killer“',
+          img: './img/phone-14.jpg',
+          q: 'Welches Smartphone mit rau-griffiger „Sandstone Black“-Rückseite, Top-Prozessor Snapdragon 801 und vorinstalliertem „CyanogenMod 11S“ sorgte 2014 als „2014 Flagship Killer“ ab 269 € für einen riesigen Hype, weil man es monatelang nur mit einer persönlichen Einladung („Invite“) kaufen konnte?',
+          a: ['OnePlus One („Bacon“)', 'Xiaomi Mi 3', 'Google Nexus 5', 'Motorola Moto G (1. Gen)'],
+          wasDasIst: {
+            title: 'OnePlus One (Codename „Bacon“)',
+            nick: '„Never Settle“ · Der ursprüngliche 299-Euro-Flagship-Killer',
+            year: 'April 2014',
+            os: 'CyanogenMod 11S (basierend auf Android 4.4 „KitKat“) / später OxygenOS',
+            display: '5,5 Zoll Full-HD LTPS-IPS (1.920 × 1.080 Pixel)',
+            feature: 'Qualcomm Snapdragon 801 (2,5 GHz), 3 GB RAM, 64 GB Speicher für 299 €, Cashew-Nuss-inspirierte „Sandstone“-Beschichtung',
+            trivia: 'Das von Ex-Oppo-Manager Pete Lau und Carl Pei gegründete Startup OnePlus bot exakt dieselbe High-End-Hardware wie 650-Euro-Flaggschiffe von Samsung, Sony und HTC für unter 300 Euro – und wurde in der Custom-ROM-Szene sofort zum Kultgerät.'
+          },
+          credit: {
+            artist: 'danishprakash',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:OnePlus One.png'
+          }
+        },
+        {
+          id: 15,
+          cat: 'touch_fold',
+          eraLabel: 'November 2017 · 10 Jahre iPhone: Abschied vom Home-Button',
+          img: './img/phone-15.jpg',
+          q: 'Mit welchem Jubiläums-Modell strich Apple im Herbst 2017 erstmals den klassischen runden Home-Button, wechselte von LCD auf ein fast vollflächiges OLED-Display mit Wischgesten-Steuerung und führte die „Notch“-Aussparung für die 3D-Infrarot-Gesichtserkennung „Face ID“ ein?',
+          a: ['Apple iPhone X („Ten“)', 'Apple iPhone 8 Plus', 'Essential Phone (PH-1)', 'Apple iPhone XR'],
+          wasDasIst: {
+            title: 'Apple iPhone X (gesprochen „iPhone Ten“)',
+            nick: 'Das Design-Fundament aller modernen iPhones seit 2017',
+            year: 'November 2017 (zum 10. Jubiläum des ersten iPhones)',
+            os: 'iOS 11 → iOS 16',
+            display: '5,8 Zoll Super Retina OLED (2.436 × 1.125 Pixel · 458 ppi)',
+            feature: 'TrueDepth-Kamerasystem mit Punktprojektor für Face ID, Apple A11 Bionic mit erster Neural Engine, Edelstahlrahmen',
+            trivia: 'Damit das OLED-Display unten bis direkt an den Gehäuserand reichen konnte (ohne breites „Kinn“ für den Display-Controller), faltete Apple das flexible OLED-Panel am unteren Ende im Gehäuseinneren um 180 Grad nach hinten um!'
+          },
+          credit: {
+            artist: 'thiago japyassu',
+            license: 'CC0',
+            licenseUrl: 'https://creativecommons.org/publicdomain/zero/1.0/deed.de',
+            commons: 'File:2iphone.jpg'
+          }
+        },
+        {
+          id: 16,
+          cat: 'touch_fold',
+          eraLabel: '2019–Heute · Die Ära der faltbaren Displays',
+          img: './img/phone-16.jpg',
+          q: 'Mit welchem Gerät begründete Samsung 2019 die kommerzielle Serie von Buch-artig aufklappbaren Smartphones („Foldables“), bei denen sich im Inneren ein großes, biegsames 7,3-Zoll-Dynamic-AMOLED-Tablet-Display entfaltet?',
+          a: ['Samsung Galaxy Fold (bzw. Galaxy Z Fold Serie)', 'Huawei Mate X', 'Motorola Razr (2019)', 'LG Wing'],
+          wasDasIst: {
+            title: 'Samsung Galaxy Fold (Begründer der Galaxy-Z-Fold-Serie)',
+            nick: 'Vom Smartphone zum 7,3-Zoll-Tablet in der Hosentasche',
+            year: 'Vorstellung Februar 2019 · Marktstart September 2019',
+            os: 'Android 9 → Android 12 mit Multi-Active-Window (3 Apps parallel)',
+            display: '7,3 Zoll faltbares Dynamic-AMOLED-Innendisplay (2.152 × 1.536) + 4,6 Zoll Außendisplay',
+            feature: 'Feinmechanisches Freistopp-Scharnier, 6 Kameras, 12 GB RAM, 512 GB UFS-3.0-Speicher',
+            trivia: 'Nachdem erste Testgeräte im Frühjahr 2019 Probleme hatten, weil Tester die oberste Schutzschicht des faltbaren Displays versehentlich wie eine Transportfolie abzogen, überarbeitete Samsung Scharnierkappen und Displayrand und machte die Z-Fold- und Z-Flip-Reihe ab 2020 (mit biegsamem „Ultra Thin Glass“) zum weltweiten Foldable-Marktführer.'
+          },
+          credit: {
+            artist: 'KKPCW',
+            license: 'CC BY-SA 4.0',
+            licenseUrl: 'https://creativecommons.org/licenses/by-sa/4.0/',
+            commons: 'File:Galaxy Fold - 1.jpg'
+          }
+        }
+      ];
+
+      let selectedLen = '8';
+      let activeCat = 'alle';
+      let deck = [];
+      let qIdx = 0;
+      let correctCount = 0;
+      let resultsLog = [];
+      let answered = false;
+      let f50Available = true;
+      let timerId = null;
+      let timeLeft = COUNTDOWN_SEC;
+      let countdownExpired = false;
+
+      function isCountdownEnabled() {
+        try { return localStorage.getItem(COUNTDOWN_KEY) === '1'; } catch (e) { return false; }
+      }
+      function setCountdownEnabled(enabled) {
+        try { localStorage.setItem(COUNTDOWN_KEY, enabled ? '1' : '0'); } catch (e) {}
+      }
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      }
+      function commonsUrl(fileTitle) {
+        const clean = String(fileTitle || '').replace(/^File:/i, '').trim().replace(/ /g, '_');
+        return 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(clean);
+      }
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+      function getPool(catId) {
+        return catId === 'alle' ? QUESTIONS.slice() : QUESTIONS.filter(q => q.cat === catId);
+      }
+      function computeRoundCount(poolLen) {
+        if (selectedLen === 'all') return poolLen;
+        return Math.min(parseInt(selectedLen, 10) || 8, poolLen);
+      }
+
+      function syncMenuControls() {
+        const timerOn = isCountdownEnabled();
+        document.getElementById('opt-timer-off').classList.toggle('active-relaxed', !timerOn);
+        document.getElementById('opt-timer-on').classList.toggle('active-timer', timerOn);
+        document.querySelectorAll('#length-bar .opt-pill').forEach(btn => {
+          btn.classList.toggle('active-len', btn.dataset.len === selectedLen);
+        });
+      }
+
+      function renderMenu() {
+        syncMenuControls();
+        const grid = document.getElementById('cat-grid');
+        grid.innerHTML = CATEGORIES.map(cat => {
+          const pool = getPool(cat.id);
+          const roundCount = computeRoundCount(pool.length);
+          return `
+            <button type="button" class="cat-card ${cat.cls}" data-cat="${cat.id}">
+              <div class="cat-top"><span class="cat-era">${escapeHtml(cat.era)}</span></div>
+              <div class="cat-name">${escapeHtml(cat.name)}</div>
+              <div class="cat-desc">${escapeHtml(cat.desc)}</div>
+              <div class="cat-foot">
+                <span>Runde: ${roundCount} von ${pool.length} Geräten</span>
+                <span class="cat-go">Starten →</span>
+              </div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('countdown-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        setCountdownEnabled(btn.dataset.timer === '1');
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        syncMenuControls();
+      });
+
+      document.getElementById('length-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        selectedLen = btn.dataset.len;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        renderMenu();
+      });
+
+      document.getElementById('cat-grid').addEventListener('click', (e) => {
+        const card = e.target.closest('.cat-card');
+        if (card) startQuiz(card.dataset.cat);
+      });
+
+      function stopTimer() {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+      }
+
+      function updatePlayTimerUI() {
+        const btn = document.getElementById('btn-play-timer');
+        const track = document.getElementById('timer-track');
+        const fill = document.getElementById('timer-fill');
+        if (!isCountdownEnabled()) {
+          track.classList.add('hidden');
+          btn.className = 'timer-toggle-btn';
+          btn.textContent = '☕ Kein Zeitlimit (Timer einschalten)';
+          return;
+        }
+        track.classList.remove('hidden');
+        if (countdownExpired || timeLeft <= 0) {
+          fill.style.width = '0%';
+          btn.textContent = '⏱ 35s um — in Ruhe weiter antworten';
+        } else {
+          fill.style.width = Math.max(0, Math.min(100, (timeLeft / COUNTDOWN_SEC) * 100)) + '%';
+          btn.textContent = `⏱ ${Math.ceil(timeLeft)}s (Timer ausschalten)`;
+        }
+      }
+
+      function startGentleCountdown() {
+        stopTimer();
+        if (!isCountdownEnabled() || answered) { updatePlayTimerUI(); return; }
+        let lastTs = performance.now();
+        updatePlayTimerUI();
+        timerId = setInterval(() => {
+          const now = performance.now();
+          timeLeft = Math.max(0, timeLeft - (now - lastTs) / 1000);
+          lastTs = now;
+          if (timeLeft <= 0) { timeLeft = 0; countdownExpired = true; stopTimer(); }
+          updatePlayTimerUI();
+        }, 120);
+      }
+
+      document.getElementById('btn-play-timer').addEventListener('click', () => {
+        const nextOn = !isCountdownEnabled();
+        setCountdownEnabled(nextOn);
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        if (nextOn) {
+          if (timeLeft <= 0) { timeLeft = COUNTDOWN_SEC; countdownExpired = false; }
+          startGentleCountdown();
+        } else {
+          stopTimer();
+          updatePlayTimerUI();
+        }
+      });
+
+      function startQuiz(catId) {
+        activeCat = catId || 'alle';
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const pool = getPool(activeCat);
+        deck = shuffle(pool).slice(0, computeRoundCount(pool.length));
+        qIdx = 0;
+        correctCount = 0;
+        resultsLog = [];
+        document.getElementById('screen-menu').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-play').classList.remove('hidden');
+        showQuestion();
+      }
+
+      function renderTulluAttribution(credit) {
+        const cUrl = commonsUrl(credit.commons);
+        const lUrl = credit.licenseUrl || 'https://creativecommons.org/licenses/by-sa/4.0/';
+        return `📷 Urheber: ${escapeHtml(credit.artist)} · Lizenz: <a href="${escapeHtml(lUrl)}" target="_blank" rel="noopener noreferrer">${escapeHtml(credit.license)} ↗</a> · <a href="${escapeHtml(cUrl)}" target="_blank" rel="noopener noreferrer">Quelle (Wikimedia Commons) ↗</a> · (Web-Skalierung)`;
+      }
+
+      function showQuestion() {
+        stopTimer();
+        answered = false;
+        f50Available = true;
+        timeLeft = COUNTDOWN_SEC;
+        countdownExpired = false;
+
+        const item = deck[qIdx];
+        const catObj = CATEGORIES.find(c => c.id === item.cat);
+
+        document.getElementById('q-num').textContent = qIdx + 1;
+        document.getElementById('q-total').textContent = deck.length;
+        document.getElementById('q-correct-count').textContent = correctCount;
+        document.getElementById('q-cat-pill').textContent = catObj ? catObj.name : 'Mobilfunk';
+        document.getElementById('q-era-pill').textContent = item.eraLabel;
+
+        const imgEl = document.getElementById('hw-img');
+        imgEl.alt = 'Handy/Smartphone-Foto zur aktuellen Frage';
+        imgEl.src = item.img;
+        document.getElementById('photo-attribution').innerHTML = renderTulluAttribution(item.credit);
+        document.getElementById('photo-status-note').textContent = 'Klick aufs Bild öffnet Vollansicht';
+
+        if (qIdx + 1 < deck.length) {
+          const pre = new Image();
+          pre.src = deck[qIdx + 1].img;
+        }
+
+        document.getElementById('q-text').textContent = item.q;
+        document.getElementById('fact-sheet').classList.add('hidden');
+        document.getElementById('joker-50').disabled = false;
+        document.getElementById('joker-skip').disabled = false;
+
+        const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+        item._rendered = opts;
+        const letters = ['A', 'B', 'C', 'D'];
+        document.getElementById('answers-grid').innerHTML = opts.map((o, i) => `
+          <button type="button" class="ans-btn" data-idx="${i}">
+            <span class="ans-key">${letters[i]}</span>
+            <span>${escapeHtml(o.txt)}</span>
+          </button>
+        `).join('');
+
+        updatePlayTimerUI();
+        if (isCountdownEnabled()) startGentleCountdown();
+      }
+
+      document.getElementById('answers-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.ans-btn');
+        if (!btn || answered || btn.classList.contains('eliminated')) return;
+        pickAnswer(parseInt(btn.dataset.idx, 10));
+      });
+
+      function pickAnswer(idx) {
+        if (answered) return;
+        answered = true;
+        stopTimer();
+
+        const item = deck[qIdx];
+        const chosen = item._rendered[idx];
+        const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+        buttons.forEach((b, i) => {
+          b.disabled = true;
+          if (item._rendered[i].isRight) b.classList.add('correct');
+        });
+
+        let status = 'miss';
+        if (chosen && chosen.isRight) {
+          correctCount++;
+          status = 'ok';
+          if (window.ArcadeAudio) ArcadeAudio.perkGood();
+        } else {
+          if (buttons[idx]) buttons[idx].classList.add('wrong');
+          if (window.ArcadeAudio) ArcadeAudio.perkBad();
+        }
+
+        resultsLog.push({ item, status });
+        document.getElementById('q-correct-count').textContent = correctCount;
+        document.getElementById('joker-50').disabled = true;
+        document.getElementById('joker-skip').disabled = true;
+        revealSteckbrief(item, status);
+      }
+
+      function revealSteckbrief(item, status) {
+        const info = item.wasDasIst;
+        const sheet = document.getElementById('fact-sheet');
+        sheet.classList.toggle('is-right', status === 'ok');
+
+        document.getElementById('hw-img').alt = info.title;
+        document.getElementById('photo-status-note').textContent = info.title;
+
+        const verdictEl = document.getElementById('sb-verdict');
+        verdictEl.className = 'sb-verdict ' + status;
+        verdictEl.textContent = status === 'ok'
+          ? '✓ Richtig erkannt — Geräte-Steckbrief:'
+          : (status === 'skip' ? 'ℹ Aufgelöst — Geräte-Steckbrief:' : '✗ Knapp daneben — Geräte-Steckbrief:');
+
+        document.getElementById('sb-title').textContent = info.title;
+        document.getElementById('sb-nick').textContent = info.nick || '';
+
+        const specs = [
+          { k: 'Erscheinungsjahr', v: info.year },
+          { k: 'Betriebssystem & Chip', v: info.os },
+          { k: 'Display', v: info.display },
+          { k: 'Besonderheiten', v: info.feature }
+        ];
+        document.getElementById('sb-specs').innerHTML = specs.map(s => `
+          <div class="spec-item"><dt>${escapeHtml(s.k)}</dt><dd>${escapeHtml(s.v)}</dd></div>
+        `).join('');
+
+        document.getElementById('sb-trivia').textContent = info.trivia;
+        document.getElementById('sb-commons-wrap').innerHTML = `
+          <a class="sb-commons-link" href="${escapeHtml(commonsUrl(item.credit.commons))}" target="_blank" rel="noopener noreferrer">
+            Originaldatei: ${escapeHtml(item.credit.commons.replace(/^File:/, ''))} · ${escapeHtml(item.credit.artist)} ↗
+          </a>
+        `;
+
+        document.getElementById('btn-next-q').textContent =
+          qIdx + 1 >= deck.length ? 'Zur Runden-Übersicht ▶' : 'Nächstes Gerät ▶';
+
+        sheet.classList.remove('hidden');
+        sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function nextQuestion() {
+        if (!answered) return;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        qIdx++;
+        if (qIdx >= deck.length) finishQuiz();
+        else { showQuestion(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      }
+
+      document.getElementById('btn-next-q').addEventListener('click', nextQuestion);
+
+      document.getElementById('joker-50').addEventListener('click', () => {
+        if (!f50Available || answered) return;
+        f50Available = false;
+        document.getElementById('joker-50').disabled = true;
+        if (window.ArcadeAudio) ArcadeAudio.pop();
+        const item = deck[qIdx];
+        const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+        const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+        wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+      });
+
+      document.getElementById('joker-skip').addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const item = deck[qIdx];
+        document.querySelectorAll('#answers-grid .ans-btn').forEach((b, i) => {
+          b.disabled = true;
+          if (item._rendered[i].isRight) b.classList.add('correct');
+        });
+        document.getElementById('joker-50').disabled = true;
+        document.getElementById('joker-skip').disabled = true;
+        resultsLog.push({ item, status: 'skip' });
+        revealSteckbrief(item, 'skip');
+      });
+
+      function finishQuiz() {
+        stopTimer();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+
+        const catObj = CATEGORIES.find(c => c.id === activeCat);
+        document.getElementById('res-score-line').textContent =
+          `${correctCount} von ${deck.length} Geräten richtig erkannt`;
+        document.getElementById('res-sub').textContent =
+          `Epoche: ${catObj ? catObj.name : activeCat} — unten findest du alle gezeigten Handys & Smartphones mit Details und Lizenzlinks.`;
+
+        if (window.ArcadeAudio) ArcadeAudio.win();
+
+        document.getElementById('gallery-list').innerHTML = resultsLog.map((entry, idx) => {
+          const it = entry.item;
+          const info = it.wasDasIst;
+          const badgeTxt = entry.status === 'ok' ? '✓ Richtig erkannt' : (entry.status === 'skip' ? 'ℹ Aufgelöst' : '✗ Verwechselt');
+          return `
+            <article class="gallery-row">
+              <button type="button" class="gallery-thumb" data-gidx="${idx}" title="Foto vergrößern">
+                <img src="${escapeHtml(it.img)}" alt="${escapeHtml(info.title)}" loading="lazy" />
+              </button>
+              <div class="gallery-info">
+                <h3>${escapeHtml(info.title)}</h3>
+                <div class="gallery-meta">${escapeHtml(info.year)} · ${escapeHtml(info.os)} · ${escapeHtml(info.display)}</div>
+                <p class="gallery-trivia">${escapeHtml(info.trivia)}</p>
+                <div class="gallery-status">
+                  <span class="outcome-badge ${entry.status}">${badgeTxt}</span>
+                  <span>${renderTulluAttribution(it.credit)}</span>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('gallery-list').addEventListener('click', (e) => {
+        const thumb = e.target.closest('.gallery-thumb');
+        if (!thumb) return;
+        const entry = resultsLog[parseInt(thumb.dataset.gidx, 10)];
+        if (entry) openLightbox(entry.item, true);
+      });
+
+      function backToMenu() {
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-menu').classList.remove('hidden');
+        renderMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('btn-back-menu').addEventListener('click', backToMenu);
+      document.getElementById('btn-change-cat').addEventListener('click', backToMenu);
+      document.getElementById('btn-replay').addEventListener('click', () => startQuiz(activeCat));
+
+      function openLightbox(item, allowTitleReveal) {
+        const modal = document.getElementById('lightbox-modal');
+        const img = document.getElementById('lightbox-img');
+        const cap = document.getElementById('lightbox-caption');
+        img.src = item.img;
+        const revealed = allowTitleReveal || answered;
+        img.alt = revealed ? item.wasDasIst.title : 'Vergrößerte Ansicht des Geräts';
+        cap.textContent = revealed
+          ? `${item.wasDasIst.title} — Foto: ${item.credit.artist} (${item.credit.license})`
+          : `Foto: ${item.credit.artist} · ${item.credit.license} (Wikimedia Commons)`;
+        modal.classList.remove('hidden');
+      }
+
+      function closeLightbox() {
+        document.getElementById('lightbox-modal').classList.add('hidden');
+      }
+
+      document.getElementById('photo-frame').addEventListener('click', () => {
+        if (deck[qIdx]) openLightbox(deck[qIdx], false);
+      });
+      document.getElementById('btn-lightbox-close').addEventListener('click', closeLightbox);
+      document.getElementById('lightbox-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeLightbox();
+      });
+
+      window.addEventListener('keydown', (e) => {
+        const lb = document.getElementById('lightbox-modal');
+        if (!lb.classList.contains('hidden')) {
+          if (e.key === 'Escape') { e.preventDefault(); closeLightbox(); }
+          return;
+        }
+        if (document.getElementById('screen-play').classList.contains('hidden')) return;
+        if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+          const idx = parseInt(e.key, 10) - 1;
+          const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+          if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+        } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+          if (e.target.closest('a, #btn-back-menu, #btn-mute, #btn-zoom-photo, #btn-play-timer')) return;
+          e.preventDefault();
+          nextQuestion();
+        }
+      });
+
+      if (window.ArcadeAudio) ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+      renderMenu();
+    })();
+  </script>
+</body>
+</html>
