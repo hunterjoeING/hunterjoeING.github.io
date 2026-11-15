@@ -12,6 +12,7 @@
   <meta name="description" content="Minesweeper 3D – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online). Spiele ein ästhetisches 3D Minesweeper kostenlos online – echter 3D-Würfel, unmögliche &amp; unendliche Formen, 26 Nachbarn, No-Guess &amp; autonomer KI-Agent-Solver.">
   <meta name="theme-color" content="#00ccff">
   <script>try{if(localStorage.getItem('arcade_theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(_){}</script>
+  <link rel="stylesheet" href="../../shared/arcade.css">
   <style>
 /* ═══════════════════════════════════════════════════════════════════
    MINESWEEPER 3D – ARCADE CRYSTAL EDITION (css/game.css)
@@ -2209,6 +2210,7 @@ html[data-theme="light"] .hb-close-btn:hover {
         <button class="hud-btn" id="btn-autopilot" onclick="toggleAutopilotPanel()" title="Autonomer 3D-Logik-Agent (statt passivem Chatbot)">🤖 Autopilot</button>
         <button class="hud-btn-ic" id="btn-subregion-top" onclick="toggleSubregionPanel()" title="Teilbereich / Schicht-Filter (Ebenen isolieren)">🔪</button>
         <button class="hud-btn" id="btn-hide-blocks" onclick="toggleHideBlocksMode()" title="Blöcke einzeln ausblenden / wiederherstellen (Taste H · oder Alt+Klick)">👁️‍🗨️ <span data-i18n="btn_hide_short">Ausblenden</span> <span id="hide-count-badge" class="hide-count-badge hidden">0</span></button>
+        <button class="hud-btn" id="btn-ms-feedback" onclick="window.ArcadeFeedback && window.ArcadeFeedback.openModal('minesweeper')" title="Verbesserungswünsche, Ideen &amp; Bugs zu 3D Minesweeper melden" style="border-color:rgba(56,189,248,0.45);color:#7dd3fc;">💬 Wünsche</button>
         <div id="agent-telemetry-pill" onclick="openModal('agent-vs-chat')" title="Klicken für Vergleich: Warum ein KI-Agent stärker ist als ein reiner Chatbot">
           <span class="pulse-dot"></span>
           <span id="telemetry-text">TECH DEMO KI-AGENT · DANKE AN VERSTAND2GO (MINESWEEPER3D.ONLINE)</span>
@@ -2306,6 +2308,7 @@ html[data-theme="light"] .hb-close-btn:hover {
       <button onclick="openModal('customgeo');toggleMobileMenu(false)">🏗️ Geometrie</button>
       <button onclick="openModal('design');toggleMobileMenu(false)">⚙️ Design</button>
       <button onclick="openModal('help');toggleMobileMenu(false)">❓ Anleitung</button>
+      <button onclick="window.ArcadeFeedback && window.ArcadeFeedback.openModal('minesweeper');toggleMobileMenu(false)" style="border-color:rgba(56,189,248,0.45);color:#7dd3fc;">💬 Wünsche &amp; Bugs</button>
     </div>
     <div class="mob-footer">
       <p class="agent-quote-mini">„Ein Chatbot schreibt dir eine Antwort. Ein KI-Agent baut die Lösung.“</p>
@@ -2461,6 +2464,7 @@ html[data-theme="light"] .hb-close-btn:hover {
       © 2026 <a href="#" onclick="openModal('agent-vs-chat');return false;" id="link-contact">HunterJoe Arcade · 3D Edition</a> –
       <a href="#" onclick="openModal('news');return false;" style="color:rgba(160,210,255,.55)" title="Versions-Info">v2.13</a> ·
       <span style="white-space:nowrap">
+        <a href="#" onclick="window.ArcadeFeedback && window.ArcadeFeedback.openModal('minesweeper');return false;" style="color:#7dd3fc;font-weight:700;">💬 Wünsche</a> ·
         <a href="#" onclick="openModal('news');return false;" data-i18n="news_footer">News</a> ·
         <a href="../../impressum.html" style="color:rgba(160,210,255,.78)">Impressum</a> ·
         <a href="../../datenschutz.html" style="color:rgba(160,210,255,.78)">Datenschutz</a>
@@ -2498,6 +2502,7 @@ html[data-theme="light"] .hb-close-btn:hover {
   </div>
 
   <!-- Application Scripts -->
+  <script src="../../shared/arcade.js"></script>
   <script>
 // ═══════════════════════════════════════════════════════════════════
 // js/i18n.js — Multilingual Strings (DE / EN / ES) + Subtle Agent Insights

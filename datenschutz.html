@@ -171,20 +171,31 @@
         <li>deine lokalen Bestleistungen, gespielten Runden und 3D-Minesweeper-Spielstände,</li>
         <li>deinen optional gewählten Spielernamen für die Bestenliste,</li>
         <li>Komfort- und Darstellungseinstellungen (z. B. Hell-/Dunkelmodus unter <code>arcade_theme</code>, Ton an/aus unter <code>arcade_muted</code>),</li>
-        <li>Quiz-Einstellungen sowie deinen lokalen Anti-Wiederholungs-Verlauf bereits gezeigter Fragen-IDs (<code>arcade_quiz_seen_v1:*</code>, Rundenlänge <code>arcade_quiz_len</code>, Zeitmodus „Ohne Zeitlimit“ unter <code>arcade_quiz_relaxed</code>), damit dir bei großen Fragenpools möglichst selten doppelte Fragen direkt nacheinander begegnen.</li>
+        <li>Quiz-Einstellungen sowie deinen lokalen Anti-Wiederholungs-Verlauf bereits gezeigter Fragen-IDs (<code>arcade_quiz_seen_v1:*</code>, Rundenlänge <code>arcade_quiz_len</code>, Zeitmodus „Ohne Zeitlimit“ unter <code>arcade_quiz_relaxed</code>), damit dir bei großen Fragenpools möglichst selten doppelte Fragen direkt nacheinander begegnen,</li>
+        <li>deine optionale Anmeldung für das Kommentar- &amp; Wunsch-Board (<code>arcade_auth_user_v1</code>, <code>arcade_auth_token_v1</code>, lokaler Passwort-Hash-Tresor <code>arcade_auth_accounts_v1</code>) sowie zwischengespeicherte Verbesserungswünsche und Upvotes (<code>arcade_feedback_items_v1</code>, <code>arcade_feedback_votes_v1</code>).</li>
       </ul>
       <p>
-        Diese Speicherung erfolgt auf Grundlage von § 25 Abs. 2 Nr. 2 TDDDG, da sie für die gewünschte Funktion des Spiel- und Quiz-Dashboards erforderlich ist. Du kannst den lokalen Speicher jederzeit vollständig über deine Browser-Einstellungen oder in den Quiz-Modulen über „Verlauf zurücksetzen“ löschen.
+        Diese Speicherung erfolgt auf Grundlage von § 25 Abs. 2 Nr. 2 TDDDG, da sie für die gewünschte Funktion des Spiel-, Quiz- und Feedback-Dashboards erforderlich ist. Du kannst den lokalen Speicher jederzeit vollständig über deine Browser-Einstellungen oder in den Quiz-Modulen über „Verlauf zurücksetzen“ löschen.
       </p>
 
-      <h2>6. Kontaktaufnahme per E-Mail oder Telefon</h2>
+      <h2>6. Kommentar- &amp; Wunsch-Board, Benutzer-Login und Anti-Bot-Schutz (CAPTCHA)</h2>
+      <p>
+        Auf dem zentralen Dashboard sowie in allen Spielen und Quizzen kannst du Verbesserungswünsche, Feature-Ideen, Bug-Meldungen oder Kommentare einreichen, auf die der Betreiber oder der integrierte KI-Agent (<code>🤖 KI-Agent (Antigravity)</code>) direkt antworten kann. Um das System vor automatisierten Spam-Angriffen zu schützen, ist vor dem Absenden eine Anmeldung mit frei wählbarem Benutzernamen und Passwort sowie eine Anti-Bot-Prüfung erforderlich:
+      </p>
+      <ul>
+        <li><strong>Passwortsicherheit:</strong> Dein gewähltes Passwort wird niemals im Klartext gespeichert, sondern ausschließlich kryptografisch gehasht (WebCrypto <code>PBKDF2-SHA256</code> bzw. <code>SHA-256</code> mit Salt) verarbeitet.</li>
+        <li><strong>Anti-Bot-Schutz (Cloudflare Turnstile &amp; lokale Rechenprüfung):</strong> Sobald du den Anmelde- oder Registrierungsdialog öffnest, kann zur Abwehr automatisierter Zugriffe das datenschutzfreundliche CAPTCHA-Widget <strong>Cloudflare Turnstile</strong> (<code>challenges.cloudflare.com</code>, Cloudflare, Inc.) geladen werden, ergänzt durch eine lokale Mensch-Prüfung (Rechenaufgabe). Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am Schutz der Website vor Bots, Spam und Missbrauch).</li>
+        <li><strong>Veröffentlichte Beiträge:</strong> Eingereichte Wünsche, Kommentare, das gewählte Ziel-Modul (Allgemein oder Spiel/Quiz), der gewählte Benutzername sowie der Zeitpunkt werden über die Cloudflare-Worker-/D1-Schnittstelle bzw. lokal gespeichert und im Wunsch-Board angezeigt.</li>
+      </ul>
+
+      <h2>7. Kontaktaufnahme per E-Mail oder Telefon</h2>
       <p>
         Wenn du per E-Mail oder Telefon Kontakt aufnimmst, werden deine angegebenen Daten ausschließlich zur Bearbeitung deines Anliegens gespeichert und nicht an unbeteiligte Dritte weitergegeben (Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO).
       </p>
 
-      <h2>7. Deine Rechte</h2>
+      <h2>8. Deine Rechte</h2>
       <p>
-        Dir stehen nach der DSGVO grundsätzlich die Rechte auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO) zu. Zudem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde (z. B. der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen) zu beschweren (Art. 77 DSGVO). Zur Löschung eines Bestenlisten-Eintrags genügt eine kurze E-Mail an <a href="mailto:j.rudolph@yahoo.de">j.rudolph@yahoo.de</a>.
+        Dir stehen nach der DSGVO grundsätzlich die Rechte auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO) zu. Zudem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde (z. B. der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen) zu beschweren (Art. 77 DSGVO). Zur Löschung eines Bestenlisten-Eintrags, Benutzerkontos oder Kommentars genügt eine kurze E-Mail an <a href="mailto:j.rudolph@yahoo.de">j.rudolph@yahoo.de</a>.
       </p>
     </article>
 

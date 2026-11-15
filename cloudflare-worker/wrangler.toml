@@ -1,0 +1,15 @@
+name = "hunterjoe-scores"
+main = "worker.js"
+compatibility_date = "2024-11-01"
+
+# D1 Datenbank-Binding (deine bestehende hunterjoe-scores D1-Datenbank-ID eintragen oder via Cloudflare Dashboard beibehalten)
+[[d1_databases]]
+binding = "DB"
+database_name = "hunterjoe-scores-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# Optionale Umgebungsvariablen / Secrets (am besten via `npx wrangler secret put <NAME>` setzen):
+# - TURNSTILE_SECRET_KEY : Cloudflare Turnstile Secret Key (ohne Key greift das offizielle Turnstile Test-Secret)
+# - JWT_SECRET           : Zufälliger geheimer Schlüssel für Login-Tokens
+# - ADMIN_SECRET         : Dein Admin-Schlüssel (damit du & der KI-Agent direkt Antworten + Status „Behoben“ posten können)
+# - AGENT_API_KEY        : Optionaler API-Key für direkte Antworten des KI-Agenten per Header X-Agent-Key

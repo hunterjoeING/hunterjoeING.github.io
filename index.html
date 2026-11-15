@@ -743,6 +743,7 @@
       <div class="header-actions">
         <button class="hub-action-btn arcade-nav-pill" id="btn-arcade-player" title="Spielername für globale Bestenlisten">👤 Name setzen</button>
         <button class="hub-action-btn" id="btn-hub-leaderboard" title="Globale Bestenliste aller Spiele öffnen">🏆 Bestenliste</button>
+        <button class="hub-action-btn" id="btn-hub-feedback" data-arcade-feedback-btn="1" title="Verbesserungswünsche, Bugs &amp; Kommentare öffnen">💬 Wünsche <span class="arcade-feedback-count" id="hub-fb-count">3</span></button>
         <button class="hub-action-btn" id="btn-replay-zoom" title="2-Sekunden-Kamerafahrt erneut abspielen">🔭 2s-Anflug</button>
         <button type="button" class="hub-action-btn" id="btn-arcade-theme" data-with-label="1" title="Hell-/Dunkel-Modus wechseln">☀️ Hell</button>
         <button class="icon-btn" id="btn-mute" title="Ton an/aus">🔊</button>
@@ -766,6 +767,7 @@
       <button class="domain-tab active" data-domain="all">✨ Alles (21)</button>
       <button class="domain-tab" data-domain="games">🎮 Games (7)</button>
       <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (14)</button>
+      <button class="domain-tab" data-domain="feedback">💬 Wünsche &amp; Bug-Melder</button>
     </div>
 
     <section class="section-block" id="sec-games">
@@ -788,9 +790,18 @@
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
 
+    <section class="section-block" id="sec-feedback">
+      <div class="section-head">
+        <h2>💬 Verbesserungswünsche, Bugs &amp; KI-Agent-Antworten <span class="section-count">Login &amp; CAPTCHA geschützt</span></h2>
+      </div>
+      <div class="glass-card" style="padding:18px;" id="hub-feedback-board"></div>
+    </section>
+
     <footer class="hub-footer">
-      <div>HunterJoe Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Weltweite Bestenlisten (Cloudflare Workers &amp; D1)</div>
+      <div>HunterJoe Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Weltweite Bestenlisten &amp; Community-Wünsche (Cloudflare Workers &amp; D1)</div>
       <nav class="hub-legal-nav" aria-label="Rechtliche Hinweise">
+        <a href="#sec-feedback" id="footer-jump-feedback">💬 Verbesserungswunsch eintragen</a>
+        <span aria-hidden="true">·</span>
         <a href="./impressum.html">Impressum</a>
         <span aria-hidden="true">·</span>
         <a href="./datenschutz.html">Datenschutz</a>
@@ -1214,6 +1225,7 @@
       const elQuizzesGrid = document.getElementById('quizzes-grid');
       const elSecGames = document.getElementById('sec-games');
       const elSecQuizzes = document.getElementById('sec-quizzes');
+      const elSecFeedback = document.getElementById('sec-feedback');
       const elShell = document.getElementById('hub-shell');
       const elIntroHud = document.getElementById('intro-hud');
       const elIntroBar = document.getElementById('intro-bar-fill');
@@ -1246,6 +1258,11 @@
       function updateHeaderStats() {
         const summary = ArcadeScores.getSummaryCache ? ArcadeScores.getSummaryCache() : null;
         document.getElementById('stat-games').textContent = GAMES.length + QUIZZES.length;
+        if (window.ArcadeFeedback) {
+          const fbCnt = ArcadeFeedback.getCountsForTarget('all');
+          const elFbCnt = document.getElementById('hub-fb-count');
+          if (elFbCnt) elFbCnt.textContent = fbCnt.total;
+        }
         if (summary && summary.games) {
           document.getElementById('stat-records').textContent = Number(summary.totalRecords || 0);
           document.getElementById('stat-plays').textContent = Number(summary.totalPlays || 0);
@@ -1261,6 +1278,7 @@
 
       function buildCard(g) {
         const best = g.noHighscore ? null : readItemBest(g.id);
+        const fbCounts = window.ArcadeFeedback ? ArcadeFeedback.getCountsForTarget(g.id) : { total: 0 };
         const a = document.createElement('a');
         a.href = g.href;
         a.className = 'game-card' + (g.featured ? ' featured' : '');
@@ -1281,16 +1299,32 @@
           <p class="card-desc">${g.desc}</p>
           <div class="card-footer">
             ${footerLeft}
-            <span class="play-cta">${g.cta || 'Spielen →'}</span>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <button type="button" class="fb-reply-toggle card-fb-trigger" data-fb-target="${escapeHubHtml(g.id)}" title="Verbesserungswünsche &amp; Bugs zu diesem Modul öffnen" style="padding:5px 8px;font-size:11.5px;">💬${fbCounts.total > 0 ? ' ' + fbCounts.total : ''}</button>
+              <span class="play-cta">${g.cta || 'Spielen →'}</span>
+            </div>
           </div>
         `;
-        a.addEventListener('click', () => ArcadeAudio.click());
+        a.addEventListener('click', (e) => {
+          const fbBtn = e.target.closest('.card-fb-trigger');
+          if (fbBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            ArcadeAudio.click();
+            if (window.ArcadeFeedback) ArcadeFeedback.openModal(g.id);
+            return;
+          }
+          ArcadeAudio.click();
+        });
         return a;
       }
 
       function renderHub() {
-        elSecGames.classList.toggle('hidden', currentDomain === 'quizzes');
-        elSecQuizzes.classList.toggle('hidden', currentDomain === 'games');
+        elSecGames.classList.toggle('hidden', currentDomain === 'quizzes' || currentDomain === 'feedback');
+        elSecQuizzes.classList.toggle('hidden', currentDomain === 'games' || currentDomain === 'feedback');
+        if (elSecFeedback) {
+          elSecFeedback.classList.toggle('hidden', currentDomain === 'games' || currentDomain === 'quizzes');
+        }
 
         elGamesGrid.innerHTML = '';
         const gList = currentGameCat === 'all' ? GAMES : GAMES.filter(g => g.cat === currentGameCat);
@@ -1609,9 +1643,30 @@
         ArcadeAudio.click();
         ArcadeScores.openLeaderboardModal('minesweeper');
       });
+      const elHubFbBtn = document.getElementById('btn-hub-feedback');
+      if (elHubFbBtn) {
+        elHubFbBtn.addEventListener('click', () => {
+          ArcadeAudio.click();
+          if (window.ArcadeFeedback) ArcadeFeedback.openModal('all');
+        });
+      }
+      if (window.ArcadeFeedback) {
+        ArcadeFeedback.mountBoard(document.getElementById('hub-feedback-board'), {
+          initialTarget: 'all'
+        });
+      }
       window.addEventListener('arcade:scores-updated', () => {
         updateHeaderStats();
         renderHub();
+      });
+      window.addEventListener('arcade:feedback-updated', () => {
+        updateHeaderStats();
+        renderHub();
+        if (window.ArcadeFeedback) {
+          ArcadeFeedback.mountBoard(document.getElementById('hub-feedback-board'), {
+            initialTarget: 'all'
+          });
+        }
       });
 
       updateHeaderStats();

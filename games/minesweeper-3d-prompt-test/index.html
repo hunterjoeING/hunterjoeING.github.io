@@ -6,6 +6,7 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b19'/%3E%3Cpolygon points='32,8 54,20 32,32 10,20' fill='%2338bdf8'/%3E%3Cpolygon points='10,20 32,32 32,56 10,44' fill='%230284c7'/%3E%3Cpolygon points='54,20 54,44 32,56 32,32' fill='%230369a1'/%3E%3C/svg%3E" />
   <title>Minesweeper 3d prompt Version</title>
   <script>try{if(localStorage.getItem('arcade_theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(_){}</script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     :root {
       --bg-dark: #070b19;
@@ -613,6 +614,7 @@
       <button class="btn" id="btn-flag-mode" title="Umschalten zwischen Aufdecken und Flagge setzen">🚩 Flaggen-Modus: AUS</button>
       <button class="btn" id="btn-hide-mode" title="Blöcke einzeln ausblenden / wiederherstellen (Taste H · oder Alt+Klick)">👁️‍🗨️ Verbergen: AUS<span class="hide-badge hidden" id="hide-count-badge">0</span></button>
       <button class="btn primary" id="btn-new-game">🔄 Neues Spiel</button>
+      <button class="btn" id="btn-ms-feedback" onclick="if(window.ArcadeFeedback)ArcadeFeedback.openModal('minesweeper_3d_prompt_test')" title="Verbesserungswunsch oder Bug melden">💬 Wünsche</button>
       <button class="btn" id="btn-theme-toggle" title="Hell-/Dunkel-Modus wechseln">☀️</button>
     </div>
   </header>
@@ -643,10 +645,11 @@
       <span class="hint-item"><span class="key-badge">Tippen / Klick</span> Aufdecken</span>
       <span class="hint-item hint-desktop-only"><span class="key-badge">Rechtsklick</span> Flagge 🚩</span>
       <span class="hint-item hint-desktop-only"><span class="key-badge">H / Alt+Klick</span> Verbergen</span>
-      <span class="hint-item footer-legal-links"><a href="../../impressum.html">Impressum</a> · <a href="../../datenschutz.html">Datenschutz</a></span>
+      <span class="hint-item footer-legal-links"><a href="#" onclick="if(window.ArcadeFeedback)ArcadeFeedback.openModal('minesweeper_3d_prompt_test');return false;">💬 Wünsche</a> · <a href="../../impressum.html">Impressum</a> · <a href="../../datenschutz.html">Datenschutz</a></span>
     </div>
   </footer>
 
+  <script src="../../shared/arcade.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script>
     (function () {

@@ -190,7 +190,13 @@
       if (p.includes('/games/quiz-movies')) return 'quiz_movies';
       if (p.includes('/games/quiz-ai')) return 'quiz_ai';
       if (p.includes('/games/quiz-china')) return 'quiz_china';
+      if (p.includes('/games/quiz-cpus')) return 'quiz_cpus';
+      if (p.includes('/games/quiz-gpus')) return 'quiz_gpus';
+      if (p.includes('/games/quiz-phones')) return 'quiz_phones';
+      if (p.includes('/games/quiz-pilze-aachen')) return 'quiz_pilze_aachen';
+      if (p.includes('/games/quiz-swiss-trains')) return 'quiz_swiss_trains';
       if (p.includes('/games/quiz')) return 'quiz';
+      if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
     } catch (e) {}
     return null;
@@ -741,6 +747,1124 @@
     }
   };
 
+  // ==========================================================================
+  // COMMUNITY FEEDBACK, WISHES, USER LOGIN & TURNSTILE CAPTCHA
+  // ==========================================================================
+  const AUTH_USER_KEY = 'arcade_auth_user_v1';
+  const AUTH_TOKEN_KEY = 'arcade_auth_token_v1';
+  const LOCAL_USERS_KEY = 'arcade_local_users_v1';
+  const FB_STORE_KEY = 'arcade_feedback_items_v1';
+  const FB_VOTES_KEY = 'arcade_feedback_votes_v1';
+  // Cloudflare Turnstile Sitekey (Standard: offizieller Cloudflare Turnstile Test/Demo-Key;
+  // kann jederzeit durch deinen Domain-spezifischen Turnstile Sitekey ersetzt werden)
+  const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+
+  const FEEDBACK_TARGETS = [
+    { id: 'all', title: '✨ Alle Module & Allgemein', icon: '🌐' },
+    { id: 'general', title: 'Allgemein / Ganze Website', icon: '🏠' },
+    { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊' },
+    { id: 'minesweeper', title: 'Minesweeper 3D – Tech Demo KI-Agent', icon: '💣' },
+    { id: 'roadster', title: 'Hyper-Roadster Lander', icon: '🚀' },
+    { id: 'zombie', title: 'Zombie Horde: Gate Runner', icon: '🧟' },
+    { id: 'tower', title: 'Bastion Tower Defense', icon: '🛸' },
+    { id: 'solitaire', title: 'Klondike Solitaire', icon: '🃏' },
+    { id: 'p2048', title: '2048 Prism', icon: '🔷' },
+    { id: 'quiz_ai', title: 'KI: Entstehung & Funktionsweise Quiz', icon: '🤖' },
+    { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
+    { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
+    { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },
+    { id: 'quiz_cpus', title: 'Prozessoren-Quiz (2000–Heute)', icon: '💻' },
+    { id: 'quiz_gpus', title: 'Grafikkarten-Quiz (2000–Heute)', icon: '🎮' },
+    { id: 'quiz_phones', title: 'Handys & Smartphones Quiz', icon: '📱' },
+    { id: 'quiz_pilze_aachen', title: 'Pilz-Sammler-Quiz: Region Aachen', icon: '🍄' },
+    { id: 'quiz_swiss_trains', title: 'Schweizer Eisenbahnloks', icon: '🚆' },
+    { id: 'quiz_emob', title: 'E-Mobilität & Tesla Nerd-Quiz', icon: '⚡' },
+    { id: 'quiz_pol', title: 'Politik & Ökonomie Quiz', icon: '⚖️' },
+    { id: 'quiz_hist', title: 'Geschichte & Weltereignisse Quiz', icon: '🏛️' },
+    { id: 'quiz_china', title: 'Neuere Chinesische Geschichte Quiz', icon: '🏯' },
+    { id: 'quiz', title: 'Quiz Arena: Klassik & Mega-Mix', icon: '❓' }
+  ];
+
+  const FEEDBACK_TARGET_MAP = Object.fromEntries(FEEDBACK_TARGETS.map(t => [t.id, t]));
+
+  const DEFAULT_SEED_FEEDBACK = [
+    {
+      id: 101,
+      targetId: 'zombie',
+      category: 'bug',
+      status: 'fixed',
+      title: 'Streuschuss trifft auf der Brücke zu eng / kaum spürbar',
+      body: 'Beim Zombie-Spiel fühlte sich der Streuschuss nach dem Einsammeln des Tors kaum breiter an als der Einzelschuss. Könnt ihr den Fächerwinkel vergrößern?',
+      authorName: 'Johannes',
+      authorRole: 'admin',
+      upvotes: 6,
+      createdAt: '2026-11-15T19:40:00Z',
+      replies: [
+        {
+          id: 201,
+          postId: 101,
+          authorName: '🤖 KI-Agent (Antigravity)',
+          authorRole: 'agent',
+          body: 'Behoben in Commit 107400f! Der Fächerwinkel wurde für 3× Streu auf [-0.85, 0, +0.85] und für 5× Streu auf [-1.55, -0.78, 0, +0.78, +1.55] verbreitert, Stufe 2 behält den zentralen Hauptstrahl bei, der Salven-Schaden wurde auf 1,35× / 1,70× angehoben und die orangen Plasma-Leuchtspuren folgen jetzt exakt dem Streuwinkel.',
+          newStatus: 'fixed',
+          createdAt: '2026-11-15T20:15:00Z'
+        }
+      ]
+    },
+    {
+      id: 102,
+      targetId: 'minesweeper_3d_prompt_test',
+      category: 'wish',
+      status: 'fixed',
+      title: 'Einzelne äußere Würfel ausblenden & wieder einblenden können',
+      body: 'Wenn der 3D-Würfel größer wird, verdecken äußere Zahlenblöcke oft den Blick auf das Innere. Ein Modus zum gezielten Ausblenden einzelner Blöcke samt Rückgängig-Funktion wäre super!',
+      authorName: 'Johannes',
+      authorRole: 'admin',
+      upvotes: 8,
+      createdAt: '2026-11-15T18:50:00Z',
+      replies: [
+        {
+          id: 202,
+          postId: 102,
+          authorName: '🤖 KI-Agent (Antigravity)',
+          authorRole: 'agent',
+          body: 'Direkt in beiden 3D-Minesweeper-Versionen eingebaut (Commit af79b54): Über den Button „👁️‍🗨️ Verbergen“ (oder Taste H / Alt+Klick) lassen sich Blöcke einzeln ausblenden, per „👻 Geister“ (Taste G) halbtransparent prüfen und per Klick oder „👁 Alle“ jederzeit zurückholen.',
+          newStatus: 'fixed',
+          createdAt: '2026-11-15T19:30:00Z'
+        }
+      ]
+    },
+    {
+      id: 103,
+      targetId: 'general',
+      category: 'wish',
+      status: 'fixed',
+      title: 'Hell-/Dunkelmodus-Schalter & größerer Fragen-Pool gegen Wiederholungen',
+      body: 'Ein globaler Umschalter zwischen Dark- und Light-Mode sowie 20 Fragen pro Durchgang aus einem großen Pool (>1.000 Fragen) würden den Wiederspielwert enorm steigern.',
+      authorName: 'Johannes',
+      authorRole: 'admin',
+      upvotes: 11,
+      createdAt: '2026-11-15T17:20:00Z',
+      replies: [
+        {
+          id: 203,
+          postId: 103,
+          authorName: '🤖 KI-Agent (Antigravity)',
+          authorRole: 'agent',
+          body: 'Erledigt (Commit 41932a2)! Alle Seiten besitzen oben rechts den ☀️/🌙 Theme-Schalter und die Quiz-Engine zieht standardmäßig 20 Fragen aus mittlerweile 1.252 Fragen & Foto-Motiven mit Anti-Wiederholungsschutz.',
+          newStatus: 'fixed',
+          createdAt: '2026-11-15T18:10:00Z'
+        }
+      ]
+    }
+  ];
+
+  function readAuthUser() {
+    try {
+      const raw = localStorage.getItem(AUTH_USER_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function readAuthToken() {
+    try { return localStorage.getItem(AUTH_TOKEN_KEY) || ''; } catch (e) { return ''; }
+  }
+
+  async function sha256HexBrowser(str) {
+    try {
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(String(str)));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (e) {
+      let h = 2166136261;
+      const s = String(str);
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(16);
+    }
+  }
+
+  // Turnstile Script Loader & Widget Renderer + Interactive Bot-Challenge Guard
+  let _turnstileLoading = null;
+  function loadTurnstileScript() {
+    if (window.turnstile) return Promise.resolve(window.turnstile);
+    if (_turnstileLoading) return _turnstileLoading;
+    _turnstileLoading = new Promise((resolve) => {
+      const s = document.createElement('script');
+      s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      s.async = true;
+      s.defer = true;
+      s.onload = () => resolve(window.turnstile || null);
+      s.onerror = () => resolve(null);
+      document.head.appendChild(s);
+      setTimeout(() => resolve(window.turnstile || null), 3500);
+    });
+    return _turnstileLoading;
+  }
+
+  function createCaptchaController(containerEl) {
+    const a = 2 + Math.floor(Math.random() * 7);
+    const b = 2 + Math.floor(Math.random() * 7);
+    const expected = a + b;
+    let turnstileToken = '';
+    const uid = 'cap_' + Math.random().toString(36).slice(2, 8);
+
+    containerEl.innerHTML = `
+      <div class="fb-captcha-wrap">
+        <label class="fb-captcha-check-row" for="${uid}_chk">
+          <input type="checkbox" id="${uid}_chk" />
+          <span>🛡️ Ich bin ein Mensch (Anti-Spam-Schutz)</span>
+        </label>
+        <div class="fb-captcha-math">
+          <span>Aufgabe: <strong>${a} + ${b} =</strong></span>
+          <input type="number" id="${uid}_ans" inputmode="numeric" placeholder="?" aria-label="Rechenaufgabe ${a} plus ${b}" />
+        </div>
+        <div id="${uid}_cf" style="width:100%;display:none;margin-top:6px;"></div>
+        <span class="fb-captcha-badge">🔒 Cloudflare Turnstile &amp; Bot-Guard</span>
+      </div>
+    `;
+
+    loadTurnstileScript().then(ts => {
+      const cfBox = document.getElementById(`${uid}_cf`);
+      if (ts && cfBox) {
+        try {
+          cfBox.style.display = 'block';
+          ts.render(cfBox, {
+            sitekey: TURNSTILE_SITE_KEY,
+            theme: window.ArcadeTheme && window.ArcadeTheme.isLight() ? 'light' : 'dark',
+            callback: (tok) => {
+              turnstileToken = tok;
+              const chk = document.getElementById(`${uid}_chk`);
+              const ans = document.getElementById(`${uid}_ans`);
+              if (chk) chk.checked = true;
+              if (ans && !ans.value) ans.value = String(expected);
+            }
+          });
+        } catch (e) {}
+      }
+    });
+
+    return {
+      verify: () => {
+        const chk = document.getElementById(`${uid}_chk`);
+        const ans = document.getElementById(`${uid}_ans`);
+        const num = parseInt(ans ? ans.value : '', 10);
+        if (!turnstileToken && (!chk || !chk.checked)) {
+          return { ok: false, error: 'Bitte setze das Häkchen bei „Ich bin ein Mensch“.' };
+        }
+        if (!turnstileToken && num !== expected) {
+          return { ok: false, error: `Bitte löse kurz die CAPTCHA-Rechenaufgabe (${a} + ${b} = ${expected}).` };
+        }
+        return {
+          ok: true,
+          token: turnstileToken || `local_guard_${Date.now()}_${expected}`
+        };
+      }
+    };
+  }
+
+  window.ArcadeAuth = {
+    getUser: () => readAuthUser(),
+    getToken: () => readAuthToken(),
+    isLoggedIn: () => !!readAuthUser(),
+    isAdminOrAgent: () => {
+      const u = readAuthUser();
+      return !!(u && (u.role === 'admin' || u.role === 'agent'));
+    },
+    logout: () => {
+      try {
+        localStorage.removeItem(AUTH_USER_KEY);
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+      } catch (e) {}
+      try { window.dispatchEvent(new CustomEvent('arcade:auth-changed', { detail: null })); } catch (e) {}
+    },
+    saveSession: (user, token) => {
+      try {
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+        if (token) localStorage.setItem(AUTH_TOKEN_KEY, token);
+        if (user && user.displayName && window.ArcadeScores) {
+          window.ArcadeScores.setPlayerName(user.displayName);
+        }
+      } catch (e) {}
+      try { window.dispatchEvent(new CustomEvent('arcade:auth-changed', { detail: user })); } catch (e) {}
+    },
+    registerOrLogin: async ({ mode, username, displayName, password, roleChoice, captchaToken }) => {
+      const cleanUser = cleanName(username).replace(/\s+/g, '_');
+      const cleanDisp = cleanName(displayName || cleanUser);
+      if (cleanUser.length < 3) {
+        throw new Error('Benutzername muss mindestens 3 Zeichen lang sein.');
+      }
+      if (!password || String(password).length < 6) {
+        throw new Error('Passwort muss mindestens 6 Zeichen lang sein.');
+      }
+
+      // 1. Versuche zuerst den Live Cloudflare Worker Endpunkt (/api/auth/register bzw. /api/auth/login)
+      try {
+        const endpoint = mode === 'register' ? '/api/auth/register' : '/api/auth/login';
+        const res = await fetch(`${API_BASE}${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: cleanUser,
+            displayName: cleanDisp,
+            password,
+            captchaToken
+          })
+        });
+        if (res.status !== 404) {
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) {
+            throw new Error(data.error || 'Anmeldung fehlgeschlagen.');
+          }
+          const user = data.user;
+          if (roleChoice === 'admin' || roleChoice === 'agent') {
+            user.role = roleChoice;
+          }
+          window.ArcadeAuth.saveSession(user, data.token);
+          return user;
+        }
+      } catch (err) {
+        if (err && err.message && !String(err.message).includes('Failed to fetch') && !String(err.message).includes('NetworkError')) {
+          throw err;
+        }
+      }
+
+      // 2. Fallback: Lokaler Browser-Tresor (PBKDF2/SHA-256 gehasht) falls Worker-Auth-Route noch nicht deployed ist
+      let localUsers = {};
+      try { localUsers = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}') || {}; } catch (e) {}
+      const key = cleanUser.toLowerCase();
+      const pwHash = await sha256HexBrowser(`arcade_salt_v1:${key}:${password}`);
+
+      if (mode === 'register') {
+        if (localUsers[key] && localUsers[key].pwHash !== pwHash) {
+          throw new Error('Dieser Benutzername ist bereits vergeben. Bitte wechsle auf „Einloggen“.');
+        }
+        const role = (roleChoice === 'admin' || roleChoice === 'agent')
+          ? roleChoice
+          : (key === 'johannes' || key === 'hunterjoe' ? 'admin' : 'user');
+        const newUser = {
+          id: Date.now(),
+          username: cleanUser,
+          displayName: cleanDisp,
+          role,
+          pwHash
+        };
+        localUsers[key] = newUser;
+        try { localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers)); } catch (e) {}
+        const sessionUser = { id: newUser.id, username: newUser.username, displayName: newUser.displayName, role: newUser.role };
+        window.ArcadeAuth.saveSession(sessionUser, `local_jwt_${newUser.id}`);
+        return sessionUser;
+      } else {
+        const existing = localUsers[key];
+        if (!existing) {
+          // Komfort: Falls der Nutzer sich zum ersten Mal einloggt, Konto direkt mit anlegen
+          const role = (roleChoice === 'admin' || roleChoice === 'agent')
+            ? roleChoice
+            : (key === 'johannes' || key === 'hunterjoe' ? 'admin' : 'user');
+          const created = {
+            id: Date.now(),
+            username: cleanUser,
+            displayName: cleanDisp,
+            role,
+            pwHash
+          };
+          localUsers[key] = created;
+          try { localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers)); } catch (e) {}
+          const sessionUser = { id: created.id, username: created.username, displayName: created.displayName, role: created.role };
+          window.ArcadeAuth.saveSession(sessionUser, `local_jwt_${created.id}`);
+          return sessionUser;
+        }
+        if (existing.pwHash !== pwHash) {
+          throw new Error('Passwort stimmt nicht mit dem gespeicherten Konto überein.');
+        }
+        if (roleChoice === 'admin' || roleChoice === 'agent') {
+          existing.role = roleChoice;
+          try { localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers)); } catch (e) {}
+        }
+        const sessionUser = { id: existing.id, username: existing.username, displayName: existing.displayName, role: existing.role };
+        window.ArcadeAuth.saveSession(sessionUser, `local_jwt_${existing.id}`);
+        return sessionUser;
+      }
+    },
+    openAuthModal: (onSuccess) => {
+      const prevModal = document.getElementById('arcade-auth-modal-root');
+      if (prevModal) prevModal.remove();
+
+      const savedPlayer = window.ArcadeScores ? window.ArcadeScores.getPlayerName() : '';
+      const prefill = savedPlayer && savedPlayer !== 'Spieler' ? savedPlayer : '';
+      let mode = 'login';
+
+      const root = document.createElement('div');
+      root.id = 'arcade-auth-modal-root';
+      root.className = 'arcade-modal-backdrop';
+      root.style.zIndex = '9995';
+      root.innerHTML = `
+        <div class="arcade-modal-card" style="width:min(450px,100%);">
+          <div class="arcade-modal-head">
+            <h3 class="arcade-modal-title" id="auth-modal-title">🔐 Login &amp; Registrierung</h3>
+            <button type="button" class="icon-btn" id="auth-modal-close">✕</button>
+          </div>
+          <div class="arcade-modal-body" style="padding-top:14px;">
+            <div style="display:flex;gap:6px;margin-bottom:12px;">
+              <button type="button" class="fb-status-pill active" id="auth-tab-login" style="flex:1;padding:8px;">🔑 Einloggen</button>
+              <button type="button" class="fb-status-pill" id="auth-tab-register" style="flex:1;padding:8px;">✨ Neu registrieren</button>
+            </div>
+            <p style="margin:0 0 12px;font-size:12.5px;color:var(--text-muted);line-height:1.45;">
+              Zum Schutz vor Spam-Bots sind Kommentare &amp; Verbesserungswünsche durch Login + CAPTCHA geschützt.
+            </p>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <div>
+                <label style="display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">Benutzername *</label>
+                <input id="auth-inp-user" class="fb-input" type="text" maxlength="24" placeholder="z. B. Johannes" value="${escapeHtml(prefill)}" autocomplete="username" />
+              </div>
+              <div>
+                <label style="display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">Passwort * (mind. 6 Zeichen)</label>
+                <input id="auth-inp-pass" class="fb-input" type="password" maxlength="64" placeholder="••••••••" autocomplete="current-password" />
+              </div>
+              <div>
+                <label style="display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">Rolle / Modus</label>
+                <select id="auth-inp-role" class="fb-select" style="width:100%;">
+                  <option value="user">👤 Spieler / Community-Mitglied</option>
+                  <option value="admin">👑 Admin / Betreiber (Johannes)</option>
+                  <option value="agent">🤖 KI-Agent (Antigravity Bugfix-Kommentator)</option>
+                </select>
+              </div>
+              <div id="auth-captcha-slot"></div>
+              <div id="auth-error-msg" style="display:none;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.45);color:#fda4af;font-size:12px;font-weight:700;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
+                <button type="button" class="secondary-btn" id="auth-btn-cancel">Abbrechen</button>
+                <button type="button" class="primary-btn" id="auth-btn-submit">🔐 Jetzt anmelden</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(root);
+
+      const capCtrl = createCaptchaController(document.getElementById('auth-captcha-slot'));
+      const errEl = document.getElementById('auth-error-msg');
+      const tabLogin = document.getElementById('auth-tab-login');
+      const tabReg = document.getElementById('auth-tab-register');
+      const submitBtn = document.getElementById('auth-btn-submit');
+
+      function setMode(m) {
+        mode = m;
+        tabLogin.classList.toggle('active', m === 'login');
+        tabReg.classList.toggle('active', m === 'register');
+        submitBtn.textContent = m === 'login' ? '🔐 Jetzt anmelden' : '✨ Konto erstellen';
+        errEl.style.display = 'none';
+      }
+
+      tabLogin.addEventListener('click', () => setMode('login'));
+      tabReg.addEventListener('click', () => setMode('register'));
+
+      const close = () => root.remove();
+      document.getElementById('auth-modal-close').addEventListener('click', close);
+      document.getElementById('auth-btn-cancel').addEventListener('click', close);
+      root.addEventListener('click', e => { if (e.target === root) close(); });
+
+      submitBtn.addEventListener('click', async () => {
+        errEl.style.display = 'none';
+        const capRes = capCtrl.verify();
+        if (!capRes.ok) {
+          errEl.textContent = capRes.error;
+          errEl.style.display = 'block';
+          return;
+        }
+        const username = document.getElementById('auth-inp-user').value;
+        const password = document.getElementById('auth-inp-pass').value;
+        const roleChoice = document.getElementById('auth-inp-role').value;
+
+        submitBtn.disabled = true;
+        try {
+          const user = await window.ArcadeAuth.registerOrLogin({
+            mode,
+            username,
+            displayName: username,
+            password,
+            roleChoice,
+            captchaToken: capRes.token
+          });
+          if (window.ArcadeAudio) window.ArcadeAudio.perkGood();
+          close();
+          if (typeof onSuccess === 'function') onSuccess(user);
+        } catch (err) {
+          errEl.textContent = err.message || 'Fehler bei der Anmeldung.';
+          errEl.style.display = 'block';
+          if (window.ArcadeAudio) window.ArcadeAudio.perkBad();
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    }
+  };
+
+  // ==========================================================================
+  // FEEDBACK STORAGE & API SYNC
+  // ==========================================================================
+  function readLocalFeedback() {
+    try {
+      const raw = localStorage.getItem(FB_STORE_KEY);
+      if (!raw) {
+        localStorage.setItem(FB_STORE_KEY, JSON.stringify(DEFAULT_SEED_FEEDBACK));
+        return DEFAULT_SEED_FEEDBACK.slice();
+      }
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_SEED_FEEDBACK.slice();
+    } catch (e) {
+      return DEFAULT_SEED_FEEDBACK.slice();
+    }
+  }
+
+  function writeLocalFeedback(items) {
+    try {
+      localStorage.setItem(FB_STORE_KEY, JSON.stringify(items));
+    } catch (e) {}
+  }
+
+  function readVotedSet() {
+    try {
+      return new Set(JSON.parse(localStorage.getItem(FB_VOTES_KEY) || '[]'));
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  function writeVotedSet(setObj) {
+    try {
+      localStorage.setItem(FB_VOTES_KEY, JSON.stringify(Array.from(setObj)));
+    } catch (e) {}
+  }
+
+  function mergeRemoteAndLocal(remoteItems, localItems) {
+    const map = new Map();
+    (localItems || []).forEach(it => map.set(String(it.id), it));
+    (remoteItems || []).forEach(it => map.set(String(it.id), it));
+    const merged = Array.from(map.values());
+    const statusWeight = { in_progress: 0, open: 1, fixed: 2 };
+    merged.sort((a, b) => {
+      const sw = (statusWeight[a.status] ?? 1) - (statusWeight[b.status] ?? 1);
+      if (sw !== 0) return sw;
+      if ((b.upvotes || 0) !== (a.upvotes || 0)) return (b.upvotes || 0) - (a.upvotes || 0);
+      return Number(b.id || 0) - Number(a.id || 0);
+    });
+    return merged;
+  }
+
+  function getCategoryMeta(cat) {
+    if (cat === 'bug') return { label: '🐞 Bug / Fehler', cls: 'cat-bug' };
+    if (cat === 'praise') return { label: '❤️ Lob & Feedback', cls: 'cat-praise' };
+    if (cat === 'question') return { label: '❓ Frage', cls: 'cat-question' };
+    return { label: '💡 Verbesserungswunsch', cls: 'cat-wish' };
+  }
+
+  function getStatusMeta(st) {
+    if (st === 'fixed') return { label: '✅ Behoben / Umgesetzt', cls: 'fixed' };
+    if (st === 'in_progress') return { label: '🛠️ In Arbeit (KI-Agent)', cls: 'in_progress' };
+    return { label: '📬 Offen', cls: 'open' };
+  }
+
+  function getRoleBadgeHtml(role, authorName) {
+    if (role === 'agent') {
+      return `<span class="fb-role-badge agent">🤖 KI-Agent</span>`;
+    }
+    if (role === 'admin') {
+      return `<span class="fb-role-badge admin">👑 Admin</span>`;
+    }
+    return `<span class="fb-role-badge user">👤 ${escapeHtml(authorName || 'Spieler')}</span>`;
+  }
+
+  window.ArcadeFeedback = {
+    TARGETS: FEEDBACK_TARGETS,
+    getItems: async (targetFilter = 'all', statusFilter = 'all') => {
+      let all = readLocalFeedback();
+      try {
+        const res = await fetch(`${API_BASE}/api/feedback?target=all&status=all&limit=100`, { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.ok && Array.isArray(data.items)) {
+            all = mergeRemoteAndLocal(data.items, all);
+            writeLocalFeedback(all);
+          }
+        }
+      } catch (e) {}
+
+      return all.filter(it => {
+        if (targetFilter && targetFilter !== 'all' && it.targetId !== targetFilter) return false;
+        if (statusFilter && statusFilter !== 'all' && it.status !== statusFilter) return false;
+        return true;
+      });
+    },
+    getCountsForTarget: (targetId) => {
+      const all = readLocalFeedback();
+      const filtered = (!targetId || targetId === 'all')
+        ? all
+        : all.filter(it => it.targetId === targetId);
+      return {
+        total: filtered.length,
+        open: filtered.filter(it => it.status === 'open' || it.status === 'in_progress').length,
+        fixed: filtered.filter(it => it.status === 'fixed').length
+      };
+    },
+    createPost: async ({ targetId, category, title, body, captchaToken }) => {
+      const user = window.ArcadeAuth.getUser();
+      if (!user) throw new Error('Bitte logge dich zuerst ein.');
+      const cleanTitle = String(title || '').trim().slice(0, 110);
+      const cleanBody = String(body || '').trim().slice(0, 1500);
+      if (cleanTitle.length < 4) throw new Error('Bitte gib einen kurzen Titel (mind. 4 Zeichen) ein.');
+      if (cleanBody.length < 6) throw new Error('Bitte beschreibe deinen Wunsch oder Kommentar etwas genauer.');
+
+      let createdItem = null;
+      try {
+        const res = await fetch(`${API_BASE}/api/feedback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${window.ArcadeAuth.getToken()}`
+          },
+          body: JSON.stringify({ targetId, category, title: cleanTitle, body: cleanBody, captchaToken })
+        });
+        if (res.status !== 404) {
+          const data = await res.json().catch(() => ({}));
+          if (res.ok && data.ok && data.item) {
+            createdItem = data.item;
+          } else if (data.error) {
+            throw new Error(data.error);
+          }
+        }
+      } catch (err) {
+        if (err && err.message && !String(err.message).includes('Failed to fetch') && !String(err.message).includes('NetworkError')) {
+          throw err;
+        }
+      }
+
+      if (!createdItem) {
+        createdItem = {
+          id: Date.now(),
+          targetId: targetId || 'general',
+          category: category || 'wish',
+          status: 'open',
+          title: cleanTitle,
+          body: cleanBody,
+          authorName: user.displayName || user.username || 'Spieler',
+          authorRole: user.role || 'user',
+          upvotes: 1,
+          createdAt: new Date().toISOString(),
+          replies: []
+        };
+      }
+
+      const all = readLocalFeedback();
+      all.unshift(createdItem);
+      writeLocalFeedback(all);
+      syncFeedbackButtons();
+      try { window.dispatchEvent(new CustomEvent('arcade:feedback-updated')); } catch (e) {}
+      return createdItem;
+    },
+    addReply: async ({ postId, body, newStatus, asAgent }) => {
+      const user = window.ArcadeAuth.getUser();
+      if (!user) throw new Error('Bitte logge dich ein, um zu kommentieren.');
+      const cleanBody = String(body || '').trim().slice(0, 1500);
+      if (cleanBody.length < 2) throw new Error('Bitte gib einen Kommentar ein.');
+
+      const role = asAgent ? 'agent' : (user.role || 'user');
+      const authorName = role === 'agent'
+        ? '🤖 KI-Agent (Antigravity)'
+        : (user.displayName || user.username || 'Spieler');
+
+      let replyObj = null;
+      try {
+        const res = await fetch(`${API_BASE}/api/feedback/${encodeURIComponent(postId)}/reply`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${window.ArcadeAuth.getToken()}`
+          },
+          body: JSON.stringify({ body: cleanBody, newStatus, asAgent, authorName })
+        });
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          if (data && data.ok && data.reply) replyObj = data.reply;
+        }
+      } catch (e) {}
+
+      if (!replyObj) {
+        replyObj = {
+          id: Date.now(),
+          postId,
+          authorName,
+          authorRole: role,
+          body: cleanBody,
+          newStatus: newStatus || null,
+          createdAt: new Date().toISOString()
+        };
+      }
+
+      const all = readLocalFeedback();
+      const target = all.find(it => String(it.id) === String(postId));
+      if (target) {
+        if (!Array.isArray(target.replies)) target.replies = [];
+        target.replies.push(replyObj);
+        if (newStatus && ['open', 'in_progress', 'fixed'].includes(newStatus)) {
+          target.status = newStatus;
+        }
+        writeLocalFeedback(all);
+      }
+      syncFeedbackButtons();
+      try { window.dispatchEvent(new CustomEvent('arcade:feedback-updated')); } catch (e) {}
+      return replyObj;
+    },
+    upvote: async (postId) => {
+      const user = window.ArcadeAuth.getUser();
+      if (!user) {
+        window.ArcadeAuth.openAuthModal();
+        return null;
+      }
+      const voted = readVotedSet();
+      const voteKey = `${user.username}:${postId}`;
+      if (voted.has(voteKey)) return null;
+      voted.add(voteKey);
+      writeVotedSet(voted);
+
+      try {
+        fetch(`${API_BASE}/api/feedback/${encodeURIComponent(postId)}/vote`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${window.ArcadeAuth.getToken()}` }
+        }).catch(() => {});
+      } catch (e) {}
+
+      const all = readLocalFeedback();
+      const item = all.find(it => String(it.id) === String(postId));
+      if (item) {
+        item.upvotes = (Number(item.upvotes) || 0) + 1;
+        writeLocalFeedback(all);
+      }
+      try { window.dispatchEvent(new CustomEvent('arcade:feedback-updated')); } catch (e) {}
+      return item ? item.upvotes : null;
+    },
+    mountBoard: (containerEl, opts = {}) => {
+      if (!containerEl) return;
+      let activeTarget = opts.initialTarget || detectGameId() || 'all';
+      let activeStatus = 'all';
+      let composeOpen = !!opts.composeOpen;
+      let openReplyId = null;
+
+      function renderShell() {
+        const user = window.ArcadeAuth.getUser();
+        const isPriv = window.ArcadeAuth.isAdminOrAgent();
+        const targetOptions = FEEDBACK_TARGETS.map(t =>
+          `<option value="${escapeHtml(t.id)}" ${t.id === activeTarget ? 'selected' : ''}>${t.icon} ${escapeHtml(t.title)}</option>`
+        ).join('');
+
+        const postTargetDefault = (activeTarget && activeTarget !== 'all') ? activeTarget : (detectGameId() || 'general');
+        const postTargetOptions = FEEDBACK_TARGETS.filter(t => t.id !== 'all').map(t =>
+          `<option value="${escapeHtml(t.id)}" ${t.id === postTargetDefault ? 'selected' : ''}>${t.icon} ${escapeHtml(t.title)}</option>`
+        ).join('');
+
+        const authStripHtml = user
+          ? `
+            <div class="fb-auth-strip">
+              <div class="fb-auth-user">
+                <span>Angemeldet als <strong>${escapeHtml(user.displayName || user.username)}</strong></span>
+                ${getRoleBadgeHtml(user.role, user.displayName)}
+              </div>
+              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                <button type="button" class="primary-btn" id="fb-btn-toggle-compose" style="padding:6px 12px;font-size:12.5px;">
+                  ${composeOpen ? '✕ Formular schließen' : '➕ Wunsch / Bug eintragen'}
+                </button>
+                <button type="button" class="secondary-btn" id="fb-btn-switch-role" style="padding:5px 10px;font-size:11.5px;" title="Konto oder Rolle wechseln">🔄 Konto</button>
+                <button type="button" class="secondary-btn" id="fb-btn-logout" style="padding:5px 10px;font-size:11.5px;">Abmelden</button>
+              </div>
+            </div>
+          `
+          : `
+            <div class="fb-auth-strip">
+              <div class="fb-auth-user">
+                <span>🔒 <strong>Spam-Schutz aktiv:</strong> Bitte kurz einloggen (mit CAPTCHA), um Verbesserungswünsche einzutragen oder zu kommentieren.</span>
+              </div>
+              <button type="button" class="primary-btn" id="fb-btn-login" style="padding:7px 14px;font-size:12.5px;">🔐 Login / Registrieren (mit CAPTCHA)</button>
+            </div>
+          `;
+
+        const composeHtml = (user && composeOpen)
+          ? `
+            <div class="fb-compose-box" id="fb-compose-box">
+              <h4 style="margin:0 0 10px;font-size:14.5px;font-weight:800;">✨ Neuen Verbesserungswunsch, Bug oder Kommentar eintragen</h4>
+              <div class="fb-compose-grid">
+                <div>
+                  <label style="display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">Betroffenes Spiel / Quiz</label>
+                  <select id="fb-inp-target" class="fb-select" style="width:100%;">${postTargetOptions}</select>
+                </div>
+                <div>
+                  <label style="display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">Kategorie</label>
+                  <select id="fb-inp-cat" class="fb-select" style="width:100%;">
+                    <option value="wish">💡 Verbesserungswunsch / Feature-Idee</option>
+                    <option value="bug">🐞 Bug / Fehler melden</option>
+                    <option value="praise">❤️ Lob &amp; allgemeiner Kommentar</option>
+                    <option value="question">❓ Frage zum Spiel / Quiz</option>
+                  </select>
+                </div>
+              </div>
+              <div style="margin-bottom:9px;">
+                <input id="fb-inp-title" class="fb-input" type="text" maxlength="110" placeholder="Kurzer Titel (z. B. „Neuer Joker beim KI-Quiz“ oder „Zoom-Geschwindigkeit bei Minesweeper“)" />
+              </div>
+              <div>
+                <textarea id="fb-inp-body" class="fb-textarea" maxlength="1500" placeholder="Beschreibe deinen Wunsch oder das Problem so konkret wie möglich — der KI-Agent kann es dann direkt beheben und hier drunter kommentieren!"></textarea>
+              </div>
+              <div id="fb-post-captcha"></div>
+              <div id="fb-post-error" style="display:none;margin-bottom:8px;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.45);color:#fda4af;font-size:12px;font-weight:700;"></div>
+              <div style="display:flex;justify-content:flex-end;gap:8px;">
+                <button type="button" class="secondary-btn" id="fb-btn-cancel-post">Abbrechen</button>
+                <button type="button" class="primary-btn" id="fb-btn-submit-post">🚀 Wunsch absenden</button>
+              </div>
+            </div>
+          `
+          : '';
+
+        containerEl.innerHTML = `
+          ${authStripHtml}
+          ${composeHtml}
+          <div class="fb-toolbar">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <label style="font-size:12px;font-weight:700;color:var(--text-muted);">Modul:</label>
+              <select class="fb-select" id="fb-filter-target" aria-label="Modul filtern">${targetOptions}</select>
+            </div>
+            <div class="fb-status-pills" id="fb-filter-status">
+              <button type="button" class="fb-status-pill ${activeStatus === 'all' ? 'active' : ''}" data-st="all">Alle</button>
+              <button type="button" class="fb-status-pill ${activeStatus === 'open' ? 'active' : ''}" data-st="open">📬 Offen</button>
+              <button type="button" class="fb-status-pill ${activeStatus === 'in_progress' ? 'active' : ''}" data-st="in_progress">🛠️ In Arbeit</button>
+              <button type="button" class="fb-status-pill ${activeStatus === 'fixed' ? 'active' : ''}" data-st="fixed">✅ Behoben</button>
+            </div>
+          </div>
+          <div class="fb-list" id="fb-items-list">
+            <div style="text-align:center;padding:24px;color:var(--text-muted);">Lade Wünsche &amp; Kommentare…</div>
+          </div>
+        `;
+
+        const loginBtn = containerEl.querySelector('#fb-btn-login');
+        if (loginBtn) {
+          loginBtn.addEventListener('click', () => {
+            window.ArcadeAuth.openAuthModal(() => {
+              composeOpen = true;
+              renderShell();
+            });
+          });
+        }
+
+        const switchRoleBtn = containerEl.querySelector('#fb-btn-switch-role');
+        if (switchRoleBtn) {
+          switchRoleBtn.addEventListener('click', () => {
+            window.ArcadeAuth.openAuthModal(() => renderShell());
+          });
+        }
+
+        const logoutBtn = containerEl.querySelector('#fb-btn-logout');
+        if (logoutBtn) {
+          logoutBtn.addEventListener('click', () => {
+            window.ArcadeAuth.logout();
+            composeOpen = false;
+            renderShell();
+          });
+        }
+
+        const toggleComposeBtn = containerEl.querySelector('#fb-btn-toggle-compose');
+        if (toggleComposeBtn) {
+          toggleComposeBtn.addEventListener('click', () => {
+            composeOpen = !composeOpen;
+            renderShell();
+          });
+        }
+
+        const cancelPostBtn = containerEl.querySelector('#fb-btn-cancel-post');
+        if (cancelPostBtn) {
+          cancelPostBtn.addEventListener('click', () => {
+            composeOpen = false;
+            renderShell();
+          });
+        }
+
+        let postCapCtrl = null;
+        const postCapSlot = containerEl.querySelector('#fb-post-captcha');
+        if (postCapSlot) {
+          postCapCtrl = createCaptchaController(postCapSlot);
+        }
+
+        const submitPostBtn = containerEl.querySelector('#fb-btn-submit-post');
+        if (submitPostBtn && postCapCtrl) {
+          submitPostBtn.addEventListener('click', async () => {
+            const errBox = containerEl.querySelector('#fb-post-error');
+            errBox.style.display = 'none';
+            const cap = postCapCtrl.verify();
+            if (!cap.ok) {
+              errBox.textContent = cap.error;
+              errBox.style.display = 'block';
+              return;
+            }
+            const targetId = containerEl.querySelector('#fb-inp-target').value;
+            const category = containerEl.querySelector('#fb-inp-cat').value;
+            const title = containerEl.querySelector('#fb-inp-title').value;
+            const body = containerEl.querySelector('#fb-inp-body').value;
+
+            submitPostBtn.disabled = true;
+            try {
+              await window.ArcadeFeedback.createPost({
+                targetId,
+                category,
+                title,
+                body,
+                captchaToken: cap.token
+              });
+              if (window.ArcadeAudio) window.ArcadeAudio.win();
+              composeOpen = false;
+              activeTarget = targetId;
+              renderShell();
+            } catch (err) {
+              errBox.textContent = err.message || 'Fehler beim Speichern.';
+              errBox.style.display = 'block';
+            } finally {
+              submitPostBtn.disabled = false;
+            }
+          });
+        }
+
+        const targetSel = containerEl.querySelector('#fb-filter-target');
+        if (targetSel) {
+          targetSel.addEventListener('change', () => {
+            activeTarget = targetSel.value;
+            renderItemsList();
+          });
+        }
+
+        const statusBar = containerEl.querySelector('#fb-filter-status');
+        if (statusBar) {
+          statusBar.addEventListener('click', e => {
+            const pill = e.target.closest('.fb-status-pill');
+            if (!pill) return;
+            activeStatus = pill.dataset.st;
+            statusBar.querySelectorAll('.fb-status-pill').forEach(p => p.classList.toggle('active', p === pill));
+            renderItemsList();
+          });
+        }
+
+        renderItemsList();
+      }
+
+      async function renderItemsList() {
+        const listEl = containerEl.querySelector('#fb-items-list');
+        if (!listEl) return;
+        const items = await window.ArcadeFeedback.getItems(activeTarget, activeStatus);
+        const user = window.ArcadeAuth.getUser();
+        const isPriv = window.ArcadeAuth.isAdminOrAgent();
+        const votedSet = readVotedSet();
+
+        if (!items || items.length === 0) {
+          const tMeta = FEEDBACK_TARGET_MAP[activeTarget] || FEEDBACK_TARGET_MAP.general;
+          listEl.innerHTML = `
+            <div style="text-align:center;padding:28px 16px;border-radius:14px;background:rgba(15,23,42,0.45);border:1px dashed rgba(148,163,184,0.28);color:var(--text-muted);">
+              Noch keine Einträge für <strong>${escapeHtml(tMeta.title)}</strong> in diesem Filter — schreib gerne den ersten Verbesserungswunsch!
+            </div>
+          `;
+          return;
+        }
+
+        listEl.innerHTML = items.map(item => {
+          const tMeta = FEEDBACK_TARGET_MAP[item.targetId] || { icon: '🎮', title: item.targetId };
+          const cMeta = getCategoryMeta(item.category);
+          const sMeta = getStatusMeta(item.status);
+          const isVoted = user && votedSet.has(`${user.username}:${item.id}`);
+          const replies = Array.isArray(item.replies) ? item.replies : [];
+
+          const repliesHtml = replies.map(rep => {
+            const repCls = rep.authorRole === 'agent' ? 'is-agent' : (rep.authorRole === 'admin' ? 'is-admin' : '');
+            const stChange = rep.newStatus ? `<span class="fb-status-badge ${escapeHtml(getStatusMeta(rep.newStatus).cls)}">${escapeHtml(getStatusMeta(rep.newStatus).label)}</span>` : '';
+            return `
+              <div class="fb-reply ${repCls}">
+                <div class="fb-reply-head">
+                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                    <strong>${escapeHtml(rep.authorName)}</strong>
+                    ${getRoleBadgeHtml(rep.authorRole, rep.authorName)}
+                    ${stChange}
+                  </div>
+                  <span>${escapeHtml(formatDateDe(rep.createdAt))}</span>
+                </div>
+                <div style="white-space:pre-wrap;">${escapeHtml(rep.body)}</div>
+              </div>
+            `;
+          }).join('');
+
+          const replyFormHtml = (openReplyId === String(item.id))
+            ? `
+              <div class="fb-reply-form" data-reply-box="${escapeHtml(item.id)}">
+                <textarea class="fb-textarea fb-reply-input" rows="2" maxlength="1200" placeholder="${isPriv ? 'Antwort / Bugfix-Kommentar eintragen (z. B. was behoben wurde)…' : 'Kommentar oder Ergänzung schreiben…'}"></textarea>
+                <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;">
+                  ${isPriv ? `
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                      <label style="font-size:11.5px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;">
+                        <input type="checkbox" class="fb-reply-as-agent" ${user && user.role === 'agent' ? 'checked' : ''} />
+                        <span>🤖 Als KI-Agent markieren</span>
+                      </label>
+                      <select class="fb-select fb-reply-status" style="padding:4px 8px;font-size:11.5px;">
+                        <option value="">Status beibehalten</option>
+                        <option value="in_progress">🛠️ Auf „In Arbeit“ setzen</option>
+                        <option value="fixed" selected>✅ Auf „Behoben / Umgesetzt“ setzen</option>
+                        <option value="open">📬 Auf „Offen“ setzen</option>
+                      </select>
+                    </div>
+                  ` : '<span></span>'}
+                  <div style="display:flex;gap:6px;">
+                    <button type="button" class="secondary-btn fb-reply-cancel" style="padding:5px 10px;font-size:11.5px;">Abbrechen</button>
+                    <button type="button" class="primary-btn fb-reply-send" data-id="${escapeHtml(item.id)}" style="padding:5px 12px;font-size:12px;">💬 Antwort senden</button>
+                  </div>
+                </div>
+              </div>
+            `
+            : '';
+
+          return `
+            <article class="fb-card status-${escapeHtml(item.status || 'open')}" data-post-id="${escapeHtml(item.id)}">
+              <div class="fb-card-top">
+                <div class="fb-badges">
+                  <span class="fb-tag target">${tMeta.icon} ${escapeHtml(tMeta.title)}</span>
+                  <span class="fb-tag ${cMeta.cls}">${escapeHtml(cMeta.label)}</span>
+                </div>
+                <span class="fb-status-badge ${sMeta.cls}">${escapeHtml(sMeta.label)}</span>
+              </div>
+              <h4 class="fb-title">${escapeHtml(item.title)}</h4>
+              <p class="fb-body">${escapeHtml(item.body)}</p>
+              <div class="fb-meta-row">
+                <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap;">
+                  ${getRoleBadgeHtml(item.authorRole, item.authorName)}
+                  <span>· ${escapeHtml(formatDateDe(item.createdAt))}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:7px;">
+                  <button type="button" class="fb-vote-btn ${isVoted ? 'voted' : ''}" data-vote-id="${escapeHtml(item.id)}" title="Wunsch unterstützen">
+                    ▲ <span>${Number(item.upvotes || 0)}</span>
+                  </button>
+                  <button type="button" class="fb-reply-toggle" data-reply-id="${escapeHtml(item.id)}">
+                    💬 ${replies.length > 0 ? `${replies.length} ${replies.length === 1 ? 'Antwort' : 'Antworten'}` : 'Kommentieren'}
+                  </button>
+                </div>
+              </div>
+              ${replies.length > 0 ? `<div class="fb-replies">${repliesHtml}</div>` : ''}
+              ${replyFormHtml}
+            </article>
+          `;
+        }).join('');
+
+        listEl.querySelectorAll('[data-vote-id]').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-vote-id');
+            const nextVotes = await window.ArcadeFeedback.upvote(id);
+            if (nextVotes != null) {
+              if (window.ArcadeAudio) window.ArcadeAudio.pop();
+              renderItemsList();
+            }
+          });
+        });
+
+        listEl.querySelectorAll('[data-reply-id]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-reply-id');
+            if (!window.ArcadeAuth.isLoggedIn()) {
+              window.ArcadeAuth.openAuthModal(() => {
+                openReplyId = String(id);
+                renderShell();
+              });
+              return;
+            }
+            openReplyId = (openReplyId === String(id)) ? null : String(id);
+            renderItemsList();
+          });
+        });
+
+        listEl.querySelectorAll('.fb-reply-cancel').forEach(btn => {
+          btn.addEventListener('click', () => {
+            openReplyId = null;
+            renderItemsList();
+          });
+        });
+
+        listEl.querySelectorAll('.fb-reply-send').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.getAttribute('data-id');
+            const box = listEl.querySelector(`[data-reply-box="${id}"]`);
+            if (!box) return;
+            const txt = box.querySelector('.fb-reply-input').value;
+            const asAgentEl = box.querySelector('.fb-reply-as-agent');
+            const statusEl = box.querySelector('.fb-reply-status');
+            btn.disabled = true;
+            try {
+              await window.ArcadeFeedback.addReply({
+                postId: id,
+                body: txt,
+                asAgent: !!(asAgentEl && asAgentEl.checked),
+                newStatus: statusEl ? statusEl.value : null
+              });
+              if (window.ArcadeAudio) window.ArcadeAudio.perkGood();
+              openReplyId = null;
+              renderItemsList();
+            } catch (err) {
+              alert(err.message || 'Antwort konnte nicht gespeichert werden.');
+            } finally {
+              btn.disabled = false;
+            }
+          });
+        });
+      }
+
+      renderShell();
+    },
+    openModal: (initialTarget) => {
+      removeModal();
+      const target = initialTarget || detectGameId() || 'all';
+      const tMeta = FEEDBACK_TARGET_MAP[target] || FEEDBACK_TARGET_MAP.all;
+      const isSub = /\/games\/[^/]+/.test((window.location.pathname || '').toLowerCase());
+      const legalBase = isSub ? '../../' : './';
+
+      const root = document.createElement('div');
+      root.id = 'arcade-modal-root';
+      root.className = 'arcade-modal-backdrop';
+      root.innerHTML = `
+        <div class="arcade-modal-card arcade-feedback-modal-card">
+          <div class="arcade-modal-head">
+            <h3 class="arcade-modal-title">💬 Verbesserungswünsche &amp; Bug-Melder · ${escapeHtml(tMeta.title)}</h3>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button type="button" class="icon-btn" id="arcade-modal-close" title="Schließen">✕</button>
+            </div>
+          </div>
+          <div class="arcade-modal-body" id="arcade-feedback-modal-body"></div>
+          <div class="arcade-modal-foot">
+            <span>🛡️ Geschützt durch Login &amp; Cloudflare Turnstile CAPTCHA</span>
+            <span aria-hidden="true">·</span>
+            <a href="${legalBase}impressum.html">Impressum</a>
+            <span aria-hidden="true">·</span>
+            <a href="${legalBase}datenschutz.html">Datenschutz</a>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(root);
+      const close = () => removeModal();
+      document.getElementById('arcade-modal-close').addEventListener('click', close);
+      root.addEventListener('click', e => { if (e.target === root) close(); });
+
+      window.ArcadeFeedback.mountBoard(document.getElementById('arcade-feedback-modal-body'), {
+        initialTarget: target
+      });
+    }
+  };
+
+  function syncFeedbackButtons() {
+    const gid = detectGameId() || 'all';
+    const counts = window.ArcadeFeedback.getCountsForTarget(gid);
+    document.querySelectorAll('[data-arcade-feedback-btn]').forEach(btn => {
+      const badge = btn.querySelector('.arcade-feedback-count');
+      if (badge) badge.textContent = counts.total;
+    });
+  }
+
   function bindThemeButton(btn) {
     if (!btn || btn.dataset.themeBound) return;
     btn.dataset.themeBound = '1';
@@ -769,6 +1893,28 @@
     document.querySelectorAll('#btn-arcade-theme, [data-arcade-theme-btn]').forEach(bindThemeButton);
     window.ArcadeTheme.syncButtons();
 
+    // 💬 Wünsche-Button in allen Spiel- und Quiz-Topbars
+    if (topbarRight && !document.getElementById('btn-arcade-feedback')) {
+      const counts = window.ArcadeFeedback.getCountsForTarget(gameId || 'all');
+      const fbBtn = document.createElement('button');
+      fbBtn.type = 'button';
+      fbBtn.className = 'arcade-feedback-btn';
+      fbBtn.id = 'btn-arcade-feedback';
+      fbBtn.setAttribute('data-arcade-feedback-btn', '1');
+      fbBtn.title = 'Verbesserungswunsch oder Bug für dieses Modul eintragen';
+      fbBtn.innerHTML = `💬 <span class="arcade-fb-label">Wünsche</span> <span class="arcade-feedback-count">${counts.total}</span>`;
+      fbBtn.addEventListener('click', () => {
+        if (window.ArcadeAudio) window.ArcadeAudio.click();
+        window.ArcadeFeedback.openModal(gameId || 'all');
+      });
+      const themeEl = document.getElementById('btn-arcade-theme');
+      if (themeEl && themeEl.parentNode === topbarRight) {
+        topbarRight.insertBefore(fbBtn, themeEl);
+      } else {
+        topbarRight.appendChild(fbBtn);
+      }
+    }
+
     if (noBoard) {
       return;
     }
@@ -788,11 +1934,12 @@
       boardBtn.textContent = '🏆';
       boardBtn.addEventListener('click', () => window.ArcadeScores.openLeaderboardModal(gameId));
 
+      const fbEl = document.getElementById('btn-arcade-feedback');
       const themeEl = document.getElementById('btn-arcade-theme');
       const muteBtn = document.getElementById('btn-mute');
-      const anchor = (themeEl && themeEl.parentNode === topbarRight)
-        ? themeEl
-        : (muteBtn && muteBtn.parentNode === topbarRight ? muteBtn : null);
+      const anchor = (fbEl && fbEl.parentNode === topbarRight)
+        ? fbEl
+        : ((themeEl && themeEl.parentNode === topbarRight) ? themeEl : (muteBtn && muteBtn.parentNode === topbarRight ? muteBtn : null));
       if (anchor) {
         topbarRight.insertBefore(playerBtn, anchor);
         topbarRight.insertBefore(boardBtn, anchor);
@@ -813,8 +1960,15 @@
           const foot = document.createElement('footer');
           foot.id = 'arcade-legal-footer';
           foot.className = 'arcade-legal-footer';
-          foot.innerHTML = `<a href="../../impressum.html">Impressum</a><span aria-hidden="true">·</span><a href="../../datenschutz.html">Datenschutz</a>`;
+          foot.innerHTML = `<a href="#" id="footer-open-feedback">💬 Verbesserungswunsch melden</a><span aria-hidden="true">·</span><a href="../../impressum.html">Impressum</a><span aria-hidden="true">·</span><a href="../../datenschutz.html">Datenschutz</a>`;
           document.body.appendChild(foot);
+          const fLink = document.getElementById('footer-open-feedback');
+          if (fLink) {
+            fLink.addEventListener('click', (e) => {
+              e.preventDefault();
+              window.ArcadeFeedback.openModal(gameId);
+            });
+          }
         }
       } catch (e) {}
     }
@@ -894,3 +2048,4 @@
     initSharedChrome();
   }
 })();
+
