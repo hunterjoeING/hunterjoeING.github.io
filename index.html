@@ -563,19 +563,19 @@
     <section class="hub-hero">
       <div class="hero-copy">
         <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Prozessoren, Grafikkarten &amp; Handys/Smartphones der letzten 25 Jahre mit Fotos, Pilz-Sammler-Quiz Region Aachen, Schweizer Eisenbahnloks, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Politik).</p>
+        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>Quiz-Welten</strong> (Kino &amp; Filme ohne RomComs, Ägyptische Geschichte, Tauchen &amp; Scuba Diving, Prozessoren, Grafikkarten &amp; Handys/Smartphones der letzten 25 Jahre mit Fotos, Pilz-Sammler-Quiz Region Aachen, Schweizer Eisenbahnloks, E-Mobilität &amp; Tesla TFF-Nerdwissen, Geschichte &amp; Politik).</p>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">19</b><span>Module</span></div>
+        <div class="hero-stat-box"><b id="stat-games">20</b><span>Module</span></div>
         <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
         <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
       </div>
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all">✨ Alles (19)</button>
+      <button class="domain-tab active" data-domain="all">✨ Alles (20)</button>
       <button class="domain-tab" data-domain="games">🎮 Games (7)</button>
-      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (12)</button>
+      <button class="domain-tab quiz-tab" data-domain="quizzes">🧠 Quiz-Welten (13)</button>
     </div>
 
     <section class="section-block" id="sec-games">
@@ -593,7 +593,7 @@
 
     <section class="section-block" id="sec-quizzes">
       <div class="section-head">
-        <h2>🧠 Quiz-Welten <span class="section-count quiz">12 Quiz-Arenen</span></h2>
+        <h2>🧠 Quiz-Welten <span class="section-count quiz">13 Quiz-Arenen</span></h2>
       </div>
       <div class="games-grid" id="quizzes-grid"></div>
     </section>
@@ -747,6 +747,24 @@
       ];
 
       const QUIZZES = [
+        {
+          id: 'quiz_movies',
+          href: './games/quiz-movies/index.html',
+          catLabel: 'Kino · Alles ohne RomComs',
+          badge: '48 Fragen · 3 Stufen · Neu',
+          featured: true,
+          cta: 'Quiz starten →',
+          title: 'Kino &amp; Filme Quiz (ohne RomComs)',
+          desc: '48 Fragen quer durch Action, Sci-Fi, Thriller, Horror, Drama, Animation &amp; Filmtechnik — von Matrix, Alien &amp; Sieben über Ghibli &amp; Die Verurteilten bis Bullet Time &amp; 70mm IMAX.',
+          accent: '#f43f5e',
+          glow: 'rgba(244, 63, 94, 0.28)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <rect x="6" y="13" width="28" height="20" rx="3.2" fill="#1e1b2e" stroke="#fb7185" stroke-width="1.8"/>
+            <path d="M6 13l28-4-1.2-4.2a1.6 1.6 0 0 0-1.9-1.2L7 7.1A1.6 1.6 0 0 0 5.8 9L6 13z" fill="#e11d48" stroke="#fda4af" stroke-width="1.4"/>
+            <path d="M12 6.3l2.2 5.4M20 5.1l2.2 5.4M28 3.9l2.2 5.4" stroke="#fff1f2" stroke-width="1.8" stroke-linecap="round"/>
+            <polygon points="17,19 26,23.5 17,28" fill="#fbbf24"/>
+          </svg>`
+        },
         {
           id: 'quiz_egypt',
           href: './games/quiz-egypt/index.html',

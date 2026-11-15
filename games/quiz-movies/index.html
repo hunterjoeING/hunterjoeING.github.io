@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Kino &amp; Filme Quiz (ohne RomComs) · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 14px 40px;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 63, 94, 0.38);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: #fb7185;
+      color: #fff1f2;
+    }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #be123c, #e11d48);
+      border-color: #fda4af;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(225, 29, 72, 0.36);
+    }
+    .diff-pill.pro.active {
+      background: linear-gradient(135deg, #991b1b, #f59e0b);
+      border-color: #fde68a;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.36);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(16, 20, 38, 0.92);
+      border: 1px solid rgba(244, 63, 94, 0.28);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: #fb7185;
+      background: rgba(159, 18, 57, 0.26);
+    }
+    .cat-card.featured {
+      border-color: rgba(244, 63, 94, 0.58);
+      background: linear-gradient(135deg, rgba(159, 18, 57, 0.3), rgba(16, 20, 38, 0.94));
+    }
+    .cat-card.featured-gold {
+      border-color: rgba(251, 191, 36, 0.48);
+      background: linear-gradient(135deg, rgba(146, 64, 14, 0.26), rgba(16, 20, 38, 0.94));
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.42; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: #fda4af;
+      margin-top: 4px;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #fb7185, #fbbf24);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill, .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .q-cat-pill {
+      background: rgba(244, 63, 94, 0.16);
+      border: 1px solid rgba(251, 113, 133, 0.44);
+      color: #fda4af;
+    }
+    .q-diff-pill.easy {
+      background: rgba(34, 197, 94, 0.16);
+      border: 1px solid rgba(74, 222, 128, 0.4);
+      color: #86efac;
+    }
+    .q-diff-pill.mid {
+      background: rgba(56, 189, 248, 0.16);
+      border: 1px solid rgba(56, 189, 248, 0.42);
+      color: #7dd3fc;
+    }
+    .q-diff-pill.pro {
+      background: rgba(251, 191, 36, 0.18);
+      border: 1px solid rgba(251, 191, 36, 0.48);
+      color: #fde68a;
+    }
+
+    .q-text {
+      font-size: clamp(17.5px, 2.7vw, 22px);
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.34);
+      color: #f1f5f9;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.35;
+      cursor: pointer;
+      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: #fb7185;
+      background: rgba(159, 18, 57, 0.28);
+      transform: translateY(-1px);
+    }
+    .ans-key {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(148, 163, 184, 0.18);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ans-btn.correct {
+      background: rgba(22, 163, 74, 0.34);
+      border-color: #4ade80;
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(225, 29, 72, 0.32);
+      border-color: #fb7185;
+      color: #ffe4e6;
+    }
+    .ans-btn.eliminated {
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .joker-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      justify-content: space-between;
+      align-items: center;
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      background: rgba(30, 41, 59, 0.85);
+      border: 1px solid rgba(251, 113, 133, 0.42);
+      color: #fda4af;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.88);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      font-size: 13px;
+      line-height: 1.48;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .result-card {
+      text-align: center;
+      padding: 28px 20px;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 480px;
+      margin: 18px auto 22px;
+    }
+    .res-box {
+      padding: 12px 8px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(251, 113, 133, 0.32);
+    }
+    .res-box b {
+      display: block;
+      font-size: 20px;
+      font-family: var(--font-mono);
+      color: #fda4af;
+    }
+    .res-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🎬 Kino &amp; Filme (o. RomComs)</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Difficulty Menu -->
+    <section id="screen-menu" class="glass-card" style="padding:20px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">Kino &amp; Filme Quiz — Alles außer romantische Komödien</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
+        48 Fragen rund um Sci-Fi, Action, Thriller, Horror, Animation, Kult-Dramen, Satire und Filmtechnik — garantiert 100&nbsp;% frei von RomComs (10 Fragen pro Runde, Tasten <code>1–4</code> möglich).
+      </p>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Kino-Basis</button>
+        <button class="diff-pill" data-diff="mid">🟡 Filmfan</button>
+        <button class="diff-pill pro" data-diff="pro">🔴 Cinephile (1,5× Pkt)</button>
+      </div>
+
+      <div class="quiz-time-bar" id="time-mode-bar">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700;">Tempo:</span>
+        <button type="button" class="time-mode-pill active" data-relaxed="0">⚡ Mit Zeitbonus (25–35s, sanfter Ablauf)</button>
+        <button type="button" class="time-mode-pill relaxed" data-relaxed="1">☕ Ohne Zeitlimit (in Ruhe überlegen)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">10</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Ohne Zeitlimit umschalten">⏱ <strong id="q-sec">25</strong>s</button>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Genre</span>
+        <span id="q-diff" class="q-diff-pill mid">Filmfan</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Genres</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div id="res-emoji" style="font-size:48px;">🎬</div>
+      <h2 id="res-heading" style="margin:8px 0 4px;">Vorstellung beendet!</h2>
+      <p id="res-sub" style="margin:0;color:var(--text-muted);font-size:13.5px;"></p>
+
+      <div class="result-stats">
+        <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
+        <div class="res-box"><b id="res-correct">0/10</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Nochmal spielen</button>
+        <button class="secondary-btn" onclick="backToMenu()">🎞️ Anderes Genre</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    const CATS = [
+      { id: 'mix',             icon: '🎬', name: 'Großes Kino (Alle Genres)',      cls: 'featured',      desc: 'Quer durch Action, Sci-Fi, Thriller, Horror, Drama, Animation & Technik (0 % RomComs!).' },
+      { id: 'action_scifi',    icon: '🚀', name: 'Action, Sci-Fi & Fantasy',       cls: '',              desc: 'Star Wars, Matrix, Blade Runner, Alien, Terminator 2, Mad Max & Herr der Ringe.' },
+      { id: 'thriller_horror', icon: '🔪', name: 'Thriller, Krimi & Horror',       cls: '',              desc: 'Psycho, Der weiße Hai, Sieben, Der Pate, Parasite, Memento & Chinatown.' },
+      { id: 'drama_anim',      icon: '🎭', name: 'Drama, Satire & Animation',      cls: '',              desc: 'Toy Story, Ghibli, Die Verurteilten, Monty Python, Das Boot, Citizen Kane & Metropolis.' },
+      { id: 'craft_history',   icon: '🎥', name: 'Regie, Tricks & Filmtechnik',    cls: 'featured-gold', desc: 'Bullet Time, Dolly Zoom, 70mm IMAX, Foley-Sound, Technicolor & Montage-Theorie.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Kino-Basis', cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Filmfan',    cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Cinephile',  cls: 'pro',  mult: 1.5 }
+    };
+
+    // Index 0 of a[] is ALWAYS the correct answer
+    const QUESTIONS = [
+      // ── Action, Sci-Fi & Fantasy ──
+      {
+        cat: 'action_scifi', diff: 'easy',
+        q: 'Welcher Regisseur inszenierte 1993 den Dino-Blockbuster „Jurassic Park“ und begründete damit den Durchbruch fotorealistischer CGI-Dinosaurier?',
+        a: ['Steven Spielberg', 'James Cameron', 'Ridley Scott', 'Robert Zemeckis'],
+        exp: 'Industrial Light & Magic (ILM) schuf die digitalen T.-Rex- und Brachiosaurus-Szenen, während Stan Winstons Studio für lebensgroße Animatronics am Set sorgte.'
+      },
+      {
+        cat: 'action_scifi', diff: 'easy',
+        q: 'In „Matrix“ (1999) wird der Hacker Neo von Morpheus vor die Wahl zwischen zwei Pillen gestellt. Welche schluckt Neo, um die Wahrheit über die Simulation zu erfahren?',
+        a: ['Die rote Pille', 'Die blaue Pille', 'Die grüne Pille', 'Die silberne Pille'],
+        exp: 'Die blaue Pille hätte Neo zurück in sein gewohntes Scheinleben geschickt; die rote Pille weckt ihn in der realen Maschinenwelt auf.'
+      },
+      {
+        cat: 'action_scifi', diff: 'easy',
+        q: 'Welcher Filmkomponist aus Frankfurt am Main schuf die epischen Scores zu „Gladiator“, „Inception“, „Interstellar“ und „Dune“?',
+        a: ['Hans Zimmer', 'John Williams', 'Howard Shore', 'Ennio Morricone'],
+        exp: 'Für „Dune“ (2021) gewann Hans Zimmer seinen zweiten Oscar für die beste Filmmusik – seinen ersten erhielt er 1995 für „Der König der Löwen“.'
+      },
+      {
+        cat: 'action_scifi', diff: 'easy',
+        q: 'Welcher Star-Wars-Antagonist spricht in „Das Imperium schlägt zurück“ (1980) gegenüber Luke Skywalker die berühmte Enthüllung „Nein, ich bin dein Vater“?',
+        a: ['Darth Vader', 'Imperator Palpatine', 'Großmoff Tarkin', 'Darth Maul'],
+        exp: 'Im englischen Original wird die Zeile oft falsch als „Luke, I am your father“ zitiert – tatsächlich antwortet Darth Vader: „No, I am your father.“'
+      },
+      {
+        cat: 'action_scifi', diff: 'mid',
+        q: 'Welchen bis heute unübertroffenen Oscar-Meilenstein erreichte „Der Herr der Ringe: Die Rückkehr des Königs“ (2003) bei der Verleihung 2004?',
+        a: ['Er gewann alle 11 Oscars, für die er nominiert war – den größten makellosen „Clean Sweep“ der Oscar-Geschichte', 'Er war der erste Fantasyfilm, der komplett auf 16-mm-Schwarzweiß gedreht wurde', 'Jeder der drei Teile der Trilogie gewann jeweils den Oscar für den besten Film', 'Peter Jackson gewann drei Regie-Oscars in einem einzigen Jahr'],
+        exp: 'Mit 11 gewonnenen Trophäen stellte „Die Rückkehr des Königs“ den Gesamtrekord von „Ben-Hur“ ein und holte als erster Film eine 100-%-Quote bei zweistelliger Nominierungszahl.'
+      },
+      {
+        cat: 'action_scifi', diff: 'mid',
+        q: 'In „Terminator 2: Tag der Abrechnung“ (1991) tritt der T-800 gegen das neuere Modell T-1000 an. Woraus besteht dieser gefährliche Verfolger?',
+        a: ['Aus flüssigem Metall („mimetic polyalloy“), das jede Form annehmen kann', 'Aus durchsichtigen Glasfasern mit biologischer Außenhaut', 'Aus einem Schwarm ferngesteuerter Nano-Insekten', 'Aus keramischem Titan mit Tarnkappen-Lackierung'],
+        exp: 'Robert Patrick spielte den T-1000, dessen flüssige Quecksilber-Verwandlungen von Industrial Light & Magic zum Meilenstein für digitales Morphing wurden.'
+      },
+      {
+        cat: 'action_scifi', diff: 'mid',
+        q: 'Welcher Endzeit-Actionfilm von George Miller (2015) begeisterte das Publikum damit, dass fast alle brachialen Stunts und Fahrzeug-Crashs real in der Wüste statt nur am Computer gedreht wurden?',
+        a: ['Mad Max: Fury Road', 'Dune: Part One', 'Waterworld', 'Blade Runner 2049'],
+        exp: '„Mad Max: Fury Road“ wurde in Namibia gedreht und gewann sechs Oscars in den Handwerks-Kategorien (u. a. Schnitt, Szenenbild, Kostüm und Ton).'
+      },
+      {
+        cat: 'action_scifi', diff: 'mid',
+        q: 'Welchen ikonischen Kampfschrei ruft Ellen Ripley (Sigourney Weaver) in James Camerons „Aliens – Die Rückkehr“ (1986), als sie im Power-Loader gegen die Alien-Königin antritt?',
+        a: ['„Get away from her, you bitch!“ (dt.: „Weg von ihr, du Schlampe!“)', '„Im Weltraum hört dich niemand schreien.“', '„Game over, man, game over!“', '„Nuke the entire site from orbit.“'],
+        exp: '„Game over, man!“ stammt ebenfalls aus „Aliens“ (gesprochen von Private Hudson), während „Im Weltraum hört dich niemand schreien“ der Tagline-Slogan des ersten „Alien“ (1979) war.'
+      },
+      {
+        cat: 'action_scifi', diff: 'pro',
+        q: 'Welchen entscheidenden Hinweis deutet am Ende von Ridley Scotts „Blade Runner“ (insbesondere im „Final Cut“) das kleine Origami-Einhorn an, das Gaff vor der Wohnung hinterlässt?',
+        a: ['Dass Blade Runner Rick Deckard selbst ein Replikant sein könnte, weil Gaff seinen geheimen Einhorn-Traum kennt', 'Dass Tyrell in Wirklichkeit der Vater von Roy Batty ist', 'Dass die Erde außerhalb von Los Angeles längst vollständig wieder aufgeforstet wurde', 'Dass Rachael niemals ein künstlicher Mensch war'],
+        exp: 'Nur wenn Erinnerungen und Träume aus Polizeiakten stammen, konnte Gaff von Deckards Einhorn-Tagtraum wissen – eine viel diskutierte Pointe der Filmgeschichte.'
+      },
+      {
+        cat: 'action_scifi', diff: 'pro',
+        q: 'Welcher 1988 erschienene japanische Anime-Film von Katsuhiro Otomo rund um das dystopische „Neo-Tokyo“ und das berühmte rote Motorrad prägte westliches Sci-Fi-Kino von „Matrix“ bis „Looper“?',
+        a: ['Akira', 'Ghost in the Shell', 'Prinzessin Mononoke', 'Cowboy Bebop: The Movie'],
+        exp: 'Das seitliche Abbremsen von Kanedas rotem Superbike („Akira Slide“) ist eine der am häufigsten zitierten Einstellungen der modernen Popkultur.'
+      },
+      {
+        cat: 'action_scifi', diff: 'pro',
+        q: 'Wie geht Stanley Kubricks „2001: Odyssee im Weltraum“ (1968) physikalisch mit Geräuschen bei Außenbordeinsätzen im luftleeren Weltraum um?',
+        a: ['Im Vakuum herrscht konsequente Stille oder man hört nur die eigene Atmung im Raumanzug bzw. klassische Musik – keine Explosionen oder Laserschüsse', 'Kubrick ließ alle Raumschiffgeräusche rückwärts auf Tonband abspielen', 'Sämtliche Außenaufnahmen wurden von einem Live-Chor vertont', 'Der Computer HAL 9000 kommentiert pausenlos jede Kamerabewegung'],
+        exp: 'Weil Schall im Vakuum kein Trägermedium hat, wirkt die einsame Stille in „2001“ bis heute realistischer und bedrohlicher als in vielen modernen Blockbustern.'
+      },
+      {
+        cat: 'action_scifi', diff: 'pro',
+        q: 'Welcher ursprünglich augenzwinkernde Ingenieurs-Begriff für einen kaum realisierbaren Wunderstoff dient sowohl in „The Core“ (2003) als auch in „Avatar“ (2009) als Name des begehrten Minerals?',
+        a: ['Unobtanium', 'Vibranium', 'Beskar', 'Mithril'],
+        exp: '„Unobtanium“ (abgeleitet von „unobtainable“ – unerreichbar) wird in Luft- und Raumfahrtkreisen bereits seit den 1950er-Jahren scherzhaft für hypothetische Traumwerkstoffe verwendet.'
+      },
+
+      // ── Thriller, Krimi & Horror ──
+      {
+        cat: 'thriller_horror', diff: 'easy',
+        q: 'Welcher Thriller von 1975 über ein tödliches Meeresraubtier vor einer kleinen US-Badeinsel begründete die Ära des modernen Sommer-Blockbusters?',
+        a: ['Der weiße Hai (Jaws)', 'Deep Blue Sea', 'Open Water', 'Meg'],
+        exp: 'Weil die mechanische Hai-Attrappe („Bruce“) ständig ausfiel, zeigte Spielberg das Tier erst spät – und erzeugte mit John Williams’ Zwei-Ton-Motiv maximale Panik.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'easy',
+        q: 'Welcher hochintelligente Kannibale hilft der jungen FBI-Agentin Clarice Starling in „Das Schweigen der Lämmer“ (1991) bei der Jagd auf „Buffalo Bill“?',
+        a: ['Dr. Hannibal Lecter', 'Norman Bates', 'John Kramer (Jigsaw)', 'Patrick Bateman'],
+        exp: 'Anthony Hopkins ist im gesamten Film nur etwa 16 Minuten zu sehen, gewann für seine intensive Performance jedoch den Oscar als bester Hauptdarsteller.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'easy',
+        q: 'In welchem berühmten Schwarzweiß-Schocker von Alfred Hitchcock (1960) findet die weltberühmte Duschszene im Bates Motel statt?',
+        a: ['Psycho', 'Die Vögel', 'Vertigo – Aus dem Reich der Toten', 'Bei Anruf Mord'],
+        exp: 'Die knapp 45 Sekunden lange Szene besteht aus über 70 schnellen Schnitten und lebt maßgeblich von den schrillen Streicher-Stakkati von Komponist Bernard Herrmann.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'easy',
+        q: 'Aus welchem Mafia-Meisterwerk von Francis Ford Coppola (1972) stammt das legendäre Zitat „Ich mache ihm ein Angebot, das er nicht ablehnen kann“?',
+        a: ['Der Pate (The Godfather)', 'GoodFellas – Drei Jahrzehnte in der Mafia', 'Scarface', 'Casino'],
+        exp: 'Marlon Brando gewann für seine Rolle als Don Vito Corleone den Oscar, lehnte die Trophäe aus Protest gegen Hollywoods Umgang mit indigenen Amerikanern jedoch ab.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'mid',
+        q: 'Welcher südkoreanische Thriller von Regisseur Bong Joon-ho schrieb 2020 Oscar-Geschichte, als er als erster nicht-englischsprachiger Film den Hauptpreis „Bester Film“ gewann?',
+        a: ['Parasite', 'Oldboy', 'Memories of Murder', 'Train to Busan'],
+        exp: 'Die beißende Gesellschaftssatire über Familie Kim und Familie Park gewann insgesamt vier Oscars – neben Bester Film auch Regie, Originaldrehbuch und Internationaler Film.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'mid',
+        q: 'Welche ungewöhnliche, mit einem Drucklufttank betriebene Waffe trägt der eiskalte Killer Anton Chigurh (Javier Bardem) in „No Country for Old Men“ (2007) bei sich?',
+        a: ['Ein Bolzenschussgerät (normalerweise zur Viehbetäubung genutzt)', 'Eine lautlose Druckluft-Armbrust', 'Einen umgebauten Presslufthammer', 'Eine antike Steinschlosspistole'],
+        exp: 'Die Coen-Brüder verzichteten in „No Country for Old Men“ fast komplett auf Filmmusik – umso stärker wirken metallische Geräusche, Schritte und das Zischen der Druckluft.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'mid',
+        q: 'Welcher frühe Thriller von Christopher Nolan aus dem Jahr 2000 erzählt seine Handlung parallel vorwärts in Schwarzweiß und rückwärts in Farbe?',
+        a: ['Memento', 'Insomnia', 'Prestige – Die Meister der Magie', 'Following'],
+        exp: 'Weil Hauptfigur Leonard sein Kurzzeitgedächtnis verloren hat, zwingt die Rückwärts-Struktur auch die Zuschauer dazu, jede Szene ohne Vorwissen neu einzuordnen.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'mid',
+        q: 'Wodurch sorgte John Carpenters Sci-Fi-Horror „Das Ding aus einer anderen Welt“ (The Thing, 1982) bei Maskenbildnern und Effektefans bis heute für Ehrfurcht?',
+        a: ['Durch komplett handgemachte Animatronik-, Latex- und Schleim-Effekte von Rob Bottin ganz ohne CGI', 'Durch den ersten voll digitalen Computer-Monsterkörper der Kinogeschichte', 'Durch gedrehte Röntgenaufnahmen echter arktischer Tiere', 'Durch Stop-Motion-Knetfiguren in Übergröße'],
+        exp: 'Der damals erst 22 Jahre alte Effekt-Künstler Rob Bottin arbeitete über ein Jahr lang nahezu ununterbrochen an den bizarren Verwandlungen der Forschungsstation.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'pro',
+        q: 'Wie vollendet Serienmörder John Doe in David Finchers „Sieben“ (Se7en, 1995) seinen Sieben-Todsünden-Plan mit dem berüchtigten Paket in der Wüste?',
+        a: ['Er verkörpert selbst den „Neid“ auf Detective Mills’ Leben und provoziert Mills zum „Zorn“, indem der Karton den Kopf von Mills’ Frau enthält', 'Er beweist damit, dass Detective Somerset sein langjähriger Komplize war', 'Er liefert die echten Verbrecherakten aller sieben korrupten Richter ab', 'Er lässt sich selbst als achter Leichnam in die Kiste einschließen'],
+        exp: 'Obwohl das Studio ein versöhnlicheres Ende wollte, setzten Brad Pitt und David Fincher vertraglich durch, dass das kompromisslose Original-Ende gedreht wurde.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'pro',
+        q: 'Wie heißt in „Die üblichen Verdächtigen“ (1995) der mysteriöse Verbrecherboss, über den Verbal Kint sagt: „Der größte Trick, den der Teufel je gebracht hat, war, die Welt glauben zu lassen, es gäbe ihn nicht“?',
+        a: ['Keyser Söze', 'Frank Lucas', 'Mr. Blonde', 'Neil McCauley'],
+        exp: 'Kevin Spacey erhielt für seine Rolle als vermeintlich harmloser Kleinverbrecher Verbal Kint einen Oscar als bester Nebendarsteller; Christopher McQuarrie gewann für das Drehbuch.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'pro',
+        q: 'Warum spielt die gesamte Ermittlungs- und Beobachtungsperspektive in Alfred Hitchcocks „Das Fenster zum Hof“ (1954) ausschließlich in der Wohnung von L. B. Jefferies?',
+        a: ['Der Fotograf sitzt mit eingegipstem Bein nach einem Arbeitsunfall im Rollstuhl und beobachtet seine Nachbarn durch das Teleobjektiv', 'Während der Dreharbeiten herrschte in New York ein Streik gegen Außenaufnahmen', 'Die Nachbarschaft steht wegen einer Quarantäne unter strenger Ausgangssperre', 'Jefferies leidet unter schwerer Lichtallergie und darf die Jalousien nicht öffnen'],
+        exp: 'Paramount errichtete für den Film im Studio eines der bis dahin größten geschlossenen Innenhof-Sets mit voll beleuchteten, mehrstöckigen Apartments.'
+      },
+      {
+        cat: 'thriller_horror', diff: 'pro',
+        q: 'Welcher Neo-Noir-Klassiker von Roman Polanski (1974) mit Jack Nicholson entlarvt ein gigantisches Komplott um Wasserrechte in Kalifornien und endet mit einem der berühmtesten Resignationssätze des Kinos?',
+        a: ['Chinatown', 'L.A. Confidential', 'Im Zeichen des Bösen (Touch of Evil)', 'Die Spur des Falken'],
+        exp: 'Robert Townes Drehbuch gilt an Filmhochschulen bis heute als Musterbeispiel für dichte Dramaturgie – gipfelnd in der Schlusszeile „Forget it, Jake, it’s Chinatown.“'
+      },
+
+      // ── Drama, Satire & Animation ──
+      {
+        cat: 'drama_anim', diff: 'easy',
+        q: 'Welcher Pixar-Film aus dem Jahr 1995 schrieb Kinogeschichte als weltweit erster abendfüllender Spielfilm, der vollständig am Computer animiert wurde?',
+        a: ['Toy Story', 'Shrek – Der tollkühne Held', 'Findet Nemo', 'Monster AG'],
+        exp: 'Das Team rund um Regisseur John Lasseter bewies mit Woody und Buzz Lightyear, dass Computeranimation ein ganzes Spielfilm-Publikum emotional tragen kann.'
+      },
+      {
+        cat: 'drama_anim', diff: 'easy',
+        q: 'In welchem berühmten Studio-Ghibli-Werk von Hayao Miyazaki (2001) geraten ein junges Mädchen und ihre Eltern in eine Geisterwelt, in der die Eltern in Schweine verwandelt werden?',
+        a: ['Chihiros Reise ins Zauberland (Spirited Away)', 'Mein Nachbar Totoro', 'Das wandelnde Schloss', 'Ponyo'],
+        exp: 'Der Film gewann sowohl den Goldenen Bären auf der Berlinale als auch den Oscar als bester animierter Spielfilm.'
+      },
+      {
+        cat: 'drama_anim', diff: 'easy',
+        q: 'Welches Gefängnisdrama mit Tim Robbins und Morgan Freeman (nach einer Novelle von Stephen King) hält seit vielen Jahren Platz 1 der IMDb-Top-250?',
+        a: ['Die Verurteilten (The Shawshank Redemption)', 'The Green Mile', 'Papillon', 'Flucht von Alcatraz'],
+        exp: 'An den Kinokassen 1994 zunächst wenig beachtet, entwickelte sich Frank Darabonts Film über Hoffnung und Ausdauer durch Videotheken und TV zum weltweiten Publikumsliebling.'
+      },
+      {
+        cat: 'drama_anim', diff: 'easy',
+        q: 'In welchem legendären britischen Satirefilm der Komikergruppe Monty Python aus dem Jahr 1979 wird ein gewöhnlicher Mann im antiken Judäa ständig für den Messias gehalten?',
+        a: ['Das Leben des Brian (Life of Brian)', 'Die Ritter der Kokosnuß', 'Der Sinn des Lebens', 'Monty Pythons wunderbare Welt der Schwerkraft'],
+        exp: 'Gerettet wurde die Produktion damals durch Ex-Beatle George Harrison, der mit seiner Firma HandMade Films einsprang, nachdem das ursprüngliche Studio kalte Füße bekommen hatte.'
+      },
+      {
+        cat: 'drama_anim', diff: 'mid',
+        q: 'Welches bewusste visuelle Stilmittel setzt Steven Spielberg mitten in seinem überwiegend in Schwarzweiß gedrehten Drama „Schindlers Liste“ (1993) ein?',
+        a: ['Ein kleines Mädchen trägt einen knallroten Mantel – als einziger deutlicher Farbtupfer inmitten der grausamen Räumung des Krakauer Ghettos', 'Alle Szenen in Oscar Schindlers Büro werden in kräftigem Technicolor gezeigt', 'Nur die ersten zehn Minuten des Films sind in Farbe und bleichen langsam aus', 'Die Namen auf Schindlers geretteter Liste glühen in goldener Schrift'],
+        exp: 'Als Schindler den roten Mantel später auf einem Leichenwagen wiedererkennt, löst genau dieser visuelle Kontrast seinen endgültigen inneren Wandel aus.'
+      },
+      {
+        cat: 'drama_anim', diff: 'mid',
+        q: 'Was machte den Animationsstil von „Spider-Man: A New Universe“ (Into the Spider-Verse, 2018) technisch so revolutionär?',
+        a: ['Die Verschmelzung von 3D-Computergrafik mit handgezeichneten Comic-Rasterpunkten, Linien und unterschiedlichen Bildraten („auf Zweien animiert“)', 'Er bestand komplett aus abgefilmten 3D-gedruckten Knetfiguren vor LED-Wänden', 'Alle Figuren wurden von Schauspielern gespielt und anschließend per Hand auf Zelluloid gepaust', 'Er verzichtete vollständig auf Schatten und Konturen zugunsten von reiner Vektor-Optik'],
+        exp: 'Anfänger Miles Morales bewegt sich anfangs bewusst ruckeliger mit 12 Einzelbildern pro Sekunde („on twos“), bis er sich mit 24 Bildern pro Sekunde synchron mit den erfahrenen Helden schwingt.'
+      },
+      {
+        cat: 'drama_anim', diff: 'mid',
+        q: 'Auf welchem berühmten Theaterstück von William Shakespeare basiert lose das Grundmotiv des Disney-Zeichentrickklassikers „Der König der Löwen“ (1994)?',
+        a: ['Auf Shakespeares Tragödie „Hamlet“', 'Auf Shakespeares Komödie „Ein Sommernachtstraum“', 'Auf Goethes „Faust“', 'Auf Friedrich Schillers „Die Räuber“'],
+        exp: 'Der machthungrige Onkel Scar ermordet den Königsvater, der Geist des Vaters erscheint dem zögernden Thronerben im Exil und ruft ihn zur Rückkehr auf – klare Parallelen zu „Hamlet“.'
+      },
+      {
+        cat: 'drama_anim', diff: 'mid',
+        q: 'Welcher deutsche Klassiker von Wolfgang Petersen (1981) fesselt mit extremer Enge, klappernden Tiefenmetern und Klaus Doldingers Musik über eine deutsche U-Boot-Besatzung im Zweiten Weltkrieg?',
+        a: ['Das Boot', 'Stalingrad', 'Die Brücke', 'Im Westen nichts Neues'],
+        exp: 'Kameramann Jost Vacano konstruierte für „Das Boot“ eine kompakte, kreiselstabilisierte Handkamera, um mit den Schauspielern im Laufschritt durch enge U-Boot-Schotten zu rasen.'
+      },
+      {
+        cat: 'drama_anim', diff: 'pro',
+        q: 'Welche außergewöhnliche schauspielerische Leistung vollbrachte Peter Sellers in Stanley Kubricks Kalter-Krieg-Satire „Dr. Seltsam oder: Wie ich lernte, die Bombe zu lieben“ (1964)?',
+        a: ['Er verkörperte gleich drei völlig unterschiedliche Hauptfiguren: Group Captain Mandrake, US-Präsident Muffley und Dr. Seltsam', 'Er spielte alle zehn Generäle im Pentagon-Lageraum per Split-Screen selbst', 'Er improvisierte jede einzelne Szene ohne fertiges Drehbuch live vor der Kamera', 'Er sprach als stummer Mime im gesamten Film kein einziges Wort'],
+        exp: 'Ursprünglich sollte Sellers sogar noch eine vierte Rolle übernehmen (Bomberpilot Major Kong) – erst ein Knöchelbruch zwang zur Umbesetzung durch Slim Pickens.'
+      },
+      {
+        cat: 'drama_anim', diff: 'pro',
+        q: 'Was verbirgt sich hinter dem geheimnisvollen letzten Wort „Rosebud“, das der mächtige Zeitungsmagnat Charles Foster Kane in Orson Welles’ „Citizen Kane“ (1941) flüstert?',
+        a: ['Der Markenname seines alten Kindheits-Holzschlittens, der am Schluss unerkannt im Ofen verbrannt wird', 'Das Codewort für den geheimen Goldtresor seines Zeitungsimperiums', 'Der Name seiner einzigen verschollenen Opern-Komposition', 'Die Bezeichnung eines geheimen Bauprojekts in der Wüste Nevadas'],
+        exp: 'Orson Welles war bei „Citizen Kane“ erst 25 Jahre alt und revolutionierte gemeinsam mit Kameramann Gregg Toland unter anderem die extreme Tiefenschärfe und Untersichten mit sichtbaren Raumdecken.'
+      },
+      {
+        cat: 'drama_anim', diff: 'pro',
+        q: 'Mit welchem raffinierten Kamera-Konzept steigert Regisseur Sidney Lumet in dem Justizdrama „Die zwölf Geschworenen“ (1957) über 96 Minuten hinweg die gefühlte Enge im Beratungszimmer?',
+        a: ['Er verwendet schrittweise immer längere Brennweiten und senkt die Kamera tiefer ab, sodass die Wände optisch zusammenrücken', 'Er lässt das Zimmer nach jeder Szene um jeweils zwanzig Zentimeter kleiner bauen', 'Er wechselt alle fünf Minuten das Bildformat von CinemaScope zu 4:3', 'Er filmt ab Minute 45 ausschließlich durch einen deckenhohen Einwegspiegel'],
+        exp: 'Am Anfang wirken die Weitwinkelaufnahmen von oben noch luftig und distanziert; im hitzigen Finale klebt das Teleobjektiv förmlich an den verschwitzten Gesichtern.'
+      },
+      {
+        cat: 'drama_anim', diff: 'pro',
+        q: 'Welches Stummfilm-Epos von Fritz Lang aus dem Jahr 1927 rund um eine futuristische Zweiklassengesellschaft und die Roboter-Doppelgängerin „Maria“ zählt heute zum UNESCO-Weltdokumentenerbe?',
+        a: ['Metropolis', 'M – Eine Stadt sucht einen Mörder', 'Das Cabinet des Dr. Caligari', 'Nosferatu – Eine Symphonie des Grauens'],
+        exp: 'Kameratrick-Pionier Eugen Schüfftan erfand dafür das „Schüfftan-Verfahren“, bei dem über halbdurchlässige Spiegel echte Darsteller nahtlos in Miniatur-Wolkenkratzer integriert wurden.'
+      },
+
+      // ── Regie, Tricks & Filmtechnik ──
+      {
+        cat: 'craft_history', diff: 'easy',
+        q: 'Welcher spektakuläre Effekt wurde 1999 durch „Matrix“ weltbekannt, bei dem die Kamera scheinbar durch einen komplett eingefrorenen Sekundenbruchteil schwebt?',
+        a: ['Bullet Time (Anordnung von über hundert Kameras im Kreis plus Bildinterpolation)', 'Stop-Motion-Claymation', 'Klassische Rückprojektion auf Leinwand', 'Amerikanische Nacht (Day-for-Night)'],
+        exp: 'Visual-Effects-Pionier John Gaeta platzierte rund 120 computergesteuerte Fotokameras auf einer Kreisbahn, um Zeitlupe und extreme Kamerafahrt voneinander zu entkoppeln.'
+      },
+      {
+        cat: 'craft_history', diff: 'easy',
+        q: 'Wofür ist in der Film-Postproduktion ein sogenannter „Foley Artist“ zuständig?',
+        a: ['Für das nachträgliche, bildsynchrone Einspielen von Alltagsgeräuschen (Schritte, Kleidung, Schläge, Türen) im Tonstudio', 'Für das digitale Entfernen versehentlich sichtbarer Mikrofone aus dem Bild', 'Für das Abmischen von Kinolautsprechern im Vorführsaal', 'Für die Lichtsetzung bei Nachtszenen im Freien'],
+        exp: 'Benannt nach Ton-Pionier Jack Foley nutzen Geräuschemacher bis heute kreative Requisiten – etwa Selleriestangen für brechende Knochen oder nasses Leder für Flügelschläge.'
+      },
+      {
+        cat: 'craft_history', diff: 'easy',
+        q: 'Welcher schrille Todesschrei aus einem 1950er-Archiv von Warner Bros. dient Sounddesignern seit Jahrzehnten als augenzwinkerndes Easter Egg von „Star Wars“ über „Indiana Jones“ bis „Der Herr der Ringe“?',
+        a: ['Der Wilhelmsschrei (Wilhelm Scream)', 'Der Hitchcock-Akkord', 'Das THX-Donner-Brummen', 'Der Kubrick-Hall'],
+        exp: 'Sounddesigner Ben Burtt entdeckte die Archivaufnahme in den 1970er-Jahren, benannte sie nach der Figur Private Wilhelm und streute sie als Insider-Gag in Dutzende Blockbuster.'
+      },
+      {
+        cat: 'craft_history', diff: 'easy',
+        q: 'Welchen optischen Kunstgriff setzt „Der Zauberer von Oz“ (1939) ein, sobald Dorothy ihre Haustür in Kansas öffnet und das Märchenland betritt?',
+        a: ['Den schlagartigen Wechsel von Sepia-Tönen auf leuchtendes Technicolor-Farbmaterial', 'Den ersten dokumentierten Einsatz von Dolby-Surround-Ton im Kino', 'Den Übergang vom Stummfilm zu gesprochenem Dialog', 'Das Einblenden von zwei separaten 3D-Projektoren'],
+        exp: 'Damit der Übergang innerhalb einer einzigen Einstellung ohne Schnitt klappte, wurde das Innere von Dorothys Raum kurzerhand komplett in Sepiatönen angemalt.'
+      },
+      {
+        cat: 'craft_history', diff: 'mid',
+        q: 'Welcher ikonische Kamera-Trick – berühmt aus Hitchcocks „Vertigo“ und Steven Spielbergs „Der weiße Hai“ (Strand-Schock von Chief Brody) – kombiniert Vorwärtsfahren mit gleichzeitiger Zoom-Verkleinerung?',
+        a: ['Der Dolly Zoom (Vertigo-Effekt)', 'Der Dutch Angle (gekippte Achse)', 'Das Snorricam-Rig (Körperkamera)', 'Das Match-Cut-Verfahren'],
+        exp: 'Dadurch bleibt die Person im Vordergrund gleich groß, während sich der Hintergrund unheimlich verengt oder wegstürzt – ein visuelles Signal für Schock oder Schwindel.'
+      },
+      {
+        cat: 'craft_history', diff: 'mid',
+        q: 'Welcher Kriegsfilm von Regisseur Sam Mendes und Kameramann Roger Deakins aus dem Jahr 2019 ist so inszeniert und geschnitten, dass er wie zwei einzige ununterbrochene Plansequenzen („One-Shot“) wirkt?',
+        a: ['1917', 'Dunkirk', 'Im Westen nichts Neues (2022)', 'Der Soldat James Ryan'],
+        exp: 'Tatsächlich versteckten die Filmemacher zahlreiche Schnitte geschickt hinter vorbeiziehenden Soldaten, Schatten oder Rauchwolken – dennoch musste jedes Timing sekundengenau sitzen.'
+      },
+      {
+        cat: 'craft_history', diff: 'mid',
+        q: 'Welcher Warner-Bros.-Film von 1927 mit Al Jolson („Wait a minute, you ain’t heard nothing yet!“) läutete durch synchronisierte Ton- und Gesangsszenen das Ende der Stummfilm-Ära ein?',
+        a: ['Der Jazzsänger (The Jazz Singer)', 'Singin’ in the Rain', 'Sunset Boulevard', 'Goldrausch'],
+        exp: 'Mit dem kommerziellen Triumph des „Jazzsängers“ über das Vitaphone-Nadeltonverfahren mussten Studios innerhalb weniger Jahre komplett auf schallisolierte Tonbühnen umrüsten.'
+      },
+      {
+        cat: 'craft_history', diff: 'mid',
+        q: 'Was genau überprüft der nach Comicautorin Alison Bechdel benannte „Bechdel-Test“ bei einem Spielfilm?',
+        a: ['Ob mindestens zwei benannte weibliche Figuren vorkommen, die sich über etwas anderes als einen Mann unterhalten', 'Ob ein Film über eine Frauen-Hauptrolle einen Gewinn an der Kinokasse erzielt', 'Ob das Drehbuch von mindestens zwei Autorinnen überarbeitet wurde', 'Ob in einem Actionfilm weniger als drei Explosionen pro Akt stattfinden'],
+        exp: 'Der 1985 ursprünglich als witziger Comic-Kommentar entstandene Test misst keine künstlerische Filmqualität im Einzelnen, macht aber einseitige Figurenkonstellationen sichtbar.'
+      },
+      {
+        cat: 'craft_history', diff: 'pro',
+        q: 'Welches analoge Filmformat nutzte Christopher Nolan für Kern-Sequenzen in „Oppenheimer“ (2023) und „The Dark Knight“, sodass komplette Filmrollen über 17 Kilometer lang und rund 270 Kilogramm schwer wurden?',
+        a: ['Das horizontale 70-mm-IMAX-Format (15 Perforationslöcher pro Bild)', 'Das klassische 35-mm-Academy-Format mit Magnettonspur', 'Das Super-8-mm-Umkehrfilm-Verfahren für Großleinwände', 'Das dreistreifige Cinerama-Verfahren von 1952'],
+        exp: 'Da IMAX-Kameras so laut ratterten wie eine Nähmaschine, mussten intime Dialoge teils mit schallgedämmten „Blimp“-Gehäusen oder etwas ruhigerem 5-Perf-65-mm-Film gefilmt werden.'
+      },
+      {
+        cat: 'craft_history', diff: 'pro',
+        q: 'Was bewies der sowjetische Filmtheoretiker Lew Kuleschow in den frühen 1920er-Jahren mit seinem berühmten „Kuleschow-Effekt“?',
+        a: ['Dass Zuschauer demselben ausdruckslosen Gesicht unterschiedliche Emotionen (Hunger, Trauer) zuschreiben, je nachdem welches Gegenbild (Suppenteller, Kindersarg) dazwischengeschnitten wird', 'Dass sich die wahrgenommene Filmgeschwindigkeit halbiert, sobald klassische Walzer-Musik unterlegt wird', 'Dass blaue Farbfilter am helllichten Tag wie Vollmondlicht wirken', 'Dass Großaufnahmen auf Stummfilmleinwänden ohne Zwischentitel unverständlich bleiben'],
+        exp: 'Das Experiment zeigte eindrucksvoll, dass filmische Bedeutung oft nicht im einzelnen Bild steckt, sondern erst im Kopf des Publikums durch die Montage zweier Bilder entsteht.'
+      },
+      {
+        cat: 'craft_history', diff: 'pro',
+        q: 'Welcher unter dem Spitznamen „Prince of Darkness“ gefeierte Hollywood-Kameramann prägte mit dramatischem Oberlicht und tiefen Schatten Filme wie „Der Pate“, „Der Pate II“ und „Die Unbestechlichen“?',
+        a: ['Gordon Willis', 'Roger Deakins', 'Emmanuel Lubezki', 'Janusz Kamiński'],
+        exp: 'Studiobosse fürchteten anfangs, man könne Marlon Brandos Augen in „Der Pate“ kaum erkennen – heute gilt Gordon Willis’ kühne Unterbelichtung als stilbildend.'
+      },
+      {
+        cat: 'craft_history', diff: 'pro',
+        q: 'Was besagt beim klassischen Kontinuitätsschnitt die sogenannte „180-Grad-Regel“ (Handlungsachse)?',
+        a: ['Die Kamera bleibt während einer Szene auf derselben Seite einer gedachten Achse zwischen zwei Figuren, damit Blick- und Bewegungsrichtungen logisch bleiben', 'Kameraschwenks dürfen in Action-Szenen pro Schnitt maximal 180 Grad umfassen', 'Zwei nacheinander montierte Drehorte müssen mindestens 180 Grad Gegenlicht aufweisen', 'Ein Film darf erst nach exakt 180 Sekunden eine totale Überblicks-Einstellung zeigen'],
+        exp: 'Ein gezieltes Überschreiten der Achse („Achssprung“) wird im Thriller oder Horror hingegen bewusst eingesetzt, um Zuschauer plötzlich zu desorientieren.'
+      }
+    ];
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 25;
+    let questionMaxTime = 25;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_movies');
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const count = getMatchingPool(c.id).length;
+        const roundLen = Math.min(10, count);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${count} Fragen verfügbar · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const count = Math.min(10, pool.length);
+      deck = shuffle(pool).slice(0, count);
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      timerId = null;
+      answered = false;
+
+      const item = deck[qIdx];
+      questionMaxTime = ArcadeQuizPrefs.getDurationSec(item.diff);
+      timeLeft = ArcadeQuizPrefs.isRelaxed() ? 0 : questionMaxTime;
+      const di = DIFF_INFO[item.diff];
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      if (!ArcadeQuizPrefs.isRelaxed()) startBonusTimer();
+    }
+
+    function startBonusTimer() {
+      clearInterval(timerId);
+      let lastTick = performance.now();
+      timerId = setInterval(() => {
+        const now = performance.now();
+        timeLeft = Math.max(0, timeLeft - (now - lastTick) / 1000);
+        lastTick = now;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          clearInterval(timerId);
+          timerId = null;
+        }
+        updateTimerUI();
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      ArcadeQuizPrefs.updateTimerUI({
+        btnEl: document.getElementById('btn-timer-mode'),
+        fillEl: document.getElementById('timer-fill'),
+        jokerTimeEl: document.getElementById('joker-time'),
+        jokerTimeAvailable: jokers.time,
+        timeLeft,
+        maxTime: questionMaxTime,
+        answered
+      });
+    }
+
+    function toggleTimerModeInPlay() {
+      const nextRelaxed = !ArcadeQuizPrefs.isRelaxed();
+      ArcadeQuizPrefs.setRelaxed(nextRelaxed);
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      clearInterval(timerId);
+      timerId = null;
+      ArcadeAudio.click();
+      if (nextRelaxed) {
+        timeLeft = 0;
+        updateTimerUI();
+      } else if (!answered) {
+        if (timeLeft <= 0) timeLeft = questionMaxTime;
+        updateTimerUI();
+        startBonusTimer();
+      } else {
+        updateTimerUI();
+      }
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = DIFF_INFO[item.diff].mult;
+        const speedBonus = Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      showFact(chosen.isRight);
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Treffer! ' : '❌ Nicht ganz: ')}</strong>${item.exp}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered || ArcadeQuizPrefs.isRelaxed()) return;
+      jokers.time = false;
+      timeLeft = Math.min(questionMaxTime + 10, timeLeft + 10);
+      updateTimerUI();
+      startBonusTimer();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const isNewRecord = ArcadeScores.record('quiz_movies', score, `${score} Pkt (${correctCount}/${deck.length})`, false);
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '🎬' : '🎞️');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Kino-Rekord!' : 'Vorstellung beendet!';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>
