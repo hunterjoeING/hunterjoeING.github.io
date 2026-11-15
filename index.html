@@ -511,9 +511,33 @@
     .hub-footer {
       margin-top: 26px;
       text-align: center;
-      font-size: 12px;
+      font-size: 12.5px;
       color: #64748b;
-      padding-bottom: 12px;
+      padding-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .hub-legal-nav {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      gap: 8px 14px;
+    }
+    .hub-legal-nav a {
+      color: #7dd3fc;
+      text-decoration: none;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 7px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .hub-legal-nav a:hover {
+      background: rgba(56, 189, 248, 0.14);
+      color: #e0f2fe;
+      text-decoration: underline;
     }
 
     @media (max-width: 560px) {
@@ -599,7 +623,12 @@
     </section>
 
     <footer class="hub-footer">
-      HunterJoe Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Weltweite Bestenlisten (Cloudflare Workers &amp; D1)
+      <div>HunterJoe Arcade · 100 % eigenständige Web-Spiele &amp; Quizze · Weltweite Bestenlisten (Cloudflare Workers &amp; D1)</div>
+      <nav class="hub-legal-nav" aria-label="Rechtliche Hinweise">
+        <a href="./impressum.html">Impressum</a>
+        <span aria-hidden="true">·</span>
+        <a href="./datenschutz.html">Datenschutz</a>
+      </nav>
     </footer>
   </div>
 

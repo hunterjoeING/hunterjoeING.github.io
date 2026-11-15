@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Datenschutzerklärung · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="./shared/arcade.css" />
+  <style>
+    .legal-shell {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 14px calc(36px + env(safe-area-inset-bottom, 0px));
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .legal-card {
+      padding: 24px 24px 22px;
+      line-height: 1.65;
+    }
+    .legal-card h1 {
+      margin: 0 0 6px;
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #f8fafc;
+    }
+    .legal-sub {
+      margin: 0 0 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .legal-card h2 {
+      margin: 22px 0 8px;
+      font-size: 15.5px;
+      font-weight: 800;
+      color: #7dd3fc;
+      letter-spacing: 0.01em;
+    }
+    .legal-card p, .legal-card li {
+      font-size: 14px;
+      color: #cbd5e1;
+    }
+    .legal-card p {
+      margin: 0 0 10px;
+    }
+    .legal-card ul {
+      margin: 6px 0 12px;
+      padding-left: 20px;
+    }
+    .legal-card li {
+      margin-bottom: 5px;
+    }
+    .legal-card a {
+      color: #38bdf8;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .legal-card a:hover {
+      color: #bae6fd;
+    }
+    .legal-card code {
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      padding: 1px 5px;
+      border-radius: 5px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      color: #e2e8f0;
+    }
+    .legal-box {
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      font-size: 14px;
+      color: #f1f5f9;
+      margin: 8px 0 12px;
+    }
+    .legal-footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px 16px;
+      font-size: 13px;
+      color: var(--text-muted);
+      padding-top: 6px;
+    }
+    .legal-footer-links a {
+      color: #7dd3fc;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .legal-footer-links a:hover {
+      text-decoration: underline;
+    }
+    @media (max-width: 560px) {
+      .legal-card { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body data-no-leaderboard="1">
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="./index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🔒 Datenschutz</div>
+    </div>
+    <div class="topbar-right">
+      <a href="./impressum.html" class="back-hub-btn">⚖️ Impressum</a>
+    </div>
+  </header>
+
+  <main class="legal-shell">
+    <article class="glass-card legal-card">
+      <h1>Datenschutzerklärung</h1>
+      <p class="legal-sub">Informationen zur Verarbeitung personenbezogener Daten gemäß DSGVO und TDDDG (Stand: November 2026)</p>
+
+      <h2>1. Verantwortlicher</h2>
+      <div class="legal-box">
+        <strong>Johannes Rudolph</strong><br />
+        Urbanstr. 55, 52080 Aachen, Deutschland<br />
+        E-Mail: <a href="mailto:j.rudolph@yahoo.de">j.rudolph@yahoo.de</a> · Telefon: <a href="tel:+4917645801034">0176 45801034</a>
+      </div>
+
+      <h2>2. Hosting über GitHub Pages</h2>
+      <p>
+        Diese Website wird als statische Web-Anwendung über <strong>GitHub Pages</strong> (GitHub, Inc. / GitHub B.V.) bereitgestellt. Beim Aufruf der Seiten erfasst der Hosting-Anbieter technisch automatisiert Server-Logdaten (insbesondere IP-Adresse, Datum und Uhrzeit des Abrufs, aufgerufene URL, Browsertyp/-version, Betriebssystem und Referrer-URL), um die Website sicher und stabil auszuliefern. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der technischen Bereitstellung und Sicherheit).
+      </p>
+
+      <h2>3. Weltweite Bestenlisten (Cloudflare Workers &amp; D1)</h2>
+      <p>
+        Für die spieleübergreifenden Highscores kommuniziert dein Browser mit einer Programmierschnittstelle auf Basis von Cloudflare Workers und Cloudflare D1 (<code>hunterjoe-scores.hunterjoeing.workers.dev</code>). Dabei werden verarbeitet:
+      </p>
+      <ul>
+        <li>beim Laden der Bestenlisten sowie beim Speichern eines Spielstands technisch erforderliche Verbindungsdaten (z. B. IP-Adresse im Rahmen der Netzwerkanfrage über Cloudflare),</li>
+        <li>der von dir freiwillig eingestellte Spielername (Standardwert ohne Eingabe: <code>Spieler</code>), das gespielte Modul, Punktzahl/Zeitwert sowie der Zeitstempel des Eintrags.</li>
+      </ul>
+      <p>
+        Bitte gib als Spielernamen keinen Klarnamen oder sonstige sensible Daten ein, wenn du nicht möchtest, dass dieser Name in der öffentlichen Bestenliste erscheint. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO bzw. bei bewusster Namensangabe Art. 6 Abs. 1 lit. a DSGVO.
+      </p>
+
+      <h2>4. Externe Bibliothek Three.js (CDN)</h2>
+      <p>
+        Auf der Startseite sowie in den 3D-Minesweeper-Modulen wird die Open-Source-Grafikbibliothek <code>three.min.js</code> über das Content Delivery Network <strong>cdnjs</strong> (<code>cdnjs.cloudflare.com</code>, Cloudflare) eingebunden. Durch den Abruf dieser Datei erfährt der CDN-Anbieter technisch deine IP-Adresse sowie übliche Browser-Header. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (performante Darstellung der 3D-Grafik).
+      </p>
+
+      <h2>5. Lokaler Browser-Speicher (localStorage) &amp; Cookies</h2>
+      <p>
+        Diese Website setzt <strong>keine Tracking-, Analyse- oder Werbe-Cookies</strong> und nutzt keine Dienste wie Google Analytics. Zur Verbesserung der Bedienbarkeit speichert dein Browser jedoch ausschließlich lokal auf deinem Gerät (per Web Storage / <code>localStorage</code>):
+      </p>
+      <ul>
+        <li>deine lokalen Bestleistungen, gespielten Runden und 3D-Minesweeper-Spielstände,</li>
+        <li>deinen optional gewählten Spielernamen für die Bestenliste,</li>
+        <li>Komfort-Einstellungen (z. B. Ton an/aus, Quiz-Zeitmodus „Ohne Zeitlimit“).</li>
+      </ul>
+      <p>
+        Diese Speicherung erfolgt auf Grundlage von § 25 Abs. 2 Nr. 2 TDDDG, da sie für die gewünschte Funktion des Spiel- und Quiz-Dashboards erforderlich ist. Du kannst den lokalen Speicher jederzeit vollständig über deine Browser-Einstellungen löschen.
+      </p>
+
+      <h2>6. Kontaktaufnahme per E-Mail oder Telefon</h2>
+      <p>
+        Wenn du per E-Mail oder Telefon Kontakt aufnimmst, werden deine angegebenen Daten ausschließlich zur Bearbeitung deines Anliegens gespeichert und nicht an unbeteiligte Dritte weitergegeben (Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO).
+      </p>
+
+      <h2>7. Deine Rechte</h2>
+      <p>
+        Dir stehen nach der DSGVO grundsätzlich die Rechte auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch (Art. 21 DSGVO) zu. Zudem hast du das Recht, dich bei einer Datenschutz-Aufsichtsbehörde (z. B. der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen) zu beschweren (Art. 77 DSGVO). Zur Löschung eines Bestenlisten-Eintrags genügt eine kurze E-Mail an <a href="mailto:j.rudolph@yahoo.de">j.rudolph@yahoo.de</a>.
+      </p>
+    </article>
+
+    <footer class="legal-footer-links">
+      <a href="./index.html">← Zurück zu HunterJoe Arcade</a>
+      <span aria-hidden="true">·</span>
+      <a href="./impressum.html">Impressum</a>
+    </footer>
+  </main>
+</body>
+</html>

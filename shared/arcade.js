@@ -466,6 +466,8 @@
             ${GAME_CATALOG.map(g => `<button type="button" class="arcade-tab-btn ${g.id === activeId ? 'active' : ''}" data-gid="${g.id}">${g.icon} ${escapeHtml(g.title)}</button>`).join('')}
            </div>`
         : '';
+      const isSub = /\/games\/[^/]+/.test((window.location.pathname || '').toLowerCase());
+      const legalBase = isSub ? '../../' : './';
       root.innerHTML = `
         <div class="arcade-modal-card">
           <div class="arcade-modal-head">
@@ -478,6 +480,11 @@
           ${tabsHtml}
           <div class="arcade-modal-sub" id="arcade-board-sub"></div>
           <div class="arcade-modal-body" id="arcade-board-body"></div>
+          <div class="arcade-modal-foot">
+            <a href="${legalBase}impressum.html">Impressum</a>
+            <span aria-hidden="true">·</span>
+            <a href="${legalBase}datenschutz.html">Datenschutz</a>
+          </div>
         </div>
       `;
       document.body.appendChild(root);
@@ -716,6 +723,20 @@
     syncPlayerButtons();
     syncTopBestDom();
     window.ArcadeScores.fetchSummary();
+
+    if (gameId && !document.getElementById('arcade-legal-footer')) {
+      try {
+        const htmlOv = window.getComputedStyle(document.documentElement).overflowY;
+        const bodyOv = window.getComputedStyle(document.body).overflowY;
+        if (htmlOv !== 'hidden' && bodyOv !== 'hidden') {
+          const foot = document.createElement('footer');
+          foot.id = 'arcade-legal-footer';
+          foot.className = 'arcade-legal-footer';
+          foot.innerHTML = `<a href="../../impressum.html">Impressum</a><span aria-hidden="true">·</span><a href="../../datenschutz.html">Datenschutz</a>`;
+          document.body.appendChild(foot);
+        }
+      } catch (e) {}
+    }
   }
 
   window.ArcadeQuizPrefs = {
