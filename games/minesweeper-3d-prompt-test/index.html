@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Minesweeper 3d prompt Version</title>
   <style>
     :root {
@@ -21,6 +21,7 @@
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
     }
 
     html, body {
@@ -29,6 +30,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      overscroll-behavior: none;
+      touch-action: none;
       background: radial-gradient(circle at 50% 35%, #111c38 0%, #070b19 75%, #03060e 100%);
       color: var(--text-main);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -41,6 +44,14 @@
       height: 100%;
       z-index: 1;
       cursor: grab;
+      touch-action: none;
+    }
+
+    #canvas-container canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
     }
 
     #canvas-container.dragging {
@@ -199,9 +210,14 @@
     }
 
     .spread-control input[type="range"] {
-      width: 140px;
+      width: 130px;
       accent-color: var(--accent);
       cursor: pointer;
+      touch-action: pan-x;
+    }
+
+    select, .btn, .back-link {
+      touch-action: manipulation;
     }
 
     .spread-val {
@@ -253,6 +269,7 @@
       display: none;
       align-items: center;
       gap: 12px;
+      max-width: calc(100vw - 24px);
     }
 
     .status-banner.show {
@@ -279,14 +296,65 @@
 
     @media (max-width: 720px) {
       .top-bar {
-        padding: 10px 12px;
-        gap: 8px;
+        top: 8px;
+        left: 8px;
+        right: 8px;
+        padding: 8px 10px;
+        gap: 6px;
+        border-radius: 13px;
+      }
+      .brand-group {
+        gap: 7px;
+        width: 100%;
+        justify-content: space-between;
+      }
+      .back-link {
+        padding: 5px 9px;
+        font-size: 11.5px;
+      }
+      .game-title {
+        font-size: 14px;
+      }
+      .stats-group {
+        gap: 6px;
+      }
+      .stat-pill {
+        padding: 4px 8px;
+        font-size: 11.5px;
+      }
+      .stat-pill b {
+        font-size: 13px;
+      }
+      .controls-group {
+        gap: 6px;
+        width: 100%;
+      }
+      select, .btn {
+        padding: 6px 9px;
+        font-size: 11.5px;
       }
       .bottom-hud {
-        padding: 10px 14px;
-        gap: 10px;
+        bottom: 10px;
+        padding: 8px 12px;
+        gap: 6px;
+        max-width: calc(100vw - 16px);
+        border-radius: 13px;
+      }
+      .spread-control {
+        gap: 7px;
+        font-size: 11.5px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .spread-control input[type="range"] {
+        width: 110px;
       }
       .hint-bar {
+        gap: 8px;
+        font-size: 11px;
+        justify-content: center;
+      }
+      .hint-desktop-only {
         display: none;
       }
     }
@@ -336,16 +404,16 @@
 
   <footer class="bottom-hud">
     <div class="spread-control">
-      <span>🔍 Mausrad-Explosion (Auseinanderziehen):</span>
+      <span>🔍 Spreizen:</span>
       <input type="range" id="slider-spread" min="100" max="320" value="115" />
       <span class="spread-val" id="spread-label">1.15×</span>
       <button class="btn" id="btn-reset-view" style="padding: 5px 10px; font-size: 12px;">Kompakt</button>
     </div>
     <div class="hint-bar">
-      <span class="hint-item"><span class="key-badge">Maus ziehen</span> Würfel drehen</span>
-      <span class="hint-item"><span class="key-badge">Mausrad</span> Würfel auseinanderziehen</span>
-      <span class="hint-item"><span class="key-badge">Linksklick</span> Aufdecken</span>
-      <span class="hint-item"><span class="key-badge">Rechtsklick</span> Flagge 🚩</span>
+      <span class="hint-item"><span class="key-badge">1 Finger / Maus</span> Drehen</span>
+      <span class="hint-item"><span class="key-badge">2 Finger / Mausrad</span> Auseinanderziehen</span>
+      <span class="hint-item"><span class="key-badge">Tippen / Klick</span> Aufdecken</span>
+      <span class="hint-item hint-desktop-only"><span class="key-badge">Rechtsklick</span> Flagge 🚩</span>
     </div>
   </footer>
 
@@ -555,9 +623,11 @@
       }
 
       function updateCameraDistance() {
-        // Adjust camera distance smoothly for gridSize
-        const baseDist = gridSize * 3.1 + 2.5;
-        camera.position.set(0, 0, baseDist);
+        const aspect = camera.aspect || (window.innerWidth / window.innerHeight) || 1;
+        const aspectFactor = aspect < 1 ? Math.min(1.9, 0.9 / Math.max(0.45, aspect)) : 1;
+        const baseDist = (gridSize * 3.0 + 2.8) * aspectFactor;
+        const spreadPullback = Math.max(0, currentSpread - 1.15) * gridSize * 0.68 * (aspect < 1 ? 1.15 : 1);
+        camera.position.set(0, 0, baseDist + spreadPullback);
       }
 
       function initGame() {
@@ -801,18 +871,38 @@
       }
 
       // =========================================================================
-      // Mouse Rotation, Raycasting & Mousewheel Pull-Apart (Explosion)
+      // Mouse & Touch Rotation, 2-Finger Pinch / Mousewheel Pull-Apart, Raycasting
       // =========================================================================
       const raycaster = new THREE.Raycaster();
       const mouse = new THREE.Vector2();
+      const worldAxisY = new THREE.Vector3(0, 1, 0);
+      const worldAxisX = new THREE.Vector3(1, 0, 0);
+      const rotQuatY = new THREE.Quaternion();
+      const rotQuatX = new THREE.Quaternion();
+
+      function rotateCube(dx, dy, speed) {
+        rotQuatY.setFromAxisAngle(worldAxisY, dx * speed);
+        rotQuatX.setFromAxisAngle(worldAxisX, dy * speed);
+        cubePivot.quaternion.premultiply(rotQuatY);
+        cubePivot.quaternion.premultiply(rotQuatX);
+        cubePivot.quaternion.normalize();
+      }
+
       let isPointerDown = false;
+      let activePointerId = null;
       let downButton = 0;
-      let downX = 0;
-      let downY = 0;
       let prevX = 0;
       let prevY = 0;
       let draggedDistance = 0;
       let hoveredCell = null;
+
+      // Mobile touch state
+      let touchMode = 'none'; // 'none' | 'single' | 'pinch'
+      let wasMultiTouch = false;
+      let touchPrevX = 0;
+      let touchPrevY = 0;
+      let touchDraggedDist = 0;
+      let prevPinchDist = null;
 
       function updateMouseNormalized(clientX, clientY) {
         mouse.x = (clientX / window.innerWidth) * 2 - 1;
@@ -856,16 +946,27 @@
         hoveredCell = null;
       }
 
+      function getPinchDistance(t1, t2) {
+        return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      }
+
+      // --- Desktop Mouse / Pen Pointer Controls ---
       container.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return;
         isPointerDown = true;
+        activePointerId = e.pointerId;
         downButton = e.button;
-        downX = prevX = e.clientX;
-        downY = prevY = e.clientY;
+        prevX = e.clientX;
+        prevY = e.clientY;
         draggedDistance = 0;
+        if (container.setPointerCapture) {
+          try { container.setPointerCapture(e.pointerId); } catch (_) {}
+        }
       });
 
       window.addEventListener('pointermove', (e) => {
-        if (isPointerDown) {
+        if (e.pointerType === 'touch') return;
+        if (isPointerDown && e.pointerId === activePointerId) {
           const dx = e.clientX - prevX;
           const dy = e.clientY - prevY;
           prevX = e.clientX;
@@ -874,21 +975,24 @@
 
           if (draggedDistance > 4) {
             container.classList.add('dragging');
-            // Rotate the 3D cube smoothly with the mouse
-            cubePivot.rotation.y += dx * 0.0085;
-            cubePivot.rotation.x += dy * 0.0085;
+            clearHover();
+            rotateCube(dx, dy, 0.0085);
           }
         }
         updateHoverHighlight(e.clientX, e.clientY);
       });
 
-      window.addEventListener('pointerup', (e) => {
-        if (!isPointerDown) return;
+      function endMousePointer(e, allowClick) {
+        if (e.pointerType === 'touch') return;
+        if (!isPointerDown || e.pointerId !== activePointerId) return;
         isPointerDown = false;
+        activePointerId = null;
         container.classList.remove('dragging');
+        if (container.releasePointerCapture) {
+          try { container.releasePointerCapture(e.pointerId); } catch (_) {}
+        }
 
-        // Distinguish click from rotation drag
-        if (draggedDistance < 7) {
+        if (allowClick && draggedDistance < 7) {
           const cell = getIntersectedCell(e.clientX, e.clientY);
           if (cell) {
             if (downButton === 2 || flagMode || e.shiftKey) {
@@ -898,22 +1002,133 @@
             }
           }
         }
+      }
+
+      window.addEventListener('pointerup', (e) => endMousePointer(e, true));
+      window.addEventListener('pointercancel', (e) => endMousePointer(e, false));
+
+      // --- Mobile Touch Controls (1-Finger Rotate & 2-Finger Pinch Pull-Apart) ---
+      container.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        clearHover();
+        if (e.touches.length === 1) {
+          touchMode = 'single';
+          wasMultiTouch = false;
+          touchPrevX = e.touches[0].clientX;
+          touchPrevY = e.touches[0].clientY;
+          touchDraggedDist = 0;
+          prevPinchDist = null;
+        }
+      }, { passive: false });
+
+      container.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches.length === 1 && touchMode === 'single') {
+          const tx = e.touches[0].clientX;
+          const ty = e.touches[0].clientY;
+          const dx = tx - touchPrevX;
+          const dy = ty - touchPrevY;
+          touchPrevX = tx;
+          touchPrevY = ty;
+          touchDraggedDist += Math.hypot(dx, dy);
+
+          if (touchDraggedDist > 3) {
+            rotateCube(dx, dy, 0.0115);
+          }
+        }
+      }, { passive: false });
+
+      container.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        if (e.touches.length === 0 && !wasMultiTouch && touchDraggedDist < 12) {
+          const changed = e.changedTouches[0];
+          if (changed) {
+            const cell = getIntersectedCell(changed.clientX, changed.clientY);
+            if (cell) {
+              elCoord.textContent = `XYZ: (${cell.x + 1}, ${cell.y + 1}, ${cell.z + 1})`;
+              if (flagMode) {
+                toggleFlag(cell);
+              } else {
+                revealCell(cell);
+              }
+            }
+          }
+        }
+      }, { passive: false });
+
+      // Handle 2-finger pinch anywhere on screen & block browser page-zoom completely
+      document.addEventListener('touchstart', (e) => {
+        if (e.touches.length >= 2) {
+          e.preventDefault();
+          touchMode = 'pinch';
+          wasMultiTouch = true;
+          prevPinchDist = getPinchDistance(e.touches[0], e.touches[1]);
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchmove', (e) => {
+        if (e.touches.length >= 2) {
+          e.preventDefault();
+          touchMode = 'pinch';
+          wasMultiTouch = true;
+          const dist = getPinchDistance(e.touches[0], e.touches[1]);
+          if (prevPinchDist !== null) {
+            const deltaDist = dist - prevPinchDist;
+            const minDim = Math.max(320, Math.min(window.innerWidth, window.innerHeight));
+            const spreadDelta = (deltaDist / minDim) * 3.8;
+            setTargetSpread(targetSpread + spreadDelta);
+          }
+          prevPinchDist = dist;
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchend', (e) => {
+        if (e.touches.length === 1) {
+          prevPinchDist = null;
+          touchMode = 'single';
+          touchPrevX = e.touches[0].clientX;
+          touchPrevY = e.touches[0].clientY;
+        } else if (e.touches.length === 0) {
+          prevPinchDist = null;
+          touchMode = 'none';
+          wasMultiTouch = false;
+        }
+      }, { passive: false });
+
+      document.addEventListener('touchcancel', () => {
+        prevPinchDist = null;
+        touchMode = 'none';
+        wasMultiTouch = false;
+      }, { passive: false });
+
+      ['gesturestart', 'gesturechange', 'gestureend'].forEach((evtName) => {
+        document.addEventListener(evtName, (e) => e.preventDefault(), { passive: false });
       });
 
       container.addEventListener('contextmenu', (e) => e.preventDefault());
 
-      // Mousewheel pulls the cube apart / pushes it back together
+      // Mousewheel / Trackpad Pinch pulls the cube apart / pushes it back together
       function setTargetSpread(newVal) {
         targetSpread = Math.max(MIN_SPREAD, Math.min(MAX_SPREAD, newVal));
         elSpreadSlider.value = String(Math.round(targetSpread * 100));
         elSpreadLabel.textContent = targetSpread.toFixed(2) + '×';
       }
 
-      container.addEventListener('wheel', (e) => {
+      window.addEventListener('wheel', (e) => {
+        if (e.target && e.target.tagName === 'SELECT') return;
         e.preventDefault();
-        // Scrolling wheel pulls apart or compacts the 3D cube layers
-        const delta = Math.sign(e.deltaY) * 0.14;
-        setTargetSpread(targetSpread + delta);
+        let dy = e.deltaY;
+        if (e.deltaMode === 1) dy *= 30;
+        else if (e.deltaMode === 2) dy *= 300;
+
+        if (e.ctrlKey) {
+          // Trackpad pinch gesture: spreading fingers out produces negative deltaY
+          setTargetSpread(targetSpread - dy * 0.015);
+        } else {
+          // Mouse wheel: smooth step scaled to deltaY
+          const step = Math.max(-0.22, Math.min(0.22, dy * 0.0014));
+          setTargetSpread(targetSpread + step);
+        }
       }, { passive: false });
 
       elSpreadSlider.addEventListener('input', () => {
@@ -940,6 +1155,7 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
+        updateCameraDistance();
       });
 
       // Render Loop with smooth interpolation of the cube pull-apart factor
@@ -956,6 +1172,7 @@
               c.bz * currentSpread
             );
           }
+          updateCameraDistance();
         }
 
         renderer.render(scene, camera);
