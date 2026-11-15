@@ -1,0 +1,2664 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="description" content="Interaktives Pilz-Sammler-Quiz mit Fotos für die Region Aachen (Aachener Wald / Öcher Bösch, Stolberger Kalktriften, Eifel & Hohes Venn) – Pilznamen bestimmen & Giftigkeit / Speisewert prüfen." />
+  <title>Pilz-Sammler-Quiz Region Aachen · Namen &amp; Giftigkeit · HunterJoe Arcade</title>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    :root {
+      --forest-bg: #07110c;
+      --forest-panel: rgba(11, 24, 18, 0.94);
+      --forest-inset: rgba(7, 16, 12, 0.88);
+      --forest-border: rgba(134, 239, 172, 0.18);
+      --forest-border-strong: rgba(167, 243, 208, 0.38);
+      --forest-green: #22c55e;
+      --forest-emerald: #10b981;
+      --forest-amber: #f59e0b;
+      --forest-orange: #f97316;
+      --forest-red: #ef4444;
+      --forest-skull: #dc2626;
+      --forest-text: #f8fafc;
+      --forest-muted: #94a3b8;
+    }
+
+    html, body {
+      background:
+        radial-gradient(ellipse at 18% 0%, rgba(16, 185, 129, 0.24) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 12%, rgba(217, 119, 6, 0.16) 0%, transparent 45%),
+        linear-gradient(180deg, #0a1912 0%, #07110c 60%, #040906 100%);
+      color: var(--forest-text);
+      min-height: 100%;
+    }
+
+    .arcade-topbar {
+      background: rgba(6, 15, 10, 0.92);
+      border-bottom: 1px solid var(--forest-border);
+    }
+
+    .back-hub-btn {
+      background: rgba(20, 40, 30, 0.78);
+      border: 1px solid rgba(134, 239, 172, 0.32);
+      color: #f1f5f9;
+    }
+    .back-hub-btn:hover {
+      background: rgba(30, 58, 44, 0.9);
+      border-color: rgba(167, 243, 208, 0.6);
+    }
+
+    .icon-btn {
+      background: rgba(12, 26, 19, 0.85);
+      border-color: var(--forest-border);
+    }
+    .icon-btn:hover {
+      background: rgba(22, 46, 34, 0.95);
+      border-color: rgba(167, 243, 208, 0.5);
+    }
+
+    .quiz-wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 20px 16px 56px;
+    }
+
+    .surface-panel {
+      background: var(--forest-panel);
+      border: 1px solid var(--forest-border);
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .hidden { display: none !important; }
+
+    /* Menu Header */
+    .menu-panel {
+      padding: 26px 24px 24px;
+    }
+
+    .hero-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .mushroom-crest-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, #15803d, #b45309);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      box-shadow: 0 10px 24px rgba(21, 128, 61, 0.35);
+      border: 1px solid rgba(253, 224, 71, 0.35);
+    }
+
+    .hero-title {
+      margin: 0 0 6px;
+      font-size: clamp(22px, 3.2vw, 28px);
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      color: #f8fafc;
+    }
+
+    .hero-lead {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.55;
+      color: #cbd5e1;
+      max-width: 70ch;
+    }
+
+    .safety-banner {
+      margin-top: 14px;
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: rgba(180, 83, 9, 0.18);
+      border: 1px solid rgba(251, 191, 36, 0.38);
+      color: #fde68a;
+      font-size: 13px;
+      line-height: 1.48;
+    }
+    .safety-banner strong {
+      color: #fef08a;
+    }
+
+    /* Controls Band */
+    .settings-band {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid var(--forest-border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .setting-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+    }
+
+    .setting-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--forest-muted);
+      min-width: 122px;
+    }
+
+    .pill-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .opt-pill {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--forest-border);
+      background: rgba(12, 26, 19, 0.76);
+      color: #cbd5e1;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.12s;
+    }
+    .opt-pill:hover {
+      background: rgba(22, 46, 34, 0.92);
+      border-color: var(--forest-border-strong);
+      color: #f8fafc;
+    }
+    .opt-pill.active-mode {
+      background: rgba(22, 163, 74, 0.28);
+      border-color: rgba(74, 222, 128, 0.72);
+      color: #dcfce7;
+      font-weight: 700;
+    }
+    .opt-pill.active-relaxed {
+      background: rgba(13, 148, 136, 0.24);
+      border-color: rgba(45, 212, 191, 0.65);
+      color: #ccfbf1;
+      font-weight: 700;
+    }
+    .opt-pill.active-timer {
+      background: rgba(217, 119, 6, 0.24);
+      border-color: rgba(245, 158, 11, 0.65);
+      color: #fef3c7;
+      font-weight: 700;
+    }
+    .opt-pill.active-len {
+      background: rgba(245, 158, 11, 0.24);
+      border-color: rgba(251, 191, 36, 0.68);
+      color: #fef3c7;
+      font-weight: 700;
+    }
+
+    .setting-hint {
+      font-size: 13px;
+      color: var(--forest-muted);
+      line-height: 1.45;
+    }
+
+    /* Category Selector Grid */
+    .cat-section-title {
+      margin: 22px 0 12px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--forest-muted);
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .cat-card {
+      text-align: left;
+      padding: 18px;
+      border-radius: 14px;
+      background: linear-gradient(160deg, rgba(16, 36, 26, 0.92), rgba(8, 19, 14, 0.96));
+      border: 1px solid var(--forest-border);
+      color: var(--forest-text);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--forest-border-strong);
+      background: linear-gradient(160deg, rgba(22, 48, 35, 0.96), rgba(10, 24, 18, 0.98));
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.42);
+    }
+    .cat-card.main-tour {
+      grid-column: 1 / -1;
+      border-color: rgba(74, 222, 128, 0.45);
+      background: linear-gradient(155deg, rgba(21, 128, 61, 0.26), rgba(11, 24, 18, 0.96));
+    }
+    .cat-card.main-tour:hover {
+      border-color: rgba(74, 222, 128, 0.78);
+    }
+    .cat-card.danger-tour {
+      border-color: rgba(239, 68, 68, 0.36);
+      background: linear-gradient(155deg, rgba(127, 29, 29, 0.24), rgba(11, 24, 18, 0.96));
+    }
+    .cat-card.danger-tour:hover {
+      border-color: rgba(248, 113, 113, 0.68);
+    }
+
+    .cat-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .cat-era {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      color: #fcd34d;
+      font-variant-numeric: tabular-nums;
+    }
+    .cat-name {
+      font-size: 16.5px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+    .cat-desc {
+      font-size: 13.5px;
+      color: #94a3b8;
+      line-height: 1.48;
+      flex: 1;
+    }
+    .cat-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid rgba(134, 239, 172, 0.14);
+      font-size: 12.5px;
+      color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+    .cat-go {
+      font-weight: 700;
+      color: #86efac;
+    }
+
+    /* Play Stage */
+    .stage-panel {
+      padding: 20px 22px 24px;
+    }
+
+    .stage-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--forest-border);
+      margin-bottom: 14px;
+    }
+
+    .progress-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: #cbd5e1;
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-cluster strong {
+      color: #f8fafc;
+    }
+    .recognized-tag {
+      color: #86efac;
+      font-weight: 700;
+    }
+    .tox-score-tag {
+      color: #fcd34d;
+      font-weight: 700;
+    }
+
+    .timer-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(45, 212, 191, 0.42);
+      background: rgba(13, 148, 136, 0.18);
+      color: #99f6e4;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      font-variant-numeric: tabular-nums;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .timer-toggle-btn:hover {
+      background: rgba(13, 148, 136, 0.3);
+    }
+    .timer-toggle-btn.countdown-running {
+      border-color: rgba(245, 158, 11, 0.55);
+      background: rgba(180, 83, 9, 0.22);
+      color: #fde68a;
+    }
+    .timer-toggle-btn.countdown-expired {
+      border-color: rgba(148, 163, 184, 0.4);
+      background: rgba(30, 41, 59, 0.72);
+      color: #e2e8f0;
+    }
+
+    .timer-track {
+      height: 5px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.16);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #22c55e, #f59e0b, #ef4444);
+      transition: width 0.12s linear;
+    }
+
+    /* Mushroom Photo Viewer */
+    .pilz-figure {
+      margin: 0 0 14px;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      max-height: clamp(240px, 39vh, 365px);
+      border-radius: 14px;
+      overflow: hidden;
+      background: #040906;
+      border: 1px solid var(--forest-border);
+      cursor: zoom-in;
+    }
+
+    .photo-frame img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform 0.28s ease;
+    }
+    .photo-frame:hover img {
+      transform: scale(1.015);
+    }
+
+    .photo-zoom-btn {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      background: rgba(6, 15, 10, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #f8fafc;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .photo-zoom-btn:hover {
+      background: rgba(14, 32, 22, 0.96);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .photo-credit {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--forest-muted);
+    }
+
+    /* Question & Answer Grid */
+    .q-meta-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .meta-tag {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(16, 38, 28, 0.9);
+      border: 1px solid var(--forest-border);
+      color: #d1fae5;
+    }
+    .meta-tag.habitat {
+      color: #fde68a;
+      background: rgba(120, 53, 15, 0.28);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+    .meta-tag.season {
+      color: #bae6fd;
+      background: rgba(12, 74, 110, 0.28);
+      border-color: rgba(56, 189, 248, 0.32);
+    }
+
+    .step-block {
+      margin-top: 12px;
+    }
+    .step-block + .step-block {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed rgba(134, 239, 172, 0.24);
+    }
+
+    .step-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      background: rgba(34, 197, 94, 0.18);
+      border: 1px solid rgba(74, 222, 128, 0.45);
+      color: #bbf7d0;
+    }
+    .step-badge.tox {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: rgba(251, 191, 36, 0.5);
+      color: #fde68a;
+    }
+
+    .q-text {
+      margin: 0 0 14px;
+      font-size: clamp(17.5px, 2.2vw, 20.5px);
+      font-weight: 800;
+      line-height: 1.4;
+      color: #f8fafc;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    .ans-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 15px;
+      border-radius: 12px;
+      border: 1px solid var(--forest-border);
+      background: var(--forest-inset);
+      color: #f8fafc;
+      font-size: 14.5px;
+      font-weight: 600;
+      line-height: 1.4;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s, transform 0.1s;
+    }
+    .ans-btn:hover:not(:disabled) {
+      background: rgba(20, 44, 32, 0.92);
+      border-color: var(--forest-border-strong);
+      transform: translateY(-1px);
+    }
+    .ans-btn:disabled { cursor: default; }
+    .ans-btn.eliminated { opacity: 0.22; pointer-events: none; }
+    .ans-btn.correct {
+      background: rgba(22, 101, 52, 0.46);
+      border-color: rgba(74, 222, 128, 0.85);
+      color: #dcfce7;
+    }
+    .ans-btn.wrong {
+      background: rgba(159, 18, 57, 0.38);
+      border-color: rgba(251, 113, 133, 0.78);
+      color: #ffe4e6;
+    }
+
+    .ans-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      background: rgba(30, 58, 44, 0.85);
+      color: #e2e8f0;
+      font-size: 13px;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .ans-btn.correct .ans-key {
+      background: rgba(34, 197, 94, 0.4);
+      color: #bbf7d0;
+    }
+    .ans-btn.wrong .ans-key {
+      background: rgba(244, 63, 94, 0.4);
+      color: #fecdd3;
+    }
+
+    /* Utility Row */
+    .helpers-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--forest-border);
+    }
+
+    .helper-btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--forest-border);
+      background: rgba(12, 26, 19, 0.85);
+      color: #e2e8f0;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.14s, border-color 0.14s;
+    }
+    .helper-btn:hover:not(:disabled) {
+      background: rgba(22, 46, 34, 0.95);
+      border-color: var(--forest-border-strong);
+    }
+    .helper-btn:disabled {
+      opacity: 0.36;
+      cursor: not-allowed;
+    }
+
+    /* Toxicity Traffic-Light Badges */
+    .tox-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+    .tox-pill.edible {
+      background: rgba(22, 163, 74, 0.25);
+      border: 1px solid rgba(74, 222, 128, 0.65);
+      color: #bbf7d0;
+    }
+    .tox-pill.cooked {
+      background: rgba(217, 119, 6, 0.25);
+      border: 1px solid rgba(251, 191, 36, 0.68);
+      color: #fef08a;
+    }
+    .tox-pill.inedible {
+      background: rgba(234, 88, 12, 0.25);
+      border: 1px solid rgba(251, 146, 60, 0.68);
+      color: #fed7aa;
+    }
+    .tox-pill.toxic {
+      background: rgba(220, 38, 38, 0.26);
+      border: 1px solid rgba(248, 113, 113, 0.72);
+      color: #fecaca;
+    }
+    .tox-pill.deadly {
+      background: linear-gradient(135deg, rgba(153, 27, 27, 0.55), rgba(88, 28, 135, 0.5));
+      border: 1px solid #f87171;
+      color: #ffffff;
+      box-shadow: 0 0 16px rgba(239, 68, 68, 0.35);
+    }
+
+    /* Post-Answer Sammler-Steckbrief */
+    .steckbrief {
+      margin-top: 20px;
+      padding: 20px 20px 18px;
+      border-radius: 14px;
+      background: rgba(6, 15, 11, 0.94);
+      border: 1px solid var(--forest-border);
+      border-left: 4px solid var(--forest-amber);
+      animation: fadeSlideUp 0.22s ease;
+    }
+    .steckbrief.is-right {
+      border-left-color: var(--forest-green);
+    }
+    .steckbrief.is-miss {
+      border-left-color: var(--forest-red);
+    }
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .sb-verdict {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 8px;
+    }
+    .sb-verdict.ok { color: #86efac; }
+    .sb-verdict.partial { color: #fde68a; }
+    .sb-verdict.miss { color: #fda4af; }
+    .sb-verdict.skip { color: #bae6fd; }
+
+    .sb-heading-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .sb-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 850;
+      color: #f8fafc;
+    }
+    .sb-latin {
+      font-size: 14px;
+      font-style: italic;
+      font-weight: 600;
+      color: #a7f3d0;
+      margin-left: 6px;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
+      gap: 10px 16px;
+      margin: 0 0 14px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(134, 239, 172, 0.14);
+      border-bottom: 1px solid rgba(134, 239, 172, 0.14);
+    }
+    .spec-item dt {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--forest-muted);
+      margin-bottom: 2px;
+    }
+    .spec-item dd {
+      margin: 0;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #f1f5f9;
+      line-height: 1.38;
+    }
+
+    .sb-lookalike-box {
+      margin: 0 0 14px;
+      padding: 11px 14px;
+      border-radius: 10px;
+      background: rgba(153, 27, 27, 0.22);
+      border: 1px solid rgba(248, 113, 113, 0.4);
+      font-size: 13.5px;
+      line-height: 1.48;
+      color: #fecdd3;
+    }
+    .sb-lookalike-box strong {
+      color: #fda4af;
+    }
+
+    .sb-trivia {
+      margin: 0 0 16px;
+      font-size: 14.5px;
+      line-height: 1.58;
+      color: #e2e8f0;
+    }
+
+    .sb-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sb-commons-link {
+      font-size: 12.5px;
+      color: #86efac;
+      text-decoration: none;
+    }
+    .sb-commons-link:hover {
+      text-decoration: underline;
+    }
+
+    .forest-primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 20px;
+      border-radius: 10px;
+      border: 1px solid rgba(74, 222, 128, 0.55);
+      background: linear-gradient(135deg, #16a34a, #15803d);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 8px 22px rgba(21, 128, 61, 0.35);
+      transition: transform 0.12s, filter 0.15s;
+    }
+    .forest-primary-btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    /* End Screen & Gallery */
+    .result-panel {
+      padding: 26px 24px 28px;
+    }
+    .result-head {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--forest-border);
+    }
+    .result-summary-pill {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(22, 163, 74, 0.2);
+      border: 1px solid rgba(74, 222, 128, 0.45);
+      color: #bbf7d0;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .result-score-line {
+      font-size: clamp(23px, 3.8vw, 31px);
+      font-weight: 850;
+      margin: 0 0 6px;
+      font-variant-numeric: tabular-nums;
+    }
+    .result-sub {
+      margin: 0 0 18px;
+      font-size: 14.5px;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+    .result-cta-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .gallery-heading {
+      margin: 22px 0 14px;
+      font-size: 17px;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+
+    .gallery-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .gallery-row {
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(7, 16, 12, 0.82);
+      border: 1px solid var(--forest-border);
+      align-items: start;
+    }
+
+    .gallery-thumb {
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--forest-border);
+      padding: 0;
+      background: #040906;
+      cursor: zoom-in;
+    }
+    .gallery-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-info h3 {
+      margin: 0 0 6px;
+      font-size: 16.5px;
+      font-weight: 800;
+      color: #f8fafc;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+    .gallery-meta {
+      font-size: 12.5px;
+      color: #fcd34d;
+      margin-bottom: 6px;
+    }
+    .gallery-trivia {
+      margin: 0 0 8px;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+    .gallery-status {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--forest-muted);
+    }
+    .outcome-badge {
+      padding: 2px 9px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11.5px;
+    }
+    .outcome-badge.ok { background: rgba(22, 101, 52, 0.45); color: #86efac; }
+    .outcome-badge.partial { background: rgba(180, 83, 9, 0.42); color: #fde68a; }
+    .outcome-badge.miss { background: rgba(159, 18, 57, 0.38); color: #fda4af; }
+    .outcome-badge.skip { background: rgba(12, 74, 110, 0.4); color: #bae6fd; }
+
+    /* Lightbox Modal */
+    .lightbox-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9995;
+      background: rgba(2, 8, 5, 0.94);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .lightbox-inner {
+      position: relative;
+      max-width: min(1160px, 96vw);
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      border-radius: 12px;
+      border: 1px solid rgba(134, 239, 172, 0.35);
+      background: #030805;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.78);
+    }
+    .lightbox-bar {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13.5px;
+      color: #e2e8f0;
+    }
+
+    @media (max-width: 680px) {
+      .arcade-topbar { flex-wrap: nowrap; }
+      .topbar-left { min-width: 0; flex: 1; }
+      .menu-panel, .stage-panel, .result-panel { padding: 16px 14px 20px; }
+      .cat-grid { grid-template-columns: 1fr; }
+      .answers-grid { grid-template-columns: 1fr; }
+      .gallery-row { grid-template-columns: 1fr; }
+      .hero-head { flex-direction: column; gap: 12px; }
+      .photo-frame { max-height: 260px; }
+    }
+  </style>
+</head>
+<body data-no-leaderboard="1">
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🍄 Pilz-Sammler-Quiz · Region Aachen &amp; Eifel</div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- START MENU -->
+    <section id="screen-menu" class="surface-panel menu-panel">
+      <div class="hero-head">
+        <div class="mushroom-crest-badge" aria-hidden="true">
+          <svg width="34" height="34" viewBox="0 0 40 40" fill="none">
+            <path d="M7 21c0-8.5 5.8-14 13-14s13 5.5 13 14H7z" fill="#dc2626" stroke="#fde68a" stroke-width="1.6"/>
+            <circle cx="15" cy="14" r="2.1" fill="#fff"/>
+            <circle cx="23" cy="12.5" r="1.8" fill="#fff"/>
+            <circle cx="26.5" cy="17" r="1.6" fill="#fff"/>
+            <path d="M16 21h8l1.5 11.5c.2 1.4-.9 2.5-2.3 2.5h-6.4c-1.4 0-2.5-1.1-2.3-2.5L16 21z" fill="#fef3c7" stroke="#fde68a" stroke-width="1.4"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="hero-title">Pilz-Sammler-Quiz: Aachener Wald, Stolberg, Eifel &amp; Hohes Venn</h1>
+          <p class="hero-lead">
+            Vom sauren Buchen- und Fichtenboden im <strong>Öcher Bösch (Aachener Wald &amp; Preuswald)</strong> über die <strong>Stolberger &amp; Kornelimünsteraner Kalktriften</strong> bis in den <strong>Hürtgenwald und das Hohe Venn</strong>:
+            Bestimme anhand echter Fotos, <strong>wie der Pilz heißt</strong> und <strong>wie es um seine Giftigkeit bzw. Essbarkeit steht</strong>!
+          </p>
+        </div>
+      </div>
+
+      <div class="safety-banner">
+        ⚠️ <strong>Wichtiger Sammler-Hinweis:</strong> Dieses Quiz dient dem Training der Arten- und Giftigkeitskenntnis – Fotos ersetzen niemals die Begutachtung echter Fruchtkörper vor Ort (Geruch, Schnittbild, Stielbasis) durch geprüfte <strong>DGfM-Pilzsachverständige</strong> in der Städteregion Aachen / Eifel. Bei Vergiftungsverdacht: <strong>Giftnotruf Bonn (0228 19240)</strong> oder Notruf 112.
+      </div>
+
+      <div class="settings-band">
+        <div class="setting-row">
+          <span class="setting-label">Prüfungsmodus</span>
+          <div class="pill-group" id="mode-bar" role="group" aria-label="Prüfungsmodus wählen">
+            <button type="button" class="opt-pill active-mode" data-mode="both">🧺 Kombi: Pilzname + Giftigkeit (Standard)</button>
+            <button type="button" class="opt-pill" data-mode="name">🔍 Nur Pilznamen bestimmen</button>
+            <button type="button" class="opt-pill" data-mode="toxicity">☠️ Nur Giftigkeit &amp; Speisewert</button>
+          </div>
+        </div>
+        <div id="mode-hint" class="setting-hint">
+          Im Kombi-Modus bestimmst du bei jedem Foto zuerst den <strong>Pilznamen</strong> und schätzt direkt darunter die <strong>Giftigkeit / Essbarkeit für den Sammlerkorb</strong> ein.
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-label">Zeitmodus</span>
+          <div class="pill-group" id="countdown-bar" role="group" aria-label="Zeitmodus wählen">
+            <button type="button" id="opt-timer-off" class="opt-pill active-relaxed" data-timer="0">☕ Ohne Zeitlimit (Standard)</button>
+            <button type="button" id="opt-timer-on" class="opt-pill" data-timer="1">⏱ Optionaler Countdown (35s)</button>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-label">Rundenlänge</span>
+          <div class="pill-group" id="length-bar" role="group" aria-label="Anzahl der Pilze">
+            <button type="button" class="opt-pill active-len" data-len="8">8 Pilze</button>
+            <button type="button" class="opt-pill" data-len="12">12 Pilze</button>
+            <button type="button" class="opt-pill" data-len="all">Alle Pilze der Auswahl</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="cat-section-title">Sammelgebiet / Schwerpunkt wählen &amp; Exkursion starten</div>
+      <div id="cat-grid" class="cat-grid"></div>
+    </section>
+
+    <!-- PLAY STAGE -->
+    <section id="screen-play" class="surface-panel stage-panel hidden">
+      <div class="stage-topbar">
+        <div class="progress-cluster">
+          <span>Pilz <strong id="q-num">1</strong> von <strong id="q-total">8</strong></span>
+          <span class="recognized-tag" id="score-name-pill">🍄 Name: <span id="q-name-count">0</span></span>
+          <span class="tox-score-tag" id="score-tox-pill">☠️ Giftigkeit: <span id="q-tox-count">0</span></span>
+        </div>
+        <button type="button" id="btn-play-timer" class="timer-toggle-btn" title="Optionalen 35s-Countdown ein- oder ausschalten">
+          ☕ Kein Zeitlimit
+        </button>
+      </div>
+
+      <div id="timer-track" class="timer-track hidden">
+        <div id="timer-fill" class="timer-fill"></div>
+      </div>
+
+      <figure class="pilz-figure">
+        <div id="photo-frame" class="photo-frame" title="Klicken zum Vergrößern (Hut, Lamellen/Röhren & Stiel prüfen)">
+          <img id="pilz-img" src="" alt="Pilz-Foto zur aktuellen Bestimmungsfrage" decoding="async" />
+          <button type="button" id="btn-zoom-photo" class="photo-zoom-btn">🔍 Foto vergrößern</button>
+        </div>
+        <figcaption class="photo-credit">
+          <span id="photo-attribution">Foto wird geladen…</span>
+          <span id="photo-status-note">Klick aufs Bild öffnet die Lupe / Vollansicht</span>
+        </figcaption>
+      </figure>
+
+      <div class="q-meta-tags">
+        <span id="q-cat-pill" class="meta-tag">Kategorie</span>
+        <span id="q-habitat-pill" class="meta-tag habitat">📍 Fundort Region Aachen</span>
+        <span id="q-season-pill" class="meta-tag season">🍂 Saison</span>
+      </div>
+
+      <!-- STEP 1: NAME IDENTIFICATION -->
+      <div id="step-name-block" class="step-block">
+        <div class="step-badge-row">
+          <span class="step-badge">1 · Artbestimmung: Wie heißt dieser Pilz?</span>
+        </div>
+        <h2 id="q-name-text" class="q-text">Frage wird geladen…</h2>
+        <div id="answers-name-grid" class="answers-grid"></div>
+      </div>
+
+      <!-- STEP 2: TOXICITY / EDIBILITY ASSESSMENT -->
+      <div id="step-tox-block" class="step-block">
+        <div class="step-badge-row">
+          <span class="step-badge tox">2 · Giftigkeit &amp; Speisewert: Was gilt für den Sammlerkorb?</span>
+        </div>
+        <h2 id="q-tox-text" class="q-text">Wie ist dieser Pilz bezüglich Giftigkeit und Speisewert einzustufen?</h2>
+        <div id="answers-tox-grid" class="answers-grid"></div>
+      </div>
+
+      <div class="helpers-row">
+        <button type="button" id="joker-50" class="helper-btn">🎯 50:50 Tipp</button>
+        <button type="button" id="joker-skip" class="helper-btn">⏭ Auflösen &amp; Steckbrief zeigen</button>
+        <button type="button" id="btn-back-menu" class="helper-btn" style="margin-left:auto;">← Revier-Auswahl</button>
+      </div>
+
+      <!-- SAMMLER-STECKBRIEF -->
+      <div id="fact-sheet" class="steckbrief hidden" aria-live="polite">
+        <div id="sb-verdict" class="sb-verdict ok"></div>
+        <div class="sb-heading-row">
+          <div>
+            <h3 class="sb-title"><span id="sb-title"></span><span id="sb-latin" class="sb-latin"></span></h3>
+          </div>
+          <span id="sb-tox-badge" class="tox-pill edible"></span>
+        </div>
+        <dl id="sb-specs" class="spec-grid"></dl>
+        <div id="sb-lookalike" class="sb-lookalike-box"></div>
+        <p id="sb-trivia" class="sb-trivia"></p>
+        <div class="sb-actions">
+          <a id="sb-commons-link" class="sb-commons-link" href="#" target="_blank" rel="noopener noreferrer">Wikimedia Commons Bildquelle ↗</a>
+          <button type="button" id="btn-next-q" class="forest-primary-btn">Nächster Pilz ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULT & ROUND GALLERY -->
+    <section id="screen-result" class="surface-panel result-panel hidden">
+      <div class="result-head">
+        <div class="result-summary-pill">🧺 Sammler-Auswertung · Region Aachen, Stolberg, Eifel &amp; Hohes Venn</div>
+        <h2 id="res-score-line" class="result-score-line">Ergebnis</h2>
+        <p id="res-sub" class="result-sub"></p>
+        <div class="result-cta-row">
+          <button type="button" id="btn-replay" class="forest-primary-btn">🔄 Exkursion wiederholen</button>
+          <button type="button" id="btn-change-cat" class="secondary-btn">🍄 Anderes Sammelgebiet wählen</button>
+          <a href="../../index.html" class="secondary-btn" style="text-decoration:none;">🏠 Dashboard</a>
+        </div>
+      </div>
+
+      <h3 class="gallery-heading">📖 Alle Pilze dieser Exkursion mit Giftigkeits-Status &amp; Doppelgängern</h3>
+      <div id="gallery-list" class="gallery-list"></div>
+    </section>
+  </main>
+
+  <!-- LIGHTBOX MODAL -->
+  <div id="lightbox-modal" class="lightbox-backdrop hidden" role="dialog" aria-modal="true" aria-label="Pilz-Foto Großansicht">
+    <div class="lightbox-inner">
+      <img id="lightbox-img" class="lightbox-img" src="" alt="Großansicht des Pilzes" />
+      <div class="lightbox-bar">
+        <span id="lightbox-caption"></span>
+        <button type="button" id="btn-lightbox-close" class="secondary-btn">✕ Schließen (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script>
+    (function () {
+      const COUNTDOWN_KEY = 'arcade_pilze_aachen_countdown';
+      const COUNTDOWN_SEC = 35;
+
+      const CATEGORIES = [
+        {
+          id: 'alle',
+          era: 'Aachener Wald, Kalk-Eifel & Venn · 24 Arten',
+          name: 'Große Sammler-Exkursion rund um Aachen (Alle 24 Pilze)',
+          desc: 'Quer durch den Öcher Bösch (Preuswald/Dreiländereck), Stolberger Kalkbuchenwälder, Hürtgenwald und Hohes Venn: Speisepilze, Roh-Giftige, Bitterlinge und tödliche Doppelgänger.',
+          cls: 'main-tour'
+        },
+        {
+          id: 'toedlich',
+          era: 'Lebensgefahr · 6 Arten',
+          name: '☠️ Tödlich & schwer giftige Pilze der Region',
+          desc: 'Pflichtwissen für jeden Sammler im Raum Aachen: Grüner Knollenblätterpilz, Gifthäubling, Spitzgebuckelter Raukopf (Venn/Eifel), Ziegelroter Risspilz, Kahler Krempling & Pantherpilz.',
+          cls: 'danger-tour'
+        },
+        {
+          id: 'speisepilze',
+          era: 'Beliebte Klassiker · 6 Arten',
+          name: '🟢 Klassische Speisepilze im Öcher Bösch & Eifel',
+          desc: 'Steinpilz, Maronen-Röhrling, Echter Pfifferling, Parasol (Riesenschirmling), Krause Glucke (Fette Henne) und Schopftintling sicher erkennen.',
+          cls: ''
+        },
+        {
+          id: 'erhitzen_spezial',
+          era: 'Roh giftig & Kenner-Arten · 6 Arten',
+          name: '🟡 Nur erhitzt essbar & besondere Waldpilze',
+          desc: 'Flockenstieliger Hexen-Röhrling, Perlpilz, Stockschwämmchen, Violetter Lacktrichterling, Edel-Reizker und Gemeiner Birkenpilz – worauf Sammler beim Kochen & Putzen achten müssen.',
+          cls: ''
+        },
+        {
+          id: 'doppelgaenger',
+          era: 'Verwechslungsgefahr · 6 Arten',
+          name: '🔴 Giftige & ungenießbare Doppelgänger',
+          desc: 'Satans-Röhrling (Stolberger Kalk!), Gallenröhrling (Bitterling), Falscher Pfifferling, Karbol-Champignon, Grünblättriger Schwefelkopf und Fliegenpilz.',
+          cls: ''
+        }
+      ];
+
+      // Standard 4 toxicity choices used when testing toxicity, tailored with clear collector categories
+      const MUSHROOMS = [
+        // ==================== 1. KLASSISCHE SPEISEPILZE (1-6) ====================
+        {
+          id: 1,
+          cat: 'speisepilze',
+          habitat: '📍 Aachener Wald (Öcher Bösch), Preuswald & Hürtgenwald · Buchen & Fichten',
+          season: 'Juli–November',
+          img: './img/pilz-01.jpg',
+          nameQ: 'Welcher begehrte Röhrling mit dickbauchigem Stiel und feinem weißem Stielnetz wächst nach warmen Sommerregen unter Buchen und Fichten im Aachener Wald?',
+          nameOpts: [
+            'Gemeiner Steinpilz (Boletus edulis)',
+            'Gallenröhrling / Bitterling (Tylopilus felleus)',
+            'Maronen-Röhrling (Imleria badia)',
+            'Satans-Röhrling (Rubroboletus satanas)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Vorzüglicher Speisepilz (essbar)',
+          toxOpts: [
+            '🟢 Vorzüglicher Speisepilz – mild-nussig, festfleischig (auch getrocknet ein Klassiker)',
+            '🟠 Ungenießbar wegen extremer Galle-Bitterkeit – verdirbt jedes Gericht',
+            '🔴 Stark Magen-Darm-giftig – verursacht heftiges Erbrechen',
+            '☠️ Tödlich giftig durch hitzestabile Amatoxine (Leberschäden)'
+          ],
+          details: {
+            title: 'Gemeiner Steinpilz',
+            latin: 'Boletus edulis',
+            features: 'Hut hasel- bis dunkelbraun mit hellem Rand; Röhren jung weiß, später gelbgrünlich; Stiel mit feinem weißem Netz auf hellem Grund; Fleisch bleibt im Anschnitt weiß.',
+            lookalike: 'Gallenröhrling (Tylopilus felleus): Hat ein grobes dunkles (!) Stielnetz, schmutzig-rosa werdende Röhren und schmeckt extrem bitter (ungefährlich, aber ungenießbar).',
+            trivia: 'Im Aachener Wald („Öcher Bösch“) auf den sauren Sand- und Lehmböden rund um Entenpfuhl, Karlshöhe und Dreiländereck sowie in den Fichten- und Buchenbeständen der Nordeifel ist der Steinpilz ab Spätsommer der begehrteste Fund im Korb.'
+          },
+          credit: {
+            artist: 'Holger Krisp',
+            license: 'CC BY 3.0',
+            commons: 'File:(Gemeine Steinpilz) Boletus edulis.jpg'
+          }
+        },
+        {
+          id: 2,
+          cat: 'speisepilze',
+          habitat: '📍 Aachener Sand, Vichtbachtal & Hürtgenwald · Saure Nadel- & Mischwälder',
+          season: 'August–November',
+          img: './img/pilz-02.jpg',
+          nameQ: 'Welcher häufige Speisepilz der Eifeler und Aachener Nadelwälder hat einen kastanienbraunen Hut, einen netzlosen längsfaserigen Stiel und blaut auf Fingerdruck an den gelblichen Röhren?',
+          nameOpts: [
+            'Maronen-Röhrling (Imleria badia)',
+            'Gemeiner Steinpilz (Boletus edulis)',
+            'Kahler Krempling (Paxillus involutus)',
+            'Schönfuß-Röhrling (Caloboletus calopus)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Sehr guter Speisepilz (gut durcherhitzen)',
+          toxOpts: [
+            '🟢 Sehr guter, milder Speisepilz (die Blaufärbung der Röhren ist völlig unbedenklich)',
+            '☠️ Tödlich giftig durch das Orellanus-Syndrom (Nierenversagen)',
+            '🔴 Stark giftig – enthält Fliegenpilz-Neurotoxine (Ibotensäure)',
+            '🟠 Ungenießbar hart und korkig wie ein Baumpilz'
+          ],
+          details: {
+            title: 'Maronen-Röhrling (Braunkappe)',
+            latin: 'Imleria badia (Syn. Boletus badius)',
+            features: 'Kastanienbrauner Hut (bei Nässe leicht schmierig); blassgelbe Röhren, die auf Druck sofort blaugrün anlaufen; Stiel bräunlich überfasert OHNE Netz.',
+            lookalike: 'Gallenröhrling (blaut nicht, hat dunkles Stielnetz & rosa Röhren) sowie Rotfußröhrlinge (ebenfalls essbar, aber weichfleischiger).',
+            trivia: 'Auf den sauren Böden des Aachener Waldes und im Hürtgenwald oft noch bis in den späten Oktober und November hinein der häufigste Röhrling. Das Blauen der Röhren verschwindet beim Braten in der Pfanne.'
+          },
+          credit: {
+            artist: 'Jean-Pol GRANDMONT',
+            license: 'CC BY 3.0',
+            commons: 'File:Boletus badius JPG1.jpg'
+          }
+        },
+        {
+          id: 3,
+          cat: 'speisepilze',
+          habitat: '📍 Aachener Wald & Rureifel · Moosige, saure Buchen- & Fichtenwälder',
+          season: 'Juni–Oktober',
+          img: './img/pilz-03.jpg',
+          nameQ: 'Welcher dottergelbe Speisepilz duftet angenehm fruchtig nach Aprikosen und besitzt an der Hutunterseite gegabelte, dickliche Leisten statt echter Lamellen?',
+          nameOpts: [
+            'Echter Pfifferling / Eierschwämmchen (Cantharellus cibarius)',
+            'Falscher Pfifferling (Hygrophoropsis aurantiaca)',
+            'Ölbaumtrichterling (Omphalotus olearius)',
+            'Spitzgebuckelter Raukopf (Cortinarius rubellus)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Vorzüglicher Speisepilz (essbar)',
+          toxOpts: [
+            '🟢 Vorzüglicher Speisepilz – pfeffrig-würzig und nahezu nie madig',
+            '☠️ Tödlich giftig – zerstört Leber und Nieren bereits in kleinster Menge',
+            '🔴 Stark halluzinogen und nervengiftig',
+            '🟠 Extrem bitter – ein Exemplar macht das Essen ungenießbar'
+          ],
+          details: {
+            title: 'Echter Pfifferling (Eierschwämmchen)',
+            latin: 'Cantharellus cibarius',
+            features: 'Dottergelb; Hutunterseite mit aderig verbundenen, gegabelten Leisten, die weit am Stiel herablaufen (nicht wie dünne Blätter vom Hutfleisch ablösbar); Fleisch innen weißlich, Geruch nach Aprikose.',
+            lookalike: 'Falscher Pfifferling (Hygrophoropsis aurantiaca, ungenießbar/leicht Magen-Darm-giftig): Hat dünne, dicht stehende, tieforange echte Lamellen und weiches, schlaffes Fleisch ohne Aprikosengeruch.',
+            trivia: 'Im Raum Aachen und in der Rureifel findet man Pfifferlinge vor allem an moosigen Hängen unter Buchen und Fichten. Wichtigstes Bestimmungsmerkmal sind immer die gegabelten Leisten im Übergang zum Stiel!'
+          },
+          credit: {
+            artist: 'Wikimedia Commons',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Chanterelle Cantharellus cibarius.jpg'
+          }
+        },
+        {
+          id: 4,
+          cat: 'speisepilze',
+          habitat: '📍 Waldränder um Kornelimünster, Raeren, Lousberg & Eifel-Wiesen',
+          season: 'Juli–November',
+          img: './img/pilz-04.jpg',
+          nameQ: 'Welcher bis zu 30 cm hohe Großpilz an Aachener Waldrändern hat einen geschuppten Schirmhut, einen frei verschiebbaren doppelten Ring und einen charakteristisch „genatterten“ Stiel?',
+          nameOpts: [
+            'Parasol / Gemeiner Riesenschirmling (Macrolepiota procera)',
+            'Pantherpilz (Amanita pantherina)',
+            'Gift-Riesenschirmling / Garten-Safranschirmling (Chlorophyllum brunneum)',
+            'Grüner Knollenblätterpilz (Amanita phalloides)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Sehr guter Speisepilz (Hut gebraten)',
+          toxOpts: [
+            '🟢 Sehr guter Speisepilz – der große Hut schmeckt paniert wie ein Schnitzel',
+            '☠️ Tödlich giftig – enthält Amatoxine wie der Knollenblätterpilz',
+            '🔴 Schwer giftig – löst das lebensbedrohliche Pantherina-Syndrom aus',
+            '🟠 Völlig ungenießbar durch brennend scharfen Milchsaft'
+          ],
+          details: {
+            title: 'Parasol (Gemeiner Riesenschirmling)',
+            latin: 'Macrolepiota procera',
+            features: 'Jung trommelschlegelförmig, später riesiger Schirm mit dunklem Buckel; Stiel braun genattert (wie Schlangenhaut!); großer, am Stiel frei verschiebbarer Laufring; Stielbasis knollig OHNE Scheide; Fleisch rötet nicht.',
+            lookalike: 'Gift-Riesenschirmling (Chlorophyllum brunneum, auf Kompost/Gärten: Stiel glatt/ungenattert, Fleisch rötet!) sowie tödliche Schirmlinge (Lepiota-Arten, die jedoch deutlich kleiner unter 10 cm Hutdurchmesser bleiben).',
+            trivia: 'Goldene Sammler-Regel für Schirmlinge im Raum Aachen: Nur große Exemplare mit eindeutig genattertem Stiel UND frei verschiebbarem Ring sammeln!'
+          },
+          credit: {
+            artist: 'Chrumps',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Macrolepiota-procera.jpg'
+          }
+        },
+        {
+          id: 5,
+          cat: 'speisepilze',
+          habitat: '📍 Aachener Wald (Preuswald / Dreiländereck) & Hürtgenwald · Am Fuß alter Kiefern',
+          season: 'August–November',
+          img: './img/pilz-05.jpg',
+          nameQ: 'Welcher badeschwamm- oder blumenkohlartige Großpilz wächst direkt am Stammfuß alter Kiefern im Preuswald und Hürtgenwald und duftet würzig-harzig?',
+          nameOpts: [
+            'Krause Glucke / Fette Henne (Sparassis crispa)',
+            'Gelbe Koralle / Bauchwehkoralle (Ramaria formosa)',
+            'Schwefelporling (Laetiporus sulphureus)',
+            'Eichen-Leberreischling (Fistulina hepatica)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Guter, würziger Speisepilz (essbar)',
+          toxOpts: [
+            '🟢 Guter, nussig-würziger Speisepilz – fast unverwechselbar am Fuß von Kiefern',
+            '☠️ Tödlich giftig – zerstört die Nieren innerhalb weniger Tage',
+            '🔴 Stark giftig – führt zu schweren Kreislaufzusammenbrüchen',
+            '🟠 Extrem scharf und brennend auf der Zunge'
+          ],
+          details: {
+            title: 'Krause Glucke (Fette Henne)',
+            latin: 'Sparassis crispa',
+            features: 'Bis 30 cm großer, kugelig-gehirnartiger Fruchtkörper aus hunderten bandförmig abgeflachten, krausen Ästchen; creme- bis ockergelb; wächst am Fuß von Kiefern.',
+            lookalike: 'Breitblättrige Glucke (Sparassis brevipes, an Eichen/Tannen, gröbere Bänder, ebenfalls essbar). Giftige Korallenpilze (Ramaria) haben drehrunde, fingerartig aufstrebende Äste mit stumpfen Spitzen statt gewellter Bänder.',
+            trivia: 'Eine einzige Krause Glucke aus den Kiefernbeständen am Dreiländereck füllt oft schon die ganze Bratpfanne. Zum Putzen schneidet man sie am besten in Scheiben und spült Tannennadeln und Walderde unter fließendem Wasser aus.'
+          },
+          credit: {
+            artist: 'Dominicus Johannes Bergsma',
+            license: 'CC0',
+            commons: 'File:Grote sponszwam (Sparassis crispa). 09-11-2023. (d.j.b).jpg'
+          }
+        },
+        {
+          id: 6,
+          cat: 'speisepilze',
+          habitat: '📍 Wiesen, Waldränder & Parkwege in Aachen (Lousberg, Soers, Seffent)',
+          season: 'Mai–November',
+          img: './img/pilz-06.jpg',
+          nameQ: 'Welcher walzenförmige, weiß geschuppte Wiesen- und Wegesrandpilz ist nur ganz jung bei reinweißen Lamellen essbar, bevor er sich von unten her zu schwarzer „Tinte“ auflöst?',
+          nameOpts: [
+            'Schopftintling / Spargelpilz (Coprinus comatus)',
+            'Faltentintling / Grauer Tintling (Coprinopsis atramentaria)',
+            'Spitzkegeliger Knollenblätterpilz (Amanita virosa)',
+            'Fransiger Wulstling (Amanita strobiliformis)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Jung vorzüglicher Speisepilz (nur reinweiß!)',
+          toxOpts: [
+            '🟢 Jung (solange Lamellen reinweiß sind) sehr guter Speisepilz – muss am Sammeltag frisch zubereitet werden',
+            '☠️ Tödlich giftig – verursacht schweres Leberversagen',
+            '🔴 Stark giftig – enthält Muskarin und führt zu Schweißausbrüchen',
+            '🟠 Ungenießbar hart und holzig'
+          ],
+          details: {
+            title: 'Schopftintling (Spargelpilz)',
+            latin: 'Coprinus comatus',
+            features: 'Walzen- bis glockenförmiger weißer Hut mit abstehenden, bräunlichen Fransenschuppen; Lamellen jung reinweiß, dann rosa, schließlich schwarz zerfließend (Autolyse); Stiel hohl mit schmalem Ring, OHNE Scheide an der Basis.',
+            lookalike: 'Faltentintling (Coprinopsis atramentaria): Grau-braun, fast glatter/gefalteter Hut ohne weiße Fransenschuppen – enthält Coprin und ist in Verbindung mit Alkohol (auch Tage später!) stark giftig (Antabus-Syndrom).',
+            trivia: 'Rund um Aachen wächst der Schopftintling oft truppweise auf geschotterten Waldwegen und gedüngten Wiesen. Da er nach dem Pflücken binnen weniger Stunden weitertintet, gehört er direkt vom Spaziergang in die Pfanne!'
+          },
+          credit: {
+            artist: 'A. Uciechowska',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Coprinus comatus.jpg'
+          }
+        },
+
+        // ==================== 2. ROH GIFTIG / NUR ERHITZT ESSBAR & BESONDERE WALDPILZE (7-12) ====================
+        {
+          id: 7,
+          cat: 'erhitzen_spezial',
+          habitat: '📍 Aachener Wald & Eifel · Sehr häufig unter Buchen & Fichten auf saurem Boden',
+          season: 'Mai–November',
+          img: './img/pilz-07.jpg',
+          nameQ: 'Welcher Röhrling mit dunkelbraunem Samthut, orangeroten Röhrenmündungen und feinen roten Flöckchen am Stiel (kein Netz!) blaut im Schnitt sofort tief dunkelblau?',
+          nameOpts: [
+            'Flockenstieliger Hexen-Röhrling / „Flocki“ (Neoboletus erythropus)',
+            'Satans-Röhrling (Rubroboletus satanas)',
+            'Netzstieliger Hexen-Röhrling (Suillellus luridus)',
+            'Schönfuß-Röhrling (Caloboletus calopus)'
+          ],
+          toxClass: 'cooked',
+          toxBadge: '🟡 Roh giftig · Gut durcherhitzt vorzüglich!',
+          toxOpts: [
+            '🟡 Roh stark Magen-Darm-giftig, aber gut durcherhitzt (mind. 15 Min.) ein vorzüglicher, festfleischiger Speisepilz!',
+            '☠️ Auch gekocht tödlich giftig – niemals verzehren!',
+            '🟢 Sogar roh im Salat bedenkenlos essbar',
+            '🟠 Wegen extremer Bitterkeit komplett ungenießbar'
+          ],
+          details: {
+            title: 'Flockenstieliger Hexen-Röhrling („Flocki“)',
+            latin: 'Neoboletus erythropus (Syn. Boletus luridiformis)',
+            features: 'Dunkelbrauner, samtiger Hut; karmin- bis orangerote Poren; gelber Stiel dicht mit feinen roten Flöckchen besetzt (KEIN Stielnetz!); gelbes Fleisch läuft im Anschnitt blitzschnell schwarzblau an.',
+            lookalike: 'Satans-Röhrling (Rubroboletus satanas, stark giftig!): Hat einen kreideweißen bis silbergrauen Hut, ein deutliches Stielnetz und wächst nur auf Kalkboden (z. B. Raum Stolberg/Kalkeifel). Netzstieliger Hexen-Röhrling hat ein dunkles Stielnetz.',
+            trivia: 'Im sauren Aachener Wald ist der „Flocki“ oft schon ab Mai zu finden und fast nie madig. Wichtig: Niemals roh probieren und immer mindestens 15 Minuten gründlich durchgaren!'
+          },
+          credit: {
+            artist: 'Wikimedia Commons',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Boletus erythropus 01.jpg'
+          }
+        },
+        {
+          id: 8,
+          cat: 'erhitzen_spezial',
+          habitat: '📍 Aachener Wald & Hürtgenwald · Sehr häufig in Laub- und Nadelwäldern',
+          season: 'Juni–November',
+          img: './img/pilz-08.jpg',
+          nameQ: 'Welcher Wulstling im Aachener Wald verrät sich durch weinrot anlaufende Fraßstellen/Stielbasis sowie eine deutlich geriefte („gekämmte“) Manschette am Stiel?',
+          nameOpts: [
+            'Perlpilz / Rötender Wulstling (Amanita rubescens)',
+            'Pantherpilz (Amanita pantherina)',
+            'Grauer Wulstling (Amanita excelsa)',
+            'Fliegenpilz (Amanita muscaria)'
+          ],
+          toxClass: 'cooked',
+          toxBadge: '🟡 Roh giftig (Hämolysine) · Nur gut erhitzt essbar!',
+          toxOpts: [
+            '🟡 Roh giftig (blutauflösende Hämolysine), nur gut durcherhitzt essbar – wegen Verwechslungsgefahr mit dem Pantherpilz nur für erfahrene Sammler!',
+            '🟢 Roh wie gekocht völlig harmlos für Anfänger',
+            '☠️ Auch gekocht tödlich giftig durch Amatoxine',
+            '🟠 Ungenießbar zäh und holzig'
+          ],
+          details: {
+            title: 'Perlpilz (Rötender Wulstling)',
+            latin: 'Amanita rubescens',
+            features: 'Rötlich-brauner Hut mit grauen bis rötlichen Hüllflocken; Manschette oberseits deutlich gerieft (wie ein Zahnrad/Kamm); Fleisch und Madengänge in der Stielbasis laufen weinrot bis fleischrosa an; Rübenknolle ohne „Bergsteigersöckchen“.',
+            lookalike: 'Pantherpilz (Amanita pantherina, schwer giftig!): Reinweiße Flocken auf braunem Hut, rötet NIEMALS, Manschette meist glatt/ungerieft, Knolle mit scharf abgesetztem Ringwulst („Bergsteigersöckchen“).',
+            trivia: 'Einer der häufigsten Waldpilze im Öcher Bösch! Wer Perlpilze sammelt, muss die beiden Pflichtmerkmale – Rötung an Verletzungen/Madengängen UND geriefte Manschette – an jedem einzelnen Exemplar kontrollieren.'
+          },
+          credit: {
+            artist: 'Archenzo',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Amanita rubescens.JPG'
+          }
+        },
+        {
+          id: 9,
+          cat: 'erhitzen_spezial',
+          habitat: '📍 Aachener Wald & Eifel · Büschelig an Laubholzstümpfen (Buche, Eiche, Birke)',
+          season: 'April–November',
+          img: './img/pilz-09.jpg',
+          nameQ: 'Welcher aromatische Holzbewohner hat einen zweifarbigen (hygrophanen) Hut und unterhalb des Stielrings kleine abstehende braune Schüppchen – besitzt aber einen tödlichen Doppelgänger?',
+          nameOpts: [
+            'Stockschwämmchen (Kuehneromyces mutabilis)',
+            'Gifthäubling / Nadelholz-Häubling (Galerina marginata)',
+            'Grünblättriger Schwefelkopf (Hypholoma fasciculare)',
+            'Honiggelber Hallimasch (Armillaria mellea)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Essbar (Suppenpilz) · ⚠️ Tödlicher Doppelgänger!',
+          toxOpts: [
+            '🟢 Guter Speise- und Suppenpilz (gut erhitzt), ABER nur für absolute Profis wegen des tödlich giftigen Gifthäublings am selben Baumstumpf!',
+            '☠️ Selbst tödlich giftig durch Amatoxine',
+            '🔴 Stark Magen-Darm-giftig und gallenbitter',
+            '🟠 Ungenießbar hart wie Zunderschwamm'
+          ],
+          details: {
+            title: 'Stockschwämmchen',
+            latin: 'Kuehneromyces mutabilis',
+            features: 'Hut feucht zimtbraun, trocknet von der Mitte her ockergelb aus (zweifarbig!); unterhalb des häutigen Rings ist der Stiel mit deutlichen, abstehenden braunen Schüppchen besetzt; Geruch angenehm würzig nach frischem Holz.',
+            lookalike: '☠️ TÖDLICHE GEFAHR: Gifthäubling (Galerina marginata)! Kann am selben Baumstumpf mitten zwischen Stockschwämmchen wachsen! Unterscheidung: Der Gifthäubling hat einen silbrig-weiß längsüberfaserten Stiel OHNE braune Schüppchen und riecht muffig-mehlig.',
+            trivia: 'Im feuchten Buchenbestand des Aachener Waldes sehr häufig. Wegen des Gifthäublings muss bei Stockschwämmchen wirklich jeder einzelne Stiel mit der Lupe auf die braunen Schüppchen geprüft werden – Einsteiger lassen ihn besser stehen!'
+          },
+          credit: {
+            artist: 'George Chernilevsky',
+            license: 'CC BY 4.0',
+            commons: 'File:Kuehneromyces mutabilis 2026 G4.jpg'
+          }
+        },
+        {
+          id: 10,
+          cat: 'erhitzen_spezial',
+          habitat: '📍 Aachener Wald · Massenhaft im Buchenlaub auf sauren bis neutralen Böden',
+          season: 'August–November',
+          img: './img/pilz-10.jpg',
+          nameQ: 'Welcher kleine, komplett leuchtend-violette Pilz mit dicklichen, entfernt stehenden Lamellen wächst im Herbst zu Hunderten im braunen Buchenlaub des Aachener Waldes?',
+          nameOpts: [
+            'Violetter Lacktrichterling (Laccaria amethystina)',
+            'Rettich-Helmling (Mycena pura)',
+            'Violetter Rötelritterling (Lepista nuda)',
+            'Bocks-Dickfuß (Cortinarius camphoratus)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Essbar als Mischpilz (in kleinen Mengen)',
+          toxOpts: [
+            '🟢 Essbar als hübscher Farbtupfer im Mischpilzgericht (nur in kleinen Mengen, da er Arsen aus dem Waldboden anreichern kann)',
+            '☠️ Tödlich giftig – schon ein einzelner Hut führt zu Leberversagen',
+            '🔴 Stark giftig mit Muskarin-Schock',
+            '🟠 Extrem scharf und brennend'
+          ],
+          details: {
+            title: 'Violetter Lacktrichterling',
+            latin: 'Laccaria amethystina',
+            features: 'Jung kräftig dunkelviolett (blassgrau ausblassend bei Trockenheit); Lamellen auffallend dick, weit auseinanderstehend und weißlich bestäubt; Stiel zäh und längsfaserig; Geruch unauffällig mild.',
+            lookalike: 'Rettich-Helmling (Mycena pura, giftig – enthält Muskarin!): Hat dünne, eng stehende blasslila Lamellen, einen zerbrechlichen hohlen Stiel und riecht beim Zerreiben deutlich nach Rettich!',
+            trivia: 'Im Buchenlaub des Öcher Bösch leuchtet der Violette Lacktrichterling wie kleine Amethyste. Da der Pilz natürliches Arsen aus dem Boden speichert, nutzt man nur eine Handvoll Hüte als bunten Farbtupfer im Mischgericht.'
+          },
+          credit: {
+            artist: 'Luridiformis at en.wikipedia',
+            license: 'CC BY 3.0',
+            commons: 'File:Laccaria amethystina 2.jpg'
+          }
+        },
+        {
+          id: 11,
+          cat: 'erhitzen_spezial',
+          habitat: '📍 Nordeifel, Hürtgenwald & Dreiländereck · Unter Kiefern & Fichten',
+          season: 'August–November',
+          img: './img/pilz-11.jpg',
+          nameQ: 'Welcher Sprödblättler unter Kiefern und Fichten sondert bei Verletzung sofort eine leuchtend karottenrote, mild schmeckende Milch ab und bekommt im Alter grünliche Flecken?',
+          nameOpts: [
+            'Edel-Reizker / Fichten-Reizker (Lactarius deliciosus / L. deterrimus)',
+            'Birken-Reizker / Zottiger Reizker (Lactarius torminosus)',
+            'Falscher Pfifferling (Hygrophoropsis aurantiaca)',
+            'Rotbrauner Milchling (Lactarius rufus)'
+          ],
+          toxClass: 'edible',
+          toxBadge: '🟢 Guter Speisepilz (Bratpilz)',
+          toxOpts: [
+            '🟢 Guter Speisepilz (besonders scharf in der Pfanne gebraten) – alle karottenrot milchenden Milchlinge Mitteleuropas sind essbar!',
+            '🔴 Stark Magen-Darm-giftig durch seine rote Milch',
+            '☠️ Tödlich giftig – zerstört die roten Blutkörperchen',
+            '🟠 Komplett ungenießbar wegen stechendem Teergeruch'
+          ],
+          details: {
+            title: 'Edel-Reizker & Fichten-Reizker',
+            latin: 'Lactarius deliciosus / Lactarius deterrimus',
+            features: 'Orangeroter, gezonte Ringe tragender Hut mit grünen Flecken im Alter; sprödes Fleisch (wie ein Apfel brechend); tritt im Anschnitt sofort karottenrote Milch aus.',
+            lookalike: 'Birken-Reizker (Lactarius torminosus, stark Magen-Darm-giftig!): Hat einen stark zottig-bärtigen Hutrand, wächst bei Birken und milcht WEISS (brennend scharf!). Grundregel bei Milchlingen: Karottenrote Milch = essbar; weiße scharfe Milch = Finger weg!',
+            trivia: 'In den Fichten- und Kiefernbeständen der Eifel und rund um Roetgen/Lammersdorf häufig zu finden. Kuriosität für Sammler: Nach einer Reizker-Mahlzeit kann sich der Urin durch harmlose Pilzfarbstoffe rötlich färben!'
+          },
+          credit: {
+            artist: 'Wikimedia Commons',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Lactarius deliciosus.jpg'
+          }
+        },
+        {
+          id: 12,
+          cat: 'erhitzen_spezial',
+          habitat: '📍 Hohes Venn (Mützenich / Lammersdorf) & Aachener Wald · Immer bei Birken',
+          season: 'Juni–Oktober',
+          img: './img/pilz-12.jpg',
+          nameQ: 'Welcher Röhrling wächst in der Städteregion Aachen und am Rand des Hohen Venns streng gebunden an Birken und trägt auf weißem Stiel raue, schwärzliche Schüppchen?',
+          nameOpts: [
+            'Gemeiner Birkenpilz (Leccinum scabrum)',
+            'Gemeiner Steinpilz (Boletus edulis)',
+            'Gallenröhrling (Tylopilus felleus)',
+            'Pfefferröhrling (Chalciporus piperatus)'
+          ],
+          toxClass: 'cooked',
+          toxBadge: '🟡 Jung gut durcherhitzt essbar (roh giftig)',
+          toxOpts: [
+            '🟡 Roh Magen-Darm-giftig, aber jung und mindestens 15 Minuten gut durcherhitzt ein guter Speisepilz',
+            '🟢 Auch roh im Salat völlig bekömmlich',
+            '☠️ Tödlich giftig – enthält Amatoxine',
+            '🟠 Extrem gallenbitter – ungenießbar'
+          ],
+          details: {
+            title: 'Gemeiner Birkenpilz',
+            latin: 'Leccinum scabrum',
+            features: 'Grau- bis haselbrauner, glatter Hut; weißliche bis graue Röhren; schlanker weißer Stiel mit dunklen, rauen Faserschüppchen (wie eine Birkenrinde!).',
+            lookalike: 'Gallenröhrling (hat ein Stielnetz statt rauer Schüppchen und bittere rosa Röhren) sowie Rotkappen (Leccinum-Arten mit orangem Hut, ebenfalls gut erhitzt essbar).',
+            trivia: 'An den Moorbirken rund um Mützenich, Roetgen und das Hohe Venn sowie an sonnigen Birkenrändern im Aachener Wald sehr verbreitet. Da ältere Hüte schnell schwammig-weich werden, sammelt man nur junge, feste Exemplare und gart sie gründlich durch.'
+          },
+          credit: {
+            artist: 'cheloVechek / talk',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Bolet rude.jpg'
+          }
+        },
+
+        // ==================== 3. TÖDLICH & SCHWER GIFTIGE PILZE (13-18) ====================
+        {
+          id: 13,
+          cat: 'toedlich',
+          habitat: '📍 Aachener Wald & Vorland · Unter Eichen und Buchen (Mykorrhiza)',
+          season: 'Juli–Oktober',
+          img: './img/pilz-13.jpg',
+          nameQ: 'Welcher gefährlichste Giftpilz Mitteleuropas (unter Eichen & Buchen im Aachener Raum) hat einen olivgrünen bis gelbgrünen Hut, dauerhaft weiße Lamellen, einen Stielring und eine sackartige weiße Scheide (Volva) an der Knolle?',
+          nameOpts: [
+            'Grüner Knollenblätterpilz (Amanita phalloides)',
+            'Grüngefelderter Täubling (Russula virescens)',
+            'Wiesenchampignon (Agaricus campestris)',
+            'Gelber Knollenblätterpilz (Amanita citrina)'
+          ],
+          toxClass: 'deadly',
+          toxBadge: '☠️ TÖDLICH GIFTIG! (Amatoxine)',
+          toxOpts: [
+            '☠️ TÖDLICH GIFTIG! Verantwortlich für rund 90 % aller tödlichen Pilzvergiftungen (hitzestabile Amatoxine zerstören die Leber)',
+            '🟡 Roh giftig, aber nach 20 Minuten Abkochen essbar',
+            '🟠 Nur leicht Magen-Darm-reizend, klingt nach 2 Stunden ab',
+            '🟢 Essbarer Speisepilz mit mildem Geschmack'
+          ],
+          details: {
+            title: 'Grüner Knollenblätterpilz',
+            latin: 'Amanita phalloides',
+            features: 'Olivgrünlicher bis gelblich-weißer, radial eingewachsen faseriger Hut (oft ohne Flocken!); Lamellen IMMER weiß; hängende Manschette am Stiel; Knolle an der Basis in einer lappig-sackartigen weißen Scheide (Volva) steckend; riecht jung süßlich nach Kunsthonig.',
+            lookalike: 'Wird von unerfahrenen Sammlern mit grünen Täublingen (haben KEINEN Ring, KEINE Knolle und spröde Lamellen), jungen Champignons (haben rosa bis schokobraune Lamellen und KEINE Scheide an der Basis) oder Grünlingen verwechselt.',
+            trivia: 'Schon ein einziger Fruchtkörper (ca. 30–50 g Frischpilz) kann für einen Erwachsenen tödlich sein! Tückisch ist die lange Latenzzeit von 6 bis 24 Stunden, gefolgt von einer scheinbaren Besserung, während die Amatoxine die Leber zerstören. Auch Kochen, Braten oder Trocknen zerstört das Gift NICHT!'
+          },
+          credit: {
+            artist: 'Archenzo',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Amanita phalloides 1.JPG'
+          }
+        },
+        {
+          id: 14,
+          cat: 'toedlich',
+          habitat: '📍 Aachener Wald & Eifel · An Nadel- und Laubholzstümpfen (oft neben Stockschwämmchen!)',
+          season: 'August–November',
+          img: './img/pilz-14.jpg',
+          nameQ: 'Welcher unscheinbare braune Holzbewohner ist der lebensgefährliche Doppelgänger des Stockschwämmchens und verrät sich durch seinen silbrig-weiß überfaserten Stiel (ohne braune Schüppchen!) und muffig-mehligen Geruch?',
+          nameOpts: [
+            'Gifthäubling / Nadelholz-Häubling (Galerina marginata)',
+            'Stockschwämmchen (Kuehneromyces mutabilis)',
+            'Samtfußrübling (Flammulina velutipes)',
+            'Rauchblättriger Schwefelkopf (Hypholoma capnoides)'
+          ],
+          toxClass: 'deadly',
+          toxBadge: '☠️ TÖDLICH GIFTIG! (Amatoxine)',
+          toxOpts: [
+            '☠️ TÖDLICH GIFTIG! Enthält dieselben leberzerstörenden Amatoxine wie der Grüne Knollenblätterpilz!',
+            '🟠 Nur bitter, aber völlig ungiftig',
+            '🟡 Nach dem Braten ein guter Suppenpilz',
+            '🟢 Essbarer Winterpilz'
+          ],
+          details: {
+            title: 'Gifthäubling (Nadelholz-Häubling)',
+            latin: 'Galerina marginata',
+            features: 'Honig- bis ockerbrauner, feucht durchscheinend geriefter Hut; flüchtiger Ring am Stiel; Stiel unterhalb des Rings silbrig-weiß längsfaserig bereift (KEINE abstehenden braunen Schüppchen!); Geruch deutlich mehlig-ranzig.',
+            lookalike: 'Stockschwämmchen (Kuehneromyces mutabilis, essbar): Hat unterhalb des Rings deutliche braune Schüppchen und riecht aromatisch-würzig nach Holz. Beide Arten können direkt nebeneinander auf demselben Baumstumpf im Aachener Wald wachsen!',
+            trivia: 'Trotz seines Namens „Nadelholz-Häubling“ wächst er im Aachener Wald auch regelmäßig auf Rotbuchen-Totholz! Eine Handvoll im Mischgericht reicht für eine tödliche Amatoxin-Vergiftung.'
+          },
+          credit: {
+            artist: 'Wikimedia Commons',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Galerina marginata.jpg'
+          }
+        },
+        {
+          id: 15,
+          cat: 'toedlich',
+          habitat: '📍 Hohes Venn, Rureifel & saure Moorfichtenwälder · Feuchte Moosböden',
+          season: 'August–Oktober',
+          img: './img/pilz-15.jpg',
+          nameQ: 'Welcher fuchsrote Schleierling mit spitzem Hutbuckel und gelber Natterung am Stiel wächst in feuchten, sauren Moor- und Fichtenwäldern Richtung Hohes Venn und Eifel?',
+          nameOpts: [
+            'Spitzgebuckelter Raukopf (Cortinarius rubellus)',
+            'Echter Pfifferling (Cantharellus cibarius)',
+            'Violetter Lacktrichterling (Laccaria amethystina)',
+            'Reifpilz / Zigeuner (Cortinarius caperatus)'
+          ],
+          toxClass: 'deadly',
+          toxBadge: '☠️ TÖDLICH GIFTIG! (Orellanin / Nierengift)',
+          toxOpts: [
+            '☠️ TÖDLICH GIFTIG! Enthält Orellanin – ein heimtückisches Nierengift, dessen Symptome oft erst 2 bis 14 Tage nach der Mahlzeit auftreten!',
+            '🟢 Guter Speisepilz der Moorwälder',
+            '🟡 Nach 10 Minuten Abkochen essbar',
+            '🟠 Ungenießbar zäh, aber ungiftig'
+          ],
+          details: {
+            title: 'Spitzgebuckelter Raukopf',
+            latin: 'Cortinarius rubellus (Syn. Cortinarius speciosissimus)',
+            features: 'Zimt- bis fuchsrotbrauner, feinfilziger Hut mit markantem spitzem Buckel; dickliche, weit stehende rostbraune Lamellen; Stiel auf rotbraunem Grund mit gelblichen Gürtelbändern (Natterung).',
+            lookalike: 'Wurde schon katastrophal mit Pfifferlingen (haben gegabelte Leisten statt rostbrauner Lamellen!) oder essbaren Milchlingen verwechselt.',
+            trivia: 'Das Gift Orellanin (Orellanus-Syndrom) ist besonders heimtückisch: Da die ersten Symptome (Durst, Flankenschmerzen, Nierenversagen) oft erst Tage bis zwei Wochen nach dem Essen einsetzen, bringen Betroffene sie oft gar nicht mehr mit dem Pilzgericht in Verbindung.'
+          },
+          credit: {
+            artist: 'Eric Steinert',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Cortinarius rubellus 01.jpg'
+          }
+        },
+        {
+          id: 16,
+          cat: 'toedlich',
+          habitat: '📍 Parks, Friedhöfe & Kalkbuchenwälder um Aachen, Stolberg & Kornelimünster',
+          season: 'Mai–Juli (Frühsommer!)',
+          img: './img/pilz-16.jpg',
+          nameQ: 'Welcher schon ab Mai in Aachener Parks und Kalkbuchenwäldern wachsende Pilz hat einen kegelig-gebuckelten, radial einreißenden Hut, läuft ziegelrot an und enthält extrem viel Muskarin?',
+          nameOpts: [
+            'Ziegelroter Risspilz (Inosperma erubescens / Inocybe patouillardii)',
+            'Maipilz / Georgsritterling (Calocybe gambosa)',
+            'Wiesenchampignon (Agaricus campestris)',
+            'Perlpilz (Amanita rubescens)'
+          ],
+          toxClass: 'deadly',
+          toxBadge: '☠️ STARK BIS TÖDLICH GIFTIG! (Muskarin)',
+          toxOpts: [
+            '☠️ STARK BIS TÖDLICH GIFTIG! Enthält das bis zu 20-Fache der Muskarin-Menge eines Fliegenpilzes (Schweißausbrüche, Sehstörungen, Herzstillstand)',
+            '🟢 Beliebter Frühlings-Speisepilz auf Parkwiesen',
+            '🟡 Roh unverträglich, gebraten mild und essbar',
+            '🟠 Nur leicht bitter im Nachgeschmack'
+          ],
+          details: {
+            title: 'Ziegelroter Risspilz',
+            latin: 'Inosperma erubescens (Syn. Inocybe erubescens / I. patouillardii)',
+            features: 'Jung weißlich-seidig mit kegeligem Buckel, im Alter und bei Druck ziegelrot bisdunkelrot verfärbend; Hutrand reißt im Alter radial tief ein; Sporenpulver schmutzig-braun; riecht unangenehm süßlich-obstig bis spermatisch.',
+            lookalike: 'Wird im Mai/Juni gefährlich oft mit dem essbaren Maipilz (Calocybe gambosa: polsterförmig, reißt nicht radial ein, rötet nie, riecht stark nach frischem Mehl/Gurke) oder Champignons verwechselt!',
+            trivia: 'Das Muskarin-Syndrom setzt bereits 15 bis 120 Minuten nach dem Essen mit massivem Schweiß- und Speichelfluss, Pupillenverengung und Kreislaufkollaps ein (Gegengift in der Klinik: Atropin).'
+          },
+          credit: {
+            artist: 'Andreas Kunze',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:2010-04-27 Inocybe erubescens.jpg'
+          }
+        },
+        {
+          id: 17,
+          cat: 'toedlich',
+          habitat: '📍 Aachener Wald & Hohes Venn · Sehr häufig unter Birken, Buchen & Fichten',
+          season: 'Juli–November',
+          img: './img/pilz-17.jpg',
+          nameQ: 'Welcher im Aachener Wald extrem häufige Pilz mit stark eingerolltem, filzigem Hutrand und auf Druck braunfleckenden, herablaufenden Lamellen galt früher als essbar, kann aber eine tödliche Immunhämolyse auslösen?',
+          nameOpts: [
+            'Kahler Krempling (Paxillus involutus)',
+            'Maronen-Röhrling (Imleria badia)',
+            'Fichten-Reizker (Lactarius deterrimus)',
+            'Samtfußkrempling (Tapinella atrotomentosa)'
+          ],
+          toxClass: 'deadly',
+          toxBadge: '☠️ LEBENSGEFÄHRLICH GIFTIG! (Paxillus-Syndrom)',
+          toxOpts: [
+            '☠️ LEBENSGEFÄHRLICH GIFTIG! Löst das tückische Paxillus-Syndrom aus (Antikörper-Reaktion, die rote Blutkörperchen zerstört und zu akutem Nierenversagen führt)',
+            '🟢 Klassischer Speisepilz für jedes Mischgericht',
+            '🟠 Nur etwas säuerlich, aber harmlos',
+            '🟡 Nach einmaligem Aufkochen völlig unbedenklich'
+          ],
+          details: {
+            title: 'Kahler Krempling',
+            latin: 'Paxillus involutus',
+            features: 'Ocker- bis rostbrauner, trichterig vertiefter Hut mit lange stark eingerolltem, filzigem Rand; eng stehende, am Stiel herablaufende Lamellen, die auf Fingerdruck sofort dunkelbraun flecken und sich leicht vom Hutboden schieben lassen.',
+            lookalike: 'Wird manchmal mit Reizkern (milchen karottenrot!) oder Trichterlingen verwechselt.',
+            trivia: 'Einer der heimtückischsten Pilze überhaupt: Manche Menschen vertragen ihn jahrelang scheinbar problemlos, während sich im Blut unbemerkt spezifische Antikörper bilden – bis eine weitere Mahlzeit schlagartig zur lebensbedrohlichen Auflösung der roten Blutkörperchen (Hämolyse) und Nierenversagen führt!'
+          },
+          credit: {
+            artist: 'Petar Milošević',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Navadne podvihanke (Paxillus involutus).jpg'
+          }
+        },
+        {
+          id: 18,
+          cat: 'toedlich',
+          habitat: '📍 Aachener Wald & Eifel · Unter Buchen, Eichen & Nadelbäumen',
+          season: 'Juli–Oktober',
+          img: './img/pilz-18.jpg',
+          nameQ: 'Welcher braune Wulstling trägt reinweiße Tupfen auf dem Hut, rötet NIEMALS im Fleisch, hat meist eine ungeriefte Manschette und unten an der Knolle einen scharf abgesetzten Ringwulst („Bergsteigersöckchen“)?',
+          nameOpts: [
+            'Pantherpilz (Amanita pantherina)',
+            'Perlpilz (Amanita rubescens)',
+            'Grauer Wulstling (Amanita excelsa)',
+            'Parasol (Macrolepiota procera)'
+          ],
+          toxClass: 'deadly',
+          toxBadge: '🔴/☠️ SCHWER GIFTIG! (Pantherina-Syndrom)',
+          toxOpts: [
+            '🔴/☠️ SCHWER GIFTIG (teils lebensbedrohlich)! Enthält hochkonzentriert Ibotensäure und Muscimol – führt zu Delirium, Krämpfen und Koma',
+            '🟢 Vorzüglicher Speisepilz wie der Perlpilz',
+            '🟡 Gut durchgebraten ein milder Bratpilz',
+            '🟠 Ungenießbar bitter, aber ungiftig'
+          ],
+          details: {
+            title: 'Pantherpilz',
+            latin: 'Amanita pantherina',
+            features: 'Reh- bis dunkelbrauner Hut mit gerieftem Rand und reinweißen Flocken; weiße Lamellen; Manschette meist glatt (ungerieft); Knolle mit scharfkantig abgesetztem Wulstrand („Bergsteigersöckchen“); Fleisch bleibt reinweiß (rötet nie!).',
+            lookalike: 'Perlpilz (Amanita rubescens, gut erhitzt essbar: rötet an Fraßstellen & Stielbasis, geriefte Manschette) und Grauer Wulstling (Amanita excelsa: graue Flocken, kräftig geriefte Manschette, rübenförmige Knolle ohne Söckchen).',
+            trivia: 'Im Raum Aachen wächst der Pantherpilz oft im selben Waldstück wie der Perlpilz. Deshalb gilt: Wer Wulstlinge nicht 100 % sicher an Stielbasis und Manschette unterscheiden kann, lässt sie konsequent stehen!'
+          },
+          credit: {
+            artist: 'George Chernilevsky',
+            license: 'Public domain',
+            commons: 'File:Amanita pantherina 2013 G1.jpg'
+          }
+        },
+
+        // ==================== 4. GIFTIGE & UNGENIESSBARE DOPPELGÄNGER (19-24) ====================
+        {
+          id: 19,
+          cat: 'doppelgaenger',
+          habitat: '📍 Aachener Wald & Hohes Venn · Unter Birken und Fichten auf saurem Boden',
+          season: 'August–November',
+          img: './img/pilz-19.jpg',
+          nameQ: 'Welcher ikonische Waldpilz mit leuchtend rotem, weiß getupftem Hut wächst im Aachener Wald oft direkt neben dem Steinpilz (gleiche Standortansprüche!) und dient daher als „Steinpilz-Anzeiger“?',
+          nameOpts: [
+            'Fliegenpilz (Amanita muscaria)',
+            'Kaiserling (Amanita caesarea)',
+            'Spei-Täubling (Russula emetica)',
+            'Ziegelroter Risspilz (Inosperma erubescens)'
+          ],
+          toxClass: 'toxic',
+          toxBadge: '🔴 Giftig! (Ibotensäure & Muscimol)',
+          toxOpts: [
+            '🔴 Giftig! Enthält die Nervengifte Ibotensäure und Muscimol (Rauschzustände, Schwindel, Krämpfe, Herzrasen)',
+            '🟢 Essbarer Glückspilz',
+            '🟡 Nach kurzem Anbraten essbar',
+            '🟠 Nur scharf, aber ohne Giftwirkung'
+          ],
+          details: {
+            title: 'Fliegenpilz',
+            latin: 'Amanita muscaria',
+            features: 'Scharlach- bis orangeroter Hut mit weißen, abwischbaren Velumflocken (können nach starkem Regen abgewaschen sein!); weiße Lamellen und weißer Stiel mit hängendem Ring und warzig gegürtelter Knolle.',
+            lookalike: 'Nach starkem Regen, wenn die weißen Punkte abgewaschen sind, wurde er schon mit roten Täublingen oder dem (in Nordwesteuropa nicht wild vorkommenden) Kaiserling (hat dottergelbe Lamellen & gelben Stiel!) verwechselt.',
+            trivia: 'Für Sammler im Öcher Bösch hat der Fliegenpilz einen großen Nutzen: Er teilt sich das Mykorrhiza-Wurzelnetz von Fichten und Birken und braucht exakt dieselbe Bodenfeuchte wie der Steinpilz – stehen Fliegenpilze da, sind Steinpilze meist nur wenige Meter entfernt!'
+          },
+          credit: {
+            artist: 'Onderwijsgek',
+            license: 'CC BY-SA 3.0 nl',
+            commons: 'File:Amanita muscaria 3 vliegenzwammen op rij.jpg'
+          }
+        },
+        {
+          id: 20,
+          cat: 'doppelgaenger',
+          habitat: '📍 Kalkgebiete bei Stolberg, Kornelimünster & Kalkeifel · Wärmeliebend unter Buchen',
+          season: 'Juli–September',
+          img: './img/pilz-20.jpg',
+          nameQ: 'Welcher wuchtige Röhrling der Kalkbuchenwälder (Raum Stolberg / Kalkeifel) hat einen kreideweißen bis silbergrauen Hut, blutrote Poren, ein rotes Stielnetz und riecht im Alter unangenehm aasartig?',
+          nameOpts: [
+            'Satans-Röhrling / Satanspilz (Rubroboletus satanas)',
+            'Flockenstieliger Hexen-Röhrling (Neoboletus erythropus)',
+            'Schönfuß-Röhrling (Caloboletus calopus)',
+            'Sommer-Steinpilz (Boletus reticulatus)'
+          ],
+          toxClass: 'toxic',
+          toxBadge: '🔴 Stark giftig! (Schwere Magen-Darm-Vergiftung)',
+          toxOpts: [
+            '🔴 Stark giftig (auch gekocht)! Verursacht stundenlanges, schwerstes Erbrechen, blutige Durchfälle und Kreislaufkollaps',
+            '🟡 Gut durcherhitzt ein hervorragender Speisepilz wie der Flockenstielige Hexen-Röhrling',
+            '🟢 Jung roh und gekocht essbar',
+            '🟠 Völlig ungiftig, nur leicht säuerlich'
+          ],
+          details: {
+            title: 'Satans-Röhrling (Satanspilz)',
+            latin: 'Rubroboletus satanas (Syn. Boletus satanas)',
+            features: 'Polsterförmiger, kalkweißer bis hell silbergrauer Hut (NIEMALS dunkelbraun!); blut- bis orangerote Poren; dickbauchiger gelb-roter Stiel mit rotem Maschennetz; blaut im Schnitt nur schwach himmelblau.',
+            lookalike: 'Flockenstieliger Hexen-Röhrling (gut erhitzt essbar!): Hat im Gegensatz zum Satans-Röhrling einen dunkelbraunen Samthut, rote Flöckchen statt Stielnetz, blaut im Schnitt tief schwarzblau und wächst im sauren Aachener Wald.',
+            trivia: 'Im sauren Sandboden des Aachener Stadtwaldes fehlt der Satanspilz, doch sobald man auf die Kalkzüge bei Stolberg, Breinig, Walheim oder in die Kalkeifel wechselt, kann man diesem seltenen Giftpilz unter alten Rotbuchen begegnen!'
+          },
+          credit: {
+            artist: 'Archenzo',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Boletus satanas.JPG'
+          }
+        },
+        {
+          id: 21,
+          cat: 'doppelgaenger',
+          habitat: '📍 Aachener Wald & Hürtgenwald · Häufig auf saurem Nadelwaldboden',
+          season: 'Juni–Oktober',
+          img: './img/pilz-21.jpg',
+          nameQ: 'Welcher klassische Doppelgänger des Steinpilzes im Aachener Nadelwald verrät sich durch ein grobes dunkles (!) Stielnetz und im Alter schmutzig-rosa werdende Röhren?',
+          nameOpts: [
+            'Gallenröhrling / Bitterling (Tylopilus felleus)',
+            'Gemeiner Steinpilz (Boletus edulis)',
+            'Sommer-Steinpilz (Boletus reticulatus)',
+            'Maronen-Röhrling (Imleria badia)'
+          ],
+          toxClass: 'inedible',
+          toxBadge: '🟠 Ungenießbar! (Extrem gallenbitter)',
+          toxOpts: [
+            '🟠 Ungenießbar wegen extremer Galle-Bitterkeit – nicht lebensgefährlich, aber ein einziger Pilz macht das gesamte Pfannengericht ungenießbar!',
+            '☠️ Tödlich giftig – zerstört Leber und Nieren',
+            '🟢 Hervorragender Speisepilz mit mildem Geschmack',
+            '🟡 Nach dem Trocknen verliert sich die Bitterkeit komplett'
+          ],
+          details: {
+            title: 'Gallenröhrling (Bitterling)',
+            latin: 'Tylopilus felleus',
+            features: 'Polsterförmiger brauner Hut wie beim Steinpilz; Röhren jung weiß, später jedoch schmutzig altrosa (Rosa-Sporenpulver!) und bauchig vorgewölbt; Stiel mit grobem, dunkelbraunem Maschennetz auf hellerem Grund.',
+            lookalike: 'Steinpilz (Boletus edulis): Hat ein feines WEISSES Stielnetz, gelbgrün werdende Röhren und schmeckt mild-nussig.',
+            trivia: 'Im sauren Fichtenwald des Aachener Waldes und Hürtgenwaldes der häufigste „Korb-Verderber“: Beim Kochen verstärkt sich der bittere Geschmack sogar noch!'
+          },
+          credit: {
+            artist: 'Björn S...',
+            license: 'CC BY-SA 2.0',
+            commons: 'File:Tylopilus felleus (36878337253) (2).jpg'
+          }
+        },
+        {
+          id: 22,
+          cat: 'doppelgaenger',
+          habitat: '📍 Aachener Wald & Eifel · Auf Nadelstreu und morschem Nadelholz',
+          season: 'August–November',
+          img: './img/pilz-22.jpg',
+          nameQ: 'Welcher leuchtend orangefarbene Doppelgänger des Pfifferlings hat ein weiches, biegsames Fleisch und an der Unterseite dünne, dicht stehende, gabelig verzweigte echte Lamellen statt dicker Leisten?',
+          nameOpts: [
+            'Falscher Pfifferling (Hygrophoropsis aurantiaca)',
+            'Echter Pfifferling (Cantharellus cibarius)',
+            'Semmel-Stoppelpilz (Hydnum repandum)',
+            'Fichten-Reizker (Lactarius deterrimus)'
+          ],
+          toxClass: 'inedible',
+          toxBadge: '🟠 Ungenießbar bis leicht Magen-Darm-giftig',
+          toxOpts: [
+            '🟠 Ungenießbar bis leicht Magen-Darm-giftig – geschmacklos-fade und führt in größeren Mengen zu Verdauungsbeschwerden',
+            '🟢 Genauso wohlschmeckend und bekömmlich wie der Echte Pfifferling',
+            '☠️ Tödlich giftig durch Orellanin',
+            '🟡 Getrocknet ein edler Gewürzpilz'
+          ],
+          details: {
+            title: 'Falscher Pfifferling',
+            latin: 'Hygrophoropsis aurantiaca',
+            features: 'Kräftig tieforange bis orangerot; Hutrand lange eingerollt; dünne, eng stehende, mehrfach gabelig geteilte echte Lamellen (lassen sich vom Hutfleisch ablösen); Fleisch weich-wattig, orangefarben (beim Echten Pfifferling innen weißlich & fest!).',
+            lookalike: 'Echter Pfifferling (Cantharellus cibarius): Dottergelb, festfleischig, innen weiß, duftet nach Aprikose und hat dickliche, aderig verbundene Leisten statt dünner Lamellen.',
+            trivia: 'Wächst im Spätherbst im Aachener Wald oft direkt auf vermodernden Fichtenstümpfen oder in dicker Nadelstreu (der Echte Pfifferling wächst nie auf Holz!).'
+          },
+          credit: {
+            artist: 'Stephan van Helden',
+            license: 'CC BY-SA 4.0',
+            commons: 'File:Falscher Pfifferling (Hygrophoropsis aurantiaca) nahe der Silberquelle an der Straße vom Silberhaus nach Nagel.jpg'
+          }
+        },
+        {
+          id: 23,
+          cat: 'doppelgaenger',
+          habitat: '📍 Parkanlagen, Gärten, Gebüsche & Waldränder in Aachen (Lousberg, Westpark)',
+          season: 'Juni–Oktober',
+          img: './img/pilz-23.jpg',
+          nameQ: 'Welcher giftige Doppelgänger des Wiesenchampignons läuft beim Anschneiden der unteren Stielknolle sofort leuchtend chromgelb an und riecht unangenehm nach Tinte, Phenol oder Apotheke?',
+          nameOpts: [
+            'Karbol-Champignon / Gift-Egerling (Agaricus xanthodermus)',
+            'Wiesenchampignon (Agaricus campestris)',
+            'Anis-Champignon (Agaricus arvensis)',
+            'Grüner Knollenblätterpilz (Amanita phalloides)'
+          ],
+          toxClass: 'toxic',
+          toxBadge: '🔴 Giftig! (Magen-Darm-Gift / Phenol)',
+          toxOpts: [
+            '🔴 Giftig! Verursacht heftiges Erbrechen, Bauchkrämpfe und Schwindel (beim Erhitzen strömt stechender Karbol-/Tintengeruch aus der Pfanne)',
+            '🟢 Vorzüglicher Speisepilz auf allen Aachener Wiesen',
+            '☠️ Tödlich giftig durch leberzerstörende Amatoxine',
+            '🟡 Nach dem Abziehen der Huthaut essbar'
+          ],
+          details: {
+            title: 'Karbol-Champignon (Gift-Egerling)',
+            latin: 'Agaricus xanthodermus',
+            features: 'Weißer, jung oft trapezförmig abgeflachter Hut; Lamellen rosa bis schokobraun; im Längsschnitt durch die Stielbasis sofort kräftig chromgelb anlaufend (siehe Foto!); Geruch nach Tinte/Phenol/Krankenhaus.',
+            lookalike: 'Essbare Champignons: Wiesenchampignon (gilbt nicht, riecht angenehm pilzig) und Anis-Champignon (gilbt nur schwach außen am Hut, aber NICHT chromgelb in der Stielbasis, und duftet herrlich nach Anis/Marzipan!).',
+            trivia: 'Verantwortlich für sehr viele Pilzvergiftungen in Gärten und Stadtparks! Bei jedem Champignon ist der Längsschnitt durch die unterste Stielbasis + Geruchsprobe Pflicht.'
+          },
+          credit: {
+            artist: 'Velella',
+            license: 'CC BY-SA 3.0',
+            commons: 'File:Agaricus xanthodermus section.jpg'
+          }
+        },
+        {
+          id: 24,
+          cat: 'doppelgaenger',
+          habitat: '📍 Aachener Wald & Eifel · Ganzjährig in großen Büscheln an Laub- und Nadelholzstümpfen',
+          season: 'April–Dezember',
+          img: './img/pilz-24.jpg',
+          nameQ: 'Welcher an fast jedem Baumstumpf im Aachener Wald büschelig wachsende Pilz hat einen schwefelgelben Hut mit rötlich-brauner Mitte, schwefelgelbes Fleisch und neongelb-grünlich schimmernde Lamellen?',
+          nameOpts: [
+            'Grünblättriger Schwefelkopf (Hypholoma fasciculare)',
+            'Rauchblättriger Schwefelkopf (Hypholoma capnoides)',
+            'Stockschwämmchen (Kuehneromyces mutabilis)',
+            'Samtfußrübling (Flammulina velutipes)'
+          ],
+          toxClass: 'toxic',
+          toxBadge: '🔴 Giftig & gallenbitter! (Fasciculare-Vergiftung)',
+          toxOpts: [
+            '🔴 Giftig und extrem bitter! Verursacht heftiges Erbrechen, Durchfall und Sehstörungen',
+            '🟢 Beliebter, milder Suppenpilz',
+            '🟡 Nach dem Abkochen essbar',
+            '☠️ Tödlich giftig durch Orellanin'
+          ],
+          details: {
+            title: 'Grünblättriger Schwefelkopf',
+            latin: 'Hypholoma fasciculare',
+            features: 'Wächst dicht büschelig an Totholz; Hut schwefelgelb mit fuchsig-brauner Mitte; Lamellen jung schwefelgelb, bald deutlich olivgrünlich (!) schimmernd; Stiel ohne geschuppten Ring; Geschmack extrem gallenbitter.',
+            lookalike: 'Rauchblättriger Schwefelkopf (Hypholoma capnoides, essbar, nur an Nadelholz: hat rauchgraue bis violettgraue Lamellen OHNE jeden Grünton und schmeckt mild) sowie Stockschwämmchen (braun geschuppter Stiel).',
+            trivia: 'Der wohl häufigste Holzpilz im gesamten Aachener Wald! Sein grünlicher Schimmer auf den gelben Lamellen ist schon von der Seite gut zu erkennen.'
+          },
+          credit: {
+            artist: 'Jörg Hempel',
+            license: 'CC BY-SA 2.0 de',
+            commons: 'File:Hypholoma fasciculare LC0091.jpg'
+          }
+        }
+      ];
+
+      // State
+      let quizMode = 'both'; // 'both' | 'name' | 'toxicity'
+      let selectedLen = '8';
+      let activeCat = 'alle';
+      let deck = [];
+      let qIdx = 0;
+      let nameCorrectCount = 0;
+      let toxCorrectCount = 0;
+      let resultsLog = [];
+      let nameAnswered = false;
+      let toxAnswered = false;
+      let f50Available = true;
+      let timerId = null;
+      let timeLeft = COUNTDOWN_SEC;
+      let countdownExpired = false;
+
+      function isCountdownEnabled() {
+        try {
+          return localStorage.getItem(COUNTDOWN_KEY) === '1';
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function setCountdownEnabled(enabled) {
+        try {
+          localStorage.setItem(COUNTDOWN_KEY, enabled ? '1' : '0');
+        } catch (e) {}
+      }
+
+      function escapeHtml(str) {
+        return String(str == null ? '' : str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function commonsUrl(fileTitle) {
+        const clean = String(fileTitle || '').replace(/^File:/i, '').trim().replace(/ /g, '_');
+        return 'https://commons.wikimedia.org/wiki/File:' + encodeURIComponent(clean);
+      }
+
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      function getPool(catId) {
+        return catId === 'alle' ? MUSHROOMS.slice() : MUSHROOMS.filter(q => q.cat === catId);
+      }
+
+      function computeRoundCount(poolLen) {
+        if (selectedLen === 'all') return poolLen;
+        const n = parseInt(selectedLen, 10) || 8;
+        return Math.min(n, poolLen);
+      }
+
+      function isQuestionFullyAnswered() {
+        if (quizMode === 'name') return nameAnswered;
+        if (quizMode === 'toxicity') return toxAnswered;
+        return nameAnswered && toxAnswered;
+      }
+
+      function syncMenuControls() {
+        document.querySelectorAll('#mode-bar .opt-pill').forEach(btn => {
+          btn.classList.toggle('active-mode', btn.dataset.mode === quizMode);
+        });
+        const modeHint = document.getElementById('mode-hint');
+        if (quizMode === 'both') {
+          modeHint.innerHTML = 'Im <strong>Kombi-Modus</strong> bestimmst du bei jedem Foto sowohl den <strong>Pilznamen</strong> als auch die <strong>Giftigkeit / Essbarkeit für den Sammlerkorb</strong>.';
+        } else if (quizMode === 'name') {
+          modeHint.innerHTML = 'Im Modus <strong>Nur Pilznamen</strong> bestimmst du die Art anhand des Fotos – der Steckbrief verrät dir danach alle Details zur Giftigkeit.';
+        } else {
+          modeHint.innerHTML = 'Im Modus <strong>Nur Giftigkeit &amp; Speisewert</strong> prüfst du gezielt, ob der Pilz essbar, nur erhitzt genießbar, bitter oder (tödlich) giftig ist.';
+        }
+
+        const timerOn = isCountdownEnabled();
+        document.getElementById('opt-timer-off').classList.toggle('active-relaxed', !timerOn);
+        document.getElementById('opt-timer-on').classList.toggle('active-timer', timerOn);
+
+        document.querySelectorAll('#length-bar .opt-pill').forEach(btn => {
+          btn.classList.toggle('active-len', btn.dataset.len === selectedLen);
+        });
+      }
+
+      function renderMenu() {
+        syncMenuControls();
+        const grid = document.getElementById('cat-grid');
+        grid.innerHTML = CATEGORIES.map(cat => {
+          const pool = getPool(cat.id);
+          const roundCount = computeRoundCount(pool.length);
+          return `
+            <button type="button" class="cat-card ${cat.cls}" data-cat="${cat.id}">
+              <div class="cat-top">
+                <span class="cat-era">${escapeHtml(cat.era)}</span>
+              </div>
+              <div class="cat-name">${escapeHtml(cat.name)}</div>
+              <div class="cat-desc">${escapeHtml(cat.desc)}</div>
+              <div class="cat-foot">
+                <span>Exkursion: ${roundCount} von ${pool.length} Pilzen</span>
+                <span class="cat-go">Starten →</span>
+              </div>
+            </button>
+          `;
+        }).join('');
+      }
+
+      document.getElementById('mode-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        quizMode = btn.dataset.mode;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        syncMenuControls();
+      });
+
+      document.getElementById('countdown-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        setCountdownEnabled(btn.dataset.timer === '1');
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        syncMenuControls();
+      });
+
+      document.getElementById('length-bar').addEventListener('click', (e) => {
+        const btn = e.target.closest('.opt-pill');
+        if (!btn) return;
+        selectedLen = btn.dataset.len;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        renderMenu();
+      });
+
+      document.getElementById('cat-grid').addEventListener('click', (e) => {
+        const card = e.target.closest('.cat-card');
+        if (!card) return;
+        startQuiz(card.dataset.cat);
+      });
+
+      function stopTimer() {
+        if (timerId) {
+          clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      function updatePlayTimerUI() {
+        const btn = document.getElementById('btn-play-timer');
+        const track = document.getElementById('timer-track');
+        const fill = document.getElementById('timer-fill');
+        const on = isCountdownEnabled();
+
+        if (!on) {
+          track.classList.add('hidden');
+          btn.className = 'timer-toggle-btn';
+          btn.textContent = '☕ Kein Zeitlimit (Timer einschalten)';
+          return;
+        }
+
+        track.classList.remove('hidden');
+        if (countdownExpired || timeLeft <= 0) {
+          fill.style.width = '0%';
+          btn.className = 'timer-toggle-btn countdown-expired';
+          btn.textContent = '⏱ 35s um — gern in Ruhe weiter prüfen';
+        } else {
+          const pct = Math.max(0, Math.min(100, (timeLeft / COUNTDOWN_SEC) * 100));
+          fill.style.width = pct + '%';
+          btn.className = 'timer-toggle-btn countdown-running';
+          btn.textContent = `⏱ ${Math.ceil(timeLeft)}s (Timer ausschalten)`;
+        }
+      }
+
+      function startGentleCountdown() {
+        stopTimer();
+        if (!isCountdownEnabled() || isQuestionFullyAnswered()) {
+          updatePlayTimerUI();
+          return;
+        }
+        let lastTs = performance.now();
+        updatePlayTimerUI();
+        timerId = setInterval(() => {
+          const now = performance.now();
+          timeLeft = Math.max(0, timeLeft - (now - lastTs) / 1000);
+          lastTs = now;
+          if (timeLeft <= 0) {
+            timeLeft = 0;
+            countdownExpired = true;
+            stopTimer();
+          }
+          updatePlayTimerUI();
+        }, 120);
+      }
+
+      document.getElementById('btn-play-timer').addEventListener('click', () => {
+        const nextOn = !isCountdownEnabled();
+        setCountdownEnabled(nextOn);
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        if (nextOn) {
+          if (timeLeft <= 0) {
+            timeLeft = COUNTDOWN_SEC;
+            countdownExpired = false;
+          }
+          startGentleCountdown();
+        } else {
+          stopTimer();
+          updatePlayTimerUI();
+        }
+      });
+
+      function startQuiz(catId) {
+        activeCat = catId || 'alle';
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const pool = getPool(activeCat);
+        const count = computeRoundCount(pool.length);
+        deck = shuffle(pool).slice(0, count);
+        qIdx = 0;
+        nameCorrectCount = 0;
+        toxCorrectCount = 0;
+        resultsLog = [];
+
+        document.getElementById('score-name-pill').classList.toggle('hidden', quizMode === 'toxicity');
+        document.getElementById('score-tox-pill').classList.toggle('hidden', quizMode === 'name');
+
+        document.getElementById('screen-menu').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-play').classList.remove('hidden');
+
+        showQuestion();
+      }
+
+      function showQuestion() {
+        stopTimer();
+        nameAnswered = quizMode === 'toxicity';
+        toxAnswered = quizMode === 'name';
+        f50Available = true;
+        timeLeft = COUNTDOWN_SEC;
+        countdownExpired = false;
+
+        const item = deck[qIdx];
+        const catObj = CATEGORIES.find(c => c.id === item.cat);
+
+        document.getElementById('q-num').textContent = qIdx + 1;
+        document.getElementById('q-total').textContent = deck.length;
+        document.getElementById('q-name-count').textContent = nameCorrectCount;
+        document.getElementById('q-tox-count').textContent = toxCorrectCount;
+        document.getElementById('q-cat-pill').textContent = catObj ? catObj.name : 'Region Aachen';
+        document.getElementById('q-habitat-pill').textContent = item.habitat;
+        document.getElementById('q-season-pill').textContent = '🍂 ' + item.season;
+
+        // Spoiler-free photo caption before reveal
+        const imgEl = document.getElementById('pilz-img');
+        imgEl.alt = 'Pilz-Foto zur aktuellen Bestimmungsfrage';
+        imgEl.src = item.img;
+        document.getElementById('photo-attribution').textContent =
+          `📷 Foto: ${item.credit.artist} · ${item.credit.license} (Wikimedia Commons)`;
+        document.getElementById('photo-status-note').textContent = 'Klick aufs Bild öffnet die Lupe / Vollansicht';
+
+        if (qIdx + 1 < deck.length) {
+          const pre = new Image();
+          pre.src = deck[qIdx + 1].img;
+        }
+
+        const letters = ['A', 'B', 'C', 'D'];
+
+        // Step 1: Name block
+        const stepNameBlock = document.getElementById('step-name-block');
+        if (quizMode === 'toxicity') {
+          stepNameBlock.classList.add('hidden');
+        } else {
+          stepNameBlock.classList.remove('hidden');
+          document.getElementById('q-name-text').textContent = item.nameQ;
+          const nameOpts = shuffle(item.nameOpts.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+          item._renderedName = nameOpts;
+          document.getElementById('answers-name-grid').innerHTML = nameOpts.map((o, i) => `
+            <button type="button" class="ans-btn" data-step="name" data-idx="${i}">
+              <span class="ans-key">${letters[i]}</span>
+              <span>${escapeHtml(o.txt)}</span>
+            </button>
+          `).join('');
+        }
+
+        // Step 2: Toxicity block
+        const stepToxBlock = document.getElementById('step-tox-block');
+        if (quizMode === 'name') {
+          stepToxBlock.classList.add('hidden');
+        } else {
+          stepToxBlock.classList.remove('hidden');
+          const toxPrompt = quizMode === 'toxicity'
+            ? `Auf dem Foto siehst du: ${item.details.title} (${item.details.latin}). Wie ist dieser Pilz bezüglich Giftigkeit und Speisewert einzustufen?`
+            : 'Wie ist dieser Pilz bezüglich Giftigkeit und Speisewert für den Sammlerkorb einzustufen?';
+          document.getElementById('q-tox-text').textContent = toxPrompt;
+          const toxOpts = shuffle(item.toxOpts.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+          item._renderedTox = toxOpts;
+          document.getElementById('answers-tox-grid').innerHTML = toxOpts.map((o, i) => `
+            <button type="button" class="ans-btn" data-step="tox" data-idx="${i}">
+              <span class="ans-key">${letters[i]}</span>
+              <span>${escapeHtml(o.txt)}</span>
+            </button>
+          `).join('');
+        }
+
+        item._nameOk = false;
+        item._toxOk = false;
+
+        document.getElementById('fact-sheet').classList.add('hidden');
+        document.getElementById('joker-50').disabled = false;
+        document.getElementById('joker-skip').disabled = false;
+
+        updatePlayTimerUI();
+        if (isCountdownEnabled()) {
+          startGentleCountdown();
+        }
+      }
+
+      document.getElementById('answers-name-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.ans-btn');
+        if (!btn || nameAnswered || btn.classList.contains('eliminated')) return;
+        pickStepAnswer('name', parseInt(btn.dataset.idx, 10));
+      });
+
+      document.getElementById('answers-tox-grid').addEventListener('click', (e) => {
+        const btn = e.target.closest('.ans-btn');
+        if (!btn || toxAnswered || btn.classList.contains('eliminated')) return;
+        pickStepAnswer('tox', parseInt(btn.dataset.idx, 10));
+      });
+
+      function pickStepAnswer(step, idx) {
+        const item = deck[qIdx];
+        if (step === 'name' && !nameAnswered) {
+          nameAnswered = true;
+          const chosen = item._renderedName[idx];
+          const buttons = document.querySelectorAll('#answers-name-grid .ans-btn');
+          buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (item._renderedName[i].isRight) b.classList.add('correct');
+          });
+          if (chosen && chosen.isRight) {
+            item._nameOk = true;
+            nameCorrectCount++;
+            document.getElementById('q-name-count').textContent = nameCorrectCount;
+            if (window.ArcadeAudio) ArcadeAudio.perkGood();
+          } else {
+            if (buttons[idx]) buttons[idx].classList.add('wrong');
+            if (window.ArcadeAudio) ArcadeAudio.perkBad();
+          }
+        } else if (step === 'tox' && !toxAnswered) {
+          toxAnswered = true;
+          const chosen = item._renderedTox[idx];
+          const buttons = document.querySelectorAll('#answers-tox-grid .ans-btn');
+          buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (item._renderedTox[i].isRight) b.classList.add('correct');
+          });
+          if (chosen && chosen.isRight) {
+            item._toxOk = true;
+            toxCorrectCount++;
+            document.getElementById('q-tox-count').textContent = toxCorrectCount;
+            if (window.ArcadeAudio) ArcadeAudio.perkGood();
+          } else {
+            if (buttons[idx]) buttons[idx].classList.add('wrong');
+            if (window.ArcadeAudio) ArcadeAudio.perkBad();
+          }
+        }
+
+        if (isQuestionFullyAnswered()) {
+          stopTimer();
+          document.getElementById('joker-50').disabled = true;
+          document.getElementById('joker-skip').disabled = true;
+          let overallStatus = 'miss';
+          if (quizMode === 'name') {
+            overallStatus = item._nameOk ? 'ok' : 'miss';
+          } else if (quizMode === 'toxicity') {
+            overallStatus = item._toxOk ? 'ok' : 'miss';
+          } else {
+            if (item._nameOk && item._toxOk) overallStatus = 'ok';
+            else if (item._nameOk || item._toxOk) overallStatus = 'partial';
+            else overallStatus = 'miss';
+          }
+          resultsLog.push({ item, status: overallStatus });
+          revealSteckbrief(item, overallStatus);
+        } else if (step === 'name' && !toxAnswered) {
+          document.getElementById('step-tox-block').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }
+
+      function revealSteckbrief(item, status) {
+        const info = item.details;
+        const sheet = document.getElementById('fact-sheet');
+        sheet.classList.toggle('is-right', status === 'ok');
+        sheet.classList.toggle('is-miss', status === 'miss');
+
+        document.getElementById('pilz-img').alt = `${info.title} (${info.latin})`;
+        document.getElementById('photo-status-note').textContent = `${info.title} (${info.latin})`;
+
+        const verdictEl = document.getElementById('sb-verdict');
+        if (status === 'ok') {
+          verdictEl.className = 'sb-verdict ok';
+          verdictEl.textContent = quizMode === 'both'
+            ? '✓ Perfekt bestimmt (Pilzname & Giftigkeit richtig!) — Sammler-Steckbrief:'
+            : '✓ Richtig erkannt — Sammler-Steckbrief:';
+        } else if (status === 'partial') {
+          verdictEl.className = 'sb-verdict partial';
+          verdictEl.textContent = item._nameOk
+            ? '⚠ Pilzname richtig, aber Vorsicht bei der Giftigkeit! — Sammler-Steckbrief:'
+            : '⚠ Giftigkeit richtig eingeschätzt, Pilzname verwechselt — Sammler-Steckbrief:';
+        } else if (status === 'skip') {
+          verdictEl.className = 'sb-verdict skip';
+          verdictEl.textContent = 'ℹ Aufgelöst — Sammler-Steckbrief:';
+        } else {
+          verdictEl.className = 'sb-verdict miss';
+          verdictEl.textContent = '✗ Vorsicht Verwechslungsgefahr! — Sammler-Steckbrief:';
+        }
+
+        document.getElementById('sb-title').textContent = info.title;
+        document.getElementById('sb-latin').textContent = `(${info.latin})`;
+
+        const toxBadge = document.getElementById('sb-tox-badge');
+        toxBadge.className = `tox-pill ${item.toxClass}`;
+        toxBadge.textContent = item.toxBadge;
+
+        const specs = [
+          { k: 'Vorkommen Region Aachen', v: item.habitat.replace(/^📍\s*/, '') },
+          { k: 'Hauptsaison', v: item.season },
+          { k: 'Wichtige Merkmale', v: info.features }
+        ];
+        document.getElementById('sb-specs').innerHTML = specs.map(s => `
+          <div class="spec-item">
+            <dt>${escapeHtml(s.k)}</dt>
+            <dd>${escapeHtml(s.v)}</dd>
+          </div>
+        `).join('');
+
+        document.getElementById('sb-lookalike').innerHTML =
+          `<strong>⚠️ Doppelgänger &amp; Verwechslungsgefahr:</strong> ${escapeHtml(info.lookalike)}`;
+        document.getElementById('sb-trivia').textContent = info.trivia;
+
+        const cLink = document.getElementById('sb-commons-link');
+        cLink.href = commonsUrl(item.credit.commons);
+        cLink.textContent = `Fotoquelle: ${item.credit.artist} · ${item.credit.license} ↗`;
+
+        const nextBtn = document.getElementById('btn-next-q');
+        nextBtn.textContent = qIdx + 1 >= deck.length ? 'Zur Exkursions-Auswertung ▶' : 'Nächster Pilz ▶';
+
+        sheet.classList.remove('hidden');
+        sheet.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      function nextQuestion() {
+        if (!isQuestionFullyAnswered()) return;
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        qIdx++;
+        if (qIdx >= deck.length) {
+          finishQuiz();
+        } else {
+          showQuestion();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+
+      document.getElementById('btn-next-q').addEventListener('click', nextQuestion);
+
+      document.getElementById('joker-50').addEventListener('click', () => {
+        if (!f50Available || isQuestionFullyAnswered()) return;
+        f50Available = false;
+        document.getElementById('joker-50').disabled = true;
+        if (window.ArcadeAudio) ArcadeAudio.pop();
+        const item = deck[qIdx];
+
+        if (!nameAnswered && item._renderedName) {
+          const wrongIndices = shuffle(
+            item._renderedName.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)
+          ).slice(0, 2);
+          const buttons = document.querySelectorAll('#answers-name-grid .ans-btn');
+          wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+        }
+        if (!toxAnswered && item._renderedTox) {
+          const wrongTox = shuffle(
+            item._renderedTox.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)
+          ).slice(0, 2);
+          const toxButtons = document.querySelectorAll('#answers-tox-grid .ans-btn');
+          wrongTox.forEach(i => toxButtons[i] && toxButtons[i].classList.add('eliminated'));
+        }
+      });
+
+      document.getElementById('joker-skip').addEventListener('click', () => {
+        if (isQuestionFullyAnswered()) return;
+        nameAnswered = true;
+        toxAnswered = true;
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const item = deck[qIdx];
+
+        if (item._renderedName) {
+          const buttons = document.querySelectorAll('#answers-name-grid .ans-btn');
+          buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (item._renderedName[i].isRight) b.classList.add('correct');
+          });
+        }
+        if (item._renderedTox) {
+          const toxButtons = document.querySelectorAll('#answers-tox-grid .ans-btn');
+          toxButtons.forEach((b, i) => {
+            b.disabled = true;
+            if (item._renderedTox[i].isRight) b.classList.add('correct');
+          });
+        }
+
+        document.getElementById('joker-50').disabled = true;
+        document.getElementById('joker-skip').disabled = true;
+        resultsLog.push({ item, status: 'skip' });
+        revealSteckbrief(item, 'skip');
+      });
+
+      function finishQuiz() {
+        stopTimer();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+
+        const catObj = CATEGORIES.find(c => c.id === activeCat);
+        const total = deck.length;
+        if (quizMode === 'both') {
+          document.getElementById('res-score-line').textContent =
+            `🍄 ${nameCorrectCount}/${total} Pilznamen · ☠️ ${toxCorrectCount}/${total} Giftigkeiten richtig`;
+        } else if (quizMode === 'name') {
+          document.getElementById('res-score-line').textContent =
+            `${nameCorrectCount} von ${total} Pilznamen richtig erkannt`;
+        } else {
+          document.getElementById('res-score-line').textContent =
+            `${toxCorrectCount} von ${total} Pilzen bei der Giftigkeit richtig eingestuft`;
+        }
+
+        document.getElementById('res-sub').textContent =
+          `Gebiet: ${catObj ? catObj.name : activeCat} — unten findest du alle Pilze dieser Runde mit Giftigkeits-Ampel, Doppelgänger-Warnung und Lupen-Ansicht.`;
+
+        if (window.ArcadeAudio) {
+          ArcadeAudio.win();
+        }
+
+        const gallery = document.getElementById('gallery-list');
+        gallery.innerHTML = resultsLog.map((entry, idx) => {
+          const it = entry.item;
+          const info = it.details;
+          const badgeTxt = entry.status === 'ok'
+            ? '✓ Sicher erkannt'
+            : (entry.status === 'partial' ? '⚠ Teilweise richtig' : (entry.status === 'skip' ? 'ℹ Aufgelöst' : '✗ Verwechselt'));
+          return `
+            <article class="gallery-row">
+              <button type="button" class="gallery-thumb" data-gidx="${idx}" title="Foto vergrößern">
+                <img src="${escapeHtml(it.img)}" alt="${escapeHtml(info.title)}" loading="lazy" />
+              </button>
+              <div class="gallery-info">
+                <h3>
+                  <span>${escapeHtml(info.title)} <em style="font-weight:500;color:#a7f3d0;font-size:14px;">(${escapeHtml(info.latin)})</em></span>
+                  <span class="tox-pill ${it.toxClass}">${escapeHtml(it.toxBadge)}</span>
+                </h3>
+                <div class="gallery-meta">${escapeHtml(it.habitat)} · Saison: ${escapeHtml(it.season)}</div>
+                <p class="gallery-trivia"><strong>Merkmale:</strong> ${escapeHtml(info.features)}<br><strong>Doppelgänger:</strong> ${escapeHtml(info.lookalike)}</p>
+                <div class="gallery-status">
+                  <span class="outcome-badge ${entry.status}">${badgeTxt}</span>
+                  <a class="sb-commons-link" href="${escapeHtml(commonsUrl(it.credit.commons))}" target="_blank" rel="noopener noreferrer">
+                    Foto: ${escapeHtml(it.credit.artist)} (${escapeHtml(it.credit.license)}) ↗
+                  </a>
+                </div>
+              </div>
+            </article>
+          `;
+        }).join('');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('gallery-list').addEventListener('click', (e) => {
+        const thumb = e.target.closest('.gallery-thumb');
+        if (!thumb) return;
+        const entry = resultsLog[parseInt(thumb.dataset.gidx, 10)];
+        if (entry) openLightbox(entry.item, true);
+      });
+
+      function backToMenu() {
+        stopTimer();
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        document.getElementById('screen-play').classList.add('hidden');
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-menu').classList.remove('hidden');
+        renderMenu();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.getElementById('btn-back-menu').addEventListener('click', backToMenu);
+      document.getElementById('btn-change-cat').addEventListener('click', backToMenu);
+      document.getElementById('btn-replay').addEventListener('click', () => startQuiz(activeCat));
+
+      // Lightbox
+      function openLightbox(item, allowTitleReveal) {
+        const modal = document.getElementById('lightbox-modal');
+        const img = document.getElementById('lightbox-img');
+        const cap = document.getElementById('lightbox-caption');
+        img.src = item.img;
+        const revealed = allowTitleReveal || isQuestionFullyAnswered();
+        img.alt = revealed ? `${item.details.title} (${item.details.latin})` : 'Vergrößerte Ansicht des Pilzes';
+        cap.textContent = revealed
+          ? `${item.details.title} (${item.details.latin}) · ${item.toxBadge} — Foto: ${item.credit.artist} (${item.credit.license})`
+          : `Foto: ${item.credit.artist} · ${item.credit.license} (Wikimedia Commons)`;
+        modal.classList.remove('hidden');
+      }
+
+      function closeLightbox() {
+        document.getElementById('lightbox-modal').classList.add('hidden');
+      }
+
+      document.getElementById('photo-frame').addEventListener('click', () => {
+        if (deck[qIdx]) openLightbox(deck[qIdx], false);
+      });
+      document.getElementById('btn-lightbox-close').addEventListener('click', closeLightbox);
+      document.getElementById('lightbox-modal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) closeLightbox();
+      });
+
+      // Keyboard navigation
+      window.addEventListener('keydown', (e) => {
+        const lb = document.getElementById('lightbox-modal');
+        if (!lb.classList.contains('hidden')) {
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeLightbox();
+          }
+          return;
+        }
+        if (document.getElementById('screen-play').classList.contains('hidden')) return;
+
+        if (['1', '2', '3', '4'].includes(e.key)) {
+          const idx = parseInt(e.key, 10) - 1;
+          if (!nameAnswered) {
+            const btn = document.querySelector(`#answers-name-grid .ans-btn[data-idx="${idx}"]`);
+            if (btn && !btn.classList.contains('eliminated')) pickStepAnswer('name', idx);
+          } else if (!toxAnswered) {
+            const btn = document.querySelector(`#answers-tox-grid .ans-btn[data-idx="${idx}"]`);
+            if (btn && !btn.classList.contains('eliminated')) pickStepAnswer('tox', idx);
+          }
+        } else if (isQuestionFullyAnswered() && (e.key === 'Enter' || e.key === ' ')) {
+          if (e.target.closest('a, #btn-back-menu, #btn-mute, #btn-zoom-photo, #btn-play-timer')) return;
+          e.preventDefault();
+          nextQuestion();
+        }
+      });
+
+      if (window.ArcadeAudio) {
+        ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+      }
+      renderMenu();
+    })();
+  </script>
+</body>
+</html>
