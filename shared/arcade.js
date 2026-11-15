@@ -138,7 +138,7 @@
   const NAME_KEY = 'arcade_player_name';
 
   const GAME_CATALOG = [
-    { id: 'minesweeper', title: '3D Minesweeper', icon: '💣', lowerIsBetter: true },
+    { id: 'minesweeper', title: '3D Minesweeper – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online)', icon: '💣', lowerIsBetter: true },
     { id: 'roadster', title: 'Roadster Lander', icon: '🚀', lowerIsBetter: false },
     { id: 'zombie', title: 'Zombie Swarm', icon: '🧟', lowerIsBetter: false },
     { id: 'tower', title: 'Orbital Tower Defense', icon: '🛸', lowerIsBetter: false },
