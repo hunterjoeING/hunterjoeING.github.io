@@ -49,6 +49,8 @@ const GAMES_META = {
   quiz_mil_air: { title: 'Militärflugzeuge Quiz', lowerIsBetter: false },
   quiz_airliners: { title: 'Passagierflugzeuge Quiz', lowerIsBetter: false },
   quiz_etfs: { title: 'Passives Investieren & ETFs Quiz', lowerIsBetter: false },
+  quiz_porsche: { title: 'Porsche & Taycan Quiz', lowerIsBetter: false },
+  quiz_md11: { title: 'McDonnell Douglas MD-11 Quiz', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
 
