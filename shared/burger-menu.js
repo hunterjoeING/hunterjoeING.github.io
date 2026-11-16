@@ -29,7 +29,7 @@
   ];
 
   const QUIZZES_1000_NAV = [
-    { id: 'quiz_waldgarten', icon: '🌿', title: 'Waldgarten (Heideblick)', meta: '1.000 Fr.', path: 'games/quiz-waldgarten/index.html' },
+    { id: 'quiz_waldgarten', icon: '🌿', title: 'Waldgarten (Heideblick)', meta: '1.000 Fr.', path: 'games/quiz-waldgarten/index.html', unlisted: true },
     { id: 'quiz_mil_air', icon: '🛩️', title: 'Militärflugzeuge', meta: '1.000 Fr.', path: 'games/quiz-military-aircraft/index.html' },
     { id: 'quiz_airliners', icon: '✈️', title: 'Passagierflugzeuge', meta: '1.000 Fr.', path: 'games/quiz-airliners/index.html' },
     { id: 'quiz_etfs', icon: '📈', title: 'Passives Investieren & ETFs', meta: '1.000 Fr.', path: 'games/quiz-etfs/index.html' },
@@ -207,7 +207,7 @@
     const q = drawerState.filter.trim().toLowerCase();
     const groups = [
       { label: '🎮 Games (7)', items: GAMES_NAV },
-      { label: '🌟 1.000+ Fragen-Quizzes (5)', items: QUIZZES_1000_NAV },
+      { label: '🌟 1.000+ Fragen-Quizzes (4)', items: QUIZZES_1000_NAV },
       { label: '🧠 Themen-Quizzes (8)', items: QUIZZES_THEMEN_NAV },
       { label: '📷 Foto- & Exkursions-Quizzes (5)', items: QUIZZES_FOTO_NAV }
     ];
@@ -300,7 +300,7 @@
       <div class="abm-head">
         <div class="abm-brand">
           <strong>🕹️ HunterJoe Arcade</strong>
-          <span>7 Games · 18 Quiz-Welten (5.252 Pool)</span>
+          <span>7 Games · 17 Quiz-Welten (4.252 Pool)</span>
         </div>
         <button type="button" class="abm-close" id="abm-btn-close" aria-label="Menü schließen">✕</button>
       </div>
