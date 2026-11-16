@@ -37,6 +37,7 @@
   ];
 
   const QUIZZES_THEMEN_NAV = [
+    { id: 'quiz_napoli72h', icon: '🍕', title: 'Napoli72H Pizza-Quiz (Aachen)', meta: '160 Fr.', path: 'games/quiz-napoli72h/index.html' },
     { id: 'quiz_ai', icon: '🤖', title: 'KI: Entstehung & Technik', meta: '108 Fr.', path: 'games/quiz-ai/index.html' },
     { id: 'quiz_movies', icon: '🎬', title: 'Kino & Filme (o. RomComs)', meta: '108 Fr.', path: 'games/quiz-movies/index.html' },
     { id: 'quiz_egypt', icon: '🏺', title: 'Ägyptische Geschichte', meta: '108 Fr.', path: 'games/quiz-egypt/index.html' },
@@ -298,7 +299,7 @@
       <div class="abm-head">
         <div class="abm-brand">
           <strong>🕹️ HunterJoe Arcade</strong>
-          <span>7 Games · 18 Quiz-Welten (5.252 Pool)</span>
+          <span>7 Games · 19 Quiz-Welten (5.412 Pool)</span>
         </div>
         <button type="button" class="abm-close" id="abm-btn-close" aria-label="Menü schließen">✕</button>
       </div>

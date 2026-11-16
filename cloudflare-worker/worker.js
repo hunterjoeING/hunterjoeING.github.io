@@ -45,6 +45,7 @@ const GAMES_META = {
   quiz_pilze_aachen: { title: 'Pilz-Sammler-Quiz: Region Aachen', lowerIsBetter: false },
   quiz_swiss_trains: { title: 'Schweizer Eisenbahnloks', lowerIsBetter: false },
   quiz_waldgarten: { title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', lowerIsBetter: false },
+  quiz_napoli72h: { title: 'Napoli72H Pizza-Quiz · Aachen', lowerIsBetter: false },
   quiz_mil_air: { title: 'Militärflugzeuge Quiz', lowerIsBetter: false },
   quiz_airliners: { title: 'Passagierflugzeuge Quiz', lowerIsBetter: false },
   quiz_etfs: { title: 'Passives Investieren & ETFs Quiz', lowerIsBetter: false },
