@@ -8,66 +8,101 @@
   <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
-    /* Napoli72H Bespoke Restaurant Palette – Dark Mode (Forno Napoletano) */
+    /* =========================================================================
+       Napoli72H Authentic Brand Palette (nach Vorbild von napoli72h.de)
+       Matte Schiefer-Schwarz (#0b0c0b) · Reines Weiß (#ffffff) · Basilikum (#5a9a43)
+       ========================================================================= */
     :root {
-      --n72-red: #dc2626;
-      --n72-red-deep: #991b1b;
-      --n72-basil: #16a34a;
-      --n72-basil-soft: #4ade80;
-      --n72-amber: #f59e0b;
-      --n72-cream: #fdf8f2;
-      --n72-muted: #cbbcb0;
-      --n72-card: rgba(26, 16, 13, 0.93);
-      --n72-card-soft: rgba(38, 23, 18, 0.9);
-      --n72-border: rgba(239, 68, 68, 0.3);
+      --n72-bg: #0b0c0b;
+      --n72-surface: #121413;
+      --n72-surface-2: #171a18;
+      --n72-border: rgba(255, 255, 255, 0.20);
+      --n72-border-strong: rgba(255, 255, 255, 0.42);
+      --n72-text: #ffffff;
+      --n72-muted: #b0b3ae;
+      --n72-green: #5a9a43;
+      --n72-green-bright: #72b858;
+      --n72-green-deep: #437631;
+      --n72-display: 'Barlow Condensed', 'Roboto Condensed', 'Arial Narrow', 'Liberation Sans Narrow', Impact, sans-serif;
     }
 
     html, body {
-      background: radial-gradient(ellipse at 18% 0%, #34130e 0%, #170d0a 52%, #0c0706 100%) !important;
-      color: var(--n72-cream) !important;
+      background-color: var(--n72-bg) !important;
+      /* Dezentes dunkles Mehl-/Schiefer-Flair ohne externe Bilddateien (100% DSGVO-frei) */
+      background-image:
+        radial-gradient(ellipse at 50% 0%, rgba(90, 154, 67, 0.10) 0%, transparent 52%),
+        radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 0),
+        radial-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 0) !important;
+      background-size: 100% 100%, 42px 42px, 67px 67px !important;
+      background-position: 0 0, 0 0, 19px 23px !important;
+      color: var(--n72-text) !important;
     }
 
+    /* Topbar – exakt im Stil der napoli72h.de Navigation (Schwarz / Weiß / Grün) */
     .arcade-topbar {
-      background: rgba(18, 10, 8, 0.92) !important;
-      border-bottom: 1px solid rgba(239, 68, 68, 0.34) !important;
+      background: rgba(8, 9, 8, 0.94) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+      box-shadow: none !important;
     }
-    .back-hub-btn {
-      background: rgba(185, 28, 28, 0.25) !important;
-      border-color: rgba(248, 113, 113, 0.5) !important;
-      color: #fee2e2 !important;
-    }
-    .back-hub-btn:hover {
-      background: rgba(220, 38, 38, 0.44) !important;
-      border-color: #fca5a5 !important;
-    }
-    .icon-btn {
-      background: rgba(34, 21, 17, 0.92) !important;
-      border-color: rgba(245, 158, 11, 0.34) !important;
-      color: #fdf8f2 !important;
-    }
-    .icon-btn:hover {
-      background: rgba(120, 53, 15, 0.45) !important;
-      border-color: #fbbf24 !important;
-    }
-    .pill-stat {
-      background: rgba(34, 21, 17, 0.92) !important;
-      border-color: rgba(251, 191, 36, 0.32) !important;
-      color: #fef3c7 !important;
-    }
-    .primary-btn {
-      background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
-      border-color: rgba(252, 165, 165, 0.65) !important;
+    .topbar-title {
+      font-family: var(--n72-display);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 800;
       color: #ffffff !important;
-      box-shadow: 0 6px 20px rgba(185, 28, 28, 0.38) !important;
+    }
+    .back-hub-btn,
+    .icon-btn,
+    .pill-stat,
+    .arcade-feedback-btn,
+    .abm-trigger {
+      background: #121413 !important;
+      border: 1px solid rgba(255, 255, 255, 0.28) !important;
+      border-radius: 2px !important;
+      color: #ffffff !important;
+      box-shadow: none !important;
+    }
+    .back-hub-btn:hover,
+    .icon-btn:hover,
+    .arcade-feedback-btn:hover,
+    .abm-trigger:hover {
+      background: #1b2219 !important;
+      border-color: var(--n72-green) !important;
+      color: #ffffff !important;
+    }
+    .arcade-feedback-count {
+      background: var(--n72-green) !important;
+      border-color: var(--n72-green-bright) !important;
+      color: #ffffff !important;
+    }
+    .abm-trigger {
+      width: 36px !important;
+      height: 36px !important;
+      border-color: rgba(255, 255, 255, 0.72) !important;
+    }
+
+    .primary-btn {
+      background: var(--n72-green) !important;
+      border: 1px solid var(--n72-green-bright) !important;
+      border-radius: 2px !important;
+      color: #ffffff !important;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+      box-shadow: none !important;
+    }
+    .primary-btn:hover:not(:disabled) {
+      background: var(--n72-green-bright) !important;
     }
     .secondary-btn {
-      background: rgba(34, 21, 17, 0.9) !important;
-      border-color: rgba(203, 188, 176, 0.32) !important;
-      color: #f5ede4 !important;
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.34) !important;
+      border-radius: 2px !important;
+      color: #ffffff !important;
     }
     .secondary-btn:hover:not(:disabled) {
-      border-color: #f59e0b !important;
-      background: rgba(54, 33, 26, 0.95) !important;
+      border-color: var(--n72-green) !important;
+      background: rgba(90, 154, 67, 0.12) !important;
     }
 
     .quiz-wrap {
@@ -77,234 +112,298 @@
     }
 
     .glass-card {
-      background: var(--n72-card) !important;
+      background: rgba(14, 16, 15, 0.94) !important;
       border: 1px solid var(--n72-border) !important;
-      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.55) !important;
+      border-radius: 4px !important;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.65) !important;
     }
 
-    /* Tricolore hairline bar along the top of the welcome hero */
+    /* Authentic napoli72h.de Hero Stage */
     .n72-hero-card {
-      position: relative;
-      overflow: hidden;
-      padding: 20px;
+      padding: 24px 20px 22px;
     }
-    .n72-tricolore-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, #16a34a 0 33.33%, #fdf8f2 33.33% 66.66%, #dc2626 66.66% 100%);
-    }
-
     .n72-welcome-banner {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      text-align: center;
       gap: 14px;
-      flex-wrap: wrap;
-      padding: 14px 16px;
-      margin: 4px 0 16px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(185, 28, 28, 0.24), rgba(28, 17, 14, 0.94));
-      border: 1px solid rgba(248, 113, 113, 0.36);
+      padding: 24px 18px 22px;
+      margin: 0 0 22px;
+      border-radius: 2px;
+      background:
+        radial-gradient(circle at 50% 24%, rgba(90, 154, 67, 0.14) 0%, rgba(12, 13, 12, 0.96) 66%),
+        #0b0c0b;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      position: relative;
+      overflow: hidden;
     }
-    .n72-brand-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 13px;
-      flex: 1;
-      min-width: 240px;
+    .n72-flour-frame {
+      position: absolute;
+      inset: 7px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      pointer-events: none;
     }
-    .n72-logo-mark {
-      width: 52px;
-      height: 52px;
-      flex-shrink: 0;
-      border-radius: 13px;
-      background: rgba(15, 9, 7, 0.92);
-      border: 1px solid rgba(251, 191, 36, 0.42);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-    }
-    .n72-welcome-text {
-      font-size: 13px;
-      line-height: 1.48;
-      color: var(--n72-cream);
-    }
-    .n72-welcome-text strong {
-      color: #fde68a;
-    }
-    .n72-loc-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-    }
-    .n72-chip {
+    .n72-logo-wrap {
+      color: #ffffff;
       display: inline-flex;
+      flex-direction: column;
       align-items: center;
-      gap: 4px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: rgba(255, 248, 240, 0.08);
-      border: 1px solid rgba(251, 191, 36, 0.28);
-      font-size: 11.5px;
+      gap: 10px;
+      position: relative;
+      z-index: 1;
+    }
+    .n72-logo-svg {
+      width: 146px;
+      height: auto;
+      display: block;
+    }
+    .n72-tracked-sub {
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: #e4e5e1;
+      margin: 0;
+      line-height: 1.75;
+    }
+    .n72-sub-line {
+      display: block;
+      white-space: nowrap;
+      margin-right: -0.42em; /* trailing tracking ausgleichen → optisch zentriert */
+    }
+    .n72-tracked-sub .n72-green {
+      color: var(--n72-green-bright);
+      font-weight: 400;
+    }
+    #screen-menu { --text-muted: var(--n72-muted); }
+    html[data-theme="light"] #screen-menu { --text-muted: #4b4f4a; }
+    .n72-hero-headline {
+      font-family: var(--n72-display);
+      font-size: clamp(23px, 4.5vw, 33px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: #ffffff;
+      margin: 2px 0 0;
+      max-width: 640px;
+      position: relative;
+      z-index: 1;
+    }
+    .n72-slash-line {
+      font-size: 12.5px;
+      line-height: 1.65;
+      color: var(--n72-muted);
+      max-width: 620px;
+      position: relative;
+      z-index: 1;
+    }
+    .n72-slash-line .sep {
+      color: var(--n72-green-bright);
+      margin: 0 6px;
       font-weight: 700;
-      color: #fde68a;
     }
-    .n72-chip.basil {
-      border-color: rgba(74, 222, 128, 0.34);
-      color: #bbf7d0;
-      background: rgba(22, 163, 74, 0.14);
+    .n72-slash-line strong {
+      color: #ffffff;
+      font-weight: 600;
     }
-
     .n72-banner-actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 4px;
+      position: relative;
+      z-index: 1;
     }
     .n72-cta-btn {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 9px 13px;
-      border-radius: 10px;
-      border: 1px solid rgba(251, 191, 36, 0.55);
-      background: linear-gradient(135deg, rgba(185, 28, 28, 0.88), rgba(153, 27, 27, 0.94));
+      gap: 7px;
+      padding: 10px 16px;
+      border-radius: 2px;
+      border: 1px solid var(--n72-green-bright);
+      background: var(--n72-green);
       color: #ffffff;
-      font-size: 12.5px;
-      font-weight: 750;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: transform 0.13s, filter 0.14s;
+      transition: background 0.14s, transform 0.12s;
     }
     .n72-cta-btn:hover {
-      filter: brightness(1.1);
+      background: var(--n72-green-bright);
       transform: translateY(-1px);
     }
     .n72-cta-btn.alt {
-      background: rgba(34, 21, 17, 0.92);
-      border-color: rgba(74, 222, 128, 0.45);
-      color: #dcfce7;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.56);
+      color: #ffffff;
+    }
+    .n72-cta-btn.alt:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #ffffff;
     }
 
+    .n72-section-title {
+      font-family: var(--n72-display);
+      margin: 0 0 6px;
+      font-size: clamp(20px, 3.2vw, 25px);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+    }
     .n72-sublead {
       margin: 0;
       color: var(--n72-muted);
       font-size: 13.5px;
-      line-height: 1.48;
+      line-height: 1.55;
     }
 
-    /* Difficulty & Tempo / Round Bars */
+    /* Filter Pills (Minimal Sharp Napoli Style) */
     .diff-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin: 14px 0 6px;
+      gap: 7px;
+      margin: 15px 0 6px;
     }
-    .diff-pill {
-      padding: 7px 13px;
-      border-radius: 999px;
-      border: 1px solid rgba(248, 113, 113, 0.34);
-      background: rgba(34, 21, 17, 0.9);
-      color: #f5ede4;
-      font-size: 12.5px;
-      font-weight: 700;
+    .diff-pill,
+    .time-mode-pill,
+    .round-len-pill {
+      padding: 6px 12px;
+      border-radius: 2px !important;
+      border: 1px solid rgba(255, 255, 255, 0.22) !important;
+      background: #121413 !important;
+      color: #d4d6d1 !important;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
       cursor: pointer;
       transition: all 0.14s;
+      box-shadow: none !important;
     }
-    .diff-pill:hover {
-      border-color: #fbbf24;
-      color: #ffffff;
+    .diff-pill:hover,
+    .time-mode-pill:hover,
+    .round-len-pill:hover {
+      border-color: var(--n72-green) !important;
+      color: #ffffff !important;
     }
-    .diff-pill.active {
-      background: linear-gradient(135deg, #b91c1c, #dc2626);
-      border-color: #fca5a5;
-      color: #ffffff;
-      box-shadow: 0 4px 16px rgba(220, 38, 38, 0.36);
+    .diff-pill.active,
+    .time-mode-pill.active,
+    .round-len-pill.active {
+      background: var(--n72-green) !important;
+      border-color: var(--n72-green-bright) !important;
+      color: #ffffff !important;
     }
     .diff-pill.pro.active {
-      background: linear-gradient(135deg, #b45309, #d97706);
-      border-color: #fde68a;
-      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.36);
-    }
-
-    .time-mode-pill, .round-len-pill {
-      background: rgba(34, 21, 17, 0.9) !important;
-      border-color: rgba(203, 188, 176, 0.28) !important;
-      color: #e7ddd2 !important;
-    }
-    .time-mode-pill.active, .round-len-pill.active {
-      background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
-      border-color: #fca5a5 !important;
-      color: #ffffff !important;
+      background: #ffffff !important;
+      border-color: #ffffff !important;
+      color: #0b0c0b !important;
     }
     .time-mode-pill.relaxed.active {
-      background: linear-gradient(135deg, #15803d, #16a34a) !important;
-      border-color: #86efac !important;
-      color: #ffffff !important;
+      background: #1e2a1b !important;
+      border-color: var(--n72-green-bright) !important;
+      color: #dcfce7 !important;
     }
+
     .pool-status-bar {
-      background: rgba(20, 12, 9, 0.78) !important;
-      border-color: rgba(251, 191, 36, 0.22) !important;
+      background: #0e100f !important;
+      border: 1px solid rgba(255, 255, 255, 0.16) !important;
+      border-radius: 2px !important;
       color: var(--n72-muted) !important;
     }
     .pool-status-text strong {
-      color: #fde68a !important;
+      color: var(--n72-green-bright) !important;
     }
     .pool-reset-btn {
-      background: rgba(38, 23, 18, 0.9) !important;
-      border-color: rgba(203, 188, 176, 0.3) !important;
-      color: #f5ede4 !important;
+      background: transparent !important;
+      border: 1px solid rgba(255, 255, 255, 0.26) !important;
+      border-radius: 2px !important;
+      color: #ffffff !important;
+    }
+    .pool-reset-btn:hover {
+      border-color: var(--n72-green) !important;
     }
 
-    /* Category Cards */
+    /* Speisekarte-Stil Category Cards */
     .cat-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
       gap: 12px;
-      margin-top: 14px;
+      margin-top: 16px;
     }
     .cat-card {
       text-align: left;
-      padding: 16px;
-      border-radius: 14px;
-      background: var(--n72-card-soft);
-      border: 1px solid rgba(251, 191, 36, 0.24);
-      color: var(--n72-cream);
+      padding: 18px 16px 15px;
+      border-radius: 2px;
+      background: #0f1110;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #ffffff;
       cursor: pointer;
       transition: transform 0.14s, border-color 0.14s, background 0.14s;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
     .cat-card:hover {
       transform: translateY(-2px);
-      border-color: #f87171;
-      background: rgba(127, 29, 29, 0.34);
+      border-color: var(--n72-green);
+      background: #141914;
     }
     .cat-card.featured {
       grid-column: 1 / -1;
-      border-color: rgba(239, 68, 68, 0.56);
-      background: linear-gradient(135deg, rgba(153, 27, 27, 0.42), rgba(26, 16, 13, 0.96));
+      border-color: rgba(90, 154, 67, 0.65);
+      background: linear-gradient(135deg, rgba(90, 154, 67, 0.14), #0e100f 62%);
     }
-    .cat-card.featured-basil {
-      border-color: rgba(74, 222, 128, 0.42);
-      background: linear-gradient(135deg, rgba(20, 83, 45, 0.34), rgba(26, 16, 13, 0.95));
+    .cat-card.featured:hover {
+      border-color: var(--n72-green-bright);
     }
-    .cat-icon { font-size: 27px; }
-    .cat-name { font-size: 16px; font-weight: 800; }
-    .cat-desc { font-size: 12.5px; color: var(--n72-muted); line-height: 1.44; flex: 1; }
+    .cat-menu-head {
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #ffffff;
+      line-height: 1.45;
+    }
+    .cat-menu-head .tag {
+      text-transform: none;
+      letter-spacing: 0.03em;
+      color: var(--n72-green-bright);
+      font-weight: 600;
+    }
+    .cat-desc {
+      font-size: 12.8px;
+      color: var(--n72-muted);
+      line-height: 1.5;
+      flex: 1;
+    }
     .cat-meta {
-      font-size: 11.5px;
+      font-size: 12px;
       font-family: var(--font-mono);
-      color: #fde68a;
-      margin-top: 4px;
+      color: #e4e5e1;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    .cat-meta .go {
+      color: var(--n72-green-bright);
+      font-family: var(--font-ui);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 11px;
+      white-space: nowrap;
     }
 
     /* Stage */
-    .quiz-stage { padding: 20px; }
+    .quiz-stage { padding: 22px 20px; }
     .quiz-meta-row {
       display: flex;
       justify-content: space-between;
@@ -315,58 +414,74 @@
       font-family: var(--font-mono);
       font-size: 13px;
     }
+    .quiz-speed-btn {
+      background: #141715 !important;
+      border: 1px solid rgba(255, 255, 255, 0.30) !important;
+      border-radius: 2px !important;
+      color: #ffffff !important;
+    }
+    .quiz-speed-btn.relaxed {
+      background: rgba(90, 154, 67, 0.18) !important;
+      border-color: var(--n72-green-bright) !important;
+      color: #dcfce7 !important;
+    }
     .timer-track {
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255, 248, 240, 0.14);
+      height: 6px;
+      border-radius: 1px;
+      background: rgba(255, 255, 255, 0.12);
       overflow: hidden;
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
     .timer-fill {
       height: 100%;
       width: 100%;
       transition: width 0.1s linear, background 0.2s;
+      background: var(--n72-green) !important; /* überschreibt Inline-Gradient aus ArcadeQuizPrefs */
     }
     .badge-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .q-cat-pill, .q-diff-pill {
       display: inline-block;
       padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 11.5px;
-      font-weight: 700;
+      border-radius: 2px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
     }
     .q-cat-pill {
-      background: rgba(220, 38, 38, 0.2);
-      border: 1px solid rgba(248, 113, 113, 0.45);
-      color: #fecaca;
+      background: #161917;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #e4e5e1;
     }
     .q-diff-pill.easy {
-      background: rgba(22, 163, 74, 0.18);
-      border: 1px solid rgba(74, 222, 128, 0.42);
+      background: rgba(90, 154, 67, 0.18);
+      border: 1px solid var(--n72-green);
       color: #bbf7d0;
     }
     .q-diff-pill.mid {
-      background: rgba(245, 158, 11, 0.18);
-      border: 1px solid rgba(251, 191, 36, 0.46);
-      color: #fde68a;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      color: #ffffff;
     }
     .q-diff-pill.pro {
-      background: rgba(225, 29, 72, 0.2);
-      border: 1px solid rgba(251, 113, 133, 0.48);
-      color: #fecdd3;
+      background: #ffffff;
+      border: 1px solid #ffffff;
+      color: #0b0c0b;
     }
 
     .q-text {
-      font-size: clamp(17.5px, 2.7vw, 22px);
-      font-weight: 800;
-      line-height: 1.38;
+      font-family: var(--n72-display);
+      font-size: clamp(20px, 3vw, 25px);
+      font-weight: 700;
+      line-height: 1.28;
+      letter-spacing: 0.02em;
       margin: 0 0 18px;
-      color: #fdf8f2;
+      color: #ffffff;
     }
 
     .answers-grid {
@@ -380,29 +495,29 @@
     .ans-btn {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 11px;
       text-align: left;
       padding: 13px 14px;
-      border-radius: 12px;
-      background: rgba(36, 22, 18, 0.94);
-      border: 1px solid rgba(203, 188, 176, 0.3);
-      color: #fdf8f2;
+      border-radius: 2px;
+      background: #141615;
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      color: #ffffff;
       font-size: 14px;
-      font-weight: 600;
-      line-height: 1.35;
+      font-weight: 500;
+      line-height: 1.38;
       cursor: pointer;
-      transition: border-color 0.12s, background 0.12s, transform 0.1s;
+      transition: border-color 0.12s, background 0.12s;
     }
     .ans-btn:hover:not(:disabled) {
-      border-color: #fbbf24;
-      background: rgba(127, 29, 29, 0.34);
-      transform: translateY(-1px);
+      border-color: var(--n72-green-bright);
+      background: #171d16;
     }
     .ans-key {
       width: 26px;
       height: 26px;
-      border-radius: 7px;
-      background: rgba(255, 248, 240, 0.12);
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -412,12 +527,17 @@
       flex-shrink: 0;
     }
     .ans-btn.correct {
-      background: rgba(22, 163, 74, 0.34);
-      border-color: #4ade80;
-      color: #dcfce7;
+      background: rgba(90, 154, 67, 0.28);
+      border-color: var(--n72-green-bright);
+      color: #ecfdf5;
+    }
+    .ans-btn.correct .ans-key {
+      background: var(--n72-green);
+      border-color: var(--n72-green-bright);
+      color: #ffffff;
     }
     .ans-btn.wrong {
-      background: rgba(225, 29, 72, 0.32);
+      background: rgba(225, 29, 72, 0.26);
       border-color: #fb7185;
       color: #ffe4e6;
     }
@@ -432,34 +552,37 @@
       flex-wrap: wrap;
       margin-top: 16px;
       padding-top: 14px;
-      border-top: 1px solid rgba(203, 188, 176, 0.18);
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
       justify-content: space-between;
       align-items: center;
     }
     .joker-btn {
       padding: 7px 12px;
-      border-radius: 9px;
-      background: rgba(38, 23, 18, 0.92);
-      border: 1px solid rgba(251, 191, 36, 0.42);
-      color: #fde68a;
-      font-size: 12.5px;
-      font-weight: 700;
+      border-radius: 2px;
+      background: #141615;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
     }
+    .joker-btn:hover:not(:disabled) {
+      border-color: var(--n72-green);
+    }
     .joker-btn:disabled {
-      opacity: 0.35;
+      opacity: 0.32;
       cursor: not-allowed;
     }
 
     .fact-box {
       margin-top: 14px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: rgba(20, 12, 9, 0.9);
-      border: 1px solid rgba(74, 222, 128, 0.38);
+      padding: 13px 15px;
+      border-radius: 2px;
+      background: #101410;
+      border: 1px solid var(--n72-green);
       font-size: 13px;
-      line-height: 1.48;
-      color: #f5ede4;
+      line-height: 1.5;
+      color: #e9ece8;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -469,7 +592,7 @@
 
     .result-card {
       text-align: center;
-      padding: 28px 20px;
+      padding: 30px 20px;
     }
     .result-stats {
       display: grid;
@@ -479,28 +602,30 @@
       margin: 18px auto 22px;
     }
     .res-box {
-      padding: 12px 8px;
-      border-radius: 12px;
-      background: rgba(34, 21, 17, 0.9);
-      border: 1px solid rgba(248, 113, 113, 0.34);
+      padding: 13px 8px;
+      border-radius: 2px;
+      background: #121413;
+      border: 1px solid rgba(255, 255, 255, 0.20);
     }
     .res-box b {
       display: block;
-      font-size: 20px;
+      font-size: 21px;
       font-family: var(--font-mono);
-      color: #fde68a;
+      color: var(--n72-green-bright);
     }
     .res-box span {
       font-size: 11.5px;
       color: var(--n72-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    /* Speisekarte QR Modal */
+    /* Speisekarte QR Modal – Authentic Napoli72H Style */
     .n72-modal-backdrop {
       position: fixed;
       inset: 0;
       z-index: 9500;
-      background: rgba(10, 6, 5, 0.84);
+      background: rgba(5, 6, 5, 0.86);
       backdrop-filter: blur(8px);
       -webkit-backdrop-filter: blur(8px);
       display: flex;
@@ -513,12 +638,12 @@
       max-width: 720px;
       max-height: 92vh;
       overflow-y: auto;
-      border-radius: 18px;
-      background: #170e0b;
-      border: 1px solid rgba(251, 191, 36, 0.42);
+      border-radius: 4px;
+      background: #0e100f;
+      border: 1px solid rgba(255, 255, 255, 0.28);
       padding: 22px;
-      color: #fdf8f2;
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+      color: #ffffff;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.78);
     }
     .n72-qr-layout {
       display: flex;
@@ -528,42 +653,46 @@
       margin: 14px 0;
     }
     .n72-sticker-preview {
-      flex: 0 0 210px;
+      flex: 0 0 214px;
       margin: 0 auto;
-      padding: 14px 14px 12px;
-      border-radius: 14px;
-      background: #fdf8f2;
-      color: #1f130f;
-      border: 2px solid #dc2626;
+      padding: 15px 14px 13px;
+      border-radius: 2px;
+      background: #ffffff;
+      color: #0b0c0b;
+      border: 2px solid #0b0c0b;
       text-align: center;
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
     .n72-sticker-preview.dark-menu {
-      background: #141211;
-      color: #fdf8f2;
-      border-color: #f59e0b;
+      background: #0b0c0b;
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.65);
+    }
+    .n72-sticker-logo {
+      width: 76px;
+      height: auto;
+      display: block;
     }
     .n72-sticker-head {
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 0.04em;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.20em;
       text-transform: uppercase;
-      color: #b91c1c;
+      color: var(--n72-green);
     }
     .n72-sticker-preview.dark-menu .n72-sticker-head {
-      color: #fde68a;
+      color: var(--n72-green-bright);
     }
     .n72-qr-frame {
-      width: 158px;
-      height: 158px;
-      padding: 6px;
-      border-radius: 10px;
+      width: 156px;
+      height: 156px;
+      padding: 5px;
       background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.10);
     }
     .n72-qr-frame svg {
       width: 100%;
@@ -571,9 +700,12 @@
       display: block;
     }
     .n72-sticker-sub {
-      font-size: 11px;
-      line-height: 1.35;
-      font-weight: 700;
+      font-family: var(--n72-display);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 1.25;
     }
     .n72-qr-details {
       flex: 1;
@@ -583,32 +715,33 @@
     }
     .n72-style-switch {
       display: flex;
-      gap: 6px;
+      gap: 7px;
       flex-wrap: wrap;
       margin-bottom: 10px;
     }
     .n72-style-btn {
-      padding: 5px 11px;
-      border-radius: 999px;
-      border: 1px solid rgba(251, 191, 36, 0.38);
-      background: rgba(34, 21, 17, 0.9);
-      color: #f5ede4;
+      padding: 6px 12px;
+      border-radius: 2px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: #141615;
+      color: #e4e5e1;
       font-size: 11.5px;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
     }
     .n72-style-btn.active {
-      background: #b91c1c;
-      border-color: #fca5a5;
+      background: var(--n72-green);
+      border-color: var(--n72-green-bright);
       color: #ffffff;
     }
     .n72-ideas-box {
-      padding: 11px 13px;
-      border-radius: 12px;
-      background: rgba(255, 248, 240, 0.05);
-      border: 1px solid rgba(251, 191, 36, 0.24);
+      padding: 12px 14px;
+      border-radius: 2px;
+      background: #141615;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       font-size: 12.2px;
-      line-height: 1.5;
+      line-height: 1.55;
+      color: #e4e5e1;
     }
     .n72-ideas-box ul {
       margin: 6px 0 0;
@@ -621,222 +754,235 @@
       margin-top: 12px;
     }
 
-    /* Light Mode ("Speisekarte / Mittagstisch") Overrides */
-    html[data-theme="light"],
-    html[data-theme="light"] body {
-      background: radial-gradient(ellipse at 20% 0%, #fffcf7 0%, #f8efe1 56%, #eee0ca 100%) !important;
-      color: #1f130f !important;
-    }
-    html[data-theme="light"] .arcade-topbar {
-      background: rgba(255, 251, 245, 0.92) !important;
-      border-bottom-color: rgba(120, 53, 15, 0.14) !important;
-    }
-    html[data-theme="light"] .topbar-title {
-      color: #1f130f !important;
-    }
-    html[data-theme="light"] .back-hub-btn {
-      background: #fee2e2 !important;
-      border-color: rgba(185, 28, 28, 0.35) !important;
-      color: #991b1b !important;
-    }
-    html[data-theme="light"] .icon-btn,
-    html[data-theme="light"] .pill-stat {
-      background: #fffcf7 !important;
-      border-color: rgba(120, 53, 15, 0.18) !important;
-      color: #1f130f !important;
-    }
-    html[data-theme="light"] .glass-card {
-      background: rgba(255, 253, 249, 0.96) !important;
-      border-color: rgba(120, 53, 15, 0.15) !important;
-      box-shadow: 0 12px 34px rgba(87, 50, 26, 0.09) !important;
-      color: #1f130f !important;
-    }
-    html[data-theme="light"] .glass-card h1,
-    html[data-theme="light"] .glass-card h2 {
-      color: #1f130f !important;
-    }
-    html[data-theme="light"] .n72-welcome-banner {
-      background: linear-gradient(135deg, rgba(185, 28, 28, 0.08), rgba(255, 251, 244, 0.98));
-      border-color: rgba(185, 28, 28, 0.25);
-    }
-    html[data-theme="light"] .n72-logo-mark {
-      background: #fff8ee;
-      border-color: rgba(185, 28, 28, 0.32);
-    }
-    html[data-theme="light"] .n72-welcome-text { color: #2b1d17; }
-    html[data-theme="light"] .n72-welcome-text strong { color: #991b1b; }
-    html[data-theme="light"] .n72-chip {
-      background: #fef3c7;
-      border-color: rgba(180, 83, 9, 0.28);
-      color: #78350f;
-    }
-    html[data-theme="light"] .n72-chip.basil {
-      background: #dcfce7;
-      border-color: rgba(21, 128, 61, 0.32);
-      color: #14532d;
-    }
-    html[data-theme="light"] .n72-cta-btn {
-      background: linear-gradient(135deg, #b91c1c, #dc2626);
-      border-color: #991b1b;
-      color: #ffffff;
-    }
-    html[data-theme="light"] .n72-cta-btn.alt {
-      background: #f0fdf4;
-      border-color: rgba(21, 128, 61, 0.38);
-      color: #166534;
-    }
-    html[data-theme="light"] .n72-sublead { color: #5f4c41; }
-    html[data-theme="light"] .diff-pill,
-    html[data-theme="light"] .time-mode-pill,
-    html[data-theme="light"] .round-len-pill {
-      background: #f7efe2 !important;
-      border-color: rgba(120, 53, 15, 0.2) !important;
-      color: #3f2d23 !important;
-    }
-    html[data-theme="light"] .diff-pill.active,
-    html[data-theme="light"] .time-mode-pill.active,
-    html[data-theme="light"] .round-len-pill.active {
-      background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
-      border-color: #991b1b !important;
-      color: #ffffff !important;
-    }
-    html[data-theme="light"] .diff-pill.pro.active {
-      background: linear-gradient(135deg, #b45309, #d97706) !important;
-      border-color: #92400e !important;
-      color: #ffffff !important;
-    }
-    html[data-theme="light"] .time-mode-pill.relaxed.active {
-      background: linear-gradient(135deg, #15803d, #16a34a) !important;
-      border-color: #166534 !important;
-      color: #ffffff !important;
-    }
-    html[data-theme="light"] .pool-status-bar {
-      background: #faf3e8 !important;
-      border-color: rgba(120, 53, 15, 0.16) !important;
-      color: #5f4c41 !important;
-    }
-    html[data-theme="light"] .pool-status-text strong { color: #991b1b !important; }
-    html[data-theme="light"] .pool-reset-btn {
-      background: #ffffff !important;
-      border-color: rgba(120, 53, 15, 0.22) !important;
-      color: #3f2d23 !important;
-    }
-    html[data-theme="light"] .cat-card {
-      background: #ffffff;
-      border-color: rgba(120, 53, 15, 0.14);
-      color: #1f130f;
-      box-shadow: 0 4px 14px rgba(87, 50, 26, 0.05);
-    }
-    html[data-theme="light"] .cat-card:hover {
-      background: #fff7ed;
-      border-color: #b91c1c;
-    }
-    html[data-theme="light"] .cat-card.featured {
-      background: linear-gradient(145deg, #fef2f2, #ffffff);
-      border-color: rgba(185, 28, 28, 0.36);
-    }
-    html[data-theme="light"] .cat-card.featured-basil {
-      background: linear-gradient(145deg, #f0fdf4, #ffffff);
-      border-color: rgba(21, 128, 61, 0.35);
-    }
-    html[data-theme="light"] .cat-desc { color: #5f4c41; }
-    html[data-theme="light"] .cat-meta { color: #991b1b; }
-    html[data-theme="light"] .q-cat-pill {
-      background: #fee2e2;
-      border-color: rgba(185, 28, 28, 0.35);
-      color: #991b1b;
-    }
-    html[data-theme="light"] .q-diff-pill.mid {
-      background: #fef3c7;
-      border-color: rgba(217, 119, 6, 0.42);
-      color: #92400e;
-    }
-    html[data-theme="light"] .q-diff-pill.pro {
-      background: #ffe4e6;
-      border-color: rgba(190, 18, 60, 0.42);
-      color: #9f1239;
-    }
-    html[data-theme="light"] .q-text { color: #1f130f; }
-    html[data-theme="light"] .ans-btn {
-      background: #fffcf7;
-      border-color: rgba(120, 53, 15, 0.18);
-      color: #1f130f;
-    }
-    html[data-theme="light"] .ans-btn:hover:not(:disabled) {
-      background: #fef2f2;
-      border-color: #b91c1c;
-    }
-    html[data-theme="light"] .ans-key { background: #f3e8d7; color: #3f2d23; }
-    html[data-theme="light"] .ans-btn.correct { background: #dcfce7; border-color: #16a34a; color: #14532d; }
-    html[data-theme="light"] .ans-btn.wrong { background: #ffe4e6; border-color: #e11d48; color: #881337; }
-    html[data-theme="light"] .joker-btn {
-      background: #fef3c7;
-      border-color: rgba(180, 83, 9, 0.38);
-      color: #78350f;
-    }
-    html[data-theme="light"] .fact-box {
-      background: #f0fdf4;
-      border-color: rgba(21, 128, 61, 0.32);
-      color: #1f130f;
-    }
-    html[data-theme="light"] .res-box {
-      background: #faf3e8;
-      border-color: rgba(120, 53, 15, 0.16);
-    }
-    html[data-theme="light"] .res-box b { color: #991b1b; }
-    html[data-theme="light"] .secondary-btn {
-      background: #faf3e8 !important;
-      border-color: rgba(120, 53, 15, 0.22) !important;
-      color: #2b1d17 !important;
-    }
-    html[data-theme="light"] .n72-modal-card {
-      background: #fffdf9;
-      color: #1f130f;
-      border-color: rgba(185, 28, 28, 0.32);
-    }
-    html[data-theme="light"] .n72-style-btn {
-      background: #f7efe2;
-      border-color: rgba(120, 53, 15, 0.22);
-      color: #2b1d17;
-    }
-    html[data-theme="light"] .n72-style-btn.active {
-      background: #b91c1c;
-      border-color: #991b1b;
-      color: #ffffff;
-    }
-    html[data-theme="light"] .n72-ideas-box {
-      background: #faf3e8;
-      border-color: rgba(120, 53, 15, 0.18);
-      color: #2b1d17;
-    }
-
-    .quiz-speed-btn {
-      background: rgba(34, 21, 17, 0.92) !important;
-      border-color: rgba(251, 191, 36, 0.42) !important;
-      color: #fde68a !important;
-    }
-    .quiz-speed-btn.relaxed {
-      background: rgba(20, 83, 45, 0.35) !important;
-      border-color: rgba(74, 222, 128, 0.5) !important;
-      color: #bbf7d0 !important;
-    }
     .arcade-legal-footer,
     .arcade-legal-footer a {
       color: var(--n72-muted) !important;
     }
+
+    /* =========================================================================
+       Light Mode ("Gedruckte Papier-Speisekarte")
+       Reines Papier-Weiß / Off-White · Tiefschwarze Typo · Basilikumgrün
+       ========================================================================= */
+    html[data-theme="light"],
+    html[data-theme="light"] body {
+      background-color: #f4f4f1 !important;
+      background-image:
+        radial-gradient(rgba(11, 12, 11, 0.03) 1px, transparent 0) !important;
+      background-size: 40px 40px !important;
+      color: #111211 !important;
+    }
+    html[data-theme="light"] .arcade-topbar {
+      background: rgba(255, 255, 255, 0.94) !important;
+      border-bottom: 1px solid rgba(17, 18, 17, 0.14) !important;
+    }
+    html[data-theme="light"] .topbar-title {
+      color: #111211 !important;
+    }
+    html[data-theme="light"] .back-hub-btn,
+    html[data-theme="light"] .icon-btn,
+    html[data-theme="light"] .pill-stat,
+    html[data-theme="light"] .arcade-feedback-btn,
+    html[data-theme="light"] .abm-trigger {
+      background: #ffffff !important;
+      border-color: rgba(17, 18, 17, 0.28) !important;
+      color: #111211 !important;
+    }
+    html[data-theme="light"] .abm-trigger {
+      border-color: #111211 !important;
+    }
+    html[data-theme="light"] .back-hub-btn:hover,
+    html[data-theme="light"] .icon-btn:hover,
+    html[data-theme="light"] .arcade-feedback-btn:hover,
+    html[data-theme="light"] .abm-trigger:hover {
+      background: #eef5eb !important;
+      border-color: var(--n72-green) !important;
+    }
+    html[data-theme="light"] .glass-card {
+      background: #ffffff !important;
+      border-color: rgba(17, 18, 17, 0.16) !important;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06) !important;
+      color: #111211 !important;
+    }
+    html[data-theme="light"] .n72-welcome-banner {
+      background: #fafaf8;
+      border-color: #111211;
+    }
+    html[data-theme="light"] .n72-flour-frame {
+      border-color: rgba(17, 18, 17, 0.10);
+    }
+    html[data-theme="light"] .n72-logo-wrap { color: #111211; }
+    html[data-theme="light"] .n72-tracked-sub { color: #3a3d39; }
+    html[data-theme="light"] .n72-tracked-sub .n72-green { color: var(--n72-green-deep); }
+    html[data-theme="light"] .n72-hero-headline { color: #111211; }
+    html[data-theme="light"] .n72-slash-line { color: #4b4f4a; }
+    html[data-theme="light"] .n72-slash-line strong { color: #111211; }
+    html[data-theme="light"] .n72-slash-line .sep { color: var(--n72-green-deep); }
+    html[data-theme="light"] .n72-cta-btn.alt {
+      background: #ffffff;
+      border-color: #111211;
+      color: #111211;
+    }
+    html[data-theme="light"] .n72-cta-btn.alt:hover {
+      background: #f0f0ec;
+    }
+    html[data-theme="light"] .n72-section-title { color: #111211; }
+    html[data-theme="light"] .n72-sublead { color: #4b4f4a; }
+    html[data-theme="light"] .diff-pill,
+    html[data-theme="light"] .time-mode-pill,
+    html[data-theme="light"] .round-len-pill {
+      background: #ffffff !important;
+      border-color: rgba(17, 18, 17, 0.22) !important;
+      color: #272926 !important;
+    }
+    html[data-theme="light"] .diff-pill.active,
+    html[data-theme="light"] .time-mode-pill.active,
+    html[data-theme="light"] .round-len-pill.active {
+      background: var(--n72-green) !important;
+      border-color: var(--n72-green-deep) !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="light"] .diff-pill.pro.active {
+      background: #111211 !important;
+      border-color: #111211 !important;
+      color: #ffffff !important;
+    }
+    html[data-theme="light"] .time-mode-pill.relaxed.active {
+      background: #e9f5e4 !important;
+      border-color: var(--n72-green) !important;
+      color: #25481a !important;
+    }
+    html[data-theme="light"] .pool-status-bar {
+      background: #fafaf8 !important;
+      border-color: rgba(17, 18, 17, 0.16) !important;
+      color: #4b4f4a !important;
+    }
+    html[data-theme="light"] .pool-status-text strong { color: var(--n72-green-deep) !important; }
+    html[data-theme="light"] .pool-reset-btn {
+      background: #ffffff !important;
+      border-color: rgba(17, 18, 17, 0.24) !important;
+      color: #111211 !important;
+    }
+    html[data-theme="light"] .cat-card {
+      background: #ffffff;
+      border-color: rgba(17, 18, 17, 0.18);
+      color: #111211;
+    }
+    html[data-theme="light"] .cat-card:hover {
+      background: #f5faf3;
+      border-color: var(--n72-green);
+    }
+    html[data-theme="light"] .cat-card.featured {
+      background: linear-gradient(145deg, #f1f8ee, #ffffff);
+      border-color: var(--n72-green);
+    }
+    html[data-theme="light"] .cat-menu-head { color: #111211; }
+    html[data-theme="light"] .cat-menu-head .tag { color: var(--n72-green-deep); }
+    html[data-theme="light"] .cat-desc { color: #4b4f4a; }
+    html[data-theme="light"] .cat-meta {
+      color: #2c2e2b;
+      border-top-color: rgba(17, 18, 17, 0.10);
+    }
+    html[data-theme="light"] .cat-meta .go { color: var(--n72-green-deep); }
     html[data-theme="light"] .quiz-speed-btn {
-      background: #fef3c7 !important;
-      border-color: rgba(180, 83, 9, 0.35) !important;
-      color: #78350f !important;
+      background: #f5f5f2 !important;
+      border-color: rgba(17, 18, 17, 0.26) !important;
+      color: #111211 !important;
     }
     html[data-theme="light"] .quiz-speed-btn.relaxed {
-      background: #dcfce7 !important;
-      border-color: rgba(21, 128, 61, 0.42) !important;
-      color: #14532d !important;
+      background: #e9f5e4 !important;
+      border-color: var(--n72-green) !important;
+      color: #25481a !important;
+    }
+    html[data-theme="light"] .timer-track { background: rgba(17, 18, 17, 0.10); }
+    html[data-theme="light"] .q-cat-pill {
+      background: #f4f4f1;
+      border-color: rgba(17, 18, 17, 0.22);
+      color: #111211;
+    }
+    html[data-theme="light"] .q-diff-pill.easy {
+      background: #e9f5e4;
+      border-color: var(--n72-green);
+      color: #25481a;
+    }
+    html[data-theme="light"] .q-diff-pill.mid {
+      background: #f4f4f1;
+      border-color: rgba(17, 18, 17, 0.30);
+      color: #111211;
+    }
+    html[data-theme="light"] .q-diff-pill.pro {
+      background: #111211;
+      border-color: #111211;
+      color: #ffffff;
+    }
+    html[data-theme="light"] .q-text { color: #111211; }
+    html[data-theme="light"] .ans-btn {
+      background: #fafaf8;
+      border-color: rgba(17, 18, 17, 0.20);
+      color: #111211;
+    }
+    html[data-theme="light"] .ans-btn:hover:not(:disabled) {
+      background: #f0f7ed;
+      border-color: var(--n72-green);
+    }
+    html[data-theme="light"] .ans-key {
+      background: #ecece8;
+      border-color: rgba(17, 18, 17, 0.14);
+      color: #111211;
+    }
+    html[data-theme="light"] .ans-btn.correct {
+      background: #e5f4df;
+      border-color: var(--n72-green);
+      color: #1b3813;
+    }
+    html[data-theme="light"] .ans-btn.wrong {
+      background: #ffe4e6;
+      border-color: #e11d48;
+      color: #881337;
+    }
+    html[data-theme="light"] .joker-bar { border-top-color: rgba(17, 18, 17, 0.12); }
+    html[data-theme="light"] .joker-btn {
+      background: #ffffff;
+      border-color: rgba(17, 18, 17, 0.26);
+      color: #111211;
+    }
+    html[data-theme="light"] .fact-box {
+      background: #f2f8ef;
+      border-color: var(--n72-green);
+      color: #111211;
+    }
+    html[data-theme="light"] .res-box {
+      background: #fafaf8;
+      border-color: rgba(17, 18, 17, 0.16);
+    }
+    html[data-theme="light"] .res-box b { color: var(--n72-green-deep); }
+    html[data-theme="light"] .secondary-btn {
+      background: #ffffff !important;
+      border-color: rgba(17, 18, 17, 0.26) !important;
+      color: #111211 !important;
+    }
+    html[data-theme="light"] .n72-modal-card {
+      background: #ffffff;
+      color: #111211;
+      border-color: #111211;
+    }
+    html[data-theme="light"] .n72-style-btn {
+      background: #f4f4f1;
+      border-color: rgba(17, 18, 17, 0.22);
+      color: #111211;
+    }
+    html[data-theme="light"] .n72-style-btn.active {
+      background: var(--n72-green);
+      border-color: var(--n72-green-deep);
+      color: #ffffff;
+    }
+    html[data-theme="light"] .n72-ideas-box {
+      background: #fafaf8;
+      border-color: rgba(17, 18, 17, 0.16);
+      color: #272926;
     }
     html[data-theme="light"] .arcade-legal-footer,
     html[data-theme="light"] .arcade-legal-footer a {
-      color: #6b5344 !important;
+      color: #555954 !important;
     }
 
     .hidden { display: none !important; }
@@ -846,7 +992,7 @@
   <header class="arcade-topbar">
     <div class="topbar-left">
       <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
-      <div class="topbar-title">🍕 Napoli72H · Pizza-Quiz Aachen</div>
+      <div class="topbar-title">NAPOLI 72H · QUIZ</div>
     </div>
     <div class="topbar-right">
       <span class="pill-stat">🏆 <span id="top-best">0</span></span>
@@ -857,44 +1003,57 @@
   <main class="quiz-wrap">
     <!-- 1. Menu Screen -->
     <section id="screen-menu" class="glass-card n72-hero-card">
-      <div class="n72-tricolore-bar" aria-hidden="true"></div>
-
       <div class="n72-welcome-banner">
-        <div class="n72-brand-row">
-          <div class="n72-logo-mark" aria-hidden="true">
-            <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-              <path d="M5 29V18a13 13 0 0 1 26 0v11H5z" fill="#2a1510" stroke="#fbbf24" stroke-width="1.8"/>
-              <path d="M9 29V19a9 9 0 0 1 18 0v10H9z" fill="#b91c1c"/>
-              <path d="M18 11c2.4 3.4 4.2 5.4 4.2 7.8a4.2 4.2 0 1 1-8.4 0c0-2.4 1.8-4.4 4.2-7.8z" fill="#fbbf24"/>
-              <path d="M23.5 23.5c2.2-2 4.5-2 6-1-0.6 2.1-2.5 3.6-6 1z" fill="#22c55e"/>
-            </svg>
-          </div>
-          <div class="n72-welcome-text">
-            <strong>Ohlala – Warten auf deine 485 °C-Pizza? 🍕</strong><br />
-            72 Stunden Teigruhe, 60 Sekunden im Originalofen aus Neapel: Verkürz dir die Zeit am Tisch mit dem <strong>Napoli72H-Quiz</strong> – ideal fürs Mittagstisch-Duell oder den Abend im Franki &amp; der Innenstadt!
-            <div class="n72-loc-chips">
-              <span class="n72-chip">📍 Oppenhoffallee 9–15</span>
-              <span class="n72-chip">📍 Franzstraße 21–23</span>
-              <span class="n72-chip basil">☕ Mittagsmenü Mo–Fr 12–15 Uhr</span>
-            </div>
-          </div>
+        <div class="n72-flour-frame" aria-hidden="true"></div>
+        <div class="n72-logo-wrap">
+          <!-- Exakte Vektor-Nachbildung des echten NAPOLI 72H Logos -->
+          <svg class="n72-logo-svg" viewBox="0 0 166 94" fill="currentColor" role="img" aria-label="NAPOLI 72H Logo">
+            <!-- N (mit typischer Torbogen-Rundung oben) -->
+            <path fill-rule="evenodd" d="M4,44 V17 A13,13 0 0 1 30,17 V44 H22 V17 A5,5 0 0 0 12,17 V44 Z"/>
+            <!-- A -->
+            <path fill-rule="evenodd" d="M35,44 V17 A13,13 0 0 1 61,17 V44 H53 V34 H43 V44 Z M43,27 H53 V17 A5,5 0 0 0 43,17 Z"/>
+            <!-- P -->
+            <path fill-rule="evenodd" d="M66,44 V4 H79.5 A11.5,13 0 0 1 79.5,30 H74 V44 Z M74,11.5 H78.5 A5,5.5 0 0 1 78.5,22.5 H74 Z"/>
+            <!-- O -->
+            <path fill-rule="evenodd" d="M96,31 V17 A13,13 0 0 1 122,17 V31 A13,13 0 0 1 96,31 Z M104,31 V17 A5,5 0 0 1 114,17 V31 A5,5 0 0 1 104,31 Z"/>
+            <!-- L -->
+            <path d="M127,4 H135 V36.5 H149 V44 H127 Z"/>
+            <!-- I -->
+            <path d="M154,4 H162 V44 H154 Z"/>
+            <!-- 7 -->
+            <path d="M4,50 H29 V57 L18,90 H9.5 L20,57.5 H4 Z"/>
+            <!-- 2 -->
+            <path d="M34,62.5 A12.5,12.5 0 0 1 59,62.5 C59,70 54,74 44.5,82.5 H59 V90 H34 V82.5 L49,68.5 C51,66.5 51.5,64.5 51.5,62 A4.5,4.5 0 0 0 42,62 Z"/>
+            <!-- Gestrecktes H bis bündig unter I -->
+            <rect x="65" y="50" width="8" height="40"/>
+            <rect x="65" y="66" width="97" height="8"/>
+            <rect x="154" y="50" width="8" height="40"/>
+          </svg>
+          <p class="n72-tracked-sub"><span class="n72-sub-line">NAPOLI72H –</span><span class="n72-sub-line n72-green">PIZZA QUIZ</span></p>
         </div>
+
+        <h1 class="n72-hero-headline">WARTEN AUF DEINE PIZZA? TESTE DEIN NAPOLI72H-WISSEN.</h1>
+
+        <div class="n72-slash-line">
+          <strong>Oppenhoffallee 9–15</strong><span class="sep">/</span><strong>Franzstraße 21–23</strong><span class="sep">/</span>72 Stunden Teigruhe<span class="sep">/</span>485° Hitze<span class="sep">/</span>60 Sek. Backzeit<span class="sep">/</span><strong>Mittagsmenü Mo–Fr 12–15 Uhr</strong>
+        </div>
+
         <div class="n72-banner-actions">
           <button type="button" class="n72-cta-btn" onclick="openQrModal()">📱 QR-Code für Speisekarte</button>
           <button type="button" class="n72-cta-btn alt" onclick="if(window.ArcadeScores)ArcadeScores.openLeaderboardModal('quiz_napoli72h')">🏆 Bestenliste</button>
         </div>
       </div>
 
-      <h1 style="margin:0 0 6px; font-size:21.5px;">🔥 Napoli72H Wissensquiz · 160 Fragen rund um Pizza, Neapel &amp; Aachen</h1>
+      <h2 class="n72-section-title">FINDE DEINE LIEBLINGS-KATEGORIE.</h2>
       <p class="n72-sublead">
-        Entdecke unsere Speisekarte (von <em>Don Tito</em> &amp; <em>Stallone</em> bis <em>Fichi</em> &amp; <em>Oh Tartufo</em>), lerne die Geheimnisse hinter 72h Teiggare &amp; 485 °C-Backkunst kennen und teste dein Aachen-Wissen.
+        160 Fragen zu Speisekarte (Don Tito / Stallone / Fichi / Oh Tartufo), Neapel-Handwerk &amp; Frankenberger Viertel.
       </p>
 
       <div class="diff-bar" id="diff-bar">
-        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
-        <button class="diff-pill" data-diff="easy">🟢 Pizza-Lover</button>
-        <button class="diff-pill" data-diff="mid">🟡 Stammgast-Pro</button>
-        <button class="diff-pill pro" data-diff="pro">🔴 Pizzaiolo-Meister (1,5× Pkt)</button>
+        <button class="diff-pill active" data-diff="all">Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">Pizza-Lover</button>
+        <button class="diff-pill" data-diff="mid">Stammgast-Pro</button>
+        <button class="diff-pill pro" data-diff="pro">Pizzaiolo-Meister (1,5× Pkt)</button>
       </div>
 
       <div class="quiz-time-bar" id="time-mode-bar">
@@ -931,18 +1090,18 @@
 
       <div class="joker-bar">
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
-          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
-          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">+10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">Überspringen</button>
         </div>
-        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Themen</button>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">← Themen</button>
       </div>
     </section>
 
     <!-- 3. Result Screen -->
     <section id="screen-result" class="glass-card result-card hidden">
-      <div id="res-emoji" style="font-size:48px;">🍕</div>
-      <h2 id="res-heading" style="margin:8px 0 4px;">Pizza-Runde geschafft!</h2>
+      <div id="res-emoji" style="font-size:44px;">🍕</div>
+      <h2 id="res-heading" class="n72-section-title" style="margin:8px 0 4px;">RUNDE GESCHAFFT.</h2>
       <p id="res-sub" style="margin:0;opacity:0.8;font-size:13.5px;"></p>
 
       <div class="result-stats">
@@ -952,8 +1111,8 @@
       </div>
 
       <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button class="primary-btn" onclick="replayCategory()">🔄 Neue Runde am Tisch</button>
-        <button class="secondary-btn" onclick="backToMenu()">🍕 Anderes Thema wählen</button>
+        <button class="primary-btn" onclick="replayCategory()">Neue Runde</button>
+        <button class="secondary-btn" onclick="backToMenu()">Anderes Thema</button>
         <button class="secondary-btn" onclick="if(window.ArcadeScores)ArcadeScores.openLeaderboardModal('quiz_napoli72h')">🏆 Bestenliste</button>
       </div>
     </section>
@@ -963,29 +1122,42 @@
   <div id="n72-qr-modal" class="n72-modal-backdrop hidden" onclick="if(event.target===this)closeQrModal()">
     <div class="n72-modal-card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
-        <h2 style="margin:0;font-size:19px;">📱 QR-Code direkt für die Speisekarte</h2>
+        <h2 class="n72-section-title" style="margin:0;font-size:21px;">QR-CODE DIREKT FÜR DIE SPEISEKARTE</h2>
         <button type="button" class="secondary-btn" style="padding:6px 11px;" onclick="closeQrModal()">✕</button>
       </div>
-      <p style="font-size:13px;line-height:1.5;margin:10px 0 6px;opacity:0.9;">
-        Kompakt gebaut für die Ecke eurer Speisekarte oder den Mittagsmenü-Einleger – ganz ohne zusätzlichen Tischaufsteller. Einfach scannen &amp; während der 60-Sekunden-Ofenzeit mit Freunden testen:
+      <p style="font-size:13px;line-height:1.5;margin:10px 0 6px;opacity:0.86;">
+        Passend zu eurem Original-Design für die Ecke der Speisekarte oder den Mittagsmenü-Einleger – ganz ohne zusätzlichen Tischaufsteller:
       </p>
 
       <div class="n72-qr-layout">
-        <div id="n72-sticker-preview" class="n72-sticker-preview">
-          <div class="n72-sticker-head">🍕 485°C · 60 Sek. Backzeit</div>
+        <div id="n72-sticker-preview" class="n72-sticker-preview dark-menu">
+          <svg class="n72-sticker-logo" viewBox="0 0 166 94" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M4,44 V17 A13,13 0 0 1 30,17 V44 H22 V17 A5,5 0 0 0 12,17 V44 Z"/>
+            <path fill-rule="evenodd" d="M35,44 V17 A13,13 0 0 1 61,17 V44 H53 V34 H43 V44 Z M43,27 H53 V17 A5,5 0 0 0 43,17 Z"/>
+            <path fill-rule="evenodd" d="M66,44 V4 H79.5 A11.5,13 0 0 1 79.5,30 H74 V44 Z M74,11.5 H78.5 A5,5.5 0 0 1 78.5,22.5 H74 Z"/>
+            <path fill-rule="evenodd" d="M96,31 V17 A13,13 0 0 1 122,17 V31 A13,13 0 0 1 96,31 Z M104,31 V17 A5,5 0 0 1 114,17 V31 A5,5 0 0 1 104,31 Z"/>
+            <path d="M127,4 H135 V36.5 H149 V44 H127 Z"/>
+            <path d="M154,4 H162 V44 H154 Z"/>
+            <path d="M4,50 H29 V57 L18,90 H9.5 L20,57.5 H4 Z"/>
+            <path d="M34,62.5 A12.5,12.5 0 0 1 59,62.5 C59,70 54,74 44.5,82.5 H59 V90 H34 V82.5 L49,68.5 C51,66.5 51.5,64.5 51.5,62 A4.5,4.5 0 0 0 42,62 Z"/>
+            <rect x="65" y="50" width="8" height="40"/>
+            <rect x="65" y="66" width="97" height="8"/>
+            <rect x="154" y="50" width="8" height="40"/>
+          </svg>
+          <div class="n72-sticker-head">P I Z Z A &nbsp; Q U I Z</div>
           <div class="n72-qr-frame">
             <svg id="n72-qr-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" shape-rendering="crispEdges" role="img" aria-label="QR-Code zum Napoli72H Pizza-Quiz">
               <rect width="41" height="41" fill="#ffffff"/>
               <path id="n72-qr-path" fill="#111111" d="M4,4h7v1h-7zM14,4h4v1h-4zM20,4h8v1h-8zM30,4h7v1h-7zM4,5h1v1h-1zM10,5h1v1h-1zM17,5h5v1h-5zM25,5h1v1h-1zM30,5h1v1h-1zM36,5h1v1h-1zM4,6h1v1h-1zM6,6h3v1h-3zM10,6h1v1h-1zM12,6h6v1h-6zM19,6h1v1h-1zM21,6h5v1h-5zM30,6h1v1h-1zM32,6h3v1h-3zM36,6h1v1h-1zM4,7h1v1h-1zM6,7h3v1h-3zM10,7h1v1h-1zM12,7h2v1h-2zM15,7h1v1h-1zM18,7h1v1h-1zM20,7h1v1h-1zM23,7h1v1h-1zM26,7h1v1h-1zM30,7h1v1h-1zM32,7h3v1h-3zM36,7h1v1h-1zM4,8h1v1h-1zM6,8h3v1h-3zM10,8h1v1h-1zM12,8h2v1h-2zM15,8h3v1h-3zM19,8h1v1h-1zM22,8h1v1h-1zM25,8h1v1h-1zM27,8h1v1h-1zM30,8h1v1h-1zM32,8h3v1h-3zM36,8h1v1h-1zM4,9h1v1h-1zM10,9h1v1h-1zM12,9h1v1h-1zM17,9h5v1h-5zM24,9h1v1h-1zM30,9h1v1h-1zM36,9h1v1h-1zM4,10h7v1h-7zM12,10h1v1h-1zM14,10h1v1h-1zM16,10h1v1h-1zM18,10h1v1h-1zM20,10h1v1h-1zM22,10h1v1h-1zM24,10h1v1h-1zM26,10h1v1h-1zM28,10h1v1h-1zM30,10h7v1h-7zM12,11h3v1h-3zM16,11h1v1h-1zM18,11h2v1h-2zM23,11h3v1h-3zM28,11h1v1h-1zM4,12h1v1h-1zM6,12h5v1h-5zM13,12h2v1h-2zM17,12h1v1h-1zM19,12h1v1h-1zM21,12h1v1h-1zM23,12h1v1h-1zM26,12h1v1h-1zM28,12h1v1h-1zM30,12h5v1h-5zM7,13h2v1h-2zM11,13h1v1h-1zM13,13h4v1h-4zM20,13h1v1h-1zM22,13h2v1h-2zM27,13h1v1h-1zM30,13h2v1h-2zM33,13h2v1h-2zM36,13h1v1h-1zM8,14h1v1h-1zM10,14h1v1h-1zM12,14h5v1h-5zM19,14h1v1h-1zM22,14h1v1h-1zM24,14h1v1h-1zM26,14h1v1h-1zM28,14h2v1h-2zM32,14h1v1h-1zM34,14h2v1h-2zM4,15h1v1h-1zM11,15h3v1h-3zM18,15h1v1h-1zM20,15h1v1h-1zM23,15h4v1h-4zM29,15h1v1h-1zM32,15h4v1h-4zM4,16h1v1h-1zM7,16h5v1h-5zM14,16h3v1h-3zM22,16h1v1h-1zM26,16h1v1h-1zM28,16h2v1h-2zM32,16h2v1h-2zM4,17h2v1h-2zM7,17h1v1h-1zM11,17h1v1h-1zM13,17h1v1h-1zM16,17h1v1h-1zM18,17h4v1h-4zM23,17h1v1h-1zM27,17h1v1h-1zM30,17h1v1h-1zM33,17h1v1h-1zM35,17h2v1h-2zM6,18h1v1h-1zM10,18h6v1h-6zM22,18h1v1h-1zM28,18h3v1h-3zM33,18h3v1h-3zM4,19h3v1h-3zM14,19h2v1h-2zM17,19h2v1h-2zM20,19h1v1h-1zM25,19h1v1h-1zM27,19h1v1h-1zM29,19h3v1h-3zM33,19h2v1h-2zM6,20h1v1h-1zM8,20h1v1h-1zM10,20h2v1h-2zM13,20h1v1h-1zM21,20h1v1h-1zM23,20h1v1h-1zM26,20h2v1h-2zM29,20h1v1h-1zM31,20h2v1h-2zM36,20h1v1h-1zM4,21h1v1h-1zM6,21h2v1h-2zM11,21h1v1h-1zM14,21h5v1h-5zM21,21h1v1h-1zM23,21h2v1h-2zM27,21h1v1h-1zM30,21h2v1h-2zM33,21h2v1h-2zM36,21h1v1h-1zM4,22h3v1h-3zM8,22h3v1h-3zM12,22h5v1h-5zM19,22h1v1h-1zM21,22h1v1h-1zM25,22h2v1h-2zM28,22h1v1h-1zM30,22h3v1h-3zM34,22h2v1h-2zM4,23h2v1h-2zM7,23h1v1h-1zM11,23h3v1h-3zM17,23h2v1h-2zM21,23h5v1h-5zM27,23h1v1h-1zM29,23h1v1h-1zM31,23h6v1h-6zM5,24h2v1h-2zM8,24h1v1h-1zM10,24h1v1h-1zM12,24h2v1h-2zM17,24h4v1h-4zM23,24h1v1h-1zM26,24h4v1h-4zM32,24h2v1h-2zM35,24h1v1h-1zM4,25h1v1h-1zM6,25h2v1h-2zM11,25h1v1h-1zM16,25h1v1h-1zM19,25h1v1h-1zM22,25h3v1h-3zM27,25h1v1h-1zM29,25h2v1h-2zM33,25h2v1h-2zM36,25h1v1h-1zM4,26h1v1h-1zM6,26h1v1h-1zM8,26h3v1h-3zM12,26h2v1h-2zM15,26h1v1h-1zM18,26h3v1h-3zM26,26h1v1h-1zM30,26h1v1h-1zM32,26h4v1h-4zM4,27h1v1h-1zM6,27h2v1h-2zM11,27h2v1h-2zM14,27h2v1h-2zM18,27h2v1h-2zM22,27h2v1h-2zM25,27h2v1h-2zM32,27h3v1h-3zM4,28h1v1h-1zM8,28h1v1h-1zM10,28h1v1h-1zM12,28h2v1h-2zM17,28h3v1h-3zM21,28h1v1h-1zM26,28h8v1h-8zM35,28h1v1h-1zM12,29h1v1h-1zM14,29h1v1h-1zM17,29h2v1h-2zM20,29h1v1h-1zM22,29h3v1h-3zM28,29h1v1h-1zM32,29h1v1h-1zM34,29h1v1h-1zM36,29h1v1h-1zM4,30h7v1h-7zM15,30h1v1h-1zM17,30h4v1h-4zM22,30h1v1h-1zM24,30h2v1h-2zM27,30h2v1h-2zM30,30h1v1h-1zM32,30h1v1h-1zM34,30h2v1h-2zM4,31h1v1h-1zM10,31h1v1h-1zM12,31h5v1h-5zM18,31h3v1h-3zM25,31h4v1h-4zM32,31h5v1h-5zM4,32h1v1h-1zM6,32h3v1h-3zM10,32h1v1h-1zM12,32h2v1h-2zM15,32h1v1h-1zM19,32h1v1h-1zM22,32h3v1h-3zM28,32h6v1h-6zM35,32h2v1h-2zM4,33h1v1h-1zM6,33h3v1h-3zM10,33h1v1h-1zM12,33h3v1h-3zM18,33h4v1h-4zM23,33h1v1h-1zM25,33h5v1h-5zM32,33h1v1h-1zM34,33h3v1h-3zM4,34h1v1h-1zM6,34h3v1h-3zM10,34h1v1h-1zM12,34h2v1h-2zM15,34h1v1h-1zM22,34h1v1h-1zM24,34h8v1h-8zM33,34h1v1h-1zM4,35h1v1h-1zM10,35h1v1h-1zM13,35h1v1h-1zM16,35h2v1h-2zM20,35h1v1h-1zM22,35h5v1h-5zM30,35h1v1h-1zM32,35h1v1h-1zM34,35h1v1h-1zM4,36h7v1h-7zM12,36h1v1h-1zM17,36h1v1h-1zM20,36h2v1h-2zM26,36h1v1h-1zM28,36h1v1h-1zM30,36h2v1h-2zM35,36h1v1h-1z"/>
             </svg>
           </div>
-          <div class="n72-sticker-sub">Napoli72H Quiz scannen &amp; spielen</div>
+          <div class="n72-sticker-sub">60 Sek. Im Ofen? Scannen &amp; Spielen.</div>
         </div>
 
         <div class="n72-qr-details">
           <div class="n72-style-switch">
-            <button type="button" class="n72-style-btn active" data-qrstyle="light" onclick="setQrTheme('light', this)">📄 Helle Speisekarte</button>
-            <button type="button" class="n72-style-btn" data-qrstyle="dark" onclick="setQrTheme('dark', this)">🖤 Dunkle Speisekarte</button>
+            <button type="button" class="n72-style-btn active" data-qrstyle="dark" onclick="setQrTheme('dark', this)">Dunkle Speisekarte (Original)</button>
+            <button type="button" class="n72-style-btn" data-qrstyle="light" onclick="setQrTheme('light', this)">Helle Speisekarte (Papier)</button>
           </div>
 
           <div class="n72-ideas-box">
@@ -997,19 +1169,19 @@
             </ul>
           </div>
 
-          <div style="margin-top:9px;font-family:var(--font-mono);font-size:11.5px;opacity:0.9;word-break:break-all;">
-            🔗 https://hunterjoeing.github.io/games/quiz-napoli72h/
+          <div style="margin-top:9px;font-family:var(--font-mono);font-size:11.5px;opacity:0.86;word-break:break-all;">
+            https://hunterjoeing.github.io/games/quiz-napoli72h/
           </div>
         </div>
       </div>
 
-      <div id="n72-qr-feedback" style="font-size:12px;font-weight:700;min-height:18px;color:#4ade80;"></div>
+      <div id="n72-qr-feedback" style="font-size:12px;font-weight:700;min-height:18px;color:#72b858;"></div>
 
       <div class="n72-dl-grid">
-        <button type="button" class="primary-btn" onclick="downloadQrBadgePng()">⬇️ Speisekarten-Badge (PNG)</button>
-        <button type="button" class="secondary-btn" onclick="downloadQrOnlyPng()">⬇️ Reiner QR-Code (PNG)</button>
-        <button type="button" class="secondary-btn" onclick="downloadQrSvg()">⬇️ Vektor-SVG</button>
-        <button type="button" class="secondary-btn" onclick="copyQrTextAndUrl()">📋 Link &amp; Text kopieren</button>
+        <button type="button" class="primary-btn" onclick="downloadQrBadgePng()">Speisekarten-Badge (PNG)</button>
+        <button type="button" class="secondary-btn" onclick="downloadQrOnlyPng()">Reiner QR-Code (PNG)</button>
+        <button type="button" class="secondary-btn" onclick="downloadQrSvg()">Vektor-SVG</button>
+        <button type="button" class="secondary-btn" onclick="copyQrTextAndUrl()">Link &amp; Text kopieren</button>
         <button type="button" class="secondary-btn" style="margin-left:auto;" onclick="closeQrModal()">Schließen</button>
       </div>
     </div>
@@ -1039,22 +1211,28 @@
       '101110101101000000101111111101000','100000100100110010111110001010100',
       '111111101000010011000010101100010'
     ];
-    let qrBadgeTheme = 'light';
+    let qrBadgeTheme = 'dark';
 
+    // Speisekarten-Rhythmus wie auf napoli72h.de: "F O C A C C I A | Vegetarisch" + Zutaten mit " / "
     const CATS = [
-      { id: 'mix',       icon: '🔥', name: 'Napoli72H Komplett-Mix (Alle 160 Fragen)', cls: 'featured',       desc: 'Quer durch unsere Speisekarte, 72h-Teigkunst, Italien-Kultur und Aachener Viertel-Wissen.' },
-      { id: 'napoli72h', icon: '🍕', name: 'Napoli72H & Speisekarte',                  cls: '',               desc: 'Don Tito, Stallone, Fichi, Parma 72, Oh Tartufo, Antipasti Finito, 485°C-Ofen & Mittagsmenü.' },
-      { id: 'handwerk',  icon: '🫓', name: 'Kunst der Pizza Napoletana',               cls: '',               desc: '72h Teigruhe, Tipo 00, Leoparding am Cornicione, San-Marzano DOP, Fior di Latte & AVPN.' },
-      { id: 'italien',   icon: '🇮🇹', name: 'Neapel, Zutaten & Genusskultur',          cls: 'featured-basil', desc: 'Vesuv-Böden, Burrata, ’Nduja, Parmigiano, Caffè sospeso, Espresso-Regeln & Tiramisu.' },
-      { id: 'aachen',    icon: '🦁', name: 'Aachen & Frankenberger Viertel',           cls: '',               desc: 'Oppenhoffallee, Franzstraße, Burg Frankenberg, Marschiertor, Dom, Klenkes & Öcher Platt.' }
+      { id: 'mix',       head: 'Komplett-Mix',       tag: 'Alle 160 Fragen', cls: 'featured', name: 'Komplett-Mix',
+        desc: 'Speisekarte / 72h-Teig / 485°-Ofen / Neapel / Frankenberger Viertel' },
+      { id: 'napoli72h', head: 'Napoli72H',          tag: 'Speisekarte',     cls: '', name: 'Napoli72H & Speisekarte',
+        desc: 'Don Tito / Stallone / Fichi / Parma 72 / Oh Tartufo / Antipasti Finito / Mittagsmenü' },
+      { id: 'handwerk',  head: 'Pizza Napoletana',   tag: 'Handwerk',        cls: '', name: 'Kunst der Pizza Napoletana',
+        desc: '72h Teigruhe / Tipo 00 / Cornicione / San Marzano DOP / Fior di Latte / AVPN' },
+      { id: 'italien',   head: 'Neapel & Genuss',    tag: 'Italien',         cls: '', name: 'Neapel, Zutaten & Genusskultur',
+        desc: 'Vesuv / Burrata / ’Nduja / Parmigiano / Caffè sospeso / Tiramisu' },
+      { id: 'aachen',    head: 'Aachen',             tag: 'Frankenberger Viertel', cls: '', name: 'Aachen & Frankenberger Viertel',
+        desc: 'Oppenhoffallee / Franzstraße / Burg Frankenberg / Marschiertor / Dom / Öcher Platt' }
     ];
 
-    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.name]));
 
     const DIFF_INFO = {
-      easy: { label: '🟢 Pizza-Lover',      cls: 'easy', mult: 1.0 },
-      mid:  { label: '🟡 Stammgast-Pro',    cls: 'mid',  mult: 1.2 },
-      pro:  { label: '🔴 Pizzaiolo-Meister', cls: 'pro', mult: 1.5 }
+      easy: { label: 'Pizza-Lover',       cls: 'easy', mult: 1.0 },
+      mid:  { label: 'Stammgast-Pro',     cls: 'mid',  mult: 1.2 },
+      pro:  { label: 'Pizzaiolo-Meister', cls: 'pro', mult: 1.5 }
     };
 
     const QUESTIONS = ArcadeQuizEngine.getBank('napoli72h');
@@ -1139,63 +1317,82 @@
       }, 'image/png');
     }
 
+    // Zeichnet das NAPOLI-72H-Vektorlogo (aus dem Inline-SVG im QR-Modal) auf ein Canvas
+    function drawNapoliLogoCanvas(ctx, x, y, scale, color) {
+      const svg = document.querySelector('.n72-sticker-logo');
+      if (!svg || typeof Path2D === 'undefined') return;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(scale, scale);
+      ctx.fillStyle = color;
+      svg.querySelectorAll('path, rect').forEach(el => {
+        if (el.tagName.toLowerCase() === 'rect') {
+          ctx.fillRect(+el.getAttribute('x'), +el.getAttribute('y'), +el.getAttribute('width'), +el.getAttribute('height'));
+        } else {
+          ctx.fill(new Path2D(el.getAttribute('d')), el.getAttribute('fill-rule') === 'evenodd' ? 'evenodd' : 'nonzero');
+        }
+      });
+      ctx.restore();
+    }
+
     function downloadQrBadgePng() {
       const isDark = qrBadgeTheme === 'dark';
       const w = 1200;
-      const h = 1520;
+      const h = 1600;
+      const bg = isDark ? '#0b0c0b' : '#ffffff';
+      const fg = isDark ? '#ffffff' : '#0b0c0b';
+      const muted = isDark ? '#b0b3ae' : '#4b4f4a';
+      const green = isDark ? '#72b858' : '#437631';
+      const condensed = "'Barlow Condensed', 'Roboto Condensed', 'Arial Narrow', 'Liberation Sans Narrow', Impact, sans-serif";
+
       const cv = document.createElement('canvas');
       cv.width = w;
       cv.height = h;
       const ctx = cv.getContext('2d');
-      ctx.fillStyle = isDark ? '#141211' : '#fdf8f2';
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
 
-      // Subtle Tricolore header bar + outer border
-      ctx.fillStyle = '#16a34a';
-      ctx.fillRect(0, 0, w / 3, 20);
-      ctx.fillStyle = '#fdf8f2';
-      ctx.fillRect(w / 3, 0, w / 3, 20);
-      ctx.fillStyle = '#dc2626';
-      ctx.fillRect((2 * w) / 3, 0, w / 3, 20);
+      // Feiner, eckiger Rahmen wie die ME/NU-Box auf napoli72h.de
+      ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.7)' : '#0b0c0b';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(30, 30, w - 60, h - 60);
 
-      ctx.strokeStyle = isDark ? '#f59e0b' : '#b91c1c';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(18, 28, w - 36, h - 46);
+      // Logo: viewBox 166×94 → Skalierung 3 = 498×282
+      const logoScale = 3;
+      drawNapoliLogoCanvas(ctx, (w - 166 * logoScale) / 2, 84, logoScale, fg);
 
       ctx.textAlign = 'center';
-      ctx.fillStyle = isDark ? '#fde68a' : '#b91c1c';
-      ctx.font = '800 44px system-ui, -apple-system, sans-serif';
-      ctx.fillText('485°C · 60 SEKUNDEN BACKZEIT', w / 2, 114);
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = green;
+      ctx.font = `600 38px ${condensed}`;
+      ctx.fillText('P I Z Z A    Q U I Z', w / 2, 438);
 
-      ctx.fillStyle = isDark ? '#fdf8f2' : '#1f130f';
-      ctx.font = '700 34px system-ui, -apple-system, sans-serif';
-      ctx.fillText('Warten auf deine Pizza? Jetzt Quiz spielen!', w / 2, 168);
-
-      // Crisp white QR quiet zone
-      const mod = 24;
-      const qrBox = (QR_ROWS.length + 8) * mod; // 41 * 24 = 984
+      // QR mit weißer Ruhezone
+      const mod = 22;
+      const qrBox = (QR_ROWS.length + 8) * mod; // 41 × 22 = 902
       const qrX = (w - qrBox) / 2;
-      const qrY = 216;
+      const qrY = 480;
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(qrX, qrY, qrBox, qrBox);
+      if (!isDark) {
+        ctx.strokeStyle = 'rgba(11,12,11,0.18)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(qrX, qrY, qrBox, qrBox);
+      }
       drawQrModules(ctx, qrX + 4 * mod, qrY + 4 * mod, mod, '#111111');
 
-      ctx.fillStyle = isDark ? '#fdf8f2' : '#1f130f';
-      ctx.font = '800 42px system-ui, -apple-system, sans-serif';
-      ctx.fillText('Napoli72H Pizza-Quiz (Aachen)', w / 2, 1292);
+      ctx.fillStyle = fg;
+      ctx.font = `800 62px ${condensed}`;
+      ctx.fillText('60 SEK. IM OFEN? SCANNEN & SPIELEN.', w / 2, 1468, w - 120);
 
-      ctx.fillStyle = isDark ? '#cbbcb0' : '#5f4c41';
-      ctx.font = '600 28px ui-monospace, Menlo, monospace';
-      ctx.fillText('hunterjoeing.github.io/games/quiz-napoli72h/', w / 2, 1365);
-
-      ctx.fillStyle = isDark ? '#86efac' : '#15803d';
-      ctx.font = '700 27px system-ui, -apple-system, sans-serif';
-      ctx.fillText('Oppenhoffallee & Franzstraße · Ohne App direkt im Browser', w / 2, 1435);
+      ctx.fillStyle = muted;
+      ctx.font = `500 29px ${condensed}`;
+      ctx.fillText('OPPENHOFFALLEE 9–15  /  FRANZSTRASSE 21–23  /  AACHEN', w / 2, 1528, w - 120);
 
       cv.toBlob(b => {
         if (!b) return;
         triggerDownload(b, `Napoli72H_Speisekarte_QR_${isDark ? 'Dunkel' : 'Hell'}.png`);
-        setQrStatus(`✅ Speisekarten-Badge (${isDark ? 'Dunkel' : 'Hell'}, 1200×1520 PNG) heruntergeladen.`);
+        setQrStatus(`✅ Speisekarten-Badge (${isDark ? 'Dunkel' : 'Hell'}, 1200×1600 PNG) heruntergeladen.`);
       }, 'image/png');
     }
 
@@ -1248,10 +1445,9 @@
         const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 20);
         return `
           <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
-            <div class="cat-icon">${c.icon}</div>
-            <div class="cat-name">${c.name}</div>
+            <div class="cat-menu-head">${c.head} <span class="tag">| ${c.tag}</span></div>
             <div class="cat-desc">${c.desc}</div>
-            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
+            <div class="cat-meta"><span>${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</span><span class="go">Starten →</span></div>
           </button>
         `;
       }).join('');
@@ -1467,7 +1663,7 @@
       document.getElementById('screen-play').classList.add('hidden');
       document.getElementById('screen-result').classList.remove('hidden');
 
-      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label : 'Alle';
       const scoreRes = ArcadeQuizEngine.submitNormalizedScore('quiz_napoli72h', score, correctCount, deck.length, {
         cat: activeCat,
         diff: selectedDiff
