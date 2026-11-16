@@ -166,6 +166,7 @@
     { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz', icon: '🛩️', lowerIsBetter: false },
     { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz', icon: '✈️', lowerIsBetter: false },
     { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz', icon: '📈', lowerIsBetter: false },
+    { id: 'quiz_bitcoin', title: 'Bitcoin Mega-Quiz (1.000 Fragen)', icon: '₿', lowerIsBetter: false },
     { id: 'quiz_porsche', title: 'Porsche & Taycan Quiz', icon: '🏎️', lowerIsBetter: false },
     { id: 'quiz_md11', title: 'McDonnell Douglas MD-11 Quiz', icon: '🛫', lowerIsBetter: false },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
@@ -208,6 +209,7 @@
       if (p.includes('/games/quiz-military-aircraft')) return 'quiz_mil_air';
       if (p.includes('/games/quiz-airliners')) return 'quiz_airliners';
       if (p.includes('/games/quiz-etfs')) return 'quiz_etfs';
+      if (p.includes('/games/quiz-bitcoin')) return 'quiz_bitcoin';
       if (p.includes('/games/quiz-porsche')) return 'quiz_porsche';
       if (p.includes('/games/quiz-md11')) return 'quiz_md11';
       if (p.includes('/games/quiz')) return 'quiz';
@@ -790,6 +792,7 @@
     { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz (1.000 Fragen)', icon: '🛩️' },
     { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz (1.000 Fragen)', icon: '✈️' },
     { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz (1.000 Fragen)', icon: '📈' },
+    { id: 'quiz_bitcoin', title: 'Bitcoin Mega-Quiz (1.000 Fragen)', icon: '₿' },
     { id: 'quiz_porsche', title: 'Porsche & Taycan Quiz (200 Fragen)', icon: '🏎️' },
     { id: 'quiz_md11', title: 'McDonnell Douglas MD-11 Quiz (100 Fragen)', icon: '🛫' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
