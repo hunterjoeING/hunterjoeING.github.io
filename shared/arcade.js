@@ -162,7 +162,7 @@
     { id: 'quiz_ai', title: 'KI: Entstehung & Technik Quiz', icon: '🤖', lowerIsBetter: false },
     { id: 'quiz_china', title: 'Neuere Chinesische Geschichte', icon: '🏯', lowerIsBetter: false },
     { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿', lowerIsBetter: false },
-    { id: 'quiz_napoli72h', title: 'Napoli72H Pizza-Quiz · Aachen', icon: '🍕', lowerIsBetter: false },
+    { id: 'quiz_napoli72h', title: 'Napoli72H Pizza-Quiz · Aachen', icon: '🍕', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz', icon: '🛩️', lowerIsBetter: false },
     { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz', icon: '✈️', lowerIsBetter: false },
     { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz', icon: '📈', lowerIsBetter: false },
@@ -488,7 +488,7 @@
       root.className = 'arcade-modal-backdrop';
       const tabsHtml = showTabs
         ? `<div class="arcade-modal-tabs" id="arcade-modal-tabs">
-            ${GAME_CATALOG.map(g => `<button type="button" class="arcade-tab-btn ${g.id === activeId ? 'active' : ''}" data-gid="${g.id}">${g.icon} ${escapeHtml(g.title)}</button>`).join('')}
+            ${GAME_CATALOG.filter(g => !g.unlisted).map(g => `<button type="button" class="arcade-tab-btn ${g.id === activeId ? 'active' : ''}" data-gid="${g.id}">${g.icon} ${escapeHtml(g.title)}</button>`).join('')}
            </div>`
         : '';
       const isSub = /\/games\/[^/]+/.test((window.location.pathname || '').toLowerCase());
@@ -782,7 +782,7 @@
     { id: 'p2048', title: '2048 Prism', icon: '🔷' },
     { id: 'quiz_ai', title: 'KI: Entstehung & Funktionsweise Quiz', icon: '🤖' },
     { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿' },
-    { id: 'quiz_napoli72h', title: 'Napoli72H Pizza-Quiz · Aachen (Test-Demo)', icon: '🍕' },
+    { id: 'quiz_napoli72h', title: 'Napoli72H Pizza-Quiz · Aachen (Test-Demo)', icon: '🍕', unlisted: true },
     { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz (1.000 Fragen)', icon: '🛩️' },
     { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz (1.000 Fragen)', icon: '✈️' },
     { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz (1.000 Fragen)', icon: '📈' },
@@ -1471,12 +1471,14 @@
       function renderShell() {
         const user = window.ArcadeAuth.getUser();
         const isPriv = window.ArcadeAuth.isAdminOrAgent();
-        const targetOptions = FEEDBACK_TARGETS.map(t =>
+        const currentGameId = detectGameId();
+        const visibleFeedbackTargets = FEEDBACK_TARGETS.filter(t => !t.unlisted || t.id === currentGameId);
+        const targetOptions = visibleFeedbackTargets.map(t =>
           `<option value="${escapeHtml(t.id)}" ${t.id === activeTarget ? 'selected' : ''}>${t.icon} ${escapeHtml(t.title)}</option>`
         ).join('');
 
-        const postTargetDefault = (activeTarget && activeTarget !== 'all') ? activeTarget : (detectGameId() || 'general');
-        const postTargetOptions = FEEDBACK_TARGETS.filter(t => t.id !== 'all').map(t =>
+        const postTargetDefault = (activeTarget && activeTarget !== 'all') ? activeTarget : (currentGameId || 'general');
+        const postTargetOptions = visibleFeedbackTargets.filter(t => t.id !== 'all').map(t =>
           `<option value="${escapeHtml(t.id)}" ${t.id === postTargetDefault ? 'selected' : ''}>${t.icon} ${escapeHtml(t.title)}</option>`
         ).join('');
 
