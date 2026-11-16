@@ -17,7 +17,7 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
    * Nutze gezielte Zeilen-Ersetzungen anstatt große Dateien komplett neu zu schreiben.
    * Prüfe nach jeder JS-Änderung die Syntax mit `node --check <datei.js>`.
 5. **Mobile-First & Android/iOS-Stabilität:**
-   * Fixierte Hintergrund-Canvas-Elemente (`#cosmos-canvas`) müssen `height: 100lvh` (`top: 0; left: 0`) nutzen und dürfen bei Touch-Scroll (`e.pointerType !== 'mouse'`) oder beim Ein-/Ausblenden der mobilen Adressleiste keine Kamera- oder Layout-Sprünge auslösen.
+   * Fixierte Hintergrund-Canvas-Elemente (`#cosmos-canvas` und `.cosmos-vignette`) müssen `height: 100lvh` (`left: 0; bottom: 0` auf Android/Desktop bzw. `top: 0; bottom: auto` per `@supports (-webkit-touch-callout: none)` auf iOS) nutzen, `transform-origin` am `#hub-shell` auf den sichtbaren Viewport begrenzen (`min(35lvh, 300px)`) und bei Touch-Scroll (`e.pointerType !== 'mouse'`) oder beim Ein-/Ausblenden der mobilen Adressleiste keinerlei Kamera- oder Layout-Sprünge auslösen.
    * Alle Seiten müssen sowohl den **Dark Mode** als auch den **Light Mode** (`html[data-theme="light"]` via `ArcadeTheme`) sauber unterstützen.
 
 ---

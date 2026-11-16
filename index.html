@@ -16,7 +16,7 @@
       padding: 0;
       min-height: 100%;
       overflow-x: clip;
-      overflow-y: auto;
+      overflow-y: visible;
       overscroll-behavior-y: auto;
       background: #020612;
       color: var(--text-main);
@@ -37,9 +37,11 @@
 
     #cosmos-canvas {
       position: fixed;
-      inset: 0;
+      left: 0;
+      bottom: 0;
       width: 100%;
-      height: 100%;
+      height: 100vh;
+      height: 100lvh;
       z-index: 0;
       display: block;
       pointer-events: none;
@@ -47,11 +49,24 @@
 
     .cosmos-vignette {
       position: fixed;
-      inset: 0;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100lvh;
       z-index: 1;
       pointer-events: none;
       background:
         radial-gradient(circle at 50% 30%, transparent 25%, rgba(2, 6, 18, 0.52) 78%, rgba(2, 5, 12, 0.85) 100%);
+    }
+
+    /* Auf iOS Safari blendet die untere Adressleiste beim Scrollen aus -> oben verankern */
+    @supports (-webkit-touch-callout: none) {
+      #cosmos-canvas,
+      .cosmos-vignette {
+        top: 0;
+        bottom: auto;
+      }
     }
 
     /* Intro Flight HUD */
@@ -119,7 +134,8 @@
       max-width: var(--hub-max);
       margin: 0 auto;
       padding: calc(14px + env(safe-area-inset-top, 0px)) 16px 48px;
-      transform-origin: center 35%;
+      transform-origin: center min(35vh, 300px);
+      transform-origin: center min(35lvh, 300px);
       opacity: 0;
       transform: scale(0.72) translateY(22px);
       pointer-events: none;
@@ -1444,15 +1460,23 @@
       let introFinished = false;
       let mouseNX = 0, mouseNY = 0;
       let smoothNX = 0, smoothNY = 0;
-      let lastVpW = window.innerWidth;
-      let lastVpH = canvas.clientHeight || window.innerHeight;
 
+      function isCoarseTouchDevice() {
+        try {
+          return !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(any-hover: hover)').matches);
+        } catch (e) {
+          return false;
+        }
+      }
       function getCanvasWidth() {
         return canvas.clientWidth || window.innerWidth;
       }
       function getCanvasHeight() {
         return canvas.clientHeight || window.innerHeight;
       }
+
+      let lastVpW = getCanvasWidth();
+      let lastVpH = getCanvasHeight();
 
       function easeOutCubic(t) {
         return 1 - Math.pow(1 - t, 3);
@@ -1478,12 +1502,15 @@
           elShell.classList.add('settled', 'interactive');
           elShell.style.opacity = '';
           elShell.style.transform = '';
+          elShell.style.transformOrigin = '';
         }
       }
 
       function startZoomIntro(duration = INTRO_DURATION) {
         introFinished = false;
         elShell.classList.remove('interactive', 'settled');
+        const originY = Math.round((window.scrollY || window.pageYOffset || 0) + Math.min(getCanvasHeight() * 0.35, 300));
+        elShell.style.transformOrigin = `center ${originY}px`;
         elIntroHud.classList.remove('hidden');
         introStart = performance.now();
         if (duration <= 0) {
@@ -1506,10 +1533,17 @@
       window.addEventListener('keydown', (e) => {
         if (!introFinished && (e.key === 'Escape' || e.key === ' ')) skipIntro();
       });
+      window.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse') {
+          mouseNX = 0;
+          mouseNY = 0;
+        }
+      }, { passive: true });
       window.addEventListener('pointermove', (e) => {
         // Auf Touch-Geräten (Android/iOS) beim Wischen/Scrollen keine Kamera-Verschiebung auslösen,
         // da sonst beim ersten Scrollen die Kamera ruckartig in Y-Richtung springt.
-        if (e.pointerType && e.pointerType !== 'mouse') return;
+        if (e.pointerType !== 'mouse' || isCoarseTouchDevice()) return;
+        if (e.sourceCapabilities && e.sourceCapabilities.firesTouchEvents) return;
         mouseNX = (e.clientX / Math.max(1, getCanvasWidth())) * 2 - 1;
         mouseNY = (e.clientY / Math.max(1, getCanvasHeight())) * 2 - 1;
       }, { passive: true });
@@ -1664,8 +1698,9 @@
         window.addEventListener('resize', () => {
           const w = getCanvasWidth();
           const h = getCanvasHeight();
-          // Ignoriere reine Höhen-Änderungen < 180px bei gleicher Breite (Android-Adressleiste beim ersten Scrollen)
-          if (Math.abs(w - lastVpW) < 2 && Math.abs(h - lastVpH) < 180) return;
+          if (w === lastVpW && h === lastVpH) return;
+          // Fallback-Schutz für ältere Mobilbrowser ohne lvh bei reiner Adressleisten-Höhenänderung
+          if (isCoarseTouchDevice() && Math.abs(w - lastVpW) < 2 && Math.abs(h - lastVpH) < 180) return;
           lastVpW = w;
           lastVpH = h;
           camera.aspect = w / h;
@@ -1715,10 +1750,13 @@
           y: (Math.random() - 0.5) * 2,
           z: Math.random()
         }));
+        let init2dDone = false;
         const resize2d = () => {
           const w = getCanvasWidth();
           const h = getCanvasHeight();
-          if (canvas.width > 0 && Math.abs(w - lastVpW) < 2 && Math.abs(h - lastVpH) < 180) return;
+          if (init2dDone && w === lastVpW && h === lastVpH) return;
+          if (init2dDone && isCoarseTouchDevice() && Math.abs(w - lastVpW) < 2 && Math.abs(h - lastVpH) < 180) return;
+          init2dDone = true;
           lastVpW = w;
           lastVpH = h;
           canvas.width = w;
