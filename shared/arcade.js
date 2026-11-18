@@ -1176,14 +1176,6 @@
                 <label style="display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">Passwort * (mind. 6 Zeichen)</label>
                 <input id="auth-inp-pass" class="fb-input" type="password" maxlength="64" placeholder="••••••••" autocomplete="current-password" />
               </div>
-              <div>
-                <label style="display:block;font-size:11.5px;font-weight:700;margin-bottom:4px;color:var(--text-muted);">Rolle / Modus</label>
-                <select id="auth-inp-role" class="fb-select" style="width:100%;">
-                  <option value="user">👤 Spieler / Community-Mitglied</option>
-                  <option value="admin">👑 Admin / Betreiber (Johannes)</option>
-                  <option value="agent">🤖 KI-Agent (Antigravity Bugfix-Kommentator)</option>
-                </select>
-              </div>
               <div id="auth-captcha-slot"></div>
               <div id="auth-error-msg" style="display:none;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.45);color:#fda4af;font-size:12px;font-weight:700;"></div>
               <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
@@ -1228,7 +1220,6 @@
         }
         const username = document.getElementById('auth-inp-user').value;
         const password = document.getElementById('auth-inp-pass').value;
-        const roleChoice = document.getElementById('auth-inp-role').value;
 
         submitBtn.disabled = true;
         try {
@@ -1237,7 +1228,7 @@
             username,
             displayName: username,
             password,
-            roleChoice,
+            roleChoice: 'user',
             captchaToken: capRes.token
           });
           if (window.ArcadeAudio) window.ArcadeAudio.perkGood();
