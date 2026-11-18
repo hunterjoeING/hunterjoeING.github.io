@@ -72,6 +72,31 @@ function cleanText(val, maxLen = 200) {
     .slice(0, maxLen);
 }
 
+function escapeTelegramHtml(val) {
+  return String(val || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function notifyTelegram(env, ctx, htmlText) {
+  if (!env?.TELEGRAM_BOT_TOKEN || !env?.TELEGRAM_CHAT_ID || !htmlText) return;
+  const url = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const task = fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: String(env.TELEGRAM_CHAT_ID).trim(),
+      text: String(htmlText).slice(0, 3900),
+      parse_mode: 'HTML',
+      disable_web_page_preview: true
+    })
+  }).catch(() => {});
+  if (ctx && typeof ctx.waitUntil === 'function') {
+    ctx.waitUntil(task);
+  }
+}
+
 // ============================================================================
 // WebCrypto Helpers (PBKDF2 Password Hashing & HMAC-SHA256 JWT)
 // ============================================================================
@@ -292,7 +317,7 @@ async function ensureTables(db) {
 }
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { status: 204, headers: CORS_HEADERS });
     }
@@ -303,11 +328,15 @@ export default {
 
     try {
       if (path === '/api/health') {
+        const hasTelegram = Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID);
         return jsonResponse({
           ok: true,
           service: 'hunterjoe-scores',
           db: db ? 'connected' : 'missing',
-          features: ['scores', 'auth', 'turnstile', 'feedback', 'agent-replies']
+          telegramConfigured: hasTelegram,
+          features: hasTelegram
+            ? ['scores', 'auth', 'turnstile', 'feedback', 'agent-replies', 'telegram']
+            : ['scores', 'auth', 'turnstile', 'feedback', 'agent-replies']
         });
       }
 
@@ -538,6 +567,23 @@ export default {
         ).run();
 
         const newId = ins.meta?.last_row_id;
+        if (user.role !== 'agent') {
+          const catLabels = { wish: '💡 Wunsch', bug: '🐞 Bug', praise: '🙌 Lob', question: '❓ Frage' };
+          const targetTitle = GAMES_META[targetId]?.title || (targetId === 'general' ? 'Allgemein / Hub' : targetId);
+          const authorDisplay = user.displayName || user.username || 'Spieler';
+          const preview = text.length > 500 ? text.slice(0, 500) + '…' : text;
+          notifyTelegram(
+            env,
+            ctx,
+            `💬 <b>Neuer Community-Beitrag</b> (#${escapeTelegramHtml(newId)})\n`
+            + `<b>Bereich:</b> ${escapeTelegramHtml(targetTitle)}\n`
+            + `<b>Kategorie:</b> ${escapeTelegramHtml(catLabels[category] || category)}\n`
+            + `<b>Von:</b> ${escapeTelegramHtml(authorDisplay)} (<code>${escapeTelegramHtml(user.username || '')}</code>)\n`
+            + `<b>Titel:</b> ${escapeTelegramHtml(title)}\n\n`
+            + `${escapeTelegramHtml(preview)}\n\n`
+            + `🔗 https://hunterjoeing.github.io/`
+          );
+        }
         return jsonResponse({
           ok: true,
           item: {
@@ -596,6 +642,25 @@ export default {
           await db.prepare(
             `UPDATE feedback_posts SET updated_at = datetime('now') WHERE id = ?1`
           ).bind(postId).run();
+        }
+
+        if (authorRole !== 'admin' && authorRole !== 'agent') {
+          const postRow = await db.prepare(
+            'SELECT title, target_id FROM feedback_posts WHERE id = ?1'
+          ).bind(postId).first().catch(() => null);
+          const targetId = postRow?.target_id || 'general';
+          const targetTitle = GAMES_META[targetId]?.title || (targetId === 'general' ? 'Allgemein / Hub' : targetId);
+          const preview = text.length > 500 ? text.slice(0, 500) + '…' : text;
+          notifyTelegram(
+            env,
+            ctx,
+            `↩️ <b>Neue Antwort im Community Board</b> (Beitrag #${escapeTelegramHtml(postId)})\n`
+            + `<b>Bereich:</b> ${escapeTelegramHtml(targetTitle)}\n`
+            + (postRow?.title ? `<b>Zu:</b> ${escapeTelegramHtml(postRow.title)}\n` : '')
+            + `<b>Von:</b> ${escapeTelegramHtml(authorName)}\n\n`
+            + `${escapeTelegramHtml(preview)}\n\n`
+            + `🔗 https://hunterjoeing.github.io/`
+          );
         }
 
         return jsonResponse({

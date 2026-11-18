@@ -13,3 +13,5 @@ database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
 # - JWT_SECRET           : Zufälliger geheimer Schlüssel für Login-Tokens
 # - ADMIN_SECRET         : Dein Admin-Schlüssel (damit du & der KI-Agent direkt Antworten + Status „Behoben“ posten können)
 # - AGENT_API_KEY        : Optionaler API-Key für direkte Antworten des KI-Agenten per Header X-Agent-Key
+# - TELEGRAM_BOT_TOKEN   : Bot-Token von @BotFather für automatische Benachrichtigungen bei neuem Feedback
+# - TELEGRAM_CHAT_ID     : Deine numerische Telegram Chat-ID für die Push-Benachrichtigungen
