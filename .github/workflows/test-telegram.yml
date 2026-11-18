@@ -1,0 +1,63 @@
+name: Test Telegram Notification
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-telegram:
+    name: Send Test Telegram Message & Check Worker Health
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Check Live Worker Telegram Config
+        run: |
+          node -e '
+          (async () => {
+            const res = await fetch("https://hunterjoe-scores.hunterjoeing.workers.dev/api/health");
+            const data = await res.json();
+            console.log("Worker /api/health:", res.status, JSON.stringify(data));
+            if (!res.ok || !data.telegramConfigured) {
+              throw new Error("Worker does not report telegramConfigured: true");
+            }
+          })();
+          '
+
+      - name: Send Test Message via Telegram Bot API
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node -e '
+          (async () => {
+            const token = (process.env.TELEGRAM_BOT_TOKEN || "").trim();
+            const chatId = (process.env.TELEGRAM_CHAT_ID || "").trim();
+            if (!token || !chatId) {
+              throw new Error("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID secret missing");
+            }
+            const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                chat_id: chatId,
+                text: "🔔 <b>Test-Benachrichtigung von HunterJoe Arcade</b>\n\nDein Telegram-Bot und dein Cloudflare Worker sind erfolgreich verbunden! Sobald jemand im Community Board kommentiert, bekommst du hier sofort Bescheid.\n\n🔗 https://hunterjoeing.github.io/",
+                parse_mode: "HTML",
+                disable_web_page_preview: true
+              })
+            });
+            const data = await res.json().catch(() => ({}));
+            console.log("Telegram API status:", res.status);
+            console.log("Telegram API response:", JSON.stringify({
+              ok: data.ok,
+              error_code: data.error_code,
+              description: data.description,
+              message_id: data.result?.message_id,
+              chat_id: data.result?.chat?.id,
+              bot_from: data.result?.from?.username
+            }));
+            if (!res.ok || !data.ok) {
+              process.exit(1);
+            }
+          })();
+          '
