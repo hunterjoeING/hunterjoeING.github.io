@@ -1,0 +1,131 @@
+name: Deploy Cloudflare Worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'cloudflare-worker/**'
+      - '.github/workflows/deploy-worker.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy hunterjoe-scores Worker
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Resolve Cloudflare Account & D1 Database Binding
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_OVERRIDE: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          node -e '
+          const fs = require("fs");
+
+          (async () => {
+            const token = process.env.CLOUDFLARE_API_TOKEN;
+            if (!token) {
+              console.error("ERROR: GitHub Secret CLOUDFLARE_API_TOKEN is missing.");
+              process.exit(1);
+            }
+
+            const cfFetch = async (path) => {
+              const res = await fetch("https://api.cloudflare.com/client/v4" + path, {
+                headers: { "Authorization": "Bearer " + token }
+              });
+              const data = await res.json().catch(() => ({}));
+              return { ok: res.ok && data.success, status: res.status, data };
+            };
+
+            let accountId = (process.env.CF_ACCOUNT_OVERRIDE || "").trim();
+            if (!accountId) {
+              const acc = await cfFetch("/accounts");
+              if (!acc.ok || !Array.isArray(acc.data.result) || !acc.data.result.length) {
+                console.error("ERROR: Could not list Cloudflare accounts:", JSON.stringify(acc.data));
+                process.exit(1);
+              }
+              accountId = acc.data.result[0].id;
+            }
+            fs.appendFileSync(process.env.GITHUB_ENV, "CLOUDFLARE_ACCOUNT_ID=" + accountId + "\n");
+            console.log("Resolved Cloudflare Account ID:", accountId);
+
+            const tomlPath = "cloudflare-worker/wrangler.toml";
+            let toml = fs.readFileSync(tomlPath, "utf8");
+            if (toml.includes("REPLACE_WITH_YOUR_D1_DATABASE_ID")) {
+              let dbId = "";
+              let dbName = "";
+
+              // 1. Prefer the D1 database currently bound as "DB" on the existing worker
+              const settings = await cfFetch(`/accounts/${accountId}/workers/scripts/hunterjoe-scores/settings`);
+              if (settings.ok && Array.isArray(settings.data.result?.bindings)) {
+                const dbBinding = settings.data.result.bindings.find(b => b.type === "d1" && b.name === "DB");
+                if (dbBinding && dbBinding.id) {
+                  dbId = dbBinding.id;
+                  console.log("Found existing DB binding on hunterjoe-scores worker:", dbId);
+                }
+              }
+
+              // 2. Look up D1 database list to resolve exact name/id
+              const dbs = await cfFetch(`/accounts/${accountId}/d1/database`);
+              const list = (dbs.ok && Array.isArray(dbs.data.result)) ? dbs.data.result : [];
+              if (dbId) {
+                const matched = list.find(d => d.uuid === dbId);
+                if (matched) dbName = matched.name;
+              } else if (list.length > 0) {
+                const preferred = list.find(d => d.name === "hunterjoe-scores-db")
+                  || list.find(d => /hunterjoe|score/i.test(d.name))
+                  || (list.length === 1 ? list[0] : null);
+                if (preferred) {
+                  dbId = preferred.uuid;
+                  dbName = preferred.name;
+                  console.log("Matched D1 database:", dbName, dbId);
+                }
+              }
+
+              if (!dbId) {
+                console.error("ERROR: Could not resolve D1 database_id. Ensure API token has Account D1:Read/Edit permission.");
+                process.exit(1);
+              }
+
+              toml = toml.replace("REPLACE_WITH_YOUR_D1_DATABASE_ID", dbId);
+              if (dbName) {
+                toml = toml.replace(/database_name\s*=\s*"[^"]*"/, `database_name = "${dbName}"`);
+              }
+              fs.writeFileSync(tomlPath, toml, "utf8");
+            }
+          })().catch(err => {
+            console.error(err);
+            process.exit(1);
+          });
+          '
+
+      - name: Deploy Worker via Wrangler
+        working-directory: cloudflare-worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: npx --yes wrangler@latest deploy --keep-vars
+
+      - name: Verify Live Worker Health
+        run: |
+          sleep 5
+          node -e '
+          (async () => {
+            const res = await fetch("https://hunterjoe-scores.hunterjoeing.workers.dev/api/health");
+            const data = await res.json();
+            console.log("Health status:", res.status, JSON.stringify(data));
+            if (!res.ok || !data.ok || data.db !== "connected" || !Array.isArray(data.features) || !data.features.includes("feedback")) {
+              throw new Error("Live worker health check failed after deploy");
+            }
+          })();
+          '
