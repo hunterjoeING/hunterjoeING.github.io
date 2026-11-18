@@ -6,7 +6,7 @@
   <meta name="description" content="Interaktives Pilz-Sammler-Quiz mit Fotos für die Region Aachen (Aachener Wald / Öcher Bösch, Stolberger Kalktriften, Eifel & Hohes Venn) – Pilznamen bestimmen & Giftigkeit / Speisewert prüfen." />
   <title>Pilz-Sammler-Quiz Region Aachen · Namen &amp; Giftigkeit · HunterJoe Arcade</title>
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-pilze-aachen/" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
@@ -63,16 +63,14 @@
     ]
   }
   </script>
-  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .gallery-latin { font-weight: 500; color: #a7f3d0; font-size: 14px; }
-    html[data-theme="light"] .gallery-latin { color: #0f766e; }
-    html[data-theme="light"] .timer-toggle-btn.countdown-expired {
-      background: #e2e8f0;
-      border-color: rgba(15, 23, 42, 0.25);
-      color: #334155;
-    }
+    html[data-theme="light"] .gallery-latin { color: var(--accent-primary); }
   </style>
   <style>
     :root {

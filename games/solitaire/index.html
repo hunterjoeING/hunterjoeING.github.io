@@ -6,8 +6,11 @@
   <title>Klondike Solitaire · HunterJoe Arcade</title>
   <meta name="description" content="Klassisches Klondike Solitaire kostenlos im Browser: wahlweise 1- oder 3-Karten-Zug, Drag &amp; Drop oder 1-Tap-Zug, unbegrenztes Rückgängig, Tipps &amp; globale Bestenliste." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/solitaire/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
@@ -65,7 +68,7 @@
     ]
   }
   </script>
-  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     :root {
@@ -428,61 +431,61 @@
 
     html[data-theme="light"] body {
       background:
-        repeating-linear-gradient(60deg, rgba(15, 23, 42, 0.024) 0 1px, transparent 1px 4px),
-        repeating-linear-gradient(-60deg, rgba(15, 23, 42, 0.024) 0 1px, transparent 1px 4px),
-        radial-gradient(ellipse at 50% 8%, #d1fae5 0%, #bae6fd 52%, #dbeafe 100%);
+        repeating-linear-gradient(60deg, rgba(28, 25, 23, 0.014) 0 1px, transparent 1px 4px),
+        repeating-linear-gradient(-60deg, rgba(28, 25, 23, 0.014) 0 1px, transparent 1px 4px),
+        radial-gradient(ellipse at 50% 8%, #FAF8F5 0%, #F3EFEA 60%, #EAE3D9 100%);
     }
     html[data-theme="light"] .sol-toolbar {
-      background: rgba(255, 255, 255, 0.90);
-      border-color: rgba(13, 148, 136, 0.30);
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      background: var(--bg-surface);
+      border-color: var(--border-hairline);
+      box-shadow: var(--shadow-soft);
     }
     html[data-theme="light"] .sol-btn {
-      background: #f8fafc;
-      border-color: rgba(15, 23, 42, 0.18);
-      color: #1e293b;
+      background: var(--bg-surface);
+      border-color: var(--border-subtle);
+      color: var(--text-main);
     }
     html[data-theme="light"] .sol-btn:hover:not(:disabled) {
-      background: #e0f2fe;
-      border-color: #0284c7;
-      color: #0f172a;
+      background: var(--bg-sand);
+      border-color: var(--accent-primary);
+      color: var(--accent-primary);
     }
     html[data-theme="light"] .sol-btn.active {
-      background: #0d9488;
-      border-color: #0f766e;
-      color: #ffffff;
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #FFFFFF;
     }
     html[data-theme="light"] .pile-slot {
-      border-color: rgba(15, 23, 42, 0.28);
-      background: rgba(255, 255, 255, 0.44);
+      border-color: rgba(28, 25, 23, 0.18);
+      background: rgba(255, 255, 255, 0.56);
     }
     html[data-theme="light"] .waste-slot {
       border-color: transparent;
       background: transparent;
     }
     html[data-theme="light"] .slot-emblem {
-      color: rgba(15, 23, 42, 0.38);
+      color: rgba(28, 25, 23, 0.30);
     }
     html[data-theme="light"] .foundation-slot[data-f="1"] .slot-emblem,
     html[data-theme="light"] .foundation-slot[data-f="3"] .slot-emblem {
-      color: rgba(220, 38, 38, 0.56) !important;
+      color: rgba(159, 58, 50, 0.52) !important;
     }
     html[data-theme="light"] .card.face-up {
-      border-color: #94a3b8;
-      box-shadow: 0 3px 10px rgba(15, 23, 42, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      border-color: rgba(28, 25, 23, 0.22);
+      box-shadow: 0 4px 12px rgba(28, 25, 23, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
     html[data-theme="light"] .win-modal {
-      background: rgba(15, 23, 42, 0.45);
+      background: rgba(28, 25, 23, 0.42);
     }
     html[data-theme="light"] .win-card h2 {
-      color: #15803d;
+      color: var(--accent-primary);
     }
     html[data-theme="light"] .win-stat {
-      background: #f8fafc;
-      border-color: rgba(2, 132, 199, 0.25);
+      background: var(--bg-sand);
+      border-color: var(--border-hairline);
     }
     html[data-theme="light"] .win-stat b {
-      color: #0f172a;
+      color: var(--text-main);
     }
 
     @media (max-width: 480px) {

@@ -6,7 +6,7 @@
   <title>Quiz Arena – Wissens- &amp; Schnellrate-Quiz</title>
   <meta name="description" content="Schnelles Wissensquiz direkt im Browser mit 25s-Zeitbonus oder entspannt ohne Limit: 324 Klassik-Fragen sowie 1.156-Fragen Mega-Mix aus 9 Themenwelten mit Streak-Multiplikator." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz/" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
@@ -63,7 +63,7 @@
     ]
   }
   </script>
-  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css">
   <style>
     .quiz-wrap {
@@ -148,14 +148,6 @@
     .cat-card.mega:hover {
       border-color: #c084fc;
       background: linear-gradient(135deg, rgba(107, 33, 168, 0.45), rgba(14, 116, 144, 0.35), rgba(15, 28, 56, 0.96));
-    }
-    html[data-theme="light"] .cat-card.mega {
-      border-color: rgba(124, 58, 237, 0.48);
-      background: linear-gradient(135deg, #f3e8ff, #e0f2fe, #ffffff);
-    }
-    html[data-theme="light"] .cat-card.mega:hover {
-      border-color: #7c3aed;
-      background: linear-gradient(135deg, #ede9fe, #bae6fd, #ffffff);
     }
 
     .quiz-stage { padding: 20px; }

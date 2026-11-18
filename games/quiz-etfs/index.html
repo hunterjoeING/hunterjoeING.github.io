@@ -6,7 +6,7 @@
   <title>Passives Investieren &amp; ETFs Quiz · 1.000 Fragen zum Weltportfolio</title>
   <meta name="description" content="1.000 Fragen zu ETFs &amp; Weltportfolio in Deutschland: TER, Tracking Difference, UCITS, MSCI ACWI vs. FTSE All-World, Zinseszins, Entsparphase &amp; Investmentsteuer (InvStG)." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-etfs/" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
@@ -63,7 +63,10 @@
     ]
   }
   </script>
-  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .quiz-wrap {
@@ -83,9 +86,9 @@
       line-height: 1.45;
     }
     html[data-theme="light"] .etf-info-note {
-      background: rgba(16, 185, 129, 0.09);
-      border-color: rgba(16, 185, 129, 0.32);
-      color: #065f46;
+      background: var(--bg-sand);
+      border-color: var(--border-hairline);
+      color: var(--text-main);
     }
 
     .diff-bar {
@@ -163,9 +166,6 @@
       color: #6ee7b7;
       margin-top: 4px;
     }
-    html[data-theme="light"] .cat-meta {
-      color: #047857;
-    }
 
     .quiz-stage { padding: 20px; }
     .quiz-meta-row {
@@ -209,10 +209,6 @@
       background: rgba(16, 185, 129, 0.18);
       border: 1px solid rgba(52, 211, 153, 0.44);
       color: #a7f3d0;
-    }
-    html[data-theme="light"] .q-cat-pill {
-      color: #065f46;
-      background: rgba(16, 185, 129, 0.14);
     }
     .q-diff-pill.easy {
       background: rgba(34, 197, 94, 0.16);

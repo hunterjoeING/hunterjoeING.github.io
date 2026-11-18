@@ -9,7 +9,7 @@
   let ctx = null;
   let muted = false;
   let noiseBuf = null;
-  let currentTheme = 'dark';
+  let currentTheme = 'light';
 
   try {
     const legacyMute = localStorage.getItem(LEGACY_MUTE_KEY);
@@ -24,7 +24,7 @@
     if (legacyScores !== null) localStorage.removeItem(LEGACY_STORE_KEY);
     muted = localStorage.getItem(MUTE_KEY) === '1';
     const savedTheme = localStorage.getItem(THEME_KEY);
-    currentTheme = savedTheme === 'light' ? 'light' : 'dark';
+    currentTheme = savedTheme === 'dark' ? 'dark' : 'light';
   } catch (e) {}
 
   try {

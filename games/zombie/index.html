@@ -7,8 +7,11 @@
   <title>Zombie Horde: Gate Runner</title>
   <meta name="description" content="Rasantes Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/zombie/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HunterJoe Arcade" />
@@ -64,7 +67,7 @@
     ]
   }
   </script>
-  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css">
   <style>
     html, body {
@@ -85,8 +88,9 @@
       width: 100%;
       max-width: 980px;
       margin: 0 auto;
-      padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px));
-      gap: 6px;
+      padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+      gap: 8px;
+      animation: editorialFadeIn 0.45s var(--ease-boutique) both;
     }
     .hud-strip {
       flex-shrink: 0;
@@ -94,17 +98,18 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 6px 8px;
-      padding: 7px 11px;
-      border-radius: 12px;
-      background: rgba(12, 18, 38, 0.9);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      font-family: var(--font-mono);
-      font-size: 12px;
+      gap: 8px 10px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-soft);
+      font-family: var(--font-ui);
+      font-size: 12.5px;
     }
     .hud-group {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
       align-items: center;
     }
@@ -114,8 +119,9 @@
       min-height: 200px;
       border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      background: #040814;
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-soft);
+      background: #0B1220;
       touch-action: none;
     }
     canvas#zCanvas {
@@ -129,48 +135,36 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      background: rgba(2, 6, 18, 0.72);
+      padding: 20px;
+      background: rgba(28, 25, 23, 0.38);
       backdrop-filter: blur(6px);
       z-index: 20;
     }
     .overlay-card.hidden { display: none !important; }
     .modal-inner {
       width: min(440px, 100%);
-      padding: 20px;
+      padding: 28px 30px;
       border-radius: 16px;
-      background: rgba(11, 20, 44, 0.96);
-      border: 1px solid rgba(56, 189, 248, 0.55);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-main);
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+      box-shadow: var(--shadow-soft);
     }
     .hint-foot {
       flex-shrink: 0;
       text-align: center;
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
     }
 
-    html[data-theme="light"] .hud-strip {
-      background: rgba(255, 255, 255, 0.94);
-      border-color: rgba(2, 132, 199, 0.28);
-      color: #0f172a;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    html[data-theme="dark"] .overlay-card {
+      background: rgba(20, 18, 16, 0.72);
     }
     html[data-theme="light"] .stage-wrap {
-      background: #bae6fd;
-      border-color: rgba(2, 132, 199, 0.45);
+      background: #E2DDD4;
     }
-    html[data-theme="light"] .overlay-card {
-      background: rgba(15, 23, 42, 0.38);
-    }
-    html[data-theme="light"] .modal-inner {
-      background: rgba(255, 255, 255, 0.96);
-      border-color: rgba(2, 132, 199, 0.45);
-      color: #0f172a;
-      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
-    }
-    html[data-theme="light"] #ov-desc { color: #334155 !important; }
+    html[data-theme="light"] #ov-desc { color: var(--text-muted) !important; }
   </style>
 </head>
 <body>

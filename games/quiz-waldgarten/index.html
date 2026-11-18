@@ -6,11 +6,14 @@
   <title>Waldgarten Quiz · Natur, Tiere, Vögel &amp; Geschichte in Schwarzenburg (Heideblick)</title>
   <meta name="description" content="1.000 Fragen zu heimischen Vögeln, Kranichzug, Rothirschbrunft, Wölfen, Kiefernwald, Pilzen, Waldgarten-Gärtnern &amp; der Geschichte von Schwarzenburg (Heideblick)." />
   <meta name="robots" content="noindex, nofollow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
-  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .quiz-wrap {
@@ -31,10 +34,6 @@
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(15, 23, 42, 0.92));
       border: 1px solid rgba(52, 211, 153, 0.42);
     }
-    html[data-theme="light"] .wg-welcome-banner {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.14), rgba(240, 253, 244, 0.96));
-      border-color: rgba(16, 185, 129, 0.4);
-    }
     .wg-welcome-text {
       flex: 1;
       min-width: 240px;
@@ -44,9 +43,6 @@
     }
     .wg-welcome-text strong {
       color: #34d399;
-    }
-    html[data-theme="light"] .wg-welcome-text strong {
-      color: #047857;
     }
     .wg-flyer-actions {
       display: flex;
@@ -72,11 +68,6 @@
       background: rgba(5, 150, 105, 0.85);
       border-color: #6ee7b7;
       transform: translateY(-1px);
-    }
-    html[data-theme="light"] .wg-flyer-btn {
-      background: #059669;
-      color: #ffffff;
-      border-color: #047857;
     }
 
     .diff-bar {
@@ -154,9 +145,6 @@
       color: #6ee7b7;
       margin-top: 4px;
     }
-    html[data-theme="light"] .cat-meta {
-      color: #047857;
-    }
 
     .quiz-stage { padding: 20px; }
     .quiz-meta-row {
@@ -200,10 +188,6 @@
       background: rgba(16, 185, 129, 0.18);
       border: 1px solid rgba(52, 211, 153, 0.44);
       color: #a7f3d0;
-    }
-    html[data-theme="light"] .q-cat-pill {
-      color: #065f46;
-      background: rgba(16, 185, 129, 0.14);
     }
     .q-diff-pill.easy {
       background: rgba(34, 197, 94, 0.16);
@@ -377,11 +361,6 @@
       padding: 22px;
       color: #f8fafc;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
-    }
-    html[data-theme="light"] .wg-modal-card {
-      background: #ffffff;
-      color: #0f172a;
-      border-color: rgba(16, 185, 129, 0.45);
     }
     .wg-qr-box {
       display: flex;

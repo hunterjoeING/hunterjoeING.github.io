@@ -6,7 +6,7 @@
   <title>McDonnell Douglas MD-11 Quiz · 100 Fragen zum Trijet</title>
   <meta name="description" content="100 Quiz-Fragen rund um die McDonnell Douglas MD-11 in 3 Stufen: Split-Winglets &amp; Glascockpit, Nr.-2-S-Duct &amp; CF6/PW4460-Triebwerke, Lufthansa Cargo &amp; FedEx sowie Historie &amp; Flugsicherheit." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-md11/" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
@@ -63,7 +63,10 @@
     ]
   }
   </script>
-  <script>(function(){try{var t=localStorage.getItem('arcade_theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     .quiz-wrap {
@@ -148,22 +151,6 @@
       margin-top: 4px;
     }
 
-    html[data-theme="light"] .cat-card.featured {
-      background: linear-gradient(145deg, #fffbeb, #ffffff);
-      border-color: rgba(217, 119, 6, 0.45);
-    }
-    html[data-theme="light"] .cat-card.featured:hover {
-      background: linear-gradient(145deg, #fef3c7, #ffffff);
-      border-color: #d97706;
-    }
-    html[data-theme="light"] .cat-meta {
-      color: #b45309;
-    }
-    html[data-theme="light"] .diff-pill.pro.active {
-      background: linear-gradient(135deg, #b45309, #d97706);
-      border-color: #92400e;
-    }
-
     .quiz-stage { padding: 20px; }
     .quiz-meta-row {
       display: flex;
@@ -206,10 +193,6 @@
       background: rgba(14, 165, 233, 0.18);
       border: 1px solid rgba(56, 189, 248, 0.44);
       color: #bae6fd;
-    }
-    html[data-theme="light"] .q-cat-pill {
-      color: #0369a1;
-      background: #e0f2fe;
     }
     .q-diff-pill.easy {
       background: rgba(34, 197, 94, 0.16);
@@ -358,9 +341,6 @@
     .res-box span {
       font-size: 11.5px;
       color: var(--text-muted);
-    }
-    html[data-theme="light"] .res-box b {
-      color: #b45309;
     }
     .hidden { display: none !important; }
   </style>

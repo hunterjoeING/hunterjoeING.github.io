@@ -7,8 +7,11 @@
   <title>Minesweeper 3d prompt Version</title>
   <meta name="description" content="Eigenständig entwickeltes 3D-Würfel-Minesweeper im Browser: Würfel frei mit der Maus drehen, per Mausrad stufenlos auseinanderziehen und Minen in 3D aufdecken." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/minesweeper-3d-prompt-test/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HunterJoe Arcade" />
@@ -64,7 +67,7 @@
     ]
   }
   </script>
-  <script>try{if(localStorage.getItem('arcade_theme')==='light')document.documentElement.setAttribute('data-theme','light');}catch(_){}</script>
+  <script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(_){}</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     :root {
@@ -96,7 +99,7 @@
       touch-action: none;
       background: radial-gradient(circle at 50% 35%, #111c38 0%, #070b19 75%, #03060e 100%);
       color: var(--text-main);
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: var(--font-ui, 'Plus Jakarta Sans', system-ui, sans-serif);
     }
 
     #canvas-container {
@@ -369,65 +372,74 @@
       font-size: 12.5px;
     }
 
-    /* Standalone Light Mode Overrides */
+    /* Standalone Light Mode Overrides – Warm Editorial Boutique */
     html[data-theme="light"] {
-      --bg-dark: #eaf2fb;
-      --panel-bg: rgba(255, 255, 255, 0.90);
-      --panel-border: rgba(2, 132, 199, 0.28);
-      --accent: #0284c7;
-      --accent-glow: rgba(2, 132, 199, 0.2);
-      --text-main: #0f172a;
-      --text-muted: #475569;
+      --bg-dark: #FAF8F5;
+      --panel-bg: rgba(255, 255, 255, 0.94);
+      --panel-border: rgba(28, 25, 23, 0.08);
+      --accent: #3A5A40;
+      --accent-glow: rgba(58, 90, 64, 0.16);
+      --text-main: #1C1917;
+      --text-muted: #57534E;
     }
     html[data-theme="light"],
     html[data-theme="light"] body {
-      background: radial-gradient(circle at 50% 35%, #ffffff 0%, #e6f0fa 58%, #cbdbe9 100%);
-      color: #0f172a;
+      background: radial-gradient(circle at 50% 35%, #FFFFFF 0%, #FAF8F5 60%, #F3EFEA 100%);
+      color: #1C1917;
     }
     html[data-theme="light"] .top-bar,
     html[data-theme="light"] .bottom-hud {
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.12);
+      box-shadow: 0 12px 32px -8px rgba(28, 25, 23, 0.08);
     }
     html[data-theme="light"] .back-link {
-      background: #f1f5f9;
-      border-color: rgba(15, 23, 42, 0.16);
-      color: #0f172a;
+      background: #FFFFFF;
+      border-color: rgba(28, 25, 23, 0.14);
+      color: #1C1917;
+      border-radius: 10px;
     }
     html[data-theme="light"] .back-link:hover {
-      background: #e0f2fe;
-      border-color: #0284c7;
-      color: #0369a1;
+      background: #F3EFEA;
+      border-color: #3A5A40;
+      color: #3A5A40;
     }
     html[data-theme="light"] .game-title {
-      background: linear-gradient(90deg, #0f172a, #0369a1, #0284c7);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      letter-spacing: -0.02em;
+      background: none;
+      -webkit-background-clip: border-box;
+      -webkit-text-fill-color: #1C1917;
+      color: #1C1917;
     }
     html[data-theme="light"] .stat-pill {
-      background: #f8fafc;
-      border-color: rgba(15, 23, 42, 0.14);
-      color: #0f172a;
+      background: #F3EFEA;
+      border-color: rgba(28, 25, 23, 0.08);
+      color: #1C1917;
     }
     html[data-theme="light"] select,
     html[data-theme="light"] .btn {
-      background: #ffffff;
-      border-color: rgba(15, 23, 42, 0.18);
-      color: #0f172a;
+      background: #FFFFFF;
+      border-color: rgba(28, 25, 23, 0.14);
+      color: #1C1917;
+      border-radius: 10px;
     }
     html[data-theme="light"] select:hover,
     html[data-theme="light"] .btn:hover {
-      background: #e0f2fe;
-      border-color: #0284c7;
+      background: #F3EFEA;
+      border-color: #3A5A40;
     }
     html[data-theme="light"] .btn.primary {
-      background: linear-gradient(135deg, #0284c7, #0ea5e9);
-      border-color: #0369a1;
-      color: #ffffff;
+      background: #3A5A40;
+      border-color: #3A5A40;
+      color: #FFFFFF;
+    }
+    html[data-theme="light"] .btn.primary:hover {
+      background: #2D4732;
+      border-color: #2D4732;
     }
     html[data-theme="light"] .btn.active-mode {
-      background: linear-gradient(135deg, #e11d48, #f43f5e);
-      border-color: #be123c;
-      color: #ffffff;
+      background: #9F3A32;
+      border-color: #842D26;
+      color: #FFFFFF;
     }
 
     /* Reversible Per-Block Hide Mode & Ghost Toolbar */
@@ -445,14 +457,15 @@
       color: #fde68a;
     }
     html[data-theme="light"] .btn.active-hide {
-      background: linear-gradient(135deg, #0284c7, #0ea5e9);
-      border-color: #0369a1;
-      color: #ffffff;
+      background: #3A5A40;
+      border-color: #3A5A40;
+      color: #FFFFFF;
+      box-shadow: 0 8px 20px -6px rgba(58, 90, 64, 0.28);
     }
     html[data-theme="light"] .btn.has-hidden:not(.active-hide) {
-      border-color: #d97706;
-      background: #fffbeb;
-      color: #b45309;
+      border-color: #B08D57;
+      background: rgba(176, 141, 87, 0.12);
+      color: #8F6D39;
     }
 
     .hide-badge {
@@ -464,10 +477,10 @@
       padding: 0 5px;
       margin-left: 4px;
       border-radius: 999px;
-      background: #f59e0b;
-      color: #0f172a;
+      background: #B08D57;
+      color: #FFFFFF;
       font-size: 11px;
-      font-weight: 900;
+      font-weight: 700;
       line-height: 1;
     }
     .hide-badge.hidden { display: none; }
@@ -504,7 +517,7 @@
       padding: 0 4px;
       white-space: nowrap;
     }
-    html[data-theme="light"] .hb-count { color: #b45309; }
+    html[data-theme="light"] .hb-count { color: #8F6D39; }
     .hb-btn {
       padding: 5px 10px;
       font-size: 12px;
@@ -522,39 +535,44 @@
       border-color: rgba(74, 222, 128, 0.55);
       color: #86efac;
     }
+    html[data-theme="light"] .hb-btn.active-ghost {
+      background: #3A5A40;
+      border-color: #3A5A40;
+      color: #FFFFFF;
+    }
     html[data-theme="light"] .hb-btn.hb-restore:not(:disabled) {
-      background: #ecfdf5;
-      border-color: rgba(21, 128, 61, 0.45);
-      color: #15803d;
+      background: rgba(58, 90, 64, 0.10);
+      border-color: #3A5A40;
+      color: #3A5A40;
     }
     .hb-close {
       padding: 4px 8px;
       font-size: 12px;
     }
     html[data-theme="light"] .hide-bar {
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.14);
+      box-shadow: 0 12px 32px -8px rgba(28, 25, 23, 0.12);
     }
-    html[data-theme="light"] .spread-control { color: #0f172a; }
-    html[data-theme="light"] .spread-val { color: #0369a1; }
+    html[data-theme="light"] .spread-control { color: #1C1917; }
+    html[data-theme="light"] .spread-val { color: #3A5A40; }
     html[data-theme="light"] .key-badge {
-      background: #e0f2fe;
-      border-color: rgba(2, 132, 199, 0.35);
-      color: #0369a1;
+      background: #F3EFEA;
+      border-color: rgba(28, 25, 23, 0.12);
+      color: #3A5A40;
     }
-    html[data-theme="light"] .footer-legal-links a { color: #0369a1; }
-    html[data-theme="light"] #coord-readout { color: #334155; }
+    html[data-theme="light"] .footer-legal-links a { color: #3A5A40; }
+    html[data-theme="light"] #coord-readout { color: #57534E; }
     html[data-theme="light"] .status-banner {
       background: rgba(255, 255, 255, 0.96);
-      color: #0f172a;
-      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+      color: #1C1917;
+      box-shadow: 0 12px 32px -8px rgba(28, 25, 23, 0.12);
     }
     html[data-theme="light"] .status-banner.win {
-      border-color: #16a34a;
-      color: #15803d;
+      border-color: #3A5A40;
+      color: #3A5A40;
     }
     html[data-theme="light"] .status-banner.lose {
-      border-color: #e11d48;
-      color: #be123c;
+      border-color: #9F3A32;
+      color: #9F3A32;
     }
 
     @media (max-width: 720px) {
@@ -742,9 +760,9 @@
       const elThemeBtn = document.getElementById('btn-theme-toggle');
       let currentTheme = (function () {
         try {
-          return localStorage.getItem('arcade_theme') === 'light' ? 'light' : 'dark';
+          return localStorage.getItem('arcade_theme') === 'dark' ? 'dark' : 'light';
         } catch (_) {
-          return 'dark';
+          return 'light';
         }
       })();
       function isLightTheme() {

@@ -6,8 +6,11 @@
   <title>2048 Prism · HunterJoe Arcade</title>
   <meta name="description" content="Kombiniere leuchtende Zahlen-Prismen flüssig per Wischgeste oder Pfeiltasten bis 2048 und darüber hinaus – spielbar im klassischen 4×4- oder erweiterten 5×5-Modus." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/2048/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
@@ -65,7 +68,7 @@
     ]
   }
   </script>
-  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
   <style>
     body {
@@ -284,53 +287,58 @@
     }
 
     html[data-theme="light"] .toolbar-2048 {
-      background: rgba(255, 255, 255, 0.94);
-      border-color: rgba(15, 23, 42, 0.14);
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+      background: var(--bg-surface);
+      border-color: var(--border-hairline);
+      box-shadow: var(--shadow-soft);
     }
     html[data-theme="light"] .mode-btn {
-      background: #f1f5f9;
-      border-color: rgba(15, 23, 42, 0.18);
-      color: #334155;
+      background: var(--bg-surface);
+      border-color: var(--border-subtle);
+      color: var(--text-main);
+    }
+    html[data-theme="light"] .mode-btn:hover:not(:disabled) {
+      background: var(--bg-sand);
+      border-color: var(--accent-primary);
     }
     html[data-theme="light"] .mode-btn.active {
-      background: #0284c7;
-      border-color: #0369a1;
-      color: #ffffff;
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #FFFFFF;
     }
     html[data-theme="light"] .board-stage {
-      background: linear-gradient(155deg, #cbd5e1, #e2e8f0);
-      border-color: rgba(2, 132, 199, 0.42);
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+      background: #E8E1D6;
+      border-color: var(--border-subtle);
+      box-shadow: var(--shadow-soft);
     }
     html[data-theme="light"] .grid-cell {
-      background: rgba(255, 255, 255, 0.56);
-      border-color: rgba(15, 23, 42, 0.10);
+      background: rgba(250, 248, 245, 0.72);
+      border-color: var(--border-hairline);
     }
     html[data-theme="light"] .t-2 {
-      background: linear-gradient(145deg, #ffffff, #f8fafc);
-      color: #0f172a;
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.10);
+      background: #FFFFFF;
+      color: var(--text-main);
+      box-shadow: 0 4px 12px rgba(28, 25, 23, 0.08);
     }
     html[data-theme="light"] .t-2 .tile-inner {
-      border-color: rgba(15, 23, 42, 0.16);
+      border-color: var(--border-hairline);
       text-shadow: none;
     }
     html[data-theme="light"] .board-overlay {
-      background: rgba(255, 255, 255, 0.92);
-      color: #0f172a;
+      background: rgba(250, 248, 245, 0.94);
+      color: var(--text-main);
     }
     html[data-theme="light"] .board-overlay p {
-      color: #334155;
+      color: var(--text-muted);
     }
     html[data-theme="light"] .dpad-btn {
-      background: #ffffff;
-      border-color: rgba(2, 132, 199, 0.38);
-      color: #0f172a;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+      background: var(--bg-surface);
+      border-color: var(--border-subtle);
+      color: var(--text-main);
+      box-shadow: var(--shadow-soft);
     }
     html[data-theme="light"] .dpad-btn:active {
-      background: #bae6fd;
+      background: var(--bg-sand);
+      border-color: var(--accent-primary);
     }
   </style>
 </head>

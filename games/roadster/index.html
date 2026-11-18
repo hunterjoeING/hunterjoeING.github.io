@@ -6,8 +6,11 @@
   <title>Hyper-Roadster – Kaltgas-Landung</title>
   <meta name="description" content="Arcade-Flugspiel direkt im Browser: Starte über die Mega-Rampe in den Himmel und lande den Hyper-Roadster mit Kaltgasdüsen und Gyro-Steuerung auf der Zielplattform." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#020612" />
+  <meta name="theme-color" content="#FAF8F5" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/roadster/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
@@ -65,7 +68,7 @@
     ]
   }
   </script>
-  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='light'?'light':'dark');}catch(e){}})();</script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css">
   <style>
     html, body {
@@ -91,9 +94,10 @@
       flex-direction: column;
       max-width: 1120px;
       margin: 0 auto;
-      padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px));
-      gap: 6px;
+      padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+      gap: 8px;
       box-sizing: border-box;
+      animation: editorialFadeIn 0.45s var(--ease-boutique) both;
     }
     .hud-strip {
       flex: 0 0 auto;
@@ -101,19 +105,20 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 6px 10px;
-      padding: 7px 12px;
-      border-radius: 12px;
-      background: rgba(10, 20, 42, 0.88);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      font-family: var(--font-mono);
-      font-size: 12px;
+      gap: 8px 12px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-soft);
+      font-family: var(--font-ui);
+      font-size: 12.5px;
     }
     .hud-metrics {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 12px;
     }
     .gas-bar-wrap {
       display: inline-flex;
@@ -121,16 +126,19 @@
       gap: 6px;
     }
     .gas-track {
+      display: inline-flex;
       width: 84px;
       height: 10px;
       border-radius: 999px;
-      background: rgba(148, 163, 184, 0.22);
+      background: var(--bg-sand);
+      border: 1px solid var(--border-hairline);
       overflow: hidden;
     }
     .gas-fill {
+      display: block;
       height: 100%;
       width: 100%;
-      background: linear-gradient(90deg, #38bdf8, #e0f2fe);
+      background: var(--accent-primary);
       transition: width 0.08s;
     }
     .canvas-stage {
@@ -139,8 +147,9 @@
       min-height: 140px;
       border-radius: 16px;
       overflow: hidden;
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      background: #030712;
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-soft);
+      background: #0B1220;
       touch-action: none;
     }
     canvas#gameCanvas {
@@ -154,20 +163,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      background: rgba(2, 6, 18, 0.68);
+      padding: 20px;
+      background: rgba(28, 25, 23, 0.36);
       backdrop-filter: blur(6px);
       z-index: 20;
     }
     .overlay-card.hidden { display: none !important; }
     .modal-inner {
       width: min(460px, 100%);
-      padding: 20px;
+      padding: 28px 30px;
       border-radius: 16px;
-      background: rgba(11, 20, 44, 0.96);
-      border: 1px solid rgba(56, 189, 248, 0.55);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-main);
       text-align: center;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+      box-shadow: var(--shadow-soft);
     }
     .controls-bar {
       flex: 0 0 auto;
@@ -188,44 +198,58 @@
       user-select: none;
       -webkit-user-select: none;
       touch-action: none;
-      padding: 13px 18px;
-      border-radius: 12px;
-      border: 1px solid rgba(56, 189, 248, 0.5);
-      background: rgba(14, 34, 68, 0.9);
-      color: #f8fafc;
-      font-weight: 800;
+      padding: 13px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-weight: 600;
       font-size: 14px;
       cursor: pointer;
+      transition: all 0.25s var(--ease-boutique);
+    }
+    .ctrl-touch-btn:hover {
+      background: var(--bg-sand);
+      border-color: var(--accent-primary);
     }
     .ctrl-touch-btn.active,
     .ctrl-touch-btn:active {
-      background: rgba(14, 165, 233, 0.55);
-      border-color: #e0f2fe;
+      background: var(--bg-sand);
+      border-color: var(--accent-primary);
       transform: scale(0.98);
     }
     .thrust-big {
       flex: 1;
       max-width: 280px;
-      background: linear-gradient(135deg, rgba(14, 116, 144, 0.7), rgba(56, 189, 248, 0.45));
-      border-color: #7dd3fc;
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #FFFFFF;
+    }
+    .thrust-big:hover,
+    .thrust-big.active,
+    .thrust-big:active {
+      background: var(--accent-primary-hover);
+      border-color: var(--accent-primary-hover);
+      color: #FFFFFF;
     }
     .assist-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 5px 10px;
-      border-radius: 8px;
-      background: rgba(22, 163, 74, 0.22);
-      border: 1px solid rgba(74, 222, 128, 0.5);
-      color: #bbf7d0;
+      padding: 6px 11px;
+      border-radius: 10px;
+      background: var(--accent-sage-soft);
+      border: 1px solid var(--accent-primary);
+      color: var(--accent-primary);
       font-size: 11.5px;
-      font-weight: 700;
+      font-weight: 600;
       cursor: pointer;
+      transition: all 0.2s var(--ease-boutique);
     }
     .assist-pill.off {
-      background: rgba(148, 163, 184, 0.16);
-      border-color: rgba(148, 163, 184, 0.4);
-      color: #cbd5e1;
+      background: var(--bg-sand);
+      border-color: var(--border-subtle);
+      color: var(--text-muted);
     }
     .stage-touch-layer {
       position: absolute;
@@ -238,7 +262,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 10px;
+      padding: 0 12px;
     }
     .stage-touch-layer.hidden,
     #overlay:not(.hidden) ~ #stage-controls {
@@ -258,12 +282,12 @@
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      border: 1.5px solid rgba(125, 211, 252, 0.45);
-      background: rgba(15, 23, 42, 0.36);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      color: #f8fafc;
-      font-weight: 800;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(28, 25, 23, 0.56);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      color: #FAF8F5;
+      font-weight: 700;
       font-size: 19px;
       display: inline-flex;
       flex-direction: column;
@@ -271,84 +295,50 @@
       justify-content: center;
       line-height: 1.05;
       cursor: pointer;
-      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.45);
-      transition: transform 0.06s, background 0.1s, border-color 0.1s;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+      transition: transform 0.1s, background 0.15s, border-color 0.15s;
     }
     .stage-thumb-btn small {
       font-size: 8.5px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      color: #bae6fd;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: rgba(250, 248, 245, 0.85);
       margin-top: 2px;
     }
     .stage-thumb-btn.thrust {
       width: 72px;
       height: 72px;
-      border-color: rgba(56, 189, 248, 0.65);
-      background: rgba(14, 116, 144, 0.36);
+      border-color: rgba(176, 141, 87, 0.72);
+      background: rgba(58, 90, 64, 0.82);
       font-size: 20px;
     }
     .stage-thumb-btn.active,
     .stage-thumb-btn:active {
-      background: rgba(14, 165, 233, 0.68);
-      border-color: #f0f9ff;
-      transform: scale(0.94);
+      background: rgba(58, 90, 64, 0.96);
+      border-color: #FAF8F5;
+      transform: scale(0.95);
     }
     .hint-desktop {
       font-size: 12px;
       color: var(--text-muted);
     }
 
-    html[data-theme="light"] .hud-strip {
-      background: rgba(255, 255, 255, 0.94);
-      border-color: rgba(2, 132, 199, 0.28);
-      color: #0f172a;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    html[data-theme="dark"] .overlay-card {
+      background: rgba(20, 18, 16, 0.72);
     }
-    html[data-theme="light"] .gas-track { background: rgba(15, 23, 42, 0.14); }
     html[data-theme="light"] .canvas-stage {
-      background: #bae6fd;
-      border-color: rgba(2, 132, 199, 0.45);
+      background: #E2DDD4;
     }
-    html[data-theme="light"] .overlay-card {
-      background: rgba(15, 23, 42, 0.38);
-    }
-    html[data-theme="light"] .modal-inner {
-      background: rgba(255, 255, 255, 0.96);
-      border-color: rgba(2, 132, 199, 0.45);
-      color: #0f172a;
-      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22);
-    }
-    html[data-theme="light"] #ov-desc { color: #334155 !important; }
-    html[data-theme="light"] .ctrl-touch-btn {
-      background: #ffffff;
-      border-color: rgba(2, 132, 199, 0.42);
-      color: #0f172a;
-    }
-    html[data-theme="light"] .ctrl-touch-btn.thrust-big {
-      background: linear-gradient(135deg, #0284c7, #0ea5e9);
-      border-color: #0369a1;
-      color: #ffffff;
-    }
-    html[data-theme="light"] .assist-pill {
-      background: #dcfce7;
-      border-color: #16a34a;
-      color: #166534;
-    }
-    html[data-theme="light"] .assist-pill.off {
-      background: #f1f5f9;
-      border-color: rgba(15, 23, 42, 0.22);
-      color: #334155;
-    }
+    html[data-theme="light"] #ov-desc { color: var(--text-muted) !important; }
 
     @media (max-width: 680px) {
       .roadster-shell {
         padding: 4px 8px calc(8px + env(safe-area-inset-bottom, 0px));
-        gap: 5px;
+        gap: 6px;
       }
       .hud-strip {
-        padding: 6px 9px;
-        gap: 5px 8px;
+        padding: 8px 10px;
+        gap: 6px 8px;
         font-size: 11px;
       }
       .hud-metrics {
