@@ -213,6 +213,22 @@ let _schemaReady = false;
 async function ensureTables(db) {
   if (_schemaReady || !db) return;
   await db.batch([
+    db.prepare(`CREATE TABLE IF NOT EXISTS scores (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      game_id TEXT NOT NULL,
+      run_id TEXT UNIQUE,
+      player_name TEXT NOT NULL,
+      score INTEGER NOT NULL,
+      lower_is_better INTEGER NOT NULL DEFAULT 0,
+      label TEXT NOT NULL,
+      meta TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )`),
+    db.prepare(`CREATE TABLE IF NOT EXISTS game_stats (
+      game_id TEXT PRIMARY KEY,
+      plays INTEGER NOT NULL DEFAULT 0,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )`),
     db.prepare(`CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT NOT NULL UNIQUE COLLATE NOCASE,
@@ -254,6 +270,24 @@ async function ensureTables(db) {
       PRIMARY KEY (post_id, user_id)
     )`)
   ]);
+
+  try {
+    const scoreInfo = await db.prepare('PRAGMA table_info(scores)').all?.();
+    const scoreCols = Array.isArray(scoreInfo?.results) ? scoreInfo.results.map(r => r.name) : [];
+    if (scoreCols.length > 0 && !scoreCols.includes('meta')) {
+      await db.prepare('ALTER TABLE scores ADD COLUMN meta TEXT').run();
+      if (scoreCols.includes('meta_json')) {
+        await db.prepare('UPDATE scores SET meta = meta_json WHERE meta IS NULL AND meta_json IS NOT NULL').run();
+      }
+    }
+
+    const statInfo = await db.prepare('PRAGMA table_info(game_stats)').all?.();
+    const statCols = Array.isArray(statInfo?.results) ? statInfo.results.map(r => r.name) : [];
+    if (statCols.length > 0 && !statCols.includes('updated_at')) {
+      await db.prepare('ALTER TABLE game_stats ADD COLUMN updated_at TEXT').run();
+    }
+  } catch (e) {}
+
   _schemaReady = true;
 }
 
