@@ -6,11 +6,11 @@
   <title>Bastion TD – Neon Tower Defense</title>
   <meta name="description" content="Taktisches Tower-Defense-Spiel im Browser: Baue Puls-, Frost-, Mörser- und Railgun-Türme auf 3 Karten, nutze 2×-Tempo und besiege zunehmend stärkere Boss-Wellen." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#FAF8F5" />
+  <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/tower/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
@@ -166,7 +166,7 @@
     .tower-btn.selected {
       border-color: var(--accent-primary);
       background: var(--bg-sand);
-      box-shadow: 0 4px 14px rgba(58, 90, 64, 0.14);
+      box-shadow: 0 4px 14px rgba(30, 58, 138, 0.14);
     }
     .tower-btn.cant-afford { opacity: 0.48; }
     .tower-name { font-size: 12.5px; font-weight: 700; }
@@ -297,7 +297,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(250, 248, 245, 0.90);
+      background: rgba(246, 248, 252, 0.90);
       backdrop-filter: blur(8px);
       z-index: 20;
       text-align: center;
@@ -315,13 +315,13 @@
     }
 
     html[data-theme="dark"] .overlay-card {
-      background: rgba(20, 18, 16, 0.88);
+      background: rgba(11, 17, 32, 0.88);
     }
-    html[data-theme="light"] #hud-gold { color: #8F6D39 !important; }
-    html[data-theme="light"] #hud-lives { color: #9F3A32 !important; }
+    html[data-theme="light"] #hud-gold { color: #2563EB !important; }
+    html[data-theme="light"] #hud-lives { color: #B91C1C !important; }
     html[data-theme="light"] #shop-head { color: var(--accent-primary) !important; }
     html[data-theme="light"] .td-board-wrap {
-      background: #E2DDD4;
+      background: #DCE3EE;
     }
     html[data-theme="light"] .overlay-card #ov-desc { color: var(--text-muted) !important; }
 

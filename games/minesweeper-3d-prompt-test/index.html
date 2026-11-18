@@ -7,11 +7,11 @@
   <title>Minesweeper 3d prompt Version</title>
   <meta name="description" content="Eigenständig entwickeltes 3D-Würfel-Minesweeper im Browser: Würfel frei mit der Maus drehen, per Mausrad stufenlos auseinanderziehen und Minen in 3D aufdecken." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#FAF8F5" />
+  <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/minesweeper-3d-prompt-test/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HunterJoe Arcade" />
@@ -372,73 +372,73 @@
       font-size: 12.5px;
     }
 
-    /* Standalone Light Mode Overrides – Warm Editorial Boutique */
+    /* Standalone Light Mode Overrides – Modern Navy & Cool Slate */
     html[data-theme="light"] {
-      --bg-dark: #FAF8F5;
+      --bg-dark: #F6F8FC;
       --panel-bg: rgba(255, 255, 255, 0.94);
-      --panel-border: rgba(28, 25, 23, 0.08);
-      --accent: #3A5A40;
-      --accent-glow: rgba(58, 90, 64, 0.16);
-      --text-main: #1C1917;
-      --text-muted: #57534E;
+      --panel-border: rgba(15, 23, 42, 0.08);
+      --accent: #1E3A8A;
+      --accent-glow: rgba(30, 58, 138, 0.16);
+      --text-main: #0F172A;
+      --text-muted: #475569;
     }
     html[data-theme="light"],
     html[data-theme="light"] body {
-      background: radial-gradient(circle at 50% 35%, #FFFFFF 0%, #FAF8F5 60%, #F3EFEA 100%);
-      color: #1C1917;
+      background: radial-gradient(circle at 50% 35%, #FFFFFF 0%, #F6F8FC 60%, #EEF2F8 100%);
+      color: #0F172A;
     }
     html[data-theme="light"] .top-bar,
     html[data-theme="light"] .bottom-hud {
-      box-shadow: 0 12px 32px -8px rgba(28, 25, 23, 0.08);
+      box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.08);
     }
     html[data-theme="light"] .back-link {
       background: #FFFFFF;
-      border-color: rgba(28, 25, 23, 0.14);
-      color: #1C1917;
+      border-color: rgba(15, 23, 42, 0.14);
+      color: #0F172A;
       border-radius: 10px;
     }
     html[data-theme="light"] .back-link:hover {
-      background: #F3EFEA;
-      border-color: #3A5A40;
-      color: #3A5A40;
+      background: #EEF2F8;
+      border-color: #1E3A8A;
+      color: #1E3A8A;
     }
     html[data-theme="light"] .game-title {
-      font-family: var(--font-serif, 'Playfair Display', Georgia, serif);
+      font-family: var(--font-display, 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif);
       letter-spacing: -0.02em;
       background: none;
       -webkit-background-clip: border-box;
-      -webkit-text-fill-color: #1C1917;
-      color: #1C1917;
+      -webkit-text-fill-color: #0F172A;
+      color: #0F172A;
     }
     html[data-theme="light"] .stat-pill {
-      background: #F3EFEA;
-      border-color: rgba(28, 25, 23, 0.08);
-      color: #1C1917;
+      background: #EEF2F8;
+      border-color: rgba(15, 23, 42, 0.08);
+      color: #0F172A;
     }
     html[data-theme="light"] select,
     html[data-theme="light"] .btn {
       background: #FFFFFF;
-      border-color: rgba(28, 25, 23, 0.14);
-      color: #1C1917;
+      border-color: rgba(15, 23, 42, 0.14);
+      color: #0F172A;
       border-radius: 10px;
     }
     html[data-theme="light"] select:hover,
     html[data-theme="light"] .btn:hover {
-      background: #F3EFEA;
-      border-color: #3A5A40;
+      background: #EEF2F8;
+      border-color: #1E3A8A;
     }
     html[data-theme="light"] .btn.primary {
-      background: #3A5A40;
-      border-color: #3A5A40;
+      background: #1E3A8A;
+      border-color: #1E3A8A;
       color: #FFFFFF;
     }
     html[data-theme="light"] .btn.primary:hover {
-      background: #2D4732;
-      border-color: #2D4732;
+      background: #172554;
+      border-color: #172554;
     }
     html[data-theme="light"] .btn.active-mode {
-      background: #9F3A32;
-      border-color: #842D26;
+      background: #B91C1C;
+      border-color: #991B1B;
       color: #FFFFFF;
     }
 
@@ -457,15 +457,15 @@
       color: #fde68a;
     }
     html[data-theme="light"] .btn.active-hide {
-      background: #3A5A40;
-      border-color: #3A5A40;
+      background: #1E3A8A;
+      border-color: #1E3A8A;
       color: #FFFFFF;
-      box-shadow: 0 8px 20px -6px rgba(58, 90, 64, 0.28);
+      box-shadow: 0 8px 20px -6px rgba(30, 58, 138, 0.28);
     }
     html[data-theme="light"] .btn.has-hidden:not(.active-hide) {
-      border-color: #B08D57;
-      background: rgba(176, 141, 87, 0.12);
-      color: #8F6D39;
+      border-color: #2563EB;
+      background: rgba(37, 99, 235, 0.10);
+      color: #2563EB;
     }
 
     .hide-badge {
@@ -477,7 +477,7 @@
       padding: 0 5px;
       margin-left: 4px;
       border-radius: 999px;
-      background: #B08D57;
+      background: #2563EB;
       color: #FFFFFF;
       font-size: 11px;
       font-weight: 700;
@@ -517,7 +517,7 @@
       padding: 0 4px;
       white-space: nowrap;
     }
-    html[data-theme="light"] .hb-count { color: #8F6D39; }
+    html[data-theme="light"] .hb-count { color: #2563EB; }
     .hb-btn {
       padding: 5px 10px;
       font-size: 12px;
@@ -536,43 +536,43 @@
       color: #86efac;
     }
     html[data-theme="light"] .hb-btn.active-ghost {
-      background: #3A5A40;
-      border-color: #3A5A40;
+      background: #1E3A8A;
+      border-color: #1E3A8A;
       color: #FFFFFF;
     }
     html[data-theme="light"] .hb-btn.hb-restore:not(:disabled) {
-      background: rgba(58, 90, 64, 0.10);
-      border-color: #3A5A40;
-      color: #3A5A40;
+      background: rgba(30, 58, 138, 0.10);
+      border-color: #1E3A8A;
+      color: #1E3A8A;
     }
     .hb-close {
       padding: 4px 8px;
       font-size: 12px;
     }
     html[data-theme="light"] .hide-bar {
-      box-shadow: 0 12px 32px -8px rgba(28, 25, 23, 0.12);
+      box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.12);
     }
-    html[data-theme="light"] .spread-control { color: #1C1917; }
-    html[data-theme="light"] .spread-val { color: #3A5A40; }
+    html[data-theme="light"] .spread-control { color: #0F172A; }
+    html[data-theme="light"] .spread-val { color: #1E3A8A; }
     html[data-theme="light"] .key-badge {
-      background: #F3EFEA;
-      border-color: rgba(28, 25, 23, 0.12);
-      color: #3A5A40;
+      background: #EEF2F8;
+      border-color: rgba(15, 23, 42, 0.12);
+      color: #1E3A8A;
     }
-    html[data-theme="light"] .footer-legal-links a { color: #3A5A40; }
-    html[data-theme="light"] #coord-readout { color: #57534E; }
+    html[data-theme="light"] .footer-legal-links a { color: #1E3A8A; }
+    html[data-theme="light"] #coord-readout { color: #475569; }
     html[data-theme="light"] .status-banner {
       background: rgba(255, 255, 255, 0.96);
-      color: #1C1917;
-      box-shadow: 0 12px 32px -8px rgba(28, 25, 23, 0.12);
+      color: #0F172A;
+      box-shadow: 0 12px 32px -8px rgba(15, 23, 42, 0.12);
     }
     html[data-theme="light"] .status-banner.win {
-      border-color: #3A5A40;
-      color: #3A5A40;
+      border-color: #15803D;
+      color: #15803D;
     }
     html[data-theme="light"] .status-banner.lose {
-      border-color: #9F3A32;
-      color: #9F3A32;
+      border-color: #B91C1C;
+      color: #B91C1C;
     }
 
     @media (max-width: 720px) {
