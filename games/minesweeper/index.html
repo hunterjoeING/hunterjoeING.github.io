@@ -9095,6 +9095,10 @@ function saveHighscoreIfEligible() {
     localStorage.setItem('ms3d_highscores_v1', JSON.stringify(list.slice(0, 25)));
   } catch (e) {}
 
+  if (window.ArcadeScores && typeof window.ArcadeScores.record === 'function') {
+    window.ArcadeScores.record('minesweeper', timer, `${timer}s · ${geoLabel} (${levelTag})`, true, { sync: false });
+  }
+
   const payload = {
     gameId: 'minesweeper',
     playerName,
@@ -9117,6 +9121,9 @@ function saveHighscoreIfEligible() {
         try {
           localStorage.setItem('ms3d_global_top_v1', JSON.stringify(res.top || []));
         } catch (e) {}
+        if (window.ArcadeScores && typeof window.ArcadeScores.fetchSummary === 'function') {
+          window.ArcadeScores.fetchSummary(true);
+        }
       }
     })
     .catch(() => {});
@@ -9710,9 +9717,27 @@ canvasEl.addEventListener('wheel', (e) => {
 }, { passive: false });
 
 window.addEventListener('keydown', (e) => {
-  if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) {
+  const ae = document.activeElement;
+  if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+      (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT'))) {
     return;
   }
+  if (document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
+    return;
+  }
+  const backdrop = document.getElementById('modal-backdrop');
+  const internalModalOpen = backdrop && !backdrop.classList.contains('hidden');
+  if (e.key === 'Escape') {
+    if (internalModalOpen) {
+      closeModal();
+    } else if (ghostHiddenVisible) {
+      toggleGhostHiddenPreview(false);
+    } else if (hideBlocksMode) {
+      setHideBlocksMode(false);
+    }
+    return;
+  }
+  if (internalModalOpen) return;
   if (e.key === 'Control' || e.key === 'Meta') {
     ctrlDown = true;
     updateNeighborOutlines(hoveredCell);
@@ -9726,17 +9751,6 @@ window.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && k === 'z') {
     e.preventDefault();
     undoLastUserHide();
-    return;
-  }
-  if (e.key === 'Escape') {
-    const backdrop = document.getElementById('modal-backdrop');
-    if (backdrop && !backdrop.classList.contains('hidden')) {
-      closeModal();
-    } else if (ghostHiddenVisible) {
-      toggleGhostHiddenPreview(false);
-    } else if (hideBlocksMode) {
-      setHideBlocksMode(false);
-    }
     return;
   }
   if ((e.key === 'Delete' || e.key === 'Backspace') && hoveredCell) {
@@ -11000,6 +11014,9 @@ function saveGameToSlot(slotId) {
     firstClick,
     revealed,
     flags,
+    usedAutopilot: !!usedAutopilot,
+    gameOver: !!gameOver,
+    gameLost: !!gameLost,
     savedAt: new Date().toLocaleTimeString(),
     cells: grid.map(c => ({
       mine: c.mine,
@@ -11030,6 +11047,7 @@ function loadGameFromSlot(slotId) {
     firstClick = !!data.firstClick;
     revealed = data.revealed || 0;
     flags = data.flags || 0;
+    usedAutopilot = !!data.usedAutopilot;
     if (Array.isArray(data.cells) && data.cells.length === grid.length) {
       data.cells.forEach((sc, idx) => {
         Object.assign(grid[idx], sc);
@@ -11047,7 +11065,13 @@ function loadGameFromSlot(slotId) {
     _hideBarDismissed = _userHiddenCount === 0;
     if (typeof syncHideBlocksUI === 'function') syncHideBlocksUI();
     if (typeof markWaterSpatialDirty === 'function') markWaterSpatialDirty();
-    if (!firstClick) startTimerIfNeeded();
+    if (data.gameOver) {
+      gameOver = true;
+      gameLost = !!data.gameLost;
+      if (typeof stopTimer === 'function') stopTimer();
+    } else if (!firstClick) {
+      startTimerIfNeeded();
+    }
     updateHUDCounters();
     updateLogicalStatusUI();
     closeModal();

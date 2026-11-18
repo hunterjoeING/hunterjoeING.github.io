@@ -321,6 +321,9 @@
     function startGame() {
       ArcadeAudio.click();
       document.getElementById('overlay').classList.add('hidden');
+      keys.left = false;
+      keys.right = false;
+      pointerActive = false;
       running = true;
       gameOver = false;
       playerU = 0;
@@ -721,6 +724,7 @@
         // Hit Zombies?
         for (let zi = zombies.length - 1; zi >= 0; zi--) {
           const zm = zombies[zi];
+          if (zm.hp <= 0) continue;
           if (Math.abs(b.z - zm.z) < 0.055 && Math.abs(b.u - zm.u) < zm.radius + 0.04) {
             zm.hp -= b.dmg;
             zm.hitFlash = 0.08;
@@ -1907,12 +1911,23 @@
     window.addEventListener('pointercancel', () => { pointerActive = false; });
 
     window.addEventListener('keydown', (e) => {
+      const ae = document.activeElement;
+      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+          document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
+        return;
+      }
       if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = true;
       if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = true;
     });
     window.addEventListener('keyup', (e) => {
       if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = false;
       if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = false;
+    });
+    window.addEventListener('blur', () => {
+      keys.left = false;
+      keys.right = false;
+      pointerActive = false;
     });
 
     ArcadeAudio.syncButton(document.getElementById('btn-mute'));

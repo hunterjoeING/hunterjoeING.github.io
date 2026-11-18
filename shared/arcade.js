@@ -148,6 +148,7 @@
 
   const GAME_CATALOG = [
     { id: 'minesweeper', title: '3D Minesweeper – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online)', icon: '💣', lowerIsBetter: true },
+    { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊', lowerIsBetter: true },
     { id: 'roadster', title: 'Roadster Lander', icon: '🚀', lowerIsBetter: false },
     { id: 'zombie', title: 'Zombie Swarm', icon: '🧟', lowerIsBetter: false },
     { id: 'tower', title: 'Orbital Tower Defense', icon: '🛸', lowerIsBetter: false },
@@ -572,39 +573,60 @@
       return data;
     },
     getAll: () => {
-      if (_summary && _summary.games) {
-        const out = {};
-        Object.entries(_summary.games).forEach(([id, g]) => {
-          if (g && g.best) {
-            out[id] = {
-              best: g.best.score,
-              label: g.best.label,
-              playerName: g.best.playerName,
-              plays: g.plays || 0,
-              updated: g.best.createdAt ? String(g.best.createdAt).slice(0, 10) : '',
-              isGlobal: true
-            };
-          }
-        });
-        return out;
-      }
-      return readLocalScores();
+      const out = {};
+      const localAll = readLocalScores();
+      const summaryGames = (_summary && _summary.games) ? _summary.games : {};
+      const allIds = new Set([...Object.keys(summaryGames), ...Object.keys(localAll)]);
+      allIds.forEach(id => {
+        const entry = window.ArcadeScores.getBest(id);
+        if (entry) out[id] = entry;
+      });
+      return out;
     },
     getBest: (gameId) => {
-      if (_summary && _summary.games && _summary.games[gameId]) {
-        const g = _summary.games[gameId];
-        if (!g.best) return null;
+      const cfg = GAME_MAP[gameId];
+      const g = (_summary && _summary.games) ? _summary.games[gameId] : null;
+      const lowerIsBetter = g && typeof g.lowerIsBetter === 'boolean'
+        ? g.lowerIsBetter
+        : !!(cfg && cfg.lowerIsBetter);
+
+      const globalEntry = (g && g.best)
+        ? {
+            best: g.best.score,
+            label: g.best.label,
+            playerName: g.best.playerName,
+            plays: g.plays || 0,
+            updated: g.best.createdAt ? String(g.best.createdAt).slice(0, 10) : '',
+            isGlobal: true
+          }
+        : null;
+
+      const localAll = readLocalScores();
+      const rawLocal = localAll[gameId];
+      const localEntry = (rawLocal && rawLocal.best !== undefined && rawLocal.best !== null)
+        ? {
+            best: rawLocal.best,
+            label: rawLocal.label || String(rawLocal.best),
+            playerName: window.ArcadeScores.hasCustomPlayerName() ? window.ArcadeScores.getPlayerName() : '',
+            plays: Math.max(Number(g?.plays || 0), Number(rawLocal.plays || 0)),
+            updated: rawLocal.updated || '',
+            isGlobal: false
+          }
+        : null;
+
+      if (globalEntry && localEntry) {
+        const localBetter = lowerIsBetter
+          ? Number(localEntry.best) < Number(globalEntry.best)
+          : Number(localEntry.best) > Number(globalEntry.best);
+        if (localBetter) {
+          return localEntry;
+        }
         return {
-          best: g.best.score,
-          label: g.best.label,
-          playerName: g.best.playerName,
-          plays: g.plays || 0,
-          updated: g.best.createdAt ? String(g.best.createdAt).slice(0, 10) : '',
-          isGlobal: true
+          ...globalEntry,
+          plays: Math.max(Number(globalEntry.plays || 0), Number(localEntry.plays || 0))
         };
       }
-      const local = readLocalScores();
-      return local[gameId] || null;
+      return globalEntry || localEntry || null;
     },
     record: (gameId, score, label, lowerIsBetter = false, opts = {}) => {
       let isPersonalBetter = false;
@@ -625,11 +647,13 @@
       } catch (e) {}
 
       if (opts.sync === false) {
+        if (isPersonalBetter) emitScoresUpdated();
         return isPersonalBetter;
       }
 
       const numScore = Number(score);
-      if (!Number.isFinite(numScore) || numScore < 0 || (numScore === 0 && gameId !== 'minesweeper')) {
+      const isLower = !!lowerIsBetter || !!(GAME_MAP[gameId] && GAME_MAP[gameId].lowerIsBetter);
+      if (!Number.isFinite(numScore) || numScore < 0 || (numScore === 0 && !isLower)) {
         return isPersonalBetter;
       }
 
@@ -647,14 +671,15 @@
 
       // Optimistic local-summary update if beating known global best
       const curBest = window.ArcadeScores.getBest(gameId);
+      const knownPlays = Math.max(Number(curBest?.plays || 0), Number(_summary?.games?.[gameId]?.plays || 0));
       const beatsKnown = !curBest
         ? true
-        : (lowerIsBetter ? payload.score < curBest.best : payload.score > curBest.best);
+        : (isLower ? payload.score < curBest.best : payload.score > curBest.best);
       if (beatsKnown) {
         updateSummaryEntry(
           gameId,
           { playerName, score: payload.score, label: payload.label, createdAt: new Date().toISOString() },
-          (curBest?.plays || 0) + 1,
+          knownPlays + 1,
           (_summary?.games?.[gameId]?.entries || 0) + 1
         );
         emitScoresUpdated();
@@ -699,10 +724,10 @@
       return isPersonalBetter;
     },
     getMinesweeperBest: () => {
-      if (_summary && _summary.games && _summary.games.minesweeper) {
+      let globalBest = null;
+      if (_summary && _summary.games && _summary.games.minesweeper && _summary.games.minesweeper.best) {
         const b = _summary.games.minesweeper.best;
-        if (!b) return null;
-        return {
+        globalBest = {
           time: b.score,
           player: b.playerName,
           label: b.label,
@@ -711,13 +736,18 @@
           isGlobal: true
         };
       }
+      let localBest = null;
       try {
         const raw = JSON.parse(localStorage.getItem('ms3d_highscores_v1') || '[]');
-        if (!Array.isArray(raw) || raw.length === 0) return null;
-        return raw[0];
-      } catch (e) {
-        return null;
+        if (Array.isArray(raw) && raw.length > 0 && raw[0] && Number.isFinite(Number(raw[0].time))) {
+          localBest = raw[0];
+        }
+      } catch (e) {}
+
+      if (globalBest && localBest) {
+        return Number(localBest.time) < Number(globalBest.time) ? localBest : globalBest;
       }
+      return globalBest || localBest || null;
     }
   };
 
@@ -994,7 +1024,7 @@
   window.ArcadeAuth = {
     getUser: () => readAuthUser(),
     getToken: () => readAuthToken(),
-    isLoggedIn: () => !!readAuthUser(),
+    isLoggedIn: () => !!(readAuthUser() && readAuthToken()),
     isAdminOrAgent: () => {
       const u = readAuthUser();
       return !!(u && (u.role === 'admin' || u.role === 'agent'));
@@ -1045,9 +1075,6 @@
             throw new Error(data.error || 'Anmeldung fehlgeschlagen.');
           }
           const user = data.user;
-          if (roleChoice === 'admin' || roleChoice === 'agent') {
-            user.role = roleChoice;
-          }
           window.ArcadeAuth.saveSession(user, data.token);
           return user;
         }
@@ -1302,6 +1329,12 @@
     return `<span class="fb-role-badge user">👤 ${escapeHtml(authorName || 'Spieler')}</span>`;
   }
 
+  function isNetworkFetchErr(err) {
+    if (!err) return false;
+    const msg = String(err.message || err);
+    return err.name === 'TypeError' || msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed');
+  }
+
   window.ArcadeFeedback = {
     TARGETS: FEEDBACK_TARGETS,
     getItems: async (targetFilter = 'all', statusFilter = 'all') => {
@@ -1313,6 +1346,8 @@
           if (data && data.ok && Array.isArray(data.items)) {
             all = mergeRemoteAndLocal(data.items, all);
             writeLocalFeedback(all);
+            syncFeedbackButtons();
+            try { window.dispatchEvent(new CustomEvent('arcade:feedback-synced')); } catch (e) {}
           }
         }
       } catch (e) {}
@@ -1336,7 +1371,7 @@
     },
     createPost: async ({ targetId, category, title, body, captchaToken }) => {
       const user = window.ArcadeAuth.getUser();
-      if (!user) throw new Error('Bitte logge dich zuerst ein.');
+      if (!user || !window.ArcadeAuth.getToken()) throw new Error('Bitte logge dich zuerst ein.');
       const cleanTitle = String(title || '').trim().slice(0, 110);
       const cleanBody = String(body || '').trim().slice(0, 1500);
       if (cleanTitle.length < 4) throw new Error('Bitte gib einen kurzen Titel (mind. 4 Zeichen) ein.');
@@ -1354,14 +1389,18 @@
         });
         if (res.status !== 404) {
           const data = await res.json().catch(() => ({}));
+          if (res.status === 401) {
+            window.ArcadeAuth.logout();
+            throw new Error(data.error || 'Deine Sitzung ist abgelaufen oder nur lokal gültig. Bitte melde dich kurz neu an.');
+          }
           if (res.ok && data.ok && data.item) {
             createdItem = data.item;
-          } else if (data.error) {
-            throw new Error(data.error);
+          } else {
+            throw new Error(data.error || 'Wunsch konnte nicht gespeichert werden.');
           }
         }
       } catch (err) {
-        if (err && err.message && !String(err.message).includes('Failed to fetch') && !String(err.message).includes('NetworkError')) {
+        if (!isNetworkFetchErr(err)) {
           throw err;
         }
       }
@@ -1391,11 +1430,11 @@
     },
     addReply: async ({ postId, body, newStatus, asAgent }) => {
       const user = window.ArcadeAuth.getUser();
-      if (!user) throw new Error('Bitte logge dich ein, um zu kommentieren.');
+      if (!user || !window.ArcadeAuth.getToken()) throw new Error('Bitte logge dich ein, um zu kommentieren.');
       const cleanBody = String(body || '').trim().slice(0, 1500);
       if (cleanBody.length < 2) throw new Error('Bitte gib einen Kommentar ein.');
 
-      const role = asAgent ? 'agent' : (user.role || 'user');
+      const role = (asAgent && (user.role === 'admin' || user.role === 'agent')) ? 'agent' : (user.role || 'user');
       const authorName = role === 'agent'
         ? '🤖 KI-Agent (Antigravity)'
         : (user.displayName || user.username || 'Spieler');
@@ -1410,11 +1449,23 @@
           },
           body: JSON.stringify({ body: cleanBody, newStatus, asAgent, authorName })
         });
-        if (res.ok) {
+        if (res.status !== 404) {
           const data = await res.json().catch(() => ({}));
-          if (data && data.ok && data.reply) replyObj = data.reply;
+          if (res.status === 401) {
+            window.ArcadeAuth.logout();
+            throw new Error(data.error || 'Deine Sitzung ist abgelaufen oder nur lokal gültig. Bitte melde dich kurz neu an.');
+          }
+          if (res.ok && data && data.ok && data.reply) {
+            replyObj = data.reply;
+          } else {
+            throw new Error(data.error || 'Antwort konnte nicht gespeichert werden.');
+          }
         }
-      } catch (e) {}
+      } catch (err) {
+        if (!isNetworkFetchErr(err)) {
+          throw err;
+        }
+      }
 
       if (!replyObj) {
         replyObj = {
@@ -1428,13 +1479,14 @@
         };
       }
 
+      const appliedStatus = replyObj.newStatus;
       const all = readLocalFeedback();
       const target = all.find(it => String(it.id) === String(postId));
       if (target) {
         if (!Array.isArray(target.replies)) target.replies = [];
         target.replies.push(replyObj);
-        if (newStatus && ['open', 'in_progress', 'fixed'].includes(newStatus)) {
-          target.status = newStatus;
+        if (appliedStatus && ['open', 'in_progress', 'fixed'].includes(appliedStatus)) {
+          target.status = appliedStatus;
         }
         writeLocalFeedback(all);
       }
@@ -1444,31 +1496,57 @@
     },
     upvote: async (postId) => {
       const user = window.ArcadeAuth.getUser();
-      if (!user) {
+      if (!user || !window.ArcadeAuth.getToken()) {
         window.ArcadeAuth.openAuthModal();
         return null;
       }
       const voted = readVotedSet();
       const voteKey = `${user.username}:${postId}`;
       if (voted.has(voteKey)) return null;
-      voted.add(voteKey);
-      writeVotedSet(voted);
 
+      let serverUpvotes = null;
+      let offlineFallback = false;
       try {
-        fetch(`${API_BASE}/api/feedback/${encodeURIComponent(postId)}/vote`, {
+        const res = await fetch(`${API_BASE}/api/feedback/${encodeURIComponent(postId)}/vote`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${window.ArcadeAuth.getToken()}` }
-        }).catch(() => {});
-      } catch (e) {}
+        });
+        if (res.status === 404) {
+          offlineFallback = true;
+        } else if (res.status === 401) {
+          window.ArcadeAuth.logout();
+          window.ArcadeAuth.openAuthModal();
+          return null;
+        } else if (res.status === 409) {
+          voted.add(voteKey);
+          writeVotedSet(voted);
+          return null;
+        } else {
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) return null;
+          if (typeof data.upvotes === 'number') serverUpvotes = data.upvotes;
+        }
+      } catch (err) {
+        if (!isNetworkFetchErr(err)) return null;
+        offlineFallback = true;
+      }
+
+      if (!offlineFallback && serverUpvotes == null) {
+        return null;
+      }
+
+      voted.add(voteKey);
+      writeVotedSet(voted);
 
       const all = readLocalFeedback();
       const item = all.find(it => String(it.id) === String(postId));
       if (item) {
-        item.upvotes = (Number(item.upvotes) || 0) + 1;
+        item.upvotes = serverUpvotes != null ? serverUpvotes : ((Number(item.upvotes) || 0) + 1);
         writeLocalFeedback(all);
       }
+      syncFeedbackButtons();
       try { window.dispatchEvent(new CustomEvent('arcade:feedback-updated')); } catch (e) {}
-      return item ? item.upvotes : null;
+      return item ? item.upvotes : serverUpvotes;
     },
     mountBoard: (containerEl, opts = {}) => {
       if (!containerEl) return;
@@ -1842,6 +1920,27 @@
         });
       }
 
+      containerEl._arcadeRefreshBoard = () => {
+        if (!document.body.contains(containerEl)) return;
+        if (!composeOpen && openReplyId === null) {
+          renderShell();
+        } else {
+          renderItemsList();
+        }
+      };
+
+      if (!containerEl._arcadeListenersBound) {
+        containerEl._arcadeListenersBound = true;
+        window.addEventListener('arcade:auth-changed', () => {
+          if (typeof containerEl._arcadeRefreshBoard === 'function') containerEl._arcadeRefreshBoard();
+        });
+        window.addEventListener('arcade:feedback-updated', () => {
+          if (containerEl.id === 'arcade-feedback-modal-body' && typeof containerEl._arcadeRefreshBoard === 'function') {
+            containerEl._arcadeRefreshBoard();
+          }
+        });
+      }
+
       renderShell();
     },
     openModal: (initialTarget) => {
@@ -2082,6 +2181,19 @@
       }
     }
   };
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const authModal = document.getElementById('arcade-auth-modal-root');
+    if (authModal) {
+      authModal.remove();
+      return;
+    }
+    const modal = document.getElementById('arcade-modal-root');
+    if (modal) {
+      modal.remove();
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initSharedChrome);

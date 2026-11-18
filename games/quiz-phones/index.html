@@ -1281,6 +1281,12 @@
       });
 
       window.addEventListener('keydown', (e) => {
+        const ae = document.activeElement;
+        if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+            (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+            document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
+          return;
+        }
         const lb = document.getElementById('lightbox-modal');
         if (!lb.classList.contains('hidden')) {
           if (e.key === 'Escape') { e.preventDefault(); closeLightbox(); }

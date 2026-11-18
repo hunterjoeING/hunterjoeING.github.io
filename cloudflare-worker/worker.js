@@ -693,10 +693,21 @@ export default {
         const runId = body.runId ? cleanText(body.runId, 64) : null;
         const metaStr = body.meta ? JSON.stringify(body.meta) : null;
 
+        let existingIsBetter = true;
+        let existingScoreVal = score;
+
         if (runId) {
-          const existing = await db.prepare('SELECT id FROM scores WHERE run_id = ?1').bind(runId).first();
+          const existing = await db.prepare('SELECT id, score FROM scores WHERE run_id = ?1').bind(runId).first();
           if (existing) {
-            await db.prepare('UPDATE scores SET player_name = ?1 WHERE id = ?2').bind(playerName, existing.id).run();
+            existingScoreVal = Number(existing.score);
+            existingIsBetter = cfg.lowerIsBetter ? score < existingScoreVal : score > existingScoreVal;
+            if (existingIsBetter) {
+              await db.prepare(
+                `UPDATE scores SET player_name = ?1, score = ?2, label = ?3, meta = ?4, created_at = datetime('now') WHERE id = ?5`
+              ).bind(playerName, score, label, metaStr, existing.id).run();
+            } else {
+              await db.prepare('UPDATE scores SET player_name = ?1 WHERE id = ?2').bind(playerName, existing.id).run();
+            }
           } else {
             await db.batch([
               db.prepare(
@@ -722,15 +733,22 @@ export default {
           ]);
         }
 
+        const effectiveScore = existingIsBetter ? score : existingScoreVal;
         const order = cfg.lowerIsBetter ? 'ASC' : 'DESC';
         const compOp = cfg.lowerIsBetter ? '<' : '>';
         const rankRow = await db.prepare(
           `SELECT COUNT(*) + 1 as rk FROM scores WHERE game_id = ?1 AND score ${compOp} ?2`
-        ).bind(gid, score).first();
-        const best = await db.prepare(
+        ).bind(gid, effectiveScore).first();
+        const bestRaw = await db.prepare(
           `SELECT id, run_id as runId, player_name as playerName, score, label, meta, created_at as createdAt
            FROM scores WHERE game_id = ?1 ORDER BY score ${order}, id ASC LIMIT 1`
         ).bind(gid).first();
+        let best = null;
+        if (bestRaw) {
+          let parsedMeta = null;
+          try { parsedMeta = bestRaw.meta ? JSON.parse(bestRaw.meta) : null; } catch (e) {}
+          best = { ...bestRaw, meta: parsedMeta };
+        }
         const cntRow = await db.prepare('SELECT COUNT(*) as c FROM scores WHERE game_id = ?1').bind(gid).first();
         const statRow = await db.prepare('SELECT plays FROM game_stats WHERE game_id = ?1').bind(gid).first();
 

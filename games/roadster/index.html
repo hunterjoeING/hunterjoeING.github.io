@@ -562,6 +562,8 @@
       phaseTime = 0;
     }
 
+    let missionStartScore = 0;
+
     function startCurrentMission() {
       ArcadeAudio.click();
       document.getElementById('overlay').classList.add('hidden');
@@ -571,6 +573,7 @@
 
     function restartLevel() {
       document.getElementById('overlay').classList.add('hidden');
+      totalScore = missionStartScore;
       setupMission();
       state = 'ramp';
       ArcadeAudio.click();
@@ -579,6 +582,7 @@
     function startFromLevelOne() {
       lvlIdx = 0;
       totalScore = 0;
+      missionStartScore = 0;
       currentRunId = ArcadeScores.newRunId('roadster');
       startCurrentMission();
     }
@@ -836,7 +840,11 @@
         document.getElementById('ov-reset-all').classList.add('hidden');
       } else {
         btn.textContent = '🚀 Nächste Mission ▶';
-        btn.onclick = () => { lvlIdx++; startCurrentMission(); };
+        btn.onclick = () => {
+          lvlIdx++;
+          missionStartScore = totalScore;
+          startCurrentMission();
+        };
         document.getElementById('ov-reset-all').classList.remove('hidden');
       }
       document.getElementById('overlay').classList.remove('hidden');
@@ -1383,6 +1391,12 @@
 
     // Bind Keyboard
     window.addEventListener('keydown', (e) => {
+      const ae = document.activeElement;
+      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+          document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
+        return;
+      }
       if (['ArrowLeft', 'a', 'A'].includes(e.key)) setControlActive('kbd', 'left', true);
       if (['ArrowRight', 'd', 'D'].includes(e.key)) setControlActive('kbd', 'right', true);
       if ([' ', 'ArrowUp', 'w', 'W'].includes(e.key)) {

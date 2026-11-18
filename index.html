@@ -1650,6 +1650,9 @@
         startZoomIntro();
       });
       window.addEventListener('keydown', (e) => {
+        const tag = e.target && e.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        if (document.querySelector('.arcade-modal-backdrop')) return;
         if (!introFinished && (e.key === 'Escape' || e.key === ' ')) skipIntro();
       });
       window.addEventListener('pointerdown', (e) => {
@@ -1923,8 +1926,9 @@
           if (window.ArcadeFeedback) ArcadeFeedback.openModal('all');
         });
       }
-      if (window.ArcadeFeedback) {
-        ArcadeFeedback.mountBoard(document.getElementById('hub-feedback-board'), {
+      const hubFbBoardEl = document.getElementById('hub-feedback-board');
+      if (window.ArcadeFeedback && hubFbBoardEl) {
+        ArcadeFeedback.mountBoard(hubFbBoardEl, {
           initialTarget: 'all'
         });
       }
@@ -1932,13 +1936,15 @@
         updateHeaderStats();
         renderHub();
       });
+      window.addEventListener('arcade:feedback-synced', () => {
+        updateHeaderStats();
+        renderHub();
+      });
       window.addEventListener('arcade:feedback-updated', () => {
         updateHeaderStats();
         renderHub();
-        if (window.ArcadeFeedback) {
-          ArcadeFeedback.mountBoard(document.getElementById('hub-feedback-board'), {
-            initialTarget: 'all'
-          });
+        if (hubFbBoardEl && typeof hubFbBoardEl._arcadeRefreshBoard === 'function') {
+          hubFbBoardEl._arcadeRefreshBoard();
         }
       });
 

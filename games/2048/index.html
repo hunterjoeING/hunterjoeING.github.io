@@ -746,6 +746,9 @@
 
       // Keyboard
       window.addEventListener('keydown', (e) => {
+        const tag = e.target && e.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+        if (document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) return;
         const k = e.key.toLowerCase();
         if (k === 'arrowleft' || k === 'a') { e.preventDefault(); move('left'); }
         else if (k === 'arrowright' || k === 'd') { e.preventDefault(); move('right'); }
@@ -767,6 +770,9 @@
         if (Math.hypot(dx, dy) < 24) return;
         if (Math.abs(dx) > Math.abs(dy)) move(dx > 0 ? 'right' : 'left');
         else move(dy > 0 ? 'down' : 'up');
+      });
+      window.addEventListener('pointercancel', () => {
+        swipeStart = null;
       });
 
       document.querySelectorAll('.dpad-btn').forEach(btn => {

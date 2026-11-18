@@ -1619,6 +1619,14 @@
           elBannerText.textContent =
             `💥 Mine getroffen! 🟢✓ Flagge = Mine (${correctFlags}) · 🟠✕ Keine Mine (${wrongFlags}) · 💣 Übersehen (${missedMines})`;
         } else {
+          const elapsedSec = startTime ? Math.max(0, Math.floor((Date.now() - startTime) / 1000)) : 0;
+          elTime.textContent = elapsedSec + 's';
+          if (window.ArcadeScores && typeof window.ArcadeScores.record === 'function') {
+            const label = `${elapsedSec}s · ${gridSize}³ (${totalMines} Minen)`;
+            window.ArcadeScores.record('minesweeper_3d_prompt_test', elapsedSec, label, true, {
+              meta: { gridSize, totalMines }
+            });
+          }
           elBanner.className = 'status-banner show win';
           elBannerText.textContent = `🏆 Gelöst! Alle sicheren Felder in ${elTime.textContent} aufgedeckt!`;
         }
@@ -2013,6 +2021,7 @@
       }
 
       window.addEventListener('keydown', (e) => {
+        if (document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) return;
         if (e.key === 'Alt') {
           if (!altKeyHeld) {
             altKeyHeld = true;

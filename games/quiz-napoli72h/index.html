@@ -1697,6 +1697,12 @@
     }
 
     window.addEventListener('keydown', (e) => {
+      const ae = document.activeElement;
+      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+          document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
+        return;
+      }
       if (e.key === 'Escape' && !document.getElementById('n72-qr-modal').classList.contains('hidden')) {
         closeQrModal();
         return;

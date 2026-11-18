@@ -758,6 +758,12 @@
     }
 
     window.addEventListener('keydown', (e) => {
+      const ae = document.activeElement;
+      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+          document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
+        return;
+      }
       if (document.getElementById('screen-play').classList.contains('hidden')) return;
       if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
         const idx = parseInt(e.key, 10) - 1;

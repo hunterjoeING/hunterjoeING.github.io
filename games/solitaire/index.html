@@ -572,6 +572,8 @@
       let state = null;
       let undoStack = [];
       let timerId = null;
+      let autoTimerId = null;
+      let winModalTimerId = null;
       let won = false;
       let autoSolving = false;
       let waterfallRaf = null;
@@ -624,6 +626,10 @@
       }
 
       function newGame() {
+        clearTimeout(autoTimerId);
+        autoTimerId = null;
+        clearTimeout(winModalTimerId);
+        winModalTimerId = null;
         stopWaterfall();
         elWinModal.classList.remove('open');
         won = false;
@@ -917,7 +923,7 @@
         render();
 
         const step = () => {
-          if (won) return;
+          if (!autoSolving || won) return;
           let bestCol = -1;
           let lowestRank = 99;
           for (let c = 0; c < 7; c++) {
@@ -937,7 +943,7 @@
             ArcadeAudio.pop();
             render();
             if (!checkWin()) {
-              setTimeout(step, 85);
+              autoTimerId = setTimeout(step, 85);
             }
           } else {
             autoSolving = false;
@@ -952,6 +958,8 @@
         if (!done) return false;
         won = true;
         autoSolving = false;
+        clearTimeout(autoTimerId);
+        autoTimerId = null;
         clearInterval(timerId);
         const timeBonus = Math.max(0, Math.round(18000 / Math.max(15, state.elapsed || 15)));
         const finalScore = state.score + timeBonus;
@@ -970,7 +978,8 @@
 
         ArcadeAudio.win();
         startWaterfall();
-        setTimeout(() => elWinModal.classList.add('open'), 650);
+        clearTimeout(winModalTimerId);
+        winModalTimerId = setTimeout(() => { if (won) elWinModal.classList.add('open'); }, 650);
         return true;
       }
 
@@ -1128,6 +1137,8 @@
           const startY = e.clientY;
           const offX = startX - rect.left;
           const offY = startY - rect.top;
+          let dragLeft = rect.left;
+          let dragTop = rect.top;
           let dragging = false;
           let originEls = [];
           let validTargets = [];
@@ -1187,13 +1198,15 @@
               startDrag();
             }
             if (dragging) {
-              elDragLayer.style.transform = `translate3d(${ev.clientX - offX}px, ${ev.clientY - offY}px, 0)`;
+              dragLeft = ev.clientX - offX;
+              dragTop = ev.clientY - offY;
+              elDragLayer.style.transform = `translate3d(${dragLeft}px, ${dragTop}px, 0)`;
             }
           };
 
           const findBestTarget = () => {
-            const dLeft = parseFloat(elDragLayer.style.transform.split('(')[1]) || 0;
-            const dTop = parseFloat(elDragLayer.style.transform.split(',')[1]) || 0;
+            const dLeft = dragLeft;
+            const dTop = dragTop;
             const dRect = {
               left: dLeft,
               top: dTop,
@@ -1219,6 +1232,7 @@
             window.removeEventListener('pointermove', onMove);
             window.removeEventListener('pointerup', onUp);
             window.removeEventListener('pointercancel', onUp);
+            window.removeEventListener('blur', onUp);
 
             validTargets.forEach(t => (t.slot || t.el).classList.remove('drop-valid'));
             originEls.forEach(oe => oe.classList.remove('drag-origin-hidden'));
@@ -1242,6 +1256,7 @@
           window.addEventListener('pointermove', onMove);
           window.addEventListener('pointerup', onUp);
           window.addEventListener('pointercancel', onUp);
+          window.addEventListener('blur', onUp);
         });
       }
 
@@ -1357,6 +1372,12 @@
 
       window.addEventListener('resize', () => { if (state) render(); });
       window.addEventListener('keydown', (e) => {
+        const ae = document.activeElement;
+        if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+            (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+            document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
+          return;
+        }
         if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
           e.preventDefault();
           undo();

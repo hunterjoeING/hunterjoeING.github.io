@@ -489,6 +489,7 @@
     let lastShopKey = '';
     let lastInspectorKey = '';
     let lastHudCtrlKey = '';
+    let waveWasOngoing = false;
 
     let gold = 165;
     let lives = 20;
@@ -622,6 +623,7 @@
       lastShopKey = '';
       lastInspectorKey = '';
       lastHudCtrlKey = '';
+      waveWasOngoing = false;
       gameOver = false;
       showFeedback('');
       document.getElementById('tdOverlay').classList.add('hidden');
@@ -823,6 +825,7 @@
       earlyWaveLockTimer = 1.05;
       const nextList = buildWaveQueue(wave);
       waveQueue.push(...nextList);
+      waveWasOngoing = true;
       spawnCooldown = Math.min(spawnCooldown, 0.14);
 
       let headline = `🌊 Welle ${wave}`;
@@ -1528,10 +1531,12 @@
         }
       }
 
-      const waveJustCleared = waveQueue.length === 0 && enemies.length === 0 && wave > 0;
+      const isOngoingNow = wave > 0 && (waveQueue.length > 0 || enemies.length > 0);
+      if (isOngoingNow) waveWasOngoing = true;
+      const waveJustCleared = !isOngoingNow && wave > 0;
       if (waveJustCleared) {
-        const wasOngoing = lastHudCtrlKey.includes('|true|');
-        if (wasOngoing) {
+        if (waveWasOngoing) {
+          waveWasOngoing = false;
           ArcadeScores.record('tower', score, `${score} Pkt (Welle ${wave})`, false, { runId: currentRunId, silent: true });
           refreshTopBest();
           changedStats = true;
