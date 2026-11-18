@@ -1,0 +1,109 @@
+name: Promote Admin User in D1
+
+on:
+  workflow_dispatch:
+    inputs:
+      username:
+        description: 'Username to promote to role=admin'
+        required: true
+        default: 'hunterjoe'
+
+jobs:
+  promote:
+    name: Set role=admin in Cloudflare D1
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Update user role in D1 via Cloudflare API
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          TARGET_USERNAME: ${{ inputs.username }}
+        run: |
+          node -e '
+          (async () => {
+            const token = process.env.CLOUDFLARE_API_TOKEN;
+            const target = String(process.env.TARGET_USERNAME || "").trim();
+            if (!token) {
+              console.error("ERROR: CLOUDFLARE_API_TOKEN missing.");
+              process.exit(1);
+            }
+            if (!target) {
+              console.error("ERROR: Target username missing.");
+              process.exit(1);
+            }
+
+            const cfFetch = async (path, init = {}) => {
+              const res = await fetch("https://api.cloudflare.com/client/v4" + path, {
+                ...init,
+                headers: {
+                  "Authorization": "Bearer " + token,
+                  "Content-Type": "application/json",
+                  ...(init.headers || {})
+                }
+              });
+              const data = await res.json().catch(() => ({}));
+              return { ok: res.ok && data.success, status: res.status, data };
+            };
+
+            const acc = await cfFetch("/accounts");
+            if (!acc.ok || !Array.isArray(acc.data.result) || !acc.data.result.length) {
+              console.error("ERROR listing accounts:", JSON.stringify(acc.data));
+              process.exit(1);
+            }
+            const accountId = acc.data.result[0].id;
+
+            let dbId = "";
+            const settings = await cfFetch(`/accounts/${accountId}/workers/scripts/hunterjoe-scores/settings`);
+            if (settings.ok && Array.isArray(settings.data.result?.bindings)) {
+              const dbBinding = settings.data.result.bindings.find(b => b.type === "d1" && b.name === "DB");
+              if (dbBinding && dbBinding.id) dbId = dbBinding.id;
+            }
+            if (!dbId) {
+              const dbs = await cfFetch(`/accounts/${accountId}/d1/database`);
+              const list = (dbs.ok && Array.isArray(dbs.data.result)) ? dbs.data.result : [];
+              const preferred = list.find(d => d.name === "hunterjoe-scores-db")
+                || list.find(d => /hunterjoe|score/i.test(d.name))
+                || (list.length === 1 ? list[0] : null);
+              if (preferred) dbId = preferred.uuid;
+            }
+            if (!dbId) {
+              console.error("ERROR resolving D1 database ID.");
+              process.exit(1);
+            }
+
+            const upd = await cfFetch(`/accounts/${accountId}/d1/database/${dbId}/query`, {
+              method: "POST",
+              body: JSON.stringify({
+                sql: "UPDATE users SET role = ?1 WHERE username = ?2 COLLATE NOCASE",
+                params: ["admin", target]
+              })
+            });
+            if (!upd.ok) {
+              console.error("ERROR updating D1 user:", JSON.stringify(upd.data));
+              process.exit(1);
+            }
+
+            const chk = await cfFetch(`/accounts/${accountId}/d1/database/${dbId}/query`, {
+              method: "POST",
+              body: JSON.stringify({
+                sql: "SELECT id, username, display_name, role FROM users WHERE username = ?1 COLLATE NOCASE",
+                params: [target]
+              })
+            });
+            const rows = chk.data?.result?.[0]?.results || [];
+            console.log("Matched user rows:", JSON.stringify(rows));
+            if (!rows.length) {
+              const allUsers = await cfFetch(`/accounts/${accountId}/d1/database/${dbId}/query`, {
+                method: "POST",
+                body: JSON.stringify({
+                  sql: "SELECT id, username, role FROM users ORDER BY id DESC LIMIT 10"
+                })
+              });
+              console.log("Recent users in D1:", JSON.stringify(allUsers.data?.result?.[0]?.results || []));
+              console.error("ERROR: User not found in D1:", target);
+              process.exit(1);
+            }
+          })();
+          '
