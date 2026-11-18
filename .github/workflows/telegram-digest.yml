@@ -1,0 +1,121 @@
+name: Send Telegram Comment Digest
+
+on:
+  workflow_dispatch:
+    inputs:
+      days:
+        description: 'Zeitraum in Tagen (Standard: 4)'
+        required: false
+        default: '4'
+
+jobs:
+  send-digest:
+    name: Fetch Feedback & Send Telegram Digest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Fetch Last N Days Comments & Send via Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DIGEST_DAYS: ${{ inputs.days || '4' }}
+        run: |
+          node -e '
+          (async () => {
+            const token = (process.env.TELEGRAM_BOT_TOKEN || "").trim();
+            const chatId = (process.env.TELEGRAM_CHAT_ID || "").trim();
+            const days = Math.max(1, Math.min(90, parseInt(process.env.DIGEST_DAYS || "4", 10) || 4));
+            if (!token || !chatId) {
+              throw new Error("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID secret missing");
+            }
+
+            const esc = (s) => String(s || "")
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
+
+            const parseTs = (raw) => {
+              if (!raw) return 0;
+              const s = String(raw).trim();
+              // SQLite datetime("now") is "YYYY-MM-DD HH:MM:SS" in UTC
+              const iso = s.includes("T") ? s : s.replace(" ", "T") + "Z";
+              const t = Date.parse(iso);
+              return Number.isFinite(t) ? t : 0;
+            };
+
+            const res = await fetch("https://hunterjoe-scores.hunterjoeing.workers.dev/api/feedback?target=all&status=all&limit=100");
+            const data = await res.json();
+            if (!res.ok || !data.ok) {
+              throw new Error("Worker /api/feedback failed: " + res.status);
+            }
+
+            const now = Date.now();
+            const cutoff = now - days * 24 * 60 * 60 * 1000;
+            const items = Array.isArray(data.items) ? data.items : [];
+
+            const recentPosts = [];
+            for (const p of items) {
+              const pCreated = parseTs(p.createdAt);
+              const pUpdated = parseTs(p.updatedAt);
+              const recentReplies = (p.replies || []).filter(r => parseTs(r.createdAt) >= cutoff);
+              if (pCreated >= cutoff || pUpdated >= cutoff || recentReplies.length > 0) {
+                recentPosts.push({ ...p, recentReplies });
+              }
+            }
+
+            const catLabels = { wish: "Wunsch", bug: "Bug", praise: "Lob", question: "Frage" };
+            const statusLabels = { open: "Offen", in_progress: "In Arbeit", fixed: "Erledigt" };
+
+            let chunks = [];
+            const header = `📬 <b>Community-Board Übersicht (letzte ${days} Tage)</b>\n`
+              + `<i>Stand: ${esc(new Date(now).toISOString().replace("T", " ").slice(0, 16))} UTC</i>\n\n`;
+
+            if (recentPosts.length === 0) {
+              const msg = header
+                + `In den letzten ${days} Tagen gibt es <b>0 neue Live-Kommentare</b> in der Website-Datenbank (Cloudflare D1).\n\n`
+                + `<i>Hinweis: Auf der Website werden beim ersten Besuch noch 3 lokale Beispiel-/Changelog-Einträge vom 15.11. angezeigt (#101 Streuschuss, #102 Blöcke verbergen, #103 Dark/Light-Mode), solange D1 leer ist.</i>\n\n`
+                + `🔗 https://hunterjoeing.github.io/`;
+              chunks.push(msg);
+            } else {
+              let buf = header + `Gefundene Beiträge: <b>${recentPosts.length}</b>\n\n`;
+              for (const p of recentPosts) {
+                const block = [
+                  `<b>#${esc(p.id)} · ${esc(p.title)}</b>`,
+                  `Bereich: <code>${esc(p.targetId)}</code> | ${esc(catLabels[p.category] || p.category)} | Status: ${esc(statusLabels[p.status] || p.status)}`,
+                  `Von: <b>${esc(p.authorName)}</b> (${esc(p.createdAt)})`,
+                  `${esc((p.body || "").slice(0, 500))}${(p.body || "").length > 500 ? "…" : ""}`,
+                  ...(p.replies || []).map(r => `  ↳ <b>${esc(r.authorName)}</b> (${esc(r.createdAt)}): ${esc((r.body || "").slice(0, 300))}`)
+                ].join("\n") + "\n\n";
+
+                if (buf.length + block.length > 3600) {
+                  chunks.push(buf);
+                  buf = block;
+                } else {
+                  buf += block;
+                }
+              }
+              buf += `🔗 https://hunterjoeing.github.io/`;
+              chunks.push(buf);
+            }
+
+            for (const text of chunks) {
+              const tgRes = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  chat_id: chatId,
+                  text,
+                  parse_mode: "HTML",
+                  disable_web_page_preview: true
+                })
+              });
+              const tgData = await tgRes.json().catch(() => ({}));
+              console.log("Telegram status:", tgRes.status, "ok:", tgData.ok, "msg_id:", tgData.result?.message_id);
+              if (!tgRes.ok || !tgData.ok) {
+                throw new Error("Telegram send failed: " + JSON.stringify(tgData));
+              }
+            }
+          })();
+          '
