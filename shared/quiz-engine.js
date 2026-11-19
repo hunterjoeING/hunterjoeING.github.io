@@ -4,6 +4,20 @@
 
   const SEEN_PREFIX = 'arcade_quiz_seen_v1:';
   const DEFAULT_LEN_KEY = 'arcade_quiz_len';
+  const ROUND_SIZE = 12;      // exakt 12 Fragen pro Runde
+  const TEMP_POOL_CAP = 75;   // TEMPORÄR: Pool pro Datenbank auf 75 Fragen begrenzen (entfernen, sobald Banken final sind)
+  let roundStartedAt = Date.now();
+
+  // Lädt das lokale Bestenlisten-Modul (shared/quiz-board.js) relativ zu dieser Datei
+  (function loadBoard() {
+    try {
+      const cs = document.currentScript;
+      if (!cs || !cs.src || window.ArcadeQuizBoard) return;
+      const s = document.createElement('script');
+      s.src = cs.src.replace(/quiz-engine\.js(\?.*)?$/, 'quiz-board.js');
+      document.head.appendChild(s);
+    } catch (e) {}
+  })();
 
   function fnv1aHash(str) {
     let h = 0x811c9dc5;
@@ -120,6 +134,9 @@
     registerBank: (topicId, questions) => {
       const clean = (Array.isArray(questions) ? questions : []).map(q => {
         const clone = Object.assign({}, q);
+        // `explanation` und `exp` sind austauschbar (Anzeige nach jeder Antwort)
+        if (clone.explanation == null && clone.exp != null) clone.explanation = clone.exp;
+        else if (clone.exp == null && clone.explanation != null) clone.exp = clone.explanation;
         try {
           Object.defineProperty(clone, '_topic', { value: topicId, configurable: true, enumerable: false });
         } catch (e) {
@@ -133,7 +150,7 @@
     },
 
     getBank: (topicId) => {
-      return (window.ARCADE_QUIZ_BANKS[topicId] || []).slice();
+      return (window.ARCADE_QUIZ_BANKS[topicId] || []).slice(0, TEMP_POOL_CAP);
     },
 
     getAllBanks: () => window.ARCADE_QUIZ_BANKS,
@@ -156,9 +173,7 @@
 
     resolveRoundCount: (requested, poolLen, defaultLen = 20) => {
       if (!poolLen || poolLen <= 0) return 0;
-      if (requested === 'all') return poolLen;
-      const n = parseInt(requested, 10) || defaultLen;
-      return Math.min(n, poolLen);
+      return Math.min(ROUND_SIZE, poolLen);
     },
 
     getSeenStats: (quizId, pool) => {
@@ -199,7 +214,15 @@
     },
 
     drawDeck: (quizId, pool, requestedCount, defaultLen = 20) => {
-      const list = Array.isArray(pool) ? pool.slice() : [];
+      // Duplikate (gleiche Frage) entfernen
+      const dedupSeen = new Set();
+      const list = (Array.isArray(pool) ? pool : []).filter(it => {
+        const k = String((it && it.q) || getItemId(it, quizId)).trim().toLowerCase();
+        if (dedupSeen.has(k)) return false;
+        dedupSeen.add(k);
+        return true;
+      });
+      roundStartedAt = Date.now();
       const count = window.ArcadeQuizEngine.resolveRoundCount(requestedCount, list.length, defaultLen);
       if (count <= 0) return { deck: [], unseenBefore: 0, cycled: false };
 
@@ -247,6 +270,14 @@
       const label = needsNorm
         ? `${recordedScore} Pkt (20er-Norm · ${correctCount}/${n})`
         : `${cleanScore} Pkt (${correctCount}/${n})`;
+      try {
+        if (window.ArcadeQuizBoard) {
+          window.ArcadeQuizBoard.submit(gameId, {
+            score: recordedScore, correct: correctCount, total: n,
+            seconds: Math.max(1, Math.round((Date.now() - roundStartedAt) / 1000))
+          });
+        }
+      } catch (e) {}
       const isNewRecord = (window.ArcadeScores && typeof window.ArcadeScores.record === 'function')
         ? window.ArcadeScores.record(gameId, recordedScore, label, false, { meta: Object.assign({ rawScore: cleanScore, totalCount: n, correctCount }, meta || {}) })
         : false;
@@ -290,7 +321,8 @@
           const label = isAll ? showAllLabel : (val === 20 ? '20 ★' : String(val));
           return `<button type="button" class="round-len-pill ${String(currentLen) === String(val) ? 'active' : ''}" data-len="${val}">${label}</button>`;
         }).join('');
-        lenBar.innerHTML = `<span style="font-size:12px;color:var(--text-muted);font-weight:700;">Fragen/Runde:</span>${pills}`;
+        void pills;
+        lenBar.innerHTML = `<span style="font-size:12px;color:var(--text-muted);font-weight:700;">Fragen/Runde: ${ROUND_SIZE}</span>`;
       }
 
       function renderStatus() {
