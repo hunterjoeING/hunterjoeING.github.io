@@ -13,7 +13,9 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 3. **Modulare Dateigrößen & Isolierung:**
    * Neue Features (z. B. Monetarisierung, Affiliate-Banner, Partner-Widgets, Analytics) müssen in **eigenständige, kleine Module** unter `shared/` ausgelagert werden (Zielgröße: **unter 300–500 Zeilen Code pro Modul**), statt bestehende Dateien wie `shared/arcade.js` oder `index.html` weiter aufzublähen.
    * Jedes Spiel und jedes Quiz lebt isoliert in seinem eigenen Verzeichnis unter `games/<slug>/`.
-4. **Gezielte, chirurgische Edits statt Komplett-Überschreibungen:**
+4. **Sofort committen & pushen:** Committe und pushe fertige Änderungen sofort nach jeder einzelnen abgeschlossenen Datei auf GitHub – sammle niemals mehrere Dateien bis zum Schluss.
+5. **Syntax-Check vor jedem Commit:** Führe vor jedem Commit `node --check` auf alle geänderten JS-Dateien aus, damit `main` jederzeit fehlerfrei bleibt.
+6. **Gezielte, chirurgische Edits statt Komplett-Überschreibungen:**
    * Nutze gezielte Zeilen-Ersetzungen anstatt große Dateien komplett neu zu schreiben.
    * Prüfe nach jeder JS-Änderung die Syntax mit `node --check <datei.js>`.
 5. **Mobile-First & Android/iOS-Stabilität:**
