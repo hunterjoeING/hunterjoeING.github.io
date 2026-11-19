@@ -37,6 +37,8 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 │   ├── arcade.js                    # Globale Services (ArcadeAudio, ArcadeTheme, ArcadeScores, ArcadeAuth, ArcadeFeedback)
 │   ├── burger-menu.js               # Modulares Top-Right Burger-Menü (☰) + Slide-Over-Drawer (Dark/Light)
 │   ├── quiz-engine.js               # Zentrale Quiz-Logik (Seen-Tracking, 1.000+-Fragen-Generator, Rundenlänge, Timer/Entspannt)
+│   ├── quiz-board.js                # Einheitliche lokale Quiz-Bestenliste (localStorage, optionale Namenseingabe)
+│   ├── hidden-admin.js              # PIN-Admin (Konstante ADMIN_PIN) für versteckte Quizzes (Waldgarten, Napoli72H)
 │   └── quiz-data/                   # Reine Quiz-Fragendatenbanken (strikt getrennt von der UI-Logik)
 │       ├── bank-waldgarten.js       # 1.000 Fragen: Natur, Vögel, Wildtiere & Geschichte Schwarzenburg (Heideblick)
 │       ├── bank-military-aircraft.js # 1.000 Fragen: Militärflugzeuge (Jets, Historie, Bomber/AWACS, Technik)
