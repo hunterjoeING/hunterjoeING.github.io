@@ -1,1304 +1,983 @@
-// Auto-generated unified quiz bank for "history" (108 questions)
+// Auto-generated unified quiz bank for "history" (75 questions)
 (function () {
   const DATA = [
   {
     "cat": "antike",
     "diff": "easy",
-    "q": "Welcher Fluss bildete über Jahrtausende die Lebensader und landwirtschaftliche Grundlage des Alten Ägypten?",
+    "q": "Wie reagierte der junge Julius Cäsar um 75 v. Chr., als ihn kilikische Piraten im Mittelmeer gefangen nahmen?",
     "a": [
-      "Der Nil",
-      "Der Euphrat",
-      "Der Jordan",
-      "Der Tiber"
+      "Er lachte über das Lösegeld von 20 Talenten Silber, forderte 50 Talente und kündigte an, alle Piraten nach seiner Freilassung zu kreuzigen",
+      "Er trat der Piratenbande bei und wurde ihr gefürchteter Vizekapitän",
+      "Er trat in den Hungerstreik, bis der römische Senat die Kaution bezahlte",
+      "Er sprang bei Nacht ins Meer und schwamm 40 Kilometer nach Rhodos"
     ],
-    "exp": "Die jährlichen Nilüberschwemmungen lieferten fruchtbaren Schlamm und machten eine der frühesten Hochkulturen in Nordostafrika möglich."
+    "explanation": "Cäsar hielt nach seiner Freilassung Wort: Er kaperte eine Flotte, nahm alle Piraten gefangen und ließ sie wie versprochen kreuzigen.",
+    "exp": "Cäsar hielt nach seiner Freilassung Wort: Er kaperte eine Flotte, nahm alle Piraten gefangen und ließ sie wie versprochen kreuzigen."
   },
   {
     "cat": "antike",
     "diff": "easy",
-    "q": "Welcher griechische Stadtstaat gilt als Geburtsort der ersten klassischen Demokratie im 5. Jahrhundert v. Chr.?",
+    "q": "Welches berühmte Dokument von 1215 zwang den englischen König Johann Ohneland erstmals zur Anerkennung von Bürgerrechten?",
     "a": [
-      "Athen",
-      "Sparta",
-      "Korinth",
-      "Theben"
+      "Magna Carta Libertatum (Große Freiheitsurkunde)",
+      "Bill of Rights",
+      "Habeas Corpus Akte",
+      "Edikt von Nantes"
     ],
-    "exp": "In Athen stimmten freie männliche Vollbürger direkt in der Volksversammlung (Ekklesia) über Gesetze, Krieg und Frieden ab."
+    "explanation": "Die Magna Carta legte den bis heute gültigen Rechtsgrundsatz fest: Niemand – nicht einmal der König – steht über dem Gesetz.",
+    "exp": "Magna Carta Libertatum (Große Freiheitsurkunde)"
+  },
+  {
+    "cat": "antike",
+    "diff": "mid",
+    "q": "Was war der kuriose Grund, warum die drei kaiserlichen Statthalter beim Prager Fenstersturz 1618 den 17-Meter-Sturz überlebten?",
+    "a": [
+      "Sie landeten auf einem riesigen Misthaufen im Burggraben der Prager Burg",
+      "Sie wurden von einem Netz aus Reiterspitzenteppichen aufgefangen",
+      "Sie hielten sich an großen Sonnenschirmen aus Seide fest",
+      "Die Burgwachen fingen sie mit gepolsterten Heuwagen auf"
+    ],
+    "explanation": "Die katholische Seite sprach von der Rettung durch die Jungfrau Maria, die Protestanten verwiesen trocken auf den stinkenden Pferdemist – der Dreißigjährige Krieg begann.",
+    "exp": "Sie landeten auf einem riesigen Misthaufen im Burggraben der Prager Burg"
   },
   {
     "cat": "antike",
     "diff": "easy",
-    "q": "Welcher römische Feldherr und Diktator wurde am 15. März („Iden des März“) 44 v. Chr. von Senatoren ermordet?",
+    "q": "Wer wurde am Weihnachtstag des Jahres 800 im Petersdom in Rom von Papst Leo III. zum ersten Kaiser des Westens gekrönt?",
     "a": [
-      "Gaius Julius Caesar",
-      "Augustus",
-      "Scipio Africanus",
-      "Mark Aurel"
+      "Karl der Große (Charlemagne)",
+      "Otto I. der Große",
+      "Friedrich I. Barbarossa",
+      "Chlodwig I."
     ],
-    "exp": "Verschwörer um Brutus und Cassius wollten die Römische Republik retten – stattdessen folgte ein Bürgerkrieg und der Übergang zum Kaisertum."
-  },
-  {
-    "cat": "antike",
-    "diff": "easy",
-    "q": "Welches Großreich errichtete zwischen dem 1. und 3. Jahrhundert n. Chr. den Limes quer durch Mitteleuropa?",
-    "a": [
-      "Das Römische Reich",
-      "Das Frankenreich",
-      "Das Perserreich",
-      "Das Byzantinische Reich"
-    ],
-    "exp": "Der Obergermanisch-Rätische Limes markierte und sicherte über rund 550 km die Grenze zwischen den römischen Provinzen und Germania."
+    "explanation": "Mit der Krönung Karls knüpfte das Frankenreich an die antike römische Kaiserwürde an – die Wiege des Heiligen Römischen Reiches.",
+    "exp": "Karl der Große (Charlemagne)"
   },
   {
     "cat": "antike",
     "diff": "mid",
-    "q": "Wann krönte Papst Leo III. den fränkischen König Karl den Großen in Rom zum Kaiser?",
+    "q": "Welche Waffe half den Osmanen unter Sultan Mehmed II. im Mai 1453, die als uneinnehmbar geltenden Theodosianischen Mauern von Konstantinopel zu knacken?",
     "a": [
-      "An Weihnachten im Jahr 800 n. Chr.",
-      "Im Jahr 476 n. Chr.",
-      "Im Jahr 962 n. Chr.",
-      "Im Jahr 1099 n. Chr."
+      "Eine gigantische Bronzekanone (Basilik) des ungarischen Gießers Urban, die 600 kg schwere Granitkugeln schoss",
+      "Ein Rammbock aus massivem Meteoreisen",
+      "Flammenwerfer mit unlöschbarem Griechischem Feuer",
+      "Ein Katapult, das Felsen mit Tretmühlen beschleunigte"
     ],
-    "exp": "Mit der Kaiserkrönung Karls des Großen 800 n. Chr. erneuerte sich im Westen die weströmische Kaiseridee als christliches Universalkaisertum."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Welche Schlacht im Jahr 9 n. Chr. unter Führung des Cheruskers Arminius stoppte die römische Eroberung Germaniens?",
-    "a": [
-      "Die Varusschlacht (im Teutoburger Wald)",
-      "Die Schlacht auf den Katalaunischen Feldern",
-      "Die Schlacht bei Cannae",
-      "Die Schlacht auf dem Lechfeld"
-    ],
-    "exp": "Drei römische Legionen unter Publius Quinctilius Varus wurden vernichtend geschlagen; Rom zog sich weitgehend hinter den Rhein zurück."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Welchen jahrzehntelangen Konflikt beendete das Wormser Konkordat im Jahr 1122?",
-    "a": [
-      "Den Investiturstreit zwischen Kaiser und Papst über die Einsetzung von Bischöfen",
-      "Den Hundertjährigen Krieg zwischen England und Frankreich",
-      "Die Hussitenkriege in Böhmen",
-      "Den Kampf zwischen Venedig und Genua"
-    ],
-    "exp": "Kaiser Heinrich V. und Papst Calixt II. trennten geistliche (Ring und Stab) und weltliche Belehnung (Zepter) der Bischöfe und Reichsäbte."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Welcher englische König musste im Jahr 1215 unter Druck der Barone die „Magna Carta Libertatum“ besiegeln?",
-    "a": [
-      "König Johann Ohneland (John Lackland)",
-      "König Richard Löwenherz",
-      "König Heinrich VIII.",
-      "König Eduard III."
-    ],
-    "exp": "Die Magna Carta gilt als Meilenstein der Verfassungsgeschichte, da auch der Monarch erstmals ausdrücklich an Recht und Gesetz gebunden wurde."
+    "explanation": "Der Fall Konstantinopels nach über 1.000 Jahren byzantinischer Geschichte gilt vielen Historikern als das offizielle Ende des europäischen Mittelalters.",
+    "exp": "Eine gigantische Bronzekanone (Basilik) des ungarischen Gießers Urban, die 600 kg schwere Granitkugeln schoss"
   },
   {
     "cat": "antike",
     "diff": "pro",
-    "q": "Mit welcher Seeschlacht im Jahr 31 v. Chr. besiegte Octavian (später Kaiser Augustus) Marcus Antonius und Kleopatra endgültig?",
+    "q": "Welches Gesetzbuch des Kaisers Justinian I. (Corpus Iuris Civilis, 6. Jh.) bildet das Fundament fast aller modernen europäischen Rechtssysteme?",
     "a": [
-      "Schlacht bei Actium",
-      "Schlacht bei Salamis",
-      "Schlacht bei Lepanto",
-      "Schlacht bei Zama"
-    ],
-    "exp": "Actium beendete die römischen Bürgerkriege und begründete das augusteische Prinzipat sowie die lange Friedensphase der „Pax Romana“."
-  },
-  {
-    "cat": "antike",
-    "diff": "pro",
-    "q": "Welche spätantike Gesetzessammlung aus den 530er Jahren unter Justinian I. prägte später das europäische Zivilrecht?",
-    "a": [
-      "Das Corpus Iuris Civilis",
+      "Das Corpus Iuris Civilis (Codex Justinianus)",
       "Der Sachsenspiegel",
-      "Die Constitutio Criminalis Carolina",
-      "Das Zwölftafelgesetz"
+      "Der Codex Hammurapi",
+      "Die Zwölftafelgesetze"
     ],
-    "exp": "Durch die spätere Wiederentdeckung in Oberitalien (ab ca. 1080) wurde das römische Recht zur juristischen Grundlage weiter Teile Kontinentaleuropas."
+    "explanation": "Das römische Zivilrecht wurde im 12. Jahrhundert an der Universität Bologna wiederentdeckt und prägt das deutsche BGB bis zum heutigen Tag.",
+    "exp": "Das Corpus Iuris Civilis (Codex Justinianus)"
+  },
+  {
+    "cat": "antike",
+    "diff": "easy",
+    "q": "Welche Seuche tötete zwischen 1347 und 1351 rund ein Drittel der gesamten europäischen Bevölkerung?",
+    "a": [
+      "Der Schwarze Tod (Beulen- und Lungenpest)",
+      "Die Spanische Grippe",
+      "Die Cholera",
+      "Die Antoninische Pestepidemie"
+    ],
+    "explanation": "Wegen des extremen Arbeitskräftemangels nach der Pest konnten Bauern erstmals höhere Löhne fordern – das System der Leibeigenschaft zerbrach.",
+    "exp": "Der Schwarze Tod (Beulen- und Lungenpest)"
+  },
+  {
+    "cat": "antike",
+    "diff": "mid",
+    "q": "Was regelte die „Goldene Bulle“ von 1356 für mehr als 400 Jahre im Heiligen Römischen Reich?",
+    "a": [
+      "Die verbindliche Wahl des deutschen Königs durch ein exklusives Kollegium von sieben Kurfürsten ohne Einmischung des Papstes",
+      "Den festen Preis für Weizen und Bier in allen Reichsstädten",
+      "Das Verbot von Ritterturnieren in der Fastenzeit",
+      "Die Pflicht zum Lateinunterricht an allen Klosterschulen"
+    ],
+    "explanation": "Kaiser Karl IV. schuf damit das erste „Grundgesetz“ des Reiches und verhinderte Doppelwahlen und Thronstreitigkeiten.",
+    "exp": "Die verbindliche Wahl des deutschen Königs durch ein exklusives Kollegium von sieben Kurfürsten ohne Einmischung des Papstes"
   },
   {
     "cat": "antike",
     "diff": "pro",
-    "q": "Was legte Kaiser Karl IV. mit der „Goldenen Bulle“ im Jahr 1356 reichsrechtlich verbindlich fest?",
+    "q": "Welche geheime Brandwaffe der byzantinischen Marine brannte sogar auf der Wasseroberfläche und rettete Konstantinopel vor arabischen Belagerungen?",
     "a": [
-      "Die Wahl des römisch-deutschen Königs durch genau sieben Kurfürsten ohne päpstliche Bestätigung",
-      "Die Einführung einer reichsweiten Einkommensteuer",
-      "Das allgemeine Verbot der mittelalterlichen Zünfte",
-      "Die Teilung des Reiches zwischen Österreich und Schweden"
+      "Das Griechische Feuer (Hygron Pyr)",
+      "Napalm-Öl aus Babylon",
+      "Schwefel-Blei-Gemisch der Alchemisten",
+      "Phosphor-Granaten aus Syrakus"
     ],
-    "exp": "Die Goldene Bulle funktionierte bis 1806 faktisch als das wichtigste Verfassungsgesetz des Heiligen Römischen Reiches."
+    "explanation": "Die genaue chemische Rezeptur (vermutlich Erdöl, Schwefel, Salpeter und gebrannter Kalk) war ein streng gehütetes Staatsgeheimnis und ging verloren.",
+    "exp": "Das Griechische Feuer (Hygron Pyr)"
+  },
+  {
+    "cat": "antike",
+    "diff": "easy",
+    "q": "Welcher karthagische Feldherr zog 218 v. Chr. mit Kriegselefanten über die schneebedeckten Alpen gegen Rom?",
+    "a": [
+      "Hannibal Barkas",
+      "Hamilkar Barkas",
+      "Hasdrubal",
+      "Mago"
+    ],
+    "explanation": "In der Schlacht von Cannae (216 v. Chr.) vernichtete Hannibal ein römisches Heer von 80.000 Mann durch die klassische doppelte Umfassung.",
+    "exp": "Hannibal Barkas"
+  },
+  {
+    "cat": "antike",
+    "diff": "mid",
+    "q": "Was geschah an den Iden des März (15. März 44 v. Chr.) im Theater des Pompejus in Rom?",
+    "a": [
+      "Julius Cäsar wurde von einer Gruppe Senatoren um Brutus und Cassius mit 23 Dolchstößen ermordet",
+      "Rom wurde von den Vandalen in Brand gesteckt",
+      "Kaiser Augustus wurde zum ersten Kaiser ausgerufen",
+      "Cäsar heiratete die ägyptische Königin Kleopatra"
+    ],
+    "explanation": "Die Verschwörer wollten die Römische Republik retten – lösten durch Cäsars Tod jedoch einen Bürgerkrieg aus, der das Römische Kaiserreich besiegelte.",
+    "exp": "Julius Cäsar wurde von einer Gruppe Senatoren um Brutus und Cassius mit 23 Dolchstößen ermordet"
   },
   {
     "cat": "antike",
     "diff": "pro",
-    "q": "Welches Ereignis im Jahr 1453 markierte das endgültige Ende des Byzantinischen Reiches?",
+    "q": "Was war der „Gang nach Canossa“ von König Heinrich IV. im Januar 1077?",
     "a": [
-      "Die Eroberung Konstantinopels durch Sultan Mehmed II.",
-      "Die Rückeroberung Granadas durch Kastilien",
-      "Das Konzil von Konstanz",
-      "Die Gründung der Hanse"
+      "Ein Bußgang im Büßergewand durch den Schnee vor die Burg von Papst Gregor VII., um die Lösung vom päpstlichen Kirchenbann zu erbitten",
+      "Ein Kriegszug zur Eroberung der Lombardei",
+      "Eine Pilgerreise nach Jerusalem auf Eseln",
+      "Ein Geheimbesuch zur Aushandlung eines Waffenstillstands mit Venedig"
     ],
-    "exp": "Nach dem Fall Konstantinopels flohen viele griechische Gelehrte nach Italien und beflügelten dort Humanismus und Renaissance."
+    "explanation": "Im sogenannten Investiturstreit ging es um die fundamentale Machtfrage: Darf der Kaiser Bischöfe einsetzen oder allein der Papst?",
+    "exp": "Ein Bußgang im Büßergewand durch den Schnee vor die Burg von Papst Gregor VII., um die Lösung vom päpstlichen Kirchenbann zu erbitten"
+  },
+  {
+    "cat": "antike",
+    "diff": "easy",
+    "q": "Welcher römische Kaiser erhob das Christentum 313 n. Chr. im Mailänder Edikt zur erlaubten Religion und verlegte die Hauptstadt nach Byzanz?",
+    "a": [
+      "Konstantin der Große",
+      "Diokletian",
+      "Nero",
+      "Marcus Aurelius"
+    ],
+    "explanation": "Auf dem Sterbebett ließ sich Konstantin taufen – das Römische Reich wandelte sich in der Folgezeit zu einem christlichen Imperium.",
+    "exp": "Konstantin der Große"
+  },
+  {
+    "cat": "antike",
+    "diff": "mid",
+    "q": "Was war der berüchtigte „Vierte Kreuzzug“ im Jahr 1204, der das christliche Abendland bis heute beschämt?",
+    "a": [
+      "Die Kreuzfahrer erreichten nie Jerusalem, sondern eroberten und plünderten stattdessen die christliche Metropole Konstantinopel",
+      "Ein Feldzug, bei dem die gesamte Armee an der Ruhr starb",
+      "Der Versuch, Rom gegen den Willen des Papstes zu besetzen",
+      "Ein Zug unbewaffneter Mönche in die Sahara"
+    ],
+    "explanation": "Gelenkt vom venezianischen Dogen Enrico Dandolo raubten die Kreuzritter die unermesslichen Kunstschätze und Reliquien der orthodoxen Christen.",
+    "exp": "Die Kreuzfahrer erreichten nie Jerusalem, sondern eroberten und plünderten stattdessen die christliche Metropole Konstantinopel"
+  },
+  {
+    "cat": "antike",
+    "diff": "pro",
+    "q": "Wer war Dschingis Khan und wie schafften seine mongolischen Reiterkrieger im 13. Jahrhundert das größte Landreich der Geschichte?",
+    "a": [
+      "Durch eiserne Disziplin, berittene Bogenschützen mit Kompositbögen, psychologische Kriegsführung und ein geniales Reiter-Postsystem (Örtöö)",
+      "Durch den exklusiven Besitz von europäischen Schusswaffen",
+      "Weil alle Nachbarstaaten friedlich freiwillig beitraten",
+      "Durch den Bau von gigantischen Belagerungsmaschinen aus Bambus"
+    ],
+    "explanation": "Das Mongolische Reich reichte von Ungarn und Polen bis nach Korea und zum Chinesischen Meer – die Pax Mongolica belebte die Seidenstraße.",
+    "exp": "Durch eiserne Disziplin, berittene Bogenschützen mit Kompositbögen, psychologische Kriegsführung und ein geniales Reiter-Postsystem (Örtöö)"
+  },
+  {
+    "cat": "antike",
+    "diff": "easy",
+    "q": "In welchem Jahr besiegte Wilhelm der Eroberer in der Schlacht bei Hastings den angelsächsischen König Harold und eroberte England?",
+    "a": [
+      "1066",
+      "1215",
+      "800",
+      "1492"
+    ],
+    "explanation": "Der berühmte Teppich von Bayeux schildert die Invasion der Normannen bildhaft auf einer Länge von fast 70 Metern.",
+    "exp": "1066"
+  },
+  {
+    "cat": "antike",
+    "diff": "mid",
+    "q": "Welcher babylonische König ließ um 1750 v. Chr. eine der ältesten erhaltenen Gesetzessammlungen in eine schwarze Basaltstele meißeln?",
+    "a": [
+      "Hammurapi („Auge um Auge, Zahn um Zahn“)",
+      "Nebukadnezar II.",
+      "Sargon von Akkad",
+      "Gilgamesch"
+    ],
+    "explanation": "Der Codex Hammurapi regelte Eigentum, Ehe, Löhne und Strafmaße und ist heute im Pariser Louvre ausgestellt.",
+    "exp": "Hammurapi („Auge um Auge, Zahn um Zahn“)"
+  },
+  {
+    "cat": "antike",
+    "diff": "pro",
+    "q": "Was war der sogenannte „Scherbengericht“ (Ostrakismos) im antiken Athen?",
+    "a": [
+      "Bürger ritzten den Namen eines Politikers in Tonscherben; wer die meisten Stimmen erhielt, wurde für 10 Jahre ohne Ehrverlust verbannt",
+      "Eine Strafe für Töpfer, die minderwertiges Tongeschirr verkauften",
+      "Ein Ritual zur Vertreibung von Erdbeben-Dämonen",
+      "Die Versteigerung von geplünderten persischen Kriegsschiffen"
+    ],
+    "explanation": "Das Scherbengericht sollte verhindern, dass ein einzelner Demagoge oder Politiker zu mächtig wird und eine Tyrannis errichtet.",
+    "exp": "Bürger ritzten den Namen eines Politikers in Tonscherben; wer die meisten Stimmen erhielt, wurde für 10 Jahre ohne Ehrverlust verbannt"
+  },
+  {
+    "cat": "antike",
+    "diff": "easy",
+    "q": "Wer überquerte 49 v. Chr. den Grenzfluss Rubikon mit den Worten „Alea iacta est“ (Die Würfel sind gefallen)?",
+    "a": [
+      "Julius Cäsar",
+      "Mark Aurel",
+      "Scipio Africanus",
+      "Pompejus"
+    ],
+    "explanation": "Mit dem Überschreiten des Flusses mit bewaffneten Truppen brach Cäsar das römische Gesetz und entfachte den Bürgerkrieg gegen den Senat.",
+    "exp": "Julius Cäsar"
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
-    "q": "Wer entwickelte um 1450 in Mainz den europäischen Buchdruck mit beweglichen Metall-Lettern und Druckerpresse?",
+    "q": "Was schlug Martin Luther am 31. Oktober 1517 der Überlieferung nach an die Tür der Schlosskirche zu Wittenberg?",
     "a": [
-      "Johannes Gutenberg",
-      "Albrecht Dürer",
-      "Leonardo da Vinci",
-      "Lucas Cranach"
+      "Seine 95 Thesen gegen den päpstlichen Ablasshandel",
+      "Die deutsche Übersetzung des Neuen Testaments",
+      "Einen offenen Brief mit einer Kriegserklärung an Kaiser Karl V.",
+      "Ein Traktat über das deutsche Reinheitsgebot für Bier"
     ],
-    "exp": "Gutenbergs Medienrevolution senkte die Kosten für Bücher drastisch und beschleunigte Wissenschaft, Bildung und Reformation in ganz Europa."
+    "explanation": "Luther prangerte an, dass die Kirche Sündenvergebung gegen Geld verkaufte („Sobald das Geld im Kasten klingt, die Seele in den Himmel springt“).",
+    "exp": "Seine 95 Thesen gegen den päpstlichen Ablasshandel"
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
-    "q": "Welches Datum und welcher Ort sind untrennbar mit dem Beginn von Martin Luthers Reformation verbunden?",
+    "q": "Was war der historische Protest der „Boston Tea Party“ im Dezember 1773?",
     "a": [
-      "31. Oktober 1517 in Wittenberg (95 Thesen)",
-      "24. Oktober 1648 in Münster",
-      "14. Juli 1789 in Paris",
-      "18. Mai 1848 in Frankfurt"
+      "Als Indianer verkleidete Kolonisten warfen 342 Kisten britischen Tees aus Protest gegen Steuern ohne parlamentarische Vertretung ins Meer",
+      "Ein Boykott englischer Kaffeebohnen durch die Kaufleute von New York",
+      "Die Verbrennung von englischen Geldscheinen vor dem Rathaus",
+      "Ein Festgelage von Rebellen zur Feier der Verfassung"
     ],
-    "exp": "Luthers Thesen richteten sich ursprünglich gegen Missbräuche beim Ablasshandel, lösten aber rasch die Spaltung der westlichen Kirche aus."
+    "explanation": "Die Parole „No taxation without representation“ wurde zum Schlachtruf des Amerikanischen Unabhängigkeitskrieges.",
+    "exp": "Als Indianer verkleidete Kolonisten warfen 342 Kisten britischen Tees aus Protest gegen Steuern ohne parlamentarische Vertretung ins Meer"
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
-    "q": "In welchem Jahr leitete der Sturm auf die Bastille in Paris den Ausbruch der Französischen Revolution ein?",
+    "q": "Wie viele Gefangene befreiten die Pariser Aufständischen am 14. Juli 1789 beim berühmten Sturm auf die Bastille tatsächlich?",
     "a": [
-      "1789",
-      "1776",
-      "1804",
-      "1815"
+      "Exakt nur sieben Gefangene (vier Urkundenfälscher, zwei Geisteskranke und ein Adeliger)",
+      "Über 5.000 gefolterte Revolutionäre",
+      "Rund 300 politische Regimekritiker",
+      "Gar keine, die Festung stand vollkommen leer"
     ],
-    "exp": "Noch im selben Sommer folgten die Abschaffung der Feudalrechte und die Erklärung der Menschen- und Bürgerrechte."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "easy",
-    "q": "Welcher Seefahrer landete am 12. Oktober 1492 im Auftrag Spaniens in der Karibik und stieß auf den amerikanischen Kontinent?",
-    "a": [
-      "Christoph Kolumbus",
-      "Ferdinand Magellan",
-      "Vasco da Gama",
-      "James Cook"
-    ],
-    "exp": "Kolumbus glaubte zunächst, einen westlichen Seeweg nach Asien gefunden zu haben – seine Fahrten lösten den „Columbian Exchange“ aus."
+    "explanation": "Den Bürgern ging es primär um die 250 Fässer Schießpulver im Keller – dennoch wurde der Tag zum ewigen Symbol des Falls des Ancien Régime.",
+    "exp": "Exakt nur sieben Gefangene (vier Urkundenfälscher, zwei Geisteskranke und ein Adeliger)"
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
-    "q": "Welches Vertragswerk beendete 1648 in Münster und Osnabrück den Dreißigjährigen Krieg?",
+    "q": "Was tat Napoleon Bonaparte am 2. Dezember 1804 in der Kathedrale Notre-Dame de Paris bei seiner Kaiserkrönung?",
     "a": [
-      "Der Westfälische Frieden",
-      "Der Friede von Utrecht",
-      "Der Vertrag von Verdun",
-      "Der Friede von Tilsit"
+      "Er nahm Papst Pius VII. die Krone aus den Händen und setzte sie sich selbst auf das Haupt",
+      "Er weigerte sich, die Kirche zu betreten und ließ sich auf einem Pferd krönen",
+      "Er warf die Krone zu Boden, um seine Verachtung für Monarchen zu zeigen",
+      "Er ließ sich von seiner Mutter die Kaiserkrone überreichen"
     ],
-    "exp": "Der Westfälische Frieden schuf die Grundlage für das Prinzip souveräner Staaten in Europa und erkannte neben Katholiken und Lutheranern auch Reformierte an."
+    "explanation": "Napoleon demonstrierte damit unmissverständlich: Er verdankte seine Macht allein seinen eigenen Taten und keinem Vertreter Gottes auf Erden.",
+    "exp": "Er nahm Papst Pius VII. die Krone aus den Händen und setzte sie sich selbst auf das Haupt"
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
-    "q": "Wer war der Hauptautor der amerikanischen Unabhängigkeitserklärung vom 4. Juli 1776?",
+    "q": "Welches fundamentale Staatsprinzip formulierte der französische Philosoph Montesquieu 1748 in „Vom Geist der Gesetze“?",
+    "a": [
+      "Die Gewaltenteilung in Legislative (Gesetzgebung), Exekutive (Ausführung) und Judikative (Rechtsprechung)",
+      "Das Gottesgnadentum des absoluten Herrschers",
+      "Die Verstaatlichung aller landwirtschaftlichen Flächen",
+      "Die Abschaffung des Privateigentums zugunsten der Allgemeinheit"
+    ],
+    "explanation": "Um Tyrannei zu verhindern, muss Macht durch Macht gebremst werden – das Grundprinzip jeder modernen Demokratie.",
+    "exp": "Die Gewaltenteilung in Legislative (Gesetzgebung), Exekutive (Ausführung) und Judikative (Rechtsprechung)"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "pro",
+    "q": "Was begründete der Westfälische Friede von 1648 in Münster und Osnabrück im Völkerrecht?",
+    "a": [
+      "Das Prinzip der staatlichen Souveränität (keine Einmischung in innere Angelegenheiten) und die Gleichrangigkeit souveräner Staaten",
+      "Die Einführung des Euro als gemeinsame Währung in Mitteleuropa",
+      "Die Gründung der ersten europäischen Zollunion",
+      "Das Verbot von Söldnerheeren in ganz Europa"
+    ],
+    "explanation": "Der Vertrag beendete den verheerenden Dreißigjährigen Krieg und schuf die sogenannte „Westfälische Ordnung“ der Nationalstaaten.",
+    "exp": "Das Prinzip der staatlichen Souveränität (keine Einmischung in innere Angelegenheiten) und die Gleichrangigkeit souveräner Staaten"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "easy",
+    "q": "Wer verfasste 1776 die amerikanische Unabhängigkeitserklärung („All men are created equal“)?",
     "a": [
       "Thomas Jefferson",
       "George Washington",
       "Benjamin Franklin",
-      "Abraham Lincoln"
+      "Alexander Hamilton"
     ],
-    "exp": "Jefferson formulierte darin die naturrechtlichen Ideale von Leben, Freiheit und Streben nach Glück sowie das Recht auf Regierungswechsel bei Tyrannei."
+    "explanation": "Am 4. Juli 1776 verabschiedete der Kontinentalkongress in Philadelphia die Loslösung der 13 Kolonien von der britischen Krone.",
+    "exp": "Thomas Jefferson"
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
-    "q": "Welche Staatstheorie entwickelte Charles de Montesquieu 1748 in seinem Hauptwerk „Vom Geist der Gesetze“?",
+    "q": "Was war der Code Civil (Code Napoléon) von 1804 und warum wirkt er bis heute nach?",
     "a": [
-      "Die Gewaltenteilung zwischen Legislative, Exekutive und Judikative",
-      "Die Lehre vom absoluten Gottesgnadentum des Monarchen",
-      "Den totalen Verzicht auf jedes Privateigentum",
-      "Die Abschaffung geschriebener Verfassungen"
+      "Ein wegweisendes Zivilgesetzbuch, das Gleichheit vor dem Gesetz, persönliche Freiheit und Schutz des Eigentums festschrieb",
+      "Ein militärischer Verhaltenskodex für französische Artillerie-Offiziere",
+      "Eine Sammlung von Handelsgesetzen für Überseekolonien",
+      "Ein medizinisches Handbuch für Feldlazarette"
     ],
-    "exp": "Montesquieus Prinzip „Le pouvoir arrête le pouvoir“ (Macht bremst Macht) prägte direkt die US-Verfassung und alle modernen Rechtsstaaten."
+    "explanation": "Napoleon bezeichnete den Code Civil auf St. Helena als sein wahres Denkmal: „Meine 40 Siege werden durch Waterloo ausgelöscht, aber mein Gesetzbuch lebt ewig.“",
+    "exp": "Ein wegweisendes Zivilgesetzbuch, das Gleichheit vor dem Gesetz, persönliche Freiheit und Schutz des Eigentums festschrieb"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "pro",
+    "q": "Was beschloss der Wiener Kongress 1814/15 unter der Leitung von Fürst Metternich?",
+    "a": [
+      "Die Restauration der vorrevolutionären Verhältnisse und die Errichtung eines europäischen Mächtegleichgewichts (Pentarchie)",
+      "Die sofortige Gründung eines einheitlichen deutschen Nationalstaates",
+      "Die Einberufung des ersten weltweiten Völkerbundes in Wien",
+      "Die vollständige Entmilitarisierung des französischen Staatsgebiets"
+    ],
+    "explanation": "„Der Kongress tanzt, aber er geht nicht weiter“ – dennoch sicherte das Metternich’sche System fast vier Jahrzehnte lang den europäischen Frieden.",
+    "exp": "Die Restauration der vorrevolutionären Verhältnisse und die Errichtung eines europäischen Mächtegleichgewichts (Pentarchie)"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "easy",
+    "q": "Welcher englische König brach mit dem Papst in Rom und gründete die Anglikanische Kirche, weil Rom seine Scheidung verweigerte?",
+    "a": [
+      "Heinrich VIII.",
+      "Heinrich V.",
+      "Richard Löwenherz",
+      "Jakob I."
+    ],
+    "explanation": "Heinrich VIII. heiratete insgesamt sechs Frauen (zwei ließ er köpfen, zwei ließ er scheiden, eine starb im Kindbett, eine überlebte ihn).",
+    "exp": "Heinrich VIII."
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
-    "q": "In welcher berühmten Seeschlacht vom 21. Oktober 1805 sicherte Admiral Nelson Großbritannien die Vorherrschaft zur See über Napoleon?",
+    "q": "Was war die berüchtigte „Schreckensherrschaft“ (La Terreur) unter Maximilien de Robespierre 1793/94 in Frankreich?",
     "a": [
+      "Die systematische Hinrichtung von Zehntausenden angeblichen Revolutionsfeinden mit der Guillotine durch den Wohlfahrtsausschuss",
+      "Die Besetzung von Paris durch preußische Truppen",
+      "Ein Ausbruch der Tollwut unter Pariser Straßenhunden",
+      "Ein Generalstreik aller Bäcker und Fleischer in Frankreich"
+    ],
+    "explanation": "Am Ende fraß die Revolution ihre eigenen Kinder: Robespierre selbst wurde nach einem Parlamentsputsch auf der Guillotine enthauptet.",
+    "exp": "Die systematische Hinrichtung von Zehntausenden angeblichen Revolutionsfeinden mit der Guillotine durch den Wohlfahrtsausschuss"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "pro",
+    "q": "Was war das Edikt von Nantes, das der französische König Heinrich IV. im Jahr 1598 erließ?",
+    "a": [
+      "Es gewährte den calvinistischen Protestanten (Hugenotten) religiöse Toleranz und Bürgerrechte in Frankreich",
+      "Die Ausweisung aller Juden aus dem französischen Königreich",
+      "Die Einführung der französischen Sprache als alleinige Gerichtssprache",
+      "Das Verbot von Duellen unter Adligen"
+    ],
+    "explanation": "Heinrich IV. beendete damit die blutigen Hugenottenkriege – Ludwig XIV. widerrief das Edikt 1685, woraufhin 200.000 Hugenotten u. a. nach Preußen flohen.",
+    "exp": "Es gewährte den calvinistischen Protestanten (Hugenotten) religiöse Toleranz und Bürgerrechte in Frankreich"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "easy",
+    "q": "Welcher Seefahrer erreichte im Oktober 1492 die Bahamas und leitete die europäische Kolonisierung Amerikas ein?",
+    "a": [
+      "Christoph Kolumbus",
+      "Amerigo Vespucci",
+      "Ferdinand Magellan",
+      "Vasco da Gama"
+    ],
+    "explanation": "Kolumbus glaubte bis zu seinem Tod felsenfest, den westlichen Seeweg nach Ostasien (Indien) entdeckt zu haben – daher nannte er die Ureinwohner „Indianer“.",
+    "exp": "Christoph Kolumbus"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "mid",
+    "q": "Was gelang der Expedition von Ferdinand Magellan und Juan Sebastián Elcano zwischen 1519 und 1522 erstmals in der Geschichte?",
+    "a": [
+      "Die allererste historisch dokumentierte Weltumsegelung der Erde",
+      "Die Durchquerung der Nordwestpassage",
+      "Die Entdeckung des Kontinents Antarktis",
+      "Die Landung auf der Osterinsel"
+    ],
+    "explanation": "Magellan selbst fiel auf den Philippinen im Kampf mit Einheimischen – Elcano brachte das einzige überlebende Schiff „Victoria“ sicher nach Spanien zurück.",
+    "exp": "Die allererste historisch dokumentierte Weltumsegelung der Erde"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "pro",
+    "q": "Was war der Vertrag von Tordesillas von 1494, vermittelt durch Papst Alexander VI.?",
+    "a": [
+      "Die Aufteilung der gesamten neu entdeckten Welt außerhalb Europas entlang eines Längengrades zwischen Spanien und Portugal",
+      "Ein Waffenstillstand zwischen Frankreich und dem Heiligen Römischen Reich",
+      "Das Verbot von Sklavenhandel im Indischen Ozean",
+      "Die Festlegung des Nullmeridians durch Madrid"
+    ],
+    "explanation": "Weil der Meridian weiter westlich lag als gedacht, ragte die Ostspitze Südamerikas in die portugiesische Hemisphäre – deshalb spricht man in Brasilien Portugiesisch!",
+    "exp": "Die Aufteilung der gesamten neu entdeckten Welt außerhalb Europas entlang eines Längengrades zwischen Spanien und Portugal"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "easy",
+    "q": "Welcher französische Sonnenkönig baute das monumentale Schloss Versailles und regierte über 72 Jahre lang absolutistisch?",
+    "a": [
+      "Ludwig XIV. („Der Staat bin ich“)",
+      "Ludwig XVI.",
+      "Franz I.",
+      "Karl IX."
+    ],
+    "explanation": "Versailles war ein goldener Käfig: Der Hochadel wurde an den Hof gezwungen und mit Etikette und Festen beschäftigt, statt Rebellionen anzuzetteln.",
+    "exp": "Ludwig XIV. („Der Staat bin ich“)"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "mid",
+    "q": "Was war die sogenannte „Glorious Revolution“ von 1688 in England?",
+    "a": [
+      "Der unblutige Sturz von König Jakob II. und die Etablierung der parlamentarischen Monarchie durch Wilhelm von Oranien",
+      "Der Sieg der Royalisten über die Truppen von Oliver Cromwell",
+      "Die Unabhängigkeitserklärung Schottlands von London",
+      "Die Errichtung einer Militärdiktatur unter Lord Nelson"
+    ],
+    "explanation": "Mit der „Bill of Rights“ von 1689 verlor die englische Krone ihre absolute Macht endgültig an das gewählte Parlament.",
+    "exp": "Der unblutige Sturz von König Jakob II. und die Etablierung der parlamentarischen Monarchie durch Wilhelm von Oranien"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "pro",
+    "q": "Welcher spanische Eroberer unterwarf zwischen 1519 und 1521 mit nur rund 500 Soldaten das riesige Reich der Azteken in Mexiko?",
+    "a": [
+      "Hernán Cortés",
+      "Francisco Pizarro",
+      "Diego de Almagro",
+      "Pánfilo de Narváez"
+    ],
+    "explanation": "Cortés nutzte den Hass unterjochter Völker (wie der Tlaxcalteken) auf die Azteken und die verheerenden Pockenepidemien geschickt für seinen Sieg aus.",
+    "exp": "Hernán Cortés"
+  },
+  {
+    "cat": "neuzeit",
+    "diff": "easy",
+    "q": "Wo erlitt Napoleon Bonaparte am 18. Juni 1815 seine endgültige und vernichtende Niederlage gegen Wellington und Blücher?",
+    "a": [
+      "Schlacht bei Waterloo (im heutigen Belgien)",
+      "Völkerschlacht bei Leipzig",
       "Schlacht von Trafalgar",
-      "Schlacht bei Austerlitz",
-      "Schlacht bei Waterloo",
-      "Schlacht bei Abukir"
+      "Schlacht bei Austerlitz"
     ],
-    "exp": "Nelson fiel während der Schlacht vor Südspanien, doch eine Invasion Britanniens durch Napoleon war fortan endgültig unmöglich."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Was besagte die berühmte Rechtsformel des Augsburger Religionsfriedens von 1555 („Cuius regio, eius religio“)?",
-    "a": [
-      "Der Landesherr bestimmte die Konfession seiner Untertanen; Andersgläubige erhielten ein Abzugsrecht",
-      "Jeder Bürger durfte frei eine beliebige Religion gründen",
-      "Nur der Kaiser allein durfte Bischöfe ernennen",
-      "Der Papst verzichtete auf alle Güter nördlich der Alpen"
-    ],
-    "exp": "Die Einigung zwischen König Ferdinand I. und den Reichsständen sicherte mehrere Jahrzehnte relativen Religionsfrieden vor dem Dreißigjährigen Krieg."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Welche unblutige britische Umwälzung von 1688/89 führte zur „Bill of Rights“ und zur dauerhaften Stärkung des Parlaments?",
-    "a": [
-      "Die Glorreiche Revolution (Glorious Revolution)",
-      "Die Chartisten-Bewegung",
-      "Der Rosenkrieg",
-      "Die Industriereform von 1832"
-    ],
-    "exp": "König Wilhelm III. von Oranien akzeptierte feste Parlamentsrechte (Steuerbewilligung, Immunität, Gesetzgebungsprimat) – Modell einer konstitutionellen Monarchie."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Wem bot Kurfürst Friedrich Wilhelm von Brandenburg mit dem Edikt von Potsdam im Jahr 1685 gezielt Schutz und Privilegien?",
-    "a": [
-      "Verfolgten französischen Protestanten (Hugenotten) nach Aufhebung des Edikts von Nantes",
-      "Englischen Puritanern vor ihrer Überfahrt nach Nordamerika",
-      "Vertriebenen spanischen Seefahrern",
-      "Italienischen Bankiers der Medici"
-    ],
-    "exp": "Rund 20.000 Hugenotten brachten Handwerk, Wissenschaft, Manufakturen und Handel nach Brandenburg-Preußen und prägten insbesondere Berlin."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Durch welche Doppelschlacht am 14. Oktober 1806 besiegte Napoleon das Königreich Preußen vernichtend?",
-    "a": [
-      "Jena und Auerstedt",
-      "Leipzig und Bautzen",
-      "Königgrätz und Sedan",
-      "Marengo und Hohenlinden"
-    ],
-    "exp": "Die Niederlage führte zum Frieden von Tilsit, löste aber gleichzeitig die tiefgreifenden Stein-Hardenbergschen Reformen (Gewerbefreiheit, Bauernbefreiung) in Preußen aus."
+    "explanation": "Nach seiner Rückkehr von Elba endete Napoleons Herrschaft der Hundert Tage bei Waterloo – er wurde auf die einsame Atlantikinsel St. Helena verbannt.",
+    "exp": "Schlacht bei Waterloo (im heutigen Belgien)"
   },
   {
     "cat": "industrie",
     "diff": "easy",
-    "q": "Welche Kraftmaschine, entscheidend weiterentwickelt von James Watt, trieb Fabriken, Bergwerke und Lokomotiven der Industrialisierung an?",
+    "q": "Welcher Schotte verbesserte ab 1769 die Dampfmaschine entscheidend und leitete damit die Industrielle Revolution ein?",
     "a": [
-      "Die Dampfmaschine",
-      "Der Kernreaktor",
-      "Die Gasturbine",
-      "Der Elektromagnetische Induktor"
+      "James Watt (Erfindung des separaten Kondensators)",
+      "Thomas Newcomen",
+      "George Stephenson",
+      "Richard Arkwright"
     ],
-    "exp": "Watts getrennter Kondensator machte Dampfmaschinen wirtschaftlich nutzbar und löste die Produktion von begrenzter Wasserkraft und Muskelarbeit."
+    "explanation": "Watts separater Kondensator senkte den Kohleverbrauch um 75 % – die Dampfmaschine wurde vom reinen Grubenentwässerer zum universellen Fabrikantrieb.",
+    "exp": "James Watt (Erfindung des separaten Kondensators)"
   },
   {
     "cat": "industrie",
     "diff": "easy",
-    "q": "Zwischen welchen beiden fränkischen Städten verkehrte 1835 mit dem „Adler“ die erste deutsche Dampfeisenbahn?",
+    "q": "Welche Pionierfahrt unternahm Bertha Benz im August 1888 heimlich mit dem Benz Patent-Motorwagen Nr. 3?",
     "a": [
-      "Nürnberg und Fürth",
+      "Die erste Überlandfahrt der Automobilgeschichte (rund 106 km von Mannheim nach Pforzheim)",
+      "Ein Geschwindigkeitsrekord auf der Berliner Rennbahn",
+      "Eine Testfahrt durch die Schweizer Alpen über den Gotthardpass",
+      "Die erste offizielle Taxifahrt im Stadtgebiet von München"
+    ],
+    "explanation": "Bertha kaufte Treibstoff (Ligroin) in Apotheken, reinigte verstopfte Benzinleitungen mit ihrer Hutnadel und bewies die Alltagstauglichkeit der Erfindung ihres Mannes.",
+    "exp": "Die erste Überlandfahrt der Automobilgeschichte (rund 106 km von Mannheim nach Pforzheim)"
+  },
+  {
+    "cat": "industrie",
+    "diff": "mid",
+    "q": "Was war der Grund für das weltweite „Jahr ohne Sommer“ im Jahr 1816 mit Schnee im Juli und Missernten?",
+    "a": [
+      "Der katastrophale Ausbruch des Vulkans Tambora in Indonesien (1815), dessen Aschewolke das Sonnenlicht global dimmte",
+      "Eine drastische Abnahme der Fleckenaktivität auf der Sonne",
+      "Der Absturz eines riesigen Meteoriten in der sibirischen Taiga",
+      "Ein plötzliches Versiegen des Nordatlantikstroms"
+    ],
+    "explanation": "Weil Pferde verhungerten, erfand Karl Drais die Laufmaschine (Draisine/Fahrrad) – und am Genfer See schrieb die frierende Mary Shelley „Frankenstein“.",
+    "exp": "Der katastrophale Ausbruch des Vulkans Tambora in Indonesien (1815), dessen Aschewolke das Sonnenlicht global dimmte"
+  },
+  {
+    "cat": "industrie",
+    "diff": "mid",
+    "q": "Worum ging es im erbitterten „Stromkrieg“ (War of the Currents) zwischen Thomas Edison und Nikola Tesla/George Westinghouse?",
+    "a": [
+      "Gleichstrom (Edison) gegen Wechselstrom (Tesla/Westinghouse) für das weltweite Stromnetz",
+      "Elektrische Eisenbahnen gegen kohlebetriebene Dampflokomotiven",
+      "Gaslaternen gegen Glühlampen in den Straßen von New York",
+      "Kabelgebundene Telefone gegen drahtlose Radiosender"
+    ],
+    "explanation": "Edison versuchte Teslas Wechselstrom als tödlich darzustellen (und erfand den elektrischen Stuhl) – doch Wechselstrom gewann dank verlustarmer Fernübertragung.",
+    "exp": "Gleichstrom (Edison) gegen Wechselstrom (Tesla/Westinghouse) für das weltweite Stromnetz"
+  },
+  {
+    "cat": "industrie",
+    "diff": "easy",
+    "q": "Aus welchem politischen Kalkül führte Reichskanzler Otto von Bismarck in den 1880er Jahren die weltweit erste staatliche Sozialversicherung ein?",
+    "a": [
+      "Er wollte der erstarkenden sozialdemokratischen Arbeiterbewegung („Zuckerbrot und Peitsche“) den Wind aus den Segeln nehmen",
+      "Auf Drängen der katholischen Bischofskonferenz",
+      "Weil die deutschen Großbanken überschüssiges Kapital investieren mussten",
+      "Um französische Einwanderer nach Deutschland zu locken"
+    ],
+    "explanation": "Krankenversicherung (1883), Unfallversicherung (1884) und Rentenversicherung (1889) schufen das Fundament des modernen Sozialstaates.",
+    "exp": "Er wollte der erstarkenden sozialdemokratischen Arbeiterbewegung („Zuckerbrot und Peitsche“) den Wind aus den Segeln nehmen"
+  },
+  {
+    "cat": "industrie",
+    "diff": "mid",
+    "q": "Was tagte 1848/49 in der Frankfurter Paulskirche als Meilenstein der deutschen Demokratiegeschichte?",
+    "a": [
+      "Die erste frei gewählte deutsche Nationalversammlung zur Ausarbeitung einer Reichsverfassung mit Grundrechtekatalog",
+      "Der Friedenskongress nach dem Deutsch-Dänischen Krieg",
+      "Ein Tribunal zur Absetzung der preußischen Könige",
+      "Die Gründungsversammlung des Allgemeinen Deutschen Gewerkschaftsbundes"
+    ],
+    "explanation": "Die Paulskirchenverfassung scheiterte, als Friedrich Wilhelm IV. von Preußen die ihm angetragene deutsche Kaiserkrone als „Reif aus Dreck und Letten“ ablehnte.",
+    "exp": "Die erste frei gewählte deutsche Nationalversammlung zur Ausarbeitung einer Reichsverfassung mit Grundrechtekatalog"
+  },
+  {
+    "cat": "industrie",
+    "diff": "pro",
+    "q": "Was war der „Deutsche Zollverein“ von 1834 und warum war er der heimliche Wegbereiter der deutschen Einheit?",
+    "a": [
+      "Er schaffte Binnenzölle zwischen den deutschen Einzelstaaten ab und schuf einen einheitlichen Binnenmarkt unter preußischer Führung",
+      "Eine gemeinsame Währung auf Basis des Gold-Talers",
+      "Ein militärischer Beistandspakt gegen Russland und England",
+      "Ein staatliches Monopol auf den Bau von Dampflokomotiven"
+    ],
+    "explanation": "Lange vor der politischen Einheit von 1871 wuchsen die deutschen Staaten durch Eisenbahnen und zollfreien Handel wirtschaftlich untrennbar zusammen.",
+    "exp": "Er schaffte Binnenzölle zwischen den deutschen Einzelstaaten ab und schuf einen einheitlichen Binnenmarkt unter preußischer Führung"
+  },
+  {
+    "cat": "industrie",
+    "diff": "easy",
+    "q": "Zwischen welchen beiden deutschen Städten fuhr am 7. Dezember 1835 die erste deutsche Eisenbahn mit der Lokomotive „Adler“?",
+    "a": [
+      "Nürnberg und Fürth (Ludwigsbahn auf rund 6 km Strecke)",
       "Berlin und Potsdam",
-      "München und Augsburg",
-      "Leipzig und Dresden"
+      "Hamburg und Lübeck",
+      "Köln und Bonn"
     ],
-    "exp": "Die Ludwigsbahn auf einer 6 km langen Trasse zeigte schlagartig die Überlegenheit von Schienenverkehr für Personen und Güter."
-  },
-  {
-    "cat": "industrie",
-    "diff": "easy",
-    "q": "Welcher preußische Ministerpräsident und spätere Reichskanzler prägte ab 1871 als „Eiserner Kanzler“ das Deutsche Kaiserreich?",
-    "a": [
-      "Otto von Bismarck",
-      "Heinrich Friedrich Karl vom Stein",
-      "Clemens von Metternich",
-      "Gustav Stresemann"
-    ],
-    "exp": "Nach drei Einigungskriegen und komplexer Bündnisdiplomatie schuf Bismarck einen deutschen Nationalstaat unter preußischer Führung."
-  },
-  {
-    "cat": "industrie",
-    "diff": "easy",
-    "q": "Wer erhielt im Januar 1886 das Patent für den ersten benzingetriebenen Motorwagen („Patent-Motorwagen Nummer 1“)?",
-    "a": [
-      "Carl Benz",
-      "Rudolf Diesel",
-      "Henry Ford",
-      "Nikolaus Otto"
-    ],
-    "exp": "Mit der legendären Fernfahrt seiner Frau Bertha Benz von Mannheim nach Pforzheim im August 1888 bewies das Automobil erstmals seine Alltagstauglichkeit."
+    "explanation": "Die Fahrt dauerte 9 Minuten – Ärzte warnten damals ernsthaft davor, dass Passagiere durch die „rasende Geschwindigkeit“ von 30 km/h Hirnschäden erleiden könnten.",
+    "exp": "Nürnberg und Fürth (Ludwigsbahn auf rund 6 km Strecke)"
   },
   {
     "cat": "industrie",
     "diff": "mid",
-    "q": "In welchem Revolutionsjahr tagte in der Frankfurter Paulskirche das erste frei gewählte gesamtdeutsche Parlament?",
+    "q": "Was war das Manifest der Kommunistischen Partei, das Karl Marx und Friedrich Engels im Revolutionsjahr 1848 in London veröffentlichten?",
     "a": [
-      "1848 (und 1849)",
-      "1830",
-      "1866",
-      "1918"
+      "Eine Kampfschrift mit der These: „Die Geschichte aller bisherigen Gesellschaft ist die Geschichte von Klassenkämpfen“",
+      "Ein Gesetzesentwurf für britische Gewerkschaften",
+      "Ein Entwurf für die Verfassung der Französischen Republik",
+      "Eine Anleitung zum gewaltfreien Boykott von Fabrikwaren"
     ],
-    "exp": "Die Paulskirchenverfassung formulierte einen zukunftsweisenden Grundrechtekatalog, scheiterte aber 1849 am Machtwiderstand der großen Fürstenstaaten."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Welcher wirtschaftliche Zusammenschluss trat am 1. Januar 1834 in Kraft und beseitigte Binnenzölle zwischen den meisten deutschen Staaten?",
-    "a": [
-      "Der Deutsche Zollverein",
-      "Der Rheinbund",
-      "Die Montanunion",
-      "Der Weimarer Wirtschaftsrat"
-    ],
-    "exp": "Durch den Wegfall dutzender Grenz- und Wegzölle entstand ein einheitlicher deutscher Binnenmarkt noch Jahrzehnte vor der politischen Reichsgründung."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Welcher internationale Kongress zog 1814/15 nach der ersten Abdankung Napoleons die politischen Grenzen Europas neu?",
-    "a": [
-      "Der Wiener Kongress",
-      "Der Berliner Kongress",
-      "Die Konferenz von Jalta",
-      "Der Kongress von Aachen"
-    ],
-    "exp": "Unter maßgeblicher Regie Fürst Metternichs entstand das Mächtegleichgewicht der Restauration sowie der lose Deutsche Bund."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Wodurch zeichnete sich die sogenannte „Gründerzeit“ in Deutschland unmittelbar nach 1871 aus?",
-    "a": [
-      "Einen Boom an Industrie-, Eisenbahn-, Bank- und Aktiengesellschaften, gefolgt vom Gründerkrach 1873",
-      "Ausschließlich eine Rückkehr zur mittelalterlichen Dreifelderwirtschaft",
-      "Die Verstaatlichung aller Bäckereien und Handwerksbetriebe",
-      "Das Ende des Städtewachstums in Berlin und dem Ruhrgebiet"
-    ],
-    "exp": "Französische Reparationsmilliarden und ein liberalisiertes Aktienrecht befeuerten eine beispiellose Investitionswelle samt spekulativer Überhitzung."
+    "explanation": "Das Manifest endete mit dem weltberühmten Aufruf: „Proletarier aller Länder, vereinigt euch!“",
+    "exp": "Eine Kampfschrift mit der These: „Die Geschichte aller bisherigen Gesellschaft ist die Geschichte von Klassenkämpfen“"
   },
   {
     "cat": "industrie",
     "diff": "pro",
-    "q": "Wofür kämpfte der schwäbische Ökonom Friedrich List in der ersten Hälfte des 19. Jahrhunderts in Deutschland besonders?",
+    "q": "Welches revolutionäre Verfahren zur Massenproduktion von billigem Stahl erfand Henry Bessemer im Jahr 1856?",
     "a": [
-      "Für ein gesamtdeutsches Eisenbahnnetz und einen einheitlichen Binnenmarkt mit befristeten Erziehungszöllen",
-      "Für das vollständige Verbot von Fabriken und Dampflokomotiven",
-      "Für eine Rückkehr zur kleinstaatlichen Zersplitterung ohne Zollverein",
-      "Für die Abschaffung des Papiergelds zugunsten von Muschelgeld"
+      "Die Bessemer-Birne (Einblasen von Luft durch flüssiges Roheisen verbrennt überschüssigen Kohlenstoff in Minuten)",
+      "Das Elektroschlacke-Umschmelzen in Vakuumkammern",
+      "Das Kaltwalzen von Gusseisen mit Wasserkraft",
+      "Die Zugabe von radioaktivem Wismut in den Hochofen"
     ],
-    "exp": "List argumentierte, industrialisierungsrückständige Volkswirtschaften bräuchten zunächst Infrastruktur und Binnenzollfreiheit vor schrankenlosem Außenwettbewerb."
+    "explanation": "Erst Bessemer-Stahl machte den weltweiten Bau von Eisenbahnschienen, Panzerkreuzern und Wolkenkratzern wirtschaftlich bezahlbar.",
+    "exp": "Die Bessemer-Birne (Einblasen von Luft durch flüssiges Roheisen verbrennt überschüssigen Kohlenstoff in Minuten)"
+  },
+  {
+    "cat": "industrie",
+    "diff": "easy",
+    "q": "Wo wurde am 18. Januar 1871 nach dem Deutsch-Französischen Krieg das Deutsche Kaiserreich proklamiert?",
+    "a": [
+      "Im Spiegelsaal des Schlosses von Versailles bei Paris",
+      "Im Brandenburger Tor in Berlin",
+      "In der Frankfurter Paulskirche",
+      "Auf der Wartburg in Thüringen"
+    ],
+    "explanation": "König Wilhelm I. von Preußen wurde im Palast des besiegten französischen Königs zum Deutschen Kaiser ausgerufen – eine schwere Demütigung für Frankreich.",
+    "exp": "Im Spiegelsaal des Schlosses von Versailles bei Paris"
+  },
+  {
+    "cat": "industrie",
+    "diff": "mid",
+    "q": "Was war der Grund für die massive irische Auswanderungswelle in die USA in den 1840er Jahren (Great Famine)?",
+    "a": [
+      "Die Kartoffelfäule (Phytophthora infestans) vernichtete mehrfach die gesamte Kartoffelernte, die Hauptnahrung der armen Bevölkerung",
+      "Ein Ausbruch des Gelbfiebers in Dublin",
+      "Ein Gesetz, das allen Iren kostenloses Land in Texas versprach",
+      "Ein Vulkanausbruch in den Bergen von Connemara"
+    ],
+    "explanation": "Über eine Million Iren verhungerten, während britische Großgrundbesitzer Getreide und Rinder weiterhin ungehindert nach England exportierten.",
+    "exp": "Die Kartoffelfäule (Phytophthora infestans) vernichtete mehrfach die gesamte Kartoffelernte, die Hauptnahrung der armen Bevölkerung"
   },
   {
     "cat": "industrie",
     "diff": "pro",
-    "q": "In welcher Reihenfolge führte Bismarck in den 1880er Jahren die drei Säulen der Sozialversicherung im Deutschen Kaiserreich ein?",
+    "q": "Was war die sogenannte „Kongo-Konferenz“ (Berliner Konferenz) 1884/85 auf Einladung von Bismarck?",
     "a": [
-      "Krankenversicherung (1883), Unfallversicherung (1884), Alters- und Invaliditätsversicherung (1889)",
-      "Erst Arbeitslosenversicherung (1881), zuletzt Krankenversicherung (1895)",
-      "Alle drei wurden gemeinsam erst nach dem Ersten Weltkrieg eingeführt",
-      "Nur Unfallversicherung existierte im 19. Jahrhundert"
+      "Die europäischen Großmächte teilten den afrikanischen Kontinent mit dem Lineal auf der Landkarte unter sich auf („Scramble for Africa“)",
+      "Ein Vertrag zur weltweiten Ächtung des Sklavenhandels mit arabischen Staaten",
+      "Die Gründung der ersten afrikanischen Eisenbahngesellschaft",
+      "Eine Friedenskonferenz zur Beendigung des Burenkriegs"
     ],
-    "exp": "Bismarck kombinierte das repressiv gegen Arbeiterparteien gerichtete Sozialistengesetz mit weltweit neuartigen, beitragspflichtigen Pflichtversicherungen."
+    "explanation": "Ohne Beteiligung eines einzigen afrikanischen Vertreters wurden willkürliche Grenzen gezogen, die ethnische Konflikte bis heute anheizen.",
+    "exp": "Die europäischen Großmächte teilten den afrikanischen Kontinent mit dem Lineal auf der Landkarte unter sich auf („Scramble for Africa“)"
+  },
+  {
+    "cat": "industrie",
+    "diff": "easy",
+    "q": "Wer erfand 1879 eine praxistaugliche Glühlampe mit Kohlefaden und elektrisierte Manhattan?",
+    "a": [
+      "Thomas Alva Edison",
+      "Alexander Graham Bell",
+      "Guglielmo Marconi",
+      "Samuel Morse"
+    ],
+    "explanation": "Edison hielt über 1.000 Patente und gründete mit der Edison General Electric Company den Vorläufer des heutigen GE-Konzerns.",
+    "exp": "Thomas Alva Edison"
+  },
+  {
+    "cat": "industrie",
+    "diff": "mid",
+    "q": "Was verhalf US-Präsident Abraham Lincoln im Sezessionskrieg (1861–1865) zum historischen Durchbruch gegen die Südstaaten?",
+    "a": [
+      "Die Emanzipations-Proklamation (1863), die alle Sklaven in den rebellierenden Konföderierten-Staaten für frei erklärte",
+      "Der Kauf von 100 französischen Panzerschiffen",
+      "Ein Bündnisvertrag mit dem russischen Zarenreich",
+      "Die Verlegung der US-Hauptstadt nach Chicago"
+    ],
+    "explanation": "Mit der Proklamation wurde der Krieg zum moralischen Kreuzzug gegen die Sklaverei – europäische Mächte konnten den Süden nicht mehr diplomatisch anerkennen.",
+    "exp": "Die Emanzipations-Proklamation (1863), die alle Sklaven in den rebellierenden Konföderierten-Staaten für frei erklärte"
   },
   {
     "cat": "industrie",
     "diff": "pro",
-    "q": "Wer lieferte Ende des 19. Jahrhunderts im berühmten „Stromkrieg“ gegen Thomas Edison die Patente für das überlegene Mehrphasen-Wechselstromsystem?",
+    "q": "Was war der sogenannte „Kulturkampf“ im Deutschen Kaiserreich in den 1870er Jahren?",
     "a": [
-      "Nikola Tesla (in Partnerschaft mit George Westinghouse)",
-      "Werner von Siemens allein mit reinen Gleichstrombatterien",
-      "Alessandro Volta",
-      "Heinrich Hertz"
+      "Bismarcks politischer Konflikt mit der katholischen Kirche und der Zentrumspartei zur Trennung von Kirche und Staat (u. a. Einführung der Zivilehe)",
+      "Ein Streit über den Baustil des Berliner Reichstagsgebäudes",
+      "Die Zensur französischer Theaterstücke in deutschen Städten",
+      "Ein Boykott ausländischer Universitätsabschlüsse"
     ],
-    "exp": "Wechselstrom ließ sich über Transformatoren verlustarm auf hohe Spannungen transformieren – und versorgte bald Städte wie Buffalo von den Niagarafällen aus."
+    "explanation": "Bismarck fürchtete die Loyalität der Katholiken zum Papst in Rom („Ultramontanismus“) – die Einführung der staatlichen Zivilehe (1875) blieb dauerhaft bestehen.",
+    "exp": "Bismarcks politischer Konflikt mit der katholischen Kirche und der Zentrumspartei zur Trennung von Kirche und Staat (u. a. Einführung der Zivilehe)"
+  },
+  {
+    "cat": "industrie",
+    "diff": "easy",
+    "q": "Welches spektakuläre Ingenieurbauwerk eröffnete Frankreich 1889 anlässlich der Weltausstellung und des 100. Jubiläums der Revolution?",
+    "a": [
+      "Der Eiffelturm von Gustave Eiffel",
+      "Der Triumphbogen",
+      "Die Basilika Sacré-Cœur",
+      "Das Pariser Riesenrad"
+    ],
+    "explanation": "Pariser Künstler protestierten wütend gegen das „nutzlose und monströse Eisengerüst“ – heute ist der Eiffelturm das berühmteste Wahrzeichen Frankreichs.",
+    "exp": "Der Eiffelturm von Gustave Eiffel"
+  },
+  {
+    "cat": "industrie",
+    "diff": "mid",
+    "q": "Wer erfand 1876 das erste funktionierende elektrische Telefon?",
+    "a": [
+      "Alexander Graham Bell (dicht gefolgt von Elisha Gray und Philipp Reis)",
+      "Samuel Morse",
+      "Guglielmo Marconi",
+      "Werner von Siemens"
+    ],
+    "explanation": "Bells erste übertragene Worte an seinen Assistenten Thomas Watson lauteten: „Mr. Watson, come here, I want to see you.“",
+    "exp": "Alexander Graham Bell (dicht gefolgt von Elisha Gray und Philipp Reis)"
   },
   {
     "cat": "industrie",
     "diff": "pro",
-    "q": "Welche politische Konsequenz besiegelte der Prager Frieden vom August 1866 nach der Schlacht bei Königgrätz?",
+    "q": "Was war der sogenannte „Boxer-Aufstand“ 1900 in China aus der Sicht der westlichen Mächte?",
     "a": [
-      "Das Ausscheiden Österreichs aus den deutschen Angelegenheiten und die Auflösung des Deutschen Bundes zugunsten Preußens",
-      "Die Vereinigung Österreichs mit Bayern zu einer süddeutschen Republik",
-      "Den sofortigen Beitritt Frankreichs zum Zollverein",
-      "Die Krönung eines Habsburger Kaisers in Berlin"
+      "Ein Aufstand gegen den Kolonialismus der Großmächte, niedergeschlagen von einem Acht-Nationen-Expeditionskorps (u. a. unter deutscher Führung)",
+      "Ein Bürgerkrieg zwischen zwei rivalisierenden Wushu-Schulen",
+      "Eine Revolte der kaiserlichen Leibgarde gegen den Hofstaat",
+      "Ein Streik der Hafenarbeiter in Shanghai"
     ],
-    "exp": "Preußen gründete im Norden den Norddeutschen Bund und ebnete damit den Weg für die sogenannte kleindeutsche Lösung 1871."
+    "explanation": "Kaiser Wilhelm II. hielt bei der Verabschiedung der deutschen Truppen seine berüchtigte „Hunnenrede“ („Pardon wird nicht gegeben, Gefangene werden nicht gemacht“).",
+    "exp": "Ein Aufstand gegen den Kolonialismus der Großmächte, niedergeschlagen von einem Acht-Nationen-Expeditionskorps (u. a. unter deutscher Führung)"
   },
   {
     "cat": "modern",
     "diff": "easy",
-    "q": "An welchem Datum wurde mit der Verkündung des Grundgesetzes die Bundesrepublik Deutschland gegründet?",
+    "q": "Was geschah am ersten Weihnachtstag 1914 (Weihnachtsfrieden) an der Westfront in Flandern?",
     "a": [
-      "23. Mai 1949",
-      "9. November 1918",
-      "17. Juni 1953",
-      "3. Oktober 1990"
+      "Deutsche und britische Soldaten legten spontan die Waffen nieder, sangen Weihnachtslieder und spielten im Niemandsland Fußball",
+      "Ein Bombenanschlag auf das Hauptquartier der Alliierten",
+      "Die offizielle Unterzeichnung des Waffenstillstands von Compiègne",
+      "Ein Massenausbruch von Gefangenen aus Festungen"
     ],
-    "exp": "Das vom Parlamentarischen Rat in Bonn beschlossene Grundgesetz galt zunächst als Provisorium bis zur Wiedervereinigung und ist bis heute unsere Verfassung."
+    "explanation": "Dieser bewegende Moment der Menschlichkeit mitten im mörderischen Stellungskrieg wurde von den Heeresleitungen danach unter Androhung der Todesstrafe verboten.",
+    "exp": "Deutsche und britische Soldaten legten spontan die Waffen nieder, sangen Weihnachtslieder und spielten im Niemandsland Fußball"
   },
   {
     "cat": "modern",
     "diff": "easy",
-    "q": "Welcher historische Abend markiert das Ende der deutschen Teilung Symbol schlechthin – den Fall der Berliner Mauer?",
+    "q": "Welche Dimension erreichte die Hyperinflation in Deutschland im Krisenjahr 1923?",
     "a": [
-      "Der 9. November 1989",
-      "Der 13. August 1961",
-      "Der 1. Juli 1990",
-      "Der 8. Mai 1945"
+      "Ein Laib Brot kostete im November 1923 rund 200 Milliarden Mark; Geldscheine wurden mit Schubkarren transportiert",
+      "Die Preise stiegen um maximal 20 Prozent pro Jahr",
+      "Geld wurde durch Goldbarren im Wert von 1 Gramm ersetzt",
+      "Alle Banken schlossen für genau zehn Jahre ihre Türen"
     ],
-    "exp": "Nach wochenlangen friedlichen Montagsdemonstrationen in Leipzig und Missverständnissen bei einer Pressekonferenz öffneten Grenzer nachts die Übergänge."
-  },
-  {
-    "cat": "modern",
-    "diff": "easy",
-    "q": "Wer war von 1949 bis 1963 der erste Bundeskanzler der jungen Bundesrepublik Deutschland?",
-    "a": [
-      "Konrad Adenauer",
-      "Willy Brandt",
-      "Helmut Schmidt",
-      "Kurt Schumacher"
-    ],
-    "exp": "Adenauer verankerte Westdeutschland politisch in den westlichen Bündnissen und trug entscheidend zur deutsch-französischen Aussöhnung bei."
-  },
-  {
-    "cat": "modern",
-    "diff": "easy",
-    "q": "Welches US-amerikanische Wirtschaftsprogramm unterstützte ab 1948 den Wiederaufbau Westeuropas (auch der Westzonen)?",
-    "a": [
-      "Der Marshallplan (European Recovery Program)",
-      "Die Monroe-Doktrin",
-      "Der Schlieffen-Plan",
-      "Das Bretton-Woods-Embargo"
-    ],
-    "exp": "Neben Kapital, Rohstoffen und Maschinen förderte der Marshallplan vor allem grenzüberschreitenden europäischen Freihandel statt neuer Abschottung."
+    "explanation": "Erst die Einführung der Rentenmark (gedeckt durch Grundschulden auf Industrie und Boden) stoppte den finanziellen Wahnsinn schlagartig.",
+    "exp": "Ein Laib Brot kostete im November 1923 rund 200 Milliarden Mark; Geldscheine wurden mit Schubkarren transportiert"
   },
   {
     "cat": "modern",
     "diff": "mid",
-    "q": "Wer hob im Juni 1948 begleitend zur D-Mark-Währungsreform viele Zwangsbewirtschaftungen auf und gilt als politischer Vater des Wirtschaftswunders?",
+    "q": "Wie retteten die Westalliierten West-Berlin während der sowjetischen Berlin-Blockade (1948/49)?",
+    "a": [
+      "Durch die legendäre Berliner Luftbrücke („Rosinenbomber“ landeten fast im Minutentakt mit Lebensmitteln und Kohle)",
+      "Durch den Bau eines unterirdischen Tunnels von Hannover nach Spandau",
+      "Durch die Drohung mit dem sofortigen Einsatz von Atomwaffen",
+      "Durch Verhandlungen mit der DDR-Regierung über Transitgebühren"
+    ],
+    "explanation": "Pilot Gail Halvorsen warf vor der Landung Schokolade an Mini-Fallschirmen für die Berliner Kinder ab – die Berliner schlossen die Westalliierten ins Herz.",
+    "exp": "Durch die Berliner Luftbrücke („Rosinenbomber“ landeten fast im Minutentakt mit Lebensmitteln und Kohle)"
+  },
+  {
+    "cat": "modern",
+    "diff": "easy",
+    "q": "Wer gilt als „Vater des deutschen Wirtschaftswunders“ und Schöpfer der Sozialen Marktwirtschaft in der jungen Bundesrepublik?",
     "a": [
       "Ludwig Erhard",
-      "Gustav Stresemann",
-      "Walter Hallstein",
-      "Helmut Kohl"
-    ],
-    "exp": "Gegen Skepsis der Alliierten setzte Erhard über das Leitsätzegesetz auf freie Preise, Marktwirtschaft und Wettbewerb – Regale füllten sich binnen Tagen."
-  },
-  {
-    "cat": "modern",
-    "diff": "mid",
-    "q": "Welche Verträge von 1957 gelten mit der Gründung von EWG und Euratom als eigentlicher Urvertrag der heutigen Europäischen Union?",
-    "a": [
-      "Die Römischen Verträge",
-      "Die Verträge von Locarno",
-      "Der Vertrag von Rapallo",
-      "Die Haager Landkriegsordnung"
-    ],
-    "exp": "Sechs Gründerstaaten (Deutschland, Frankreich, Italien, Benelux) vereinbarten den schrittweisen Aufbau eines gemeinsamen Binnenmarktes ohne Binnenzölle."
-  },
-  {
-    "cat": "modern",
-    "diff": "mid",
-    "q": "Was löste im Oktober 1929 mit Kursstürzen am „Schwarzen Donnerstag / Schwarzen Freitag“ eine globale Rezession aus?",
-    "a": [
-      "Der New Yorker Börsencrash an der Wall Street",
-      "Die Eröffnung des Suezkanals",
-      "Die Währungsreform zur Einführung des Euro",
-      "Die Gründung des Völkerbundes in Genf"
-    ],
-    "exp": "Der Crash riss Banken, Welthandel und Kreditketten mit sich; Massenarbeitslosigkeit und Bankenkrisen destabilisierten weltweit junge Demokratien."
-  },
-  {
-    "cat": "modern",
-    "diff": "mid",
-    "q": "Welches internationale Dokument von 1975 verknüpfte Entspannung im Kalten Krieg mit Unverletzlichkeit der Grenzen UND Menschenrechten?",
-    "a": [
-      "Die Schlussakte von Helsinki (KSZE)",
-      "Das Potsdamer Abkommen",
-      "Der Hitler-Stalin-Pakt",
-      "Der Petersberg-Vertrag"
-    ],
-    "exp": "Auf die Menschenrechtsklauseln („Korb III“) beriefen sich in den 1980er Jahren später erfolgreich Bürgerrechtsbewegungen in Polen, der Tschechoslowakei und der DDR."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Welche Währungsreform beendete im November 1923 schlagartig die Hyperinflation der Weimarer Republik („1 Billion Papiermark“)?",
-    "a": [
-      "Die Einführung der Rentenmark (später abgelöst durch die Reichsmark)",
-      "Die direkte Einführung der Deutschen Mark",
-      "Die Übernahme des Schweizer Franken als gesetzliches Zahlungsmittel",
-      "Die komplette Abschaffung von Münz- und Scheingeld"
-    ],
-    "exp": "Weil die Notenpresse für den Ruhrkampf gestoppt wurde und das Vertrauen über streng limitierte Ausgabe („Wunder der Rentenmark“) zurückkehrte, stabilisierte sich die Währung sofort."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Welcher völkerrechtliche Vertrag vom 12. September 1990 besiegelte außenpolitisch die volle Souveränität des wiedervereinigten Deutschlands?",
-    "a": [
-      "Der Zwei-plus-Vier-Vertrag zwischen BRD, DDR und den vier Siegermächten",
-      "Der Elysée-Vertrag von 1963",
-      "Der Grundlagenvertrag von 1972",
-      "Der Vertrag von Lissabon"
-    ],
-    "exp": "Die USA, die Sowjetunion, Großbritannien und Frankreich verzichteten auf ihre alliierten Vorbehaltsrechte; die Oder-Neiße-Grenze wurde völkerrechtlich bestätigt."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Worauf beruhte das von 1944 bis Anfang der 1970er Jahre geltende Weltwährungssystem von Bretton Woods?",
-    "a": [
-      "Feste Wechselkurse zum US-Dollar bei gleichzeitiger Gold-Einlösepflicht der USA für ausländische Zentralbanken (35 $ pro Feinunze)",
-      "Einer weltweiten rein digitalen Einheitswährung ohne Goldbezug",
-      "Völlig freien Wechselkursen aller Staaten ohne Notenbank-Eingriffe seit 1945",
-      "Einer direkten Bindung aller Währungen an den Silberpreis"
-    ],
-    "exp": "Mit wachsenden US-Leistungsbilanzdefiziten beendete Präsident Richard Nixon im August 1971 das Goldfenster („Nixon-Schock“); die Welt ging zu frei schwankenden Fiat-Währungen über."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Was war der unmittelbare wirtschaftliche Auslöser für den Volksaufstand in der DDR am 17. Juni 1953?",
-    "a": [
-      "Eine verpflichtende Erhöhung der Arbeitsnormen um mindestens 10 % bei gleichem Lohn inmitten einer Versorgungskrise",
-      "Die sofortige Einführung der D-Mark in Ost-Berlin",
-      "Der Bau des Berliner Fernsehturms",
-      "Die Verabschiedung der Rentenreform in Bonn"
-    ],
-    "exp": "Aus Streiks Berliner Bauarbeiter entwickelte sich binnen Stunden ein DDR-weiter Aufstand für freie Wahlen, den sowjetische Panzer gewaltsam niederschlugen."
-  },
-  {
-    "cat": "antike",
-    "diff": "easy",
-    "q": "Welche legendären Zwillinge gründeten der römischen Mythologie nach im Jahr 753 v. Chr. die Stadt Rom?",
-    "a": [
-      "Romulus und Remus",
-      "Kastor und Pollux",
-      "Hektor und Achilles",
-      "Orestes und Pylades"
-    ],
-    "exp": "Der Sage nach wurden Romulus und Remus am Tiber von einer Wölfin gesäugt; nach einem Streit gründete Romulus schließlich Rom als erster König."
-  },
-  {
-    "cat": "antike",
-    "diff": "easy",
-    "q": "Welches gewaltige römische Amphitheater im Herzen Roms bot rund 50.000 Zuschauern Platz für Gladiatorenkämpfe?",
-    "a": [
-      "Das Kolosseum (Flavisches Amphitheater)",
-      "Der Circus Maximus",
-      "Das Pantheon",
-      "Die Engelsburg"
-    ],
-    "exp": "Unter den flavischen Kaisern Vespasian und Titus zwischen 72 und 80 n. Chr. errichtet, ist das Kolosseum das größte Amphitheater der Antike."
-  },
-  {
-    "cat": "antike",
-    "diff": "easy",
-    "q": "Welcher makedonische König und Schüler des Aristoteles eroberte im 4. Jahrhundert v. Chr. das riesige Perserreich bis hin zum Indus?",
-    "a": [
-      "Alexander der Große",
-      "König Midas",
-      "Leonidas I.",
-      "Perikles"
-    ],
-    "exp": "Alexander III. von Makedonien schuf binnen rund zehn Jahren ein Weltreich von Griechenland bis nach Ägypten und Nordwestindien und leitete den Hellenismus ein."
-  },
-  {
-    "cat": "antike",
-    "diff": "easy",
-    "q": "Mit welchem berühmten Tier überquerte der karthagische Feldherr Hannibal im Jahr 218 v. Chr. im Zweiten Punischen Krieg die Alpen nach Italien?",
-    "a": [
-      "Mit Kriegselefanten",
-      "Mit riesigen sibirischen Mammuts",
-      "Mit zweihöckrigen Trampeltieren",
-      "Mit abgerichteten Geparden"
-    ],
-    "exp": "Obwohl viele der rund 37 Kriegselefanten die Kälte und steilen Pässe nicht überlebten, überraschte Hannibals Alpenzug die römischen Legionen komplett."
-  },
-  {
-    "cat": "antike",
-    "diff": "easy",
-    "q": "In welcher norditalienischen Region verschüttete der Ausbruch des Vulkans Vesuv im Jahr 79 n. Chr. die Städte Pompeji und Herculaneum?",
-    "a": [
-      "Kampanien (am Golf von Neapel)",
-      "Sizilien",
-      "Lombardei",
-      "Toskana"
-    ],
-    "exp": "Asche- und Bimssteinschichten konservierten Häuser, Fresken, Straßen und Alltagsgegenstände im antiken Pompeji für fast zwei Jahrtausende."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Wofür standen im Römischen Reich zwischen 293 und ca. 313 n. Chr. unter Kaiser Diokletian die „Tetrarchie“?",
-    "a": [
-      "Für eine Aufteilung der Kaisermacht auf vier Herrscher (zwei Augusti und zwei Caesares für Ost und West)",
-      "Für die Einführung von vier Pflichtwährungen gleichzeitig",
-      "Für die Errichtung von genau vier Stadttoren um jede Garnison",
-      "Für eine feste Vier-Jahreszeiten-Steuer ausschließlich auf Weizen"
-    ],
-    "exp": "Um das riesige, von Krisen geschüttelte Römische Reich wieder steuerbar zu machen und Thronfolgekriege abzufangen, führte Diokletian das Vierkaisertum ein."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Welches Ereignis des Jahres 476 n. Chr. gilt traditionell als formelles Ende des Weströmischen Reiches?",
-    "a": [
-      "Die Absetzung des letzten weströmischen Kaisers Romulus Augustulus durch den germanischen Heerführer Odoaker",
-      "Der Tod Julius Caesars auf der Krim",
-      "Der Bau des ersten Limeswalls bei Mainz",
-      "Der Fall von Konstantinopel an die Osmanen"
-    ],
-    "exp": "Odoaker schickte die kaiserlichen Insignien 476 n. Chr. an den Kaiser im Osten nach Konstantinopel und herrschte selbst als König Italiens – während Ostrom noch fast 1.000 Jahre weiterlebte."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Welches große mittelalterliche Reitervolk bedrohte Mitteleuropa, ehe König Otto I. es im August 955 in der Schlacht auf dem Lechfeld entscheidend besiegte?",
-    "a": [
-      "Die Ungarn (Magyaren)",
-      "Die Mongolen unter Dschingis Khan",
-      "Die Westgoten",
-      "Die Berber aus Nordafrika"
-    ],
-    "exp": "Der Sieg Ottos I. auf dem Lechfeld bei Augsburg beendete die jahrelangen Streifzüge der Magyaren und ebnete seinen Weg zur römisch-deutschen Kaiserkrone 962."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Welcher mittelalterliche Städte- und Kaufmannsbund kontrollierte vom 13. bis ins 15. Jahrhundert den Fernhandel in Nord- und Ostsee (Zentrum u. a. Lübeck)?",
-    "a": [
-      "Die Hanse",
-      "Der Schwäbische Bund",
-      "Die Medici-Gilde von Florenz",
-      "Die Fuggersche Bergwerk-Allianz"
-    ],
-    "exp": "Die Hanse verband zeitweise über 200 Städte von Brügge und London über Lübeck und Köln bis nach Nowgorod in einem mächtigen Handelsnetz."
-  },
-  {
-    "cat": "antike",
-    "diff": "mid",
-    "q": "Welcher schwerwiegende religiöse Streit um kaiserliche Machtbefugnisse zwischen Papst Gregor VII. und König Heinrich IV. gipfelte 1077 im „Gang nach Canossa“?",
-    "a": [
-      "Der Investiturstreit (Wer darf Bischöfe und Äbte mit Ring und Stab in ihr Amt einsetzen?)",
-      "Der Konflikt um die Besteuerung des Nordseefischfangs",
-      "Die Entdeckung Amerikas vor dem Vatikan",
-      "Der Bau des Kölner Doms ohne Baugenehmigung"
-    ],
-    "exp": "Im schneebedeckten Vorhof der Burg Canossa erwirkte der gebannte König Heinrich IV. als Büßer die Lossprechung vom Kirchenbann und sicherte vorläufig seinen Thron."
-  },
-  {
-    "cat": "antike",
-    "diff": "pro",
-    "q": "Welche Reformen des athenischen Staatsmannes Kleisthenes ab 508/507 v. Chr. gelten als entscheidender institutioneller Durchbruch zur attischen Demokratie?",
-    "a": [
-      "Die Neuordnung der Bürgerschaft nach zehn territorialen Phylen (Bruch alter Adelsclans) und die Stärkung von Volksversammlung und Rat der 500",
-      "Die Erhebung Spartas zur Hauptstadt Attikas",
-      "Die vollständige Abschaffung aller Gesetze und Gerichte",
-      "Die Übergabe aller Macht an sieben lebenslange Priesterkönige"
-    ],
-    "exp": "Kleisthenes mischte Küsten-, Berg- und Stadtbewohner in neuen künstlichen Stämmen (Phylen), wodurch alte aristokratische Sippenbindungen entmachtet wurden."
-  },
-  {
-    "cat": "antike",
-    "diff": "pro",
-    "q": "Worin lag das historische Ergebnis des Vertrags von Verdun aus dem Jahr 843?",
-    "a": [
-      "Die Dreiteilung des Fränkischen Reiches unter den Enkeln Karls des Großen (Ausgangspunkt für Westfranken/Frankreich und Ostfranken/Deutschland)",
-      "Die Einigung zwischen Rom und Karthago nach dem Ersten Punischen Krieg",
-      "Die Abschaffung der Leibeigenschaft in ganz Skandinavien",
-      "Der Friedensschluss zwischen dem Kaiserreich China und dem Kalifat von Bagdad"
-    ],
-    "exp": "Nach jahrelangem Bruderkrieg teilten Lothar I., Ludwig der Deutsche und Karl der Kahle das karolingische Großreich in ein West-, Mittel- und Ostfrankenreich."
-  },
-  {
-    "cat": "antike",
-    "diff": "pro",
-    "q": "Welchen politischen Zweck erfüllte im antiken Athen das sogenannte „Scherbengericht“ (Ostrakismos)?",
-    "a": [
-      "Die Bürger konnten einen als zu mächtig oder tyrannengefährdend empfundenen Politiker per Tonscherben-Abstimmung für zehn Jahre ehrenvoll in die Verbannung schicken",
-      "Damit bestrafte man Töpfer, die zerbrochene Amphoren auf den Markt brachten",
-      "Es wählte alljährlich den schnellsten Läufer für Olympia aus",
-      "Es diente ausschließlich zur Klärung von Grenzstreitigkeiten zwischen Bauern"
-    ],
-    "exp": "Wer mindestens 6.000 Stimmen (Scherben/Ostraka) erhielt, musste Athen für zehn Jahre verlassen – behielt aber Vermögen und Bürgerrecht."
-  },
-  {
-    "cat": "antike",
-    "diff": "pro",
-    "q": "Warum gilt der Sieg des byzantinischen Kaisers Leon III. bei der Belagerung von Konstantinopel 717–718 gegen das Umayyaden-Kalifat unter Einsatz des „Griechischen Feuers“ als europäische Schicksalsschlacht?",
-    "a": [
-      "Er stoppte die islamische Expansion nach Südosteuropa über Anatolien für rund sieben Jahrhunderte",
-      "Er öffnete erst den direkten Seeweg über den Nordpol",
-      "Dadurch eroberten byzantinische Schiffe Südamerika",
-      "Es führte sofort zum Bau der Großen Mauer in Westeuropa"
-    ],
-    "exp": "Mit dem Geheimrezept des auf Wasser weiterbrennenden „Griechischen Feuers“ zerstörte die byzantinische Flotte enorme Teile der Belagerungsarmada."
-  },
-  {
-    "cat": "antike",
-    "diff": "pro",
-    "q": "Welches berühmte Schriftzeugnis des Jahres 1180 zerschlug das mächtige Herzogtum Sachsen Heinrichs des Löwen und markierte einen Wendepunkt in der mittelalterlichen Reichsverfassung?",
-    "a": [
-      "Die Gelnhäuser Urkunde (unter Kaiser Friedrich I. Barbarossa)",
-      "Das Nürnberger Reichsedikt von 1495",
-      "Die Mainzer Reichsakte von 800",
-      "Der Augsburger Fürstenbrief"
-    ],
-    "exp": "Nach Heinrichs Prozess wegen Ungehorsams zerlegte Barbarossa dessen gewaltigen Machtkomplex in kleinere Territorialherrschaften – die Geburtsstunde stärkerer Reichsfürsten."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "easy",
-    "q": "Welche berühmte italienische Familie prägte im 15. und 16. Jahrhundert als Bankiers, Kunstförderer (Michelangelo, Leonardo) und Stadtherren die Renaissance in Florenz?",
-    "a": [
-      "Die Medici",
-      "Die Habsburger",
-      "Die Plantagenets",
-      "Die Romanows"
-    ],
-    "exp": "Unter Cosimo und Lorenzo il Magnifico de’ Medici blühte Florenz als Zentrum von Bankwesen, Humanismus und Renaissancekunst auf."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "easy",
-    "q": "Welcher französische Sonnenkönig errichtete ab den 1660er Jahren außerhalb von Paris das prachtvolle Schloss Versailles als Zentrum des Absolutismus?",
-    "a": [
-      "Ludwig XIV.",
-      "Napoleon Bonaparte",
-      "Karl X.",
-      "Heinrich IV."
-    ],
-    "exp": "Mit dem Ausspruch „L’État, c’est moi“ verbunden, band Ludwig XIV. den französischen Hochadel über prunkvolles Hofzeremoniell in Versailles eng an seine Kontrolle."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "easy",
-    "q": "Welcher portugiesische Entdecker umschiffte 1497/98 im Auftrag Portugals als erster Europäer auf dem Seeweg die Südspitze Afrikas bis direkt nach Indien?",
-    "a": [
-      "Vasco da Gama",
-      "Fernando Magellan",
-      "James Cook",
-      "Roald Amundsen"
-    ],
-    "exp": "Vasco da Gama erreichte 1498 Calicut an der Malabarküste und eröffnete damit den direkten Gewürz-Seehandel vorbei am Osmanischen Reich."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "easy",
-    "q": "Welchen historischen Satz (sinngemäß überliefert) hielt Martin Luther auf dem Reichstag zu Worms 1521 seiner Forderung nach Widerruf entgegen?",
-    "a": [
-      "„Hier stehe ich, ich kann nicht anders. Gott helfe mir!“",
-      "„Der Würfel ist gefallen!“",
-      "„Ich kam, sah und siegte!“",
-      "„Alle Macht den Zünften!“"
-    ],
-    "exp": "Obwohl die genaue Schlussfloskel erst etwas später ausgestaltet wurde, markierte Luthers Weigerung vor Kaiser Karl V. den unumkehrbaren Bruch der Kirchenspaltung."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "easy",
-    "q": "Welche Frau saß von 1740 bis 1780 auf dem Habsburger Thron (u. a. Gegenspielerin Friedrichs des Großen) und führte u. a. die allgemeine Schulpflicht in Österreich ein?",
-    "a": [
-      "Maria Theresia",
-      "Katharina von Medici",
-      "Königin Victoria",
-      "Elisabeth I. von England"
-    ],
-    "exp": "Maria Theresia modernisierte Verwaltung, Steuern und Schulwesen der Habsburgermonarchie und behauptete ihr Erbe trotz verlustreicher Kriege um Schlesien."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "mid",
-    "q": "Was bezeichnet man in der Frühneuzeit unter Kaiser Karl V. oder Spanien unter Philipp II. mit „Ein Reich, in dem die Sonne niemals untergeht“?",
-    "a": [
-      "Das gewaltige spanisch-habsburgische Weltreich mit Besitzungen von Europa über die Karibik/Amerikas bis zu den Philippinen in Asien",
-      "Ein kleines Fürstentum im nördlichen Polarkreis im Hochsommer",
-      "Die Abschaffung der Kerzensteuer in Madrid",
-      "Das römisch-deutsche Kaiserreich allein zwischen Rhein und Elbe"
-    ],
-    "exp": "Durch die Union von Spanien, Österreich/Burgund und den neueroberten Kolonien in Amerika und Asien lag irgendwo im Reich rund um die Uhr Tageslicht."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "mid",
-    "q": "Welches Ereignis am 23. Mai 1618 löste unmittelbar den Ausbruch des Dreißigjährigen Krieges aus?",
-    "a": [
-      "Der Zweite Prager Fenstersturz (böhmische Stände stürzten kaiserliche Statthalter aus dem Fenster der Prager Burg)",
-      "Der Überfall Schwedens auf Hamburg",
-      "Die Hinrichtung Ludwigs XVI. in Paris",
-      "Die Gründung der Hanse in Lübeck"
-    ],
-    "exp": "Die kaiserlichen Räte überlebten zwar den Sturz auf einem Abfallhaufen bzw. weichen Hang, doch der Aufstand in Böhmen eskalierte zu einem dreißigjährigen europäischen Flächenbrand."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "mid",
-    "q": "Welche ökonomische Staatsdoktrin herrschte in Europa des 17. und 18. Jahrhunderts (z. B. unter Finanzminister Jean-Baptiste Colbert in Frankreich) vor dem freien Marktkapitalismus vor?",
-    "a": [
-      "Der Merkantilismus (Förderung von Export, Zöllen auf Importe und staatliche Manufakturen zur Vermehrung von Gold/Silber im Staatsschatz)",
-      "Der moderne Neo-Monetarismus",
-      "Reiner Anarchokapitalismus ohne Zölle",
-      "Vollständiger Tauschhandel ohne Münzen"
-    ],
-    "exp": "Colbert baute Zölle im Innern ab, zog hohe Schutzmauern nach außen hoch und gründete staatliche Manufakturen für Luxusgüter – genau dagegen schrieben später die Physiokraten und Adam Smith."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "mid",
-    "q": "Welches europäische Parlament verabschiedete im August 1789 im Zug der Französischen Revolution die bahnbrechende „Erklärung der Menschen- und Bürgerrechte“?",
-    "a": [
-      "Die französische Nationalversammlung (Assemblée nationale constituante)",
-      "Das britische Unterhaus in London",
-      "Der Reichstag zu Regensburg",
-      "Die Generalstände in Amsterdam"
-    ],
-    "exp": "Freiheit, Eigentum, Sicherheit und Widerstand gegen Unterdrückung wurden darin als unveräußerliche Naturrechte aller Bürger festgeschrieben (Olympes de Gouges ergänzte 1791 für Frauen)."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "mid",
-    "q": "Was änderte der Gregorianische Kalender von 1582 (unter Papst Gregor XIII.) am alten Julianischen Kalender?",
-    "a": [
-      "Er strich zehn Tage aus dem Oktober 1582 und führte die verfeinerte Schaltjahrregel (alle 400 statt 100 Jahre) ein, damit Ostern wieder zur Frühjahrs-Tagundnachtgleiche passte",
-      "Er verkürzte das Jahr pauschal auf exakt 300 Tage",
-      "Er schaffte den Monat Februar komplett ab",
-      "Er legte fest, dass eine Woche künftig 10 Tage hat"
-    ],
-    "exp": "Durch eine kleine Ungenauigkeit von ca. 11 Minuten pro Jahr hatte sich der Julianische Kalender über anderthalb Jahrtausende um rund zehn Tage gegen das Sonnenjahr verschoben."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Welches Gesetzbuch ließ Napoleon Bonaparte 1804 veröffentlichen, das Prinzipien wie Gleichheit vor dem Gesetz, Gewerbefreiheit und Eigentumsschutz weit über Frankreich hinaus prägte (und im Rheinland lange fortgalt)?",
-    "a": [
-      "Den Code civil (Code Napoléon)",
-      "Das Allgemeine Preußische Landrecht",
-      "Den Sachsenspiegel",
-      "Das Zwölftafelgesetz"
-    ],
-    "exp": "Selbst nach Napoleons Sturz blieben die rheinischen Gebiete (wie Preußens Rheinprovinz oder Baden) dem fortschrittlichen Code civil bis zur Einführung des BGB im Jahr 1900 verbunden."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Welche politische Koalition schloss das kleine, protestantische Brandenburg-Preußen und Großbritannien im Siebenjährigen Krieg (1756–1763) gegen Österreich, Frankreich und Russland („Renversement des alliances“)?",
-    "a": [
-      "Die Konvention von Westminster 1756 brachte das spektakuläre Umkippen der alten Allianzen (Habsburg verbündete sich erstmals mit seinem Erzfeind Bourbon-Frankreich)",
-      "Ein weltweites Handelsbündnis allein gegen die USA",
-      "Einen Vertrag zur Rückgabe Elsass-Lothringens an Spanien",
-      "Den Pakt von Venedig mit dem Osmanischen Reich"
-    ],
-    "exp": "Die „diplomatische Revolution“ von 1756 kehrte jahrhundertealte Bündnismuster Europas komplett um und machte aus dem Siebenjährigen Krieg faktisch einen frühen „Weltkrieg“ bis Indien und Nordamerika."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Welchen Rechtsakt vollzog Kaiser Franz II. am 6. August 1806 unter dem Druck Napoleons und der Gründung des Rheinbundes?",
-    "a": [
-      "Er legte die Kaiserkrone nieder und erklärte das fast tausendjährige Heilige Römische Reich für erloschen",
-      "Er eroberte Moskau gemeinsam mit schwedischen Truppen",
-      "Er krönte seinen jüngsten Bruder zum König von Großbritannien",
-      "Er vereinigte Österreich und Preußen in einem einzigen Parlament"
-    ],
-    "exp": "Mit der Niederlegung der Krone endete 1806 offiziell das Alte Reich; Franz regierte fortan als Kaiser Franz I. von Österreich weiter."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Was bezeichnete in den englischen Revolutionen des 17. Jahrhunderts die berühmte Rechtsgarantie der „Habeas-Corpus-Akte“ von 1679?",
-    "a": [
-      "Das Grundrecht gegen willkürliche Verhaftung: Jeder Verhaftete muss binnen kurzer Frist einem Richter vorgeführt werden, um die Rechtmäßigkeit der Haft zu prüfen",
-      "Die Pflicht, jährlich einen Zehnten in Getreide abzugeben",
-      "Das ausschließliche Recht des Königs, ohne Parlament Steuern einzutreiben",
-      "Ein Verbot privater Druckereien in London"
-    ],
-    "exp": "„Habeas corpus“ („Du habest den Körper“) ist bis heute eines der Fundamente moderner Rechtsstaatlichkeit und individueller Freiheit."
-  },
-  {
-    "cat": "neuzeit",
-    "diff": "pro",
-    "q": "Welche historische Bedeutung besaß das „Edikt von Nantes“ (1598 unter König Heinrich IV.) bis zu seiner Aufhebung 1685?",
-    "a": [
-      "Es beendete Frankreichs blutige Religionskriege und gewährte den protestantischen Hugenotten begrenzte Glaubens- und Kultusfreiheit im katholischen Frankreich",
-      "Es verpflichtete alle Europäer zu gleichen Maßeinheiten beim Wiegen",
-      "Es ordnete den Abriss sämtlicher Stadtmauern an der Loire an",
-      "Es verbot den Überseehandel mit Nordamerika"
-    ],
-    "exp": "Als Ludwig XIV. das Edikt von Nantes 1685 aufhob (Edikt von Fontainebleau), flohen hunderttausende oft hochqualifizierte Hugenotten u. a. nach Brandenburg-Preußen und in die Niederlande."
-  },
-  {
-    "cat": "industrie",
-    "diff": "easy",
-    "q": "Welcher schwedische Chemiker und Erfinder des Dynamits stiftete mit seinem riesigen Vermögen in seinem Testament die berühmten Preise für Physik, Chemie, Medizin, Literatur und Frieden?",
-    "a": [
-      "Alfred Nobel",
-      "Werner von Siemens",
-      "Carl Bosch",
-      "Thomas Alva Edison"
-    ],
-    "exp": "Seit 1901 werden jährlich die Nobelpreise am Todestag Alfred Nobels (10. Dezember) verliehen; 1968 kam der Preis für Wirtschaftswissenschaften durch die schwedische Reichsbank hinzu."
-  },
-  {
-    "cat": "industrie",
-    "diff": "easy",
-    "q": "Welcher Industriezweig bildete Ende des 18. Jahrhunderts in Großbritannien (Spinning Jenny, mechanischer Webstuhl) den allerersten Motor der Industriellen Revolution?",
-    "a": [
-      "Die Textil- und Baumwollindustrie",
-      "Die Halbleiter- und Chipfertigung",
-      "Die zivile Luftfahrt",
-      "Der Bau von Hochgeschwindigkeitszügen"
-    ],
-    "exp": "Mit Mechanisierung der Spinnerei und Weberei (kombiniert mit Dampfkraft und billiger Baumwolle) vervielfachte sich die Produktivität in Lancashire explosionsartig."
-  },
-  {
-    "cat": "industrie",
-    "diff": "easy",
-    "q": "Welche soziale Schicht wuchs im 19. Jahrhundert mit den rauchenden Fabriken des Ruhrgebiets, Sachsens und Berlins massenhaft neu heran („Soziale Frage“)?",
-    "a": [
-      "Die städtische Industriearbeiterschaft (Proletariat), oft unter harten Arbeitszeiten und schlechten Wohnverhältnissen",
-      "Der klassische höfische Ritterstand",
-      "Reine Einsiedler-Bauern ohne Geldverkehr",
-      "Die Zunft der freien Goldschmiede auf Segelschiffen"
-    ],
-    "exp": "Urbanisierung, Landflucht, Kinderarbeit und fehlende Absicherung prägten die „Soziale Frage“ des 19. Jahrhunderts und führten sowohl zur Arbeiterbewegung als auch zu Sozialgesetzen."
-  },
-  {
-    "cat": "industrie",
-    "diff": "easy",
-    "q": "Welcher Deutsche entwickelte Mitte/Ende der 1860er Jahre das „dynamoelektrische Prinzip“, das den Weg zur praktischen Großerzeugung von Elektrizität öffnete?",
-    "a": [
-      "Werner von Siemens",
-      "Gottlieb Daimler",
-      "Wilhelm Conrad Röntgen",
-      "Heinrich Hertz"
-    ],
-    "exp": "1866 präsentierte Siemens die Dynamomaschine, die mechanische Energie ohne teure Permanentmagnete effektiv in starken elektrischen Strom wandelte."
-  },
-  {
-    "cat": "industrie",
-    "diff": "easy",
-    "q": "Welches riesige deutsche Bauprojekt von Nordsee zu Ostsee wurde 1895 nach acht Jahren Bauzeit unter Wilhelm II. eröffnet und ersparte der Schifffahrt die gefährliche Fahrt um Dänemark?",
-    "a": [
-      "Der Nord-Ostsee-Kanal (damals Kaiser-Wilhelm-Kanal)",
-      "Der Mittellandkanal",
-      "Der Main-Donau-Kanal",
-      "Der Panamakanal"
-    ],
-    "exp": "Der Nord-Ostsee-Kanal gehört bis heute zu den meistbefahrenen künstlichen Wasserstraßen der Welt für die Seeschifffahrt."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Warum verlor das erste frei gewählte gesamtdeutsche Parlament der Paulskirche 1848/49 letztlich die Machtfrage gegen die alten Monarchen?",
-    "a": [
-      "Es fehlte ihr an eigener Armee, Exekutivgewalt und Staatskasse – und Preußens König Friedrich Wilhelm IV. lehnte die angetragene „Bürgerkrone“ ab",
-      "Weil die Abgeordneten sich alle einstimmig selbst auflösten, um nach Amerika auszuwandern",
-      "Weil Napoleon III. persönlich in Frankfurt einmarschierte",
-      "Weil die Eisenbahnlinien alle blockiert waren"
-    ],
-    "exp": "Ohne militärische Durchsetzungskraft gegen die wiedererstarkten Fürstenarmeen scheiterte die Reichsverfassung 1849, blieb aber Grundstein für spätere deutsche Verfassungen."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Welches chemische Großverfahren von Fritz Haber und Carl Bosch kurz vor 1913 ermöglichte die künstliche Herstellung von Ammoniak aus Luftstickstoff – Basis für weltweiten Kunstdünger UND Sprengstoffe?",
-    "a": [
-      "Das Haber-Bosch-Verfahren",
-      "Das Bessemer-Verfahren",
-      "Die Fischer-Tropsch-Synthese",
-      "Die Vulkanisation nach Goodyear"
-    ],
-    "exp": "Ohne die stickstofffixierenden Düngemittel aus dem Haber-Bosch-Verfahren könnten heute Schätzungen zufolge Milliarden Menschen nicht ernährt werden."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Wie lauteten die drei berühmten Kriege („Einigungskriege“) zwischen 1864 und 1871, die unter Otto von Bismarck zur Gründung des Deutschen Kaiserreichs führten?",
-    "a": [
-      "Deutsch-Dänischer Krieg (1864), Deutscher Krieg gegen Österreich (1866) und Deutsch-Französischer Krieg (1870/71)",
-      "Krimkrieg, Boxeraufstand und Erster Weltkrieg",
-      "Dreißigjähriger Krieg, Befreiungskriege und Balkankrieg",
-      "Burenkrieg, Opiumkrieg und Siebenjähriger Krieg"
-    ],
-    "exp": "Mit dem Sieg bei Sedan über Frankreich riefen deutsche Fürsten am 18. Januar 1871 im Spiegelsaal von Versailles König Wilhelm I. zum Deutschen Kaiser aus."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Worin bestand die historische Pionierleistung von Henry Fords „T-Modell“ („Tin Lizzie“) ab 1913 in Detroit?",
-    "a": [
-      "Durch das konsequent bewegliche Fließband und extreme Standardisierung schrumpfte die Montagezeit dramatisch, sodass ein Auto für breite Käuferschichten bezahlbar wurde",
-      "Es fuhr bereits serienmäßig mit einer Lithium-Ionen-Batterie",
-      "Es besaß als erstes Auto eine automatische Einparkkamera",
-      "Es wurde von jedem Kunden aus Einzelteilen zu Hause selbst gegossen"
-    ],
-    "exp": "Die Einführung des Fließbands senkte die Endmontagezeit eines Model T von über zwölf Stunden auf rund anderthalb Stunden – Geburtsstunde der modernen Massenproduktion."
-  },
-  {
-    "cat": "industrie",
-    "diff": "mid",
-    "q": "Welche politische Verfassungsgrundlage prägte das Deutsche Kaiserreich ab 1871 im Hinblick auf das Wahlrecht zum Reichstag gegenüber Preußen?",
-    "a": [
-      "Auf Reichsebene galt das (für Männer) allgemeine und gleiche Wahlrecht – in Preußen jedoch bestand bis 1918 das ungleiche Dreiklassenwahlrecht weiter",
-      "Im Reich durften überhaupt nur Adlige wählen, während Preußen Frauenwahlrecht besaß",
-      "Beide Parlamente wählten direkt alle Bürger ab 14 Jahren gleich",
-      "Wahlen waren in Berlin gesetzlich für 50 Jahre ganz verboten"
-    ],
-    "exp": "Während im Reichstag selbst SPD und Zentrum starke Blöcke gewannen, sicherte das Drei-Klassen-Wahlrecht im größten Bundesstaat Preußen den Großgrundbesitzern und Wohlhabenden enorme Übermacht."
-  },
-  {
-    "cat": "industrie",
-    "diff": "pro",
-    "q": "Welche tiefgreifenden Reformen in Verwaltung, Heereswesen, Bauernbefreiung und Städteordnung modernisierten Preußen nach der Niederlage von 1806 ab 1807?",
-    "a": [
-      "Die Stein-Hardenbergschen Reformen (sowie Wilhelm von Humboldts Bildungsreform)",
-      "Die Paulskirchen-Dekrete",
-      "Die Bismarcksche Reichsversicherungsordnung",
-      "Der Schlieffen-Plan"
-    ],
-    "exp": "Unter Heinrich Friedrich Karl vom Stein und Karl August von Hardenberg schaffte Preußen u. a. Erbuntertänigkeit und Zunftzwang ab und führte kommunale Selbstverwaltung ein."
-  },
-  {
-    "cat": "industrie",
-    "diff": "pro",
-    "q": "Warum bezeichnete das historische „Bessemer-Verfahren“ (1856) zusammen mit dem späteren „Thomas-Verfahren“ einen Quantensprung für das Eisenbahn- und Brückenbauzeitalter?",
-    "a": [
-      "Man konnte nun billig in großen Mengen flüssigen, hochwertigen Stahl statt sprödem Gusseisen direkt aus phosphorreichem Roheisen frischen",
-      "Man entdeckte damit erst das chemische Element Eisen unter dem Boden",
-      "Es ersetzte die Eisenbahnschienen vollständig durch massives Holz",
-      "Es erlaubte das Schweißen von Schienen komplett unter Wasser"
-    ],
-    "exp": "Insbesondere Sidney Thomas’ basisch ausgekleidete Birne machte phosphorreiches Erz etwa aus Lothringen und dem Ruhrgebiet erst für billigen Massenstahlguss nutzbar."
-  },
-  {
-    "cat": "industrie",
-    "diff": "pro",
-    "q": "Was bezeichnete Bismarcks innenpolitischer „Kulturkampf“ (ab 1871 bis in die späten 1870er Jahre)?",
-    "a": [
-      "Einen erbitterten Macht- und Rechtskonflikt des Reiches und Preußens gegen den Einfluss der katholischen Kirche und der Zentrumspartei (u. a. Zivilehe, Schulaufsicht)",
-      "Ein Förderprogramm für moderne Theater und Museen auf dem Land",
-      "Eine Kampagne gegen das Rauchen in preußischen Kasernen",
-      "Die Abschaffung der deutschen Frakturschrift zugunsten von Latein"
-    ],
-    "exp": "Aus Sorge vor „Reichsfeinden“ schränkte Bismarck Kirchenrechte (Kanzelparagraph, Jesuitenverbot) massiv ein – stärkte aber wider Willen die Geschlossenheit des Zentrums; die obligatorische Zivilehe blieb."
-  },
-  {
-    "cat": "industrie",
-    "diff": "pro",
-    "q": "Worin lagen die gravierenden wirtschafts- und währungspolitischen Folgen der „Gründerkrise“ (Wiener und Berliner Börsenkrach 1873) für Deutschland?",
-    "a": [
-      "Nach überhitzter Spekulation mit den französischen Milliarden-Reparationen platzte die Blase; jahrelange Stagnation („Große Depression“) trieb das Kaiserreich ab 1879 vom Freihandel zurück zu Schutzzöllen und Kartellen",
-      "Die Reichsmark musste sofort durch den US-Dollar ersetzt werden",
-      "Sämtliche Eisenbahnen im Deutschen Reich wurden stillgelegt",
-      "Preußen wurde vorübergehend wieder in ein Agrarland ohne Banken geteilt"
-    ],
-    "exp": "Der Schwenk von Freihandel zu Eisen- und Roggenzöllen 1879 zementierte in Deutschland das Bündnis von Schwerindustrie und ostelbischem Adel („Rittergut und Hochofen“)."
-  },
-  {
-    "cat": "industrie",
-    "diff": "pro",
-    "q": "Welches Ereignis des Jahres 1917 bedeutete mitten im Ersten Weltkrieg eine doppelte strategische Wende weg von der alten europäischen Mächteordnung?",
-    "a": [
-      "Die Russischen Revolutionen (mit Ausscheiden Russlands aus dem Krieg 1918) und der Kriegseintritt der USA aufseiten der Entente nach Deutschlands uneingeschränktem U-Boot-Krieg",
-      "Die gleichzeitige Wiedervereinigung Österreichs mit Frankreich",
-      "Der Beginn des Flottenbauprogramms in Hannover",
-      "Der Rücktritt Königin Victorias in London"
-    ],
-    "exp": "Während die Ostfront nach der Oktoberrevolution kollabierte, brachten die ökonomisch übermächtigen USA frische Millionenheere und Finanzen an die Westfront."
-  },
-  {
-    "cat": "modern",
-    "diff": "easy",
-    "q": "Wie hießen die legendären Flugzeuge der Westalliierten, die 1948/49 während der sowjetischen Blockade West-Berlin fast elf Monate lang aus der Luft versorgten („Berliner Luftbrücke“)?",
-    "a": [
-      "„Rosinenbomber“",
-      "„Wunderzeppeline“",
-      "„Albatros-Schnelldampfer“",
-      "„Mondfähren“"
-    ],
-    "exp": "Im Minutentakt landeten alliierte Transportmaschinen mit Kohle, Mehl und Medikamenten u. a. in Tempelhof und Gatow und vereitelten Stalins Aushungerungsversuch."
-  },
-  {
-    "cat": "modern",
-    "diff": "easy",
-    "q": "Welcher Bundeskanzler der Bundesrepublik kniete 1970 im damals polnischen Warschau spontan vor dem Denkmal für die Opfer des Warschauer Ghettos nieder?",
-    "a": [
-      "Willy Brandt",
-      "Helmut Kohl",
       "Konrad Adenauer",
-      "Gerhard Schröder"
+      "Kurt Schumacher",
+      "Theodor Heuss"
     ],
-    "exp": "Willy Brandts Kniefall von Warschau am 7. Dezember 1970 ging als weltweit bewegende Geste der Versöhnung und Neuen Ostpolitik in die Geschichtsbücher ein."
+    "explanation": "Mit der Währungsreform von 1948 (Einführung der D-Mark) und dem Slogan „Wohlstand für alle“ füllten sich die Schaufenster über Nacht.",
+    "exp": "Ludwig Erhard"
   },
   {
     "cat": "modern",
-    "diff": "easy",
-    "q": "Welcher Tag in Deutschland markiert jährlich seit 1990 als gesetzlicher Nationalfeiertag die staatliche Wiedervereinigung?",
+    "diff": "mid",
+    "q": "Was war der mutige Volksaufstand vom 17. Juni 1953 in der DDR?",
     "a": [
-      "Der 3. Oktober („Tag der Deutschen Einheit“)",
-      "Der 9. November",
-      "Der 17. Juni",
-      "Der 23. Mai"
+      "Arbeiter protestierten gegen erhöhte Arbeitsnormen und forderten freie Wahlen; sowjetische Panzer schlugen den Aufstand blutig nieder",
+      "Eine Demonstration für die sofortige Einführung des Westfernsehens",
+      "Ein Studentenprotest an der Berliner Humboldt-Universität",
+      "Ein Generalstreik der Eisenbahner gegen die D-Mark"
     ],
-    "exp": "Am 3. Oktober 1990 traten die neuen Bundesländer bzw. Berlin nach dem Einigungsvertrag dem Geltungsbereich des Grundgesetzes bei."
+    "explanation": "In der Bundesrepublik wurde der 17. Juni bis zur Wiedervereinigung 1990 als bundesweiter Feiertag („Tag der deutschen Einheit“) begangen.",
+    "exp": "Arbeiter protestierten gegen erhöhte Arbeitsnormen und forderten freie Wahlen; sowjetische Panzer schlugen den Aufstand blutig nieder"
+  },
+  {
+    "cat": "modern",
+    "diff": "pro",
+    "q": "Welcher sowjetische Marineoffizier verhinderte am 27. Oktober 1962 während der Kubakrise eigenhändig den Dritten Weltkrieg?",
+    "a": [
+      "Wassili Archipow (er weigerte sich an Bord des U-Boots B-59, dem Abschuss eines Atomtorpedos zuzustimmen)",
+      "Stanislaw Petrow",
+      "Sergej Gorschkow",
+      "Dmitri Ustinow"
+    ],
+    "explanation": "Das U-Boot wurde von US-Zerstörern mit Übungs-Wasserbomben eingekreist. Zwei Offiziere wollten feuern – nur Archipows Veto verhinderte den Atomkrieg.",
+    "exp": "Wassili Archipow (er weigerte sich an Bord des U-Boots B-59, dem Abschuss eines Atomtorpedos zuzustimmen)"
   },
   {
     "cat": "modern",
     "diff": "easy",
-    "q": "Welcher sowjetische Generalsekretär und Präsident löste mit seinen Reformbegriffen „Glasnost“ (Offenheit) und „Perestroika“ (Umbau) ab 1985 unbeabsichtigt den Zerfall des Ostblocks aus?",
+    "q": "Wann begann das DDR-Regime unter Walter Ulbricht mit dem Bau der Berliner Mauer?",
+    "a": [
+      "13. August 1961",
+      "17. Juni 1953",
+      "9. November 1989",
+      "24. Juni 1948"
+    ],
+    "explanation": "Noch zwei Monate zuvor hatte Ulbricht auf einer Pressekonferenz gelogen: „Niemand hat die Absicht, eine Mauer zu errichten!“",
+    "exp": "13. August 1961"
+  },
+  {
+    "cat": "modern",
+    "diff": "mid",
+    "q": "Was begründete die Schuman-Erklärung vom 9. Mai 1950, deren Jahrestag heute als Europatag gefeiert wird?",
+    "a": [
+      "Die Montanunion (EGKS) – gemeinsame Kontrolle von Kohle und Stahl zwischen Deutschland und Frankreich als Basis der heutigen EU",
+      "Die Einführung des Euro als gemeinsame Währung",
+      "Den Beitritt Deutschlands zur NATO",
+      "Das Schengener Abkommen für offene Grenzen"
+    ],
+    "explanation": "Krieg zwischen Frankreich und Deutschland sollte „nicht nur undenkbar, sondern materiell unmöglich“ werden – ein epochaler Friedensplan.",
+    "exp": "Die Montanunion (EGKS) – gemeinsame Kontrolle von Kohle und Stahl zwischen Deutschland und Frankreich als Basis der heutigen EU"
+  },
+  {
+    "cat": "modern",
+    "diff": "pro",
+    "q": "Was war der historische Kniefall von Warschau von Bundeskanzler Willy Brandt am 7. Dezember 1970?",
+    "a": [
+      "Eine spontane Geste der Demut und Bitte um Vergebung vor dem Denkmal für die Helden des Warschauer Ghetto-Aufstandes",
+      "Ein diplomatischer Fauxpas bei der Begrüßung des polnischen Präsidenten",
+      "Ein Schwächeanfall wegen Unterzuckerung bei Minusgraden",
+      "Ein rituelles Gebet gemeinsam mit dem Erzbischof von Krakau"
+    ],
+    "explanation": "Brandt schrieb später: „Am Abgrund der deutschen Geschichte und unter der Last der Millionen Ermordeten tat ich, was Menschen tun, wenn die Worte versagen.“",
+    "exp": "Eine spontane Geste der Demut und Bitte um Vergebung vor dem Denkmal für die Helden des Warschauer Ghetto-Aufstandes"
+  },
+  {
+    "cat": "modern",
+    "diff": "easy",
+    "q": "Welcher sowjetische Staatschef leitete ab 1985 mit „Glasnost“ (Offenheit) und „Perestroika“ (Umbau) das Ende des Ostblocks ein?",
     "a": [
       "Michail Gorbatschow",
       "Leonid Breschnew",
       "Nikita Chruschtschow",
-      "Wladimir Lenin"
+      "Juri Andropow"
     ],
-    "exp": "Durch Gorbatschows Verzicht auf militärische Gewalt („Sinatra-Doktrin“) konnten Ungarn, Polen, die ČSSR und die DDR 1989 friedlich ihre Freiheit erlangen."
+    "explanation": "Gorbatschow verweigerte den Einsatz von sowjetischen Panzern gegen die Freiheitsbewegungen in Osteuropa und erhielt 1990 den Friedensnobelpreis.",
+    "exp": "Michail Gorbatschow"
+  },
+  {
+    "cat": "modern",
+    "diff": "mid",
+    "q": "Was war der „Vertrag von Maastricht“ von 1992?",
+    "a": [
+      "Der Gründungsvertrag der Europäischen Union (EU) und der Beschluss zur Einführung der gemeinsamen Währung Euro",
+      "Ein Abkommen über die Aufteilung der Nordsee-Ölvorkommen",
+      "Die Charta der Grundrechte der Vereinten Nationen",
+      "Ein Friedensvertrag zur Beendigung des Bosnienkriegs"
+    ],
+    "explanation": "Die Europäische Wirtschaftsgemeinschaft (EWG) wandelte sich in die Europäische Union mit gemeinsamer Außen- und Sicherheitspolitik.",
+    "exp": "Der Gründungsvertrag der Europäischen Union (EU) und der Beschluss zur Einführung der gemeinsamen Währung Euro"
+  },
+  {
+    "cat": "modern",
+    "diff": "pro",
+    "q": "Was war der „Zwei-plus-Vier-Vertrag“ von September 1990 in Moskau?",
+    "a": [
+      "Der friedensvertragliche Schlusspunkt unter den Zweiten Weltkrieg: Die vier Siegermächte gaben Deutschland die volle Souveränität zurück",
+      "Ein Handelsabkommen über den zollfreien Austausch von vier Grundnahrungsmitteln",
+      "Ein Abrüstungsvertrag über Mittelstreckenraketen in Europa",
+      "Die Gründung der OSZE in Helsinki"
+    ],
+    "explanation": "Verhandelt von BRD und DDR mit den USA, UdSSR, Großbritannien und Frankreich machte der Vertrag den Weg frei für die Wiedervereinigung am 3. Oktober 1990.",
+    "exp": "Der friedensvertragliche Schlusspunkt unter den Zweiten Weltkrieg: Die vier Siegermächte gaben Deutschland die volle Souveränität zurück"
   },
   {
     "cat": "modern",
     "diff": "easy",
-    "q": "In welcher ehemaligen Reichstags- und preußischen Stadt unterzeichneten die alliierten Sieger Churchill/Attlee, Truman und Stalin im Sommer 1945 das zentrale Nachkriegsabkommen für Deutschland?",
+    "q": "Wer hielt am 28. August 1963 in Washington vor über 250.000 Menschen die weltberühmte Rede „I Have a Dream“?",
     "a": [
-      "In Potsdam (Potsdamer Konferenz / Abkommen auf Schloss Cecilienhof)",
-      "In München",
-      "In Nürnberg",
-      "In Frankfurt am Main"
+      "Martin Luther King Jr.",
+      "Malcolm X",
+      "Rosa Parks",
+      "Nelson Mandela"
     ],
-    "exp": "Die „Vier D“ (Denazifizierung, Demilitarisierung, Demokratisierung, Demontage/Dezentralisierung) und die Besatzungszonen sowie die Oder-Neiße-Verwaltung wurden in Potsdam verhandelt."
+    "explanation": "King träumte von einem Amerika, in dem seine Kinder „nicht nach der Hautfarbe, sondern nach dem Charakter beurteilt werden“.",
+    "exp": "Martin Luther King Jr."
   },
   {
     "cat": "modern",
     "diff": "mid",
-    "q": "Welche historische Bedeutung besaß das „Wunder von Bern“ bzw. das Weltmeisterschaftsjahr 1954 neben dem Sport für die junge westdeutsche Nachkriegsgesellschaft?",
+    "q": "Was war der „Marshallplan“ (European Recovery Program) der USA ab 1948?",
     "a": [
-      "Der überraschende Fußball-WM-Titel gegen das ungeschlagene Ungarn stärkte erstmals wieder unbeschwertes Selbstvertrauen mitten im anlaufenden Wirtschaftswunder",
-      "Es beendete vertraglich den Ersten Weltkrieg",
-      "Es begründete die sofortige Aufnahme der BRD in die Vereinten Nationen am selben Tag",
-      "Es markierte die Einführung des Euro"
+      "Ein milliardenschweres Hilfsprogramm aus Krediten und Gütern für den Wiederaufbau des kriegszerstörten Westeuropas",
+      "Ein militärischer Notfallplan für den Fall eines sowjetischen Angriffs auf Berlin",
+      "Ein Programm zur Auswanderung deutscher Wissenschaftler in die USA",
+      "Ein Gesetz zur Entmilitarisierung der Ruhrindustrie"
     ],
-    "exp": "Neun Jahre nach Kriegsende erlebte die Bevölkerung ein emotionales Gemeinschaftsgefühl – oft als „innere Geburtsstunde“ westdeutschen Alltags-Selbstbewusstseins beschrieben."
+    "explanation": "Benannt nach US-Außenminister George C. Marshall legte der Plan den Grundstein für das westeuropäische Wirtschaftswachstum der 1950er Jahre.",
+    "exp": "Ein milliardenschweres Hilfsprogramm aus Krediten und Gütern für den Wiederaufbau des kriegszerstörten Westeuropas"
+  },
+  {
+    "cat": "modern",
+    "diff": "pro",
+    "q": "Was war die sogenannte „Spiegel-Affäre“ im Herbst 1962 in der Bundesrepublik Deutschland?",
+    "a": [
+      "Verteidigungsminister Franz Josef Strauß ließ Redaktionsräume besetzen und Journalisten wegen angeblichen Landesverrats verhaften – die Pressefreiheit siegte",
+      "Ein Skandal um gefälschte Interviews mit US-Präsident Kennedy",
+      "Die Aufdeckung von Schmiergeldzahlungen bei der Beschaffung des Starfighters",
+      "Ein Streit über den Abdruck von satirischen Karikaturen im Hamburger Abendblatt"
+    ],
+    "explanation": "Massive Bürgerproteste gegen den autoritären Eingriff zwangen Strauß zum Rücktritt – die Affäre gilt als Reifeprüfung der jungen westdeutschen Demokratie.",
+    "exp": "Verteidigungsminister Franz Josef Strauß ließ Redaktionsräume besetzen und Journalisten wegen angeblichen Landesverrats verhaften – die Pressefreiheit siegte"
+  },
+  {
+    "cat": "modern",
+    "diff": "easy",
+    "q": "Welcher südafrikanische Freiheitskämpfer verbrachte 27 Jahre in Haft und wurde 1994 der erste schwarze Präsident Südafrikas?",
+    "a": [
+      "Nelson Mandela",
+      "Desmond Tutu",
+      "Steve Biko",
+      "Kofi Annan"
+    ],
+    "explanation": "Mandela führte Südafrika auf dem friedlichen Weg aus der Apartheid und erhielt 1993 gemeinsam mit Frederik de Klerk den Friedensnobelpreis.",
+    "exp": "Nelson Mandela"
   },
   {
     "cat": "modern",
     "diff": "mid",
-    "q": "Wann und mit welchem verhängnisvollen Bau begann das SED-Regime um Walter Ulbricht die endgültige hermetische Abriegelung West-Berlins von Ost-Berlin?",
+    "q": "Wann trat am 1. Januar 2002 der Euro als physisches Bargeld in zwölf europäischen Staaten in Kraft?",
     "a": [
-      "Am frühen Morgen des 13. August 1961 mit dem Bau der Berliner Mauer",
-      "Am 20. Juli 1944",
-      "Am 1. Juli 1990",
-      "Am 9. Mai 1945"
+      "1. Januar 2002",
+      "1. Januar 1999",
+      "3. Oktober 1990",
+      "1. Mai 2004"
     ],
-    "exp": "Da bis dahin rund drei Millionen meist gut ausgebildete Menschen über das „Schlupfloch Berlin“ in den Westen geflohen waren, riegelte die DDR-Führung die Grenze mit Stacheldraht und Beton ab."
-  },
-  {
-    "cat": "modern",
-    "diff": "mid",
-    "q": "Welches europäische Verträgewerk von 1992 wandelte die damaligen Europäischen Gemeinschaften offiziell in die Europäische Union (EU) um und legte den Fahrplan für die gemeinsame Euro-Währung fest?",
-    "a": [
-      "Der Vertrag von Maastricht",
-      "Der Vertrag von Aachen 2019",
-      "Der Elysée-Vertrag 1963",
-      "Die Charta von München 1938"
-    ],
-    "exp": "Unterzeichnet am 7. Februar 1992 im niederländischen Maastricht, definierte der Vertrag u. a. die Konvergenzkriterien für die Euro-Einführung sowie die gemeinsame Außen- und Sicherheitspolitik."
-  },
-  {
-    "cat": "modern",
-    "diff": "mid",
-    "q": "Welche drastische Krisenmaßnahme verhängte die Bundesregierung Willy Brandt im November 1973 während des ersten globalen Ölpreisschocks?",
-    "a": [
-      "Vier sogenannte „autofreie Sonntage“ mit allgemeinem Fahrverbot und vorübergehenden Tempolimits auf Autobahnen",
-      "Die komplette Enteignung aller Tankstellen zugunsten von Pferdekutschen",
-      "Den sofortigen Abbruch aller Stromverbindungen ins Ausland",
-      "Die Rückgabe der Deutschen Mark an die USA"
-    ],
-    "exp": "Das Lieferembargo der OPEC-Staaten infolge des Jom-Kippur-Krieges führte zu freien Autobahnen voller Spaziergänger und Fahrradfahrer an vier Herbstsonntagen 1973."
-  },
-  {
-    "cat": "modern",
-    "diff": "mid",
-    "q": "Mit welchem folgenschweren Verfassungsprinzip grenzte sich das Grundgesetz von 1949 bewusst gegen die Schwächen der Weimarer Verfassung ab („Ewigkeitsklausel“ in Art. 79 Abs. 3 GG)?",
-    "a": [
-      "Menschenwürde, Grundrechtsbindung, Demokratie-, Bundes- und Rechtsstaatsprinzip sind auch mit Zweidrittelmehrheit unantastbar – plus starke Kanzlerstellung über konstruktives Misstrauensvotum",
-      "Der Bundespräsident darf allein das Parlament lebenslang absetzen",
-      "Wahlen finden nur noch alle 25 Jahre statt",
-      "Bundesgesetze müssen stets einstimmig von allen 80 Millionen Bürgern unterschrieben werden"
-    ],
-    "exp": "„Wehrhafte Demokratie“: Anders als 1933 kann keine parlamentarische Mehrheit die Grundordnung legal per Ermächtigungsgesetz abschaffen; zudem kann ein Kanzler nur gestürzt werden, wenn sofort ein neuer gewählt wird."
+    "explanation": "Als Buchgeld existierte der Euro schon seit 1999 – ab 2002 hielten die Bürger erstmals Münzen und Scheine in den Händen.",
+    "exp": "1. Januar 2002"
   },
   {
     "cat": "modern",
     "diff": "pro",
-    "q": "Was bezeichnete der „Élysée-Vertrag“ vom 22. Januar 1963 zwischen Konrad Adenauer und Charles de Gaulle?",
+    "q": "Was war das „Wunder von Bern“ am 4. Juli 1954 im Berner Wankdorfstadion?",
     "a": [
-      "Den historischen deutsch-französischen Freundschaftsvertrag, der feste Regierungskonsultationen und das Deutsch-Französische Jugendwerk begründete",
-      "Ein geheimes Militärbündnis zur Eroberung Belgiens",
-      "Die gemeinsame Übernahme Großbritanniens in den Franc-Raum",
-      "Das endgültige Ende des Kalten Krieges mit den USA"
+      "Die deutsche Fußball-Nationalmannschaft wurde durch ein 3:2 gegen die damals als unschlagbar geltenden Ungarn sensationell Weltmeister",
+      "Die Unterzeichnung des ersten europäischen Passabkommens",
+      "Die Eröffnung des ersten Schweizer Atomkraftwerks",
+      "Die Landung des ersten Düsenflugzeugs auf dem Berner Flughafen"
     ],
-    "exp": "Nach Jahrhunderten der „Erbfeindschaft“ und drei verheerenden Kriegen verankerte der Élysée-Vertrag die Aussöhnung institutionell in Regierung und Zivilgesellschaft."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Worin bestand die innenpolitische Zäsur der sogenannten „Spiegel-Affäre“ im Herbst 1962 für die junge Demokratie der Bundesrepublik?",
-    "a": [
-      "Die rechtsstaatlich fragwürdige Razzia und Verhaftung von Redakteuren gegen kritische Berichterstattung löste breite Proteste für Pressefreiheit aus – und kostete Verteidigungsminister Franz Josef Strauß das Amt",
-      "Die erste Übertragung des Fernsehens in Farbe",
-      "Der plötzliche Rücktritt Adenauers wegen der Kuba-Krise am selben Tag",
-      "Ein Skandal um gefälschte Bundesbank-Goldreserven"
-    ],
-    "exp": "Das Bundesverfassungsgericht stärkte in seinem späteren Spiegel-Urteil von 1966 maßgeblich die Pressefreiheit als „schlechthin konstituierend“ für die Demokratie."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Welche weltpolitisch gefährlichste Zuspitzung des Kalten Krieges im Oktober 1962 dauerte 13 Tage lang und führte fast zu einem Nuklearkrieg zwischen USA und UdSSR?",
-    "a": [
-      "Die Kubakrise (Stationierung sowjetischer Mittelstreckenraketen auf Kuba / US-Seeblockade)",
-      "Die Koreakrise von 1950",
-      "Der Prager Frühling 1968",
-      "Die Suezkrise 1956"
-    ],
-    "exp": "John F. Kennedy und Nikita Chruschtschow einigten sich in letzter Minute auf den Abzug der Raketen aus Kuba gegen einen Verzicht auf Invasion und den stillen Abzug von US-Raketen aus der Türkei."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Welche ökonomisch folgenreiche Währungsentscheidung traf US-Präsident Richard Nixon am 15. August 1971 („Nixon-Schock“)?",
-    "a": [
-      "Er hob einseitig die Einlösbarkeit des US-Dollars in Gold auf (Goldfenster geschlossen), was das 1944 vereinbarte Bretton-Woods-System fester Wechselkurse bis 1973 zusammenbrechen ließ",
-      "Er führte in den Vereinigten Staaten die D-Mark als Parallelwährung ein",
-      "Er verbot sämtliche Importe aus Europa für zehn Jahre",
-      "Er verstaatlichte alle Privatbanken Amerikas"
-    ],
-    "exp": "Damit endete weltweit faktisch die direkte Verankerung der Leitwährungen an Gold – seitdem herrscht ein System frei schwankender („floatender“) Fiat-Währungen."
-  },
-  {
-    "cat": "modern",
-    "diff": "pro",
-    "q": "Was besiegelte die von US-Außenminister George C. Marshall vorgestellte Politik in Kombination mit der Gründung des Europarats 1949 und des Schuman-Plans 1950/EGKS?",
-    "a": [
-      "Die wirtschaftliche und friedenssichernde Integration Westeuropas durch gemeinsame Kontrolle der damals kriegswichtigen Schlüsselindustrien Kohle und Stahl (Montanunion)",
-      "Die sofortige Auflösung aller nationalen Parlamente zugunsten der USA",
-      "Ein strenges Wirtschafts- und Zollverbot zwischen Deutschland und Frankreich",
-      "Die Verlagerung der gesamten Schwerindustrie Europas nach Island"
-    ],
-    "exp": "Robert Schuman und Jean Monnet schufen mit der Europäischen Gemeinschaft für Kohle und Stahl (EGKS) ein supranationales Friedensmodell, aus dem direkt die heutige EU erwuchs."
+    "explanation": "Herbert Zimmermanns Radio-Kommentar („Aus dem Hintergrund müsste Rahn schießen ... Rahn schießt ... Tor! Tor! Tor!“) wurde zum Mythos des deutschen Neuanfangs.",
+    "exp": "Die deutsche Fußball-Nationalmannschaft wurde durch ein 3:2 gegen die damals als unschlagbar geltenden Ungarn sensationell Weltmeister"
   }
 ];
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
     window.ArcadeQuizEngine.registerBank("history", DATA);
   } else {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
