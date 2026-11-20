@@ -1,0 +1,130 @@
+name: Check Cloudflare Traffic (Test)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check-traffic:
+    name: Query Cloudflare & Worker Stats
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Query Cloudflare Analytics & Worker Summary
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CF_ACCOUNT_OVERRIDE: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          node -e '
+          (async () => {
+            const token = process.env.CLOUDFLARE_API_TOKEN;
+            if (!token) {
+              console.error("CLOUDFLARE_API_TOKEN missing");
+              process.exit(1);
+            }
+
+            const cfFetch = async (path, opts = {}) => {
+              const res = await fetch("https://api.cloudflare.com/client/v4" + path, {
+                ...opts,
+                headers: {
+                  "Authorization": "Bearer " + token,
+                  "Content-Type": "application/json",
+                  ...(opts.headers || {})
+                }
+              });
+              const data = await res.json().catch(() => ({}));
+              return { ok: res.ok && data.success !== false, status: res.status, data };
+            };
+
+            let accountId = (process.env.CF_ACCOUNT_OVERRIDE || "").trim();
+            if (!accountId) {
+              const acc = await cfFetch("/accounts");
+              if (acc.ok && Array.isArray(acc.data.result) && acc.data.result.length) {
+                accountId = acc.data.result[0].id;
+              }
+            }
+            console.log("Account resolved:", Boolean(accountId));
+
+            // 1. Worker GraphQL Analytics (last 7 days)
+            if (accountId) {
+              const since = new Date(Date.now() - 7 * 86400000).toISOString();
+              const until = new Date().toISOString();
+              const query = `
+                query ($accountTag: string!, $since: Time!, $until: Time!) {
+                  viewer {
+                    accounts(filter: { accountTag: $accountTag }) {
+                      workersInvocationsAdaptive(
+                        limit: 100,
+                        filter: { datetime_geq: $since, datetime_leq: $until }
+                        orderBy: [date_DESC]
+                      ) {
+                        dimensions { date scriptName }
+                        sum { requests subrequests errors }
+                      }
+                    }
+                  }
+                }
+              `;
+              const gql = await cfFetch("/graphql", {
+                method: "POST",
+                body: JSON.stringify({ query, variables: { accountTag: accountId, since, until } })
+              });
+              console.log("=== WORKER GRAPHQL (7d) ===");
+              console.log(JSON.stringify(gql.data, null, 2));
+            }
+
+            // 2. Zones (if any domain is on Cloudflare)
+            const zones = await cfFetch("/zones?per_page=10");
+            console.log("=== ZONES ===");
+            if (!zones.ok) {
+              console.log("Zones error:", zones.status, JSON.stringify(zones.data));
+            } else {
+              const zList = zones.data.result || [];
+              console.log("Zone count:", zList.length, zList.map(z => z.name));
+              for (const z of zList) {
+                const startDate = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+                const endDate = new Date().toISOString().slice(0, 10);
+                const zQuery = `
+                  query ($zoneTag: string!, $startDate: Date!, $endDate: Date!) {
+                    viewer {
+                      zones(filter: { zoneTag: $zoneTag }) {
+                        httpRequests1dGroups(
+                          limit: 10,
+                          filter: { date_geq: $startDate, date_leq: $endDate },
+                          orderBy: [date_DESC]
+                        ) {
+                          dimensions { date }
+                          sum { requests pageViews }
+                          uniq { uniques }
+                        }
+                      }
+                    }
+                  }
+                `;
+                const zgql = await cfFetch("/graphql", {
+                  method: "POST",
+                  body: JSON.stringify({ query: zQuery, variables: { zoneTag: z.id, startDate, endDate } })
+                });
+                console.log("=== ZONE GRAPHQL:", z.name, "===");
+                console.log(JSON.stringify(zgql.data, null, 2));
+              }
+            }
+
+            // 3. Public Worker /api/summary
+            try {
+              const sumRes = await fetch("https://hunterjoe-scores.hunterjoeing.workers.dev/api/summary");
+              const sumJson = await sumRes.json();
+              const games = sumJson.games || {};
+              let totalPlays = 0, totalEntries = 0;
+              for (const g of Object.values(games)) {
+                totalPlays += Number(g.plays || 0);
+                totalEntries += Number(g.entries || 0);
+              }
+              console.log("=== WORKER /api/summary ===");
+              console.log(JSON.stringify({ ok: sumJson.ok, gameCount: Object.keys(games).length, totalPlays, totalEntries }, null, 2));
+            } catch (e) {
+              console.log("Summary fetch error:", e.message);
+            }
+          })();
+          '
