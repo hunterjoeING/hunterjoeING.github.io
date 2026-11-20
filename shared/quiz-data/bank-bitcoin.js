@@ -1,706 +1,986 @@
-/**
- * Fragenpool: Bitcoin · Protokoll, Mining, Lightning & Ökonomie — 1.000 Fragen
- * Kategorien:
- *  - protokoll_krypto   (SHA-256, ECDSA/Schnorr, UTXO, SegWit, Taproot, Script, Mempool)
- *  - mining_konsens     (Proof-of-Work, Difficulty, Halving, 21M-Cap, ASICs, Pools, Konsens)
- *  - layer2_skalierung  (Lightning Network, HTLCs, HD-Wallets/BIP39, Multisig, Cold Storage, Sidechains)
- *  - historie_oekonomie (Cypherpunks, Genesis Block, Blocksize Wars, Ökonomie, § 23 EStG, ETFs)
- *
- * Schema: { id, cat, diff, q, a: [richtig, falsch1, falsch2, falsch3], exp }
- * Index 0 von a[] ist stets die richtige Antwort.
- */
+// Auto-generated unified quiz bank for "bitcoin" (75 questions)
 (function () {
-  function seededShuffle(arr, seed) {
-    const a = arr.slice();
-    let s = (seed >>> 0) || 1;
-    for (let i = a.length - 1; i > 0; i--) {
-      s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
-      const j = s % (i + 1);
-      const t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
+  const DATA = [
+  {
+    "cat": "protokoll_krypto",
+    "diff": "easy",
+    "q": "Was bedeutet das UTXO-Modell (Unspent Transaction Output) in Bitcoin anschaulich im Alltag?",
+    "a": [
+      "Bitcoin funktioniert wie Bargeld-Münzen, die immer als Ganzes ausgegeben werden, wobei Wechselgeld zurückfließt",
+      "Bitcoin speichert Guthaben wie eine Excel-Tabelle mit einfachen Kontoständen",
+      "Jeder Nutzer besitzt ein festes Bankkonto mit täglicher Überweisungsbegrenzung",
+      "Bitcoins existieren als fortlaufend nummerierte Seriennummern auf Festplatten"
+    ],
+    "explanation": "Wer 1 BTC besitzt, hat in Wahrheit einen UTXO im Wert von 1 BTC. Zahlt man 0,2 BTC, wird der ganze 1-BTC-Output zerstört und man erhält 0,8 BTC Wechselgeld-UTXO.",
+    "exp": "Wer 1 BTC besitzt, hat in Wahrheit einen UTXO im Wert von 1 BTC. Zahlt man 0,2 BTC, wird der ganze 1-BTC-Output zerstört und man erhält 0,8 BTC Wechselgeld-UTXO."
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "easy",
+    "q": "Welche kryptografische Hashfunktion bildet das Herzstück des Bitcoin-Proof-of-Work und der Block-Verkettung?",
+    "a": [
+      "Doppeltes SHA-256 (SHA-256d)",
+      "MD5 mit 128-Bit-Prüfsumme",
+      "RSA-4096 mit Primzahlfaktoren",
+      "Scrypt mit variabler Speichertiefe"
+    ],
+    "explanation": "Bitcoin wendet SHA-256 gleich zweimal hintereinander an (SHA-256(SHA-256(Daten))), um gegen Längen-Erweiterungs-Angriffe immun zu sein.",
+    "exp": "Bitcoin wendet SHA-256 gleich zweimal hintereinander an (SHA-256(SHA-256(Daten))), um gegen Längen-Erweiterungs-Angriffe immun zu sein."
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "easy",
+    "q": "Wie viele Satoshis stecken rechnerisch in einem einzigen ganzen Bitcoin?",
+    "a": [
+      "100.000.000 Satoshis (100 Millionen)",
+      "1.000.000 Satoshis (1 Million)",
+      "1.000.000.000 Satoshis (1 Milliarde)",
+      "10.000 Satoshis (10 Tausend)"
+    ],
+    "explanation": "Jeder Bitcoin ist auf 8 Nachkommastellen teilbar – die kleinste Basiseinheit auf der Blockchain ist ein Satoshi (0,00000001 BTC).",
+    "exp": "Jeder Bitcoin ist auf 8 Nachkommastellen teilbar – die kleinste Basiseinheit auf der Blockchain ist ein Satoshi (0,00000001 BTC)."
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "mid",
+    "q": "Was ist der sogenannte „Mempool“ bei einem Bitcoin-Knotenpunkt (Full Node)?",
+    "a": [
+      "Der Warteraum im Arbeitsspeicher für gültige, aber noch unbestätigte Transaktionen",
+      "Ein gesicherter Speicherbereich für gelöschte Wallet-Passwörter",
+      "Die Liste aller Miner, die in den letzten 24 Stunden einen Block gefunden haben",
+      "Ein permanentes Archiv aller jemals abgelehnten Spam-Überweisungen"
+    ],
+    "explanation": "Miner wählen aus dem Mempool bevorzugt Transaktionen mit den höchsten Gebühren pro vByte aus, um sie in den nächsten Block aufzunehmen.",
+    "exp": "Der Warteraum im Arbeitsspeicher für gültige, aber noch unbestätigte Transaktionen"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "mid",
+    "q": "Was löste das Segregated Witness (SegWit)-Upgrade im Jahr 2017 technisch im Bitcoin-Block aus?",
+    "a": [
+      "Die Signaturdaten (Witness) wurden vom Transaktionsrumpf getrennt, was Malleability behob und die Blockkapazität effektiv erhöhte",
+      "Die maximale Blockgröße wurde fest auf 32 Megabyte angehoben",
+      "Es verbot Minern, Transaktionen ohne Angabe einer Ausweisnummer zu verarbeiten",
+      "Es ersetzte das Proof-of-Work-Verfahren vollständig durch Proof-of-Stake"
+    ],
+    "explanation": "SegWit trennte Signaturen ab, führte das Konzept von Block-Weight (4 Millionen Weight Units) ein und schuf das Fundament für das Lightning Network.",
+    "exp": "Die Signaturdaten (Witness) wurden vom Transaktionsrumpf getrennt, was Malleability behob und die Blockkapazität effektiv erhöhte"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "pro",
+    "q": "Welche Signaturmethode führte das Taproot-Upgrade 2021 ein, die komplexe Multisig-Transaktionen wie einfache Zahlungen aussehen lässt?",
+    "a": [
+      "Schnorr-Signaturen mit linearer Schlüssel- und Signatur-Aggregation",
+      "Ring-Signaturen mit permanent verschleierten Beträgen",
+      "Zero-Knowledge-SNARKs mit vertrauenswürdigem Setup",
+      "Lamport-Einmalsignaturen auf Basis von Quantengattern"
+    ],
+    "explanation": "Schnorr-Signaturen ermöglichen MuSig2: Mehrere Parteien erzeugen gemeinsam eine einzige, ununterscheidbare Standardsignatur – das spart Platz und stärkt Privatsphäre.",
+    "exp": "Schnorr-Signaturen mit linearer Schlüssel- und Signatur-Aggregation"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "mid",
+    "q": "Was bedeutet das Feature „RBF“ (Replace-by-Fee) bei einer im Mempool hängenden Bitcoin-Transaktion?",
+    "a": [
+      "Man kann eine unbestätigte Überweisung durch dieselbe mit höherer Gebühr ersetzen, um sie zu beschleunigen",
+      "Die Transaktionsgebühr wird nach zwei Stunden automatisch von der Miner-Belohnung abgezogen",
+      "Miner erstatten zu viel gezahlte Gebühren an die Ausgangsadresse zurück",
+      "Das Netzwerk storniert eine versehentlich an die falsche Adresse gesendete Zahlung"
+    ],
+    "explanation": "Bietet man mehr Gebühr für dieselben Inputs, ersetzen Full Nodes die alte Transaktion im Mempool und Miner bestätigen sie schnell.",
+    "exp": "Man kann eine unbestätigte Überweisung durch dieselbe mit höherer Gebühr ersetzen, um sie zu beschleunigen"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "pro",
+    "q": "Warum ist die Skriptsprache „Bitcoin Script“ absichtlich nicht Turing-vollständig (keine freien Schleifen)?",
+    "a": [
+      "Um Endlosschleifen und Denial-of-Service-Angriffe auf validierende Nodes prinzipiell auszuschließen",
+      "Weil Satoshi Nakamoto damals keine Programmiererfahrung mit modernen Compilern hatte",
+      "Damit alle Transaktionen auf einfachen programmierbaren Taschenrechnern signiert werden können",
+      "Um die Ausführung von mathematischen Divisionen im Smart-Contract-Code zu erzwingen"
+    ],
+    "explanation": "Hätte Bitcoin freie Schleifen (wie Solidity in Ethereum), könnte ein Angreifer eine Endlosschleife senden, die alle weltweiten Nodes einfrieren lässt.",
+    "exp": "Um Endlosschleifen und Denial-of-Service-Angriffe auf validierende Nodes prinzipiell auszuschließen"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "easy",
+    "q": "Wozu dient der „Merkle Tree“ (Hash-Baum) in einem Bitcoin-Block-Header?",
+    "a": [
+      "Er fasst tausende Transaktionen in einem einzigen kompakten 32-Byte-Root-Hash zusammen",
+      "Er speichert die Namen aller beteiligten Miner in alphabetischer Reihenfolge",
+      "Er verschlüsselt die Wallet-Adressen für Außenstehende unkenntlich",
+      "Er zählt die verbleibenden Tage bis zum nächsten Halving-Ereignis"
+    ],
+    "explanation": "Dank der Merkle-Root kann ein Smartphone (SPV-Client) mit wenigen Hashes mathematisch beweisen, dass eine Transaktion im Block enthalten ist.",
+    "exp": "Er fasst tausende Transaktionen in einem einzigen kompakten 32-Byte-Root-Hash zusammen"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "mid",
+    "q": "An welchem Präfix erkennt man eine moderne native SegWit-Adresse (Bech32)?",
+    "a": [
+      "bc1q...",
+      "1...",
+      "3...",
+      "0x..."
+    ],
+    "explanation": "bc1q-Adressen sind komplett kleingeschrieben, haben integrierte Fehlerkorrektur (BCH-Code) und sparen gegenüber Legacy-Adressen (Präfix 1) massiv Transaktionsgebühren.",
+    "exp": "bc1q..."
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "pro",
+    "q": "Was ist das Verfahren „CPFP“ (Child Pays for Parent) bei unbestätigten Transaktionen?",
+    "a": [
+      "Der Empfänger erzeugt eine Folgetransaktion mit hoher Gebühr, sodass Miner beide Blöcke im Paket verarbeiten",
+      "Die Bank des Senders bürgt für eventuelle Gebührenausfälle des Empfängers",
+      "Ein Mining-Pool spendiert Minustransaktionen für wohltätige Zwecke",
+      "Zwei Wallets teilen sich die Transaktionskosten automatisch zu gleichen Teilen"
+    ],
+    "explanation": "Miner wollen die lukrative Folge-Transaktion (Child) kassieren – das geht aber nur, wenn sie zuvor die feststeckende Eltern-Transaktion (Parent) minen.",
+    "exp": "Der Empfänger erzeugt eine Folgetransaktion mit hoher Gebühr, sodass Miner beide Blöcke im Paket verarbeiten"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "easy",
+    "q": "Welche elliptische Kurve verwendet Bitcoin zur Generierung öffentlicher Schlüssel aus privaten Schlüsseln?",
+    "a": [
+      "secp256k1",
+      "Curve25519",
+      "NIST P-256",
+      "Ed448-Goldilocks"
+    ],
+    "explanation": "Satoshi wählte die Koblitz-Kurve secp256k1 – viele Kryptografen vermuten, weil sie im Gegensatz zu NIST-Kurven keine verdächtigen, von der NSA gewählten Konstanten enthält.",
+    "exp": "secp256k1"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "mid",
+    "q": "Was bedeutet „Transaction Malleability“ (Transaktions-Verformbarkeit), die durch SegWit behoben wurde?",
+    "a": [
+      "Man konnte die Signatur leicht verändern, wodurch sich die TXID änderte, ohne die Gültigkeit der Zahlung zu zerstören",
+      "Angreifer konnten den überwiesenen Bitcoin-Betrag nachträglich im Block verdoppeln",
+      "Miner konnten den Ziel-Empfänger durch eine Adress-Spiegelung manipulieren",
+      "Transaktionen verloren nach 14 Tagen automatisch ihre kryptografische Bindung"
+    ],
+    "explanation": "Malleability verhinderte verlässliche Ketten unbestätigter Transaktionen – erst durch die Behebung konnte das Lightning Network sicher realisiert werden.",
+    "exp": "Man konnte die Signatur leicht verändern, wodurch sich die TXID änderte, ohne die Gültigkeit der Zahlung zu zerstören"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "pro",
+    "q": "Wie viele Byte umfasst der reine Block-Header eines Bitcoin-Blocks exakt?",
+    "a": [
+      "80 Bytes",
+      "32 Bytes",
+      "1024 Bytes",
+      "256 Bytes"
+    ],
+    "explanation": "Version (4B) + Hash Vorblock (32B) + Merkle Root (32B) + Timestamp (4B) + Bits/Difficulty (4B) + Nonce (4B) = exakt 80 Bytes.",
+    "exp": "80 Bytes"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "easy",
+    "q": "Was passiert, wenn du versehentlich Bitcoin an eine gültige Adresse sendest, deren privaten Schlüssel niemand auf der Welt besitzt?",
+    "a": [
+      "Die Bitcoins sind für immer unwiderruflich verloren und können von niemandem bewegt werden",
+      "Das Bitcoin-Netzwerk bucht die Coins nach 30 Tagen automatisch auf das Absenderkonto zurück",
+      "Die Miner teilen die verwaisten Coins im nächsten Halving unter sich auf",
+      "Der Gründer Satoshi Nakamoto schaltet die Coins über einen Master-Key wieder frei"
+    ],
+    "explanation": "Auf der Blockchain gibt es keinen Kundenservice: Ohne den passenden privaten Schlüssel kann niemand die mathematische Signatur erzeugen.",
+    "exp": "Die Bitcoins sind für immer unwiderruflich verloren und können von niemandem bewegt werden"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "mid",
+    "q": "Welches Präfix besitzen modernste Taproot-Adressen auf der Bitcoin-Blockchain?",
+    "a": [
+      "bc1p...",
+      "bc1q...",
+      "1BTC...",
+      "tap1..."
+    ],
+    "explanation": "bc1p steht für SegWit Version 1 (Taproot) – diese Adressen nutzen 32-Byte Schnorr-Outputs und bieten modernste Privatsphäre und Skalierbarkeit.",
+    "exp": "bc1p..."
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "pro",
+    "q": "Was ermöglicht der Script-Opcode „OP_CHECKLOCKTIMEVERIFY“ (CLTV, BIP65)?",
+    "a": [
+      "Einen Output bis zu einem bestimmten Block- oder Zeitstempel absolut unbeweglich einzufrieren",
+      "Das automatische Verdoppeln von Miner-Gebühren bei hoher Netzwerkauslastung",
+      "Die periodische Löschung alter Transaktionsdaten aus der Blockchain",
+      "Eine staatliche Notabschaltung bei Feststellung von verdächtigen Überweisungen"
+    ],
+    "explanation": "CLTV macht es möglich, Auszahlungen mathematisch zu sperren – essenziell für Zeitschlösser, Escrow-Verträge und Zahlungskanäle.",
+    "exp": "Einen Output bis zu einem bestimmten Block- oder Zeitstempel absolut unbeweglich einzufrieren"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "easy",
+    "q": "Was ist der fundamentale Unterschied zwischen einer „Full Node“ und einem reinen „Miner“?",
+    "a": [
+      "Full Nodes prüfen und erzwingen alle Konsensregeln unabhängig; Miner erzeugen nur neue Block-Kandidaten",
+      "Full Nodes erhalten den Block-Reward, während Miner für Transaktionen Gebühren zahlen",
+      "Miner validieren die Blockchain, während Full Nodes nur als Grafik-Benutzeroberfläche dienen",
+      "Full Nodes benötigen riesige ASIC-Fabriken, während Miner auf jedem Smartphone laufen"
+    ],
+    "explanation": "Nicht die Miner bestimmen die Spielregeln von Bitcoin, sondern die zehntausenden unabhängigen Full Nodes weltweit – ungültige Blöcke werden sofort verworfen.",
+    "exp": "Full Nodes prüfen und erzwingen alle Konsensregeln unabhängig; Miner erzeugen nur neue Block-Kandidaten"
+  },
+  {
+    "cat": "protokoll_krypto",
+    "diff": "mid",
+    "q": "Warum beträgt die Ziel-Blockzeit bei Bitcoin im Mittel genau 10 Minuten?",
+    "a": [
+      "Um globalen Nodes ausreichend Zeit zur fehlerfreien Block-Propagierung zu geben und Chain-Spaltungen zu minimieren",
+      "Weil der damalige Internet-Browser von Satoshi Nakamoto 10 Minuten für Seitenaufrufe brauchte",
+      "Damit Banküberweisungen im direkten Geschwindigkeitsvergleich immer langsamer sind",
+      "Weil die SHA-256-Verschlüsselung physikalisch mindestens 600 Sekunden Rechenzeit pro Durchlauf erzwingt"
+    ],
+    "explanation": "Wäre die Blockzeit nur 5 Sekunden, würden ständig konkurrierende Blöcke gleichzeitig gefunden – das würde große Mining-Konzerne unfair bevorteilen.",
+    "exp": "Um globalen Nodes ausreichend Zeit zur fehlerfreien Block-Propagierung zu geben und Chain-Spaltungen zu minimieren"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "easy",
+    "q": "Wie viele Bitcoins wird es jemals im mathematisch festgelegten Maximum geben?",
+    "a": [
+      "Exakt knapp 21 Millionen Bitcoins (genau 20.999.999,9769 BTC)",
+      "Unbegrenzt viele, da die Menge an das jährliche Weltwirtschaftswachstum gekoppelt ist",
+      "Exakt 100 Millionen Bitcoins, verteilt auf alle Staaten der Erde",
+      "Exakt 21 Milliarden Bitcoins zur Vermeidung von Kommastellen"
+    ],
+    "explanation": "Durch die Halbierung der Blockbelohnung alle 210.000 Blöcke summiert sich die geometrische Reihe exakt auf 21 Millionen BTC.",
+    "exp": "Exakt knapp 21 Millionen Bitcoins (genau 20.999.999,9769 BTC)"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "easy",
+    "q": "In welchem Intervall findet das legendäre Bitcoin-Halving statt?",
+    "a": [
+      "Alle 210.000 Blöcke (ca. alle 4 Jahre)",
+      "Pünktlich zum 1. Januar jedes Schaltjahres",
+      "Sobald die Hashrate der Miner um 50 Prozent einbricht",
+      "Alle 1.000 Tage um exakt Mitternacht koordinierter Weltzeit"
+    ],
+    "explanation": "Das Halving ist nicht an einen Kalender gebunden, sondern an die Blockhöhe: Bei 210.000, 420.000, 630.000, 840.000 Blöcken usw. halbiert sich die Belohnung.",
+    "exp": "Alle 210.000 Blöcke (ca. alle 4 Jahre)"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "easy",
+    "q": "Was sucht ein Bitcoin-Miner bei Proof-of-Work eigentlich ganz genau?",
+    "a": [
+      "Eine Nonce (Zahl), sodass der Hash des Block-Headers kleiner als das vorgegebene Target ist",
+      "Die privaten Schlüssel von verlassenen Wallets aus den Anfangsjahren",
+      "Komplexe Primzahlenreihen zur Entschlüsselung von Bankensystemen",
+      "Eine Lösung für das klassische Problem des Handlungsreisenden"
+    ],
+    "explanation": "Mining ist wie eine gigantische globale Lotterie: Wer Billionen Zahlen durchprobiert, findet irgendwann einen Hash mit genügend führenden Nullen.",
+    "exp": "Eine Nonce (Zahl), sodass der Hash des Block-Headers kleiner als das vorgegebene Target ist"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "mid",
+    "q": "Wie oft passt das Bitcoin-Netzwerk die Mining-Schwierigkeit (Difficulty Adjustment) automatisch an?",
+    "a": [
+      "Alle 2.016 Blöcke (ungefähr alle zwei Wochen)",
+      "Nach jedem einzelnen neu geminten Block in Echtzeit",
+      "Einmal pro Monat durch manuelle Abstimmung der Entwickler",
+      "Einmal jährlich am Jahrestag des Genesis-Blocks"
+    ],
+    "explanation": "Dauerten die letzten 2.016 Blöcke weniger als zwei Wochen, steigt die Difficulty; dauerten sie länger, sinkt sie – so bleibt der Takt bei ~10 Minuten.",
+    "exp": "Alle 2.016 Blöcke (ungefähr alle zwei Wochen)"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "mid",
+    "q": "Was passiert mit der Sicherheit von Bitcoin, wenn 80 Prozent aller weltweiten Miner schlagartig ihren Strom abschalten?",
+    "a": [
+      "Blöcke kommen zunächst langsamer; nach maximal 2.016 Blöcken passt sich die Difficulty an und der 10-Minuten-Takt läuft wie gewohnt weiter",
+      "Das Netzwerk stoppt sofort und muss von den Entwicklern per Hand neu gestartet werden",
+      "Alle unbestätigten Transaktionen werden sofort gelöscht und Guthaben eingefroren",
+      "Die Blockchain spaltet sich automatisch in fünf getrennte regionale Währungen"
+    ],
+    "explanation": "Genau das geschah im Mai 2021 beim chinesischen Mining-Verbot: Über 50 % der Hashrate fielen aus – das Netzwerk lief unterbrechungsfrei weiter.",
+    "exp": "Blöcke kommen zunächst langsamer; nach maximal 2.016 Blöcken passt sich die Difficulty an und der 10-Minuten-Takt läuft wie gewohnt weiter"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "pro",
+    "q": "Warum ist der Begriff „51%-Angriff“ oft missverstanden und was KANN ein Angreifer mit 51% Hashrate NICHT tun?",
+    "a": [
+      "Er kann niemals fremde Bitcoins stehlen, private Schlüssel knacken oder Konsensregeln (wie das 21M-Limit) ändern",
+      "Er kann keine eigenen Transaktionen in der Vergangenheit ungeschehen machen",
+      "Er kann nicht verhindern, dass andere Miner überhaupt noch Blöcke finden",
+      "Er kann die Netzwerkgebühren nicht für mehr als 24 Stunden erhöhen"
+    ],
+    "explanation": "Jede Full Node prüft Signaturen und Regeln selbstständig. Ein 51%-Miner kann lediglich eigene Transaktionen reorganisieren (Double Spend) oder Transaktionen zensieren.",
+    "exp": "Er kann niemals fremde Bitcoins stehlen, private Schlüssel knacken oder Konsensregeln (wie das 21M-Limit) ändern"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "mid",
+    "q": "Woraus setzt sich die Gesamt-Einnahme eines Miners pro gefundenem Block zusammen?",
+    "a": [
+      "Aus dem festen Block-Reward (Subvention) plus allen Transaktionsgebühren der enthaltenen Zahlungen",
+      "Ausschließlich aus Zinszahlungen der Federal Reserve Bank",
+      "Aus dem Verkauf der berechneten SHA-256-Hashes an Cloud-Unternehmen",
+      "Aus festen monatlichen Mitgliedsbeiträgen der Full-Node-Betreiber"
+    ],
+    "explanation": "Wenn in Zukunft die Block-Subvention gegen Null geht, finanzieren allein die Transaktionsgebühren die Sicherheit des Mining-Netzwerks.",
+    "exp": "Aus dem festen Block-Reward (Subvention) plus allen Transaktionsgebühren der enthaltenen Zahlungen"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "easy",
+    "q": "Was ist ein „ASIC“ im modernen Bitcoin-Mining?",
+    "a": [
+      "Ein anwendungsspezifischer Mikrochip, der ausschließlich SHA-256-Hashes extrem effizient berechnen kann",
+      "Ein internationaler Verband aller großen Krypto-Mining-Gesellschaften",
+      "Ein Kühlsystem auf Basis von tiefgekühltem Flüssigstickstoff",
+      "Ein Notstromaggregat auf Basis von recyceltem Altspeiseöl"
+    ],
+    "explanation": "ASIC steht für Application-Specific Integrated Circuit – normale CPUs und GPUs sind im Bitcoin-Mining seit 2013 völlig chancenlos.",
+    "exp": "Ein anwendungsspezifischer Mikrochip, der ausschließlich SHA-256-Hashes extrem effizient berechnen kann"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "pro",
+    "q": "Was beschreibt das Phänomen des „Methane Flaring“ beim modernen nachhaltigen Bitcoin-Mining?",
+    "a": [
+      "Miner nutzen abgefackeltes oder ungenutztes Erdöl-Begleitgas direkt an Bohrlöchern zur Stromerzeugung vor Ort",
+      "Miner erzeugen Methangas durch die Erhitzung ihrer ASIC-Kühlflüssigkeiten",
+      "Ein Angriffsvektor, der Serverlüfter durch Zuleitung von Gasgemischen sabotiert",
+      "Die staatliche Pflicht zur Verbrennung von Altrechnern in Biogasanlagen"
+    ],
+    "explanation": "Begleitgas, das sonst nutzlos in die Atmosphäre abgefackelt oder entweicht würde, treibt mobile Mining-Container an und reduziert Treibhausgasemissionen.",
+    "exp": "Miner nutzen abgefackeltes oder ungenutztes Erdöl-Begleitgas direkt an Bohrlöchern zur Stromerzeugung vor Ort"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "easy",
+    "q": "Wie hoch war die anfängliche Block-Subvention (Reward) im Jahr 2009 beim Start von Bitcoin?",
+    "a": [
+      "50 BTC pro Block",
+      "100 BTC pro Block",
+      "21 BTC pro Block",
+      "10 BTC pro Block"
+    ],
+    "explanation": "Von 2009 bis 2012 gab es 50 BTC pro Block, dann 25 BTC, dann 12,5 BTC, dann 6,25 BTC und seit April 2024 sind es noch 3,125 BTC.",
+    "exp": "50 BTC pro Block"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "mid",
+    "q": "Was ist die erste Transaktion in jedem Bitcoin-Block, in der die neuen Coins erschaffen werden?",
+    "a": [
+      "Coinbase-Transaktion",
+      "Genesis-Transfer",
+      "Reward-Distribution",
+      "Master-Mint"
+    ],
+    "explanation": "Die Coinbase-Transaktion hat keine Inputs – hier generiert der Finder des Blocks die Block-Subvention plus alle Gebühren auf seine eigene Adresse.",
+    "exp": "Coinbase-Transaktion"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "pro",
+    "q": "Welchen dramatischen Vorteil bringt das neue Mining-Pool-Protokoll „Stratum V2“ für die Dezentralisierung?",
+    "a": [
+      "Einzelne Miner können ihre eigenen Transaktionsblöcke selbst zusammenstellen, statt dies dem Pool-Betreiber zu überlassen",
+      "Es verdoppelt die Rechenleistung älterer Antminer-Geräte per Software-Übertaktung",
+      "Es erlaubt das Minen ohne jegliche Internetverbindung über Ultrakurzwellen-Funk",
+      "Es überweist die Mining-Erlöse direkt auf ein privates Bankkonto in Euro"
+    ],
+    "explanation": "Bisher bestimmen Pool-Betreiber, welche Transaktionen gemint werden – Stratum V2 gibt diese Macht zurück an die tausenden einzelnen Miner.",
+    "exp": "Einzelne Miner können ihre eigenen Transaktionsblöcke selbst zusammenstellen, statt dies dem Pool-Betreiber zu überlassen"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "easy",
+    "q": "In welchem Jahr wird voraussichtlich der allerletzte Satoshi gemint werden?",
+    "a": [
+      "Um das Jahr 2140",
+      "Bereits im Jahr 2032",
+      "Um das Jahr 2088",
+      "Genau im Jahr 3000"
+    ],
+    "explanation": "Wegen der 32 Halvings wird der letzte Bruchteil eines Bitcoins ca. 2140 geschöpft – danach speisen sich Miner-Einnahmen zu 100 % aus Transaktionsgebühren.",
+    "exp": "Um das Jahr 2140"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "mid",
+    "q": "Was bedeutet der Begriff „Hashrate“ im Bitcoin-Netzwerk?",
+    "a": [
+      "Die geschätzte Anzahl der SHA-256-Rechenoperationen, die alle Miner weltweit pro Sekunde ausführen",
+      "Die durchschnittliche Dauer für die Verifizierung eines Personalausweises an Krypto-Börsen",
+      "Der prozentuale Anteil an verloren gegangenen Bitcoins seit dem Genesis-Block",
+      "Die Übertragungsgeschwindigkeit von Transaktionsdaten im Glasfasernetz"
+    ],
+    "explanation": "Die Hashrate liegt heute bei über 600 Exahashes pro Sekunde – das sind 600 Trillionen Berechnungen jede einzelne Sekunde weltweit.",
+    "exp": "Die geschätzte Anzahl der SHA-256-Rechenoperationen, die alle Miner weltweit pro Sekunde ausführen"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "pro",
+    "q": "Warum führt eine Halbierung der Hashrate nicht zu einer Halbierung der Bitcoinerzeugung auf Dauer?",
+    "a": [
+      "Weil die automatische Difficulty Adjustment die Rechenhürde senkt, sodass Blöcke wieder verlässlich alle 10 Minuten entstehen",
+      "Weil die verbleibenden Miner gesetzlich verpflichtet sind, Überstunden zu leisten",
+      "Weil Satoshi Nakamoto fehlende Blöcke automatisch durch Reserveblöcke auffüllt",
+      "Weil die Blockgröße bei weniger Minern automatisch verdoppelt wird"
+    ],
+    "explanation": "Das mathematische Regelwerk passt sich stets an: Egal wie viel oder wenig Rechenleistung existiert, das Angebot an neuen BTC bleibt exakt nach Plan.",
+    "exp": "Weil die automatische Difficulty Adjustment die Rechenhürde senkt, sodass Blöcke wieder verlässlich alle 10 Minuten entstehen"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "mid",
+    "q": "Was ist ein „Orphan Block“ (verwaister Block) in der Bitcoin-Blockchain?",
+    "a": [
+      "Ein gültiger Block, der fast zeitgleich mit einem anderen gefunden wurde, dessen Kette sich aber letztlich nicht als längste durchsetzte",
+      "Ein Block, der von Minern unter 18 Jahren ohne Elterneinwilligung gemint wurde",
+      "Ein Block mit gefälschten Transaktionsgebühren, der von der Polizei beschlagnahmt wurde",
+      "Ein Block, der ausschließlich Transaktionen ohne Empfängeradresse enthält"
+    ],
+    "explanation": "Finden zwei Miner gleichzeitig einen Block, spaltet sich die Kette kurz – sobald der nächste Block gefunden wird, gewinnt die längere Kette und der andere wird verworfen.",
+    "exp": "Ein gültiger Block, der fast zeitgleich mit einem anderen gefunden wurde, dessen Kette sich aber letztlich nicht als längste durchsetzte"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "easy",
+    "q": "Warum wird Bitcoin-Mining oft als „Käufer der letzten Instanz“ für erneuerbare Energien bezeichnet?",
+    "a": [
+      "Weil Miner ortsunabhängig überschüssigen Strom abnehmen können, der sonst wegen Netzengpässen abgeregelt würde",
+      "Weil Miner gesetzlich verpflichtet sind, Solaranlagen auf Firmengebäuden zu finanzieren",
+      "Weil Mining-ASICs als Heizkörper für staatliche Hallenbäder vorgeschrieben sind",
+      "Weil Ökostrom-Zertifikate direkt in Bitcoin-Transaktionen eingedruckt werden"
+    ],
+    "explanation": "Wind- und Wasserkraftwerke an entlegenen Orten können Strom nicht immer transportieren – Bitcoin-Miner wandeln diese sonst verlorene Energie in ökonomischen Wert um.",
+    "exp": "Weil Miner ortsunabhängig überschüssigen Strom abnehmen können, der sonst wegen Netzengpässen abgeregelt würde"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "pro",
+    "q": "Was passiert, wenn ein böswilliger Miner versucht, sich in der Coinbase-Transaktion 10 statt 3,125 Bitcoins auszuzahlen?",
+    "a": [
+      "Jede einzelne unabhängige Full Node weltweit verwirft den gesamten Block augenblicklich als ungültig – der Miner verbrennt Strom umsonst",
+      "Der Block wird akzeptiert, aber der Miner erhält eine Geldstrafe von 50 Prozent seiner Gebühren",
+      "Das Netzwerk teilt die überzähligen Bitcoins gleichmäßig unter allen Benutzern auf",
+      "Die Transaktion wird für 14 Tage zur manuellen Überprüfung an Krypto-Börsen weitergeleitet"
+    ],
+    "explanation": "Konsensregeln sind absolut kompromisslos: Selbst wenn 99 % der Miner einen falschen Block unterstützen würden, wirft ihn jede Node sofort in den Papierkorb.",
+    "exp": "Jede einzelne unabhängige Full Node weltweit verwirft den gesamten Block augenblicklich als ungültig – der Miner verbrennt Strom umsonst"
+  },
+  {
+    "cat": "mining_konsens",
+    "diff": "mid",
+    "q": "Warum verbraucht das Bitcoin-Mining physikalisch überhaupt so viel Strom?",
+    "a": [
+      "Weil thermodynamische Arbeit (Energieeinsatz) die Verankerung in der physischen Realität schafft und Manipulationen unbezahlbar teuer macht",
+      "Weil die Computerprogramme absichtlich mit ineffizienten Wartezeiten programmiert wurden",
+      "Weil die Server permanente Hochfrequenz-Radiowellen in den Weltraum senden",
+      "Um die weltweite Produktion von Siliziumchips künstlich anzukurbeln"
+    ],
+    "explanation": "PoW verbindet Information mit Thermodynamik: Wer die Vergangenheit umschreiben will, müsste mehr Energie aufwenden als das gesamte ehrliche Netzwerk zusammen.",
+    "exp": "Weil thermodynamische Arbeit (Energieeinsatz) die Verankerung in der physischen Realität schafft und Manipulationen unbezahlbar teuer macht"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "easy",
+    "q": "Was ist das Lightning Network im Verhältnis zur Bitcoin-Haupt-Blockchain?",
+    "a": [
+      "Ein dezentrales Layer-2-Netzwerk für sekundenschnelle, spottbillige Zahlungen außerhalb der Blockchain (Off-Chain)",
+      "Eine neue Kryptowährung, die Bitcoin in Zukunft vollständig ablösen soll",
+      "Ein zentraler Zahlungsdienstleister im Besitz des US-Finanzministeriums",
+      "Ein Cloud-Backup-Dienst zur Speicherung von verschlüsselten Passwörtern"
+    ],
+    "explanation": "Im Lightning Network können Millionen Transaktionen pro Sekunde abgewickelt werden, während die Basisschicht nur zum Öffnen und Schließen von Kanälen dient.",
+    "exp": "Ein dezentrales Layer-2-Netzwerk für sekundenschnelle, spottbillige Zahlungen außerhalb der Blockchain (Off-Chain)"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "easy",
+    "q": "Was stellen die berühmten 12 oder 24 Wörter einer Seed-Phrase (BIP-39) dar?",
+    "a": [
+      "Eine für Menschen lesbare Codierung des kryptografischen Master-Private-Keys für alle Adressen der Wallet",
+      "Ein Passwort, das bei einem zentralen Serverbetreiber per E-Mail hinterlegt ist",
+      "Eine Liste von Freunden, die im Notfall den Zugriff auf die Wallet freigeben können",
+      "Zufällige Wörter, die bei jeder Transaktion als Bestätigungscode eingegeben werden müssen"
+    ],
+    "explanation": "Aus diesen 12 oder 24 Wörtern aus der standardisierten BIP-39-Wortliste (2.048 Wörter) lassen sich mathematisch unendlich viele Adressen und Schlüssel ableiten.",
+    "exp": "Eine für Menschen lesbare Codierung des kryptografischen Master-Private-Keys für alle Adressen der Wallet"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "mid",
+    "q": "Was ist das kryptografische Kernkonstrukt, das Zahlungen über mehrere Stationen im Lightning Network sicher macht?",
+    "a": [
+      "HTLC (Hash Time Locked Contract)",
+      "Zk-Rollup Smart Account",
+      "Atomic Swapped Token",
+      "Proof of Authority Vault"
+    ],
+    "explanation": "Ein HTLC garantiert: Entweder wird das Geheimnis (Preimage) rechtzeitig vorgelegt und das Geld fließt, oder beide Parteien erhalten ihr Guthaben automatisch zurück.",
+    "exp": "HTLC (Hash Time Locked Contract)"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "mid",
+    "q": "Was bewirkt die optionale „Passphrase“ (oft als 25. Wort bezeichnet) bei einem BIP-39-Backup?",
+    "a": [
+      "Sie generiert eine komplett eigenständige, neue Wallet und schützt vor Erpressung („Plausible Deniability“)",
+      "Sie sperrt die Wallet für exakt 25 Tage nach fehlerhafter PIN-Eingabe",
+      "Sie übermittelt die Transaktionsdaten automatisch an das zuständige Finanzamt",
+      "Sie halbiert die erforderliche Anzahl an Wörtern auf dem Notizblatt"
+    ],
+    "explanation": "Jede unterschiedliche Passphrase öffnet eine völlig neue Kette von Adressen – ein Angreifer kann nicht feststellen, ob noch eine weitere geheime Wallet existiert.",
+    "exp": "Sie generiert eine komplett eigenständige, neue Wallet und schützt vor Erpressung („Plausible Deniability“)"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "pro",
+    "q": "Was ist die Aufgabe eines „Watchtowers“ im Lightning Network?",
+    "a": [
+      "Er überwacht die Blockchain auf alte Kanalzustände und bestraft unehrliche Partner mit dem Verlust ihres gesamten Einsatzes",
+      "Er sendet Werbe-Pings an andere Nodes zur Steigerung der Kanalgebühren",
+      "Er wandelt Satoshis bei starkem Kursverfall automatisch in Stablecoins um",
+      "Er misst die Temperatur der Hardware-Wallets und alarmiert die Feuerwehr"
+    ],
+    "explanation": "Versucht ein Partner einen alten Kanalstand auf der Kette zu veröffentlichen, greift der Watchtower mit der Revocation-Transaktion ein und straft ihn rigoros ab.",
+    "exp": "Er überwacht die Blockchain auf alte Kanalzustände und bestraft unehrliche Partner mit dem Verlust ihres gesamten Einsatzes"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "easy",
+    "q": "Was bedeutet das Motto: „Not your keys, not your coins“ in der Bitcoin-Community?",
+    "a": [
+      "Wer seine privaten Schlüssel Börsen oder Dritten überlässt, besitzt nur ein unsicheres Schuldversprechen statt echtem Bitcoin",
+      "Man darf Bitcoins nur auf Geräten mit mindestens zwei mechanischen Schlüsseln lagern",
+      "Jeder Nutzer muss seinen kryptografischen Schlüssel beim Einwohnermeldeamt registrieren",
+      "Verlorene Passwörter können gegen Vorlage des Personalausweises zurückgesetzt werden"
+    ],
+    "explanation": "Zusammenbrüche wie Mt. Gox oder FTX bewiesen: Nur wer seine Schlüssel (Non-Custodial) selbst verwahrt, ist vor Veruntreuung und Pleiten geschützt.",
+    "exp": "Wer seine privaten Schlüssel Börsen oder Dritten überlässt, besitzt nur ein unsicheres Schuldversprechen statt echtem Bitcoin"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "mid",
+    "q": "Was ist eine „Multisig-Wallet“ (z. B. 2-von-3) und welchen Sicherheitsgewinn bringt sie?",
+    "a": [
+      "Mindestens 2 von 3 separaten Schlüsseln müssen signieren, um eine Transaktion auszulösen – kein Einzelfehler führt zu Verlust",
+      "Man muss jede Überweisung dreimal hintereinander mit demselben Passwort bestätigen",
+      "Drei verschiedene Banken müssen der Transaktion vorab per Fax zustimmen",
+      "Die Transaktion wird gleichzeitig an drei verschiedene Empfänger versendet"
+    ],
+    "explanation": "Geht ein Schlüssel verloren oder wird gestohlen, bleibt das Geld sicher – Multisig ist der Goldstandard für Firmen und große private Vermögen.",
+    "exp": "Mindestens 2 von 3 separaten Schlüsseln müssen signieren, um eine Transaktion auszulösen – kein Einzelfehler führt zu Verlust"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "pro",
+    "q": "Was ist der Vorteil von „PSBT“ (Partially Signed Bitcoin Transactions, BIP174)?",
+    "a": [
+      "Transaktionen können offline auf Air-Gapped-Hardware signiert und zwischen mehreren Geräten gefahrlos ausgetauscht werden",
+      "Miner können unvollständige Transaktionen erraten und die Lücken selbst füllen",
+      "Man kann halbe Bitcoins ohne Zahlung von Netzwerkgebühren transferieren",
+      "Es erlaubt das Signieren von Zahlungen mit rein biometrischen Fingerabdrücken"
+    ],
+    "explanation": "PSBT trennt das Vorbereiten, Koordinieren und Signieren – die Hardware-Wallet berührt niemals das Internet und signiert sicher per QR-Code oder SD-Karte.",
+    "exp": "Transaktionen können offline auf Air-Gapped-Hardware signiert und zwischen mehreren Geräten gefahrlos ausgetauscht werden"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "easy",
+    "q": "Was zeichnet eine echte „Hardware-Wallet“ (wie BitBox02, Trezor oder Coldcard) im Vergleich zu einer Handy-App aus?",
+    "a": [
+      "Der private Schlüssel verlässt niemals den geschützten, isolierten Sicherheitschip des Geräts",
+      "Sie benötigt keine Stromversorgung und funktioniert rein über Magnetfelder",
+      "Sie speichert die gesamte 600-GB-Blockchain auf einem internen Mini-Laufwerk",
+      "Sie erstattet gestohlene Coins über eine eingebaute Versicherungs-Police"
+    ],
+    "explanation": "Selbst wenn der verbundene Computer voller Viren und Trojaner ist, kann der Angreifer den privaten Schlüssel nicht auslesen.",
+    "exp": "Der private Schlüssel verlässt niemals den geschützten, isolierten Sicherheitschip des Geräts"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "mid",
+    "q": "Was beschreibt das neue Lightning-Spezifikationsprotokoll „BOLT-12“ (Offers)?",
+    "a": [
+      "Wiederverwendbare, statische Zahlungsanfragen und native Abonnements ohne jedes Mal eine neue Rechnung generieren zu müssen",
+      "Die Erhöhung der maximalen Kanalkapazität auf über 100 Millionen US-Dollar",
+      "Das automatische Schließen von Kanälen nach 24 Stunden Inaktivität",
+      "Ein Notfall-Protokoll zur Rückabwicklung von Fehlüberweisungen"
+    ],
+    "explanation": "Klassische BOLT-11-Rechnungen waren Einweg-Invoices – BOLT-12 ermöglicht Spenden-QR-Codes, die dauerhaft gültig sind, und automatische Rechnungsstellung.",
+    "exp": "Wiederverwendbare, statische Zahlungsanfragen und native Abonnements ohne jedes Mal eine neue Rechnung generieren zu müssen"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "pro",
+    "q": "Was ist das Problem des „Inbound Liquidity“ beim Betreiben einer eigenen neuen Lightning-Routing-Node?",
+    "a": [
+      "Man kann erst Zahlungen empfangen, wenn andere Teilnehmer ihrerseits Kanäle zu einem öffnen oder man Guthaben ausgibt",
+      "Die Festplatte läuft voll, weil alle Rechnungen weltweit lokal gespeichert werden müssen",
+      "Der Internetanbieter drosselt die Bandbreite wegen zu vieler gleichzeitiger Pings",
+      "Die Node verliert pro Tag automatisch ein Prozent ihres Kapitals an Miner"
+    ],
+    "explanation": "Um empfangen zu können, müssen Satoshis auf der Gegenseite des Kanals liegen. Fehlt Gegenstellen-Guthaben, können Zahlungen nicht zu einem geroutet werden.",
+    "exp": "Man kann erst Zahlungen empfangen, wenn andere Teilnehmer ihrerseits Kanäle zu einem öffnen oder man Guthaben ausgibt"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "easy",
+    "q": "Was bedeutet der Begriff „Cold Storage“ bei der Aufbewahrung von Kryptowerten?",
+    "a": [
+      "Die privaten Schlüssel werden vollkommen offline auf Medien aufbewahrt, die niemals mit dem Internet verbunden sind",
+      "Die Wallets werden in speziellen Tiefkühltruhen bei minus 18 Grad gelagert",
+      "Das Einfrieren von Benutzerkonten durch gerichtliche Beschlüsse",
+      "Das Abspeichern von Transaktionsdaten auf magnetischen Tonbändern im Banktresor"
+    ],
+    "explanation": "Hardware-Wallets, Paper-Wallets oder Metallplatten, die keinen Internetkontakt haben, sind vor Online-Hacking absolut sicher.",
+    "exp": "Die privaten Schlüssel werden vollkommen offline auf Medien aufbewahrt, die niemals mit dem Internet verbunden sind"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "mid",
+    "q": "Warum stanzen erfahrene Bitcoiner ihre 12 oder 24 Seed-Wörter oft in Edelstahl- oder Titanplatten?",
+    "a": [
+      "Um das Backup gegen Hausbrände, Löschwasser, Säure und physische Zerstörung unzerstörbar zu machen",
+      "Weil Papier gesetzlich für Finanz-Backups verboten ist",
+      "Damit Metalldetektoren am Flughafen das Backup sofort erkennen können",
+      "Um elektromagnetische Strahlung von Mobilfunkmasten abzuschirmen"
+    ],
+    "explanation": "Papier verbrennt bei 230 °C und löst sich in Wasser auf – Edelstahl widersteht über 1.400 °C Hitze bei einem Wohnungsbrand mühelos.",
+    "exp": "Um das Backup gegen Hausbrände, Löschwasser, Säure und physische Zerstörung unzerstörbar zu machen"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "pro",
+    "q": "Was ist der Unterschied zwischen einer „Federated Sidechain“ (wie Liquid) und dem Lightning Network?",
+    "a": [
+      "Liquid ist eine eigenständige Blockchain mit Zwischenverwahrung durch Funktionäre; Lightning arbeitet ohne eigene Token direkt mit echtem BTC",
+      "Liquid funktioniert ohne Kryptografie, während Lightning Quantencomputer nutzt",
+      "Lightning speichert alle Daten auf Google-Servern, Liquid auf Apple-Servern",
+      "Liquid erlaubt nur Zahlungen an staatliche Institutionen"
+    ],
+    "explanation": "Auf Sidechains werden Bitcoins eingesperrt (Peg-in) und als Stellvertreter-Token bewegt – Lightning bewegt echte native UTXOs in Zahlungskanälen.",
+    "exp": "Liquid ist eine eigenständige Blockchain mit Zwischenverwahrung durch Funktionäre; Lightning arbeitet ohne eigene Token direkt mit echtem BTC"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "easy",
+    "q": "Wie viele Transaktionen pro Sekunde (TPS) schafft die Bitcoin-Basisschicht (Layer 1) theoretisch maximal?",
+    "a": [
+      "Rund 7 bis 10 Transaktionen pro Sekunde",
+      "Rund 24.000 Transaktionen pro Sekunde",
+      "Genau 1 Transaktion pro Minute",
+      "Unbegrenzt viele Transaktionen pro Sekunde"
+    ],
+    "explanation": "Wegen der Blockgröße von ~1-2 MB und 10 Minuten Blockzeit ist Layer 1 bewusst als unveränderliches, globales Abrechnungsnetzwerk (Settlement Layer) konzipiert.",
+    "exp": "Rund 7 bis 10 Transaktionen pro Sekunde"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "mid",
+    "q": "Was geschieht beim „Closing“ (Schließen) eines Lightning-Zahlungskanals?",
+    "a": [
+      "Der finale Abrechnungsstand der Guthaben wird in einer einzigen On-Chain-Transaktion auf der Blockchain festgeschrieben",
+      "Alle getätigten Zahlungen werden einzeln nacheinander auf der Blockchain nachgetragen",
+      "Das gesamte Kanalkapital wird automatisch an die Miner als Gebühr überwiesen",
+      "Die beteiligten Wallets werden dauerhaft deaktiviert und können nicht mehr genutzt werden"
+    ],
+    "explanation": "Tausende Zahlungen liefen blitzschnell off-chain ab – nur Start (Open) und Ende (Close) hinterlassen jeweils exakt eine Spur auf der Bitcoin-Blockchain.",
+    "exp": "Der finale Abrechnungsstand der Guthaben wird in einer einzigen On-Chain-Transaktion auf der Blockchain festgeschrieben"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "pro",
+    "q": "Was ist das Prinzip des „Onion Routings“ bei Lightning-Zahlungen?",
+    "a": [
+      "Jeder Zwischenknoten kennt nur seinen direkten Vorgänger und Nachfolger, nicht aber Sender oder finalen Empfänger",
+      "Zahlungen werden in sieben gleiche Teile gespalten und wie Zwiebelschalen gestapelt",
+      "Zahlungen können nur über das Tor-Netzwerk im Darknet versendet werden",
+      "Die Transaktionsgebühren steigen mit jedem Hop schalenweise um 10 Prozent"
+    ],
+    "explanation": "Wie bei Tor ist das Zahlungspaket mehrfach verschlüsselt: Jeder Knoten schält nur seine eigene Schicht ab und leitet das Paket weiter – maximale Privatsphäre.",
+    "exp": "Jeder Zwischenknoten kennt nur seinen direkten Vorgänger und Nachfolger, nicht aber Sender oder finalen Empfänger"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "easy",
+    "q": "Was passiert, wenn du deine Hardware-Wallet verlierst oder sie ins Wasser fällt?",
+    "a": [
+      "Gar nichts Schlimmes – du kaufst ein neues Gerät und stellst mit deinen 12/24 Seed-Wörtern alle Bitcoins wieder her",
+      "Deine Bitcoins sind für immer im Meer versunken",
+      "Du musst eine Verlustanzeige bei der Bundesanstalt für Finanzdienstleistungsaufsicht stellen",
+      "Der Finder des Geräts kann ohne PIN sofort dein ganzes Geld abheben"
+    ],
+    "explanation": "Bitcoins liegen niemals auf der Hardware-Wallet selbst, sondern auf der weltweiten Blockchain. Das Gerät speichert nur den Schlüssel zur Autorisierung.",
+    "exp": "Gar nichts Schlimmes – du kaufst ein neues Gerät und stellst mit deinen 12/24 Seed-Wörtern alle Bitcoins wieder her"
+  },
+  {
+    "cat": "layer2_skalierung",
+    "diff": "mid",
+    "q": "Was versteht man unter dem Begriff „Dust Limit“ im Bitcoin-Protokoll?",
+    "a": [
+      "Ein Schwellenwert für winzige Beträge, deren Ausgabe mehr Gebühren kosten würde als sie wert sind",
+      "Die maximale Menge an Kerosinstaub in unterirdischen Serverzentren",
+      "Ein Grenzwert für veraltete Transaktionen, die nach 3 Tagen automatisch gelöscht werden",
+      "Die Mindestgebühr für Transaktionen mit mehr als fünfzehn Empfängern"
+    ],
+    "explanation": "Um zu verhindern, dass die UTXO-Datenbank aller Nodes mit unwirtschaftlichem Müll zugemüllt wird, lehnen Nodes Transaktionen unter dem Dust Limit (~546 Satoshis) ab.",
+    "exp": "Ein Schwellenwert für winzige Beträge, deren Ausgabe mehr Gebühren kosten würde als sie wert sind"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "easy",
+    "q": "Welche historische Schlagzeile bettete Satoshi Nakamoto am 3. Januar 2009 in den Genesis-Block von Bitcoin ein?",
+    "a": [
+      "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks",
+      "Wall Street Journal: Lehman Brothers files for biggest bankruptcy in history",
+      "New York Times: President Obama announces trillion-dollar stimulus package",
+      "Financial Times: Gold reaches all-time high amid global currency crisis"
+    ],
+    "explanation": "Satoshi bewies damit nicht nur das exakte Startdatum, sondern hinterließ einen dauerhaften Protest gegen das unbegrenzte Gelddrucken und Bankenrettungen.",
+    "exp": "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "easy",
+    "q": "Was kaufte der Programmierer Laszlo Hanyecz am 22. Mai 2010 für 10.000 Bitcoins (der berühmte Bitcoin Pizza Day)?",
+    "a": [
+      "Zwei Pizzen von Papa John’s, geliefert von einem Forenmitglied",
+      "Einen gebrauchten Sportwagen der Marke Toyota Supra",
+      "Zehn Kisten Champagner für eine Krypto-Entwicklerparty",
+      "Den ersten ASIC-Mining-Prozessor aus einem chinesischen Labor"
+    ],
+    "explanation": "Es war die allererste dokumentierte kommerzielle Warentransaktion mit Bitcoin – damals waren 10.000 BTC rund 41 US-Dollar wert.",
+    "exp": "Zwei Pizzen von Papa John’s, geliefert von einem Forenmitglied"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "easy",
+    "q": "Wie werden Gewinne aus dem Verkauf von privat gehaltenem Bitcoin in Deutschland steuerlich nach § 23 EStG behandelt?",
+    "a": [
+      "Nach einer Haltedauer von mindestens einem Jahr sind Kursgewinne zu 100 Prozent völlig steuerfrei",
+      "Es gilt immer eine pauschale Abgeltungssteuer von 25 Prozent plus Solidaritätszuschlag",
+      "Verkäufe sind grundsätzlich illegal und werden mit Einzug der Coins bestraft",
+      "Gewinne müssen unabhängig von der Haltedauer immer mit 42 Prozent versteuert werden"
+    ],
+    "explanation": "In Deutschland gilt Bitcoin steuerlich als privates Wirtschaftsgut (wie Gold oder Kunst) – wer mindestens 365 Tage hodlt, zahlt keinen einzigen Cent Steuer.",
+    "exp": "Nach einer Haltedauer von mindestens einem Jahr sind Kursgewinne zu 100 Prozent völlig steuerfrei"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "mid",
+    "q": "Welcher renommierte Krypto-Pionier erhielt im Januar 2009 die allererste Bitcoin-Transaktion (10 BTC) von Satoshi Nakamoto persönlich?",
+    "a": [
+      "Hal Finney",
+      "Nick Szabo",
+      "Adam Back",
+      "Wei Dai"
+    ],
+    "explanation": "Hal Finney twitterte legendär am 11. Januar 2009 „Running bitcoin“ und half Satoshi beim Testen und Debuggen des ersten Quellcodes.",
+    "exp": "Hal Finney"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "mid",
+    "q": "Worum ging es im dramatischen „Blocksize War“ zwischen 2015 und 2017 in der Bitcoin-Community?",
+    "a": [
+      "Großkonzerne und Miner wollten riesige Blöcke erzwingen; die Community verteidigte kleine Blöcke zur Erhaltung privater Full Nodes",
+      "Ein Streit zwischen Entwicklern über die Einführung von Werbebannern in Transaktionen",
+      "Ein Rechtsstreit vor dem US Supreme Court über das Urheberrecht am Bitcoin-Logo",
+      "Der Versuch der europäischen Union, die Blockzeit von 10 auf 60 Minuten zu verlängern"
+    ],
+    "explanation": "Wären Blöcke gigantisch groß, könnten nur noch Großrechenzentren Nodes betreiben – Bitcoin hätte seine zensurresistente Dezentralisierung verloren.",
+    "exp": "Großkonzerne und Miner wollten riesige Blöcke erzwingen; die Community verteidigte kleine Blöcke zur Erhaltung privater Full Nodes"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "pro",
+    "q": "Was besagt der ökonomische „Cantillon-Effekt“ und warum löst Bitcoin dieses Problem?",
+    "a": [
+      "Wer neu gedrucktes Geld zuerst erhält (Staaten, Großbanken), profitiert auf Kosten jener, zu denen das Geld erst nach Preisanstiegen sickert",
+      "Währungen mit festem Angebot führen zwingend zu Massenarbeitslosigkeit und Firmenpleiten",
+      "Der Goldpreis sinkt immer dann, wenn Zentralbanken die Leitzinsen unter Null senken",
+      "Je mehr Münzen geprägt werden, desto höher wird der Silberanteil in Umlaufmünzen"
+    ],
+    "explanation": "Richard Cantillon erkannte 1755: Fiat-Geldumverteilung bereichert die Elite nah an der Druckerpresse. Bei Bitcoin kann niemand neues Geld bevorzugt aus dem Nichts schöpfen.",
+    "exp": "Wer neu gedrucktes Geld zuerst erhält (Staaten, Großbanken), profitiert auf Kosten jener, zu denen das Geld erst nach Preisanstiegen sickert"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "easy",
+    "q": "Welches Land führte im September 2021 als weltweit erster souveräner Staat Bitcoin als offizielles gesetzliches Zahlungsmittel ein?",
+    "a": [
+      "El Salvador",
+      "Schweiz",
+      "Singapur",
+      "Argentinien"
+    ],
+    "explanation": "Präsident Nayib Bukele verabschiedete das Bitcoin-Gesetz und stattete Bürger mit der Chivo-Wallet und 30 Dollar Startguthaben aus.",
+    "exp": "El Salvador"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "mid",
+    "q": "Welches bahnbrechende Konzept erfand Adam Back 1997, das Satoshi Nakamoto direkt in Bitcoin als PoW übernahm?",
+    "a": [
+      "Hashcash (ursprünglich zur Bekämpfung von E-Mail-Spam erfunden)",
+      "B-Money für dezentrale Verträge",
+      "Bit Gold mit Quorums-Konsens",
+      "DigiCash mit blinden Signaturen"
+    ],
+    "explanation": "Hashcash verlangte vom E-Mail-Absender den Nachweis einer kleinen Rechenleistung – Satoshi zitierte Backs Paper direkt im Bitcoin-Whitepaper.",
+    "exp": "Hashcash (ursprünglich zur Bekämpfung von E-Mail-Spam erfunden)"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "pro",
+    "q": "Welcher Meilenstein der Finanzgeschichte ereignete sich im Januar 2024 an den US-Börsen?",
+    "a": [
+      "Die US-Börsenaufsicht SEC genehmigte erstmals 11 physisch gedeckte Bitcoin-Spot-ETFs (u. a. BlackRock und Fidelity)",
+      "Die Federal Reserve kaufte 100.000 Bitcoins als offizielle Währungsreserve",
+      "Der Handel mit Kryptowährungen an der Wall Street wurde vollständig verboten",
+      "Die New York Stock Exchange stellte ihr gesamtes Abrechnungssystem auf Bitcoin um"
+    ],
+    "explanation": "Der BlackRock iShares Bitcoin Trust (IBIT) wurde zum am schnellsten wachsenden ETF der gesamten Wall-Street-Geschichte.",
+    "exp": "Die US-Börsenaufsicht SEC genehmigte erstmals 11 physisch gedeckte Bitcoin-Spot-ETFs (u. a. BlackRock und Fidelity)"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "easy",
+    "q": "Wann verfasste Satoshi Nakamoto seine letzte bekannte Nachricht im Bitcointalk-Forum, bevor er für immer verschwand?",
+    "a": [
+      "Dezember 2010",
+      "Oktober 2008",
+      "Mai 2015",
+      "Januar 2020"
+    ],
+    "explanation": "Am 12. Dezember 2010 postete Satoshi über Software-Verbesserungen gegen DoS-Angriffe. Im April 2011 schrieb er Mike Hearn: „I’ve moved on to other things.“",
+    "exp": "Dezember 2010"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "mid",
+    "q": "Welche berüchtigte Darknet-Plattform wurde 2013 vom FBI geschlossen und brachte Bitcoin erstmals breite Medienpräsenz?",
+    "a": [
+      "Silk Road (gegründet von Ross Ulbricht als „Dread Pirate Roberts“)",
+      "AlphaBay Marketplace",
+      "Napster Underground",
+      "The Pirate Bay Crypto"
+    ],
+    "explanation": "Silk Road bewies einerseits die Funktionsfähigkeit zensurresistenter Zahlungen, prägte aber jahrelang das falsche Vorurteil, Bitcoin sei rein für Kriminelle.",
+    "exp": "Silk Road (gegründet von Ross Ulbricht als „Dread Pirate Roberts“)"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "pro",
+    "q": "Was war der Auslöser für den dramatischen Zusammenbruch der Krypto-Börse Mt. Gox im Februar 2014?",
+    "a": [
+      "Über Jahre hinweg wurden unbemerkt rund 850.000 Bitcoins aus Hot-Wallets entwendet",
+      "Ein Brand im Serverraum der Zentrale in Tokio vernichtete alle Festplatten",
+      "Die japanische Notenbank beschlagnahmte die Konten wegen illegaler Devisengeschäfte",
+      "Der Gründer verlor die Passwörter bei einem Tauchunfall im Pazifik"
+    ],
+    "explanation": "Mt. Gox wickelte damals über 70 Prozent des weltweiten Bitcoin-Handels ab – die Pleite löste einen mehrjährigen Bärenmarkt aus.",
+    "exp": "Über Jahre hinweg wurden unbemerkt rund 850.000 Bitcoins aus Hot-Wallets entwendet"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "easy",
+    "q": "Was bedeutet der Begriff „Stock-to-Flow-Verhältnis“ bei einem knappen Gut wie Gold oder Bitcoin?",
+    "a": [
+      "Das Verhältnis des vorhandenen Bestands (Stock) zur jährlichen Neuproduktion (Flow)",
+      "Die tägliche Anzahl an Aktien, die an den großen Wertpapierbörsen gehandelt werden",
+      "Die Menge an Kerosin, die für den weltweiten Transport von Münzgeld nötig ist",
+      "Die Gewinnmarge von Minern nach Abzug aller laufenden Strom- und Betriebskosten"
+    ],
+    "explanation": "Je höher das Stock-to-Flow-Verhältnis, desto härter das Geld – seit dem Halving 2024 hat Bitcoin ein höheres Stock-to-Flow-Verhältnis als Gold.",
+    "exp": "Das Verhältnis des vorhandenen Bestands (Stock) zur jährlichen Neuproduktion (Flow)"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "mid",
+    "q": "Welche Bewegung von Programmierern in den 1990ern forderte starke Kryptografie zum Schutz der Privatsphäre („Cypherpunks write code“)?",
+    "a": [
+      "Die Cypherpunks (um Eric Hughes, Timothy May und John Gilmore)",
+      "Die Silicon Valley Pioneers League",
+      "Der Chaos Computer Club New York",
+      "Die Open Source Hardware Alliance"
+    ],
+    "explanation": "Aus ihrer Mailingliste, auf der auch Hal Finney, Nick Szabo und Adam Back aktiv waren, entsprang 2008 das Bitcoin-Whitepaper.",
+    "exp": "Die Cypherpunks (um Eric Hughes, Timothy May und John Gilmore)"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "pro",
+    "q": "Was geschah bei der berüchtigten Hard Fork von „Bitcoin Cash“ (BCH) am 1. August 2017?",
+    "a": [
+      "Befürworter großer Blöcke spalteten sich ab; alle bisherigen Bitcoin-Besitzer erhielten automatisch exakt dieselbe Menge BCH geschenkt",
+      "Alle existierenden Bitcoins wurden auf einen Schlag entwertet und durch BCH ersetzt",
+      "Die Europäische Zentralbank übernahm die technische Aufsicht über das neue Netzwerk",
+      "Miner mussten ihre bestehenden ASIC-Geräte verschrotten und neue Hardware kaufen"
+    ],
+    "explanation": "Weil Bitcoin Cash die Historie kopierte, besaß jeder Wallet-Inhaber plötzlich beide Coins – der Markt entschied sich jedoch eindeutig für das Original (BTC).",
+    "exp": "Befürworter großer Blöcke spalteten sich ab; alle bisherigen Bitcoin-Besitzer erhielten automatisch exakt dieselbe Menge BCH geschenkt"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "easy",
+    "q": "Unter welchem Pseudonym veröffentlichte der unbekannte Schöpfer von Bitcoin am 31. Oktober 2008 das Whitepaper?",
+    "a": [
+      "Satoshi Nakamoto",
+      "Dorian Nakamoto",
+      "Nick Szabo",
+      "Craig Wright"
+    ],
+    "explanation": "Bis heute ist die wahre Identität von Satoshi Nakamoto eines der größten und faszinierendsten Geheimnisse der modernen Menschheit.",
+    "exp": "Satoshi Nakamoto"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "mid",
+    "q": "Welches US-amerikanische Software-Unternehmen kaufte unter Michael Saylor ab 2020 massiv Bitcoin als primäre Treasury-Reserve?",
+    "a": [
+      "MicroStrategy",
+      "Oracle Corporation",
+      "Salesforce",
+      "Adobe Systems"
+    ],
+    "explanation": "MicroStrategy wandelte seine gesamten Cash-Bestände in Bitcoin um, emittierte Wandelanleihen und besitzt heute über 1 % aller existierenden Bitcoins.",
+    "exp": "MicroStrategy"
+  },
+  {
+    "cat": "historie_oekonomie",
+    "diff": "pro",
+    "q": "Wie hoch ist die Freigrenze für private Veräußerungsgeschäfte nach § 23 EStG in Deutschland (Stand ab Steuerjahr 2024)?",
+    "a": [
+      "1.000 Euro Gewinn pro Kalenderjahr (bei Erreichen ab 1.000 € wird der volle Betrag steuerpflichtig)",
+      "600 Euro Freibetrag, der immer komplett abgezogen wird",
+      "10.000 Euro pauschal für alle Bürger über 18 Jahre",
+      "Es gibt überhaupt keine Freigrenze für Verkäufe innerhalb der Jahresfrist"
+    ],
+    "explanation": "Achtung: Es ist eine Freigrenze, kein Freibetrag! Wer 999 € Gewinn macht, zahlt 0 €; wer 1.001 € Gewinn innerhalb der Jahresfrist macht, versteuert die vollen 1.001 €.",
+    "exp": "1.000 Euro Gewinn pro Kalenderjahr (bei Erreichen ab 1.000 € wird der volle Betrag steuerpflichtig)"
   }
-
-  // 1. Handkuratierte Kern-, Praxis- & Szenariofragen (80 Stück · 20 je Kategorie)
-  const CORE = [
-    // --- PROTOKOLL & KRYPTOGRAFIE (20) ---
-    ['protokoll_krypto', 'easy', 'Welche kryptografische Hashfunktion nutzt Bitcoin im Block-Header und für das Mining-Proof-of-Work?', 'SHA-256 (zweifach angewendet als Double-SHA-256)', ['MD5', 'SHA-1', 'AES-256'], 'Bitcoin berechnet für Block-Hashes und Transaktions-IDs stets SHA256(SHA256(Daten)), um u. a. Length-Extension-Angriffe auszuschließen.'],
-    ['protokoll_krypto', 'easy', 'Wie viele Satoshis ergeben exakt 1 Bitcoin (BTC)?', '100.000.000 Satoshis (10 hoch 8)', ['1.000.000 Satoshis', '10.000 Satoshis', '1.000.000.000 Satoshis'], 'Ein Bitcoin ist auf der Basisebene in 100 Millionen kleinste Einheiten (satoshi / sat) teilbar; im Lightning Network geht es intern sogar bis auf Millisatoshi hinab.'],
-    ['protokoll_krypto', 'mid', 'Wie verwaltet Bitcoin Kontostände technisch auf der Blockchain im Unterschied zu klassischen Bankkonten oder Ethereum?', 'Über das UTXO-Modell (Unspent Transaction Outputs – wie digitale Münzen/Scheine)', ['Über zentrale Kontostands-Tabellen pro Name', 'Über ein tägliches Saldo-Backup der EZB', 'Über monatliche PDF-Kontoauszüge im Block-Header'], 'Jede Bitcoin-Transaktion verbraucht bestehende UTXOs als Inputs und erschafft neue UTXOs (inkl. Wechselgeld zurück an dich) als Outputs.'],
-    ['protokoll_krypto', 'mid', 'Welche elliptische Kurve verwendet Bitcoin für klassische ECDSA- und moderne Taproot-Schnorr-Signaturen?', 'secp256k1', ['Ed25519', 'RSA-2048', 'NIST P-256 (secp256r1)'], 'Satoshi wählte die von Certicom spezifizierte Koblitz-Kurve secp256k1 mit besonders sauber strukturierten Parametern statt der umstrittenen NIST-Standardkurven.'],
-    ['protokoll_krypto', 'pro', 'Welches grundlegende Problem löste das Soft-Fork-Upgrade „SegWit“ (BIP-141, 2017) abseits einer Blockkapazitäts-Erhöhung auf bis zu ~4 MB Blockweight?', 'Transaction Malleability (nachträgliche Veränderbarkeit der Transaktions-ID vor Bestätigung) – Grundvoraussetzung für sicheres Lightning', ['Die Erhöhung der Gesamtgeldmenge von 21 auf 42 Millionen BTC', 'Die Abschaffung von Mining zugunsten von Proof-of-Stake', 'Vollständige Anonymisierung aller Beträge wie bei Zcash'], 'Indem die Signaturdaten („Witness“) von der TXID-Berechnung entkoppelt wurden, lassen sich Folge-Transaktionen (wie Lightning-Channels) sicher im Voraus signieren.'],
-    ['protokoll_krypto', 'pro', 'Was führte das Upgrade „Taproot“ (BIP-340/341/342, Block 709.632 im November 2021) als Signaturverfahren statt reinem ECDSA ein?', 'Schnorr-Signaturen – sie ermöglichen Key Aggregation (Multisig sieht on-chain aus wie eine normale Einzeltransaktion) und Batch-Verifikation', ['Post-Quantum-Gitterkryptografie als Pflicht für alle Adressen', 'Verpflichtende E-Mail-Verifizierung je UTXO', 'Verdopplung der Blockzeit von 10 auf 20 Minuten'], 'Durch MuSig2 und MAST sehen selbst komplexe 3-of-5-Multisigs oder Timelock-Verträge auf der Blockchain wie gewöhnliche Single-Sig-Ausgaben aus – besser für Privacy und Gebühren!'],
-    ['protokoll_krypto', 'easy', 'Mit welchen Zeichen beginnen moderne Native-SegWit- (Bech32) und Taproot-Adressen (Bech32m) im Bitcoin-Mainnet?', 'Mit „bc1q…“ (SegWit v0) bzw. „bc1p…“ (Taproot / SegWit v1)', ['Mit „0x…“ wie bei Ethereum', 'Mit „ltc1…“', 'Immer mit „BTC-…“'], 'Legacy-Adressen starten mit „1…“, P2SH-Multisig-/Wrapped-SegWit-Adressen mit „3…“, Native SegWit mit „bc1q…“ und Taproot mit „bc1p…“.'],
-    ['protokoll_krypto', 'mid', 'Wozu dient der „Merkle Tree“ (Hash-Baum) innerhalb jedes einzelnen Bitcoin-Blocks?', 'Er verdichtet alle Hunderte oder Tausende Transaktionen eines Blocks zu einem einzigen 32-Byte-Merkle-Root im 80-Byte-Block-Header', ['Er verschlüsselt private Wallets mit AES', 'Er speichert die IP-Adressen aller Miner weltweit', 'Er begrenzt die Anzahl der Nodes im Netzwerk'], 'Dank des Merkle Trees kann eine leichte Wallet mittels „Merkle Proof“ (nur ~10–12 Hashes statt des ganzen Blocks) kryptografisch beweisen, dass eine TX im Block liegt.'],
-    ['protokoll_krypto', 'mid', 'Welche zwei Verfahren erlauben es dem Sender bzw. Empfänger, eine im Mempool feststeckende zu niedrig bepreiste Bitcoin-Transaktion nachträglich zu beschleunigen?', 'RBF (Replace-By-Fee durch den Sender) und CPFP (Child-Pays-For-Parent durch Ausgeben eines unbestätigten Outputs mit hoher Gebühr)', ['Stornieren per Anruf beim Bitcoin-Support', 'Löschen des gesamten Mempools weltweit', 'Verdoppeln des eigenen Seed-Phrase-Passworts'], 'Bei Full-RBF ersetzt eine neue TX dieselben Inputs mit höherer Gebühr; bei CPFP bezahlt eine Kind-Transaktion für sich und die Eltern-TX gleich mit.'],
-    ['protokoll_krypto', 'easy', 'In welcher Einheit werden Transaktionsgebühren im Bitcoin-Netzwerk technisch bemessen (weil Blöcke nach Gewicht/Größe und nicht nach Euro-Betrag knapp sind)?', 'Satoshis pro virtuellem Byte (sat/vB)', ['Prozent vom überwiesenen Euro-Wert', 'Feste 15 € Grundgebühr je Transaktion', 'Anzahl der beteiligten Länder'], 'Einer 1-Milliarde-Dollar-Transaktion mit einem Input und zwei Outputs genügt oft dieselbe niedrige sat/vB-Gebühr wie einer 10-Euro-Zahlung!'],
-    ['protokoll_krypto', 'pro', 'Wie genau berechnet sich das SegWit-„Blockweight“ (Obergrenze 4.000.000 Weight Units = 4 MWU)?', 'Non-Witness-Daten (Basis-Transaktion) zählen ×4 Weight Units, reine Signatur-/Witness-Daten nur ×1 Weight Unit', ['Alle Daten zählen einheitlich ×10', 'Nur Ausgaben über 1 BTC werden gewichtet', 'Das Gewicht hängt vom aktuellen USD-Kurs ab'], 'Deshalb spart SegWit/Taproot massiv Gebühren und schützt gleichzeitig gegen schädliches UTXO-Set-Aufblähen (Outputs kosten volleren Platz als Signaturen!).'],
-    ['protokoll_krypto', 'mid', 'Welche Aufgaben übernimmt eine eigene „Bitcoin Full Node“ (z. B. Bitcoin Core) für ihren Betreiber?', 'Sie lädt die Blockchain herunter und verifiziert JEDE einzelne Block-, Konsens- und Signaturregel komplett unabhängig ohne Drittvertrauen', ['Sie generiert ohne eigene Hardware Millionen neue Bitcoins', 'Sie speichert die Passwörter anderer Nutzer zentral ab', 'Sie ersetzt automatisch eine Hardware Wallet für Private Keys'], '„Don’t trust, verify!“ – Nur wer seine Wallet mit einer eigenen Node verknüpft, schützt sich gegen gefälschte Salden und schützt gleichzeitig seine IP/Adress-Privatsphäre.'],
-    ['protokoll_krypto', 'pro', 'Was prüft der Script-Opcode `OP_CHECKLOCKTIMEVERIFY` (CLTV / BIP-65) in einem Bitcoin-Output?', 'Er sperrt einen Output auf Skriptebene absolut bis zu einem bestimmten Block height (Blockhöhe) oder Unix-Zeitstempel', ['Er erzwingt die sofortige Löschung der Blockchain', 'Er erlaubt beliebige Schleifen wie in JavaScript', 'Er misst die CPU-Temperatur des Miners'], 'Im Gegensatz zu Turing-vollständigem Smart-Contract-Code bleibt Bitcoin Script absichtlich nicht-Turing-vollständig (ohne Endlosschleifen) für maximale Deterministik und Sicherheit.'],
-    ['protokoll_krypto', 'easy', 'Welcher Unterschied besteht technisch zwischen einer Bitcoin-Adresse (Public Key Hash / Taproot Key) und einem Private Key?', 'Aus dem geheimen Private Key wird mathematisch per Einwegfunktion der Public Key bzw. die Adresse abgeleitet – niemals jedoch umgekehrt!', ['Aus jeder öffentlichen Adresse lässt sich der Private Key leicht errechnen', 'Beide Schlüssel sind öffentlich im Block-Explorer abgedruckt', 'Der Private Key ändert sich automatisch nach jeder Anmeldung mit E-Mail'], 'Solange dein Private Key geheim bleibt, kann niemand auf der Welt ohne deine Signatur deine UTXOs gültig ausgeben.'],
-    ['protokoll_krypto', 'mid', 'Warum empfehlen Bitcoin-Sicherheitsexperten grundsätzlich, für jeden Zahlungseingang eine frische Empfangsadresse aus dem HD-Wallet zu verwenden (Address Reuse vermeiden)?', 'Adresse-Wiederverwendung entwertet die Privatsphäre massiv (jeder Absender sieht sonst den gesamten Kontostand) und legt bei Ausgaben einmalig den rohen Public Key offen', ['Weil eine Bitcoin-Adresse technisch nach exakt einem Eingang zerstört wird', 'Weil sonst 50 % Strafgebühr an Miner fließen', 'Weil Adressen maximal 24 Stunden gültig sind'], 'HD-Wallets (BIP-32/84/86) erzeugen automatisch für jeden Empfang eine neue abgeleitete Adresse – Backups über die eine Seed Phrase sichern dennoch alle!'],
-    ['protokoll_krypto', 'pro', 'Welches spezielle Hash-Format nutzt Bitcoin zur Darstellung klassischer Base58Check-Adressen (`1…` / `3…`) aus einem 33-/65-Byte-ECDSA-Public-Key?', 'HASH160 = RIPEMD-160(SHA-256(Public Key)) plus Versionsbyte und 4-Byte-Double-SHA256-Prüfsumme', ['Einfaches Base64 ohne Prüfsumme', 'CRC32 des Nutzernamens', 'MD5 des Transaktionsdatums'], 'Die 4-Byte-Prüfsumme stellt sicher, dass fast jeder Tippfehler in einer Adresse von der Wallet sofort erkannt und zurückgewiesen wird.'],
-    ['protokoll_krypto', 'easy', 'Was bedeutet „1 Confirmation“ (eine Bestätigung) bei einer versendeten Bitcoin-Transaktion?', 'Die Transaktion wurde erfolgreich in einen gültigen Block aufgenommen und an die längste Proof-of-Work-Kette angehängt', ['Der Empfänger hat per SMS „Danke“ geantwortet', 'Eine Bank in Frankfurt hat die Überweisung manuell freigegeben', 'Der Kurs hat sich um 1 % bewegt'], 'Bei kleineren Beträgen reichen oft 1–2 Bestätigungen (~10–20 Min); bei riesigen Überweisungen gelten klassischerweise 6 Bestätigungen (~1 Stunde) als praktisch unumkehrbar.'],
-    ['protokoll_krypto', 'mid', 'Was liegt im sogenannten „Mempool“ einer Bitcoin-Node?', 'Alle bislang von dieser Node als gültig geprüften, aber noch NICHT in einem geminten Block bestätigten Transaktionen', ['Bereits gelöschte Blöcke der Jahre 2009 bis 2012', 'Die komplette Passwortliste sämtlicher Börsen', 'Nur Lightning-Rechnungen'], 'Miner wählen aus ihrem lokalen Mempool bevorzugt jene Transaktionen aus, die am meisten Gebühren pro virtuellem Byte (sat/vB) bieten.'],
-    ['protokoll_krypto', 'pro', 'Wie verhindert das Upgrade „BIP-350“ (Bech32m) eine subtile Schwachstelle des ursprünglichen Bech32-Formats (BIP-173) bei Taproot-Adressen?', 'Bech32 hatte bei Längenmutationen mit einem angehängten „q“ am Ende unter Umständen eine blinde Prüfsumme; Bech32m verändert die Prüfsummen-Konstante `0x2bc830a3` für SegWit v1+ und schließt das aus', ['Bech32m verschlüsselt jede Adresse mit einem 8-stelligen PIN', 'Bech32m ersetzt alle Buchstaben durch Emojis', 'Bech32m verbietet Groß- und Kleinschreibung vollständig – Moment: Bech32 nutzt bereits nur ein Case, Bech32m fügt AES-GCM hinzu'], 'Bech32 bleibt für SegWit v0 (`bc1q…`), während Taproot / SegWit v1 zwingend Bech32m (`bc1p…`) verlangt.'],
-    ['protokoll_krypto', 'mid', 'Worin liegt der wesentliche Vorteil von „Transaction Batching“ (Bündelung vieler Auszahlungen durch Börsen/Händler in einer einzigen TX)?', 'Statt 50 separater Transaktionen mit je eigenem Overhead und Header reicht eine gemeinsame TX mit 50 Outputs – das spart massiv Blockplatz und Gebühren', ['Man bezahlt überhaupt keine Mining-Gebühren mehr', 'Die Bestätigungszeit sinkt auf exakt 0,1 Sekunden', 'Jeder Empfänger erhält automatisch die doppelte Menge BTC'], 'Als Nachteil teilen sich gebündelte Auszahlungen optisch denselben Input-Cluster auf dem Block-Explorer.'],
-
-    // --- MINING, PROOF-OF-WORK & GELDPOLITIK (20) ---
-    ['mining_konsens', 'easy', 'Wie hoch ist die im Bitcoin-Quellcode fest verankerte maximale Gesamtmenge an Bitcoins, die jemals geschürft werden kann?', 'Knapp 21 Millionen BTC (genau rund 20.999.999,9769 BTC)', ['100 Millionen BTC', 'Unbegrenzt, jedes Jahr +2 %', 'Exakt 10 Millionen BTC'], 'Durch ganzzahliges Abrunden der Satoshi-Halbierungen („Bit-Shifting“) über 33 Halving-Epochen nähert sich das Gesamtangebot asymptotisch knapp unter 21.000.000 BTC an.'],
-    ['mining_konsens', 'easy', 'In welchem Rhythmus halbiert sich bei Bitcoin die Block-Belohnung (Block Subsidy) pro neu gefundenem Block?', 'Alle 210.000 Blöcke (ca. alle 4 Jahre)', ['Jeden 1. Januar um Mitternacht', 'Alle 10.000 Blöcke (~2 Monate)', 'Sobald der Kurs ein neues Allzeithoch erreicht'], 'Gestartet mit 50 BTC (2009), sank die Subvention auf 25 (2012), 12,5 (2016), 6,25 (2020) und 3,125 BTC pro Block beim 4. Halving am 20. April 2024 (Block 840.000).'],
-    ['mining_konsens', 'easy', 'Auf welches durchschnittliche Zeitintervall zwischen zwei neuen Blöcken regelt der Bitcoin-Konsens die Mining-Schwierigkeit (Difficulty)?', '10 Minuten pro Block (2.016 Blöcke = 20.160 Minuten ≈ 14 Tage)', ['12 Sekunden pro Block', '60 Minuten pro Block', '1 Sekunde pro Block'], 'Dieses relativ ruhige 10-Minuten-Intervall erlaubt globale Verbreitung ohne übermäßig viele konkurrierende Stale Blocks und hält die Blockchain handhabbar.'],
-    ['mining_konsens', 'mid', 'Was passiert automatisch alle 2.016 Blöcke („Difficulty Adjustment“), wenn weltweit plötzlich doppelt so viele schnelle ASIC-Miner ans Netz gehen und Blöcke im Schnitt schon alle 5 Minuten entstehen?', 'Das Netzwerk verdoppelt die Mining-Schwierigkeit (+100 %), sodass wieder ca. 10 Minuten pro Block vergehen', ['Die Block-Belohnung halbiert sich sofort vorzeitig', 'Die Miner erhalten automatisch den doppelten Preis pro Block', 'Das Netzwerk schaltet die Hälfte aller ASICs zwangsweise per Internet ab'], 'Diese geniale Rückkopplung entkoppelt Bitcoin komplett von Hardware-Sprüngen: Egal ob 1 Laptop oder 1.000 Exahashes/s schürfen – das Ausgabetempo bleibt bei ~144 Blöcken/Tag stabil!'],
-    ['mining_konsens', 'pro', 'Aus welchen genau 6 Feldern (zusammen exakt 80 Bytes groß) besteht ein Bitcoin Block Header, der beim Mining gehasht wird?', 'Version (4 B), Previous Block Hash (32 B), Merkle Root (32 B), Timestamp (4 B), nBits / Difficulty-Target (4 B) und Nonce (4 B)', ['Absenderadresse, Empfängeradresse, Betrag, PIN, IBAN und Gebühr', 'Alle einzelnen Transaktionen im Volltext bis zu 4 MB', 'IP-Adresse des Pools, Stromtarif, GPU-Typ und Länder-Code'], 'Weil das 4-Byte-Nonce-Feld nur ~4,29 Milliarden Möglichkeiten fasst (heutige ASICs rechnen > 200 Billionen Hashes/s!), variieren Miner zusätzlich Timestamp und das „ExtraNonce“-Feld in der Coinbase-TX.'],
-    ['mining_konsens', 'mid', 'Welche beiden Bestandteile bilden zusammen die gesamte Belohnung (Coinbase-Output), die ein erfolgreicher Miner für einen gültigen Block einstreicht?', 'Neu geschaffene Block-Subvention (Block Subsidy) PLUS alle Transaktionsgebühren (Fees) der enthaltenen Transaktionen', ['Ausschließlich Spenden der Krypto-Börsen', 'Feste 1 % Vermögenssteuer auf alle ruhenden Wallets', 'Ausschließlich die Block-Subvention – Gebühren werden verbrannt'], 'Langfristig, wenn die Block-Subvention über weitere Halvings gegen null geht, sollen steigende Transaktionsgebühren für Blockspace allein das Sicherheitsbudget tragen.'],
-    ['mining_konsens', 'mid', 'Welche technische Hardware-Reihenfolge prägte die Evolution des Bitcoin-Minings von 2009 bis heute?', 'CPU (ab 2009) → GPU (ab 2010) → FPGA (ab 2011) → hochspezialisierte SHA-256 ASICs (ab 2013 bis heute)', ['Nur Quantencomputer seit 2010', 'Smartphone-Chips → Taschenrechner → CPUs', 'Ausschließlich Grafikkarten (GPUs) bis heute'], 'Moderne SHA-256-ASICs sind um viele Größenordnungen effizienter pro Joule als jede Universal-CPU oder GPU – normales Heim-Laptop-Mining hat heute praktisch null Chance auf einen Solo-Block.'],
-    ['mining_konsens', 'pro', 'Warum schützt die „Nakamoto-Konsens-Regel“ (längste Kette / meiste akkumulierte Arbeit, `chainwork`) Bitcoin effektiv vor Double-Spend-Attacken?', 'Nicht bloß „die meisten Blöcke“, sondern die Kette mit dem höchsten kumulierten Proof-of-Work-Energieaufwand gewinnt – wer einen alten Block umschreiben will, müsste schneller als der Rest der Welt die ganze Kette neu minen', ['Weil ein zentraler Rat in der Schweiz bei Streit abstimmt', 'Weil jeder Block nach 24 Stunden aus dem Internet gelöscht wird', 'Weil die UNO jede Blockchain gegenzeichnet'], 'Mit jedem weiteren bestätigten Block wächst der rechnerische und finanzielle Kraftakt für ein Zurückrollen exponentiell ins Astronomische.'],
-    ['mining_konsens', 'easy', 'Warum scheitert eine sogenannte „51-%-Attacke“ oft selbst für einen hypothetisch kapitalstarken Angreifer ökonomisch an Bitcoin?', 'Selbst mit > 50 % Hashrate kann man KEINE fremden Bitcoins ohne Private Key stehlen und KEINE 21-Mio.-Regel brechen – ein Angriff zerstört nur Vertrauen und entwertet genau die eigene gigantische ASIC-Investition', ['Weil bei 51 % das ganze Bitcoin-Netzwerk sich automatisch selbst löscht', 'Weil 51 % die Gebühren sofort für den Angreifer sperrt', 'Weil es weltweit nur maximal 49 Miner gibt'], 'Ein 51-%-Angreifer könnte theoretisch lediglich eigene frische Transaktionen rückgängig machen (Double Spend) oder Zensur üben – gegen die Mehrheit gültiger Full Nodes kann er dennoch keine ungültigen Blöcke durchsetzen!'],
-    ['mining_konsens', 'mid', 'Welche einzigartige Besonderheit steckt in den allerersten Transaktionen jedes Blocks – der „Coinbase-Transaktion“?', 'Sie hat keinen vorigen UTXO als Input (erschafft die neue Block-Belohnung aus dem Nichts), und ihre neuen BTC müssen 100 Blöcke warten („Coinbase Maturity“), bevor sie ausgegeben werden dürfen', ['Sie gehört zwingend der US-Börse Coinbase', 'Sie darf nur am Wochenende erstellt werden', 'Sie enthält eine Klartext-Liste aller Weltbevölkerungs-Namen'], 'Die 100-Block-Reifezeit schützt Empfänger davor, frische Coinbase-Münzen auszugeben, falls ein kurzfristiger Chain-Reorg einen Stale Block verwirft.'],
-    ['mining_konsens', 'pro', 'Wofür steht die maximale Begrenzung der Difficulty-Anpassung pro Epoche von Faktor 4 (×4 / ÷4) im Bitcoin-Protokoll?', 'Ein Schutzmechanismus im Consensus-Code (`MAX_TARGET` Clamp), sodass extreme Zeitstempel-Manipulationen oder Ausreißer die Difficulty in einem Sprung nie um mehr als +300 % anheben oder unter 25 % senken können', ['Dass Miner maximal 4 Stunden täglich arbeiten dürfen', 'Dass höchstens 4 Mining-Pools erlaubt sind', 'Dass ein Block genau 4 Megabyte groß sein muss'], 'Sogar falls über Nacht 90 % aller Miner weltweit abfallen würden, fängt das Protokoll dies schrittweise über wenige Epochs geordnet auf.'],
-    ['mining_konsens', 'mid', 'Welchen energetischen Wettbewerbsvorteil sucht mobiles oder industrielles Bitcoin-Mining rund um den Globus heute ganz besonders?', 'Überschüssige, abgeregelte oder geografisch gestrandete („stranded“) Energie – etwa Wasserkraft in abgelegenen Tälern, Solar-/Windspitzen oder sonst offen abgefackeltes Begleitgas (Flare Gas)', ['Möglichst teuren Spitzenlaststrom im Zentrum von Großstädten', 'Dieselgeneratoren in Einkaufszentren', 'Batterien aus Smartphones'], 'Da Mining ortsunabhängig arbeitet und innerhalb von Sekunden flexibel gedrosselt werden kann („Demand Response“), stabilisiert es mancherorts Stromnetze als abrufbarer Ankerverbraucher.'],
-    ['mining_konsens', 'easy', 'Was bedeutet ein „Stale Block“ (früher oft ungenau „Orphan Block“ genannt) im Mining?', 'Ein kryptografisch eigentlich völlig gültig geminter Block, der im selben Moment entstand wie ein konkurrierender Block – und im Wettrennen von der Mehrheit zugunsten des schneller verbreiteten Blocks verworfen wird', ['Ein betrügerischer Block mit gefälschten Münzen', 'Ein leerer Block ab Jahr 2140', 'Ein Block, der von einer Behörde beschlagnahmt wurde'], 'Für einen verwaisten Stale Block erhält dessen Miner null Block-Belohnung; kompakte Blockübertragung (Compact Blocks / FIBRE) hält diese Rate heute extrem niedrig (< 0,1 %).'],
-    ['mining_konsens', 'pro', 'Welcher wesentliche architektonische Fortschritt zeichnet das moderne Mining-Pool-Protokoll „Stratum v2“ gegenüber Stratum v1 aus?', 'Ende-zu-Ende-Verschlüsselung gegen Hashrate-Hijacking sowie die Option „Job Negotiation“ – einzelne Miner dürfen wieder selbst ihre Block-Templates (Transaktionsauswahl) bestimmen statt blindem Pool-Diktat', ['Verdopplung der ASIC-Rechengeschwindigkeit per Software-Update', 'Verzicht auf jegliche Internetverbindung beim Mining', 'Automatische Umstellung auf Proof-of-Stake'], 'Das stärkt massiv die Zensurresistenz von Bitcoin, selbst wenn einzelne große Mining-Pools unter regulatorischen Druck geraten sollten.'],
-    ['mining_konsens', 'easy', 'Um welches ungefähre Jahr wird rechnerisch nach aktuellem Protokoll-Zeitplan voraussichtlich der allerletzte Satoshi der 21 Millionen BTC neu geschürft?', 'Um das Jahr 2140', ['Bereits im Jahr 2030', 'Im Jahr 2050', 'Niemals – neue BTC entstehen unendlich'], 'Wegen des exponentiellen Halving-Abfalls sind Ende 2024 bereits über 94 % aller jemals existierenden Bitcoins (~19,7–19,8 Mio.) geschürft; die letzten Prozent verteilen sich langsam über mehr als 110 Jahre!'],
-    ['mining_konsens', 'mid', 'Worin unterscheiden sich die Mining-Pool-Auszahlungsmodelle „FPPS“ (Full Pay-Per-Share) und „PPLNS“ (Pay-Per-Last-N-Shares)?', 'Bei FPPS garantiert der Pool unabhängig vom Blockglück für jeden gültigen Share eine feste (anteilige Subvention + Fee-) Vergütung gegen etwas höhere Poolgebühr; bei PPLNS trägt der Miner das Blockfindungs-Glück mit', ['FPPS zahlt nur einmal alle vier Jahre zum Halving aus', 'PPLNS zahlt in Euro bar per Post', 'Bei FPPS müssen Miner alle Transaktionen eigenhändig signieren'], 'Große industrielle Farmen bevorzugen meist FPPS wegen stabil kalkulierbarer Cashflows.'],
-    ['mining_konsens', 'pro', 'Warum speist ein Block mit vielen enthaltenen Transaktionen im Header dennoch nur einen einzigen 32-Byte-Merkle-Root statt all dieser Daten in den Mining-Hash?', 'Weil das ASIC-Hashing dadurch unzählige Male pro Sekunde über exakt immer denselben 80-Byte-Block-Header rasen kann – völlig egal, ob im Block 1 oder 3.000 Transaktionen stecken', ['Weil Mining-Hardware nur 80 Bytes pro Minute empfangen darf', 'Weil Transaktionen erst nach dem Finden des Blocks geschrieben werden', 'Weil Merkle Roots automatisch verschlüsselte Passwörter sind'], 'Sogar „Header-First“-Validierung und extrem schnelles ASIC-Pipeling basieren auf genau diesem festen 80-Byte-Layout!'],
-    ['mining_konsens', 'mid', 'Wie verhält sich laut Bitcoin-Protokoll die „Coin-Ausgaberate“ (Block-Subvention) gegenüber einer plötzlichen Verdreifachung der weltweiten Strompreise oder des Bitcoin-Kurses?', 'Die geplante BTC-Menge je 10 Minuten bleibt absolut unverändert! Höhere Nachfrage/Preise ziehen lediglich mehr Hashrate und steigende Difficulty nach sich (und umgekehrt) – niemals mehr Angebot', ['Bei Verdopplung des Kurses schürft Bitcoin automatisch doppelt so viele neue Münzen', 'Bei steigenden Strompreisen sinkt das 21-Mio.-Limit auf 10 Mio.', 'Die Difficulty wird manuell von einer Zentralbank eingefroren'], 'Im Gegensatz zu Gold oder Öl besitzt Bitcoin eine vollkommen unelastische Angebotskurve – selbst bei 1 Million $ Preis gibt es keinen einzigen neuen Satoshi extra!'],
-    ['mining_konsens', 'easy', 'Was bedeutet ein „Empty Block“ (leerer Block, der nur die eine Coinbase-TX enthält), wie er im Bitcoin-Explorer ab und zu auftaucht?', 'Ein Pool beginnt schon wenige Millisekunden vor Abschluss der Voll-Validierung des Vorgängerblocks sicherheitshalber auf einen leeren Template-Header zu minen und findet zufällig direkt einen Treffer', ['Ein Fehler in der Blockchain, der Geld verschwinden lässt', 'Ein Angriff, bei dem 100 Nutzer gesperrt werden', 'Ein Testblock ohne Proof-of-Work'], 'Völlig regelkonform – da innerhalb von Sekunden darauf der reguläre Mempool in den neuen Template-Kandidaten geladen wird, passiert dies nur selten.'],
-    ['mining_konsens', 'pro', 'Was besagt das Konzept „Difficulty-Adjusted Hashprice“ (z. B. USD oder BTC pro TH/s/Tag) für Mining-Betreiber?', 'Den täglichen Bruttoertrag je eingesetzter Recheneinheit (Terahash/s), der direkt von Bitcoin-Preis, Transaktionsgebühren und aktueller Netzwerk-Schwierigkeit abhängt', ['Den Kaufpreis eines neuen Antminer auf eBay', 'Die gesetzliche Stromsteuer in Texas', 'Die Länge eines SHA-256-Strings'], 'Sinkt der Hashprice durch ein Halving oder stark wachsende globale Hashrate unter die individuellen Stromkosten (USD/kWh), müssen ältere ineffiziente ASIC-Generationen abgeschaltet werden („Miner-Kapitulation“).'],
-
-    // --- LAYER-2, LIGHTNING NETWORK & WALLETS (20) ---
-    ['layer2_skalierung', 'easy', 'Welches Grundprinzip nutzt das „Lightning Network“, um Bitcoin-Zahlungen in Sekundenbruchteilen für Bruchteile eines Cents zu ermöglichen?', 'Off-Chain-Zahlungskanäle (2-of-2-Multisig-Kanäle), zwischen denen Zahlungen kryptografisch abgesichert und erst beim endgültigen Schließen auf der Mainchain abgerechnet werden', ['Eine komplett eigene Proof-of-Stake-Altcoin ohne echte Bitcoins', 'Ein zentrales PayPal-Konto in den USA', 'Größere 1-Gigabyte-Blöcke auf der Hauptblockchain'], 'Solange Kanäle offen bleiben, können Millionen Zahlungen zwischen den Partnern oder über Routing-Hops hinweg stattfinden – gedeckt durch echte Bitcoins auf Layer 1!'],
-    ['layer2_skalierung', 'easy', 'Was genau ist eine „Seed Phrase“ (Recovery Phrase / Mnemonic nach BIP-39) mit 12 oder 24 englischen Wörtern?', 'Eine für Menschen lesbare Codierung der geheimen Zufallszahl (Entropie), aus der sämtliche Bitcoin-Keys und -Adressen eines HD-Wallets deterministisch abgeleitet werden', ['Ein vom Hersteller zugewiesener Werbecode für Rabatte', 'Ein klassischer Benutzername für die Wallet-App', 'Eine öffentliche Liste zum Verschicken an Freunde'], 'Wer diese 12 oder 24 Wörter besitzt, hat vollen unwiderruflichen Zugriff auf alle Coins dieses Wallets – deshalb niemals fotografieren, abtippen in Webseiten oder in die Cloud legen!'],
-    ['layer2_skalierung', 'mid', 'Worin liegt im Lightning Network der entscheidende Unterschied zwischen „Outbound Liquidity“ (Ausgabekapazität) und „Inbound Liquidity“ (Empfangskapazität)?', 'Outbound ist der eigene Anteil im Kanal, den man versenden kann; Inbound ist der Betrag auf der Gegenseite des Kanals, den man überhaupt erst empfangen darf', ['Beides bezeichnet denselben Bank-Überziehungsrahmen', 'Inbound gilt nur für Börsen, Outbound nur für Geldautomaten', 'Lightning kennt gar keine Kanal-Kapazitäten'], 'Deshalb braucht ein brandneuer Lightning-Node zunächst Inbound-Kapazität (z. B. durch Ausgeben, Submarine Swap / Loop Out oder Kanal-Kauf von LSPs), um Zahlungen empfangen zu können!'],
-    ['layer2_skalierung', 'mid', 'Was leistet ein „HTLC“ (Hash Time-Locked Contract) beim Multi-Hop-Routing im Lightning Network?', 'Er garantiert atomar über mehrere fremde Routing-Nodes hinweg: Entweder erhalten alle Zwischenstationen ihr Geld gegen Bekanntgabe des geheimen Preimage – oder niemand verliert etwas nach Timeout!', ['Er druckt automatisch QR-Codes auf Kassenbons', 'Er verschlüsselt E-Mails der Mining-Pools', 'Er erhöht jede Rechnung pauschal um 5 % Zinsen'], 'So kann Alice sicher über Bob und Carol an Dave bezahlen, ohne Bob oder Carol jemals blind ihr Geld anvertrauen zu müssen!'],
-    ['layer2_skalierung', 'pro', 'Welchen Schutz bietet im Lightning Network eine „Watchtower“-Node für Offline-Nutzer?', 'Wenn dein eigenes Gerät Tage oder Wochen offline ist und dein Kanalpartner betrügerisch einen alten, für ihn günstigeren Kanalzustand auf Layer 1 sendet, strahlt der Watchtower automatisch die „Justice-Transaktion“ aus!', ['Sie überwacht den aktuellen Bitcoin-Euro-Kurs und kauft nach', 'Sie verhindert Stromausfälle beim Miner', 'Sie prüft E-Mails auf Phishing-Links'], 'Bei so einem Betrugsversuch verliert der Angreifer vertraglich das KOMPLETTE im Kanal gebundene Guthaben an das Opfer!'],
-    ['layer2_skalierung', 'easy', 'Was verbirgt sich hinter dem bekannten Merksatz der Bitcoin-Szene: „Not your keys, not your coins“?', 'Solange Bitcoins bei einer zentralen Börse oder Verwahrstelle liegen, hast du rechtlich bloß einen Schuldschein/Anspruch – echtes Eigentum entsteht erst durch Kontrolle der eigenen Private Keys (Self-Custody)', ['Man sollte niemals eine Tastatur beim Tippen benutzen', 'Nur wer zehn Wallets besitzt, darf überweisen', 'Coins auf Börsen sind technisch gar keine Bitcoins, sondern Goldmünzen'], 'Zusammenbrüche wie Mt. Gox (2014) oder FTX (2022) demonstrierten schmerzhaft das Kontrahentenrisiko zentraler Verwahrung.'],
-    ['layer2_skalierung', 'mid', 'Wozu dient bei einer BIP-39-Seed-Phrase das optionale „25. Wort“ (BIP-39 Passphrase)?', 'Es wird als zusätzlicher geheimer String mit den 24 Wörtern zu einem völlig neuen, separaten Seed kombiniert – schützt perfekt gegen physischen Diebstahl eines 24-Wörter-Stahlbackups („Plausible Deniability“)!', ['Es ist das verpflichtende Passwort für das WLAN-Netz', 'Es verdoppelt die Empfangsgeschwindigkeit in der Blockchain', 'Es wird automatisch von BIP-39 aus der Wortliste erraten'], 'Wichtig: Im Unterschied zu einem Geräte-PIN hängt die mathematische Key-Ableitung direkt an dieser Passphrase – wer sie vergisst, verliert für immer den Zugang zu diesem versteckten Wallet!'],
-    ['layer2_skalierung', 'pro', 'Welches Dateiformat („PSBT“ – BIP-174) nutzen moderne Air-Gapped-Hardware-Wallets und Multisig-Setups zum sicheren Signieren?', 'Partially Signed Bitcoin Transaction – ein standardisierter Container für unsignierte/teilsignierte Transaktionen inkl. UTXO-Metadaten, der problemlos per QR-Code oder SD-Karte zwischen Online-Koordinator und Offline-Signer wandert', ['Private Secure Bitcoin Token – ein neuer Coin', 'Permanent Storage Backup Table – eine Datenbank auf USB', 'Public Server Broadcast Tunnel'], 'Dank PSBT kann eine Offline-Wallet genau prüfen, wie viel Wechselgeld an welche eigene geprüfte Ableitungsadresse zurückfließt, bevor du physisch am Gerät bestätigst!'],
-    ['layer2_skalierung', 'easy', 'Was leistet eine echte Hardware Wallet (wie BitBox02, Coldcard, Ledger oder Trezor) beim Signieren im Vergleich zu einer reinen Smartphone-App?', 'Der Private Key verlässt das isolierte Hardware-Gerät niemals (nur der Hash bzw. das fertig signierte TX-Ergebnis geht an den kompromittierbaren PC/Mac zurück)', ['Sie erhöht den Bitcoin-Kurs direkt über Bluetooth', 'Sie garantiert steuerfreie Verkäufe in ganz Europa', 'Sie schützt auch dann vor Verlust, wenn man die Seed Phrase wegwirft'], 'Auch auf einem komplett mit Viren verseuchten PC lassen sich Transaktionen auf dem kleinen vertrauenswürdigen Bildschirm der Hardware Wallet noch visuell prüfen und freigeben.'],
-    ['layer2_skalierung', 'mid', 'Welche praktische Widerstandsfähigkeit bietet ein klassisches „2-of-3 Multisig“-Setup für hohe Bitcoin-Bestände?', 'Selbst wenn 1 Key/Seed gestohlen wird oder abbrennt, bleibt das Geld mit den übrigen 2 von 3 Schlüsseln voll zugänglich – und ein Dieb kann mit nur 1 gestohlenen Key nichts anfangen!', ['Man benötigt zwingend immer alle 3 Schlüssel gleichzeitig', 'Es halbiert jede Blockchain-Gebühr um 50 %', 'Jede Einzelperson erhält einen komplett eigenen Coin'], 'Wichtig beim Multisig-Backup: Neben jeder einzelnen Seed Phrase muss unbedingt auch das „Wallet-Deskriptor / xpub“-Dokument für alle 3 Keys aufbewahrt werden!'],
-    ['layer2_skalierung', 'pro', 'Welches bahnbrechende Feature bringt der neue Lightning-Standard „BOLT-12 (Offers)“ gegenüber herkömmlichen BOLT-11-Rechnungen?', 'Statische, wiederverwendbare Zahlungscodes (ohne Webserver nötig!), echte Empfänger-Privatsphäre durch Blinded Paths und native „Proof of Payment“-Quittungen direkt über das Lightning-P2P-Netz', ['Zwangsanbindung aller Wallets an klassische Kreditkarten', 'Aufhebung aller 21 Millionen BTC auf Layer 2', 'Verpflichtende Angabe der Wohnadresse'], 'Damit braucht ein Creator oder Online-Shop keinen dauerhaften LNURL-HTTPS-Server mehr, um beliebig oft wiederverwendbare Spenden-/Bezahlcodes anzubieten.'],
-    ['layer2_skalierung', 'mid', 'Warum gilt eine klassische „24-Wörter-Seed-Phrase“ auf einem Blatt Papier als anfällig – und was nutzen langfristige Bitcoiner stattdessen zur Archivierung?', 'Stahlplatten (gestanzt, graviert oder mit Unterlegscheiben aus Edelstahl) gegen Feuer, Hochwasser und Verrotten', ['Ein gewöhnliches Foto in Google Photos oder iCloud', 'Speicherung als unverschlüsselte Word-Datei auf dem Desktop', 'Ein Laminiergerät für Papier allein gegen 1.000 °C Hausbrand'], 'Feuerfester Edelstahl (AISI 304/316) übersteht Hausbrände von über 1.100 °C und rostet im Hochwasser nicht weg.'],
-    ['layer2_skalierung', 'pro', 'Was versteht man unter einem „Submarine Swap“ (z. B. Loop In / Loop Out / Boltz) im Lightning-Ökosystem?', 'Ein trustless (über HTLCs abgesicherter) Tausch zwischen On-Chain-Bitcoin (Layer 1) und Lightning-Bitcoin (Layer 2) ohne Vertrauen in eine zentrale Börse', ['Ein Unterseekabel zwischen New York und London für Miner', 'Das komplette Löschen aller Lightning-Kanäle', 'Ein Tausch zwischen Bitcoin und physischem Gold'], 'Perfekt geeignet, um vollgelaufene Lightning-Empfangskanäle nahtlos in On-Chain Cold Storage umzuschichten – während frische Inbound-Kapazität im Kanal frei wird!'],
-    ['layer2_skalierung', 'easy', 'Was beschreibt der Begriff „Hot Wallet“ im Unterschied zum „Cold Wallet“?', 'Hot Wallets laufen auf mit dem Internet verbundenen Geräten (Handy-App, Browser-Erweiterung – praktisch für Alltagsgeld), während Cold Wallets Private Keys strikt offline erzeugen und speichern', ['Hot Wallets sind nur im Sommer aktiv', 'Cold Wallets müssen im Kühlschrank gelagert werden', 'Hot Wallets erzeugen echte Bitcoins im Leerlauf'], 'Faustregel: Kleine Alltagsbeträge für Zahlungen im mobilen Hot Wallet / Lightning, die großen Langfrist-Ersparnisse ins offline gesicherte Cold Wallet!'],
-    ['layer2_skalierung', 'pro', 'Wie sichert „Onion Routing“ (Sphinx-Format) im Lightning Network die Privatsphäre unterwegs beim Zahlungs-Routing?', 'Wie bei Tor wird jeder Hop in verschlüsselte Schalen verpackt – eine Zwischenstation kennt stets nur den unmittelbaren Vorgänger und den nächsten Hop, niemals aber Absender, Endempfänger oder Zweck!', ['Es veröffentlicht den ganzen Pfad inklusive Namen auf Twitter', 'Es versendet alle Zahlungen über klassische Zwiebelpost', 'Jeder Empfänger muss erst eine Passkopie hochladen'], 'Selbst eine große vermittelnde Routing-Node sieht nicht, ob der direkte Nachbar selbst zahlt oder nur im Auftrag von zehn anderen weiterleitet.'],
-    ['layer2_skalierung', 'mid', 'Welche Sicherheitsgefahr entsteht sofort, wenn ein Nutzer eine physische 24-Wörter-Seed-Phrase am regulären Smartphone oder Windows-PC abtippt?', 'Falls Malware/Keylogger/Zwischenablage-Trojaner oder automatische Cloud-Backups aktiv sind, können die Keys sofort unbemerkt abgegriffen und alle Bestände in Sekunden leergeräumt werden', ['Die Wörter verfallen danach innerhalb von zwei Stunden', 'Die Blockchain sperrt die Adresse wegen Zeichenfehler', 'Die Gebühr vervierfacht sich automatisch'], 'Darum tippt man einen echten Cold-Storage-Seed grundsätzlich AUSSCHLIESSLICH direkt auf der Hardware Wallet oder einem reinen Air-Gapped-Gerät ein!'],
-    ['layer2_skalierung', 'pro', 'Was ermöglicht „Splicing“ bei modernen Lightning-Implementierungen (wie Core Lightning, Eclair, Phoenix)?', 'Dynamisches Einzahlen oder Abheben von On-Chain-Mitteln IN einen laufenden Lightning-Kanal per einziger kooperativer On-Chain-Transaktion, ohne den Kanal schließen und unterbrechen zu müssen', ['Das Zerschneiden von 1 BTC in 100 Altcoins', 'Das automatische Erraten fremder PINs', 'Das Verdoppeln der Kanalgröße ohne echte Bitcoins'], 'Dadurch verschmelzen On-Chain-Guthaben und Lightning-Balance nahtlos für Nutzer, ohne ständiges manuelles Öffnen und Schließen einzelner Mini-Kanäle.'],
-    ['layer2_skalierung', 'easy', 'Wie groß ist der offizielle englische BIP-39-Wortkatalog, aus dem die 12 oder 24 Wörter einer Standard-Bitcoin-Seed-Phrase stammen?', '2.048 Wörter (wobei jeweils die ersten 4 Buchstaben jedes Wortes bereits eindeutig sind!)', ['26 Wörter von A bis Z', '100.000 Wörter aus dem Duden', 'Exakt 100 Wörter'], 'Durch die Eindeutigkeit der ersten 4 Buchstaben passen manche kompakten Stahl-Backups (z. B. Seedplate / Cryptotag-Codes) mit minimalem Stanz-Aufwand auf winzige Plättchen!'],
-    ['layer2_skalierung', 'mid', 'Was bezeichnet bei einer BIP-32 „Hierarchical Deterministic (HD) Wallet“ der Extended Public Key (`xpub` / `zpub`)?', 'Einen Master-Öffentlich-Schlüssel, mit dem man unbegrenzt viele zugehörige Empfangsadressen und Salden rein lesend („Watch-Only“) ableiten kann – OHNE jemals Bitcoins ausgeben zu können!', ['Den geheimen Master-Private-Key zum sofortigen Überweisen', 'Die Seriennummer des USB-Kabels', 'Eine Liste aller weltweit existierenden Bitcoin-Nodes'], 'Vorsicht jedoch bezüglich Privacy: Wer deinen `zpub` kennt, sieht ab sofort alle vergangenen und künftigen Kontobewegungen dieses Accounts!'],
-    ['layer2_skalierung', 'pro', 'Welche Rolle spielt das offene Konzept „Miniscript“ (von Pieter Wuille, Andrew Poelstra u. a.) bei modernen Bitcoin-Wallets wie Liana oder Sparrow?', 'Eine strukturierte, sauber analysierbare Darstellung von Bitcoin Script, mit der komplexe Spending-Policies (z. B. Multisig + automatischer Timelock-Erbfall nach 1 Jahr Inaktivität) fehlerfrei gebaut und analysiert werden', ['Eine neue Programmiersprache für Browser-Spiele', 'Ein Kompressionstool zum Verkleinern von PDFs', 'Ein zentrales KYC-Register in Brüssel'], 'So lässt sich z. B. sauber programmieren: „Entweder mein Hardware-Key sofort ODER nach 365 Tagen Stillstand 2-of-3 der Erben-Keys“ – ganz ohne Anwalt oder Treuhänder!'],
-
-    // --- HISTORIE, ÖKONOMIE & RECHT (20) ---
-    ['historie_oekonomie', 'easy', 'An welchem Datum veröffentlichte „Satoshi Nakamoto“ das 9-seitige Bitcoin-Whitepaper („Bitcoin: A Peer-to-Peer Electronic Cash System“)?', 'Am 31. Oktober 2008 über die Cryptography Mailing List', ['Am 1. Januar 2000 zur Jahrtausendwende', 'Am 15. September 2015', 'Am 22. Mai 2010'], 'Das Whitepaper kombinierte erstmals Hashcash-Proof-of-Work, Public-Key-Signaturen, Merkle Trees und Difficulty-Adjustment zu einem dezentralen Konsens ohne Doppelausgaben.'],
-    ['historie_oekonomie', 'easy', 'Welche historische Schlagzeile der britischen Zeitung „The Times“ bettete Satoshi Nakamoto am 3. Januar 2009 in den Coinbase-Parameter des allerersten „Genesis Blocks“ ein?', '„The Times 03/Jan/2009 Chancellor on brink of second bailout for banks“', ['„Apple unveils the first iPhone in San Francisco“', '„Berlin Wall falls after historic protests“', '„Internet reaches one billion users worldwide“'], 'Diese Botschaft bewies erstens manipulationssicher, dass der Genesis Block nicht vor dem 03.01.2009 erschaffen wurde – und setzte zweitens ein scharfes zeitgeschichtliches Statement gegen Bankenrettungen und Geldschöpfung.'],
-    ['historie_oekonomie', 'easy', 'Was geschah am berühmten „Bitcoin Pizza Day“ am 22. Mai 2010?', 'Der Programmierer Laszlo Hanyecz kaufte über das BitcoinTalk-Forum zwei Papa-John’s-Pizzen für exakt 10.000 BTC – die erste belegte reale Güter-Transaktion mit Bitcoin', ['Pizza Hut nahm Bitcoin in allen 10.000 Filialen weltweit an', 'Satoshi Nakamoto bestellte eine Pizza im Wert von 1 Satoshi', 'Italien verbot Bitcoin vorübergehend wegen Pizza-Steuern'], 'Damals entsprachen 10.000 BTC rund 41 US-Dollar – heute legendärer Feiertag der Bitcoin-Geschichte für die Geburtsstunde von Marktwert aus dem Nichts.'],
-    ['historie_oekonomie', 'mid', 'Welche zwei Krypto-Vorläufer zitierte Satoshi Nakamoto namentlich in den Literaturverweisen des Bitcoin-Whitepapers (neben Adam Backs Hashcash)?', 'Wei Dais „b-money“ und Stuart Haber / W. Scott Stornettas kryptografisches Timestamping (plus Hal Finney / Nick Szabos „Bit Gold“ im Geiste)', ['Ethereum und Dogecoin', 'PayPal und Visa Direct', 'Libra / Diem von Facebook'], 'Bitcoin fiel nicht einfach vom Himmel, sondern stand auf den Schultern jahrzehntelanger Cypherpunk-Forschung seit den 1980er/1990er Jahren!'],
-    ['historie_oekonomie', 'mid', 'Wer erhielt am 12. Januar 2009 in Block 170 die allererste Peer-to-Peer-Bitcoin-Transaktion (10 BTC) direkt von Satoshi Nakamoto?', 'Hal Finney (legendärer Kryptograf und Erfinder von RPOW)', ['Vitalik Buterin', 'Michael Saylor', 'Elon Musk'], 'Hal Finney twitterte am 11. Januar 2009 bereits berühmt die zwei Worte „Running bitcoin“ und lief als einer der Ersten das Netzwerk mit Satoshi mit.'],
-    ['historie_oekonomie', 'pro', 'Worum ging es im sogenannten „Blocksize War“ (2015–2017) – und wie endete diese Machtprobe im Bitcoin-Netzwerk?', 'Konflikt zwischen Groß-Minern/Unternehmen (wollten große Blöcke per Hard Fork auf Kosten der Dezentralität von Full Nodes) vs. ökonomischer Node-Mehrheit („User Activated Soft Fork / SegWit“, damit jeder selbst günstig eine Full Node betreiben kann)', ['Streit über das Design des goldenen Bitcoin-Logos', 'Krieg zwischen USA und China um alle ASIC-Fabriken', 'Abstimmung zur Erhöhung von 21 Mio. auf 100 Mio. Coins'], 'Der Sieg der dezentralen Nodes über das „New York Agreement / SegWit2x“ im Jahr 2017 bewies ein für alle Mal: Miner und Großfirmen beherrschen das Regelwerk von Bitcoin NICHT allein!'],
-    ['historie_oekonomie', 'easy', 'Welche historische Lektion prägte der spektakuläre Zusammenbruch der damals größten Handelsplattform „Mt. Gox“ im Februar 2014?', 'Über ~740.000–850.000 Kunden-Bitcoins verschwanden bzw. wurden veruntreut – bis heute schärfster Beweis für die Gefahr zentraler Drittverwahrung statt Self-Custody', ['Dass der Bitcoin-Quellcode selbst gehackt wurde', 'Dass Japan fortan den Handel komplett abschaffte', 'Dass man maximal 5 Bitcoins pro Person kaufen darf'], 'Wichtig: Nicht das Bitcoin-Protokoll versagte – lediglich das interne Sicherheitssystem und Management einer zentralisierten Börse!'],
-    ['historie_oekonomie', 'easy', 'Wie werden Kursgewinne beim Verkauf von direkt gehaltenen (echten) Bitcoins für Privatanleger in Deutschland nach § 23 EStG aktuell steuerlich behandelt?', 'Als privates Veräußerungsgeschäft: Nach über 12 Monaten (1 Jahr) Haltedauer sind sämtliche Kursgewinne unabhängig von der Höhe komplett einkommensteuerfrei!', ['Immer mit pauschal 26,375 % Abgeltungsteuer unabhängig von der Haltedauer', 'Als gewerbliches Einkommen mit 19 % Mehrwertsteuer', 'Komplett steuerfrei ab dem allerersten Tag auch bei Sekundentrading'], 'Verkauft man hingegen *innerhalb* eines Jahres mit Gewinn, greift ab 2024 die Freigrenze von 1.000 € pro Kalenderjahr – bei Überschreitung ist der volle Gewinn mit dem persönlichen Einkommensteuersatz zu versteuern!'],
-    ['historie_oekonomie', 'mid', 'Welche wichtige Anhebung der jährlichen Freigrenze für private Veräußerungsgeschäfte (wie Bitcoin unter 1 Jahr Haltedauer) trat in Deutschland rückwirkend zum 1. Januar 2024 in Kraft?', 'Sie stieg von bisher 600 € auf 1.000 € pro Jahr (Wachstumschancengesetz)', ['Sie wurde komplett auf 0 € abgeschafft', 'Sie stieg auf 100.000 € steuerfrei auch beim Daytrading', 'Sie wurde auf exakt 50 € gesenkt'], 'Achtung bei „Freigrenze“ statt „Freibetrag“: Wer im Jahr mit kurzfristigen Verkäufen exakt 1.001 € Gewinn erzielt, muss nicht bloß 1 €, sondern den gesamten Gewinn von 1.001 € versteuern!'],
-    ['historie_oekonomie', 'mid', 'Was passiert nach deutscher Rechtsprechung und BMF-Schreiben (Mai 2022), wenn ein Privatanleger seine Bitcoins für ein Jahr verleiht („Lending“) oder für Erträge einsetzt – verlängert sich heute noch die 1-Jahres-Haltefrist auf 10 Jahre?', 'Nein! Das Bundesfinanzministerium (BMF-Schreiben 10.05.2022) stellte klar, dass die frühere 10-Jahres-Fristverlängerung für virtuelle Währungen bei Lending/Staking im Privatvermögen NICHT anwendbar ist (es bleibt bei 1 Jahr)', ['Ja, sie verlängert sich gesetzlich auf lebenslange 50 Jahre', 'Ja, es gilt fortan 30 Jahre wie bei Lebensversicherungen', 'Lending ist in Deutschland mit Haftstrafen belegt'], 'Die aus dem Lending erhaltenen neuen Zins-Coins stellen jedoch im Zuflusszeitpunkt als sonstige Einkünfte (§ 22 Nr. 3 EStG, Freigrenze 256 €/Jahr) steuerpflichtige Einnahmen dar.'],
-    ['historie_oekonomie', 'mid', 'Was drückt in der Geldtheorie der sogenannte „Cantillon-Effekt“ aus, den Ökonomen häufig mit Fiat-Geld vs. Bitcoin verknüpfen?', 'Neu geschöpftes Zentralbank-/Kreditgeld fließt nicht gleichzeitig zu allen Menschen, sondern begünstigt zuerst jene Akteure nahe der Geldschleusen (Banken, Finanzsektor, Großkonzerne) zu alten Preisen, bevor Inflation bei normalen Löhnen ankommt', ['Dass sich nur Sänger aus Italien für Bitcoin interessieren', 'Dass Bitcoins immer genau um 12 Uhr mittags günstiger sind', 'Dass Deflation automatisch zu 100 % Arbeitslosigkeit führt'], 'Bei Bitcoin existiert per Konsens kein privilegiertes Druckrecht für politische oder finanzielle Insider – jeder neue Satoshi erfordert exakt dasselbe Proof-of-Work.'],
-    ['historie_oekonomie', 'pro', 'Welchen historischen Schritt vollzog die US-Börsenaufsicht SEC am 10. Januar 2024 (Handelsstart 11. Januar 2024)?', 'Die gleichzeitige Zulassung der ersten physisch besicherten US-Spot-Bitcoin-ETFs (u. a. BlackRock IBIT, Fidelity FBTC, Bitwise, Ark)', ['Ein komplettes US-weites Verbot aller Hardware Wallets', 'Die Ernennung von Bitcoin zur gesetzlichen alleinigen US-Währung statt des Dollars', 'Die Abschaffung von Satoshi Nakamotos Whitepaper'], 'BlackRocks IBIT entwickelte sich anschließend zum am schnellsten wachsenden ETF der Börsengeschichte überhaupt!'],
-    ['historie_oekonomie', 'easy', 'Welcher mittelamerikanische Staat führte Bitcoin im September 2021 als weltweit erstes Land offiziell als gesetzliches Zahlungsmittel (neben dem US-Dollar) ein?', 'El Salvador', ['Costa Rica', 'Argentinien', 'Schweiz'], 'Seit 2021 baute El Salvador zudem strategische staatliche Bitcoin-Reserven auf und startete Bildungsinitiativen rund um Self-Custody und Lightning.'],
-    ['historie_oekonomie', 'mid', 'Welchen Zusammenhang beschreibt die „Zeitpräferenz“ (Time Preference) aus der Österreichischen Ökonomie im Bezug auf hartes Geld wie Bitcoin?', 'Wer ein wertbeständiges Sparmedium ohne ständige Geldentwertung besitzt, senkt seine Zeitpräferenz – man konsumiert weniger hektisch auf Pump und plant/investiert langfristiger für die Zukunft', ['Nur die Vorliebe für teure mechanische Schweizer Armbanduhren', 'Dass man Überweisungen immer exakt nachts ausführen muss', 'Dass Kurse ausschließlich vor Weihnachten steigen'], 'Weiches inflationäres Geld zwingt dagegen Sparer oft ungewollt in spekulative Risiken oder schnellen Konsum („Warum sparen, wenn Kaufkraft schmilzt?“).'],
-    ['historie_oekonomie', 'pro', 'Was versteht man beim „Stock-to-Flow“-Verhältnis (S2F) nach monetärer Angebotsmessung, und warum gilt Bitcoin nach dem 4. Halving 2024 härter als Gold?', 'Stock (Bestand) geteilt durch Flow (jährliche Neuproduktion): Mit ~0,83 % jährlichem Angebotswachstum ab April 2024 ist Bitcoins Angebotsinflation etwa halb so groß wie Golds (~1,7 % p. a.)!', ['Das Verhältnis von Börsen-Aktienkurs zu Wasserfluss in Wasserkraftwerken', 'Die Geschwindigkeit, mit der Börsen Konten einfrieren können', 'Die monatliche Rendite von Anleihen'], 'Wichtig zur Einordnung: Ein hohes S2F-Verhältnis misst allein harte Angebotsknappheit („Hardness“), ersetzt für Preisprognosen aber niemals reale Nachfrage-Modelle!'],
-    ['historie_oekonomie', 'mid', 'Welche Bedeutung hat der frühe Meilenstein im Code – die sogenannte „Value Overflow Incident“ im August 2010 (Block 74.638)?', 'Ein Integer-Overflow-Bug erschuf kurzzeitig 184,47 Milliarden BTC aus dem Nichts; innerhalb weniger Stunden schrieben Satoshi und Gavin Andresen einen Soft-Fork-Patch und rollten die Kette sauber zurück', ['Satoshi verschenkte versehentlich alle seine eigenen Coins an ein Museum', 'Die US-Regierung kaufte erstmals Mining-Chips', 'Das Logo wechselte von Silber auf Orange'], 'Ein lehrreiches Stück Ur-Geschichte: Im noch jungen kleinen Netzwerk bewahrte schnelle koordinierte Peer-Review das 21-Mio.-Versprechen vollständig.'],
-    ['historie_oekonomie', 'easy', 'Was bedeutet „HODL“ in der Bitcoin-Kultur und woher stammt die eigentliche Buchstabenfolge?', 'Aus einem berühmt-betrunkenen Tippfehler („I AM HODLING“) im BitcoinTalk-Forum am 18. Dezember 2013 während eines Crashs – heute Symbol für stoisches Langfristhalten ohne Panikverkäufe', ['Ein geheimes Banken-Protokoll aus der Schweiz („Hold On Digital Ledger“)', 'Eine von Satoshi erfundene Kryptografie-Funktion', 'Eine Abkürzung für tägliches Hebel-Daytrading'], 'Später wurde dem legendären Tippfehler scherzhaft das Backronym „Hold On for Dear Life“ angedichtet.'],
-    ['historie_oekonomie', 'pro', 'Wie wirkt sich die europäische „Transfer of Funds Regulation (TFR)“ bzw. Travel Rule auf regulierte EU-Krypto-Verwahrstellen aus?', 'Bei Transfers ab/zu regulierten CASPs müssen Identitätsdaten (Travel Rule) erfasst und vor Auszahlungen auf eigene selbstverwaltete Wallets („Unhosted Wallets“) bei > 1.000 € meist ein Inhaberschafts-Nachweis erbracht werden', ['Der Besitz eigener Hardware Wallets ist für EU-Bürger komplett strafbar', 'Alle privaten Nodes in Europa müssen abgeschaltet werden', 'Bitcoin-Transaktionen unter 1.000 € werden steuerlich verdoppelt'], 'Reiner Peer-to-Peer-Transfer zwischen zwei privaten Self-Custody-Wallets bleibt von der Travel Rule rechtlich weiterhin komplett unberührt!'],
-    ['historie_oekonomie', 'mid', 'Was trennt grundsätzlich das Denken von „Bitcoin-only“-Verfechtern gegenüber dem breiten „Krypto/Altcoin“-Sektor?', 'Die Überzeugung, dass monetäre Dezentralität auf einem einzigen glaubwürdig neutralen, führerlosen Base-Layer ohne Pre-Mine und CEO basiert (Bitcoin) und jede kopierte „Verbesserung“ mit zentralen Gründerteams Sicherheits-/Dezentralitätskompromisse eingeht', ['Sie lehnen grundsätzlich jegliche Software-Updates oder Layer 2 ab', 'Sie dürfen gesetzlich keine Aktien besitzen', 'Sie handeln ausschließlich an asiatischen Börsen'], 'Gerade deshalb verlagern viele Bitcoin-Entwickler komplexe Zahlungs-, Datenschutz- und Smart-Contract-Funktionen sauber auf Layer 2 (Lightning, Ark, Fedimint) statt das L1-Protokoll zu verkomplizieren.'],
-    ['historie_oekonomie', 'pro', 'Welches Bewertungsmaß betrachtet bei Bitcoin statt des gesamten Marktpreises nur die Summe der tatsächlichen Kaufpreise beim letzten On-Chain-Move jeder Münze („Realized Cap“ / MVRV)?', 'Realized Capitalization (und im Verhältnis zur Market Cap das MVRV-Ratio) – misst historisch verlässlich überhitzte Spekulationsblasen vs. tiefe Unterbewertungsphasen unter dem Durchschnitts-Einstandspreis', ['Die Gesamtzahl aller Bankfilialen weltweit', 'Den reinen Strompreis sämtlicher ASIC-Rechner in Island', 'Den Umsatz von Hardware-Wallet-Herstellern'], 'Zudem bleiben mutmaßlich dauerhaft verlorene frühe Coins (z. B. aus 2009/2010) darin fair mit wenigen Cents statt 100.000 $ bewertet.']
-  ];
-
-  // 2. Umfangreiche Bitcoin-Wissensdatenbank: 160 Begriffe & Konzepte × 5 präzise Fragen = 800 Fragen
-  // Format: [cat, term, domainLbl, def, [wrong1, wrong2, wrong3], benefitRule, praxisDetail, diff]
-  const CONCEPTS_DB = [
-    // === 1) PROTOKOLL & KRYPTOGRAFIE (40 Einträge → 200 Fragen) ===
-    ['protokoll_krypto', 'UTXO (Unspent Transaction Output)', 'Transaktions- & Buchhaltungsmodell', 'Eine bisher unausgegebene Ausgabe einer früheren Transaktion, die nur mit passendem kryptografischem Entsperrskript neu ausgegeben werden darf', ['Ein automatisch verzinstes Bankguthaben auf der Blockchain', 'Eine gelöschte Mining-Datei auf der Festplatte', 'Ein zentrales Passwort des Node-Betreibers'], 'Ermöglicht parallele Verifizierung ohne globalen Kontenzustand und verhindert doppelte Ausgaben absolut sauber', 'Mehrere kleine „Dust“-UTXOs erhöhen bei hohen Gebühren künftige Transaktionskosten deutlich (UTXO-Konsolidierung bei niedrigen Fees sinnvoll)', 'easy'],
-    ['protokoll_krypto', 'Double SHA-256 (`SHA256d`)', 'Hash-Kryptografie', 'Zweifaches Hintereinanderausführen der 256-Bit-SHA-2-Hashfunktion auf dieselben Eingabedaten', ['Zweifaches Verschlüsseln mit dem eigenen Passwort', 'Eine Verdopplung des Bitcoin-Preises bei jedem Block', 'Ein Kompressionsverfahren für JPEG-Bilder'], 'Dient sowohl als Einweg-Prüfsumme für TXIDs/Block-Hashes als auch zur Härtung gegen mögliche Length-Extension-Angriffe', 'Die Wahrscheinlichkeit einer zufälligen Kollision zweier verschiedener SHA-256-Inputs ist praktisch astronomisch unmöglich (2^256 Raum)', 'mid'],
-    ['protokoll_krypto', 'ECDSA (secp256k1)', 'Asymmetrische Signaturverfahren', 'Elliptische-Kurven-Signaturverfahren, das mit einem 256-Bit-Private-Key den Besitz von Legacy- und SegWit-v0-UTXOs beweist', ['Ein zentrales SSL-Zertifikat einer Bank', 'Ein Mining-Verfahren ausschließlich für Grafikkarten', 'Ein Netzwerkprotokoll zum Versenden von Webseiten'], 'Stellt sicher, dass jeder Besitzer zwar seinen Public Key offenlegen kann, niemand aber ohne Private Key gültig signiert', 'Ein schlechter Zufallsgenerator (`k`-Nonce-Wiederverwendung!) beim Signieren mit ECDSA leakt den geheimen Private Key sofort öffentlich!', 'mid'],
-    ['protokoll_krypto', 'Schnorr-Signaturen (BIP-340)', 'Moderne Taproot-Kryptografie', 'Mathematisch lineares Signaturschema (aktiviert mit Taproot 2021), das mehrere öffentliche Schlüssel und Signaturen zu einer einzigen zusammenfasst', ['Ein altes Analog-Verfahren aus den 1970ern ohne Internet', 'Eine Software zum Beschleunigen von Grafikkarten', 'Ein KYC-Formular für Mining-Pools'], 'Senkt den Speicherplatzbedarf von Multisigs radikal und macht komplexe Verträge on-chain ununterscheidbar von Einzelsignaturen', 'Dank der Linearität ohne schlechte Zufallsmischungen ermöglicht MuSig2 interaktive N-of-N-Multisigs in genau einer einzigen 64-Byte-Signatur', 'pro'],
-    ['protokoll_krypto', 'SegWit (Segregated Witness, BIP-141)', 'Protokoll-Upgrade & Soft Fork', 'Trennung der Entsperr-Signaturen (Witness-Daten) von der Basis-Transaktionsstruktur, aktiviert im August 2017 bei Block 481.824', ['Verdopplung der maximalen Coin-Menge auf 42 Millionen', 'Einführung eines festen Mining-Monopols', 'Löschung aller Transaktionen vor 2015'], 'Behebt TXID-Malleability dauerhaft und vergrößert das reale Blocklimit auf rund 1,8–4 MB (4 Mio. Weight Units)', 'Witness-Daten werden mit Faktor 1 statt Faktor 4 gewichtet, weshalb native `bc1q`- und `bc1p`-Inputs deutlich günstiger sind als `1…`-Legacy!', 'mid'],
-    ['protokoll_krypto', 'Taproot & MAST (BIP-341/342)', 'Smart-Contract-Effizienz', 'Kombiniert Schnorr-Keys mit Merklized Alternative Script Trees, sodass ungenutzte Ausgabebedingungen geheim bleiben', ['Veröffentlicht jeden einzelnen privaten Vertrag im Klartext', 'Zwingt alle Wallets zu mindestens 10 Unterschriften', 'Verbietet jegliche Timelocks auf Bitcoin'], 'Sogar aufwendige Fallback-Erbschafts- oder Lightning-Pfade bleiben unsichtbar, solange der kooperative Hauptpfad genutzt wird', 'Die 2021 per „Speedy Trial“ ohne Split aktivierte Taproot-Soft-Fork nutzt ausschließlich Bech32m-Adressen (`bc1p…`)', 'pro'],
-    ['protokoll_krypto', 'Bitcoin Script & Stack', 'Transaktions-Logikschicht', 'Einfache, rückwärts-polnische (Stack-basierte) Programmiersprache ohne Schleifen zur Prüfung von Spending-Bedingungen', ['Eine komplette Web-Engine wie JavaScript mit DOM', 'Eine zentrale Excel-Tabelle aller Kontostände', 'Ein Bildformat für QR-Codes'], 'Garantiert absolut vorhersagbare Ausführungszeiten und verhindert DoS-Endlosschleifenangriffe auf Nodes vollständig', 'Standard-Skripte werden aus einem Lock-Teil (`scriptPubKey`) am alten UTXO und einem Unlock-Teil (`scriptSig`/`witness`) zusammengesetzt', 'pro'],
-    ['protokoll_krypto', 'P2PKH (`1…` Legacy-Adresse)', 'Klassische Adressstandards', 'Pay-to-Public-Key-Hash – der frühe Bitcoin-Adresstyp, bei dem Gelder an den HASH160 eines einzelnen Public Keys gesendet werden', ['Der modernste Adressstandard aus dem Jahr 2024', 'Eine spezielle Firmenadresse nur für Regierungen', 'Eine Adresse ausschließlich für das Lightning Network'], 'Maximal kompatibel mit absolut jeder uralten Wallet oder Börse seit 2009', 'Verursacht heute unnötig die höchsten Transaktionsgebühren pro Ausgabe, da kein SegWit-Rabatt greift', 'easy'],
-    ['protokoll_krypto', 'P2SH (`3…` Script-Hash-Adresse)', 'Multisig & Skript-Kapselung', 'Pay-to-Script-Hash (BIP-16) – verbirgt beliebige komplexe Skripte (wie 2-of-3-Multisig oder Wrapped-SegWit) hinter einem kompakten 20-Byte-Hash', ['Eine kostenlose Spendenadresse ohne Gebühren', 'Eine reine Testnet-Adresse ohne realen Wert', 'Ein automatisches Mining-Belohnungskonto'], 'Der Absender trägt nur die geringen Hash-Kosten; erst der Ausgebende muss beim späteren Weiterleiten das volle `redeemScript` enthüllen', 'Viele Übergangs-Wallets verpackten SegWit ab 2017 zunächst in `3…`-P2SH-Adressen für Abwärtskompatibilität', 'mid'],
-    ['protokoll_krypto', 'P2WPKH (`bc1q…` Native SegWit)', 'Effiziente Standard-Adressen', 'Pay-to-Witness-Public-Key-Hash in fehlerresistentem Bech32-Format (nur Kleinbuchstaben, starke Fehlerlokalisierung)', ['Ein privates Chat-Protokoll zwischen Nodes', 'Eine ungesicherte Adresse ohne Prüfsumme', 'Eine Adresse ausschließlich für Altcoins'], 'Spart gegenüber `1…`-Legacy rund ~35–40 % Gebühren und verhindert Groß-/Kleinschreibungsfehler in QR-Codes', 'Bech32 erkennt mit über 99,9 % Garantie selbst mehrere vertauschte Zeichen genau an der fehlerhaften Stelle', 'easy'],
-    ['protokoll_krypto', 'P2TR (`bc1p…` Taproot-Adresse)', 'Modernster Adressstandard', 'Pay-to-Taproot (BIP-341, Bech32m) – vereint Single-Sig, N-of-N-Multisig und versteckte Skriptbäume unter einem einzigen 32-Byte-Key', ['Ein veralteter Standard von 2009 ohne Prüfsumme', 'Eine Adresse exklusiv für Mining-Pools', 'Eine temporäre Einmal-Rechnung mit 5 Minuten Ablauf'], 'Bietet maximale Privacy für komplexe Verträge und leicht günstigere Multi-Input-Gebühren als Native SegWit', 'Beim einfachen Senden (1-In/1-Out) liegt `bc1p` gebührenmäßig minimal über `bc1q` (32B Key vs. 20B Hash), glänzt aber bei Inputs massiv!', 'mid'],
-    ['protokoll_krypto', 'Merkle Tree & SPV-Proofs', 'Blockdaten-Struktur', 'Binärer Hash-Baum sämtlicher Block-Transaktionen, der kompakte Zugehörigkeitsbeweise („Inclusion Proofs“) in logarithmischer Größe erlaubt', ['Ein Verzeichnis sämtlicher Passwörter in Bitcoin Core', 'Ein Grafikprogramm zur Kursanzeige', 'Ein physischer Baum auf ASIC-Chips'], 'Selbst leichte Mobilgeräte können kryptografisch sicher prüfen, ob eine Zahlung wirklich tief in einem Block verankert liegt', 'Bei 2.048 Transaktionen im Block benötigt ein vollständiger Merkle-Proof statt 2.048 nur 11 winzige 32-Byte-Hashes!', 'mid'],
-    ['protokoll_krypto', 'Mempool (Memory Pool)', 'Unbestätigte Transaktionen', 'Der RAM-Zwischenspeicher jeder einzelnen Full Node für gültige, aber noch nicht in einen Block aufgenommene Transaktionen', ['Die gesamte historische Blockchain seit 2009 auf Festplatte', 'Ein zentrales globales Cloud-Laufwerk in den USA', 'Ein Sammelbecken ausschließlich für ungültige Betrugsversuche'], 'Es gibt keinen „einen globalen Mempool“ – jede Node pflegt ihren eigenen (Standardlimit oft 300 MB) und räumt bei Flut billige TXs heraus', 'Am aktuellen Mempool-Gebührenstau orientieren sich gute Wallets (wie Mempool.space) für realistische `sat/vB`-Empfehlungen', 'easy'],
-    ['protokoll_krypto', 'RBF (Replace-By-Fee, BIP-125)', 'Gebühren-Beschleunigung', 'Mechanismus, eine unbestätigte Transaktion aus dem Mempool durch eine neue Version mit mindestens denselben Inputs und höherer Fee zu ersetzen', ['Ein Storno-Button zur Rückholung bereits bestätigter Coins', 'Eine monatliche Pauschale an den Wallet-Hersteller', 'Ein automatischer Rabatt auf Stromkosten'], 'Rettet festgefahrene Zahlungen in Hochgebührenphasen sofort, ohne hilflos wochenlang auf das Verfallen zu warten', 'Mit `mempoolfullrbf=1` akzeptiert heute praktisch die Mehrheit der Bitcoin-Nodes Ersatz-TXs selbst dann, wenn Opt-in-RBF nicht markiert war', 'mid'],
-    ['protokoll_krypto', 'CPFP (Child-Pays-For-Parent)', 'Empfängerseitige Beschleunigung', 'Ausgeben eines noch unbestätigten Outputs (z. B. eigenen Wechselgelds) in einer neuen „Kind-TX“ mit extra hoher Gebühr, um das ganze Paket für Miner lukrativ zu machen', ['Eine staatliche Kinderzulage für Krypto-Halter', 'Das Abbrechen einer Transaktion durch den Empfänger', 'Eine Verdopplung des gesendeten Betrags'], 'Funktioniert selbst für Empfänger einer zu geizig abgesandten Zahlung, da Miner nur das Gesamt-Fee-Rate-Paket („Ancestor Feerate“) bewerten', 'Besonders im Lightning Network für Anchor-Outputs entscheidend, um zeitkritische Closing-Transaktionen im Fee-Spike durchzudrücken!', 'pro'],
-    ['protokoll_krypto', 'nLockTime & CheckLockTimeVerify', 'Zeitliche Transaktionssperren', 'Bedingungen auf Transaktions- bzw. UTXO-Ebene, ab welcher Blockhöhe oder welchem Unix-Zeitpunkt frühestens eine Ausgabe gültig in einen Block darf', ['Ein automatisches Löschen vergessener Wallets nach 30 Tagen', 'Die Synchronisation der Systemuhr per Atomuhr', 'Eine feste 10-Minuten-Pause vor jedem Wallet-Start'], 'Bildet das unverzichtbare zeitliche Rückgrat für treuhänderfreie Lightning-Timeout-Regeln und Erbschafts-Fallback-Skripte', 'Bei Zahlenwerten unter `500.000.000` interpretiert das Protokoll sie als Blockhöhe; darüber als Sekunden-Unix-Timestamp', 'pro'],
-    ['protokoll_krypto', 'nSequence & CheckSequenceVerify (BIP-112)', 'Relative Zeitsperren', 'Definiert eine relative Wartefrist (in Blöcken oder 512-Sekunden-Intervallen), NACHDEM der vorgelagerte Input zuerst bestätigt wurde', ['Sortiert die Alphabet-Reihenfolge der Seed-Wörter', 'Zählt wie oft eine Wallet geöffnet wurde', 'Legt die genaue Reihenfolge von Mining-Pools fest'], 'Erlaubt verschachtelte Off-Chain-Verträge wie Lightning-Kanäle ohne vorab ablaufende absolute Kalenderdaten!', 'Erst wenn ein Dispute-Commit auf L1 landet, tickt das relative Zeitfenster (z. B. 144 oder 2.016 Blöcke) an', 'pro'],
-    ['protokoll_krypto', 'Coinbase-Transaktion', 'Block-Erschaffungs-TX', 'Allererste Transaktion in jedem Block, die neue Block-Subventionen + alle Gebühren einsammelt und keinen vorherigen Output als Input hat', ['Ausschließlich Transaktionen der gleichnamigen US-Handelsplattform', 'Eine Gebührenrechnung an den Wallet-Anbieter', 'Ein reines Backup der letzten Woche'], 'Kann beliebige 2 bis 100 Bytes Nachricht im Input („Coinbase-Daten“) tragen – wie Satoshis legendäres Times-Zitat oder Mining-Pool-Tags', 'Nach SegWit (BIP-141) enthält ein OP_RETURN-Output dieser TX zudem zwingend den kryptografischen Witness-Commitment-Root!', 'mid'],
-    ['protokoll_krypto', 'OP_RETURN', 'Datenverankerung on-chain', 'Ein Skript-Opcode, der einen Output sofort für un-ausgebbar („provably unspendable“) markiert und bis zu 80 Bytes beliebige Metadaten anheftet', ['Ein Befehl, um fälschlich gesendete Coins sofort zurückzubuchen', 'Der Reset-Knopf einer abgestürzten Node', 'Ein Rabatt-Code für niedrigere Mining-Fees'], 'Da diese Outputs mathematisch nie wieder ausgegeben werden können, müssen Full Nodes sie NICHT ewig im schnellen UTXO-RAM-Set behalten!', 'Genutzt u. a. für Zeitstempel-Beweise (OpenTimestamps) und Protokoll-Markierungen – im Block bleibt der Vermerk auf ewig gespeichert', 'mid'],
-    ['protokoll_krypto', 'Compact Block Relay (BIP-152)', 'P2P-Netzwerk-Optimierung', 'Nodes übertragen bei neuen Blöcken bloß den Header sowie winzige 6-Byte-Kurz-IDs, weil die Gegenseite fast alle TXs schon im Mempool hat', ['Komprimiert die 21-Millionen-Obergrenze auf 21.000', 'Erlaubt Bitcoin auf Disketten zu betreiben', 'Löscht alte Transaktionen älter als ein Jahr'], 'Drückt die Block-Ausbreitungszeit im globalen Netz unter eine Sekunde und reduziert so Stale Blocks im Mining drastisch', 'Fehlen einer empfangenden Node wenige einzelne TXs, fordert sie genau nur diese gezielt nach statt der kompletten 2 MB', 'pro'],
-    ['protokoll_krypto', 'IBD (Initial Block Download)', 'Full-Node-Synchronisation', 'Der einmalige Startprozess einer neuen Bitcoin-Node, bei dem alle historischen Blöcke seit 2009 heruntergeladen und Signaturen verifiziert werden', ['Das monatliche Update des Bitcoin-Logos', 'Ein schneller Sofortkauf per Kreditkarte', 'Das Entfernen der eigenen Node aus dem Internet'], 'Nur wer IBD komplett selbst durchläuft (oder zumindest lokal prüft), verlässt das blinde Vertrauen gegenüber fremden Servern endgültig', 'Dank `assumevalid` überspringt Bitcoin Core bei sehr alten bereits tief vergrabenen Blöcken optional einzelne teure ECDSA-Prüfungen für schnelleren Sync (auf Wunsch abschaltbar)', 'mid'],
-    ['protokoll_krypto', 'Blockchain Pruning (`prune=…`)', 'Speicherplatz-Schonung für Nodes', 'Betrieb einer vollständigen Full Node, die alle Blöcke zwar komplett validiert, ältere historische Blockdaten nach der Prüfung aber bis auf z. B. 5 GB von der SSD löscht', ['Das dauerhafte Fälschen alter Transaktionsbeträge', 'Das Entziehen von Rechten der Mining-Pools', 'Das Teilen des Private Keys auf drei Rechner'], 'Bewahrt volle kryptografische Unabhängigkeit und gültiges UTXO-Set sogar auf günstigen Mini-SSDs oder älteren Laptops!', 'Lediglich das nachträgliche Rescannen sehr alter importierter Wallets oder das Beliefern neuer Peers mit Uraltblöcken erfordert wieder eine unbeschnittene Archive Node', 'mid'],
-    ['protokoll_krypto', 'Dust Limit (Staub-Grenze)', 'Anti-Spam-UTXO-Schutz', 'Mindestbetrag eines Outputs (je nach Typ meist 294 bis 546 Satoshis), unter dem Nodes die Weiterleitung verweigern, weil das spätere Ausgeben teurer wäre als der Wert selbst', ['Reinigungsgebühr für staubige ASIC-Lüfter', 'Das maximale Monatslimit beim Kauf auf Börsen', 'Ein fester Mindestpreis pro Bitcoin in Euro'], 'Verhindert das künstliche Vermüllen des kostbaren globalen UTXO-Sets durch Millionen winzigster 1-Satoshi-Transaktionen', 'Im Lightning Network verschwinden Kleinstbeträge unter dem Dust Limit im Channel-Guthaben als nicht auf L1 materialisierbare „Trimmed HTLCs“', 'mid'],
-    ['protokoll_krypto', 'Transaction Weight (`vBytes` / `WU`)', 'Blockplatz-Einheit', 'Maß für den Blockplatzverbrauch einer Transaktion nach SegWit: 1 vByte entspricht 4 Weight Units (WU); Maximalgrenze pro Block = 1.000.000 vBytes', ['Das physische Gewicht einer Hardware Wallet in Gramm', 'Der aktuelle Dollarkurs durch das Handelsvolumen', 'Die Anzahl der verwendeten englischen Seed-Wörter'], 'Ersetzt das alte starre 1-MB-Limit elegant und belohnt speicherschonende moderne Adressformate unmittelbar im Geldbeutel', 'Eine Standard 1-In/2-Out P2WPKH-TX wiegt ca. 141 vBytes – dieselbe als Legacy-P2PKH aber schon rund 226 vBytes (+60 % höhere Kosten!)', 'pro'],
-    ['protokoll_krypto', 'Compact Block Filters (BIP-157/158 „Neutrino“)', 'Datenschonende Light-Clients', 'Full Nodes erzeugen deterministische Golomb-Coded-Set-Filter je Block, sodass Mobil-Wallets ohne Preisgabe ihrer Adressen prüfen können, ob ein Block sie betrifft', ['Ein Spamfilter für Phishing-E-Mails', 'Ein Grafikfilter für Kerzencharts', 'Eine Hardware-Komponente im USB-Stecker'], 'Behebt die fatalen Datenschutzlecks älterer BIP-37 Bloom-Filter, bei denen Server mühelos alle Adressen eines Nutzers korrelieren konnten', 'Wird u. a. von Wasabi Wallet und vielen modernen Mobile Lightning Wallets (Phoenix/Breez/LND-Neutrino) standardmäßig genutzt', 'pro'],
-    ['protokoll_krypto', 'SIGHASH-Flags (z. B. `ALL`, `NONE`, `SINGLE`)', 'Signatur-Geltungsbereiche', 'Parameter innerhalb jeder Signatur, der exakt festlegt, welche Inputs und Outputs einer Transaktion durch diese Signatur festgenagelt bzw. änderbar bleiben', ['Sichtbarkeits-Schalter auf sozialen Netzwerken', 'Farbmarkierungen in Ledger Live', 'Notfall-Stopps für Mining-Rigs'], 'Standard ist `SIGHASH_ALL` (alle Inputs & Outputs fixiert); Tricks wie `ANYONECANPAY` erlauben sogar Crowdfunding oder dezentrale Tausch-Orders!', 'Auch der geplante mögliche Covenant-Vorschlag `SIGHASH_ANYPREVOUT` (BIP-118) für Eltoo/LN-Symmetry baut direkt auf solchen Flags auf', 'pro'],
-    ['protokoll_krypto', 'Soft Fork vs. Hard Fork', 'Netzwerk-Regeländerungen', 'Soft Fork verschärft Regeln rückwärtskompatibel (alte Nodes akzeptieren neue Blöcke weiter); Hard Fork lockert Regeln und verlangt zwingendes Update aller Teilnehmer (sonst Chain-Split)', ['Hardware-Update für den Computer vs. weiche Tastatur', 'Kauf per Karte vs. Kauf per Überweisung', 'Günstige vs. teure Börsen'], 'Bitcoin nutzt konsequent möglichst vorsichtige Soft Forks (wie SegWit, Taproot), damit das Netzwerk nie unnötig gespalten wird', 'Beispiele berühmter umstrittener Hard Forks waren 2017 Abspaltungen wie Bitcoin Cash (BCH) – alte Nodes blieben bei Bitcoin', 'easy'],
-    ['protokoll_krypto', 'P2P Gossip Network (Port 8333)', 'Peer-to-Peer-Transport', 'Dezentrales Maschennetz tausender vernetzter Bitcoin-Nodes, die neue Transaktionen, Adressen und Blöcke flüsterpostartig über alle Kontinente verteilen', ['Ein privater Voice-Chat für Mining-Ingenieure', 'Der Server-Cluster einer einzigen US-Großbank', 'Ein automatisches SMS-Warnsystem'], 'Ohne zentralen Koordinator oder DNS-Pflicht reicht ein einziger erreichbarer Peer (oder sogar Tor-/Satelliten-Link!), um vollen Netzwerkanschluss herzustellen', 'Ergänzende Protokolle wie BIP-324 (`v2 P2P Transport`) verschlüsseln heute selbst den direkten Node-zu-Node-Verkehr gegen passives Mitlesen durch ISPs', 'mid'],
-    ['protokoll_krypto', 'BIP-324 (v2 P2P Transport Encryption)', 'Verschlüsselter Node-Verkehr', 'Führt opportunistische Verschlüsselung und kürzere Paket-Header zwischen kommunizierenden Bitcoin-Core-Nodes (seit Version 26.0) ein', ['Verschlüsselt den Bitcoin-Preis vor den Medien', 'Ersetzt SHA-256 im Mining', 'Erzwingt ein Passwort zum Lesen im Block-Explorer'], 'Erschwert Netzwerkprovidern und Zensoren massiv das gezielte Mitlesen oder Sabotieren von P2P-Transaktionsübertragungen', 'Baut geschickt auf dem ElligatorSwift-Protokoll über secp256k1 auf, sodass der Verbindungsaufbau optisch wie reines Zufallsrauschen wirkt', 'pro'],
-    ['protokoll_krypto', 'Bitcoin Core', 'Referenz-Software-Implementierung', 'Die führende, von Hunderten freien Open-Source-Entwicklern weltweit gepflegte Knoten-Software (geschrieben primär in C++), hervorgegangen aus Satoshis Ur-Client', ['Eine offizielle Aktiengesellschaft mit Vorstand in London', 'Ein kostenpflichtiges Bankprogramm', 'Der exklusive Hardware-Treiber eines ASIC-Herstellers'], 'Wird oft schlicht mit dem Bitcoin-Protokoll selbst gleichgesetzt, bestimmt Konsensregeln aber NICHT autoritär gegen die Nutzer: Niemand wird zum Updaten gezwungen!', 'Alternative saubere Implementierungen (wie btcd in Go oder rust-bitcoin) tragen zusätzlich zur Überprüfbarkeit bei', 'easy'],
-    ['protokoll_krypto', 'BIP (Bitcoin Improvement Proposal)', 'Offener Standardisierungsprozess', 'Formelles Dokument zur Spezifikation neuer technischer Ideen, Standards oder Konsensänderungen für das Bitcoin-Ökosystem (analog zu IETF RFCs)', ['Ein verbindliches US-Bundesgesetz für Kryptosteuern', 'Ein Rabattgutschein für Hardware Wallets', 'Die automatische Erhöhung der Blockbelohnung'], 'Trennt konstruktive Fachdiskussion sauber in Standards-Track- (z. B. BIP-39 Seed, BIP-340 Schnorr) und Informational-Vorschläge', 'Berühmte Nummern: BIP-32 (HD-Wallets), BIP-39 (Seed-Wörter), BIP-141 (SegWit), BIP-174 (PSBT), BIP-340–342 (Taproot)', 'mid'],
-    ['protokoll_krypto', 'Transaction ID (`txid`) vs. `wtxid`', 'Eindeutige Transaktions-Fingerabdrücke', '`txid` ist der Double-SHA256 der klassischen Transaktion OHNE Witness-Daten; `wtxid` hasht die komplette Transaktion INKLUSIVE der SegWit-Signaturen', ['Zwei verschiedene Bankkonten für Dollar und Euro', 'Der Code für Mining vs. Staking', 'Die Uhrzeit in Berlin vs. New York'], 'Verhindert unkontrollierte `txid`-Verfälschung unterwegs, solange alle Signaturen sauber isoliert im `wtxid`-Bereich stecken', 'Deshalb referenzieren alle nachfolgenden UTXOs im Input exakt immer über `(txid, vout-Index)` statt der `wtxid`', 'pro'],
-    ['protokoll_krypto', 'Block-Explorer (z. B. Mempool.space)', 'Transparenz-Werkzeug', 'Web- oder lokal selbst gehostete Visualisierungs-Oberfläche, die jeden jemals bestätigten Block, jede Adresse, Mempool-Warteschlange und Gebühren anzeigt', ['Ein Programm zum Erstellen gefälschter Bitcoins', 'Ein geheimer Backdoor-Zugang für Hacker', 'Eine Börse zum direkten Kaufen mit Kreditkarte'], 'Macht das offene öffentliche Hauptbuch („Public Ledger“) für jedermann binnen Sekunden nachvollziehbar überprüfbar', 'Aus Datenschutzgründen idealerweise selbst im Heimnetz (z. B. Mempool via Umbrel / Start9 / Raspiblitz) betreiben statt fremden Servern die eigenen TXs abzufragen!', 'easy'],
-    ['protokoll_krypto', 'Output Descriptors (Wallet-Deskriptoren)', 'Eindeutige Script-Bauanleitungen', 'Maschinenlesbarer Standard (z. B. `wpkh([fingerprint/84h/0h/0h]xpub.../0/*)`), der exakt beschreibt, wie Adressen und komplexe Skripte aus Schlüsseln gebaut werden', ['Der Klarnamen-Lebenslauf des Kontoinhabers', 'Eine veraltete Backup-Datei von 2010', 'Eine Preis-Grafik im Wallet'], 'Löst das frühere Raten („Welchen Ableitungspfad und Skripttyp nutzte diese alte Wallet nochmal?“) gerade bei Multisig und Miniscript endgültig ab!', 'Heutige moderne Profiwallets wie Sparrow, Bitcoin Core und Liana speichern Konten nativ als Output Descriptors', 'pro'],
-    ['protokoll_krypto', 'Base58Check Encoding', 'Klassisches Adress-Textformat', 'Kodiert binäre Zahlen in 58 gut lesbare ASCII-Zeichen (lässt verwechselbare `0`, `O`, `I`, `l` gezielt aus!) samt 4-Byte-Prüfsumme', ['Eine Speicherkarte mit exakt 58 Gigabyte', 'Der Preis eines Bitcoins im Jahre 2013', 'Ein Verfahren nur für JPEG-Fotos'], 'Vermeidet beim Ablesen und Abschreiben langer Adressen fatale Verwechslungen zwischen Null und großem O oder kleinem L und großem i', 'Bei modernen Bech32-Adressen (`bc1…`) übernahm ein spezielles 32-Zeichen-Alphabet ohne Groß-/Kleinschreibungs-Mix diesen Komfort sogar noch effizienter', 'mid'],
-    ['protokoll_krypto', 'UTXO-Set (Chainstate)', 'Aktiver Münz-Bestand', 'Kompakte Datenbank sämtlicher aktuell noch unausgegebener Transaktionsausgaben (ca. 6–12 GB groß), anhand derer Nodes blitzschnell neue Zahlungen prüfen', ['Die komplette 600+ GB Historie aller alten Blöcke seit 2009', 'Nur die verlorenen Coins von Satoshi', 'Die Tageskurse der letzten fünf Jahre'], 'Nodes müssen beim Validieren einer frischen Zahlung NICHT 600 GB Historie durchsuchen – ein schneller Blick ins handliche UTXO-Set reicht sofort!', 'Unüberlegtes Erzeugen von Millionen kleiner Spam-UTXOs belastet langfristig genau dieses kostbare Arbeitsspeicher-/SSD-Set aller Nodes', 'mid'],
-    ['protokoll_krypto', 'Coin Selection (Münzauswahl in Wallets)', 'Gebühren- & Privatsphäre-Algorithmus', 'Strategie einer Wallet, welche eigenen UTXOs sie für einen gewünschten Zahlbetrag möglichst sparsam und privatsphäreschonend als Inputs auswählt', ['Das zufällige Erraten eines Empfängerbetrags', 'Die Auswahl zwischen Bitcoin und Silber', 'Der Kauf bei der günstigsten Krypto-Börse'], 'Vermeidet überflüssige winzige Wechselgeld-Splitter („Changeless Transaction“ via Branch-and-Bound!) und senkt Folgekosten', 'Die gute Auswahl verhindert außerdem ungewolltes Zusammenführen völlig getrennter UTXOs (z. B. KYC-Börsengeld mit geheimen Spenden!)', 'pro'],
-    ['protokoll_krypto', 'Testnet (Testnet3 / Testnet4) & Signet', 'Entwickler- & Übungsnetzwerke', 'Separate Bitcoin-Testnetzwerke mit wertlosen Test-Coins (`tb1…`), auf denen Wallets, Skripte und Upgrades gefahrlos ohne Echtgeldverlust erprobt werden', ['Kostenlose Bonus-Bitcoins für Neukunden ab 18 Jahren', 'Die geheimen Konten großer Zentralbanken', 'Das Mainnet vor dem Jahr 2015'], 'Insbesondere „Signet“ (BIP-325) liefert Entwicklern dank zentral signierter Takte einen stabilen, vorhersehbaren 10-Minuten-Takt ohne Testnet-Spamstürme', 'Testnet-Coins haben null realen Geldwert – wer jemandem „Testnet-BTC“ für echte Euro andreht, begeht Betrug!', 'easy'],
-    ['protokoll_krypto', 'Covenants (z. B. OP_CTV / OP_CAT)', 'Aktuelle Protokoll-Forschung', 'Diskutierte Skript-Erweiterungen, die einem UTXO künftig vorschreiben dürfen, WOHIN oder nach welchem Ausgabemuster (Vaults, Ark, Channel Factories) er später fließen darf', ['Bereits seit 2009 vorgeschriebene US-Steuern', 'Zentrale Konto-Sperren durch die UNO', 'Ein alter Name für Hardware Wallets'], 'Könnten etwa unknackbare „Bitcoin Vaults“ ermöglichen (Dieb berührt Key → Geld verzögert sich 2 Wochen und lässt sich auf Notfall-Cold-Key umleiten!)', 'Wie üblich bei Bitcoin wird über potenzielle Risiken (wie Zensur-Missbrauch) extrem vorsichtig und oft jahrelang gerungen', 'pro'],
-    ['protokoll_krypto', 'Timechain', 'Alternativer Protokoll-Begriff', 'Früher von Satoshi selbst in Ur-Entwürfen geprägter (und heute wieder populärer) Begriff für die Bitcoin-Blockchain als deterministische kryptografische Uhr ohne zentrale Zeitserver', ['Eine Luxus-Armbanduhren-Marke in Zürich', 'Ein monatliches Abo für Krypto-News', 'Die Verzögerung von Überweisungen im Wochenende'], 'Bringt präzise auf den Punkt, dass Bitcoin in seinem Kern eine manipulationssichere zeitliche Abfolge („Wer zahlte zuerst?“) durch Energiebeweis ordnet', 'Alle rund 10 Minuten schlägt das globale Herz der Timechain um genau einen Block weiter voran', 'easy'],
-
-    // === 2) MINING, PROOF-OF-WORK & GELDPOLITIK (40 Einträge → 200 Fragen) ===
-    ['mining_konsens', '21-Millionen-Obergrenze (Hard Cap)', 'Monetäre Kernregel', 'Mathematische Fixierung der absolut maximal existierenden Menge auf knapp 21.000.000 BTC durch geometrische Halbierungsreihe der Block-Subventionen', ['Eine lockere Empfehlung, die per Mehrheitsbeschluss jährlich steigt', 'Das tägliche globale Handelsvolumen an Börsen', 'Die maximale Anzahl erlaubter Wallet-Nutzer'], 'Macht Bitcoin zum ersten absoluten digitalen Knappheitsgut („Absolute Scarcity“), das gegen beliebige politische Geldschöpfung immun ist', 'Genauer summiert sich `∑ (210.000 × floor(50×10^8 / 2^k))` exakt auf rund `20.999.999,9769 BTC`, sobald jede Subvention auf 0 Satoshis fällt', 'easy'],
-    ['mining_konsens', 'Halving (Halbierung)', 'Disinflationärer Ausgabeplan', 'Protokollereignis exakt alle 210.000 Blöcke (~4 Jahre), das die neu generierten Bitcoins pro gefundenem Block um exakt 50 % kürzt', ['Halbierung der aktuellen Kontostände aller Anleger', 'Halbierung der Mining-Gebühren beim Überweisen', 'Verlängerung der Blockzeit von 10 auf 20 Minuten'], 'Reduziert die jährliche Angebotsinflation verlässlich planbar Schritt für Schritt unter die von Gold und gegen null', 'Bisherige Termine: Nov 2012 (25 BTC), Jul 2016 (12,5 BTC), Mai 2020 (6,25 BTC) und 20. April 2024 (3,125 BTC bei Block 840.000)', 'easy'],
-    ['mining_konsens', 'Difficulty Adjustment (Schwierigkeitsanpassung)', 'Automatische Takt-Stabilisierung', 'Alle 2.016 Blöcke (~2 Wochen) passt jeder Full Node das Ziel-Target an, sodass die Blockfindung trotz weltweiter Hardware-Schwankung stabil bei ~10 Minuten bleibt', ['Ein manueller Eingriff durch den Bitcoin-Erfinder per Update', 'Eine Anpassung des Euro-Preises bei großen Börsen', 'Ein monatlicher Zinssatz für Kredite'], 'Schützt die Geldpolitik gegen Hyper-Beschleunigung durch bessere Chips sowie gegen Stillstand bei plötzlichem Hashrate-Einbruch', 'Rechnung: `Neue Difficulty = Alte Difficulty × (20.160 Min / tatsächliche Minuten für die letzten 2.016 Blöcke)` (gekappt auf Faktor 4)', 'mid'],
-    ['mining_konsens', 'Hashrate (EH/s / ZH/s)', 'Rechenleistungs-Metrik', 'Geschätzte Anzahl aller pro Sekunde weltweit berechneten Double-SHA256-Versuche durch sämtliche Bitcoin-Miner zusammen', ['Die Geschwindigkeit der persönlichen Internetleitung', 'Die Anzahl der offenen Browser-Tabs auf Mempool.space', 'Der aktuelle Bitcoin-Preis in Euro'], 'Dient als direktes Maß für das physisch-energetische Schutzschild (Sicherheitsbudget), das jeden vergangenheitsändernden Angriff absurd teuer macht', 'Im Zeitraum 2024–2026 überschritt das Bitcoin-Netzwerk bereits Bereiche von ~600 bis über 800 Exahashes pro Sekunde (`10^18` H/s) – also fast ein Zettahash!', 'easy'],
-    ['mining_konsens', 'Target & nBits', 'Proof-of-Work-Zielwert', 'Ein riesiger 256-Bit-Schwellenwert (kompakt im 4-Byte-Feld `nBits` im Header codiert): Ein gültiger Block-Header-Hash muss numerisch KLEINER sein als dieses Target', ['Die Ziel-IP-Adresse beim Versenden von Geldern', 'Der angestrebte Zielkurs von Investmentbanken', 'Die maximale Zahl erlaubter Transaktionen im Jahr'], 'Je kleiner das Ziel-Target wird (höhere Difficulty), desto mehr führende Nullen benötigt der Hash – und desto schwerer ist ein Glückstreffer', 'Das Target prüft jeder einzelne normale Full Node binnen einer Mikrosekunde absolut leicht nach („Asymmetrie: schwer zu finden, kinderleicht zu prüfen“)', 'pro'],
-    ['mining_konsens', 'Nonce & ExtraNonce', 'Mining-Suchraum-Variablen', '32-Bit-Zähler im Block-Header (Nonce: ~4,29 Mrd. Werte) plus variables Datenfeld in der Coinbase-TX (ExtraNonce) zum blitzschnellen Durchprobieren Billionen verschiedener Header-Kombinationen', ['Der Vor- und Nachname des Block-Finders', 'Zwei geheime Schlüssel zum Entsperren fremder Coins', 'Die Nummer des verwendeten Stromzählers'], 'Sobald alle 4,29 Mrd. Nonce-Werte eines Headers in Millisekunden durchprobiert sind, inkrementiert der ASIC einfach das ExtraNonce und rotiert weiter', 'Moderne Stratum-Chips variieren obendrein gezielt Bits im Block-Version-Feld („AsicBoost / Version Rolling“) für noch effizienteren Durchsatz', 'pro'],
-    ['mining_konsens', 'ASIC (Application-Specific Integrated Circuit)', 'Spezialisierte Mining-Hardware', 'Ausschließlich auf Double-SHA256-Hashing optimierter Silizium-Chip, der gewöhnliche CPUs und Grafikkarten um das Millionen- bis Milliardenfache in Effizienz je Watt schlägt', ['Eine allgemeine Software zur Steuererklärung', 'Ein Standard-Smartphone-Prozessor für Games', 'Eine sichere Aufbewahrungs-USB-Box'], 'Erzeugt im Mining knallharten Wettbewerb um Effizienz (Joule pro Terahash, J/TH) und zwingt Miner zu billigster Überschussenergie', 'Bekannte Flaggschiff-Serien (z. B. Bitmain Antminer S21 / WhatsMiner M60) bewegen sich bei ~15–18,5 J/TH – 2013 lagen frühe ASICs noch über 10.000 J/TH!', 'mid'],
-    ['mining_konsens', 'Nakamoto-Konsens (Accumulated Chainwork)', 'Konsensregel bei Kettenspaltungen', 'Bei gleichzeitig entstandenen konkurrierenden Kettenästen folgen ehrliche Nodes immer der gültigen Kette mit der meisten kumulierten Proof-of-Work-Arbeit', ['Es gewinnt die Kette mit den meisten Twitter-Followern', 'Es gewinnt immer der Block mit dem ältesten Datum', 'Die UNO bestimmt monatlich die richtige Kette'], 'Ersetzt jegliche subjektive Identitäts-Abstimmung („Wer bist du?“) durch objektiv messbare physikalisch verbrauchte Rechenarbeit!', 'Daher lässt sich eine längere (arbeitsreichere) gültige Kette weltweit auch komplett ohne bekannte Absender oder Ausweise jederzeit eindeutig erkennen', 'mid'],
-    ['mining_konsens', '51-%-Attacke (Mehrheitsangriff)', 'Theoretisches Sicherheits-Szenario', 'Kontrolle über mehr als die Hälfte der globalen Mining-Rechenleistung, was kurzfristig Reorgs eigener kürzlicher Transaktionen (Double Spend) oder Zensur neuer Blöcke erlauben würde', ['Komplettes Ausrauben aller existierenden Cold Wallets weltweit', 'Beliebiges Erhöhen des 21-Mio.-Caps auf 50 Mio. BTC', 'Sofortiges Löschen der gesamten historischen Blockchain'], 'Selbst ein 51-%-Angreifer kann KEINE fremde Signatur fälschen und KEINE Konsensregel (wie 21 Mio.) brechen – ehrliche Full Nodes würden solche Blöcke schlicht ignorieren!', 'Bei global ~700+ EH/s wäre der Aufbau von 51 % Hardware + Energie gigantisch teuer und entwertete durch Vertrauensverlust gleichzeitig die eigenen Maschinen', 'mid'],
-    ['mining_konsens', 'Block Subsidy (Block-Subvention)', 'Primär-Emission neuer Coins', 'Der gesetzte Betrag brandneuer Bitcoins pro Block (aktuell seit April 2024 exakt 3,125 BTC), der durch das Halving alle 210.000 Blöcke sinkt', ['Staatliche Förderung für neue Rechenzentren', 'Zinsen auf fest angelegte Bitcoin-Konten', 'Eine Gebühr für das Herunterladen einer Wallet-App'], 'Verteilt neue Münzen rein wettbewerblich ohne privilegierte Vorab-Zuteilung („No Pre-Mine, Fair Launch“)', 'Nach dem 5. Halving (~2028, Block 1.050.000) halbiert sich diese Subvention weiter auf exakt 1,5625 BTC pro Block', 'easy'],
-    ['mining_konsens', 'Transaktionsgebühren (Fee Market)', 'Zweiter Teil des Sicherheitsbudgets', 'Die Differenz zwischen Summe aller Inputs und Summe aller Outputs einer Transaktion, die freiwillig dem Block-Finder als Prioritäts-Anreiz zufällt', ['Eine feste Mehrwertsteuer an das lokale Finanzamt', 'Eine Provision für den Smartphone-Hersteller', 'Ein Verlustbetrag durch Datenfehler im Internet'], 'Übernimmt im Langfristdesign nach den Halvings zunehmend die Finanzierung der globalen Mining-Sicherheit', 'Wird im Header der Transaktion gar nicht als eigenes „Fee-Feld“ geschrieben, sondern ergibt sich implizit aus `(Summe Inputs − Summe Outputs)`!', 'easy'],
-    ['mining_konsens', 'Coinbase Maturity (100-Block-Regel)', 'Reifezeit geschürfter Coins', 'Protokollregel, nach der frisch geschürfte Coins aus einer Coinbase-TX erst nach 100 nachfolgenden Blöcken (~16–17 Stunden) erstmals ausgegeben werden dürfen', ['Ein Mindestalter von 100 Tagen für neue Börsenkonten', 'Ein Verbot von Mining durch unter 18-Jährige', 'Ein Rabatt nach 100 ausgeführten Überweisungen'], 'Verhindert Chaos in der Blockchain-Buchhaltung, falls ein junger Block bei einem kurzfristigen Reorg wieder zum Stale Block wird', 'Falls ein Stale Block entfällt, verschwinden damit auch niemals bereits weiterüberwiesene Folge-Zahlungen Unbeteiligter!', 'pro'],
-    ['mining_konsens', 'AsicBoost (Covert vs. Overt Version Rolling)', 'Chip- & Protokoll-Optimierung', 'Mathematische Abkürzung beim Berechnen des Double-SHA256 im Block-Header, die bei mehreren Kandidaten Zwischenergebnisse wiederverwendet (~15–20 % Stromersparnis)', ['Ein verbotener Virus auf Mining-Laptops', 'Ein neues Krypto-Börsen-Konto für Profis', 'Eine Übertaktung durch Flüssigstickstoff'], 'Während verdecktes („Covert“) AsicBoost einst geheime Umwege brauchte und SegWit behinderte, läuft offenes („Overt“) Version Rolling heute sauber und standardisiert auf allen ASICs', 'Nutzt erlaubte reservierte Bits im 4-Byte-Block-Versionsfeld, ohne irgendwie das Transaktionsverhalten zu stören', 'pro'],
-    ['mining_konsens', 'Stratum v2 Protocol', 'Dezentrales Pool-Protokoll', 'Modernes, verschlüsseltes Kommunikationsprotokoll zwischen einzelnen Minern und Pools mit optionaler eigener Transaktionsauswahl beim Miner („Job Negotiation“)', ['Ein altes Internet-Protokoll von 1990 für Drucker', 'Eine neue Mining-Steuer in den USA', 'Ein Name für den zweiten Satoshi-Account'], 'Schützt gegen Man-in-the-Middle-Hashrate-Diebstahl und bricht das einstige Block-Zensur-Monopol großer zentraler Poolbetreiber auf', 'Dank binärer Kodierung spart Stratum v2 zugleich rund die Hälfte bis zwei Drittel Bandbreite gegenüber altem JSON-basiertem Stratum v1', 'pro'],
-    ['mining_konsens', 'Mining-Pool (FPPS vs. PPLNS)', 'Ertragsglättung für Miner', 'Zusammenschluss zahlloser Miner, um statt jahrelangen Wartens auf einen seltenen Solo-Glücksblock verlässlich tägliche Teilanteile auszuschütten', ['Ein gemeinsames Schwimmbad in Mining-Rechenzentren', 'Ein Zusammenschluss von Banken zum Preisdrücken', 'Eine kostenlose App zum Verdoppeln von Guthaben'], 'Ermöglicht selbst Betreibern mit nur 1 oder 10 ASICs stetige Einnahmen zur monatlichen Stromkostenrechnung', 'Ein Solo-Heimminer („Bitaxe“) auf eigene Faust findet bei aktuellem Niveau eher wie ein Lottogewinn einen ganzen 3,125-BTC-Block (~1 von zig Millionen pro 10 Min)', 'easy'],
-    ['mining_konsens', 'Demand Response & Netzstabilisierung', 'Energiewirtschaftliche Rolle', 'Sekundenschnelles Ab- oder Zuschalten großer Mining-Lasten auf Preissignale oder Netzfrequenz-Warnungen hin (z. B. in Texas / ERCOT)', ['Das Zwingen von Haushalten zu mehr Bitcoin-Handel', 'Ein Verbot von Windkraftanlagen neben Rechenzentren', 'Das Dauerlaufen unabhängig von Stromausfällen'], 'Macht bisher unwirtschaftliche erneuerbare Wind-/Solarparks oft überhaupt erst rentabel, indem deren sonst abgeregelte Überproduktion sinnvoll abgenommen wird', 'Bei Kälte- oder Hitze-Spitzenlast schalten Miner ihr Netz innerhalb von Sekunden frei für Kliniken und Privathaushalte – schneller als jedes Gaskraftwerk!', 'mid'],
-    ['mining_konsens', 'Flare Gas Mitigation (Abfackelgas-Mining)', 'Ökologische Methan-Nutzung', 'Aufstellung mobiler Mining-Container direkt auf abgelegenen Ölfeldern zur Verbrennung sonst ungenutzten Methans/Begleitgases in Strom für ASICs', ['Verwendung von Bitcoin zur Finanzierung von Feuerwerken', 'Lagerung von Gasflaschen in privaten Wohnzimmern', 'Ersetzung von Solardächern durch Kohleöfen'], 'Wandelt extrem klimaschädliches unverbranntes Methan (über ~28×–80× stärker als CO2!) sauberer in Strom + Wertschöpfung um, wo Pipelines sich nicht lohnen', 'Senkt so teils real die Methan-Emissionen pro Bohrloch, selbst wenn man reine Emissionen kritisch einpreist', 'mid'],
-    ['mining_konsens', 'Abwärmenutzung (District Heating / Gewächshäuser)', 'Thermische Zweitverwertung', 'Nutzung der unvermeidlich entstehenden ~100 % elektrischen Abwärme von ASICs direkt für Fernwärmenetze, Gewächshäuser, Schwimmbäder oder Holztrocknung', ['Erhitzen von ASICs auf 500 °C zur Stromgewinnung', 'Wegwerfen aller alten Miner ins Meer', 'Ein reiner Kühlprozess mit Trockeneis'], 'Weil ohnehin jede elektrische Heizung fast 100 % in Wärme wandelt, liefert ein gekoppelter Miner Wärme PLUS gleichzeitig neue Bitcoins (Subvention der Heizkosten!)', 'Gerade moderne flüssigkeitsgekühlte („Hydro / Immersion“) ASICs liefern angenehme 55–65 °C Vorlauftemperatur direkt für Wärmetauscher', 'easy'],
-    ['mining_konsens', 'Solo Mining (z. B. CKPool / Bitaxe)', 'Unabhängiges Schürfen ohne Pool-Teilung', 'Betrieb eigener Hardware auf ein eigenes Block-Template, bei dem nur im äußerst seltenen Erfolgsfall die komplette volle ~3,125 BTC Belohnung an die eigene Adresse geht', ['Mining, bei dem garantiert jeden Tag 1 Bitcoin herausspringt', 'Mining auf einem ausgeschalteten Handy', 'Ein Abo bei großen Börsen für monatliche Zinsen'], 'Dient bei Hobby-Tischgeräten (~1 TH/s) heute eher der Dezentralitäts-Förderung, Technikbildung und dem „Bitcoin-Lottoschein“-Spaß', 'Einzelne winzige Heim-Miner landen tatsächlich immer wieder überraschende historische Glückstreffer!', 'easy'],
-    ['mining_konsens', 'Stale Block vs. Orphan Block', 'Begriffsgenauigkeit bei Kettenspaltungen', 'Stale Block = gültiger Block mit bekanntem Elternteil, der das Fork-Rennen knapp verliert; Orphan Block = Block, dessen Vorgänger-Parent einer Node aktuell komplett fehlt', ['Zwei verschiedene Namen für kaputte ASICs', 'Ein Block, der über 100 MB groß ist', 'Ein leerer Block ab Jahr 2140'], 'Im Volksmund werden auch Stale Blocks oft fälschlich „Orphans“ genannt – echte Orphans existieren seit Bitcoin Cores Headers-First-Sync (v0.10) kaum noch', 'Kompakte Block-Relays und Hochgeschwindigkeits-Backbones drücken Stale-Raten heute weit unter ein Prozent', 'pro'],
-    ['mining_konsens', 'Byzantinisches-Generäle-Problem', 'Fundamentales Informatik-Problem', 'Klassische Frage der Verteilten Systeme: Wie einigen sich räumlich getrennte Teilnehmer über ein unzuverlässiges Netz auf eine gemeinsame Wahrheit, obwohl Betrüger falsche Infos streuen?', ['Wie die Stadt Byzanz damals ihre Steuern einzog', 'Wie man drei E-Mails ohne Betreff gleichzeitig druckt', 'Ein Schachrätsel aus dem 18. Jahrhundert'], 'Satoshi verknüpfte digitale Signaturen mit thermischer Proof-of-Work-Arbeit zu einer genialen probabilistischen Lösung für offene anonyme Netze', 'Vor 2008 kannten Informatiker nur Lösungen in geschlossenen Netzen mit fest registrierten, bekannten Teilnehmern („Permissioned BFT“)', 'mid'],
-    ['mining_konsens', 'Selfish Mining (Theoretische Spieltheorie)', 'Akademische Angriffshypothese', 'Strategie, bei der ein sehr großer Pool (> ~25–33 %) gefundene Blöcke kurz heimlich zurückhält und erst geschickt enthüllt, um ehrliche Konkurrenz zu Stale Blocks zu zwingen', ['Ein Miner, der sämtlichen Strom selbst klaut', 'Das private Horten von Coins ohne jemals auszugeben', 'Mining ausschließlich an Feiertagen'], 'Wichtige theoretische Grenze für das Design von Mining-Protokollen – im realen Wettbewerb jedoch riskant wegen unmittelbarem Reputations-/Kursverfall und eigenem Stale-Risiko', 'Ein hoher Grad an geographischer und Pool-Dezentralisierung entzieht diesem Angriff weitgehend den Boden', 'pro'],
-    ['mining_konsens', 'Genesis Block (Block 0)', 'Geburtsstunde der Blockchain', 'Allererster Block der Bitcoin-Blockchain, geschürft am 3. Januar 2009 von Satoshi mit hartkodiertem `prevHash = 0` und 50 un-ausgebbaren BTC', ['Ein Block voller Test-Bilder im PNG-Format', 'Der allerletzte Block im Jahr 2140', 'Ein Block, den erst Vitalik Buterin 2015 schrieb'], 'Dessen einzigartige 50 BTC sind aufgrund eines kuriosen Verhaltens bei Block 0 gar nicht in die spätere UTXO-Datenbank aufgenommen und für ewig un-ausgebbar!', 'Der Zeitstempel von Block 0 und Block 1 liegt übrigens ganze 6 Tage auseinander (03.01. bis 09.01.2009)', 'easy'],
-    ['mining_konsens', 'Genesis-Block-Rätsel (6-Tage-Lücke)', 'Historisches Kuriosum', 'Auffällige Pause von knapp sechs Tagen zwischen Schürfen von Block 0 (3. Jan 2009) und Block 1 (9. Jan 2009)', ['Das Internet fiel damals weltweit für eine Woche komplett aus', 'Satoshi vergaß sein Passwort und knackte es in 6 Tagen', 'Die US-Regierung sperrte den Quellcode'], 'Vermutlich hatte Satoshi Block 0 im Vorfeld oder am 03.01. lokal erzeugt, während der öffentliche Release der Bitcoin v0.1 Software erst am 8./9. Januar erfolgte!', 'Bis heute strömen zudem tausende nostalgische Spenden-Satoshis freiwillig an die berühmte Genesis-Adresse `1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa`', 'pro'],
-    ['mining_konsens', 'Proof-of-Work vs. Proof-of-Stake', 'Konsens-Architekturen im Vergleich', 'PoW verankert Konsens in objektiver externer physikalischer Energie/Hardware; PoS vergibt Blockrechte intern nach bereits gehaltenem Token-Kapital', ['Beide funktionieren mathematisch absolut identisch', 'PoW benötigt nur ein Smartphone; PoS tausende Kraftwerke', 'PoS entstand bereits 1995 vor dem Internet'], 'PoW verhindert das „Nothing-at-Stake“- und „Rich-get-Richer without cost“-Problem, weil jeder neue Akteur reale Energiekosten am Weltmarkt erbringen muss', 'Auch ein Neuling ohne Erlaubnis („Permissionless“) kann über bloßen Stromzugang neuer Blöcke ohne bestehende Alt-Eigentümer mitvalidieren', 'easy'],
-    ['mining_konsens', 'Coin-Emission & Monetäre Disinflation', 'Geldmengenverlauf', 'Die gesamte neue BTC-Zufuhr ist nach unten gedeckelt und sinkt alle 4 Jahre um jeweils die Hälfte – im scharfen Kontrast zu unbegrenzter Fiat-Ausweitung', ['Ständige Deflation bedeutet automatischen monatlichen Münzen-Abzug im Wallet', 'Die jährliche Neuproduktion wächst exponentiell um +10 %', 'Münzen werden jedes Jahr nach einem Zufallsprinzip gelöscht'], 'Aktuell liegt die jährliche Bitcoin-Ausgaberate seit April 2024 (~450 BTC/Tag × 365 = ~164.250 BTC/Jahr) bei nur noch ~0,83 %!', 'Ab dem nächsten Halving ~2028 sinkt die jährliche Inflation weiter auf ~0,4 % p. a.', 'mid'],
-    ['mining_konsens', 'Mining-Difficulty-Epoch (2.016 Blöcke)', 'Zeitfenster der Neu-Justierung', 'Festgelegter Abschnitt exakt aller 2.016 Blöcke (Blockhöhen 0, 2016, 4032, …), nach dem jede Full Node den nächsten Ziel-Schwellenwert neu ermittelt', ['Ein tägliches Wartungsfenster von 15 Minuten', 'Eine monatliche Konferenz aller Pool-Chefs', 'Exakt 100 Blöcke nach jedem Halving'], 'Durch einen berühmt-historischen Off-by-One-Bug von Satoshi fließt in die Zeitdifferenz tatsächlich nur die Dauer von 2.015 Intervallen statt 2.016 mit ein!', 'Dieser winzige 0,05-%-Fehler bleibt wegen der Rückwärtskompatibilität für immer fest im Konsens erhalten', 'pro'],
-    ['mining_konsens', 'Immersion Cooling (Flüssigkühlung für ASICs)', 'Industrielle Hardware-Kühlung', 'Vollständiges Eintauchen blanker ASIC-Platinen in elektrisch nicht-leitendes Spezialöl bzw. dielektrische Flüssigkeit zur extrem leisen, effizienten Wärmeabfuhr', ['Kühlen von Laptops mit gewöhnlichem Leitungswasser', 'Aufstellen der Hardware im offenen Regen', 'Einfrieren der Festplatte im Tiefkühlfach'], 'Eliminiert laute 80-dB-Hochleistungslüfter komplett, verringert Staubeintrag, erlaubt mildes Übertakten und leitet Wärme sauber in Heizkreisläufe', 'Wird immer häufiger bei großen Heizanlagen oder lärmsensiblen urbanen/industriellen Standorten eingesetzt', 'mid'],
-    ['mining_konsens', 'Unelastisches Angebot („Perfectly Inelastic Supply“)', 'Ökonomische Angebots-Eigenschaft', 'Eigenschaft, dass unabhängig von extremen Preisexplosionen (etwa ×10 in einem Bullrun) keine einzige zusätzliche Bitcoin-Einheit über 144 Blöcke/Tag hinaus geschürft wird', ['Der Preis eines Bitcoins ist gesetzlich für alle Zeiten eingefroren', 'Man kann Bitcoins nur in 1-BTC-Stücken kaufen', 'Mining verbraucht bei steigendem Kurs immer weniger Strom'], 'Unterscheidet Bitcoin radikal von Gold, Öl oder Immobilien, wo hohe Preise rasch neue Minen, Fracking oder Neubauten ankurbeln und Preise wieder dämpfen', 'Deshalb trägt bei Bitcoin im Boom allein die Preisfindung den plötzlichen Nachfrageschub!', 'mid'],
-    ['mining_konsens', 'Hashprice & Miner Capitulation', 'Wirtschaftszyklus der Miner', 'Kennzahl für tägliche Umsatzerwartung pro Terahash (BTC oder USD / TH / Tag) und erzwungener Ausstieg unrentabler Alt-Hardware bei fallenden Margen', ['Ein Strafzoll für internationale Miner-Lieferungen', 'Die Gebühr für ein BitcoinTalk-Konto', 'Ein monatlicher Rabatt beim Stromversorger'], 'Reinigender Wettbewerbsprozess: Fällt die Hashrate nach schwacher Phase leicht ab, greift bald die Difficulty-Senkung und entlastet effiziente Überlebende', 'Gerade kurz nach Halvings wirkt diese natürliche Marktauslese als starker Innovationsdruck auf effizientere Chips und billigere Abwärme-/Überschussenergie', 'mid'],
-    ['mining_konsens', 'Block-Time-Poisson-Verteilung', 'Mathematische Zufälligkeit der Blockfindung', 'Obwohl der Mittelwert bei 10 Minuten liegt, folgen einzelne Block-Abstände einer gedächtnislosen Exponentialverteilung (mal 10 Sekunden, selten über 60 Minuten)', ['Jeder Block fällt exakt atomuhr-genau bei Sekunde 600,00', 'Am Wochenende erscheinen keine Blöcke', 'Blöcke entstehen immer nur zu vollen Stunden'], 'Da jeder einzelne Hash-Versuch ein unabhängiger Münzwurf bleibt, ist die Wahrscheinlichkeit für einen Fund in der nächsten Sekunde immer exakt gleich hoch – egal ob seit dem letzten Block 1 Minute oder 45 Minuten vergingen!', 'Rein statistisch erscheinen über zwei Drittel der Blöcke innerhalb von unter 10 Minuten, während rund 0,25 % über eine ganze Stunde dauern', 'pro'],
-    ['mining_konsens', 'Timewarp-Attacke', 'Historisch bekannte theoretische Konsens-Lücke', 'Subtiler potenzieller Missbrauch durch manipulierte Block-Zeitstempel nahe der 2.016-Blöcke-Epochengrenze (durch die 2.015-Intervall-Lücke), um die Difficulty künstlich gegen null zu drücken', ['Das Zurückreisen eines Bitcoin-Preises ins Jahr 2010', 'Eine Zeitumstellung von Sommer- auf Winterzeit im Wallet', 'Eine Uhrzeitsynchronisation auf Smartphones'], 'Bräuchte in der Praxis eine feindliche Mining-Mehrheit; das bekannte Update-Konzept „Consensus Cleanup“ schlägt vor, auch dieses Restrisiko sauber per Soft Fork ganz zu schließen', 'Zeigt eindrucksvoll, mit welcher äußersten Tiefenschärfe selbst kleinste Ur-Randfälle des Protokolls studiert werden', 'pro'],
-    ['mining_konsens', 'Thermodynamic Wall (Physischer Fälschungsschutz)', 'Sicherheit durch reale Energie', 'Grundsatz, dass niemand 10 Minuten oder 10 Jahre echte Hasharbeit kostenlos im Software-Emulator „herbeifantasiert“ ohne real messbaren Strom- und Chipaufwand', ['Die Hitzegrenze in Rechenzentren bei 30 °C', 'Eine Mauer um europäische Mining-Hallen', 'Die Abschaltung des Netzes im Winter'], 'Verankert die rein digitale Währung fest in der unverhandelbaren Physik des Universums statt in politischen Versprechen', '„Energy cannot be forged“ – jedes einzelne Validitätszeichen eines gültigen Headers bezeugt unbestechliche reale Kosten', 'mid'],
-    ['mining_konsens', 'Lost Coins (Dauerhaft verlorene Bitcoins)', 'Effektive Angebotsverknappung', 'Geschätzte 3 bis 4 Millionen frühe oder durch zerstörte Keys unzugängliche BTC (u. a. Satoshis ca. 1 Mio. gemutmaßte Coins), die mathematisch wohl nie mehr bewegt werden', ['Coins, die nach fünf Jahren Nichtbenutzung vom Staat eingezogen werden', 'Coins, die durch Softwarefehler langsam verblassen', 'Coins, die im Urlaubsland gestohlen wurden'], 'Satoshi bemerkte dazu legendär: „Lost coins only make everyone else’s coins worth slightly more. Think of it as a donation to everyone.“', 'Vorsicht vor Mythen: Niemand kann auf der Blockchain optisch sicher unterscheiden, ob eine alte Adresse aus 2010 verloren ging oder ein extrem geduldiger Besitzer schlicht noch hodlt!', 'easy'],
-    ['mining_konsens', 'Halving-Schaltplan (33 Epochen bis 0 Satoshis)', 'Mathematischer Emissions-Ausklang', 'Durch Rechts-Shift (`>>= 1`) ganzzahliger Satoshis fällt die Block-Subvention nach 32 Halbierungen in Epoche 33 (ab Block 6.930.000) endgültig von 1 Satoshi auf exakt 0', ['Nach 10 Halbierungen startet die Belohnung automatisch wieder bei 50 BTC', 'Jede einzelne Epoche dauert genau 10 Jahre', 'Die Gebühren werden danach per Gesetz gestrichen'], 'Bis zum Erreichen von Block 6.930.000 um ca. 2140 bleibt das Ausgabeprogramm restlos mathematisch vorhersehbar', 'Ab Epoche 33 stammen sämtliche Block-Erträge von Minern zu 100 % aus frei bezahlten Transaktionsgebühren (Fee Market)', 'pro'],
-    ['mining_konsens', 'Share (bei Mining-Pools)', 'Teil-Arbeitsnachweis', 'Ein Hash-Treffer eines einzelnen Pool-Miners, der eine leichtere Pool-Schwierigkeit knackt (ohne das volle Bitcoin-Netzwerk-Target zu schaffen) als statistischer Arbeitsbeweis', ['Eine Aktie eines börsennotierten Mining-Konzerns', 'Ein öffentlicher Post über Gewinne auf Social Media', 'Ein geteilter Private Key für zwei Personen'], 'Erlaubt es Mining-Pools sekundengenau und unbestechlich abzurechnen, wer wie viel reale Rechenleistung eingebracht hat', 'Ein bloßer Share ist nur für den Pool gültig – erst wenn ein Share zufällig auch unter das gigantisch strengere echte Bitcoin-Target fällt, entsteht ein neuer Block für alle!', 'mid'],
-    ['mining_konsens', 'Empty-Block-Mining / Spy Mining', 'Spezielle Pool-Geschwindigkeits-Technik', 'Während ein Pool einen brandneuen Block seines Konkurrenten noch herunterlädt und verifiziert, schürft er sicherheitshalber wenige Sekunden auf den neuen Header ohne alte Mempool-TXs', ['Das Ausspionieren privater Nutzerkonten durch Geheimdienste', 'Das heimliche Stehlen von Seed Phrases beim Wallet-Kauf', 'Mining ohne Stromanschluss'], 'Verhindert versehentliches Einbinden einer im soeben geschürften Nachbarblock schon bestätigten TX (was den neuen Block komplett ungültig machen würde!)', 'Deshalb beobachtet man leere 1-TX-Blöcke fast nur bei zwei Blöcken, die innerhalb weniger 1–15 Sekunden hintereinander auftreten', 'pro'],
-    ['mining_konsens', 'Hashrate-Dezentralisierung & Zensurresistenz', 'Widerstandsfähigkeit des Block-Erstellens', 'Streuung der Mining-Hardware über möglichst viele souveräne Jurisdiktionen, Strommärkte und Pools, sodass kein einzelner Staat Zahlungen dauerhaft aus Blöcken aussperren kann', ['Das Verlegen sämtlicher ASICs in ein einziges Rechenzentrum', 'Das Abschalten privater Full Nodes', 'Ein zentrales Passwort der Europäischen Zentralbank'], 'Selbst wenn 70 % aller Miner zensieren würden, brächte ein einziger freier Miner mit 30 % der Hashrate jede blockierte gültige TX durchschnittlich innerhalb von ~33 Minuten trotzdem zuverlässig in die Chain!', 'Stratum v2 verschärft diese Zensurresistenz noch einmal deutlich zugunsten zehntausender individueller Einzel-Hardware-Betreiber', 'mid'],
-    ['mining_konsens', 'Bitmain / WhatsMiner / Canaan / Bitaxe', 'Wichtige Hardware-Akteure', 'Führende Hersteller industrieller SHA-256-ASICs sowie (mit dem Open-Source-Bitaxe) der neuen Heim- & Bildungs-Open-Source-Mining-Welle', ['Die vier größten Bitcoin-Börsen Europas', 'Entwickler-Teams bekannter Smartphone-Wallets', 'Hersteller physischer Goldmünzen'], 'Open-Source-Hardware-Initiativen wie Bitaxe (auf Basis einzelner moderner ASIC-Chips) knacken das jahrelange Black-Box-Monopol geschlossener Chip-Firmware auf', 'Tischgeräte mit 0,5 bis 5 TH/s brauchen nur 15–80 Watt, laufen flüsterleise und machen den PoW-Prozess daheim greifbar erlebbar', 'easy'],
-    ['mining_konsens', 'Public Ledger Auditability (Transparente Bilanz)', 'Vollständige Mengen-Nachprüfbarkeit', 'Jeder einzelne User auf einem einfachen Heim-PC kann mittels `gettxoutsetinfo` in Bitcoin Core auf den letzten Satoshi exakt überprüfen, wie viele Coins heute existieren', ['Die monatliche Steuerprüfung durch ein Wirtschaftsprüfungsbüro', 'Das Veröffentlichen aller Klarnamen im Internet', 'Das Verschlüsseln sämtlicher Summen auf ewig'], 'Im Gegensatz zu undurchsichtigen Zentralbankbilanzen oder Goldreserven erfordert Bitcoins Gesamtmenge niemals Blindvertrauen in einen Prüfer', 'Dieses offene Audit-Versprechen unterscheidet Bitcoin klar von vielen intransparenten Protokollen mit geheimer Verschleierung von Angebots-Bugs', 'easy'],
-
-    // === 3) LAYER-2, LIGHTNING NETWORK & WALLETS (40 Einträge → 200 Fragen) ===
-    ['layer2_skalierung', 'Payment Channel (2-of-2-Multisig-Kanal)', 'Lightning-Grundbaustein', 'Eine auf der Blockchain geöffnete gemeinsame 2-of-2-Multisig-Adresse zweier Partner, in der sie beliebig viele signierte Saldo-Updates offline austauschen', ['Ein Video-Streaming-Kanal auf YouTube', 'Ein kostenloses Kreditkartenkonto einer Großbank', 'Ein öffentlicher Chatroom im Darknet'], 'Ermöglicht tausende blitzschnelle Hin-und-Her-Zahlungen bei nur einer Öffnungs- und Schließ-Transaktion auf der Haupt-Blockchain', 'Erst beim Schließen oder im Streitfall wird der aktuellste gegenseitig signierte Commitment-Stand auf Layer 1 geschrieben', 'easy'],
-    ['layer2_skalierung', 'Commitment Transaction', 'Lightning-Kanal-Zustandsvertrag', 'Speziell signierte Off-Chain-Transaktion, die für jeden neuen Zahlungsstand die aktuelle Aufteilung des Kanalguthabens rechtssicher festschreibt', ['Ein fester Sparvertrag über zehn Jahre bei einer Filialbank', 'Eine unverbindliche Zahlungserinnerung per E-Mail', 'Der Kaufbeleg eines ASIC-Miners'], 'Garantiert jedem der beiden Kanalpartner jederzeit die einseitige Auszahlung seines aktuellen Saldos, selbst wenn der Partner spurlos offline geht', 'Alte, überholte Commitment-States werden mittels Revocation Keys entwertet – wer sie dennoch sendet, verliert als Betrugsstrafe alles!', 'pro'],
-    ['layer2_skalierung', 'Revocation Key (Penalty Mechanism)', 'Lightning-Betrugsschutz', 'Kryptografischer Widerrufsschlüssel, mit dem ein Partner jeden früheren alten Kanalzustand bei jeder neuen Zahlung unwiderruflich als strafbar entwertet', ['Der Zentralschlüssel einer Krypto-Börse zur Kontosperrung', 'Ein Notfall-PIN zum Zurücksetzen der Hardware Wallet', 'Der Download-Schlüssel für Bitcoin Core'], 'Erzwingt spieltheoretisch Ehrlichkeit zwischen völlig Fremden – wer einen veralteten Vorteil einreicht, verliert seine gesamte Kanaleinlage!', 'Die Gegenseite (oder ihr Watchtower) strahlt im Betrugsfall innerhalb des CSV-Verzögerungsfensters sofort eine Justice-TX aus', 'pro'],
-    ['layer2_skalierung', 'HTLC (Hash Time-Locked Contract)', 'Atomares Multi-Hop-Routing', 'Bedingter Vertrag im Lightning-Netzwerk: Geld fließt nur bei Vorlage eines geheimen Hash-Preimage innerhalb einer festen Block-Frist, sonst fällt es zurück', ['Ein hochfrequenter Aktienhandels-Algorithmus', 'Eine Hardware-Komponente auf der Hauptplatine', 'Ein internationaler Steuertarif'], 'Macht Vertrauen in dazwischenliegende Routing-Nodes komplett überflüssig, da niemand unterwegs Gelder abzweigen kann', 'Im Unterschied zum einfachen „Trusted Escrow“ läuft alles rein mathematisch per SHA-256-Preimage + Timelock', 'mid'],
-    ['layer2_skalierung', 'Outbound vs. Inbound Liquidity', 'Lightning-Kanalkapazität', 'Outbound = dein versendbares Guthaben auf deiner Kanalseite; Inbound = freie Kapazität auf der Gegenseite, bis zu der du Zahlungen empfangen kannst', ['Ein- und Auszahlungsgebühren an einem Krypto-Automaten', 'Die WLAN-Download- und Upload-Geschwindigkeit daheim', 'Steuerliche Haltefristen unter und über zwölf Monaten'], 'Erklärt, warum neue Händler oder Nodes anfangs zuerst Inbound-Kapazität aufbauen müssen, bevor größere Rechnungen eingehen können', 'Typische Kanalkapazität bleibt konstant (`Outbound + Inbound = Kanalgröße`), verschiebt sich aber mit jeder Zahlung wie Perlen auf einer Schnur', 'easy'],
-    ['layer2_skalierung', 'Watchtower (Lightning-Wächter)', 'Offline-Kanalschutz', 'Unabhängiger Dienst oder Zweitrechner im Heimnetz, der verschlüsselte Justice-Transaktionen bereithält und rund um die Uhr gegen Betrugsversuche wacht', ['Ein Aussichtsturm in Mining-Rechenzentren', 'Eine Börsenaufsichtsbehörde in Washington', 'Ein Virusprogramm zum Ausspähen von Passwörtern'], 'Schützt mobile Wallets oder oft ausgeschaltete Nodes wochenlang vor unbemerkten Cheat-Versuchen durch Kanalpartner', 'Da übermittelte Blobs Ende-zu-Ende verschlüsselt sind, weiß der Watchtower vor einem Betrugsfall nicht einmal, wessen Kanäle er schützt', 'mid'],
-    ['layer2_skalierung', 'BOLT-11 Invoice', 'Klassische Lightning-Rechnung', 'Standardisiertes `lnbc…`-Rechnungsformat (Bech32-ähnlich codiert) für einmalige Zahlungsanforderungen inklusive Betrag, Ablaufzeit und Zahlungs-Hash', ['Ein europäisches Steuerformular für Börsengewinne', 'Der Name des elften Bitcoin-Blocks', 'Eine Hardware-Schnittstelle an Kalt-Wallets'], 'Ermöglicht sekundenschnelles Scannen und Bezahlen auf den Satoshi genau inklusive integrierter Ablaufkontrolle', 'Nachteil gegenüber BOLT-12: Jede BOLT-11-Rechnung sollte aus Sicherheits- und Preimage-Gründen grundsätzlich nur ein einziges Mal bezahlt werden', 'mid'],
-    ['layer2_skalierung', 'BOLT-12 Offers & Blinded Paths', 'Moderne statische Lightning-Codes', 'Neuer nativer Lightning-Standard (`lno…`) für dauerhaft wiederverwendbare statische Bezahlcodes direkt übers P2P-Netz ohne Webserver', ['Eine Krypto-Börsen-Lizenz in Europa', 'Zwölf neue Wörter zusätzlich zur Seed Phrase', 'Ein Mining-Pool ausschließlich für Großunternehmen'], 'Kombiniert extrem bequeme statische QR-Codes mit „Blinded Paths“, die sogar die echte Node-ID / IP des Empfängers verbergen!', 'Erzeugt außerdem automatisch ein kryptografisch beweisbares „Proof of Payment“ für Bestellungen oder Abos', 'pro'],
-    ['layer2_skalierung', 'LNURL & Lightning Address (`name@domain`)', 'Nutzerfreundliche Zahlungsschnittstelle', 'HTTPS-basiertes Protokoll auf Lightning, mit dem eine simple E-Mail-ähnliche Adresse (`satoshi@wallet.de`) dynamisch frische BOLT-11-Rechnungen liefert', ['Eine gewöhnliche Gmail-Adresse für Krypto-Newsletter', 'Eine feste On-Chain-Adresse im Format `1…`', 'Ein zentrales Passwort-Verzeichnis der EU'], 'Senkt die Hürde für Trinkgelder, Zaps (Nostr) und Alltagskassen auf normales E-Mail-Niveau ohne komplizierte QR-Strings', 'Technisch kontaktiert die zahlende Wallet den Webserver der Domain per HTTPS-GET; bei Self-Custody laufen solche Endpunkte oft über eigene VPS oder Alby/LNbits', 'easy'],
-    ['layer2_skalierung', 'Keysend & Spontaneous Payments', 'Rechnungslose Lightning-Zahlung', 'Verfahren, bei dem der Sender ein eigenes Zufalls-Preimage verschlüsselt direkt im Onion-Paket mitschickt, sodass keine vorangehende Rechnung nötig ist', ['Das Versenden des eigenen Private Keys per Messenger', 'Eine Sammelüberweisung auf zehn Bankkonten', 'Das Löschen einer bereits gesendeten Zahlung'], 'Ideal für sekundengenaue Streaming-Mikrozahlungen („Value4Value“ bei Podcasts je gehörter Minute!)', 'Im Gegensatz zur klassischen Invoice liefert Keysend allerdings keinen vorab signierten Zahlungsbeleg einer Gegenstelle zurück', 'pro'],
-    ['layer2_skalierung', 'Onion Routing (Sphinx) in Lightning', 'Netzwerk-Privatsphäre im Routing', 'Mehrfache Zwiebel-Verschlüsselung der Wegbeschreibung einer Lightning-Zahlung, sodass jeder Routing-Hop nur seinen Vor- und Nachbar-Hop erfährt', ['Verkauf von Bitcoin auf Gemüsemärkten', 'Öffentliches Speichern sämtlicher Zahlungswege in jedem Block', 'Eine Verschlüsselungsmethode ausschließlich für E-Mails'], 'Verhindert Massenüberwachung der Zahlungsströme durch große Lightning-Hubs auf Transportebene', 'Allein Timing-Analysen und Betragsmuster bleiben theoretische Heuristiken – weshalb Multi-Path Payments (MPP) Beträge zusätzlich aufteilen', 'pro'],
-    ['layer2_skalierung', 'MPP / AMP (Multi-Path Payments)', 'Zahlungssplitting über mehrere Kanäle', 'Technik, um eine größere Lightning-Rechnung automatisch in mehrere kleinere Teilzahlungen über verschiedene Routen parallel an das Ziel zu leiten', ['Gleichzeitiges Bezahlen in Bitcoin, Euro und Gold', 'Doppelte Abrechnung eines einzelnen Kaffee-Kaufs', 'Ein Verfahren zum Aufteilen von Block-Subventionen'], 'Erhöht die Erfolgsquote größerer Zahlungen drastisch, weil ein einzelner Kanal nicht mehr den gesamten Betrag allein stemmen muss', 'Moderne Wallets nutzen MPP fast immer automatisch im Hintergrund, sobald mehrere Teilkanäle genug Restsaldo haben', 'mid'],
-    ['layer2_skalierung', 'Channel Splicing', 'Nahtlose L1/L2-Kanal-Anpassung', 'Erweiterung oder Verkleinerung des Guthabens in einem aktiven Lightning-Kanal per einzelner On-Chain-TX ohne Unterbrechung des laufenden Kanals', ['Physisches Aufschneiden eines USB-Kabels', 'Schließen sämtlicher Kanäle und Neuinstallation der App', 'Tausch von Satoshis in Token anderer Blockchains'], 'Beseitigt die harte Trennmauer zwischen „On-Chain-Sparkonto“ und „Lightning-Geldbörse“ bei minimalen Mainchain-Gebühren', 'Erlaubt es auch, direkt aus einem bestehenden Lightning-Kanal heraus reguläre L1-On-Chain-Adressen zu bezahlen („Splice-Out“)', 'pro'],
-    ['layer2_skalierung', 'Anchor Outputs (BIP / BOLT Spec)', 'Zuverlässige Fee-Bump-Anker im Kanal', 'Zwei winzige zusätzliche Outputs in Lightning-Commitment-TXs, mit denen jede Seite im Notfall per CPFP die Bestätigungsgebühr einer alten TX nachträglich anheben kann', ['Schwere Stahlanker für Offshore-Mining-Schiffe', 'Feste 1-BTC-Sicherheitskaution bei Krypto-Börsen', 'Unveränderliche Preise in Online-Shops'], 'Schützt Lightning-Kanäle gegen extrem sprunghaft ansteigende On-Chain-Gebührenstürme beim erzwungenen Closing vor Timelock-Ablauf', 'Vor Anchor Outputs drohten vorgefertigte feste Fee-Sätze bei plötzlich überfülltem Mempool steckenzubleiben', 'pro'],
-    ['layer2_skalierung', 'Submarine Swap (Loop / Boltz)', 'Vertrauensfreier On-Chain/Lightning-Tausch', 'Trustless Austausch zwischen Layer-1-Bitcoin und Layer-2-Lightning-Guthaben über atomare HTLCs ohne Kontrahentenrisiko', ['Ein Tauschhandel in Unterseebooten ohne Internet', 'Das Verschieben von Coins zwischen zwei eigenen Handy-Apps', 'Der Kauf von Bitcoin am Geldautomaten'], 'Löst elegant Liquiditätsengpässe: Läuft ein Shop-Kanal voll mit Zahlungseingängen, swapt man per Loop-Out sicher ins Cold Wallet und gewinnt frischen Empfangsplatz!', 'Dank atomarer Hash-Sperre kann der Swap-Dienstleister dein Geld niemals einfach behalten', 'mid'],
-    ['layer2_skalierung', 'Zero-Conf-Channel (Turbo Channel)', 'Sofortiger Lightning-Start', 'Vertrauensbasierte Vereinbarung (meist mit einem LSP), einen neuen Lightning-Kanal noch VOR der ersten On-Chain-Blockbestätigung sofort nutzbar zu machen', ['Ein Kanal komplett ohne Passwort oder PIN', 'Eine Transaktion mit exakt 0 Bitcoins Deckung', 'Kostenloses Mining auf dem Smartphone'], 'Ermöglicht mobilen Nutzern, beim allerersten Empfangen sofort loszulegen statt 10–30 Minuten auf Layer-1-Bestätigungen zu warten', 'Das Risiko trägt dabei primär der anbietende LSP, da die Funding-TX theoretisch bis zur Bestätigung noch ersetzt werden könnte', 'mid'],
-    ['layer2_skalierung', 'LSP (Lightning Service Provider)', 'Infrastruktur-Dienstleister für Layer 2', 'Spezialisierter Lightning-Node-Betreiber, der Endnutzer-Apps automatisch mit Liquidität, Just-In-Time-Kanälen und Routing-Anbindung versorgt', ['Ein Internetanschluss-Anbieter für Glasfaser', 'Ein gesetzlicher Steuerberater für Krypto-Börsen', 'Ein Hersteller mechanischer Seed-Stahlplatten'], 'Macht Lightning auf dem Smartphone so simpel wie eine Instant-Banking-App – meist ganz ohne Aufgabe der eigenen Schlüssel („Self-Custodial LSP“)', 'Bekannte Beispiele im Ökosystem sind u. a. ACINQ (Phoenix), Breez, Mutiny/Olympus oder Voltage', 'easy'],
-    ['layer2_skalierung', 'Just-In-Time (JIT) Channel Opening', 'Bedarfsgenaue Kanal-Eröffnung', 'Technik, bei der ein LSP genau in der Sekunde einer eingehenden Zahlung on-the-fly einen passenden Kanal für den Empfänger mitabwickelt und öffnet', ['Automatisches Kaufen von Bitcoin bei Kurseinbruch', 'Ein schnelles Backup der letzten zehn Minuten', 'Verschicken einer Zahlung exakt um 00:00 Uhr'], 'Spart Nutzern vorab nutzlos gebundene Liquidität, bevor überhaupt feststeht, wie viel Guthaben eingehen wird', 'Für diese On-Chain-Eröffnung behält der LSP einmalig die anfallende L1-Eröffnungsgebühr anteilig vom ersten Eingang ein', 'mid'],
-    ['layer2_skalierung', 'BIP-39 Mnemonic Seed Phrase (12 / 24 Wörter)', 'Menschliches Wallet-Backup', 'Standard zur Umwandlung kryptografischer 128- bzw. 256-Bit-Zufallszahlen inkl. Prüfsumme in 12 bzw. 24 eindeutige Wörter aus einer 2.048er-Liste', ['Ein vom Nutzer selbst ausgedachtes Lieblingsgedicht als Konto', 'Zwei dutzend E-Mail-Passwörter für Krypto-Börsen', 'Eine Liste der 24 größten Mining-Pools'], 'Sichert sämtliche aktuellen und zig Millionen zukünftige Empfangsadressen eines Wallets über eine einzige analoge Sicherung auf Dauer!', 'Niemals eigene „Brainwallet“-Wörter frei erfinden – ausschließlich echte kryptografische Zufallsentropie einer geprüften Wallet nutzen!', 'easy'],
-    ['layer2_skalierung', 'BIP-39 Passphrase („25. Wort“)', 'Zusätzlicher Seed-Schutz & Versteck', 'Frei wählbares Zusatzwort/Passwort, das mit den 24 Seed-Wörtern per PBKDF2-HMAC-SHA512 eine völlig neue, separate Wallet-Baumstruktur erzeugt', ['Ein vierstelliger Entsperr-PIN für das Display', 'Das WLAN-Passwort beim ersten Einrichten', 'Ein veralteter Standard, der heute nicht mehr funktioniert'], 'Schützt gegen Diebstahl/Erpressung der sichtbaren 24 Wörter („Plausible Deniability“: Lockvogel-Wallet ohne Passphrase + Haupttresor mit Passphrase!)', 'Tippfehler oder Vergessen der exakten Groß-/Kleinschreibung macht die dahinterliegenden Coins absolut unwiederbringlich – exakt dokumentieren!', 'mid'],
-    ['layer2_skalierung', 'HD Wallet (BIP-32 / BIP-44 / BIP-84 / BIP-86)', 'Hierarchisch Deterministisches Wallet', 'Schlüsselbaum-Architektur, die aus einem einzelnen Master-Seed beliebig viele Accounts und frische Einmal-Adressen mathematisch reproduzierbar ableitet', ['Eine Festplatte in High-Definition-Qualität', 'Eine Börse für besonders große Aufträge', 'Ein Wallet mit automatischem Videochat'], 'Erlaubt perfekt getrennte Einmal-Adressen für Privatsphäre bei gleichzeitig einem einzigen einmaligen Backup am Lebensanfang', 'Pfade definieren dabei den Adresstyp eindeutig: `m/44\'/0\'/0\'` (Legacy), `m/84\'/0\'/0\'` (Native SegWit `bc1q`), `m/86\'/0\'/0\'` (Taproot `bc1p`)', 'mid'],
-    ['layer2_skalierung', 'Extended Public Key (`xpub` / `zpub`)', 'Watch-Only-Kontenspiegelung', 'Übergeordneter öffentlicher Ableitungsschlüssel eines ganzen Accounts, der alle künftigen Adressen und Salden lesend verfolgt – ganz ohne Ausgaberecht!', ['Der Master-Private-Key zum freien Versenden aller Coins', 'Die Hardware-Seriennummer eines Ledger-Geräts', 'Ein Code zum kostenlosen Erhöhen der Gebühr'], 'Perfekt für Buchhaltung, Steuer-Tracker oder ein mobiles Watch-Only-Wallet, um jederzeit Zahlungseingänge fürs sichere Cold Storage zu generieren', 'Achtung Privatsphäre: Wer deinen `zpub` kennt, kann sämtliche bisherigen und künftigen Kontostände dieses Kontos mathematisch einsehen!', 'mid'],
-    ['layer2_skalierung', 'Cold Storage & Air-Gapped Signing', 'Maximalschutz gegen Fernangriffe', 'Erzeugung und Aufbewahrung privater Schlüssel auf Geräten ohne jede Netzwerk-/Internetverbindung; Signatur-Datentransport nur per QR-Code oder SD-Karte', ['Lagerung eines Laptops im Gefrierfach bei −18 °C', 'Abschalten des Smartphones während des Schlafens', 'Verkauf aller Bitcoins vor dem Sommerurlaub'], 'Schaltet praktisch 100 % aller Online-Trojaner, Fernzugriffs-Hacker und Browser-Phishing-Angriffe auf deine Langfrist-Ersparnisse aus', 'Gerade Tools wie SeedSigner, Coldcard oder Passport im reinen Air-Gapped-QR- bzw. PSBT-Modus bieten vorbildliche Überprüfbarkeit', 'easy'],
-    ['layer2_skalierung', 'Hardware Wallet Secure Element vs. Open Source', 'Sicherheitsarchitektur von Signern', 'Abwägung zwischen zertifiziertem Spezialchip gegen physisches Auslesen (Secure Element) und vollständig öffentlich einsehbarem Code gegen versteckte Hintertüren', ['Hardware Wallets bestehen stets nur aus leerem Plastik', 'Alle Hardware Wallets speichern Keys in der Hersteller-Cloud', 'Open Source heißt, jeder fremde Nutzer kennt deine Seed Phrase'], 'Spitzen-Geräte kombinieren inzwischen beides transparent (Open-Source-Firmware + dediziertes Secure Element + optionale Würfel-Entropie)', 'Unabhängig vom Hersteller-Tool lässt sich jede standardkonforme BIP-39-Seed im Notfall auf beliebigen alternativen Wallets wiederherstellen', 'pro'],
-    ['layer2_skalierung', 'PSBT (Partially Signed Bitcoin Transaction, BIP-174)', 'Standard für Offline- & Multisig-Signieren', 'Offenes Binär-/Base64-/QR-Format zum Transport noch unvollständiger Transaktionen inkl. UTXO-Verifizierungsinfos zwischen Online-Software und Offline-Signer', ['Eine versehentlich halb verschickte Überweisung im Mempool', 'Ein spezieller Altcoin auf einer Nebenchain', 'Ein Backup-Format für Excel-Tabellen'], 'Erlaubt nahtlose Zusammenarbeit ganz verschiedener Hersteller (z. B. Sparrow am PC + BitBox02 + Coldcard + Trezor im selben 2-of-3 Multisig!)', 'Die Offline-Wallet prüft darin auch ohne eigenes Internet mathematisch, dass Wechselgeld wirklich an dich zurückfließt', 'pro'],
-    ['layer2_skalierung', 'Multisig (M-of-N, z. B. 2-of-3)', 'Verteilte Schlüssel-Ausfallsicherheit', 'Verfahren, bei dem für gültiges Ausgeben zwingend `M` verschiedene unabhängige Schlüssel aus einem Set von `N` vorhandenen Schlüsseln signieren müssen', ['Ein einzelner langer PIN-Code aus drei Zahlenblöcken', 'Verwaltung durch drei verschiedene Bankangestellte per Telefon', 'Automatische Sicherung auf drei USB-Sticks derselben Seed Phrase'], 'Eliminiert den gefürchteten „Single Point of Failure“: Verlust oder Diebstahl eines einzelnen Schlüssels führt zu null Totalverlust!', 'Zwingend nötig für Wiederherstellung bei Multisig: Jede der 3 Seeds PLUS die vollständige Wallet-Konfigurationsdatei (Output Descriptor / alle xpubs)!', 'mid'],
-    ['layer2_skalierung', 'Shamir Backup (SLIP-39) vs. Multisig', 'Seed-Aufteilung vs. Skript-Schutz', 'SLIP-39 zerlegt mathematisch ein einziges Geheimnis in `M-of-N`-Wortlisten-Anteile, führt beim Wiederherstellen aber wieder alle Teile an EINEM Gerät zusammen', ['Beide Konzepte verlangen zwingend monatliche Gebühren', 'SLIP-39 ist eine Bitcoin-Hardware-Wallet aus der Schweiz', 'Multisig funktioniert nur offline per Brief'], 'Multisig schützt zusätzlich beim *Signieren* im Alltag (ein kompromittierter Einzelcomputer reicht niemals für einen Diebstahl!), während Shamir bloß ruhende Backups schützt', 'Beim klassischen Single-Sig empfiehlt sich bei Laien oft eher 1× saubere 24er-Stahlplatte + Passphrase oder echtes Hardware-Multisig statt riskanter Selbstbastel-Splits', 'pro'],
-    ['layer2_skalierung', 'Miniscript (Erweiterte Ausgabepolicies)', 'Programmierbare Vererbung & Vaults', 'Strukturierte, formell prüfbare Skript-Darstellung (BIP-379), die zeitgesteuerte Mehr-Schlüssel-Bedingungen zuverlässig und fehlerfrei zusammensetzt', ['Eine winzige Schriftart für Stahl-Backups', 'Ein einfaches Textverarbeitungsprogramm für Verträge', 'Eine verbotene Erweiterung in Bitcoin Core'], 'Erlaubt geniale treuhänderfreie Nachlasslösungen („Nach 1 Jahr Inaktivität dürfen 2-of-3 Erben zugreifen – vorher nur ich selbst!“)', 'Wallets wie Liana oder Sparrow machen diese sonst hochkomplexe Skript-Konstruktion grafisch sicher nutzbar', 'pro'],
-    ['layer2_skalierung', 'Stahlplatten-Backup (Seed-Platte / Seed-Washers)', 'Physische Katastrophen-Sicherung', 'Prägen, Stanzen oder Gravieren der 12/24 Seed-Wörter (bzw. ihrer ersten 4 Buchstaben / BIP39-Nummern) auf feuerfesten Edelstahl (~1.400 °C Schmelzpunkt)', ['Speicherung in einem Word-Dokument auf Google Drive', 'Notieren mit Bleistift auf einer Serviette', 'Eintippen in die Notizen-App des Smartphones'], 'Übersteht verheerende Hausbrände, Löschwasser, Schimmel und Jahrzehnte besser als Papier oder schnell alternde Flash-Speicher', 'Stahlplatten niemals per Kamera fotografieren, beschriften ohne Publikum und sicher getrennt von Passphrase/PIN verwahren!', 'easy'],
-    ['layer2_skalierung', 'Custodial vs. Non-Custodial (Self-Custody)', 'Eigentumsverhältnis bei Wallets', 'Custodial = ein Anbieter hält die Private Keys treuhänderisch (wie Bank/Börse); Non-Custodial = ausschließlich du selbst kontrollierst den kryptografischen Seed', ['Kostenlose vs. bezahlte Apps im App Store', 'Wallets für Unternehmen vs. Privatpersonen', 'Wallets mit grünem vs. blauem Design'], 'Nur bei Self-Custody besitzt du zensurresistentes echtes Eigentum ohne Insolvenz- oder Kontosperr-Risiko einer dritten Firma', 'Custodial-Apps (z. B. Wallet of Satoshi) eignen sich höchstens als extrem bequemes kleines Trinkgeld-Portemonnaie für winzige Kleckerbeträge', 'easy'],
-    ['layer2_skalierung', 'Silent Payments (BIP-352)', 'Wiederverwendbare anonyme Empfangsadressen', 'Neuer Standard für statische Spenden- oder Profil-Adressen (`sp1…`), aus denen jeder Sender für jede einzelne Zahlung heimlich einen einzigartigen Einmal-UTXO ableitet', ['Überweisungen komplett ohne Mining-Gebühren', 'Stummschalten sämtlicher App-Benachrichtigungen', 'Zahlungen, die erst in 10 Jahren ankommen'], 'Verhindert Block-Explorer-Cluster-Tracking selbst bei öffentlich auf Webseiten geposteten Spendenadressen vollständig!', 'Anders als umständliche PayNym/BIP-47-Lösungen braucht BIP-352 keinerlei vorangehende Ankündigungs-Transaktion auf der Blockchain', 'pro'],
-    ['layer2_skalierung', 'Fedimint (Federated Chaumian Ecash)', 'Privates Community-Layer-2/3', 'Verbindung aus kleiner Föderation vertrauter Guardians (Multisig-Verwahrung) und blinden Chaumian-Ecash-Token für maximale Privatsphäre mit Lightning-Brücke', ['Ein staatliches Zentralbank-Konto der Fed in den USA', 'Ein neues Mining-Gerät für Familien', 'Ein zentralisiertes Börsen-System wie FTX'], 'Ermöglicht Dorfgemeinschaften oder Familien extrem billige, komplett unverkettbare Kleinstzahlungen ohne direkte Mainchain-Fees', 'Schafft bewusst ein faires Trust-Spektrum: Man vertraut keinen Einzel-CEOs, sondern z. B. 4 von 7 persönlich gewählten lokalen Hütern', 'pro'],
-    ['layer2_skalierung', 'Ark Protocol', 'Neues UTXO-Off-Chain-Skalierungskonzept', 'Innovatives Layer-2-Design (VTXOs über einen Ark Service Provider), das blitzschnelle Off-Chain-Zahlungen OHNE vorab nötige Inbound-Kanal-Liquidität ermöglicht', ['Ein Spielzeug-Bausatz für Kinder', 'Das älteste Protokoll aus dem Jahr 2009', 'Ein veraltetes Verschlüsselungsverfahren'], 'Nutzer können jederzeit unabhängig und ohne Erlaubnis („Unilateral Exit“) ihr Geld per vorab signierter Transaktion zurück auf Layer 1 retten', 'Löst insbesondere das nervige Onboarding- und Liquiditätsproblem mobiler Neulinge elegant auf neuartiger Basis', 'pro'],
-    ['layer2_skalierung', 'Liquid Network (L-BTC Sidechain)', 'Federierte Bitcoin-Sidechain', 'Von über 60 internationalen Börsen und Institutionen betriebene Bitcoin-Sidechain mit schnellen 1-Minuten-Blöcken und vertraulichen Beträgen (Confidential Transactions)', ['Flüssigkeitsgekühlte ASIC-Server im Keller', 'Ein zentrales Euro-Konto in Frankfurt', 'Eine andere Währung ohne Kopplung an Bitcoin'], 'Dient vor allem Arbitrage-Händlern, OTC-Desks und verbrieften Wertpapieren für blitzschnelle Abwicklung mit verborgenen Summen', 'Die L-BTC-Bindung („Peg“) hängt an der Föderations-Signaturmehrheit – für reine Langzeitersparnisse daher kein Ersatz für natives L1-Cold-Storage!', 'mid'],
-    ['layer2_skalierung', 'BitVM (Bitcoin Virtual Machine)', 'Trust-minimierte Off-Chain-Verifikation', 'Von Robin Linus 2023 vorgestelltes Paradigma, beliebige komplexe Berechnungen off-chain zu prüfen und Streitfälle bei Betrug mittels Fraud-Proofs via Taproot-Bäumen on-chain zu lösen', ['Ein Windows-Emulator auf ASIC-Minern', 'Eine neue zentrale Krypto-Börse in Berlin', 'Ein schneller Browser speziell für Bitcoin'], 'Öffnet Wege zu deutlich trust-minimierteren Layer-2-Rollups und Sidechain-Brücken („Zero-Knowledge-Verifizierung“) ohne harte Base-Layer-Änderungen!', 'Gerade BitVM2 optimierte den On-Chain-Streitablauf massiv Richtung praktischer Brücken-Anwendungen', 'pro'],
-    ['layer2_skalierung', 'CoinJoin (Whirlpool / JoinMarket / WabiSabi)', 'Kooperative On-Chain-Privatsphäre', 'Gemeinsame Transaktion mehrerer fremder Teilnehmer, bei der Inputs gemischt und gleich große Outputs ausgegeben werden, sodass niemand Inputs eindeutig Outputs zuordnen kann', ['Das Zusammenkleben zweier physischer Münzen', 'Ein Kauf-Programm für Gruppenrabatte bei Börsen', 'Eine gesetzliche Pflichtanmeldung bei Banken'], 'Durchbricht nachträglich die einfache Transaktionsketten-Verfolgung durch kommerzielle Chain-Analyse-Firmen („Common Input Ownership Heuristic“)', 'Wichtig danach: Gemixte UTXOs niemals wieder unachtsam gemeinsam mit KYC-Restbeträgen in einer einzigen neuen Transaktion verschmelzen!', 'pro'],
-    ['layer2_skalierung', 'PayJoin (BIP-78)', 'Stealth-On-Chain-Privatsphäre beim Zahlen', 'Besondere Transaktion zwischen Sender und Empfänger, bei der der Empfänger heimlich einen eigenen UTXO als zusätzlichen Input beisteuert', ['Ein gemeinsames Konto für Ehepaare', 'Die Zahlung einer Rechnung in genau zwei Monatsraten', 'Die Gebührenteilung zwischen zwei Minern'], 'Unterwandert die fundamentale Heuristik aller Block-Tracker („Alle Inputs gehören derselben Person!“) – und sieht auf der Blockchain völlig unspektakulär wie eine ganz normale Zahlung aus!', 'Erleichtert Shops außerdem gleichzeitig im Hintergrund das Konsolidieren kleiner Eingänge', 'pro'],
-    ['layer2_skalierung', 'Sparrow Wallet / Electrum / BlueWallet', 'Bekannte Open-Source-Wallet-Software', 'Bewährte Desktop- bzw. Mobile-Wallets (insbesondere Sparrow für detailgenaues UTXO-/PSBT-/Hardware-Management an der eigenen Node)', ['Zentrale Krypto-Banken mit eigenem Investmentkonto', 'Browser-Spiele mit Bitcoin-Optik', 'Veraltete Software nur für den Genesis Block'], 'Geben Nutzern volle Kontrolle über exakte Coin Control, benutzerdefinierte Gebührensätze (`sat/vB`), RBF und direkte Eigen-Node-Anbindung via Electrs/Fulcrum', 'Gerade die Kombination „Eigene Full Node + Sparrow am Desktop + Hardware-Signer“ gilt heute als Goldstandard souveräner Verwahrung!', 'easy'],
-    ['layer2_skalierung', 'UTXO-Konsolidierung', 'Gebühren-Vorsorge in Ruhephasen', 'Gezieltes Zusammenfassen vieler kleiner empfangener Klecker-Outputs („Sparplan-Inputs“) in einen einzigen sauberen großen Output an sich selbst bei extrem niedrigen Netzwerkgebühren', ['Löschen überflüssiger Konten bei Krypto-Börsen', 'Aufteilen von 1 BTC in 100 Millionen einzelne Transaktionen', 'Verkauf aller Altcoins auf Null'], 'Spart später in Hype-Phasen mit teuren 100+ sat/vB-Blöcken leicht hunderte Euro ein, weil du zum Senden plötzlich nur noch 1 statt 25 Inputs zahlen musst!', 'Achtung Datenschutz: Kombiniere beim Konsolidieren am besten UTXOs aus derselben Herkunft (z. B. gleiche Sparplan-Quelle), um keine getrennten Identitäten zu verknüpfen', 'mid'],
-    ['layer2_skalierung', 'Dual-Funded Channels', 'Beidseitige Lightning-Kanalfinanzierung', 'Fortschrittliches Lightning-Verfahren (BOLT-2-Erweiterung), bei dem beide Partner von Beginn an eigene Satoshis in den gemeinsamen Eröffnungs-UTXO einlegen', ['Bezahlung einer Kanaleröffnung halb in Bitcoin, halb in Euro', 'Pflicht zur doppelten Gebührenzahlung an Miner', 'Zwei komplett getrennte Wallets auf zwei Handys'], 'Schafft ab dem allerersten Block symmetrisch beidseitige Empfangs- UND Sendekapazität im selben frischen Kanal!', 'Bildet auch die Grundlage dezentraler Liquiditätsmärkte (wie Liquidity Ads in Core Lightning)', 'pro'],
-
-    // === 4) HISTORIE, ÖKONOMIE & RECHT (40 Einträge → 200 Fragen) ===
-    ['historie_oekonomie', 'Cypherpunk-Bewegung (1990er)', 'Ideengeschichtliche Wurzeln', 'Zusammenschluss von Kryptografen und Freiheitsdenkern (Eric Hughes, Tim May, Nick Szabo, Hal Finney, Adam Back), die Privatsphäre und digitale Freiheit durch offene Mathematik statt Polit-Vertrauen schützten', ['Eine Punk-Rock-Musikszene aus London im Jahr 2015', 'Eine Abteilung großer Investmentbanken in New York', 'Eine Gruppe aus Computerviren-Programmierern'], 'Legte sämtliche theoretischen Bauteile (Hashcash, RPOW, b-money, Bit Gold, Public-Key-Verschlüsselung) für Bitcoin bereit', 'Berühmter Satz aus dem „Cypherpunk’s Manifesto“ (1993): „Cypherpunks write code.“', 'easy'],
-    ['historie_oekonomie', 'Hashcash (Adam Back, 1997)', 'Vorläufer des Proof-of-Work', 'Ursprünglich gegen E-Mail-Spam entwickeltes Verfahren, das vor dem Versand einer Nachricht eine messbare kleine CPU-Rechenarbeit verlangte', ['Eine frühe E-Cash-App von PayPal', 'Ein Rabattprogramm für Online-Supermärkte', 'Ein Verschlüsselungs-Virus aus den 1990ern'], 'Satoshi griff genau dieses „leicht zu prüfende Arbeits-Rätsel“ auf und schuf daraus die dezentrale Konsensuhr der Blockchain', 'Adam Back wurde direkt in den Zitaten des Bitcoin-Whitepapers gewürdigt und leitet heute Blockstream', 'mid'],
-    ['historie_oekonomie', 'Wei Dai (b-money) & Nick Szabo (Bit Gold)', 'Konzeptuelle Geld-Vorläufer', 'Zwei wegweisende Entwürfe von 1998 für knappes, dezentrales unzensierbares Computergeld per Arbeitsbeweis – allerdings noch ohne voll gelöste Konsens- und Reorg-Synchronisation', ['Die beiden Gründer der Zentralbank von Japan', 'Erfinder moderner Smartphone-Touchscreens', 'Gründer von Ethereum im Jahre 2014'], 'Satoshi verband ihre Ideen genial mit verteilten Hash-Ketten und einheitlicher Difficulty-Regulierung zum ersten wirklich funktionierenden System', 'Besonders „Bit Gold“ von Nick Szabo (auch Präger des Begriffs „Smart Contract“) gilt verblüffend nah an der späteren Bitcoin-Struktur!', 'mid'],
-    ['historie_oekonomie', 'Bitcoin Whitepaper (31.10.2008)', 'Gründungsdokument', 'Das legendäre 9-seitige Fachpapier „Bitcoin: A Peer-to-Peer Electronic Cash System“ unter dem Pseudonym Satoshi Nakamoto', ['Ein 500 Seiten langes Gesetzbuch aus Brüssel', 'Ein Börsenprospekt der Nasdaq aus dem Jahr 2017', 'Die Bedienungsanleitung eines Ledger-Geräts'], 'Beschrieb präzise und ohne jedes Marketing-Versprechen den vollständigen Bauplan für elektronisches Bargeld ohne Mittelsmänner', 'Veröffentlicht mitten auf dem Höhepunkt der globalen Finanzkrise wenige Wochen nach der Lehman-Brothers-Pleite!', 'easy'],
-    ['historie_oekonomie', 'Satoshi Nakamoto (Pseudonym)', 'Unbekannter Schöpfer & Rückzug', 'Der oder die anonym gebliebenen Erfinder von Bitcoin, aktiv im Code/Forum bis Ende 2010 und seit April 2011 komplett verschwunden', ['Der CEO der Bitcoin AG in Kalifornien', 'Der damalige Präsident der EZB', 'Ein öffentlich bekannter Nobelpreisträger aus Berlin'], 'Der freiwillige rückstandslose Abgang ohne Chef-Rolle verhinderte eine zentrale Angriffsfläche („Headless Protocol“) und machte Bitcoin erst wahrhaft führungslos!', 'Seine rund 1 Mio. gemutmaßten Ur-Coins aus 2009 („Patoshi Pattern“) blieben bis heute vollkommen unberührt', 'easy'],
-    ['historie_oekonomie', 'Hal Finney („Running bitcoin“)', 'Erster Co-Entwickler & Empfänger', 'Wegweisender Kryptograf (PGP, RPOW), der im Januar 2009 als erster Mensch neben Satoshi eine Bitcoin-Node startete und in Block 170 die ersten 10 BTC empfing', ['Der Erfinder der Visa-Kreditkarte', 'Der Besitzer von Mt. Gox', 'Der Autor des ersten Hardware-Miners 2014'], 'Half Satoshi intensiv beim Debugging der allerersten Alpha-Version v0.1 und formulierte erstaunlich früh Gedanken zur späteren Millionen-Skalierung via Bank-/Layer-Ebenen', 'Hal Finney verstarb 2014 tragisch an ALS; sein Andenken lebt in Initiativen wie „Running Bitcoin“ weiter', 'easy'],
-    ['historie_oekonomie', 'Bitcoin Pizza Day (22. Mai 2010)', 'Erste reale Güterzahlung', 'Tag, an dem Laszlo Hanyecz im BitcoinTalk-Forum 10.000 BTC bezahlte, damit ein anderer User ihm zwei Pizzen von Papa John’s bestellte und lieferte', ['Der Tag, an dem Italien Bitcoin als offizielles Geld annahm', 'Der Starttag der ersten Börse in Frankfurt', 'Der Geburtstag von Satoshi Nakamoto'], 'Markierte den historischen Übergang vom reinen Computer-Experiment zu einem Gut mit realem wirtschaftlichem Austauschwert (~0,004 $/BTC damals)', 'Laszlo erfand übrigens auch das erste GPU-Mining – er bereute den legendären Pizza-Kauf nach eigener Aussage nie!', 'easy'],
-    ['historie_oekonomie', 'Value Overflow Incident (August 2010)', 'Schnelle Behebung eines Ur-Bugs', 'Schwerer Integer-Overflow-Bug in Block 74.638, der eine einzige Transaktion über ~184,47 Mrd. BTC durchschlüpfen ließ – binnen 5 Stunden gepatcht und per Reorg bereinigt', ['Ein Einbruch in ein Rechenzentrum in Island', 'Ein Hack des Lightning Network im Jahr 2020', 'Die erste Steuerprüfung auf Krypto-Börsen'], 'Zeigt, warum extrem sorgfältige konservative Code-Review und kleinstmögliche Änderungen heute im Fokus von Bitcoin Core stehen', 'Seit jenem Vorfall 2010 gab es nie mehr einen Inflations-Ausbruch dieser Art im Bitcoin-Protokoll', 'pro'],
-    ['historie_oekonomie', 'Silk Road & frühe Wahrnehmung (2011–2013)', 'Frühe Online-Debatte', 'Erster großer Darknet-Marktplatz, der Bitcoin nutzte – führte lange zum politischen Vorurteil des „Kriminellen-Gelds“, obwohl die öffentliche Blockchain am Ende genau die Ermittler zu Tätern führte', ['Die weltweit erste staatlich lizensierte Krypto-Bank', 'Eine Autobahn in China speziell für ASIC-Laster', 'Der Name der zweiten Bitcoin-Version'], 'Ironischerweise bewies die lückenlose Rückverfolgbarkeit später oft das exakte Gegenteil: Öffentliche transparente Blockchains sind miserabel geeignet für klassische Geldwäsche im großen Stil!', 'Versteigerten beschlagnahmte Coins machten teils bekannte Früh-Investoren wie Tim Draper zu Großhaltern', 'mid'],
-    ['historie_oekonomie', 'Mt. Gox Kollaps (2014)', 'Größte frühe Börsenpleite', 'Zusammenbruch der damaligen japanischen Marktführer-Börse (~70 % des Welthandels!) nach unbemerkten jahrelangen Abflüssen von rund ~740.000–850.000 BTC', ['Ein technisches Scheitern der Bitcoin-SHA-256-Verschlüsselung', 'Ein neues Gesetz zur Zinsbegrenzung', 'Das Ende des Bitcoin-Minings in Japan'], 'Prägte die eiserne Selbstschutz-Regel gegen Drittverwahrung („Not your keys, not your coins“) für eine ganze Anlegergeneration', 'Über zehn Jahre später erhielten Gläubiger 2024 endlich schrittweise erste Rest-Auszahlungen aus dem verbliebenen Insolvenztopf (~140k BTC)', 'easy'],
-    ['historie_oekonomie', 'Blocksize War (2015–2017) & UASF (BIP-148)', 'Machtfrage um Protokoll-Hoheit', 'Zwei Jahre harter Konflikt zwischen Großkonzernen/Minern (wollten 8–32-MB-Blöcke erzwingen) vs. Node-Betreibern & Devs, die kleine prüfbare Blöcke + SegWit durchsetzten', ['Ein Krieg zwischen Hardware-Wallet-Herstellern', 'Ein Rechtsstreit über Markennamen von Bitcoin', 'Die Aufteilung der 21 Mio. BTC auf 5 Kontinente'], 'Endete mit dem klaren Triumph der Nutzer-Nodes („Economic Majority“): Miner produzieren Blöcke, aber **Nodes** definieren gültige Regeln!', 'Die Verlierer spalteten sich im August 2017 als „Bitcoin Cash (BCH)“ ab und schrumpften ökonomisch seither stark gegenüber echtem Bitcoin', 'pro'],
-    ['historie_oekonomie', 'BCH / BSV Forks (2017–2018)', 'Lehre zu Hard-Fork-Abspaltungen', 'Abspaltungen von Bitcoin-Kopien mit vergrößerten Blocklimits und eigenen Regeln, die vom freien Markt gegen die originale Kette getestet wurden', ['Offizielle Nachfolge-Upgrades von Bitcoin Core', 'Zwingende Umtausch-Aktionen für alte Wallets', 'Neue Adressformate ab dem Jahr 2021'], 'Bewies praktisch, dass man zwar den freien Quellcode unendlich oft kopieren kann – nicht jedoch Netzwerkeffekt, Markenglaubwürdigkeit, Entwicklerdichte und Hashrate!', 'Jeder Besitzer vor dem Fork-Block erhielt theoretisch 1:1 entsprechende Fork-Token; nach Verlust an Relevanz scheiterten die „Big-Block“-Versprechen am Markt klar', 'mid'],
-    ['historie_oekonomie', 'El Salvador (Bitcoin-Gesetz 2021)', 'Weltweit erstes Land mit gesetzlichem Status', 'Zentralamerikanisches Land, das im September 2021 Bitcoin (neben dem US-Dollar) als offizielles gesetzliches Zahlungsmittel anerkannte', ['Ein großer Mining-Pool in Nordeuropa', 'Die größte Krypto-Börse Amerikas', 'Eine steuerfreie Krypto-Insel in Asien'], 'Brachte globale Aufmerksamkeit auf Bitcoin als grenzüberschreitende Remittance-Lösung für Menschen ohne klassische Bankkonten („Unbanked“)', 'Prüfte in der Praxis erstmals auch konkrete Alltagshürden (Volatilität, Aufklärung, Chivo-Wallet vs. offene Lightning-Standards)', 'easy'],
-    ['historie_oekonomie', 'US-Spot-Bitcoin-ETFs (Januar 2024)', 'Institutioneller Marktzugang', 'SEC-Zulassung der ersten regulierten börsengehandelten Spot-Fonds (IBIT, FBTC, BITB etc.), die echte hinterlegte Bitcoins bei Verwahrern halten', ['Einführung eines neuen Altcoins durch die Wall Street', 'Verbot aller privaten Wallets in Nordamerika', 'Umstellung von Bitcoin auf Dividenden-Zahlung'], 'Öffnete Pensionskassen, Vermögensverwaltern und klassischen Aktiendepots einen extrem liquiden, regulierten Zugangsweg – mit Rekord-Zuflüssen!', 'Wichtiger Unterschied zur echten Coin-Haltung: ETF-Käufer delegieren Stimmrecht, Verwahrsicherheit und Zensurresistenz an Institutionen und zahlen jährliche TER-Gebühren', 'easy'],
-    ['historie_oekonomie', 'China-Mining-Ban & „Great Migration“ (2021)', 'Resilienz-Stresstest des Netzes', 'Plötzliches behördliches Verbot sämtlichen Krypto-Minings in China (damals > 50 % der Hashrate!) im Frühsommer 2021 ohne jede Betriebsunterbrechung der Blockchain', ['Ein dreimonatiger Totalausfall aller Bitcoin-Transaktionen', 'Der permanente Absturz der Blockzeit auf 1 Stunde für ewig', 'Die Übergabe der Schlüssel nach Peking'], 'Die weltweite Mining-Hashrate erholte sich durch Abwanderung in die USA, Kasachstan, Nordeuropa und Kanada via Difficulty Adjustment binnen weniger Monate auf neue Rekorde!', 'Beispielloser Realwelt-Beweis für die geografische Anti-Fragilität des dezentralen Netzwerks', 'mid'],
-    ['historie_oekonomie', 'Geld-Eigenschaften (Sound Money)', 'Ökonomische Geldtheorie', 'Die klassischen Kriterien eines idealen Tausch- und Wertaufbewahrungsmittels: Knappheit, Teilbarkeit, Portabilität, Haltbarkeit, Fungibilität und leichte Prüfbarkeit', ['Bunte Farben auf Papiergeld und Unterschriften von Politikern', 'Möglichst schnelle Entwertung um 10 % pro Jahr', 'Vollständige Abhängigkeit von Öffnungszeiten'], 'Bitcoin vereint die extrem harte Knappheit von Gold mit einer unvergleichlich besseren globalen digitalen Transportfähigkeit und Prüfbarkeit!', 'Ein Goldbarren lässt sich kaum durch ein Glasfaserkabel in 10 Minuten weltweit verschicken oder auf 10^-8 teilen – bei Bitcoin passiert genau das automatisch', 'easy'],
-    ['historie_oekonomie', 'Absolute vs. Relative Knappheit', 'Ökonomisches Differenzierungsmerkmal', 'Bei physischen Gütern wie Gold/Immobilien steigt durch hohe Preise irgendwann das Neuangebot („Relative Knappheit“); bei Bitcoin bleibt das Limit von 21 Mio. absolut unveränderlich', ['Bitcoin existiert als unendliche Ressource wie Meerwasser', 'Relative Knappheit bedeutet nur 1 Mio. Einwohner', 'Absolute Knappheit gilt auch für Papiergeld'], 'Verleiht Bitcoin ein einzigartiges monetäres Profil, sobald immer mehr Weltvermögen auf ein streng fixes Gut trifft', 'Keine noch so gigantische Rechenzentrums-Investition erschafft auch nur 1 einzigen Satoshi extra über das Protokoll-Limit hinaus', 'mid'],
-    ['historie_oekonomie', 'Schelling-Punkt (Spieltheorie)', 'Koordinations-Gleichgewicht im Markt', 'Ein natürlicher Sammelpunkt, auf den sich Menschen auch ohne vorherige Absprache einigen – in der digitalen Geldwelt der klare Marktführer Bitcoin', ['Ein berühmter Marktflecken in Wien', 'Ein Kurseinbruch um genau 50 %', 'Die maximale Laufzeit eines Kredits'], 'Erklärt aus der Spieltheorie, weshalb Liquidität, Sicherheit, Netzwerknutzen und Mindshare dazu neigen, auf EIN globales Basisprotokoll statt auf zehntausend Split-Token zu konvergieren', 'Ähnlich wie sich das Internet technisch genau auf das eine offene TCP/IP einigte statt auf dutzende inkompatible Firmen-Netze', 'pro'],
-    ['historie_oekonomie', 'Stock-to-Flow (S2F) Verhältnis', 'Angebots-Härte-Kennzahl', 'Verhältnis aus vorhandenem Gesamtbestand (Stock) zur jährlichen Neuproduktion (Flow) – je höher der Wert, desto unempfindlicher gegen Angebotsverwässerung', ['Verhältnis zwischen Lagerbestand im Handel und Wasserfluss', 'Anzahl der täglichen Börsenzugänge durch Neukunden', 'Dividendenrendite klassischer Bankaktien'], 'Mit einem S2F > ~110–120 nach dem 4. Halving 2024 übertrifft Bitcoin erstmals dauerhaft die reine Angebots-Härte von physischem Gold (~60)!', 'Wichtig für kritische Köpfe: S2F quantifiziert allein Angebotsknappheit, ist jedoch kein garantierter automatischer Kursvorhersage-Orakel!', 'mid'],
-    ['historie_oekonomie', 'Cantillon-Effekt', 'Geldpolitik-Verteilungswirkung', 'Vom Ökonomen Richard Cantillon (18. Jh.) beschriebenes Phänomen: Neues Zentralbank-/Kreditgeld verteilt Kaufkraft ungerecht an frühe Empfänger vor der allgemeinen Preisinflation', ['Eine Klangstörung bei frühen Hardware Wallets', 'Die automatische Zinsberechnung im Lightning Network', 'Der Kursanstieg unmittelbar vor jedem Wochenende'], 'Bei Fiat profitieren Finanzsektor, Großschuldner und Vermögenseigentümer oft zuerst, während Lohnempfänger später die gestiegenen Lebenshaltungskosten spüren', 'Bitcoins vollkommen neutrale Proof-of-Work-Ausgabe verhindert jegliche politische Günstlingswirtschaft bei frischer Geldemission', 'mid'],
-    ['historie_oekonomie', 'Zeitpräferenz (Niedrige vs. Hohe Time Preference)', 'Verhaltensökonomie des Sparens', 'Verhältnis zwischen sofortigem Gegenwarts-Konsumwunsch und langfristiger Vorsorge – geprägt stark von der Wertbeständigkeit des genutzten Geldes', ['Bevorzugte Tageszeit für Bitcoin-Überweisungen', 'Maximale Wartezeit im Mempool', 'Das Alter beim ersten Kontoeröffnen'], 'Hartes unverderbliches Geld belohnt Geduld, Sparen und langfristige Produktivität statt kurzfristigem Konsum auf Schuldenbasis', 'Wer weiß, dass seine Ersparnisse nicht durch Gelddrucken entwertet werden, plant ruhiger über Dekaden statt in Quartalen', 'mid'],
-    ['historie_oekonomie', 'Österreichische Schule der Nationalökonomie', 'Geldtheoretische Denkschule', 'Tradition um Menger, Mises und Hayek, die Inflation als Geldmengenausweitung kritisiert und Marktpreise sowie Entstaatlichung des Geldes („Denationalisation of Money“) befürwortet', ['Ein verpflichtendes Schulfach an Handelsakademien in Wien', 'Eine moderne Blockchain auf Proof-of-Stake', 'Ein staatliches Förderprogramm für Kreditvergabe'], 'Viele Konzepte von Hayek (1976: Wettbewerb freier Währungen!) wirkten Jahrzehnte später wie eine ideelle Vorlage für den Erfolg von Bitcoin', 'Zentraler Gedanke: Geld entstand spontan aus dem Markt als nützlichstes Gut, nicht durch staatliches Dekret', 'mid'],
-    ['historie_oekonomie', 'Fiat-Geld vs. Warengeld / Hartgeld', 'Vergleich von Geldsystemen', 'Fiat („Es geschehe“) basiert per staatlichem Gesetz ohne feste Rohstoffdeckung auf Vertrauen/Schulden; Hartgeld (Gold/Bitcoin) auf knapper physischer bzw. rechnerischer Begrenzung', ['Luxusautos der Firma Fiat vs. Transporträder', 'Nur digitales Online-Banking vs. Münzgeld', 'Steuerpflichtiges vs. illegales Geld'], 'Seit dem endgültigen Ende von Bretton Woods 1971 („Nixon-Schock“) existieren weltweit faktisch ausschließlich reine ungedeckte Fiat-Währungen', 'Seitdem wuchsen globale Geldmengen und Schuldenstände vervielfacht an – wesentlicher Treiber moderner Bitcoin-Investmentthesen', 'easy'],
-    ['historie_oekonomie', 'Hyperbitcoinization', 'Langfrist-Szenario-Begriff', 'Gedankliches Szenario einer schleichenden oder krisenbedingten Ablösung weicher Fiat-Währungen als primärer globaler Rechen- und Wertmaßstab durch Bitcoin', ['Der sofortige Absturz sämtlicher Tech-Aktien an einem Dienstag', 'Ein technisches Upgrade zur Verdopplung der Blockgröße', 'Das Erstellen von einer Milliarde neuen Bitcoins'], 'Im Alltag vieler Hochinflationsländer (wie Argentinien, Türkei, Nigeria) dient Bitcoin/Krypto schon lange schrittweise als Schutzschild gegen lokalen Währungsverfall', 'Befürworter betonen, dass dazu kein politisches Verbot nötig sei – lediglich freiwilliger Umstieg zu besserem Geld (Thiers’sches Gesetz!)', 'pro'],
-    ['historie_oekonomie', 'Greshamsches Gesetz vs. Thiers’sches Gesetz', 'Wettbewerbsgesetze von Geld', 'Gresham: Bei gesetzlich erzwungenem Zwangskurs hortet man gutes Geld und gibt schlechtes aus; Thiers: Im freien Wettbewerb verdrängt gutes Geld das schlechte!', ['Zwei Steuergesetze im deutschen Einkommensteuergesetz', 'Die beiden Teile eines Block-Headers', 'Regeln zur maximalen Transaktionsanzahl'], 'Erklärt, weshalb Nutzer zunächst häufig ihre entwertenden Euro/Dollar im Laden ausgeben und ihre knappen Satoshis lieber langfristig halten („Hodl first!“)', 'Erst wenn Händler oder Staaten schlechtes Geld schlicht verweigern, dreht sich der Alltag vollständig zu Thiers’ Gesetz', 'pro'],
-    ['historie_oekonomie', 'Volatilität & Marktzyklen (Bullen vs. Bären)', 'Charakteristikum junger Anlageklassen', 'Extreme prozentuale Auf- und Abschwünge (−70 % Drawdowns ebenso wie +300-%-Rallyes) auf dem historischen Adoption-Pfad vom Nischenprojekt zum Welt-Asset', ['Eine gesetzlich festgelegte Kursschwankung von exakt 5 %', 'Ein technischer Bug in frühen Wallet-Apps', 'Die Stromschwankung von Mining-Kraftwerken'], 'Wächst als natürlicher Preis dafür, dass Bitcoin ohne zentrale Preisstabilisierungs-Behörde bei steigender globaler Nachfrage erst seinen fairen Preis findet!', 'Mit wachsender Marktkapitalisierung und ETF-Liquidität tendieren prozentuale Zyklus-Ausschläge langfristig statistisch leicht abzuschwächen', 'easy'],
-    ['historie_oekonomie', 'DCA (Dollar-Cost Averaging / Sparplan)', 'Disziplinierte Anlagestrategie', 'Regelmäßiges automatisiertes Investieren fester Euro-Beträge (z. B. wöchentlich/monatlich) unabhängig von kurzfristigen Schlagzeilen oder Panik-Kursen', ['Ein zentrales Clearinghaus an der New Yorker Börse', 'Die sofortige All-In-Spekulation auf Kredit', 'Das tägliche Wechseln zwischen fünf verschiedenen Coins'], 'Schaltet emotionale Timing-Fehler („FOMO“ am Top, Panik am Tief) fast komplett aus und senkt den durchschnittlichen Kaufpreis durch automatisches Nachkaufen in Dips', 'Wichtige Steuer-Notiz für DE: Jede einzelne Sparplan-Rate eröffnet rechtlich eine eigene getrennte 12-Monats-Haltefrist nach FIFO!', 'easy'],
-    ['historie_oekonomie', 'Sovereign Wealth & Corporate Treasuries (MicroStrategy / Strategy)', 'Unternehmens-Reserven in BTC', 'Strategie börsennotierter Firmen und erster Staatsfonds, überschüssige Cash-Reserven (oder günstiges Fremdkapital) dauerhaft gegen Kaufkraftverlust in Bitcoin-Reserven zu tauschen', ['Eine Pflicht für alle Handwerksbetriebe in Deutschland', 'Die Umwandlung sämtlicher Bankkonten durch die EZB', 'Ein monatliches Bonusprogramm für Aktionäre'], 'Bekanntestes Beispiel seit August 2020 war MicroStrategy (heute Strategy) unter Michael Saylor mit Hunderttausenden gehaltenen BTC in der Bilanz', 'Unternehmen tragen dabei bilanzielle Kursschwankungen (seit neuen Fair-Value-Accounting-Regeln US-GAAP sauberer abbildbar als frühere bloße Abschreibungspflichten)', 'mid'],
-    ['historie_oekonomie', 'Steuerpflicht DE: § 23 EStG (1-Jahres-Haltefrist)', 'Deutsches Privatsteuerrecht', 'Einstufung physischer Bitcoins als „andere Wirtschaftsgüter“: Verkauf nach mehr als 12 Monaten Haltedauer ist für Privatanleger zu 100 % steuerfrei!', ['Pauschale Besteuerung mit 26,375 % Abgeltungsteuer unabhängig von der Dauer', 'Generelle Steuerfreiheit schon ab einer Sekunde Haltedauer', 'Besteuerung mit 19 % Umsatzsteuer auf den gesamten Verkaufserlös'], 'Gilt allerdings strikt für echte direkt gehaltene Coins (inkl. Cold Wallet oder echter Börsen-BTC) – NICHT für Derivate oder Zertifikate!', 'Auch reine Tauschvorgänge „BTC gegen Ethereum/USDC oder Bezahlen einer Pizza mit BTC“ innerhalb von 12 Monaten gelten steuerlich bereits als Realisierung!', 'easy'],
-    ['historie_oekonomie', 'Steuer-Freigrenze 1.000 € (seit 2024 in DE)', 'Steuergrenze für Kurzfristgewinne', 'Ab Veranlagungsjahr 2024 geltende Grenze (zuvor 600 €), bis zu der sämtliche privaten Veräußerungsgewinne unter 1 Jahr steuerfrei bleiben', ['Ein allgemeiner Freibetrag, bei dem nur der Teil über 1.000 € zählt', 'Ein monatlicher steuerfreier Bitcoin-Bonus pro Haushalt', 'Der Mindestpreis beim Kauf an Krypto-Börsen'], 'Kritische Falle „Freigrenze“: Erzielst du innerhalb von 12 Monaten exakt 1.050 € Gewinn (aus allen §-23-Geschäften zusammen), werden alle 1.050 € ab dem 1. Euro voll steuerpflichtig!', 'Gewinne genau zu beobachten (z. B. 950 € realisieren statt 1.050 €) spart sofort unnötige Einkommensteuer zum persönlichen Grenzsteuersatz', 'mid'],
-    ['historie_oekonomie', 'FIFO-Prinzip & Depot-/Wallet-Trennung (Steuer DE)', 'Verbrauchsfolgeverfahren', 'First-In-First-Out: Bei Verkauf aus demselben Wallet/Depot gilt gesetzlich der zuerst gekaufte Coin auch zuerst als verkauft (BMF-Schreiben 10.05.2022)', ['Der teuerste Coin wird automatisch zuerst gegen den Verlust gerechnet', 'Jeder Nutzer darf frei rückwirkend die günstigsten Münzen herauspicken', 'Nur Coins aus dem letzten Monat dürfen verkauft werden'], 'Trennt man strategisch ein steuerfreies „Langfrist-Cold-Wallet“ (> 1 Jahr) sauber von einem separaten „Kurzfrist-/Zahlungs-Wallet“, verhindert man versehentliches Verlieren steuerfreier Altbestände!', 'Seit BMF 2022 gilt die Einzelbetrachtung je Wallet/Börsenkonto – vorausgesetzt, Zu- und Abgänge sind sauber dokumentiert!', 'pro'],
-    ['historie_oekonomie', 'Krypto-Airdrops, Forks & Mining (Steuer DE)', 'Steuer-Zufluss außerhalb § 23 EStG', 'Einkünfte aus eigenem Mining (gewerblich/sonstig) oder Gegenleistungs-Belohnungen gelten direkt im Empfangszeitpunkt mit Marktwert steuerlich als Zufluss', ['Jeder noch so große Gewinn aus gewerblichem Mining ist sofort völlig steuerfrei', 'Hardwarekosten für ASICs dürfen grundsätzlich nie gegengerechnet werden', 'Das Finanzamt akzeptiert Steuern ausschließlich direkt in Bitcoin'], 'Bei privat genutztem passiven Lending/Staking (§ 22 Nr. 3 EStG, Freigrenze 256 €/Jahr) verlängert sich nach BMF 2022 trotzdem NICHT mehr die 1-Jahres-Frist der Grundcoins!', 'Saubere Transaktions-Exports (CoinTracking, Blockpit, Accointing) erleichtern die Nachweispflicht erheblich', 'pro'],
-    ['historie_oekonomie', 'MiCA-Verordnung (Markets in Crypto-Assets, EU)', 'Europäischer Regulierungsrahmen', 'Seit 2024/2025 schrittweise voll greifendes einheitliches EU-Regelwerk für Krypto-Dienstleister (CASPs), Token-Emittenten und Stablecoins – ohne ein direktes Bitcoin-Verbot!', ['Ein komplettes EU-Verbot von Bitcoin-Software und Full Nodes', 'Eine Einlagensicherung des Staates auf alle Krypto-Kurse', 'Die Abschaffung von Hardware Wallets in Deutschland'], 'Erhöht Verbraucherschutz- und Reserve-Pflichten für zentrale Handelsplattformen und Banken; selbstverwaltete Software-Wallets („Self-Custody“) fallen ausdrücklich NICHT unter CASP-Lizenzen', 'Strengere Vorschriften bei Euro-/Dollar-Stablecoins (EMT/ART) haben das Angebot einzelner nicht-lizensierter Stablecoins im EWR bereits verändert', 'mid'],
-    ['historie_oekonomie', 'Travel Rule (EU TFR & Unhosted Wallets)', 'Herkunftsprüfung bei Plattform-Transfers', 'Vorschrift, nach der regulierte Krypto-Börsen Überweisungsdaten austauschen und vor größeren Transfers (> 1.000 €) zu selbstverwalteten Wallets einen Inhabernachweis verlangen', ['Pflicht zur Anmeldung vor jeder privaten Auslandsreise im Reisepass', 'Verbot jeglicher Lightning-Zahlungen im EU-Ausland', 'Automatischer Steuerabzug bei jeder Wallet-Abhebung'], 'Betrifft regulierte Börsen-Schnittstellen (On-/Off-Ramps) – direkte Peer-to-Peer-Zahlungen zwischen zwei Privatpersonen sind nicht lizenzpflichtig!', 'Wird technisch in Börsen-Apps oft schlicht durch ein kurzes Signieren einer Testnachricht („Satoshi Test / Sign Message“) von deiner Adresse gelöst', 'mid'],
-    ['historie_oekonomie', 'MVRV & Realized Cap (On-Chain-Analyse)', 'Zyklus-Bewertungskennzahlen', 'Realized Cap bewertet jeden einzelnen UTXO zu dem Marktpreis seiner letzten Bewegung on-chain; das MVRV-Verhältnis misst so das Durchschnittsgewinnpolster des ganzen Marktes', ['Die Anzahl aller neuen Wallet-Downloads in Deutschland', 'Der jährliche Strompreis pro Bitcoin-Block', 'Die offizielle Bewertung der Europäischen Zentralbank'], 'Historisch markierte ein MVRV < 1 oft kapitulierende Zyklusböden (Durchschnitts-Halter im Minus!), während extrem hohe Werte (> 3,5+) heiße Überhitzungen anzeigten', 'Dient langfristigen Analysten deutlich objektiver zur Einordnung als reine emotionale Stimmungs-Tweets', 'pro'],
-    ['historie_oekonomie', 'HODL Waves / Coin Days Destroyed', 'Altersstruktur der On-Chain-Coins', 'On-Chain-Statistiken, die zeigen, welcher Anteil aller existierenden Bitcoins seit 1, 2, 5 oder 10+ Jahren absolut unbewegt im Cold Storage ruht', ['Eine grafische Welle zur Messung von Ozean-Wärme beim Mining', 'Die wöchentliche Handelsgebühr auf dezentralen Börsen', 'Ein Ranking der schnellsten Internetprovider'], 'Wenn mitten in Rücksetzern oder Halvings > 65–70 % aller Coins über ein Jahr lang still liegen bleiben, illustriert das ein historisch extrem knappes freies Angebots-Float!', 'Hohe „Coin Days Destroyed“-Spitzen signalisieren hingegen Momente, in denen besonders viele langjährige Groß-Hodler tatsächlich umschichten oder Gewinne mitnehmen', 'pro'],
-    ['historie_oekonomie', 'Bitcoin-ETP / ETN vs. Echter Bitcoin (Self-Custody)', 'Anlageformen im Vergleich (Europa/DE)', 'Börsengehandelte Inhaberschuldverschreibungen (häufig mit physischer Hinterlegung und Auslieferungsoption ab ~1 Jahr steuerfrei, aber weiterhin Emittenten-/Verwahrrisiko)', ['Beides ist sowohl technisch als auch rechtlich zu 100 % absolut identisch', 'ETPs erlauben sekundengenaue Lightning-Kaffeezahlungen im Supermarkt', 'Echte Bitcoins zahlen 19 % Mehrwertsteuer beim Verkauf'], 'Wichtige Feinheit in DE: Viele *echt physisch besicherte* Bitcoin-ETNs mit vertraglicher Auslieferungsoption (wie z. B. bestimmte Xetra-ETCs nach BMF-Praxis) genießen ebenfalls die 1-Jahres-Steuerfreiheit – reine Termin-/Swap-Papiere oft NICHT!', 'Dennoch bleibt beim ETF/ETN immer das Vertrauen in Bank, Emittent, Verwahrstelle und Börsenöffnungszeiten (Mo–Fr) statt 24/7 echter Souveränität', 'mid'],
-    ['historie_oekonomie', 'Circular Economy & Bitcoin-Kreislaufwirtschaft', 'Alltags-Nutzung als Zahlungsmittel', 'Lokale und digitale Gemeinschaften (z. B. Bitcoin Ekasi, El Zonte, Lugano Plan ₿, Arnheim), in denen Kunden, Händler und Handwerker direkt per Lightning in Satoshis bezahlen und weiterbezahlen', ['Ein geschlossenes Recycling-System für kaputte Mining-Lüfter', 'Ein staatliches Gutscheinsystem ausschließlich für Bankangestellte', 'Ein neues Konsens-Verfahren ohne Blöcke'], 'Zeigt Bitcoin nicht bloß als passives „Digital Gold“ im Tresor, sondern lebendig im freien, grenzüberschreitenden Zahlungsverkehr ohne 2–3 % Kartengebühren', 'Gerade in der Schweiz (Lugano: sogar Steuern und Parktickets in BTC/LVGA!) und in Wachstumsmärkten wächst dieses Modell stetig weiter', 'easy'],
-    ['historie_oekonomie', 'Nostr & Zaps (NIP-57)', 'Soziale Web-Integration von Lightning', 'Dezentrales offenes Social-Network-Protokoll (Notes and Other Stuff Transmitted by Relays), das per Lightning („Zaps“) winzige Direkt-Spenden an Autoren ohne Werbeplattformen integriert', ['Ein neuer Kryptowährungs-Token ohne Zusammenhang mit Bitcoin', 'Eine zentrale Behörde für digitale Nachrichten in Norwegen', 'Eine geheime Mining-Software für Apple MacBooks'], 'Schafft einen zensurresistenten Raum, in dem jeder Leser Content direkt per 21 oder 1.000 Satoshis sofort honorieren kann!', 'Zeigt eindrucksvoll, wie Lightning-Mikrozahlungen ohne 50-Cent-Kreditkarten-Grundgebühr ganz neue Internet-Geschäftsmodelle erschließen', 'mid'],
-    ['historie_oekonomie', 'Proof-of-Reserves (PoR) bei Börsen', 'Kryptografische Transparenz-Prüfung', 'Verfahren (oft mit Merkle Trees / Zero-Knowledge), mit dem zentrale Krypto-Verwahrer beweisen sollen, dass Kundeneinlagen tatsächlich 1:1 on-chain gedeckt sind', ['Ein geheimes Darlehen zwischen zwei Mining-Pools', 'Das Ausstellen papierhafter Sparbücher in Filialbanken', 'Eine monatliche Steuererklärung für Privatanleger'], 'Wichtiges Kontroll-Indiz nach Skandalen wie FTX – ersetzt jedoch NIEMALS eine gleichzeitige Prüfung aller **Verbindlichkeiten (Liabilities)** sowie eigene Self-Custody!', 'Wer nur auf der eigenen Hardware Wallet prüft („Verify your own address“), benötigt keine noch so schicken Börsen-Audits', 'mid']
-  ];
-
-  // 3. Handkuratierte Vergleichs-, Rechen- & Praxis-Szenarien (40 Stück · 10 je Kategorie)
-  const CONTRASTS_AND_CALC = [
-    // PROTOKOLL_KRYPTO (10)
-    ['protokoll_krypto', 'mid', 'Welche Größenordnung spart eine Native-SegWit-Transaktion (`bc1q…`) gegenüber einer gleichwertigen alten Legacy-Transaktion (`1…`) bei identischem `sat/vB`-Gebührensatz?', 'Typischerweise rund ~35 % bis ~42 % virtuelle Bytes (`vBytes`) und damit direkt ebenso viel Euro an Transaktionsgebühren', ['Sie ist exakt 10-mal teurer', 'Überhaupt keine Ersparnis (0 %)', 'Sie spart 99,9 % und kostet immer 1 Satoshi'], 'Da Signaturen nur mit 1× statt 4× Weight Unit pro Byte gewichtet werden, ist das moderne `bc1q`/`bc1p`-Format im Geldbeutel massiv überlegen!'],
-    ['protokoll_krypto', 'easy', 'Wie viele Satoshis besitzt jemand exakt, der laut Block-Explorer genau `0,025 BTC` auf seiner Adresse liegen hat?', '2.500.000 Satoshis (`0,025 × 100.000.000`)', ['250.000 Satoshis', '25.000 Satoshis', '25.000.000 Satoshis'], 'Merksatz: `0,01 BTC = 1 Million sats` („1 Mio. Satoshis“), `0,001 BTC = 100.000 sats`, `0,00001 BTC = 1.000 sats`!'],
-    ['protokoll_krypto', 'pro', 'Eine komplexe Transaktion besitzt 1.000 Bytes Non-Witness-Basisdaten und 800 Bytes SegWit-Signaturdaten (Witness). Wie hoch ist ihr virtuelles Gewicht in `vBytes`?', '`1.200 vBytes` (`(1.000×4 + 800×1) / 4 = 4.800 WU / 4`)', ['1.800 vBytes', '4.800 vBytes', '450 vBytes'], 'Genau so funktioniert die SegWit-Formel: Basisdaten zählen voll (`1 Byte = 1 vB`), reine Witness-Daten nur ein Viertel (`4 Bytes Witness = 1 vB`)!'],
-    ['protokoll_krypto', 'mid', 'Ein Nutzer besitzt in seiner Wallet vier UTXOs über je 0,10 BTC und möchte 0,25 BTC an eine Bekannte überweisen. Wie sieht eine typische saubere Bitcoin-Transaktion aus?', '3 Inputs (zusammen 0,30 BTC) werden komplett verbraucht → 2 Outputs entstehen: 0,25 BTC an die Bekannte + knapp ~0,05 BTC Wechselgeld zurück an eine eigene neue Adresse (abzgl. Fee)', ['Nur 2,5 Inputs werden halb verbraucht, der dritte halbiert sich automatisch', 'Alle 0,40 BTC verschwinden und es entstehen 40 neue Adressen', 'Die Wallet sendet 0,25 BTC ohne Wechselgeld und behält den Rest in der alten RX-TX'], 'UTXOs lassen sich wie unteilbare Goldmünzen beim Schmelzen niemals anknabbern – sie werden immer komplett verbraucht mit neuem Wechselgeld-UTXO zurück!'],
-    ['protokoll_krypto', 'pro', 'Welchen handfesten Datenschutz- und Kostenvorteil genießt eine `3-of-5`-Multisig-Ausgabe über Taproot (`MuSig2 / Key-Path`) gegenüber klassischem `P2SH`-Multisig (`3…`)?', 'Alle 5 Beteiligten einigen sich interaktiv auf eine einzige 64-Byte-Schnorr-Signatur – on-chain ununterscheidbar von einem einfachen Single-Key und rund ~3× günstiger in Gebühren!', ['Gar keinen, alle 5 Public Keys müssen trotzdem immer öffentlich im Block stehen', 'Die Transaktion wird dadurch kostenlos ohne jede Fee', 'Sie benötigt doppelt so viel Speicherplatz auf der Blockchain'], 'Durch Key-Path-Spending spart Taproot enormen Blockplatz und verrät Fremden nicht einmal mehr, wie viele Personen mitunterschrieben haben!'],
-    ['protokoll_krypto', 'easy', 'Du willst `50.000 sat` (0,0005 BTC) bei aktuellen 200 sat/vB On-Chain-Gebühren über eine sehr kleine 140-vB-Standard-TX direkt on-chain verschicken. Was zeigt sich schnell?', 'Die On-Chain-Mining-Gebühr läge bei `28.000 sat` (56 % des Betrags!) – für Kleinstbeträge bei vollem Mempool ist Lightning Layer 2 die eindeutig richtige Wahl!', ['Die Gebühr beträgt exakt 0,1 Satoshi', 'Der Betrag verdoppelt sich während des Sendens', 'Die Transaction wird automatisch auf Layer 1 kostenlos abgewickelt'], 'Genau für solche Kleinstzahlungen in Hochgebührenphasen wurden Layer-2-Netzwerke wie Lightning konzipiert!'],
-    ['protokoll_krypto', 'mid', 'Ein falscher Buchstabe rutscht beim Abtippen in die Mitte einer `bc1q…`-Bech32-Adresse. Wie reagiert jede konforme Bitcoin-Wallet?', 'Die integrierte BCH-Prüfsumme schlägt sofort Alarm, weist die ungültige Adresse ab und verhindert jeden Fehlversand ins digitale Nirvana!', ['Die Wallet sendet das Geld automatisch an Satoshi Nakamoto', 'Die Wallet rät per KI eine ähnliche Adresse', 'Die Blockchain korrigiert still den Tippfehler nach 10 Minuten'], 'Die Wahrscheinlichkeit, dass ein zufälliger Tippfehler die Bech32-/Bech32m-Prüfsumme zufällig doch noch besteht, liegt weit unter 1 zu einer Milliarde!'],
-    ['protokoll_krypto', 'pro', 'Warum bleiben im Output-Script-Code einer Bitcoin-Transaktion (z. B. beim `P2WPKH`-Empfang) die eigentlichen Signaturen komplett leer im `scriptSig`?', 'Weil bei Native SegWit das alte `scriptSig`-Feld zwingend leer bleibt und sämtliche Signaturdaten sauber in das separate `Witness`-Feld wandern', ['Weil Native SegWit aus Bequemlichkeit gar keine Signatur mehr braucht', 'Weil das Signatur-Feld nach 10 Blöcken automatisch aus der Blockchain gelöscht wird', 'Weil der Miner die Signatur selbst für dich schreibt'], 'Dadurch berechnet sich die `txid` (ohne Witness) absolut unveränderlich für immer – der Kern von SegWits Transaction-Malleability-Lösung!'],
-    ['protokoll_krypto', 'mid', 'Auf Mempool.space wartest du dringend auf eine Auszahlung deiner Börse mit magerer Fee (`5 sat/vB`), während Blöcke gerade bei `45 sat/vB` clearen. Die Börse aktiviert leider kein RBF. Was kannst du als Empfänger selbst tun?', 'Per CPFP (Child-Pays-For-Parent) deinen eigenen noch unbestätigten Output mit einer neuen Kind-TX samt hoher Fee (z. B. `90 sat/vB`) an dich selbst weiterleiten und das Paket gemeinsam durchziehen!', ['Man muss mindestens einen Monat hilflos abwarten', 'Man schaltet einen eigenen ASIC ein und fälscht den Zeitstempel', 'Man löscht den Verlauf seiner Browser-App'], 'Miner bündeln Eltern- und Kind-TX automatisch gemeinsam, sobald die kombinierte durchschnittliche Paket-Fee-Rate den Mempool überbietet!'],
-    ['protokoll_krypto', 'easy', 'Was bedeutet es genau für die Sicherheit einer eigenen Wallet, wenn man eine Desktop-Wallet wie Sparrow an die eigene Bitcoin Core Node statt an einen fremden Public Server anschließt?', 'Alle eigenen Salden und Adressabfragen bleiben zu 100 % privat im Heimnetz und jede eingehende Zahlung wird nach echten selbst geprüften Konsensregeln verifiziert!', ['Man bezahlt überhaupt keine Transaktionsgebühren mehr an Miner', 'Die Wallet schürft nachts automatisch 0,01 BTC dazu', 'Der Bitcoin-Preis steigt in der App um 5 %'], 'Ohne eigene Node vertraut man faktisch dem fremden Elektum-/API-Betreiber sowohl über den eigenen Kontostand (Datenschutz) als auch über die Echtheit der Kette!'],
-
-    // MINING_KONSENS (10)
-    ['mining_konsens', 'easy', 'Seit dem 4. Halving im April 2024 beträgt die Block-Subvention `3,125 BTC`. Wie viele brandneue Bitcoins erschafft das Netzwerk damit im langfristigen Schnitt pro Tag (144 Blöcke)?', 'Exakt `450 BTC` pro Tag (`144 × 3,125 BTC`)', ['900 BTC pro Tag', '1.800 BTC pro Tag', '144 BTC pro Tag'], 'Vor dem Halving waren es rund 900 BTC/Tag; nach dem 5. Halving (~2028) sinkt die tägliche weltweite Neuemission weiter auf nur noch `225 BTC`!'],
-    ['mining_konsens', 'mid', 'In einer 2.016-Blöcke-Epoche steigt die globale Hashrate kräftig, sodass statt der Soll-Zeit von 14 Tagen (20.160 Min) alle 2.016 Blöcke bereits nach exakt 11,2 Tagen (16.128 Min) gefunden wurden. Wie ändert das nächste Difficulty Adjustment den Wert?', 'Die Difficulty steigt um exakt `+25 %` (`20.160 / 16.128 = 1,25`), damit Blöcke wieder bei rund 10 Minuten Takt liegen!', ['Die Difficulty sinkt um −25 %', 'Die Difficulty verdreifacht sich (+200 %)', 'Sie bleibt unverändert bei 0 % Änderung'], 'Immer wenn es schneller geht als 20.160 Minuten, wird die Zielschwierigkeit um genau diesen Faktor angehoben!'],
-    ['mining_konsens', 'pro', 'Aufgrund eines hypothetischen massiven Stromausfalls sinkt die Hashrate kurzzeitig extrem, sodass 2.016 Blöcke tatsächlich 60 Tage (statt 14 Tage) gedauert hätten. Wie reagiert der Bitcoin-Konsens-Algorithmus laut Protokoll-Clamp?', 'Er begrenzt die Abwärtssenkung pro Schritt auf maximal Faktor 4 (also `−75 %` / ein Viertel der alten Difficulty), um sprunghafte Manipulationen einzudämmen!', ['Die Blockchain stoppt sofort dauerhaft für ein halbes Jahr', 'Er senkt die Difficulty um −99,99 % auf 1 Hash', 'Er verkürzt die Block-Belohnung um 75 %'], 'Auch umgekehrt nach oben greift dieselbe Sicherheitsbremse von maximal `×4` (+300 %) pro 2.016-Blöcke-Epoche!'],
-    ['mining_konsens', 'mid', 'Ein moderner ASIC leistet `200 TH/s` bei `3.500 Watt` (3,5 kW) Leistungsaufnahme. Wie hoch ist seine energetische Effizienz in Joule pro Terahash (`J/TH`)?', '`17,5 J/TH` (`3.500 W / 200 TH/s`)', ['200 J/TH', '5,7 J/TH', '57 J/TH'], 'Da `1 Watt = 1 Joule pro Sekunde`, rechnet man schlicht Gesamtwattzahl geteilt durch Terahash pro Sekunde!'],
-    ['mining_konsens', 'easy', 'Wann hat ein Miner mit einer gefundenen gültigen Block-Lösung die neue Coinbase-Belohnung tatsächlich frei für Überweisungen zur Verfügung?', 'Erst nach `100` weiteren nachfolgenden Blöcken (ca. 16 bis 17 Stunden später wegen Coinbase Maturity)', ['Sofort nach genau 1 Sekunde', 'Erst beim nächsten 4-Jahres-Halving', 'Nach exakt 6 Bestätigungen'], 'Diese Reifezeit stellt sicher, dass niemand aus Versehen Münzen eines Blocks ausgibt, der kurz darauf durch ein Stale-Block-Rennen wieder verworfen wird!'],
-    ['mining_konsens', 'mid', 'Wie viel Prozent aller jemals existierenden 21.000.000 BTC wurden bereits allein in den ersten beiden Halving-Epochen (2009–2016: 50 BTC + 25 BTC je Block) geschürft?', 'Exakt 75 % (`50 % + 25 % = 15,75 Millionen BTC` in gerade einmal knapp acht Jahren!)', ['Nur 10 % (~2,1 Millionen BTC)', 'Exakt 50 % (~10,5 Millionen BTC)', 'Bereits 99 % (~20,8 Millionen BTC)'], 'Durch die geometrische Reihe `1/2 + 1/4 + 1/8 + 1/16 + …` stammten nach 4 Epochen (2024) bereits `93,75 %` (19,6875 Mio. BTC) auf dem Konto der Historie!'],
-    ['mining_konsens', 'pro', 'Weshalb erhöht bloßes Anschließen zehntausender neuer extrem starker ASICs langfristig NICHT die jährliche Inflation neuer Bitcoins?', 'Weil höhere Hashrate über das alle 2.016 Blöcke greifende Difficulty Adjustment automatisch mit höherer Schwierigkeit gekontert wird – die Ausgabe bleibt streng an Blöcke statt Energie gekoppelt!', ['Weil ASICs nach 1.000 Blöcken gesetzlich abgeschaltet werden müssen', 'Weil neue Bitcoins direkt proportional zur Hashrate vernichtet werden', 'Weil das 21-Millionen-Limit dann auf 10 Millionen halbiert wird'], 'Mehr globale Hashrate steigert nicht das Angebot an Coins, sondern ausschließlich das thermische Sicherheitsbudget der Kette!'],
-    ['mining_konsens', 'easy', 'Ein Miner zahlt industriell extrem teure 0,30 $/kWh statt 0,04 $/kWh an einer abgelegenen Wasserkraft-Anlage. Welcher Faktor entscheidet in der Mining-Industrie fast allein über das langfristige Überleben?', 'Günstigster weltweiter Zugang zu Überschuss-/Off-Grid-Strom + höchste ASIC-Effizienz (`J/TH`), da die weltweite Difficulty alle High-Cost-Standorte gnadenlos aus dem Markt drängt', ['Möglichst teure Büromiete im Finanzviertel von London', 'Wie gut ein Miner mit Photoshop umgehen kann', 'Ein schneller Glasfaser-Anschluss von 100 Gbit/s allein'], 'Bitcoin-Mining wirkt wie ein globaler Energiesucher, der sich automatisch zu den weltweit ungenutztesten und preiswertesten Energiequellen hinzieht!'],
-    ['mining_konsens', 'mid', 'Was ändert sich am 80-Byte-Block-Header, wenn ein Block statt 10 Transaktionen plötzlich 3.200 Transaktionen enthält?', 'Die Gesamtgröße des Headers bleibt immer exakt `80 Bytes` – allein der 32-Byte-Merkle-Root innerhalb dieses Headers ändert seinen Hashwert!', ['Der Block Header wächst auf 3.200 Kilobytes an', 'Jede Transaktion fügt dem Header 80 Bytes hinzu', 'Das Nonce-Feld verlängert sich auf 32 Bytes'], 'Deshalb interessiert es den SHA-256-ASIC-Chip beim extrem schnellen Hashes-Durchprobieren überhaupt nicht, ob im Block 1 oder 3.000 Transaktionen liegen!'],
-    ['mining_konsens', 'pro', 'Welcher konkrete technische Nachteil entsteht im Netzwerk, wenn Miner plötzlich völlig auf Stratum v1 mit riesigen zentralen Pools setzen, ohne eigene Node-Validierung?', 'Wenige große Pool-Betreiber entscheiden zentral über Transaktionsauswahl und Zensur, während einzelne Hasher quasi blind fremde Header ohne eigenen Mempool durchrechnen', ['Die Bitcoin-Adresse ändert sich dadurch täglich', 'Die 21-Mio.-Grenze steigt auf 25 Mio.', 'Hardware Wallets lassen sich nicht mehr verbinden'], 'Genau dieses Zentralisierungsrisiko bekämpft heute **Stratum v2** mit „Job Negotiation“, indem individuelle Miner wieder eigene Block-Templates vorschlagen dürfen!'],
-
-    // LAYER2_SKALIERUNG (10)
-    ['layer2_skalierung', 'easy', 'Du eröffnest einen brandneuen leeren Lightning-Kanal mit `1.000.000 sat` (0,01 BTC) komplett aus deinem eigenen On-Chain-Guthaben. Wie sieht die Start-Kapazität aus?', '1.000.000 sat `Outbound` (du kannst senden), aber `0 sat Inbound` (du kannst noch nichts empfangen, bevor du erst etwas ausgibst oder Inbound schaffst!)', ['0 sat Outbound und 1.000.000 sat Inbound', '500.000 sat Outbound und 500.000 sat Inbound automatisch', '2.000.000 sat beidseitig kostenlos'], 'Das klassische Anfänger-Aha-Erlebnis in Lightning: Sobald du 300.000 sat für einen Einkauf sendest, rutschen jene 300.000 sat auf die Gegenseite – ab sofort hast du genau 300.000 sat `Inbound`-Empfangsplatz!'],
-    ['layer2_skalierung', 'mid', 'Was liegt im entscheidenden praktischen Risiko, wenn jemand eine 24-Wörter-Seed-Phrase in zwei getrennte Zettel aufteilt (Wörter 1–12 in Tresor A, Wörter 13–24 im Büro)?', 'Verliert auch nur einer von beiden Orten seine Hälfte (Brand/Verlust), sind 100 % der Bitcoins komplett verloren! (0-aus-2-Toleranz statt 2-of-3-Multisig)', ['Mit den ersten 12 Wörtern kann man exakt 50 % des Geldes retten', 'Die zweite Hälfte lässt sich in zwei Stunden einfach erraten', 'Man kann die fehlende Hälfte beim Wallet-Support anfordern'], 'Nie eine einzelne Seed Phrase halbieren! Entweder den vollständigen 24er-Seed physisch doppelt an getrennten Orten samt starkem Passphrase-Schutz sichern oder echtes 2-of-3 Hardware-Multisig nutzen!'],
-    ['layer2_skalierung', 'pro', 'Warum schützt ein „2-of-3 Multisig“ aus drei verschiedenen Hardware-Wallets (z. B. BitBox02 + Coldcard + Trezor) auch gegen einen heimlichen Firmware-Supply-Chain-Bug eines einzelnen Herstellers?', 'Weil selbst ein gekaperter einzelner Hersteller niemals zwei fremde Schlüssel anderer Hersteller kontrollieren kann – für eine gültige Ausgabe müssen mindestens 2 völlig verschiedene Hersteller zusammen signieren!', ['Weil drei USB-Kabel schneller laden', 'Weil Multisig automatisch die Blockchain-Größe halbiert', 'Weil man dann überhaupt kein Backup der Seeds mehr braucht'], 'Dieses „Multi-Vendor Multisig“-Prinzip reduziert das Vertrauen in einen einzelnen Chip- oder Softwarehersteller drastisch auf null!'],
-    ['layer2_skalierung', 'mid', 'Du überweist `100.000 sat` per Lightning über einen einzigen Hop mit `base_fee = 1 sat` und `fee_rate = 500 ppm` (Parts per Million). Wie hoch ist die Routing-Gebühr dieses Hops?', '`51 sat` (`1 sat + 100.000 × 0,0005 = 1 + 50`)', ['501 sat', '5.001 sat', '5 sat'], 'Rechnung mit ppm: `1.000 ppm = 0,1 %`; `500 ppm = 0,05 %`! Auf 100.000 sats sind das also sagenhaft günstige 50 sats (+ 1 sat Basisgebühr) für sofortiges globales Settlement!'],
-    ['layer2_skalierung', 'easy', 'Was unterscheidet eine reine „Watch-Only-Wallet“ mit deinem `zpub` von einer vollwertigen Hot Wallet auf dem Alltagshandy?', 'Die Watch-Only-Wallet zeigt live jeden Zahlungseingang und generiert frische Empfangsadressen – enthält jedoch keinerlei Private Key, sodass Diebe bei Handyverlust exakt null Satoshis stehlen können!', ['Sie kann überhaupt keine Empfangsadressen anzeigen', 'Sie braucht zwingend ein Monatsabo beim Anbieter', 'Man darf mit ihr nur alle zwei Jahre Kontostände sehen'], 'Ideal fürs tägliche Neugier-Prüfen und Geldempfangen im Alltag, während die echten Hardware-Schlüssel daheim unantastbar im Safe ruhen!'],
-    ['layer2_skalierung', 'pro', 'Weshalb ist in einem echten 2-of-3-Multisig das alleinige Aufbewahren deiner eigenen einen 24-Wörter-Seed Phrase oft NICHT ausreichend, wenn zwei andere Schlüssel noch existieren? Halt – bei Verlust eines Keys bleiben noch 2 Seeds: Wieso braucht man dennoch ZUSÄTZLICH das Output-Descriptor/xpub-Backup aller 3?', 'Weil in P2SH/P2WSH ohne Kenntnis ALLER drei beteiligten öffentlichen Master-Schlüssel (`xpub1, xpub2, xpub3`) das Wallet-Skript (`redeemScript`) mathematisch nicht einmal gefunden oder ausgegeben werden kann!', ['Weil sonst alle 3 Keys auf das doppelte Volumen wachsen', 'Weil das Internet Multisig-Adressen nach 3 Jahren löscht', 'Weil man ein Notariatsschreiben benötigt'], 'Selbst wenn dir 2 von 3 Seeds noch gehören: Fehlt dir der dritte öffentliche `xpub` (aus dem gemeinsamen Descriptor!), sitzt das Geld fest – darum beim Multisig stets Seeds + komplette Wallet-Config sichern!'],
-    ['layer2_skalierung', 'mid', 'Warum nutzt man eine „BIP-39 Passphrase“ im Idealfall NICHT als kurzes einfaches Wörterbuch-Wort wie `bitcoin` oder `123456`?', 'Weil ein Dieb, der deine 24-Wörter-Platte in die Hände bekommt, per moderner GPU-Bruteforce-Software Millionen gängiger Passwörter binnen Minuten gegen deinen Seed durchprobieren könnte!', ['Weil die Hardware Wallet Wörter unter 20 Zeichen sofort ablehnt', 'Weil Großbuchstaben die Gebühren verdoppeln', 'Weil das 25. Wort automatisch öffentlich im Block steht'], 'Eine sichere Passphrase sollte ausreichend Entropie besitzen (z. B. 4–5 echte Zufallswörter oder zufälliger Buchstaben-/Zahlencode) UND sicher außerhalb des Kopfes dokumentiert sein!'],
-    ['layer2_skalierung', 'easy', 'Du kaufst eine gebrauchte Hardware Wallet sehr günstig bei einem privaten Kleinanzeigen-Händler – in der Schachtel liegt bereits ein fertig ausgefülltes Kärtchen mit „deiner vor-eingerichteten 24-Wörter-Seed-Phrase“. Was tust du?', 'Sofortiger klassischer Scam-Alarm! Niemals vor-notierte Seeds verwenden – Hardware komplett auf Werkseinstellungen zurücksetzen, Firmware prüfen und selbst frisch eine neue Zufalls-Seed auf dem Gerät generieren!', ['Dankbar direkt die 24 vorgedruckten Wörter nutzen und viel Geld darauf senden', 'Nur die letzten 4 Wörter durchstreichen und neu schreiben', 'Die ersten 12 Wörter nutzen und die zweiten ignorieren'], 'Der berüchtigte „Pre-Filled Seed Card Scam“ gehört zu den ältesten und häufigsten Diebstahlmaschen im Hardware-Bereich!'],
-    ['layer2_skalierung', 'pro', 'Welchen gravierenden Vorteil besitzt ein „Submarine Swap (Loop Out)“ für einen erfolgreichen Online-Shop mit Lightning-Kasse im Vergleich zu klassischem Kanal-Schließen (`Close Channel`)?', 'Beim Schließen verliert man seinen gewachsenen Routing-Kanal und zahlt L1-Close + später L1-Open doppelt; beim Loop Out bleibt der gute Kanal erhalten und leert sich elegant gegen sicheres On-Chain Cold Storage!', ['Es entfallen sämtliche On-Chain-Transaktionen auch für den Swap-Provider komplett', 'Der Swap verwandelt Satoshis automatisch steuerfrei in Euro', 'Die Gebühr beträgt immer exakt minus 5 % Bonus'], 'Genau so automatisieren große Routing-Nodes und Lightning-Händler rund um die Uhr ihr perfektes Liquiditäts-Gleichgewicht!'],
-    ['layer2_skalierung', 'mid', 'Wie sieht die Zahlungsrichtung einer regulären Lightning-Zahlung über „BOLT-11“ vs. „LNURL-withdraw“ (z. B. Auszahlungs-QR am Geldautomaten/Faucet) aus?', 'BOLT-11 bezahlt eine Rechnung (Sender push-t Geld zum Empfänger); bei LNURL-withdraw zieht sich deine Wallet auf Abruf Satoshis von einer Gegenstelle auf die eigene frisch generierte Rechnung!', ['Beide senden immer automatisch dein ganzes Guthaben weg', 'LNURL-withdraw funktioniert ausschließlich mit physischen Bargeld-Scheinen', 'BOLT-11 benötigt zwingend eine eigene Web-Domain mit SSL'], 'So funktionieren u. a. lustige Bitcoin-Voucher-Karten oder „Boltcards“, bei denen das Auslesen einen sicheren Abruf über LNURL-withdraw anstößt!'],
-
-    // HISTORIE_OEKONOMIE (10)
-    ['historie_oekonomie', 'easy', 'Ein Privatanleger in Deutschland kauft am 10. März 2025 einen halben Bitcoin für 38.000 € und verkauft ihn komplett am 15. April 2026 für 62.000 € (+24.000 € Gewinn). Wie viel Einkommensteuer fällt nach § 23 EStG voraussichtlich an?', 'Exakt `0,00 €` – da zwischen Anschaffung und Veräußerung mehr als ein volles Jahr (> 12 Monate) liegt, ist der gesamte Kursgewinn komplett steuerfrei!', ['Rund 6.330 € Abgeltungsteuer (26,375 %)', 'Rund 10.800 € Einkommensteuer (45 %)', 'Exakt 1.000 € Pauschalsteuer'], 'Wichtig zur Fristberechnung: Taggenau nach §§ 187, 188 BGB sicher ein paar Tage Puffer über den genauen Jahrestag abwarten (hier über 13 Monate)!'],
-    ['historie_oekonomie', 'mid', 'Eine Anlegerin kauft im Januar 2026 Bitcoin für 10.000 € und verkauft schon im August 2026 (nach 7 Monaten!) wegen Kurssprung komplett für 12.200 € (+2.200 € Gewinn; keine anderen §-23-Geschäfte). Was ist in Deutschland steuerpflichtig?', 'Da die 1.000-€-Freigrenze überschritten ist, werden nicht bloß 1.200 €, sondern die VOLLEN `2.200 €` Gewinn mit ihrem persönlichen Einkommensteuersatz versteuert!', ['Nur die überschreitenden 1.200 € werden besteuert', 'Es fallen 0 € Steuer an, weil alle Bitcoins unter 50.000 € frei sind', 'Nur die pauschale Abgeltungsteuer von 26,375 % greift'], 'Die Unterscheidung zwischen „Freigrenze“ (§ 23 EStG: ab 1.000 € ALLES steuerpflichtig!) und „Freibetrag“ (wie beim ETF-Sparerpauschbetrag) kostet Unwissende oft bares Geld!'],
-    ['historie_oekonomie', 'pro', 'Du besitzt seit 2021 schon `1,0 BTC` im selben unveränderten Börsen-Account und kaufst dort Anfang 2026 nochmal `0,5 BTC` frisch hinzu. Zwei Monate später verkaufst du genau `0,4 BTC` von genau diesem Konto. Welcher steuerliche Anteil gilt nach „FIFO“ als verkauft?', 'Nach FIFO (`First-In-First-Out`) gelten `0,4 BTC` aus dem uralten `2021`-Bestand als zuerst verkauft – sie sind damit nach > 1 Jahr Haltefrist komplett steuerfrei!', ['Es gelten automatisch immer die teuersten oder neuesten Coins von 2026 (LIFO)', 'Du musst rückwirkend auf alle 1,5 BTC Nachsteuern zahlen', 'Der Verkauf wird exakt halbiert auf je 0,2 BTC alt und neu'], 'Noch sauberer vermeidet man Verwechslungen allerdings durch physische Trennung zwischen einem alten Langfrist-Cold-Wallet und einem separaten Trading-Wallet!'],
-    ['historie_oekonomie', 'mid', 'Welche Wirkung hat der historische Meilenstein „Bitcoin Halving“ im April 2024 verglichen mit traditionellem Gold-Mining auf den Markt?', 'Während höhere Goldpreise Minengesellschaften zu rund ~1,7 % jährlicher Ausweitung antreiben, fiel Bitcoins neue jährliche Angebotsinflation per Code fest auf nur noch ~0,83 % p. a. – völlig egal wie stark der Kurs steigt!', ['Die weltweite Bitcoin-Menge schrumpft jedes Jahr um −5 % durch aktive Vernichtung', 'Bitcoin wird nun direkt aus Goldbarren hergestellt', 'Alle alten Bitcoins vor 2024 verlieren die Hälfte ihres Werts'], 'Zum ersten Mal in der Wirtschaftsgeschichte existiert ein globales Gut mit niedrigerer Angebots-Inflation als das härteste Edelmetall der Menschheit!'],
-    ['historie_oekonomie', 'easy', 'Was geschah technisch mit dem Wert von zwei Pizzen, die am 22. Mai 2010 mit `10.000 BTC` bezahlt wurden, wenn man einen Kurs von 80.000 € je BTC ansetzt?', '10.000 BTC würden bei 80.000 €/BTC theoretisch sagenhaften `800 Millionen Euro` (für zwei Pizzen!) entsprechen', ['Rund 80.000 Euro', 'Genau 8 Millionen Euro', 'Circa 80 Milliarden Euro'], 'Ein herrliches Kopfrechenbeispiel, das den unvorstellbaren Wertzuwachs vom kleinen Experimental-Token zum globalen Asset auf einen Blick greifbar macht!'],
-    ['historie_oekonomie', 'mid', 'Welchen direkten Vergleich ziehen Ökonomen zwischen einer Banküberweisung im klassischen System und einer direkten Peer-to-Peer-Bitcoin-Transaktion (Layer 1) über Kontinente?', 'Klassische Überweisungen brauchen Korrespondenzbanken, SWIFT, Wochentage und Vertrauen auf Auszahlbarkeit (und können storniert/eingefroren werden); L1-Bitcoin setzt unumkehrbares Final-Settlement rund um die Uhr in ~10–60 Min ganz ohne Erlaubnis durch!', ['Bitcoin funktioniert ausschließlich von Montag bis Freitag zwischen 9 und 17 Uhr', 'Eine Banküberweisung läuft technisch schneller über Proof-of-Work', 'Bei Bitcoin bürgt die lokale Sparkasse für jeden Zahlungseingang'], 'Deshalb unterscheidet man sauber zwischen billigem *Zahlungsnachrichtensystem* (PayPal/Kreditkarte, reversible IOU!) und unumkehrbarem *Basisschicht-Settlement* (Bitcoin)!'],
-    ['historie_oekonomie', 'pro', 'Warum galt der frühe historische Kauf von MicroStrategy (2020) bzw. anderen Public-Company-Treasuries unter Bilanzregeln vor 2025 lange als buchhalterisch besonders unvorteilhaft?', 'Unter alten US-GAAP-Regeln für immaterielle Vermögenswerte durften Unternehmen Bitcoin zwar bei Kursrutsch zwingend *abwerten*, Kursgewinne bis zum Verkauf jedoch NICHT wieder hochbuchen – was Gewinne optisch stark verzerrte!', ['Unternehmen durften rechtlich maximal 1 Bitcoin besitzen', 'Kursgewinne mussten damals in Deutschland mit 90 % besteuert werden', 'Börsen verboten den Handel für Aktiengesellschaften komplett'], 'Mit der neuen FASB Fair-Value-Bilanzierung (ab Geschäftsjahren nach Dez 2024) bilden US-Unternehmen Bitcoin-Marktwerte nun endlich fair symmetrisch in beide Richtungen ab!'],
-    ['historie_oekonomie', 'mid', 'Welche historische Erkenntnis bewies die erfolgreiche Abwehr von „SegWit2x“ im November 2017 für das Kräfteverhältnis in Bitcoin?', 'Obwohl ein Bündnis über 80 %+ der damaligen Mining-Hashrate und große Börsen hinter dem Hard-Fork-Plan standen, gaben sie am Ende ohne Fork auf, weil das Netzwerk aus unzähligen Full Nodes schlicht auf den alten Konsensregeln beharrte!', ['Dass ein einziger Großinvestor jede Regeländerung jederzeit erkaufen kann', 'Dass Miner bei 80 % Hashrate die 21-Millionen-Grenze sprengen dürfen', 'Dass Entwickler einfach alle Widersacher sperren'], 'Diese schmerzhafte aber reinigende Lektion festigte weltweit das Vertrauen in Bitcoins unveränderliche Verfassungs-Regeln!'],
-    ['historie_oekonomie', 'easy', 'Du möchtest Bitcoin für deine Familie über 15 Jahre hinweg sicher ansparen, ohne dich jeden Tag um kurzfristige Kursschwankungen zu stressen. Welche zwei Säulen gelten als Goldstandard?', 'Langfristige disziplinierte Sparplan-Kultur (nur Kapital, das man jahrelang entbehren kann!) + schrittweises Übertragen auf eigene gut gesicherte Self-Custody (Hardware Wallet / Stahlbackup) mit Vererbungsplan', ['Jeden Morgen 20-fach gehebeltes Daytrading an unregulierten Offshore-Börsen', 'Sämtliche Rücklagen sofort auf ein einzelnes heißes Browser-Addon ohne Backup legen', 'Den gesamten Notgroschen inklusive Miete für nächsten Monat spekulativ einzusetzen'], 'Genau so verbindet man emotionale Ruhe im Alltag mit technologischer Souveränität über Dekaden!'],
-    ['historie_oekonomie', 'pro', 'Worin steckt ein häufig übersehener Unterschied bei der Besteuerung eines US-/EU-Bitcoin-Spot-ETFs (bzw. gemischten Fonds) im deutschen Privatdepot gegenüber dem Direktkauf physischer Bitcoins auf einem Wallet?', 'Ein klassischer Investmentfonds/ETF unterliegt im deutschen Depot in aller Regel der laufenden **Abgeltungsteuer (26,375 % + ggf. KiSt)** ohne Befreiung nach einem Jahr – während direkt gehaltene echte Bitcoins nach 12 Monaten bei 0 % Steuer stehen!', ['Ein US-ETF ist in Deutschland bereits nach 3 Monaten völlig steuerfrei', 'Echte Bitcoins zahlen pauschal 30 % Zusatzsteuer auf jedes Wallet', 'Beide werden vom Finanzamt absolut identisch ohne jeden Unterschied versteuert'], 'Wer nicht zwingend auf einfache Depoteinbindung (z. B. Firmenvermögen oder Riester-/Broker-Komfort) angewiesen ist, genießt beim direkten Self-Custody-Halten in Deutschland enorme Steuer- und Souveränitätsvorteile!']
-  ];
-
-  // Hilfsfunktionen & Sammlung
-  const questions = [];
-  const seenQ = new Set();
-  const catCounts = { protokoll_krypto: 0, mining_konsens: 0, layer2_skalierung: 0, historie_oekonomie: 0 };
-
-  function pushQ(cat, diff, q, correct, wrongs, exp) {
-    const cleanQ = String(q).trim();
-    if (seenQ.has(cleanQ)) return false;
-    const cleanCorrect = String(correct).trim();
-    const uniqWrongs = [];
-    for (const w of wrongs) {
-      const cw = String(w || '').trim();
-      if (cw && cw !== cleanCorrect && !uniqWrongs.includes(cw)) {
-        uniqWrongs.push(cw);
-      }
-      if (uniqWrongs.length === 3) break;
-    }
-    if (uniqWrongs.length < 3) return false;
-    seenQ.add(cleanQ);
-    questions.push({
-      id: questions.length + 1,
-      cat,
-      diff,
-      q: cleanQ,
-      a: [cleanCorrect, uniqWrongs[0], uniqWrongs[1], uniqWrongs[2]],
-      exp: String(exp).trim()
-    });
-    catCounts[cat] = (catCounts[cat] || 0) + 1;
-    return true;
+];
+  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
+    window.ArcadeQuizEngine.registerBank("bitcoin", DATA);
+  } else {
+    window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
+    window.ARCADE_QUIZ_BANKS["bitcoin"] = DATA;
   }
-
-  // Schritt A: Handkuratierte CORE-Fragen (80)
-  for (const c of CORE) {
-    pushQ(c[0], c[1], c[2], c[3], c[4], c[5]);
-  }
-
-  // Schritt B: Pro Begriff/Instrument in CONCEPTS_DB je 5 präzise Fragen (160 * 5 = 800)
-  const DB_BY_CAT = {
-    protokoll_krypto: CONCEPTS_DB.filter(x => x[0] === 'protokoll_krypto'),
-    mining_konsens: CONCEPTS_DB.filter(x => x[0] === 'mining_konsens'),
-    layer2_skalierung: CONCEPTS_DB.filter(x => x[0] === 'layer2_skalierung'),
-    historie_oekonomie: CONCEPTS_DB.filter(x => x[0] === 'historie_oekonomie')
-  };
-
-  for (let i = 0; i < CONCEPTS_DB.length; i++) {
-    const [cat, term, domainLbl, def, distractors, benefitRule, praxisDetail, diff] = CONCEPTS_DB[i];
-    const sameCat = DB_BY_CAT[cat].filter(x => x[1] !== term);
-    const pickCatOther = (fieldIdx, disallow, seed) => {
-      const out = [];
-      for (const item of seededShuffle(sameCat, seed)) {
-        const v = item[fieldIdx];
-        if (v && v !== disallow && !out.includes(v)) out.push(v);
-        if (out.length === 3) break;
-      }
-      return out;
-    };
-
-    const expStr = `${term} (${domainLbl}): ${def}. Kernwirkung: ${benefitRule}. Praxis-Hinweis: ${praxisDetail}.`;
-
-    // 1. Was beschreibt Term?
-    pushQ(
-      cat, diff,
-      `Was beschreibt der Fachbegriff bzw. das Konzept „${term}“ im Bitcoin-Ökosystem?`,
-      def, distractors, expStr
-    );
-
-    // 2. Umgekehrt: Term per exakter Definition erkennen
-    pushQ(
-      cat, 'mid',
-      `Welcher Begriff oder welche Regel wird präzise wie folgt beschrieben: „${def}“?`,
-      term, pickCatOther(1, term, i * 19 + 2), expStr
-    );
-
-    // 3. Einordnungs-Kategorie / Domain
-    pushQ(
-      cat, 'easy',
-      `In welchen sachlichen Themenbereich gehört „${term}“ rund um Bitcoin?`,
-      domainLbl, pickCatOther(2, domainLbl, i * 19 + 3), expStr
-    );
-
-    // 4. Nutzen / Auswirkung / Regelinhalt
-    pushQ(
-      cat, 'mid',
-      `Welche wesentliche Wirkung oder Bedeutung besitzt „${term}“ in der Praxis?`,
-      benefitRule, pickCatOther(5, benefitRule, i * 19 + 4), expStr
-    );
-
-    // 5. Tiefes Praxisdetail erkennen
-    pushQ(
-      cat, 'pro',
-      `Welcher konkrete Praxis- oder Expertenhinweis trifft speziell auf „${term}“ zu?`,
-      praxisDetail, pickCatOther(6, praxisDetail, i * 19 + 5), expStr
-    );
-  }
-
-  // Schritt C: Handkuratierte Rechen- & Praxis-Szenarien (40 Stück)
-  for (const s of CONTRASTS_AND_CALC) {
-    pushQ(s[0], s[1], s[2], s[3], s[4], s[5]);
-  }
-
-  // Schritt D: Parameterisierte eindeutige Rechen- & Protokoll-Szenarien pro Kategorie auf exakt 250 je Kategorie
-  // 1) protokoll_krypto: Fee/vByte-, Satoshi-Umrechnungs-, SegWit-Weight- & Merkle-Proof-Szenarien (20 Fragen → genau 250)
-  const PK_SCENARIOS = [
-    [141, 12, 0.005, 800, 400, 1024],   [226, 25, 0.012, 1200, 600, 2048],
-    [110, 8,  0.0025, 600, 300, 512],   [154, 40, 0.035, 900, 500, 4096],
-    [280, 15, 0.008, 1500, 700, 256],   [195, 50, 0.042, 1100, 900, 8192],
-    [140, 30, 0.0015, 700, 200, 128],   [320, 18, 0.075, 1600, 1000, 16384],
-    [210, 60, 0.009, 1000, 400, 32768], [168, 22, 0.018, 1300, 500, 64],
-    [248, 35, 0.004, 1400, 800, 2048],  [125, 45, 0.065, 500, 300, 512],
-    [350, 10, 0.0033, 2000, 1200, 4096],[175, 80, 0.022, 850, 350, 1024],
-    [260, 14, 0.125, 1800, 600, 256],   [138, 70, 0.0075, 950, 450, 8192],
-    [300, 28, 0.055, 1700, 700, 16384], [190, 95, 0.006, 1150, 550, 128],
-    [235, 16, 0.088, 1250, 750, 32768], [410, 20, 0.014, 2100, 900, 4096]
-  ];
-  for (let i = 0; i < PK_SCENARIOS.length && catCounts.protokoll_krypto < 250; i++) {
-    const [vb, rate, btcVal, baseB, witB, txCount] = PK_SCENARIOS[i];
-    if (i % 4 === 0) {
-      const feeSats = vb * rate;
-      pushQ(
-        'protokoll_krypto', 'easy',
-        `Rechencheck Gebühr: Eine Bitcoin-Transaktion belegt exakt ${vb} vBytes und wird mit einem Gebührensatz von ${rate} sat/vB abgesendet. Wie hoch ist die Gesamtgebühr in Satoshis?`,
-        `${feeSats.toLocaleString('de-DE')} sat`,
-        [
-          `${(feeSats * 10).toLocaleString('de-DE')} sat`,
-          `${Math.round(feeSats / 2).toLocaleString('de-DE')} sat`,
-          `${(vb + rate).toLocaleString('de-DE')} sat`
-        ],
-        `Die Gesamtgebühr im Block space berechnet sich direkt als \`${vb} vB × ${rate} sat/vB = ${feeSats.toLocaleString('de-DE')} sat\`.`
-      );
-    } else if (i % 4 === 1) {
-      const sats = Math.round(btcVal * 100000000);
-      pushQ(
-        'protokoll_krypto', 'easy',
-        `Einheiten-Umrechnung: Wie vielen Satoshis entsprechen exakt ${btcVal.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 4 })} BTC?`,
-        `${sats.toLocaleString('de-DE')} Satoshis`,
-        [
-          `${Math.round(sats / 10).toLocaleString('de-DE')} Satoshis`,
-          `${(sats * 10).toLocaleString('de-DE')} Satoshis`,
-          `${Math.round(sats / 100).toLocaleString('de-DE')} Satoshis`
-        ],
-        `Da \`1 BTC = 100.000.000 sat\`, multipliziert man \`${btcVal} × 100.000.000 = ${sats.toLocaleString('de-DE')} sat\`.`
-      );
-    } else if (i % 4 === 2) {
-      const wu = baseB * 4 + witB;
-      const calcVb = Math.ceil(wu / 4);
-      pushQ(
-        'protokoll_krypto', 'pro',
-        `SegWit-Gewicht (#${i + 1}): Eine Transaktion umfasst ${baseB} Bytes Basisdaten (Non-Witness) plus ${witB} Bytes Signaturdaten (Witness). Wie hoch ist ihr Blockweight in WU bzw. vBytes?`,
-        `${wu.toLocaleString('de-DE')} WU (${calcVb.toLocaleString('de-DE')} vBytes)`,
-        [
-          `${((baseB + witB) * 4).toLocaleString('de-DE')} WU (${(baseB + witB).toLocaleString('de-DE')} vBytes)`,
-          `${(baseB + witB).toLocaleString('de-DE')} WU (${Math.ceil((baseB + witB) / 4).toLocaleString('de-DE')} vBytes)`,
-          `${(baseB + witB * 4).toLocaleString('de-DE')} WU`
-        ],
-        `Nach BIP-141 zählen Basisdaten ×4 (\`${baseB * 4} WU\`) und Witness-Daten ×1 (\`${witB} WU\`) = \`${wu} WU\`, geteilt durch 4 = \`${calcVb} vBytes\`.`
-      );
-    } else {
-      const depth = Math.round(Math.log2(txCount));
-      pushQ(
-        'protokoll_krypto', 'mid',
-        `Merkle-Proof-Tiefe (#${i + 1}): In einem Bitcoin-Block liegen genau ${txCount.toLocaleString('de-DE')} Transaktionen. Wie viele 32-Byte-Nachbarhashes (Baumebenen) benötigt ein SPV-Merkle-Proof maximal zum Verifizieren einer einzelnen TX?`,
-        `Nur ${depth} Hashes (log2(${txCount}) = ${depth})`,
-        [
-          `${txCount.toLocaleString('de-DE')} Hashes (alle Transaktionen komplett)`,
-          `${Math.round(txCount / 2).toLocaleString('de-DE')} Hashes`,
-          `Nur 1 einziger Hash unabhängig von der Größe`
-        ],
-        `Dank des binären Merkle Trees wächst die Proof-Größe nur logarithmisch: \`2^${depth} = ${txCount}\`, also genügen ${depth} × 32-Byte-Hashes!`
-      );
-    }
-  }
-
-  // 2) mining_konsens: Difficulty Adjustment, Halving-Emission, Hashrate-Anteil & 21M-Mathematik (20 Fragen → genau 250)
-  const MK_SCENARIOS = [
-    [100, 10080, 3.125, 12], [80,  26880, 6.25,  15], [120, 13440, 1.5625, 8], [150, 16128, 3.125, 20],
-    [90,  25200, 12.5,  10], [200, 15120, 3.125, 25], [110, 40320, 0.78125, 5], [140, 17920, 3.125, 18],
-    [75,  22400, 25.0,  30], [160, 11200, 1.5625, 4], [95,  18144, 3.125, 14], [130, 30240, 6.25,  22],
-    [180, 14400, 3.125, 6],  [85,  28800, 12.5,  16], [220, 16800, 0.78125, 3], [105, 19200, 3.125, 9],
-    [170, 12600, 1.5625, 11],[115, 24192, 6.25,  24], [190, 17280, 3.125, 7], [250, 13440, 1.5625, 2]
-  ];
-  for (let i = 0; i < MK_SCENARIOS.length && catCounts.mining_konsens < 250; i++) {
-    const [oldDiff, actualMin, sub, poolPct] = MK_SCENARIOS[i];
-    if (i % 4 === 0) {
-      const ratio = 20160 / actualMin;
-      const newDiff = Math.round(oldDiff * ratio * 10) / 10;
-      const changePct = Math.round((ratio - 1) * 100);
-      const sign = changePct >= 0 ? `+${changePct}%` : `${changePct}%`;
-      pushQ(
-        'mining_konsens', 'mid',
-        `Difficulty Adjustment (#${i + 1}): Bei Ausgangswert ${oldDiff} benötigt das weltweite Netz für die 2.016 Blöcke tatsächlich nur/ganze ${actualMin.toLocaleString('de-DE')} Minuten (Soll: 20.160 Min). Wie lautet die angepasste neue Difficulty?`,
-        `Rund ${newDiff.toLocaleString('de-DE')} (${sign} Anpassung)`,
-        [
-          `Rund ${(oldDiff * 4).toLocaleString('de-DE')} (+300%)`,
-          `Unverändert exakt ${oldDiff} (0 %)`,
-          `Rund ${Math.round(oldDiff / (ratio || 1)).toLocaleString('de-DE')}`
-        ],
-        `Formel: \`${oldDiff} × (20.160 / ${actualMin}) = ${newDiff}\` – dadurch pendelt sich der nächste 2.016-Blöcke-Zyklus wieder auf ~10 Min/Block ein.`
-      );
-    } else if (i % 4 === 1) {
-      const daily = Math.round(144 * sub * 100) / 100;
-      const yearly = Math.round(daily * 365);
-      pushQ(
-        'mining_konsens', 'easy',
-        `Emissions-Rechnung (#${i + 1}): In einer Halving-Epoche beträgt die feste Block-Subvention ${sub.toLocaleString('de-DE')} BTC je Block (Plan: 144 Blöcke/Tag). Wie viele neue Bitcoins entstehen dabei rechnerisch pro Tag (~Jahr)?`,
-        `Rund ${daily.toLocaleString('de-DE')} BTC/Tag (~${yearly.toLocaleString('de-DE')} BTC/Jahr)`,
-        [
-          `Exakt ${(daily * 4).toLocaleString('de-DE')} BTC/Tag`,
-          `Nur ${(sub * 24).toLocaleString('de-DE')} BTC/Tag`,
-          `Genau 21.000 BTC/Tag unabhängig vom Halving`
-        ],
-        `Bei 6 Blöcken je Stunde (= 144 pro Tag) schürfen Miner genau \`144 × ${sub} = ${daily} BTC\` täglich bzw. rund \`${yearly.toLocaleString('de-DE')} BTC\` im Jahr.`
-      );
-    } else if (i % 4 === 2) {
-      const blocksWeek = Math.round(1008 * (poolPct / 100));
-      pushQ(
-        'mining_konsens', 'mid',
-        `Pool-Statistik (#${i + 1}): Ein Mining-Pool kontrolliert im Durchschnitt ${poolPct} % der gesamten weltweiten Bitcoin-Hashrate. Mit wie vielen der ~1.008 regulären Blöcke einer Woche darf er statistisch im Schnitt rechnen?`,
-        `Etwa ${blocksWeek} Blöcke pro Woche (von ~1.008)`,
-        [
-          `Exakt ${poolPct * 50} Blöcke pro Woche`,
-          `Immer null oder höchstens 1 Block`,
-          `Alle 1.008 Blöcke der Woche`
-        ],
-        `Durch die Unabhängigkeit des Poisson-Mining-Prozesses entspricht der erwartete Anteil an Blöcken direkt dem Anteil an der globalen Hashrate (\`${poolPct} % × 1.008 ≈ ${blocksWeek}\`).`
-      );
-    } else {
-      const subAt = sub;
-      const perEpoch = Math.round(210000 * subAt);
-      pushQ(
-        'mining_konsens', 'pro',
-        `Epochen-Gesamtmenge (#${i + 1}): Wie viele brandneue Bitcoins werden über eine komplette 210.000-Blöcke-Halving-Epoche hinweg geschürft, wenn die Block-Subvention bei ${subAt.toLocaleString('de-DE')} BTC liegt?`,
-        `Exakt ${perEpoch.toLocaleString('de-DE')} BTC`,
-        [
-          `Exakt ${Math.round(perEpoch / 2).toLocaleString('de-DE')} BTC`,
-          `Exakt ${(perEpoch * 2).toLocaleString('de-DE')} BTC`,
-          `Genau 1.000.000 BTC pro Epoche`
-        ],
-        `Jede einzelne Halving-Epoche umfasst strikt \`210.000 Blöcke × ${subAt} BTC = ${perEpoch.toLocaleString('de-DE')} BTC\`.`
-      );
-    }
-  }
-
-  // 3) layer2_skalierung: Lightning-Routing-Gebühren, Outbound/Inbound-Balance & Multisig-Schwellen (20 Fragen → genau 250)
-  const L2_SCENARIOS = [
-    [250000, 1, 400, 500000, 150000, 2, 3], [500000, 2, 200, 1000000, 400000, 3, 5],
-    [100000, 5, 1000, 800000, 250000, 2, 4], [1000000, 1, 300, 2000000, 600000, 4, 7],
-    [75000, 0, 800, 400000, 120000, 3, 4],  [400000, 3, 250, 1200000, 500000, 5, 7],
-    [150000, 2, 600, 600000, 200000, 2, 5],  [800000, 4, 150, 1500000, 450000, 3, 6],
-    [300000, 1, 500, 900000, 350000, 4, 6],  [600000, 2, 350, 2500000, 900000, 5, 9],
-    [50000, 1, 1200, 300000, 80000, 2, 2],   [900000, 5, 100, 3000000, 1100000, 6, 9],
-    [200000, 0, 450, 700000, 180000, 3, 7],  [350000, 2, 700, 1100000, 320000, 4, 5],
-    [120000, 3, 500, 550000, 210000, 2, 6],  [700000, 1, 200, 1600000, 700000, 5, 8],
-    [450000, 4, 300, 1800000, 650000, 6, 11], [60000, 2, 1500, 450000, 140000, 7, 11],
-    [850000, 1, 120, 2200000, 800000, 3, 8],  [125000, 2, 800, 650000, 275000, 4, 9]
-  ];
-  for (let i = 0; i < L2_SCENARIOS.length && catCounts.layer2_skalierung < 250; i++) {
-    const [amt, baseFee, ppm, cap, spend, m, n] = L2_SCENARIOS[i];
-    if (i % 3 === 0) {
-      const fee = Math.round(baseFee + (amt * ppm) / 1000000);
-      pushQ(
-        'layer2_skalierung', 'mid',
-        `Lightning Routing Fee (#${i + 1}): Du sendest ${amt.toLocaleString('de-DE')} sat über einen Node mit ${baseFee} sat Base-Fee + ${ppm} ppm (Parts per Million). Welche Gesamtgebühr erhebt dieser Node?`,
-        `${fee.toLocaleString('de-DE')} sat (${baseFee} Base + ${Math.round((amt * ppm) / 1e6)} ppm-Anteil)`,
-        [
-          `${(fee * 10 + 5).toLocaleString('de-DE')} sat`,
-          `${Math.round(amt * 0.05).toLocaleString('de-DE')} sat`,
-          `Exakt ${baseFee} sat`
-        ],
-        `Lightning-Gebührenformel: \`Base_Fee + (Betrag × ppm / 1.000.000) = ${baseFee} + ${Math.round((amt * ppm) / 1e6)} = ${fee} sat\`.`
-      );
-    } else if (i % 3 === 1) {
-      const newOut = cap - spend;
-      const newIn = spend;
-      pushQ(
-        'layer2_skalierung', 'easy',
-        `Kanal-Liquidität (#${i + 1}): Du startest einen reinen eigenen ${cap.toLocaleString('de-DE')}-sat-Kanal (100 % Outbound) und bezahlst danach sofort ${spend.toLocaleString('de-DE')} sat per Lightning an einen Händler. Wie sind danach Outbound und Inbound verteilt?`,
-        `${newOut.toLocaleString('de-DE')} sat Outbound / ${newIn.toLocaleString('de-DE')} sat Inbound`,
-        [
-          `${newIn.toLocaleString('de-DE')} sat Outbound / ${newOut.toLocaleString('de-DE')} sat Inbound`,
-          `${cap.toLocaleString('de-DE')} sat Outbound / 0 sat Inbound`,
-          `${(cap - spend * 2).toLocaleString('de-DE')} sat gesamt`
-        ],
-        `Mit jeder Ausgabe rutschen deine \`${spend.toLocaleString('de-DE')} sat\` auf die Gegenseite des Kanals und verwandeln sich direkt in deine neue Empfangskapazität (Inbound)!`
-      );
-    } else {
-      const lossMax = n - m;
-      const stealMin = m;
-      pushQ(
-        'layer2_skalierung', 'pro',
-        `Multisig-Fehlertoleranz (#${i + 1}): Bei einem ${m}-of-${n}-Multisig-Setup: Wie viele Schlüssel dürfen maximal zerstört werden oder verloren gehen, ohne dass die Coins unrettbar festsitzen – und ab wie vielen geklauten Keys wird es für Diebe gefährlich?`,
-        `Maximal ${lossMax} Verlust(e) verkraftbar · Diebstahl erst ab ${stealMin} geklauten Keys möglich`,
-        [
-          `Maximal ${m} Verlust(e) · Diebstahl schon ab 1 geklauten Key`,
-          `Null Verluste erlaubt · Alle ${n} Keys müssen gestohlen werden`,
-          `Maximal ${n - 1} Verlust(e) · Diebstahl erst ab ${n} Keys`
-        ],
-        `Bei \`${m}-of-${n}\` gilt allgemein: Redundanz gegen Verlust = \`N − M = ${lossMax}\`; Schutz gegen Einzeldiebstahl = \`M = ${stealMin}\`.`
-      );
-    }
-  }
-
-  // 4) historie_oekonomie: § 23 EStG Steuer-Szenarien, BTC-Inflationsrate & Purchasing-Power-Rechnung (20 Fragen → genau 250)
-  const HO_SCENARIOS = [
-    [14, 900, 1, 19700000, 450, 90000],  [8, 1450, 0, 19800000, 450, 75000],
-    [18, 2800, 1, 20400000, 225, 110000], [5, 850, 0, 20700000, 112.5, 65000],
-    [24, 4200, 1, 19900000, 450, 82000],  [9, 1050, 0, 20100000, 225, 95000],
-    [13, 1800, 1, 19687500, 450, 60000],  [11, 3100, 0, 20550000, 225, 120000],
-    [36, 9500, 1, 19750000, 450, 50000],  [6, 620, 0, 20850000, 112.5, 88000],
-    [15, 5000, 1, 19950000, 450, 100000], [4, 1950, 0, 20250000, 225, 70000],
-    [19, 750, 1, 20920000, 56.25, 125000],[10, 4800, 0, 19850000, 450, 55000],
-    [28, 12000, 1, 20600000, 112.5, 92000],[3, 980, 0, 20000000, 225, 68000],
-    [16, 6400, 1, 20960000, 28.125, 140000],[7, 2500, 0, 19720000, 450, 78000],
-    [48, 15000, 1, 20480000, 225, 85000], [2, 1300, 0, 20800000, 112.5, 105000]
-  ];
-  for (let i = 0; i < HO_SCENARIOS.length && catCounts.historie_oekonomie < 250; i++) {
-    const [months, gainEur, taxFreeFlag, circBtc, dailyBtc, priceEur] = HO_SCENARIOS[i];
-    if (i % 3 === 0) {
-      const over1Y = months > 12;
-      const underLimit = gainEur < 1000;
-      const expected = over1Y
-        ? `0 € Steuer (komplett steuerfrei nach > 12 Monaten Haltefrist, § 23 EStG)`
-        : (underLimit
-          ? `0 € Steuer (da Gewinn von ${gainEur.toLocaleString('de-DE')} € unter der 1.000-€-Freigrenze bleibt)`
-          : `Steuerpflichtig auf volle ${gainEur.toLocaleString('de-DE')} € mit dem persönlichen Einkommensteuersatz (über 1.000-€-Freigrenze bei < 1 Jahr!)`);
-      const w1 = `Pauschale 26,375 % Abgeltungsteuer (${Math.round(gainEur * 0.26375).toLocaleString('de-DE')} €)`;
-      const w2 = `Steuerpflichtig ausschließlich auf den Teil oberhalb von 1.000 €`;
-      const w3 = over1Y ? `Steuerpflichtig zum halben Einkommensteuersatz` : `Steuerfrei auf jeden Fall unabhängig von Haltedauer und Höhe`;
-      pushQ(
-        'historie_oekonomie', 'mid',
-        `Steuer-Fallstudie DE (#${i + 1}): Ein deutscher Privatanleger verkauft echte Bitcoins aus dem Self-Custody-Wallet nach exakt ${months} Monaten mit ${gainEur.toLocaleString('de-DE')} € Gewinn (sonst keine privaten Veräußerungen im Jahr). Was gilt nach § 23 EStG?`,
-        expected,
-        [w1, w2, w3],
-        `Nach § 23 EStG gilt: Über 12 Monate Haltefrist = immer 0 €; unter 12 Monaten greift die 1.000-€-Freigrenze (ab 2024).`
-      );
-    } else if (i % 3 === 1) {
-      const yearlyNew = dailyBtc * 365;
-      const infPct = (yearlyNew / circBtc) * 100;
-      const infStr = infPct.toFixed(2).replace('.', ',');
-      const s2f = Math.round(circBtc / yearlyNew);
-      pushQ(
-        'historie_oekonomie', 'pro',
-        `Monetäre Angebots-Rechnung (#${i + 1}): Umlaufmenge ~${circBtc.toLocaleString('de-DE')} BTC bei täglich ~${dailyBtc.toLocaleString('de-DE')} neuen BTC (~${Math.round(yearlyNew).toLocaleString('de-DE')} BTC/Jahr). Wie hoch liegen jährliche Bitcoin-Inflation und Stock-to-Flow (S2F)?`,
-        `~${infStr} % jährliche Inflation · S2F ≈ ${s2f}`,
-        [
-          `~${(infPct * 4).toFixed(2).replace('.', ',')} % jährliche Inflation · S2F ≈ ${Math.round(s2f / 4)}`,
-          `~5,00 % jährliche Inflation · S2F ≈ 20`,
-          `~0,01 % Inflation · S2F ≈ 10.000`
-        ],
-        `Berechnung: \`(${Math.round(yearlyNew).toLocaleString('de-DE')} / ${circBtc.toLocaleString('de-DE')}) = ${infStr} %\` Inflation bzw. Kehrwert \`S2F ≈ ${s2f}\`.`
-      );
-    } else {
-      const satsPerEur = Math.round(100000000 / priceEur);
-      pushQ(
-        'historie_oekonomie', 'easy',
-        `Satoshi-Kaufkraft (#${i + 1}): Bei einem Marktpreis von genau ${priceEur.toLocaleString('de-DE')} € je 1 Bitcoin: Wie viele Satoshis erhältst du rechnerisch für exakt 1 Euro?`,
-        `Rund ${satsPerEur.toLocaleString('de-DE')} Satoshis (100 Mio. / ${priceEur.toLocaleString('de-DE')})`,
-        [
-          `Rund ${Math.round(satsPerEur * 10).toLocaleString('de-DE')} Satoshis`,
-          `Nur ${Math.round(satsPerEur / 10).toLocaleString('de-DE')} Satoshis`,
-          `Immer exakt 100 Satoshis pro Euro`
-        ],
-        `Ein Euro entspricht \`100.000.000 sat / ${priceEur.toLocaleString('de-DE')} € ≈ ${satsPerEur.toLocaleString('de-DE')} sat\`.`
-      );
-    }
-  }
-
-  // Registriere kompletten 1.000-Fragen-Pool (250 je Kategorie)
-  window.ArcadeQuizEngine.registerBank('bitcoin', questions.slice(0, 1000));
 })();
