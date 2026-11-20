@@ -1,1304 +1,983 @@
-// Auto-generated unified quiz bank for "diving" (108 questions)
+// Auto-generated unified quiz bank for "diving" (75 questions)
 (function () {
   const DATA = [
   {
     "cat": "ausruestung",
     "diff": "easy",
-    "q": "Wozu steht die Abkürzung „SCUBA“ im Englischen, die heute weltweit für das Gerätetauchen verwendet wird?",
+    "q": "Was befindet sich standardmäßig in einer normalen Tauchflasche für Sporttaucher?",
     "a": [
-      "Self-Contained Underwater Breathing Apparatus",
-      "Surface-Controlled Underwater Buoyancy Aid",
-      "Standard Compressed Undersea Breathing Air",
-      "Submersible Carbon Underwater Breathing Assembly"
+      "Gereinigte, getrocknete und komprimierte normale Umgebungsluft (21 % Sauerstoff, 78 % Stickstoff)",
+      "Reiner, medizinischer 100-Prozent-Sauerstoff unter hohem Druck",
+      "Ein spezielles Gasgemisch aus reinem Helium und Wasserstoff",
+      "Flüssiger Sauerstoff, der erst beim Einatmen verdampft"
     ],
-    "exp": "Der Begriff beschreibt ein autonomes Unterwasser-Atemgerät, bei dem der Taucher seinen Atemgasvorrat unabhängig von der Oberfläche mitführt."
+    "explanation": "Ein weitverbreiteter Mythos: Reiner Sauerstoff wäre bereits ab etwa 6 Metern Tiefe akut giftig für das zentrale Nervensystem (Sauerstofftoxizität).",
+    "exp": "Ein weitverbreiteter Mythos: Reiner Sauerstoff wäre bereits ab etwa 6 Metern Tiefe akut giftig für das zentrale Nervensystem (Sauerstofftoxizität)."
   },
   {
     "cat": "ausruestung",
     "diff": "easy",
-    "q": "Welche Hauptaufgabe hat das Tarierjacket (BCD – Buoyancy Control Device) beim Gerätetauchen?",
+    "q": "Wer erfand 1943 den modernen bedarfsgesteuerten Atemregler („Aqualung“), der das Sporttauchen erst ermöglichte?",
     "a": [
-      "Das kontrollierte Einstellen des Auftriebs (neutrales Schweben unter Wasser, Schwimmen an der Oberfläche)",
-      "Das Filtern von Stickstoff aus der Atemluft",
-      "Die Erwärmung der Atemluft im Kaltwasser",
-      "Das Messen der aktuellen Tauchtiefe"
+      "Jacques-Yves Cousteau und Émile Gagnan",
+      "Hans Hass und Lotte Baierl",
+      "William Beebe und Otis Barton",
+      "Auguste Piccard und Don Walsh"
     ],
-    "exp": "Über Inflator und Schnellablässe wird Luft ins Jacket gegeben oder abgelassen, um in jeder Tiefe exakt neutral zu tarieren (weder sinken noch steigen)."
+    "explanation": "Gagnan passte ein Ventil an, das er ursprünglich für Holzgasgeneratoren an Autos im kriegsbesetzten Paris erfunden hatte.",
+    "exp": "Gagnan passte ein Ventil an, das er ursprünglich für Holzgasgeneratoren an Autos im kriegsbesetzten Paris erfunden hatte."
   },
   {
     "cat": "ausruestung",
     "diff": "easy",
-    "q": "Welches Messinstrument zeigt dem Taucher jederzeit zuverlässig an, wie viel Restdruck (in bar) noch in seiner Tauchflasche ist?",
+    "q": "Was ist die Hauptaufgabe der Ersten Stufe eines Tauch-Atemreglers?",
     "a": [
-      "Das Finimeter (bzw. ein Sender für den luftintegrierten Tauchcomputer)",
-      "Das Barometer",
-      "Der Tiefenmesser",
-      "Das Hygrometer"
+      "Sie reduziert den Flaschendruck von rund 200 bar auf einen Mitteldruck von etwa 9 bis 10 bar",
+      "Sie kühlt das Atemgas herunter, um die Lunge vor Überhitzung zu schützen",
+      "Sie mischt automatisch zusätzlichen Sauerstoff aus dem Meerwasser bei",
+      "Sie misst die Herzfrequenz des Tauchers und schlägt bei Panik Alarm"
     ],
-    "exp": "Das Finimeter hängt am Hochdruckabgang der 1. Stufe und gibt den aktuellen Flaschendruck direkt in bar oder psi an."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "easy",
-    "q": "Was bezeichnet man beim Atemregler-System klassisch als „Oktopus“?",
-    "a": [
-      "Die alternative bzw. zweite 2. Stufe (Ersatzatemregler, meist mit gelbem Schlauch/Deckel)",
-      "Eine spezielle achtfach gefaltete Tarierblase",
-      "Den Tiefenmesser an der Konsole",
-      "Einen Unterwasser-Scooter mit acht Propellern"
-    ],
-    "exp": "Der Oktopus dient im Notfall (z. B. bei Luftmangel des Tauchpartners) zur schnellen und gut sichtbaren Wechselatmung."
+    "explanation": "Die Erste Stufe sitzt direkt am Flaschenventil. Erst die Zweite Stufe am Mundstück reduziert das Gas auf den Umgebungsdruck zum Atmen.",
+    "exp": "Sie reduziert den Flaschendruck von rund 200 bar auf einen Mitteldruck von etwa 9 bis 10 bar"
   },
   {
     "cat": "ausruestung",
     "diff": "mid",
-    "q": "Wie arbeiten 1. Stufe und 2. Stufe eines modernen Pressluft-Atemreglers technisch zusammen?",
+    "q": "Was unterscheidet einen DIN-Flaschenanschluss von einem internationalen INT-Bügelanschluss?",
     "a": [
-      "Die 1. Stufe senkt den Flaschendruck auf einen konstanten Mitteldruck (~9–10 bar über Umgebungsdruck), die 2. Stufe auf den exakten Umgebungsdruck",
-      "Die 1. Stufe kühlt die Luft ab, die 2. Stufe verdichtet sie wieder auf 200 bar",
-      "Die 1. Stufe ist nur für die Maske, die 2. Stufe für das Jacket zuständig",
-      "Beide Stufen liefern konstant 5 bar unabhängig von der Tauchtiefe"
+      "Beim DIN-Anschluss wird der Regler direkt fest ins Flaschenventil geschraubt und hält höheren Drücken (bis 300 bar) stand",
+      "INT-Bügel sind für das Tieftauchen unter 40 Metern gesetzlich vorgeschrieben",
+      "DIN-Anschlüsse besitzen keine Gummi-O-Ringe und dichten rein metallisch ab",
+      "INT-Regler dürfen ausschließlich in chloriertem Poolwasser verwendet werden"
     ],
-    "exp": "Durch dieses zweistufige Demand-Prinzip (Lungenautomat) atmet der Taucher auf 30 m Tiefe genauso leicht wie an der Oberfläche."
+    "explanation": "Der DIN-Anschluss umschließt den O-Ring vollkommen sicher im Ventilgewinde – bei INT liegt der O-Ring offen und kann unter Druck leichter herausrutschen.",
+    "exp": "Beim DIN-Anschluss wird der Regler direkt fest ins Flaschenventil geschraubt und hält höheren Drücken (bis 300 bar) stand"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "easy",
+    "q": "Was zeigt das „Finimeter“ (SPG) dem Taucher während des Tauchgangs an?",
+    "a": [
+      "Den verbleibenden Restdruck (Luftvorrat) in der Tauchflasche in bar",
+      "Die aktuelle Wassertemperatur auf der jeweiligen Tauchtiefe",
+      "Die verbleibende Nullzeit vor einer Pflicht-Dekompression",
+      "Die Himmelsrichtung zum Ausstiegsboot an der Oberfläche"
+    ],
+    "explanation": "Das Finimeter ist das elementare Manometer – fällt der Druck auf die Reserve von 50 bar, muss der Tauchgang beendet sein.",
+    "exp": "Den verbleibenden Restdruck (Luftvorrat) in der Tauchflasche in bar"
   },
   {
     "cat": "ausruestung",
     "diff": "mid",
-    "q": "Worin besteht der wesentliche Unterschied zwischen einem DIN- und einem INT-Anschluss (Yoke/Bügel) am Flaschenventil?",
+    "q": "Warum ist der alternative Zweitregler (Oktopus) fast immer an einem leuchtend gelben, längeren Schlauch befestigt?",
     "a": [
-      "DIN wird direkt ins Flaschenventil eingeschraubt (bis 200/300 bar, O-Ring sitzt am Regler); INT nutzt einen Klemmbügel (bis ~232 bar, O-Ring im Ventil)",
-      "DIN ist nur für Nitrox, INT nur für reinen Sauerstoff zugelassen",
-      "INT besitzt keinen Hochdruckabgang für ein Finimeter",
-      "DIN funktioniert ausschließlich unter Süßwasser"
+      "Damit der Tauchpartner ihn im Falle eines akuten Luftnotfalls unter Wasser sofort blind greifen kann",
+      "Weil gelber Kunststoff unter Wasser chemisch resistenter gegen Salzwasser ist",
+      "Um dem Tauchlehrer zu signalisieren, dass der Schüler noch Anfänger ist",
+      "Damit giftige Quallen durch die Signalfarbe reflexartig Abstand halten"
     ],
-    "exp": "DIN-Gewinde sind mechanisch robuster gegen Stöße und für 300-bar-Flaschen ausgelegt; viele Reisebasen nutzen jedoch noch INT-Ventile mit herausnehmbarem Einsatz."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "mid",
-    "q": "Warum umschließt eine Tauchmaske – anders als eine Schwimmbrille – auch immer die Nase des Tauchers?",
-    "a": [
-      "Damit beim Abtauchen durch Ausatmen durch die Nase ein Druckausgleich im Maskenraum möglich ist",
-      "Damit man unter Wasser besser riechen kann",
-      "Damit das Glas automatisch von innen gekühlt wird",
-      "Um den Atemregler über die Nase zu fixieren"
-    ],
-    "exp": "Ohne Druckausgleich in der Maske entsteht bei steigendem Wasserdruck ein Unterdruck („Masken-Squeeze“), der schmerzhafte Einblutungen an Augen und Gesicht verursachen kann."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "mid",
-    "q": "Wodurch unterscheidet sich ein Trockentauchanzug (Drysuit) grundsätzlich von einem Nasstauchanzug?",
-    "a": [
-      "Ein Trockentauchanzug dichtet komplett ab, hält den Körper trocken und wird über ein Einlassventil zum Druckausgleich zusätzlich tariert",
-      "Ein Trockentauchanzug besteht immer aus dünnem Lycra ohne Unterzieher",
-      "Ein Trockentauchanzug darf nur bis maximal 5 m Tiefe genutzt werden",
-      "Beim Trockentauchanzug benötigt man grundsätzlich überhaupt kein Blei"
-    ],
-    "exp": "Die Wärmeisolation übernimmt beim Trockentauchen vor allem der Unterzieher und die eingeschlossene Luftschicht – bei falscher Tarierung oder zu viel Luft in den Füßen besteht jedoch „Aufschieß“-Risiko."
+    "explanation": "Im Ernstfall gerät ein Taucher ohne Luft in Panik – der Oktopus muss im sogenannten Dreieck zwischen Kinn und Brustkanten sofort sichtbar sein.",
+    "exp": "Damit der Tauchpartner ihn im Falle eines akuten Luftnotfalls unter Wasser sofort blind greifen kann"
   },
   {
     "cat": "ausruestung",
     "diff": "pro",
-    "q": "Wie viel Liter entspannte Luft auf Oberflächendruck (1 bar) enthält eine Standard-12-Liter-Tauchflasche bei 200 bar Fülldruck näherungsweise (ideales Gas)?",
+    "q": "Warum bevorzugen technische Taucher in eisigem Wasser „membrangesteuerte, umweltversiegelte“ Erste Stufen?",
     "a": [
-      "Ca. 2.400 Liter",
-      "Ca. 200 Liter",
-      "Ca. 1.200 Liter",
-      "Ca. 4.800 Liter"
+      "Wasser dringt nicht in die Federn-Mechanik ein, was ein Vereisen und unkontrolliertes Abblasen des Reglers verhindert",
+      "Sie erlauben das Einatmen von warmem Wasserdampf gegen Unterkühlung",
+      "Sie erzeugen automatisch 50 Prozent mehr Atemgas bei Tiefen über 60 Metern",
+      "Sie wiegen nur ein Zehntel herkömmlicher Kolbenregler aus Edelstahl"
     ],
-    "exp": "Nach p · V = const. gilt: 12 L × 200 bar = 2.400 Liter (bei sehr hohen Drücken wie 300 bar weicht reales Gas wegen der Kompressibilität etwas nach unten ab)."
+    "explanation": "Bei der Druckminderung kühlt sich Gas extrem ab (Joule-Thomson-Effekt). Wasser an der Feder würde sofort gefrieren und das Ventil blockieren.",
+    "exp": "Wasser dringt nicht in die Federn-Mechanik ein, was ein Vereisen und unkontrolliertes Abblasen des Reglers verhindert"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "easy",
+    "q": "Wofür dient das Ausblasventil an der Maske bzw. das bewusste Freiblasen der Tauchermaske unter Wasser?",
+    "a": [
+      "Um eingedrungenes Wasser durch Ausatmen durch die Nase bei leicht angehobener Maske herauszudrücken",
+      "Um die Gläser von außen vor herannahenden Fischen zu reinigen",
+      "Damit Kondenswasser als Trinkwasser in den Mund fließen kann",
+      "Um den Maskenrand mit zusätzlichem Klebstoff am Gesicht abzudichten"
+    ],
+    "explanation": "Weil Luft oben bleibt und Wasser nach unten drückt, strömt das Wasser am unteren Maskenrand restlos heraus, wenn man durch die Nase ausatmet.",
+    "exp": "Um eingedrungenes Wasser durch Ausatmen durch die Nase bei leicht angehobener Maske herauszudrücken"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "mid",
+    "q": "Was passiert mit der wärmenden Wirkung eines Neoprenanzugs in 30 Metern Wassertiefe?",
+    "a": [
+      "Die Isolierung bricht drastisch ein, weil der Wasserdruck die isolierenden Gasbläschen im Neopren zusammenpresst",
+      "Der Anzug wärmt doppelt so gut, weil kaltes Wasser mehr Körperwärme reflektiert",
+      "Das Neopren wird flexibler und pumpt warmes Wasser aktiv am Körper entlang",
+      "Die Dicke des Neoprens verdoppelt sich durch Quellung im Salzwasser"
+    ],
+    "explanation": "In 30 m Tiefe (4 bar) wird ein 7-mm-Anzug auf rund 2-3 mm flachgepresst – er verliert den Großteil seiner Isolierwirkung und verleiht weniger Auftrieb.",
+    "exp": "Die Isolierung bricht drastisch ein, weil der Wasserdruck die isolierenden Gasbläschen im Neopren zusammenpresst"
   },
   {
     "cat": "ausruestung",
     "diff": "pro",
-    "q": "Warum können Atemregler beim Tauchen in kaltem Wasser (< 4–10 °C) vereisen und plötzlich unkontrolliert abblasen?",
+    "q": "Was ist das fundamentale Funktionsprinzip eines Kreislauftauchgeräts (Rebreather)?",
     "a": [
-      "Durch den Joule-Thomson-Effekt kühlt expandierende Luft stark ab und lässt Restfeuchte im Ventil oder Umgebungswasser anfrieren",
-      "Weil der Stickstoff im Pressluftgemisch bereits bei +8 °C gefriert",
-      "Weil das Finimeter bei Kälte den Mitteldruck auf 200 bar erhöht",
-      "Weil Silikonmundstücke bei unter 10 °C schmelzen"
+      "Ausgeatmetes Gas wird im Kreislauf durch einen CO₂-Kalkfilter gereinigt, mit dosiertem Sauerstoff angereichert und wiederverwendet",
+      "Es gewinnt den Atem-Sauerstoff direkt durch chemische Elektrolyse aus dem Meerwasser",
+      "Es kühlt die Ausatemluft ab und speichert sie als Eiswürfel im Rucksack",
+      "Es sendet alle Blasen über einen dünnen Schlauch zurück an ein Begleitboot"
     ],
-    "exp": "In Kaltwasser sind speziell gekapselte (membrangesteuerte) kaltwassertaugliche Regler und – je nach Standard – zwei getrennte 1. Stufen an Doppelventilen Pflicht."
+    "explanation": "Da der Körper nur rund 4-5 % des eingeatmeten Sauerstoffs verbraucht, ist ein Rebreather extrem gassparend und stößt keine scheuchenden Blasen aus.",
+    "exp": "Ausgeatmetes Gas wird im Kreislauf durch einen CO₂-Kalkfilter gereinigt, mit dosiertem Sauerstoff angereichert und wiederverwendet"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "easy",
+    "q": "Warum besitzen Taucherflossen im Gegensatz zu reinen Schwimmflossen meist ein geschlossenes Fußteil mit Fersenband?",
+    "a": [
+      "Damit man feste Neoprenschuhe (Füßlinge) gegen Kälte und scharfe Felsen darin tragen kann",
+      "Weil barfuß tauchen im offenen Meer per internationalem Gesetz verboten ist",
+      "Damit die Flossen bei Strömung automatisch zur Wasseroberfläche aufsteigen",
+      "Um Blei-Gewichte direkt in die Flossenspitzen einzusetzen"
+    ],
+    "explanation": "Füßlinge schützen beim Einstieg über steinige Küsten und Seeigel – Geräteflossen mit verstellbarem Fersenband passen perfekt darüber.",
+    "exp": "Damit man feste Neoprenschuhe (Füßlinge) gegen Kälte und scharfe Felsen darin tragen kann"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "mid",
+    "q": "Woraus besteht das Atemkalk-Granulat im Scrubber eines Rebreathers?",
+    "a": [
+      "Aus einer Mischung von Calciumhydroxid und Natriumhydroxid (Sodalime)",
+      "Aus pulverisierter Aktivkohle aus verbrannten Kokosnussschalen",
+      "Aus feinstem Quarzsand mit synthetischen Enzymen",
+      "Aus gefriergetrockneten Algenkulturen zur Photosynthese"
+    ],
+    "explanation": "Der Atemkalk bindet Kohlendioxid chemisch in einer exothermen Reaktion – wird er verbraucht, droht dem Taucher schleichende CO₂-Vergiftung (Hyperkapnie).",
+    "exp": "Aus einer Mischung von Calciumhydroxid und Natriumhydroxid (Sodalime)"
   },
   {
     "cat": "ausruestung",
     "diff": "pro",
-    "q": "Welche Hauptfunktion erfüllt die „Membran“ bzw. „Kapselung“ in einer membrangesteuerten 1. Stufe (im Gegensatz zu ungekapselten Kolbenreglern)?",
+    "q": "Warum besitzen Stahlflaschen gegenüber Aluminiumflaschen unter Wasser einen spürbaren Tariervorteil?",
     "a": [
-      "Sie trennt die empfindliche Hochdruckmechanik hermetisch vom schmutzigen oder kalten Umgebungswasser",
-      "Sie mischt automatisch Helium ins Atemgas",
-      "Sie erhöht die Sauerstoffkonzentration auf 32 %",
-      "Sie ersetzt die 2. Stufe komplett"
+      "Stahlflaschen behalten auch im fast leeren Zustand negativen Abtrieb; Aluminiumflaschen werden leer positiv und ziehen nach oben",
+      "Aluminiumflaschen rosten im Salzwasser innerhalb von drei Tagen vollständig durch",
+      "Stahlflaschen verdoppeln das Fassungsvermögen bei gleicher geometrischer Größe",
+      "Stahlflaschen absorbieren Magnetfelder von Haien und bieten Schutz vor Angriffen"
     ],
-    "exp": "Eine trockene (oder mit Öl/Silikon gefüllte) Kammer schützt Feder und Ventilsitz vor Vereisung, Sand und Korrosion."
+    "explanation": "Eine leere Alu-Flasche schwimmt auf – Taucher müssen daher bei Alu-Tanks 2 bis 3 kg extra Blei mitnehmen, um am Sicherheitsstopp unten zu bleiben.",
+    "exp": "Stahlflaschen behalten auch im fast leeren Zustand negativen Abtrieb; Aluminiumflaschen werden leer positiv und ziehen nach oben"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "easy",
+    "q": "Was ist eine „SMB“ (Surface Marker Buoy / Signalboje) und wann wird sie geschossen?",
+    "a": [
+      "Eine aufblasbare rote/orange Boje, die vor dem Auftauchen an einer Leine hochgelassen wird, um Boote vor dem Taucher zu warnen",
+      "Ein Mini-Schlauchboot, auf das sich erschöpfte Taucher setzen können",
+      "Eine Signalrakete, die unter Wasser gezündet wird und Rauch erzeugt",
+      "Ein Peilsender, der verlorene Kameras ortet"
+    ],
+    "explanation": "Die Boje zeigt Bootsführern: „Hier tauchen Menschen auf – Abstand halten und Schraube stoppen!“",
+    "exp": "Eine aufblasbare rote/orange Boje, die vor dem Auftauchen an einer Leine hochgelassen wird, um Boote vor dem Taucher zu warnen"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "mid",
+    "q": "Welches Blei-System ermöglicht es, bei einem Notfall an der Oberfläche sofort massiven Auftrieb zu erlangen?",
+    "a": [
+      "Ein Schnellabwurf-Bleigurt oder integrierte Bleitaschen mit Einhand-Entriegelung",
+      "Schwere Bleisohlen in den Taucherschuhen mit Schraubverschluss",
+      "Blei-Pellets, die im Ernstfall über ein Ventil ins Meerwasser gepumpt werden",
+      "Ein magnetischer Bleirucksack, der vom Buddy per Fernbedienung gelöst wird"
+    ],
+    "explanation": "Der Bleigurt muss mit einer Hand durch Zug an der Schnalle abgeworfen werden können – ohne Blei schießt der Taucher sofort sicher an die Oberfläche.",
+    "exp": "Ein Schnellabwurf-Bleigurt oder integrierte Bleitaschen mit Einhand-Entriegelung"
   },
   {
     "cat": "ausruestung",
     "diff": "pro",
-    "q": "Wie verändert sich typischerweise der benötigte Bleibedarf beim Wechsel vom Süßwassersee ins Salzwasser (bei sonst identischer Ausrüstung)?",
+    "q": "Was versteht man unter einem „Trockentauchanzug“ im Vergleich zum Nassanzug?",
     "a": [
-      "Im Salzwasser benötigt man mehr Blei (ca. 2–3 kg zusätzlich), weil Salzwasser eine höhere Dichte (~1,025 kg/L) und damit stärkeren Auftrieb besitzt",
-      "Im Salzwasser benötigt man deutlich weniger Blei, weil Salz nach unten zieht",
-      "Der Bleibedarf ist exakt identisch",
-      "Im Salzwasser darf kein Blei am Gürtel getragen werden"
+      "Manschetten an Hals und Armen halten das Wasser komplett draußen; isoliert wird durch trockene Unterziehwäsche und Luft",
+      "Der Anzug wird vor dem Tauchgang mit heißem Paraffinwachs gefüllt",
+      "Er besteht aus wasserabweisender Baumwolle mit Gore-Tex-Membran",
+      "Er darf ausschließlich außerhalb des Wassers auf dem Bootsdeck getragen werden"
     ],
-    "exp": "Salzwasser ist rund 2,5 % dichter als Süßwasser; ein verdrängtes Körper-/Ausrüstungsvolumen von 80–100 Litern erzeugt dadurch etwa 2–2,5 kg mehr Auftrieb."
+    "explanation": "Trockentaucher tarieren den Anzug selbst mit Luft aus der Flasche, um den schmerzhaften „Suit Squeeze“ (Anzug-Quetschung) beim Abstieg zu verhindern.",
+    "exp": "Manschetten an Hals und Armen halten das Wasser komplett draußen; isoliert wird durch trockene Unterziehwäsche und Luft"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "easy",
+    "q": "Warum spucken erfahrene Taucher vor dem Tauchgang kurz in ihre Tauchmaske und spülen sie aus?",
+    "a": [
+      "Der Speichel bildet einen hauchdünnen Tensidfilm, der das Beschlagen der Scheibe verhindert",
+      "Um eventuelle Salzreste chemisch zu neutralisieren",
+      "Ein alter Seemannsbrauch, der vor Haibissen schützen soll",
+      "Um die Elastizität des Maskensilikons bei Kälte zu verbessern"
+    ],
+    "explanation": "Speichel bricht die Oberflächenspannung von winzigen Wassertröpfchen – die Sicht bleibt absolut glasklar.",
+    "exp": "Der Speichel bildet einen hauchdünnen Tensidfilm, der das Beschlagen der Scheibe verhindert"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "mid",
+    "q": "Wozu dient der „Inflatorschlauch“ am Tarierjacket?",
+    "a": [
+      "Er leitet Mitteldruckluft aus der ersten Stufe per Knopfdruck in die Luftblase des Jackets",
+      "Er saugt Meerwasser an, um das Gewicht des Tauchers im Wasser zu erhöhen",
+      "Er dient als Reserveschlauch zum Trinken von Süßwasser aus einem Tank",
+      "Er entlüftet die Taucherohren automatisch beim Abtauchen"
+    ],
+    "explanation": "Mit dem Power-Inflator steuert der Taucher seinen Auftrieb millimetergenau, um völlig schwerelos im Wasser zu schweben.",
+    "exp": "Er leitet Mitteldruckluft aus der ersten Stufe per Knopfdruck in die Luftblase des Jackets"
+  },
+  {
+    "cat": "ausruestung",
+    "diff": "pro",
+    "q": "Was ist das Hauptmerkmal einer „Wing“-Tarierblase im technischen Tauchen gegenüber einem klassischen Westenschnitt?",
+    "a": [
+      "Die Auftriebsblase liegt komplett auf dem Rücken, was eine perfekte horizontale Wasserlage (Trim) garantiert",
+      "Sie bläst sich wie zwei Flügel links und rechts neben den Ohren auf",
+      "Sie besitzt kleine Propeller zur elektrischen Fortbewegung unter Wasser",
+      "Sie wird aus recycelten Segeln von historischen Windjammern genäht"
+    ],
+    "explanation": "Wings drücken den Körper automatisch in die ergonomische „Kopfüber-Flachlage“ (Trim) und engen die Brust bei voller Blase nicht ein.",
+    "exp": "Die Auftriebsblase liegt komplett auf dem Rücken, was eine perfekte horizontale Wasserlage (Trim) garantiert"
   },
   {
     "cat": "physik",
     "diff": "easy",
-    "q": "Wie stark steigt der Wasserdruck zusätzlich zum Luftdruck (1 bar) pro 10 Meter Wassertiefe?",
+    "q": "Um wie viel bar nimmt der hydrostatische Umgebungsdruck im Wasser pro 10 Meter Tiefe zu?",
     "a": [
-      "Um jeweils ca. 1 bar (auf 20 m herrschen also ca. 3 bar Gesamtdruck)",
-      "Um jeweils 0,1 bar",
-      "Um jeweils 10 bar",
-      "Der Druck verdoppelt sich erst ab 50 Metern"
+      "Um exakt 1 bar pro 10 Meter Wassertiefe",
+      "Um 0,1 bar pro 10 Meter Wassertiefe",
+      "Um 5 bar pro 10 Meter Wassertiefe",
+      "Der Druck bleibt bis 50 Meter Tiefe vollkommen konstant"
     ],
-    "exp": "An der Oberfläche herrscht 1 bar Atmosphärendruck; auf 10 m sind es 2 bar, auf 20 m 3 bar, auf 30 m 4 bar Gesamtdruck."
+    "explanation": "An der Oberfläche herrscht 1 bar Luftdruck. In 10 m Tiefe herrschen 2 bar, in 20 m Tiefe 3 bar, in 30 m Tiefe 4 bar absoluter Druck.",
+    "exp": "Um exakt 1 bar pro 10 Meter Wassertiefe"
   },
   {
     "cat": "physik",
     "diff": "easy",
-    "q": "Welche oberste Grundregel des Gerätetauchens verhindert eine gefährliche Lungenüberdehnung beim Auftauchen?",
+    "q": "Welches ist die allerwichtigste Grundregel beim Gerätetauchen mit Druckluftflaschen?",
     "a": [
-      "Niemals beim Tauchen die Luft anhalten – jederzeit ruhig und kontinuierlich weiteratmen",
-      "Beim Auftauchen immer so schnell wie möglich nach oben schießen",
-      "Vor dem Abtauchen die gesamte Luft aus dem Jacket ablassen",
-      "Unter Wasser nur alle 30 Sekunden einmal tief einatmen"
+      "Niemals den Atem anhalten – immer kontinuierlich und entspannt atmen!",
+      "Immer vor dem Tauchpartner an der Oberfläche auftauchen",
+      "Mindestens 5 Liter Salzwasser pro Tauchgang trinken",
+      "Niemals tiefer als 3 Meter ohne Schwimmweste tauchen"
     ],
-    "exp": "Nach dem Gesetz von Boyle-Mariotte dehnt sich eingeschlossene Luft bei Druckabnahme aus – schon wenige Meter Auftauchen mit geschlossener Stimmritze können die Lunge schwer verletzen."
+    "explanation": "Hält man beim Aufstieg den Atem an, dehnt sich die Luft in der Lunge nach dem Boyle-Mariotte-Gesetz aus – es droht ein tödlicher Lungenriss (Barotrauma).",
+    "exp": "Niemals den Atem anhalten – immer kontinuierlich und entspannt atmen!"
   },
   {
     "cat": "physik",
     "diff": "easy",
-    "q": "Welcher Standard-Sicherheitsstopp wird bei Sporttauchgängen (insbesondere tiefer als 10 m) am Ende des Tauchgangs empfohlen?",
+    "q": "Warum ist die relative Volumenänderung von Luft zwischen 10 Metern Tiefe und der Oberfläche am gefährlichsten?",
     "a": [
-      "Etwa 3 Minuten auf rund 5 Metern Tiefe",
-      "15 Minuten auf 20 Metern Tiefe",
-      "10 Sekunden auf 1 Meter Tiefe",
-      "Kein Stopp, sondern direkt an der Wasseroberfläche abwarten"
+      "Weil sich das Luftvolumen von 2 bar auf 1 bar verdoppelt (100 % Zunahme) – auf keiner anderen 10-Meter-Stufe ist der relative Sprung so groß",
+      "Weil in den oberen 10 Metern mehr giftige Algen im Wasser schwimmen",
+      "Weil die Wassertemperatur an der Oberfläche sprunghaft ansteigt",
+      "Weil Sonnenstrahlen den Druckanzug von außen aufheizen"
     ],
-    "exp": "Der Sicherheitsstopp auf ca. 5 m gibt dem Körper zusätzliche Zeit, überschüssigen Stickstoff kontrolliert über die Lunge abzuatmen."
-  },
-  {
-    "cat": "physik",
-    "diff": "easy",
-    "q": "Was versteht man unter einem „Druckausgleich“ (z. B. Valsalva-Manöver) beim Abtauchen?",
-    "a": [
-      "Das vorsichtige Zuführen von Luft über die Ohrtrompete (Eustachische Röhre) ins Mittelohr, um dem steigenden Wasserdruck auf das Trommelfell entgegenzuwirken",
-      "Das Ablassen von Luft aus der Tauchflasche ins Meer",
-      "Das Nachfüllen von Wasser in den Tauchanzug",
-      "Das Kalibrieren des Kompasses auf Null"
-    ],
-    "exp": "Man sollte frühzeitig und oft schon ab dem ersten Meter ausgleichen – noch bevor überhaupt ein unangenehmer Druck auf dem Ohr spürbar wird."
+    "explanation": "Von 40 m (5 bar) auf 30 m (4 bar) dehnt sich Luft nur um 25 % aus. Auf den letzten 10 Metern verdoppelt sich das Volumen!",
+    "exp": "Weil sich das Luftvolumen von 2 bar auf 1 bar verdoppelt (100 % Zunahme) – auf keiner anderen 10-Meter-Stufe ist der relative Sprung so groß"
   },
   {
     "cat": "physik",
     "diff": "mid",
-    "q": "Zwischen welchen zwei Tiefenbereichen tritt prozentual die größte Volumenänderung (Verdopplung bzw. Halbierung) eines gasgefüllten Hohlraums auf?",
+    "q": "Was besagt die berührende Faustregel über den „Tiefenrausch“ (Stickstoffnarkose) im Volksmund?",
     "a": [
-      "Zwischen 0 Metern (1 bar) und 10 Metern (2 bar)",
-      "Zwischen 20 Metern (3 bar) und 30 Metern (4 bar)",
-      "Zwischen 30 Metern (4 bar) und 40 Metern (5 bar)",
-      "Die Volumenänderung ist in jeder Tiefe prozentual exakt gleich"
+      "„Martini-Regel“: Jeder 10-Meter-Schritt unterhalb von 30 Metern wirkt wie ein trockener Martini auf nüchternen Magen",
+      "„Champagner-Effekt“: Ab 20 Metern schmeckt Atemluft prickelnd und süß",
+      "„Bier-Kurve“: Man verliert pro Meter Tiefe 10 Prozent seiner Sehkraft",
+      "„Wein-Formel“: Nach 15 Minuten Tauchzeit verdoppelt sich der Appetit"
     ],
-    "exp": "Von 0 m auf 10 m verdoppelt sich der Druck (1 -> 2 bar), das Volumen halbiert sich (-50 %). Von 30 m auf 40 m sinkt es nur noch von 1/4 auf 1/5 (-20 %)."
+    "explanation": "Unter hohem Partialdruck wirkt Stickstoff narkotisierend auf Nervenmembranen. Taucher werden euphorisch, unvorsichtig oder handlungsunfähig.",
+    "exp": "„Martini-Regel“: Jeder 10-Meter-Schritt unterhalb von 30 Metern wirkt wie ein trockener Martini auf nüchternen Magen"
   },
   {
     "cat": "physik",
     "diff": "mid",
-    "q": "Welches Gas verursacht bei tieferen Pressluft-Tauchgängen (typischerweise ab ~30 m) den sogenannten „Tiefenrausch“ (Narkosewirkung)?",
+    "q": "Warum darf man mit normaler Pressluft niemals tiefer als rund 56 bis 66 Meter tauchen?",
     "a": [
-      "Der erhöhte Partialdruck des Stickstoffs (N₂)",
-      "Das fehlende Kohlendioxid (CO₂) in der Flasche",
-      "Eine Reaktion von Salzwasser mit Aluminium",
-      "Das Helium im normalen Atemgas"
+      "Weil der Sauerstoff-Partialdruck die kritische toxische Grenze von 1,4 bis 1,6 bar überschreitet (Paul-Bert-Effekt)",
+      "Weil der Stickstoff in der Lunge bei 60 Metern zu flüssigem Ammoniak kondensiert",
+      "Weil das Flaschenventil unter 6 bar Außendruck mechanisch blockiert",
+      "Weil die Lunge unterhalb von 50 Metern kein Gas mehr aufnehmen kann"
     ],
-    "exp": "Der Tiefenrausch äußert sich ähnlich wie Alkoholrausch (Euphorie oder Angst, Tunnelblick, Rechenfehler) und verschwindet beim Aufsteigen in geringere Tiefe rasch."
+    "explanation": "Zu viel Sauerstoff unter Druck führt zu plötzlichen epileptischen Krämpfen (Sauerstoffkrampf) ohne Vorwarnung – unter Wasser führt das zum Ertrinken.",
+    "exp": "Weil der Sauerstoff-Partialdruck die kritische toxische Grenze von 1,4 bis 1,6 bar überschreitet (Paul-Bert-Effekt)"
   },
   {
     "cat": "physik",
     "diff": "mid",
-    "q": "Was ist der Hauptvorteil von „Nitrox“ (z. B. EAN32 mit 32 % Sauerstoff und 68 % Stickstoff) im Sporttauchbereich?",
+    "q": "Was passiert bei der Taucherkrankheit (Dekompressionskrankheit / Caisson-Krankheit / DCS)?",
     "a": [
-      "Weniger Stickstoffanteil verlängert die Nullzeiten bzw. erhöht die Sicherheitsmarge gegen Dekompressionsstress",
-      "Mit Nitrox darf man viel tiefer tauchen als mit normaler Pressluft",
-      "Nitrox verhindert jeden Druckausgleich im Ohr",
-      "Nitrox senkt den Luftverbrauch auf genau die Hälfte"
+      "Im Gewebe gelöster Stickstoff perlt beim zu schnellen Aufstieg wie Kohlensäure in einer geschüttelten Mineralwasserflasche aus",
+      "Giftige Schwefelgase steigen aus dem Magen in die Blutbahn auf",
+      "Die roten Blutkörperchen platzen durch den Mangel an Sonnenlicht",
+      "Wasser dringt durch die Hautporen direkt in die Venen ein"
     ],
-    "exp": "Weil Nitrox mehr Sauerstoff enthält, sinkt die maximale Tauchtiefe (MOD) sogar deutlich gegenüber Pressluft – man gewinnt aber längere Grundzeiten im Flach-/Mittelbereich."
+    "explanation": "Das Gesetz von Henry erklärt: Bei hohem Druck löst sich viel Gas im Blut. Steigt man langsam auf, wird es über die Lunge abgeatmet – steigt man zu schnell auf, blockieren Gasblasen Gefäße.",
+    "exp": "Im Gewebe gelöster Stickstoff perlt beim zu schnellen Aufstieg wie Kohlensäure in einer geschüttelten Mineralwasserflasche aus"
   },
   {
     "cat": "physik",
-    "diff": "mid",
-    "q": "Warum muss nach einem Tauchgang eine ausreichend lange Pause (meist 12–18+ Stunden) vor einem Linienflug eingehalten werden?",
-    "a": [
-      "Weil der reduzierte Kabinendruck im Flugzeug (~0,75–0,8 bar) noch gelösten Reststickstoff im Gewebe zu gefährlichen Gasblasen ausperlen lassen kann",
-      "Weil Salzwasser sonst die Gepäckscanner stört",
-      "Weil das Trommelfell erst nach 24 Stunden wieder durchlässig wird",
-      "Weil Taucheruhren im Flugzeug stehen bleiben"
-    ],
-    "exp": "Die Flugzeugkabine entspricht etwa 2.000–2.400 m Höhe – nach einem einzelnen Nullzeittauchgang empfiehlt DAN mindestens 12 Stunden, nach mehreren Tauchgängen mindestens 18 Stunden."
-  },
-  {
-    "cat": "physik",
-    "diff": "pro",
-    "q": "Welches physikalische Gasgesetz erklärt unmittelbar die Stickstoffaufsättigung im Blut und Gewebe unter Druck sowie die Ausgasung beim Auftauchen (DCS)?",
-    "a": [
-      "Das Gesetz von Henry (gelöste Gasmenge ist proportional zum Partialdruck über der Flüssigkeit)",
-      "Das Gesetz von Archimedes",
-      "Das Ohmsche Gesetz",
-      "Die Snellius-Brechungsregel"
-    ],
-    "exp": "Steigt der Stickstoffpartialdruck in der Tiefe, löst sich mehr N₂ im Gewebe; fällt der Druck beim Aufstieg zu schnell, bilden sich Bläschen (Dekompressionskrankheit / DCS)."
-  },
-  {
-    "cat": "physik",
-    "diff": "pro",
-    "q": "Wie hoch liegt die maximale Einsatztiefe (MOD) für Nitrox EAN32 (32 % O₂) beim konservativen Sporttauch-Limit von pO₂ = 1,4 bar?",
-    "a": [
-      "Ca. 33,7 Meter (gerundet 33 m)",
-      "Ca. 21 Meter",
-      "Ca. 56 Meter",
-      "Ca. 66 Meter"
-    ],
-    "exp": "Nach Dalton: p_max = 1,4 bar / 0,32 = 4,375 bar Gesamtdruck. Abzüglich 1 bar Oberflächendruck bleiben 3,375 bar Wasserdruck = ca. 33,7 m Tiefe."
-  },
-  {
-    "cat": "physik",
-    "diff": "pro",
-    "q": "Was bezeichnet beim Tauchen ein sogenannter „Reverse Block“ (umgekehrter Block)?",
-    "a": [
-      "Schmerzhafte Blockade, wenn sich Luft beim Auftauchen in Mittelohr oder Nebenhöhlen ausdehnt, aber nicht mehr entweichen kann",
-      "Ein Defekt der Flaschenreserve",
-      "Das Rückwärts-Schwimmen mit Flossen",
-      "Das zu schnelle Absinken zu Tauchbeginn"
-    ],
-    "exp": "Lässt z. B. abschwellendes Nasenspray nach oder schwillt Schleimhaut an, darf man nicht weiter aufsteigen, sondern sinkt leicht ab und versucht sanften Ausgleich (ohne starkes Pressen)."
-  },
-  {
-    "cat": "physik",
-    "diff": "pro",
-    "q": "Welche zwei unterschiedlichen Gasgefahren werden durch das Gesetz von Dalton (Summe der Partialdrücke) auf 40 m Tiefe (5 bar) bei normaler Pressluft verdeutlicht?",
-    "a": [
-      "Der Stickstoffpartialdruck steigt auf ~3,95 bar (Narkoserisiko) und der Sauerstoffpartialdruck auf ~1,05 bar (unterhalb des 1,4-bar-Limits)",
-      "Sauerstoff und Stickstoff trennen sich vollständig in der Flasche",
-      "Beide Gase fallen unter 0,2 bar ab",
-      "Kohlendioxid wird in Helium umgewandelt"
-    ],
-    "exp": "Daltons Gesetz zeigt: 5 bar × 0,79 = 3,95 bar pN₂ und 5 bar × 0,21 = 1,05 bar pO₂. Die prozentuale Mischung bleibt gleich, aber die wirksame Menge pro Atemzug verfünffacht sich."
-  },
-  {
-    "cat": "praxis",
     "diff": "easy",
-    "q": "Was bedeutet unter Wasser das Handzeichen „Daumen nach oben“?",
+    "q": "Welche Farbe des Sonnenlichts wird vom Meerwasser als allererste schon in den obersten 5 Metern vollständig absorbiert?",
     "a": [
-      "„Auftauchen / nach oben!“ (Beenden des Tauchgangs oder Höhergehen)",
-      "„Alles super / OK!“",
-      "„Ich habe noch 100 bar Luft“",
-      "„Schau mal diesen Hai an!“"
-    ],
-    "exp": "Ein häufiger Anfängerfehler! „Alles OK“ zeigt man unter Wasser ausschließlich durch einen Kreis aus Daumen und Zeigefinger (andere Finger abgespreizt)."
-  },
-  {
-    "cat": "praxis",
-    "diff": "easy",
-    "q": "Welches Handzeichen steht im internationalen Tauchsport eindeutig für „Alles OK!“?",
-    "a": [
-      "Daumen und Zeigefinger bilden ein „O“, die anderen drei Finger sind gespreizt",
-      "Beide Daumen nach oben",
-      "Flache Hand waagerecht hin und her kippen",
-      "Kreisende Bewegung mit dem Zeigefinger"
-    ],
-    "exp": "Nachts zeigt man das „OK“-Zeichen mit der Hand vor der Brust und leuchtet mit der Tauchlampe kurz darauf – niemals dem Buddy direkt in die Augen leuchten!"
-  },
-  {
-    "cat": "praxis",
-    "diff": "easy",
-    "q": "Was überprüft man beim klassischen Partnercheck (Buddy-Check nach PADI-Merksatz „BWRAF“)?",
-    "a": [
-      "BCD (Jacket), Weights (Blei), Releases (Schnallen/Verschlüsse), Air (Luft/Atemregler/Finimeter) und Final OK",
-      "Batterie, Wetter, Riffschutz, Anker, Flossen",
-      "Brille, Weste, Ruder, Anker, Funk",
-      "Breite, Weite, Richtung, Auftrieb, Foto"
-    ],
-    "exp": "Ein konsequenter Buddy-Check vor jedem Einstieg deckt vergessene Bleigurte, geschlossene Flaschenventile oder verdrehte Schnallen sofort auf."
-  },
-  {
-    "cat": "praxis",
-    "diff": "easy",
-    "q": "Wie sollte man sich verhalten, wenn unter Wasser Wasser in die Tauchmaske eindringt?",
-    "a": [
-      "Ruhig durch den Atemregler weiteratmen, oberen Maskenrahmen leicht andrücken, nach oben schauen und sanft durch die Nase ausatmen",
-      "Sofort die Maske ganz abnehmen und schnell auftauchen",
-      "Den Atemregler aus dem Mund nehmen und Luft anhalten",
-      "Mit den Händen unter der Maske Wasser ausschöpfen"
-    ],
-    "exp": "Die ausgeatmete Luft steigt oben in die Maske und verdrängt das Wasser am unteren Dichtrand nach außen – eine der wichtigsten Basisübungen."
-  },
-  {
-    "cat": "praxis",
-    "diff": "mid",
-    "q": "Was signalisiert ein Taucher, der seine flache Hand quer hin und her kippt („Waage“)?",
-    "a": [
-      "„Etwas stimmt nicht / ich habe ein Problem“ (danach zeigt man meist auf die betroffene Stelle, z. B. Ohr oder Finimeter)",
-      "„Alles perfekt, lass uns tiefer gehen“",
-      "„Dort hinten ist ein Wrack“",
-      "„Sicherheitsstopp abgeschlossen“"
-    ],
-    "exp": "Klare Kommunikation vor dem Tauchgang sorgt dafür, dass beide Buddys sofort richtig auf Warnsignale reagieren."
-  },
-  {
-    "cat": "praxis",
-    "diff": "mid",
-    "q": "Woran erkennt man beim Blei-Check an der Wasseroberfläche eine korrekt austarierte Bleimenge?",
-    "a": [
-      "Mit entleertem Jacket (BCD) und normalem Atemzug treibt man ruhig auf Augenhöhe; beim Ausatmen sinkt man leicht ab",
-      "Man geht auch mit voll aufgeblasenem Jacket sofort wie ein Stein unter",
-      "Man liegt mit den Schultern komplett über der Wasserlinie bei leerem Jacket",
-      "Man schwebt exakt 2 Meter über der Oberfläche"
-    ],
-    "exp": "Weil eine Standard-Alu- oder Stahlflasche am Ende des Tauchgangs durch die veratmete Luft (~2 kg leichter!) mehr Auftrieb hat, prüft man möglichst so, dass man auch bei 50 bar auf 5 m stabil bleibt."
-  },
-  {
-    "cat": "praxis",
-    "diff": "mid",
-    "q": "Warum taucht man bei Strömungstauchgängen (sofern möglich) am besten zunächst GEGEN die Strömung ab und lässt sich auf dem Rückweg treiben?",
-    "a": [
-      "Damit man zu Beginn noch volle Kräfte und ausreichend Luft hat und am Ende mühelos zum Boot/Ausstieg zurückgetragen wird",
-      "Weil man nur gegen die Strömung tarieren kann",
-      "Weil Tauchcomputer sonst falsch zählen",
-      "Weil Fische ausschließlich gegen die Strömung schlafen"
-    ],
-    "exp": "Ausnahme sind reine One-Way-Strömungstauchgänge (Drift Dives), bei denen das Boot die Tauchgruppe am Ende anhand der Oberflächenboje (SMB) einsammelt."
-  },
-  {
-    "cat": "praxis",
-    "diff": "mid",
-    "q": "Welche maximale Aufstiegsgeschwindigkeit gilt heute als gängiger Standard bei den meisten Tauchverbänden und Tauchcomputern?",
-    "a": [
-      "Maximal etwa 9 bis 10 Meter pro Minute (oft noch langsamer in den letzten 10 Metern)",
-      "Maximal 30 Meter pro Minute",
-      "Maximal 60 Meter pro Minute (1 m/s)",
-      "Die Geschwindigkeit spielt bis 40 m überhaupt keine Rolle"
-    ],
-    "exp": "Als einfache Faustregel für die Praxis gilt: Nie schneller aufsteigen als die kleinsten eigenen ausgeatmeten Luftblasen!"
-  },
-  {
-    "cat": "praxis",
-    "diff": "pro",
-    "q": "Wozu dient eine Signalboje („SMB“ / „DSMB“ – Delayed Surface Marker Buoy), die am Ende oder im Notfall unter Wasser mit Luft gefüllt wird?",
-    "a": [
-      "Sie markiert während des Sicherheitsstopps und Aufstiegs für Boote sichtbar die Position der Taucher an der Oberfläche",
-      "Sie dient als Zusatzflasche zum Atmen auf 30 m",
-      "Sie misst die Wassertemperatur in der Tiefe",
-      "Sie vertreibt Quallen durch Ultraschall"
-    ],
-    "exp": "Beim Setzen einer DSMB aus der Tiefe achtet man strikt darauf, dass sich die Schnur (Spool/Reel) nicht am Körper verheddert und einen unkontrollierten Mitriss auslöst."
-  },
-  {
-    "cat": "praxis",
-    "diff": "pro",
-    "q": "Wie reagiert man korrekt, falls die 2. Stufe des Atemreglers unter Wasser durch Vereisung oder Defekt stark abbläst (Freeflow)?",
-    "a": [
-      "Regler NICHT aus dem Mund nehmen, sondern die Zunge/Lippen leicht öffnen („Luft schlucken“ / überschüssige Luft vorbeiströmen lassen) und sofort auf die Reserve-2.-Stufe oder Buddy-Luft wechseln und kontrolliert aufsteigen",
-      "Sofort den Atemregler komplett aus dem Mund ziehen und die Luft bis oben anhalten",
-      "Den Inflatorschlauch abreißen",
-      "Unter Wasser die Flasche selbst zudrehen, ohne Ersatzregler im Mund zu haben"
-    ],
-    "exp": "Aus einem abblasenden Regler kann man bei entspannt geöffneter Lippe problemlos weiteratmen, während man Ruhe bewahrt und den Tauchgang sicher beendet."
-  },
-  {
-    "cat": "praxis",
-    "diff": "pro",
-    "q": "Wie lässt sich bei einem Tauchgang mit sauberer Tarierung der eigene Atemluft-Verbrauch am präzisesten über die Atmung feinregulieren?",
-    "a": [
-      "Kleine Tiefenkorrekturen über das Lungenvolumen vornehmen und das Jacket (BCD) nur für grobe Änderungen nutzen, statt ständig Luft nachzugeben und abzulassen",
-      "Alle 10 Sekunden komplett ausblasen und neu aufblasen",
-      "Übergewicht mitnehmen und mit prallem Jacket dagegenhalten",
-      "Nur über den Flossenschlag nach unten drücken"
-    ],
-    "exp": "Durch die zeitliche Verzögerung des Lungenvolumens (ca. 1–2 Sekunden) schweben geübte Taucher im Riff vollkommen ruhig im „Trim“ – das spart enorm viel Luft."
-  },
-  {
-    "cat": "praxis",
-    "diff": "pro",
-    "q": "Was bezeichnet der „SAC-Wert“ (Surface Air Consumption / Oberflächen-Atemminutenvolumen, AMV) bei der Tauchplanung?",
-    "a": [
-      "Den persönlichen Atemgasverbrauch umgerechnet auf 1 bar Oberflächendruck pro Minute (in bar/min oder Liter/min)",
-      "Den maximalen Druck der Sicherheitsboje",
-      "Die Sauerstoff-Sättigung des Blutes in Prozent",
-      "Die Länge des Sicherheitsstopps bei Strömung"
-    ],
-    "exp": "Kennt man sein eigenes AMV (z. B. 15–20 L/min), lässt sich exakt vorausberechnen, wie lange ein Gasvorrat auf 20 m oder 30 m Tiefe inklusive Reserve reicht."
-  },
-  {
-    "cat": "welten",
-    "diff": "easy",
-    "q": "Warum erscheinen unter Wasser Gegenstände durch die Tauchmaske hindurch optisch verändert?",
-    "a": [
-      "Sie wirken um etwa ein Drittel (~33 %) größer und entsprechend (~25 %) näher als sie tatsächlich sind",
-      "Sie wirken um die Hälfte kleiner und weiter weg",
-      "Sie stehen komplett auf dem Kopf",
-      "Sie verändern ihre Größe überhaupt nicht"
-    ],
-    "exp": "Ursache ist die Lichtbrechung an der Grenzfläche zwischen Wasser (Brechungsindex ~1,33) und der Luftschicht innerhalb der Maske (~1,0)."
-  },
-  {
-    "cat": "welten",
-    "diff": "easy",
-    "q": "Welche Farbe des sichtbaren Sonnenlichts wird beim Abtauchen vom Wasser als ERSTES absorbiert und wirkt schon nach wenigen Metern bräunlich-grau?",
-    "a": [
-      "Rot (bereits ab ca. 5 Metern Tiefe)",
+      "Rot",
       "Blau",
-      "Violett",
-      "Grün"
+      "Grün",
+      "Gelb"
     ],
-    "exp": "Langwelliges rotes Licht verliert im Wasser am schnellsten Energie, gefolgt von Orange und Gelb – erst durch eine Tauchlampe erstrahlen Korallen wieder in Rot."
-  },
-  {
-    "cat": "welten",
-    "diff": "easy",
-    "q": "In welchem Meer liegt eines der berühmtesten Betauch-Wracks der Welt – die im Zweiten Weltkrieg gesunkene „SS Thistlegorm“?",
-    "a": [
-      "Im Roten Meer (Ägypten)",
-      "In der Ostsee vor Rügen",
-      "Im Nordpazifik vor Alaska",
-      "Im Bodensee"
-    ],
-    "exp": "Der 1941 durch deutsche Bomber versenkte britische Frachter liegt auf ca. 16–30 m Tiefe und transportierte Motorräder, LKW und Dampflokomotiven."
-  },
-  {
-    "cat": "welten",
-    "diff": "easy",
-    "q": "Welcher französische Meeresforscher entwickelte 1943 gemeinsam mit Émile Gagnan die legendäre „Aqua-Lung“ (erster erfolgreicher Pressluft-Lungenautomat)?",
-    "a": [
-      "Jacques-Yves Cousteau",
-      "Hans Hass",
-      "Jules Verne",
-      "Robert Ballard"
-    ],
-    "exp": "Die Erfindung von Cousteau und Gagnan machte das freie, unabhängige Sporttauchen ohne schwere Helmtauchanzüge und Luftschläuche überhaupt erst möglich."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Was sind die berühmten „Cenoten“ auf der mexikanischen Halbinsel Yucatán, die unter Tauchern weltbekannt sind?",
-    "a": [
-      "Mit kristallklarem Süßwasser gefüllte Kalkstein-Dolinen und unterirdische Höhlensysteme (oft mit Halokline zum Salzwasser)",
-      "Künstliche Schiffswracks vor Cancún",
-      "Heiße Tiefsee-Vulkanschlote im Pazifik",
-      "Mangroven-Inseln im Amazonas"
-    ],
-    "exp": "Wo Süßwasser über schwererem Salzwasser liegt, entsteht in manchen Cenoten eine beeindruckende, wabernde Grenzschicht – die sogenannte Halokline."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Worin unterscheidet sich das Auftriebssystem von Haien und Rochen (Knorpelfische) grundsätzlich von den meisten Knochenfischen?",
-    "a": [
-      "Haie besitzen keine Schwimmblase, sondern nutzen ihre große, ölreiche Leber (Squalen) sowie dynamischen Auftrieb durch Brustflossen",
-      "Haie füllen ihre Kiemen regelmäßig mit Luft an der Oberfläche",
-      "Knochenfische haben überhaupt keinen Auftrieb",
-      "Haie tragen Luftblasen in ihren Rückenflossen"
-    ],
-    "exp": "Weil Haie keine gasgefüllte Schwimmblase haben, können sie rasch zwischen verschiedenen Tiefen wechseln, ohne ein Barotrauma ihrer Schwimmblase zu erleiden."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Was löst das dramatische Phänomen der „Korallenbleiche“ an tropischen Riffen hauptsächlich aus?",
-    "a": [
-      "Dauerhaft zu hohe Wassertemperaturen versetzen Korallen in Stress, sodass sie ihre lebensnotwendigen symbiotischen Algen (Zooxanthellen) abstoßen",
-      "Zu viel Mondlicht in Neumondnächten",
-      "Das Ausatmen von Stickstoffblasen durch Sporttaucher",
-      "Die normale jährliche Häutung von Steinkorallen"
-    ],
-    "exp": "Die Zooxanthellen verleihen Korallen sowohl ihre bunten Farben als auch bis zu 90 % ihrer Energie durch Photosynthese – hält die Hitze an, stirbt das Kalkskelett ab."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Welches Tauchverhalten gilt beim Fotografieren und Beobachten empfindlicher Riffe und Wracks als oberstes Gebot (Green Fins / Umweltcodex)?",
-    "a": [
-      "Perfekte Tarierung halten, nichts berühren oder aufwirbeln, Abstand halten und niemals Meeresbewohner jagen oder füttern",
-      "Sich zum ruhigen Fotografieren mit den Knien auf Tischkorallen abstützen",
-      "Kleine Seesterne für das Foto kurz an die Oberfläche bringen",
-      "Alte Bleigewichte als Souvenir am Riff ablegen"
-    ],
-    "exp": "Steinkorallen wachsen oft nur wenige Millimeter bis Zentimeter pro Jahr – ein einziger unachtsamer Flossenschlag kann jahrzehntealtes Wachstum zerstören."
-  },
-  {
-    "cat": "welten",
-    "diff": "pro",
-    "q": "Was bezeichnet der Begriff „Thermokline“ (Sprungschicht), den Taucher besonders in Seen oder vor Strömungskanten spüren?",
-    "a": [
-      "Eine relativ scharfe Grenzschicht zwischen wärmerem Oberflächenwasser und deutlich kälterem Tiefenwasser",
-      "Die elektrische Leitfähigkeit einer Tauchlampe",
-      "Die maximale Tauchtiefe eines Nitrox-Gemischs",
-      "Ein medizinisches Gerät in der Druckkammer"
-    ],
-    "exp": "Durch den Dichteunterschied mischen sich warme und kalte Wasserschichten kaum; an der Thermokline ändert sich die Temperatur oft innerhalb eines Meters um mehrere Grad."
-  },
-  {
-    "cat": "welten",
-    "diff": "pro",
-    "q": "Warum können manche bunt gefärbte Nacktschnecken (Nudibranchia) am Riff Fressfeinde wirksam abwehren, obwohl sie weich und ohne Schale sind?",
-    "a": [
-      "Viele speichern Nesselzellen (Kleptocniden) oder Giftstoffe aus ihrer Nahrung (z. B. Schwämmen oder Hydroidpolypen) in ihren Rückenanhängen",
-      "Sie besitzen ein stählernes Innen-Skelett",
-      "Sie tauchen bei Gefahr sofort auf 200 m Tiefe ab",
-      "Sie stoßen Hochspannungsblitze aus"
-    ],
-    "exp": "Ihre grellen Warnfarben (Aposematismus) signalisieren Fischen eindeutig: „Ungenießbar und giftig!“"
-  },
-  {
-    "cat": "welten",
-    "diff": "pro",
-    "q": "Warum erfordert das Tauchen in hochgelegenen Bergseen (z. B. auf 1.500 m Höhe) spezielle „Bergsee-Tabellen“ bzw. einen Höhenmodus am Tauchcomputer?",
-    "a": [
-      "Wegen des geringeren Luftdrucks an der Oberfläche beginnt die Dekompressionsberechnung auf niedrigerem Ausgangsniveau und Tiefenmesser müssen teils kalibriert werden",
-      "Weil Süßwasser über 1.000 m Höhe keinen Sauerstoff enthält",
-      "Weil dort die Schwerkraft um 50 % höher ist",
-      "Weil Neoprenanzüge in Bergseen nicht isolieren"
-    ],
-    "exp": "Auch direkt nach der Autofahrt von Meereshöhe zu einem hochgelegenen Bergsee wirkt die Höhe bereits ähnlich wie ein leichter Druckabfall – moderne Computer messen den Luftdruck vor dem Tauchgang automatisch."
-  },
-  {
-    "cat": "welten",
-    "diff": "pro",
-    "q": "Welcher bekannte Tauchspot in Belize ist eine kreisrunde, über 300 m breite und rund 124 m tiefe Karst-Doline mitten im Leuchtturm-Riff?",
-    "a": [
-      "Das Great Blue Hole",
-      "Der Silfra-Spalt (Island)",
-      "Die Barracuda Point (Sipadan)",
-      "Das Richelieu Rock (Thailand)"
-    ],
-    "exp": "Während der Eiszeiten entstand dort eine riesige Kalksteinhöhle über dem Meeresspiegel, deren Decke später einstürzte – unter Wasser sieht man noch mächtige Stalaktiten."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "easy",
-    "q": "Wozu tragen Gerätetaucher beim Sporttauchen einen Tauchcomputer am Handgelenk (oder in der Konsole)?",
-    "a": [
-      "Zur laufenden Berechnung von Tiefe, Tauchzeit, Nullzeit und Aufstiegsgeschwindigkeit",
-      "Als Unterwasser-Musikplayer für Begleitfische",
-      "Um das Flaschengewicht elektrisch auszugleichen",
-      "Zum Aussenden von Funkgesprächen über Kilometer unter Wasser"
-    ],
-    "exp": "Der Tauchcomputer berechnet anhand eines Dekompressionsmodells kontinuierlich die Gewebesättigung mit Stickstoff und warnt vor Überschreiten der Nullzeit oder zu schnellem Auftauchen."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "easy",
-    "q": "Wofür ist ein Schnorchel beim Gerätetauchen links an der Maske vor allem praktisch?",
-    "a": [
-      "Zum Atemluftsparen beim Schwimmen an der Wasseroberfläche",
-      "Als Ersatz-Atemregler in 30 Metern Tiefe",
-      "Als Signalhorn bei Haibegegnungen",
-      "Zum Aufpumpen des Trockentauchanzugs"
-    ],
-    "exp": "Beim längeren Schwimmen an der Wasseroberfläche zum Tauchplatz oder Boot spart man mit dem Schnorchel wertvolle Druckluft aus der Tauchflasche."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "easy",
-    "q": "Wozu trägt man unter Wasser Tauchflossen an den Füßen?",
-    "a": [
-      "Für effizienten, kräfteschonenden Vortrieb mit freien Händen",
-      "Um spitze Korallen unter Wasser abbrechen zu können",
-      "Als reines Gewicht gegen Abtrieb an der Oberfläche",
-      "Damit man auf dem Grund aufrecht laufen kann"
-    ],
-    "exp": "Flossen vergrößern die Vortriebsfläche der Beine erheblich, sodass Taucher ruhig und stabil durchs Wasser gleiten, während die Hände für Ausrüstung und Tarierung frei bleiben."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "easy",
-    "q": "Woraus besteht ein typischer Nasstauchanzug (Wetsuit) fast immer im Kernmaterial?",
-    "a": [
-      "Aus geschäumtem Neopren mit tausenden geschlossenen Gasbläschen",
-      "Aus luftdurchlässiger reiner Baumwolle",
-      "Aus massivem Stahlblech",
-      "Aus unelastischer PVC-Lkw-Plane ohne Isolierung"
-    ],
-    "exp": "Neopren schließt mikroskopisch kleine Stickstoff- oder Luftbläschen ein, die Wärme schlecht leiten, und hält zudem eine dünne Wasserschicht auf Körperwärme."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "easy",
-    "q": "Welche Standard-Farben kennzeichnen in der Regel den Reserve-Atemregler („Oktopus“)?",
-    "a": [
-      "Auffälliges Gelb für den Notfallregler und meist auch dessen Schlauch",
-      "Rein durchsichtiges Glas",
-      "Tarnfarbenes Schwarz ohne Markierung",
-      "Leuchtendes Weiß ausschließlich bei Nacht"
-    ],
-    "exp": "Die auffällige Signalfarbe Gelb sorgt dafür, dass ein Buddy ohne Luft im Notfall die alternative Luftversorgung in Sekundenschnelle greifen kann."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "mid",
-    "q": "Worin unterscheidet sich eine klassische Wing-Konstruktion (Backplate & Wing) vom herkömmlichen Jacket-BCD?",
-    "a": [
-      "Der Auftriebskörper liegt ausschließlich auf dem Rücken und hält die Brust komplett frei",
-      "Es enthält fest einlaminiertes Blei ohne Ablassmöglichkeit",
-      "Es funktioniert ausschließlich mit Helium statt Luft",
-      "Es benötigt keinen Inflatorschlauch zum Aufblasen"
-    ],
-    "exp": "Bei einem Wing sitzt die Luftblase hinter dem Rücken des Tauchers, was eine waagerechte Wasserlage (Trim) erleichtert und Bewegungsfreiheit im Brustbereich schafft."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "mid",
-    "q": "Welches Material weisen deutsche Standard-Pressluftflaschen (z. B. 10 L oder 12 L, 200 bar) meist gegenüber typischen Leihflaschen in Ägypten (80 cuft / 11,1 L) auf?",
-    "a": [
-      "Deutsche Flaschen sind häufig aus Stahl (Eigenabtrieb), tropische Leihflaschen meist aus Aluminium",
-      "Deutsche Flaschen bestehen aus Titan, tropische aus Keramik",
-      "Aluminiumflaschen wiegen voll rund doppelt so viel wie Stahlflaschen",
-      "Stahlflaschen dürfen gesetzlich maximal mit 50 bar gefüllt werden"
-    ],
-    "exp": "Stahlflaschen sind meist schwerer und bleiben abtriebsstark, während dickwandige Aluminiumflaschen (AL80) gegen Ende des Tauchgangs leicht positiv auftreiben können."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "mid",
-    "q": "Wozu dient ein kleiner Schutzdeckel (Staubschutzkappe) an der 1. Stufe des Atemreglers nach dem Tauchgang?",
-    "a": [
-      "Um beim Spülen im Süßwasser den Hochdruck-Filter vor Feuchtigkeit und Salz zu schützen",
-      "Als Auslöseknopf für die automatische Rettungsboje",
-      "Zur Messung der Restfeuchte im Flaschenhals",
-      "Um Luft während des Tauchgangs anzusaugen"
-    ],
-    "exp": "Wenn die Staubschutzkappe vor dem Abspülen trocken und dicht aufgesetzt wird, dringt kein Spülwasser in die empfindliche Innenmechanik der ersten Stufe ein."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "mid",
-    "q": "Warum verliert ein dicker 7-mm-Neopren-Nasstauchanzug mit zunehmender Tauchtiefe an Wärmeisolierung und Auftrieb?",
-    "a": [
-      "Weil der steigende Wasserdruck die Gasbläschen im Neopren zusammendrückt",
-      "Weil kaltes Salzwasser die Gummischicht unter Wasser auflöst",
-      "Weil Neopren ab 10 Metern Tiefe metallisch leitend wird",
-      "Weil der Luftverbrauch des Lungenautomaten das Neopren abkühlt"
-    ],
-    "exp": "Nach dem Gesetz von Boyle-Mariotte komprimiert der Umgebungsdruck die Gasbläschen im Neopren, wodurch das Anzugvolumen und somit Auftrieb sowie Dämmung schrumpfen."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "mid",
-    "q": "Welcher zentrale Vorteil spricht bei einem Trockentauchanzug für eine Hals- und Armmanschette aus Silikon gegenüber klassischem Latex (je nach System)?",
-    "a": [
-      "Silikon altert nicht so schnell durch UV-Licht/Ozon und vermeidet Latexallergien",
-      "Silikon vergrößert automatisch die Pressluftflasche um 2 Liter",
-      "Silikon schmilzt beim Waschen und dichtet so nahtlos",
-      "Silikon kann ohne Inflatorschlauch aufgepumpt werden"
-    ],
-    "exp": "Silikonmanschetten sind geschmeidig, unempfindlicher gegen Ozon-Rissbildung, hypoallergen und lassen sich bei modularen Ringsystemen selbst in Minuten tauschen."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "pro",
-    "q": "Welchen Zweck erfüllt ein sogenannter „Long Hose“ (ca. 1,5–2,1 m langer Atemreglerschlauch) bei technischen oder DIR-inspirierten Tauchsport-Konfigurationen?",
-    "a": [
-      "Er erleichtert im Notfall das Durchtauchen enger Engstellen im Gänsemarsch bei Gas-Spende an einen Buddy",
-      "Er dient als Abschleppseil für Schlauchboote an der Oberfläche",
-      "Er reduziert den Wasserdruck in der Lunge auf die Hälfte",
-      "Er ersetzt zwingend das Finimeter in der Konsole"
-    ],
-    "exp": "Mit dem Long Hose kann der Spender vorneweg und der Empfänger hinterher schwimmen, etwa in Wrackgängen, Höhlen oder bei starker Strömung."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "pro",
-    "q": "Worin liegt das Funktionsprinzip einer „pneumatisch balancierten“ 1. oder 2. Stufe beim Atemregler?",
-    "a": [
-      "Der Atemwiderstand bleibt unabhängig vom Flaschendruck und der Tauchtiefe nahezu konstant leichtgängig",
-      "Der Atemregler wechselt auf 30 Metern Tiefe selbstständig auf Nitrox",
-      "Das Ventil schließt ab 150 bar Flaschendruck völlig ab",
-      "Ein eingebauter Elektromotor pumpt Luft bei jedem Einatmen"
-    ],
-    "exp": "Bei unbalancierten Reglern steigt mit fallendem Flaschendruck oder steigendem Tiefendruck der Einatemwiderstand leicht an; balancierte Konstruktionen kompensieren diese Druckdifferenzen mechanisch."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "pro",
-    "q": "Welches spezifische Gewinde besitzen viele in der EU genutzte M26x2-Nitrox-Flaschenventile seit Einführung der Norm EN 144-3?",
-    "a": [
-      "Ein größeres Rechtsgewinde M26x2 speziell für sauerstoffangereicherte Gemische (> 21 % O₂)",
-      "Ein Linksgewinde ausschließlich für Helium-Gemische",
-      "Ein identisches G5/8-Gewinde wie bei 200-bar-Luftventilen",
-      "Ein Fahrradreifen-Schraderventil"
-    ],
-    "exp": "Um Verwechslungen mit nicht sauerstoffreinen Luftreglern auszuschließen, schrieb Europa M26x2 für Flaschen und Regler mit mehr als 21 % Sauerstoffanteil vor (international oft weiterhin DIN/YOKE mit O₂-Reinigung)."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "pro",
-    "q": "Wie arbeitet ein geschlossener Kreislauf-Rebreather (CCR – Closed Circuit Rebreather) im Kern gegenüber einem offenen Sport-Atemgerät?",
-    "a": [
-      "Die ausgeatmete Luft wird mittels Atemkalk vom CO₂ gereinigt, mit frischem O₂ auf Soll-Partialdruck aufgefüllt und blasenfrei erneut eingeatmet",
-      "Er verbrennt Diesel unter Wasser, um neuen Sauerstoff aus Meerwasser zu elektrolysieren",
-      "Er presst ausgeatmetes Stickstoffgas wieder mit 200 bar in die Flasche",
-      "Er kühlt das Atemgas auf −20 °C herunter, damit die Lunge weniger verbraucht"
-    ],
-    "exp": "Da Menschen pro Atemzug nur einen kleinen Teil des Sauerstoffs verbrauchen, nutzt ein CCR das Atemgas immer wieder, misst den pO₂ mit Sensoren und spart extrem viel Gas bei geräuschlosem Tauchen."
-  },
-  {
-    "cat": "ausruestung",
-    "diff": "pro",
-    "q": "Warum müssen Gewindeteile und Dichtringe von Nitrox- (> 40 % O₂) oder Sauerstoffarmaturen zwingend „sauerstoffrein“ (O₂-clean) mit speziellen Fetten wie Christo-Lube/Krytox gepflegt werden?",
-    "a": [
-      "Herkömmliche Kohlenwasserstoff-Fette oder Schmutzpartikel können sich bei hohem Sauerstoffpartialdruck und schneller Adiabatischer Kompression explosionsartig entzünden",
-      "Normales Silikonfett gefriert unter Sauerstoff zu festem Eis bei +25 °C",
-      "Ohne Spezialfett entweicht reiner Sauerstoff durch massiven Stahl hindurch",
-      "Sauerstoff verändert sonst seine Farbe auf knallrot"
-    ],
-    "exp": "Hohe Sauerstoffkonzentrationen senken die Zündtemperatur drastisch; plötzliches Ventilöffnen kann Kohlenwasserstoff-Schmiermittel zur Verbrennung bringen."
-  },
-  {
-    "cat": "physik",
-    "diff": "easy",
-    "q": "Welcher Gesamtdruck (absolut) wirkt auf einen Taucher in genau 20 Metern Tiefe im Meer?",
-    "a": [
-      "Etwa 3 bar (1 bar Luftdruck + 2 bar Wasserdruck)",
-      "Genau 1 bar",
-      "Etwa 10 bar",
-      "Etwa 20 bar"
-    ],
-    "exp": "Zu 1 bar atmosphärischem Druck an der Wasseroberfläche addiert sich alle 10 Meter Wassertiefe rund 1 bar hydrostatischer Wasserdruck (20 m = 1 + 2 = 3 bar)."
-  },
-  {
-    "cat": "physik",
-    "diff": "easy",
-    "q": "In welcher Körperregion spürt ein Taucher beim Abtauchen zuerst ein Ziehen oder Drücken, wenn er keinen Druckausgleich macht?",
-    "a": [
-      "In den Ohren (am Trommelfell)",
-      "In den Kniegelenken",
-      "In der Leber",
-      "An den Fingernägeln"
-    ],
-    "exp": "Das Mittelohr hinter dem Trommelfell ist ein geschlossener lufthaltiger Hohlraum; steigt außen der Wasserdruck, wölbt sich das Trommelfell schmerzhaft nach innen."
-  },
-  {
-    "cat": "physik",
-    "diff": "easy",
-    "q": "Warum verbraucht ein Taucher in 30 Metern Tiefe (4 bar absolut) aus seiner Druckluftflasche ungefähr viermal so viel Luft pro Minute wie an der Wasseroberfläche?",
-    "a": [
-      "Der Atemregler liefert Luft exakt auf dem dortigen Umgebungsdruck (vierfache Gasdichte pro Atemzug)",
-      "Unter Wasser schlägt das Herz viermal langsamer, braucht aber pro Zug mehr",
-      "Druckluft dehnt sich in der Tiefe um das Vierfache aus",
-      "Der kalte Tauchcomputer pumpt automatisch Luft ins Jacket ab"
-    ],
-    "exp": "Das Lungenvolumen pro Atemzug bleibt gleich, aber durch den vierfachen Druck auf 30 m enthält jeder Atemzug viermal mehr Gasmasse."
-  },
-  {
-    "cat": "physik",
-    "diff": "easy",
-    "q": "Was bezeichnet beim Gerätetauchen die „Nullzeit“ (NDL – No-Decompression Limit)?",
-    "a": [
-      "Die maximale Zeit auf einer bestimmten Tiefe, nach der man noch direkt (ohne Pflicht-Dekompressionsstopps) mit Normaltempo auftauchen darf",
-      "Die Mindestzeit, die eine Flasche zum Abkühlen im Auto braucht",
-      "Die exakte Uhrzeit, zu der alle Fische schlafen",
-      "Die Garantiezeit eines neuen Atemreglers"
-    ],
-    "exp": "Bleibt der Taucher innerhalb der Nullzeit, hat der Körper so wenig Stickstoff aufgenommen, dass langsames Auftauchen samt Sicherheitsstopp zum sicheren Abbau genügt."
-  },
-  {
-    "cat": "physik",
-    "diff": "easy",
-    "q": "Warum schimmert kaltes Süßwasser oder Meerwasser bei einem Tauchgang ab 5 bis 15 Metern oft deutlich blauer und grünlicher als die Oberfläche?",
-    "a": [
-      "Langwelliges rotes und orangefarbenes Licht wird vom Wasser als Erstes geschluckt (absorbiert)",
-      "Plankton sprüht gezielt blaue Leuchtpigmente auf Masken",
-      "Stickstoff im Blut verfärbt das Sehnervsignal",
-      "Die Tauchflasche reflektiert ausschließlich ultraviolettes Licht"
-    ],
-    "exp": "Wasser filtert die energiereichen kurzen (blauen) Wellenlängen deutlich später heraus als Rot, Orange und Gelb – mit einer Tauchlampe kehren die Originalfarben sofort zurück."
+    "explanation": "Langkelliges rotes Licht wird zuerst geschluckt – in 15 m Tiefe sieht ein roter Fisch bräunlich-grau aus und frisches Blut erscheint grünlich-schwarz!",
+    "exp": "Rot"
   },
   {
     "cat": "physik",
     "diff": "mid",
-    "q": "Welche zwei Gase bilden zusammen fast 99 % der normalen medizinisch-reinen Atemluft in einer Pressluftflasche?",
+    "q": "Warum erscheinen Gegenstände unter Wasser durch die Tauchermaske um rund 33 Prozent größer und 25 Prozent näher?",
     "a": [
-      "Rund 78 % Stickstoff und 21 % Sauerstoff",
-      "Rund 50 % Sauerstoff und 50 % Helium",
-      "Rund 78 % Kohlendioxid und 21 % Stickstoff",
-      "Rund 95 % Sauerstoff und 5 % Edelgase"
+      "Wegen der Lichtbrechung am Übergang zwischen Wasser, Maskenglas und der Luftschicht vor dem Auge",
+      "Weil das Salzwasser wie eine gigantische Lupe wirkt",
+      "Wegen des erhöhten Augeninnendrucks durch den Wasserdruck",
+      "Weil Fische unter Wasser ihre Schuppen zur Abschreckung aufplustern"
     ],
-    "exp": "Pressluft aus dem Tauchkompressor ist verdichtete und gefilterte Umgebungsluft (~78 % N₂, ~21 % O₂, ~1 % Argon/Spurengase)."
-  },
-  {
-    "cat": "physik",
-    "diff": "mid",
-    "q": "Was besagt das Archimedische Prinzip beim Thema Tarierung im Wasser?",
-    "a": [
-      "Die nach oben wirkende Auftriebskraft entspricht genau der Gewichtskraft des verdrängten Wasservolumens",
-      "Jeder Taucher sinkt unterhalb von 10 Metern physikalisch zwangsläufig",
-      "Salzwasser hat stets weniger Auftrieb als Süßwasser",
-      "Die Lunge wiegt beim Ausatmen mehr als beim Einatmen"
-    ],
-    "exp": "Wer mehr Wassergewicht verdrängt als er wiegt, schwimmt positiv (steigt auf); bei gleicher Masse schwebt er schwerelos (neutrale Tarierung)."
-  },
-  {
-    "cat": "physik",
-    "diff": "mid",
-    "q": "Wie hoch ist die kritische Gefahr eines Lungenbarotraumas, wenn ein mit Pressluft abgetauchter Gerätetaucher mit angehaltenem Atem selbst aus nur 3–4 Metern Tiefe nach oben schießt?",
-    "a": [
-      "Sehr hoch – da sich die Luft zwischen 4 m (1,4 bar) und 0 m (1 bar) um 40 % ausdehnt, was zarte Lungenbläschen zerreißen kann",
-      "Völlig ausgeschlossen unterhalb von 30 Metern Tiefe",
-      "Nur relevant beim Freitauchen ohne Flasche",
-      "Es entsteht lediglich ein leichter Husten ohne Gewebeschaden"
-    ],
-    "exp": "Gerade die flachsten Meter vor der Oberfläche verursachen die größten prozentualen Drucksprünge; Luftanhalten bei Druckgasatmung während des Aufstiegs ist daher lebensgefährlich."
-  },
-  {
-    "cat": "physik",
-    "diff": "mid",
-    "q": "Was ist der typische medizinische Grund für „Kopfbrummen“ oder CO₂-Kopfschmerzen („Skip-Breathing Headache“) direkt nach dem Auftauchen?",
-    "a": [
-      "Anstauung von Kohlendioxid durch zu flaches Atmen, bewusste Atempausen („Luftsparen“) oder extremen Kraftaufwand gegen Strömung",
-      "Ein Übermaß an reinem Stickstoff im Magen",
-      "Ein zu kalter Bleiabwurf am Beckengurt",
-      "Zu wenig Wasser im Innenraum der Tauchflasche"
-    ],
-    "exp": "Unnötiges Luftsparen („Skip Breathing“) erhöht die CO₂-Konzentration im Blut, erweitert Gehirngefäße und führt zu typischem Kopfschmerz und Atemnotgefühl."
-  },
-  {
-    "cat": "physik",
-    "diff": "mid",
-    "q": "Wieso kühlt ein menschlicher Körper im 20 °C warmen Wasser rund 20-mal schneller aus als in 20 °C warmer Luft?",
-    "a": [
-      "Wasser hat eine massiv höhere Wärmeleitfähigkeit und Wärmekapazität als Luft",
-      "Weil Fische dem Körper beim Vorbeischwimmen Wärme entziehen",
-      "Weil Pressluft aus der Flasche immer −15 °C kalt ist",
-      "Weil Wasser auf der Haut beim Tauchen verdunstet"
-    ],
-    "exp": "Wasser leitet Körperwärme rund 20- bis 25-mal effizienter ab als ruhige Luft, weshalb schon im Tropenwasser (27 °C) ein dünner Anzug sinnvoll ist."
+    "explanation": "Wasser hat einen höheren Brechungsindex (1,33) als Luft (1,0) – das Licht wird gebrochen und erzeugt ein virtuelles, vergrößertes Bild.",
+    "exp": "Wegen der Lichtbrechung am Übergang zwischen Wasser, Maskenglas und der Luftschicht vor dem Auge"
   },
   {
     "cat": "physik",
     "diff": "pro",
-    "q": "Wie berechnet sich die „Äquivalente Lufttiefe“ (EAD – Equivalent Air Depth) im Prinzip bei der Verwendung von Nitrox (z. B. EAN36), und wozu dient sie?",
+    "q": "Was versteht man unter der „MOD“ (Maximum Operating Depth) beim Tauchen mit Nitrox-Gemischen?",
     "a": [
-      "Sie ermittelt anhand des geringeren Stickstoffanteils jene flachere Luft-Tauchtiefe mit identischem Stickstoffpartialdruck (geringeres Deko-Risiko)",
-      "Sie gibt an, ab wie viel Metern man ohne Maske sehen kann",
-      "Sie bestimmt das exakte Gewicht des Bleigurts in Süßwasser",
-      "Sie rechnet Bar in Knoten um"
+      "Die maximale Einsatztiefe, bei der der Sauerstoff-Partialdruck (meist 1,4 bar) nicht überschritten wird",
+      "Die Tiefe, bei der eine Tauchflasche rechnerisch zerquetscht würde",
+      "Die Mindesttiefe, ab der Korallenriffe gesetzlich unter Naturschutz stehen",
+      "Der Zeitpunkt, an dem die Batterie des Tauchcomputers leer wird"
     ],
-    "exp": "Durch höheren O₂-Anteil enthält EAN36 nur 64 % statt 79 % Stickstoff; ein Tauchgang auf 30 m liefert damit die Stickstoffbelastung eines Lufttauchgangs in rund 22,5 m Tiefe."
+    "explanation": "Bei EAN32 (32 % O₂) liegt die MOD bei exakt 33,7 Metern. Wer tiefer taucht, riskiert eine lebensgefährliche Sauerstoffvergiftung.",
+    "exp": "Die maximale Einsatztiefe, bei der der Sauerstoff-Partialdruck (meist 1,4 bar) nicht überschritten wird"
+  },
+  {
+    "cat": "physik",
+    "diff": "easy",
+    "q": "Wie funktioniert der Druckausgleich im Mittelohr (z. B. Valsalva-Methode) beim Abtauchen?",
+    "a": [
+      "Nase zuhalten und sanft gegen die geschlossene Nase ausatmen, um Luft durch die Eustachische Röhre ins Ohr zu drücken",
+      "Kräftig Meerwasser durch den Schnorchel in den Rachen einatmen",
+      "Mit der flachen Hand auf die Außenseite der Ohrmuschel schlagen",
+      "Die Zunge dreimal im Kreis gegen den Gaumen rollen"
+    ],
+    "explanation": "Mit steigendem Druck biegt sich das Trommelfell nach innen – gleicht man nicht alle paar Meter aus, droht ein extrem schmerzhafter Trommelfellriss.",
+    "exp": "Nase zuhalten und sanft gegen die geschlossene Nase ausatmen, um Luft durch die Eustachische Röhre ins Ohr zu drücken"
+  },
+  {
+    "cat": "physik",
+    "diff": "mid",
+    "q": "Warum verliert der menschliche Körper im Wasser rund 20- bis 25-mal schneller Wärme als an der Luft?",
+    "a": [
+      "Weil Wasser eine enorm hohe Wärmekapazität und Wärmeleitfähigkeit im Vergleich zu Luft besitzt",
+      "Weil die Poren der Haut im Wasser sofort auf das Dreifache aufquellen",
+      "Weil Salzwasser dem Blut über die Haut direkt Wärme entzieht",
+      "Weil die Muskeln unter Wasser keine Kalorien mehr verbrennen können"
+    ],
+    "explanation": "Selbst in 28 °C warmem Tropenwasser kühlt ein ungeschützter Taucher nach 45 Minuten aus – ein Neoprenanzug ist daher fast immer ratsam.",
+    "exp": "Weil Wasser eine enorm hohe Wärmekapazität und Wärmeleitfähigkeit im Vergleich zu Luft besitzt"
   },
   {
     "cat": "physik",
     "diff": "pro",
-    "q": "Warum mischen technische Tiefentaucher („Trimix“-Taucher) ab ca. 40–50 Metern Tiefe zusätzlich Helium ins Atemgas?",
+    "q": "Welches Gasgemisch verwenden Extrem-Tieftaucher (Trimix), um Tiefenrausch und Sauerstoffgiftigkeit gleichzeitig zu umgehen?",
     "a": [
-      "Um sowohl den Narkose-Partialdruck von Stickstoff als auch die O₂-Toxizität bei großen Tiefen unter Kontrolle zu halten",
-      "Damit die Tauchflasche unter Wasser positiv nach oben zieht",
-      "Weil Helium auf 60 Metern Tiefe durch die Haut aufgenommen wird",
-      "Um unter Wasser in normaler Tonlage sprechen zu können"
+      "Sauerstoff, Stickstoff und Helium",
+      "Reines Methan, Argon und Krypton",
+      "Ozon, Wasserstoff und Neon",
+      "Stickstoffmonoxid und Kohlendioxid"
     ],
-    "exp": "Helium wirkt selbst bei enormem Druck praktisch nicht narkotisch und besitzt eine geringe Dichte, wodurch auch die Atemarbeit in großen Tiefen beherrschbar bleibt."
+    "explanation": "Helium ist nicht narkotisch und hat eine geringe Dichte, wodurch das Atmen in 100 m Tiefe leicht bleibt. Der Sauerstoffanteil wird oft auf unter 10 % gesenkt (hypoxisch).",
+    "exp": "Sauerstoff, Stickstoff und Helium"
+  },
+  {
+    "cat": "physik",
+    "diff": "easy",
+    "q": "Was ist die empfohlene maximale Aufstiegsgeschwindigkeit im Sporttauchen?",
+    "a": [
+      "Maximal 9 bis 10 Meter pro Minute (langsamer als die kleinsten aufsteigenden Luftblasen)",
+      "Mindestens 30 Meter pro Minute, um Luft zu sparen",
+      "Exakt 1 Meter pro Sekunde",
+      "So schnell, wie die Flossen den Taucher tragen"
+    ],
+    "explanation": "Langsames Aufsteigen gibt dem Körper Zeit, gelösten Stickstoff kontrolliert über die Ausatmung abzutransportieren.",
+    "exp": "Maximal 9 bis 10 Meter pro Minute (langsamer als die kleinsten aufsteigenden Luftblasen)"
+  },
+  {
+    "cat": "physik",
+    "diff": "mid",
+    "q": "Was besagt der Begriff „Nullzeit“ (No-Decompression Limit, NDL) auf dem Tauchcomputer?",
+    "a": [
+      "Die Zeit in Minuten, die man auf der aktuellen Tiefe noch bleiben darf, ohne beim Aufstieg Dehnungs-Deko-Stopps einlegen zu müssen",
+      "Die Zeit, bis die Flasche vollständig auf null bar leergeatmet ist",
+      "Die Ruhepause, die man vor dem ersten Tauchgang des Urlaubs einhalten muss",
+      "Die Zeitspanne, bis die Batterie des Computers abschaltet"
+    ],
+    "explanation": "Innerhalb der Nullzeit kann man im Notfall direkt mit 9 m/min an die Oberfläche aufsteigen (unter Einhaltung des Sicherheitsstopps), ohne DCS zu riskieren.",
+    "exp": "Die Zeit in Minuten, die man auf der aktuellen Tiefe noch bleiben darf, ohne beim Aufstieg Dehnungs-Deko-Stopps einlegen zu müssen"
   },
   {
     "cat": "physik",
     "diff": "pro",
-    "q": "Welchen physiologischen Effekt bezeichnet der Begriff „CNS-Uhr“ (Central Nervous System Oxygen Toxicity) bei modernen Nitrox-Tauchcomputern?",
+    "q": "Welche lebensrettende Behandlung ist bei schwerer Dekompressionskrankheit (DCS) medizinischer Goldstandard?",
     "a": [
-      "Das kumulierte Expositionslimit des zentralen Nervensystems gegenüber erhöhtem Sauerstoffpartialdruck (typisch ab pO₂ > 1,4 bar), das Krampfanfälle drohen lässt",
-      "Die Uhrzeit, wann der nächste Hai-Fütterungspunkt öffnet",
-      "Den Akkuladestand der Funk-Drucksonde an der Flasche",
-      "Eine Warnung bei Unterkühlung der Finger"
+      "Hyperbare Sauerstofftherapie (HBO) in einer Druckkammer nach US-Navy-Behandlungstabellen",
+      "Sofortiges Trinken von zwei Litern hochprozentigem Alkohol zur Gefäßerweiterung",
+      "Ein heißes Vollbad mit Meersalz und anschließende Eispackungen",
+      "Sofortiger Rücktransport auf 40 Meter Tiefe ohne Flasche"
     ],
-    "exp": "Zu hohe O₂-Partialdrücke über längere Zeit reizen das zentrale Nervensystem (Paul-Bert-Effekt) und können unter Wasser plötzliche Krampfanfälle auslösen."
+    "explanation": "In der Druckkammer schrumpfen die Gasbläschen unter künstlichem Druck wieder, während 100 % Sauerstoff das unterversorgte Gewebe rettet.",
+    "exp": "Hyperbare Sauerstofftherapie (HBO) in einer Druckkammer nach US-Navy-Behandlungstabellen"
+  },
+  {
+    "cat": "physik",
+    "diff": "easy",
+    "q": "Warum darf man nach Tauchgängen mindestens 12 bis 24 Stunden lang nicht in ein Flugzeug steigen?",
+    "a": [
+      "Weil der reduzierte Kabinendruck im Flugzeug (ca. 0,8 bar) restlichen Stickstoff im Körper schlagartig ausperlen lassen kann",
+      "Weil Fluggesellschaften Personen mit Neoprenanzügen im Handgepäck ablehnen",
+      "Weil die kosmische Strahlung in Reiseflughöhe mit Rest-Stickstoff reagiert",
+      "Weil die Ohren nach dem Tauchen für 24 Stunden taub gegen Triebwerkslärm sind"
+    ],
+    "explanation": "Was unter Wasser harmlos im Gewebe schlummerte, kann im niedrigen Kabinendruck des Flugzeugs schwere Dekompressionssymptome auslösen.",
+    "exp": "Weil der reduzierte Kabinendruck im Flugzeug (ca. 0,8 bar) restlichen Stickstoff im Körper schlagartig ausperlen lassen kann"
+  },
+  {
+    "cat": "physik",
+    "diff": "mid",
+    "q": "Was ist ein „Umkehr-Block“ (Reverse Block) beim Auftauchen?",
+    "a": [
+      "Luft in Stirn- oder Nebenhöhlen kann beim Aufstieg wegen verstopfter Schleimhäute nicht entweichen und dehnt sich schmerzhaft aus",
+      "Das Jacket lässt sich an der Oberfläche nicht mehr entlüften",
+      "Der Atemregler liefert beim Auftauchen plötzlich kochend heiße Luft",
+      "Die Taucherflosse rutscht vom Fuß und treibt an die Oberfläche"
+    ],
+    "explanation": "Wer mit Schnupfen taucht (oder wenn Nasensprays nachlassen), riskiert, dass expandierende Luft die Hohlräume sprengt – Abhilfe: Sofort wieder etwas abtauchen!",
+    "exp": "Luft in Stirn- oder Nebenhöhlen kann beim Aufstieg wegen verstopfter Schleimhäute nicht entweichen und dehnt sich schmerzhaft aus"
   },
   {
     "cat": "physik",
     "diff": "pro",
-    "q": "Was beschreibt der Begriff „Isobare Gegendiffusion“ beim anspruchsvollen Mischgastauchen (Gaswechsel zwischen Helium- und Stickstoffgemischen)?",
+    "q": "Was beschreibt der „Tiefen-HPNS“ (High Pressure Nervous Syndrome) beim Extremtauchen jenseits von 150 Metern?",
     "a": [
-      "Ein gewebephysiologisches Ungleichgewicht ohne Druckänderung, wenn schnelles Helium aus dem Gewebe langsamer ausdiffundiert oder Stickstoff gegengerichtet einströmt",
-      "Das gleichzeitige Aufpumpen von Trocki und Jacket auf derselben Tiefe",
-      "Das Verdampfen von CO₂ im Atemkalk bei genau 1 bar",
-      "Die Spiegelung der Wasseroberfläche bei Nacht"
+      "Zittern, Übelkeit und Muskelzuckungen, die durch den extremen physikalischen Druck direkt auf Proteine des Nervensystems ausgelöst werden",
+      "Eine allergische Reaktion auf Salzkristalle im Atemregler",
+      "Der plötzliche Verlust des Zeitgefühls in vollkommener Dunkelheit",
+      "Eine Entzündung der Lungenbläschen durch komprimiertes Helium"
     ],
-    "exp": "Wechselt ein Taucher in der Tiefe abrupt von einem heliumreichen Dekogas auf stark stickstoffhaltige Gemische, diffundiert Stickstoff schneller ein als Helium heraus – lokale Blasenbildung droht."
+    "explanation": "HPNS tritt unabhängig von Narkose auf – um das Zittern zu dämpfen, mischen Extremtaucher winzige Mengen betäubenden Stickstoff ins Trimix (Trimix/Heliox).",
+    "exp": "Zittern, Übelkeit und Muskelzuckungen, die durch den extremen physikalischen Druck direkt auf Proteine des Nervensystems ausgelöst werden"
   },
   {
     "cat": "physik",
-    "diff": "pro",
-    "q": "In welcher physikalischen Gesetzmäßigkeit ist festgelegt, dass der Gesamt-Atemdruck der Summe aller Teil-Gasdrücke entspricht (P_total = P₁ + P₂ + ...)?",
+    "diff": "easy",
+    "q": "Warum kann man unter Wasser die Richtung einer Schallquelle mit den Ohren fast gar nicht orten?",
     "a": [
-      "Gesetz von Dalton (Daltonsches Partialdruckgesetz)",
-      "Gesetz von Ohm",
-      "Zweiter Hauptsatz der Thermodynamik",
-      "Keplersches Flächensatz-Gesetz"
+      "Schall breitet sich im Wasser viermal schneller aus als in der Luft, sodass die Laufzeitdifferenz zwischen beiden Ohren für das Gehirn zu winzig ist",
+      "Weil das Trommelfell unter Wasser keine Schwingungen mehr aufnehmen kann",
+      "Weil Fische den Schall durch ihre Schuppen streuen und reflektieren",
+      "Weil das Maskenglas alle akustischen Wellen von den Ohren wegleitet"
     ],
-    "exp": "Daltons Gesetz erlaubt Tauchern sofort zu berechnen, wie hoch der jeweilige Teildruck (Partialdruck) von Sauerstoff oder Stickstoff auf jeder Tiefe steigt."
+    "explanation": "Im Wasser (ca. 1.480 m/s) erreicht der Schall fast zeitgleich beide Ohren – jedes Motorboot klingt, als wäre es direkt über dem eigenen Kopf.",
+    "exp": "Schall breitet sich im Wasser viermal schneller aus als in der Luft, sodass die Laufzeitdifferenz zwischen beiden Ohren für das Gehirn zu winzig ist"
   },
   {
     "cat": "praxis",
     "diff": "easy",
-    "q": "Was signalisiert ein Taucher unter Wasser mit dem Handzeichen „Flache Hand senkrecht vor der Kehle waagerecht hin und her bewegen“?",
+    "q": "Was bedeutet das Handzeichen unter Wasser, bei dem Daumen und Zeigefinger einen Kreis bilden („OK“)?",
     "a": [
-      "„Ich habe keine Luft mehr!“ (Out of Air – akuter Notfall)",
-      "„Schau mal, ein riesiger Hai hinter dir!“",
-      "„Ich brauche genau 2 Kilogramm mehr Blei“",
-      "„Wir tauchen jetzt gemütlich fotografierend ab“"
+      "„Alles in Ordnung / Bist du okay?“ – und muss vom Partner zwingend erwidert werden",
+      "„Wir müssen sofort zur Wasseroberfläche aufsteigen!“",
+      "„Ich habe noch genau 100 bar Luft in der Flasche.“",
+      "„Achtung, hinter dir schwimmt ein gefährlicher Hai!“"
     ],
-    "exp": "Das Kehl-Schneidezeichen steht weltweit für akuten Luftmangel; der Buddy reagiert sofort mit der alternativen Luftversorgung (Oktopus) und anschließendem kontrollierten Aufstieg."
+    "explanation": "Wichtig: Der nach oben gestreckte Daumen bedeutet unter Wasser niemals „Alles super“, sondern unmissverständlich: „Tauchgang abbrechen, wir steigen auf!“",
+    "exp": "„Alles in Ordnung / Bist du okay?“ – und muss vom Partner zwingend erwidert werden"
   },
   {
     "cat": "praxis",
     "diff": "easy",
-    "q": "Welches Handzeichen zeigt an, dass man nur noch wenig Luft hat (z. B. Reserve-Grenze von meist 50 bar erreicht)?",
+    "q": "Was bedeutet die Geste: Die flache Hand wird horizontal vor dem Hals hin- und hergezogen?",
     "a": [
-      "Die geschlossene Faust gegen die Brust halten (oder ans Finimeter klopfen und Ziffern zeigen)",
-      "Mit beiden Füßen kräftig auf den Sand stampfen",
-      "Die Maske kurz absetzen und wieder aufsetzen",
-      "Beide Arme über dem Kopf zu einem Dreieck falten"
+      "„Ich habe keine Luft mehr!“ (Out of Air – absoluter Notfall)",
+      "„Mir ist kalt, lass uns umkehren.“",
+      "„Schau mal auf deinen Tauchkompass.“",
+      "„Wir schwimmen jetzt gegen eine starke Strömung.“"
     ],
-    "exp": "Die Faust vor der Brust steht für „Reserve erreicht“ (in der Regel 50 bar); dies leitet planmäßig den geordneten Rückweg bzw. Aufstieg ein."
+    "explanation": "Auf dieses Zeichen muss der Buddy sofort seinen Oktopus reichen und den Partner sichern.",
+    "exp": "„Ich habe keine Luft mehr!“ (Out of Air – absoluter Notfall)"
   },
   {
     "cat": "praxis",
     "diff": "easy",
-    "q": "Warum berühren verantwortungsvolle Taucher am Korallenriff grundsätzlich weder Steinkorallen noch Schildkröten?",
+    "q": "Was ist der Standard-„Sicherheitsstopp“ am Ende jedes normalen Sporttauchgangs?",
     "a": [
-      "Korallen bestehen aus äußerst empfindlichen lebenden Polypen und Schleimhäuten; selbst leichte Berührung kann Kolonien zerstören und Nesseltiere reizen",
-      "Weil Korallen ab 5 Metern Tiefe sofort aus Metall werden",
-      "Nur damit keine Sandkörner ans Jacket kleben bleiben",
-      "Weil man unter Wasser sonst automatisch Auftrieb verliert"
+      "3 Minuten Verweilen auf 5 Metern Wassertiefe vor dem finalen Auftauchen",
+      "10 Minuten Pause auf 15 Metern Tiefe",
+      "1 Minute schnelles Auf- und Abtauchen zur Kreislaufaktivierung",
+      "Vollständiges Entleeren der Flasche an der Ankerkette"
     ],
-    "exp": "Hartkorallen wachsen oft nur wenige Millimeter pro Jahr; ein einziger unachtsamer Flossenschlag oder Griff beschädigt die schützende Schleimschicht."
+    "explanation": "Der Sicherheitsstopp auf 5 m baut nochmals massiv Mikrobläschen ab und senkt das DCS-Risiko beträchtlich.",
+    "exp": "3 Minuten Verweilen auf 5 Metern Wassertiefe vor dem finalen Auftauchen"
+  },
+  {
+    "cat": "praxis",
+    "diff": "mid",
+    "q": "Wofür steht die beliebte englische Eselsbrücke „BWRAF“ beim Buddy-Check vor dem Sprung ins Wasser?",
+    "a": [
+      "BCD (Jacket), Weights (Blei), Releases (Schnallen), Air (Luftatmung/Flasche offen), Final OK",
+      "Boots, Wetsuit, Regulator, Anchor, Fins",
+      "Buoyancy, Water, Rope, Altitude, First-Aid",
+      "Breathe, Watch, Relax, Ascend, Float"
+    ],
+    "explanation": "Deutsche Merkhilfe: „Brauchen Wir Richtig Alle Flaschen?“ oder „Taucher Ohne Partner Leben Gefährlich“.",
+    "exp": "BCD (Jacket), Weights (Blei), Releases (Schnallen), Air (Luftatmung/Flasche offen), Final OK"
   },
   {
     "cat": "praxis",
     "diff": "easy",
-    "q": "Wie verhält man sich unter Wasser richtig, wenn man beim Tauchgang den Buddy für mehr als eine Minute aus den Augen verliert?",
+    "q": "Was zeigt die Geste an, bei der ein Taucher seine Hand mit abgespreiztem Daumen und kleinem Finger schüttelt (Shaka)?",
     "a": [
-      "Etwa eine Minute lang ruhig im Kreis suchend umschauen und dann kontrolliert zur Wasseroberfläche auftauchen, um sich dort wiederzutreffen",
-      "Sofort Vollgas alleine weiter durch das Labyrinth tauchen",
-      "Auf dem Meeresboden sitzen bleiben bis die Flasche komplett leer ist",
-      "Den Bleigurt unter Wasser abwerfen und losschießen"
+      "Entspannt bleiben / Alles cool / Hang Loose",
+      "Achtung, Giftstachel-Rochen gesichtet!",
+      "Mein Druckausgleich funktioniert überhaupt nicht.",
+      "Die Strömung zieht uns nach links weg."
     ],
-    "exp": "Die universelle Buddy-Trennungsregel („1 Minute suchen, dann geordnet auftauchen“) vermeidet langes Suchen bei schwindender Luft und vereint das Team sicher an der Oberfläche."
+    "explanation": "Das hawaiianische Shaka-Zeichen ist unter Tauchern weltweit der Inbegriff für Freude und Gelassenheit unter Wasser.",
+    "exp": "Entspannt bleiben / Alles cool / Hang Loose"
+  },
+  {
+    "cat": "praxis",
+    "diff": "mid",
+    "q": "Was bedeutet ein Zeigefinger, der auf die Handfläche der anderen Hand tippt?",
+    "a": [
+      "„Wie viel Restdruck (bar) hast du noch in der Flasche?“",
+      "„Lass uns hier ein Unterwasser-Foto machen.“",
+      "„Ich habe eine Muschel auf dem Meeresgrund gefunden.“",
+      "„Wir schwimmen jetzt im Gänsemarsch hintereinander.“"
+    ],
+    "explanation": "Auf dieses Zeichen antwortet der Partner mit Ziffern: Zwei Finger = 20 bar, eine Hand flach = 50 bar, Faust = 100 bar.",
+    "exp": "„Wie viel Restdruck (bar) hast du noch in der Flasche?“"
+  },
+  {
+    "cat": "praxis",
+    "diff": "mid",
+    "q": "Wie verhält man sich nach der internationalen 1-Minuten-Regel, wenn man seinen Tauchpartner (Buddy) unter Wasser verliert?",
+    "a": [
+      "Eine Minute lang ruhig 360 Grad im Kreis suchen; findet man ihn nicht, steigen beide kontrolliert an die Oberfläche auf und treffen sich dort",
+      "Sofort auf 40 Meter abtauchen und laute Schreie ausstoßen",
+      "Alleine weitertauchen und am Boot auf den Partner warten",
+      "Auf den Meeresgrund setzen und warten, bis das Boot Rettungstaucher schickt"
+    ],
+    "explanation": "Niemals den Tauchgang alleine fortsetzen: Die Vereinbarung sorgt dafür, dass sich beide Partner sicher nach wenigen Minuten an der Oberfläche wiedersehen.",
+    "exp": "Eine Minute lang ruhig 360 Grad im Kreis suchen; findet man ihn nicht, steigen beide kontrolliert an die Oberfläche auf und treffen sich dort"
+  },
+  {
+    "cat": "praxis",
+    "diff": "pro",
+    "q": "Warum ist der sogenannte „Frog Kick“ (Froschbeinschlag) in Höhlen, Wracks und über schlammigem Grund Standard?",
+    "a": [
+      "Weil das Wasser nach hinten und oben weggestossen wird, ohne Sedimente vom Boden aufzuwirbeln (Silt-Out)",
+      "Weil er dreimal schneller ist als jeder normale Kraulbeinschlag",
+      "Weil Fische Froschbeine für natürliche Wasserpflanzen halten",
+      "Damit die Wadenmuskeln auch bei 4 Grad Wassertemperatur nicht verkrampfen"
+    ],
+    "explanation": "Ein einziger unbedachter Flossenschlag nach unten kann in Sekunden die Sicht in einem Wrack oder einer Höhle auf absolute Nullsicht (Blindflug) reduzieren.",
+    "exp": "Weil das Wasser nach hinten und oben weggestossen wird, ohne Sedimente vom Boden aufzuwirbeln (Silt-Out)"
   },
   {
     "cat": "praxis",
     "diff": "easy",
-    "q": "Was prüft man vor einem Bootstauchgang an der eigenen Haupt-2.-Stufe durch kurzes Atmen bei offenem Ventil, während man aufs Finimeter schaut?",
+    "q": "Was bedeutet die Geste: Eine Hand flach auf den Kopf legen (an der Wasseroberfläche)?",
     "a": [
-      "Ob das Flaschenventil ganz aufgedreht ist (die Manometernadel darf beim tiefen Einatmen nicht absacken)",
-      "Wie kalt das Wasser in 40 Metern Tiefe sein wird",
-      "Wie stark die Unterwasserströmung am Nachmittag wird",
-      "Ob der Tauchanzug wasserdicht vernäht wurde"
+      "„Mir geht es gut / Ich bin okay!“ (weithin sichtbar für das Tauchboot)",
+      "„Ich habe akute Kopfschmerzen, holt mich sofort raus!“",
+      "„Ich habe meine Tauchermaske im Wasser verloren.“",
+      "„Ich möchte noch einmal für 10 Minuten abtauchen.“"
     ],
-    "exp": "Fällt die Nadel beim tiefen Einatmen spürbar ab und schnellt wieder hoch, ist das Flaschenventil nur minimal oder fast geschlossen – klassischer Gefahrenfehler vor dem Sprung."
+    "explanation": "Da das kleine Fingern-OK auf 50 Meter Entfernung vom Boot aus kaum erkennbar ist, signalisiert die Hand auf dem Kopf eindeutig: Alles in bester Ordnung!",
+    "exp": "„Mir geht es gut / Ich bin okay!“ (weithin sichtbar für das Tauchboot)"
   },
   {
     "cat": "praxis",
     "diff": "mid",
-    "q": "Welchen Flossenschlag verwenden geübte Tarierungs-Taucher knapp über empfindlichem Riffboden oder Schlick, um keinen Sand aufzuwirbeln?",
+    "q": "Was bedeutet das Handzeichen: Die flache Hand wird waagerecht gehalten und langsam nach links und rechts gekippt?",
     "a": [
-      "Den „Frog Kick“ (Froschbeinschlag mit abgewinkelten Knien nach hinten-außen)",
-      "Den hektischen Kraul-Beinschlag vertikal Richtung Boden",
-      "Das kräftige Durchdrücken gerader Beine im Stehen",
-      "Das Rückwärtspaddeln mit beiden Händen auf dem Grund"
+      "„Irgendetwas stimmt nicht / Nicht ganz okay.“",
+      "„Schau mal, ein schöner Plattfisch im Sand.“",
+      "„Die Strömung wechselt im 5-Minuten-Takt.“",
+      "„Ich habe Hunger auf gegrillten Fisch.“"
     ],
-    "exp": "Beim Frog Kick drückt das Flossenblatt Wasser horizontal nach hinten weg statt schräg nach unten – Sedimente bleiben am Boden und die Sicht bleibt glasklar."
+    "explanation": "Auf dieses Zeichen folgt meist das Zeigen auf das Problem: z. B. auf das Ohr (Druckausgleichsproblem) oder die Brust (Atemnot/Unwohlsein).",
+    "exp": "„Irgendetwas stimmt nicht / Nicht ganz okay.“"
+  },
+  {
+    "cat": "praxis",
+    "diff": "pro",
+    "q": "Was ist die „Drittel-Regel“ (Rule of Thirds) beim Höhlen- und Wracktauchen?",
+    "a": [
+      "Ein Drittel Gas für den Hinweg, ein Drittel für den Rückweg, ein Drittel unberührte Reserve für Notfälle",
+      "Man taucht maximal ein Drittel der Distanz mit Flossen, den Rest mit Scooter",
+      "Ein Drittel der Gruppe muss an der Oberfläche als Rettungsposten warten",
+      "Man darf maximal ein Drittel des Tages unter Wasser verbringen"
+    ],
+    "explanation": "Egal wie spektakulär die Höhle noch weitergeht: Sobald das erste Drittel Gas verbraucht ist, wird der Rückweg kompromisslos angetreten.",
+    "exp": "Ein Drittel Gas für den Hinweg, ein Drittel für den Rückweg, ein Drittel unberührte Reserve für Notfälle"
+  },
+  {
+    "cat": "praxis",
+    "diff": "easy",
+    "q": "Wie reagiert man richtig, wenn man merkt, dass der Atemregler plötzlich vereist und unkontrolliert tonnenweise Luft abbläst?",
+    "a": [
+      "Aus dem abblasenden Mundstück weiteratmen (überschüssige Luft am Mund vorbeiströmen lassen), Buddy signalisieren und sofort ruhig aufsteigen",
+      "Den Mund fest verschließen und die Luftflasche mit beiden Händen festhalten",
+      "Das Mundstück sofort aus dem Mund nehmen und die 20 Meter zur Oberfläche sprinten",
+      "Die Tauchermaske abnehmen und durch die Nase aus der Flasche trinken"
+    ],
+    "explanation": "Ein vereister Regler blockiert fast immer im offenen Zustand (Fail-Safe) – man hat genug Luft zum Atmen, muss aber zügig aufsteigen, da die Flasche in 2–3 Minuten leer ist.",
+    "exp": "Aus dem abblasenden Mundstück weiteratmen (überschüssige Luft am Mund vorbeiströmen lassen), Buddy signalisieren und sofort ruhig aufsteigen"
   },
   {
     "cat": "praxis",
     "diff": "mid",
-    "q": "Was bezeichnet beim Tarieren und Tauchen im Team die sogenannte „Drittel-Regel“ für den Gasvorrat (v. a. in Höhlen, Wracks oder bei Strömung)?",
+    "q": "Was zeigt die Geste an, bei der zwei ausgestreckte Zeigefinger parallel nebeneinander gehalten werden?",
     "a": [
-      "1/3 für den Hinweg, 1/3 für den Rückweg, und 1/3 eiserne Reserve für Buddy-Notfälle",
-      "Die Tauchflasche nur zu einem Drittel mit 70 bar füllen",
-      "Alle 3 Minuten einmal kurz Luft in die Boje pusten",
-      "Mindestens 3 Flossen pro Taucher mitnehmen"
+      "„Bleibt eng zusammen als Buddies!“",
+      "„Dort vorne schwimmen zwei Barrakudas.“",
+      "„Wir müssen noch zwei Minuten Sicherheitsstopp machen.“",
+      "„Bitte beide Flaschenventile um eine halbe Drehung schließen.“"
     ],
-    "exp": "Die Drittelregel sorgt dafür, dass bei einem Ausfall eines Systems jederzeit genug Reservegas für die Umkehr von gleich zwei Tauchern an Bord bleibt."
+    "explanation": "Damit ermahnt der Guide Taucher, den Abstand zum Partner nicht auf mehr als eine Armlänge anwachsen zu lassen.",
+    "exp": "„Bleibt eng zusammen als Buddies!“"
+  },
+  {
+    "cat": "praxis",
+    "diff": "easy",
+    "q": "Warum sollte man beim Tauchen über Korallenriffen niemals mit Händen oder Flossen den Meeresboden berühren?",
+    "a": [
+      "Korallenpolypen sind empfindliche Lebewesen, die bei Berührung absterben, und viele Arten sind scharf oder giftig",
+      "Weil der Druck der Finger das Riff zum Einsturz bringt",
+      "Weil das Berühren von Kalkstein Tauchflaschen entmagnetisiert",
+      "Weil Korallen den Taucher mit ihren Tentakeln unter Wasser festhalten"
+    ],
+    "explanation": "Eine Koralle wächst oft nur 1 Zentimeter pro Jahr – ein unachtsamer Flossenschlag zerstört das Wachstum von Jahrzehnten.",
+    "exp": "Korallenpolypen sind empfindliche Lebewesen, die bei Berührung absterben, und viele Arten sind scharf oder giftig"
+  },
+  {
+    "cat": "praxis",
+    "diff": "pro",
+    "q": "Was ist ein kontrollierter schwimmender Notaufstieg (CESA – Controlled Emergency Swimming Ascent)?",
+    "a": [
+      "Ein Notaufstieg aus geringer Tiefe ohne Atemgas, bei dem man kontinuierlich einen leisen Summton („Aaaah“) von sich gibt",
+      "Ein Notaufstieg, bei dem man sich an der Aufstiegsleine mit einer Hand nach oben zieht",
+      "Ein Aufstieg, bei dem man das Bleigewicht an die Bojenleine bindet",
+      "Das Ausatmen in die Tauchmaske zur Rückgewinnung von Not-Sauerstoff"
+    ],
+    "explanation": "Das stetige Summen stellt sicher, dass die Stimmritze offen bleibt und sich ausdehnende Lungenluft ungehindert entweichen kann.",
+    "exp": "Ein Notaufstieg aus geringer Tiefe ohne Atemgas, bei dem man kontinuierlich einen leisen Summton („Aaaah“) von sich gibt"
+  },
+  {
+    "cat": "praxis",
+    "diff": "easy",
+    "q": "Was bedeutet ein senkrecht nach oben gestreckter Daumen unter Wasser?",
+    "a": [
+      "„Wir beenden den Tauchgang und steigen auf!“",
+      "„Mir geht es fantastisch!“",
+      "„Schau mal nach oben, da kreist ein Seevogel.“",
+      "„Erhöhe deine Tauchtiefe um weitere 5 Meter.“"
+    ],
+    "explanation": "Einer der häufigsten Anfängerfehler: Daumen hoch heißt niemals Lob, sondern immer Aufstieg!",
+    "exp": "„Wir beenden den Tauchgang und steigen auf!“"
   },
   {
     "cat": "praxis",
     "diff": "mid",
-    "q": "Wie dreht man einen handelsüblichen DIN-Flaschenhahn nach dem vollständigen Aufdrehen in manchen Verbänden traditionell (oder bewusst ganz auf) – und worauf ist beim Check zu achten?",
+    "q": "Was ist der „Pinnacle“-Einstieg (Schrittsprung / Giant Stride) von einem großen Tauchschiff?",
     "a": [
-      "Vollständig aufdrehen (maximal eine Vierteldrehung zurück ohne Kraft, damit sich die Spindel nicht verklemmt – niemals „nur halb“ geöffnet lassen!)",
-      "Immer genau nur eine halbe Umdrehung öffnen, damit Druck gespart wird",
-      "Nach jedem Tauchgang mit der Zange zudrehen",
-      "Während des Tauchgangs dauerhaft halboffen einstellen"
+      "Ein weiter Schritt nach vorn ins Wasser, während eine Hand Maske und Regler festhält und die andere den Bleigurt sichert",
+      "Ein Vorwärtssalto mit angezogenen Knien zur Schonung der Flossen",
+      "Ein Kopfsprung wie im Schwimmbad mit gestreckten Armen",
+      "Ein rückwärtiges Fallenlassen über die Reling mit geschlossenen Augen"
     ],
-    "exp": "Ein nur angerissenes Ventil verengt den Gasdurchsatz bei tiefem Einatmen oder Notfällen zu zweit dramatisch; heute wird meist vollständig aufgedreht (mit sanftem Lösen gegen Festfressen)."
-  },
-  {
-    "cat": "praxis",
-    "diff": "mid",
-    "q": "Wozu benutzt ein Taucher beim Strömungstauchen im Blauwasser den sogenannten „Negative Entry“ (Abtauchen mit leerem Jacket direkt ins Blaue)?",
-    "a": [
-      "Um als Gruppe gemeinsam durch Oberflächenströmung hindurch sofort geschlossen auf das tiefer gelegene Riff abzutauchen, bevor die Strömung das Team auseinanderzieht",
-      "Um beim Sprung vom Boot absichtlich die Maske zu fluten",
-      "Weil man dabei das Finimeter zu Hause lässt",
-      "Um mit Übergewicht auf 60 Meter hinabzustürzen"
-    ],
-    "exp": "An exponierten Strömungsriffen wie den Malediven oder Galapagos verhindert ein schneller, koordinierter Negative Entry das Abtreiben am Bootsausstieg."
-  },
-  {
-    "cat": "praxis",
-    "diff": "mid",
-    "q": "Wie kommuniziert man unter Wasser präzise die exakten verbleibenden bar-Zahlen (z. B. 120 bar oder 70 bar) durch Handzeichen?",
-    "a": [
-      "Aufs Finimeter zeigen und Zehner- oder Hunderter-Ziffern deutlich mit den Fingern anzeigen (z. B. „1“ und „2“ für 120 bar oder Faust + „2“)",
-      "Mit dem Lungenautomaten dreimal laut klopfen",
-      "Ein Unterwasser-Morsegerät ans Bleistück schlagen",
-      "Den Atemregler zehn Sekunden lang herausnehmen"
-    ],
-    "exp": "Nach internationaler Handzeichen-Konvention bedeuten gehobene Finger jeweils die Zahl mal zehn bzw. in Verbindung mit Faust/T-Zeichen exakte Druckangaben."
+    "explanation": "Der weite Ausfallschritt verhindert, dass man mit den Flaschen an der Badeplattform anschlägt; das Festhalten schützt die Maske vor dem Verrutschen beim Aufprall.",
+    "exp": "Ein weiter Schritt nach vorn ins Wasser, während eine Hand Maske und Regler festhält und die andere den Bleigurt sichert"
   },
   {
     "cat": "praxis",
     "diff": "pro",
-    "q": "Wie löst man eine verklebte oder klemmende Hauptstufe bei Verdacht auf Notfallsituation im kontrollierten Notaufstieg ohne Zweitregler oder Buddy („CESA“ – Controlled Emergency Swimming Ascent)?",
+    "q": "Warum ist eine Strömungsleine („Jon Line“) beim Sicherheitsstopp an einer Ankerkette in starker Strömung so nützlich?",
     "a": [
-      "Kontinuierlich leicht ausatmend („Aaaah“-Laut) mit dem letzten Restgas/ohne Lufteinatmen mit Maximal-Normtempo aufsteigen und nicht die Lunge verschließen",
-      "Sofort die Nase zuhalten und schnellstmöglich hochschwimmen",
-      "Die Flasche unter Wasser komplett abnehmen und loslassen",
-      "Zehn Sekunden auf 20 Metern abwarten"
+      "Sie entkoppelt den Taucher von den heftigen Auf- und Abbewegungen des schaukelnden Schiffs an der Kette",
+      "Sie zieht den Taucher mit Elektromotoren automatisch zum Heck des Schiffes",
+      "Sie misst die Strömungsgeschwindigkeit in Knoten für das Logbuch",
+      "Sie schützt vor elektrischen Schlägen der Schiffskathode"
     ],
-    "exp": "Beim CESA dehnt sich die verbleibende Luft in der Lunge beim Aufstieg aus; stetiges Ausatmen verhindert ein tödliches Lungenbarotrauma."
+    "explanation": "Das Schiff reißt bei Wellengang mit Tonnenkraft an der Kette – die 2-3 Meter lange Jon Line federt die Rucke elastisch ab.",
+    "exp": "Sie entkoppelt den Taucher von den heftigen Auf- und Abbewegungen des schaukelnden Schiffs an der Kette"
   },
   {
     "cat": "praxis",
-    "diff": "pro",
-    "q": "Warum wird beim Tauchen in über Kopf geschlossenen Umgebungen (Overhead Environments wie Wrackinneren oder Höhlen) eine permanente „Führungsleine“ (Reel / Guideline) gelegt?",
+    "diff": "easy",
+    "q": "Was sollte man tun, wenn man beim Tauchen plötzlich von einem schmerzhaften Wadenkrampf überrascht wird?",
     "a": [
-      "Um auch bei totalem Sichtverlust durch aufgewirbelten Silt jederzeit blind den direkten Weg zurück zum Ausgang/Freiwasser zu ertasten",
-      "Um Fische entlang der Schnur zur Kamera zu locken",
-      "Um die Wassertemperatur entlang der Wand zu messen",
-      "Damit Taucher ihre Ausrüstung zum Trocknen aufhängen können"
+      "Die Flossenspitze mit der Hand greifen und das Bein bei durchgestrecktem Knie langsam zum Körper heranziehen",
+      "Die Flosse sofort abstreifen und auf den Grund sinken lassen",
+      "Mit der anderen Flosse mit voller Wucht gegen die verkrampfte Wade treten",
+      "Sofort panisch an die Oberfläche strampeln"
     ],
-    "exp": "Selbst perfekt tarierte Taucher verlieren in Silt-Wolken bei Nullsicht ohne Tast-Leine in Sekunden jegliche Orientierung zwischen Decke, Boden und Ausgang."
-  },
-  {
-    "cat": "praxis",
-    "diff": "pro",
-    "q": "Welcher wichtige Handgriff gehört zum Aussetzen einer Spool-Boje (DSMB) unter Wasser unbedingt zur Eigensicherung?",
-    "a": [
-      "Spool-Leine nie an der Hand festbinden oder Finger durch die Spule stecken, sondern lose halten, sodass man bei Verhaken mit der Boje jederzeit loslassen kann",
-      "Die Bojenschnur immer dreimal fest ums Handgelenk wickeln",
-      "Die Boje fest an den Bleigurt knoten",
-      "Erst an der Oberfläche mit dem Lungenautomaten Luft in die Boje pumpen"
-    ],
-    "exp": "Verhakt sich eine prall gefüllte Boje beim Hochschießen mit einer am Handgelenk festgebundenen Schnur, reißt sie den Taucher unkontrolliert mit an die Oberfläche."
-  },
-  {
-    "cat": "praxis",
-    "diff": "pro",
-    "q": "Worauf weist beim Tauchen mit mehreren Gasgemischen (Stage-Flaschen) die Markierung „MOD 21“ mit fetten Zahlen seitlich auf einer Deko-Stage hin?",
-    "a": [
-      "Maximal zulässige Einsatztiefe dieses sauerstoffreichen Dekompressionsgases (typisch EAN50 mit pO₂ 1,6 bei 21 m)",
-      "Baujahr der Flasche 2021",
-      "Empfohlene Mindesttiefe von 21 Metern zum Einatmen",
-      "Anzahl der bereits absolvierten Tauchgänge"
-    ],
-    "exp": "Auf jeder Stage-Flasche steht die MOD groß und kontrastreich sichtbar, damit beim Gaswechsel unter Wasser (z. B. 50 % O₂ oder 100 % O₂ ab 6 m) niemals zu tief aus ihr geatmet wird."
-  },
-  {
-    "cat": "praxis",
-    "diff": "pro",
-    "q": "Welches Anzeichen spricht bei einem aufgetauchten Taucher am deutlichsten für den sofortigen Verdacht auf eine akute Dekompressionskrankheit (DCS / Taucherunfall) und verlangt umgehend 100 % Sauerstoff?",
-    "a": [
-      "Taubheitsgefühle, Kribbeln, Gelenkschmerzen („Bends“), Schwindel, Sehstörungen oder ungewöhnliche extreme Erschöpfung binnen Minuten bis Stunden nach dem Tauchgang",
-      "Ein trockener Hals durch Salzwasser im Mund",
-      "Rot angelaufene Maskenabdrücke im Gesicht",
-      "Kalte Zehen nach 45 Minuten Badesee"
-    ],
-    "exp": "Bei neurologischen Symptomen oder unklaren Schmerzen nach Tauchgängen darf niemals gewartet werden: Sofort 100 % Normobar-Sauerstoff geben, flach lagern und Notruf/Druckkammer verständigen."
+    "explanation": "Durch das Dehnen der Wadenmuskulatur löst sich der Krampf meist nach wenigen Sekunden – oft hilft der Buddy dabei.",
+    "exp": "Die Flossenspitze mit der Hand greifen und das Bein bei durchgestrecktem Knie langsam zum Körper heranziehen"
   },
   {
     "cat": "welten",
     "diff": "easy",
-    "q": "Welches berühmte Riffsystem vor der Nordostküste Australiens ist das größte von Lebewesen geschaffene Bauwerk unserer Erde?",
+    "q": "Welches weltberühmte Kriegswrack im Roten Meer liegt mit Motorrädern und LKW im Laderaum in 30 Metern Tiefe?",
     "a": [
-      "Das Great Barrier Reef",
-      "Das Mesoamerikanische Korallenriff",
-      "Das Rote-Meer-Saumriff",
-      "Das Ningaloo Reef"
+      "SS Thistlegorm (1941 von deutschen Heinkel-Bombern versenkt)",
+      "SMS Emden",
+      "Giannis D",
+      "Carnatic"
     ],
-    "exp": "Das Great Barrier Reef erstreckt sich über rund 2.300 Kilometer Länge und besteht aus fast 3.000 einzelnen Korallenriffen."
+    "explanation": "Jacques Cousteau entdeckte das britische Frachtschiff in den 1950ern – es gilt als eines der spektakulärsten Wracks der Erde.",
+    "exp": "SS Thistlegorm (1941 von deutschen Heinkel-Bombern versenkt)"
   },
   {
     "cat": "welten",
     "diff": "easy",
-    "q": "Welches friedliche, bis über 12 Meter lange Tier gilt als größter Fisch der Weltmeere und ernährt sich als Planktonfiltrierer – ein Traum für Taucher?",
+    "q": "Was sind die mystischen „Cenoten“ auf der mexikanischen Halbinsel Yucatán für Taucher?",
     "a": [
-      "Der Walhai (Rhincodon typus)",
-      "Der Weiße Hai",
-      "Der Schwertwal (Orca)",
-      "Der Mondfisch"
+      "Eingestürzte Kalkstein-Dolinen mit glasklarem Süßwasser und Zugang zu gigantischen unterirdischen Höhlensystemen",
+      "Künstliche Unterwasser-Museen aus Betonstatuen vor Cancún",
+      "Tiefe Gräben im offenen Pazifik mit kochend heißen Schwefelquellen",
+      "Lagunen mit extrem hohem Salzgehalt, in denen man nicht untergehen kann"
     ],
-    "exp": "Walhaie sind trotz ihrer gewaltigen Größe sanftmütige Knorpelfische, die meist an tropischen Planktonspots ruhig mit offenem Maul durch das Wasser gleiten."
+    "explanation": "Die Maya hielten Cenoten für heilige Eingänge zur Unterwelt (Xibalba) – unter Wasser faszinieren fantastische Lichtspiele und Haloklinen.",
+    "exp": "Eingestürzte Kalkstein-Dolinen mit glasklarem Süßwasser und Zugang zu gigantischen unterirdischen Höhlensystemen"
+  },
+  {
+    "cat": "welten",
+    "diff": "mid",
+    "q": "Was ist eine „Halokline“, die Taucher in Höhlen wie den Cenoten oft fasziniert und irritiert?",
+    "a": [
+      "Die scharfe Grenzschicht zwischen leichterem Süßwasser oben und dichterem Salzwasser unten, die bei Durchmischung verschwommen wie Öl wirkt",
+      "Eine giftige Schicht aus Schwefelwasserstoff, die Taucheranzüge gelb färbt",
+      "Eine Kaltwasser-Wand, die die Temperatur schlagartig um 20 Grad absenkt",
+      "Eine magnetische Gesteinsschicht, die Kompassnadeln im Kreis drehen lässt"
+    ],
+    "explanation": "Taucht man durch die Halokline, bricht sich das Licht an den unterschiedlichen Dichten – die Sicht wirkt plötzlich wie durch verschmiertes Glas.",
+    "exp": "Die scharfe Grenzschicht zwischen leichterem Süßwasser oben und dichterem Salzwasser unten, die bei Durchmischung verschwommen wie Öl wirkt"
+  },
+  {
+    "cat": "welten",
+    "diff": "mid",
+    "q": "Welcher berüchtigte Tauchplatz in Dahab (Ägypten) besitzt einen 26 Meter langen Tunnel („The Arch“) ins offene Meer in 56 Metern Tiefe?",
+    "a": [
+      "Blue Hole Dahab",
+      "Ras Mohammed Shark Reef",
+      "Elphinstone Reef",
+      "St. John’s Caves"
+    ],
+    "explanation": "Wegen der extremen Tiefe unterhalb des Sporttauchlimits starben im Blue Hole leider viele Taucher an Tiefenrausch – ein Friedhof von Gedenktafeln säumt die Küste.",
+    "exp": "Blue Hole Dahab"
   },
   {
     "cat": "welten",
     "diff": "easy",
-    "q": "Welche Besonderheit macht die „Putzerfische“ (z. B. Blaustreifen-Putzerlippfische) an sogenannten Putzerstationen am Korallenriff so wertvoll?",
+    "q": "Warum müssen Haie im Gegensatz zu Knochenfischen fast permanent in Bewegung bleiben?",
     "a": [
-      "Sie befreien größere Fische, Mantas und Muränen friedlich von Parasiten und abgestorbenen Hautresten",
-      "Sie säubern alte Glasscheiben von Schiffswracks",
-      "Sie jagen aktiv alle jungen Riffhaie weg",
-      "Sie versorgen Korallen mit Trinkwasser"
+      "Sie besitzen keine Schwimmblase und müssen durch ständiges Vorwärtsschwimmen Auftrieb erzeugen und Kiemen beatmen",
+      "Weil ihre Schuppen bei Stillstand im Wasser sofort festrosten",
+      "Um das Meerwasser durch Reibungswärme auf Körpertemperatur zu halten",
+      "Weil sie im Schlaf von kleineren Putzerfischen gefressen würden"
     ],
-    "exp": "An festen Putzerstationen stehen selbst Raubfische ruhig mit geöffneten Kiemen und Mäulern Schlange, ohne ihre kleinen Helfer zu fressen."
+    "explanation": "Haie besitzen eine schwere Knorpelstruktur und eine ölreiche Leber, aber keine gasgefüllte Schwimmblase – halten sie an, sinken viele Arten auf den Grund.",
+    "exp": "Sie besitzen keine Schwimmblase und müssen durch ständiges Vorwärtsschwimmen Auftrieb erzeugen und Kiemen beatmen"
+  },
+  {
+    "cat": "welten",
+    "diff": "mid",
+    "q": "Was ist der größte Fisch der heutigen Weltmeere, der trotz seiner gewaltigen Größe völlig harmlos für Taucher ist?",
+    "a": [
+      "Walhai (Rhincodon typus)",
+      "Riesenmanta",
+      "Weißer Hai",
+      "Mondfisch (Mola Mola)"
+    ],
+    "explanation": "Walhaie können über 12 Meter lang werden und ernähren sich als friedliche Filtrierer ausschließlich von Plankton und kleinen Schwarmfischen.",
+    "exp": "Walhai (Rhincodon typus)"
+  },
+  {
+    "cat": "welten",
+    "diff": "pro",
+    "q": "Was war die „Operation Hailstone“ 1944, die die Chuuk-Lagune (Truk Lagoon) im Pazifik zum größten Wrackfriedhof der Welt machte?",
+    "a": [
+      "Ein verheerender US-Luftangriff auf die japanische Flottenbasis, bei dem über 50 Kriegsschiffe und 250 Flugzeuge versenkt wurden",
+      "Eine geheime Übung der britischen Marine mit Torpedorohren",
+      "Das Versenken ausgemusterter Schiffe zur Schaffung eines künstlichen Riffs",
+      "Die Sprengung eines Atommüll-Endlagers durch französische Pioniere"
+    ],
+    "explanation": "Truk Lagoon in Mikronesien ist das weltweite Mekka für Wracktaucher – Panzer, Flugzeuge und Frachter liegen intakt auf dem Grund.",
+    "exp": "Ein verheerender US-Luftangriff auf die japanische Flottenbasis, bei dem über 50 Kriegsschiffe und 250 Flugzeuge versenkt wurden"
   },
   {
     "cat": "welten",
     "diff": "easy",
-    "q": "Warum faszinieren Nachttauchgänge viele Taucher am eigentlich bekannten Hausriff besonders?",
+    "q": "Warum sollte man beim Schnorcheln oder Tauchen niemals auf einen scheinbar harmlosen Stein am Meeresgrund treten?",
     "a": [
-      "Korallenpolypen entfalten ihre Fangtentakel, und scheue nachtaktive Räuber wie Langusten, Kraken und Rotfeuerfische kommen heraus",
-      "Das Wasser verwandelt sich nachts automatisch in Süßwasser",
-      "Nachts verschwindet jegliche Tauchphysik unter Wasser",
-      "Die Tauchflaschen füllen sich durch Wellenbewegung wieder auf"
+      "Es könnte sich um einen Steinfisch handeln – den giftigsten Fisch der Welt mit tödlichen Rückenstacheln",
+      "Steine saugen Menschen durch Unterdruck in den Schlick",
+      "Weil Steine unter Wasser bei Erschütterung giftige Gase absondern",
+      "Korallensteine explodieren unter dem Druck von Taucherschuhen"
     ],
-    "exp": "Im Schein der Tauchlampe zeigt sich ein komplett anderes Riff-Ökosystem voller Farben, leuchtendem Plankton (Biolumineszenz) und aktiven Jägern."
+    "explanation": "Steinfische sind perfekt als Felsen getarnt. Ihr Gift an den Rückenflossen führt ohne Gegengift und Heißwasserbehandlung zu unerträglichen Schmerzen und Tod.",
+    "exp": "Es könnte sich um einen Steinfisch handeln – den giftigsten Fisch der Welt mit tödlichen Rückenstacheln"
+  },
+  {
+    "cat": "welten",
+    "diff": "mid",
+    "q": "Was zeichnet den bizarren Mondfisch (Mola Mola) aus, der u. a. vor Bali Taucher begeistert?",
+    "a": [
+      "Er ist der schwerste Knochenfisch der Erde (bis zu 2 Tonnen) und besitzt praktisch keine Schwanzflosse",
+      "Er kann wie ein fliegender Fisch bis zu 100 Meter weit durch die Luft gleiten",
+      "Er leuchtet in der Nacht neongrün zur Anlockung von Beutetieren",
+      "Er besitzt ein Außenskelett aus massiver Hornhaut wie ein Nashorn"
+    ],
+    "explanation": "Mola Mola steigen aus der Tiefsee auf, um sich an Riffen von Putzerfischen von Parasiten befreien zu lassen und sich an der Oberfläche zu sonnen.",
+    "exp": "Er ist der schwerste Knochenfisch der Erde (bis zu 2 Tonnen) und besitzt praktisch keine Schwanzflosse"
   },
   {
     "cat": "welten",
     "diff": "easy",
-    "q": "Welches imposante Tier besitzt eine breite Spannweite von teils über 5 Metern, hat KEINEN Giftstachel am Schwanz und schwebt gern an tropischen „Cleaning Stations“?",
+    "q": "Welche symbiotische Beziehung besteht zwischen Anemonenfischen („Nemo“) und Seeanemonen?",
     "a": [
-      "Der Riesenmanta (Mobula birostris)",
-      "Der Blauringkrake",
-      "Der Steinfisch",
-      "Der Zitteraal"
+      "Der Fisch schützt sich durch eine Schleimschicht vor den Nesselzellen der Anemone und verteidigt sie gegen Fressfeinde",
+      "Die Anemone ernährt sich von den Schuppen des Fisches",
+      "Der Fisch legt seine Eier in das Maul der Anemone zur Bebrütung",
+      "Die Anemone transportiert den Fisch hunderte Meter durch das Riff"
     ],
-    "exp": "Mantarochen sind völlig harmlose, hochintelligente Filtrierer ohne Giftstachel – mit charakteristischen Kopflappen rechts und links am breiten Maul."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "In welchem bekannten Nationalpark im Roten Meer (Ägypten) liegen spektakuläre Steilwände wie „Shark & Yolanda Reef“ mit versunkenen Toilettenschüsseln?",
-    "a": [
-      "Ras Mohammed an der Südspitze des Sinai",
-      "St. John’s tief im Süden bei Berenike",
-      "El Gouna vor Hurghada",
-      "Port Said am Ausgang des Suezkanals"
-    ],
-    "exp": "Das Frachtschiff Yolanda sank 1980 mit Badezimmerkeramik am Riff bei Ras Mohammed; heute sind die Korallenbewuchse rund um das Riff weltberühmt."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Warum gilt der Steinfisch (Synanceia) an tropischen Flachwasser-Riffen als einer der gefährlichsten Giftfische für Unachtsame?",
-    "a": [
-      "Wegen seiner perfekten Tarnung am Felsboden und extrem schmerzhafter, potenziell gefährlicher Giftdrüsen an den 13 Rückenstacheln",
-      "Weil er Taucher gezielt meterweit durch das Blauwasser verfolgt",
-      "Weil sein Blick ein Tauchmaskenglas zerspringen lässt",
-      "Weil er unter Wasser Stromschläge bis 600 Volt abgibt"
-    ],
-    "exp": "Steinfische greifen nicht an, stechen aber blitzschnell zu, wenn man aus Unachtsamkeit auf sie tritt oder sich auf getarnte Steine stützt – heißes Wasser inaktiviert das Proteingift als Erste Hilfe."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Welche berühmte Felsinsel vor Costa Rica ist weltbekannt für riesige Schulen aus Hunderten von Hammerhaien in starker Strömung?",
-    "a": [
-      "Cocos Island (Isla del Coco)",
-      "Santorin im Ägäischen Meer",
-      "Helgoland in der Nordsee",
-      "Cozumel vor Yucatán"
-    ],
-    "exp": "Cocos Island (wie auch Malpelo und Galápagos-Wolf/Darwin) bildet das „Hai-Dreieck“ des Ostpazifiks mit legendären Großfisch-Begegnungen."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Welches eindrucksvolle Phänomen lässt sich beim Tauchen im Grünen See (Steiermark) oder manchen alpinen Schmelzwasserseen erleben (sofern Tauchfreigabe vorliegt bzw. historisch berühmt)?",
-    "a": [
-      "Im Frühjahr versunkene Wanderwege, Parkbänke und Wiesen unter glasklarem Schneeschmelzwasser",
-      "Heißwassergeysire über 80 °C am Seeboden",
-      "Riesige lebende Großkorallenbänke",
-      "Starken Tidenhub von über 12 Metern zweimal täglich"
-    ],
-    "exp": "Durch die Frühjahrs-Schneeschmelze stieg der Grüne See dramatisch an und flutete temporär Bäume und Brücken – wegen des Naturschutzschutzes ist das Tauchen dort heute streng untersagt."
-  },
-  {
-    "cat": "welten",
-    "diff": "mid",
-    "q": "Wie orientieren sich und kommunizieren Haie unter Wasser über sehr kurze Distanzen, um selbst im Sand vergrabene Beute durch deren winzige Muskelimpulse aufzuspüren?",
-    "a": [
-      "Mithilfe der sogenannten Lorenzini-Ampullen rund um die Schnauze (Elektrosinn)",
-      "Über hochfrequentes Unterwasser-WLAN",
-      "Mit leuchtenden Infrarot-Augenlidern",
-      "Durch Schmecken der Wassertiefe mit der Rückenflosse"
-    ],
-    "exp": "Die mit gallertartiger Substanz gefüllten Poren (Lorenzinische Ampullen) erfassen kleinste bioelektrische Felder von Herzschlägen und Kiemenbewegungen."
+    "explanation": "Ohne die Anemone wäre der kleine Clownfisch leichte Beute für Raubfische – im Gegenzug versorgt er sie mit Futterresten und Sauerstoff.",
+    "exp": "Der Fisch schützt sich durch eine Schleimschicht vor den Nesselzellen der Anemone und verteidigt sie gegen Fressfeinde"
   },
   {
     "cat": "welten",
     "diff": "pro",
-    "q": "Welcher berüchtigte Tauchplatz bei Dahab am Golf von Akaba kombiniert eine wunderschöne Korallenspalte („Bells“) mit einem über 100 m tiefen, vertikalen Loch samt Unterwasserbogen ab ca. 56 m?",
+    "q": "Welches giftige Weichtier im Indopazifik kann mit einem harpunenartigen Pfeil selbst für Menschen tödliche Nervengifte verschießen?",
     "a": [
-      "Das Blue Hole bei Dahab",
-      "Das Wrack der Salem Express vor Safaga",
-      "Die Zenobia vor Larnaka",
-      "Der SS-President-Coolidge-Spot auf Vanuatu"
+      "Die Kegelschnecke (z. B. Conus geographus)",
+      "Die Riesenmuschel (Tridacna gigas)",
+      "Die spanische Tänzerin",
+      "Die Perlmuschel"
     ],
-    "exp": "Im Blue Hole von Dahab liegt der sogenannte „Arch“-Durchgang erst in über 55 Metern Tiefe – weshalb leichtsinnige Presslufttauchgänge ohne Mischgas dort tragische Berühmtheit erlangten."
+    "explanation": "Kegelschnecken jagen schlafende Fische mit Conotoxinen – Taucher sollten niemals hübsche Schneckengehäuse aufheben und in die Jackettasche stecken!",
+    "exp": "Die Kegelschnecke (z. B. Conus geographus)"
+  },
+  {
+    "cat": "welten",
+    "diff": "mid",
+    "q": "Warum fliegen viele Taucher auf die abgelegene Kokos-Insel (Costa Rica) oder die Galápagos-Inseln?",
+    "a": [
+      "Um gigantische Schulen von hunderten Bogenstirn-Hammerhaien im offenen Ozean zu erleben",
+      "Wegen warmer, strömungsfreier Lagunen ohne Wellengang",
+      "Um Süßwasserdelphine in unterirdischen Quellen zu beobachten",
+      "Weil dort das Tauchen ohne Tauchschein für jedermann gestattet ist"
+    ],
+    "explanation": "Dort treffen nährstoffreiche Meeresströmungen aufeinander – Hammerhaie nutzen die Inseln als Reinigungsstationen und Orientierungspunkte.",
+    "exp": "Um gigantische Schulen von hunderten Bogenstirn-Hammerhaien im offenen Ozean zu erleben"
+  },
+  {
+    "cat": "welten",
+    "diff": "easy",
+    "q": "Was ist das Great Barrier Reef vor der Ostküste Australiens aus biologischer Sicht?",
+    "a": [
+      "Das größte zusammenhängende, von Lebewesen geschaffene Bauwerk der Erde (sogar aus dem Weltall sichtbar)",
+      "Ein künstlicher Damm zum Schutz der australischen Küste vor Tsunamis",
+      "Ein versunkener Gebirgszug aus erloschenen Vulkanen ohne Korallen",
+      "Eine Sandbank, die erst im 19. Jahrhundert durch Schiffsverkehr entstand"
+    ],
+    "explanation": "Über 2.300 Kilometer lang beherbergt das Riff tausende Korallenarten, Fische, Meeresschildkröten und Rochen.",
+    "exp": "Das größte zusammenhängende, von Lebewesen geschaffene Bauwerk der Erde (sogar aus dem Weltall sichtbar)"
+  },
+  {
+    "cat": "welten",
+    "diff": "mid",
+    "q": "Was ist der erstaunliche Trick des Blauring-Oktopus in den Korallenriffen Australiens und Südostasiens?",
+    "a": [
+      "Bei Bedrohung leuchten blaue Ringe auf – sein Biss enthält tödliches Tetrodotoxin, das Lähmungen verursacht",
+      "Er kann sich auf die Größe eines Autoreifens aufblasen",
+      "Er spuckt heißes Meerwasser zur Blendung von Angreifern",
+      "Er imitiert die Geräusche von jagenden Schwertwalen"
+    ],
+    "explanation": "Obwohl er nur wenige Zentimeter groß ist, reicht das Gift eines einzigen Tieres aus, um über 20 erwachsene Menschen binnen Minuten zu lähmen.",
+    "exp": "Bei Bedrohung leuchten blaue Ringe auf – sein Biss enthält tödliches Tetrodotoxin, das Lähmungen verursacht"
   },
   {
     "cat": "welten",
     "diff": "pro",
-    "q": "Welches eindrucksvolle Wrack in der Orkney-Region (Schottland) bildet gemeinsam mit weiteren deutschen Schiffen das legendäre Kaltwasser-Wracktauchgebiet von 1919?",
+    "q": "Welches gigantische Passagierschiff-Wrack sank 1942 vor Espiritu Santo (Vanuatu) und ist heute das größte begehbare Luxusliner-Wrack?",
     "a": [
-      "Die Selbstversenkung der deutschen Hochseeflotte in Scapa Flow",
-      "Der Untergang der RMS Titanic südlich von Neufundland",
-      "Die Versenkung der SMS Emden vor den Kokosinseln",
-      "Die Armada vor Südwestirland"
+      "SS President Coolidge",
+      "Andrea Doria",
+      "RMS Rhone",
+      "HMHS Britannic"
     ],
-    "exp": "1919 versenkte die deutsche Besatzung über 50 Kriegsschiffe in Scapa Flow; riesige Schlachtschiffe und Kreuzer wie die SMS Markgraf oder SMS König ruhen dort für Wracktaucher."
+    "explanation": "Der 200 m lange Truppentransporter lief auf eigene Minen. Taucher können durch Ballsäle, Laderäume mit Jeeps und bis zur berühmten „Lady“-Statue tauchen.",
+    "exp": "SS President Coolidge"
+  },
+  {
+    "cat": "welten",
+    "diff": "easy",
+    "q": "Wie atmen Meeresschildkröten (wie die Echte Karettschildkröte), während sie unter Wasser fressen und schlafen?",
+    "a": [
+      "Sie haben Lungen und müssen zum Atmen regelmäßig an die Wasseroberfläche kommen",
+      "Sie besitzen Kiemen an den Hinterbeinen und bleiben permanent unter Wasser",
+      "Sie filtern Sauerstoff durch ihren gepanzerten Rücken",
+      "Sie schlafen nur auf trockenem Land am Strand"
+    ],
+    "explanation": "Im Ruhezustand können Schildkröten ihren Herzschlag extrem verlangsamen und bis zu 4 bis 7 Stunden mit einem Atemzug unter Wasser schlafen.",
+    "exp": "Sie haben Lungen und müssen zum Atmen regelmäßig an die Wasseroberfläche kommen"
+  },
+  {
+    "cat": "welten",
+    "diff": "mid",
+    "q": "Was ist das Phänomen der „Korallenbleiche“ (Coral Bleaching), das durch zu warme Meere ausgelöst wird?",
+    "a": [
+      "Die Korallen stoßen ihre symbiotischen Algen (Zooxanthellen) ab und verhungern, wodurch das weiße Kalkskelett sichtbar wird",
+      "Säure im Wasser wäscht die bunten Farbpigmente aus der Haut der Korallen",
+      "Fische knabbern die farbige Oberschicht der Korallen im Sommer ab",
+      "Die Korallen stellen bei Hitze die Bildung von Kalk für immer ein"
+    ],
+    "explanation": "Zooxanthellen liefern durch Photosynthese bis zu 90 % der Nährstoffe der Koralle. Steigt die Wassertemperatur zu lang um 1-2 °C, zerbricht die Symbiose.",
+    "exp": "Die Korallen stoßen ihre symbiotischen Algen (Zooxanthellen) ab und verhungern, wodurch das weiße Kalkskelett sichtbar wird"
   },
   {
     "cat": "welten",
     "diff": "pro",
-    "q": "Wie bezeichnet man in den Cenoten Yucatáns jene milchig-schimmernde optische Trennschicht zwischen leichtem Süßwasser oben und schwerem Salzwasser unten?",
+    "q": "Was ist die berühmte „Silfra-Spalte“ im Thingvellir-Nationalpark in Island für Taucher?",
     "a": [
-      "Halokline",
-      "Thermohaline Zirkulation",
-      "Pyrokline",
-      "Stratopause"
+      "Ein Graben mit über 100 Metern Sichtweite direkt zwischen der eurasischen und nordamerikanischen Kontinentalplatte",
+      "Ein unterirdischer Vulkankrater mit 40 Grad heißem Thermalwasser",
+      "Die tiefste Meeresrinne des europäischen Kontinents",
+      "Ein versunkener Wikingerhafen mit intakten Holzschiffen"
     ],
-    "exp": "Die Halokline entsteht am Dichteübergang zwischen Süß- und Salzwasser; taucht man hindurch, verschwimmt die Sicht kurz schlierig wie durch Öl."
-  },
-  {
-    "cat": "welten",
-    "diff": "pro",
-    "q": "Worin liegt der tiefenphysiologische Unterschied bei Walen und Meeressäugern (wie dem Rekordtaucher Schnabelwal bis > 2.900 m), der ihnen die Taucherkrankheit fast völlig erspart?",
-    "a": [
-      "Sie atmen unter Druck KEINE frische Druckluft nach, und ihre Brustkörbe samt Lungenbläschen kollabieren kontrolliert ab ~70–100 m Tiefe, wodurch kaum noch Stickstoff ins Blut gepresst wird",
-      "Sie tragen im Inneren Heliumblasen",
-      "Ihr Blut enthält ausschließlich Wasser statt Hämoglobin",
-      "Sie wandeln unter Druck Stickstoff in Glukose um"
-    ],
-    "exp": "Durch den vollständigen Lungenkollaps gelangt die restliche Luft in steife, dickwandige Atemwege ohne Gasaustausch – ergänzt durch enorm viel sauerstoffspeicherndes Myoglobin im Muskel."
-  },
-  {
-    "cat": "welten",
-    "diff": "pro",
-    "q": "Welches bekannte Großwrack aus dem 2. Weltkrieg vor Port Vila / Espiritu Santo in Vanuatu beherbergt die berühmte Skulptur bzw. Figur „The Lady“ im Speisesaal und zählt zu den größten betauchbaren Wracks direkt vom Ufer aus?",
-    "a": [
-      "Die SS President Coolidge (ehemaliger Luxusdampfer und Truppentransporter)",
-      "Die USS Arizona vor Pearl Harbor",
-      "Die Andrea Doria vor Nantucket",
-      "Die HMHS Britannic in der Ägäis"
-    ],
-    "exp": "Das rund 200 Meter lange Schiff sank 1942 auf eigene Minen vor Espiritu Santo und liegt in ca. 20 bis 70 m Tiefe mit tausenden Artefakten direkt strandnah."
+    "explanation": "Gletscherwasser wird über Jahrzehnte durch poröses Lavagestein gefiltert – das Wasser bei 2–4 °C ist so rein, dass man es beim Tauchen trinken kann.",
+    "exp": "Ein Graben mit über 100 Metern Sichtweite direkt zwischen der eurasischen und nordamerikanischen Kontinentalplatte"
   }
 ];
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
     window.ArcadeQuizEngine.registerBank("diving", DATA);
   } else {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
