@@ -1,571 +1,984 @@
-/**
- * Fragenpool: Militärflugzeuge (Erster Weltkrieg bis Stealth & 6. Generation) — 1.000 Fragen
- * Kategorien:
- *  - jets              (Moderne Kampfjets & Stealth · 4. bis 6. Generation)
- *  - historisch        (Weltkriege & Kalter Krieg · Propeller bis frühe Überschalljets)
- *  - bomber_aufklaerer (Strategische Bomber, Aufklärer, Transporter, Tanker, Drohnen & Hubschrauber)
- *  - technik_waffen    (Aerodynamik, Radar, Triebwerke, Avionik, Rettungssysteme & Lenkwaffen)
- *
- * Schema: { id, cat, diff, q, a: [richtig, falsch1, falsch2, falsch3], exp }
- * Index 0 von a[] ist stets die richtige Antwort (UI mischt die Optionen dynamisch).
- */
+// Unified quiz bank for "mil_air" (75 questions: Militärflugzeuge)
 (function () {
-  function seededShuffle(arr, seed) {
-    const a = arr.slice();
-    let s = (seed >>> 0) || 1;
-    for (let i = a.length - 1; i > 0; i--) {
-      s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
-      const j = s % (i + 1);
-      const t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
+  const DATA = [
+  {
+    "cat": "jets",
+    "diff": "easy",
+    "q": "Welcher US-Kampfjet ging 2005 als weltweit erster einsatzfähiger Luftüberlegenheitsjäger der 5. Generation mit Tarnkappentechnik in Dienst?",
+    "a": [
+      "Lockheed Martin F-22 Raptor",
+      "Lockheed Martin F-16 Fighting Falcon",
+      "Boeing F/A-18E Super Hornet",
+      "Grumman F-14 Tomcat"
+    ],
+    "explanation": "Die F-22 Raptor kombinierte als erstes Serienflugzeug extreme Stealth-Eigenschaften mit Supercruise und 2D-Schubvektorsteuerung.",
+    "exp": "Die F-22 Raptor kombinierte als erstes Serienflugzeug extreme Stealth-Eigenschaften mit Supercruise und 2D-Schubvektorsteuerung."
+  },
+  {
+    "cat": "jets",
+    "diff": "easy",
+    "q": "Welche vier europäischen Staaten entwickelten und bauten gemeinsam das Mehrzweckkampfflugzeug Eurofighter Typhoon?",
+    "a": [
+      "Deutschland, Großbritannien, Italien und Spanien",
+      "Frankreich, Schweden, Belgien und die Niederlande",
+      "Deutschland, Frankreich, Schweden und Polen",
+      "Großbritannien, Norwegen, Dänemark und Schweiz"
+    ],
+    "explanation": "Frankreich stieg früh aus dem gemeinsamen Projekt aus, um mit der Dassault Rafale einen rein nationalen Kampfjet zu entwickeln.",
+    "exp": "Frankreich stieg früh aus dem gemeinsamen Projekt aus, um mit der Dassault Rafale einen rein nationalen Kampfjet zu entwickeln."
+  },
+  {
+    "cat": "jets",
+    "diff": "easy",
+    "q": "Welche Version der modernen F-35 Lightning II ist für Senkrechtlandungen und Kurzstarts (STOVL) mit einem Hubgebläse ausgestattet?",
+    "a": [
+      "F-35B (für US Marine Corps und Royal Air Force)",
+      "F-35A (Standard-Heer- und Luftwaffenversion)",
+      "F-35C (Flugzeugträgerversion mit Großflügel)",
+      "F-35I Adir (Spezialversion der israelischen Luftwaffe)"
+    ],
+    "explanation": "Die F-35B nutzt ein vertikales Rolls-Royce-Hubgebläse hinter dem Cockpit sowie eine um 95 Grad nach unten schwenkbare Hauptdüse.",
+    "exp": "Die F-35B nutzt ein vertikales Rolls-Royce-Hubgebläse hinter dem Cockpit sowie eine um 95 Grad nach unten schwenkbare Hauptdüse."
+  },
+  {
+    "cat": "jets",
+    "diff": "easy",
+    "q": "Welcher ikonische US-Marinejäger mit Schwenkflügeln erlangte durch den Kinofilm 'Top Gun' von 1986 weltweiten Kultstatus?",
+    "a": [
+      "Grumman F-14 Tomcat",
+      "McDonnell Douglas F-15 Eagle",
+      "General Dynamics F-111 Aardvark",
+      "Vought F-8 Crusader"
+    ],
+    "explanation": "Die F-14 Tomcat schützte Flugzeugträgerkampfgruppen mit ihren variablen Schwenkflügeln und den weitreichenden AIM-54 Phoenix-Raketen.",
+    "exp": "Die F-14 Tomcat schützte Flugzeugträgerkampfgruppen mit ihren variablen Schwenkflügeln und den weitreichenden AIM-54 Phoenix-Raketen."
+  },
+  {
+    "cat": "jets",
+    "diff": "easy",
+    "q": "Um welche gigantische siebenläufige 30-mm-Gatling-Kanone herum wurde das US-Erdkampfflugzeug A-10 Thunderbolt II konstruiert?",
+    "a": [
+      "GAU-8/A Avenger",
+      "M61A1 Vulcan (20 mm)",
+      "Mauser BK-27 (27 mm)",
+      "GSch-30-1 (30 mm)"
+    ],
+    "explanation": "Die GAU-8/A Avenger ist samt Munitionstrommel über 6 Meter lang; das Bugfahrwerk der A-10 musste dafür seitlich versetzt werden.",
+    "exp": "Die GAU-8/A Avenger ist samt Munitionstrommel über 6 Meter lang; das Bugfahrwerk der A-10 musste dafür seitlich versetzt werden."
+  },
+  {
+    "cat": "jets",
+    "diff": "easy",
+    "q": "Welches Land baute den Saab 39 Gripen gezielt für Starts von kurzen Autobahn-Behelfslandebahnen?",
+    "a": [
+      "Schweden",
+      "Norwegen",
+      "Finnland",
+      "Schweiz"
+    ],
+    "explanation": "Schwedens Bas-90-Doktrin verlangte Starts von 800-Meter-Straßenabschnitten und die Betankung/Aufmunitionierung binnen 10 Minuten durch Wehrpflichtige.",
+    "exp": "Schwedens Bas-90-Doktrin verlangte Starts von 800-Meter-Straßenabschnitten und die Betankung/Aufmunitionierung binnen 10 Minuten durch Wehrpflichtige."
+  },
+  {
+    "cat": "jets",
+    "diff": "mid",
+    "q": "Welche makellose Luftkampfbilanz (Abschüsse zu eigenen Verlusten im Luftkampf) hält die McDonnell Douglas F-15 Eagle bis heute?",
+    "a": [
+      "Über 100 Siege bei 0 eigenen Verlusten im Luftkampf",
+      "Genau 50 Siege bei 25 Verlusten",
+      "Rund 320 Siege bei 110 Verlusten",
+      "Knapp 12 Siege bei 4 Verlusten"
+    ],
+    "explanation": "Die F-15 verbucht offiziell über 104 Luftsiege (hauptsächlich durch die israelische und US-Luftwaffe) ohne einen einzigen Verlust im Luft-Luft-Kampf.",
+    "exp": "Die F-15 verbucht offiziell über 104 Luftsiege (hauptsächlich durch die israelische und US-Luftwaffe) ohne einen einzigen Verlust im Luft-Luft-Kampf."
+  },
+  {
+    "cat": "jets",
+    "diff": "mid",
+    "q": "Warum trug die berühmte Lockheed F-117 Nighthawk die Kennung 'F' (Fighter), obwohl sie ein reiner Bomber war?",
+    "a": [
+      "Zur Tarnung des geheimen Programms und um hochkarätige Jagdpiloten für Tests zu rekrutieren",
+      "Weil sie im Notfall Mach 2,5 im Überschall-Luftkampf fliegen konnte",
+      "Weil sie standardmäßig mit vier wärmesuchenden Sidewinder-Raketen flog",
+      "Aufgrund eines bürokratischen Tippfehlers im US-Verteidigungsministerium"
+    ],
+    "explanation": "Die F-117 besaß weder Radar noch Bordkanone noch Luftkampffähigkeit. Das 'F' lockte Top-Piloten an und verschleierte den Angriffscharakter.",
+    "exp": "Die F-117 besaß weder Radar noch Bordkanone noch Luftkampffähigkeit. Das 'F' lockte Top-Piloten an und verschleierte den Angriffscharakter."
+  },
+  {
+    "cat": "jets",
+    "diff": "mid",
+    "q": "Wie lautet der offizielle NATO-Codename für das russische Tarnkappen-Kampfflugzeug Suchoi Su-57?",
+    "a": [
+      "Felon",
+      "Flanker",
+      "Fulcrum",
+      "Foxhound"
+    ],
+    "explanation": "Nach NATO-Konvention beginnen Jagdflugzeuge mit 'F': Flanker steht für Su-27/35, Fulcrum für MiG-29, Foxhound für MiG-31 und Felon für Su-57.",
+    "exp": "Nach NATO-Konvention beginnen Jagdflugzeuge mit 'F': Flanker steht für Su-27/35, Fulcrum für MiG-29, Foxhound für MiG-31 und Felon für Su-57."
+  },
+  {
+    "cat": "jets",
+    "diff": "mid",
+    "q": "Welches Merkmal unterscheidet die trägergestützte F-35C optisch sofort von der Luftwaffenversion F-35A?",
+    "a": [
+      "Deutlich größere Tragflächen mit Klappmechanismus für den Trägerhangar",
+      "Zwei Triebwerke nebeneinander statt eines einzelnen Triebwerks",
+      "Canard-Vorflügel (Entenflügel) direkt vor der Cockpithaube",
+      "Ein komplett rundes Rumpfprofil ohne kantige Kanten"
+    ],
+    "explanation": "Größere Tragflächen erlauben der F-35C langsamere, sichere Anflüge auf den Flugzeugträger; die Flügelenden klappen im Trägerhangar nach oben.",
+    "exp": "Größere Tragflächen erlauben der F-35C langsamere, sichere Anflüge auf den Flugzeugträger; die Flügelenden klappen im Trägerhangar nach oben."
+  },
+  {
+    "cat": "jets",
+    "diff": "mid",
+    "q": "Welcher britische Senkrechtstarter schrieb im Falklandkrieg 1982 Luftfahrtgeschichte?",
+    "a": [
+      "BAe Sea Harrier",
+      "Panavia Tornado ADV",
+      "English Electric Lightning",
+      "Hawker Hunter"
+    ],
+    "explanation": "Mit Vektor-Schubdüsen (VIFF - Vectoring in Forward Flight) errangen britische Sea Harrier 20 Luftsiege ohne eigenen Luftkampfverlust.",
+    "exp": "Mit Vektor-Schubdüsen (VIFF - Vectoring in Forward Flight) errangen britische Sea Harrier 20 Luftsiege ohne eigenen Luftkampfverlust."
+  },
+  {
+    "cat": "jets",
+    "diff": "mid",
+    "q": "Was ist das primäre Einsatzkonzept des chinesischen Tarnkappenjägers Chengdu J-20 Mighty Dragon?",
+    "a": [
+      "Fernabfangen feindlicher Tanker und AWACS-Flugzeuge mit weitreichenden Lenkwaffen",
+      "Kurzstrecken-Dogfights im engen Nahbereich über Landungsstränden",
+      "Einsatz als Schulflugzeug für ausländische Exportkunden",
+      "Ausschließlicher Katapultstart von kleinen Hubschrauberträgern"
+    ],
+    "explanation": "Die große J-20 ist auf hohe Reichweite, interne Raketenschächte und das Ausschalten von Stützpfeilern wie Tankern und Radarflugzeugen optimiert.",
+    "exp": "Die große J-20 ist auf hohe Reichweite, interne Raketenschächte und das Ausschalten von Stützpfeilern wie Tankern und Radarflugzeugen optimiert."
+  },
+  {
+    "cat": "jets",
+    "diff": "pro",
+    "q": "Aus welchem Grund schoss die F-14 Tomcat ihre schwere Luft-Luft-Rakete AIM-54 Phoenix fast 40 Kilometer steil in die Stratosphäre?",
+    "a": [
+      "Um in dünner Luft bei minimalem Luftwiderstand maximale Reichweite im Sinkflug zu erzielen",
+      "Weil der Raketensucher Satelliten als Wegpunkte anpeilen musste",
+      "Um feindlichen Radarstrahlen durch die Erdkrümmung komplett auszuweichen",
+      "Weil der Feststoffmotor in dichter Luft sofort überhitzt wäre"
+    ],
+    "explanation": "Die Phoenix stieg im Loft-Profil auf über 25.000 Meter Höhe auf und stürzte sich im antriebslosen Hyperschall-Gleitflug auf das Ziel herab.",
+    "exp": "Die Phoenix stieg im Loft-Profil auf über 25.000 Meter Höhe auf und stürzte sich im antriebslosen Hyperschall-Gleitflug auf das Ziel herab."
+  },
+  {
+    "cat": "jets",
+    "diff": "pro",
+    "q": "Welches sowjetische Abfangflugzeug verblüffte 1976 den Westen, als Pilot Viktor Belenko damit nach Japan floh?",
+    "a": [
+      "Mikojan-Gurewitsch MiG-25 Foxbat",
+      "Suchoi Su-24 Fencer",
+      "Mikojan-Gurewitsch MiG-21 Fishbed",
+      "Tupolew Tu-128 Fiddler"
+    ],
+    "explanation": "Zur Überraschung der US-Ingenieure bestand die bis zu Mach 3 schnelle MiG-25 überwiegend aus Edelstahl und Vakuum-Röhrenelektronik gegen EMP.",
+    "exp": "Zur Überraschung der US-Ingenieure bestand die bis zu Mach 3 schnelle MiG-25 überwiegend aus Edelstahl und Vakuum-Röhrenelektronik gegen EMP."
+  },
+  {
+    "cat": "jets",
+    "diff": "pro",
+    "q": "Welche aerodynamische Instabilität nutzt der Eurofighter Typhoon gezielt aus, um extreme Wendigkeit zu erreichen?",
+    "a": [
+      "Künstliche Längsinstabilität mit Entenflügeln und ständiger Rechner-Korrektur (Fly-by-Wire)",
+      "Starre Schränkung der Flügelspitzen nach unten ohne Querruder",
+      "Einen permanent ungleichen Schub beider Triebwerke im Kurvenflug",
+      "Einen extremen Schwerpunkt vor der aerodynamischen Flügelnase"
+    ],
+    "explanation": "Der Eurofighter ist aerodynamisch instabil ausgelegt. Ohne die millisekundenschnellen Korrekturen der vier Flugsteuerungscomputer würde er unkontrollierbar taumeln.",
+    "exp": "Der Eurofighter ist aerodynamisch instabil ausgelegt. Ohne die millisekundenschnellen Korrekturen der vier Flugsteuerungscomputer würde er unkontrollierbar taumeln."
+  },
+  {
+    "cat": "jets",
+    "diff": "pro",
+    "q": "Wie viele Steuerflächen und Düsen steuert das Fly-by-Wire-System der schwedischen Gripen bei einer Landung als aerodynamische Bremse?",
+    "a": [
+      "Canards stellen sich um 90 Grad senkrecht auf und drücken die Vorderräder auf die Straße",
+      "Ein riesiger Bremsfallschirm wird bei jedem Touchdown mechanisch ausgeworfen",
+      "Das Triebwerk zündet automatisch eine vorwärtsgerichtete Raketendüse",
+      "Die Flügel klappen wie bei einer F-14 im Moment des Aufsetzens nach vorne"
+    ],
+    "explanation": "Die großen Entenflügel kippen bei der Landung fast senkrecht nach vorne. Das bremst enorm ab und presst das Bugrad für maximale Bremswirkung auf die Piste.",
+    "exp": "Die großen Entenflügel kippen bei der Landung fast senkrecht nach vorne. Das bremst enorm ab und presst das Bugrad für maximale Bremswirkung auf die Piste."
+  },
+  {
+    "cat": "jets",
+    "diff": "pro",
+    "q": "Welches Flugzeug erreichte als einziger operativer Aufklärungsjet im regulären Flugbetrieb über Mach 3,2 in 26 Kilometern Höhe?",
+    "a": [
+      "Lockheed SR-71 Blackbird",
+      "Convair B-58 Hustler",
+      "North American XB-70 Valkyrie",
+      "Mikojan-Gurewitsch MiG-31"
+    ],
+    "explanation": "Die SR-71 flog bei Mach 3,2 so schnell und hoch, dass keine Flugabwehrrakete sie jemals einholen konnte – man beschleunigte einfach davon.",
+    "exp": "Die SR-71 flog bei Mach 3,2 so schnell und hoch, dass keine Flugabwehrrakete sie jemals einholen konnte – man beschleunigte einfach davon."
+  },
+  {
+    "cat": "jets",
+    "diff": "pro",
+    "q": "Welches Schicksal ereilte die einzige im Kampfeinsatz abgeschossene F-117 Nighthawk im Kosovokrieg 1999?",
+    "a": [
+      "Sie wurde von einer serbischen SA-3-Batterie mit modifiziertem Langwellen-Radar geortet",
+      "Sie kollidierte nachts mit einer amerikanischen Tankdrohne",
+      "Ein Defekt an den Tarnkappen-Facetten entzündete das Fahrwerk",
+      "Sie wurde von einer MiG-29 im Dogfight mit Bordkanone getroffen"
+    ],
+    "explanation": "Oberst Dani Zoltán nutzte sowjetische Langwellenradare bei offener Bombenschachttür der F-117 und feuerte zwei SA-3 Goa Raketen ab.",
+    "exp": "Oberst Dani Zoltán nutzte sowjetische Langwellenradare bei offener Bombenschachttür der F-117 und feuerte zwei SA-3 Goa Raketen ab."
+  },
+  {
+    "cat": "jets",
+    "diff": "pro",
+    "q": "Was versteht man unter dem Begriff 'Kobra-Manöver', das 1989 auf der Pariser Luftfahrtschau mit der Su-27 vorgeführt wurde?",
+    "a": [
+      "Ein kurzzeitiges extremes Aufbäumen auf über 110 Grad Anstellwinkel ohne Höhengewinn",
+      "Einen Sturzflug mit dreifacher Fassrolle um die Längsachse",
+      "Ein Drehen um 360 Grad im Stand auf dem Fahrwerk",
+      "Das blitzartige Wenden des Jets allein über asymmetrischen Nachbrenner"
+    ],
+    "explanation": "Testpilot Wiktor Pugatschow stellte die Su-27 für Sekunden senkrecht in die Luft, bremste extrem ab und senkte die Nase ohne Strömungsabriss wieder.",
+    "exp": "Testpilot Wiktor Pugatschow stellte die Su-27 für Sekunden senkrecht in die Luft, bremste extrem ab und senkte die Nase ohne Strömungsabriss wieder."
+  },
+  {
+    "cat": "historisch",
+    "diff": "easy",
+    "q": "Welches deutsche Flugzeug gilt als das weltweit erste einsatzfähige Militärflugzeug mit Turbinen-Strahltriebwerken?",
+    "a": [
+      "Messerschmitt Me 262 Schwalbe",
+      "Heinkel He 111",
+      "Focke-Wulf Fw 190",
+      "Junkers Ju 87 Stuka"
+    ],
+    "explanation": "Die zweistrahlige Me 262 flog erstmals im Juli 1942 mit Jumo-004-Triebwerken und ging Mitte 1944 in den Fronteinsatz.",
+    "exp": "Die zweistrahlige Me 262 flog erstmals im Juli 1942 mit Jumo-004-Triebwerken und ging Mitte 1944 in den Fronteinsatz."
+  },
+  {
+    "cat": "historisch",
+    "diff": "easy",
+    "q": "Welches legendäre britische Jagdflugzeug mit elliptischen Flügeln verteidigte Großbritannien 1940 in der Luftschlacht um England?",
+    "a": [
+      "Supermarine Spitfire",
+      "Hawker Typhoon",
+      "Gloster Gladiator",
+      "Bristol Blenheim"
+    ],
+    "explanation": "Die Spitfire bildete zusammen mit der robusteren Hawker Hurricane das Rückgrat der britischen Luftverteidigung gegen die Luftwaffe.",
+    "exp": "Die Spitfire bildete zusammen mit der robusteren Hawker Hurricane das Rückgrat der britischen Luftverteidigung gegen die Luftwaffe."
+  },
+  {
+    "cat": "historisch",
+    "diff": "easy",
+    "q": "Welcher US-Begleitjäger brachte den Alliierten durch seinen Rolls-Royce-Merlin-Motor die Luftherrschaft über Deutschland?",
+    "a": [
+      "North American P-51 Mustang",
+      "Republic P-47 Thunderbolt",
+      "Curtiss P-40 Warhawk",
+      "Lockheed P-38 Lightning"
+    ],
+    "explanation": "Erst der Einbau des britischen Merlin-Motors (als Lizenzbau Packard V-1650) machte die P-51 zum überlegenen Langstrecken-Begleitjäger für B-17-Bomber.",
+    "exp": "Erst der Einbau des britischen Merlin-Motors (als Lizenzbau Packard V-1650) machte die P-51 zum überlegenen Langstrecken-Begleitjäger für B-17-Bomber."
+  },
+  {
+    "cat": "historisch",
+    "diff": "easy",
+    "q": "Welcher Dreidecker wurde durch Manfred von Richthofen, den 'Roten Baron', im Ersten Weltkrieg weltberühmt?",
+    "a": [
+      "Fokker Dr.I",
+      "Albatros D.III",
+      "Sopwith Camel",
+      "SPAD S.XIII"
+    ],
+    "explanation": "Richthofen erzielte seine letzten 19 seiner 80 Luftsiege auf dem wendigen roten Fokker-Dreidecker Dr.I.",
+    "exp": "Richthofen erzielte seine letzten 19 seiner 80 Luftsiege auf dem wendigen roten Fokker-Dreidecker Dr.I."
+  },
+  {
+    "cat": "historisch",
+    "diff": "easy",
+    "q": "Welches japanische Trägerflugzeug dominierte im Pazifikkrieg bis 1942 durch extreme Wendigkeit und Reichweite die Luftkämpfe?",
+    "a": [
+      "Mitsubishi A6M Zero",
+      "Nakajima Ki-43 Hayabusa",
+      "Kawasaki Ki-61 Hien",
+      "Aichi D3A Val"
+    ],
+    "explanation": "Die Zero war extrem leicht gebaut und hatte keinen Panzerschutz, was ihr unübertroffene Wendigkeit und über 2.600 km Reichweite verlieh.",
+    "exp": "Die Zero war extrem leicht gebaut und hatte keinen Panzerschutz, was ihr unübertroffene Wendigkeit und über 2.600 km Reichweite verlieh."
+  },
+  {
+    "cat": "historisch",
+    "diff": "easy",
+    "q": "Welcher schwere US-Bomber des Zweiten Weltkriegs wurde wegen seiner schweren Abwehrbewaffnung als 'Fliegende Festung' bezeichnet?",
+    "a": [
+      "Boeing B-17 Flying Fortress",
+      "Consolidated B-24 Liberator",
+      "Boeing B-29 Superfortress",
+      "North American B-25 Mitchell"
+    ],
+    "explanation": "Bis zu 13 schwere Kaliber-.50-Maschinengewehre machten dichte B-17-Bomberformationen zu einer tödlichen Abwehrfestung gegen feindliche Jäger.",
+    "exp": "Bis zu 13 schwere Kaliber-.50-Maschinengewehre machten dichte B-17-Bomberformationen zu einer tödlichen Abwehrfestung gegen feindliche Jäger."
+  },
+  {
+    "cat": "historisch",
+    "diff": "mid",
+    "q": "Warum besaß das US-Trägerjagdflugzeug Vought F4U Corsair seine charakteristischen Knickflügel (umgekehrte Knickflügel)?",
+    "a": [
+      "Um Bodenfreiheit für den riesigen 4-Meter-Propeller bei kurzen Fahrwerksbeinen zu schaffen",
+      "Damit das Flugzeug bei Wasserungen wie ein Boot auf den Flügeln schwimmt",
+      "Um den Piloten einen uneingeschränkten Blick senkrecht nach unten zu bieten",
+      "Weil die Flügel im Flug automatisch nach hinten schwenkten"
+    ],
+    "explanation": "Der gewaltige Pratt & Whitney R-2800 Triebwerksdurchmesser erforderte enorme Propeller; Knickflügel hielten das Trägerfahrwerk kurz und stabil.",
+    "exp": "Der gewaltige Pratt & Whitney R-2800 Triebwerksdurchmesser erforderte enorme Propeller; Knickflügel hielten das Trägerfahrwerk kurz und stabil."
+  },
+  {
+    "cat": "historisch",
+    "diff": "mid",
+    "q": "Woraus bestand der Rumpf des britischen Mehrzweckflugzeugs de Havilland DH.98 Mosquito ('The Wooden Wonder')?",
+    "a": [
+      "Aus formverleimtem Balsaholz- und Birkensperrholz-Sandwich",
+      "Aus genietetem Wellblech-Aluminium",
+      "Aus imprägniertem Leinen auf geschweißtem Stahlrohr",
+      "Aus gegossenen Magnesiumplatten"
+    ],
+    "explanation": "Die Mosquito sparte strategisch knappes Leichtmetall und wurde von Klavier- und Möbelbauern aus Sperrholz gefertigt – und war trotzdem schneller als die meisten Jäger.",
+    "exp": "Die Mosquito sparte strategisch knappes Leichtmetall und wurde von Klavier- und Möbelbauern aus Sperrholz gefertigt – und war trotzdem schneller als die meisten Jäger."
+  },
+  {
+    "cat": "historisch",
+    "diff": "mid",
+    "q": "Welche beiden Düsenjäger lieferten sich im Koreakrieg (1950–1953) über der berüchtigten 'MiG Alley' historische Luftkämpfe?",
+    "a": [
+      "North American F-86 Sabre gegen Mikojan-Gurewitsch MiG-15",
+      "Lockheed P-80 Shooting Star gegen Jakowlew Jak-9",
+      "Grumman F9F Panther gegen Messerschmitt Me 262",
+      "Republic F-84 Thunderjet gegen Suchoi Su-7"
+    ],
+    "explanation": "Beide Flugzeuge nutzten gepfeilte Tragflächen nach deutschem Weltkriegs-Forschungsvorbild und lieferten sich die ersten Jet-gegen-Jet-Duelle der Geschichte.",
+    "exp": "Beide Flugzeuge nutzten gepfeilte Tragflächen nach deutschem Weltkriegs-Forschungsvorbild und lieferten sich die ersten Jet-gegen-Jet-Duelle der Geschichte."
+  },
+  {
+    "cat": "historisch",
+    "diff": "mid",
+    "q": "Welches deutsche Sturzkampfflugzeug erzeugte beim Sturzflug durch Fahrtwind-Sirenen ('Jericho-Trompeten') psychologischen Terror?",
+    "a": [
+      "Junkers Ju 87 Stuka",
+      "Henschel Hs 129",
+      "Dornier Do 17",
+      "Blohm & Voss BV 141"
+    ],
+    "explanation": "Die am Fahrwerk montierten Sirenen heulten mit zunehmender Sturzfluggeschwindigkeit auf, um Truppen am Boden einzuschüchtern.",
+    "exp": "Die am Fahrwerk montierten Sirenen heulten mit zunehmender Sturzfluggeschwindigkeit auf, um Truppen am Boden einzuschüchtern."
+  },
+  {
+    "cat": "historisch",
+    "diff": "mid",
+    "q": "Warum montierte die US-Luftwaffe im Vietnamkrieg an ihren F-4 Phantom II Jagdbombern nachträglich wieder Bordkanonen?",
+    "a": [
+      "Weil frühe Luft-Luft-Raketen im Nahkampf unzuverlässig waren und Dogfights erzwangen",
+      "Weil die Piloten Kanonensalven als optisches Signal zur Landung brauchten",
+      "Um das Flugzeuggewicht künstlich für schwerere Bombenabwürfe zu erhöhen",
+      "Weil Raketen durch die hohe Luftfeuchtigkeit im Dschungel korrodierten"
+    ],
+    "explanation": "Die Phantom war ursprünglich rein auf Lenkwaffen ausgelegt. Erst nach hohen Verlusten gegen wendige MiG-17/21 erhielt die F-4E eine feste 20-mm-Gatling.",
+    "exp": "Die Phantom war ursprünglich rein auf Lenkwaffen ausgelegt. Erst nach hohen Verlusten gegen wendige MiG-17/21 erhielt die F-4E eine feste 20-mm-Gatling."
+  },
+  {
+    "cat": "historisch",
+    "diff": "mid",
+    "q": "Welches Flugzeug warf am 6. August 1945 die erste Atombombe ('Little Boy') über Hiroshima ab?",
+    "a": [
+      "Boeing B-29 Superfortress ('Enola Gay')",
+      "Boeing B-17 Flying Fortress ('Memphis Belle')",
+      "Consolidated B-32 Dominator",
+      "Avro Lancaster ('Dambuster')"
+    ],
+    "explanation": "Die Enola Gay war eine B-29 unter dem Kommando von Paul Tibbets. Die B-29 verfügte über Druckkabinen und computergesteuerte Ferngeschütztürme.",
+    "exp": "Die Enola Gay war eine B-29 unter dem Kommando von Paul Tibbets. Die B-29 verfügte über Druckkabinen und computergesteuerte Ferngeschütztürme."
+  },
+  {
+    "cat": "historisch",
+    "diff": "pro",
+    "q": "Was war das größte technische Problem des raketengetriebenen Abfangjägers Messerschmitt Me 163 Komet?",
+    "a": [
+      "Die extrem explosive und ätzende Treibstoffkombination T-Stoff und C-Stoff",
+      "Der Ausfall des Funkgeräts bei Geschwindigkeiten über 300 km/h",
+      "Das Fehlen jeglicher Bewaffnung bei der Landung auf Kufen",
+      "Die Unfähigkeit, bei Temperaturen unter 20 Grad Celsius zu starten"
+    ],
+    "explanation": "T-Stoff (Wasserstoffperoxid) und C-Stoff (Hydrazinhydrat/Methanol) entzündeten sich bei Kontakt spontan und lösten bei Lecks organische Gewebe auf.",
+    "exp": "T-Stoff (Wasserstoffperoxid) und C-Stoff (Hydrazinhydrat/Methanol) entzündeten sich bei Kontakt spontan und lösten bei Lecks organische Gewebe auf."
+  },
+  {
+    "cat": "historisch",
+    "diff": "pro",
+    "q": "Wie funktionierte die berühmte 'Schräge Musik' in deutschen Nachtjägern (wie Bf 110 und Ju 88) im Zweiten Weltkrieg?",
+    "a": [
+      "Schräg nach oben gerichtete Maschinenkanonen feuerten unbemerkt von unten in die Tragflächentanks britischer Bomber",
+      "Ein akustischer Radarwarner spielte verzerrte Melodien bei feindlicher Annäherung",
+      "Ein Scheinwerfersystem blendete den Bordschützen des Feindes im 45-Grad-Winkel",
+      "Ein rückwärtsfeuerndes Maschinengewehr feuerte beim Überholen ab"
+    ],
+    "explanation": "Nachtjäger flogen im toten Winkel unter britische Bomber und schossen schräg nach oben, ohne dass der feindliche Heckschütze sie sehen konnte.",
+    "exp": "Nachtjäger flogen im toten Winkel unter britische Bomber und schossen schräg nach oben, ohne dass der feindliche Heckschütze sie sehen konnte."
+  },
+  {
+    "cat": "historisch",
+    "diff": "pro",
+    "q": "Welche Erfindung von Anthony Fokker revolutionierte 1915 den Luftkampf im Ersten Weltkrieg auf der Fokker E.I?",
+    "a": [
+      "Das mechanische Unterbrechergetriebe zum Schießen durch den laufenden Propellerkreis",
+      "Der erste Schleudersitz mit komprimierter Luft",
+      "Der Bordfunk zur Verständigung mit der Artillerie",
+      "Gepanzerte Selbstabdicht-Tanks für Flugbenzin"
+    ],
+    "explanation": "Das Synchronisationsgetriebe stoppte das MG mechanisch in dem Moment, in dem ein Propellerblatt die Mündung passierte.",
+    "exp": "Das Synchronisationsgetriebe stoppte das MG mechanisch in dem Moment, in dem ein Propellerblatt die Mündung passierte."
+  },
+  {
+    "cat": "historisch",
+    "diff": "pro",
+    "q": "Welches alliierte Flugzeug führte 1943 die 'Operation Chastise' (Angriff auf deutsche Talsperren mit Rollbomben) durch?",
+    "a": [
+      "Avro Lancaster (der No. 617 Squadron 'Dambusters')",
+      "Handley Page Halifax",
+      "Short Stirling",
+      "Consolidated PB4Y Privateer"
+    ],
+    "explanation": "Barnes Wallis erfand die rotierende Rollbombe, die bei exakt 18 Metern Flughöhe über das Wasser sprang und direkt an der Staumauer detonierte.",
+    "exp": "Barnes Wallis erfand die rotierende Rollbombe, die bei exakt 18 Metern Flughöhe über das Wasser sprang und direkt an der Staumauer detonierte."
+  },
+  {
+    "cat": "historisch",
+    "diff": "pro",
+    "q": "Welcher schwere deutsche Jäger wurde im Zweiten Weltkrieg als 'Würger' oder 'Schlächter' bekannt und besaß einen luftgekühlten BMW-801-Doppelsternmotor?",
+    "a": [
+      "Focke-Wulf Fw 190",
+      "Messerschmitt Bf 109",
+      "Dornier Do 335",
+      "Heinkel He 162"
+    ],
+    "explanation": "Die Fw 190 von Kurt Tank überraschte die Royal Air Force 1941 durch überlegene Rollrate, enorme Motorleistung und ein breites Fahrwerk.",
+    "exp": "Die Fw 190 von Kurt Tank überraschte die Royal Air Force 1941 durch überlegene Rollrate, enorme Motorleistung und ein breites Fahrwerk."
+  },
+  {
+    "cat": "historisch",
+    "diff": "pro",
+    "q": "Was zeichnete den deutschen Dornier Do 335 'Pfeil' als schnellstes kolbenmotorgetriebenes Flugzeug des Zweiten Weltkriegs aus?",
+    "a": [
+      "Tandemanordnung: Ein Zugpropeller im Bug und ein Druckpropeller im Heck auf einer Rumpfachse",
+      "Vier Sternmotoren, die alle auf eine gemeinsame Welle im Cockpit wirkten",
+      "Flügel aus reinem Magnesium mit integrierten Feststoffraketen",
+      "Ein faltbarer Doppelflügel für den Start von U-Boot-Decks"
+    ],
+    "explanation": "Durch den Schub- und Zugmotor in Mittellinie erzeugte die Do 335 keinen asymmetrischen Schub bei Motorausfall und erreichte über 760 km/h.",
+    "exp": "Durch den Schub- und Zugmotor in Mittellinie erzeugte die Do 335 keinen asymmetrischen Schub bei Motorausfall und erreichte über 760 km/h."
+  },
+  {
+    "cat": "historisch",
+    "diff": "pro",
+    "q": "Welches Flugzeug durchbrach am 14. Oktober 1947 mit Chuck Yeager erstmals im horizontalen Flug offiziell die Schallmauer?",
+    "a": [
+      "Bell X-1 (raketengetriebenes Forschungsflugzeug)",
+      "North American F-86 Sabre",
+      "Douglas D-558-2 Skyrocket",
+      "Gloster Meteor F.4"
+    ],
+    "explanation": "Die von einer B-29 in der Luft ausgeklinkte Bell X-1 'Glamorous Glennis' erreichte über der Mojave-Wüste Mach 1,06.",
+    "exp": "Die von einer B-29 in der Luft ausgeklinkte Bell X-1 'Glamorous Glennis' erreichte über der Mojave-Wüste Mach 1,06."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "easy",
+    "q": "Welcher ikonische US-Tarnkappenbomber ist als riesiger schwanzloser Nurflügler konstruiert?",
+    "a": [
+      "Northrop Grumman B-2 Spirit",
+      "Rockwell B-1B Lancer",
+      "Boeing B-52 Stratofortress",
+      "General Dynamics F-111"
+    ],
+    "explanation": "Die B-2 Spirit besitzt kein Seitenleitwerk; Gierbewegungen werden über geteilte Ruderklappen (Drag Rudders) an den Flügelspitzen gesteuert.",
+    "exp": "Die B-2 Spirit besitzt kein Seitenleitwerk; Gierbewegungen werden über geteilte Ruderklappen (Drag Rudders) an den Flügelspitzen gesteuert."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "easy",
+    "q": "Seit welchem Jahrzehnt fliegt der achtstrahlige Langstreckenbomber Boeing B-52 Stratofortress ununterbrochen im Dienst der US Air Force?",
+    "a": [
+      "Seit den 1950er-Jahren (Erstflug 1952)",
+      "Seit den 1970er-Jahren",
+      "Seit den 1930er-Jahren",
+      "Erst seit den 1990er-Jahren"
+    ],
+    "explanation": "Die B-52 flog erstmals 1952 und soll mit neuen Rolls-Royce-Triebwerken bis weit in die 2050er-Jahre – fast 100 Jahre lang – im Dienst bleiben.",
+    "exp": "Die B-52 flog erstmals 1952 und soll mit neuen Rolls-Royce-Triebwerken bis weit in die 2050er-Jahre – fast 100 Jahre lang – im Dienst bleiben."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "easy",
+    "q": "Welcher sowjetische Langstreckenbomber ist für seine vier Turboprop-Triebwerke mit gegenläufigen Riesenpropellern weltbekannt?",
+    "a": [
+      "Tupolew Tu-95 Bear",
+      "Tupolew Tu-160 Blackjack",
+      "Tupolew Tu-22M Backfire",
+      "Iljuschin Il-76 Candid"
+    ],
+    "explanation": "Die Propellerspitzen der Kusnezow-NK-12-Triebwerke drehen im Überschallbereich, was die Tu-95 zu einem der lautesten Flugzeuge der Welt macht.",
+    "exp": "Die Propellerspitzen der Kusnezow-NK-12-Triebwerke drehen im Überschallbereich, was die Tu-95 zu einem der lautesten Flugzeuge der Welt macht."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "easy",
+    "q": "Welches Flugzeug dient der US Air Force als schwer bewaffnetes Erdkampfflugzeug mit Haubitzen und Bordkanonen an der linken Rumpfseite?",
+    "a": [
+      "Lockheed AC-130 Ghostrider / Spooky (Gunship)",
+      "Boeing KC-135 Stratotanker",
+      "Fairchild C-123 Provider",
+      "McDonnell Douglas KC-10 Extender"
+    ],
+    "explanation": "Die AC-130 kreist in einer Pylon-Kurve über dem Ziel und feuert mit einer 105-mm-Haubitze, 30-mm-Kanonen und Präzisionsraketen aus der linken Flanke.",
+    "exp": "Die AC-130 kreist in einer Pylon-Kurve über dem Ziel und feuert mit einer 105-mm-Haubitze, 30-mm-Kanonen und Präzisionsraketen aus der linken Flanke."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "easy",
+    "q": "Welches Kipprotor-Wandelflugzeug verbindet die Senkrechtstarteigenschaften eines Hubschraubers mit der Geschwindigkeit eines Turboprops?",
+    "a": [
+      "Bell-Boeing V-22 Osprey",
+      "Sikorsky CH-53K King Stallion",
+      "Boeing CH-47 Chinook",
+      "Mil Mi-26 Halo"
+    ],
+    "explanation": "Die V-22 schwenkt ihre Triebwerksgondeln an den Flügelenden um 90 Grad nach oben für den Schwebeflug und nach vorne für den Reiseflug.",
+    "exp": "Die V-22 schwenkt ihre Triebwerksgondeln an den Flügelenden um 90 Grad nach oben für den Schwebeflug und nach vorne für den Reiseflug."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "mid",
+    "q": "Warum tropfte die SR-71 Blackbird vor dem Start am Boden regelmäßig Kerosin aus den Tragflächentanks?",
+    "a": [
+      "Weil sich die Titan-Rumpfbeplankung erst durch die Reibungshitze bei Mach 3 luftdicht ausdehnte",
+      "Weil Kerosin absichtlich zur Kühlung der heißen Bremsen versprüht wurde",
+      "Weil das Betanken am Boden nur mit Überdruckventilen möglich war",
+      "Um das Flugzeuggewicht vor dem Startlauf auf Asphaltbahnen zu senken"
+    ],
+    "explanation": "Gummidichtungen hielten 300 Grad Hitze bei Mach 3 nicht stand. Die Fugen waren locker eingepasst und schlossen sich erst bei Wärmeausdehnung.",
+    "exp": "Gummidichtungen hielten 300 Grad Hitze bei Mach 3 nicht stand. Die Fugen waren locker eingepasst und schlossen sich erst bei Wärmeausdehnung."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "mid",
+    "q": "Warum begleiten bei Landungen des Höhenaufklärers Lockheed U-2 'Dragon Lady' schnelle Sportwagen das Flugzeug auf der Piste?",
+    "a": [
+      "Ein erfahrener U-2-Pilot im Auto gibt dem Piloten per Funk die genaue Resthöhe über dem Asphalt durch",
+      "Um das Flugzeug mit einem Fanghaken am Kofferraum abzubremsen",
+      "Um die abgeworfenen Startstützräder (Pogos) blitzschnell wieder anzustecken",
+      "Um die Bremsfallschirme vor dem Verwehen im Wind aufzufangen"
+    ],
+    "explanation": "Die extreme Gleitflügel-Aerodynamik im Bodeneffekt und das Tandemfahrwerk machen das Aufsetzen blind; der Chase-Car-Fahrer fungiert als Bodenauge.",
+    "exp": "Die extreme Gleitflügel-Aerodynamik im Bodeneffekt und das Tandemfahrwerk machen das Aufsetzen blind; der Chase-Car-Fahrer fungiert als Bodenauge."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "mid",
+    "q": "Welcher strategische Schwenkflügelbomber der US Air Force ist auf extremen Tiefflug unterhalb des feindlichen Radars optimiert?",
+    "a": [
+      "Rockwell B-1B Lancer",
+      "General Dynamics FB-111",
+      "Boeing B-52H Stratofortress",
+      "Northrop B-2 Spirit"
+    ],
+    "explanation": "Die B-1B fliegt vollautomatisch gesteuert vom Terrain-Following-Radar mit fast Schallgeschwindigkeit knapp über Baumwipfeln und Hügeln.",
+    "exp": "Die B-1B fliegt vollautomatisch gesteuert vom Terrain-Following-Radar mit fast Schallgeschwindigkeit knapp über Baumwipfeln und Hügeln."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "mid",
+    "q": "Welches ist das größte und schwerste Überschall-Kampfflugzeug, das jemals in Serie gebaut wurde?",
+    "a": [
+      "Tupolew Tu-160 'Weißer Schwan' (NATO-Codename: Blackjack)",
+      "Suchoi T-4 Sotka",
+      "Rockwell B-1B Lancer",
+      "Mikojan-Gurewitsch MiG-31"
+    ],
+    "explanation": "Die Tu-160 wiegt voll beladen bis zu 275 Tonnen, besitzt Schwenkflügel und erreicht dank vier riesiger Kusnezow-Triebwerke Mach 2.",
+    "exp": "Die Tu-160 wiegt voll beladen bis zu 275 Tonnen, besitzt Schwenkflügel und erreicht dank vier riesiger Kusnezow-Triebwerke Mach 2."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "mid",
+    "q": "Welcher schwere US-Militärtransporter kann mit seinem hochklappbaren Bugvisier und Heckrampe schwere Kampfpanzer vom Typ M1 Abrams transportieren?",
+    "a": [
+      "Lockheed C-5 Galaxy",
+      "Boeing C-17 Globemaster III",
+      "Lockheed C-130 Hercules",
+      "Airbus A400M Atlas"
+    ],
+    "explanation": "Die C-5 Galaxy kann bis zu zwei M1-Abrams-Panzer oder sechs Hubschrauber schlucken und kniet am Boden hydraulisch für leichtes Beladen ab.",
+    "exp": "Die C-5 Galaxy kann bis zu zwei M1-Abrams-Panzer oder sechs Hubschrauber schlucken und kniet am Boden hydraulisch für leichtes Beladen ab."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "mid",
+    "q": "Welches unbemannte Flugsystem (Drohne) wurde zum weltweiten Symbol für gezielte Präzisionsschläge mit Hellfire-Raketen?",
+    "a": [
+      "General Atomics MQ-9 Reaper / MQ-1 Predator",
+      "Northrop Grumman RQ-4 Global Hawk",
+      "Baykar Bayraktar TB2",
+      "IAI Heron TP"
+    ],
+    "explanation": "Die propellergetriebene Reaper kann über 24 Stunden über dem Zielgebiet patrouillieren und laser- oder satellitengelenkte Präzisionswaffen einsetzen.",
+    "exp": "Die propellergetriebene Reaper kann über 24 Stunden über dem Zielgebiet patrouillieren und laser- oder satellitengelenkte Präzisionswaffen einsetzen."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "mid",
+    "q": "Welcher Kampfhubschrauber der US Army wird primär zur Panzerbekämpfung eingesetzt und trägt das Longbow-Radar über dem Hauptrotor?",
+    "a": [
+      "Boeing AH-64 Apache",
+      "Bell AH-1Z Viper",
+      "Eurocopter Tiger",
+      "Kamow Ka-52 Alligator"
+    ],
+    "explanation": "Die kuppelförmige Radarantenne über dem Rotor erlaubt dem AH-64D/E Apache, hinter Baumreihen in Deckung zu bleiben und Ziele zu erfassen.",
+    "exp": "Die kuppelförmige Radarantenne über dem Rotor erlaubt dem AH-64D/E Apache, hinter Baumreihen in Deckung zu bleiben und Ziele zu erfassen."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "pro",
+    "q": "Welches Treibstoff-Spezialgemisch benötigte die SR-71 Blackbird, das bei Raumtemperatur so schwer entflammbar war, dass man ein brennendes Streichholz darin löschen konnte?",
+    "a": [
+      "JP-7 (mit extrem hohem Flammpunkt und Triethylboran als chemischem Zünder)",
+      "Hydrazin mit flüssigem Sauerstoff",
+      "Reines synthetisches Ethanol mit Bleizusatz",
+      "Kompakter Festtreibstoff in Pelletform"
+    ],
+    "explanation": "JP-7 entzündet sich bei Hitze nicht selbst. Zum Starten der Triebwerke und der Nachbrenner wurde grünes Triethylboran (TEB) eingespritzt.",
+    "exp": "JP-7 entzündet sich bei Hitze nicht selbst. Zum Starten der Triebwerke und der Nachbrenner wurde grünes Triethylboran (TEB) eingespritzt."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "pro",
+    "q": "Wie kühlt die B-2 Spirit ihre heißen Triebwerksabgase, um vor wärmesuchenden Infrarot-Raketen verborgen zu bleiben?",
+    "a": [
+      "Die Abgase werden auf der Flügeloberseite mit kalter Bypass-Luft gemischt und über Hitzeschutzkacheln geleitet",
+      "Durch kontinuierliches Einspritzen von flüssigem Stickstoff in den Abgasstrahl",
+      "Über einen langen Schlauch, der 200 Meter hinter dem Flugzeug nachgezogen wird",
+      "Indem die Triebwerke alle 10 Minuten für 60 Sekunden komplett abgeschaltet werden"
+    ],
+    "explanation": "Die Düsen liegen tief auf der Flügeloberseite versenkt. Kalte Außenluft kühlt den Strahl, und der Flügel schirmt die Hitze nach unten ab.",
+    "exp": "Die Düsen liegen tief auf der Flügeloberseite versenkt. Kalte Außenluft kühlt den Strahl, und der Flügel schirmt die Hitze nach unten ab."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "pro",
+    "q": "Wie hält der schwerste Hubschrauber der Welt, die russische Mil Mi-26 Halo, ihren riesigen Achtblatt-Hauptrotor im Gleichgewicht?",
+    "a": [
+      "Zwei Turbinentriebwerke mit je über 11.400 PS treiben den 32-Meter-Rotor an und heben bis zu 20 Tonnen Nutzlast",
+      "Vier gegenläufige Koaxialrotoren ohne Heckrotor",
+      "Ein zusätzlicher Raketenantrieb an jeder Rotorblattspitze",
+      "Ein riesiges Pendelgewicht im Passagierkabinenboden"
+    ],
+    "explanation": "Die Mil Mi-26 kann einen voll beladenen Linienbus oder einen schweren Transporthubschrauber wie die CH-47 als Außenlast transportieren.",
+    "exp": "Die Mil Mi-26 kann einen voll beladenen Linienbus oder einen schweren Transporthubschrauber wie die CH-47 als Außenlast transportieren."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "pro",
+    "q": "Welches Flugzeugträger-Aufklärungsflugzeug der US Navy trägt das markante rotierende Radom auf dem Rücken?",
+    "a": [
+      "Northrop Grumman E-2 Hawkeye",
+      "Boeing E-3 Sentry (AWACS)",
+      "Grumman C-2 Greyhound",
+      "Lockheed S-3 Viking"
+    ],
+    "explanation": "Die zweimotorige Turboprop E-2 Hawkeye ist das fliegende Radar- und Führungsauge auf allen US-Supercarriern.",
+    "exp": "Die zweimotorige Turboprop E-2 Hawkeye ist das fliegende Radar- und Führungsauge auf allen US-Supercarriern."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "pro",
+    "q": "Welche bemerkenswerte Eigenschaft besaß das Hauptfahrwerk der B-52 Stratofortress bei starkem Seitenwind?",
+    "a": [
+      "Die Fahrwerksdrehgestelle lassen sich bis zu 20 Grad in Landerichtung schwenken (Crosswind Landing Gear)",
+      "Es fährt bei Wind automatisch Kufen an den Flügelenden aus",
+      "Es federt nur einseitig ein, um Schräglagen auszugleichen",
+      "Es besitzt eigene Elektromotoren, die das Flugzeug vor dem Aufsetzen quer beschleunigen"
+    ],
+    "explanation": "Die B-52 kann im 'Krabbenwinkel' schräg zur Landebahn anfliegen und aufsetzen, weil die Räder genau in Pistenrichtung ausgerichtet werden.",
+    "exp": "Die B-52 kann im 'Krabbenwinkel' schräg zur Landebahn anfliegen und aufsetzen, weil die Räder genau in Pistenrichtung ausgerichtet werden."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "pro",
+    "q": "Was passiert mit den Startstützrädern (Pogos) an den äußeren Tragflächenenden der Lockheed U-2 beim Startlauf?",
+    "a": [
+      "Sie fallen nach wenigen Metern Startlauf automatisch aus den Tragflächen auf die Bahn",
+      "Sie werden per Seilwinde ins Cockpit gezogen",
+      "Sie explodieren mit kleinen Sprengsätzen nach dem Abheben",
+      "Sie klappen in die Kamerabucht im Flugzeugbauch"
+    ],
+    "explanation": "Die Pogos stabilisieren die vollgetankten, herabhängenden Flügel beim Rollen und fallen beim Abheben einfach aus ihren Steckhülsen.",
+    "exp": "Die Pogos stabilisieren die vollgetankten, herabhängenden Flügel beim Rollen und fallen beim Abheben einfach aus ihren Steckhülsen."
+  },
+  {
+    "cat": "bomber_aufklaerer",
+    "diff": "pro",
+    "q": "Welcher neue US-Tarnkappenbomber wurde im Dezember 2022 als Nachfolger der B-2 feierlich der Öffentlichkeit vorgestellt?",
+    "a": [
+      "Northrop Grumman B-21 Raider",
+      "Boeing B-3 Penetrator",
+      "Lockheed B-12 Valkyrie II",
+      "General Dynamics B-88 Phantom"
+    ],
+    "explanation": "Die B-21 Raider ist ein digital konstruierter Stealth-Nurflügler der 6. Generation mit offener Systemarchitektur und Drohnen-Führungsfunktion.",
+    "exp": "Die B-21 Raider ist ein digital konstruierter Stealth-Nurflügler der 6. Generation mit offener Systemarchitektur und Drohnen-Führungsfunktion."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "easy",
+    "q": "Was bedeutet der Begriff 'Supercruise' bei modernen Kampfflugzeugen wie dem Eurofighter oder der F-22?",
+    "a": [
+      "Dauerhafter Überschallflug ohne Zuschalten des spritfressenden Nachbrenners",
+      "Automatisches Schweben über einem Punkt auf See",
+      "Fliegen mit zweifacher Schallgeschwindigkeit im Sturzflug",
+      "Das Koppeln des Autopiloten an zivile GPS-Satelliten"
+    ],
+    "explanation": "Supercruise spart enorme Mengen Kerosin und erlaubt es Kampfjets, mit Überschall ins Einsatzgebiet einzufliegen und einsatzbereit zu bleiben.",
+    "exp": "Supercruise spart enorme Mengen Kerosin und erlaubt es Kampfjets, mit Überschall ins Einsatzgebiet einzufliegen und einsatzbereit zu bleiben."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "easy",
+    "q": "Welche radargelenkte US-Luft-Luft-Rakete gilt als weltweiter Standard für BVR-Kämpfe (Beyond Visual Range)?",
+    "a": [
+      "AIM-120 AMRAAM",
+      "AIM-9 Sidewinder",
+      "AGM-88 HARM",
+      "AGM-65 Maverick"
+    ],
+    "explanation": "Die AMRAAM (Advanced Medium-Range Air-to-Air Missile) verfügt über ein eigenes aktives Radar und arbeitet nach dem Fire-and-Forget-Prinzip.",
+    "exp": "Die AMRAAM (Advanced Medium-Range Air-to-Air Missile) verfügt über ein eigenes aktives Radar und arbeitet nach dem Fire-and-Forget-Prinzip."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "easy",
+    "q": "Was versteht man unter 'Chaff' und 'Flares' bei den Selbstschutzsystemen von Militärflugzeugen?",
+    "a": [
+      "Chaff täuscht feindliche Radargeräte durch Aluminiumstreifen, Flares täuschen Hitzesuchköpfe durch heiße Magnesiumfackeln",
+      "Chaff kühlt die Triebwerke ab, Flares erhellen die Landebahn bei Nacht",
+      "Chaff dient als Not-Treibstoff, Flares sind Blendgranaten gegen Bodentruppen",
+      "Chaff zerstört feindliche Funkantennen, Flares blenden feindliche Piloten"
+    ],
+    "explanation": "Düppel (Chaff) erzeugt eine künstliche Radarechowolke; Flares brennen mit über 1.000 Grad Celsius und ziehen Infrarotsuchköpfe auf sich.",
+    "exp": "Düppel (Chaff) erzeugt eine künstliche Radarechowolke; Flares brennen mit über 1.000 Grad Celsius und ziehen Infrarotsuchköpfe auf sich."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "easy",
+    "q": "Was zeichnet einen modernen 'Zero-Zero'-Schleudersitz (wie von Martin-Baker) aus?",
+    "a": [
+      "Er rettet den Piloten selbst bei Fluggeschwindigkeit Null und Höhe Null (am Boden im Stand)",
+      "Er benötigt null Sprengstoff und arbeitet rein mit Gummiseilen",
+      "Er funktioniert nur bei exakt null Grad Außentemperatur",
+      "Er kann ohne jegliche Fallschirme butterweich aufprallen"
+    ],
+    "explanation": "Dank Raketenpack schnellt der Sitz aus dem stehenden Flugzeug hoch genug in die Luft, damit sich der Rettungsschirm voll entfalten kann.",
+    "exp": "Dank Raketenpack schnellt der Sitz aus dem stehenden Flugzeug hoch genug in die Luft, damit sich der Rettungsschirm voll entfalten kann."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "mid",
+    "q": "Was ist der entscheidende Vorteil eines AESA-Radars (Active Electronically Scanned Array) gegenüber älteren mechanischen Radaren?",
+    "a": [
+      "Tausende winzige Sende-/Empfangsmodule schwenken den Radarstrahl blitzschnell rein elektronisch ohne bewegliche Teile",
+      "Es verbraucht im Betrieb überhaupt keinen elektrischen Bordstrom",
+      "Es kann feindliche Flugzeuge physisch durch Mikrowellenhitze zerstören",
+      "Es benötigt keine Antenne an der Flugzeugnase"
+    ],
+    "explanation": "AESA-Radare können gleichzeitig den Luftraum überwachen, Bodenziele kartieren und mehrere Raketen ins Ziel leiten – extrem schwer zu orten und zu stören.",
+    "exp": "AESA-Radare können gleichzeitig den Luftraum überwachen, Bodenziele kartieren und mehrere Raketen ins Ziel leiten – extrem schwer zu orten und zu stören."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "mid",
+    "q": "Welchen Radarquerschnitt (RCS - Radar Cross Section) weist ein Stealth-Jet wie die F-22 von vorne ungefähr auf?",
+    "a": [
+      "Vergleichbar mit einer kleinen Murmel oder einer Hummel (rund 0,0001 m²)",
+      "Vergleichbar mit einem ganzen Einfamilienhaus (rund 150 m²)",
+      "Exakt null Quadratmillimeter – physikalisch absolut unsichtbar",
+      "Vergleichbar mit einem Reisebus"
+    ],
+    "explanation": "Die F-22 ist am Radar nicht unsichtbar, reflektiert aber nur so viel Energie wie ein kleines Insekt, wodurch sie erst aus nächster Nähe geortet wird.",
+    "exp": "Die F-22 ist am Radar nicht unsichtbar, reflektiert aber nur so viel Energie wie ein kleines Insekt, wodurch sie erst aus nächster Nähe geortet wird."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "mid",
+    "q": "Welcher europäische Flugkörper gilt dank Staustrahltriebwerk (Ramjet) als eine der gefährlichsten Luft-Luft-Raketen der Welt?",
+    "a": [
+      "MBDA Meteor",
+      "AIM-9X Sidewinder",
+      "IRIS-T",
+      "Matra R550 Magic"
+    ],
+    "explanation": "Der Staustrahlantrieb der Meteor lässt sich im Flug drosseln, wodurch der Flugkörper im Zielanflug (No Escape Zone) nochmals voll beschleunigen kann.",
+    "exp": "Der Staustrahlantrieb der Meteor lässt sich im Flug drosseln, wodurch der Flugkörper im Zielanflug (No Escape Zone) nochmals voll beschleunigen kann."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "mid",
+    "q": "Wie funktioniert das IRST-System (Infrared Search and Track), das u. a. am Eurofighter und russischen Jets montiert ist?",
+    "a": [
+      "Es spürt feindliche Flugzeuge passiv an der Reibungshitze der Rumpfnase und Abgaswärme auf, ohne eigene Funkwellen abzustrahlen",
+      "Es sendet Infrarot-Laserimpulse aus, die die Tragflächen des Gegners zerschneiden",
+      "Es schützt die Cockpitscheibe vor feindlichen Laserblendwaffen",
+      "Es misst die Wassertemperatur von Flüssen zur Positionsbestimmung"
+    ],
+    "explanation": "IRST ist völlig passiv: Der Sucher 'sieht' Wärmequellen über Dutzende Kilometer, ohne dass der feindliche Radarwarner Alarm schlägt.",
+    "exp": "IRST ist völlig passiv: Der Sucher 'sieht' Wärmequellen über Dutzende Kilometer, ohne dass der feindliche Radarwarner Alarm schlägt."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "mid",
+    "q": "Welche Revolution bietet der Helm des F-35-Piloten (Gen III Helmet Mounted Display System)?",
+    "a": [
+      "Sensordaten von sechs Außenkameras werden direkt ins Visier projiziert – der Pilot blickt virtuell 'durch den Flugzeugboden'",
+      "Er kühlt den Kopf mit flüssigem Helium gegen G-Kräfte",
+      "Er steuert das Flugzeug komplett durch Gedankenübertragung",
+      "Er ersetzt die Sauerstoffmaske durch künstliche Kiemenatmung"
+    ],
+    "explanation": "Das Distributed Aperture System (DAS) projiziert eine nahtlose 360-Grad-Rundumansicht ins Helmdisplay; blickt der Pilot nach unten, sieht er die Landschaft unter dem Jet.",
+    "exp": "Das Distributed Aperture System (DAS) projiziert eine nahtlose 360-Grad-Rundumansicht ins Helmdisplay; blickt der Pilot nach unten, sieht er die Landschaft unter dem Jet."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "mid",
+    "q": "Welche Rakete feuert die Bundeswehr mit dem Waffensystem Patriot und der IRIS-T SLM zur Luft- und Raketenabwehr ab?",
+    "a": [
+      "Hochpräzise Flugabwehrlenkflugkörper mit Radar- bzw. hochauflösendem Infrarot-Suchkopf",
+      "Umlaufende Feststoff-Schrotladungen zur Wolkenbildung",
+      "Akustische Schockwellenbomben gegen Turbinen",
+      "Unbemannte Jagddrohnen mit Rammspornen"
+    ],
+    "explanation": "IRIS-T nutzt einen extrem empfindlichen Infrarotsuchkopf mit Schubvektorsteuerung und trifft selbst kleinste Marschflugkörper und Drohnen.",
+    "exp": "IRIS-T nutzt einen extrem empfindlichen Infrarotsuchkopf mit Schubvektorsteuerung und trifft selbst kleinste Marschflugkörper und Drohnen."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Was bewirken 3D-Schubvektordüsen, wie sie an der Suchoi Su-35 oder MiG-29OVT zu finden sind?",
+    "a": [
+      "Sie lenken den Triebwerksstrahl in alle Raumrichtungen aus und ermöglichen Manöver jenseits der aerodynamischen Strömungsgrenzen (Post-Stall)",
+      "Sie drehen das gesamte Triebwerk während des Flugs um die Längsachse",
+      "Sie erzeugen künstliche Tornados unter den Tragflächen für Notstarts",
+      "Sie kühlen den Abgasstrahl für Tauchfahrten unter Wasser ab"
+    ],
+    "explanation": "Schubvektorsteuerung erlaubt kontrollierte Fluglagen selbst dann, wenn an den normalen Rudern mangels Vorwärtsgeschwindigkeit keine Strömung mehr anliegt.",
+    "exp": "Schubvektorsteuerung erlaubt kontrollierte Fluglagen selbst dann, wenn an den normalen Rudern mangels Vorwärtsgeschwindigkeit keine Strömung mehr anliegt."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Warum besitzen moderne Marschflugkörper wie Taurus KEPD 350 oder Storm Shadow einen zweistufigen Tandem-Gefechtskopf (MEPHISTO)?",
+    "a": [
+      "Eine Vorladung sprengt eine Öffnung in Erdreich und Beton, danach dringt der schwere Penetrator tief in den Bunker ein",
+      "Die erste Stufe brennt chemischen Nebel ab, die zweite Stufe detoniert",
+      "Um das Ziel doppelt mit zwei verschiedenen Sprengstoffen zu markieren",
+      "Weil zwei kleine Sprengköpfe billiger in der Herstellung sind als ein großer"
+    ],
+    "explanation": "Der MEPHISTO-Sprengkopf durchschlägt mit seiner Vorhohlladung meterdecken Stahlbeton; ein intelligenter Sensor zählt Stockwerke vor der Zündung.",
+    "exp": "Der MEPHISTO-Sprengkopf durchschlägt mit seiner Vorhohlladung meterdecken Stahlbeton; ein intelligenter Sensor zählt Stockwerke vor der Zündung."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Welche Funktion hat die sogenannte 'DSI' (Diverterless Supersonic Inlet), wie sie an der F-35 und der Chengdu J-20 verwendet wird?",
+    "a": [
+      "Ein aerodynamischer Höcker vor dem Lufteinlauf leitet turbulente Grenzschichtluft ab und verdeckt die Verdichterschaufeln vor Radarstrahlen",
+      "Ein beweglicher Schieber, der bei Überschall mechanisch nach vorne fährt",
+      "Eine Einspritzdüse für Lachgas direkt vor dem Verdichterrad",
+      "Ein Sieb zum Auffangen von Vogelschlag im Tiefstflug"
+    ],
+    "explanation": "DSI spart hunderte Kilo an schweren Grenzschichtabscheidern und Klappen und reduziert den Radarquerschnitt an der Triebwerkseinlassöffnung dramatisch.",
+    "exp": "DSI spart hunderte Kilo an schweren Grenzschichtabscheidern und Klappen und reduziert den Radarquerschnitt an der Triebwerkseinlassöffnung dramatisch."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Wie überwindet ein Anti-Strahlungs-Flugkörper wie die AGM-88 HARM feindliche Flugabwehrstellungen?",
+    "a": [
+      "Er peilt die elektromagnetischen Sendesignale feindlicher Radarstellungen an und steuert direkt in die Radarantenne",
+      "Er strahlt radioaktive Isotope zur Zersetzung feindlicher Kabel ab",
+      "Er sendet starke Störgeräusche auf allen UKW-Frequenzen aus",
+      "Er entlädt Hochspannungsblitze in die Hochspannungsleitungen des Gegners"
+    ],
+    "explanation": "HARM (High-Speed Anti-Radiation Missile) schaltet feindliche Luftabwehr-Radare aus; schaltet der Gegner das Radar ab, merkt sich die Rakete die GPS-Koordinate.",
+    "exp": "HARM (High-Speed Anti-Radiation Missile) schaltet feindliche Luftabwehr-Radare aus; schaltet der Gegner das Radar ab, merkt sich die Rakete die GPS-Koordinate."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Welcher physikalische Effekt schützt Flugzeuge mit Fly-by-Wire vor struktureller Überlastung durch zu starke Steuerknüppel-Eingaben?",
+    "a": [
+      "G-Limiting (Flugsteuerungsrechner begrenzen die Lastvielfachen automatisch, z. B. auf maximal +9G)",
+      "Ein automatischer Stoßdämpfer bricht bei 5G einfach das Steuerhorn ab",
+      "Ein pneumatischer G-Anzug bläst den Piloten so stark auf, dass er den Knüppel loslässt",
+      "Das Triebwerk geht bei mehr als 7G automatisch für 5 Sekunden aus"
+    ],
+    "explanation": "Das Flight Control System (FCS) begrenzt Ruderausschläge in Millisekunden so, dass die Flugzeugzelle selbst bei vollem Durchreißen des Knüppels intakt bleibt.",
+    "exp": "Das Flight Control System (FCS) begrenzt Ruderausschläge in Millisekunden so, dass die Flugzeugzelle selbst bei vollem Durchreißen des Knüppels intakt bleibt."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Was versteht man unter 'Radar Absorbent Material' (RAM) auf der Außenhaut von Tarnkappenflugzeugen?",
+    "a": [
+      "Spezielle ferrit- oder kohlenstoffhaltige Beschichtungen, die Radarwellen aufnehmen und in winzige Wärmemengen umwandeln",
+      "Eine Gummischicht, die Radarwellen wie einen Tennisball zurückfedert",
+      "Eine Schicht aus Quecksilber, die das Radarlicht spiegelt",
+      "Eine bioaktive Algenpaste, die elektromagnetische Strahlung aufzehrt"
+    ],
+    "explanation": "RAM-Lackierungen absorbieren einfallende Radarwellen durch magnetische und dielektrische Verluste, statt sie zum feindlichen Sender zurückzustreuen.",
+    "exp": "RAM-Lackierungen absorbieren einfallende Radarwellen durch magnetische und dielektrische Verluste, statt sie zum feindlichen Sender zurückzustreuen."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Was ist der Hauptvorteil von internen Waffenschächten bei Stealth-Kampfflugzeugen gegenüber externen Pylonen unter den Flügeln?",
+    "a": [
+      "Raketen und Bomben zerstören an Außenlaststationen die Radartarnung und erzeugen enormen aerodynamischen Widerstand",
+      "Waffen dürfen laut Genfer Konventionen nicht mehr von außen sichtbar sein",
+      "Intern gelagerte Raketen können im Flug vom Piloten nachjustiert werden",
+      "Außen angehängte Waffen frieren in 10.000 Metern Höhe irreversibel fest"
+    ],
+    "explanation": "Jede außen angehängte Rakete wirkt auf dem Radar wie ein riesiger Scheinwerfer. Interne Schächte halten den Jet absolut 'sauber' und radararm.",
+    "exp": "Jede außen angehängte Rakete wirkt auf dem Radar wie ein riesiger Scheinwerfer. Interne Schächte halten den Jet absolut 'sauber' und radararm."
+  },
+  {
+    "cat": "technik_waffen",
+    "diff": "pro",
+    "q": "Wie funktioniert das sogenannte 'Link 16'-Datenfunksystem der NATO-Streitkräfte?",
+    "a": [
+      "Taktische Daten über Feindziele, Treibstoff und Waffen werden im Sekundentakt verschlüsselt und abhörsicher zwischen Flugzeugen, Schiffen und Boden geteilt",
+      "Ein analoger Sprechfunkkanal mit automatischer Rauschunterdrückung",
+      "Ein Satellitennetzwerk ausschließlich für Drohnen-Videostreams",
+      "Ein Morse-Code-Signal über Langwelle für getauchte U-Boote"
+    ],
+    "explanation": "Link 16 verbindet alle Einheiten zu einem gemeinsamen taktischen Lagebild. Ein Jet kann eine Rakete abfeuern, deren Ziel nur ein entfernter AWACS sieht.",
+    "exp": "Link 16 verbindet alle Einheiten zu einem gemeinsamen taktischen Lagebild. Ein Jet kann eine Rakete abfeuern, deren Ziel nur ein entfernter AWACS sieht."
   }
-
-  // 1. Handkuratierte Szenario-, Einsatz- & Faktenfragen (80 Stück, 20 pro Kategorie)
-  const CORE = [
-    // --- JETS (20) ---
-    ['jets', 'easy', 'Welcher US-Kampfjet ging 2005 als erster in Serie gebauter Luftüberlegenheitsjäger der 5. Generation mit Tarnkappentechnik und Supercruise in Dienst?', 'Lockheed Martin F-22 Raptor', ['Lockheed Martin F-16 Fighting Falcon', 'Boeing F/A-18E Super Hornet', 'Grumman F-14 Tomcat'], 'Die F-22 Raptor kombiniert extreme Radartarnung (Stealth), 2D-Schubvektorsteuerung, AESA-Radar und Überschallflug ohne Nachbrenner (Supercruise).'],
-    ['jets', 'easy', 'Welche vier europäischen Nationen bilden das Kernkonsortium hinter dem Bau des Eurofighter Typhoon?', 'Deutschland, Großbritannien, Italien und Spanien', ['Frankreich, Schweden, Belgien und Niederlande', 'USA, Kanada, Australien und Japan', 'Österreich, Schweiz, Polen und Finnland'], 'Frankreich schied früh aus dem Gemeinschaftsprogramm aus und entwickelte im Alleingang die träger- und landgestützte Dassault Rafale.'],
-    ['jets', 'mid', 'Welche Version der Lockheed Martin F-35 Lightning II besitzt hinter dem Cockpit ein vertikales Hubgebläse (LiftFan) für Kurzstart und Senkrechtlandung (STOVL)?', 'F-35B', ['F-35A', 'F-35C', 'F-35I Adir'], 'Die F-35B von US Marine Corps, Royal Air Force und Italien lenkt über den Rolls-Royce-LiftFan kalten Luftstrom nach unten und schwenkt die Hauptdüse um 95 Grad abwärts.'],
-    ['jets', 'mid', 'Woran erkennt man die Flugzeugträger-Variante F-35C äußerlich am eindeutigsten im Vergleich zur F-35A der Luftwaffe?', 'Deutlich größere Tragflächen mit hochklappbaren Flügelspitzen, Doppelrad-Bugfahrwerk mit Katapultzugstange und robuster Fanghaken', ['Zwei Triebwerke nebeneinander im Heck', 'Entenflügel (Canards) vor dem Cockpit', 'Fehlendes Seitenleitwerk in reiner Nurflügelform'], 'Durch die vergrößerte Flügelfläche kann die F-35C bei geringerer Geschwindigkeit sicher per Fangseil auf CATOBAR-Flugzeugträgern landen.'],
-    ['jets', 'easy', 'Welcher zweistrahlige US-Marinejäger mit automatischen Schwenkflügeln wurde durch den Kinofilm „Top Gun“ (1986) weltberühmt?', 'Grumman F-14 Tomcat', ['McDonnell Douglas F-15 Eagle', 'General Dynamics F-111 Aardvark', 'Vought F-8 Crusader'], 'Die F-14 Tomcat schützte ab 1974 US-Flugzeugträgerkampfgruppen mit ihrem weitreichenden AWG-9-Radar und den Langstreckenraketen AIM-54 Phoenix.'],
-    ['jets', 'mid', 'Um welche riesige 30-mm-Siebenlauf-Gatling-Kanone herum wurde das US-Erdkampfflugzeug Fairchild Republic A-10 Thunderbolt II („Warthog“) buchstäblich konstruiert?', 'GAU-8/A Avenger', ['M61A1 Vulcan (20 mm)', 'Mauser BK-27 (27 mm)', 'GSch-30-1 (30 mm)'], 'Die GAU-8/A Avenger ist samt Munitionstrommel über 6 Meter lang; das Bugfahrwerk der A-10 musste deshalb seitlich nach rechts versetzt eingebaut werden.'],
-    ['jets', 'pro', 'Wie lautet der offizielle NATO-Codename des russischen Tarnkappen-Mehrzweckkampfflugzeugs Suchoi Su-57?', 'Felon', ['Flanker', 'Fulcrum', 'Foxhound'], 'Alle NATO-Codenamen für Jagdflugzeuge beginnen mit F (Fighter): Flanker = Su-27/35, Fulcrum = MiG-29, Foxhound = MiG-31, Felon = Su-57.'],
-    ['jets', 'mid', 'Welches schwedische Kampfflugzeug ist gezielt für Starts und Landungen auf 800 m kurzen Autobahn-Behelfspisten sowie 10-Minuten-Betankung durch kleine Bodentrupps ausgelegt?', 'Saab JAS 39 Gripen', ['Dassault Mirage 2000', 'Lockheed F-104 Starfighter', 'McDonnell Douglas F-4 Phantom II'], 'Das schwedische Bas-90-Verteidigungskonzept setzt auf Dezentralisierung im gesamten Straßennetz, weshalb die Gripen extrem wartungsfreundlich konstruiert wurde.'],
-    ['jets', 'pro', 'Warum erhielt die Lockheed F-117 Nighthawk das Präfix „F“ (Fighter), obwohl sie weder Radar noch Luft-Luft-Lenkwaffen besaß?', 'Sie war ein reiner Unterschall-Tarnkappen-Präzisionsbomber; das „F“ diente der Geheimhaltung und sollte erfahrene Jagdpiloten für die Erprobung anziehen', ['Weil sie Mach 3 im Luftkampf erreichte', 'Weil sie eine ferngesteuerte Drohne ohne Pilot war', 'Weil sie ursprünglich als Luftbetankungsflugzeug entwickelt wurde'], 'Die F-117 führte im internen Waffenschacht zwei lasergelenkte Bomben mit und verließ sich nachts komplett auf ihre facettenreiche Radartarnung und einen FLIR-Sensor.'],
-    ['jets', 'easy', 'Welcher Kampfjet der Bundeswehr steht rund um die Uhr auf den Fliegerhorsten Neuburg und Wittmund in der „Alarmrotte“ (Quick Reaction Alert)?', 'Eurofighter Typhoon', ['Panavia Tornado ECR', 'Airbus A400M', 'Fairchild A-10C Thunderbolt II'], 'Zwei voll bewaffnete Eurofighter steigen innerhalb weniger Minuten auf, um nicht identifizierte Luftfahrzeuge oder Maschinen mit Funkausfall im deutschen Luftraum abzufangen.'],
-    ['jets', 'mid', 'Welches Tarnkappenflugzeug bestellte Deutschland als künftigen Nachfolger des Panavia Tornado beim Taktischen Luftwaffengeschwader 33 in Büchel für die nukleare Teilhabe?', 'Lockheed Martin F-35A Lightning II', ['Boeing F-15EX Eagle II', 'Dassault Rafale M', 'Saab JAS 39E Gripen'], 'Deutschland beschafft 35 Exemplare der F-35A, weil dieses Muster bereits für den Einsatz der B61-12-Abwurfwaffen im NATO-Rahmen zertifiziert ist.'],
-    ['jets', 'pro', 'Wie heißt die für die deutsche Luftwaffe beauftragte elektronische Kampfführungsvariante des Eurofighter zum Ersatz des Tornado ECR?', 'Eurofighter EK (Elektronischer Kampf) mit Saab-Arexis-Störsystem und Anti-Radar-Lenkwaffe AARGM', ['Eurofighter Navy mit Katapultfahrwerk', 'Eurofighter Tanker mit Schlauchtrommel', 'Eurofighter Stealth-STOVL mit Hubgebläse'], 'Der Eurofighter EK übernimmt ab Ende der 2020er-Jahre die Unterdrückung gegnerischer Flugabwehrradare (SEAD).'],
-    ['jets', 'mid', 'Wie lautet das Kürzel des französisch-deutsch-spanischen Rüstungsprojekts für ein Luftkampfsystem der 6. Generation samt „Remote Carrier“-Drohnen?', 'FCAS (Future Combat Air System)', ['GCAP (Global Combat Air Programme)', 'JSF (Joint Strike Fighter)', 'MRCA (Multi-Role Combat Aircraft)'], 'Parallel dazu treiben Großbritannien, Italien und Japan das eigene 6.-Gen-Projekt GCAP (ehemals Tempest) voran.'],
-    ['jets', 'mid', 'Welche drei Länder kooperieren im Konkurrenzprogramm GCAP (Global Combat Air Programme) zur Entwicklung eines Kampfjets der 6. Generation bis etwa 2035?', 'Großbritannien, Italien und Japan', ['Frankreich, Deutschland und Spanien', 'USA, Kanada und Australien', 'Schweden, Finnland und Norwegen'], 'Ende 2022 verschmolzen das britisch-italienische Tempest-Programm und das japanische F-X-Projekt zu GCAP.'],
-    ['jets', 'pro', 'Warum übernahm die Bundeswehr nach 1990 zunächst 24 MiG-29 „Fulcrum“ aus NVA-Beständen in das Jagdgeschwader 73 „Steinhoff“?', 'Die MiG-29 übertraf mit ihrem Helmvisier und der schwenkbaren Kurzstreckenrakete R-73 im Nahkampf damals westliche Muster und diente NATO-weit als realistischer Übungsgegner', ['Weil Westdeutschland 1990 keine eigenen Kampfflugzeuge mehr besaß', 'Weil die MiG-29 mit Schiffsdiesel flog', 'Weil sie auf kleinen Hubschrauberträgern landen konnte'], '2004 gab Deutschland die verbliebenen 22 einsatzfähigen MiG-29 für je einen symbolischen Euro an das NATO-Mitglied Polen ab.'],
-    ['jets', 'pro', 'Welcher Konkurrenz-Prototyp unterlag 1991 im US-Auswahlverfahren „Advanced Tactical Fighter“ der YF-22 (später F-22 Raptor), punktete aber mit Rautenflügel und V-Leitwerk?', 'Northrop/McDonnell Douglas YF-23 („Black Widow II“)', ['Boeing X-32', 'Grumman X-29', 'Rockwell-MBB X-31'], 'Die YF-23 erreichte etwas höhere Supercruise-Werte und sehr niedrige Heck-Infrarotsignatur, während die F-22 durch Schubvektoren im engen Kurvenkampf dominierte.'],
-    ['jets', 'mid', 'Welches Experimentalflugzeug der 1980er mit markant nach vorn gepfeilten Verbundwerkstoff-Flügeln zeigte der NASA extrem hohe Agilität knapp vor dem Strömungsabriss?', 'Grumman X-29', ['Bell X-1', 'Lockheed SR-71', 'North American X-15'], 'Da bei vorwärts gepfeilten Flügeln der Strömungsabriss zuerst innen auftritt, bleiben die äußeren Querruder bis in hohe Anstellwinkel voll wirksam.'],
-    ['jets', 'pro', 'Welches deutsch-amerikanische Experimentalprogramm (Rockwell / MBB) demonstrierte in den 1990ern mit 3D-Schubvektor-Paddeln das extrem enge „Herbst-Manöver“ bei bis zu 70° Anstellwinkel?', 'Rockwell-MBB X-31', ['EWR VJ 101', 'VFW VAK 191B', 'Dornier Do 31'], 'Das Manöver wurde nach dem deutschen Messerschmitt-Bölkow-Blohm-Konstrukteur Wolfgang Herbst benannt.'],
-    ['jets', 'mid', 'Welche zweistrahlige Suchoi-Variante ordnet Pilot und Waffensystemoffizier nebeneinander in einem breiten gepanzerten Cockpit samt kleiner Bordküche und Toilette an?', 'Suchoi Su-34 („Fullback“)', ['Suchoi Su-27 („Flanker“)', 'Suchoi Su-57 („Felon“)', 'Mikojan MiG-31 („Foxhound“)'], 'Durch das breite „Entenschnabel“-Cockpit der Su-34 können sich die Besatzungsmitglieder auf langen Langstreckeneinsätzen abwechseln und kurz aufstehen.'],
-    ['jets', 'easy', 'Welcher einstrahlige US-Jet von General Dynamics / Lockheed Martin wurde über 4.600-mal gebaut und gilt mit seiner freien 360°-Tropfenhaube bis heute als weltweiter Exportschlager?', 'F-16 Fighting Falcon („Viper“)', ['F-15 Eagle', 'F-104 Starfighter', 'F-4 Phantom II'], 'Bei der F-16 liegt der Schleudersitz um 30 Grad nach hinten geneigt, damit der Pilot Beschleunigungen bis +9 g besser verkraftet.'],
-
-    // --- HISTORISCH (20) ---
-    ['historisch', 'easy', 'Welches deutsche Strahljagdflugzeug mit zwei Jumo-004-Düsentriebwerken ging 1944 als erstes serienmäßig eingesetztes Düsenjagdflugzeug der Welt in den Kampfeinsatz?', 'Messerschmitt Me 262 („Schwalbe“)', ['Messerschmitt Bf 109', 'Focke-Wulf Fw 190', 'Junkers Ju 87 („Stuka“)'], 'Mit rund 870 km/h Höchstgeschwindigkeit war die gepfeilte Me 262 allen alliierten Kolbenmotorjägern tempo- und steigleistungsmäßig weit überlegen.'],
-    ['historisch', 'mid', 'Welcher Motor verhalf der US-amerikanischen North American P-51D Mustang ab Ende 1943 erst zur überragenden Höhenleistung für Langstrecken-Eskorten nach Berlin?', 'Der flüssigkeitsgekühlte Rolls-Royce Merlin V12 mit Zweistufenlader (US-Lizenzbau Packard V-1650)', ['Der Praga-Reihenmotor', 'Der BMW 801 Sternmotor', 'Der Junkers Jumo 004 Düsenantrieb'], 'Die frühe P-51A mit Allison-Motor verlor oberhalb von 4.500 Metern stark an Leistung; erst der britische Merlin verwandelte sie in den vielseitigsten Eskortjäger.'],
-    ['historisch', 'easy', 'Welcher britische Einsitzer des Zweiten Weltkriegs ist sofort an seinen charakteristisch geschwungenen, dünnen elliptischen Tragflächen zu erkennen?', 'Supermarine Spitfire', ['Hawker Typhoon', 'Gloster Meteor', 'Avro Lancaster'], 'Reginald J. Mitchell kombinierte bei der Spitfire geringen induzierten Flügelwiderstand mit enormer Wendigkeit und dem markanten Klang des Rolls-Royce Merlin.'],
-    ['historisch', 'mid', 'Worin lag der konstruktive Vorteil des hängenden V12-Motors Daimler-Benz DB 601/605 (Zylinder nach unten) bei der Messerschmitt Bf 109?', 'Freiere Sicht über die tiefere Motorhaube, günstige Schwerpunktlage und dank direkter Benzineinspritzung keine Vergaseraussetzer bei negativen G-Kräften', ['Er arbeitete ohne Kühlflüssigkeit allein durch Fahrtwind', 'Er konnte im Flug rückwärts gedreht werden', 'Er verbrauchte Schweröl statt Benzin'], 'Britische Vergasermotoren der frühen Luftschlacht um England setzten beim plötzlichen Drücken in den Sturzflug kurz aus, während die Bf 109 unterbrechungsfrei durchzog.'],
-    ['historisch', 'pro', 'Warum nannte man die zweimotorige britische De Havilland DH.98 Mosquito im Zweiten Weltkrieg respektvoll „The Wooden Wonder“?', 'Ihre aerodynamisch glatte Verbundschale bestand fast komplett aus leichtem Balsaholz und Birkensperrholz, sodass sie vielen Jägern einfach davonflog', ['Sie hatte nur eine Attrappen-Kanone aus Holz', 'Sie war bloß ein hölzernes Segelübungsgerät', 'Ihre Propeller waren aus Eichenstämmen geschnitzt'], 'Dank niedriger Masse und zwei Rolls-Royce-Merlin-Motoren flog die Mosquito schnelle Aufklärungs-, Pfadfinder- und Präzisionsangriffe bei minimalen Verlusten.'],
-    ['historisch', 'mid', 'Welche beiden Strahljäger der ersten Pfeilflügel-Generation trafen ab 1950 über Korea in der sogenannten „MiG Alley“ direkt aufeinander?', 'North American F-86 Sabre und Mikojan-Gurewitsch MiG-15', ['F-4 Phantom II und MiG-21', 'F-104 Starfighter und MiG-23', 'Me 262 und Gloster Meteor'], 'Die MiG-15 punktete mit Steigleistung und schwerer 37-/23-mm-Kanonenbewaffnung, während die F-86 Sabre über ein radargestütztes Visier und hydraulische Steuerung verfügte.'],
-    ['historisch', 'easy', 'Welcher leuchtend rot gestrichene deutsche Dreidecker aus dem Ersten Weltkrieg ist untrennbar mit Manfred von Richthofen („Roter Baron“) verbunden?', 'Fokker Dr.I', ['Albatros D.V', 'Sopwith Camel', 'SPAD S.XIII'], 'Durch seine drei kompakten, freitragenden Tragflächen ohne äußere Spanndrähte kletterte der Fokker Dr.I außergewöhnlich schnell und drehte eng auf der Stelle.'],
-    ['historisch', 'mid', 'Welche technische Erfindung von Anthony Fokker 1915 ermöglichte es Jagdflugzeugen erstmals zuverlässig, durch den eigenen rotierenden Propellerkreis nach vorn zu schießen?', 'Das Unterbrechergetriebe (Synchronisationsgetriebe) zwischen Motorwelle und Maschinengewehr', ['Das Bordradar im Spinner', 'Rückstoßfreie Hohlraumgeschosse', 'Einen elektrisch abschaltbaren Gummi-Propeller'], 'Vorher experimentierten Piloten wie Roland Garros mit auf den Propellerblättern aufgeschraubten Stahlkeilen, die Abpraller ablenkten.'],
-    ['historisch', 'mid', 'Warum zog das britische Erfolgsjagdflugzeug Sopwith Camel des Ersten Weltkriegs bei Rechtskurven abrupt die Nase nach unten und verlangte höchste Aufmerksamkeit?', 'Wegen des starken Kreiseleffekts seines schweren rotierenden Umlaufmotors (Clerget 9B)', ['Weil die rechte Tragfläche stets kürzer gebaut war', 'Weil sie nur auf einem Rad landete', 'Weil sie Heckruder ohne Kabel besaß'], 'In den Händen erfahrener Piloten ließ sich genau diese Kreiselwirkung für blitzschnelle Richtungswechsel ausnutzen – für 1.294 Luftsiege der Alliierten.'],
-    ['historisch', 'easy', 'Mit welchem raketengetriebenen Experimentalflugzeug durchbrach Chuck Yeager am 14. Oktober 1947 als erster Mensch im kontrollierten Horizontalflug die Schallmauer?', 'Bell X-1 („Glamorous Glennis“)', ['North American F-86 Sabre', 'North American X-15', 'Lockheed F-80 Shooting Star'], 'Die Bell X-1 wurde unter dem Rumpf einer B-29 in große Höhe getragen, ausgeklinkt und beschleunigte mit vier Flüssigkeits-Brennkammern auf Mach 1,06.'],
-    ['historisch', 'pro', 'Welches US-Hyperschall-Raketenflugzeug stellte 1967 unter William „Pete“ Knight mit Mach 6,70 (7.274 km/h) den bis heute unerreichten Geschwindigkeitsrekord bemannt fliegender Flugzeuge auf?', 'North American X-15', ['Lockheed SR-71 Blackbird', 'North American XB-70 Valkyrie', 'Mikojan-Gurewitsch MiG-25'], 'Die hitzebeständige X-15 aus Inconel X stieg außerdem auf über 107 Kilometer Höhe an den Rand des Weltraums.'],
-    ['historisch', 'mid', 'Welches war 1944 das einzige tatsächlich im Fronteinsatz geflogene Strahljagdflugzeug der Westalliierten und fing unter anderem deutsche V1-Marschflugkörper ab?', 'Gloster Meteor', ['De Havilland Vampire', 'Lockheed P-80 Shooting Star', 'Hawker Sea Fury'], 'Die zweistrahlige Gloster Meteor F.1 flog bereits ab Juli 1944 Einsätze über Südengland gegen anfliegende V1-Flügelbomben.'],
-    ['historisch', 'pro', 'Welcher sechsstrahlige Mach-3-Versuchsbomber klappte ab 1964 im schnellen Flug seine äußeren Flügelspitzen um bis zu 65 Grad nach unten, um „Compression Lift“ auf seiner Stoßwelle zu erzeugen?', 'North American XB-70 Valkyrie', ['Convair B-58 Hustler', 'Convair B-36 Peacemaker', 'Boeing B-47 Stratojet'], 'Durch das Herunterklappen wuchs der Auftrieb im Überschall um rund 30 %, während sich das Seitenleitwerk stabilisierte.'],
-    ['historisch', 'easy', 'Welches sowjetische Schlachtflugzeug des Zweiten Weltkriegs wurde mit über 36.100 Stück das meistgebaute Militärflugzeug der Geschichte?', 'Iljuschin Il-2 („Sturmovik“)', ['Messerschmitt Bf 109', 'Supermarine Spitfire', 'North American P-51 Mustang'], 'Bei der Il-2 war die schwere Stahlpanzerung nicht aufgeschraubt, sondern direkt als tragende vordere Rumpfwanne um Motor und Besatzung ausgelegt.'],
-    ['historisch', 'mid', 'Warum erhielt der trägergestützte Pazifik-Jäger Chance Vought F4U Corsair charakteristisch nach unten geknickte Tragflächen („Inverted Gull Wing“)?', 'Um beim riesigen 4-Meter-Propeller genügend Bodenfreiheit zu wahren, ohne ein unstabil langes Hauptfahrwerk zu benötigen', ['Zur Tarnung vor U-Boot-Radaren', 'Um Bomben seitlich abzulenken', 'Um Schwimmer für Wasserlandungen unterzubringen'], 'Durch den Knickflügel stand das kürzere Fahrwerk zudem rechtwinklig am Flügelknick, was Decklandungen erheblich robuster machte.'],
-    ['historisch', 'mid', 'Welche zweimotorige US-Maschine im Zweiten Weltkrieg trug wegen ihrer zwei schlanken Heckausleger und zentralen Waffengondel bei deutschen Piloten den Spitznamen „Gabelschwanzteufel“?', 'Lockheed P-38 Lightning', ['North American B-25 Mitchell', 'De Havilland Mosquito', 'Grumman F7F Tigercat'], 'Da alle Bordwaffen (20-mm-Kanone + vier 12,7-mm-MG) gebündelt in der Rumpfspitze lagen, streute die P-38 auf weite Distanz deutlich weniger als Flügelwaffen.'],
-    ['historisch', 'easy', 'Welcher Überschall-Abfangjäger der Sowjetunion wurde mit über 11.400 gebauten Exemplaren das meistgebaute Überschall-Kampfflugzeug überhaupt?', 'Mikojan-Gurewitsch MiG-21 („Fishbed“)', ['Suchoi Su-27', 'MiG-29', 'F-4 Phantom II'], 'Kennzeichnend ist der spitze bewegliche Stoßwellenkegel direkt im kreisrunden Bug-Lufteinlauf des Rumpfes.'],
-    ['historisch', 'mid', 'Welche historische Besonderheit wies der britische Kalter-Krieg-Abfangjäger English Electric Lightning bei der Anordnung seiner beiden Rolls-Royce-Avon-Triebwerke auf?', 'Die beiden Strahltriebwerke saßen nicht nebeneinander, sondern vertikal übereinander gestapelt im schlanken Rumpf', ['Eines saß in der linken Flügelspitze und eines im Seitenleitwerk', 'Ein Triebwerk war nach vorn zum Bremsen gerichtet', 'Die Lufteinläufe befanden sich unter dem Cockpitboden'], 'Die gestapelte Anordnung minimierte die Stirnfläche für extrem schnelle Steigflüge auf Mach 2 zur Bomberabwehr.'],
-    ['historisch', 'easy', 'Welche viermotorige britische Nachtbomber-Konstruktion konnte dank eines riesigen ungeteilten Bombenschachts die 10 Tonnen schwere „Grand Slam“-Erdbebenbombe tragen?', 'Avro Lancaster', ['Handley Page Halifax', 'Boeing B-17G Flying Fortress', 'Vickers Wellington'], 'Auch die berühmten rotierenden „Upkeep“-Rollbomben gegen deutsche Talsperren 1943 („Dambusters“) wurden von modifizierten Avro Lancasters eingesetzt.'],
-    ['historisch', 'pro', 'Welches Problem plagte die deutsche Raketenjagdmaschine Messerschmitt Me 163 „Komet“ beim Starten und Landen neben der hochreaktiven Treibstoffkombination T-Stoff / C-Stoff?', 'Sie warf nach dem Abheben ihr zweirädriges Fahrwerk ab und landete als schwerer antriebsloser Segler mit hoher Geschwindigkeit auf einer ausfahrbaren Rumpfkufe', ['Sie musste rückwärts gegen ein Netz landen', 'Sie besaß keinerlei Seitenruder', 'Ihr Piloten-Cockpit lag offen im Abgasstrahl'], 'Schon kleinste Restmengen des Wasserstoffperoxid-Treibstoffs im Rumpf konnten bei harten Kufenlandungen verheerende Explosionen auslösen.'],
-
-    // --- BOMBER, AUFKLÄRER, TRANSPORTER & HUBSCHRAUBER (20) ---
-    ['bomber_aufklaerer', 'easy', 'Welches zweistrahlige Lockheed-Aufklärungsflugzeug hält mit über Mach 3,2 und > 25 km Dienstgipfelhöhe den Rekord für bemannte luftatmende Serienjets?', 'Lockheed SR-71 Blackbird', ['Lockheed U-2S Dragon Lady', 'Northrop B-2 Spirit', 'Rockwell B-1B Lancer'], 'Kein einziges Exemplar der Titan-gebauten SR-71 wurde jemals durch gegnerische Luftabwehr abgeschossen – über 800 gestartete Flugabwehrraketen gingen ins Leere.'],
-    ['bomber_aufklaerer', 'mid', 'Warum tropfte die Lockheed SR-71 Blackbird am Boden vor dem Start absichtlich Treibstoff (JP-7) aus den Tanks?', 'Die Titan-Beplankung hatte Dehnungsfugen, die sich erst bei rund 300 °C Reibungshitze im Mach-3-Flug ausdehnten und die Tanks dicht schlossen', ['Um die Startbahn vor dem Abheben abzukühlen', 'Weil JP-7 bei Normaldruck zu schwer war', 'Weil die Dichtungen durch ein fehlendes Hydraulikventil nicht eingesetzt wurden'], 'Deshalb startete die SR-71 oft mit Teilbetankung, heizte kurz auf Überschall hoch und wurde dann per Tankflugzeug in der Luft vollgetankt.'],
-    ['bomber_aufklaerer', 'easy', 'Welcher achtstrahlige strategische US-Bomber aus den 1950er-Jahren soll nach laufender Umrüstung auf Rolls-Royce-F130-Triebwerke (B-52J) rund 100 Jahre lang bis in die 2050er im Dienst stehen?', 'Boeing B-52 Stratofortress', ['Convair B-36 Peacemaker', 'Boeing B-47 Stratojet', 'Northrop B-2 Spirit'], 'Heute fliegen bereits Enkelkinder der ersten B-52-Crews mit der unverwüstlichen Zelle von 1961/62.'],
-    ['bomber_aufklaerer', 'mid', 'Welcher strategische Bomber ist mit vier gigantischen Turboprops und acht gegenläufigen Propellern als vermutlich lautestes Militärflugzeug der Welt berüchtigt?', 'Tupolew Tu-95 („Bear“)', ['Tupolew Tu-160 („Blackjack“)', 'Tupolew Tu-22M3 („Backfire“)', 'Boeing B-52H'], 'Die Blattspitzen der acht gegenläufigen Propeller bewegen sich dauerhaft mit Überschallgeschwindigkeit und waren selbst auf Sonaren getauchter U-Boote ortbar.'],
-    ['bomber_aufklaerer', 'mid', 'Welcher neue US-Tarnkappen-Nurflügelbomber absolvierte im November 2023 seinen Erstflug und soll schrittweise die B-1B und B-2 Spirit ersetzen?', 'Northrop Grumman B-21 Raider', ['Boeing B-3 Sentinel', 'Lockheed Martin SR-72', 'Convair B-58 II'], 'Benannt wurde die B-21 nach den „Doolittle Raiders“ von 1942 und integriert offene Software-Architektur für Drohnen-Begleitung.'],
-    ['bomber_aufklaerer', 'mid', 'Welche Start- und Landeeigenschaft verlangt die hochfliegende Lockheed U-2 „Dragon Lady“ wegen ihres Fahrrad-Tandemfahrwerks beim Aufsetzen?', 'Ein zweiter Pilot in einem schnellen Sportwagen („Chase Car“) rast hinter der landenden Maschine über die Piste und funkt zentimetergenau die letzte Höhe an', ['Sie landet stets quer zur Bahn auf Stahlkufen', 'Sie wirft vor jedem Aufsetzen ihre Tragflächenspitzen ab', 'Sie hakt sich in Träger-Fangseilen ein'], 'Aufgrund der 31,4 m langen Segelflugzeugflügel und kaum Sicht über die lange Nase ist das präzise Ausschweben extrem anspruchsvoll.'],
-    ['bomber_aufklaerer', 'easy', 'Welche prägende Dachstruktur trägt das NATO-/USAF-Frühwarnflugzeug Boeing E-3 Sentry (AWACS)?', 'Eine 9,1 Meter große drehende Scheibenantenne („Rotodome“) mit 360°-Radar auf zwei Stützen über dem 707-Rumpf', ['Einen Ausleger nach vorn wie eine Lanze', 'Drei hintereinander angeordnete Heckleitwerke', 'Vier zusätzliche Startraketen unter den Flügeln'], 'Ein E-3 AWACS überwacht Luftraum und Tiefflieger in einem Radius von über 400 Kilometern.'],
-    ['bomber_aufklaerer', 'mid', 'Welche Besonderheit bei der Drehrichtung seiner vier Achtblatt-Propeller besitzt das europäische Transportflugzeug Airbus A400M „Atlas“?', 'Die beiden Propeller jeder Tragfläche drehen gegenläufig aufeinander zu („Down Between Engines“), um Drehmoment und Flügeldurchbiegung drastisch zu senken', ['Die beiden äußeren Propeller drehen im Rückwärtsgang als Bremse', 'Alle vier Propeller treiben nur einen gemeinsamen Zentralrotor an', 'Die Propeller drehen erst ab 5.000 Metern Höhe'], 'Durch die symmetrische Umströmung beider Flügel braucht der A400M deutlich weniger Seitenruderfläche und weniger strukturelles Gewicht.'],
-    ['bomber_aufklaerer', 'easy', 'Welche schwere Transporthubschrauber-Baureihe mit Tandem-Doppelrotoren beschafft auch die Bundeswehr in 60 Exemplaren (Block II Standard Range) als CH-53-Nachfolger?', 'Boeing CH-47 Chinook', ['Sikorsky UH-60 Black Hawk', 'NHIndustries NH90', 'Bell UH-1D Huey'], 'Dank der beiden gegenläufig rotierenden Hauptrotoren vorn und hinten entfällt der leistungsverbrauchende Heckrotor komplett.'],
-    ['bomber_aufklaerer', 'pro', 'Welcher russische Kampfhubschrauber verfügt nicht nur über gegenläufige Koaxialrotoren ohne Heckrotor, sondern als weltweit einziger Serien-Heli über echte Raketen-Schleudersitze?', 'Kamow Ka-52 „Alligator“', ['Mil Mi-28N „Havoc“', 'Boeing AH-64E Apache', 'Airbus Helicopters Tiger'], 'Vor dem Auslösen der K-37-800-Schleudersitze sprengen kleine Sprengschnüre in den Rotorwurzeln die Rotorblätter aus der Gefahrenzone ab.'],
-    ['bomber_aufklaerer', 'mid', 'Welche vierstrahlige Zivilflugzeug-Abwandlung übernimmt bei den Marinefliegern in Nordholz als Nachfolger der P-3C Orion die Seefernaufklärung und U-Boot-Jagd?', 'Boeing P-8A Poseidon (auf Basis der Boeing 737-800 mit Flügeln der -900)', ['Airbus A320 MPA', 'Lockheed S-3 Viking', 'Breguet Atlantic'], 'Die P-8A trägt Torpedos im internen Waffenschacht im Rumpf und wirft über 120 akustische Sonarbojen ab.'],
-    ['bomber_aufklaerer', 'easy', 'Welches sechsmotorige Frachtflugzeug hielt mit 88,4 m Spannweite und 640 t max. Startmasse bis zu seiner Zerstörung 2022 den Weltrekord als größtes Flugzeug?', 'Antonow An-225 „Mrija“', ['Antonow An-124 „Ruslan“', 'Lockheed C-5M Super Galaxy', 'Hughes H-4 Hercules'], 'Die An-225 entstand in den 1980er-Jahren ursprünglich, um die sowjetische Raumfähre „Buran“ auf dem Rumpfrücken zu transportieren.'],
-    ['bomber_aufklaerer', 'mid', 'Wie kombiniert das Kipprotor-Wandelflugzeug Bell Boeing V-22 Osprey Hubschrauber- und Flugzeugfähigkeiten?', 'Es startet und landet senkrecht mit nach oben zeigenden Rotoren und schwenkt die beiden Motorgondeln im Flug um 90° nach vorn', ['Es besitzt vier senkrechte Düsen und zwei Stummelflügel', 'Es lässt sich nur über einen großen Kran absetzen', 'Es wirft nach dem Senkrechtstart die Rotoren ab'], 'Dadurch fliegt die V-22 doppelt so schnell und weit wie ein herkömmlicher Transporthubschrauber gleicher Nutzlast.'],
-    ['bomber_aufklaerer', 'easy', 'Was steckt bei der Boeing AH-64E Apache hinter dem markanten „Kugel-Radom“ ganz oben über der Rotornabe?', 'Das Millimeterwellen-Feuerleitradar AN/APG-78 „Longbow“, das über Baumwipfel und Hügelkämme hinweg Ziele aufklärt, während der Rumpf verborgen bleibt', ['Ein passiver Wetterballon', 'Der Haupttank für die 30-mm-Kanone', 'Eine Satelliten-WLAN-Antenne für Passagiere'], 'So erkennt der Apache in Deckung hinter einem Waldrand Panzerkolonnen und kann Radar-Hellfire-Raketen abfeuern.'],
-    ['bomber_aufklaerer', 'mid', 'Welche große Langstreckendrohne (HALE) mit Druckfan über dem Heck und knapp 40 m Spannweite liefert der NATO als „AGS Phoenix“ von Sizilien aus Radaraufklärung?', 'Northrop Grumman RQ-4D (Global Hawk)', ['General Atomics MQ-9 Reaper', 'Bayraktar TB2', 'Eurofighter Typhoon'], 'Eine einzige RQ-4 kann über 30 Stunden am Stück in 18.000 Metern Höhe patrouillieren und mit SAR-Radar durch Wolken hindurchsehen.'],
-    ['bomber_aufklaerer', 'mid', 'Welche zentrale Eigenschaft unterscheidet das europäische Tank- und Transportflugzeug Airbus A330 MRTT von reinen Kampfjets bei Luftbetankungsmissionen?', 'Es nutzt den gesamten regulären Flügel- und Rumpftankinhalt von ca. 111 Tonnen Kerosin ohne zusätzliche Frachtraumtanks, sodass die Hauptkabine komplett für Truppen oder MedEvac frei bleibt', ['Es betankt Flugzeuge per Unterwasserpipeline', 'Es verwendet ausschließlich Atomantrieb', 'Es kann maximal 3 Tonnen Kerosin abgeben'], 'Darüber hinaus lässt sich der A330 MRTT sowohl mit starrem Tankausleger (Boom) als auch mit zwei Schlauch-Fangtrichtern unter den Tragflächen bestücken.'],
-    ['bomber_aufklaerer', 'mid', 'Welche Bauform verleiht der Northrop Grumman B-2 Spirit ihre minimale Radarsignatur aus fast jedem Winkel?', 'Eine reine glatte Nurflügler-Sägezahn-Geometrie ohne jedes Seitenleitwerk, bei der das gesamte Flugzeug selbst als Auftriebskörper dient und die Auslässe tief oben im Flügel versteckt sind', ['Ein extrem langer Stahl-Spiegel im Heck', 'Vier große Außenborder-Propeller vor den Tragflächen', 'Zwei schräg nach außen ragende Heckflossen aus Holz'], 'Stabilisiert wird die B-2 um die Hochachse statt durch ein Seitenruder über geteilte Spreizklappen an beiden Flügelspitzen und digitale Flugcomputer.'],
-    ['bomber_aufklaerer', 'pro', 'Warum trägt die sowjetisch-russische Tupolew Tu-160 den inoffiziellen Beinamen „Weißer Schwan“?', 'Wegen ihrer reflektierenden weißen Anti-Blitz-Lackierung gegen nukleare Wärmestrahlung und der eleganten Schwenkflügel-Silhouette', ['Weil sie aus geschäumtem Kunststoffschaum besteht', 'Weil sie auf verschneiten Seen landet', 'Weil alle Besatzungsmitglieder weiße Pelzmäntel tragen'], 'Mit 275 t maximalem Startgewicht und über Mach 2 ist die Tu-160 gleichzeitig das schwerste und schnellste Kampfflugzeug der Welt.'],
-    ['bomber_aufklaerer', 'mid', 'Welcher konstruktive Kniff erlaubt es dem vierstrahligen Transporter Boeing C-17 Globemaster III, schwere Kampfpanzer wie den M1 Abrams selbst auf 1.000-Meter-Behelfspisten sicher zu landen?', 'Extern angeblasene Auftriebsklappen (Externally Blown Flaps) im Abgasstrahl der vier Triebwerke sowie Schubumkehr, die selbst im Flug oder Rückwärtsrollen aktiviert werden kann', ['Zwei große Fanghaken am Bugfahrwerk', 'Ein 40 Meter breiter Bremsfallschirm unter dem Cockpit', 'Ein senkrechter LiftFan im Rumpfdach'], 'Zudem kann die C-17 mithilfe ihrer starken Schubumkehr am Boden eigenständig rückwärts einparken.'],
-    ['bomber_aufklaerer', 'easy', 'Welcher viermotorige Turboprop-Taktiktransporter befindet sich als C-130-Familie (bis heute als C-130J Super Hercules) seit über 70 Jahren ununterbrochen in Produktion?', 'Lockheed Martin C-130 Hercules', ['Antonow An-12', 'Transall C-160', 'Boeing C-17'], 'Ob mit Schneekufen in der Antarktis (LC-130), als Tanker (KC-130) oder schwer bewaffnetes Gunship (AC-130J) – kein anderes Militärtransportmuster blieb länger in Serie.'],
-
-    // --- TECHNIK & WAFFEN (26) ---
-    ['technik_waffen', 'easy', 'Wofür steht die Abkürzung „AESA“ bei modernen Kampfflugzeug-Radaren?', 'Active Electronically Scanned Array (aktive elektronische Strahlschwenkung mittels hunderter Sende-/Empfangsmodule)', ['Airborne Emergency Speed Assist', 'Automatic Engine Stability Actuator', 'Aerodynamic Electron Sensor Array'], 'Jedes einzelne Modul einer AESA-Antenne kann unabhängig senden und empfangen, sodass Luft-Luft-, Boden- und elektronische Störoperationen gleichzeitig in Millisekunden stattfinden.'],
-    ['technik_waffen', 'mid', 'Welche Antriebstechnik verschafft der europäischen Lenkwaffe MBDA „Meteor“ eine deutlich größere „No-Escape-Zone“ als herkömmlichen Feststoffraketen?', 'Ein drosselbares Staustrahltriebwerk (Ramjet / Throttleable Ducted Rocket), das Energie über den gesamten Flug bis kurz vor dem Einschlag aufspart', ['Ein miniaturisierter Atomreaktor im Heck', 'Ein Zweitakt-Dieselpropeller', 'Ein nach dem Start ausklappendes Segel'], 'Klassische Feststoffraketen brennen nach wenigen Sekunden aus und werden im Endanflug auf weichende Jets schnell zu langsam; Meteor hält hingegen bis zum Einschlag hohen Nachschub.'],
-    ['technik_waffen', 'easy', 'Was bedeutet „Supercruise“ in der Kampfflugzeugtechnik?', 'Anhaltender Überschallflug oberhalb von Mach 1 ohne Zuschaltung des Nachbrenners', ['Fliegen in über 40 km Höhe', 'Vollautomatische Trägerlandung ohne Pilot', 'Schweben wie ein Hubschrauber über dem Boden'], 'Ohne Nachbrenner verbraucht der Jet nur rund ein Viertel bis ein Drittel des Treibstoffs im Vergleich zum Nachbrennerflug und bleibt für Infrarotsensoren weitaus unauffälliger.'],
-    ['technik_waffen', 'mid', 'Welche zwei grundlegend unterschiedlichen Verfahren zur Luftbetankung sind in der westlichen Militärluftfahrt verbreitet?', 'Starrer Tankausleger („Flying Boom“, USAF) und flexibler Schlauch mit Fangtrichter („Probe-and-Drogue“, US Navy & europäische Luftwaffen)', ['Unterwasser-Kupplung und Abschleppseil', 'Magnetgreifer an der Flügelspitze', 'Elektrische Induktionsspulen'], 'Der Flying Boom liefert wesentlich höhere Kerosin-Durchflussraten für schwere Bomber (F-35A, F-15, B-2), während am Tankflugzeug bis zu drei Jets gleichzeitig per Fangtrichter andocken können.'],
-    ['technik_waffen', 'mid', 'Warum wurden frühe Überschalljets nach der in den 1950ern entdeckten „Flächenregel“ (Area Rule) im Bereich der Tragflächenwurzel tailliert gebaut („Coke-Bottle“-Form)?', 'Weil ein gleichmäßiger, sprungfreier Verlauf des Gesamtquerschnitts aus Rumpf plus Flügel den schlagartigen Wellenwiderstand bei Mach 1 drastisch reduziert', ['Damit Piloten bequemer über den Rumpf hinabsehen konnten', 'Zur Einsparung von Aluminiumblechen am Flügel', 'Um Zusatztanks enger anliegend aufhängen zu können'], 'Sowohl Otto Frenzl bei Junkers als auch Richard Whitcomb bei der NACA entdeckten unabhängig diesen Zusammenhang an Modellen und verhalfen etwa der Convair F-102 zu Mach 1+.'],
-    ['technik_waffen', 'mid', 'Warum konstruiert man moderne wendige Kampfjets wie Eurofighter oder F-16 bewusst „aerodynamisch instabil“ und überlässt die Stabilisierung vierfach redundanten Fly-by-Wire-Computern?', 'Der Auftriebsschwerpunkt liegt näher vor dem Schwerpunkt: Das reduziert den Trimmwiderstand im Geradeausflug und lässt das Flugzeug auf Steuerbefehle blitzschnell kippen', ['Um Wartungskosten an mechanischen Stangen zu umgehen', 'Weil die Flugrechner sonst im Geradeausflug arbeitslos wären', 'Um Batterien durch Windkraft zu laden'], 'Ohne funktionierende Flugkontrollrechner wäre ein aerodynamisch instabiles Flugzeug für Menschenhand binnen Sekundenbruchteilen unbeherrschbar.'],
-    ['technik_waffen', 'pro', 'Wie vermeidet die sogenannte „S-Duct“-Führung (gebogener Lufteinlaufkanal) bei Stealth-Jets wie F-22, B-2 oder F-117 ein enormes Radarecho?', 'Sie verdeckt von vorn den direkten Blick auf die stark radarreflektierenden rotierenden Verdichterschaufeln des Triebwerks hinter gebogenen radarabsorbierenden Kanalwänden', ['Sie leitet die angesaugte Luft direkt ins Cockpit', 'Sie nutzt flüssiges Stickstoffgas zur Tarnung', 'Sie kühlt ausschließlich den Schleudersitz'], 'Gerade die rotierenden Metall-Schaufeln eines Triebwerks erzeugen sonst auf feindlichem Radar einen unverwechselbaren „Jet Engine Modulation“-(JEM-)Fingerabdruck.'],
-    ['technik_waffen', 'pro', 'Was versteht man im Radar-Luftkampf (BVR) unter dem Ausweichmanöver „Notching“ oder „Beaming“ gegen ein Puls-Doppler-Radar?', 'Der angegriffene Jet dreht exakt quer (90°) zur Radarstrahlrichtung des Gegners, sodass seine Radialgeschwindigkeit nahe null liegt und der Dopplerfilter des Radars ihn mit Bodenechos („Ground Clutter“) herausfiltert', ['Er schaltet einfach sein eigenes Radar aus', 'Er fliegt senkrecht nach unten ins Meer', 'Er zündet sofort seinen Nachbrenner auf maximale Stufe'], 'Deshalb schalten moderne Kampfpiloten bei Raketenwarnung hart auf „3-Uhr“- oder „9-Uhr“-Kurs zur gegnerischen Radarquelle ab.'],
-    ['technik_waffen', 'mid', 'Welche Kern-Idee steckt hinter dem vom US-Jagdpiloten und Strategen John Boyd entwickelten Konzept der „Energy-Maneuverability Theory“ (E-M-Theorie)?', 'Die Vergleichbarkeit von Kampfflugzeugen über ihre spezifische Überschussleistung Ps: Wer schneller Energie (Höhe + Geschwindigkeit) bewahren und wiederaufbauen kann, gewinnt den Kurvenkampf', ['Dass immer die maximale Zahl an Bomben entscheidend ist', 'Dass leichte Holzflugzeuge schneller als Jets sind', 'Dass ein Pilot niemals mehr als zwei Kurven fliegen darf'], 'Boyds E-M-Theorie beeinflusste unmittelbar den Entwurf der extrem agilen US-Fighter F-15 Eagle und F-16 Fighting Falcon.'],
-    ['technik_waffen', 'easy', 'Was unterscheidet „Chaff“ (Düppel) von „Flares“ (Leuchtfackeln) beim Selbstschutz eines Kampfjets?', 'Chaff streut metallbeschichtete Glas-/Kunststofffäden gegen Radarsuchköpfe, während Flares extrem heiß abbrennende Leuchtkörper zur Ablenkung von Infrarot-Suchköpfen sind', ['Chaff ist gegen U-Boote und Flares sind gegen Funkstörungen', 'Chaff leuchtet rot und Flares dienen der Kommunikation am Boden', 'Chaff wird nur von Hubschraubern abgeworfen'], 'Beide Täuschkörper werden heute meist über automatische MAWS-Raketenanflugwarner koordiniert ausgestoßen.'],
-    ['technik_waffen', 'mid', 'Worauf zielt ein modernes DIRCM-System (Directional Infrared Countermeasures) an Großflugzeugen, Hubschraubern und Transportern wie dem A400M ab?', 'Es lenkt einen gebündelten, modulierten Laserstrahl direkt in den Infrarot-Suchkopf einer anfliegenden Lenkwaffe und blendet deren Steuerung', ['Es legt eine dichte Nebelwand über den eigenen Flügeln aus', 'Es misst nur die Abgastemperatur beim Rollen', 'Es zerstört gegnerische Satelliten im Orbit'], 'Damit wehrt ein Transportflugzeug tragbare Flugabwehrraketen (MANPADS) auch ohne unbegrenzte Vorräte an Flares ab.'],
-    ['technik_waffen', 'pro', 'Welchen grundlegenden technischen Unterschied markieren ein klassischer „PESA“- und ein moderner „AESA“-Radar?', 'Beim PESA speist eine einzige zentrale Hochleistungs-Röhrenquelle viele Phasenschieber; beim AESA besitzt jedes Antennenelement ein eigenes Halbleiter-Sende-/Empfangsmodul (TRM)', ['PESA funktioniert nur unter Wasser, AESA nur über 15 km Höhe', 'PESA benötigt gar keine elektrische Energie', 'AESA dreht sich mechanisch mit 1.200 Umdrehungen pro Minute'], 'Fällt beim AESA ein kleines Prozent der TRM-Module aus, arbeitet das Radar nahezu störungsfrei weiter (Graceful Degradation).'],
-    ['technik_waffen', 'easy', 'Wie schützt ein „Anti-G-Anzug“ samt Pressatmung (AGSM) einen Kampfpiloten bei engen Kurven von bis zu +9 g?', 'Aufblasbare Luftkammern an Beinen und Unterbauch sowie aktive Muskelspannung verhindern, dass das Blut in die untere Körperhälfte versackt und im Gehirn zu G-LOC (Bewusstlosigkeit) führt', ['Er wärmt die Hände bei Kälte in 15.000 Metern', 'Er schützt gegen Blitzschlag im Gewitter', 'Er verhindert Seekrankheit über dem Ozean'], 'Bereits bei +4 bis +5 g ohne Anti-G-Maßnahmen verengt sich das Gesichtsfeld erst zum Tunnelblick („Greyout“) bis zur vorübergehenden Erblindung („Blackout“).'],
-    ['technik_waffen', 'easy', 'Was gewährleistet ein „Zero-Zero-Schleudersitz“ (wie von Martin-Baker oder Aces II)?', 'Sicheren Raketen-Ausstieg und vollständige Fallschirmöffnung auch bei Geschwindigkeit null (0 kt) und Flughöhe null (0 m) direkt auf der Startbahn', ['Ausstieg bei doppelter Schallgeschwindigkeit ohne Anzug', 'Zero Wartungsaufwand während der gesamten Lebensdauer', 'Steuern des unbemannten Jets vom Fallschirm aus'], 'Vor Einführung des Zero-Zero-Prinzips endeten Ausstiege am Boden oder bei niedrigen Startunfällen mangels Fallschirm-Entfaltungszeit fast immer tödlich.'],
-    ['technik_waffen', 'mid', 'Worauf zielt die Kombination aus „HOBS“-Lenkwaffen (High Off-Boresight) und Piloten-Helmvisier (HMDS / JHMCS) im Luftnahkampf?', 'Der Pilot muss nicht mehr seine ganze Flugzeugnase auf das feindliche Ziel drehen, sondern schaut den Gegner durch das Helmvisier im extremen Seitenwinkel (bis ±90°) an und feuert direkt ab', ['Er kann Raketen durch das eigene Seitenleitwerk nach hinten feuern, ohne Sensorik', 'Das Helmvisier projiziert nur Kinofilme auf langen Überführungsflügen', 'Der Pilot lenkt damit gleichzeitig mehrere Tankflugzeuge'], 'IRIS-T und AIM-9X können dadurch unmittelbar nach dem Ausklinken mit Schubvektorsteuerung harte Kurven in die Blickrichtung des Piloten ziehen.'],
-    ['technik_waffen', 'mid', 'Worin liegt das Risiko eines militärischen Staustrahltriebwerks (Ramjet) im Gegensatz zu einem normalen Turbofan?', 'Ein reiner Ramjet liefert im Stand keinerlei Schub – er benötigt zunächst einen Raketenbooster oder ein Trägerflugzeug, um auf mindestens ~Mach 2 zu beschleunigen, ehe Staudruck die Verdichtung übernimmt', ['Er funktioniert ausschließlich unterhalb von 100 km/h', 'Er explodiert oberhalb von 500 Metern Höhe automatisch', 'Er verbraucht ausschließlich festes Kohlepulver'], 'Genau deshalb zündet bei der Meteor zuerst ein integrierter Feststoff-Booster für wenige Sekunden, ehe der eigentliche Ramjet übernimmt.'],
-    ['technik_waffen', 'mid', 'Welche Aufgaben trennen in der Luftabwehr-Unterdrückung die Missionstypen „SEAD“ und „DEAD“?', 'SEAD (Suppression of Enemy Air Defenses) zwingt gegnerische Radare mit Störsendern oder Anti-Radar-Raketen zum Abschalten; DEAD (Destruction) zielt auf die dauerhafte physische Zerstörung der gesamten Batterie', ['SEAD fliegt nur nachts und DEAD nur über Wasser', 'SEAD benutzt ausschließlich Hubschrauber, DEAD ausschließlich Bomber', 'Beides bezeichnet rein friedliche Transportflüge'], 'Flugzeuge wie die EA-18G Growler, F-16CJ oder der Tornado ECR beherrschen beides im Verbund mit Aufklärungs- und Präzisionswaffen.'],
-    ['technik_waffen', 'pro', 'Warum bleiben Luft-Luft-Lenkwaffen bei einem klassischen Kampfflugzeug-Stealth-Entwurf (wie F-22, F-35, Su-57, J-20) im normalen Marschflug in internen Waffenschächten verborgen?', 'Jede äußere Waffenhalterung („Pylon“) und jeder Raketenflügel bildet rechte Winkel („Corner Reflectors“) und würde die winzige Radarrückstrahlfläche (RCS) sofort um ein Vielfaches erhöhen', ['Weil der Fahrtwind äußere Raketen bei Mach 1,5 abbrechen würde', 'Weil Waffen unter den Tragflächen das Ausfahren des Fahrwerks blockieren', 'Weil Raketen bei Minusgraden an der Luft sofort einfrieren'], 'Nur im sogenannten „Beast Mode“ (nach Erkämpfung der Luftüberlegenheit) hängen auch F-35 zusätzliche Außenlasten an Unterflügelstationen.'],
-    ['technik_waffen', 'pro', 'Welches Prinzip versteckt sich hinter „LPI“-Radaren (Low Probability of Intercept) moderner Stealth-Kampfjets?', 'Statt starker schmalbandiger Einzelimpulse sendet das Radar schnell wechselnde Frequenzen mit breit gestreuter, niedriger Spitzenleistung aus, sodass gegnerische Radarwarnempfänger (RWR) es kaum vom Hintergrundrauschen trennen können', ['Es nutzt ausschließlich optische Scheinwerfer statt Funkwellen', 'Es schaltet sich nur alle zehn Minuten für eine Sekunde ein', 'Es sendet Signale direkt über das Unterseekabel'], 'So bleibt der Stealth-Jet nicht nur schwer ortbar, sondern verrät dem Ziel nicht einmal, dass es aktiv aufgefasst wurde.'],
-    ['technik_waffen', 'easy', 'Wofür steht „BVR“ (Beyond Visual Range) in der Luftkampfdoktrin?', 'Luftkampf auf weite Entfernung jenseits der menschlichen Sichtweite (oft 30 bis über 150 km) mittels Radar, Datenlink und Mittelstrecken-Lenkwaffen', ['Kurvenkampf ausschließlich mit 20-mm-Bordkanonen auf Sichtweite', 'Starten und Landen ohne Ausfahren der Landeklappen', 'Fliegen knapp unter der Grasnarbe ohne Radar'], 'Demgegenüber bezeichnet WVR (Within Visual Range) den klassischen Sichtweiten-Kurvenkampf („Dogfight“).'],
-    ['technik_waffen', 'mid', 'Warum setzen fast alle hochwendigen Jets seit den 1970ern (z. B. F-16, F/A-18, Su-27) sogenannte „LERX“ (Leading Edge Root Extensions – lang gezogene Flügelwurzel-Übergänge) vor der Tragfläche ein?', 'Bei extrem steilen Anstellwinkeln lösen LERX gezielt stabile energiereiche Randwirbel aus, die über den Hauptflügel streichen und einen plötzlichen Strömungsabriss weit hinauszögern', ['Um dort die Bordkanone und den Fallschirm unterzubringen', 'Damit Wasser bei Regen abgeleitet wird', 'Als rein dekorative Verlängerung für Staffelabzeichen'], 'Bei hoher Luftfeuchtigkeit werden genau diese stabilen LERX-Wirbel oft als elegante weiße Kondensationsfäden über dem Rücken eines Jets sichtbar.'],
-    ['technik_waffen', 'mid', 'Welche entscheidende Eigenschaft bestimmt das „Schub-Gewichts-Verhältnis“ größer 1,0 (Thrust-to-Weight > 1) bei modernen Kampfjets?', 'Der Jet liefert mehr Schub als seine eigene Gewichtskraft beträgt und kann daher selbst senkrecht im reinen Steigflug ohne Schwung weiter beschleunigen', ['Dass der Jet über Mach 5 schnell fliegen kann', 'Dass er mehr Treibstoff als eigenes Gewicht mitnimmt', 'Dass seine Bremsklappen die Geschwindigkeit sofort halbieren'], 'Im leichten Luftkampf-Setup erreichen Jets wie F-22, F-15, Eurofighter Typhoon oder MiG-29 problemlos Werte über 1,0.'],
-    ['technik_waffen', 'pro', 'Welchen Zweck erfüllt bei einem modernen Turbofan-Kampfjet-Triebwerk ein niedriges Nebenstromverhältnis (Low-Bypass Ratio, z. B. 0,3:1 bis 0,6:1 statt 10:1 beim Airliner)?', 'Es hält den Stirnquerschnitt für minimalen Überschall-Widerstand schlank, liefert hohe Abgasstrahlgeschwindigkeit für hohe Mach-Zahlen und erlaubt effiziente Nachverbrennung', ['Es spart bei langsamen 300 km/h den maximalen Kerosinanteil', 'Es schützt gegen Hagelschlag in großen Höhen', 'Es ermöglicht Rückwärtsflug in der Luft'], 'Während ein Passagierjet viel kalte Luft langsam bewegt (hoher Bypass), braucht ein Kampfjet maximalen spezifischen Schub pro Querschnitt im Überschallbereich.'],
-    ['technik_waffen', 'mid', 'Was bewirkt ein „Nachbrenner“ (Afterburner) hinter der eigentlichen Turbine eines Strahlflugzeugs?', 'Er spritzt zusätzlichen Treibstoff in den noch sauerstoffreichen heißen Abgasstrahl hinter der Turbine ein und steigert den Maximalschub kurzzeitig um rund 40–70 % auf Kosten eines extremen Treibstoffverbrauchs', ['Er filtert Rußpartikel aus den Abgasen für stealthy Emissionen', 'Er wandelt Bremsenergie wieder in Strom zurück', 'Er kühlt die Abgase auf Raumtemperatur herunter'], 'Wegen des gigantischen Verbrauchs wird der Nachbrenner meist nur bei schweren Starts, Abfangeinsätzen oder im akuten Luftkampf gezündet.'],
-    ['technik_waffen', 'easy', 'Welche Hauptvorteile bietet das militärische Datenfunknetzwerk „Link 16“ einer Kampfjet-Rotte?', 'Störresistenter Echtzeitaustausch von Radarbildern, Zieldaten, Treibstoffstand und Waffenstatus zwischen Flugzeugen, AWACS, Schiffen und Bodentruppen ohne verräterische Sprachfunksprüche', ['Kostenlose Telefonate der Piloten nach Hause', 'Automatische Reparatur von Triebwerkschäden im Flug', 'Verschlüsselte Steuerung gegnerischer Drohnen'], 'Durch Link 16 kann ein Stealth-Jet ohne eigenes aktives Radar ein Ziel bekämpfen, das von einem weit hinten fliegenden AWACS geortet wird („Silent Attack“).'],
-    ['technik_waffen', 'mid', 'Was bezeichnen „CATOBAR“, „STOBAR“ und „STOVL“ in der Marinefliegerei?', 'Die drei Start- und Landeverfahren auf Flugzeugträgern (Katapult + Fangseil, Sprungschanze + Fangseil, Kurzstart + Senkrechtlandung)', ['Die drei Tarnfarbenmuster für Nordatlantik, Wüste und Dschungel', 'Die drei internationalen Pilotenscheinstufen', 'Die drei Schichten einer Stealth-Lackierung'], 'Während die USA und Frankreich auf leistungsstarke CATOBAR-Katapultträger setzen, nutzen Großbritannien, Italien und Spanien meist kompaktere STOVL-Träger für die F-35B.']
-  ];
-
-  // 2. Umfangreiche Militärflugzeug-Datenbank (84 historische & moderne Muster · 28 je Kategorie)
-  // Felder: [name, role, origin, yearFirstFlight, maxKmh, speedLabel, engines, wingFeature, opFact, cat, diff]
-  const AIRCRAFT_DB = [
-    // === JETS (28) ===
-    ['Lockheed Martin F-22 Raptor', 'Luftüberlegenheitsjäger der 5. Generation', 'USA (Lockheed Martin / Boeing)', 1997, 2414, 'ca. Mach 2,25 (~2.414 km/h)', 'zwei Pratt & Whitney F119-PW-100 mit 2D-Schubvektorsteuerung', 'Rauten-Trapezflügel mit geschlossenen Waffenschächten und S-Duct-Einläufen', 'Supercruise bei ca. Mach 1,8 und überragende Radartarnung (nur ca. 195 gebaute Exemplare)', 'jets', 'easy'],
-    ['Lockheed Martin F-35A Lightning II', 'Tarnkappen-Mehrzweckkampfflugzeug (CTOL · 5. Gen)', 'USA & internationale Partner', 2006, 1930, 'ca. Mach 1,6 (~1.930 km/h)', 'ein Pratt & Whitney F135-PW-100 (191 kN Nachbrennerschub)', 'DSI-Lufteinläufe (Diverterless Supersonic Inlet) ohne bewegliche Rampen', 'weltweiter Standardjäger u. a. auch von Deutschland, Schweiz, Polen und Finnland beschafft', 'jets', 'easy'],
-    ['Lockheed Martin F-35B Lightning II', 'STOVL-Tarnkappenkampfflugzeug (Kurzstart/Senkrechtlandung)', 'USA / Großbritannien (Lockheed Martin / Rolls-Royce)', 2008, 1925, 'ca. Mach 1,6 (~1.925 km/h)', 'ein F135-PW-600 mit Rolls-Royce LiftFan und 95°-Schwenkdüse', 'kleinerer interner Waffenschacht wegen des Hubgebläses hinter dem Cockpit', 'ermöglicht Einsätze von kompakten Amphibienschiffen und STOVL-Trägern', 'jets', 'mid'],
-    ['Lockheed Martin F-35C Lightning II', 'Trägergestütztes CATOBAR-Stealth-Kampfflugzeug', 'USA (Lockheed Martin / US Navy)', 2010, 1935, 'ca. Mach 1,6 (~1.935 km/h)', 'ein Pratt & Whitney F135-PW-400', 'stark vergrößerte Tragflächen mit elektrisch klappbaren Flügelspitzen', 'ausgestattet mit doppelbereiftem Bugfahrwerk für Katapultstarts auf US-Superträgern', 'jets', 'mid'],
-    ['Eurofighter Typhoon', 'Zweimotoriger Delta-Canard-Luftüberlegenheits- und Mehrzweckjäger (4,5. Gen)', 'Europa (DE, UK, IT, ES)', 1994, 2495, 'ca. Mach 2,0 (~2.495 km/h)', 'zwei Eurojet EJ200 (je 90 kN Nachbrennerschub)', 'vor dem Cockpit angeordnete Canards mit kinnständigem Doppel-Lufteinlauf', 'Standard-Jagdflugzeug der deutschen Luftwaffe (Alarmrotte QRA) mit PIRATE-IRST', 'jets', 'easy'],
-    ['Dassault Rafale', 'Träger- und landgestütztes „Omnirole“-Kampfflugzeug (4,5. Gen)', 'Frankreich (Dassault Aviation)', 1986, 1912, 'ca. Mach 1,8 (~1.912 km/h)', 'zwei Safran/Snecma M88-2-Turbofans', 'eng gekoppelte Delta-Canard-Auslegung mit fester Luftbetankungssonde vor dem Cockpit', 'als Rafale M (Marine) auf dem Atomträger Charles de Gaulle im CATOBAR-Einsatz', 'jets', 'mid'],
-    ['Saab JAS 39E Gripen', 'Leichtes einstrahliges Mehrzweckkampfflugzeug', 'Schweden (Saab)', 1988, 2130, 'ca. Mach 2,0 (~2.130 km/h)', 'ein General Electric F414G (Gripen E)', 'kompakte Delta-Canard-Konfiguration mit 10 Aufhängungspunkten', 'Name JAS steht für Jakt (Jagd), Attack (Angriff) und Spaning (Aufklärung)', 'jets', 'mid'],
-    ['Boeing F-15EX Eagle II', 'Schwerer zweistrahliger Langstrecken-Luftüberlegenheits- und Jagdbomber', 'USA (McDonnell Douglas / Boeing)', 1972, 2655, 'ca. Mach 2,5 (~2.655 km/h)', 'zwei General Electric F110-GE-129', 'große hochmontierte Doppel-Seitenleitwerke und quadratische verstellbare Einläufe', 'historische F-15-Familie erreichte über 100 Luftsiege bei null Luftkampfverlusten', 'jets', 'easy'],
-    ['Lockheed Martin F-16C/V Fighting Falcon', 'Leichtes einstrahliges Mehrzweckkampfflugzeug („Viper“)', 'USA (General Dynamics / Lockheed Martin)', 1974, 2120, 'ca. Mach 2,0 (~2.120 km/h)', 'ein General Electric F110 oder Pratt & Whitney F100', 'rahmenlose Tropfen-Cockpithaube und ein einzelner Kinneinlauf unter dem Rumpf', 'über 4.600 gebaute Maschinen und 30°-geneigter Schleudersitz für höhere G-Toleranz', 'jets', 'easy'],
-    ['Boeing F/A-18E/F Super Hornet', 'Zweistrahliges Träger-Mehrzweckkampfflugzeug', 'USA (Boeing)', 1995, 1915, 'ca. Mach 1,6 (~1.915 km/h)', 'zwei General Electric F414-GE-400', 'große gerundete LERX-Übergänge und rechteckig abgekantete Lufteinläufe', 'ersetzte sowohl alte F/A-18C als auch F-14 Tomcat als Rückgrat der US-Navy-Trägergeschwader', 'jets', 'mid'],
-    ['Boeing EA-18G Growler', 'Spezialflugzeug für elektronische Kampfführung (SEAD)', 'USA (Boeing)', 2006, 1900, 'ca. Mach 1,6 (~1.900 km/h)', 'zwei General Electric F414-GE-400', 'Zweisitzer-Hornet ohne Bordkanone, dafür ALQ-218-Flügelspitzen-Antennen', 'blendet gegnerische Flugabwehrradare mit Hochleistungsstörbehältern und AGM-88 AARGM', 'jets', 'pro'],
-    ['Grumman F-14D Tomcat', 'Zweisitziger trägergestützter Langstrecken-Abfangjäger', 'USA (Grumman)', 1970, 2485, 'ca. Mach 2,34 (~2.485 km/h)', 'zwei General Electric F110-GE-400 (D-Version)', 'automatisch schwenkende Flügel (20° bis 68°) und extrem breiter Auftriebs-Rumpftunnel', 'trug bis zu sechs weitreichende Luft-Luft-Lenkwaffen vom Typ AIM-54 Phoenix', 'jets', 'easy'],
-    ['Panavia Tornado IDS / ECR', 'Zweisitziger Tiefflug-Schwenkflügel-Jagdbomber & ECR-Störflugzeug', 'Deutschland, Großbritannien, Italien', 1974, 2340, 'ca. Mach 2,2 (~2.340 km/h)', 'zwei Turbo-Union RB199 mit schwenkbaren Schubumkehrklappen', 'markant hohes trapezförmiges Seitenleitwerk und vollautomatisches Geländefolgeradar', 'ermöglichte bei Nacht und Regen Tiefflüge in 60 Metern über Grund (u. a. JG 33 & TLG 51)', 'jets', 'easy'],
-    ['Fairchild Republic A-10C Thunderbolt II', 'Gepanzertes Erdkampfflugzeug zur Luftnahunterstützung (CAS)', 'USA (Fairchild Republic)', 1972, 706, 'ca. 706 km/h (Unterschall)', 'zwei hoch am hinteren Rumpf montierte Turbofans TF34-GE-100', 'gerade dicke Tragflächen mit halb ausgefahrenem Hauptfahrwerk auch im eingezogenen Zustand', '540 kg Titan-Schutzwanne rund ums Cockpit (Spitzname „Warthog“ / „Panzerknacker“)', 'jets', 'easy'],
-    ['Mikojan-Gurewitsch MiG-29 („Fulcrum“)', 'Hochwendiger zweistrahliger Front- und Nahkampfabfangjäger', 'Sowjetunion / Russland (MiG)', 1977, 2400, 'ca. Mach 2,25 (~2.400 km/h)', 'zwei Klimow RD-33-Turbofans', 'integrale Tragflächen-Rumpf-Auslegung mit verschließbaren Einlaufgittern für unbefestigte Pisten', 'stand bis 2004 beim Jagdgeschwader 73 der Bundeswehr in Laage im Einsatz', 'jets', 'mid'],
-    ['Mikojan MiG-31BM („Foxhound“)', 'Schwerer zweisitziger Überschall-Langstrecken-Abfangjäger', 'Sowjetunion / Russland (MiG)', 1975, 3000, 'ca. Mach 2,83 (~3.000 km/h)', 'zwei Solowjow D-30F6 Mantelstromtriebwerke', 'massive kastenförmige Seiteneinläufe mit Doppelrad-Tandemhauptfahrwerk', 'war 1981 das weltweit erste Serien-Jagdflugzeug mit phasen­gesteuertem PESA-Radar (Zaslon)', 'jets', 'pro'],
-    ['Mikojan-Gurewitsch MiG-25 („Foxbat“)', 'Extremer Höhen-Abfangjäger und Aufklärer des Kalten Krieges', 'Sowjetunion (MiG)', 1964, 3395, 'bis Mach 3,2 (~3.395 km/h · Betriebslimit 2,83)', 'zwei leistungsstarke Tumanski R-15B Einkreis-Turbojets', 'Zelle zu 80 % aus geschweißtem Nickel-Edelstahl gegen immense Reibungshitze gebaut', 'provozierte im Westen den überhasteten Entwicklungsstart der McDonnell Douglas F-15 Eagle', 'jets', 'pro'],
-    ['Suchoi Su-27 / Su-35S („Flanker“)', 'Schwerer zweistrahliger Langstrecken-Luftüberlegenheitsjäger', 'Sowjetunion / Russland (Suchoi)', 1977, 2500, 'ca. Mach 2,25 (~2.500 km/h)', 'zwei Saturn AL-31F bzw. AL-41F1S mit 3D-Schubvektorsteuerung', 'langer Heckausleger („Stachel“) zwischen den weit auseinander liegenden Triebwerken', 'berühmt für das dynamische Abbremsmanöver „Pugatschow-Kobra“ über 90° Anstellwinkel', 'jets', 'mid'],
-    ['Suchoi Su-57 („Felon“)', 'Russischer Tarnkappen-Mehrzweckkampfjet der 5. Generation', 'Russland (Suchoi)', 2010, 2135, 'ca. Mach 2,0 (~2.135 km/h)', 'zwei Saturn AL-41F1 (Serie später AL-51F1)', 'vollbewegliche kleine Seitenleitwerke, breiter Mitteltunnel zwischen den Gondeln und zwei Tandemschächte', 'verbindet flächige stealth-nahe Geometrie mit extremer 3D-Schubvektor-Agilität', 'jets', 'mid'],
-    ['Chengdu J-20 („Mighty Dragon“)', 'Langgestreckter schwerer Stealth-Luftüberlegenheitsjäger', 'China (Chengdu Aerospace)', 2011, 2100, 'ca. Mach 2,0 (~2.100 km/h)', 'zwei Shenyang WS-10C bzw. neue WS-15', 'seltene Kombination aus Stealth-Rumpf, vorderen Canards und nach außen geneigten Leitwerken', 'verfügt über seitliche kleine Raketenschächte, die sich auch bei offenem Abfeuern schließen lassen', 'jets', 'pro'],
-    ['KAI KF-21 „Boramae“', 'Moderner zweistrahliger Kampfjet (Generation 4,5 / stealth-optimiert)', 'Südkorea / Indonesien (KAI)', 2022, 2200, 'ca. Mach 1,81 (~2.200 km/h)', 'zwei General Electric F414-GE-400K', 'kantiger F-22-ähnlicher Stealth-Rumpf noch mit halbversenkter Außenbewaffnung im Block I', 'Block II soll später voll interne Waffenschächte zur 5.-Generation-Fähigkeit einführen', 'jets', 'pro'],
-    ['Dassault Mirage 2000-5', 'Schwanzloser einstrahliger Deltaflügel-Abfang- und Mehrzweckjet', 'Frankreich (Dassault)', 1978, 2336, 'ca. Mach 2,2 (~2.336 km/h)', 'ein Snecma M53-P2 Nachbrenner-Turbofan', 'reiner tief angesetzter Deltaflügel völlig ohne horizontales Höhenleitwerk', 'dank digitalem Fly-by-Wire hochagil im Überschall und weitverbreiteter Exportschlager', 'jets', 'mid'],
-    ['Saab 37 Viggen („Blitz“)', 'Einstrahliges schwedisches Canard-Delta-Kampfflugzeug des Kalten Krieges', 'Schweden (Saab)', 1967, 2231, 'ca. Mach 2,1 (~2.231 km/h)', 'ein Volvo RM8 (JT8D-Lizenz mit Nachbrenner und Schubumkehr)', 'fest installierte Auftriebs-Canards plus eingebaute Schubumkehr am Hecktriebwerk', 'konnte dank Schubumkehr auf nur 500 m vereister Piste landen und selbst rückwärts einparken', 'jets', 'pro'],
-    ['McDonnell Douglas AV-8B Harrier II', 'V/STOL-Erdkampf- und Marine-Unterstützungsflugzeug', 'Großbritannien / USA (BAE / McDonnell Douglas)', 1978, 1083, 'ca. 1.083 km/h (Unterschall)', 'ein Rolls-Royce F402/Pegasus mit vier synchron schwenkbaren Schubdüsen', 'Schulterdecker mit Tandem-Zentralfahrwerk und kleinen Stützrädern unter den Tragflächen', 'schwebt vertikal über kleinen Decks dank Kaltluftdüsen vorn und Heißgasdüsen hinten', 'jets', 'mid'],
-    ['Lockheed F-117A Nighthawk', 'Erstes einsatzfähiges Tarnkappen-Präzisionsangriffsflugzeug', 'USA (Lockheed Skunk Works)', 1981, 993, 'ca. 993 km/h (Unterschall)', 'zwei General Electric F404-F1D2 ohne Nachbrenner', 'extremer Facetten-Rumpf („Hopeless Diamond“) aus flachen dreieckigen Radar-Ablenkflächen', 'die schlitzförmigen Triebwerksauslässe („Platypus“-Heck) kühlen Abgase breitflächig ab', 'jets', 'mid'],
-    ['Suchoi Su-34 („Fullback“)', 'Langstrecken-Jagdbomber mit Side-by-Side-Cockpit', 'Russland (Suchoi)', 1990, 1900, 'ca. Mach 1,8 (~1.900 km/h)', 'zwei Saturn AL-31FM1-Mantelstromtriebwerke', 'abgeflachte Schnabelnase und Tandem-Hauptfahrwerk statt Einzelrädern', 'Einstieg in die 17 mm starke Titan-Cockpitkabine erfolgt über eine Leiter im Bugfahrwerksschacht', 'jets', 'mid'],
-    ['SEPECAT Jaguar', 'Schlanker zweistrahliger taktischer Tiefangriffsjäger', 'Großbritannien / Frankreich (BAC / Breguet)', 1968, 1699, 'ca. Mach 1,6 (~1.699 km/h)', 'zwei Rolls-Royce Turboméca Adour', 'Schulterdecker mit hochgesetztem Fahrwerk und markanten Raketenschienen AUF den Tragflächen', 'wurde für sehr robuste Einsätze auf unbefestigten Graspisten und Behelfsplätzen gebaut', 'jets', 'pro'],
-    ['Mitsubishi F-2 („Viper Zero“)', 'Vergrößerte japanische Seeziel- und Jagd-Weiterentwicklung der F-16', 'Japan / USA (Mitsubishi Heavy Industries)', 1995, 2124, 'ca. Mach 2,0 (~2.124 km/h)', 'ein General Electric F110-IHI-129', '25 % größere CFK-Tragflächen als die F-16 sowie dreiteilige Windschutzscheibe gegen Vogelschlag', 'führte im Jahr 2000 das weltweit erste einsatzfähige AESA-Radar (J/APG-1) in einem Serienjet ein', 'jets', 'pro'],
-
-    // === HISTORISCH (28) ===
-    ['Fokker E.III („Eindecker“)', 'Frühes deutsches Jagdflugzeug des Ersten Weltkriegs', 'Deutsches Kaiserreich (Fokker)', 1915, 140, 'ca. 140 km/h', 'ein 100-PS-Oberursel-U.I-Siebenzylindermotor (Umlaufmotor)', 'drahtverspannter Eindecker mit Verwindungssteuerung der Tragflächen statt Querrudern', 'erster Serienträger von Anthony Fokkers Synchronisationsgetriebe („Fokker-Plage“ 1915/16)', 'historisch', 'mid'],
-    ['Fokker Dr.I („Dreidecker“)', 'Hochwendiges deutsches Dreidecker-Jagdflugzeug des Ersten Weltkriegs', 'Deutsches Kaiserreich (Reinhold Platz / Fokker)', 1917, 185, 'ca. 185 km/h', 'ein 110-PS-Oberursel-Ur.II-Neunzylinder-Umlaufmotor', 'drei ohne äußere Verspannungen montierte dicke Tragflächen mit kleiner Achsabdeckung', 'legendäres Einsatzmuster von Rittmeister Manfred von Richthofen („Der Rote Baron“)', 'historisch', 'easy'],
-    ['Sopwith F.1 Camel', 'Britisches Einsitzer-Doppeldecker-Jagdflugzeug (WW1)', 'Großbritannien (Sopwith Aviation)', 1916, 185, 'ca. 185 km/h', 'ein Clerget-9B-Umlaufmotor (130 PS)', 'charakteristischer Metall-Höcker („Camel Hump“) über den beiden synchronisierten Vickers-MGs', 'erzielte im Ersten Weltkrieg mit 1.294 Abschüssen die höchste Siegeszahl aller alliierten Muster', 'historisch', 'easy'],
-    ['SPAD S.XIII', 'Schnelles französisches Doppeldecker-Jagdflugzeug (WW1)', 'Frankreich (Société Pour L’Aviation et ses Dérivés)', 1917, 218, 'ca. 218 km/h', 'ein flüssigkeitsgekühlter Hispano-Suiza-8Ba-V8-Motor (220 PS)', 'extrem steif verstrebte Flügelzelle für schnelle Sturzangriffe ohne Bruchgefahr', 'Einsatzmaschine zahlreicher Asse wie René Fonck, Georges Guynemer und Eddie Rickenbacker', 'historisch', 'pro'],
-    ['Messerschmitt Bf 109 G-6', 'Meistgebautes Jagdflugzeug der Geschichte (WW2)', 'Deutschland (Messerschmitt)', 1935, 640, 'ca. 640 km/h', 'ein hängender V12 Daimler-Benz DB 605A mit Benzineinspritzung', 'sehr schmalspuriges Hauptfahrwerk, das aus dem Rumpf nach außen schwenkte', 'mit rund 34.000 gebauten Einheiten Standard-Einsitzer der deutschen Luftwaffe von 1937 bis 1945', 'historisch', 'easy'],
-    ['Focke-Wulf Fw 190 A-8 („Würger“)', 'Wendiges einsitziges deutsches Jagd- und Schlachtflugzeug', 'Deutschland (Kurt Tank / Focke-Wulf)', 1939, 656, 'ca. 656 km/h', 'ein luftgekühlter 14-Zylinder-Doppelsternmotor BMW 801D-2', 'breitspuriges stabiles Fahrwerk und geschlossenes „Kommandogerät“ zur Einhebel-Motorbedienung', 'glänzte durch hervorragende Rollrate und Feuerkraft; ab 1944 als Langnase D-9 mit Jumo 213', 'historisch', 'mid'],
-    ['Supermarine Spitfire Mk. IX', 'Britisches Jagdflugzeug mit elliptischen Tragflächen (WW2)', 'Großbritannien (Supermarine)', 1936, 650, 'ca. 650 km/h', 'ein Rolls-Royce Merlin 66 V12 mit zweistufigem Lader', 'dünne elliptische Ganzmetall-Tragfläche für überragende Kurveneigenschaften', 'einziges alliiertes Jagdflugzeug, das vor dem Krieg in Produktion ging und bis Kriegsende weitergebaut wurde', 'historisch', 'easy'],
-    ['Hawker Hurricane Mk. IIC', 'Robuster britischer Jagdeinsitzer der Luftschlacht um England', 'Großbritannien (Hawker Aircraft)', 1935, 547, 'ca. 547 km/h', 'ein Rolls-Royce Merlin XX V12', 'dicke Tragflächen, Stoffbespannung über Stahlrohr-Heck und vier 20-mm-Kanonen (Mk. IIC)', 'erzielte während der Battle of Britain rund 60 % aller britischen Luftsiege gegen deutsche Bomber', 'historisch', 'mid'],
-    ['North American P-51D Mustang', 'Legendärer amerikanischer Langstrecken-Eskortjäger (WW2)', 'USA (North American Aviation)', 1940, 703, 'ca. 703 km/h', 'ein Packard V-1650-7 V12 (Lizenz des Rolls-Royce Merlin)', 'Laminarprofil-Tragflächen und großer Bauchkühler mit Meredith-Schubeffekt', 'begleitete Bomberverbände bis weit nach Ostdeutschland hin und zurück', 'historisch', 'easy'],
-    ['Republic P-47D Thunderbolt („Jug“)', 'Schwerstes einmotoriges Kolbenmotor-Jagdflugzeug (WW2)', 'USA (Republic Aviation)', 1941, 697, 'ca. 697 km/h', 'ein Pratt & Whitney R-2800 Double Wasp + Abgasturbolader im Heck', 'bulliger Tropfenrumpf mit acht 12,7-mm-M2-Browning-MGs in den Flügeln', 'steckte wegen des luftgekühlten Sternmotors extrem viel Beschuss weg und dominierte Tiefflugangriffe', 'historisch', 'mid'],
-    ['Lockheed P-38J Lightning', 'Zweimotoriger schwerer Langstrecken- und Fotoaufklärungsjäger', 'USA (Lockheed „Kelly Johnson“)', 1939, 666, 'ca. 666 km/h', 'zwei Allison V-1710 V12 mit Abgasturboladern', 'charakteristische Doppelrumpfträger mit mittigem Pilotensitz und Nasenbewaffnung', 'beide Propeller liefen gegensinnig (nach oben außen drehend), um jedes Drehmoment zu eliminieren', 'historisch', 'mid'],
-    ['Chance Vought F4U-4 Corsair', 'Träger- und Marinekorps-Jäger im Pazifikkrieg', 'USA (Chance Vought)', 1940, 718, 'ca. 718 km/h', 'ein Pratt & Whitney R-2800 Double Wasp (> 2.100 PS)', 'markant nach unten geknickter Knickflügel („Inverted Gull Wing“)', 'die nach hinten versetzte Kanzel führte anfangs zu erschwerter Trägersicht bei Decklandungen', 'historisch', 'mid'],
-    ['Grumman F6F-5 Hellcat', 'Dominanter US-Navy-Trägerjäger im Pazifik ab 1943', 'USA (Grumman)', 1942, 629, 'ca. 629 km/h', 'ein Pratt & Whitney R-2800-10W mit Wassereinspritzung', 'leicht nach oben geklappte „Sto-Wing“-Faltflügel an Deck und breite Cockpit-Sicht', 'ihr wurden über 5.200 Luftsiege bei hervorragendem Tauschverhältnis gegen japanische Muster zugeschrieben', 'historisch', 'pro'],
-    ['Mitsubishi A6M „Zero“ (Reisen)', 'Leichtes japanisches Marine-Langstreckenjagdflugzeug', 'Japan (Jiro Horikoshi / Mitsubishi)', 1939, 533, 'ca. 533 km/h', 'ein Nakajima Sakae 14-Zylinder-Sternmotor', 'ultralight Duralumin-Zelle mit hervorragender Wendigkeit und über 2.000 km Reichweite', 'verzichtete anfangs auf jede Cockpitpanzerung und selbstabdichtende Treibstofftanks', 'historisch', 'easy'],
-    ['Iljuschin Il-2m3 („Sturmovik“)', 'Sowjetisches stark gepanzertes Erdkampfflugzeug (WW2)', 'Sowjetunion (Iljuschin)', 1939, 414, 'ca. 414 km/h', 'ein flüssigkeitsgekühlter Mikulin AM-38F V12', 'tragende 4–12-mm-Stahlpanzerwanne direkt um Motor, Kühler und Pilotensitz', 'Stalin bezeichnete die Il-2 in Telegrammen an die Fabriken als „so lebensnotwendig wie Luft und Brot“', 'historisch', 'easy'],
-    ['Lawotschkin La-7', 'Hochwendiges sowjetisches Jagdflugzeug der Kriegsendphase', 'Sowjetunion (Lawotschkin)', 1944, 680, 'ca. 680 km/h', 'ein Schwezow ASch-82FN 14-Zylinder-Doppelsternmotor', 'kompletter Ölkühler unter dem Rumpf und sauber aerodynamisch verkleidete Lufteinläufe', 'galt unter 5.000 Metern Flughöhe als einer der schnellsten Kolbenmotorjäger an der Ostfront', 'historisch', 'pro'],
-    ['Messerschmitt Me 262 A-1a („Schwalbe“)', 'Erstes serienmäßig eingesetztes Strahljagdflugzeug der Welt', 'Deutschland (Messerschmitt)', 1942, 870, 'ca. 870 km/h', 'zwei Junkers Jumo 004B-Axialstrahltriebwerke unter den Flügeln', 'leicht nach hinten gepfeilte Flügel und vier durchschlagskräftige 30-mm-Kanonen MK 108', 'litt wegen Rohstoffmangels unter extremer Empfindlichkeit und kurzer Laufzeit (ca. 25 h) der Turbinenschaufeln', 'historisch', 'easy'],
-    ['Gloster Meteor F.8', 'Erstes einsatzbereites Düsenjagdflugzeug der Westalliierten', 'Großbritannien (Gloster Aircraft)', 1943, 965, 'ca. 965 km/h', 'zwei direkt in den Tragflächen integrierte Rolls-Royce Derwent Turbojets', 'hochliegendes T-ähnliches Kreuz-Höhenleitwerk über den Triebwerksstrahlen', 'blieb als unbewaffnete Zielschleppmaschine und Schleudersitz-Testplattform von Martin-Baker bis heute im Flug', 'historisch', 'mid'],
-    ['De Havilland DH.98 Mosquito', 'Zweimotoriges Hochgeschwindigkeits-Mehrzweckflugzeug aus Holz', 'Großbritannien (De Havilland)', 1940, 668, 'ca. 668 km/h', 'zwei Rolls-Royce Merlin 25/76 V12', 'Sandwich-Verbundschale aus Balsaholz zwischen Sperrholzschichten', 'flog als Schnellbomber ohne Abwehrtürme so rasch, dass feindliche Nachtjäger kaum nachkamen', 'historisch', 'easy'],
-    ['Junkers Ju 87 B/G („Stuka“)', 'Deutsches Sturzkampfflugzeug und später Panzerjäger (WW2)', 'Deutschland (Junkers)', 1935, 390, 'ca. 390 km/h', 'ein Junkers Jumo 211 V12', 'starres verkleidetes Hosenbein-Fahrwerk, Knickflügel und Luftbremsklappen', 'besaß neben „Jericho-Trompeten“-Sirenen auch eine automatische Sturzflug-Abfangvorrichtung', 'historisch', 'easy'],
-    ['Boeing B-17G Flying Fortress', 'Viermotoriger amerikanischer Höhen-Tagbomber (WW2)', 'USA (Boeing)', 1935, 462, 'ca. 462 km/h', 'vier Wright R-1820 Cyclone mit Abgasturboladern', 'bis zu dreizehn 12,7-mm-Browning-M2-Maschinengewehre inkl. elektrisch betriebenem Kinnturm', 'erreichte wegen robuster Struktur oft trotz schwerster Flak- und Rammschäden den Heimatflugplatz', 'historisch', 'easy'],
-    ['Boeing B-29 Superfortress', 'Technologisch wegweisender strategischer Bomber mit Druckkabinen', 'USA (Boeing)', 1942, 574, 'ca. 574 km/h', 'vier Wright R-3350 Duplex-Cyclone (je 2.200 PS)', 'lange schlanke Flügel, vollverglaste Bugkanzel und ein Kriechtunnel zwischen vorderer und mittlerer Druckkabine', 'ihre ferngesteuerten MG-Türme wurden über Analog-Feuerleitrechner gegen Ausweichmanöver korrigiert', 'historisch', 'mid'],
-    ['Avro Lancaster B.I', 'Viermotoriger schwerer Nachtbomber des RAF Bomber Command', 'Großbritannien (Avro)', 1941, 462, 'ca. 462 km/h', 'vier Rolls-Royce Merlin XX / 24 V12-Motoren', 'doppeltes Seitenleitwerk und ungeteilter 10 Meter langer Bombenschacht', 'konnte als einziges britisches Flugzeug die 10 Tonnen schwere „Grand Slam“-Bombe aufnehmen', 'historisch', 'mid'],
-    ['North American F-86F Sabre', 'Amerikanischer Pfeilflügel-Strahljäger des Koreakrieges', 'USA (North American)', 1947, 1106, 'ca. 1.106 km/h (Mach 0,9)', 'ein General Electric J47-GE-27 mit 26 kN Schub', 'um 35 Grad gepfeilte Flügel, automatische Vorflügel und durchgehender Bug-Lufteinlauf', 'besaß ein radargestütztes Kreiselvisier (AN/APG-30), das den exakten Vorhaltewinkel berechnete', 'historisch', 'mid'],
-    ['Mikojan-Gurewitsch MiG-15bis („Fagot“)', 'Sowjetischer Pfeilflügel-Höhenjäger des Kalten Krieges', 'Sowjetunion (MiG)', 1947, 1076, 'ca. 1.076 km/h', 'ein Klimow WK-1 Radialtriebwerk (abgeleitet vom Rolls-Royce Nene)', 'hochgezogenes T-ähnliches Pfeil-Höhenleitwerk und markante Luftbremsen am Heck', 'kombiniert eine 37-mm- und zwei 23-mm-Kanonen für verheerende Salven gegen Bomber', 'historisch', 'mid'],
-    ['Mikojan-Gurewitsch MiG-21bis („Fishbed“)', 'Leichter sowjetischer Mach-2-Delta-Abfangjäger', 'Sowjetunion (MiG)', 1955, 2175, 'ca. Mach 2,05 (~2.175 km/h)', 'ein Tumanski R-25-300 mit zweistufigem Nachbrenner', 'dünner schwanzgeführter Deltaflügel und charakteristischer Schockkegel im Bug-Lufteinlauf', 'diente in rund 60 Luftwaffen weltweit inklusive der NVA-Luftstreitkräfte der DDR', 'historisch', 'easy'],
-    ['Lockheed F-104G Starfighter', 'Einstrahliger Mach-2-Hochgeschwindigkeits-Abfangjäger & Jagdbomber', 'USA (Lockheed Skunk Works)', 1954, 2125, 'ca. Mach 2,0 (~2.125 km/h)', 'ein General Electric J79-GE-11A mit markantem „Heul“-Ton', 'extrem kurze dünne Stummel-Trapezflügel (6,68 m Spannweite) mit Schutzleisten an den scharfen Vorderkanten', 'nutzte erstmals „Boundary Layer Control“ (Anblasen der Landeklappen mit Zapfluft gegen Abkippen)', 'historisch', 'mid'],
-    ['McDonnell Douglas F-4E Phantom II', 'Schwerer zweisitziger Allwetter-Abfangjäger und Jagdbomber', 'USA (McDonnell Aircraft)', 1958, 2370, 'ca. Mach 2,23 (~2.370 km/h)', 'zwei General Electric J79-GE-17', 'um 12 Grad hochgeknickte Außenflügel und um 23 Grad nach unten hängendes Pendel-Höhenleitwerk', 'stellte weltweit 16 Geschwindigkeits- und Höhenrekorde auf; auch bei der Bundesluftwaffe bis 2013', 'historisch', 'easy'],
-
-    // === BOMBER, AUFKLÄRER, TRANSPORTER & HUBSCHRAUBER (28) ===
-    ['Northrop Grumman B-2 Spirit', 'Strategischer Stealth-Langstreckenbomber in Nurflügelbauweise', 'USA (Northrop Grumman)', 1989, 1010, 'ca. Mach 0,95 (~1.010 km/h)', 'vier tief im Flügel eingebaute GE F118-GE-100 ohne Nachbrenner', '52,4 m Spannweite mit Sägezahn-Hinterkante und fehlendem Seitenleitwerk', 'kann in zwei internen Schächten bis zu 18 t Bomben inkl. zwei GBU-57 MOP aufnehmen', 'bomber_aufklaerer', 'easy'],
-    ['Northrop Grumman B-21 Raider', 'Strategischer Tarnkappenbomber der 6. Generation', 'USA (Northrop Grumman)', 2023, 995, 'hoher Unterschall (~995 km/h)', 'zwei neuentwickelte strahlungsarme Turbofans im geschlossenen Rumpf', 'sehr glatte Sägezahn-Nurflügelform mit schrägen cockpitnahen Seitenscheiben', 'soll ab Ende der 2020er-Jahre schrittweise B-1B und B-2 vollständig ablösen', 'bomber_aufklaerer', 'mid'],
-    ['Rockwell B-1B Lancer („Bone“)', 'Vierstrahliger strategischer Schwenkflügel-Überschallbomber', 'USA (Rockwell / Boeing)', 1974, 1340, 'ca. Mach 1,25 (~1.340 km/h)', 'vier General Electric F101-GE-102 mit Nachbrenner', 'variable Tragflächenpfeilung (15° bis 67,5°) und radarabschirmende gewundene S-Einläufe', 'hält mit bis zu 34 Tonnen internem Waffenzuladungspotenzial den Kapazitätsrekord der USAF', 'bomber_aufklaerer', 'mid'],
-    ['Boeing B-52H Stratofortress', 'Achtstrahliger strategischer Interkontinentalbomber', 'USA (Boeing)', 1952, 1047, 'ca. Mach 0,86 (~1.047 km/h)', 'acht Pratt & Whitney TF33-PW-3 (künftig Rolls-Royce F130 bei B-52J)', 'hohe dünne Pfeilflügel mit kleinen Stützrädern ganz außen an den Spitzen', 'sehr flexibles Tandem-Hauptfahrwerk kann zum Landen bei starkem Seitenwind seitlich eingeschwenkt werden', 'bomber_aufklaerer', 'easy'],
-    ['Tupolew Tu-160 („Blackjack“ / „Weißer Schwan“)', 'Größter und schnellster Schwenkflügel-Strategiebomber', 'Sowjetunion / Russland (Tupolew)', 1981, 2220, 'ca. Mach 2,05 (~2.220 km/h)', 'vier Kusnezow NK-32 (mit je 245 kN Nachbrennerschub)', 'schwenkbare Tragflächen (20° bis 65°) über langgestrecktem zentralem Waffenschachtrumpf', 'trägt bis zu zwölf weitreichende Marschflugkörper auf zwei rotierenden Revolver-Werfern', 'bomber_aufklaerer', 'mid'],
-    ['Tupolew Tu-95MS („Bear“)', 'Viermotoriger Turboprop-Langstreckenbomber und Seeaufklärer', 'Sowjetunion / Russland (Tupolew)', 1952, 925, 'ca. 925 km/h (schnellster Serien-Turboprop)', 'vier Kusnezow NK-12MP mit je acht gegenläufigen Propellerblättern', 'um 35 Grad stark gepfeilte Flügel trotz klassischem Propellerantrieb', 'einziger bis heute weltweit aktiv genutzter strategischer Propeller-Bomber', 'bomber_aufklaerer', 'easy'],
-    ['Tupolew Tu-22M3 („Backfire“)', 'Überschall-Schwenkflügel-Mittelstreckenbomber & Seezielflugkörperträger', 'Sowjetunion / Russland (Tupolew)', 1969, 2300, 'ca. Mach 1,88 (~2.300 km/h)', 'zwei schwere Kusnezow NK-25 Turbofans', 'keilförmige verstellbare Seiteneinläufe (ähnlich MiG-25/F-14) mit Schwenkflügeln', 'konzipiert zum Angriff auf Flugzeugträgerverbände mit überschallschnellen Ch-22/Ch-32-Lenkwaffen', 'bomber_aufklaerer', 'pro'],
-    ['Lockheed SR-71 Blackbird', 'Schnellstes bemanntes luftatmendes Serien-Aufklärungsflugzeug', 'USA (Lockheed Skunk Works)', 1964, 3540, 'über Mach 3,2 (~3.540 km/h)', 'zwei Pratt & Whitney J58 mit beweglichem Schockkegel und Luft-Bypass-Röhren', 'schwarze Titan-Rumpfzelle mit breiten Rumpfseitenleisten („Chines“) bis zu den Flügeln', 'nutzte speziellen schwerentflammbaren Hochtemperatur-Treibstoff JP-7 als Kühlflüssigkeit', 'bomber_aufklaerer', 'easy'],
-    ['Lockheed U-2S „Dragon Lady“', 'Hochfliegendes einstrahliges Aufklärungsflugzeug', 'USA (Lockheed Skunk Works)', 1955, 805, 'ca. 805 km/h in > 21.000 m Höhe', 'ein General Electric F118-GE-101 ohne Nachbrenner', 'extrem langgestreckte dünne Segelflugzeug-Tragflächen (31,4 m Spannweite) und Tandem-Fahrwerk', 'Piloten tragen in über 21 km Höhe druckbeaufschlagte Volldruck-Raumanzüge', 'bomber_aufklaerer', 'easy'],
-    ['Boeing E-3 Sentry (AWACS)', 'Frühwarn- und Luftraumüberwachungsflugzeug', 'USA / NATO (Boeing)', 1972, 855, 'ca. 855 km/h', 'vier Pratt & Whitney TF33 bzw. CFM56', '9,1 m drehbare Radar-Scheibe („Rotodome“) oberhalb einer 707-320B-Zelle', 'ermöglicht mit Look-Down-Doppler-Radar das Verfolgen tief fliegender Jets über Land und Meer', 'bomber_aufklaerer', 'easy'],
-    ['Boeing E-7A Wedgetail', 'Modernes zweistrahliges Frühwarnflugzeug mit MESA-Radarflosse', 'Australien / USA / NATO (Boeing)', 2004, 853, 'ca. 853 km/h', 'zwei CFM International CFM56-7B27A', 'fest stehende „Top-Hat“-Radarfinne auf dem Rücken einer 737-700ER statt rotierender Scheibe', 'soll künftig bei NATO, Großbritannien und USA die älteren E-3 Sentry ablösen', 'bomber_aufklaerer', 'pro'],
-    ['Northrop Grumman E-2D Advanced Hawkeye', 'Trägergestütztes Frühwarn- und Leitflugzeug', 'USA (Grumman / Northrop Grumman)', 1960, 648, 'ca. 648 km/h', 'zwei Rolls-Royce T56-A-427A Turboprops', '4-fach-Seitenleitwerk unter niedrig gehaltenen Hangar-Decks + Drehscheibe auf dem Rücken', 'fungiert dank neuer AESA-UHF-Antenne als fliegendes Kommandozentrum für F-35C und Super Hornet', 'bomber_aufklaerer', 'pro'],
-    ['Boeing P-8A Poseidon', 'Seefernaufklärer und U-Boot-Jagdflugzeug (MPA)', 'USA (Boeing · auch Bundeswehr)', 2009, 907, 'ca. 907 km/h', 'zwei CFM56-7B27A Turbofans', 'Zelle der 737-800ERX mit starken Raked Wingtips der 767/787 für Langsamflug-Wendigkeit', 'trägt Leichtgewichtstorpedos im beheizten internen Heckschacht sowie Harpoon-Antischiffswaffen', 'bomber_aufklaerer', 'mid'],
-    ['Airbus A400M „Atlas“', 'Viermotoriges taktisches und strategisches Militärtransportflugzeug', 'Europa (Airbus Defence and Space)', 2009, 780, 'ca. 780 km/h (Mach 0,72)', 'vier Europrop TP400-D6 (je 11.000 PS)', 'Hochdecker mit Achtblatt-Sichelpropellern und T-Leitwerk', 'kann bis zu 37 Tonnen Fracht (z. B. Puma-Bauteile, NH90 oder zwei LKW) auf unbefestigte Pisten bringen', 'bomber_aufklaerer', 'easy'],
-    ['Boeing C-17 Globemaster III', 'Vierstrahliger taktisch-strategischer Schwerlasttransporter', 'USA (McDonnell Douglas / Boeing)', 1991, 830, 'ca. 830 km/h', 'vier Pratt & Whitney F117-PW-100', 'hochgezogene Winglets, T-Leitwerk und angeblasene Auftriebsklappen', 'schafft bis zu 77,5 Tonnen Nutzlast bei bemerkenswert kurzer Landestrecke auf Behelfsplätzen', 'bomber_aufklaerer', 'easy'],
-    ['Lockheed C-5M Super Galaxy', 'Größtes Serien-Transportflugzeug der US Air Force', 'USA (Lockheed)', 1968, 870, 'ca. 870 km/h', 'vier General Electric CF6-80C2L1F (F138-GE-100)', 'absenkbares Fahrwerk („Kneeling“) samt nach oben hochklappbarem Bugvisier & Heckrampe', 'erlaubt „Drive-Through“-Be- und Entladen an Bug und Heck zugleich bis ca. 127 t Zuladung', 'bomber_aufklaerer', 'mid'],
-    ['Lockheed Martin C-130J Super Hercules', 'Viermotoriger taktischer Militärtransporter', 'USA (Lockheed Martin)', 1954, 670, 'ca. 670 km/h', 'vier Rolls-Royce AE 2100D3 mit Sechsblatt-Verbundpropellern', 'klassische Hochdecker-Kastenrumpfform mit breiter rückwärtiger Laderampe', 'als AC-130J „Ghostrider“ auch mit seitwärts feuernder 30-mm- und 105-mm-Haubitze im Einsatz', 'bomber_aufklaerer', 'easy'],
-    ['Antonow An-124 „Ruslan“', 'Schweres vierstrahliges strategisches Großraum-Frachtflugzeug', 'Sowjetunion / Ukraine (Antonow)', 1982, 865, 'ca. 865 km/h', 'vier Iwtschenko Progress D-18T', 'absenkbare Nase mit „Knie-Funktion“ auf dem 24-rädrigen Fahrwerk', 'transportiert regelmäßig überdimensionale Industriegüter, Hubschrauber und Lokomotiven weltweit', 'bomber_aufklaerer', 'mid'],
-    ['Antonow An-225 „Mrija“', 'Einziges sechsmotoriges Überschwerlastflugzeug (88,4 m Spannweite)', 'Sowjetunion / Ukraine (Antonow)', 1988, 850, 'ca. 850 km/h', 'sechs Iwtschenko Progress D-18T Turbofans', 'markantes doppeltes Seitenleitwerk außen am breiten Höhenleitwerk für Huckepack-Lasten', 'hielt den absoluten Weltrekord für das schwerste Einzelfrachtstück in der Luft (ca. 190 t Generator)', 'bomber_aufklaerer', 'easy'],
-    ['Airbus A330 MRTT (Multi Role Tanker Transport)', 'Zweistrahliger strategischer Tanker und Truppentransporter', 'Europa (Airbus Defence and Space)', 2007, 880, 'ca. Mach 0,86 (~880 km/h)', 'zwei Rolls-Royce Trent 700 oder GE CF6-80E1', 'auf A330-200 basierend ohne extra Kabinentanks, da der Flügel- und Zentraltank bereits 111 t Kerosin fasst', 'Standard-Tanker der multinationalen MMF-Einheit in Eindhoven und Köln-Wahn', 'bomber_aufklaerer', 'mid'],
-    ['Bell Boeing V-22 Osprey', 'Kipprotor-Wandelflugzeug (Tiltrotor)', 'USA (Bell / Boeing)', 1989, 509, 'ca. 509 km/h im Horizontalflug', 'zwei schwenkbare Rolls-Royce AE 1107C Wellenturbinen (quer verbunden)', 'für Schiffsaufzüge falten sich Rotorblätter automatisch und der komplette Flügel dreht um 90° längs zum Rumpf', 'eine Transmissionswelle im Flügel treibt notfalls beide Rotoren an, falls ein Motor ausfällt', 'bomber_aufklaerer', 'mid'],
-    ['Boeing CH-47F Chinook', 'Schwerer Tandem-Transporthubschrauber', 'USA (Boeing)', 1961, 315, 'ca. 315 km/h', 'zwei Honeywell T55-GA-714A Wellenturbinen', 'vorderer und höher gesetzter hinterer Gegenlaufrotor ohne Heckrotor + bootsähnlicher Rumpf', 'kann dank versiegeltem Rumpf auf flachem Wasser schwimmend Spezialboote direkt über die Heckrampe aufnehmen', 'bomber_aufklaerer', 'easy'],
-    ['Sikorsky CH-53K King Stallion', 'Schwerster westlicher Transporthubschrauber der Gegenwart', 'USA (Sikorsky)', 2015, 315, 'ca. 315 km/h', 'drei General Electric T408-GE-400 (je 7.500 WPS)', 'Siebenblatt-Verbundhauptrotor mit geknickten Flügelspitzen', 'hebt über 16 Tonnen Außenlast an den drei Lasthaken und lässt sich auch im Flug per Tankrüssel betanken', 'bomber_aufklaerer', 'pro'],
-    ['Boeing AH-64E Apache Guardian', 'Schwerer zweisitziger Kampfhubschrauber', 'USA (Boeing)', 1975, 293, 'ca. 293 km/h', 'zwei General Electric T700-GE-701D Wellenturbinen', 'Mastvisier-Millimeterwellenradar AN/APG-78 oberhalb des Rotors und Stummelflügel mit bis zu 16 Hellfire', 'die 30-mm-Kettenkanone M230 unter dem Rumpf folgt automatisch der Blickrichtung des Bordschützen-Helms', 'bomber_aufklaerer', 'easy'],
-    ['Airbus Helicopters Tiger (UHT)', 'Zweisitziger europäischer Kampf- und Unterstützungshubschrauber', 'Deutschland / Frankreich (Eurocopter / Airbus)', 1991, 315, 'ca. 315 km/h', 'zwei MTU/Turboméca/Rolls-Royce MTR390', 'extrem schmale Rumpf-Silhouette mit tandemmäßig sitzender Besatzung und starrem Vierblatt-Verbundrotor', 'in der deutschen UHT-Version mit Osiris-Mastvisier für PARS-3-LR-Feuer-und-Vergiss-Panzerabwehr', 'bomber_aufklaerer', 'mid'],
-    ['Kamow Ka-52 „Alligator“', 'Russischer zweisitziger Kampfhubschrauber mit Koaxialrotor', 'Russland (Kamow)', 1997, 300, 'ca. 300 km/h', 'zwei Klimow WK-2500 Wellenturbinen', 'zwei gegenläufige übereinander montierte Hauptrotoren und fehlender Heckrotor + Side-by-Side-Cockpit', 'einziger Kampfhubschrauber mit K-37-Raketen-Schleudersitzen nach Absprengung der Rotorblätter', 'bomber_aufklaerer', 'pro'],
-    ['General Atomics MQ-9 Reaper', 'Satellitengesteuerte Mehrzweck- und Aufklärungsdrohne (MALE)', 'USA (General Atomics)', 2001, 482, 'ca. 482 km/h (> 27 h Ausdauer)', 'ein Honeywell TPE331-10 Turboprop im Druckheck', 'schlanke Flügel und umgedrehtes V-/Y-Leitwerk zur Abschirmung des Druckpropellers', 'trägt Laserzielbeleuchter, SAR-Radar und präzise Luft-Boden-Lenkwaffen unter den Flügeln', 'bomber_aufklaerer', 'easy'],
-    ['Northrop Grumman RQ-4 Global Hawk', 'Strategische Langstrecken-Höhenaufklärungsdrohne (HALE)', 'USA (Northrop Grumman)', 1998, 575, 'ca. 575 km/h in 18.000 m Höhe (> 32 h)', 'ein Rolls-Royce AE 3007H Turbofan auf dem Rumpfrücken', '39,9 Meter Flügelspannweite (breiter als eine Boeing 737) und charakteristischer bauchiger Nasensensor', 'kartografiert riesige Landflächen autark bei Nacht und geschlossener Wolkendecke per SAR-Radar', 'bomber_aufklaerer', 'mid']
-  ];
-
-  // 3. Strukturierte Technik-, Sensorik-, Aerodynamik- & Waffen-Datenbank (40 Einträge × 5 Fragen = 200)
-  // Felder: [term, categoryLabel, def, distractors[3], combatUse, exampleDetail, diff]
-  const TECH_DB = [
-    ['AIM-120D AMRAAM', 'Aktive Radar-Mittelstrecken-Luft-Luft-Lenkwaffe', 'Nutzt im Endanflug ein eigenes aktives Bordradar („Fire-and-Forget“), nachdem sie im Reiseflug per Datenlink aktualisiert wurde', ['Reine Infrarot-Kurzstreckenrakete ohne eigenes Radar', 'Ungelenkte Luft-Boden-Rakete für Kampfhubschrauber', 'Lasergeführte 900-kg-Panzerbombe'], 'Standard-BVR-Luftkampf auf mittlere bis weite Distanzen (ca. 100–160 km)', 'Ermöglicht dem Trägerjet sofort nach dem Datenlink-Übergabezeitpunkt („Pitbull“) abzudrehen', 'easy'],
-    ['AIM-9X Sidewinder', 'Hochagile Infrarot-Kurzstrecken-Luft-Luft-Lenkwaffe', 'Setzt einen abbildenden IIR-Infrarotsensor samt Schubvektorsteuerung ein und lässt sich via Helmvisier bis 90° seitlich abfeuern', ['Schwerer nuklearer Marschflugkörper', 'Anti-Radar-Lenkwaffe gegen Seezielflugkörper', 'Akustisch gelenkte U-Boot-Jagd-Torpedowaffe'], 'Luftnahkampf (Dogfight) mit extremen Abgangswinkeln („High Off-Boresight“)', 'Der abbildende Infrarotsucher unterscheidet gezielt Flugzeugformen von heißen Flare-Täuschkörpern', 'easy'],
-    ['DIEHL IRIS-T', 'Europäische Infrarot-Kurzbahn-Lenkwaffe (auch Boden-Luft SLM)', 'Kombiniert Schubvektordüsen, hochmanövrierfähige Flossen und einen hochauflösenden IR-Bildsuchkopf mit Speicherung von Zielkonturen', ['Langstrecken-Tankbehälter unter dem Rumpf', 'Passiver GPS-Gleitbomben-Rüstsatz', 'Überschall-Aufklärungsdrohne'], 'Nahbereichsverteidigung für Kampfjets sowie Luftverteidigung (IRIS-T SLM)', 'Die Rakete beherrscht Schüsse über die Schulter gegen Verfolger hinter dem eigenen Jet', 'mid'],
-    ['MBDA Meteor', 'Europäische BVR-Luft-Luft-Lenkwaffe mit Staustrahlantrieb', 'Besitzt ein regelbares Staustrahltriebwerk (Ramjet), das den Marschschub drosselt und im Endanflug wieder beschleunigt', ['Nutzt nur die Erdanziehung nach dem Ausklinken', 'Hat vier kleine ausklappbare Düsentriebwerke', 'Fliegt rein ballistisch bis in 120 km Höhe'], 'Weiträumige Luftüberlegenheit mit riesiger „No-Escape-Zone“ über > 150 km', 'Ausgerüstet u. a. an Eurofighter Typhoon, Saab Gripen, Dassault Rafale und F-35', 'mid'],
-    ['TAURUS KEPD 350', 'Deutsch-schwedischer präziser Abstandsmarschflugkörper', 'Fliegt über 500 km weit autonom im Tiefstflug mittels Geländekonturvergleich, INS, GPS und Endphasen-IR-Sensorik', ['Eine ungelenkte Streubombe der 1960er-Jahre', 'Eine kleine 20-mm-Bordkanonenpatrone', 'Ein Radartäuschkörper aus Aluminiumfolie'], 'Zerstörung gehärteter Kommandozentralen und Brücken weit außerhalb gegnerischer Flugabwehr', 'Der MEPHISTO-Doppelgefechtskopf besitzt einen programmierbaren Zünder (PIMPF), der Bunker-Stockwerke mitzählt', 'mid'],
-    ['Storm Shadow / SCALP-EG', 'Britisch-französischer stealth-optimierter Abstandsmarschflugkörper', 'Nutzt einen eckigen Tarnkappenrumpf aus Verbundwerkstoff, Klappflügel und den zweistufigen BROACH-Gefechtskopf gegen gehärtete Ziele', ['Eine See-Luft-Flugabwehrrakete für Zerstörer', 'Ein Nachbrenner-Zusatztank', 'Ein Bremsfallschirm für schwere Bomber'], 'Tiefenbekämpfung strategischer Infrastruktur aus sicherer Entfernung über 250 km', 'Wird u. a. von Rafale, Typhoon und angepassten ukrainischen Su-24 eingesetzt', 'mid'],
-    ['AGM-88E AARGM', 'Überschall-Anti-Radar-Lenkwaffe (SEAD / DEAD)', 'Peilt elektromagnetische Strahlung feindlicher Flugabwehrradare an und wechselt im Endanflug auf ein eigenes Millimeterwellen-Radar', ['Ein passiver Lasersucher für fahrende Jeeps', 'Eine Rauchmarkierungspatrone für Infanterie', 'Ein elektro-optischer Kamerapod für Kartierung'], 'Zerschlagung von Luftabwehrstellungen selbst wenn diese ihr Radar panisch abschalten', 'Der AARGM-Speicher merkt sich die letzten GPS-Koordinaten, falls der Emitter abgeschaltet wird', 'pro'],
-    ['GBU-12 / GBU-24 Paveway', 'Lasergelenkte Präzisionsbombe (LGB)', 'Ergänzt konventionelle Mk-82- oder Mk-84-Sprengkörper durch einen schwenkbaren Lasersuchkopf vorn und lenkende Heckflossen', ['Eine rein atomare Freifallwaffe', 'Eine Luft-Luft-Lenkwaffe gegen Bomber', 'Ein Sonar-Ortungssystem für Seeaufklärer'], 'Punktgenauer Schlag gegen stationäre oder bewegliche Einzelziele nach Zielbeleuchtung', 'Erfordert freie Sichtlinie für den Laser-Zielpod (z. B. LITENING), da dichter Rauch das Licht dämpft', 'mid'],
-    ['JDAM (GBU-31 / GBU-38)', 'GPS- und INS-Lenkrüstsatz für Standard-Freifallbomben', 'Rüstet normale Fallbomben über ein Heckleitwerk mit präziser Satelliten- und Trägheitsnavigation nach', ['Ein automatischer Bremsfallschirm für Kampfpanzer', 'Eine ferngesteuerte Drohnenkamera', 'Ein Raketen-Katapult auf Flugzeugträgern'], 'Allwetterfähige Bombardierung auch durch geschlossene dicke Wolkendecken hindurch', 'Als Gleitvariante JDAM-ER mit ausklappbaren Flügeln steigt die Abwurfweite auf über 70 km', 'easy'],
-    ['GBU-39 Small Diameter Bomb (SDB)', 'Kompakte 113-kg-Präzisionsgleitbombe mit Klappflügeln', 'Erlaubt durch schlanke Bauform (4 Bomben auf einem Träger) präzise Gleitschläge über 100 km weit mit minimalen Kollateralschäden', ['Eine fünf Tonnen schwere Bunkerbombe', 'Eine ungelenkte Nebelgranate', 'Eine Anti-Satelliten-Rakete'], 'Bekämpfung zahlreicher kleiner Ziele pro Einsatzflug, auch intern in der F-22/F-35', 'In der SDB-II („StormBreaker“) kombiniert sie Tri-Mode-Sucher aus Radar, IR und Laser gegen fahrende Ziele', 'pro'],
-    ['GBU-57 MOP (Massive Ordnance Penetrator)', '13,6 Tonnen schwere konventionelle US-Bunkerbrecher-Präzisionsbombe', 'Durchdringt mit massiv gehärteter Stahlhülle und über 6 m Länge tief unter Gebirgen liegende Atomanlagen und Bunker', ['Ein leichter Fallschirmspringer-Versorgungsbehälter', 'Eine Kurzstreckenrakete für Drohnen', 'Ein Wasserabwurfbehälter zur Waldbrandbekämpfung'], 'Ausschaltung extrem tief gehärteter strategischer Ziele, die normale Bomben nicht erreichen', 'Wird ausschließlich vom strategischen Tarnkappenbomber Northrop B-2 Spirit im internen Schacht getragen', 'pro'],
-    ['GAU-8/A „Avenger“', 'Siebenläufige 30-mm-Gatling-Bordkanone der A-10 Thunderbolt II', 'Verschießt bis zu 3.900 schwere 30×173-mm-Projektile pro Minute mithilfe eines hydraulischen Fremdantriebs', ['Ein Radarwarngerät in der Seitenflosse', 'Ein Luftbetankungsventil in der F-16-Nase', 'Eine kleine Starter-Gasturbine am Boden'], 'Nahunterstützung am Gefechtsfeld gegen gepanzerte Fahrzeuge und Bunkerstellungen', 'Durch den gewaltigen Rückstoß sitzen die oberen Läufe exakt entlang der Rumpflängsachse, um Wegdrehen zu verhindern', 'easy'],
-    ['Mauser BK-27', 'Einläufige europäische 27-mm-Revolverkanone', 'Erreicht durch eine rotierende fünf-kammerige Trommel extrem hohe Kadenz (bis 1.700 Schuss/min) bereits ab der allerersten Millisekunde', ['Ein amerikanischer Raketenwerfer für Kampfhubschrauber', 'Ein schwenkbares Periskop für U-Boot-Jäger', 'Eine elektronische ECM-Störantenne'], 'Standard-Bordkanone von Eurofighter Typhoon, Panavia Tornado, Alpha Jet und Saab Gripen', 'Da bei Luftkampf-Schüssen oft nur 0,5 Sekunden Feuerfenster bleiben, überzeugt die Revolverkanone ohne Anlaufzeit', 'mid'],
-    ['AGM-158 JASSM-ER', 'US-Abstands-Tarnkappenmarschflugkörper mit > 900 km Reichweite', 'Kombiniert extrem eckige Radar-Tarnkappengeometrie mit einem 450-kg-Gefechtskopf und automatischer Infrarot-Endphasen-Zielerkennung', ['Eine rein optische Kamera-Aufklärungsdrohne', 'Ein Luft-Luft-Abfangsystem für den Weltraum', 'Ein schwenkbarer Scheinwerfer an Suchhubschraubern'], 'Präzisionsschläge auf stark geschützte Ziele tief im gegnerischen Luftraum (auch für B-1B, F-15E, F-35)', 'Erkennt im Zielanflug anhand gespeicherter 3D-Silhouetten das exakte Dachfenster eines Gebäudes', 'pro'],
-    ['AESA-Radar (Active Electronically Scanned Array)', 'Vollelektronische phasengesteuerte Radarantenne mit über 1.000 TRM-Modulen', 'Lenkt und spaltet den Radarstrahl ohne jede mechanische Drehbewegung in Mikrosekunden elektronisch', ['Eine mechanisch von einem Gleichstrommotor gedrehte Parabolschüssel', 'Ein passives Fernglas mit Restlichtverstärker', 'Ein reiner Akustik-Mikrofonsensor unter dem Cockpit'], 'Gleichzeitige Luft-Luft-Verfolgung, Bodenkartierung (SAR), Raketenlenkung und elektronisches Stören', 'Selbst beim Ausfall dutzender einzelner Module bleibt das System voll einsatzfähig', 'easy'],
-    ['PESA-Radar (Passive Electronically Scanned Array)', 'Frühere Generation elektronisch gesteuerter Radare (z. B. Zaslon MiG-31, B-1B, Rafale RBE2-Urversion)', 'Schwenkt den Strahl elektronisch über Phasenschieber, verwendet dafür aber noch eine einzige zentrale Hochfrequenz-Senderröhre', ['Ein analoges mechanisches Radar der 1950er-Jahre', 'Ein reiner Infrarotsensor für Nachtflüge', 'Eine Satelliten-Wetterantenne'], 'Schnellere Strahlführung als mechanische Teller ohne Verschleiß schwerer Motoren', 'Die MiG-31 führte 1981 als erstes Kampfflugzeug überhaupt ein solches System (Zaslon) in Serie ein', 'mid'],
-    ['IRST (Infrared Search and Track)', 'Passiver optronischer Wärmebildsensor (z. B. Eurofighter PIRATE, F-35 EOTS)', 'Detektiert gegnerische Flugzeuge anhand der Wärmeabstrahlung von Triebwerk und Reibungshitze, ohne selbst Funkwellen auszusenden', ['Ein hochfrequenter aktiver Störsender gegen Satelliten', 'Ein Radarhöhenmesser zur Landung im Nebel', 'Ein Laser-Entfernungsmesser für die Treibstoffanzeige'], 'Völlig unbemerktes Aufspüren von Feindflugzeugen selbst gegen Stealth-Flugzeuge bei Funkstille', 'Löst im Unterschied zum Radar keinen Radarwarnempfänger (RWR) im Zielcockpit aus', 'mid'],
-    ['Radarwarnempfänger (RWR / Spoofer)', 'Passiver Empfänger für feindliche Radar-Ausstrahlungen rund um den eigenen Jet', 'Analysiert Frequenz, Pulswiederholrate und Einfallsrichtung gegnerischer Such-, Zielverfolgungs- und Raketenleitradare', ['Ein aktives Bordradar zum Angreifen von Bombern', 'Ein GPS-Navigationssystem für zivile Verkehrswege', 'Ein automatischer Autopilot für den Formationsflug'], 'Warnt den Piloten akustisch und visuell per Cockpit-Symboldisplay sofort bei gegnerischer Zielerfassung („Lock“)', 'Unterscheidet am charakteristischen Ton oft schon den gegnerischen Radartyp (z. B. S-300 vs. Kampfjet)', 'easy'],
-    ['MAWS (Missile Approach Warning System)', 'Optisches oder radarbasiertes Anflugwarnsystem für anfliegende Raketen', 'Erkennt anhand der UV- oder Infrarotsignatur eines zündenden Raketenmotors selbst passive Infrarot-Flugabwehrraketen', ['Ein automatisches System zur Startbahnbeleuchtung', 'Ein Sensor für vereiste Tragflächenvorderkanten', 'Eine automatische Zielerfassung für Bomben'], 'Überlebenssicherung gegen tragbare MANPADS bei Hubschraubern, Transportern (A400M) und Kampfjets', 'Zündet binnen Bruchteilen einer Sekunde selbsttätig Flares oder richtet einen DIRCM-Laser aus', 'mid'],
-    ['Link 16 (MIDS / Tactical Data Link)', 'Störfestes militärisches Echtzeit-Datenfunknetzwerk der NATO', 'Vernetzt Kampfjets, AWACS, Kriegsschiffe und Flugabwehrraketenbatterien zu einem nahtlosen digitalen Lagebild', ['Ein unverschlüsseltes Sprechfunkband für Sportpiloten', 'Eine mechanische Kupplung am Schleudersitz', 'Ein reiner Wettermelde-Dienst per Kurzwelle'], 'Ein Jagdpilot sieht Ziele eines entfernten AWACS, als wären sie auf seinem eigenen Display', 'Nutzt schnelles Frequenzsprungverfahren (TDMA / Spread Spectrum) zur Abwehr feindlicher Störsender', 'mid'],
-    ['Supercruise-Antriebstechnik', 'Aerodynamik- und Triebwerksauslegung für überschallschnellen Marschflug ohne Nachbrenner', 'Ermöglicht dauerhafte Mach 1,2 bis Mach 1,8 allein über den trockenen Maximaltriebwerksschub', ['Fliegen in 50 Metern Höhe unter Brücken hindurch', 'Starten auf nur 50 Metern Schotterpiste', 'Abfeuern von Waffen im freien Rückwärtsfall'], 'Doppelt bis dreimal größerer Überschall-Aktionsradius und deutlich reduzierte Hitzesignatur', 'Beherrschen unter anderem F-22 Raptor, Eurofighter Typhoon, Saab Gripen E und Concorde', 'easy'],
-    ['Schubvektorsteuerung (Thrust Vectoring / TVC)', 'Bewegliche Paddel oder allseitig schwenkbare Düsen am Triebwerksauslass', 'Lenkt den heißen Schubstrahl direkt um, um Nick-, Roll- oder Giermomente auch weit unterhalb normaler Ruderwirksamkeit zu erzeugen', ['Rückwärtiges Einparken an einem Flughafen-Gate', 'Abschneiden ausgefahrener Fangseile durch den Schubstrahl', 'Automatisches Abkühlen von Abgasen durch Wasser'], 'Extreme Agilität jenseits des aerodynamischen Strömungsabrisses (Post-Stall-Bereich)', 'Die F-22 nutzt eine rechteckige 2D-Nickdüse (Stealth-optimiert), Su-35/Su-57 hingegen voll 3D-schwenkbare Runddüsen', 'easy'],
-    ['DSI (Diverterless Supersonic Inlet)', 'Fester, rampenloser Überschall-Lufteinlauf an F-35, J-20 und JF-17', 'Trennt dank einer ausgeformten 3D-Beule vor dem Einlaufkanal die langsame Rumpf-Grenzschicht ohne bewegliche Metallrampen ab', ['Ein einfahrbarer Propeller vor der Flugzeugnase', 'Ein zusätzliches Seitenruder für Wasserflugzeuge', 'Ein Ventil zur Betankung am Boden'], 'Senkt Gewicht um Hunderte Kilogramm, erspart komplexe Wartungshydraulik und schluckt starke Radarreflexionen', 'Ersetzt frühere schwere bewegliche Einlauframpen von Jets wie F-15, Phantom II oder Concorde', 'pro'],
-    ['S-Duct-Lufteinlaufkanal', 'S-förmig gewundener Kanal vom äußeren Rumpfeinlauf bis zum Verdichter', 'Schirmt das spiegelglatte Metall-Schaufelrad des Triebwerks vollständig gegen direkte frontale Radarwellen ab', ['Ein Auspuff-Schalldämpfer bei alten Kolbenmotoren', 'Eine Notausstiegsschleuse unter dem Rumpfboden', 'Ein Kühlrohr für Maschinengewehre'], 'Kerntechnologie bei Tarnkappenkonstruktionen wie F-22, B-2 Spirit und Northrop F-117', 'Die gekrümmten Innenwände des S-Ducts werden zudem mit radarabsorbierendem Material ausgekleidet', 'pro'],
-    ['Schwenkflügel-Geometrie (Variable Geometry Wing)', 'Bewegliche Tragflächen mit variabler Pfeilung im Flug (z. B. Tornado, F-14, B-1B, Su-24)', 'Spreizt Flügel für hohen Auftrieb bei Start, Landung sowie langer Patrouille und pfeilt sie für schnellen Überschall-Tiefflug stark nach hinten', ['Flügel, die sich komplett abwerfen lassen', 'Flügel aus elastischem Stoffgewebe', 'Flügel, die zum Kurvenfliegen wie Vögel auf- und abwärts schlagen'], 'Löst den Zielkonflikt zwischen geringer Landegeschwindigkeit und hoher Machzahl im Tiefflug', 'Nachteil gegenüber modernen starren Fly-by-Wire-Flügeln: schwerer, teurer Titanschwenkbeschlag in der Rumpfmitte', 'mid'],
-    ['Delta-Canard-Konfiguration', 'Verbindung aus großem Delta-Hauptflügel und vorderen kleinen Steuer-Canards (Eurofighter, Rafale, Gripen)', 'Verleiht extrem hohe Wendigkeit, großen internen Flügeltankraum und kontrollierten Auftrieb durch energiereiche Canard-Wirbel', ['Ein Doppeldecker-Flügel aus zwei Weltkriegen', 'Ein reiner Hubschrauber-Heckausleger', 'Ein Nurflügel komplett ohne Seitenruder'], 'Ermöglicht über 9 g Wendigkeit im Nahkampf bei moderater Anfluggeschwindigkeit für kurze Landebahnen', 'Bei falscher Auslegung könnten Canards das Radarbild vergrößern, weshalb klassische Stealth-Jets sie meist meiden', 'mid'],
-    ['Flächenregel (Area Rule / „Wespentaille“)', 'Transsonisches Konstruktionsprinzip zur Minimierung des Luftwiderstands nahe Mach 1', 'Verjüngt den Rumpf genau dort, wo die Flügelwurzel ansetzt, sodass die Querschnittsfläche über die Gesamtlänge sanft zu- und abnimmt', ['Die gesetzliche Begrenzung maximaler Flügelflächen je Luftwaffe', 'Eine Landebahnvermessung nach Quadratmetern', 'Das Verhältnis von Seitenruder zu Cockpit'], 'Verhalf überschallschnellen Mustern wie Convair F-106 oder F-5 überhaupt erst durch die Schallmauer', 'Deshalb zeigen viele 1950er- bis 1970er-Jets wie Northrop F-5 oder Mirage F1 eine deutlich eingeschnürte Rumpftaille', 'pro'],
-    ['Prandtl-Glauert-Kondensationswolke', 'Plötzlich um einen Jet aufblitzende kegelförmige weiße Nebelscheibe beim schnellen Flug', 'Entsteht bei hoher Luftfeuchtigkeit durch einen schlagartigen Unterdruck- und Temperaturabfall in der Expansionszone hinter einem Verdichtungsstoß', ['Ein Feuer im Triebwerksgehäuse', 'Ausgetretener weißer Treibstoff durch Überdruck', 'Pulver aus dem Fallschirmkasten'], 'Häufig beobachtet in tiefen feuchten Küstenvorbeiflügen nahe Mach 0,95–1,0 sowie in sehr engen Kurven', 'Sie zeigt keine Explosion der „Schallmauer“ selbst, sondern einen strömungsmechanischen Taupunkt-Effekt', 'mid'],
-    ['LERX (Leading Edge Root Extensions)', 'Weit nach vorn gezogene aerodynamische Verlängerungen an der Tragflächenwurzel (F-16, F/A-18, MiG-29, Su-27)', 'Erzeugen bei hohen Anstellwinkeln stabile schnelle Wirbelschleppen über den Oberflügel, die den Strömungsabriss weit hinausschieben', ['Trittbretter für Mechaniker beim Check', 'Schallschutzwände gegen Kanonenlärm', 'Zusätzliche Kühlschlitze für das Bugfahrwerk'], 'Bewahrt Roll- und Höhenruderwirksamkeit bis weit jenseits von 30°–50° Anstellwinkel', 'Wurde durch rechnergestützte Strömungsversuche ab der F-5/YF-17 zum Markenzeichen moderner Fighter', 'mid'],
-    ['Radarrückstrahlfläche (RCS / Radar Cross Section)', 'Maß (in m²) für die Stärke des von einem Flugzeug reflektierten Radarsignals', 'Beschreibt, wie groß ein Objekt auf dem Radarschirm erscheint – abhängig nicht von der echten Größe, sondern von Formgebung und Material', ['Die totale Oberfläche aller Tragflächenoberseiten in Quadratmetern', 'Die maximale Ausdehnung eines Fallschirms', 'Das geometrische Profil des Pilotenschattens'], 'Während ein großer älterer Jet 10–25 m² RCS hat, liegt ein Stealth-Fighter frontal im Bereich einer kleinen Murmel (< 0,001 m²)', 'Schon zwei im 90°-Winkel zusammenstoßende Metallflächen wirken wie ein extrem greller Katzenauge-Rückstrahler', 'easy'],
-    ['RAM-Beschichtung (Radar Absorbent Material)', 'Spezielle ferrit- oder kohlenstoffhaltige Beschichtungen und Matten auf Stealth-Flugzeugen', 'Wandeln auftreffende hochfrequente elektromagnetische Radarwellen im Inneren durch innere Reibung und Interferenz in winzige Wärme um', ['Reiner Arbeitsspeicher des Bord-Navigationscomputers', 'Rostschutzfarbe für salzhaltige Meeresluft', 'Eine extrem glatte Teflon-Schicht gegen Eisbildung'], 'Unverzichtbare Ergänzung zur gezielten Kantenausrichtung moderner Tarnkappenflugzeuge', 'Ältere RAM-Schichten waren anfällig gegen Regen und Abrieb; moderne F-35-Matten sind direkt als robuste „Baked-in“-Außenhaut integriert', 'mid'],
-    ['Chaff & Flare (Düppel & Fackeln)', 'Ausstoßbare passive Täuschkörper-Patronen zur Lenkwaffenabwehr', 'Lenken aktive Radarsuchköpfe (mittels metallisierter Fasern) oder Infrarot-Suchköpfe (mittels brennender Magnesiumkapseln) vom Jet ab', ['Markierungsfarben für Kunstflugstaffeln', 'Leuchtsignale für eine Notlandung im Urwald', 'Schmierstoffe für Schwenkflügel-Gelenke'], 'Basisschutz fast jedes militärischen Kampfflugzeugs, Transportflugzeugs und Kampfhubschraubers', 'Moderne Flare-Patronen zünden im Spektrum des tatsächlichen Triebwerks („Spectral Flares“) gegen kluge Bildsucher', 'easy'],
-    ['DIRCM (Directional Infrared Countermeasures)', 'Aktiv ausgerichteter Laser-Täuschsender am Rumpf von Transportflugzeugen und Helikoptern', 'Dreht einen Spiegelturm blitzschnell auf eine anfliegende Infrarotrakete und blendet deren Sucher mit kodierten Laserblitzen', ['Ein optisches Zielgerät für ungelenkte Eisenbomben', 'Ein Scheinwerfer zur Schneeräumung auf der Piste', 'Ein Datenlink-Modem zum Bodenturm'], 'Schützt Großflugzeuge (A400M, C-17, VC-25) vor modernen schultergestützten MANPADS', 'Arbeitet völlig geräuschlos und erlischt nicht wie endliche Leuchtfackel-Magazine', 'pro'],
-    ['Martin-Baker Zero-Zero-Schleudersitz', 'Raketenunterstütztes Besatzungsrettungssystem ab 0 m Höhe und 0 Knoten Geschwindigkeit', 'Zündet nach Cockpitdach-Absprengung Feststoff-Booster und öffnet bei niedrigster Flughöhe mittels pyrotechnischer Entfaltung den Rettungsschirm binnen 2 Sekunden', ['Ein gepanzerter massiver Sitz ohne jede Auslösevorrichtung', 'Eine Komfortliege für lange Tankflüge', 'Eine elektronische Steuerkonsole auf Rädern'], 'Rettet Piloten auch bei verunglückten Startabbrüchen oder Senkrechtlandefehlern noch direkt auf der Rollbahn', 'Bisher wurden über 7.700 Pilotenleben weltweit durch Martin-Baker-Schleudersitze bewahrt', 'easy'],
-    ['Anti-G-Anzug & Pressatmung (AGSM)', 'Körperanzug mit aufblasbaren Druckkammern gegen hohe Kurven-Beschleunigungen', 'Verhindert bei hohen +g-Manövern (+9 g) den Blutabfluss aus dem Gehirn durch gezielten Gegendruck auf Waden, Oberschenkel und Bauch', ['Kälteanzug gegen Erfrierungen in arktischen Hangars', 'Feuerfeste Jacke allein für Mechaniker am Boden', 'Taucheranzug zur Seenotrettung'], 'Verhindert G-LOC (Ohnmacht im Cockpit) bei schlagartigen Ausweichmanövern mit 9-facher Erdanziehungskraft', 'In Eurofighter und F-22 schließen sich volle Wasserkammern/Drucksysteme verzögerungsfrei innerhalb von Millisekunden an', 'easy'],
-    ['Helmvisier-System (HMDS / JHMCS)', 'In das Visier des Pilotenhelms eingespiegelte Flug-, Waffen- und Sensorprojektion', 'Überträgt Geschwindigkeit, Horizont, Link-16-Ziele und Zielerfassungskreise exakt vor das Auge des Piloten – wohin er auch blickt', ['Ein einfacher Kopfschutz ohne jede Optik', 'Ein reiner Schweißschutzschild beim Schießen', 'Eine Tauchermaske für Notwasserungen'], 'Ermöglicht Zielsperrung auf feindliche Jets über die Schulter hinweg ohne das eigene Flugzeug drehen zu müssen', 'Bei der F-35 ersetzt das HMDS sogar komplett die fest installierte gläserne HUD-Scheibe vor dem Pilotensitz', 'mid'],
-    ['Fly-by-Wire (vierfach digital redundant)', 'Rechnergestützte elektronische Flugsteuerung zwischen Steuerknüppel und Ruderaktoren', 'Wandelt Steuerwünsche des Piloten über mehrere parallele Flugrechner in sichere Ruderausschläge um und stabilisiert instabile Jets hundertfach pro Sekunde', ['Mechanische Stahlseile und Umlenkrollen vom Steuerknüppel direkt zur Flosse', 'Manuelles Kurbeln hydraulischer Hilfspumpen', 'Ausschließlich per Sprachkommando ausgegebene Ruderbefehle'], 'Unabdingbar bei hochagilen Mustern wie F-16, Eurofighter, Rafale, F-22 sowie B-2 Spirit', 'Vier parallele Rechner („Quadruple Redundant“) vergleichen ihre Werte per Mehrheitsentscheid gegen Fehlersignale', 'easy'],
-    ['CATOBAR-Trägerbetrieb', 'Flugzeugträger-Auslegung mit Katapultstart und Fangseillandung (US Navy, Frankreich)', 'Beschleunigt voll beladene schwere Jets (F/A-18, F-35C, Rafale M, E-2D) binnen ca. 2 Sekunden per Dampf- oder EMALS-Magnetkatapult auf Startgeschwindigkeit', ['Eine kleine schräge Holzrampe ohne Seile', 'Senkrechtlandung auf einem kleinen Kreuzerheck', 'Start auf Gummipontons im Hafenbecken'], 'Einziges Trägerkonzept, das auch schwere Turboprop-Frühwarnflugzeuge (E-2D) und maximal bewaffnete Fighter starten kann', 'Die moderne USS Gerald R. Ford nutzt statt Dampfzylindern elektromagnetische Linear-Induktionskatapulte (EMALS)', 'mid'],
-    ['STOBAR-Trägerbetrieb', 'Flugzeugträger-System mit nach oben gebogener Sprungschanze („Ski-Jump“) ohne Katapult und Fangseilen zur Landung', 'Jets wie MiG-29K, Su-33 oder chinesische J-15 starten mit eigenem Nachbrennerschub über die gekrümmte Bugrampe', ['Katapultstart mit anschließender Senkrechtlandung auf dem Wasser', 'Ausschließlich für Hubschrauber gedacht', 'Benötigt mindestens 3 Kilometer lange schwimmende Bahnen'], 'Einfacher und wartungsärmer als Dampf-Katapultträger, limitiert jedoch das maximale Startgewicht (Treibstoff + Bomben) stark', 'Im Einsatz unter anderem auf der indischen INS Vikramaditya sowie frühen chinesischen Trägern (Liaoning/Shandong)', 'pro'],
-    ['STOVL-Trägerbetrieb', 'Kurzstart mit senkrechter Landung (Short Take-Off and Vertical Landing)', 'Kombiniert kurzen Rollanlauf (oft über eine Ski-Jump-Rampe mit höherem Startgewicht) mit einer punktgenauen Schwebelandung ohne Fangseile', ['Senkrechtstart mit anschließendem Gleitflug auf Kufen', 'Start von Unterseebooten aus per Torpedorohr', 'Reine Drohnenbedienung ohne Pilot'], 'Macht relativ kostengünstige kleinere Schiffe (z. B. britische Queen-Elizabeth-Klasse oder italienische Cavour) einsatzfähig', 'Typische Vertreter sind Harrier II und Lockheed Martin F-35B Lightning II', 'easy']
-  ];
-
-  // Hilfsfunktionen: strikte Eindeutigkeit der Fragen (seenQ) und genau 4 eindeutig verschiedene Antworten
-  const questions = [];
-  const seenQ = new Set();
-  const catCounts = { jets: 0, historisch: 0, bomber_aufklaerer: 0, technik_waffen: 0 };
-
-  function pushQ(cat, diff, q, correct, wrongs, exp) {
-    const cleanQ = String(q).trim();
-    if (seenQ.has(cleanQ)) return false;
-    const cleanCorrect = String(correct).trim();
-    const uniqWrongs = [];
-    for (const w of wrongs) {
-      const cw = String(w || '').trim();
-      if (cw && cw !== cleanCorrect && !uniqWrongs.includes(cw)) {
-        uniqWrongs.push(cw);
-      }
-      if (uniqWrongs.length === 3) break;
-    }
-    if (uniqWrongs.length < 3) return false;
-    seenQ.add(cleanQ);
-    questions.push({
-      id: questions.length + 1,
-      cat,
-      diff,
-      q: cleanQ,
-      a: [cleanCorrect, uniqWrongs[0], uniqWrongs[1], uniqWrongs[2]],
-      exp: String(exp).trim()
-    });
-    catCounts[cat] = (catCounts[cat] || 0) + 1;
-    return true;
-  }
-
-  // Schritt A: Handkuratierte CORE-Fragen einfügen
-  for (const c of CORE) {
-    pushQ(c[0], c[1], c[2], c[3], c[4], c[5]);
-  }
-
-  // Schritt B: Pro Muster in AIRCRAFT_DB 5 scharf abgegrenzte Blickwinkel (84 * 5 = 420 Fragen)
-  const BY_CAT = {
-    jets: AIRCRAFT_DB.filter(x => x[9] === 'jets'),
-    historisch: AIRCRAFT_DB.filter(x => x[9] === 'historisch'),
-    bomber_aufklaerer: AIRCRAFT_DB.filter(x => x[9] === 'bomber_aufklaerer')
-  };
-
-  for (let i = 0; i < AIRCRAFT_DB.length; i++) {
-    const [name, role, origin, year, kmh, speedLbl, engines, wingFeat, opFact, cat, baseDiff] = AIRCRAFT_DB[i];
-    const samePool = BY_CAT[cat].filter(x => x[0] !== name);
-    const allOthers = AIRCRAFT_DB.filter(x => x[0] !== name);
-
-    const pickUnique = (pool, fn, disallow, seed) => {
-      const out = [];
-      for (const item of seededShuffle(pool, seed)) {
-        const val = fn(item);
-        if (val && val !== disallow && !out.includes(val)) out.push(val);
-        if (out.length === 3) break;
-      }
-      if (out.length < 3) {
-        for (const item of seededShuffle(allOthers, seed + 77)) {
-          const val = fn(item);
-          if (val && val !== disallow && !out.includes(val)) out.push(val);
-          if (out.length === 3) break;
-        }
-      }
-      return out;
-    };
-
-    const expStr = `${name} (${origin}, Erstflug ${year}): ${role}. Antrieb: ${engines}. Höchsttempo: ${speedLbl}. Kennzeichen: ${wingFeat} (${opFact}).`;
-
-    // B1: Identifikation über bauliches Hauptmerkmal
-    pushQ(
-      cat, baseDiff,
-      `Welches Militärflugzeug lässt sich besonders an diesem Konstruktionsmerkmal erkennen: „${wingFeat}“?`,
-      name,
-      pickUnique(samePool, x => x[0], name, i * 19 + 1),
-      expStr
-    );
-
-    // B2: Identifikation über Einsatzprofil / Faktenkombination
-    pushQ(
-      cat, 'mid',
-      `Auf welches Luftfahrzeug (${origin}, Erstflug ${year}) trifft dieser Einsatz-Fakt zu: „${opFact}“?`,
-      name,
-      pickUnique(samePool, x => x[0], name, i * 19 + 2),
-      expStr
-    );
-
-    // B3: Triebwerk zu benanntem Muster
-    pushQ(
-      cat, 'pro',
-      `Welches Antriebskonzept bzw. Triebwerk kommt bei der „${name}“ (${role}) zum Einsatz?`,
-      engines,
-      pickUnique(samePool, x => x[6], engines, i * 19 + 3),
-      expStr
-    );
-
-    // B4: Einsatzrolle & Kategorie des Musters
-    pushQ(
-      cat, 'easy',
-      `Welche primäre Einsatzrolle und Bauart beschreibt das Muster „${name}“ treffend?`,
-      role,
-      pickUnique(allOthers, x => x[1], role, i * 19 + 4),
-      expStr
-    );
-
-    // B5: Herkunft / Herstellerland
-    pushQ(
-      cat, 'easy',
-      `Welchem Hersteller bzw. Herkunftsland entstammt das Militärflugzeug „${name}“ (Erstflug ${year})?`,
-      origin,
-      pickUnique(allOthers, x => x[2], origin, i * 19 + 5),
-      expStr
-    );
-  }
-
-  // Schritt C: Pro System in TECH_DB 5 tiefgehende Fragen (40 * 5 = 200 Fragen) -> technik_waffen gesamt: 26 + 200 = 226
-  for (let i = 0; i < TECH_DB.length; i++) {
-    const [term, catLabel, def, distractors, combatUse, exDetail, diff] = TECH_DB[i];
-    const otherTech = TECH_DB.filter((_, k) => k !== i);
-    const pickOther = (idx, disallow, seed) => {
-      const out = [];
-      for (const item of seededShuffle(otherTech, seed)) {
-        const v = item[idx];
-        if (v && v !== disallow && !out.includes(v)) out.push(v);
-        if (out.length === 3) break;
-      }
-      return out;
-    };
-
-    const expStr = `${term} (${catLabel}): ${def}. Nutzen: ${combatUse}. Detail: ${exDetail}.`;
-
-    pushQ(
-      'technik_waffen', diff,
-      `Was beschreibt das militärische Konzept bzw. Waffensystem „${term}“ in der Luftfahrttechnik?`,
-      def, distractors, expStr
-    );
-
-    pushQ(
-      'technik_waffen', 'mid',
-      `Welcher Fachbegriff bzw. welches System wird technisch so definiert: „${def}“?`,
-      term, pickOther(0, term, i * 23 + 11), expStr
-    );
-
-    pushQ(
-      'technik_waffen', 'easy',
-      `Welcher Systemgattung in der Militärluftfahrt gehört „${term}“ an?`,
-      catLabel, pickOther(1, catLabel, i * 23 + 12), expStr
-    );
-
-    pushQ(
-      'technik_waffen', 'mid',
-      `Welchen konkreten Einsatzzweck erfüllt „${term}“ in der modernen Luftkriegsführung?`,
-      combatUse, pickOther(4, combatUse, i * 23 + 13), expStr
-    );
-
-    pushQ(
-      'technik_waffen', 'pro',
-      `Welches charakteristische technische Detail trifft speziell auf „${term}“ zu?`,
-      exDetail, pickOther(5, exDetail, i * 23 + 14), expStr
-    );
-  }
-
-  // Schritt D: Kontrastierende Technik-Vergleichsfragen für technik_waffen bis genau 250 Fragen
-  const TECH_CONTRAST_PAIRS = [
-    ['AESA-Radar (Active Electronically Scanned Array)', 'PESA-Radar (Passive Electronically Scanned Array)', 'Beim AESA sendet und empfängt jedes einzelne Antennenmodul eigenständig per Halbleiter; ein PESA teilt eine zentrale Senderröhre auf Phasenschieber auf', 'Die AESA-Architektur bringt höhere Ausfallsicherheit, LPI-Tarnung und parallele Betriebsmodi gegenüber einem PESA.'],
-    ['MBDA Meteor', 'AIM-120 AMRAAM', 'Die Meteor nutzt ein drosselbares Staustrahltriebwerk für konstanten Nachschub bis ins Ziel, während die AMRAAM auf einen schnell ausbrennenden Feststoffmotor setzt', 'Dadurch bleibt Meteor auf weite Entfernungen auch gegen abdrehende schnelle Kampfjets extrem energiereich.'],
-    ['Chaff (Düppel)', 'Flares (Leuchtfackeln)', 'Chaff täuscht aktive Radarsuchköpfe mittels metallisierter Faserwolken, Flares blenden hingegen Infrarot-Suchköpfe mit großer Hitze', 'Moderne Kampfflugzeuge laden Magazine mit beiden Täuschkörperarten separat in Ausstoßkassetten.'],
-    ['CATOBAR-Trägerbetrieb', 'STOBAR-Trägerbetrieb', 'CATOBAR startet auch schwer beladene Flugzeuge über Katapulte und fängt sie mit Seilen, STOBAR nutzt eine Schanze ohne Katapultunterstützung', 'Katapultträger ermöglichen deutlich höhere Waffenzuladungen und den Einsatz von Turboprop-Frühwarnflugzeugen (E-2D).'],
-    ['Flying-Boom-Betankung', 'Probe-and-Drogue-Betankung', 'Beim Boom steuert ein Bediener im Tanker ein starres Teleskoprohr an, beim Fangtrichter fliegt der abnehmende Jet selbst eine Sonde in den Korb', 'Über einen Flying Boom fließen größere Treibstoffmengen pro Minute, dafür versorgen Schlauchsysteme mehrere Fighter zugleich.'],
-    ['IRST (Infrared Search and Track)', 'Aktives Bordradar', 'Ein IRST ortet Wärmestrahlung völlig passiv ohne eigene Emission, während aktives Radar elektromagnetische Impulse ausstrahlt', 'Deshalb löst ein rein mit IRST arbeitender Abfangjäger keine gegnerischen Radarwarnempfänger aus.'],
-    ['Supercruise-Antriebstechnik', 'Nachbrenner (Afterburner)', 'Supercruise hält Mach 1+ mit normalem Trockenschub sparsam über lange Zeit durch; der Nachbrenner opfert extrem viel Treibstoff für kurzzeitigen Maximalschub', 'Echte Supercruise-Muster halten die Infrarotsignatur im schnellen Marschflug zudem drastisch niedriger.'],
-    ['BVR (Beyond Visual Range)', 'WVR (Within Visual Range / Dogfight)', 'BVR bezeichnet den Raketenkampf jenseits der Sichtweite anhand von Sensoren und Datenlinks, WVR den engen Kurvenkampf auf Sicht', 'Heute endet die Mehrheit der Luftkämpfe idealerweise bereits im BVR-Bereich noch vor der Sichtaufnahme.'],
-    ['SEAD-Mission', 'DEAD-Mission', 'SEAD drängt gegnerische Flugabwehrradare durch Stören oder Warnschläge in die Abschaltung, DEAD zielt auf deren komplette physische Vernichtung', 'Beide Rollen werden häufig kombiniert, wenn Angriffspakete in stark verteidigten Luftraum eindringen.'],
-    ['S-Duct-Lufteinlaufkanal', 'DSI (Diverterless Supersonic Inlet)', 'Ein S-Duct krümmt den Kanal gegen direkte Verdichter-Radarechos im Rumpf, ein DSI nutzt vorn eine feste 3D-Beule zum Ableiten der Rumpf-Grenzschicht', 'Bei Hochleistungs-Stealthjets wie F-35 oder J-20 arbeiten beide Konstruktionsideen perfekt Hand in Hand.'],
-    ['TAURUS KEPD 350', 'JDAM (GBU-31 / GBU-38)', 'TAURUS fliegt über 500 km eigenständig per Triebwerk im Konturtiefstflug, eine JDAM gleitet nach Flugzeugabwurf rein antriebslos per GPS/INS ins Ziel', 'Der erhebliche Reichweiten-Unterschied schützt den Trägerjet bei TAURUS weit außerhalb starker Luftabwehrzonen.'],
-    ['GBU-12 Paveway', 'JDAM (GBU-38)', 'Paveway folgt aktiv einem reflektierten Laserpunkt (empfindlich bei Rauch/Wolken), JDAM navigiert wetterunabhängig nach Satellit und Trägheitsplattform', 'Moderne Dual-Mode-Lenkwaffen vereinigen deshalb Laser- und GPS/INS-Steuerung in derselben Bombe.'],
-    ['Schubvektorsteuerung (2D vs. 3D)', 'Konventionelle feste Schubdüse', 'Schubvektorsteuerung schwenkt den Abgasstrahl aktiv zur Steuerung jenseits von Strömungsabrissen, eine feste Düse schiebt ausschließlich geradeaus nach hinten', 'Gerade im extrem langsamen Langsamflug-Turn („Post-Stall“) bleiben Schubvektor-Jets voll kontrollierbar.'],
-    ['RAM-Beschichtung', 'Geometrische Radar-Kantenführung', 'RAM-Schichten schlucken eindringende Radarwellen als Wärme, die gezielte Kantenführung lenkt Reflexionen gezielt in schmale leere Sektoren ab', 'Erst die Kombination beider Effekte liefert die extrem niedrige Radarrückstrahlfläche echter Stealth-Flugzeuge.'],
-    ['Anti-Radar-Lenkwaffe (AARGM)', 'Gleitbombe (SDB)', 'AARGM spürt aktiv strahlende Radarantennen im Überschall auf und speichert deren Position, eine SDB gleitet lautlos auf statische Koordinaten', 'Gegen mobile Flugabwehrbatterien wirkt die Kombination aus passiver Emitter-Verfolgung und Endphasenradar überragend.'],
-    ['Delta-Canard-Konfiguration', 'Schwenkflügel-Geometrie', 'Delta-Canard optimiert Stabilität und Agilität leichtgewichtig über Flugcomputer ohne schwere Mechanik, Schwenkflügel verstellen ihren Winkel massiv per Titan-Drehgelenk', 'Deswegen verdrängten digitale Delta-Canards seit den 1990ern fast überall die Wartungsgiganten mit Schwenkflügeln.'],
-    ['Schleudersitz Zero-Zero', 'Konventioneller älterer Schleudersitz', 'Ein Zero-Zero-Sitz rettet durch eigene Raketentriebwerke sicher selbst stehend am Boden, ältere Sitze brauchten zwingend hohe Fluggeschwindigkeit und Ausgangshöhe', 'Die Erfindung pyrotechnischer Katapultsitze senkte die Todesrate bei Start- und Landeunfällen dramatisch.'],
-    ['Radarwarnempfänger (RWR)', 'Anflugwarner (MAWS)', 'RWR warnt gegen unsichtbare elektromagnetische Radarstrahlung, MAWS erkennt direkt den UV- oder Wärmeblitz eines startenden Raketenmotors', 'Damit schützt ein MAWS auch gegen rein passive, radarlose Schulterraketen (MANPADS).'],
-    ['DIRCM-Laser', 'Klassische Flares', 'DIRCM zielt mit einem modulierbaren Laser direkt auf den Suchkopf einer Rakete ohne Verbrauchs limit, Flares verbrennen einmalig in der Luft', 'Für große Transporter und VIP-Hubschrauber verringern DIRCM-Systeme das Risiko leerer Täuschkörper-Magazine drastisch.'],
-    ['Helmdisplay (HMDS / JHMCS)', 'Festes Head-Up Display (HUD)', 'Das Helmvisier projiziert Flugdaten und Zielmarken in jede beliebige Blickrichtung des Pilotenkopfes, ein festes HUD zeigt alles nur genau geradeaus', 'Im Kurvenkampf erlaubt dies sofortige Zielaufschaltung mit HOBS-Raketen bis 90° neben der Flugrichtung.'],
-    ['Link 16 Datennetzwerk', 'Klassischer Sprechfunk (UHF/VHF)', 'Link 16 verschickt fortlaufend hochkomprimierte verschlüsselte Radar- und Telemetriedaten in Echtzeit, Sprechfunk erfordert zeitraubendes verbales Melden', 'Piloten gewinnen durch gemeinsame Taktikbilder im Display wertvolle Sekundenbruchteile Reaktionsvorsprung.'],
-    ['Low-Bypass-Kampfjet-Turbofan', 'High-Bypass-Airliner-Turbofan', 'Kampfjet-Turbofans setzen auf kompakte Querschnitte und hohe Ausströmgeschwindigkeit für Überschall + Nachbrenner; Airliner-Triebwerke bewegen gigantische Luftmassen ruhig und sparsam im Unterschall', 'Ein großer Airliner-Frontfan würde im Überschallflug innerhalb von Sekunden durch gewaltigen Luftwiderstand und Verdichtungsstöße abbremsen.'],
-    ['Flächenregel (Area Rule)', 'LERX-Vorderkantenwurzeln', 'Die Flächenregel glättet Querschnittsübergänge für minimalen Wellenwiderstand um Mach 1; LERX erzeugen kräftige Wirbel für maximalen Auftrieb in steilen Langsamflugkurven', 'Ersteres erhöht die Höchstgeschwindigkeit im Transschall, letzteres die Wendigkeit im steilen Kurvenkampf.'],
-    ['Prandtl-Glauert-Nebelscheibe', 'Kondensstreifen (Contrails) in 10 km Höhe', 'Die Prandtl-Glauert-Wolke entsteht schlagartig in Bodennähe durch lokale Unterdruck-Abkühlung bei fast Mach 1; Kondensstreifen gefrieren aus feuchten Triebwerksabgasen in klirrend kalter Höhe', 'Das eine ist ein rein momentaner Druckeffekt an der Zelle, das andere ein anhaltendes Abgas-Eiswolkenband.']
-  ];
-
-  // Generiere 24 Kontrastfragen in technik_waffen -> 226 + 24 = 250 exakt!
-  for (let i = 0; i < TECH_CONTRAST_PAIRS.length && catCounts.technik_waffen < 250; i++) {
-    const [tA, tB, diffTxt, expTxt] = TECH_CONTRAST_PAIRS[i];
-    const altWrongs = seededShuffle(
-      TECH_CONTRAST_PAIRS.filter((_, idx) => idx !== i).map(p => p[2]),
-      i * 41 + 9
-    ).slice(0, 3);
-    pushQ(
-      'technik_waffen', 'mid',
-      `Worin besteht im praktischen Einsatz der zentrale technische Unterschied zwischen „${tA}“ und „${tB}“?`,
-      diffTxt, altWrongs, expTxt
-    );
-  }
-
-  // Schritt E: Präzise Quartett-Vergleichsfragen (Chronologie, Tempo, Kennzeichen) für exakt je 250 in jets, historisch, bomber_aufklaerer
-  function buildQuartetComparisons(cat, targetCount, seedBase) {
-    const pool = BY_CAT[cat];
-    let step = 1;
-    let safety = 0;
-    while (catCounts[cat] < targetCount && safety < 15000) {
-      safety++;
-      const shuffled = seededShuffle(pool, seedBase + step * 997);
-      const quad = shuffled.slice(0, 4);
-      step++;
-      if (quad.length < 4) continue;
-
-      const mode = step % 4;
-      if (mode === 0) {
-        // Frühester Erstflug
-        const sorted = quad.slice().sort((a, b) => a[3] - b[3]);
-        if (sorted[0][3] + 2 <= sorted[1][3]) {
-          const w = sorted[0];
-          const exp = `Frühester Erstflug: ${w[0]} (${w[3]}), vor ${sorted[1][0]} (${sorted[1][3]}), ${sorted[2][0]} (${sorted[2][3]}) und ${sorted[3][0]} (${sorted[3][3]}).`;
-          pushQ(
-            cat, 'mid',
-            `Welches der vier hier genannten Luftfahrzeuge – ${quad[0][0]}, ${quad[1][0]}, ${quad[2][0]} oder ${quad[3][0]} – hob historisch als Allererstes zum Erstflug ab?`,
-            w[0],
-            sorted.slice(1).map(x => x[0]),
-            exp
-          );
-        }
-      } else if (mode === 1) {
-        // Jüngster Erstflug
-        const sorted = quad.slice().sort((a, b) => b[3] - a[3]);
-        if (sorted[0][3] >= sorted[1][3] + 2) {
-          const w = sorted[0];
-          const exp = `Spätester Erstflug: ${w[0]} (${w[3]}), entwickelt nach ${sorted[1][0]} (${sorted[1][3]}), ${sorted[2][0]} (${sorted[2][3]}) und ${sorted[3][0]} (${sorted[3][3]}).`;
-          pushQ(
-            cat, 'mid',
-            `Entwicklungsalter: Welches dieser vier Muster (${quad[0][0]}, ${quad[1][0]}, ${quad[2][0]}, ${quad[3][0]}) feierte am spätesten seinen Erstflug?`,
-            w[0],
-            sorted.slice(1).map(x => x[0]),
-            exp
-          );
-        }
-      } else if (mode === 2) {
-        // Höchste Geschwindigkeit
-        const sorted = quad.slice().sort((a, b) => b[4] - a[4]);
-        if (sorted[0][4] >= sorted[1][4] + 140) {
-          const w = sorted[0];
-          const exp = `Höchste Geschwindigkeit: ${w[0]} (${w[5]}), vor ${sorted[1][0]} (${sorted[1][5]}), ${sorted[2][0]} (${sorted[2][5]}) und ${sorted[3][0]} (${sorted[3][5]}).`;
-          pushQ(
-            cat, 'mid',
-            `Leistungsvergleich: Welches der vier Muster – ${quad[0][0]}, ${quad[1][0]}, ${quad[2][0]} oder ${quad[3][0]} – erreicht die höchste Maximalgeschwindigkeit?`,
-            w[0],
-            sorted.slice(1).map(x => x[0]),
-            exp
-          );
-        }
-      } else {
-        // Gezielte Merkmals-Zuordnung innerhalb eines konkreten Quartetts
-        const a = quad[0];
-        const b = quad[1];
-        const subMode = step % 8;
-        if (subMode === 3) {
-          const exp = `${a[0]} (${a[2]}, ${a[3]}) trägt als klares Kennzeichen: ${a[7]} – im Gegensatz etwa zur ${b[0]}.`;
-          pushQ(
-            cat, 'easy',
-            `Auswahl unter den vier Mustern ${quad[0][0]}, ${quad[1][0]}, ${quad[2][0]} und ${quad[3][0]}: Welches trägt folgendes Erkennungsmerkmal: „${a[7]}“?`,
-            a[0],
-            [b[0], quad[2][0], quad[3][0]],
-            exp
-          );
-        } else {
-          const exp = `${a[0]} (${a[2]}, Erstflug ${a[3]}): ${a[8]}.`;
-          pushQ(
-            cat, 'pro',
-            `Muster-Zuordnung zwischen ${quad[0][0]}, ${quad[1][0]}, ${quad[2][0]} und ${quad[3][0]}: Auf welches dieser vier Muster trifft zu: „${a[8]}“?`,
-            a[0],
-            [b[0], quad[2][0], quad[3][0]],
-            exp
-          );
-        }
-      }
-    }
-  }
-
-  buildQuartetComparisons('jets', 250, 101);
-  buildQuartetComparisons('historisch', 250, 202);
-  buildQuartetComparisons('bomber_aufklaerer', 250, 303);
-
-  // Sicherheitsauffüller falls ein Kategorie-Ziel minimal unter 250 geblieben sein sollte
-  let padIdx = 0;
-  while (questions.length < 1000 && padIdx < AIRCRAFT_DB.length * 4) {
-    const a = AIRCRAFT_DB[padIdx % AIRCRAFT_DB.length];
-    const [name, role, origin, year, kmh, speedLbl, engines, wingFeat, opFact, cat] = a;
-    const targetCat = Object.entries(catCounts).sort((x, y) => x[1] - y[1])[0][0];
-    if (cat === targetCat && catCounts[cat] < 250) {
-      const others = seededShuffle(AIRCRAFT_DB.filter(x => x[0] !== name), padIdx * 313 + 7);
-      pushQ(
-        cat, 'pro',
-        `Woran erkennt der Experte speziell die „${name}“ (${year}) am Antrieb und Tempo?`,
-        `${engines} (${speedLbl})`,
-        others.slice(0, 3).map(o => `${o[6]} (${o[5]})`),
-        `${name} (${origin}): ${role}. Antrieb: ${engines} für ${speedLbl}.`
-      );
-    }
-    padIdx++;
-  }
+];
 
   if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
-    window.ArcadeQuizEngine.registerBank('mil_air', questions.slice(0, 1000));
+    window.ArcadeQuizEngine.registerBank('mil_air', DATA);
   }
 })();
