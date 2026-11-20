@@ -1,665 +1,986 @@
-/**
- * Fragenpool: Passives Investieren, ETFs & Weltportfolio — 1.000 Fragen
- * Kategorien:
- *  - etf_grundlagen    (Funktionsweise, UCITS, Replikation, Sondervermögen, Spread, iNAV, Orderbuch)
- *  - indizes_strategie (MSCI/FTSE/S&P, 70/30 vs. 1-ETF, Faktoren, Geldmarkt DBX0AN, Anleihen & Gold)
- *  - vermoegensaufbau  (Zinseszins, Sparplan vs. Einmalanlage, Rebalancing, 4-%-Regel, Risiko & Psychologie)
- *  - steuern_recht_de  (InvStG 2018, Teilfreistellung, Vorabpauschale, FIFO, Irland-Quellensteuer, § 19 InvStG)
- *
- * Schema: { id, cat, diff, q, a: [richtig, falsch1, falsch2, falsch3], exp }
- * Index 0 von a[] ist stets die richtige Antwort.
- */
+// Auto-generated unified quiz bank for "etfs" (75 questions)
 (function () {
-  function seededShuffle(arr, seed) {
-    const a = arr.slice();
-    let s = (seed >>> 0) || 1;
-    for (let i = a.length - 1; i > 0; i--) {
-      s = (Math.imul(s, 1664525) + 1013904223) >>> 0;
-      const j = s % (i + 1);
-      const t = a[i]; a[i] = a[j]; a[j] = t;
-    }
-    return a;
+  const DATA = [
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Was passiert mit deinen ETF-Anteilen, wenn die Fondsgesellschaft (wie BlackRock/iShares oder Vanguard) oder deine Depotbank pleitegeht?",
+    "a": [
+      "Gar nichts – ETFs gelten als insolvenzgeschütztes Sondervermögen und fallen nicht in die Insolvenzmasse",
+      "Deine Anteile gehen verloren, bis auf die gesetzliche Einlagensicherung von 100.000 Euro",
+      "Die Bundesanstalt für Finanzdienstleistungsaufsicht versteigert die Aktien an andere Banken",
+      "Das Guthaben wird in staatliche Bundesschatzbriefe mit 10 Jahren Laufzeit umgewandelt"
+    ],
+    "explanation": "Sondervermögen bleibt rechtlich strikt vom Vermögen der Gesellschaft getrennt – Gläubiger haben keinerlei Zugriff darauf.",
+    "exp": "Gar nichts – ETFs gelten als insolvenzgeschütztes Sondervermögen und fallen nicht in die Insolvenzmasse"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Wer gründete 1975 den ersten Indexfonds für Privatanleger und wurde mit Vanguard zum Vater des passiven Investierens?",
+    "a": [
+      "John „Jack“ Bogle",
+      "Warren Buffett",
+      "Benjamin Graham",
+      "Peter Lynch"
+    ],
+    "explanation": "Wall-Street-Konkurrenten verspotteten die Idee anfangs als „Bogles Torheit“ und unamerikanisch – heute spart das Prinzip Anlegern weltweit hunderte Milliarden.",
+    "exp": "John „Jack“ Bogle"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Warum ist die Kennzahl „Tracking Difference“ (TD) für Anleger viel aussagekräftiger als die reine Gesamtkostenquote (TER)?",
+    "a": [
+      "Die TD zeigt die reale Renditedifferenz zum Index nach Wertpapierleihe und Swap-Vorteilen – viele ETFs schlagen ihren Index sogar nach Kosten",
+      "Die TER beinhaltet bereits die Mehrwertsteuer des Steuerberaters",
+      "Die TD misst den Stromverbrauch der Server beim Börsenhandel",
+      "Die TER gilt nur für US-Bürger, während die TD für europäische Anleger verpflichtend ist"
+    ],
+    "explanation": "Ein ETF mit 0,20 % TER kann durch Wertpapierleihe und geschickte Optimierung eine negative TD von -0,10 % haben und damit besser als der Index laufen.",
+    "exp": "Die TD zeigt die reale Renditedifferenz zum Index nach Wertpapierleihe und Swap-Vorteilen – viele ETFs schlagen ihren Index sogar nach Kosten"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "mid",
+    "q": "Was ist der fundamentale Unterschied zwischen einem „physisch replizierenden“ und einem „synthetischen“ (Swap-)ETF?",
+    "a": [
+      "Physische ETFs kaufen die echten Originalaktien; synthetische ETFs bilden die Rendite über Tauschverträge (Swaps) mit Banken ab",
+      "Physische ETFs werden auf Papier ausgedruckt; synthetische existieren rein digital",
+      "Synthetische ETFs dürfen laut EU-Recht nur an Sonntagen gehandelt werden",
+      "Physische ETFs dürfen keinerlei Dividenden an Anleger ausschütten"
+    ],
+    "explanation": "Synthetische ETFs nutzen Trägerportfolios und Swaps – bei US-Aktien haben sie in Europa oft Steuervorteile, da keine US-Quellensteuer auf Dividenden anfällt.",
+    "exp": "Physische ETFs kaufen die echten Originalaktien; synthetische ETFs bilden die Rendite über Tauschverträge (Swaps) mit Banken ab"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "mid",
+    "q": "Wie funktioniert der geniale „Creation/Redemption“-Prozess, der den Börsenkurs eines ETFs immer nah am Nettoinventarwert (NAV) hält?",
+    "a": [
+      "Authorised Participants (Market Maker) tauschen Aktienkörbe gegen ETF-Anteile und gleichen Preisdifferenzen durch Arbitrage sekundenschnell aus",
+      "Die Europäische Zentralbank kauft bei Kursabfällen automatisch ETF-Anteile auf",
+      "Der Fondsmanager korrigiert den Börsenkurs per manueller Software-Eingabe jeden Abend",
+      "Anleger stimmen auf Jahreshauptversammlungen über den fairen Börsenpreis ab"
+    ],
+    "explanation": "Wird der ETF teurer als die enthaltenen Aktien, kaufen Market Maker die Aktien, schaffen neue ETF-Anteile und verkaufen sie mit Gewinn – der Preis sinkt sofort auf den fairen Wert.",
+    "exp": "Authorised Participants (Market Maker) tauschen Aktienkörbe gegen ETF-Anteile und gleichen Preisdifferenzen durch Arbitrage sekundenschnell aus"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "pro",
+    "q": "Welche strenge Obergrenze setzt die europäische UCITS-Richtlinie für das Kontrahentenrisiko (Ausfallrisiko) bei synthetischen Swap-ETFs?",
+    "a": [
+      "Maximal 10 Prozent des Fondsvermögens (viele Anbieter besichern sogar zu über 100 Prozent)",
+      "Maximal 50 Prozent des Fondsvermögens",
+      "Es gibt überhaupt keine Obergrenze für Swap-Partner",
+      "Genau 100.000 Euro pro Privatanleger"
+    ],
+    "explanation": "Selbst wenn die Swap-Bank pleitegeht, sind mindestens 90 % (in der Praxis meist 105–110 % durch Überbesicherung mit Staatsanleihen) absolut geschützt.",
+    "exp": "Maximal 10 Prozent des Fondsvermögens (viele Anbieter besichern sogar zu über 100 Prozent)"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Zu welchen Uhrzeiten sollte man als deutscher Privatanleger ETFs an der Börse kaufen, um den geringsten Spread (Geld-Brief-Spanne) zu zahlen?",
+    "a": [
+      "Zwischen 15:30 und 17:30 Uhr an Werktagen (wenn Xetra und die US-Börsen in New York gleichzeitig geöffnet sind)",
+      "Morgens um 07:00 Uhr vor Arbeitsbeginn",
+      "Am Wochenende, wenn die Börsenkurse stillstehen",
+      "Nachts um 23:00 Uhr an ausländischen Tradegate-Spätmärkten"
+    ],
+    "explanation": "Höchste Liquidität bedeutet engste Spreads: Wenn die Wall Street öffnet, sinken die Handelskosten auf Bruchteile von Cents.",
+    "exp": "Zwischen 15:30 und 17:30 Uhr an Werktagen (wenn Xetra und die US-Börsen in New York gleichzeitig geöffnet sind)"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "mid",
+    "q": "Was unterscheidet einen „ausschüttenden“ (Distributing) von einem „thesaurierenden“ (Accumulating) ETF?",
+    "a": [
+      "Ausschütter überweisen Dividenden aufs Girokonto; Thesaurierer legen Dividenden automatisch steuerstundend im Fondsvermögen wieder an",
+      "Thesaurierende ETFs dürfen niemals wieder verkauft werden",
+      "Ausschüttende ETFs investieren ausschließlich in Gold- und Immobilienaktien",
+      "Thesaurierer verlangen doppelt so hohe Verwaltungsgebühren wie Ausschütter"
+    ],
+    "explanation": "Thesaurierer maximieren den Zinseszinseffekt, da Erträge sofort automatisch ohne Transaktionskosten reinvestiert werden.",
+    "exp": "Ausschütter überweisen Dividenden aufs Girokonto; Thesaurierer legen Dividenden automatisch steuerstundend im Fondsvermögen wieder an"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "pro",
+    "q": "Warum sollten Anleger an der Börse immer mit einer „Limit-Order“ statt mit einer unlimitierten „Billigst/Bestens-Order“ handeln?",
+    "a": [
+      "Ein Limit schützt vor bösen Überraschungen bei plötzlichen Marktschwankungen oder dünnem Orderbuch",
+      "Limit-Orders sind bei allen Brokern gesetzlich von der Mehrwertsteuer befreit",
+      "Billigst-Orders werden vom Broker nach 10 Sekunden automatisch gelöscht",
+      "Eine Limit-Order verdoppelt die Dividendenrendite der gekauften Aktien"
+    ],
+    "explanation": "Wer „Bestens“ kauft, akzeptiert jeden Preis – im ungünstigen Fall kauft man weit über dem fairen Nettoinventarwert (iNAV).",
+    "exp": "Ein Limit schützt vor bösen Überraschungen bei plötzlichen Marktschwankungen oder dünnem Orderbuch"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Wofür steht das europäische Siegel „UCITS“ (im Deutschen OGAW) im Namen seriöser Publikums-ETFs?",
+    "a": [
+      "Undertakings for Collective Investment in Transferable Securities (strenge EU-Verbraucherschutz- und Diversifikationsregeln)",
+      "Universal Currency International Trading Standard",
+      "United Crypto and Index Trading System",
+      "Unilateral Collective Investment Tax Statute"
+    ],
+    "explanation": "UCITS garantiert Mindest-Diversifikation (keine Aktie über 10 % bzw. 20 %), tägliche Handelbarkeit und unabhängige Verwahrung bei einer Depotbank.",
+    "exp": "Undertakings for Collective Investment in Transferable Securities (strenge EU-Verbraucherschutz- und Diversifikationsregeln)"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "mid",
+    "q": "Was bedeutet „Sampling“ bei der physischen Replikation eines riesigen Index wie dem MSCI ACWI IMI?",
+    "a": [
+      "Der ETF kauft nicht alle 9.000 Aktien, sondern wählt repräsentative Titel aus, um Transaktionskosten bei Kleinstaktien zu sparen",
+      "Der Fondsmanager kauft von jeder Aktie immer nur exakt eine einzige Probeaktie",
+      "Die Aktien werden alle vier Wochen per Zufallsgenerator ausgewürfelt",
+      "Das Portfolio besteht zur Hälfte aus Rohöl- und Kaffeebohnen-Lieferverträgen"
+    ],
+    "explanation": "Winzige Micro-Caps in Schwellenländern kosten beim Handel zu viel Gebühren – optimiertes Sampling bildet die Rendite mit rund 2.000 bis 3.000 Aktien perfekt ab.",
+    "exp": "Der ETF kauft nicht alle 9.000 Aktien, sondern wählt repräsentative Titel aus, um Transaktionskosten bei Kleinstaktien zu sparen"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "pro",
+    "q": "Was ist der „iNAV“ (indikativer Nettoinventarwert) während der laufenden Handelszeiten?",
+    "a": [
+      "Der fortlaufend berechnete faire rechnerische Wert eines ETF-Anteils basierend auf den aktuellen Kursen aller enthaltenen Aktien",
+      "Der historische Kurs am Tag der Auflegung des Fonds",
+      "Der Mindestpreis, den der Staat beim Verkauf garantiert",
+      "Die Summe aller Transaktionsgebühren der letzten 12 Monate"
+    ],
+    "explanation": "Börsen berechnen den iNAV meist im Sekundentakt – so sieht man sofort, ob der aktuelle Briefkurs fair ist oder ein überhöhter Aufschlag vorliegt.",
+    "exp": "Der fortlaufend berechnete faire rechnerische Wert eines ETF-Anteils basierend auf den aktuellen Kursen aller enthaltenen Aktien"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Was versteht man unter dem „Spread“ beim Kauf eines Wertpapiers an der Börse?",
+    "a": [
+      "Die Spanne zwischen dem Kaufpreis (Brief/Ask) und dem Verkaufspreis (Geld/Bid)",
+      "Der Rabatt, den der Broker für Neukunden beim ersten Trade gewährt",
+      "Die Differenz zwischen Sommer- und Winterpreisen für Aktien",
+      "Die Zinszahlung der Bundesbank an die Depotbank"
+    ],
+    "explanation": "Der Spread ist die unvermeidliche Marge des Market Makers – je liquider der ETF und je liquider der Markt, desto kleiner ist dieser Unterschied.",
+    "exp": "Die Spanne zwischen dem Kaufpreis (Brief/Ask) und dem Verkaufspreis (Geld/Bid)"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "mid",
+    "q": "Warum dürfen Privatanleger in der EU seit 2018 keine US-domizilierten Original-ETFs (wie VOO oder SPY) mehr direkt kaufen?",
+    "a": [
+      "Weil US-Fonds kein EU-konformes „KID/PRIIPs“-Basisinformationsblatt in deutscher Sprache bereitstellen",
+      "Weil die US-Börsenaufsicht SEC den Handel mit Europa komplett untersagt hat",
+      "Weil US-Dollar-Zahlungen in Europa unter Geldwäscheverdacht stehen",
+      "Weil US-ETFs keine Aktien von Technologieunternehmen enthalten dürfen"
+    ],
+    "explanation": "Ein reines EU-Bürokratie-Problem: Da US-Häuser keine EU-KIDs drucken, greifen europäische Anleger einfach zu den identischen UCITS-Versionen aus Irland oder Luxemburg.",
+    "exp": "Weil US-Fonds kein EU-konformes „KID/PRIIPs“-Basisinformationsblatt in deutscher Sprache bereitstellen"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "pro",
+    "q": "Wie generieren manche physische ETFs durch „Wertpapierleihe“ Zusatzeinnahmen für den Fonds?",
+    "a": [
+      "Sie leihen Aktien gegen erstklassige Sicherheiten (Collateral) an Leerverkäufer aus und teilen die Leihgebühren mit den Fondsanlegern",
+      "Sie verleihen die Aktienzertifikate an Museen zu Ausstellungszwecken",
+      "Sie beleihen das Portfolio bei Geschäftsbanken zur Spekulation auf Devisen",
+      "Sie verkaufen die Stimmrechte der Hauptversammlungen an Regierungen"
+    ],
+    "explanation": "Diese Leiherträge decken oft die laufenden Kosten des Fonds komplett ab und führen zu negativen Tracking Differences zugunsten der Anleger.",
+    "exp": "Sie leihen Aktien gegen erstklassige Sicherheiten (Collateral) an Leerverkäufer aus und teilen die Leihgebühren mit den Fondsanlegern"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Was bedeutet die Abkürzung „ETF“?",
+    "a": [
+      "Exchange Traded Fund (Börsengehandelter Indexfonds)",
+      "Electronic Transfer Facility",
+      "European Trade Foundation",
+      "Equity Trust Future"
+    ],
+    "explanation": "Im Gegensatz zu klassischen Investmentfonds, die man einmal täglich über die Fondsgesellschaft kauft, handelt man ETFs sekundenschnell an der Börse.",
+    "exp": "Exchange Traded Fund (Börsengehandelter Indexfonds)"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "mid",
+    "q": "Was ist der Nachteil von Branchen- oder Themen-ETFs (wie Wasserstoff, Metaverse oder Cannabis)?",
+    "a": [
+      "Sie werden meist auf dem Höhepunkt eines Hypes aufgelegt, haben hohe Gebühren und unterperformen den breiten Markt langfristig oft massiv",
+      "Sie dürfen gesetzlich nur 12 Monate lang im Depot gehalten werden",
+      "Sie unterliegen einer Sondersteuer von 50 Prozent auf alle Kursgewinne",
+      "Sie schütten keine Dividenden in Euro, sondern in Naturalien aus"
+    ],
+    "explanation": "Wer auf Trends setzt, kauft Aktien, wenn sie am teuersten sind – breit gestreute Welt-ETFs schlagen Modethemen über 10 Jahre fast ausnahmslos.",
+    "exp": "Sie werden meist auf dem Höhepunkt eines Hypes aufgelegt, haben hohe Gebühren und unterperformen den breiten Markt langfristig oft massiv"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "pro",
+    "q": "Was bedeutet „Vollreplikation“ bei einem Indexfonds?",
+    "a": [
+      "Der ETF kauft ausnahmslos jede einzelne Aktie des Index exakt in ihrer indexgewichteten Marktkapitalisierung",
+      "Der Fondsmanager verdoppelt jede Transaktion auf seinem privaten Depotkonto",
+      "Der Index wird auf zwei getrennten Servern gleichzeitig parallel berechnet",
+      "Das Portfolio besteht ausschließlich aus Staatsanleihen von AAA-Ländern"
+    ],
+    "explanation": "Bei Indizes mit wenigen hundert Aktien (wie DAX 40 oder S&P 500) ist Vollreplikation der Standard; bei Weltindizes mit tausenden Titeln nutzt man Sampling.",
+    "exp": "Der ETF kauft ausnahmslos jede einzelne Aktie des Index exakt in ihrer indexgewichteten Marktkapitalisierung"
+  },
+  {
+    "cat": "etf_grundlagen",
+    "diff": "easy",
+    "q": "Was ist ein „Sparplan“ bei einer modernen Direktbank oder einem Neobroker?",
+    "a": [
+      "Ein automatischer Dauerauftrag, der monatlich ab z. B. 1 Euro Bruchteile von ETF-Anteilen gebührenarm zukauft",
+      "Ein Sparbuch mit garantierten 10 Prozent Festzinsen pro Jahr",
+      "Ein Bausparvertrag mit staatlicher Wohnungsbauprämie",
+      "Eine Pflichtversicherung für den Fall von Kursverlusten"
+    ],
+    "explanation": "Sparpläne nehmen Emotionen aus der Geldanlage: Man investiert stur jeden Monat, egal ob die Kurse gerade steigen oder fallen.",
+    "exp": "Ein automatischer Dauerauftrag, der monatlich ab z. B. 1 Euro Bruchteile von ETF-Anteilen gebührenarm zukauft"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "easy",
+    "q": "Welches weit verbreitete Missverständnis betrifft den berühmten Aktienindex „MSCI World“?",
+    "a": [
+      "Er enthält nicht die ganze Welt, sondern nur Industrie-Länder (keine Schwellenländer wie China oder Indien)",
+      "Er enthält ausschließlich deutsche und französische Unternehmen",
+      "Er umfasst alle 50.000 börsennotierten Aktiengesellschaften der Erde",
+      "Er investiert zu 80 Prozent in physisches Rohöl und Edelmetalle"
+    ],
+    "explanation": "Der MSCI World umfasst rund 1.500 Aktien aus 23 entwickelten Ländern – Schwellenländer (Emerging Markets) fehlen komplett.",
+    "exp": "Er enthält nicht die ganze Welt, sondern nur Industrie-Länder (keine Schwellenländer wie China oder Indien)"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "easy",
+    "q": "Was ist der Unterschied zwischen dem „MSCI World“ und dem „MSCI ACWI“ (All Country World Index)?",
+    "a": [
+      "Der MSCI ACWI enthält neben den Industrieländern auch 24 Schwellenländer (Emerging Markets)",
+      "Der MSCI ACWI investiert ausschließlich in nachhaltige Solarenergie",
+      "Der MSCI World enthält doppelt so viele Aktien wie der ACWI",
+      "Der ACWI darf nur von institutionellen Pensionskassen gekauft werden"
+    ],
+    "explanation": "Der MSCI ACWI deckt rund 85 % der weltweiten streubesitzbereinigten Marktkapitalisierung ab und ist ein echtes 1-ETF-Weltportfolio.",
+    "exp": "Der MSCI ACWI enthält neben den Industrieländern auch 24 Schwellenländer (Emerging Markets)"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "mid",
+    "q": "Was zeichnet den beliebten Welt-ETF auf den „FTSE All-World“ (z. B. Vanguard A1JX52 / A2PKXG) aus?",
+    "a": [
+      "Er vereint Industrie- und Schwellenländer (über 3.600 Aktien) in einem einzigen kostengünstigen All-in-One-Fonds",
+      "Er garantiert eine feste jährliche Mindestrendite von 5 Prozent",
+      "Er schließt alle US-amerikanischen Technologieunternehmen strikt aus",
+      "Er besteht zu 50 Prozent aus Goldbarren in Londoner Tresoren"
+    ],
+    "explanation": "Der FTSE All-World gilt in Finanzforen als der Goldstandard für das unkomplizierte „Kaufen und Liegenlassen“-Weltportfolio.",
+    "exp": "Er vereint Industrie- und Schwellenländer (über 3.600 Aktien) in einem einzigen kostengünstigen All-in-One-Fonds"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "easy",
+    "q": "Warum ist der US-Aktienanteil in globalen Weltindizes wie dem MSCI World derzeit mit über 65 bis 70 Prozent so hoch?",
+    "a": [
+      "Weil die Gewichtung streng nach der weltweiten Free-Float-Marktkapitalisierung (Börsenwert der Unternehmen) erfolgt",
+      "Weil die US-Notenbank den Indexanbietern Schmiergelder zahlt",
+      "Weil der Index nach der geografischen Landfläche der Kontinente gewichtet ist",
+      "Weil europäische Aktien gesetzlich auf maximal 10 Prozent gedeckelt sind"
+    ],
+    "explanation": "Giganten wie Apple, Microsoft, Nvidia und Alphabet sind gigantisch wertvoll – ihr Börsenwert bestimmt objektiv das Gewicht im Index.",
+    "exp": "Weil die Gewichtung streng nach der weltweiten Free-Float-Marktkapitalisierung (Börsenwert der Unternehmen) erfolgt"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "mid",
+    "q": "Was war der Gedanke hinter der klassischen „70/30-Strategie“ (70 % MSCI World / 30 % Emerging Markets)?",
+    "a": [
+      "Eine stärkere Annäherung an das weltweite Bruttoinlandsprodukt (BIP) statt reiner Marktkapitalisierung",
+      "Eine Reduktion des US-Dollars auf null Prozent im Depot",
+      "Die Maximierung von Dividenden für den monatlichen Konsum",
+      "Ein steuerliches Erfordernis nach dem alten Außenwirtschaftsgesetz"
+    ],
+    "explanation": "Nach Marktkapitalisierung haben Schwellenländer nur ca. 10 % Gewicht – nach BIP erwirtschaften sie rund 35-40 % der Weltwirtschaftsleistung.",
+    "exp": "Eine stärkere Annäherung an das weltweite Bruttoinlandsprodukt (BIP) statt reiner Marktkapitalisierung"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "nerd",
+    "q": "Was ist der „Xtrackers II EUR Overnight Rate Swap UCITS ETF“ (DBX0AN) und warum ist er bei Privatanlegern so beliebt?",
+    "a": [
+      "Ein Geldmarkt-ETF, der exakt den kurzfristigen Euro-Zins der EZB (€STR) abzüglich minimaler TER risikolos abbildet",
+      "Ein spekulativer Krypto-Fonds mit Hebelwirkung auf Ethereum",
+      "Ein Immobilienfonds, der Gewerbeparks in Frankfurt finanziert",
+      "Ein staatlicher Notgroschen-Fonds der Europäischen Investitionsbank"
+    ],
+    "explanation": "Der DBX0AN ist die moderne Alternative zum Tagesgeld: Zinsanhebungen der EZB fließen ab Tag 1 zu 100 % ein – ohne Lockangebote oder Neukundengefeilsche.",
+    "exp": "Ein Geldmarkt-ETF, der exakt den kurzfristigen Euro-Zins der EZB (€STR) abzüglich minimaler TER risikolos abbildet"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "mid",
+    "q": "Was besagt das berühmte Fama-French-Faktorenmodell (Factor Investing)?",
+    "a": [
+      "Überrenditen lassen sich durch systematische Risikoprämien wie Size (Small Caps), Value (günstig bewertet) und Quality erklären",
+      "Aktienkurse lassen sich durch Chart-Formationen wie Schulter-Kopf-Schulter exakt vorhersagen",
+      "Je höher die Dividende eines Unternehmens, desto sicherer ist die Aktie vor Verlusten",
+      "Unternehmen mit ungeraden Mitarbeiterzahlen erzielen höhere Quartalsgewinne"
+    ],
+    "explanation": "Eugene Fama (Nobelpreis 2013) zeigte, dass langfristig bestimmte Faktoren wie Value und Small Caps höhere Risikoprämien abwerfen können.",
+    "exp": "Überrenditen lassen sich durch systematische Risikoprämien wie Size (Small Caps), Value (günstig bewertet) und Quality erklären"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "easy",
+    "q": "Wie viele Aktien enthält der wichtigste US-amerikanische Leitindex „S&P 500“?",
+    "a": [
+      "500 der größten börsennotierten US-Aktiengesellschaften",
+      "Exakt 50 Technologie-Konzerne aus dem Silicon Valley",
+      "Alle 5.000 börsennotierten Unternehmen der USA",
+      "Die 500 ältesten Familienbetriebe Nordamerikas"
+    ],
+    "explanation": "Der S&P 500 repräsentiert rund 80 % der gesamten Marktkapitalisierung des US-Aktienmarktes und wird von einem Komitee kuratiert.",
+    "exp": "500 der größten börsennotierten US-Aktiengesellschaften"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "mid",
+    "q": "Was passiert mit den Kursen bestehender Anleihen-ETFs, wenn die Zentralbank die Zinsen schlagartig erhöht?",
+    "a": [
+      "Die Kurse bestehender Anleihen fallen, weil alte Anleihen mit niedrigeren Zinskupons unattraktiver werden",
+      "Die Kurse steigen sofort proportional zur Zinsanhebung",
+      "Der Kurs bleibt absolut unverändert, nur die Ausschüttung verdoppelt sich",
+      "Der ETF wird von der Börse ausgesetzt, bis die Zinsen wieder fallen"
+    ],
+    "explanation": "Zinsen und Anleihekurse bewegen sich wie eine Wippe: Steigen die Zinsen, fallen die Kurse bestehender Papiere – je länger die Duration, desto heftiger der Einbruch.",
+    "exp": "Die Kurse bestehender Anleihen fallen, weil alte Anleihen mit niedrigeren Zinskupons unattraktiver werden"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "nerd",
+    "q": "Was bedeutet die Kennzahl „Modified Duration“ bei einem Anleihen-ETF?",
+    "a": [
+      "Sie gibt an, um wie viel Prozent der ETF-Kurs fällt, wenn das Marktzinsniveau um 1 Prozentpunkt steigt",
+      "Die durchschnittliche Dauer bis zur Rente der Fondsmanager",
+      "Die Anzahl der Jahre, die der ETF ohne Zinszahlung überleben kann",
+      "Die prozentuale Ausfallwahrscheinlichkeit von Staatsanleihen"
+    ],
+    "explanation": "Hat ein Anleihen-ETF eine Duration von 7 Jahren, verliert er bei einer Zinsanhebung um 1 % rund 7 % an Kurswert.",
+    "exp": "Sie gibt an, um wie viel Prozent der ETF-Kurs fällt, wenn das Marktzinsniveau um 1 Prozentpunkt steigt"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "easy",
+    "q": "Was ist der deutsche Leitindex DAX seit September 2021?",
+    "a": [
+      "Ein Index der 40 größten und umsatzstärksten deutschen Aktiengesellschaften (zuvor 30 Titel)",
+      "Ein Index aller 100 DAX-Familienunternehmen",
+      "Ein reiner Mittelstands-Index für Handwerksbetriebe",
+      "Ein Verband deutscher Sparkassen und Volksbanken"
+    ],
+    "explanation": "Nach dem Wirecard-Skandal reformierte die Deutsche Börse den DAX: Er wuchs auf 40 Werte und führte strengere Rentabilitätsregeln ein.",
+    "exp": "Ein Index der 40 größten und umsatzstärksten deutschen Aktiengesellschaften (zuvor 30 Titel)"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "mid",
+    "q": "Was bedeutet der Begriff „Equal Weight“ (Gleichgewichtung) bei einem ETF im Vergleich zur Standard-Gewichtung?",
+    "a": [
+      "Jede Aktie im Index erhält exakt denselben prozentualen Anteil (z. B. 0,2 % bei 500 Aktien), unabhängig von ihrer Größe",
+      "Alle Unternehmen müssen genau gleich viele Mitarbeiter beschäftigen",
+      "Männer und Frauen müssen im Vorstand paritätisch vertreten sein",
+      "Aktien und Anleihen werden im Verhältnis 50:50 gemischt"
+    ],
+    "explanation": "Equal-Weight-ETFs verhindern das Klumpenrisiko von Mega-Caps (wie Apple oder Microsoft), erfordern aber quartalsweises Rebalancing.",
+    "exp": "Jede Aktie im Index erhält exakt denselben prozentualen Anteil (z. B. 0,2 % bei 500 Aktien), unabhängig von ihrer Größe"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "pro",
+    "q": "Was ist der Unterschied zwischen dem MSCI Emerging Markets und dem FTSE Emerging Index?",
+    "a": [
+      "FTSE stuft Südkorea als Industrieland ein (kein Südkorea im EM-Index); MSCI stuft Südkorea weiterhin als Schwellenland ein (rund 12 % Samsung & Co.)",
+      "FTSE verbietet Aktien aus China; MSCI erlaubt nur chinesische Titel",
+      "MSCI enthält ausschließlich Rohstoffkonzerne",
+      "FTSE berechnet die Kurse in Schweizer Franken, MSCI in Britischen Pfund"
+    ],
+    "explanation": "Wer MSCI World und FTSE Emerging Markets mischt, hat Südkorea nirgends im Depot – wer FTSE Developed und MSCI EM mischt, hat Südkorea doppelt!",
+    "exp": "FTSE stuft Südkorea als Industrieland ein (kein Südkorea im EM-Index); MSCI stuft Südkorea weiterhin als Schwellenland ein (rund 12 % Samsung & Co.)"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "easy",
+    "q": "Welche Anlageklasse bildet der Nasdaq-100-Index primär ab?",
+    "a": [
+      "Die 100 größten nicht-finanziellen Unternehmen der US-Technologiebörse Nasdaq",
+      "Die 100 profitabelsten US-Banken und Versicherungen",
+      "100 Start-ups mit weniger als drei Jahren Historie",
+      "Die 100 größten Immobilienkonzerne Amerikas"
+    ],
+    "explanation": "Der Nasdaq-100 ist stark technologielastig (Apple, Microsoft, Alphabet, Amazon, Nvidia, Meta) und schließt Finanzunternehmen per Definition aus.",
+    "exp": "Die 100 größten nicht-finanziellen Unternehmen der US-Technologiebörse Nasdaq"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "mid",
+    "q": "Warum ist ein Gold-ETC (wie Xetra-Gold oder Euwax Gold II) in Deutschland kein echter ETF, sondern eine Inhaberschuldverschreibung?",
+    "a": [
+      "Weil europäische UCITS-Fondsgesetze vorschreiben, dass ein Fonds diversifiziert sein muss und nicht nur aus einem einzigen Rohstoff bestehen darf",
+      "Weil der deutsche Staat privaten Goldhandel verbieten will",
+      "Weil Goldbarren im Gegensatz zu Aktien keine Seriennummern haben",
+      "Weil ETCs nur an US-Börsen gehandelt werden dürfen"
+    ],
+    "explanation": "Ein ETF muss diversifiziert sein – daher heißen 1-Rohstoff-Produkte „ETC“ (Exchange Traded Commodity). Gold-ETCs hinterlegen physisches Gold im Tresor.",
+    "exp": "Weil europäische UCITS-Fondsgesetze vorschreiben, dass ein Fonds diversifiziert sein muss und nicht nur aus einem einzigen Rohstoff bestehen darf"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "pro",
+    "q": "Was ist der steuerliche Riesen-Vorteil von physischen Gold-ETCs (wie Xetra-Gold) für deutsche Anleger laut BFH-Urteil?",
+    "a": [
+      "Nach 12 Monaten Haltedauer sind Kursgewinne wie bei physischen Barren nach § 23 EStG zu 100 Prozent steuerfrei",
+      "Es gibt jedes Jahr 5 Prozent garantierte Zinsen vom Bundesfinanzministerium",
+      "Gewinne werden automatisch mit Rentenbeiträgen verrechnet",
+      "Die Depotbank liefert bei jedem Verkauf kostenlosen Champagner"
+    ],
+    "explanation": "Besteht ein Lieferanspruch auf echtes physisches Gold (wie bei Xetra-Gold), gilt es steuerlich als privates Veräußerungsgeschäft – nach 1 Jahr steuerfrei!",
+    "exp": "Nach 12 Monaten Haltedauer sind Kursgewinne wie bei physischen Barren nach § 23 EStG zu 100 Prozent steuerfrei"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "easy",
+    "q": "Was versteht man unter dem Begriff „ESG-Screening“ bei nachhaltigen ETFs?",
+    "a": [
+      "Ausschluss oder Übergewichtung von Unternehmen nach Kriterien aus Environmental (Umwelt), Social (Soziales) und Governance (Unternehmensführung)",
+      "Die Garantie, dass ein Unternehmen niemals Kurseinbrüche erleidet",
+      "Ein Zertifikat für besonders hohe Managergehälter",
+      "Die Pflicht, nur Aktien von Elektroautoherstellern zu kaufen"
+    ],
+    "explanation": "Klassische ESG-Filter schließen oft Waffen, Tabak, Kohleverstromung oder Unternehmen mit gravierenden Arbeitsrechtsverstößen aus.",
+    "exp": "Ausschluss oder Übergewichtung von Unternehmen nach Kriterien aus Environmental (Umwelt), Social (Soziales) und Governance (Unternehmensführung)"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "mid",
+    "q": "Was deckt der Index „MSCI ACWI IMI“ im Unterschied zum normalen „MSCI ACWI“ zusätzlich ab?",
+    "a": [
+      "Den Bereich der Small Caps (Nebenwerte) – damit deckt er 99 % der weltweiten investierbaren Aktienmarktkapitalisierung ab",
+      "Ausschließlich Staatsanleihen von Schwellenländern",
+      "Rohstoff-Terminkontrakte auf Weizen und Kupfer",
+      "Nicht-börsennotierte Immobilien in Asien"
+    ],
+    "explanation": "IMI steht für „Investable Market Index“ – er umfasst Large, Mid und Small Caps aus Industrie- und Schwellenländern (rund 9.000 Aktien weltweit).",
+    "exp": "Den Bereich der Small Caps (Nebenwerte) – damit deckt er 99 % der weltweiten investierbaren Aktienmarktkapitalisierung ab"
+  },
+  {
+    "cat": "indizes_strategie",
+    "diff": "pro",
+    "q": "Was ist die historische Begründung für das Phänomen „Small-Cap-Prämie“ im Faktor-Investing?",
+    "a": [
+      "Kleinere Unternehmen haben höheres Insolvenzrisiko und geringeren Kreditzugang – Anleger fordern dafür langfristig eine höhere Risikoprämie",
+      "Kleine Firmen sind gesetzlich von Unternehmenssteuern befreit",
+      "Großkonzerne dürfen laut Kartellrecht keine Gewinne ausschütten",
+      "Small Caps wachsen automatisch mit exakt 15 Prozent pro Jahr"
+    ],
+    "explanation": "Historisch schlugen Small-Cap-Value-Aktien den Markt oft über lange Dekaden – allerdings unter deutlich höherer Volatilität und langen Durststrecken.",
+    "exp": "Kleinere Unternehmen haben höheres Insolvenzrisiko und geringeren Kreditzugang – Anleger fordern dafür langfristig eine höhere Risikoprämie"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Was besagt die berühmte „72er-Regel“ in der Finanzmathematik im Handumdrehen?",
+    "a": [
+      "72 geteilt durch den jährlichen Zinssatz ergibt die Jahre, in denen sich das Vermögen verdoppelt (z. B. 72 / 7 % ≈ 10,3 Jahre)",
+      "Man sollte mit 72 Jahren alle Aktien in Bargeld umtauschen",
+      "Maximal 72 Prozent des Einkommens dürfen für Miete ausgegeben werden",
+      "Nach 72 Monaten ist jeder Bankkredit automatisch getilgt"
+    ],
+    "explanation": "Bei 7 % Realrendite verdoppelt sich dein Geld alle 10 Jahre: Aus 10.000 € werden in 30 Jahren rund 80.000 €!",
+    "exp": "72 geteilt durch den jährlichen Zinssatz ergibt die Jahre, in denen sich das Vermögen verdoppelt (z. B. 72 / 7 % ≈ 10,3 Jahre)"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Was belegen die renommierten S&P SPIVA-Studien seit über zwei Jahrzehnten immer wieder schonungslos?",
+    "a": [
+      "Rund 85 bis 95 Prozent aller aktiv gemanagten Aktienfonds schneiden nach Kosten schlechter ab als ihr Vergleichsindex",
+      "Aktive Fondsmanager schlagen den Markt in 90 Prozent der Fälle",
+      "Indexfonds gehen nach 10 Jahren Laufzeit fast immer pleite",
+      "Tagesgeldkonten erzielen höhere Renditen als globale Aktienmärkte"
+    ],
+    "explanation": "Hohe Verwaltungsgebühren (1,5–2 % p. a.) und teure Transaktionskosten fressen die Performance aktiver Fondsmanager systematisch auf.",
+    "exp": "Rund 85 bis 95 Prozent aller aktiv gemanagten Aktienfonds schneiden nach Kosten schlechter ab als ihr Vergleichsindex"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "mid",
+    "q": "Was zeigt die historische Kapitalmarktforschung beim Duell „Einmalanlage vs. Sparplan (DCA)“ bei verfügbarem Kapital?",
+    "a": [
+      "In ca. 68–70 % aller historischen Fälle schlägt die sofortige Einmalanlage den schrittweisen Einstieg, weil Märkte öfter steigen als fallen",
+      "Schrittweises Investieren über 2 Jahre erzielt immer die höhere Rendite",
+      "Beide Methoden liefern auf den Cent genau dasselbe Ergebnis",
+      "Wer auf einen Schlag investiert, verliert garantiert im ersten Monat Geld"
+    ],
+    "explanation": "„Time in the market beats timing the market“ – wer wartet, steht meist bei höheren Kursen an der Seitenlinie. Psychologisch hilft DCA jedoch gegen Reue.",
+    "exp": "In ca. 68–70 % aller historischen Fälle schlägt die sofortige Einmalanlage den schrittweisen Einstieg, weil Märkte öfter steigen als fallen"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Was beschreibt der gefährliche psychologische Anlegerfehler „Home Bias“?",
+    "a": [
+      "Anleger investieren überproportional viel Geld in den eigenen Heimatmarkt (z. B. Deutsche zu 50 % in den DAX), statt global zu streuen",
+      "Man kauft Aktien nur vom heimischen PC aus statt am Smartphone",
+      "Die Weigerung, eine Immobilie vor dem 40. Lebensjahr zu kaufen",
+      "Die Angst vor der Eröffnung eines Online-Depots bei Neobrokern"
+    ],
+    "explanation": "Deutschland macht weniger als 2 % der weltweiten Börsenkapitalisierung aus – wer sein Depot mit DAX-Werten vollstopft, geht ein extremes Klumpenrisiko ein.",
+    "exp": "Anleger investieren überproportional viel Geld in den eigenen Heimatmarkt (z. B. Deutsche zu 50 % in den DAX), statt global zu streuen"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "mid",
+    "q": "Was besagt die berühmte „4-Prozent-Regel“ (Trinity-Studie) für die finanzielle Freiheit (FIRE)?",
+    "a": [
+      "Wer zu Rentenbeginn 4 Prozent seines Portfolios entnimmt und jährlich um die Inflation anpasst, übersteht 30 Jahre Ruhestand fast immer ohne Pleite",
+      "Man darf maximal 4 Prozent seines Gehalts in Aktien anlegen",
+      "Jedes Unternehmen muss mindestens 4 Prozent Dividende ausschütten",
+      "Die Börse stürzt alle 4 Jahre um exakt 40 Prozent ab"
+    ],
+    "explanation": "Daraus folgt die Faustregel: Man benötigt das 25-fache seiner jährlichen Ausgaben im Weltportfolio (Ausgaben × 25 = Zielvermögen).",
+    "exp": "Wer zu Rentenbeginn 4 Prozent seines Portfolios entnimmt und jährlich um die Inflation anpasst, übersteht 30 Jahre Ruhestand fast immer ohne Pleite"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "pro",
+    "q": "Was ist das gefürchtete „Sequence-of-Returns-Risiko“ in den ersten Jahren der Ruhestands-Entnahmephase?",
+    "a": [
+      "Stürzen die Kurse direkt zu Beginn des Ruhestands stark ein, zerstört der Zwang zu Notverkäufen das Portfolio überproportional schnell",
+      "Die Reihenfolge der Dividendenausschüttungen im Kalenderjahr",
+      "Das Risiko, dass Neobroker die Auszahlungen an Wochenenden verzögern",
+      "Ein plötzlicher Anstieg der Notariatsgebühren beim Erbfall"
+    ],
+    "explanation": "Bärenmärkte am Anfang wiegen viel schwerer als am Ende – ein Cash-Puffer für 2–3 Jahre Lebenshaltungskosten schützt vor Verkäufen im Tief.",
+    "exp": "Stürzen die Kurse direkt zu Beginn des Ruhestands stark ein, zerstört der Zwang zu Notverkäufen das Portfolio überproportional schnell"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Was bezweckt das regelmäßige „Rebalancing“ eines gemischten Portfolios (z. B. 80 % Aktien / 20 % Tagesgeld)?",
+    "a": [
+      "Wiederherstellung der ursprünglichen Risikoverteilung durch Umschichtung oder gezieltes Besparen der zurückgebliebenen Anlageklasse",
+      "Maximierung der kurzfristigen Börsenspekulation",
+      "Die Pflichtabgabe von 10 Prozent des Gewinns an gemeinnützige Vereine",
+      "Das tägliche Wechseln des Passworts der Depotbank"
+    ],
+    "explanation": "Antizyklisches Verhalten par excellence: Man verkauft automatisch einen Teil der teuer gewordenen Gewinner und kauft billig nach.",
+    "exp": "Wiederherstellung der ursprünglichen Risikoverteilung durch Umschichtung oder gezieltes Besparen der zurückgebliebenen Anlageklasse"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "mid",
+    "q": "Was ist die historische Durchschnittsrendite des weltweiten Aktienmarkts (z. B. MSCI World) über rollierende 20-Jahres-Zeiträume vor Inflation?",
+    "a": [
+      "Rund 7 bis 8 Prozent nominal pro Jahr (bzw. ca. 5 bis 6 Prozent real nach Inflation)",
+      "Exakt 2 bis 3 Prozent pro Jahr wie beim klassischen Sparbuch",
+      "Über 25 Prozent pro Jahr wie bei Krypto-Coins",
+      "Null Prozent, da Gebühren und Inflation alle Gewinne auffressen"
+    ],
+    "explanation": "Historisch gab es über jeden beliebigen 15-Jahres-Zeitraum im MSCI World noch nie einen Verlust – selbst wenn man direkt vor dem größten Crash einstieg.",
+    "exp": "Rund 7 bis 8 Prozent nominal pro Jahr (bzw. ca. 5 bis 6 Prozent real nach Inflation)"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "pro",
+    "q": "Was fand eine legendäre Untersuchung des US-Brokers Fidelity über die erfolgreichsten Konten ihrer Privatanleger heraus?",
+    "a": [
+      "Die besten Renditen erzielten Anleger, die ihre Passwörter vergessen hatten oder bereits verstorben waren (kein schädliches Hin-und-Her-Handeln!)",
+      "Fahrer von Sportwagen handelten am profitabelsten",
+      "Anleger, die täglich 10 Trades ausführten, schlugen alle anderen",
+      "Kunden mit Abonnements von Börsenbriefen verdoppelten ihr Vermögen"
+    ],
+    "explanation": "„Hin und her macht Taschen leer“: Wer nicht ins Depot schaut und panisch verkauft, lässt den Zinseszins ungestört arbeiten.",
+    "exp": "Die besten Renditen erzielten Anleger, die ihre Passwörter vergessen hatten oder bereits verstorben waren (kein schädliches Hin-und-Her-Handeln!)"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Was ist der sogenannte „Notgroschen“ und wohin gehört er vor Beginn des ETF-Investierens?",
+    "a": [
+      "Eine eiserne Reserve von 3 bis 6 Monatsausgaben auf einem sicheren, sofort verfügbaren Tagesgeldkonto",
+      "Geld, das man in spekulative Hebel-Zertifikate anlegt",
+      "Bargeld, das man in einem Einmachglas im Garten vergräbt",
+      "Ein Festgeldkonto mit 10 Jahren fester Kündigungsfrist"
+    ],
+    "explanation": "Geht die Waschmaschine oder das Auto kaputt, muss der Notgroschen ran – sonst müsste man ETF-Anteile im schlimmsten Moment im Börsencrash verkaufen.",
+    "exp": "Eine eiserne Reserve von 3 bis 6 Monatsausgaben auf einem sicheren, sofort verfügbaren Tagesgeldkonto"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "mid",
+    "q": "Was besagt die „Prospect Theory“ (Kahneman & Tversky, Nobelpreis) über das Schmerzempfinden von Börsenverlusten?",
+    "a": [
+      "Verluste schmerzen emotional rund doppelt so stark wie gleich hohe Gewinne Freude bereiten (Verlustaversion)",
+      "Gewinne und Verluste werden vom Gehirn mathematisch vollkommen identisch bewertet",
+      "Anleger vergessen Verluste innerhalb von 24 Stunden vollständig",
+      "Verluste an Freitagen lösen weniger Stress aus als an Montagen"
+    ],
+    "explanation": "Wer 1.000 € verliert, leidet doppelt so intensiv, wie er sich über 1.000 € Gewinn freut – das verleitet Anleger zu fatalen Panikverkäufen im Crash.",
+    "exp": "Verluste schmerzen emotional rund doppelt so stark wie gleich hohe Gewinne Freude bereiten (Verlustaversion)"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "pro",
+    "q": "Was beschreibt der „Dispositionseffekt“ bei unerfahrenen Privatanlegern?",
+    "a": [
+      "Gewinner-Aktien werden viel zu früh verkauft, um Gewinne zu sichern, während Verlierer-Aktien jahrelang im Depot behalten werden",
+      "Die Verpflichtung, monatlich denselben Betrag zu sparen",
+      "Die Tendenz, Aktien nur bei Vollmond zu kaufen",
+      "Das Vererben von Aktien an Minderjährige"
+    ],
+    "explanation": "Man will sich den Fehler des Verlusts nicht eingestehen – so schneidet man die Blumen ab und gießt das Unkraut.",
+    "exp": "Gewinner-Aktien werden viel zu früh verkauft, um Gewinne zu sichern, während Verlierer-Aktien jahrelang im Depot behalten werden"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Was passiert mit dem Vermögen auf einem Sparkonto bei 0 Prozent Zinsen und 3 Prozent jährlicher Inflation nach 24 Jahren?",
+    "a": [
+      "Die reale Kaufkraft des Geldes halbiert sich exakt um rund 50 Prozent",
+      "Das Geld behält exakt seinen vollen Wert",
+      "Der Staat zieht das Konto automatisch ein",
+      "Die Kaufkraft steigt durch Deflationseffekte an"
+    ],
+    "explanation": "Die sogenannte „Geldillusion“: Auf dem Kontoauszug steht noch dieselbe Zahl, aber im Supermarkt bekommt man nur noch die Hälfte der Waren dafür.",
+    "exp": "Die reale Kaufkraft des Geldes halbiert sich exakt um rund 50 Prozent"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "mid",
+    "q": "Was bedeutet der Begriff „Max Drawdown“ bei der Bewertung eines ETF-Portfolios?",
+    "a": [
+      "Der maximale prozentuale Kursverlust vom historischen Höchststand bis zum tiefsten Punkt vor der Erholung",
+      "Die maximale Menge an Geld, die man pro Tag am Bankautomaten abheben darf",
+      "Der maximale Gewinn, den ein Anleger steuerfrei behalten darf",
+      "Die Gebühr für die Depotauflösung bei Auswanderung"
+    ],
+    "explanation": "Im Corona-Crash 2020 lag der Max Drawdown des MSCI World bei ca. -34 %, in der Finanzkrise 2008 bei über -50 % – wer investiert, muss das aushalten können.",
+    "exp": "Der maximale prozentuale Kursverlust vom historischen Höchststand bis zum tiefsten Punkt vor der Erholung"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "pro",
+    "q": "Was ist das Prinzip der „Moderne Portfoliotheorie“ von Harry Markowitz (Nobelpreis 1990)?",
+    "a": [
+      "Durch Kombination nicht perfekt korrelierter Anlageklassen sinkt das Gesamtrisiko des Portfolios, ohne die Renditeerwartung zu schmälern",
+      "Man sollte sein gesamtes Geld auf die profitabelste Einzelaktie des Jahres setzen",
+      "Aktienkurse steigen proportional zum Wachstum der Weltbevölkerung",
+      "Anleihen sind in jeder Marktphase rentabler als Aktien"
+    ],
+    "explanation": "Diversifikation ist der sprichwörtliche „einzige kostenlose Mittagstisch“ (Free Lunch) der Finanzmärkte.",
+    "exp": "Durch Kombination nicht perfekt korrelierter Anlageklassen sinkt das Gesamtrisiko des Portfolios, ohne die Renditeerwartung zu schmälern"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Warum ist „Market Timing“ (der Versuch, Tiefststände zum Kaufen und Höchststände zum Verkaufen zu erraten) fast immer zum Scheitern verurteilt?",
+    "a": [
+      "Weil die besten Renditetage an der Börse fast immer unmittelbar nach den schlimmsten Crashtagen folgen – wer draußen ist, verpasst die Rendite",
+      "Weil der Broker bei jedem Verkaufsversuch eine Strafgebühr von 20 Prozent verlangt",
+      "Weil die Kurse an Feiertagen grundsätzlich fallen",
+      "Weil Banken den Verkauf von Aktien im Bärenmarkt gesetzlich sperren"
+    ],
+    "explanation": "Wer in den letzten 20 Jahren nur die 10 besten Handelstage verpasste, halbierte seine Gesamtrendite im S&P 500!",
+    "exp": "Weil die besten Renditetage an der Börse fast immer unmittelbar nach den schlimmsten Crashtagen folgen – wer draußen ist, verpasst die Rendite"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "mid",
+    "q": "Was bedeutet „Cost-Average-Effekt“ (Durchschnittskosteneffekt) bei einem monatlichen ETF-Sparplan?",
+    "a": [
+      "Bei festem Sparbetrag kauft man bei niedrigen Kursen automatisch mehr Anteile und bei hohen Kursen weniger Anteile",
+      "Die Depotbank senkt die Kontoführungsgebühren mit jedem Sparmonat",
+      "Der Arbeitgeber zahlt einen Zuschuss von 10 Prozent auf jede Rate",
+      "Man zahlt für alle ETF-Anteile denselben Pauschalpreis wie im Vorjahr"
+    ],
+    "explanation": "Sparplan-Anleger freuen sich insgeheim über fallende Kurse: Für dieselben 200 € bekommt man im Börsentief deutlich mehr ETF-Anteile ins Körbchen.",
+    "exp": "Bei festem Sparbetrag kauft man bei niedrigen Kursen automatisch mehr Anteile und bei hohen Kursen weniger Anteile"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "pro",
+    "q": "Was beschreibt die „Sharpe Ratio“ bei der Analyse eines Anlageportfolios?",
+    "a": [
+      "Die erzielte Überrendite gegenüber dem risikofreien Zinssatz geteilt durch die Volatilität (Schwankungsbreite) des Portfolios",
+      "Das Verhältnis von Depotgebühren zum monatlichen Sparbetrag",
+      "Die Zeitdauer, bis ein ETF seine Kostenquote wieder erwirtschaftet hat",
+      "Die durchschnittliche Haltedauer von Aktien im Fonds"
+    ],
+    "explanation": "Eine hohe Sharpe Ratio bedeutet: Der Anleger wurde für das eingegangene Risiko und die erlittenen Kursschwankungen mit exzellenter Rendite belohnt.",
+    "exp": "Die erzielte Überrendite gegenüber dem risikofreien Zinssatz geteilt durch die Volatilität (Schwankungsbreite) des Portfolios"
+  },
+  {
+    "cat": "vermoegensaufbau",
+    "diff": "easy",
+    "q": "Wie viel sollte man laut solider Finanzplanung maximal monatlich in risikobehaftete Aktien-ETFs investieren?",
+    "a": [
+      "Nur Geld, auf das man mindestens 10 bis 15 Jahre lang garantiert nicht zwingend zugreifen muss",
+      "Das gesamte Monatsgehalt inklusive des Überziehungskredits",
+      "Die angesparte Kaution der Mietwohnung",
+      "Nur Beträge, die man im Lotto oder Kasino gewonnen hat"
+    ],
+    "explanation": "Der Anlagehorizont ist der Schlüssel: Wer 15 Jahre Zeit hat, kann jede schwere Wirtschaftskrise aussitzen und mit Gewinn hervorgehen.",
+    "exp": "Nur Geld, auf das man mindestens 10 bis 15 Jahre lang garantiert nicht zwingend zugreifen muss"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "easy",
+    "q": "Wie hoch ist die „Teilfreistellung“ nach § 20 InvStG für private Anleger in Deutschland bei einem reinen Aktien-ETF (Aktienquote mind. 51 %)?",
+    "a": [
+      "Exakt 30 Prozent (nur 70 Prozent der Gewinne und Dividenden werden steuerlich belastet)",
+      "Exakt 15 Prozent",
+      "Genau 50 Prozent",
+      "Aktien-ETFs sind in Deutschland zu 100 Prozent steuerfrei"
+    ],
+    "explanation": "Die 30 % Teilfreistellung kompensiert pauschal die Quellensteuern, die der Fonds bereits auf Fondsebene an ausländische Staaten abdrücken musste.",
+    "exp": "Exakt 30 Prozent (nur 70 Prozent der Gewinne und Dividenden werden steuerlich belastet)"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "easy",
+    "q": "Wie hoch ist der Sparerpauschbetrag (Freistellungsauftrag) für Alleinstehende in Deutschland seit dem 1. Januar 2023?",
+    "a": [
+      "1.000 Euro pro Jahr (bzw. 2.000 Euro für zusammenveranlagte Ehepaare)",
+      "801 Euro pro Jahr",
+      "5.000 Euro pro Jahr",
+      "500 Euro pro Jahr"
+    ],
+    "explanation": "Dank der 30 % Teilfreistellung kann ein Single jedes Jahr bis zu 1.428,57 € Bruttogewinne aus Aktien-ETFs völlig steuerfrei einstreichen (1.428,57 € × 0,70 = 1.000 €)!",
+    "exp": "1.000 Euro pro Jahr (bzw. 2.000 Euro für zusammenveranlagte Ehepaare)"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "mid",
+    "q": "Wann wird die sogenannte „Vorabpauschale“ nach dem Investmentsteuerreformgesetz (InvStG 2018) fällig?",
+    "a": [
+      "Am ersten Werktag des Folgejahres (Anfang Januar) auf Basis des Basiszinses der Bundesbank für thesaurierende und teilausschüttende Fonds",
+      "Immer am 31. Dezember um Punkt Mitternacht in bar",
+      "Erst beim endgültigen Verkauf der ETF-Anteile",
+      "Nur in Schaltjahren bei Erreichen von 10.000 Euro Gewinn"
+    ],
+    "explanation": "Die Vorabpauschale verhindert die endlose Steuerstundung bei Thesaurierern – bezahlte Vorabpauschalen werden beim späteren Verkauf voll angerechnet.",
+    "exp": "Am ersten Werktag des Folgejahres (Anfang Januar) auf Basis des Basiszinses der Bundesbank für thesaurierende und teilausschüttende Fonds"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "mid",
+    "q": "Was passiert mit der Vorabpauschale für ein Jahr, wenn der ETF in diesem Kalenderjahr eine negative Kursentwicklung hatte?",
+    "a": [
+      "Es wird überhaupt keine Vorabpauschale erhoben (Vorabpauschale = 0 Euro)",
+      "Der Verlust wird mit der Einkommensteuer des Vormonats verrechnet",
+      "Das Finanzamt erstattet 25 Prozent des Verlusts aufs Girokonto",
+      "Die Vorabpauschale verdoppelt sich als Strafgebühr"
+    ],
+    "explanation": "Das Gesetz stellt klar: Niemand muss fiktive Gewinne versteuern, wenn der Fonds im Kalenderjahr tatsächlich an Wert verloren hat.",
+    "exp": "Es wird überhaupt keine Vorabpauschale erhoben (Vorabpauschale = 0 Euro)"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "easy",
+    "q": "Wie hoch ist die deutsche Abgeltungsteuer auf Kapitalerträge (ohne Solidaritätszuschlag und Kirchensteuer)?",
+    "a": [
+      "Exakt 25,0 Prozent (mit Soli: 26,375 Prozent)",
+      "Exakt 15,0 Prozent",
+      "Genau 42,0 Prozent",
+      "Stufenlos zwischen 0 und 50 Prozent je nach Einkommen"
+    ],
+    "explanation": "Mit Solidaritätszuschlag (5,5 % auf die Steuer) sind es 26,375 % – bei Kirchensteuerpflicht kommen je nach Bundesland noch 8 % oder 9 % Kirchensteuer hinzu.",
+    "exp": "Exakt 25,0 Prozent (mit Soli: 26,375 Prozent)"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "mid",
+    "q": "Welches steuerliche Prinzip wendet das deutsche Steuerrecht beim Verkauf von Wertpapieren desselben Bestands an?",
+    "a": [
+      "FIFO-Prinzip (First In – First Out): Die zuerst gekauften Anteile gelten als zuerst verkauft",
+      "LIFO-Prinzip (Last In – First Out): Die zuletzt gekauften Anteile werden zuerst verkauft",
+      "HIFO-Prinzip: Die teuersten Anteile werden automatisch zuerst abgerechnet",
+      "Zufallsprinzip durch den Rechner der Depotbank"
+    ],
+    "explanation": "Weil ältere Anteile meist höhere Buchgewinne haben, löst der Verkauf oft höhere Steuern aus – wer neuere Anteile verkaufen will, nutzt clevere Zweitdepots.",
+    "exp": "FIFO-Prinzip (First In – First Out): Die zuerst gekauften Anteile gelten als zuerst verkauft"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "pro",
+    "q": "Warum haben ETFs mit Fondsdomizil in Irland (IE) bei US-Aktien einen gewaltigen Steuervorteil gegenüber solchen aus Luxemburg (LU)?",
+    "a": [
+      "Dank des US-Irland-Doppelbesteuerungsabkommens sinkt die US-Quellensteuer auf Dividenden von 30 auf 15 Prozent (Luxemburg hat diesen Vorteil nicht)",
+      "Irland erhebt keine Mehrwertsteuer auf Computerchips",
+      "In Irland ansässige Fonds sind von der EU-Bankenabgabe befreit",
+      "Weil irische Fondsmanager niedrigere Gehälter verlangen"
+    ],
+    "explanation": "Da US-Aktien im Weltportfolio rund 70 % ausmachen, spart das Irland-Abkommen jedes Jahr rund 0,20 bis 0,30 % spürbare Rendite auf Fondsebene ein!",
+    "exp": "Dank des US-Irland-Doppelbesteuerungsabkommens sinkt die US-Quellensteuer auf Dividenden von 30 auf 15 Prozent (Luxemburg hat diesen Vorteil nicht)"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "pro",
+    "q": "Wie kann man mit einem „Zweitdepot“ das steuerliche FIFO-Prinzip beim Teilverkauf legal optimieren?",
+    "a": [
+      "Man überträgt die ältesten Anteile per steuerfreiem Depotübertrag auf das Zweitdepot und verkauft im Hauptdepot die jüngeren Anteile mit wenig Gewinn",
+      "Man meldet das Zweitdepot auf den Namen des Haustieres an",
+      "Zweitdepots sind für die ersten 5 Jahre von allen Steuern befreit",
+      "Man tauscht die Aktien des Zweitdepots gegen Krypto-Tokens"
+    ],
+    "explanation": "Da beim Depotübertrag ohne Gläubigerwechsel ebenfalls streng nach FIFO übertragen wird, landen die ältesten Anteile drüben – die verbleibenden neuen Anteile haben minimale Steuerlast.",
+    "exp": "Man überträgt die ältesten Anteile per steuerfreiem Depotübertrag auf das Zweitdepot und verkauft im Hauptdepot die jüngeren Anteile mit wenig Gewinn"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "easy",
+    "q": "Was passiert, wenn du deiner deutschen Depotbank einen gültigen „Freistellungsauftrag“ erteilst?",
+    "a": [
+      "Die Bank führt für Kapitalerträge bis zu dieser Höhe automatisch keine Abgeltungsteuer ans Finanzamt ab",
+      "Du musst keine Depotführungsgebühren mehr zahlen",
+      "Die Bank schickt deine Steuererklärung automatisch an die Finanzverwaltung",
+      "Deine Kursverluste werden automatisch verdoppelt"
+    ],
+    "explanation": "Ohne Freistellungsauftrag zieht die Bank ab dem ersten Euro Gewinn brav 26,375 % Steuern ab – man müsste sie mühsam über die Steuererklärung (Anlage KAP) zurückholen.",
+    "exp": "Die Bank führt für Kapitalerträge bis zu dieser Höhe automatisch keine Abgeltungsteuer ans Finanzamt ab"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "mid",
+    "q": "Was ist die „Günstigerprüfung“ bei der Einkommensteuererklärung (Anlage KAP)?",
+    "a": [
+      "Das Finanzamt prüft, ob der persönliche Grenzsteuersatz unter 25 Prozent liegt – falls ja, werden Kapitalerträge mit dem niedrigeren Satz besteuert",
+      "Ein Vergleich der günstigsten Handytarife des Steuerzahlers",
+      "Die automatische Vergabe von zinslosen Krediten für ETF-Käufe",
+      "Ein Rabatt auf die Kirchensteuer für treue Kirchgänger"
+    ],
+    "explanation": "Wer z. B. als Student, Rentner oder Geringverdiener nur 15 % Steuersatz hat, zahlt auf Antrag auch für ETF-Gewinne nur 15 % statt 25 % Abgeltungsteuer.",
+    "exp": "Das Finanzamt prüft, ob der persönliche Grenzsteuersatz unter 25 Prozent liegt – falls ja, werden Kapitalerträge mit dem niedrigeren Satz besteuert"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "pro",
+    "q": "Wie hoch ist die Teilfreistellung nach § 20 Abs. 2 InvStG bei einem „Mischfonds-ETF“ (Aktienquote mind. 25 %, aber unter 51 %)?",
+    "a": [
+      "Exakt 15 Prozent",
+      "Exakt 30 Prozent",
+      "Genau 0 Prozent",
+      "Stufenlos 20 Prozent"
+    ],
+    "explanation": "Aktienfonds (mind. 51 % Aktien) bekommen 30 % Teilfreistellung; Mischfonds (mind. 25 % Aktien) bekommen 15 %; reine Renten- oder Geldmarktfonds 0 %.",
+    "exp": "Exakt 15 Prozent"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "easy",
+    "q": "Wie werden Aktien- und ETF-Verluste steuerlich in Deutschland behandelt?",
+    "a": [
+      "Sie landen im bankeigenen Verlustverrechnungstopf und werden automatisch mit zukünftigen Gewinnen steuermindernd verrechnet",
+      "Sie verfallen am 31. Dezember jedes Jahres ersatzlos",
+      "Das Finanzamt überweist 50 Prozent der Verluste als Trostpflaster zurück",
+      "Verluste dürfen nur mit dem Gehalt aus unselbstständiger Arbeit verrechnet werden"
+    ],
+    "explanation": "Verluste aus ETFs landen im allgemeinen Verlusttopf und mindern zukünftige ETF-Gewinne, Zinsen und Dividenden (werden unbegrenzt ins nächste Jahr vorgetragen).",
+    "exp": "Sie landen im bankeigenen Verlustverrechnungstopf und werden automatisch mit zukünftigen Gewinnen steuermindernd verrechnet"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "mid",
+    "q": "Was ist die Nichtveranlagungs-Bescheinigung (NV-Bescheinigung) für Kinder oder einkommensschwache Personen?",
+    "a": [
+      "Eine Bescheinigung des Finanzamts, mit der die Bank Kapitalerträge selbst oberhalb von 1.000 Euro komplett steuerfrei ohne Abzug auszahlt",
+      "Eine Bescheinigung über die Befreiung von der GEZ-Rundfunkgebühr",
+      "Ein Dokument zum Nachweis von unbegrenztem Auslandsvermögen",
+      "Eine Bestätigung, dass man keine Schulden bei Banken hat"
+    ],
+    "explanation": "Kinder haben den vollen Grundfreibetrag (über 11.000 €) – mit NV-Bescheinigung können beträchtliche ETF-Erträge für Kinder absolut steuerfrei vereinnahmt werden.",
+    "exp": "Eine Bescheinigung des Finanzamts, mit der die Bank Kapitalerträge selbst oberhalb von 1.000 Euro komplett steuerfrei ohne Abzug auszahlt"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "pro",
+    "q": "Wie lautet die exakte mathematische Formel für den Basisertrag der Vorabpauschale nach § 18 InvStG?",
+    "a": [
+      "Wert des ETF am Jahresanfang × Basiszins × 0,7 (gedeckelt auf den tatsächlichen Wertzuwachs des Jahres)",
+      "Wert des ETF am Jahresende geteilt durch 12 Monate",
+      "Ausschüttungen des Jahres multipliziert mit dem Zinssatz der Bundesbank",
+      "Gesamter Depotwert multipliziert mit der Inflationsrate"
+    ],
+    "explanation": "Vom errechneten Basisertrag werden noch tatsächliche Ausschüttungen abgezogen; auf den Rest greift die 30 % Teilfreistellung, bevor 26,375 % Steuer anfallen.",
+    "exp": "Wert des ETF am Jahresanfang × Basiszins × 0,7 (gedeckelt auf den tatsächlichen Wertzuwachs des Jahres)"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "easy",
+    "q": "Muss ein deutscher Anleger bei einem inländischen Broker (wie Scalable, Trade Republic oder ING) ETF-Gewinne in der Steuererklärung selbst ausrechnen?",
+    "a": [
+      "Nein – inländische Broker führen die Abgeltungsteuer, Soli und Kirchensteuer vollautomatisch direkt an das Finanzamt ab",
+      "Ja – man muss jeden einzelnen Kauf und Verkauf handschriftlich in einer Kladde einreichen",
+      "Nein – ETFs sind für Privatpersonen in Deutschland grundsätzlich meldefrei",
+      "Ja – aber nur, wenn man im Kalenderjahr mehr als 50 Transaktionen getätigt hat"
+    ],
+    "explanation": "Deutsche Broker sind steuereinfach: Sie verrechnen Freibeträge und Verluste automatisch. Nur bei Auslandsbrokern (wie Interactive Brokers) muss man alles selbst deklarieren.",
+    "exp": "Nein – inländische Broker führen die Abgeltungsteuer, Soli und Kirchensteuer vollautomatisch direkt an das Finanzamt ab"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "mid",
+    "q": "Was passiert mit der Steuer beim Verkauf eines ETFs, für den in den Vorjahren Vorabpauschalen bezahlt wurden?",
+    "a": [
+      "Die bereits versteuerten Vorabpauschalen werden vom finalen Verkaufsgewinn abgezogen, um eine Doppelbesteuerung zu verhindern",
+      "Die gezahlten Vorabpauschalen sind für immer verloren und werden nicht angerechnet",
+      "Der Gewinn wird beim Verkauf nochmals vollständig besteuert",
+      "Das Finanzamt zieht eine Extragebühr von 10 Prozent für den Buchungsaufwand ab"
+    ],
+    "explanation": "Die Bank zieht die Summe der Vorabpauschalen automatisch vom Veräußerungsgewinn ab – man zahlt keinen Cent doppelt Steuer.",
+    "exp": "Die bereits versteuerten Vorabpauschalen werden vom finalen Verkaufsgewinn abgezogen, um eine Doppelbesteuerung zu verhindern"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "pro",
+    "q": "Was ist der historische „Bestandsschutz“ für ETF-Anteile, die vor dem 1. Januar 2009 (Einführung der Abgeltungsteuer) gekauft wurden?",
+    "a": [
+      "Kursgewinne bis Ende 2017 waren steuerfrei; für Wertzuwächse ab 2018 gibt es einen persönlichen Freibetrag von 100.000 Euro pro Anleger",
+      "Die Anteile sind bis heute zu 100 Prozent unbegrenzt steuerfrei",
+      "Der Bestandsschutz wurde 2018 ersatzlos und rückwirkend gestrichen",
+      "Die Anteile mussten bis 2020 zwangsverkauft werden"
+    ],
+    "explanation": "Alt-Anteile vor 2009 genießen bis heute den üppigen 100.000-Euro-Freibetrag nach § 56 InvStG – erst wenn dieser aufgebraucht ist, greift die Abgeltungsteuer.",
+    "exp": "Kursgewinne bis Ende 2017 waren steuerfrei; für Wertzuwächse ab 2018 gibt es einen persönlichen Freibetrag von 100.000 Euro pro Anleger"
+  },
+  {
+    "cat": "steuern_recht_de",
+    "diff": "easy",
+    "q": "Welche Bescheinigung stellt jede deutsche Bank ihren Kunden im Frühjahr für die Steuererklärung kostenlos zur Verfügung?",
+    "a": [
+      "Die Jahressteuerbescheinigung (mit allen Zeileneinträgen für die Anlage KAP)",
+      "Die Unbedenklichkeitserklärung der BaFin",
+      "Das Führungszeugnis für Wertpapierhändler",
+      "Ein notarielles Echtheitszertifikat für die Wertpapiere"
+    ],
+    "explanation": "Darin stehen alle einbehaltenen Steuern, genutzten Freibeträge und verbliebenen Verlusttöpfe übersichtlich nach Zeilen der Steuererklärung sortiert.",
+    "exp": "Die Jahressteuerbescheinigung (mit allen Zeileneinträgen für die Anlage KAP)"
   }
-
-  // 1. Handkuratierte Kern-, Praxis- & Szenariofragen (80 Stück · 20 je Kategorie)
-  const CORE = [
-    // --- ETF-GRUNDLAGEN (20) ---
-    ['etf_grundlagen', 'easy', 'Wofür steht die Abkürzung „ETF“ im Wertpapierhandel?', 'Exchange Traded Fund (börsengehandelter Indexfonds)', ['Electronic Tax Free Fund', 'European Treasury Finance', 'Equity Trading Future'], 'ETFs bündeln meist Hunderte oder Tausende Wertpapiere eines Index und lassen sich während der Börsenzeiten fortlaufend an der Börse handeln wie eine Aktie.'],
-    ['etf_grundlagen', 'easy', 'Warum gelten UCITS-ETFs rechtlich auch im unwahrscheinlichen Konkursfall der Depotbank oder des ETF-Anbieters (z. B. iShares oder Vanguard) als extrem insolvenzgeschützt?', 'Sie zählen rechtlich als getrennt verwahrtes „Sondervermögen“ der Verwahrstelle und fallen niemals in die Insolvenzmasse von Bank oder Fondsgesellschaft', ['Sie sind bis 100.000 € durch die staatliche Einlagensicherung geschützt', 'Die EZB übernimmt automatisch jede Aktie als Kredit', 'Die Depotbank haftet persönlich mit ihren eigenen Immobilien'], 'Während Bankguthaben oberhalb von 100.000 € zur Bank-Insolvenzmasse gehören, bleibt ein Aktien-ETF als Sondervermögen unantastbar Eigentum der Anleger.'],
-    ['etf_grundlagen', 'mid', 'Welche zwei Replikationsmethoden nutzen ETFs grundsätzlich, um einen Aktienindex wie den MSCI World möglichst genau nachzubilden?', 'Physische Replikation (Vollreplikation / optimiertes Sampling) und synthetische Replikation (über ein Swap-Tauschgeschäft)', ['Aktive und passive Kreditvergabe', 'Statische und dynamische Steuer-Arbitrage', 'Direkte Terminbörse und Festgeld-Beimischung'], 'Beide Varianten sind in Europa streng durch die UCITS-Richtlinie reguliert; beim Swap darf das Kontrahentenrisiko maximal 10 % betragen (meist liegt es durch täglichen Reset nahe 0 %).'],
-    ['etf_grundlagen', 'mid', 'Wann greift ein physisch replizierender ETF statt zur „Vollreplikation“ lieber zum „Optimized Sampling“ (optimierte Stichprobe)?', 'Bei riesigen oder teils weniger liquiden Indizes (z. B. MSCI ACWI IMI mit > 8.500 Aktien), indem man auf die allerkleinsten illiquiden Nebenwerte verzichtet und Handelskosten spart', ['Wenn ein Fondsmanager auf steigende Einzelaktien wetten möchte', 'Immer wenn eine Aktie im Jahr mehr als 50 % steigt', 'Nur bei rein deutschen DAX-40-Werten'], 'Da die kleinsten 2.000 Small Caps im Weltindex zusammen oft unter 1–2 % Gewicht liegen, drückt kluges Sampling die Transaktionskosten spürbar ohne nennenswerten Tracking Error.'],
-    ['etf_grundlagen', 'pro', 'Wie funktioniert der „Creation-and-Redemption“-Prozess im Hintergrund, damit ein ETF-Kurs fast nie weit von seinem echten inneren Wert (NAV) abweicht?', 'Autorisierte Marktteilnehmer (Authorized Participants) tauschen ständig ganze Wertpapierkörbe direkt beim Emittenten gegen neue ETF-Anteile (bzw. umgekehrt) und schöpfen Kursabweichungen per Arbitrage ab', ['Der CEO des ETF-Anbieters legt morgens manuell einen Festpreis fest', 'Die Bundesbank kauft jede Sekunde alle überzähligen Anteile auf', 'Die Börse pausiert den Handel bei ±0,5 % Abweichung sofort für 24 Stunden'], 'Genau durch diesen Primärmarkt-Arbitrage-Mechanismus bleibt der Börsenpreis selbst bei enormen Mittelzuflüssen eng am fairen Nettoinventarwert.'],
-    ['etf_grundlagen', 'easy', 'Was bedeutet bei einem ETF der Namenszusatz „UCITS“?', 'Undertakings for Collective Investment in Transferable Securities – ein streng reguliertes europäisches Anlegerschutz-Gütesiegel (u. a. Diversifikations- und Sondervermögensregeln)', ['United Capital Index Trading Standard – eine US-Steuerkennung', 'Ultra Cost-free Index Tradeable Shares', 'Unrestricted Crypto Investment Trust System'], 'Privatkunden in der EU erhalten in der Regel ausschließlich Fonds und ETFs mit UCITS-Zulassung.'],
-    ['etf_grundlagen', 'easy', 'Was bedeuten die Kürzel „Acc“ (oder „C“) vs. „Dist“ (oder „D“) hinter dem Namen eines ETFs?', 'Acc = Accumulating (thesaurierend: Dividenden werden automatisch fonds-intern reinvestiert); Dist = Distributing (ausschüttend auf das Verrechnungskonto)', ['Acc = Aktiver Fonds; Dist = Diskontierter Fonds', 'Acc = US-Aktien; Dist = Deutsche Aktien', 'Acc = Account-Gebühr inkl.; Dist = Ohne Gebühr'], 'Für den reinen Zinseszinseffekt langfristiger Sparpläne wird oft Acc bevorzugt, während viele Anleger zur psychologischen Motivation oder Ausschöpfung kleiner Sparerpauschbeträge anfangs Dist mögen.'],
-    ['etf_grundlagen', 'mid', 'Warum ist die veröffentlichte „TER“ (Total Expense Ratio) nicht der vollständige Kostensatz eines ETFs und was ist die treffendere Kennzahl?', 'Die TER lässt interne Transaktionskosten, Wertpapierleiherträge, Swap-Spreads und Steuereffekte außen vor – aussagekräftiger für das Ergebnis ist die Tracking Difference (TD)', ['Die TER enthält stets 2 % Ausgabeaufschlag, der eigentlich geheim ist', 'Die echte Kostenkennzahl heißt KGV', 'Die TER gilt immer nur für einen einzigen Monat'], 'Manchmal weist ein hervorragender S&P-500-Swap-ETF oder ein ETF mit Wertpapierleihe sogar eine negative Tracking Difference auf – er schlägt den Net-Return-Index nach Kosten!'],
-    ['etf_grundlagen', 'pro', 'Worin liegt im Unterschied zu einem aktiv gemanagten Fonds der strukturelle Kostenvorteil (ca. 0,07 %–0,22 % p. a. statt 1,5 %–2,0 % p. a.) eines passiven Welt-ETFs?', 'Es entfallen teure Analystenteams, häufiges Portfolioumschichten, Ausgabeaufschläge und Vertriebsprovisionen (Kickbacks)', ['ETF-Anbieter müssen gar keine Börsengebühren und Gehälter bezahlen', 'ETFs investieren grundsätzlich nur in steuerfreie Staatsanleihen', 'ETFs kaufen Aktien immer 20 % unter Börsenkurs ein'], 'Nachweislich (SPIVA-Statistik) schlagen über 15–20 Jahre hinweg meist rund 85–95 % der teuren aktiven Fonds ihren eigenen Vergleichsindex nach Kosten NICHT.'],
-    ['etf_grundlagen', 'easy', 'Was beschreibt im Börsenhandel der sogenannte „Spread“ (Geld-Brief-Spanne / Bid-Ask-Spread) beim Kauf oder Verkauf eines ETFs?', 'Die prozentuale Differenz zwischen sofortigem Kaufkurs (Ask/Brief) und sofortigem Verkaufskurs (Bid/Geld) im Orderbuch', ['Die jährliche Gesamtkostenquote TER', 'Den maximalen Jahresverlust einer Aktie', 'Die Dividendenrendite abzüglich Abgeltungsteuer'], 'Um unliebsame hohe Spreads zu vermeiden, handelt man Aktien-ETFs am besten zu liquiden Kernzeiten (z. B. Xetra 09:00–17:30 Uhr, besonders ab US-Börsenstart 15:30 Uhr CET).'],
-    ['etf_grundlagen', 'mid', 'Was drückt der Zusatz „USD (hedged to EUR)“ oder „EUR Hedged“ bei einem globalen Aktien-ETF aus und lohnt er sich für langfristige Aktien-Investments meist?', 'Der Fonds sichert Wechselkursschwankungen (etwa USD/EUR) laufend über Devisentermingeschäfte ab; bei langfristigen Aktien verursacht dies jedoch laufende Absicherungskosten und ist meist unnötig', ['Er garantiert eine feste jährliche Rendite von 6 % in Euro', 'Die enthaltenen US-Unternehmen dürfen nur noch in Euro bilanzieren', 'Man spart damit die deutsche Abgeltungsteuer komplett'], 'Während eine Währungsabsicherung bei schwankungsarmen Anleihen/Geldmarkt-Bausteinen sinnvoll ist, tragen globale Weltkonzerne ihre Währungsrisiken global ohnehin realwirtschaftlich selbst.'],
-    ['etf_grundlagen', 'mid', 'Welche Angabe in der WKN-/ISIN-Datenbank gibt an, aus welchem Land ein ETF stammt (z. B. beginnt eine ISIN mit „IE…“ oder „LU…“)?', 'Das Fondsdomizil: IE = Irland, LU = Luxemburg, DE = Deutschland', ['Die ausschließliche Staatsangehörigkeit der enthaltenen Aktiengesellschaften', 'Die Sprache, in der der Jahresbericht gedruckt werden muss', 'Der Hauptsitz der depotführenden Hausbank'], 'Wichtig: Ein „IE“-MSCI-World-ETF investiert trotzdem zu ca. 70 % in US-Konzerne – „IE“ verrät ausschließlich den steuerlich oft vorteilhaften Sitz des Fonds selbst!'],
-    ['etf_grundlagen', 'pro', 'Welche Rolle spielt das sogenannte „AUM“ (Assets under Management / Fondsvolumen) bei der Auswahl eines ETFs für ein langfristiges Depot?', 'Ein ausreichend hohes Volumen (Faustregel > 100 Mio. €, besser > 500 Mio. €) schützt vor Unwirtschaftlichkeit, engen Liquiditätsproblemen und einer späteren Fondsschließung', ['Ein kleines Fondsvolumen garantiert automatisch eine Verdopplung der Rendite', 'ETFs mit über 1 Mrd. € dürfen keine Dividenden mehr auszahlen', 'Unterhalb von 50 Mio. € ist die Anlage automatisch komplett illegal'], 'Wird ein sehr kleiner Nischen-ETF geschlossen, fließt das Kapital zwar regulär zum aktuellen Kurs aus, löst jedoch unfreiwillig sofortige Veräußerungssteuer auf bisherige Buchgewinne aus.'],
-    ['etf_grundlagen', 'easy', 'Was bedeutet „Wertpapierleihe“ (Securities Lending) innerhalb eines physischen ETFs?', 'Der ETF-Anbieter verleiht Aktien vorübergehend gegen hochwertige Sicherheiten (Collateral) und Zinsgebühren an institutionelle Marktteilnehmer und gibt den Großteil der Einnahmen an den Fonds weiter', ['Ein Privatanleger leiht sich kostenlos Aktien bei der Bank ohne sie zu zahlen', 'Ein Verkäufer liefert die Aktie erst fünf Jahre später', 'Die Aktien werden für Wahlkämpfe verliehen'], 'Durch diese Zusatzerträge senken große iShares-, Vanguard- oder Xtrackers-ETFs oft spürbar ihre effektiven Fondskosten.'],
-    ['etf_grundlagen', 'mid', 'Warum empfiehlt es sich beim Kauf größerer Einmalsummen über die Börse fast immer, mit einem „Limit“ (Limit-Order) statt blind mit einer „Market Order“ (Billigst/Bestens) zu ordern?', 'Eine Limit-Order schützt zuverlässig vor unerwarteten Ausreißerkursen oder kurzfristigen „Mistrades“ in dünnen Orderbüchern', ['Eine Limit-Order erlässt sämtliche Bank- und Börsengebühren', 'Mit Limit-Order werden ETFs steuerfrei übertragen', 'Ohne Limit lässt sich kein ETF aus Irland kaufen'], 'Eine knapp über dem angezeigten Ask-Briefkurs platzierte Limit-Order wird bei normalen Zeiten ebenso sofort ausgeführt, schützt aber vor bösen Überraschungen.'],
-    ['etf_grundlagen', 'mid', 'Was drückt der fortlaufend berechnete „iNAV“ (Indicative Net Asset Value) während der Börsenöffnungszeiten aus?', 'Einen sekündlich geschätzten fairen Echtzeit-Wert eines ETF-Anteils auf Basis der laufenden Börsenkurse der enthaltenen Einzelaktien', ['Den prognostizierten Schlusskurs genau in zehn Jahren', 'Die Höhe der gesetzlichen Mehrwertsteuer beim Handel', 'Den exakten Gewinn einer Bank pro ausgeführter Order'], 'Anhand des Vergleichs von Echtzeit-Ask-Preis und iNAV erkennen anspruchsvolle Trader sofort, ob der aktuelle Spread gerade günstig liegt.'],
-    ['etf_grundlagen', 'pro', 'Welche wichtige Risikogrenze schreibt das EU-Regelwerk UCITS bei einem synthetischen Swap-ETF (Contreparty Risk) verbindlich vor?', 'Das Ausfallrisiko gegenüber einer einzelnen Swap-Gegenpartei darf maximal 10 % des Netto-Fondsvermögens ausmachen (in der Praxis über Übersicherung / tägliches Zurücksetzen meist nahe 0–1 %)', ['Mindestens 90 % des Fonds müssen aus physischem Gold bestehen', 'Swap-ETFs dürfen ausschließlich Aktien aus der Schweiz nachbilden', 'Ein Swap-Partner muss ein eingetragener Sportverein sein'], 'Im „Unfunded Swap“-Modell liegt hinter dem ETF zudem ein vollständig physischer Sicherheiten-Aktienkorb im echten Sondervermögen.'],
-    ['etf_grundlagen', 'easy', 'Warum eignet sich ein klassischer gehebelter ETF (z. B. 2× Daily Leverage MSCI USA) meist NICHT als reines gedankenloses „Buy-and-Hold“-Einzelprodukt für Einsteiger?', 'Wegen der täglichen Pfadabhängigkeit („Volatility Drag“) verlieren 2×/3×-Hebel-ETFs in stark schwankenden Seitwärtsmärkten überproportional an Wert und weisen viel höhere Kosten/Risiken auf', ['Weil gehebelte ETFs niemals an deutschen Börsen gekauft werden können', 'Weil Gewinne über 10 % automatisch eingezogen werden', 'Weil ein Hebel nur abwärts und nie aufwärts wirkt'], 'Bei starken langfristigen Seitwärts-Zickzackphasen entsteht selbst bei 0 % Marktveränderung im Ursprungsindex spürbarer mathematischer Rückgang im gehebelten Produkt.'],
-    ['etf_grundlagen', 'mid', 'Woran erkennt man im exakten Produkt-Namen „Vanguard FTSE All-World UCITS ETF (USD) Distributing“ die Währung „USD“ korrekt – trägt ein Euro-Anleger damit ein reales US-Dollar-Konto-Risiko?', '„USD“ ist hier nur die reine Berichtswährung (Fondswährung) des ETF-Rechenwerks; entscheidend für das reale Währungsrisiko sind allein die Umsätze/Geschäfte der zugrunde liegenden Weltfirmen, nicht ob der ETF in EUR oder USD notiert', ['Ja, jede Kurssteigerung des Euro halbiert den Wert des ETFs künstlich über Nacht', 'Ja, bei Kauf an Xetra bekommt man physisch Dollarscheine geschickt', 'Nein, USD heißt nur, dass US-Bürger mitkaufen dürfen'], 'Ob du denselben MSCI World ETF in Euro, US-Dollar oder Schweizer Franken kaufst und abrechnest, liefert exakt dieselbe reale wirtschaftliche Wertentwicklung in deiner Heimatwährung!'],
-    ['etf_grundlagen', 'mid', 'Was geschieht rechtlich und steuerlich bei einer vom Anbieter angekündigten „ETF-Verschmelzung“ (Merger) über Ländergrenzen hinweg (z. B. Luxemburg nach Irland)?', 'Für deutsche Steuerinländer gilt eine grenzüberschreitende Verschmelzung steuerlich oft als fiktiver Verkauf + Neukauf, was bisherige Kursgewinne sofort der Abgeltungsteuer unterwirft', ['Die Anteile verfallen komplett wertlos an den Staat', 'Man muss alle Aktien einzeln an der Heimatbörse einsammeln', 'Alle künftigen Gewinne sind fortan auf Lebenszeit völlig steuerfrei'], 'Bei rein nationalen Fondsverschmelzungen innerhalb desselben Staates bleibt sie nach Investmentsteuergesetz hingegen meist steuerneutral.'],
-
-    // --- INDIZES & STRATEGIE (20) ---
-    ['indizes_strategie', 'easy', 'Wie viele entwickelte Industrieländer und ungefähren Marktanteil großer und mittlerer Unternehmen deckt der bekannte „MSCI World Index“ ab?', 'Rund 1.400 Large- und Mid-Cap-Aktien aus 23 entwickelten Industrieländern (keine Schwellenländer wie China/Indien, keine Small Caps)', ['Alle Unternehmen aus ausnahmslos 195 Ländern inklusive Kleinbetrieben', 'Exakt die 30 größten Tech-Firmen ausschließlich in Kalifornien', 'Genau 500 Unternehmen aus Europa und Japan ohne Nordamerika'], 'Aufgrund seines Namens „World“ halten viele Einsteiger ihn fälschlich für die gesamte Weltwirtschaft – Schwellenländer und Nebenwerte fehlen im Standard-MSCI World komplett!'],
-    ['indizes_strategie', 'easy', 'Welche beiden großen Indizes bieten als echtes „1-ETF-All-in-One-Weltportfolio“ bereits Industrieländer UND Schwellenländer gemeinsam in einem einzigen Produkt?', 'MSCI ACWI (All Country World Index) und FTSE All-World', ['MSCI World und S&P 500', 'DAX 40 und EURO STOXX 50', 'NASDAQ-100 und Dow Jones'], 'Der FTSE All-World deckt über 3.600–4.000 Titel (~90–95 % Marktkapitalisierung inkl. Teilen kleinerer Mid Caps) ab; noch breiter geht der MSCI ACWI IMI (~99 %).'],
-    ['indizes_strategie', 'mid', 'Worin unterscheiden sich die Indexanbieter MSCI und FTSE bei der Einstufung zweier wichtiger asiatischer und europäischer Wirtschaftsnationen?', 'FTSE stuft Südkorea und Polen bereits als „Developed Markets“ (Industrieländer) ein, während MSCI beide noch in den „Emerging Markets“ (Schwellenländern) führt', ['MSCI zählt die Schweiz zu den Schwellenländern, FTSE zu den USA', 'FTSE enthält überhaupt keine japanischen Aktien', 'MSCI schließt grundsätzlich alle Banken und Versicherer aus'], 'Wichtig für DIY-Kombinierer: Wer fälschlich einen MSCI World (ohne Südkorea) mit einem FTSE Emerging Markets (ebenfalls ohne Südkorea!) kombiniert, lässt Samsung komplett weg!'],
-    ['indizes_strategie', 'mid', 'Nach welchem Grundprinzip gewichtet das klassische 1-ETF-Weltportfolio (wie MSCI ACWI oder FTSE All-World) die Anteile von Apple, Microsoft, Nestlé oder TSMC?', 'Nach der frei handelbaren Marktkapitalisierung („Free-Float Market Cap“)', ['Alle Aktien erhalten jedes Quartal genau das gleiche Gewicht (Equal Weight)', 'Nach dem geschätzten zukünftigen Bevölkerungswachstum je Land', 'Nach dem reinen Aktien-Nennwert je Einzelpapier an der Börse'], 'Marktkapitalisierung ist theoretisch das einzig selbst-ausgleichende System ohne ständigen Portfolio-Umschlag und spiegelt das kollektive Marktgewicht aller globalen Investoren wider.'],
-    ['indizes_strategie', 'mid', 'Welches bekannte Gewichtungsmodell kombiniert in Deutschland populär oft 70 % MSCI World und 30 % MSCI Emerging Markets?', 'Das klassische „70/30“-Weltportfolio (orientiert stärker am BIP-Anteil der Schwellenländer statt rein an deren geringerer Börsenkapitalisierung von ca. 10–12 %)', ['Die gesetzlich vorgeschriebene Gewichtung der Rentenkasse', 'Das Verhältnis zwischen 70 % Gold und 30 % Bargeld', 'Eine Strategie ausschließlich für Tagesgeld und Krypto'], 'Vorteil eines simplen 1-ETF-Ansatzes (FTSE All-World / MSCI ACWI): Es spart das jährliche manuelle Rebalancing zwischen den beiden Teilen komplett ein!'],
-    ['indizes_strategie', 'pro', 'Was misst der von Indexanbietern angebotene „MSCI ACWI IMI“ (Investable Market Index) gegenüber dem regulären MSCI ACWI?', 'Er ergänzt die großen und mittleren Aktien (Large & Mid Caps) auch noch um die kleinsten börsennotierten Unternehmen (Small Caps) und deckt ca. 99 % des weltweit investierbaren Aktienmarkts ab', ['Er schließt sämtliche Tech-Unternehmen komplett aus', 'Er investiert ausschließlich in unnotierte Start-ups und Immobilien', 'Er bildet den Index stets doppelt gehebelt ab'], 'Der SPDR MSCI ACWI IMI ETF (ISIN IE00B3YLTY66) ist damit praktisch eine der weltweit umfassendsten Ein-Fonds-Lösungen überhaupt.'],
-    ['indizes_strategie', 'mid', 'Warum verzerrt der berühmte historische US-Leitindex „Dow Jones Industrial Average“ (DJIA, 30 Werte) stark gegenüber dem „S&P 500“?', 'Der Dow Jones gewichtet seine 30 Konzerne bloß nach dem absoluten optischen Stückpreis einer Aktie (Price-Weighted) statt nach dem tatsächlichen Unternehmenswert (Market-Cap)!', ['Im Dow Jones dürfen nur Fluggesellschaften notiert werden', 'Der S&P 500 wird ausschließlich auf dem Computer simuliert', 'Der Dow Jones berücksichtigt nur kanadische Firmen'], 'Im Dow hat dadurch eine optisch „teure“ 500-Dollar-Aktie zehnmal mehr Einfluss als ein viel größerer Weltkonzern, dessen Aktie nach einem Split bei 50 Dollar steht!'],
-    ['indizes_strategie', 'easy', 'Was steckt hinter dem besonders niedrigschwankenden Geldmarkt-ETF „Xtrackers II EUR Overnight Rate Swap“ (bekannt unter dem Ticker DBX0AN)?', 'Er bildet über Swap-Verträge ziemlich genau den risikofreien europäischen Tagesgeld-Interbankenzins (€STR + 8,5 Basispunkte) nach', ['Er hebelt den Bitcoin-Kurs um Faktor 3 nach oben', 'Er spekuliert auf stark steigende Öl- und Erdgaspreise', 'Er investiert zu 100 % in amerikanische Wachstumsaktien'], 'Als liquide, tägliche „Parkplatz“-Alternative bei hohem Zinsumfeld ersetzt er für erfahrene Anleger häufig das ständige Tagesgeld-Hopping zwischen Lockvogel-Banken.'],
-    ['indizes_strategie', 'mid', 'Welche fünf bekannten wissenschaftlichen Kapitalmarktfaktoren („Factor Investing / Smart Beta“) versprechen nach Studien (u. a. Fama/French) langfristig eine Risiko- oder Verhaltensprämie gegenüber dem breiten Markt?', 'Size (kleine Firmen), Value (günstige Bewertung), Momentum (Trends), Quality (starke Bilanz/Profitabilität) und Low Volatility / Minimum Volatility', ['Glück, Intuition, Astrologie, Farbe und Alter der Gründer', 'Hype, Dividenden-Streichung, Verschuldung und hoher Spread', 'Nur DAX, MDAX, SDAX, TecDAX und Gold'], 'Wichtig: Faktorprämien erfordern lange Atemzüge – einzelne Faktoren wie Value können über 5 bis 15 Jahre hinweg spürbar hinter dem breiten MSCI World zurückbleiben!'],
-    ['indizes_strategie', 'pro', 'Warum dürfen physisch besicherte reine „Gold-ETFs“ (wie ein einzelner reiner Gold-Trust) in Deutschland bzw. der EU regulatorisch meist nur als „ETC“ (Exchange Traded Commodity) aufgelegt werden?', 'Weil ein EU-UCITS-Fonds strikt breit diversifiziert sein muss („Einzel-Rohstoff-Verbot“, z. B. max. 10–20 % je Einzeltitel); deshalb wird physisches Gold als besicherte Schuldverschreibung (ETC) begeben', ['Weil Gold rechtlich kein Metall ist', 'Weil ETFs niemals über Tresore verfügen dürfen', 'Weil sonst alle Goldmünzen beschlagnahmt würden'], 'Wichtiger Unterschied: Echte ETCs mit physischem Auslieferungsanspruch (wie Xetra-Gold oder EUWAX Gold II) genießen bei Privatpersonen in DE dennoch die 1-Jahres-Steuerfreiheit!'],
-    ['indizes_strategie', 'mid', 'Welche Gefahr besteht bei sogenannten „Themen-ETFs“ (z. B. Clean Energy, Wasserstoff, Cannabis, Metaverse, AI Hype) laut empirischen Finanzstudien besonders häufig?', 'Sie werden oft erst auf dem Höhepunkt eines Medien-Hypes bei völlig überzogenen Bewertungen aufgelegt, besitzen hohe Gebühren (~0,5–0,75 %) und enttäuschen danach langfristig erheblich', ['Sie zahlen gesetzlich gar keine Gewinne oberhalb von 5 % aus', 'Sie werden nach zwei Jahren automatisch in Bargeld umgetauscht', 'Sie sind nur über Filialbanken ab 100.000 € kaufbar'], 'Wer das Kerngeschäft einer breiten Innovationswelle dauerhaft mitnehmen will, hält über einen ACWI/Welt-ETF Gewinner wie Verlierer kostengünstig automatisch im Portfolio.'],
-    ['indizes_strategie', 'pro', 'Wie wirkt sich ein schneller Anstieg des allgemeinen Marktzinsniveaus (z. B. von 0 % auf 4 %) unmittelbar auf den Börsenkurs bereits bestehender „Langläufer-Staatsanleihen-ETFs“ (Duration ~15–20 Jahre) aus?', 'Der Kurs fällt massiv zweistellig, weil alte festverzinste Anleihen mit niedrigem Kupon gegen attraktiv verzinste Neuemissionen stark abgewertet werden müssen', ['Der Kurs verdoppelt sich über Nacht automatisch durch höhere Zinsen', 'Der Kurs bleibt mathematisch auf exakt 100 % eingefroren', 'Die Anleihen verwandeln sich rechtlich sofort in Aktien'], 'Faustregel der „Modifizierten Duration“: Steigt das Zinsniveau um +1 %, fällt der Kurs eines Anleihen-ETFs grob um `Duration × 1 %` (bei Duration 15 also rund -15 %!).'],
-    ['indizes_strategie', 'mid', 'Warum klagen manche Anleger im „MSCI World“ heute über ein sogenanntes US-Klumpenrisiko (Anteil der USA zeitweise über 65–72 %), und wie lässt es sich einordnen?', 'Viele global beherrschende Tech-Giganten (Apple, Microsoft, Alphabet, Amazon, Nvidia) sitzen zwar juristisch in den USA, erwirtschaften rund 40–50 % ihrer echten Umsätze aber weltweit über alle Kontinente', ['Das liegt an einem Rechenfehler im Index seit 1995', 'Alle europäischen Firmen wurden aus dem Index geworfen', 'Nur US-Konzerne dürfen an Frankfurter Börsen gehandelt werden'], 'Dennoch reduzieren manche Anleger das Ländergewicht optional über Equal-Weight-, BIP-orientierte oder gezielte Europa-/EM-Beimischungen (was jedoch gezielte Wetten gegen die Marktkapitalisierung darstellt!).'],
-    ['indizes_strategie', 'easy', 'Was deckt der beliebte europäische Aktienindex „STOXX Europe 600“ gegenüber dem bekannteren „EURO STOXX 50“ deutlich breiter ab?', 'Er umfasst 600 große, mittlere und kleinere Konzerne aus 17 europäischen Ländern inklusive Schweiz, Großbritannien und Skandinavien (nicht nur 50 Firmen der Eurozone)', ['Er investiert nur in 600 Banken innerhalb der Stadt Frankfurt', 'Er beinhaltet 600 ausschließliche Tech-Start-ups aus Berlin', 'Er deckt nur 600 Staatsanleihen ab'], 'Gerade schweizerische Schwergewichte (Nestlé, Roche, Novartis) sowie britische Weltkonzerne fehlen im reinen EURO-STOXX-50 komplett.'],
-    ['indizes_strategie', 'easy', 'Welcher sehr bekannte US-Index konzentriert sich gezielt auf die rund 100 größten NICHT-Finanz-Konzerne der US-Technologiebörse Nasdaq?', 'NASDAQ-100 Index', ['Russell 2000', 'DAX 40', 'MSCI Pacific ex Japan'], 'Er besitzt keine einzige Bank oder Versicherung, weist dafür jedoch extreme Konzentration in wenigen großen Tech-/Plattformkonzernen auf.'],
-    ['indizes_strategie', 'mid', 'Was bildet der bekannte US-Index „Russell 2000“ (bzw. S&P 600) gezielt ab?', 'Rund 2.000 kleinere US-amerikanische Nebenwerte (Small Caps), die in großen Blue-Chip-Indizes wie dem S&P 500 fehlen', ['Die 2.000 größten weltweiten Rohstoff-Konzerne', 'Die weltweit 2.000 sichersten Staatsanleihen', '2.000 Unternehmen ausschließlich aus dem Energiesektor'], 'Da viele Small Caps höhere Verschuldung und heimische Binnenfokusierung tragen, reagieren sie konjunktursensibler als Mega-Cap-Techkonzerne.'],
-    ['indizes_strategie', 'pro', 'Welcher wesentliche Vorteil spricht für ein „Single-ETF“-Produkt wie Vanguard FTSE All-World gegenüber einer DIY-Kombination aus 3 bis 4 Einzelregionen-ETFs (Nordamerika, Europa, EM, Pazifik)?', 'Kein mentales Rebalancing-Fehlverhalten („Behavioral Risk“), keinerlei manuelle Orderspesen zur Gewichtsanpassung, steuerfreies internes Umschichten von Länderrankings', ['Ein einzelner ETF zahlt per Gesetz 10 % mehr Dividende pro Aktie', 'Drei ETFs zusammen lassen sich bei keinem deutschen Broker kaufen', 'Ein Single-ETF darf überhaupt nicht im Kurs sinken'], 'Nur bei sehr hohen Depotvolumina (etwa zur gezielten FIFO-Entnahmesteuerung oder feinen Kostenminimierung von ~0,08 % pro Jahr) rentieren mehrgliedrige Aufsplittungen mitunter rechnerisch.'],
-    ['indizes_strategie', 'easy', 'Was verbindet die bekannten „Vanguard LifeStrategy“ Multi-Asset-ETFs (z. B. 80 % Aktien / 20 % Anleihen oder 60/40)?', 'Sie kombinieren ein globales Aktien- und Anleihen-Portfolio fertig in nur einem einzigen UCITS-ETF samt festem automatischen Rebalancing — und erreichen oft > 51 % Aktienquote für die volle 30 % Teilfreistellung bei der 60er/80er Variante!', ['Sie legen 100 % in physisches Gold und Bitcoin an', 'Sie garantieren fest verzinst genau 8 % Kapitalzuwachs pro Jahr', 'Man verliert nach 5 Jahren automatisch sämtliche Anleihen'], 'Gerade für sicherheitsbewusste „One-and-Done“-Anleger (etwa LifeStrategy 60 % oder 80 % Equity) ist das interne steuerfreie Rebalancing bei gleichzeitiger 30-%-Aktienfonds-Teilfreistellung äußerst elegant.'],
-    ['indizes_strategie', 'mid', 'Welche Besonderheit führt dazu, dass im „MSCI World“ trotz des Wortes „World“ aktuell nur etwa 23 Staaten vertreten sind?', 'Er berücksichtigt satzungsgemäß ausschließlich sogenannte „Developed Markets“ (entwickelte Volkswirtschaften nach strengen Kriterien der Marktzugänglichkeit und Rechtssicherheit)', ['Alle anderen Staaten der Welt verweigern den Aktienverkauf', 'Die Vereinten Nationen haben nur 23 Aktienbörsen zugelassen', 'Es handelt sich um ein begrenztes EU-Sondergesetz von 1970'], 'Wachsende Schwergewichte wie Indien, Brasilien, Taiwan oder China liegen im getrennten „MSCI Emerging Markets Index“.'],
-    ['indizes_strategie', 'pro', 'Woran scheitert ein naiver Vergleich zwischen dem bekannten „DAX 40 (Performance-Index)“ und z. B. dem „S&P 500 (Price Index)“ in Zeitungsartikeln besonders oft?', 'Der Standard-DAX wird als Performance-Index inkl. voller Bruttodividenden-Reinvestition berechnet, während US-/Euro-Indizes in Schlagzeilen klassischerweise als reine Kursindizes (ohne Dividenden!) abgedruckt werden', ['Der DAX besteht aus Euro und der S&P 500 aus britischen Pfund', 'Der S&P 500 zieht jedes Jahr pauschal 5 % Inflation ab', 'Im DAX zählen nur Unternehmen unter 5 Mrd. € Börsenwert'], 'Um Äpfel nicht mit Birnen zu vergleichen, misst man weltweit ETF-Renditen stets am „Net Total Return“ (NTR) inkl. reinvestierter Nettodividenden!'],
-
-    // --- VERMÖGENSAUFBAU & FINANZMATHEMATIK (20) ---
-    ['vermoegensaufbau', 'easy', 'Was sagt die berühmte „72er-Regel“ der Finanzmathematik als schnelle Kopfrechenformel aus?', 'Teilt man 72 durch den jährlichen prozentualen Zinssatz (z. B. 72 / 7 % ≈ 10,3 Jahre), erhält man exakt die ungefähre Verdopplungsdauer des angelegten Kapitals', ['Dass man genau ab dem 72. Lebensjahr alle Aktien verkaufen muss', 'Dass jeder ETF mindestens 72 Unternehmen enthalten muss', 'Dass 72 % aller Anleger Verluste erzielen'], 'Dank des Zinseszinseffekts wächst ein Vermögen bei 7 % real/nominal nicht linear, sondern verdoppelt sich etwa alle 10 Jahre erneut (1× → 2× → 4× → 8×).'],
-    ['vermoegensaufbau', 'mid', 'Warum schlägt laut historischer Kapitalmarktdaten (z. B. Vanguard-Studie über USA, UK, Europa) bei vorhandener größerer Geldsumme (z. B. Erbe, Bonus) die sofortige Einmalanlage („Lump Sum“) das schrittweise Strecken per Sparplan („DCA“) in rund zwei Dritteln aller Fälle?', 'Weil Aktienmärkte in den meisten Jahren steigen: Wer Kapital schrittweise zurückhält, verpasst im Durchschnitt wertvolle Marktzeit („Time in the Market beats Timing the Market“)', ['Weil Einmalanlagen steuerfrei sind, Sparpläne hingegen doppelt besteuert werden', 'Weil Broker bei Sparplänen heimlich die halbe Dividende einbehalten', 'Weil Kurse prinzipiell ausschließlich freitags steigen'], 'Dennoch kann für besonders nervöse Gemüter psychologisches Tranche-Splitting über 3–6 Monate sinnvoll sein, um im ungünstigsten Crash-Fall ruhig schlafen zu können.'],
-    ['vermoegensaufbau', 'mid', 'Wie verhalten sich Rendite und Kaufkraft bei 7,0 % nominaler Durchschnittsrendite und 2,5 % jährlicher Inflation, und welche reale Wertentwicklung bleibt?', 'Rund +4,4 % p. a. reale Kaufkraftrendite (nach exakt `(1,07 / 1,025) - 1`) — entscheidend für Wohlstand ist allein reale Rendite nach Inflation und Steuern!', ['Glatte +9,5 % p. a., da beide addiert werden', 'Genau 0 % Realrendite ab 10.000 €', '+17,5 % Kaufkraftzuwachs'], 'Deshalb erodiert vermeintlich „risikoloses“ Sparbuchgeld bei 0–1 % Zins und 3 % Inflation real jedes Jahr um rund 2 % Kaufkraft sicher!'],
-    ['vermoegensaufbau', 'easy', 'Was beschreibt das bekannte „Rendite-Dreieck“ (z. B. des Deutschen Aktieninstituts auf breite Aktienindizes wie DAX oder MSCI World)?', 'Historisch zeigt es für fast jede erdenkliche Einstiegs- und Ausstiegskombination, dass Verluste auf kurze Sicht (1–5 Jahre) hoch möglich sind, ab ca. 12–15 Jahren Haltedauer jedoch historisch nahezu jede Periode positiv abschloss', ['Dass die Rendite im Dreieck ab 10 Jahren stetig auf null fällt', 'Die drei Gebührenarten eines Beraters', 'Wie oft im Jahr genau umgeschichtet werden darf'], 'Genau deshalb empfehlen unabhängige Ökonomen breit gestreute Aktien-ETFs erst ab einem Anlagehorizont von mindestens 10 bis 15 Jahren.'],
-    ['vermoegensaufbau', 'mid', 'Worin liegt der wesentliche Vorteil des sogenannten „Rebalancing“ (z. B. Wiederherstellen von 80 % Aktien / 20 % Cash/Anleihen einmal jährlich)?', 'Es begrenzt unbeabsichtigtes Über-Risiko nach starken Börsenbooms und zwingt systematisch antizyklisch dazu, Teurergewordenes zu kappen und Zurückgebliebenes günstig aufzustocken', ['Es verdoppelt gesetzlich alle jährlichen Dividenden', 'Es macht einen Aktiencrash mathematisch unmöglich', 'Es schließt sämtliche Gebühren dauerhaft aus'], 'In der Sparphase erledigt man Rebalancing besonders steuerschonend, indem man monatliche Sparraten oder frisches Geld einfach in den zurückgefallenen Depot-Anteil leitet („Cashflow Rebalancing“)!'],
-    ['vermoegensaufbau', 'pro', 'Welches gravierende finanzmathematische Risiko bedroht einen frisch in den Ruhestand tretenden ETF-Entnehmer unter dem Namen „Sequence-of-Returns-Risiko“?', 'Tritt ein schwerer Börsencrash (−40 %) gleich in den ersten 2–5 Entnahmejahren ein, müssen zu viele Anteile zu Tiefstkursen verkauft werden – das Depot erholt sich oft auch bei späterem Boom nicht mehr!', ['Wenn alle Aktien gleichzeitig ihre Namen ändern', 'Wenn die Inflation exakt auf 0,0 % sinkt', 'Wenn der ETF eine Ausschüttung einen Tag später bucht'], 'Gegenmittel in den ersten Entnahmejahren: ein Cash-/Geldmarkt- oder Kurzläufer-Puffer für ~2–5 Jahre Lebenshaltungskosten oder dynamisch flexible Entnahmen!'],
-    ['vermoegensaufbau', 'mid', 'Welches Hauptergebnis formulierte die berühmte amerikanische „Trinity-Studie“ zur sicheren Ruhestands-Entnahme („4-%-Regel“)?', 'Bei einem gemischten Aktien-/Anleihen-Portfolio überstand eine anfängliche Entnahme von 4 % (danach jährlich bloß mit der Inflation erhöht) historisch über 95 % aller 30-Jahres-Ruhestandszeiträume', ['Dass man immer exakt 4 % seiner Bruttogehälter sparen muss', 'Dass jeder ETF mindestens 4 % sichere Dividende jedes Jahr zahlt', 'Dass Aktien alle 4 Jahre exakt um 50 % fallen'], 'Für sehr lange Zeiträume (40–50 Jahre bei „FIRE“-Frührentnern) sowie unter Berücksichtigung deutscher Steuern empfehlen konservative Planer heute meist eine etwas vorsichtigere Rate von ca. 3,0–3,5 %.'],
-    ['vermoegensaufbau', 'easy', 'Was genau bedeutet im Rahmen eines passiven Depots das beliebte Konzept des „Cost-Average-Effekts“ (Durchschnittskosteneffekt) bei einem regelmäßigen monatlichen Sparplan?', 'Bei konstanter monatlicher Sparrate kauft man bei niedrigen Kursen automatisch mehr Anteile und bei hohen Kursen weniger Anteile (mit angenehmem psychologischem Effekt bei Rücksetzern)', ['Dass man automatisch immer den absolut tiefsten Tageskurs im ganzen Jahr bekommt', 'Dass Gebühren beim 12. Monat automatisch entfallen', 'Dass ein Sparplan eine laufende hohe Einmalsumme mathematisch immer weit schlägt'], 'Wichtig zur Aufklärung: Psychologisch hilft es enorm gegen Kaufhemmung – mathematisch entsteht der Rendite-Vorteil des Sparplans primär dadurch, dass man verdientes Gehalt sofort ohne Warten in den Markt fließen lässt!'],
-    ['vermoegensaufbau', 'mid', 'Welche zwei Bausteine trennt das klassische „Risikoreich-Risikoarm-Modell“ (bekannt u. a. durch Gerd Kommer)?', 'Man steuert das gesamte Depot-Risiko nicht über komplizierte Misch-Produkte, sondern schlicht über das Verhältnis zwischen 100 % global diversifiziertem Aktien-ETF (risikoreich) und erstklassigem Tagesgeld / kurzen EUR-Staatsanleihen / Geldmarkt-ETF (risikoarm)', ['Man investiert 50 % in Lotterielose und 50 % in Immobilien', 'Man wechselt jeden Dienstag zwischen Krypto und DAX', 'Man teilt sein Geld gleichmäßig auf fünf Girokonten bei derselben Bank'], 'So wächst dein Depot-Verständnis kristallklar mit: Jede Veränderung der eigenen Risikoneigung regelt einfach ein einziger Schieberegler zwischen Sicherheits- und Renditebaustein.'],
-    ['vermoegensaufbau', 'mid', 'Welcher häufige Anlegerfehler verbirgt sich in der Verhaltensökonomie unter dem Fachbegriff „Home Bias“?', 'Die Neigung von Investoren, viel zu stark in Aktien des eigenen Heimatlandes (z. B. DAX-Titel bei Deutschen, obwohl Deutschland nur ca. 2 % des Weltaktienmarkts ausmacht!) zu investieren', ['Die Angst, sein ETF-Depot jemals von zu Hause per Smartphone zu öffnen', 'Die Vorliebe ausschließlich für Bau- und Heimwerker-Aktien', 'Das Aufbewahren von Goldmünzen im heimischen Garten'], 'Wer neben seinem Arbeitsplatz, Einkommen und vielleicht einer eigenen Immobilie in Deutschland auch seine Aktien im DAX klumpt, bündelt alle Klumpenrisiken auf dasselbe Land!'],
-    ['vermoegensaufbau', 'mid', 'Was versteht die Verhaltenspsychologie unter dem „Dispositionseffekt“ bei vielen Kleinanlegern?', 'Die irrationale Tendenz, gut laufende Gewinneraktien zu schnell vorzeitig zu verkaufen („Gewinne mitnehmen“), während stark gefallene Verlustpositionen ewig in der Hoffnung auf Einstandskurse festgehalten werden', ['Das regelmäßige Vergessen der Bank-PIN', 'Die konsequente Umschichtung einmal jährlich', 'Das ständige Wechseln zu jeweils günstigeren Brokern'], 'Beim passiven Welt-ETF-Kauf umgeht man diese Falle, weil nicht Einzelwetten selektiert werden, sondern stets der ganze globale Markt gehalten wird.'],
-    ['vermoegensaufbau', 'pro', 'Welches Konzept bezeichnet in der persönlichen Lebensfinanzplanung das sogenannte „Humankapital“ in Relation zu einem jungen ETF-Sparer?', 'Die abgezinste Summe aller zukünftigen Arbeitseinkommen — bei einem 28-Jährigen mit langem sicherem Berufsleben ist es gigantisch und wirkt wie eine riesige „Anleihe“, weshalb er oft nahe 100 % Aktienquote im ETF-Depot verkraftet', ['Die Summe aller Fitnessstudio-Mitgliedsbeiträge', 'Das durchschnittliche Startgehalt von Bankvorständen', 'Die Anzahl der eingetragenen Kinder im Depot'], 'Mit dem Älterwerden schmilzt dieses zukünftige Gehalts-Humankapital ab und wandert hoffentlich in reales Finanzkapital im ETF-Depot um.'],
-    ['vermoegensaufbau', 'mid', 'Worauf zielt die Kennzahl „Maximum Drawdown“ in der Risikoanalyse eines Aktien-ETFs ab?', 'Den maximalen prozentualen Rückgang vom jemals erreichten historischen Höchstkurs bis zum darauffolgenden Tiefpunkt (z. B. rund −50 % bis −57 % beim MSCI World 2007–2009)', ['Den jährlichen maximalen Bankabhebungsbetrag am Geldautomaten', 'Die maximale Zahl an Fonds im selben Broker', 'Den Gewinn in der allerbesten Börsenwoche des Jahres'], 'Wer ehrlich prüft, ob er auch im Crash einen −50-%-Buchverlust ruhig durchstehen kann ohne panisch am Tiefpunkt zu verkaufen, wählt seine passende Aktienquote von vornherein realistisch.'],
-    ['vermoegensaufbau', 'pro', 'Was besagt die Kennzahl „Sharpe Ratio“ (nach William F. Sharpe) bei der Gegenüberstellung zweier Portfolios?', 'Sie misst die erzielte Überrendite oberhalb des risikofreien Zinses im Verhältnis zur dafür in Kauf genommenen Schwankungsbreite (Volatilität) – je höher desto besser', ['Die exakte Anzahl der Handelsminuten bis zur Ausführung', 'Das Verhältnis zwischen Bargeldkosten und Depotgebühren', 'Den prozentualen Anteil von Schwellenländern in einem ETF'], 'Genau deshalb zeigt ein sehr breit gestreutes globales Portfolio langfristig typischerweise eine bessere Sharpe Ratio als einzelne konzentrierte Länder- oder Einzelaktienwetten.'],
-    ['vermoegensaufbau', 'easy', 'Was bedeutet „Tracking Error“ im Gegensatz zu „Tracking Difference“ bei einem Index-ETF?', 'Tracking Difference ist der tatsächliche Performance-Unterschied (Rendite ETF minus Rendite Index); Tracking Error misst die tägliche statistische Schwankungsbreite (Standardabweichung) dieser Abweichungen', ['Beides beschreibt dieselbe gesetzliche Verkaufsprovision', 'Tracking Error bezeichnet nur eine Softwarestörung an der Börse', 'Tracking Difference misst die Uhrzeitverschiebung zu New York'], 'Für einen langfristigen Buy-and-Hold-Sparer zählt am Ende des Tages die niedrige (oder sogar leicht positive/günstige) Tracking Difference!'],
-    ['vermoegensaufbau', 'easy', 'Welcher fatale Denkfehler unter dem Namen „Recency Bias“ kostet viele Privatanleger viel Geld beim Einstieg?', 'Die jüngsten 1–3 Börsenjahre einfach gedankenlos endlos in die Zukunft fortzuschreiben (z. B. nach zwei starken Jahren 100 % Tech zu jagen oder nach einem Crash dauerhaft alles zu meiden)', ['Immer erst genau nach dem Jahreswechsel umzusteigen', 'Alle Dividenden noch am selben Tag auszugeben', 'Niemals zwei verschiedene Indizes zu kennen'], 'Kapitalmärkte kennen „Mean Reversion“ (Rückkehr zum langfristigen Mittelwert): Nach sehr hoch bewerteten Boomphasen fallen oft die anschließenden 10-Jahres-Erwartungsrenditen etwas moderater aus.'],
-    ['vermoegensaufbau', 'mid', 'Welche mathematische Asymmetrie zeigt die sogenannte „Verlust-Rechnung“ an den Aktienmärkten deutlich auf?', 'Verliert eine Anlage um −50 % (von 100 € auf 50 €), benötigt sie anschließend exakt +100 % Gewinn, um überhaupt wieder auf dem Ursprungsstand (100 €) zu landen', ['Ein −50-%-Verlust braucht auch genau +50 % für den Ausgleich', 'Nach −50 % gewinnt der Markt automatisch im nächsten Tag +50 %', 'Verluste halbieren einfach nur zukünftige Steuern'], 'Genau deshalb hilft breite Streuung gegen einzelne Totalverluste bei Einzelaktien (etwa Wirecard −99,9 %, wofür +99.900 % nötig wären!).'],
-    ['vermoegensaufbau', 'pro', 'Warum schlagen Einzelaktien-Depots im Durchschnitt seltener den Index als Laien vermuten (Hendrik Bessembinder-Studie)?', 'Die historische Rendite des Aktienmarktes ist extrem rechtsschief: Über Jahrzehnte hinweg tragen oft nur die besten ~4 % aller börsennotierten Firmen fast die gesamte Überrendite gegenüber US-Schatzbriefen – die Mehrheit verliert oder dümpelt vor sich hin!', ['Weil Privatanleger pro Order tausende Euro Gebühren an die UN zahlen', 'Weil kleine Unternehmen rechtlich keine Gewinne machen dürfen', 'Weil Indizes heimlich nachträglich geschönt werden'], 'Genau diese extreme Rechtsschiefe begründet Jack Bogles legendären Rat: „Don’t look for the needle in the haystack. Just buy the haystack!“'],
-    ['vermoegensaufbau', 'easy', 'Welche kostspieligste Illusion hindert Einsteiger häufig daran, den Zinseszinseffekt früh voll auszunutzen?', 'Das ewige Warten auf den „perfekten vermeintlich tieferen Einstiegskurs“ an der Seitenlinie – in der Praxis verpasst man dabei oft genau die wenigen stärksten Erholungstage des Jahrzehnts', ['Dass man unter 50.000 € überhaupt keine Order abgeben darf', 'Dass Sparpläne erst ab 50 Jahren Steuervorteile genießen', 'Dass Börsen im Sommer drei Monate pausieren'], 'Studien über Jahrzehnte zeigen: Wer in einem 20-Jahres-Zeitraum bloß die besten 10 einzelnen Börsentage verpasst, büßt häufig rund die Hälfte der Endrendite ein!'],
-    ['vermoegensaufbau', 'mid', 'Warum empfiehlt es sich in der Familien- oder Partnerplanung, eigene Depotbestände sauber getrennt oder bewusst geordnet zu führen, und was bringt ein separates Junior-/Kinderdepot?', 'Kinder genießen jedes Jahr einen eigenen steuerlichen Grundfreibetrag (plus Sparerpauschbetrag > 13.000 €/Jahr Gesamt-Einkommensfreiraum), was früh auf den Namen des Kindes laufende ETF-Erträge über NV-Bescheinigung oft faktisch steuerfrei aufwachsen lässt', ['Ein Kinderdepot verbietet jede Wertschwankung unter 0 %', 'Die Eltern behalten rechtlich weiterhin jederzeit unbegrenzten Zugriff zur Selbstentnahme', 'Im Kinderdepot sind nur europäische Sparbücher erlaubt'], 'Wichtige Grenze beim echten Kinderdepot: Das Geld gehört rechtlich unwiderruflich dem Kind und steht ihm ab dem 18. Geburtstag komplett frei zur Verfügung (zudem eventuelle Bafög-/Familienversicherungs-Grenzen bei Ausschüttungen beachten!).'],
-
-    // --- STEUERN & RECHT IN DEUTSCHLAND (20) ---
-    ['steuern_recht_de', 'easy', 'Wie hoch liegt aktuell (seit 2023) der reguläre jährliche Sparerpauschbetrag für Kapitalerträge in Deutschland pro Person bzw. für zusammen veranlagte Ehepaare?', '1.000 € für Einzelpersonen · 2.000 € für zusammen veranlagte Paare', ['801 € für Einzelpersonen · 1.602 € für Paare', '2.500 € für Einzelpersonen · 5.000 € für Paare', '500 € pro einzelner gehaltenen ETF-ISIN'], 'Durch Einreichen eines Freistellungsauftrags direkt beim Broker zieht die Bank diese Freibeträge bereits ab dem ersten Euro automatisch steuerfrei ab.'],
-    ['steuern_recht_de', 'easy', 'Wie hoch ist der reguläre deutsche Steuersatz der Abgeltungsteuer inklusive Solidaritätszuschlag (ohne Kirchensteuer) auf steuerpflichtige Kapitalerträge jenseits des Freibetrags?', '26,375 % (25 % Abgeltungsteuer plus 5,5 % Solidaritätszuschlag darauf)', ['Exakt 15,0 % Pauschalsteuer', 'Immer einheitliche 45,0 % Spitzensteuersatz', '19,0 % wie die Mehrwertsteuer'], 'Liegt dein persönlicher Einkommensteuersatz allerdings deutlich niedriger (z. B. Rentner, Studenten), erhält man die Differenz über die „Günstigerprüfung“ in der Steuererklärung zurück.'],
-    ['steuern_recht_de', 'easy', 'Wie hoch fällt laut Investmentsteuergesetz (InvStG 2018) die „Teilfreistellung“ bei reinen Aktien-ETFs (dauerhafte Aktienquote über 50 % bzw. ≥ 51 %) in Deutschland aus?', '30 % sämtlicher Ausschüttungen, Vorabpauschalen und Verkaufsgewinne bleiben dauerhaft einkommensteuerfrei', ['100 % Steuerfreiheit ab dem allerersten Tag', 'Genau 5 % Pauschalrabatt', '0 % – Aktien-ETFs zahlen in DE immer 30 % Extrazuschlag'], 'Mit 30 % Teilfreistellung sinkt die effektive Belastung von 26,375 % auf angenehme ca. `26,375 % × 0,70 = 18,4625 %` auf deine echten Aktien-ETF-Gewinne!'],
-    ['steuern_recht_de', 'mid', 'Weshalb existiert überhaupt die viel diskutierte „Vorabpauschale“ seit dem Investmentsteuergesetz 2018 bei deutschen ETF-Anlegern?', 'Damit Anleger thesaurierender (wiederanlegender) ETFs die volle Kapitalertragsteuer nicht jahrzehntelang komplett bis zur Rente vor sich herschieben können – sie sorgt für eine faire minimale jährliche Vorabbesteuerung', ['Als Strafsteuer gegen ausländische Broker', 'Als jährliche Gebühr direkt für den Börsenbetreiber', 'Nur für Verluste oberhalb von 100.000 €'], 'Wichtiges Fairness-Prinzip: Alle gezahlten Vorabpauschalen werden später beim echten Verkauf exakt von deinem steuerpflichtigen Veräußerungsgewinn abgezogen, sodass nichts doppelt versteuert wird!'],
-    ['steuern_recht_de', 'mid', 'Welche zwei Schutz-Deckel verhindern, dass dich die Vorabpauschale eines ETFs in einem schlechten Börsenjahr übervorteilt?', 'Fällt der Kurs im betreffenden Kalenderjahr insgesamt (negativ oder 0 %), fällt eine Vorabpauschale von 0 € an – und generell ist sie maximal auf den tatsächlichen Jahres-Wertzuwachs (inkl. Ausschüttungen) begrenzt', ['Sie gilt niemals bei Depotgrößen unter 1 Mio. €', 'Jeder zahlt einmal pro Jahrzehnt pauschal 50 €', 'Bei minus 10 % zahlt das Finanzamt 10 % zurück'], 'Nur im Januar eines Jahres nach einem guten, deutlich positiven Vorjahr (und positivem Basiszins) greift somit die Abbuchung auf dem Verrechnungskonto!'],
-    ['steuern_recht_de', 'pro', 'Wie berechnet sich rechnerisch der gesetzliche „Basisertrag“ für die Vorabpauschale am Beispiel eines ETF-Werts von 100.000 € zum 01.01. bei einem unterstellten Basiszins von 2,53 %?', '`100.000 € × 2,53 % × 0,7 = 1.771 €` Basisertrag (wovon bei Aktien-ETFs nach 30 % Teilfreistellung nur `1.239,70 €` steuerpflichtig vor dem Pauschbetrag bleiben!)', ['Es werden sofort pauschal 2,53 % des Depotwerts als Steuer abgebucht = 2.530 € Steuer', 'Es gelten stets 50 % auf das gesamte Vermögen', 'Es fallen rund 17.710 € Steuer an'], 'Bei 100.000 € Aktien-ETF werden also grob nur ~1.240 € auf den Freibetrag angerechnet – bzw. erst ohne Freibetrag fallen ca. 327 € echte Liquiditätssteuer ab (die später beim Verkauf komplett angerechnet wird!).'],
-    ['steuern_recht_de', 'mid', 'Warum empfehlen Steuerspar-Ratgeber für physisch replizierende US- oder Welt-Aktien-ETFs meist ausdrücklich das Fondsdomizil „Irland (ISIN IE…)“ statt „Luxemburg (ISIN LU…)“?', 'Dank des vorteilhaften Doppelbesteuerungsabkommens zwischen Irland und den USA behält die US-Steuerbehörde auf US-Dividenden intern nur 15 % Quellensteuer ein statt typischerweise 30 % in klassischen Luxemburger Fonds', ['Weil Irland 0 % deutsche Abgeltungsteuer an das deutsche Finanzamt meldet', 'Weil Luxemburger ETFs gar keine US-Aktien kaufen dürfen', 'Weil in Irland alle Handelszeiten 24 Stunden laufen'], 'Da US-Aktien im MSCI World ca. 70 % ausmachen, spart das irische Domizil bei etwa 1,5 % Dividendenrendite rund 0,15 %–0,20 % Performance jedes Jahr ganz automatisch ein!'],
-    ['steuern_recht_de', 'pro', 'Warum schlagen gute „synthetische“ US-/S&P-500-Swap-ETFs (nach US Section 871(m)) in der Praxis sogar irische physische S&P-500-ETFs oft um rund 0,2 %–0,3 % pro Jahr?', 'Auf qualifizierte breite US-Indizes (wie S&P 500 oder MSCI USA) im Swap-Kontrakt werden intern auf US-Dividenden sogar 0 % statt 15 % US-Quellensteuer fällig!', ['Weil Swap-ETFs gar keine Kosten haben', 'Weil die amerikanische Regierung ihnen Fördergelder überweist', 'Weil Swap-ETFs stets mehr Nvidia halten als erlaubt'], 'Genau deshalb erzielen große S&P-500-Swap-ETFs (z. B. Invesco, iShares Swap, Xtrackers Swap) oft spürbare Outperformance gegenüber ihrem Netto-Index (NTR).'],
-    ['steuern_recht_de', 'mid', 'Nach welchem gesetzlichen Reihenfolge-Prinzip ermittelt dein deutscher Broker die Steuer beim Teilverkauf mehrerer über Jahre besparter Anteile desselben ETFs?', 'FIFO-Prinzip (First-In, First-Out): Die historisch zuerst (und meist am billigsten!) gekauften Anteile gelten steuerlich als zuerst verkauft – und zahlen die höchste Gewinnsteuer', ['LIFO-Prinzip: Immer die teuersten letzten Käufe zuerst', 'Freie Auswahl per Häkchen direkt im Verkaufsfenster', 'Exakt die durchschnittlichen Einstandskurse aller Tranchen'], 'Wichtige Ausnahme beim „Depotübertrag“ zwischen zwei Konten: Auch beim stückweisen Übertrag auf ein separates Zweitdepot wandern immer die ältesten FIFO-Stücke zuerst rüber – genau das ermöglicht intelligente Verkaufs-Optimierung!'],
-    ['steuern_recht_de', 'pro', 'Was verbirgt sich hinter der bei ETF-Anlegern beliebten „3×10-Strategie“ (oder schrittweisen ETF-Besparungsrotation über mehrere ISINs im Aufbau)?', 'Man bespart etwa alle 10 Jahre einen neuen gleichwertigen Welt-ETF (oder überträgt ältere Teile zum Zweitdepot vor Entnahme), sodass man im Alter zuerst die jüngeren Stücke mit deutlich geringerem Kursgewinnanteil und damit geringerer Sofort-Steuerlast veräußert!', ['Man verkauft alle 10 Tage 3 ETFs mit Verlust', 'Man kauft exakt 30 verschiedene Bankprodukte gleichzeitig', 'Man spart 10 Jahre lang überhaupt kein Geld in Aktien'], 'So bleibt das meiste steuergeschonte Kapital der ältesten Gewinner-Tranchen noch viele zusätzliche Jahre zinseszinsertragbringend vollständig investiert!'],
-    ['steuern_recht_de', 'pro', 'Welche wichtige neue Wegzugssteuer-Regelung gilt in Deutschland seit dem 01. Januar 2025 gemäß § 19 Abs. 3 InvStG auch für private ETF-Anleger beim Auswandern?', 'Wer seinen Wohnsitz aus Deutschland verlegt, muss stille Kursgewinne auf einzelne Investmentfondsanteile fiktiv versteuern, sofern die Anschaffungskosten dieses spezifischen Fonds ≥ 500.000 € betragen!', ['Jeder ab 10.000 € Depot muss alle Aktien verkaufen', 'Nur Immobilienfonds über 10 Mio. € sind betroffen', 'Wegzug in andere Länder schließt ETFs generell von Besteuerung komplett aus'], 'Wichtiges Gestaltungsdetail: Die 500.000-€-Grenze bemisst sich an den historischen *Anschaffungskosten* je *einzelner Fonds-ISIN* – Streuung über verschiedene gleichwertige ETF-ISINs verhindert daher oft das Erreichen der Schwelle!'],
-    ['steuern_recht_de', 'mid', 'Welche Besonderheit trennt in deutschen Steuerregeln den „Verlustverrechnungstopf Aktien“ (Einzelaktien) vom „Verlustverrechnungstopf Sonstige“ (ETFs, Anleihen, Dividenden)?', 'Verluste aus Einzelaktien lassen sich ausschließlich gegen spätere Gewinne aus Einzelaktien verrechnen – NICHT mit ETF-Gewinnen! Umgekehrt können ETF-Verluste („Sonstige“) sowohl mit ETFs, Dividenden als auch Einzelaktiengewinnen verrechnet werden', ['ETFs dürfen in Deutschland grundsätzlich niemals einen Verlust aufweisen', 'Alle Gewinne und Verluste von Immobilien, Krypto und ETFs landen in genau demselben Topf', 'Aktienverluste verfallen am Jahresende automatisch komplett'], 'Auch beim Verkauf von ETFs mit kleinem Verlust zur Verlustverrechnung darf man beachten, dass bereits 30 % Teilfreistellung sowohl für Verluste als auch für Gewinne gelten.'],
-    ['steuern_recht_de', 'easy', 'Gelten Kursgewinne durch ETF-Umschichtungen oder steuerpflichtige Erträge in einer privaten deutschen Altersvorsorge-Versicherung im freien ETF-Depot steuerlich anders als in einer klassischen Nettopolice?', 'Im freien ETF-Depot löst jeder aktive ETF-Tausch (Rebalancing-Verkauf) sofort Abgeltungsteuer (~18,46 % nach 30 % TFS) auf aufgelaufene Gewinne aus; in einer guten kostengünstigen Nettopolice bleiben Umschichtungen steuerfrei im Mantel (Abwägung gegen Versicherungsmantel-Kosten!)', ['Im freien Depot ist jeder Tausch zwischen zwei ETFs gesetzlich steuerfrei', 'Versicherungen zahlen gar keine internen Gebühren', 'In Versicherungen ist ausschließlich Sparbuch-Zins erlaubt'], 'Für reines geduldiges „Buy-and-Hold“ schlägt ein provisionsfreies freies ETF-Depot dank null laufender Versicherungsmantelkosten am Ende meist die Mehrheit teurer Fondspolicen deutlich.'],
-    ['steuern_recht_de', 'mid', 'Warum sind seit 2018 thesaurierende und ausschüttende Aktien-ETFs in Deutschland im Ergebnis über viele Jahre hinweg steuerlich weitgehend gleichgestellt – wofür taugt der Ausschütter noch?', 'Durch die Vorabpauschale zahlen auch Thesaurierer bei positivem Basiszins jährlich einen Sockelbetrag; der Ausschütter hilft in frühen Jahren, den Sparerpauschbetrag (1.000 €/2.000 €) unkompliziert automatisch ohne eigenen Teilverkauf zu nutzen', ['Ausschütter zahlen gar keine Abgeltungsteuer mehr in Deutschland', 'Thesaurierer müssen jedes Jahr 50 % Strafe abführen', 'Thesaurierer können nicht vererbt werden'], 'Sobald das Depot groß genug ist, dass jährliche Ausschüttungen den Sparerpauschbetrag sprengen, minimiert der Thesaurierer oft die laufende Steuerabfluss-Bremse am stärksten.'],
-    ['steuern_recht_de', 'easy', 'Was bedeutet im Zusammenhang mit Geldanlagen und Banken der Begriff „Abgeltungsteuer“ im Gegensatz zum persönlichen Einkommensteuertarif?', 'Mit dem automatischen Steuereinbehalt durch die deutsche Depotbank (25 % + SolZ) ist die Einkommensteuerschuld auf diesen Kapitalertrag grundsätzlich pauschal vollständig „abgegolten“', ['Dass die Bank dein Geld am Ende des Jahres behält', 'Dass Kapitalerträge immer mit mindestens 42 % besteuert werden', 'Eine freiwillige Spendenabgabe an Bankmitarbeiter'], 'Lediglich bei ausländischen Brokern ohne automatischen deutschen Steuerabzug (z. B. Interactive Brokers, DeGiro) muss zwingend selbst per Anlage KAP deklariert werden!'],
-    ['steuern_recht_de', 'mid', 'Welchen konkreten Zweck erfüllt eine beim Finanzamt beantragte „Nichtveranlagungsbescheinigung“ (NV-Bescheinigung) für Studenten, Kinder im Kinderdepot oder Rentner?', 'Liegt das gesamte zu versteuernde Jahreseinkommen unterhalb des Grundfreibetrags (~12.000+ €) plus Sparerpauschbetrag, weist die Bank dank NV-Bescheinigung sämtliche ETF-Ausschüttungen und Verkaufsgewinne über 1.000 € hinaus 3 Jahre lang komplett ohne Steuerabzug aus', ['Sie verbietet den Kauf riskanter Aktien-ETFs', 'Sie befreit den Anleger lebenslang vom Zahlen jeglicher Einkommensteuer auch bei 1 Mio. € Gehalt', 'Sie ersetzt den Personalausweis bei Depot-Eröffnung'], 'Damit lassen sich etwa in einem Kinderdepot aufgelaufene stille Kursgewinne von Zeit zu Zeit komplett legal steuerfrei realisieren („Steuer-Reset“) und wieder neu anlegen!'],
-    ['steuern_recht_de', 'pro', 'Was unterscheidet einen klassischen Rohstoff-ETC wie „Xetra-Gold“ oder „EUWAX Gold II“ steuerlich von einem normalen physischen Aktien-ETF oder einem Silber-ETC OHNE Auslieferungsanspruch?', 'Besitzern mit verbrieftem Anspruch auf physische Goldauslieferung gelten Kursgewinne rechtlich als private Veräußerungsgeschäfte (§ 23 EStG) – nach über 12 Monaten Haltedauer sind sämtliche Verkaufsgewinne zu 100 % einkommensteuerfrei!', ['Xetra-Gold unterliegt exakt demselben 30-%-Aktienfonds-Steuersatz', 'Xetra-Gold zahlt jedes Quartal 8 % steuerfreie Dividende', 'Auf Gold-ETCs fallen stets 35 % Luxussteuer an'], 'Ohne juristisch durchsetzbares Auslieferungsrecht (wie bei rein barabgewickelten Terminkontrakt-ETCs) greift hingegen voll die normale Abgeltungsteuer!'],
-    ['steuern_recht_de', 'mid', 'Welche Steuersystem-Regel gilt bei einem deutschen Gemeinschaftsdepot (Oder-Depot von Ehepartnern) bezüglich der Teilfreistellung und des Pauschbetrags?', 'Solange beide zusammen veranlagt sind, greift der doppelte Sparerpauschbetrag von 2.000 € – allerdings Vorsicht bei Schenkungsteuer-Risiken bei extrem großen einseitigen Einzahlungen eines Partners!', ['Verheiratete erhalten automatisch den fünffachen Betrag (5.000 €)', 'Bei Gemeinschaftsdepots entfällt die 30-%-Teilfreistellung komplett', 'Alle Aktien gehören dort juristisch immer zu 100 % der Bank'], 'Für unverheiratete Paare sollte dagegen zur sauberen Schenkungs- und Trennungssicherheit stets besser jeder ein separates Einzeldepot führen.'],
-    ['steuern_recht_de', 'easy', 'Wie wirkt sich ein einfacher „Depotübertrag ohne Eigentümerwechsel“ zwischen zwei eigenen deutschen Depots (z. B. Hausbank zu günstigem Neobroker) auf bisherige Buchgewinne aus?', 'Der reine Depotübertrag an dich selbst (mit identischer Inhaberschaft!) ist in Deutschland per Gesetz kostenlos und löst keinerlei Besteuerung aus – sämtliche historische Einstandsdaten wandern per TaxBox-System mit', ['Jeder Depotwechsel zwingt vorher zur Versteuerung aller Gewinne', 'Banken dürfen in Deutschland 500 € Übertragsgebühr verlangen', 'Nur Barüberweisungen ohne Wertpapiere sind erlaubt'], 'Lediglich etwaige Bruchstücke unter 1,00 ganzen Anteil (aus Sparplänen entstanden) lassen sich technisch oft nicht übertragen und werden vorab bar verkauft.'],
-    ['steuern_recht_de', 'mid', 'Wann lohnt sich bei hohen Ausschüttungen auf ein deutsches Wertpapier im Ausland (z. B. französische oder schweizerische Einzelaktien im Vergleich zum Welt-ETF) der Blick auf die Quellensteuer?', 'Bei ausländischen Einzelaktien (wie Nestlé aus CH mit 35 % oder TotalEnergies aus FR) muss mühsam Quellensteuer zurückgefordert werden – bei einem breit gestreuten UCITS-ETF übernimmt hingegen bereits der Fonds im Hintergrund die Quellensteuer-Optimierung ohne Aufwand für den Privatanleger!', ['Innerhalb von ETFs wird pauschal 50 % Straf-Quellensteuer bezahlt', 'Schweizer Quellensteuer existiert in Europa überhaupt nicht', 'Einzelaktien sind immer weltweit quellensteuerfrei'], 'Ein enormer praktischer Pluspunkt für globale ETFs: Keinerlei nerviger Papierkram mit ausländischen Finanzämtern in Bern oder Paris!']
-  ];
-
-  // 2. Strukturierte Wissensdatenbank (40 × 4 Kategorien = 160 Begriffe / Produkte / Regeln × 5 Perspektiven = 800 Fragen!)
-  // Felder: [cat, term, domainLabel, definition, distractors[3], benefitOrRule, praxisDetail, diff]
-  const CONCEPTS_DB = [
-    // === ETF-GRUNDLAGEN (40 Einträge → 200 Fragen) ===
-    ['etf_grundlagen', 'Sondervermögen (KAGB / UCITS)', 'Anlegerschutz & Rechtsstatus', 'Strikt vom eigenen Firmenvermögen der Depotbank und Kapitalverwaltungsgesellschaft getrennt verwahrtes Fondsvermögen', ['Einlage bis maximal 100.000 € durch Bankensicherungsfonds', 'Verpfändetes Kreditkapital der Deutschen Börse', 'Ein staatlich garantiertes Festgeldkonto mit 4 % Zins'], 'Voller Schutz gegen Verlust bei Pleite der Depotbank oder des Emittenten (BlackRock, Vanguard, Amundi)', 'Selbst im Ernstfall ziehen andere Banken oder Treuhänder das Portfolio nahtlos auf ein neues Institut um', 'easy'],
-    ['etf_grundlagen', 'Physische Vollreplikation', 'Nachbildungsmethode', 'Der ETF kauft exakt alle Indexmitglieder im genau selben Prozentgewicht tatsächlich real als physische Aktien ein', ['Der ETF bildet Indexrenditen allein über Bank-Tauschverträge ab', 'Ein Fondsmanager pickt nach Bauchgefühl 15 Favoriten heraus', 'Es werden ausschließlich Derivate auf Gold gekauft'], 'Höchste Transparenz ohne Swap-Kontrahenten bei hochliquiden Standardindizes (z. B. DAX, S&P 500, Euro Stoxx 50)', 'Erfordert bei jeder quartalsweisen Index-Neugewichtung reale Börsengeschäfte im Fonds', 'easy'],
-    ['etf_grundlagen', 'Optimized Sampling', 'Intelligente Teilreplikation', 'Kauf einer statistisch exakt ausgewählten Teilmenge des Index unter Weglassen winziger illiquider Mikro-Titel', ['Willkürlicher Verkauf aller Dividendenwerte eines Landes', 'Tägliches Umschichten nach technischen Chartmustern', 'Verdopplung der Gewichtungen aller Finanzaktien'], 'Drückt Handelskosten spürbar bei tausende Titel starken Indizes wie MSCI World oder FTSE All-World', 'Die Tracking Difference zum Gesamtindex bleibt trotz geringerem Anteilskauf winzig klein', 'mid'],
-    ['etf_grundlagen', 'Synthetische Replikation (Swap-ETF)', 'Derivatbasierte Nachbildung', 'Hält einen beliebigen UCITS-Sicherheitenaktienkorb und tauscht dessen Rendite per Swap-Vertrag exakt gegen die angestrebte Indexrendite', ['Erzeugt künstlich erfundene Aktienkurse ohne echte Börse', 'Leiht sich täglich Kredithebel auf Kreditkarte', 'Spekuliert gegen jeden Anleger auf Totalverlust'], 'Häufig extrem geringe Tracking Difference und starker Steuer-Vorteil (0 % statt 15 % Quellensteuer auf US-Indizes!)', 'Das Kontrahentenrisiko ist per UCITS auf max. 10 % gedeckelt und wird täglich zurückgesetzt', 'mid'],
-    ['etf_grundlagen', 'TER (Total Expense Ratio)', 'Laufende Verwaltungsgebühr p. a.', 'Prozentual angegebene jährliche Verwaltungs-, Lizenz- und Verwahrgebühr, die intern direkt dem Fondsvermögen entnommen wird', ['Einmalige Verkaufssteuer beim Verlassen des Brokers', 'Der maximal zulässige Börsenaufschlag am Tag', 'Ein Aufpreis auf jede erhaltene Dividende'], 'Einfache erste Richtschnur zur Sortierung günstiger globaler Standard-ETFs (meist 0,07 % bis 0,25 %)', 'Wird nie separat vom Girokonto abgebucht, sondern täglich anteilig (~1/365) im ETF-Kurs verrechnet', 'easy'],
-    ['etf_grundlagen', 'Tracking Difference (TD)', 'Echte Kostenkennzahl gegen den Index', 'Exakte Renditeabweichung über ein Gesamtjahr zwischen der tatsächlichen ETF-Wertentwicklung und der des Benchmark-Netto-Index', ['Die reine Preisspanne zwischen Xetra und Gettex', 'Der Abstand zwischen Tageshoch und Tagestief', 'Die Anzahl der Tage seit ETF-Auflage'], 'Zeigt sämtliche verborgenen Effekte: TER, Transaktionskosten, Wertpapierleihe-Erträge und interne Quellensteuern', 'Eine negative TD von −0,15 % beim S&P-500-ETF bedeutet sogar +0,15 % Outperformance gegenüber dem Index!', 'mid'],
-    ['etf_grundlagen', 'Tracking Error (TE)', 'Statistische Gleichlaufschwankung', 'Standardabweichung der täglichen/monatlichen Renditedifferenzen eines ETFs zu seinem Zielindex über einen Zeitraum', ['Der exakte Euro-Betrag aller bezahlten Ordergebühren', 'Ein technischer Computerfehler beim Online-Broker', 'Der Gesamtwertverlust im Börsencrash'], 'Maßstab dafür, wie gleichmäßig und ruhig ein Produkt den Index abbildet ohne plötzliche Ausreißer', 'Während bei Langfristanlegern die Tracking Difference zählt, achten Profis bei Kurzfrist-Trading auf minimalen Tracking Error', 'pro'],
-    ['etf_grundlagen', 'Creation & Redemption Prozess', 'Primärmarkt-Mechanismus', 'Laufender Austausch ganzer Aktienkörbe gegen neue ETF-Anteilspakete (Creation Units) durch autorisierte Marktteilnehmer', ['Eine jährliche Hauptversammlung aller Privatanleger', 'Das Löschen historischer Verluste im Finanzamt', 'Der Umtausch physischer Papier-Aktien am Schalter'], 'Garantiert, dass der Börsenpreis des ETFs nie dauerhaft über oder unter den wahren Aktienwert driftet', 'Klein- und Großanleger profitieren gleichermaßen vom effizienten Sekundärmarkt-Arbitragehandel', 'pro'],
-    ['etf_grundlagen', 'Authorized Participant (AP)', 'Institutioneller Markt-Partner', 'Zugelassene große Investmentbank oder Handelshaus, das direkt beim ETF-Anbieter große Anteilspakete schaffen oder zurückgeben darf', ['Jeder Privatanleger mit einem mindestens 10.000 € Depot', 'Ein Mitarbeiter der BaFin-Finanzaufsicht', 'Ausschließlich der Gründer des jeweiligen Index'], 'Hält die Geld-Brief-Spannen eng und sichert hohe Handelbarkeit auch in unruhigen Marktphasen', 'Typischerweise wirken mehrere unabhängige APs gleichzeitig auf jeden großen UCITS-ETF ein', 'pro'],
-    ['etf_grundlagen', 'Bid-Ask-Spread (Geld-Brief-Spanne)', 'Implizite Handelskosten beim Börsenkauf', 'Prozentualer Abstand zwischen dem aktuellen Verkaufskurs (Bid/Geld) und dem leicht höheren Kaufkurs (Ask/Brief)', ['Die monatliche Fixgebühr für das Verrechnungskonto', 'Der Unterschied zwischen zwei völlig verschiedenen ETFs', 'Der prozentuale Anteil an US-Aktien'], 'Versteckte sofortige Kosten beim Kauf/Verkauf – möglichst eng handeln zu liquiden Referenzbörsen-Zeiten!', 'Auf Xetra liegt der Spread großer MSCI-World-ETFs zwischen 15:30–17:30 Uhr oft nur bei winzigen 0,02 % bis 0,05 %', 'easy'],
-    ['etf_grundlagen', 'NAV (Net Asset Value)', 'Innerer Nettoinventarwert pro Anteil', 'Täglich exakt zum Börsenschluss festgestellter Fair Value des gesamten Fondsvermögens abzüglich Verbindlichkeiten geteilt durch alle Anteile', ['Der historische Emissionspreis am allerersten Tag', 'Die Dividende aller 30 deutschen Großkonzerne', 'Ein spezieller Steuersatz in den Niederlanden'], 'Offizielle Referenzbasis für Ausgabe-/Rücknahmepreise sowie für die Jahresendbewertung bei der Vorabpauschale', 'Während des Handelstages liefert der fortlaufende iNAV eine gute Näherung an den Echtzeit-NAV', 'mid'],
-    ['etf_grundlagen', 'Thesaurierend (Acc)', 'Ertragsverwendungsart', 'Alle erhaltenen Unternehmensdividenden werden fonds-intern umgehend steuerschonend in neue Indexaktien wiederangelegt', ['Sämtliche Gewinne werden vierteljährlich bar aufs Girokonto überwiesen', 'Der ETF hält niemals Aktien mit Dividenden', 'Nach 10 Jahren werden Anteile automatisch verkauft'], 'Maximale Bequemlichkeit und voller Zinseszinseffekt ohne manuelles Reinvestieren kleiner Ausschüttungsbeträge', 'Erkennt man meist an Kürzeln wie „Acc“, „C“ (Capitalisation) oder im deutschen Zusatz „Thesaurierend“', 'easy'],
-    ['etf_grundlagen', 'Ausschüttend (Dist)', 'Ertragsverwendungsart', 'Erhaltene Dividenden oder Zinsen werden viertel-, halb- oder ganzjährlich real auf das Verrechnungskonto des Anlegers überwiesen', ['Alle Anteile verschwinden nach Auszahlung komplett', 'Man erhält physische Warenpakete der Konzerne per Post', 'Die Gebühren steigen um genau den Ausschüttungsbetrag'], 'Perfekt für laufenden Cashflow im Alter oder um anfangs den 1.000-€-Freibetrag ohne Anteilverkauf auszunutzen', 'Am „Ex-Tag“ (Dividendenabschlag) fällt der ETF-Kurs rechnerisch genau um die gezahlte Ausschüttungssumme', 'easy'],
-    ['etf_grundlagen', 'WKN & ISIN', 'Eindeutige Wertpapier-Kennnummern', 'Sechsstellige deutsche (WKN) bzw. zwölfstellige internationale Identifikationsnummer (ISIN mit Länderkürzel wie IE oder LU)', ['Passwörter für das Online-Banking-Postfach', 'Gültigkeitsdaten auf gedruckten Kontoauszügen', 'Kurze Börsenkürzel mit nur genau zwei Zeichen'], 'Vermeidet jede Verwechslungsgefahr bei ähnlich klingenden ETF-Varianten (etwa Acc vs. Dist oder EUR-Hedged!)', 'Die ersten zwei Buchstaben der ISIN (z. B. IE00B4L5Y983) verraten exakt das rechtliche Domizilland des Fonds', 'easy'],
-    ['etf_grundlagen', 'Fondsdomizil (IE / LU / DE)', 'Rechtlicher Sitz des Investmentfonds', 'Das Land, in dem der ETF rechtlich aufgelegt wurde und dessen Aufsicht sowie Doppelbesteuerungsabkommen gelten', ['Die geographische Region der gekauften Firmen im Fonds', 'Das Land, in dem der Käufer geboren wurde', 'Der exakte Standort des Brokers'], 'Entscheidender Hebel bei physischen US-/Welt-ETFs: Irland (IE) spart durch US-DBA intern die halbe Dividenden-Quellensteuer!', 'Ein in Irland aufgelegter ETF wird völlig problemlos an der Frankfurter Börse Xetra in Euro gehandelt', 'mid'],
-    ['etf_grundlagen', 'Fondsvolumen (AUM)', 'Größe eines ETFs in Euro/USD', 'Gesamtsumme des aktuell von allen Anlegern weltweit in diesen spezifischen Fonds investierten Kapitals', ['Maximaler Umsatz aller enthaltenen Aktiengesellschaften', 'Schuldenstand des Anbieters bei der Zentralbank', 'Gesamtzahl der täglichen Handelsausführungen'], 'Sichert wirtschaftlichen Langzeitbetrieb des Anbieters und hohe Marktliquidität (Faustformel möglichst > 100 Mio. €)', 'Sehr kleine ETFs unter 20–30 Mio. € nach mehreren Jahren Laufzeit bergen ein erhöhtes Risiko für Fondsschließungen', 'easy'],
-    ['etf_grundlagen', 'Wertpapierleihe (Securities Lending)', 'Fonds-Zusatzertragsmethode', 'Vorübergehendes Verleihen von ETF-Aktien an Leerverkäufer/Institutionen gegen hochwertige überbesicherte Pfänder (Collateral > 100 %)', ['Dauerhafter unversicherter Verkauf der besten Aktien', 'Private Kreditvergabe vom Broker an Studenten', 'Fehlender Eigentumsschutz bei einem Börsensturz'], 'Liefert laufende Zinseinnahmen für den ETF und kompensiert so oft Teile oder die gesamte TER', 'Gute Anbieter legen bis ins Detail offen, welcher Prozentanteil der Leiherträge tatsächlich dem Fonds verbleibt (oft 60–90 %)', 'pro'],
-    ['etf_grundlagen', 'Limit-Order', 'Kontrollierte Börsen-Kauf-/Verkaufsart', 'Auftrag mit festem maximalen Kaufpreis (bzw. minimalem Verkaufspreis), der nicht überschritten werden darf', ['Automatischer Ratenkauf auf Kredit bis zum Limit', 'Zwanghafter Kauf auch zum zehnfachen Kurs', 'Ein Sparplan ohne festgelegte Sparrate'], 'Schützt konsequent vor plötzlichen Spread-Ausweitungen, dünnen Orderbüchern und unvorhergesehenen Flash-Spitzen', 'Sollte außerhalb der US-Kernzeiten oder bei kleineren Nebenwerte-ETFs immer statt ungeschütztem „Market“-Klick genutzt werden', 'easy'],
-    ['etf_grundlagen', 'Market Maker', 'Liquiditätssteller an der Börse', 'Spezialisiertes Handelshaus, das für einen ETF fortlaufend verbindliche An- und Verkaufspreise (Quotes) ins Orderbuch stellt', ['Ein prominenter Finanz-YouTuber mit großen Videos', 'Die staatliche Börsenaufsicht im Bundesfinanzministerium', 'Der größte Einzelaktionär einer Aktie'], 'Garantiert, dass Privatanleger auch bei kleineren ETFs jederzeit sofort ohne Warten auf zufällige andere Privat-Gegenorders handeln können', 'Im Gegenzug verdient der Market Maker hauchdünne Bruchteile am Bid-Ask-Spread', 'mid'],
-    ['etf_grundlagen', 'Xetra-Handelszeiten (Referenzprinzip)', 'Optimales Timing bei ETF-Orders', 'Haupt-Orderbuchzeit der Frankfurter Elektronikbörse (09:00 bis 17:30 Uhr CET); höchste Liquidität für Global-ETFs meist 15:30–17:30 Uhr', ['Rund um die Uhr sieben Tage pro Woche mit identischen Preisen', 'Ausschließlich zwischen 22:00 Uhr und 06:00 Uhr nachts', 'Nur am ersten und letzten Werktag eines Monats'], 'Schützt deutlich vor hohen Randzeit-Spreads an abendlichen Direkthandel-Plattformen nach US-/EU-Börsenschluss', 'Ab 15:30 Uhr CET ist zusätzlich Wall Street (NYSE / Nasdaq) live geöffnet, was den globalen Aktienmarkt voll bepreist', 'easy'],
-    ['etf_grundlagen', 'Index-Lizenzgebühr', 'Kostenbestandteil im ETF-Inneren', 'Nutzungsentgelt, das der ETF-Anbieter (z. B. iShares) an den Indexberechner (z. B. MSCI oder S&P) für den geschützten Namen zahlt', ['Eine einmalige Prüfungsgebühr für den Brokerkunden', 'Eine Steuer an die Stadt New York', 'Gebühr für den Verlustausgleich im Depot'], 'Erklärt mit, weshalb ETFs auf Eigen- oder günstige Indizes (z. B. Solactive, Prime Global) teils noch günstigere TERs von 0,05 % schaffen', 'Große Anbieter wie Vanguard wechselten historisch in manchen US-Fonds sogar den Index-Anbieter genau wegen dieser Lizenzkosten', 'pro'],
-    ['etf_grundlagen', 'ETC (Exchange Traded Commodity)', 'Börsengehandelte Rohstoff-Schuldverschreibung', 'Unbefristetes Wertpapier zur Abbildung einzelner Rohstoffe (wie Gold oder Öl), rechtlich eine besicherte Inhaberschuldverschreibung statt Sondervermögen', ['Ein klassischer Aktien-ETF auf 50 Bergbaufirmen', 'Ein spezielles Währungskonto in der Schweiz', 'Ein festverzinslicher Bausparvertrag'], 'Ermöglicht börsennotiertes Rohstoffinvestment trotz europäischem UCITS-Verbot für Ein-Rohstoff-Fonds', 'Achten Sie stets auf physische Besicherung in Tresoren (z. B. Xetra-Gold / EUWAX II) gegen Emittenten-Ausfallrisiko!', 'mid'],
-    ['etf_grundlagen', 'Börsengehandelter Renten-/Anleihen-ETF', 'Rentenfonds an der Börse', 'Körbe aus Staats- oder Unternehmensanleihen definierter Bonität und Laufzeit ohne endgültiges Fälligkeitsdatum (sofern kein Laufzeit-ETF)', ['Eine physische Mietwohnung auf Aktienbasis', 'Ein ausschließlich aus Tagesgeldkonten bestehender Fonds', 'Ein risikoloses Zinsversprechen wie 10 % fest'], 'Bietet einfache Diversifikation über Hunderte Schuldner und stabilisiert durch geringere Korrelation klassisch das Aktienrisiko', 'Wichtiger Unterschied zu Einzelanleihen: Laufende „Rolling“-Anleihen-ETFs rollen stets frische Anleihen nach und reagieren empfindlich auf Zinsänderungen', 'mid'],
-    ['etf_grundlagen', 'Target-Maturity / Laufzeit-Anleihen-ETF (z. B. iBonds)', 'Anleihen-ETF mit festem Enddatum', 'Kombiniert breite Streuung eines ETFs mit dem festen Rückzahlungsdatum eines definierten Jahres (z. B. Dezember 2028) durch Ablauf aller Anleihen im Korb', ['Ein ETF auf Aktien, der nach 5 Jahren zwanghaft auf null fällt', 'Ein unkündbarer 50-Jahres-Vertrag', 'Ein spekulativer Terminkontrakt auf Öl'], 'Löst das Zinsänderungsrisiko bei Halt bis Endfälligkeit durch geordnete Rückzahlung aller Nennwerte', 'Ideal zum gezielten Parken von Geld für exakte künftige Meilensteine (Hauskauf oder Immobilien-Anschlussfinanzierung)', 'pro'],
-    ['etf_grundlagen', 'Sparplan-Ausführung (Bruchstücke)', 'Automatisierter Kleinanleger-Kauf', 'Ermöglicht die monatliche Geldanlage fester glatter Eurobeträge (oft ab 1 € bis 25 €), wodurch auch gebrochene Anteile wie „0,4372 Stück“ gebucht werden', ['Erfordert stets den Kauf von mindestens 100 vollen Anteilen auf einmal', 'Lässt nur jährliche Zahlungen per Postanweisung zu', 'Ersetzt den Handel über Börsen komplett durch Lotterie'], 'Nimmt jede psychologische Kaufhürde aus dem Alltag („Pay yourself first“) und sorgt für konstante Disziplin', 'Ganze Anteile lassen sich reibungslos übertragen; Bruchstücke verbleiben meist beim Verkauf im Altdepot', 'easy'],
-    ['etf_grundlagen', 'Berichtswährung vs. Fondswährung vs. Handelswährung', 'Drei oft verwechselte Währungsebenen', 'Handelswährung (EUR in DE), Fondswährung (Rechnungslegung meist USD) und eigentliche Unternehmensumsatz-Währung bestimmen ganz unterschiedlich – real zählt nur Letzteres!', ['Alle drei müssen stets exakt identisch auf EUR lauten, sonst Verlust', 'Nur die Handelswährung an der Börse bestimmt die echte Aktienrendite', 'Die Fondswährung verdoppelt Währungsgewinne'], 'Ob du einen identischen S&P-500-ETF an Xetra in EUR oder in London in USD kaufst: Beide sind nach Rückrechnung auf den Euro auf den Cent genau wertgleich', 'Währungsumrechnung auf Depotabrechnungen ist bloß eine Anzeige-Rechengröße, kein eigenes Zusatzrisiko neben den Konzernwährungen', 'pro'],
-    ['etf_grundlagen', 'EUR-Hedged Aktien-ETF', 'Währungsgesicherte Aktienklasse', 'Kauft zusätzlich laufende rollierende Devisentermingeschäfte zum Neutralisieren von Wechselkursschwankungen zwischen USD/JPY und EUR', ['Investiert ausschließlich in Unternehmen innerhalb Europas', 'Garantiert gesetzlich gegen jeden Börsencrash', 'Verdoppelt jede erhaltene Dividende in Euro'], 'Reduziert kurzfristig Kursschwankungen aus dem USD/EUR-Kurs, kostet aber laufende Zinsdifferenz- und Rollgebühren', 'Über 15–30 Jahre gleichen sich globale Wechselkurse von Sachwerten wie internationalen Konzernaktien häufig stark aus', 'mid'],
-    ['etf_grundlagen', 'Wesentliche Anlegerinformationen (KID / PRIIPs)', 'Gesetzliches 3-Seiten-Basisinformationsblatt', 'Verpflichtendes Kurz-Dokument je ETF mit Kostenübersicht, Risikoindikator (SRI 1–7), Wertentwicklungsszenarien und genauem Abbildungsziel', ['Ein freiwilliger Hochglanz-Werbekatalog von 120 Seiten', 'Eine persönliche Gewinnzusage vom Vorstand', 'Der jährliche Kontoauszug der Depotbank'], 'Ermöglicht schnellen Blick auf Kosten und Risiko-Einstufung noch vor jedem Order-Klick', 'Muss in Deutschland von jedem regulierten Broker gesetzlich unmittelbar vor Kauf zum Download verlinkt werden', 'easy'],
-    ['etf_grundlagen', 'Factsheet des ETF-Anbieters', 'Monatlich aktualisiertes Produkt-Datenblatt', 'Kompakte Übersicht über aktuelle Top-10-Einzelpositionen, Ländergewichtungen, Branchenaufteilung, Domizil und Ausschüttungsrendite', ['Der steuerliche Einkommensteuerbescheid des Käufers', 'Die allgemeine Hausordnung des Brokers', 'Die tägliche Börsenzeitung auf Papier'], 'Perfektes Werkzeug um sofort zu prüfen, wie viel % etwa USA, Apple oder Technologie aktuell konkret ausmachen', 'Findet sich jederzeit kostenlos auf justETF, extraETF oder direkt bei iShares / Vanguard / Xtrackers', 'easy'],
-    ['etf_grundlagen', 'Rebalancing-Frequenz des Index (Index Review)', 'Periodische Überprüfung durch Indexanbieter', 'Festgelegte Termine (meist halbjährlich oder quartalsweise), an denen MSCI oder FTSE Aufsteiger aufnehmen und Absteiger aus dem Index sortieren', ['Jeden Werktag morgens um 08:00 Uhr komplett neu', 'Nur einmal alle zwanzig Jahre per Zufall', 'Nach jeder politischen Wahl automatisch'], 'Hält die Indexstruktur verlässlich repräsentativ, ohne täglich unnötig Transaktionskosten im Fonds zu verfeuern', 'Erfahrene ETF-Händler wissen, dass große Indexanpassungen genau am letzten Handelstag von Mai oder November oft hohes Volumen erzeugen', 'pro'],
-    ['etf_grundlagen', 'Cash Drag (Bargeld-Bremse)', 'Subtiler interner Reibungsverlust im Fonds', 'Durch zeitlich verzögerte Wiederanlage neu eingenommener Dividenden entstehender geringer unverzinster Kassenbestand im Fonds', ['Ein plötzlicher Absturz aller Bankaktien um 20 %', 'Das Bezahlen mit physischen Münzen am Bankschalter', 'Der Verlust der Zugangsdaten zum Online-Depot'], 'Große institutionelle ETF-Verwalter minimieren Cash Drag elegant durch zwischenzeitliche Eindeckung über Index-Futures', 'Macht bei optimal gemanagten Standard-ETFs heute oft nur unter 0,01–0,03 % im Jahr aus', 'pro'],
-    ['etf_grundlagen', 'Anteilsklasse / Share Class', 'Unterschiedliche Verpackung desselben Fondsvermögens', 'Verschiedene Ausprägungen eines identischen Hauptfonds (z. B. einmal als thesaurierend Acc, einmal ausschüttend Dist oder währungsgesichert)', ['Unterschiedliche Aktienmärkte mit denselben Namen', 'Schulklassen innerhalb von Finanzinstituten', 'Eine Klassifizierung der Kreditwürdigkeit eines Landes'], 'Teilen sich meist denselben riesigen Gesamt-Topf (AUM), haben aber eine eigene ISIN, WKN und ggf. andere Gebühren', 'Vor einem ETF-Kauf unbedingt Share-Class-Check machen: genau auf Acc vs. Dist achten!', 'mid'],
-    ['etf_grundlagen', 'Free-Float-Adjustierung', 'Streubesitz-Bereinigung in Indizes', 'Gewichtet Unternehmen nicht mit allen Aktien insgesamt, sondern nur mit dem tatsächlich frei an der Börse handelbaren Anteil (ohne feste Familien-/Staatspakete)', ['Kostenlose Abgabe von Aktien an Neukunden', 'Automatische Preisanpassung an Inflation', 'Verzicht auf jegliche Sicherheitsregeln im Handel'], 'Verhindert Verzerrungen und Liquiditätsengpässe durch schwer handelbare Firmen mit winzigem Streubesitz (z. B. 95 % beim Staat)', 'Erklärt z. B., warum Saudi Aramco trotz riesigem Gesamtwert im MSCI EM wegen winzigem Free-Float viel kleiner gewichtet ist', 'pro'],
-    ['etf_grundlagen', 'ETF-Sparplan vs. Einmalkauf-Ordergebühr', 'Broker-Preismodelle im Wettbewerb', 'Viele Neobroker und Direktbanken bieten Sparpläne gebührenfrei (0 €) an, während ungeschützte Einmalorders an traditionellen Filialbanken oft 10–50 €+ kosten', ['Einmalkauf ist gesetzlich immer teurer als 12 monatliche Raten', 'Gebühren werden nur bei fallenden Kursen erhoben', 'Sparpläne kosten immer 5 % Ausgabeaufschlag'], 'Vergleiche bei größeren Ordern dennoch neben Ordergebühren stets die Spread-Qualität zu Xetra-Zeiten', 'Einmal 20 € Kaufgebühr fällt bei einer 10.000-€-Anlage (0,2 %) langfristig viel weniger ins Gewicht als +0,5 % schlechter Spread!', 'easy'],
-    ['etf_grundlagen', 'Inverse / Short ETF', 'Produkt für Wetten auf fallende Kurse', 'Gewinnt (meist auf täglicher Basis) prozentual spiegelbildlich, wenn der zugrunde liegende Aktienindex an diesem Tag verliert', ['Ein ETF, der ausschließlich nachts in Asien kauft', 'Ein langfristig stabil wachsender Sparplan-ETF für die Rente', 'Ein steuerfreies Sondervermögen für Immobilien'], 'Durch Zins-/Finanzierungseffekte, Volatility Drag und historisch langfristig steigende Aktienmärkte als Daueranlage mathematisch extrem riskant!', 'Eignet sich ausschließlich als kurzfristiges taktisches Absicherungs- oder Spekulationswerkzeug erfahrener Akteure', 'pro'],
-    ['etf_grundlagen', 'ESG / SRI Nachhaltigkeits-Filter', 'Nachhaltige Indexvarianten', 'Schließt bestimmte Branchen (Waffen, Tabak, Kohle, Ölsand) über vordefinierte Regelwerke aus oder gewichtet Firmen mit hohem Nachhaltigkeits-Score höher', ['Reine Wohltätigkeits-Spenden völlig ohne Ertragsabsicht', 'Ein ETF ausschließlich auf kleine regionale Vereine', 'Automatisches Verbot jeglicher Softwarefirmen'], 'Unterscheidet sich stark je nach Filtertiefe: „ESG Screened“ filtert sanft, während „SRI“ (Socially Responsible Investing) oft ca. 75 % aller Firmen streicht!', 'Prüfe bei SRI-ETFs unbedingt, ob sich durch radikal enges Filtern ungewollte Sektor- oder Einzeltitelkonzentrationen (z. B. extrem viel Microsoft/Tesla) einschleichen', 'mid'],
-    ['etf_grundlagen', 'Multi-Asset-ETF (z. B. Vanguard LifeStrategy / Arero)', 'Gemischter Baustein in einem Papier', 'Kombiniert Aktien, Anleihen (und je nach Produkt teils Rohstoffe) fix gewichtet mit vollautomatischem steuerschonendem internem Rebalancing', ['Ein reiner Bitcoin-Fonds ohne Aktien', 'Ein Bausparvertrag mit variablen Zinsen', 'Ein Aktienkorb ohne feste Strategie'], 'Bequemste „One-Fund“-Komplettlösung für Menschen, die ihr Portfolio exakt auf einem fixen Mischungsverhältnis halten und nie selbst rebalancen wollen', 'Beachte bei Mischprodukten die jeweilige Aktien-Kapitalbeteiligungsquote: Nur > 50 % sichern volle 30 % statt 15 % Teilfreistellung!', 'mid'],
-    ['etf_grundlagen', 'Wertpapier-Clearing & Verwahrstelle (z. B. Clearstream)', 'Unsichtbare Backoffice-Infrastruktur', 'Zentralverwahrer im Hintergrund, der Wertpapierbestände und Eigentumswechsel beim Börsenkauf hochautomatisiert abwickelt und verbucht', ['Ein Online-Rechner für monatliche Sparbeträge', 'Eine Werbeagentur von Indexanbietern', 'Ein privates Handelsforum auf Social Media'], 'Garantiert reibungslosen rechtsicheren Eigentumserwerb binnen zwei Werktagen (T+2, bald T+1) nach dem Order-Klick', 'In Europa prägen besonders Clearstream Banking und Euroclear diesen zentralen Abwicklungsprozess', 'pro'],
-    ['etf_grundlagen', 'Ausschüttungsschwelle / Ex-Tag (Ex-Dividend Date)', 'Stichtag rund um Dividendenauszahlungen', 'Der erste Börsentag, ab dem ein neu gekaufter ETF keinen Anspruch mehr auf die aktuell bevorstehende Ausschüttung besitzt – der Kurs sinkt morgens optisch exakt um die Dividende', ['Der Tag, an dem ein ETF wegen Verlusten geschlossen wird', 'Der letzte Tag vor Jahresende für eine Steuererklärung', 'Der Jahrestag der Fondsgründung'], 'Ein bloßes gezieltes Kaufen kurz vorm Ex-Tag bringt keinen Zaubergewinn („Dividenden-Fallschirm-Mythos“), da nur der Kurs exakt um den Netto-Betrag abschlägt!', 'Wer am Vortag („Cum-Tag“) vor Handelsschluss kauft, erhält noch die nächste Ausschüttung; der Ex-Tag-Kauf spart dafür den sofortigen steuerpflichtigen Dividendenabzug', 'mid'],
-    ['etf_grundlagen', 'Delisting & Zwangs-Liquidation eines ETFs', 'Auflösung zu unrentabler Nischen-ETFs', 'Wird ein Fonds wegen winzigem Volumen dauerhaft unrentabel, kündigt der Anbieter fristgerecht – der Restbestand wird am Stichtag zum aktuellen NAV ausgezahlt', ['Alle Anleger verlieren ihr komplettes eingesetztes Geld an die Bank', 'Der Anleger muss Strafzinsen über zehn Jahre nachzahlen', 'Die Bank übernimmt das Depot dauerhaft'], 'Kein Kapitalverlust durch die Bank selbst, aber ein ärgerlicher steuerlicher Eingriff wegen zwangsweiser Realisation aufgelaufener Kursgewinne!', 'Deshalb für Langfrist-Core-Positionen möglichst ETFs mit mindestens > 100 Mio. € (besser > 500 Mio. €) Fondsvolumen bevorzugen', 'mid'],
-
-    // === INDIZES & STRATEGIE (40 Einträge → 200 Fragen) ===
-    ['indizes_strategie', 'MSCI World Index', 'Klassiker unter den Industrieländer-Indizes', 'Bildet rund 1.400 große und mittlere Aktiengesellschaften aus 23 entwickelten Industrieländern nach Marktkapitalisierung ab', ['Enthält alle Weltaktien inklusive China, Indien und Small Caps', 'Konzentriert sich ausschließlich auf die 30 größten EU-Konzerne', 'Investiert zu 100 % in globale Staatsanleihen'], 'Starkes Kernfundament für Einsteiger, lässt allerdings Schwellenländer (EM) und kleine Nebenwerte (Small Caps) außen vor', 'Aufgrund hoher US-Börsengewichtung macht Nordamerika hier meist rund zwei Drittel bis über 70 % aus', 'easy'],
-    ['indizes_strategie', 'MSCI ACWI (All Country World Index)', 'Globaler Standardindex inkl. Schwellenländer', 'Kombiniert die 23 Industrieländer des MSCI World mit 24 aufstrebenden Schwellenländern auf insgesamt über 2.700 Konzerne (~85 % globale Marktkapitalisierung)', ['Deckt nur 100 rein europäische Großunternehmen ab', 'Schließt bewusst amerikanische Aktien komplett aus', 'Enthält ausschließlich Staatsanleihen der G7'], 'Schafft ein komplett wartungsarmes 1-ETF-Weltportfolio ohne separates Rebalancing zwischen Industrie- und Schwellenmärkten', 'Nach Marktkapitalisierung entfallen aktuell grob rund 88–90 % auf Industrieländer und rund 10–12 % auf Schwellenländer', 'easy'],
-    ['indizes_strategie', 'MSCI ACWI IMI (Investable Market Index)', 'Maximales All-in-One Weltaktien-Universum', 'Umfasst Large, Mid UND Small Caps über Industrie- wie Schwellenländer hinweg (~8.500+ Titel, ca. 99 % des global investierbaren Aktienmarkts)', ['Ein rein aktiv geführter Hedgefonds-Index für Milliardäre', 'Enthält nur Goldminen und Ölgesellschaften', 'Wird nur alle 15 Jahre angepasst'], 'Bietet die maximal überhaupt sinnvoll erreichbare globale Einzelaktien-Diversifikation mit nur einem einzigen ETF (z. B. SPDR MSCI ACWI IMI)', 'Durch optimiertes Sampling hält der entsprechende physische ETF typischerweise über 3.000 bis 3.500 repräsentative Aktien real im Depot', 'mid'],
-    ['indizes_strategie', 'FTSE All-World Index', 'Vanguards berühmter globaler Benchmark-Index', 'Enthält rund 4.000 große und mittelgroße Unternehmen aus ca. 49 Industrie- und Schwellenländern (~90–95 % Marktabdeckung inkl. Südkorea & Polen als Developed)', ['Beinhaltet nur Aktien aus Großbritannien und dem Commonwealth', 'Investiert zu gleichen Teilen in Aktien und Krypto', 'Beschränkt sich strikt auf genau 500 Unternehmen'], 'Zusammen mit dem SPDR MSCI ACWI IMI das populärste Einzel-Basisinvestment der weltweiten ETF-Sparer-Community („Heiliger Gral“)', 'Wichtig bei Eigenbau-Mixes: FTSE ordnet Südkorea (Samsung) und Polen längst bei Developed ein, nicht bei Emerging Markets!', 'easy'],
-    ['indizes_strategie', 'MSCI Emerging Markets (EM)', 'Schwellenländer-Aktienindex', 'Deckt rund 1.200–1.400 große und mittlere Unternehmen aus 24 aufstrebenden Volkswirtschaften ab (darunter China, Indien, Taiwan, Brasilien, Südkorea)', ['Reiner Aktienindex für Japan und Australien', 'Anleihenkorb für mittelständische europäische Handwerker', 'Index ausschließlich für erneuerbare Rohstoffe'], 'Erweitert ein MSCI-World-Depot geografisch um aufstrebende Wirtschaftsräume mit eigenständigem Konjunktur- und Demografieprofil', 'Halbleitergigant TSMC (Taiwan), Tencent, Alibaba, Samsung (Südkorea) und HDFC Bank bilden hier zentrale Top-Positionen', 'easy'],
-    ['indizes_strategie', 'S&P 500 Index', 'Weltwichtigster US-Aktienindex', 'Trackt die 500 größten an US-Börsen notierten führenden amerikanischen Konzerne (abdeckend ca. 80 % des gesamten US-Aktienmarktwerts)', ['Die 500 weltweit kleinsten Neugründungen', 'Die 500 sichersten Staatsanleihen der Welt', 'Ausschließlich 500 europäische Banken'], 'Extrem tiefer, kostengünstiger Zugang zum global dominanten US-Kapitalmarkt (häufig TER ~0,03 % bis 0,07 %)', 'Im Unterschied zu passiv rein regelbasierten Indizes entscheidet beim S&P 500 ein Index-Komitee über finale Aufnahmekriterien wie anhaltende Profitabilität', 'easy'],
-    ['indizes_strategie', 'NASDAQ-100 Index', 'Technologie- und wachstumsstarker US-Index', 'Enthält die 100 größten Nicht-Finanzunternehmen an der US-Computerbörse Nasdaq (gewichtet nach modifizierter Marktkapitalisierung)', ['Enthält ausschließlich traditionelle US-Großbanken', 'Umfasst exakt 100 mitteldeutsche Maschinenbauer', 'Gewichtet streng nach Mitarbeitenden-Anzahl'], 'Lieferte über die jüngste Dekade hinweg dank Big-Tech-Boom überdurchschnittliche Gewinne – bei gleichzeitig deutlich höherer Absturzanfälligkeit (z. B. 2000–2002 −80 %!)', 'Um exzessive Einzelkonzern-Klumpen über 15–20 % zu bremsen, greift bei Bedarf eine Sonder-Deckelung („Special Rebalance“)', 'easy'],
-    ['indizes_strategie', 'STOXX Europe 600', 'Breiter Gesamteuropa-Aktienindex', 'Umfasst 600 Large-, Mid- und Small-Caps aus 17 europäischen Ländern inklusive Schweiz, Großbritannien und Nordeuropa', ['Beschränkt sich starr auf 50 Konzerne im Euro-Raum', 'Handelt nur mit europäischen Staatsanleihen', 'Enthält ausschließlich Unternehmen mit Sitz in Berlin'], 'Verhindert im Gegensatz zum engen Euro Stoxx 50 das Weglassen erstklassiger Konzerne aus der Schweiz (Nestlé, Roche) und UK (AstraZeneca, Shell)', 'Kein einzelnes Land oder Unternehmen dominiert ihn einseitig: Frankreich, UK, Schweiz und Deutschland liegen breit ausgewogen verteilt', 'mid'],
-    ['indizes_strategie', 'EURO STOXX 50', 'Enger Standardwerte-Index der Eurozone', 'Bündelt bloß die 50 größten börsennotierten Blue Chips aus den Staaten der gemeinsamen Euro-Währungszone', ['Deckt alle 600 Unternehmen Gesamteuropas ab', 'Umfasst alle 27 EU-Wirtschaftsministerien', 'Ist ein Index auf Schweizer Franken Staatsanleihen'], 'Extrem liquide Terminmarkt-Referenz, für Langfristsparer jedoch meist deutlich zu eng und ländermäßig unvollständig im Vergleich zum STOXX 600', 'Durch die geringe Titelzahl entfallen oft starke Phasen Großbritanniens, der Schweiz oder Skandinaviens komplett', 'easy'],
-    ['indizes_strategie', 'DAX 40', 'Deutscher Leitindex (seit 2021 erweitert)', 'Repräsentiert die 40 größten und umsatzstärksten an der Frankfurter Börse gelisteten deutschen Aktiengesellschaften (meist als Performance-Index)', ['Alle 4.000 deutschen Aktiengesellschaften im Gesamtmarkt', 'Nur die 40 größten deutschen Familienbäckereien', 'Die 40 wichtigsten europäischen Staatsanleihen'], 'Wichtiges Stimmungsbarometer für deutsche Industrie, Software und Finanzen – als Hauptanlage eines Depots jedoch massiver Home Bias!', 'Erst seit der Erweiterung von 30 auf 40 Werte (2021 nach Wirecard) gelten strengere Profitabilitäts- und Prüfpflichten vor Aufnahme', 'easy'],
-    ['indizes_strategie', '70/30 Weltportfolio-Modell', 'Populäre Zweiteil-Aufteilung (DM / EM)', 'Verteilt Aktienkapital zu 70 % in Industrieländer (MSCI World) und zu 30 % in Schwellenländer (MSCI EM) zur Stärkung von BIP-Gewichten', ['70 % Tagesgeld auf Girokonten und 30 % Risikoaktien', '70 % Goldmünzen im Schließfach und 30 % DAX', '70 % Kosten und 30 % Ausschüttung'], 'Historisch zeitweise starke Übergewichtungs-Alternative zur reinen 90/10-Marktkapitalisierung – setzt aber gezielt eine aktive Makro-Wette auf Emerging Markets!', 'Verursacht durch manuelles Nachkaufen oder Umschichten meist spürbaren Aufwand gegenüber einem Ein-ETF-Ansatz (ACWI / All-World)', 'easy'],
-    ['indizes_strategie', 'BIP-Gewichtung vs. Marktkapitalisierung', 'Alternative globale Ländergewichtung', 'Gewichtet Weltregionen statt nach heutigem Börsenwert (USA ~70 %) anteilig nach ihrem Anteil am realen globalen Bruttoinlandsprodukt (USA ~25 %)', ['Gewichtet nach geografischer Landesfläche in km²', 'Kauft nur Länder ohne jegliche Staatsverschuldung', 'Verteilt alles Geld auf exakt vier Städte weltweit'], 'Reduziert theoretisch USA-/Mega-Cap-Klumpen und erhöht deutlich Schwellenländer sowie Europa – bedeutet aber laufendes Rebalancing und höhere ETF-Kosten', 'Erfordert mindestens 3–4 einzelne Regionen-ETFs und regelmäßiges Nachjustieren', 'pro'],
-    ['indizes_strategie', 'Equal Weight Index (z. B. S&P 500 Equal Weight)', 'Gleichgewichteter Aktienindex', 'Gibt sämtlichen enthaltenen Firmen exakt dasselbe Gewicht (beim S&P 500 je ~0,2 %) und stellt dies vierteljährlich per Umschichten wieder her', ['Kauft nur Aktien exakt mit demselben Dollarkurs pro Stück', 'Bevorzugt gezielt ausschließlich Banken und Versicherer', 'Verzichtet auf jede Aktienanpassung bis zum Jahr 2050'], 'Entschärft die Dominanz extrem teurer Tech-Riesen und bringt automatisch einen eingebauten leichten Small-/Value-Faktor-Tilt mit', 'Höherer interner Portfolioumschlag und spürbare Minderrendite immer dann, wenn wenige Mega-Caps unaufhaltsam davoneilen', 'pro'],
-    ['indizes_strategie', 'Factor Investing: Value-Faktor', 'Systematischer Bewertungs-Faktor', 'Bevorzugt gezielt Aktien, die gemessen an Substanz-, Buchwert, Cashflow oder KGV fundamental günstig im Vergleich zum Gesamtmarkt handeln', ['Wählt immer bloß die optisch absolut teuersten Aktien aus', 'Investiert allein nach der neuesten App-Bewertung', 'Sucht nur Firmen ohne Umsatz'], 'Historisch gut belegte langfristige Prämie (Fama/French), da Anleger kriselnde klassische Firmen oft übermäßig abstrafen', 'Langfristiges Durchhaltevermögen nötig: Von ca. 2007 bis 2020 erlebte Value eine über zehnjährige Schwächephase gegen Wachstumswerte (Growth)', 'mid'],
-    ['indizes_strategie', 'Factor Investing: Size-Faktor (Small Caps)', 'Systematischer Größen-Faktor', 'Setzt gezielt auf börsennotierte Kleinunternehmen außerhalb der globalen Riesenkonzerne (Small-Cap-Aktien wie im MSCI World Small Cap)', ['Wählt ausschließlich die fünf allergrößten Weltkonzerne aus', 'Bezieht sich nur auf besonders kurze ETF-Namen', 'Misst die körperliche Größe der Vorstände'], 'Kleine agile Firmen weisen teils höheres langfristiges Wachstumspotenzial bei leicht höherem Konjunktur- und Liquiditätsrisiko auf', 'Wissenschaftliche Erkenntnisse neuerer Jahre zeigen: Besonders kräftig performen „Small Cap Value“, während unrentable „Small Cap Growth“-Schrotttitel bremsen!', 'mid'],
-    ['indizes_strategie', 'Factor Investing: Momentum-Faktor', 'Systematischer Trend-Faktor', 'Wählt in regelmäßigen Abständen jene Titel aus, die über die vorausgegangenen 6 bis 12 Monate die stärkste Kursentwicklung gezeigt haben', ['Investiert ausschließlich gegen den aktuellen Trend in größte Verlierer', 'Kauft immer nur einen einzigen Tag vor Börsenschluss', 'Reagiert allein auf aktuelle Nachrichtenschlagzeilen'], 'Nutzt menschliche Trägheit und Herden-Verhaltensverzögerungen beim Einpreisen positiver Geschäftsberichte aus', 'Starkes Absturzrisiko bei plötzlichen heftigen Trendwenden („Momentum Crash“ genau bei ruppigen Markt-Rebounds)', 'pro'],
-    ['indizes_strategie', 'Factor Investing: Quality-Faktor', 'Systematischer Bilanzgüte-Faktor', 'Filtert Konzerne mit hoher Eigenkapitalrendite, geringem Verschuldungsgrad und sehr stabilen, verlässlichen Gewinnmargen heraus', ['Misst die physische Haltbarkeit von Produktionsfabriken', 'Bevorzugt hochverschuldete Konzerne am Rande der Insolvenz', 'Kauft gezielt staatliche Unternehmen ohne Gewinnerzielung'], 'Tendiert oft dazu, in schweren Wirtschaftskrisen durch solide Bilanzen widerstandsfähiger abzubauen als der Gesamtmarkt', 'Häufig sind stark profitable Qualitätsunternehmen wie Microsoft, Apple, Visa oder Novo Nordisk im Sektor stark vertreten', 'mid'],
-    ['indizes_strategie', 'Factor Investing: Minimum Volatility', 'Systematischer Schwankungs-Dämpfer-Faktor', 'Optimiert ein Aktienportfolio mathematisch so, dass die gesamte Portfoliovolatilität im Zeitverlauf möglichst niedrig bleibt', ['Erhöht die tägliche Kursschwankung absichtlich um Faktor 5', 'Garantiert gesetzlich mindestens 12 % Gewinn je Quartal', 'Investiert 100 % ausschließlich in Tagesgeld'], 'Glättet starke Börsenausschläge durch defensivere Branchen (Basiskonsum, Gesundheit, Versorger), büßt in explosiven Bullenmärkten oft aber etwas Spitze ein', 'Eignet sich besonders für nervenschwächere Langfristsparer im Übergang zur Ruhestandsphase', 'mid'],
-    ['indizes_strategie', 'Geldmarkt-ETF (z. B. DBX0AN / €STR)', 'Liquider Zins-Parkplatz an der Börse', 'Investiert oder swappt extrem kurzfristige Geldmarktsätze nahe des offiziellen EZB-Einlagenzinses praktisch ohne Kurs- und Zinsänderungsrisiko', ['Spekuliert auf langfristige Immobilienpreise in Tokio', 'Unterliegt denselben 50-%-Abstürzen wie Aktien', 'Ist auf maximal drei Monate Haltedauer beschränkt'], 'Liefert faire tagesaktuelle Marktzinsen (abzgl. winziger TER) ohne ständige Suche nach neuen Tagesgeld-Aktionszinsen', 'Achtung bei fallenden Leitzinsen unter 0 %: Dann fällt auch die erwartete Rendite eines Geldmarkt-ETFs sofort wieder leicht negativ ab!', 'easy'],
-    ['indizes_strategie', 'Anleihen-ETF: Investment Grade vs. High Yield', 'Bonitäts-Unterschiede am Anleihemarkt', 'Investment Grade bezeichnet finanzstarke Schuldner (AAA bis BBB−) mit sehr geringem Ausfallrisiko; High Yield („Junk Bonds“) riskantere hochverzinste Firmen (BB+ abwärts)', ['Bezeichnet genau die beiden Farbvarianten auf Börsentafeln', 'Investment Grade zahlt niemals Zinsen aus', 'High Yield ist immer absolut steuerfrei und ohne jedes Risiko'], 'Vorsicht beim Portfolio-Bau: High-Yield-Schrottanleihen stürzen im Crash meist fast genauso ab wie Aktien und taugen nicht als echter Krisen-Airbag!', 'Für die Rolle als „sicherer Hafen“ dienen deshalb fast ausschließlich kurzlaufende erstklassige Staatsanleihen in Heimatwährung (AAA–AA)', 'mid'],
-    ['indizes_strategie', 'Modifizierte Duration (Zinssensitivität)', 'Risikomaß bei Anleihen-ETFs', 'Gibt grob an, um wie viel Prozent der Kurs eines Anleihenfonds fällt (oder steigt), wenn das Marktzinsniveau schlagartig um 1 Prozentpunkt steigt (oder sinkt)', ['Die verbleibende Lebensdauer des Wertpapierbrokers', 'Die tägliche Dauer einer Börsensitzung in Minuten', 'Ein Aufschlag bei grenzüberschreitenden Zahlungen'], 'Langläufer mit Duration 18 verlieren bei +2 % Zinsanstieg über −30 % – Kurzläufer (Duration 0–2) schwanken kaum', 'Genau aus diesem Grund erlitten 2022 konservative Anleger in alten langlaufenden „sicheren“ Staatsanleihen historische Kursverluste', 'pro'],
-    ['indizes_strategie', 'Inflationsindexierte Anleihen-ETFs (ILBs)', 'Realzins-geschützte Staatsanleihen', 'Passen laufend Nennwert und Zinszahlungen an einen amtlichen Verbraucherpreisindex (z. B. Euro-HVPI / US-CPI) an', ['Zahlen gar keine Zinsen solange Lebensmittel steigen', 'Verdoppeln ihren Kurs nur bei vollständiger Deflation', 'Können bloß in Supermärkten eingelöst werden'], 'Schützen real vor unerwarteten Inflationsschüben – reagieren bei Zinsanstiegen wegen meist langer Laufzeiten aber oft trotzdem kursmäßig empfindlich!', 'Oft erst ab genau definierten Laufzeitbändern sinnvoll einschätzbar', 'pro'],
-    ['indizes_strategie', 'Dividenden-ETFs (High Dividend Yield)', 'Ertragsfokussierte Aktienstrategien', 'Selektieren weltweit oder regional jene Unternehmen aus dem Index heraus, die besonders hohe laufende prozentuale Dividendenrenditen ausschütten', ['Steuerfreier Sondertopf ohne jede Kursschwankung', 'Aktien von Firmen ohne Gewinne, die Schulden verschenken', 'ETFs mit mindestens 20 % laufender Zinsgarantie'], 'Gefühlte Belohnung durch regelmäßige Ausschüttungen, aber strukturell oft leichtes Value-/Finanz-/Energie-Übergewicht und Vernachlässigung stark wachsender Tech-Firmen (die Gewinne einbehalten!)', 'Dividenden sind steuerlich keineswegs „Gratisgeld“, da sie voll besteuert werden und am Ex-Tag direkt den Kurs schmälern!', 'mid'],
-    ['indizes_strategie', 'MSCI World Information Technology / Sektor-ETFs', 'Branchenwetten als Beimischung (Core-Satellite)', 'Fokussiert 100 % des Kapitals auf einen bestimmten Wirtschaftszweig (z. B. IT, Gesundheit, Banken, Basiskonsumgüter)', ['Enthält grundsätzlich eine gleichmäßige Mischung aller 11 GICS-Sektoren', 'Schließt börsennotierte AGs komplett aus', 'Wird gesetzlich subventioniert'], 'Als kleiner gezielter Satellit maximal denkbar, birgt als Kernposition aber extremes Sektor- und Klumpenrisiko bei Branchen-Blasen', 'In vielen Fällen steckt derselbe Top-Konzern (z. B. Apple/Microsoft > 30–40 % im Tech-Sektor!) schon massiv im normalen MSCI World', 'easy'],
-    ['indizes_strategie', 'Core-Satellite-Strategie', 'Kombinierter Depot-Aufbauansatz', 'Verankert rund 70–90 % des Depots stabil und kostengünstig in einem global gestreuten Basis-ETF („Core“) und lässt 10–30 % gezielt Spielraum für Faktoren, Themen oder Einzelaktien („Satellites“)', ['Investiert ausschließlich in Raumfahrt- und Satellitenbetreiber', 'Verbietet jeglichen Einsatz von ETFs im Kernbereich', 'Teilt das Konto automatisch auf zehn ausländische Banken auf'], 'Befriedigt menschlichen Spieltrieb in engen beherrschbaren Grenzen, ohne die langfristige Altersvorsorge im Core durch Einzelwetten zu gefährden', 'Studien zeigen meist, dass auf sehr lange Sicht der schlichte Core allein den Satellite-Anteil häufig schlägt', 'easy'],
-    ['indizes_strategie', 'REITs / Immobilien-ETFs (FTSE EPRA/Nareit)', 'Börsennotierte Immobiliengesellschaften', 'Investiert hochliquide ab 25 € in Hunderte Gewerbe-, Logistik-, Rechenzentrums- und Wohnimmobiliengesellschaften weltweit', ['Kauft eine einzelne Eigentumswohnung direkt vor Ort mit Kredit', 'Garantiert 0 % Kursschwankung wie ein Sparbuch', 'Zahlt grundsätzlich nur bei leerstehenden Bürogebäuden aus'], 'Bietet laufende Ausschüttungen (REITs müssen meist ~90 % Gewinne ausschütten) — reagiert im Marktcrash und bei schnellem Zinsanstieg jedoch extrem aktien-/zinsempfindlich!', 'Immobilienaktien erhalten in DE oft keine 30 % Aktien- oder 60 % offene Immobilienfonds-Teilfreistellung, sondern je nach Satzung meist nur 0 % (bzw. je nach Status)', 'pro'],
-    ['indizes_strategie', 'Themen-ETFs (Clean Energy, Robotik, AI, Gaming)', 'Spezialisierte Zukunfts-Branchenkörbe', 'Bündeln meist 30 bis 100 Firmen rund um ein eng definiertes Trendthema abseits klassischer Sektorgrenzen', ['Sind rechtlich verpflichtet, jede Jahresrendite zu verdoppeln', 'Besitzen geringere Gebühren als jeder S&P-500-ETF', 'Enthalten schon sämtliche 8.000 Weltunternehmen'], 'Hohe Gebühren (~0,4–0,8 %), spätes Auflegen auf Hype-Höhepunkten und enormes Überwertungsrisiko führen statistisch oft zu deutlicher Unterperformance gegen den MSCI World', 'Wer langfristig profitiert, wenn Künstliche Intelligenz oder Medizin wächst, hält ohnehin über den Welt-ETF oft die wahren Gewinner', 'easy'],
-    ['indizes_strategie', 'Rohstoff-Futures-ETFs (z. B. Bloomberg Commodity)', 'Breite Rohstoffkörbe (UCITS-konform)', 'Investieren über rollierende Terminkontrakte breit gestreut in Energie, Industriemetalle, Agrarrohstoffe und Edelmetalle (mindestens diversifiziert)', ['Lagern tonnenweise Weizen und Rohöl im Garten des Fonds-Anbieters', 'Zahlen die höchsten kontinuierlichen Gewinnausschüttungen', 'Schlagen langfristig reale Aktienmärkte mühelos bei Null-Inflation'], 'Können in plötzlichen Versorgungsinflations-Schocks (wie 2022) kurzfristig gegenläufig schützen, haben langfristig real ohne Wachstumswertschöpfung aber oft nur magere Eigenrendite („Rollverluste / Contango“)', 'Unterschied zu Gold: Breite Commodity-Fonds dürfen per UCITS-Diversifizierung tatsächlich als reguläre ETFs aufgelegt werden!', 'pro'],
-    ['indizes_strategie', 'Physisch hinterlegtes Gold (Xetra-Gold / EUWAX II)', 'Wertaufbewahrung ohne laufende Dividenden', 'Verbrieft Gramm-Ansprüche auf echtes gelagertes Feingold (inkl. vertraglichem Auslieferungsrecht an deutsche Adressen/Banken)', ['Erwirtschaftet real laufend Unternehmensgewinne wie Konzerne', 'Verliert jährlich automatisch 5 % Masse durch Lagerabrieb', 'Zählt in Deutschland als 30 % teilfreigestellter Aktienfonds'], 'Unkorrelierter Krisen-Diversifikator und Inflationsschutz auf extrem lange Zeiträume; in DE nach 12 Monaten Haltedauer steuerfrei!', 'Beachte versteckte kleine Verwahrgebühr (z. B. Xetra-Gold berechnet dem Broker ca. 0,36 % p. a. inkl. MwSt., EUWAX Gold II meist über den Handelsspread finanziert)', 'mid'],
-    ['indizes_strategie', 'MSCI World Small Cap Index', 'Globale Nebenwerte der Industrieländer', 'Deckt rund 4.000 kleinere börsennotierte Unternehmen aus den 23 Industrieländern ab (untere ~14 % der Marktkapitalisierung)', ['Beinhaltet ausschließlich Apple, Nvidia und Microsoft', 'Enthält nur nicht-börsennotierte Bäckereien', 'Investiert zu 100 % in chinesische Staatsbanken'], 'Vervollständigt einen normalen MSCI World zu rund ~99 % Gesamtabdeckung aller Industrieländer-Firmengrößen', 'Als leichte Beimischung (oft ca. 10–15 % des Depots) oder bereits fertig eingebaut über den MSCI ACWI IMI abbildbar', 'mid'],
-    ['indizes_strategie', 'Krypto-ETNs (Bitcoin / Ethereum ETPs in Europa)', 'Börsengehandelte Krypto-Schuldverschreibungen', 'Ermöglichen Handel regulierter Krypto-Bestände direkt über die gewohnte Börse im normalen Bank- oder Neobroker-Depot ohne eigenes Wallet/Seed-Phrase', ['Sind vom EU-Gesetz als sichere Staatsanleihen eingestuft', 'Schützen vollständig vor jeglichen Kursverlusten von −80 %', 'Zahlen exakt 4 % sichere monatliche Mietrendite'], 'Steuer-Sonderheit in DE prüfen: Je nachdem ob Auslieferungsanspruch besteht oder nicht, kann ein Krypto-ETN teils wie privater Krypto-Handel (§ 23 EStG 1-Jahres-Frist!) oder eben als Abgeltungsteuer-Produkt behandelt werden!', 'Tragen zudem stets extremes Volatilitäts- und potenzielles Ausfallrisiko je nach Besicherungs-Treuhänder', 'pro'],
-    ['indizes_strategie', 'FTSE Developed World Index', 'Industrieländer-Konkurrent zum MSCI World', 'Bildet große und mittlere Konzerne aus rund 25 entwickelten Ländern ab – hier inklusive Südkorea (Samsung) und Polen bereits integriert', ['Enthält im Vergleich zu MSCI noch weniger Länder', 'Erlaubt ausschließlich Banken aus Großbritannien', 'Zahlt doppelt so hohe jährliche Gebühren'], 'Häufig sehr günstige Alternative zu MSCI World (etwa Vanguard FTSE Developed World ETF mit nur 0,12 % TER)', 'Ideal kombinierbar mit einem FTSE Emerging Markets – niemals unbedacht mischen mit MSCI EM (sonst zweimal Südkorea/Polen)!', 'mid'],
-    ['indizes_strategie', 'Solactive / Prime Global Indizes (z. B. Amundi Prime Global)', 'Ultra-Low-Cost Index-Alternative', 'Unabhängige Indexanbieter mit deutlich niedrigeren Lizenzgebühren gegenüber MSCI/FTSE, was extrem niedrige ETF-TERs um ~0,05 %–0,07 % ermöglicht', ['Spekulative Hebelprodukte auf den Schweizer Franken', 'Ausschließlich ethisch völlig unregulierte Börsen', 'Börsentäglich manuell geratene Portfolios'], 'Praktisch nahezu identische Wertentwicklung und 99-%-Überdeckung zum MSCI World bei niedrigsten möglichen jährlichen Fondskosten', 'Gerade beim Amundi Prime All Country World (0,07 % TER!) neuer kosteneffizienter Wettbewerber zu Vanguard FTSE All-World (0,22 %)', 'mid'],
-    ['indizes_strategie', 'GICS-Sektorenklassifizierung (11 Sektoren)', 'Weltweiter Branchen-Standard (MSCI / S&P)', 'Ordnet jedes Unternehmen eindeutig einem von 11 Hauptsektoren zu: Information Technology, Financials, Health Care, Consumer Discretionary, Industrials u. a.', ['Elf gesetzliche Steuerklassen im Bundesfinanzministerium', 'Die 11 größten Banken auf dem Planeten', 'Elf Länder innerhalb der Europäischen Union'], 'Macht in ETF-Factsheets auf den ersten Blick sichtbar, falls ein Portfolio heimlich etwa 40 % Tech-Anteil angehäuft hat', 'Im breiten MSCI ACWI bewegt sich Technologie je nach Marktzyklus meist bei 20–26 %, weit ausgewogener als im Nasdaq-100 (~50+ %)', 'pro'],
-    ['indizes_strategie', 'Defensive Sektoren vs. Zyklische Sektoren', 'Konjunkturverhalten einzelner Wirtschaftszweige', 'Basiskonsum (Zahnpasta, Lebensmittel), Gesundheit und Versorger laufen in Rezessionen oft ruhiger („defensiv“); Tech, Autos, Reisen und Luxus schwanken heftig („zyklisch“)', ['Defensive Sektoren dürfen in Kriegen nicht gehandelt werden', 'Zyklische Sektoren zahlen ihre Dividenden nur jeden Schaltjahr-Februar', 'Defensive Aktien fallen in Crashes immer doppelt so tief'], 'Hilft beim Einordnen, warum manche Dividenden- oder MinVol-ETFs in Wirtschaftskrisen oft stabiler durchhalten', 'In einem All-World-ETF besitzt man beide Pole ausgewogen automatisch ohne eigene Sektor-Prognosen', 'easy'],
-    ['indizes_strategie', 'MSCI World SRI (Socially Responsible Investing)', 'Streng gefilterter Nachhaltigkeitsindex', 'Kürzt den normalen MSCI World extrem streng um bis zu ~75 % aller Firmen und behält bloß die oberen ~25 % ESG-Spitzenreiter jeder Branche („Best-in-Class“)', ['Kauft jedes einzelne Unternehmen auf dem Planeten doppelt', 'Beinhaltet ausschließlich staatliche Behörden', 'Schließt alle Wind- und Solarhersteller aus'], 'Bietet starke ökologisch-soziale Filterung, erzeugt jedoch deutlich höhere Einzelaktien-Konzentrationen (weniger als ~400 Titel statt ~1.400!)', 'Unbedingt vorab prüfen, ob einzelne Positionen (wie Tesla oder Nvidia) darin zeitweise enorme Prozentgewichte annehmen', 'mid'],
-    ['indizes_strategie', 'Tagesgeld vs. Geldmarkt-ETF im Portfolio', 'Entscheidung für den „risikoarmen“ Teil', 'Tagesgeld punktet per Einlagensicherung (100.000 €/Bank) ohne jede Börsenspread-Gebühr; ein €STR-Geldmarkt-ETF glänzt ab sehr großen Beträgen (> 100.000 €) als Sondervermögen ohne Zins-Hopping', ['Tagesgeld bringt immer exakt 10 % mehr als die Zentralbank', 'Geldmarkt-ETFs verlieren an Wert, sobald Aktien fallen', 'Beide sind ab 5 Jahren Laufzeit verboten'], 'In der Praxis nutzen Millionen Privatanleger problemlos Tagesgeld bis ~100.000 € bei einer soliden Bank – und darüber bzw. für maximale Faulheit gern DBX0AN!', 'Beachte bei kleinen Summen < 2.000 €, dass Kauforder- und Spread-Gebühren eines Geldmarkt-ETFs einen Zinsvorsprung erst nach einigen Wochen einspielen', 'mid'],
-    ['indizes_strategie', 'China-A-Shares (Inlandsaktien Festland)', 'Spezielle Aktienkategorie in Emerging Markets', 'Direkt an den chinesischen Festlandsbörsen Shanghai und Shenzhen gehandelte Renminbi-Aktien (ergänzend zu Offshore-Aktien in Hongkong / ADR in USA)', ['Aktien ausschließlich amerikanischer Luftfahrtunternehmen', 'Chinesische Staatsanleihen in Euro', 'Anteile von A-Klasse-Luxusautos'], 'Erst seit 2018 schrittweise durch MSCI mit kleinem Einschlussfaktor („Inclusion Factor“) in den Emerging Markets aufgenommen', 'Berücksichtigt zugleich politische Risiken, Kapitalverkehrskontrollen und Eingriffe in Tech-/Plattformunternehmen', 'pro'],
-    ['indizes_strategie', 'Japan & Pazifik (MSCI Pacific)', 'Asien-Pazifik-Industrieländer', 'Umfasst die entwickelten Märkte Japan (dominanter Kernanteil ~65 %+), Australien, Hongkong, Singapur und Neuseeland', ['Deckt ausschließlich China, Indien und Vietnam ab', 'Beinhaltet nur Kreuzfahrtschiffe im Pazifik', 'Ist auf kanadische Holzfirmen begrenzt'], 'Historische Mahnung im passiven Welt-Portfolio: Ende der 1980er machte Japan rund ~45 % des gesamten MSCI World aus – nach dem Platzen der Blase folgten über 30 Jahre Seitwärtsbewegung!', 'Genau dieses Japan-Beispiel beweist, weshalb das sture Festhalten an nur *einem* Land selbst beim damaligen Weltmeister gefährlich ist – im globalen ETF sank Japans Anteil sanft von 45 % auf ~5–6 %', 'mid'],
-    ['indizes_strategie', '1-ETF-Lösung vs. Multi-ETF-Depot', 'Grundsatzfrage bei der Portfoliokonstruktion', 'Eine 1-ETF-Lösung (ACWI/All-World) gewinnt durch Minimalaufwand, automatisches Selbst-Rebalancing und niedrigste Fehlerquote; Multi-ETFs lohnen nur ab hohen Summen für feine Gewichtung oder gezielte FIFO-Steuerstaffelung', ['Mit nur einem ETF ist Diversifikation gesetzlich nicht anerkannt', 'Ein 10-ETF-Depot erzielt ausnahmslos 3 % höhere Rendite jährlich', 'Multi-ETFs kosten gar keine Steuern beim Umschichten'], 'Komplexität erhöht bei Geldanlagen selten die Rendite – verleitet aber viel häufiger zum unnötigen Hin-und-Her-Herumfummeln!', 'Viele erfahrene Vermögensverwalter setzen genau deshalb selbst für sechsstellige Summen im Kern bloß auf einen einzigen globalen All-World-ETF', 'easy'],
-
-    // === VERMÖGENSAUFBAU & FINANZMATHEMATIK (40 Einträge → 200 Fragen) ===
-    ['vermoegensaufbau', 'Zinseszinseffekt (Exponentielles Wachstum)', 'Stärkster Motor des Langfristaufbaus', 'Bereits erhaltene Erträge und Dividenden werden mitverzinst und arbeiten ihrerseits sofort weiter (`K_n = K_0 · (1 + r)^n`)', ['Ein einfacher linearer Jahresaufschlag ohne Wiederanlage', 'Eine einmalige Gebührenerstattung beim Verkauf', 'Der Verlust von Geld durch Inflation am Girokonto'], 'Lässt Kurven bei langen Zeiträumen ab Jahr 15–20 förmlich abheben („Hockeystick-Effekt“): Zeit schlägt oft die bloße Sparrate!', 'Bei 7 % p. a. wächst eine Sparrate von 500 €/Monat nach 10 Jahren auf ~86.000 €, nach 30 Jahren aber auf über 588.000 € an (bei nur 180.000 € Einzahlung!)', 'easy'],
-    ['vermoegensaufbau', 'Einmalanlage vs. Sparplan-Streckung (Lump Sum vs. DCA)', 'Timing größerer Geldbeträge (Erbe/Bonus)', 'Statistische Auswertungen globaler Kapitalmärkte zeigen: Sofortiges Gesamtinvestieren schlägt ein schrittweises Aufsplitten über 6–12 Monate in ca. 67–68 % aller historischen Fälle', ['Gestaffeltes Einkaufen gewinnt statistisch in 95 % aller Jahre deutlich', 'Einmalanlagen werden doppelt so hoch versteuert wie gestückelte Käufe', 'Beide erzielen stets bis auf den letzten Euro dasselbe Ergebnis'], 'Je länger man vorhandenes Geld unverzinst parkt, desto mehr positive Börsenmonate verpasst man statistisch – falls nötig zur Nervenberuhigung höchstens kurz auf 2–3 Tranchen splitten!', 'Achtung: Ein regulärer *monatlicher Gehalts-Sparplan* ist keine absichtliche Zurückhaltung, sondern schlicht sofortige Anlage sobald das Gehalt eintrifft!', 'mid'],
-    ['vermoegensaufbau', 'Rebalancing', 'Systematische Risikosteuerung', 'Regelmäßiges (z. B. jährlich oder bei > 5 % Abweichung) Zurückführen verschobener Depot-Gewichte auf die ursprünglich gewünschte Ziel-Allokation', ['Komplettes Abstoßen sämtlicher Gewinnpositionen für immer', 'Verkauf aller Aktien immer genau vor wichtigen Wahlen', 'Zwanghaftes Aufstocken auf 100 % Anleihen ab dem 30. Lebensjahr'], 'Verhindert schleichendes Über-Risiko nach langen Aktienbooms und erzwingt diszipliniertes antizyklisches „Teuer stutzen, Günstig zukaufen“', 'In der aktiven Sparphase bevorzugt über frische Sparraten statt Verkäufe umsetzen („Cashflow-Rebalancing“ vermeidet verfrühte Steuerzahlung!)', 'easy'],
-    ['vermoegensaufbau', 'Reale vs. Nominale Rendite', 'Kaufkraftbereinigte Renditerechnung', 'Bereinigt das optische Depotwachstum (nominal) um die tatsächliche jährliche Geldentwertung durch Inflation: `r_real ≈ (1+r_nom)/(1+i) - 1`', ['Der Unterschied zwischen brutto vor Bankspesen und netto nach Ordergebühr', 'Die bloße Eurozahl auf dem Kontoauszug vor Kosten', 'Das Verhältnis von Aktienwert zu Goldpreis'], 'Nur reale positive Rendite nach Steuern UND Inflation steigert echten späteren Wohlstand und Lebensqualität', 'Bei 2 % Tagesgeldzins und 3 % Inflation verlierst du sicher Jahr für Jahr ca. 1 % Kaufkraft trotz optisch steigenden Kontostands', 'easy'],
-    ['vermoegensaufbau', 'Sequence-of-Returns-Risiko', 'Reihenfolgerisiko beim Entsparen', 'Gefahr, dass ausgerechnet in den allerersten Ruhestands-Entnahmejahren ein heftiger Crash passiert, wodurch gezwungenermaßen extrem viele billige Anteile verkauft werden müssen', ['Das Verbot, Aktien in alphabetischer Reihenfolge zu verkaufen', 'Wenn eine Bank Überweisungen erst drei Tage später bucht', 'Das Risiko, dass zwei ETFs am selben Tag um 1 % steigen'], 'Selbst identische Durchschnittsrenditen von z. B. +7 % über 25 Jahre enden im Ruhestand komplett anders, je nachdem ob Crashes früh oder spät kommen!', 'Wirksame Gegenmittel: Cash-/Geldmarkt-Reserve für 2–4 Jahre Entnahmen oder anpassbare („Guardrails“) Entnahmeregeln', 'pro'],
-    ['vermoegensaufbau', '4-%-Regel (Trinity-Studie)', 'Daumenregel für das Entnahmeportfolio', 'Erste Ruhestands-Entnahme von 4 % des Startdepots (anschließend nur noch jährlich an Inflation angepasst), ausgelegt auf mindestens ~30 Jahre Überlebensdauer', ['Garantie durch Banken, stets 4 % monatliche Zinsen zu erhalten', 'Vorschrift, jedes Jahr mindestens 4 % mehr anzusparen', 'Steuersatz für große ETF-Entnahmen in Europa'], 'Für über 40–50 Jahre Frührente („FIRE“), deutsche Abgeltungsteuern und aktuelle Bewertungen rechnen vorsichtige Planer meist lieber sicherer mit 3,0–3,5 % p. a.!', 'Starke Aktienquoten von 50–75 % schnitten in den historischen Berechnungen wegen des langen Inflationsschutzes oft robuster ab als 100 % zinsarme Anleihen', 'mid'],
-    ['vermoegensaufbau', 'Volatility Drag (Mathematische Varianzbremse)', 'Unterschied zwischen arithmetischer & geometrischer Rendite', 'Hohe Schwankungen fressen reale Zinseszinsrendite auf: +50 % und −50 % ergeben im Mittel optisch 0 %, real jedoch −25 % Verlust (`1,5 × 0,5 = 0,75`)!', ['Zusatzgebühr bei starkem Wind an der Frankfurter Börse', 'Eine Steuer auf tägliche Hebel-Zertifikate', 'Die langsame Datenübertragung beim Online-Broker'], 'Je ruhiger ein gleichmäßig diversifiziertes Portfolio wächst, desto geringer fällt diese geometrische Abzugslücke aus', 'Genau dieser mathematische Effekt schädigt gehebelte 2×/3×-ETFs im wackeligen Seitwärtsmarkt besonders stark', 'pro'],
-    ['vermoegensaufbau', 'Home Bias (Heimatmarktverzerrung)', 'Psychologische Portfolio-Unwucht', 'Übermäßige Konzentration auf heimische Aktien (z. B. viel DAX/MDAX bei Deutschen), obwohl Deutschland nur gut ~2 % der globalen Börsenkapitalisierung stellt', ['Angst vor einem Umzug in das Ausland', 'Vorliebe für Bauaktien und Eigenheime', 'Ein reiner Verzicht auf amerikanische Währungen'], 'Schafft unnötige Doppelabhängigkeit von der eigenen Wirtschaftslage, wo ohnehin oft Jobgehalt und eigene Immobilien liegen', 'Ein weltweiter ACWI-/All-World-ETF heilt den Home Bias auf Knopfdruck vollständig', 'easy'],
-    ['vermoegensaufbau', 'Dispositionseffekt', 'Kognitives Fehlverhalten bei Kursveränderungen', 'Psychologischer Impuls, kleine Gewinne viel zu eilig einzukassieren, aber tiefe Verlustpositionen aus Stolz endlos „aussitzen“ zu wollen', ['Die professionelle Verteilung von Warenlagern in der Logistik', 'Regelgerechtes Rebalancing nach exaktem Kalenderplan', 'Der automatische Wechsel des Referenzkontos'], 'Kostet aktive Stockpicker messbar Rendite (Verlierer werden oft endlos weiter mitgezogen, starke Gewinner zu früh abgewürgt)', 'Passives Investieren in Marktindizes bricht diese Verzerrung elegant, da nie isolierte Einzelwetten psychologisch bewertet werden', 'mid'],
-    ['vermoegensaufbau', 'Recency Bias (Aktualitätsfehler)', 'Überschätzung der allerjüngsten Vergangenheit', 'Irrige Annahme, aktuelle Börsenmoden oder Renditetrends der letzten 24 Monate würden sich automatisch ungebremst über Jahrzehnte genau so fortsetzen', ['Das Kaufen stets der aktuellsten ETF-Neuemission am Markt', 'Die Pflicht, jährlich den neuesten Broker zu testen', 'Das Rechnen mit tagesaktuellen Echtzeit-Umrechnungskursen'], 'Verleitet Anleger oft prozyklisch genau am Hoch in Hype-Sektoren (wie 1999 Dotcom, 2021 Clean Energy) – und hält nach Bärenmärkten aus Angst vor dem Einstieg fern!', 'Geschichtsbewusstsein (etwa 15-Jahres-Zyklen wie „Verlorenes Jahrzehnt“ 2000–2009 bei US-Large-Caps) erdet den Blick sofort', 'mid'],
-    ['vermoegensaufbau', 'Rendite-Dreieck (z. B. DAI / MSCI World)', 'Visualisierung historischer Anlagezeiträume', 'Zeigt für alle Start- und Endjahre seit 1970/75 übersichtlich die erzielten jährlichen Durchschnittsrenditen – kurzfristig extrem bunt (tiefrot bis dunkelgrün), langfristig nahezu rein grün', ['Ein geheimer technischer Chart-Indikator für schnellen Daytrading-Reichtum', 'Drei verschiedene Kostenstufen einer Bankberatung', 'Die Gewinnaufteilung zwischen Staat, Broker und Emittent'], 'Der plastischste Beweis überhaupt, weshalb Aktien bei > 15 Jahren Horizont historisch praktisch immer verlässlich Vermögen aufbauten', 'Unterhalb von 5 Jahren Anlagehorizont tauchen hingegen regelmäßig tiefrote zweistellige Minus-Zeiträume auf!', 'easy'],
-    ['vermoegensaufbau', 'Risikotragfähigkeit vs. Risikobereitschaft', 'Zwei völlig verschiedene Risikodimensionen', 'Risikotragfähigkeit misst objektive finanzielle Reserven & Zeithorizont (kann ich −40 % aussitzen?); Risikobereitschaft misst subjektive Nervenstärke (schlafe ich noch ruhig?)', ['Beide Worte bedeuten juristisch genau dasselbe', 'Risikotragfähigkeit steigt automatisch mit Höhe des Kredits', 'Nur Risikobereitschaft entscheidet allein ohne Geldreserven'], 'Ein junger Student mit langem Horizont hat theoretisch hohe Tragfähigkeit, sollte bei Panikanfällen im Minus aber trotzdem eine defensivere Quote wählen!', 'Der ehrliche „Crash-Test“: Wie groß ist der maximale vorübergehende Euro-Buchverlust, den ich ohne Panikverkauf ertrage?', 'mid'],
-    ['vermoegensaufbau', 'Humankapital in der Lebenszyklusplanung', 'Unsichtbares Start-Vermögen junger Berufstätiger', 'Die Summe aller voraussichtlich noch bis zur Rente verdienbaren künftigen Arbeitseinkommen — bei Jüngeren wie eine enorme stetige Einkommens-Anleihe wirkend', ['Anzahl der Urlaubstage pro Kalenderjahr', 'Nur das bereits geerbte Familiensparbuch', 'Der Wert von Aktien einer Zeitarbeitsfirma'], 'Rechtfertigt bei jungen sicheren Sparern (ohne nahen Immobilienwunsch) hohe Aktienquoten nahe 80–100 %, um den langen Zinseszins voll zu nutzen', 'Mit Annäherung an die Rente wandert das verbrauchte Humankapital sukzessive in Finanzkapital um, weshalb einige schrittweise Sicherheitsbausteine stärken', 'pro'],
-    ['vermoegensaufbau', 'Liquiditätsreserve („Notgroschen“)', 'Basis-Absicherung vor dem ETF-Start', 'Sofort verfügbares, völlig schwankungsfreies Bankguthaben (meist 3 bis 6 Nettomonatsausgaben) auf einem getrennten Tagesgeldkonto', ['Das maximale Beleihungslimit der Kreditkarte', 'Alle vorhandenen physischen Aktien im Depot', 'Ein auf 30 Jahre fest angelegter Sparbrief'], 'Verhindert zwingend, dass kaputte Waschmaschinen, Autoreparaturen oder kurze Arbeitslosigkeit zum erzwungenen ETF-Verkauf mitten im tiefsten Börsen-Tal zwingen!', 'Merke: Erst Notgroschen voll + Konsumschulden getilgt, dann konsequent den ETF-Sparplan starten!', 'easy'],
-    ['vermoegensaufbau', 'Maximum Drawdown (Max. Verlusttiefe)', 'Hartes Stress-Risikomaß', 'Prozentualer maximaler Absturz vom absoluten Allzeithoch bis zum anschließenden tiefsten Boden eines Marktes oder ETFs (z. B. ~−55 % Finanzkrise 2007–2009)', ['Die jährliche Inflationsrate in Europa', 'Maximal zulässiger monatlicher Sparbetrag je Person', 'Differenz zwischen bestem und zweitbestem Fonds'], 'Viel realistischer und greifbarer für echte Psychologie als reine theoretische „Volatilitäts-Standardabweichungen“!', 'Auch die „Erholungsdauer“ („Time to Recovery“ – oft 2 bis über 5 Jahre!) muss vor dem Aktienkauf mental klar eingerechnet sein', 'mid'],
-    ['vermoegensaufbau', 'Sharpe Ratio', 'Risiko-adjustierte Renditekennzahl', 'Quotient aus Überrendite eines Portfolios (Rendite minus sicherer Zins) geteilt durch dessen Volatilität (Standardabweichung)', ['Prozentualer Rabatt auf die regulären Orderkosten', 'Verhältnis der Bankfilialen je Einwohner', 'Anteil technologie-naher Titel im Portfolio'], 'Zeigt nüchtern, wie viel Rendite man *pro Einheit eingegangenen Risikos* wirklich kassiert hat', 'Breite Marktportfolios erreichen häufig durch geringere Korrelation zwischen Sektoren/Ländern eine günstigere Sharpe Ratio als eng konzentrierte Wetten', 'pro'],
-    ['vermoegensaufbau', 'Behavioral Gap (Anleger-Verhaltenslücke)', 'Lücke zwischen Fondsrendite & tatsächlicher Anlegerrendite', 'Typische Rendite-Differenz von teils 1–3 % p. a., die Privatanleger real verschenken, weil sie emotional prozyklisch nach Booms zu teuer einsteigen und nach Crashes am Tiefpunkt panisch aussteigen', ['Eine technische Verzögerung von zwei Werktagen bei Überweisungen', 'Ein Rechenfehler im Jahresbericht einer Depotbank', 'Die Abweichung eines ETFs durch Managementgebühren'], 'Die größte Renditebremse sitzt fast nie in der Produktwahl (ob TER 0,12 % oder 0,20 %), sondern zwischen den eigenen Ohren beim Zögern und Panik-Klicken!', 'Automatisierte Dauer-Sparpläne + seltenes Depot-Checken eliminieren diese Verhaltenslücke nachweislich fast vollständig', 'mid'],
-    ['vermoegensaufbau', 'Overconfidence Bias (Selbstüberschätzung)', 'Psychologische Überschätzung eigenen Markt-Timings', 'Tendenz von Anlegern (besonders nach ersten zufälligen Treffern), die eigenen Fähigkeiten bei Stockpicking oder Crash-Vorhersagen systematisch zu überschätzen', ['Völliger Verzicht auf jegliches Risikomanagement aus Angst', 'Das Vertrauen auf breite marktgewichtete Indizes', 'Das automatisierte monatliche Sparplan-Abbuchen'], 'Führt empirisch häufig zu übermäßigem Umschichten („Hin und Her macht Taschen leer“ – hohe Handelskosten + Steuern + schlechtes Timing)', 'Statistisch handeln Vieltrader laut klassischer Barber/Odean-Forschungen am Ende messbar schlechter als sture „Kaufen-und-Liegenlassen“-Sparer', 'mid'],
-    ['vermoegensaufbau', 'Time in the Market vs. Timing the Market', 'Goldene Grundregel passiven Investierens', 'Konzentriere dich darauf, langfristig kontinuierlich investiert zu bleiben, statt kurzfristige perfekte Höchst- und Tiefstkurse erraten zu wollen', ['Immer genau zwischen 10 und 11 Uhr zu handeln', 'Sämtliche Positionen pünktlich alle 30 Tage komplett umzutauschen', 'Nur in Schaltjahren neue Aktien zu kaufen'], 'Weil Märkte auch über Nacht oft überraschend heftige Erholungs-Sprünge machen, zerstört bloßes Verpassen der wenigen besten Börsentage gewaltig die Langfristrendite!', 'Ein verpasster Rebound-Monat lässt Zögernde nicht selten monatelang völlig uninvestiert auf noch teureren Kursen stehenbleiben', 'easy'],
-    ['vermoegensaufbau', 'Korrelation zwischen Anlageklassen (ρ)', 'Statistischer Gleichlauf von Preisen (−1 bis +1)', 'Misst, wie stark sich zwei Assets (z. B. globale Aktien vs. erstklassige Staatsanleihen) zeitgleich in dieselbe (+1) oder gegensätzliche (−1) Richtung bewegen', ['Die totale Anzahl gemeinsamer Unternehmen zweier Fonds', 'Der gesetzliche Wechselkurs zwischen Dollar und Yen', 'Das Verhältnis der jährlichen Ordergebühren zweier Broker'], 'Kombinieren von Assets mit niedriger oder negativer Korrelation senkt das Gesamt-Depot-Risiko oft ohne proportionalen Renditeverlust (Portfolio-Theorie nach Markowitz)', 'Vorsicht: In extremen Liquiditätsschocks wie 2022 stieg durch plötzliche Zinserhöhungen die Korrelation zwischen Aktien und langlaufenden Anleihen unerwartet stark an!', 'pro'],
-    ['vermoegensaufbau', 'Mean Reversion (Rückkehr zum Mittelwert)', 'Statistische Markt-Tendenz über Jahrzehnte', 'Langfristige Beobachtung, dass extreme Bewertungsübertreibungen oder Regionen-Outperformances über sehr lange Perioden oft wieder Richtung historischem Durchschnitt abkühlen', ['Dass jeder Kurs exakt nach genau 12 Monaten auf 0 zurückspringt', 'Dass jede verlorene Einzelaktie zwanghaft wieder steigt', 'Ein mathematisches Verbot starker Bullenmärkte'], 'Wichtig für Erwartungen: Gilt empirisch oft für breite bewertungsgetriebene Märkte/Faktoren – jedoch niemals blind als Garantie für eine insolvenzbedrohte Einzelaktie!', 'Regelmäßiges Rebalancing nutzt sanfte Mean-Reversion-Effekte langfristig systematisch aus', 'pro'],
-    ['vermoegensaufbau', 'Buy-and-Hold-Prinzip', 'Grundphilosophie der Bogleheads & Indexinvestoren', 'Konsequentes Kaufen eines breit gestreuten günstigen Index-ETFs und beharrliches Halten durch alle Stürme, Schlagzeilen und Marktzyklen über Jahrzehnte hinweg', ['Kaufen am Morgen und sofortiges Verkaufen vor dem Abend', 'Monatliches Auswechseln kompletter Ländergewichte per Gefühl', 'Blindes Halten einer einzigen kriselnden Firma bis zur Pleite'], 'Minimiert Gebühren, schont die Nerven, nutzt Zinseszins maximal aus und verschiebt reale Kursgewinnbesteuerung bis ganz ans Ende der Laufzeit', 'Funktioniert ausschließlich sinnvoll bei breit gestreuten ganzen Märkten/Indizes – niemals pauschal blind bei einzelnen Firmenwetten!', 'easy'],
-    ['vermoegensaufbau', 'Sparrate vs. Rendite-Hebel in den ersten Jahren', 'Praktischer Reality-Check für Einsteiger', 'In den ersten 3–7 Jahren einer Geldanlage dominiert die Höhe deiner eigenen monatlichen Sparrate das Vermögenswachstum gewaltig stärker als 0,5 % Renditeunterschied; später dominiert die Rendite auf das gewachsene Depot!', ['Bereits ab 100 € bringt 0,1 % Gebührenersparnis sofort 5.000 €', 'Die eigene Sparrate hat überhaupt keinen spürbaren Effekt', 'Ab Jahr 1 überwiegt immer sofort allein der Dividendenfluss'], 'Statt sich am Anfang stundenlang über 0,03 % TER-Unterschiede zu zerreiben, zahlt sich Einkommenssteigerung und hohe frühe Sparquote tausendfach stärker aus!', 'Erst wenn das Depot weit oberhalb des Mehrfachen des eigenen Jahresgehalts liegt, zieht der prozentuale Markteffekt rasant vorbei', 'easy'],
-    ['vermoegensaufbau', 'Sicheres Humankapital & „Lifestyle Creep“', 'Verhaltensfalle bei Gehaltserhöhungen', 'Schleichende Anpassung sämtlicher Konsumausgaben an jedes gestiegene Nettogehalt („mit höherem Gehalt steigen Auto und Miete mit“), sodass trotz mehr Geld kaum mehr Vermögen wächst', ['Ein plötzlicher Absturz aller Lifestyle- und Luxusaktien', 'Das langsame Verblassen alter Depot-Passwörter', 'Die schrittweise Verkleinerung von Fondsgrößen'], 'Einfacher Gegen-Trick: Bei jeder künftigen Gehalts- oder Tariferhöhung automatisch 50 % des Nettoplusses direkt in die ETF-Sparrate erhöhen!', 'Man gönnt sich sofort die eine Hälfte spürbar im Jetzt und sichert mit der anderen Hälfte beschleunigt finanzielle Freiheit', 'easy'],
-    ['vermoegensaufbau', 'Dynamic Withdrawal („Guardrails“) im Ruhestand', 'Flexible Entnahmestrategie gegen Crash-Pleiten', 'Statt sturer inflationsbereinigter 4-%-Entnahme selbst in harten Krisenjahren passt man bei tiefen Markteinbrüchen Ausgaben leicht um ~10 % nach unten (und in Boomjahren nach oben) an', ['Man darf im Alter überhaupt nur noch 1 % seines Geldes nutzen', 'Man wechselt im Crash sofort komplett in Krypto', 'Eine staatliche Schranke vor jeder Bankfiliale'], 'Erhöht die theoretische Erfolgsquote über 30–50 Jahre Entnahmezeitraum dramatisch oder erlaubt etwas höhere Start-Entnahmen bei ruhigem Gewissen', 'Lässt sich besonders angenehm leben, wenn gesetzliche Grundrenten die fixen Lebenshaltungskosten solide abfedern', 'pro'],
-    ['vermoegensaufbau', 'Rentenlücke berechnen & barwertige Planung', 'Realistische Zielsummen-Findung fürs Alter', 'Ermittelt die künftige monatliche Differenz zwischen Wunschbudget im Ruhestand (inflationsbereinigt!) und verlässlichen gesetzlichen/betrieblichen Renten', ['Blindes Sammeln von genau 100.000 € ohne je den Bedarf zu prüfen', 'Rechnen mit den Preisen von vor 30 Jahren ohne Inflation', 'Gleichsetzen des Bruttogehalts mit späterem Ausgabebedarf'], 'Wer seine echte gewünschte Zusatz-Entnahme kennt (z. B. 1.500 €/Monat = 18.000 €/Jahr), leitet per 3,5–4-%-Faustformel klar das Zielkapital (ca. 450k–515k€ real nach Steuer) ab', 'Berücksichtige beim Sparen bereits den Unterschied zwischen Brutto-Depotwert und Netto nach Abgeltungsteuer (~18,46 % nur auf den *Gewinnanteil*!)', 'mid'],
-    ['vermoegensaufbau', 'Kredithebel auf Aktien („Wertpapierkredit / Lombard“)', 'Riskantes Investieren auf Pump', 'Beleiht bestehende ETF-Depots für zusätzliche Käufe; droht bei scharfem Kurseinbruch jedoch sofort mit Zwangsverkauf („Margin Call“) exakt ganz am tiefsten Kurspunkt!', ['Ein völlig risikoloses Geschenk aller Banken zur Renditesteigerung', 'Dasselbe wie ein kostenloser Sparplan bei Direktbanken', 'Ein staatliches Förderdarlehen für Schüler'], 'Verstößt bei Laien massiv gegen ruhige Risikotragfähigkeit und zerstört durch erzwungene Notverkäufe im Tiefpunkt die Erholungschance komplett', 'Solide Grundregel: Investiere langfristig ausschließlich schuldenfrei aus echtem frei verfügbarem Geldvermögen', 'mid'],
-    ['vermoegensaufbau', 'Aktives Stockpicking vs. Index-ETF (SPIVA Scorecard)', 'Langjährige empirische Beweisführung (S&P Dow Jones)', 'Offizielle halbjährliche Auswertungen zeigen weltweit konsistent: Über 15–20 Jahre schlagen rund 85–95 % aller teuer bezahlten aktiven Aktienfonds ihren einfachen Index nach Kosten NICHT!', ['Aktive Fondsmanager schlagen zu 90 % jeden Welt-ETF mühelos', 'Statistiken erfassen nur asiatische Bankkonten', 'Nur alle 100 Jahre unterliegt ein aktiver Fonds dem Markt'], 'Genau deshalb flossen im vergangenen Jahrzehnt Billionen von teuren aktiven Hausbank-Fonds hinüber in günstige Index-ETFs', 'Nicht weil aktive Manager dumm wären – sondern weil hohe jährliche Gebühren (~1,5–2,0 %) bei hochkompetitiver kollektiver Preisbildung eine kaum zu überspringende Hürde legen!', 'easy'],
-    ['vermoegensaufbau', 'Asymmetrische Renditeverteilung (Bessembinder-Effekt)', 'Warum Einzelaktien statistisch riskanter sind als ein Index', 'Über fast ein Jahrhundert hinweg generierten bloß rund 4 % der extrem erfolgreichen „Super-Aktien“ beinahe die gesamte Überrendite des US-Aktienmarktes über Tagesgeld', ['Jede beliebige Aktie schlägt sicher irgendwann jedes Sparbuch', 'Immer exakt genau 50 % aller Firmen steigern sich pro Jahr um +20 %', 'Große Konzerne steigen automatisch im Gleichschritt'], 'Wer eine der wenigen späteren Super-Aktien (Apple, Amazon, Nvidia) bei eigener Einzelauswahl verpasst, hinkt dem breiten Welt-ETF kaum aufholbar hinterher!', 'Ein einfacher breiter Index-ETF hält ausnahmslos *alle* künftigen Überflieger automatisch ab Start im Korb', 'pro'],
-    ['vermoegensaufbau', 'Inflation-Erosion im Bargeld', 'Verdeckte Gefahr übertriebener Sicherheit', 'Bereits moderate 2,5 % Jahresinflation halbieren die reale Kaufkraft von unverzinst geparkten Banknoten oder Sparbüchern binnen knapp 28 Jahren!', ['Bargeld verdoppelt alle 10 Jahre seine reale Kaufkraft automatisch', 'Geldscheine gewinnen bei Inflation physikalisch an Gewicht', 'Inflation trifft ausschließlich Unternehmen an der Börse'], 'Wohldosierte Produktiv-Sachwerte (wie Anteile an realwertschaffenden globalen Unternehmen via ETF) schützen Kaufkraft historisch langfristig deutlich robuster', 'Reale Wirtschaftspreiserhöhungen fließen unmittelbar in höhere Umsätze und Dividenden realer Weltkonzerne mit ein', 'easy'],
-    ['vermoegensaufbau', 'Anlagehorizont-Abstufung (1–3 / 3–10 / > 15 Jahre)', 'Saubere Geld-Töpfe nach Fälligkeitsdatum', 'Geld für geplante Ausgaben in den nächsten 1–4 Jahren (Auto, Anzahlung) gehört in sicheres Geldmarkt/Tagesgeld; Geld für > 12–15 Jahre darf voll in den Aktien-ETF', ['Man sollte auch seine nächste Urlaubskasse komplett in Schwellenländer-ETFs stecken', 'Für > 20 Jahre empfiehlt sich ausschließlich das Girokonto ohne Zins', 'Jede Laufzeit verlangt immer genau 50 % Krypto'], 'Schützt zuverlässig davor, genau ein halbes Jahr vor dem Hauskauf von einem plötzlichen Börseneinbruch kalt erwischt zu werden', 'Der saubere Check vor jeder Sparrate: „Wann brauche ich exakt dieses Geld frühestens garantiert zurück?“', 'easy'],
-    ['vermoegensaufbau', 'Sunk Cost Fallacy beim Festhalten an teuren Altprodukten', 'Irrationale Treue zu schlechten Altverträgen', 'Anleger halten überteuerte aktive Hausbankfonds nur deshalb stur fest, „weil man damals ja schon 5 % Ausgabeaufschlag bezahlt hat“ – statt nüchtern künftige Kosten zu vergleichen', ['Der Wertverlust durch gesunkene Schiffe auf See', 'Eine besonders günstige Neukunden-Bonusaktion', 'Das rechtzeitige Rebalancen nach Plan'], 'Bereits bezahlte Gebühren sind unwiderruflich weg („Sunk Costs“): Relevant für morgen bleibt allein, welcher Weg ab heute netto günstiger und renditestärker wächst!', 'Vor einem Umschichten aber natürlich kurz den steuerlichen Freibetrag und eventuelle Verkaufsspesen nüchtern gegen die gesparte laufende jährliche Kostenquote rechnen', 'mid'],
-    ['vermoegensaufbau', 'Cost-Average-Mythos (Sparplan vs. Marktrichtung)', 'Nüchterne Klarstellung zum beliebten Marketingwort', 'Oft wird behauptet, regelmäßige Sparpläne schlügen Einmalkäufe immer durch „billige Durchschnittskurse“; mathematisch ist dies bei langfristig steigenden Märkten unzutreffend und ein reines Timing-/Risikothema', ['Der Cost-Average-Effekt garantiert per Gesetz 100 % Gewinn selbst wenn ein Kurs dauerhaft auf null fällt', 'Sparpläne funktionieren mathematisch ausschließlich in Schaltjahren', 'Einmalkauf wird in der Wissenschaft komplett verboten'], 'Richtig eingeordnet: Wer ein Vermögen durch *monatliches Gehalt* erst erarbeitet, hat eh keine Alternative und schöpft dank direktem Monatseinkauf maximale Market-Time aus!', 'Die reale Rendite steigt durch sofortiges Investieren der Sparraten – nicht durch künstliches Zurückhalten vorhandener Millionen', 'pro'],
-    ['vermoegensaufbau', 'Börsen-Crash-Protokoll (Vorab-Notfallplan)', 'Mentale Checkliste für Krisenzeiten', 'Ein bereits in guten Tagen aufgeschriebener persönlicher Investment-Plan („Investment Policy Statement“), der im −35-%-Crash exakt Panikverkäufe untersagt und Sparplan-Konstanz festschreibt', ['Ein automatisches Depot-Löschskript bei −10 % Verlust', 'Eine Empfehlung sofort sämtliche Schulden auf Aktien aufzunehmen', 'Ein wöchentliches Umschichten je nach Fernsehnachrichten'], 'Im ruhigen Kopf bei klarem Himmel getroffene Regeln retten in roten stürmischen Marktwochen nachweislich Hunderttausende Euro Vermögen', 'Im schlimmsten Fall einfach Banking-App für einige Monate vom Startbildschirm nehmen und Sparplan still automatisiert günstig weiterkaufen lassen!', 'easy'],
-    ['vermoegensaufbau', 'Sparquote als Frührenten-Turbo (Shockingly Simple Math)', 'Zusammenhang aus Ausgaben und Freiheit', 'Je höher die eigene Sparquote (% vom Netto), desto weniger Kapital braucht man zugleich fürs Auskommen UND desto schneller ist diese Summe angespart!', ['Nur bei über 200.000 € Nettoverdienst lässt sich überhaupt Vermögen bilden', 'Die Sparquote senkt die Rendite von ETFs um genau denselben Prozentsatz', 'Unter 80 % Sparquote funktioniert der Zinseszins gar nicht'], 'Bei 10 % Sparquote dauert volle Unabhängigkeit grob ~50 Jahre, bei 50 % Sparquote (durch geringere Lebenshaltungskosten!) oft nur rund ~15–17 Jahre!', 'Deswegen entfalten moderate Ausgaben-Optimierungen doppelte Wirkung: Höhere monatliche Einzahlung PLUS dauerhaft geringere Wunsch-Zielgröße im Alter', 'mid'],
-    ['vermoegensaufbau', 'Mental Accounting (Mentale Buchführung)', 'Psychologische Töpfchenbildung mit eigenem Geld', 'Menschen bewerten Euro-Beträge irrationally unterschiedlich je nach Quelle (z. B. Bonusgeld wird leichtsinnig verzockt, hart Erspartes panisch geschont)', ['Das saubere Führen eines Haushaltsbuchs am Computer', 'Eine Pflichtsteuer auf mehrere Bankkonten', 'Eine besonders geschützte Anleihenklasse'], 'Wichtiges Korrektiv: Jeder einzelne Euro im Gesamtvermögen ist gleich wert – egal ob aus Lohn, Dividenden oder Lottogewinn!', 'Allerdings lässt sich Mental Accounting *positiv* zähmen, indem man z. B. das Notgroschenkonto strikt vom langfristigen Altersdepot trennt', 'mid'],
-    ['vermoegensaufbau', 'Steuerstundungseffekt („Tax Deferral“)', 'Zinseszins-Bonus unbesteuerter Buchgewinne', 'Solange Kursgewinne im ETF nicht verkauft werden (abgesehen von leichter Vorabpauschale), arbeiten selbst die eigentlich dem Finanzamt zustehenden ~18,46 % weiter für dich und erwirtschaften zusätzliche Gewinne!', ['Dass der Broker vergisst, eine Kapitalertragsteuer einzubehalten', 'Eine freiwillige Vorauszahlung für fünf Jahrzehnte', 'Das komplette Absetzen von ETF-Käufen von der Einkommensteuer'], 'Jedes unnötige häufige Umschichten im Depot zerschießt genau diesen kostenlosen „Steuer-Hebel“ des Buy-and-Hold-Investors!', 'Bei langer Haltedauer von 30 Jahren macht das reine Verzögern von Verkaufssteuern schnell einen hohen prozentualen Endwertvorteil aus', 'pro'],
-    ['vermoegensaufbau', 'Geldwertrisiko vs. Sachwertprodukt', 'Fundamentaler Unterschied zweier Kapitalwelten', 'Geldwerte (Tagesgeld, Festgeld, Staatsanleihen) versprechen nominelle Euro-Zahlungen und leiden bei starker Inflation; Sachwerte (Aktien, Immobilien, Gold) verbriefen reale Unternehmen & Dinge', ['Aktien gehören zu den reinen kurzfristigen Geldwerten', 'Bargeld im Kopfkissen ist ein klassischer Produktiv-Sachwert', 'Sachwerte unterliegen niemals Preisschwankungen'], 'Unternehmen reagieren auf Inflation mittel- bis langfristig über angepasste Verkaufspreise und halten reale Gewinne so viel eher auf Kurs', 'Im gesunden Portfolio sichern Geldwerte das kurze Risiko ab, während ETF-Sachwerte das Langfrist-Vermögen tragen', 'easy'],
-    ['vermoegensaufbau', 'Dividenden-Irrelevanz-Theorem (Miller & Modigliani)', 'Wichtige Finanztheorie für Dividendenfans', 'In perfekter Theorie macht es wirtschaftlich keinen Unterschied, ob ein Unternehmen Gewinne als Dividende auszahlt (Kurs sinkt um Ausschüttung) oder sinnvoll im Konzern behält', ['Dass Unternehmen grundsätzlich gar keine Dividenden mehr auszahlen dürfen', 'Dass Aktienkurse bei jeder Dividende um 50 % ansteigen müssen', 'Dass Dividenden im Depot steuerfrei geschenkt werden'], 'In der echten steuerlichen Realität erzeugen übermäßig hohe Ausschüttungen sogar spürbar *sofortige Steuerabzüge* (über 1.000 € Pauschbetrag hinaus) gegenüber thesaurierenden Qualitätsfirmen!', 'Ein „eigener Verkauf“ von 3 % ETF-Anteilen im Jahr schafft wirtschaftlich exakt denselben Cashflow – nur oft deutlich flexibler und breiter gestreut', 'pro'],
-    ['vermoegensaufbau', 'Rendite-Reihenfolge & Entnahme-Brücke', 'Sichere Überbrückung der ersten Ruhestandsjahre', 'Kombiniert das Aktien-Weltdepot beim Start der Auszahlphase mit einem 2- bis 4-jährigen Zins-/Cash-Polster, sodass nach Kursstürzen einfach ohne Aktien-Notverkauf vom Geldmarkttopf gelebt wird', ['Ein Kredit beim Broker für luxuriöse Weltreisen', 'Der komplette Tausch aller Aktien in Gold genau am 65. Geburtstag', 'Das Einstellen aller Lebensmittelkäufe nach Börsenschluss'], 'Senkt das psychologische wie mathematische Ruinrisiko („Sequence-of-Returns-Risk“) im Entnahmeplan extrem wirkungsvoll ab', 'Sobald Aktien wieder zu neuen Allzeithochs gelaufen sind, füllt man die Ausgaben-Brücke entspannt per geordnetem Verkauf wieder auf', 'mid'],
-
-    // === STEUERN & RECHT IN DEUTSCHLAND (40 Einträge → 200 Fragen) ===
-    ['steuern_recht_de', 'Investmentsteuergesetz 2018 (InvStG)', 'Aktuelle deutsche Fondsbesteuerung', 'Vereinheitlichte zum 01.01.2018 die Besteuerung in- und ausländischer ETFs enorm und ersetzte komplexe Schattenrechnung durch Teilfreistellungen + Vorabpauschale', ['Führte ein generelles Verbot für ausländische iShares-ETFs ein', 'Schaffte den Sparerpauschbetrag vollständig ab', 'Besteuert ausschließlich physische Immobilien'], 'Machte sogar vormals mühsame „steuerhässliche“ ausländische Thesaurierer ab 2018 für deutsche Privatanleger komplett wartungsarm „steuereinfach“ bei deutschen Depotbanken!', 'Vor 2018 gekaufte „Bestandsgeschützte Altanteile“ verloren damals ihre Steuerfreiheit ab dem Stichtag – erhielten aber einmalig einen persönlichen 100.000-€-Freibetrag für ab 2018 entstehende Gewinne!', 'mid'],
-    ['steuern_recht_de', 'Teilfreistellung: Aktienfonds (30 %)', 'Steuerlicher Ausgleichs-Mechanismus (InvStG)', 'Befreit ab einem Anlage-Schwerpunkt von fortlaufend über 50 % (meist ≥ 51 %) physischer Kapitalbeteiligungen pauschal 30 % aller Erträge komplett von der deutschen Abgeltungsteuer', ['Zieht zusätzlich 30 % Strafsteuer direkt beim Broker ab', 'Gilt ausschließlich für deutsche Einzelaktien ohne ETF', 'Gilt erst ab 1 Million € Depotvolumen'], 'Gleicht pauschal auf Fonds-Ebene weltweit bereits abgezogene ausländische Quellensteuern aus und drückt deutsche Effektivsteuer auf ~18,46 % (inkl. SolZ)', 'Gilt gleichermaßen selbst bei *synthetischen* Swap-ETFs, sobald ihr eigener Träger-Sicherheitenaktienkorb durchgängig über 50 % Aktienquote hält!', 'easy'],
-    ['steuern_recht_de', 'Teilfreistellung: Mischfonds (15 %)', 'Mittlere Steuerklasse bei Misch-ETFs', 'Greift automatisch bei Investmentfonds oder Multi-Asset-ETFs, die laut Anlagebedingungen fortlaufend mindestens 25 % (aber ≤ 50 %) Kapitalbeteiligung in Aktien halten', ['Befreit 15 % vom eigenen Bruttogehalt bei der Einkommensteuer', 'Gilt für reine Krypto-Zertifikate', 'Verdoppelt jede Bankgebühr um 15 %'], 'Typisch z. B. für ausgewogene Multi-Asset-ETFs wie Vanguard LifeStrategy 40 % Equity oder Arero (sofern zwischen 25 % und 50 % Aktienquote)', 'Genau deshalb achten Produktentwickler (z. B. LifeStrategy 60 % / 80 %) bewusst auf > 51 % echte Aktienquote für volle 30 % statt 15 % Teilfreistellung!', 'mid'],
-    ['steuern_recht_de', 'Teilfreistellung: Immobilienfonds (60 % / 80 %)', 'Spezial-Regel für klassische offene Immobilienfonds', 'Befreit bei offenen Immobilienfonds nach InvStG 60 % der Erträge bei Schwerpunkt in Deutschland bzw. sogar 80 % bei Überwiegendem Auslandsschwerpunkt', ['Gilt pauschal für alle amerikanischen Rechenzentrums-REIT-Aktien', 'Erhöht die Grunderwerbsteuer um 60 %', 'Befreit Mietzahlungen an private Vermieter'], 'Wichtige Falle: Viele börsennotierte „Immobilien-Aktien-ETFs“ (auf Vonovia oder US-REITs) gelten steuerlich *nicht* als offene Immobilienfonds (sondern teils als Aktienfonds oder 0 % Misch/Sonstige)!', 'Rechtliche Detail-Einstufung deshalb immer im Factsheet / KIID unter „Aktienfondsquote / Kapitalbeteiligungsquote“ prüfen', 'pro'],
-    ['steuern_recht_de', 'Vorabpauschale (Grundprinzip & Fälligkeit)', 'Jährliche Mindestbesteuerung thesaurierender Fonds', 'Wird stets im Januar rechnerisch für das vorangegangene Kalenderjahr ermittelt (fiktiver Zufluss erster Werktag im Januar) und belastet zuerst den Freistellungsauftrag, danach erst das Giro-Verrechnungskonto', ['Wird beim ersten Kauf eines ETFs im Voraus für 20 Jahre abgezogen', 'Fällt nur an, sobald ein ETF-Name einen Umlaut enthält', 'Zahlt der Anleger in bar direkt beim Finanzamt ein'], 'Garantiert keine Doppelbesteuerung: Alle jemals versteuerten Vorabpauschalen merkt sich die deutsche Bank elektronisch und zieht sie beim finalen Verkauf komplett vom steuerpflichtigen Gewinn ab!', 'In Jahren mit einem negativen oder null Basiszinssatz (wie 2021/2022) fiel die Vorabpauschale automatisch komplett auf 0,00 €!', 'mid'],
-    ['steuern_recht_de', 'Basisertrag-Berechnung (0,7-Faktor & Basiszins)', 'Formel-Kernstück der Vorabpauschale', 'Multipliziert den ersten Fondspreis des Vorjahres mit dem jährlich vom Bundesfinanzministerium festgelegten Basiszins und dem pauschalen Sicherheitsfaktor 0,7 (`Wert × Basiszins × 0,7`)', ['Multipliziert den gesamten Depotwert mit einem festen Faktor von 5,0', 'Zieht stets pauschal 10 % vom gesamten Depotvermögen ab', 'Teilt den aktuellen Jahresgewinn durch zwölf Monate'], 'Der Faktor 0,7 zieht pauschal ~30 % typische Fondskosten vorab bereits rechnerisch ab; außerdem zählt er nie mehr als die echte reale Wertsteigerung des Jahres!', 'Selbst in Hochzinsphasen bleibt die jährliche reale Steuerbelastung eines Aktien-ETFs dadurch oft unter ca. 0,3 % des Depotwerts pro Jahr', 'pro'],
-    ['steuern_recht_de', 'Sparerpauschbetrag (1.000 € / 2.000 €)', 'Jährlicher Freibetrag auf Kapitalerträge', 'Jährlicher steuerfreier Rahmen (1.000 € je Einzelperson bzw. 2.000 € bei Zusammenveranlagung) für Zinsen, Dividenden, Vorabpauschalen und ETF-Verkaufsgewinne', ['Lebenslanger Einmalbetrag für die gesamte Rentenzeit', 'Pro Depot je Bank 1.000 € unbegrenzt vervielfachbar', 'Gilt ausschließlich für Gewinne aus Immobilienverkäufen'], 'Nicht genutzte Restbeträge am 31. Dezember verfallen leider ersatzlos ins nächste Jahr („Use it or lose it!“)', 'Bei mehreren Banken darf die *Summe* aller verteilten Freistellungsaufträge zusammen maximal 1.000 € bzw. 2.000 € betragen (Finanzamt gleicht zentral per Steuer-ID ab!)', 'easy'],
-    ['steuern_recht_de', 'Freistellungsauftrag (FSA)', 'Bankauftrag zum steuerfreien Einbehalt-Schutz', 'Weist deine jeweilige Depotbank verbindlich an, deinen persönlichen Sparerpauschbetrag bis zur genannten Grenze direkt ohne Abzug der 26,375 % Steuer anzuwenden', ['Kündigungsformular zur sofortigen Depotlöschung', 'Antrag zum kostenlosen Verleihen von ETFs', 'Schutzbrief gegen Börsencrashs über 20 %'], 'Ohne hinterlegten FSA überweist die Bank schon ab dem ersten 1-Euro-Dividenden-Cent ~26 Cent sofort ans Finanzamt (Rückholung erst im Folgejahr per Anlage KAP)', 'Sollte ein Paar bei zwei verschiedenen Brokern Beträge eingetragen haben, müssen bei Änderungen einfach beide Summen sauber aktualisiert werden', 'easy'],
-    ['steuern_recht_de', 'Abgeltungsteuer (25 % + 5,5 % SolZ = 26,375 %)', 'Standard-Steuersatz auf Kapitalerträge', 'Pauschale Kapitalertragsteuer zzgl. Solidaritätszuschlag (und ggf. 8 % oder 9 % Kirchensteuer auf die Abgeltungsteuer) oberhalb des Freibetrags', ['Gilt ab dem allerersten Cent ohne jeden Freibetrag', 'Wird in Deutschland grundsätzlich nie auf ETFs erhoben', 'Sinkt nach exakt 12 Monaten Haltedauer immer automatisch auf 0 %'], 'Wichtig: Anders als beim Arbeitseinkommen (wo der SolZ für die meisten Gehälter entfiel!) fällt der Solidaritätszuschlag auf die Abgeltungsteuer unverändert für jeden Euro weiter an!', 'Durch 30 % Teilfreistellung reduziert sich der reale Satz auf Aktien-ETF-Gewinne faktisch aber von 26,375 % auf angenehme 18,4625 %', 'easy'],
-    ['steuern_recht_de', 'Kirchensteuer-Abzug auf Kapitalerträge', 'Steuerliche Besonderheit mit kleinem Sonderausgleich', 'Kirchenmitglieder zahlen auf Kapitalerträge 8 % (BY/BW) bzw. 9 % (übrige Bundesländer) auf die Abgeltungsteuer — reduziert diese aber gleichzeitig leicht durch Anrechnung (Sonderausgabenabzug)', ['Verdoppelt die Abgeltungsteuer glatt auf genau 50 %', 'Wird erst ab einem jährlichen Depotgewinn über 100.000 € erhoben', 'Muss in bar am Pfarrhaus abgegeben werden'], 'Dadurch sinkt der Basissatz leicht von 25 % auf ca. 24,45 % (bei 9 % KiSt), was gesamt ca. 27,99 % inkl. KiSt + SolZ entspricht', 'Bei deutschen Banken erfolgt dies seit 2015 vollautomatisch per Kirchensteuer-Abrufmerkmal (KiStAM) beim Bundeszentralamt', 'pro'],
-    ['steuern_recht_de', 'Günstigerprüfung (Anlage KAP)', 'Steuererklärungs-Vorteil für Niedrigeinkommen', 'Erlaubt Steuerpflichtigen mit niedrigem persönlichen Grenzsteuersatz unter 25 % (z. B. Studenten, Sabbatical, Teilzeit, geringe Rente), sich zu viel einbehaltene 25 % Abgeltungsteuer zurückzuholen', ['Prüfung durch das Finanzamt, welcher Broker die billigste App bietet', 'Automatische Erstattung aller ETF-Orderkosten', 'Halbierung der Mehrwertsteuer auf ETF-Käufe'], 'Unbedingt ankreuzen in Anlage KAP (Zeile 4), sobald Gesamteinkommen + Kapitalerträge zu einem günstigeren Durchschnitts-/Grenzsteuersatz führen!', 'Die 30 % Aktienfonds-Teilfreistellung bleibt bei der Günstigerprüfung zusätzlich vollumfänglich erhalten!', 'mid'],
-    ['steuern_recht_de', 'Nichtveranlagungsbescheinigung (NV-Bescheinigung)', 'Steuer-Befreiungsausweis vom Finanzamt', 'Wird vom Finanzamt für 3 Jahre erteilt, wenn zu versteuerndes Gesamteinkommen unterhalb von Grundfreibetrag + Pauschbetrag liegt (~13.000+ €), und verhindert jeden bankseitigen Steuerabzug sofort', ['Bescheinigung für Bürger ohne Wohnsitz in der EU', 'Erlaubt illegalen Schwarzhandel ohne Buchführung', 'Befreit automatisch von der Grunderwerbsteuer'], 'Top-Instrument für Kinderdepots (realisieren steuerfreier Gewinne per „Wash Sale“-Neukauf!) sowie Ruheständler mit schmaler Rente', 'Vorsicht: Bei Familienversicherung in der Gesetzlichen Krankenkasse (GKV) genau auf die niedrigen monatlichen Gesamteinkommensgrenzen (ca. 500–550 €/Monat) des Kindes achten!', 'pro'],
-    ['steuern_recht_de', 'FIFO-Prinzip (First-In, First-Out)', 'Gesetzliche Verbrauchsreihenfolge beim ETF-Verkauf', 'Legt beim Teilverkauf identischer Wertpapiere in einem einzelnen Depot starr fest, dass immer die am frühesten (ältesten) gekauften Anteile zuerst veräußert werden', ['Ermöglicht manuelles Aussuchen einzelner günstiger Stücke per Klick', 'Verkauft grundsätzlich immer zuerst die jüngsten gekauften Anteile', 'Berechnet stur genau den Durchschnitt aller Einstandspreise'], 'Da älteste Anteile meist gigantisch viel aufgelaufenen Kursgewinn tragen, verursacht stures Verkaufen aus einem 30 Jahre lang besparten Einzel-ETF maximal hohe frühe Steuerlast', 'Durch schlaue Zweitdepot-Überträge vor Verkauf oder ETF-ISIN-Wechsel alle ~10 Jahre hebelt man diesen Effekt komplett legal aus!', 'easy'],
-    ['steuern_recht_de', 'Zweitdepot-FIFO-Optimierung (Teilübertrag)', 'Smarte Entnahmesteuerung beim späteren Verkaufen', 'Man überträgt bloß ältere (per FIFO zuerst rüberwandernde!) Anteile kostenfrei auf ein leeres Zweitdepot und verkauft danach aus dem alten Erstdepot steuergünstig ausschließlich die zurückgebliebenen jüngeren Anteile!', ['Man meldet beim Broker ein fiktives Verlustkonto im Ausland an', 'Man verkauft jeden Tag punktgenau einen Anteil mit 1 Cent Verlust', 'Man löst den gesamten ETF komplett über die USA auf'], 'Völlig legal nach aktueller Gesetzeslage (bestätigt per Rechtsprechung/BMF): Senkt Sofort-Abgeltungsteuer im Ruhestand oft um zig Tausende Euro durch längeren Steuerstundungshebel!', 'Ein vollständiges Logbuch oder Unterdepot (bei Anbietern mit Unterdepots besonders simpel!) hält die Tranchen jederzeit glasklar getrennt', 'pro'],
-    ['steuern_recht_de', '3×10-Strategie im Vermögensaufbau', 'Langfristige ISIN-Rotation', 'Statt 30 Jahre blind ein und dieselbe MSCI-World-ISIN durchzusparen, bespart man alle ca. 10 Jahre eine andere günstige Welt-ETF-ISIN, um in der Entnahme zuerst die 3. Tranche zu verkaufen', ['Dreimal am Tag zehn unterschiedliche Indizes vergleichen', 'Nur maximal 10 % seines Gehalts überhaupt jemals in ETFs sparen', 'Alle 10 Jahre exakt 30 % seines Vermögens bar spenden'], 'Spart im Alter das nachträgliche Hin-und-Her-Übertragen vor jedem Teilverkauf komplett ein und schafft natürliche steuerliche Schichten („Steuer-Töpfe“)', 'Alle drei ETFs bleiben dabei dauerhaft wirtschaftlich quasi 100 % gleich investiert – etwa iShares -> Vanguard -> Amundi/SPDR', 'mid'],
-    ['steuern_recht_de', 'US-Quellensteuer Irland (15 % vs. 30 % DBA)', 'Internes Steuer-Wissen beim Fondssitz', 'Irische physische UCITS-ETFs unterliegen auf US-Aktiendividenden dank speziellem US-Irland-Doppelbesteuerungsabkommen nur 15 % Quellensteuerabzug statt oft 30 % wie klassisch etwa in Luxemburg', ['Irland übernimmt 15 % sämtlicher deutschen Bankordergebühren', 'US-Firmen zahlen in Irland 30 % Strafe vor jeder Dividendenzahlung', 'Ein Anleger aus Berlin muss in Dublin Einkommensteuer zahlen'], 'Da US-Aktien oft ~70 % eines Welt-ETFs bilden, spart dies laufend rund 0,15 % echte Nettorendite pro Jahr ganz von allein', 'Achtung: Bei *synthetischen* US-Swap-ETFs (auf qualifizierte breite Indizes nach Sec. 871m) sind es sogar 0 % US-Quellensteuer!', 'mid'],
-    ['steuern_recht_de', 'Section 871(m) / US-Swap-Vorteil (0 % Quellensteuer)', 'Spezialeffekt auf US-Swap-ETFs', 'Befreit qualifizierte sehr breite US-Aktienindizes (wie S&P 500, MSCI USA) bei swap-basierten UCITS-ETFs komplett von interner US-Dividendenquellensteuer (0 % statt 15 %!)', ['Zwingt jeden US-Fonds zu 871 Monaten Mindestlaufzeit', 'Verdoppelt den Spread an der New Yorker Börse', 'Verbietet europäischen Kleinanlegern den Besitz von US-Tech'], 'Erklärt glasklar, wieso reine S&P-500-Swap-ETFs ihren Vergleichsindex nach Steuern Jahr für Jahr knapp schlagen können', 'Wichtig: Auf dem gesamten *MSCI World* (enthält Nicht-US-Aktien!) oder bei engeren Indizes gilt diese Sondervorschrift nicht in derselben Form', 'pro'],
-    ['steuern_recht_de', 'Verlustverrechnungstopf „Sonstige“ vs. „Aktien“', 'Wichtige getrennte Verrechnungsgrenzen', 'Gewinne und Verluste aus ETFs, Anleihen, Zertifikaten und Dividenden landen im Topf „Sonstige“; Einzelaktien-Verluste bleiben starr im Topf „Aktien“ eingesperrt', ['Beide Töpfe verschmelzen automatisch Ende März jedes Jahres', 'Im Topf Sonstige können auch Verluste aus dem Autoverkauf abgezogen werden', 'Verluste verfallen am 31.12. automatisch an den Staat'], 'Positive Pointe für ETF-Sparer: *Verluste* aus ETFs lassen sich sogar gegen Gewinne aus Einzelaktien anrechnen — nur der umgekehrte Weg (Einzelaktien-Minus vs. ETF-Plus) ist blockiert!', 'Nicht aufgebrauchte Verlusttöpfe trägt deine Bank automatisch endlos ins Folgejahr weiter (für Bankwechsel braucht es bloß bis 15.12. eine Verlustbescheinigung!)', 'mid'],
-    ['steuern_recht_de', 'Verlustbescheinigung (Stichtag 15. Dezember)', 'Fristgerechte Verlustmitnahme über Bankgrenzen hinweg', 'Antrag bei der Bank bis spätestens 15. Dezember, um ungenutzte Verlusttöpfe nicht im dortigen Institut zu belassen, sondern in der Steuererklärung mit Gewinnen bei einer *anderen* Bank verrechnen zu können', ['Formular bei Kontoeröffnung vor dem allerersten ETF-Kauf', 'Bescheinigung für den Erhalt einer staatlichen Prämie bei Börsencrashs', 'Bestätigung, dass das Depot vollständig gelöscht wurde'], 'Ohne fristgerechten Antrag bis 15.12. friert der Verlusttopf bei Bank A vorerst im Folgejahr ein und kann erst bei künftigen eigenen Bank-A-Gewinnen genutzt werden!', 'Achtung: Ein kompletter Depotübertrag ALLER Bestände samt Schließung der Bankverbindung nimmt Töpfe teilweise direkt mit — reine Einzel-Anträge ohne Depotauflösung erfordern zwingend die Stichtagsfrist 15.12.', 'pro'],
-    ['steuern_recht_de', 'Wegzugsbesteuerung Investmentfonds (§ 19 Abs. 3 InvStG)', 'Neue gesetzliche Regelung ab 2025 für Großanleger', 'Bei Wohnsitzaufgabe ins Ausland unterliegen künftig auch private Fonds-/ETF-Anteile der fiktiven Veräußerungsbesteuerung, sobald die Anschaffungskosten je *einzelnem Investmentfonds* ≥ 500.000 € betragen', ['Betrifft ausschließlich geerbte Grundstücke über 5 Millionen €', 'Verhindert jeglichen ETF-Kauf für Personen über 60 Jahre', 'Besteuert bereits ab 10.000 € Depot beim bloßen Urlaub im Ausland'], 'Wichtiges Gestaltungsdetail im Gesetz: Es zählt die Summe der Anschaffungskosten *pro einzelnem ETF / ISIN* – wer rechtzeitig auf unterschiedliche gleichwertige Fonds verteilt (< 500k€ Einstand je ISIN!), umgeht oft diese Hürde!', 'Trifft ggf. sogar bei unentgeltlicher Übertragung an nicht unbeschränkt steuerpflichtige Erben oder Beschenkte im Ausland zu', 'pro'],
-    ['steuern_recht_de', 'Depotübertrag mit vs. ohne Gläubigerwechsel', 'Schenkungs- vs. eigene Umschichtungsübertragung', 'Übertrag auf dein eigenes Zweitdepot bleibt steuerfrei („ohne Gläubigerwechsel“); Übertrag aufs Depot eines Partners oder Kindes löst je nach Konstellation (entgeltlich vs. unentgeltlich) ggf. Steuer oder Schenkungsteuermeldung aus!', ['Jeder Depotübertrag wird pauschal sofort mit 25 % besteuert', 'Überträge zwischen Eheleuten werden grundsätzlich geheim gehalten', 'Man kann Aktien niemals zwischen unterschiedlichen Familienmitgliedern verschieben'], 'Achtung bei *Gemeinschaftsdepots* unverheirateter Paare: Einzahlen durch nur einen Partner oder Umzug auf ein Einzeldepot löst schnell ungewollte Schenkungsteuer-Probleme (nur 20.000 € Freibetrag in 10 Jahren!) aus', 'Unter Eheleuten beträgt der alle 10 Jahre erneuerbare Schenkungsteuerfreibetrag immerhin 500.000 €, gegenüber jedem eigenen Kind je Elternteil 400.000 €!', 'pro'],
-    ['steuern_recht_de', 'Kinderdepot / Junior-Depot & Mündelsicherheit', 'Langfristiger Vermögensaufbau für Kinder', 'Läuft rechtlich ab Eröffnung direkt auf den Namen des Kindes (unter treuhänderischer Verwaltung beider Eltern); Geld und sämtliche ETF-Anteile gehören unwiderruflich rechtlich dem Kind!', ['Eltern können jederzeit nach Belieben einen Neuwagen davon kaufen', 'Die Erträge werden voll auf dem Steuersatz der Eltern abgerechnet', 'Das Depot löst sich automatisch am 18. Geburtstag in Luft auf'], 'Starker Steuervorteil über eigenen Grundfreibetrag + Pauschbetrag des Kindes; jedoch später ab dem 18. Lebensjahr volle Alleinverfügung durch den jungen Erwachsenen sowie Bafög-Vermögensanrechnung (> ~15.000–45.000 € je Alter)!', 'Eltern dürfen ein auf Kindername laufendes Depot nicht als verdecktes Steuersparkonto missbrauchen und Geld wieder für sich abheben (Untreue-Risiko / Finanzamt-Aberkennung)!', 'mid'],
-    ['steuern_recht_de', 'Ausländischer Broker vs. Steuereinfacher Broker in DE', 'Erklärungsaufwand in der Einkommensteuer (Anlage KAP)', 'Deutsche Broker ziehen Abgeltungsteuer, TFS und Vorabpauschale vollautomatisch ans Finanzamt ab; bei Auslandsbrokern (z. B. Interactive Brokers) muss jeder einzelne Kauf/Verkauf sowie jede komplexe Vorabpauschale eigenhändig exakt berechnet erklärt werden!', ['Ausländische Broker unterliegen für Deutsche gar keinen deutschen Steuergesetzen', 'Ausländische Broker überweisen Steuern immer automatisch nach Berlin', 'Inländische Broker verlangen pauschal 20 % Extra-Aufschlag'], 'Gerade wegen komplexer deutscher Vorabpauschalen-, TFS- und FIFO-Nachweispflichten empfiehlt sich für entspannte Langfrist-ETF-Anleger meist ausdrücklich ein deutscher steuereinfacher Broker', 'Bei steuerpflichtigen Gewinnen über Auslandsbroker besteht gesetzliche Erklärungspflicht (Anlage KAP / KAP-INV) – Vergessen gilt als Steuerhinterziehung!', 'easy'],
-    ['steuern_recht_de', 'Besteuerung von Gold-ETC (Xetra-Gold / EUWAX II)', 'Steuerfreiheit nach Spekulationsfrist', 'Gilt wegen des verbrieften Rechts auf reale physische Auslieferung von Goldbarren in DE juristisch als privates Veräußerungsgeschäft nach § 23 EStG (1 Jahr Haltefrist -> 0 % Steuer!)', ['Unterliegt trotz physischer Auslieferung exakt denselben 26,375 % Abgeltungsteuer', 'Gilt als teilfreigestellter Aktienfonds mit 30 % Steuerabzug', 'Wird erst ab 20 Jahren Haltedauer jemals verkaufbar'], 'Im Gegenzug lassen sich steuerpflichtige Verluste innerhalb der ersten 12 Monate NICHT im normalen Abgeltungsteuer-Aktien- oder Sonstige-Topf verrechnen!', 'Achtung: Ein regulärer Gold-ETC *ohne* echtes Auslieferungsrecht (reine Barausgleich-Produkte) verliert dieses 1-Jahres-Privileg komplett und zahlt volle 26,375 %!', 'mid'],
-    ['steuern_recht_de', 'Geldmarkt-ETF Steuerbehandlung (0 % TFS)', 'Steuerpflichtiger Zinscharakter', 'Da ein reiner Geldmarkt-ETF (wie DBX0AN) aus Anleihen/Geldmarktpapieren ohne echte Aktienquote besteht, erhält er 0 % Teilfreistellung — Erträge und Vorabpauschale werden voll besteuert', ['Geldmarkt-ETFs genießen als Staats-Ersatz 50 % Teilfreistellung', 'Geldmarkt-ETFs zahlen niemals Vorabpauschalen', 'Geldmarkt-ETFs zählen rechtlich wie privates Gold'], 'Trotzdem bleibt die Nettorendite eines soliden €STR-Geldmarkt-ETFs exakt vergleichbar zu regulären Tagesgeldzinsen (beide ohne Teilfreistellung mit 26,375 % besteuert)!', 'Auch beim Geldmarkt-ETF gilt selbstverständlich ganz normal der 1.000-€-/2.000-€-Sparerpauschbetrag per Freistellungsauftrag', 'easy'],
-    ['steuern_recht_de', 'Alte Bestandschutz-Anteile (Kauf vor 2009) & 100.000-€-Freibetrag', 'Historisches Steuerrecht für Langzeit-Pioniere', 'Vor dem 01.01.2009 erworbene ETFs verloren durch die Reform 2018 ab 2018 die endlose Steuerfreiheit – erhielten zum Ausgleich pro Anleger einmalig einen 100.000-€-Freibetrag für Kursgewinne ab 2018!', ['Alle vor 2009 gekauften Fonds mussten 2018 zwangsweise verkauft werden', 'Vor 2009 gekaufte Aktien verloren die Hälfte ihres Nennwerts', 'Erzielten ab 2018 automatisch den dreifachen Freibetrag pro Jahr'], 'Gewinne bis Ende 2017 blieben auf diesen Uralt-Stücken tatsächlich dauerhaft steuerfrei; erst ab dem Wertzuwachs ab 01.01.2018 frisst sich der 100.000-€-Sondertopf per Steuererklärung ab!', 'Dieser Sondertopf wird nicht von der Bank berechnet, sondern über die Steuererklärung mit dem Finanzamt verwaltet', 'pro'],
-    ['steuern_recht_de', 'Kirchensteuer-Sperrvermerk (Widerspruch BZSt)', 'Optionale Erklärung gegenüber dem Bundeszentralamt', 'Ermöglicht einen Widerspruch gegen den automatischen Datenabruf des Konfessionsmerkmals durch Banken — der Anleger muss seine Kirchensteuer auf Kapitalerträge dann aber zwingend selbst per Einkommensteuererklärung angeben!', ['Man entgeht durch den Sperrvermerk komplett rechtlich jeder Kirchensteuerzahlung', 'Die Bank verdoppelt daraufhin alle Kontoführungsgebühren', 'Das Depot wird dadurch automatisch ins Ausland verlegt'], 'Dient ausschließlich der Wahrung der religiösen Diskretion gegenüber privaten Kreditinstituten, ändert an der gesetzlichen Steuerpflicht keinen einzigen Cent!', 'Muss elektronisch bis zum 30. Juni eines Jahres beim BZSt vorliegen, damit er für das automatische Regelverfahren des Folgejahres greift', 'pro'],
-    ['steuern_recht_de', 'Sparplan-Steuer beim Todesfall (Erbschaft)', 'Rechts- und Steuerfolgen im Erbfall eines ETF-Depots', 'Ein ETF-Depot fällt zum aktuellen Todestagskurs voll in den Nachlass (Freibeträge z. B. 500.000 € Ehepartner, 400.000 € je Kind); zudem übernehmen Erben die historischen Einstandskurse des Erblassers!', ['Beim Tod des Inhabers behält der Broker alle Aktien automatisch ein', 'Erben zahlen grundsätzlich pauschal 70 % Sondersteuer auf Aktien', 'Die alten Anschaffungskurse werden zum Todesdatum komplett steuerfrei hochgesetzt'], 'Bedeutet sogenannte „Fußstapfentheorie“: Beim späteren Verkauf durch die Kinder löst der gesamte historische Kursgewinn seit Großvaters erstem Kauf regulär Abgeltungsteuer aus (Anrechnung möglicher Erbschaftsteuer teils via § 35b EStG)!', 'Wichtig: Banken müssen Finanzämtern Todestagskurse melden — eine saubere Depotvollmacht über den Tod hinaus erleichtert Erben schnelles Handeln', 'pro'],
-    ['steuern_recht_de', 'Staatliche Riester- / Rürup-Rente vs. Freies ETF-Depot', 'Vor- und Nachteile staatlich geförderter Versicherungen', 'Riester/Rürup locken mit Steuerstundung oder Zulagen, fressen dies aber erschreckend häufig durch hohe Abschluss-/Verwaltungskosten, starre Kapitalverrentungs-Pflichten und schlechte Garantiekorsetts wieder auf!', ['Riester-Verträge dürfen weltweit ohne jegliche Kosten 100 % frei weitervererbt werden', 'Im freien ETF-Depot bezahlt man gesetzlich doppelt so viele Steuern pro Euro', 'Jeder Mensch in Deutschland muss zwingend eine Rürup-Police besitzen'], 'Vor Abschluss hochkomplexer Policen immer realistische Gesamtrendite nach Versicherungskosten, Verrentungsfaktor (Langlebigkeitsannahme) und mangelnder Liquidität gegen simples freies ETF-Depot gegenrechnen!', 'Wer einmal in eine teure Basis-/Rürup-Rente eingezahlt hat, kommt in aller Regel bis zum Tod nicht mehr per Kündigung an das angesparte Kapital', 'mid'],
-    ['steuern_recht_de', 'Teilfreistellung bei *synthetischen* Swap-ETFs', 'Wichtige Klausel im § 2 InvStG', 'Entscheidend ist allein die vertragliche Satzungsbedingung im Verkaufsprospekt („fortlaufend > 50 % Aktienquote im Trägerportfolio“): Auch ein S&P-500-Swap-ETF erhält dadurch regulär volle 30 % Teilfreistellung!', ['Swap-ETFs bekommen in Deutschland rechtlich prinzipiell immer 0 % Teilfreistellung', 'Swap-ETFs müssen sofort bei Kauf 50 % Einkommensteuer abführen', 'Swap-ETFs zahlen 60 % Immobilien-Teilfreistellung'], 'Genau deshalb vereinen bestimmte S&P-500-Swaps doppelten Segen: intern 0 % US-Quellensteuer + deutschlandweit volle 30 % Abgeltungsteuer-Rabatt!', 'Für deutsche Privatanleger ist die vertraglich festgeschriebene Mindestaktienquote im Verkaufsprospekt steuerlich oft wichtiger als physisch vs. Swap', 'pro'],
-    ['steuern_recht_de', 'Steuerliche Gleichbehandlung Thesaurierer vs. Ausschütter seit 2018', 'Ende eines früheren Steuer-Chaos', 'Während vor 2018 ausländische Thesaurierer mühsame doppelte Besteuerungs-Nachweise in der Steuererklärung erforderten, behandelt die pauschale Vorabpauschale seit 2018 beide Bauarten vollkommen identisch simpel beim Broker', ['Ausschütter werden seit 2018 pauschal gar nicht mehr besteuert', 'Thesaurierer wurden 2018 in Deutschland komplett verboten', 'Ausschütter sind gesetzlich allein für Rentner zugelassen'], 'Bei exakt gleichem Index bleibt das reine Steuerniveau am Ende des Tages minimal verschieden je nach Zinsniveau (in Niedrigzinsen hat Thesaurierung oft leichten Stundungsvorteil über dem Freibetrag)', 'Ausschütter bleiben praktisch für alle, die kleinere Erträge ohne Anteilverkauf zum Ausschöpfen des 1.000-€-Freibetrags bevorzugen', 'mid'],
-    ['steuern_recht_de', 'Realisierung von Gewinnen bis 1.000 € („Steuer-Harvesting“)', 'Smarte Freibetrag-Nutzung am Jahresende', 'Wer im Dezember eines Jahres bloß 200 € Dividende erhielt und somit noch 800 € ungenutzten Sparerpauschbetrag übrig hat, kann anteilig einen ETF mit ca. 1.140 € Buchgewinn kurz verkaufen (nach 30 % TFS = ~800 €) und gleich wieder neu kaufen!', ['Man spendet am 31.12. 800 € direkt an die Depotbank', 'Man löscht sämtliche Verluste auf dem Girokonto', 'Ein illegaler Trick zum Umgehen aller Bankgesetze'], 'Hebt den Einstandskurs der neu gekauften Anteile komplett legal um diese ~1.140 € an und spart im späteren Alter direkt ca. 210 € echte Steuer — ganz ohne Strafgebühr, da es in DE kein „Wash-Sale-Verbot“ wie in den USA gibt!', 'Lohnt sich selbstverständlich erst dann, wenn Ordergebühr & Spread (z. B. 0–2 € beim Neobroker) weit unter den ~210 € Steuerersparnis liegen!', 'pro'],
-    ['steuern_recht_de', 'Broker-Insolvenz & 20.000 € Anlegerentschädigung', 'Schutzebenen bei Depotbanken', 'Deine ETFs liegen als unantastbares Sondervermögen außerhalb jeder Broker-Bilanz; nur für etwaig nicht sauber verwahrte bzw. laufende Wertpapiergeschäfte greift die gesetzliche Anlegerentschädigung (90 %, max. 20.000 €) und fürs Cashkonto 100.000 € Einlagensicherung', ['Sobald ein Neobroker pleitegeht, sind 100 % aller MSCI-World-ETFs sofort weg', 'Auf dem Cash-Verrechnungskonto gilt die unbegrenzte Sondervermögens-Garantie', 'Der Schutz gilt grundsätzlich weltweit unabhängig von Aufsicht'], 'Wichtig für Cash-Bequemlichkeit: Großbeträge (über 100.000 €) auf keinen Fall ewig auf einem unverzinsten/verzinsten *Bank-Verrechnungskonto* stapeln, sondern als ETF-Sondervermögen (z. B. Geldmarkt-ETF) schützen!', 'Bei einer Broker-Insolvenz können Positionen vorübergehend kurz blockiert sein — der laufende Notgroschen gehört daher getrennt auf ein Tagesgeldkonto', 'mid'],
-    ['steuern_recht_de', 'Börsliche Einlagen & Kontoführungsgebühren vs. Vermögensverwaltung', 'Warum 1 % laufende Robo-Advisor/Beratergebühr weh tut', 'Anders als direkte Ordergebühren lassen sich laufende prozentuale Vermögensverwaltungsgebühren (0,5 %–1,5 % p. a.) oder Depotgebühren in Deutschland NICHT von den Kapitalerträgen steuerlich als Werbungskosten absetzen!', ['Alle laufenden Berater- und Kontoentgelte erstattet das Finanzamt zu 100 % bar zurück', 'Vermögensverwaltungen befreien automatisch von jeder Abgeltungsteuer', 'In einem Bankberatungsdepot entfallen automatisch 100 % der TER'], 'Seit 2009 sind sämtliche Werbungskosten rund um Kapitalanlagen durch den Sparerpauschbetrag pauschal abgegolten (nur echte Transaktionsspesen direkt im Kauf-/Verkaufskurs reduzieren den Gewinn)', 'Eine 1-%-Verwaltungsgebühr frisst bei 7 % Marktrendite effektiv rund ein Siebtel des Bruttoertrags und mindert noch dazu nicht einmal die Bemessungsgrundlage', 'mid'],
-    ['steuern_recht_de', 'Quellensteuer-Anrechnung (ausl. Einzelaktien vs. ETF)', 'Verwaltungsersparnis durch den UCITS-Mantel', 'Während ein Privatanleger für ausländische Einzelaktien-Dividenden (z. B. Frankreich, Schweiz, Italien) über 15 % oft teure Formulare im Ausland einreichen muss, ist bei UCITS-ETFs diese Rückforderung oder Pauschalabgeltung im Fonds komplett eingepreist und erfordert ZERO Formulare', ['Bei einem ETF muss man 40 Formulare in jedem einzelnem enthaltenen Land ausfüllen', 'Einzelaktien genießen immer weltweit 0 % Quellensteuer', 'ETFs zahlen grundsätzlich doppelt so viel Quellensteuer wie Privatanleger'], 'Einer der größten stillen Alltags-Vorteile globaler Index-ETFs neben der breiten Risikostreuung', 'Bei Schweizer oder französischen Einzelaktien verschenken Privatanleger sonst ohne umständliche Erstattungsanträge oft jahrelang rund 15–20 % der Dividende', 'easy'],
-    ['steuern_recht_de', 'Anlage KAP Pflicht vs. Wahlrecht', 'Wann muss die Steuererklärung wirklich ausgefüllt werden?', 'Bei rein steuereinfachen deutschen Depotbanken besteht oft gar keine Abgabepflicht für Kapitalerträge (Pflicht aber etwa bei Auslandsbrokern ohne Steuerabzug, Verlusttopf-Übergang zwischen zwei Banken oder fehlendem KiSt-Einbehalt)', ['Jeder einzelne Besitzer eines 25-€-ETF-Sparplans ist gesetzlich zu 50 Seiten Steuererklärung monatlich verpflichtet', 'Beim Auslandsbroker muss grundsätzlich überhaupt nie etwas deklariert werden', 'Sobald ein Sparplan pausiert, fällt automatische Meldepflicht an'], 'Bei korrekter steuereinfacher Bank-Führung bleibt die jährliche Kapitalertrags-Verwaltung für viele Sparer angenehm papierlos', 'Manchmal lohnt freiwillige Abgabe via Günstigerprüfung (§ 32d Abs. 6 EStG) für Menschen mit niedrigem Gesamteinkommen wie Studierende oder Rentner', 'easy'],
-    ['steuern_recht_de', 'Teilfreistellungs-Satz bei Wechsel der Fondskategorie', 'Was passiert falls ein Mischfonds plötzlich über/unter 51 % fällt?', 'Wechselt ein Fonds durch Änderung der Anlagebedingungen dauerhaft seine steuerliche Statuskategorie (z. B. von Mischfonds auf Aktienfonds), fingiert § 22 InvStG einen steuerneutralen Tausch bzw. stichtagsgenauen Übergang!', ['Der Anleger muss sämtliche Anteile sofort an die Bank abtreten', 'Das gesamte Depot wird rückwirkend für 10 Jahre komplett neu veranlagt', 'Ein Statuswechsel ist in Deutschland überhaupt unmöglich'], 'Deshalb sichern seriöse Anbieter ihre Aktienquotengrenzen (z. B. Mindestbeteiligung 51 % im Prospekt) strikt vertraglich ab', 'Deutsche steuereinfache Broker buchen diesen fiktiven steuerneutralen Statusübergang zum Stichtag vollautomatisch auf dem Verrechnungskonto', 'pro'],
-    ['steuern_recht_de', 'Schenkung an Enkel / Kinder über ETF-Übertrag', 'Langfristige Erbschaftsteuer-Gestaltung', 'Durch steuerfreien Übertrag einzelner ETF-Anteile (ohne vorherigen Verkauf!) nutzen Großeltern/Eltern alle 10 Jahre gesetzliche Freibeträge (400.000 € Kinder / 200.000 € Enkel), ohne vorab Abgeltungsteuer beim Übertrag auszulösen!', ['Man darf Kindern grundsätzlich nur Bargeld scheinen und niemals ETF-Anteile übertragen', 'Beim Schenken von ETFs verdoppelt sich sofort die Abgeltungsteuer', 'Der Freibetrag je Kind gilt bloß ein einziges Mal im ganzen Leben (nicht alle 10 Jahre!)'], 'Unbedingt beim schenkweisen Depotübertrag „unentgeltlicher Übertrag an Dritte (Schenkung)“ korrekt ankreuzen – nicht versehentlich „entgeltlicher Übertrag“ (was als steuerpflichtiger Verkauf gilt!)!', 'Auch hierbei übernehmen beschenkte Kinder die historischen Einstandswerte („Fußstapfe“) und können mit eigenem Freibetrag oft stark steuerschonend verkaufen', 'pro'],
-    ['steuern_recht_de', 'Verlustverrechnung bei Totalausfall / Insolvenz (Wertlos-Ausbuchung)', 'Spezielle Grenze bei extremen Einzelaktien-Pleiten (§ 20 Abs. 6 EStG)', 'Bei wertlosen Ausbuchungen oder extremen Einzelverlusten bestanden in Deutschland zeitweise starre 20.000-€-Jahresdeckelungen (jüngst durch Gesetzgeber teils gelockert/aufgehoben!) – ein Risiko, dem ein breit gestreuter Welt-ETF fast nie ausgesetzt ist', ['Auch ein kompletter MSCI World wird regelmäßig jedes Jahrzehnt komplett wertlos ausgebucht', 'Jeder Verlust über 100 € ist komplett gesetzlich verboten', 'Wertlose Papiere zahlen im Tod automatisch 100 % Gewinn'], 'Wieder ein leiser Sicherheitsvorteil der Index-ETFs: Ein einzelnes Konkurs-Unternehmen verlässt einen Index automatisch lange vor totaler Nullung', 'Durch das Jahressteuergesetz 2024 wurden die umstrittenen 20.000-€-Verlustverrechnungs-Deckel erfreulich weitgehend wieder entschärft', 'pro'],
-    ['steuern_recht_de', 'Altersvorsorge-Depot (Reformen / steuerbegünstigte Diskussion DE)', 'Politischer Diskurs jenseits von Riester', 'Seit Jahren wird in Deutschland ein flexibleres, kostengünstigeres „Altersvorsorge-Depot“ nach Vorbild von US-401(k)/Roth-IRA oder schwedischem ISK diskutiert, um Aktien-ETFs ohne starre teure Garantiezwänge für die Rente attraktiver zu machen', ['Solche staatlich geförderten Konzepte wurden im Grundgesetz auf ewig verboten', 'Ein schwedisches ISK-Konto verlangt in der Regel 90 % Staatsanleihen', 'In Deutschland sind Aktienfonds im Ruhestand schon immer komplett ohne Steuern'], 'Unabhängig von politischen Debatten und etwaigen kommenden Förderkonten lohnt sich heute der unmittelbare günstige Start im flexiblen freien ETF-Depot am meisten!', 'Verlorene Zinseszinsjahre durch bloßes Abwarten auf künftige Gesetze kosten langfristig fast immer mehr als erhoffte spätere Steuerzulagen', 'easy']
-  ];
-
-  // 3. Reiche Praxis-Rechen-, Szenario- & Vergleichsaufgaben (jeweils ~30 je Kategorie -> bringt jede Kategorie präzise auf 250 = 1.000)
-  const CONTRASTS_AND_CALC = [
-    // ETF_GRUNDLAGEN (10) -> 20 + 200 + 10 = 230 -> fehlen 20
-    ['etf_grundlagen', 'mid', 'Ein Anleger kauft für 10.000 € einen MSCI-World-ETF: Variante A (physisch, TER 0,20 %, TD −0,05 %), Variante B (TER 0,50 %, TD +0,55 %). Wie viel beträgt die reale Jahresrendite-Differenz zwischen A und B?', 'Rund 0,60 Prozentpunkte pro Jahr zugunsten von Variante A (~60 € jährlich bereits auf 10.000 €)', ['Genau 0,30 Prozentpunkte pro Jahr', 'Überhaupt kein Unterschied, da die Index-Aktien identisch sind', 'Rund 5,0 Prozentpunkte pro Jahr'], 'Entscheidend am Jahresende ist immer die tatsächliche Tracking Difference (−0,05 % vs. +0,55 % ergibt 0,60 % Differenz!).'],
-    ['etf_grundlagen', 'easy', 'Was bedeutet ein „Bid 99,95 € / Ask 100,05 €“ im Live-Orderbuch eines großen Welt-ETFs konkret für deinen Kauf?', 'Man kauft sofort zu 100,05 € (Ask) und verkauft aktuell zu 99,95 € (Bid) – der Spread beträgt schmale 0,10 %', ['Man erhält 10 Cent Bonus direkt von der Börse', 'Man muss mindestens 100 Anteile zu genau 100,00 € abnehmen', 'Der ETF darf heute gar nicht verkauft werden'], 'Mit `0,10 € / 100,00 € = 0,10 %` liegt dieser Spread sehr eng – außerhalb der Xetra-Kernzeiten kann er sich mitunter auf > 0,5 % weiten.'],
-    ['etf_grundlagen', 'pro', 'Du bestellst am Sonntagabend um 21:30 Uhr an einem Wochenend-Direkthandel einen Welt-ETF für 20.000 € per „Market Order“ und der Spread liegt bei breiten 1,2 %. Wie viel unsichtbare Kosten schenkst du dem Market Maker sofort?', 'Rund 240 € unmittelbaren Einbuß-Verlust allein durch den zu breiten Wochenend-Spread', ['Exakt 0 €, weil ETF-Sparpläne gesetzlich immer gratis sind', 'Nur 2,40 € kleine Bankprovision', 'Die 240 € werden ab Montagmorgen automatisch zurückerstattet'], 'Deshalb größere Einmalkäufe immer wochentags zur liquiden Börsenkernzeit (15:30–17:30 Uhr CET) und mit schützendem Limit platzieren!'],
-    ['etf_grundlagen', 'mid', 'Warum trägt ein ausschüttender ETF am Tag nach dem Ex-Tag oft auf einmal 1,5 % bis 2 % weniger Kurs als am Vortag, obwohl der Gesamtmarkt unverändert blieb?', 'Genau in Höhe der ausgezahlten Brutto-/Nettodividende erfolgt morgens der automatische technische Dividenden-Abschlag („Ex-Dividende“)', ['Weil plötzlich über Nacht die Hälfte der Unternehmen ausgetreten ist', 'Weil der ETF geschlossen wird', 'Weil die jährliche Bank-Ordergebühr abgezogen wurde'], 'Für dein Gesamtvermögen geht dabei wirtschaftlich nichts verloren: Kursabschlag + Ausschüttung auf dem Konto entsprechen derselben Summe (abzgl. evtl. Steuer!).'],
-    ['etf_grundlagen', 'mid', 'Worauf deutet eine über ein ganzes Jahr *negative* Tracking Difference von z. B. −0,25 % bei einem S&P-500-UCITS-ETF hin?', 'Der ETF hat nach Abzug aller eigenen Gebühren dank Steuervorteilen (0 % Swap) oder Wertpapierleihe sogar um +0,25 % BESSER abgeschnitten als sein Net-Return-Benchmark!', ['Der ETF hat sich um −0,25 % verrechnet und muss Strafe zahlen', 'Anleger verloren 0,25 % mehr Geld als beim Vergleichsindex', 'Der Fonds ist akut von Schließung bedroht'], 'Achtung bei der Vorzeichenkonvention mancher Portale: Tracking Difference als `(Indexrendite − ETF-Rendite)` bedeutet bei negativem Wert eine echte *Outperformance*!'],
-    ['etf_grundlagen', 'easy', 'Was passiert beim Kauf eines „Acc“-ETFs mit einer eigentlich anfallenden Unternehmensdividende von 2 % auf das Fondsvermögen?', 'Sie bleibt vollständig im Fonds und kauft sofort intern automatisch weitere Aktien des Index hinzu, wodurch der Kurs je Anteil langfristig schneller wächst', ['Sie wird einfach vom ETF-Anbieter als Gewinn einbehalten', 'Sie verpufft komplett an die jeweiligen Börsen', 'Sie landet einmal jährlich als Einkaufsgutschein per Post'], 'Genau deshalb steigt ein thesaurierender MSCI-World-ETF über zehn Jahre hinweg rein kursmäßig um rund ~20–25 % stärker als ein optisch sonst gleicher Ausschütter!'],
-    ['etf_grundlagen', 'pro', 'Welches konkrete Produkt wählt ein Anleger richtigerweise, falls er einen möglichst hohen *physischen* Schutz gegen ein theoretisches Bank-Swap-Risiko im Welt-ETF wünscht?', 'Einen voll oder optimiert *physisch replizierenden* UCITS-ETF ohne Swap-Derivate (z. B. iShares Core MSCI World oder Vanguard FTSE All-World)', ['Einen dreifach gehebelten synthetischen Tages-ETF', 'Einen reinen Zertifikate-Basket einer Einzelbank', 'Einen unbesicherten Bitcoin-ETN aus Übersee'], 'Auch wenn UCITS-Swaps durch strenge Übersicherung (10 % Deckel, meist 100+ % Aktienkorb) ebenfalls extrem sicher sind, fühlen sich viele Anleger mit physischen Anteilen noch wohler.'],
-    ['etf_grundlagen', 'mid', 'Weshalb zeigen zwei fast identische MSCI-World-ETFs desselben Anbieters (einer seit 2009 aufgelegt, einer seit 2022) oft komplett verschiedene Anteils-Stückpreise von z. B. „92 €“ vs. „11 €“ — welcher ist besser?', 'Der bloße optische Stückpreis eines Anteils ist komplett irrelevant für Rendite und Kosten! Entscheidend allein sind prozentuale Entwicklung, TD, Liquidität und Replikation', ['Der 11-€-ETF besitzt automatisch die neunfache künftige Wachstumsrate', 'Der 92-€-ETF steht kurz vor einem Zwangs-Split auf null', 'Immer strikt nur den billigeren Euro-Stückpreis wählen'], 'Ob du mit 1.000 € nun 10 Anteile zu 100 € kaufst oder 100 Anteile zu 10 €: Ein +10-%-Marktanstieg bringt beides Mal exakt dieselben +100 € Gewinn!'],
-    ['etf_grundlagen', 'easy', 'Welcher praktische Vorteil kennzeichnet ETFs im Gegensatz zu klassischen offenen Hausbank-Investmentfonds bei einem dringenden unvorhergesehenen Verkauf?', 'ETFs werden zu Börsenzeiten binnen Sekunden genau zum aktuellen Marktpreis ausgeführt – alte Hausbank-Fonds rechnen oft erst nach Tagen zum unbekannten künftigen Schlusskurs („Forward Pricing“) ab', ['ETFs lassen sich nur einmal pro Quartal kündigen', 'Hausbank-Fonds zahlen immer einen sofortigen 5-%-Ausstiegsbonus', 'ETFs haben eine Kündigungsfrist von drei Monaten'], 'Auch lästige 5 % Ausgabeaufschläge klassischer Filialfonds entfallen im freien Börsen-ETF komplett.'],
-    ['etf_grundlagen', 'pro', 'Worin unterscheiden sich „Funded Swap“ und „Unfunded Swap“ juristisch bei synthetischen UCITS-ETFs?', 'Beim weit verbreiteten Unfunded Swap besitzt der ETF sein Sicherheiten-Aktien-Portfolio selbst rechtlich im eigenen Sondervermögen; beim Funded Swap liegt das Geld beim Kontrahenten mit Verpfändung auf Drittkonten', ['Beim Unfunded Swap gibt es gar keine Aktien im Fonds', 'Beide sind ausschließlich für Immobilien in Asien gedacht', 'Funded Swap darf kein Kontrahentenlimit haben'], 'Deswegen bevorzugen viele seriöse europäische ETF-Anbieter im Swap-Segment heute die transparente Unfunded-Swap-Struktur im eigenen Sondervermögen.'],
-
-    // INDIZES_STRATEGIE (10)
-    ['indizes_strategie', 'mid', 'Welche fatale Überschneidung entstünde unbemerkt, falls ein Anleger je 50 % in einen „MSCI World ETF“ und 50 % in einen „S&P 500 ETF“ investiert?', 'Da der MSCI World bereits zu ~70 % aus den USA besteht, läge der echte gesamte US-Anteil plötzlich bei extremen ~85 % (Apple/Microsoft/Nvidia massiv übergewichtet!)', ['Der US-Anteil sänke auf gesunde 35 % ab', 'Alle europäischen Unternehmen bekämen automatisch das doppelte Gewicht', 'Die Abgeltungsteuer entfiele komplett'], 'Ein Klassiker vieler Einsteiger-Depots („Sektoren-/Länder-Dopplung“): Statt mehr Diversifikation durch zwei ETFs sinkt hier die geografische Streuung oft drastisch!'],
-    ['indizes_strategie', 'mid', 'Was entgeht einem Investor, der versucht, einen MSCI World (23 Industrieländer) versehentlich mit einem **FTSE** Emerging Markets ETF zu kombinieren?', 'Beide Indizes lassen **Südkorea und Polen** komplett unter den Tisch fallen (da MSCI beide bei EM verortet, FTSE hingegen bereits bei Developed Markets)!', ['Man kauft versehentlich viermal mehr südkoreanische Aktien als gewollt', 'Es fehlen komplett alle Unternehmen in Japan und Großbritannien', 'Es fehlen sämtliche US-Technologiefirmen'], 'Goldene Mischregel: Entweder konsequent komplett innerhalb derselben Index-Familie bleiben (MSCI + MSCI bzw. FTSE + FTSE) oder direkt ein All-in-One-Produkt wählen!'],
-    ['indizes_strategie', 'easy', 'Wie verändert eine Gewichtungserhöhung von Schwellenländern (z. B. von ~10 % ACWI-Standard auf 30 % im 70/30-Portfolio) das politische und wirtschaftliche Risikoprofil des Depots?', 'Höheres Engagement in dynamischen Wachstumsmärkten (Indien, Taiwan, Brasilien, China), aber gleichzeitig höheres politisches Eingriffs-, Rechts- und Währungsrisiko', ['Schwellenländer besitzen immer die geringeren Kursschwankungen als die Schweiz', 'Das Gesamtrisiko fällt garantiert auf exakt 0 %', 'Man investiert automatisch zu 90 % in amerikanische Tech-Werte'], 'Beide Varianten sind legitim – man sollte aber bewusst verstehen, dass 70/30 bereits eine aktive Abweichung vom globalen Börsen-Gleichgewicht darstellt.'],
-    ['indizes_strategie', 'pro', 'Weshalb enthält ein reiner „MSCI World Small Cap ETF“ überhaupt keine großen Konzerne wie Nvidia, Apple oder SAP – selbst wenn eine kleine Aktie stark im Kurs wächst?', 'Sobald ein wachsendes Small-Cap-Unternehmen eine bestimmte Marktkapitalisierungsschwelle überschreitet, steigt es im nächsten Index-Review ordentlich in den Mid/Large-Cap-Bereich des normalen MSCI World auf', ['Weil erfolgreiche Firmen sofort aus dem Aktienmarkt ausgeschlossen werden', 'Weil Small Caps gar keine Börsennotierung haben', 'Weil jede Aktie nach drei Jahren zwangsweise absteigen muss'], 'Bei einem Gesamt-Fonds (wie MSCI ACWI IMI) bleibt der künftige Aufsteiger sogar komplett nahtlos ohne Umschichten im selben Depot!'],
-    ['indizes_strategie', 'mid', 'Warum hinkt die häufig gehörte Kritik „Ein Welt-ETF kauft blind viel zu viel teure US-Aktien, man verpasst Europa“ bei reinen Konzernumsätzen oft etwas hinterher?', 'Blickt man nicht allein auf den juristischen Börsensitz, sondern auf echte geografische Umsätze von Apple, Microsoft oder Coca-Cola (und umgekehrt bei Nestlé/ASML/SAP), erwirtschaftet der MSCI World fast rund 45–50 % seiner echten Gewinne bereits außerhalb Nordamerikas!', ['Weil amerikanische Unternehmen weltweit verboten sind außerhalb der USA zu verkaufen', 'Weil der Euro zehnmal stärker ist als der US-Dollar', 'Weil europäische Unternehmen keinerlei Exporte betreiben'], 'Global agierende Multis funktionieren längst als übernationale Welt-Gewinngeneratoren statt als bloße nationale Binnenfirmen.'],
-    ['indizes_strategie', 'mid', 'Welche wichtige Gefahr lauert bei einem hoch angepriesenen „Dividenden-Aristokraten“- oder „High-Dividend-Yield“-ETF für sehr junge Sparer im Vermögensaufbau?', 'Durch konsequenten Fokus allein auf alte ausschüttende Sektoren (Tabak, Öl, Telekom, Banken) verpasst man wachstumsstarke Innovatoren, zahlt früh unnötig laufend Steuern oberhalb 1.000 € und erzielt nicht selten geringere Gesamtrendite!', ['Solche Unternehmen gehen nach genau fünf Jahren per Gesetz pleite', 'Solche ETFs können unter keinen Umständen fallen', 'Man bekommt ab dem 40. Lebensjahr gar keine Dividenden mehr'], 'Entscheidend über 30 Jahre bleibt immer allein der Gesamtertrag (**Total Return** = Kurszuwachs plus Dividenden nach Steuer), nicht die optische Ausschüttungshöhe!'],
-    ['indizes_strategie', 'easy', 'Welchen einfachen Test empfiehlt die Finanzwissenschaft, um bei einem neu gefundenen Nischen-ETF sofort die Größe der Risikostreuung einzuschätzen?', 'Blick in das offizielle Factsheet auf „Anzahl der Positionen“ UND „Gewicht der Top-10-Positionen“ (bei < 30 Titeln und > 60 % Top-10-Anteil liegt hohes Konzentrationsrisiko vor!)', ['Prüfen, wie bunt die Werbe-Webseite gestaltet ist', 'Zählen der Buchstaben in der zwölfstelligen ISIN', 'Ablesen des Stückpreises oberhalb von 500 €'], 'Im breiten FTSE All-World liegt das gemeinsame Gewicht aller Top-10-Giganten der Welt meist bloß bei rund ~20–24 % bei knapp 4.000 Positionen!'],
-    ['indizes_strategie', 'pro', 'Weshalb korrelieren langlaufende (15–30 Jahre) erstklassige Staatsanleihen bei einem plötzlichen *Inflations- und Zinsschock* (wie 2022) negativ gegen die klassische Annahme „Anleihen stützen immer im Crash“?', 'Stark anziehende Leitzinsen zur Inflationsbekämpfung lassen sowohl Aktienbewertungen sinken ALS AUCH lange Anleihen im Gleichschritt massiv abstürzen (−20 % bis −35 %!)', ['Weil alle Regierungen 2022 plötzlich ihre Währungen abgeschafft haben', 'Weil lange Anleihen bei Zinsanstieg um +30 % steigen müssten', 'Weil Anleihen-ETFs nur an zwei Tagen im Jahr handelbar sind'], 'Genau deshalb bevorzugen viele Privatanleger als schlichten Sicherheitsanker in Deutschland lieber ultrakurze Zinsläufer (0–1 Jahr / Geldmarkt / Tagesgeld) ohne Zinsänderungsrisiko!'],
-    ['indizes_strategie', 'mid', 'Was unterscheidet das reine Aktien-Cluster „MSCI World Momentum“ in hektischen Bärenmarkt-Wendepunkten gefährlich vom breiten MSCI World?', 'Nach einem langen Crash hält der Momentum-ETF zunächst vorübergehend sehr viel defensive Gesundheit/Energie und verpasst plötzliche starke Tech-/Zykliker-Rebounds („Momentum-Whipsaw“) kurzzeitig', ['Der Momentum-ETF schaltet an schlechten Tagen den Handel komplett aus', 'Er hat überhaupt keine Transaktionskosten mehr', 'Er verdoppelt jedes Mal den Anteil von Gold'], 'Umgekehrt reitet er in ruhigen langen Trendphasen starke Branchenwellen ausgesprochen lange sehr effizient mit.'],
-    ['indizes_strategie', 'easy', 'Wie nennt man eine schlichte, von Nobelpreisträgern und John Bogle empfohlene Struktur, die für 95 % aller privaten Langfristsparer nahezu das komplette Optimum ohne Berater liefert?', 'Marktgewichtetes 1- oder 2-ETF-Weltportfolio plus schwankungsfreier sicherer Cash-/Zinsbaustein exakt passend zum eigenen Nervenkostüm', ['Tägliches Handeln von mindestens 20 Einzeloptionen nach Börsenticker', 'Die vollständige Konzentration auf genau eine einzige Wasserstoffaktie', 'Aufteilung des Vermögens auf 15 teure Bausparverträge'], 'Einfachheit, extrem tiefe Gesamtkosten (~0,15 %), weltweite Streuung über Tausende Konzerne und maximale emotionale Durchhaltefähigkeit schlagen fast jedes komplexe Konstrukt!'],
-
-    // VERMOEGENSAUFBAU (10)
-    ['vermoegensaufbau', 'mid', 'Ein Sparer legt 25 Jahre lang jeden Monat stur 400 € in einen Welt-ETF (Einzahlung insgesamt 120.000 €) bei ~7 % p. a. Durchschnittsrendite. Wie hoch liegt der ungefähre Depotendwert vor Steuern?', 'Rund 324.000 € (fast zwe Drittel davon – über 200.000 €! – stammen rein aus Zinseszinsen)', ['Knapp 138.000 €', 'Exakt 180.000 €', 'Über 1,5 Millionen €'], 'Durch 300 monatliche Sparraten entfaltet der lange exponentielle Zinseszinseffekt hinten raus enorme Kraft!'],
-    ['vermoegensaufbau', 'easy', 'Nach der berühmten 72er-Regel: Wie lange dauert es grob, bis sich ein heute investierter Einmalbetrag von 20.000 € bei 6 % jährlicher Nettorendite auf 40.000 € verdoppelt?', 'Rund 12 Jahre (`72 / 6 = 12`)', ['Nur 4 Jahre', 'Exakt 24 Jahre', 'Rund 36 Jahre'], 'Und lässt man diese 40.000 € einfach weitere 12 Jahre liegen (gesamt 24 Jahre bei 6 %), wachsen sie dank Zinseszins schon weiter auf ~80.000 €!'],
-    ['vermoegensaufbau', 'mid', 'Vergleich zweier Sparer bei 7 % p. a.: Anna spart ab Alter 25 bloß 10 Jahre lang 300 €/Monat (36.000 € Gesamt-Einzahlung) und stoppt dann komplett bis 65; Ben beginnt erst mit 35, zahlt aber 30 volle Jahre 300 €/Monat (108.000 € Einzahlung) bis 65. Wer hat mit 65 mehr Geld?', 'Anna liegt mit ~395.000 € noch immer deutlich VOR Ben (~366.000 €), obwohl sie nur ein Drittel so viel Geld eingezahlt hat!', ['Ben gewinnt zwingend dreifach haushoch mit über 1 Million €', 'Beide stehen punktgenau bis auf einen Euro gleich', 'Anna verliert ihr gesamtes Kapital durch die Pause'], 'Einer der beeindruckendsten Beweise für frühes Starten: Zehn verlorene frühe Startjahre kosten später das Dreifache an eigener Ersparnis!'],
-    ['vermoegensaufbau', 'pro', 'Warum schrumpfen reale Aktienmärkte selbst in extrem schweren Wirtschaftskrisen nicht dauerhaft auf null, sondern erholten sich historisch aus jedem Bärenmarkt langfristig wieder auf neue Höchststände?', 'Weil im Index kein totes statisches Papier liegt, sondern Hunderte reale produktive Firmen weltweit laufend auf Probleme reagieren, echte Güter/Software verkaufen, schwach performende Pleitekandidaten aus dem Index ausscheiden und neue starke Unternehmen aufrücken', ['Weil die Notenbanken jedem Privataktionär immer neue Geldscheine überreichen', 'Weil eine Weltregierung alle Aktienkurse jeden Montag um 0,1 % nach oben schraubt', 'Weil Unternehmensgewinne gesetzlich verboten sind zu sinken'], 'Ein einzelnes Unternehmen kann auf ewig sterben (Kodak, Wirecard, Lehman) – globale menschliche Produktivität im ganzen Weltindex passt sich über Jahrzehnte immer wieder neu an!'],
-    ['vermoegensaufbau', 'mid', 'Welches Ergebnis liefert ein reales Rebalancing-Beispiel: Ziel 80 % Aktien-ETF / 20 % Tagesgeld bei 100.000 €. Nach einem starken Boom stehen Aktien bei 108.000 € und Cash bei 20.000 € (= 128.000 € gesamt). Was muss beim Rebalancing umgeschichtet werden?', 'Ziel-Aktien (80 % von 128k) = 102.400 € → es werden 5.600 € aus dem Aktien-ETF gesichert (bzw. per Sparpläne auf Cash aufgestockt) auf 25.600 € Sicherheitsbaustein', ['Es müssen sofort 50.000 € zusätzlich auf Kredit in Aktien gesteckt werden', 'Alle 20.000 € Tagesgeld wandern sofort restlos in Aktien', 'Man löst das komplette Depot zur Strafe vollständig auf'], 'Genau so nimmt der Anleger systematisch leicht hohe Gewinne mit und lädt das Sicherheitspolster fürs nächste mögliche Tief rechtzeitig wieder nach!'],
-    ['vermoegensaufbau', 'easy', 'Wie wirkt sich eine Erhöhung der eigenen monatlichen ETF-Sparrate von 250 € auf 500 € auf die Anlagedauer aus, um das erste große Ziel von 100.000 € (bei 7 % p. a.) zu knacken?', 'Die Wartezeit verkürzt sich drastisch von rund ~17,5 Jahren auf rund ~11 Jahre!', ['Nur um läppische sechs Monate früher', 'Sie verlängert sich auf über 25 Jahre', 'Auf genau exakt zwei Jahre'], 'Darum schlägt aktives Steuern von Karriere & Sparrate zu Beginn jedes noch so ausgefeilte Prozent-Optimieren in kleinem Maßstab!'],
-    ['vermoegensaufbau', 'pro', 'Ein ETF-Entnehmer im Ruhestand startet mit 600.000 € (80/20) und möchte anfangs sicher mit 3,5 % p. a. starten. Wie hoch fällt die jährliche bzw. monatliche Brutto-Startentnahme aus?', '21.000 € pro Jahr bzw. rund 1.750 € pro Monat (brutto vor etwaiger Steuer auf den enthaltenen Gewinnanteil)', ['Exakt 4.200 € jeden Monat', 'Nur 350 € pro Monat', 'Exakt 35.000 € jährlich'], 'Da bei Verkäufen nicht der komplette Auszahlungsbetrag (Kapitalanteil!) besteuert wird, sondern bloß der reine *Gewinnanteil* mit ~18,46 % Abgeltungsteuer, verbleibt meist extrem viel Netto übrig!'],
-    ['vermoegensaufbau', 'mid', 'Du hältst einen Welt-ETF für 50.000 €, der unglücklicherweise in einer globalen Krise um −40 % fällt (auf 30.000 €). Wie viel prozentuale Erholung ab dem neuen Tiefpunkt braucht es exakt wieder zurück bis auf 50.000 €?', '+66,7 % Aufschwung (`50.000 / 30.000 = 1,667`)', ['Exakt wieder +40,0 %', 'Nur +20,0 %', 'Exakt +100,0 %'], 'Die bekannte „Verlust-Asymmetrie“ beachten: −20 % braucht +25 %, −40 % braucht +66,7 %, −50 % bereits volle +100 %!'],
-    ['vermoegensaufbau', 'easy', 'Wieso erzielt das einfache automatisierte Besparen per Dauerauftrag am Monatsanfang direkt nach Gehaltseingang deutlich höhere Durchhaltequoten als „am Monatsende das Übriggebliebene anlegen“?', 'Nach dem Prinzip „Pay yourself first“ wandert die Sparrate zuerst sicher ins Vermögen – am Monatsende verfließt vermeintlich Übriggebliebenes psychologisch leicht in Klein-Konsum', ['Weil ETFs am Monatsersten immer 10 % künstlich verbilligt sind', 'Weil Überweisungen ab dem 25. eines Monats technisch verboten sind', 'Weil sonst die Krankenkasse das Gehalt komplett pfändet'], 'Kombiniere einen realistischen festen Sparbetrag am Monatsersten mit klarem Spaßbudget – dann wächst dein Wohlstand ohne ständiges Verzichtsgefühl im Alltag!'],
-    ['vermoegensaufbau', 'mid', 'Was schützt im Falle einer plötzlich entdeckten verlockenden „15-%-Festrendite-Anlage“ im Internet vor dem Verlust aller ETF-Ersparnisse?', 'Das Eiserne Dreieck / Unmöglichkeitsgesetz der Geldanlage: Dauerhaft deutlich höhere Rendite als der globale Aktienmarkt bei null Risiko gibt es nirgends – extrem hohe Zinsversprechen deuten fast immer auf extreme Risiken oder Betrug hin!', ['Das Abfragen bei einem völlig unbekannten Chat-Forum auf Telegram', 'Das schnelle Überweisen innerhalb von 5 Minuten vor Ablauf des Timers', 'Das Verpfänden des eigenen Hauses für einen schnellen Bonus'], 'Breite globale ETFs schöpfen bereits praktisch die komplette faire Durchschnittsrendite der produktiven Weltwirtschaft ab!'],
-
-    // STEUERN_RECHT_DE (10)
-    ['steuern_recht_de', 'mid', 'Ein Anleger verkauft einen lang gehaltenen Aktien-ETF mit 10.000 € reinem Kursgewinn (Freibetrag bereits aufgebraucht, keine Kirchensteuer). Wie hoch ist exakt die fällige deutsche Steuer inklusive SolZ?', 'Rund 1.846,25 € (`10.000 € × 70 % nach Teilfreistellung × 26,375 %`), sodass über 8.153 € Gewinn netto bleiben!', ['Exakt 2.637,50 €', 'Genau 3.000,00 €', 'Exakt 0 €, da Kursgewinne ab einem Jahr Haltefrist steuerfrei sind'], 'Durch die 30 % Aktienfonds-Teilfreistellung sparst du gegenüber Einzelaktien beim exakt gleichen 10.000-€-Gewinn mal eben über 791 € Steuer ein!'],
-    ['steuern_recht_de', 'mid', 'Ein thesaurierender Aktien-ETF (Wert am 01.01.: 50.000 €; Jahresgewinn +6.000 €; Basiszins 2,29 %) unterliegt der Vorabpauschale. Wie viel wird ungefähr auf deinen Sparerpauschbetrag angerechnet?', '`50.000 € × 2,29 % × 0,7 = 801,50 €` Basisertrag → abzüglich 30 % Teilfreistellung rund `561,05 €` Anrechnung auf deinen 1.000-€-Freibetrag (effektiv 0 € Steuer bei gültigem FSA!)', ['Es werden über 5.600 € sofort vom Konto abgezogen', 'Genau 2.290 € bare Steuerzahlung ans Finanzamt', 'Exakt 15.000 € Anrechnung auf die Einkommensteuer'], 'Selbst bei einem bereits beachtlichen 50.000-€-Aktien-Depot deckt der reguläre 1.000-€-Freibetrag die Vorabpauschale damit immer noch locker vollständig ab!'],
-    ['steuern_recht_de', 'pro', 'Du verkaufst Anfang Januar 2026 einen Aktien-ETF komplett mit +4.000 € Gesamtkursgewinn, auf den du im Januar 2024 und 2025 bereits zusammen 600 € steuerpflichtige Vorabpauschale nach Teilfreistellung versteuert hast. Welcher Gewinn wird nun noch versteuert?', 'Die Bank zieht die 600 € bereits versteuerte Vorabpauschale voll ab, sodass effektiv statt `2.800 €` nach Teilfreistellung nur noch `2.200 €` abschließend besteuert werden!', ['Die 4.000 € werden komplett voll ein zweites Mal besteuert', 'Die vorab bezahlten 600 € verfallen ersatzlos als Verlust', 'Die gesamte Auszahlung wird nun komplett steuerfrei'], 'Wichtig beim Depotwechsel per Übertrag: Achte stets auf dem finalen Beleg darauf, ob alle kumulierten Vorabpauschalen via TaxBox korrekt zur neuen Bank mit übertragen wurden!'],
-    ['steuern_recht_de', 'easy', 'Eine Einzelperson hat in diesem Jahr bei Broker A 600 € Zinsen und bei Broker B 700 € ETF-Ausschüttungen (nach Teilfreistellung 490 € steuerpflichtig). Passt das exakt auf den regulären 1.000-€-Freibetrag?', 'Fast: `600 € + 490 € = 1.090 €` steuerpflichtige Erträge – oberhalb von 1.000 € werden also bloß auf die überschießenden 90 € rund 23,74 € Steuer fällig', ['Nein, alle 1.300 € überschreiten die 1.000 € komplett und werden voll besteuert', 'Ja, da alle Beträge genau auf 800 € abgerundet werden', 'Man darf in einem Jahr nicht bei zwei Banken zugleich handeln'], 'Dank der 30 % Aktienfonds-Teilfreistellung schöpft man erst mit brutto 1.428 € reinen Aktien-ETF-Gewinnen den kompletten 1.000-€-Sparerpauschbetrag völlig aus!'],
-    ['steuern_recht_de', 'mid', 'Welche fatale Verrechnungslücke bemerkt ein Anleger im Dezember oft schmerzhaft zu spät: Er hat 5.000 € *Einzelaktien*-Verlust im Depot A und zugleich 5.000 € *MSCI-World-ETF*-Gewinn im Depot B verkauft?', 'Die 5.000 € Verlust aus der Einzelaktie sind streng im „Aktienverlusttopf“ gesperrt und dürfen nach deutschem Gesetz NICHT mit seinem 5.000-€-ETF-Gewinn verrechnet werden!', ['Er erhält trotzdem sofort alle Steuern rückerstattet', 'Das Finanzamt zahlt ihm automatisch 2.500 € Ausgleichsbonus', 'Beide Beträge werden mit 50 % Zinsen verzinst'], 'Der Topf „Aktien“ darf ausschließlich gegen positive *Aktiengewinne* (nicht gegen ETFs oder Dividenden!) ausgeglichen werden.'],
-    ['steuern_recht_de', 'mid', 'Warum zahlen Anleger in der ersten Dezemberwoche bei einem gemischten ETF-Depot (Freibetrag noch ungenutzt mit 700 € Rest) keine Schenkung an den Staat, wenn sie kurz anteilig Gewinne durch Verkauf + Neukauf realisieren?', 'Durch das steuerliche Ausschöpfen des Jahres-Freibetrags werden zukünftige Verkaufskosten (Basiswert wird angehoben) steuerlich dauerhaft „eingelockt“ – ungenutzter Freibetrag verfällt sonst am 31.12. für immer!', ['Weil der Broker ab 1.000 € sonst das komplette Depot sperrt', 'Weil im Dezember alle Kurse 20 % höher stehen als im Januar', 'Weil alte Käufe sonst automatisch ans Finanzamt übergeben werden'], 'Auf Dauer kann solch sauberes Freibetrags-Harvesting im Aufbau leicht über 250 € reale Endsteuer Jahr für Jahr dauerhaft einsparen!'],
-    ['steuern_recht_de', 'easy', 'Was bedeutet ein fehlender Freistellungsauftrag bei einem 100 % thesaurierenden ETF in einem starken Börsenjahr mit positivem Basiszins für dein Bank-Girokonto im Januar?', 'Die Bank muss mangels Freistellungsauftrag echte Euro für die fällige Vorabpauschale vom zugehörigen Verrechnungskonto abbuchen – ist dort null Euro drauf, entsteht sonst teurer Überziehungs-Dispozins oder Steuermeldung!', ['Nichts, die Vorabpauschale fällt ohne Freistellungsauftrag komplett aus', 'Die Bank schließt das Depot nach genau drei Tagen', 'Der ETF schaltet sich auf 0 € Rendite zurück'], 'Daher einfach rechtzeitig den kostenlosen Freistellungsauftrag online im Broker-Menü einrichten bzw. im Januar immer etwas Kleingeld auf dem Verrechnungskonto belassen!'],
-    ['steuern_recht_de', 'pro', 'Zwei Freunde starten jeweils mit 300.000 € in einen S&P-500-ETF: Paul wählt einen iShares physisch (Irland), Mia einen iShares/Invesco Swap-ETF. Worin hat Mias Swap-Konstrukt meist die Nase knapp vorn?', 'Durch Section 871(m) fällt bei Mias Swap auf den breiten US-Index S&P 500 intern 0 % US-Quellensteuer an (vs. 15 % bei Pauls irischem physischem Fonds), wodurch Mia oft ~0,20 %–0,25 % p. a. mehr Rendite bei exakt gleichen 30 % Teilfreistellung behält!', ['Paul darf sein Geld erst ab 70 Jahren jemals entnehmen', 'Mia zahlt beim Verkauf in Deutschland prinzipiell 0 % Abgeltungsteuer', 'Paul verliert pro Jahr 5 % durch schlechte Währungsrechnung'], 'Für sehr USA-zentrierte Portfolios ist der Swap-S&P-500 daher historisch ein faszinierender legaler Steuer-Effizienz-Sieger!'],
-    ['steuern_recht_de', 'mid', 'Welche versteckte Kostenschwelle gilt beim Verkauf von einem ETF mit 50.000 € Einzahlung + 50.000 € Kursgewinn (gesamt 100.000 €) bei Teil-Entnahme von genau 10.000 € fürs nächste Jahr?', 'Da nur die Hälfte der verkauften 10.000 € reiner Kursgewinn (= 5.000 € Gewinn) ist, fällt selbst ohne Pauschbetrag bloß Steuer auf 5.000 € Gewinn an (`~923 €` statt auf volle 10.000 €!), also bleiben rund ~9.077 € bar netto übrig!', ['Es werden sofort auf alle 10.000 € über 2.637 € Steuer abgezogen', 'Auf den reinen Einzahlungsanteil zahlt man erneut volle Einkommensteuer', 'Die volle 10.000-€-Entnahme wird im Folgejahr von der Rente gestrichen'], 'Oft überschätzen Sparer die spätere Steuerlast beim Entsparen massiv – denn versteuert wird stets nur der reale *Gewinnanteil*, niemals das zuvor selbst eingezahlte Netto-Grundkapital!'],
-    ['steuern_recht_de', 'pro', 'Du ziehst in sieben Jahren beruflich in die Schweiz um und hältst dann 620.000 € Einzahlungskosten (Marktwert 950.000 €) in genau EINEM einzigen MSCI-World-ETF (ISIN IE00B4L5Y983). Welcher § 19 InvStG-Stolperstein droht seit 2025?', 'Da die historischen Anschaffungskosten dieser *einzelnen Fonds-ISIN* über der neuen 500.000-€-Grenze liegen, greift beim Wegzug aus Deutschland sofortige Wegzugsbesteuerung auf die 330.000 € Buchgewinne – verteilt auf 2–3 verschiedene ISINs (je < 500k€ Einstand!) bliebe man unterhalb dieser Fonds-Schwelle!', ['Es droht keinerlei Auswirkung bei Privatpersonen auf der ganzen Welt', 'Jeder Auszug zwingt ab 1 € zur Abgabe des Reisepasses', 'Man zahlt sofort 50 % Strafe auf die gesamten 950.000 € in die Schweiz'], 'Ein brandaktuelles Profi-Wissen ab 2025: Wer langfristig große Summen aufbaut und internationale Mobilität nicht ausschließt, hält einzelne Fonds-ISINs geschickt rechtzeitig unterhalb von 500.000 € Anschaffungswert!']
-  ];
-
-  // Hilfsfunktionen & Sammlung
-  const questions = [];
-  const seenQ = new Set();
-  const catCounts = { etf_grundlagen: 0, indizes_strategie: 0, vermoegensaufbau: 0, steuern_recht_de: 0 };
-
-  function pushQ(cat, diff, q, correct, wrongs, exp) {
-    const cleanQ = String(q).trim();
-    if (seenQ.has(cleanQ)) return false;
-    const cleanCorrect = String(correct).trim();
-    const uniqWrongs = [];
-    for (const w of wrongs) {
-      const cw = String(w || '').trim();
-      if (cw && cw !== cleanCorrect && !uniqWrongs.includes(cw)) {
-        uniqWrongs.push(cw);
-      }
-      if (uniqWrongs.length === 3) break;
-    }
-    if (uniqWrongs.length < 3) return false;
-    seenQ.add(cleanQ);
-    questions.push({
-      id: questions.length + 1,
-      cat,
-      diff,
-      q: cleanQ,
-      a: [cleanCorrect, uniqWrongs[0], uniqWrongs[1], uniqWrongs[2]],
-      exp: String(exp).trim()
-    });
-    catCounts[cat] = (catCounts[cat] || 0) + 1;
-    return true;
-  }
-
-  // Schritt A: Handkuratierte CORE-Fragen (80)
-  for (const c of CORE) {
-    pushQ(c[0], c[1], c[2], c[3], c[4], c[5]);
-  }
-
-  // Schritt B: Pro Begriff/Instrument in CONCEPTS_DB je 5 präzise Fragen (160 * 5 = 800)
-  const DB_BY_CAT = {
-    etf_grundlagen: CONCEPTS_DB.filter(x => x[0] === 'etf_grundlagen'),
-    indizes_strategie: CONCEPTS_DB.filter(x => x[0] === 'indizes_strategie'),
-    vermoegensaufbau: CONCEPTS_DB.filter(x => x[0] === 'vermoegensaufbau'),
-    steuern_recht_de: CONCEPTS_DB.filter(x => x[0] === 'steuern_recht_de')
-  };
-
-  for (let i = 0; i < CONCEPTS_DB.length; i++) {
-    const [cat, term, domainLbl, def, distractors, benefitRule, praxisDetail, diff] = CONCEPTS_DB[i];
-    const sameCat = DB_BY_CAT[cat].filter(x => x[1] !== term);
-    const pickCatOther = (fieldIdx, disallow, seed) => {
-      const out = [];
-      for (const item of seededShuffle(sameCat, seed)) {
-        const v = item[fieldIdx];
-        if (v && v !== disallow && !out.includes(v)) out.push(v);
-        if (out.length === 3) break;
-      }
-      return out;
-    };
-
-    const expStr = `${term} (${domainLbl}): ${def}. Kernwirkung: ${benefitRule}. Praxis-Hinweis: ${praxisDetail}.`;
-
-    // 1. Was beschreibt Term?
-    pushQ(
-      cat, diff,
-      `Was beschreibt der Fachbegriff bzw. das Konzept „${term}“ im Kontext des passiven Investierens?`,
-      def, distractors, expStr
-    );
-
-    // 2. Umgekehrt: Term per exakter Definition erkennen
-    pushQ(
-      cat, 'mid',
-      `Welcher Begriff oder welche Regelung wird präzise wie folgt beschrieben: „${def}“?`,
-      term, pickCatOther(1, term, i * 19 + 2), expStr
-    );
-
-    // 3. Einordnungs-Kategorie / Domain
-    pushQ(
-      cat, 'easy',
-      `In welchen sachlichen Themenbereich gehört „${term}“ bei der ETF-Anlage?`,
-      domainLbl, pickCatOther(2, domainLbl, i * 19 + 3), expStr
-    );
-
-    // 4. Nutzen / Auswirkung / Regelinhalt
-    pushQ(
-      cat, 'mid',
-      `Welche wesentliche praktische Wirkung oder Regelfolge hat „${term}“ für Anleger?`,
-      benefitRule, pickCatOther(5, benefitRule, i * 19 + 4), expStr
-    );
-
-    // 5. Tiefes Praxisdetail erkennen
-    pushQ(
-      cat, 'pro',
-      `Welcher konkrete Praxis- oder Expertenhinweis trifft speziell auf „${term}“ zu?`,
-      praxisDetail, pickCatOther(6, praxisDetail, i * 19 + 5), expStr
-    );
-  }
-
-  // Schritt C: Handkuratierte Rechen- & Praxis-Szenarien (40 Stück)
-  for (const s of CONTRASTS_AND_CALC) {
-    pushQ(s[0], s[1], s[2], s[3], s[4], s[5]);
-  }
-
-  // Schritt D: Parameterisierte eindeutige Rechen- & Finanzmathematik-Szenarien pro Kategorie auf exakt 250 je Kategorie
-  // 1) ETF-Grundlagen: Spread-, Kosten- & Orderbuch-Szenarien (20 Fragen → genau 250)
-  const COST_SCENARIOS = [
-    [5000, 0.04, 0.12, 0.22], [12000, 0.03, 0.20, 0.07], [25000, 0.05, 0.45, 0.15], [8000, 0.06, 0.35, 0.19],
-    [15000, 0.02, 0.65, 0.20], [30000, 0.04, 0.80, 0.12], [50000, 0.03, 1.50, 0.22], [40000, 0.05, 0.25, 0.07],
-    [10000, 0.08, 1.20, 0.18], [60000, 0.02, 0.38, 0.12], [20000, 0.10, 0.55, 0.20], [35000, 0.04, 0.40, 0.15],
-    [75000, 0.03, 1.45, 0.22], [18000, 0.06, 0.30, 0.10], [45000, 0.05, 0.70, 0.20], [22000, 0.07, 0.50, 0.12],
-    [90000, 0.02, 1.80, 0.22], [14000, 0.04, 0.42, 0.14], [28000, 0.03, 0.60, 0.18], [100000, 0.03, 1.60, 0.20]
-  ];
-  for (let i = 0; i < COST_SCENARIOS.length && catCounts.etf_grundlagen < 250; i++) {
-    const [sum, spreadPct, activeCost, etfCost] = COST_SCENARIOS[i];
-    if (i % 2 === 0) {
-      const spreadEur = Math.round(sum * (spreadPct / 100));
-      const badSpreadPct = Number((spreadPct * 12).toFixed(2));
-      const badSpreadEur = Math.round(sum * (badSpreadPct / 100));
-      const diffEur = badSpreadEur - spreadEur;
-      const ans = `ca. ${spreadEur.toLocaleString('de-DE')} € zu Xetra-Kernzeit vs. ca. ${badSpreadEur.toLocaleString('de-DE')} € nachts (${diffEur.toLocaleString('de-DE')} € Ersparnis!)`;
-      const wrongs = [
-        `ca. ${spreadEur * 10} € zu Kernzeit vs. ${badSpreadEur * 2} € nachts`,
-        `Exakt ${Math.round(sum * 0.05).toLocaleString('de-DE')} € unabhängig von der Uhrzeit`,
-        `0 € Spread am Abend, aber ${diffEur.toLocaleString('de-DE')} € Gebühr tagsüber`
-      ];
-      pushQ(
-        'etf_grundlagen', 'mid',
-        `Order-Timing bei ${sum.toLocaleString('de-DE')} € Einmalkauf: Zu Xetra-Kernzeit liegt der ETF-Spread bei ${spreadPct.toFixed(2).replace('.', ',')} %, spät abends im dünnen Direkthandel bei ${badSpreadPct.toFixed(2).replace('.', ',')} %. Wie viel kostet der Kauf-Spread real?`,
-        ans, wrongs,
-        `Rechnung: ${sum.toLocaleString('de-DE')} € × ${spreadPct} % ≈ ${spreadEur} €, abends bei ${badSpreadPct} % aber ${badSpreadEur} € — durch schlichtes Abwarten der Börsenkernzeit sparst du sofort ${diffEur} €!`
-      );
-    } else {
-      const annualDiffPct = Number((activeCost - etfCost).toFixed(2));
-      const annualSaved = Math.round(sum * (annualDiffPct / 100));
-      const tenYearApprox = annualSaved * 10;
-      const ans = `${annualSaved.toLocaleString('de-DE')} € pro Jahr (${annualDiffPct.toFixed(2).replace('.', ',')} % Kostendifferenz) bzw. ~${tenYearApprox.toLocaleString('de-DE')} € vor Zinseszins in 10 Jahren`;
-      const wrongs = [
-        `${Math.round(annualSaved / 10).toLocaleString('de-DE')} € pro Jahr bei identischen Endkosten`,
-        `${(annualSaved * 5).toLocaleString('de-DE')} € jährliche Gebühr ausschließlich im letzten Jahr`,
-        `Keine Kostendifferenz, weil aktive Fonds in DE grundsätzlich gebührenfrei laufen`
-      ];
-      pushQ(
-        'etf_grundlagen', 'easy',
-        `Kostenvergleich auf ein ${sum.toLocaleString('de-DE')}-€-Depot: Fondsalternative X kostet jährlich ${activeCost.toFixed(2).replace('.', ',')} %, der Index-ETF nur ${etfCost.toFixed(2).replace('.', ',')} %. Wie viel Gebühren erspart der ETF direkt pro Jahr?`,
-        ans, wrongs,
-        `${activeCost.toFixed(2)} % − ${etfCost.toFixed(2)} % = ${annualDiffPct.toFixed(2)} % p. a. auf ${sum.toLocaleString('de-DE')} € ergeben rund ${annualSaved.toLocaleString('de-DE')} € direkte Kostenersparnis Jahr für Jahr (mit Zinseszins real sogar noch deutlich mehr!).`
-      );
-    }
-  }
-
-  // 2) Indizes & Strategie: Ländergewichtungs- & Rebalancing-Mixe (20 Fragen → genau 250)
-  const INDEX_MIX_SCENARIOS = [
-    [60, 40, 70, 12], [75, 25, 68, 11], [80, 20, 71, 10], [50, 50, 70, 12], [65, 35, 66, 13],
-    [85, 15, 72, 11], [70, 30, 69, 10], [55, 45, 70, 12], [90, 10, 68, 12], [40, 60, 70, 11],
-    [60, 40, 65, 14], [70, 30, 72, 12], [80, 20, 67, 13], [75, 25, 70, 10], [50, 50, 68, 12],
-    [65, 35, 71, 11], [85, 15, 69, 12], [90, 10, 70, 13], [55, 45, 72, 10], [45, 55, 70, 12]
-  ];
-  for (let i = 0; i < INDEX_MIX_SCENARIOS.length && catCounts.indizes_strategie < 250; i++) {
-    const [w1, w2, usaInWorld, usaInSp500WeightOrEm] = INDEX_MIX_SCENARIOS[i];
-    if (i % 2 === 0) {
-      // MSCI World + S&P 500 US-Anteil berechnen
-      const realUS = Number(((w1 / 100) * usaInWorld + w2).toFixed(1));
-      const nonUS = Number((100 - realUS).toFixed(1));
-      pushQ(
-        'indizes_strategie', 'mid',
-        `Portfolio-Check: Jemand steckt ${w1} % in einen MSCI World (aktuell ~${usaInWorld} % USA) und ${w2} % zusätzlich in einen reinen S&P 500 (100 % USA). Wie hoch klettert der gesamte US-Anteil unbemerkt?`,
-        `Auf rund ${realUS.toFixed(1).replace('.', ',')} % USA (für den Rest der ganzen Welt bleiben nur ${nonUS.toFixed(1).replace('.', ',')} %)`,
-        [
-          `Er sinkt auf entspannte ${(w1 / 2).toFixed(1).replace('.', ',')} % USA`,
-          `Genau ${(w2).toFixed(1).replace('.', ',')} % USA und ${w1} % Europa`,
-          `Unverändert exakt ${usaInWorld},0 % USA`
-        ],
-        `Rechnung: (${w1} % × ${usaInWorld} %) + ${w2} % = ${realUS.toFixed(1)} % US-Gewicht! Zwei ETFs senken hier nicht automatisch das Länderrisiko, sondern ballen es massiv in den USA.`
-      );
-    } else {
-      // MSCI World + MSCI EM Anteil berechnen
-      const realUS = Number(((w1 / 100) * usaInWorld).toFixed(1));
-      const realEM = w2;
-      pushQ(
-        'indizes_strategie', 'easy',
-        `Global-Portfolio-Rechnung: Ein Anleger mischt ${w1} % MSCI World (inkl. ~${usaInWorld} % USA) mit ${w2} % MSCI Emerging Markets (0 % USA). Welche Gewichtungen entstehen exakt für USA und Schwellenländer?`,
-        `Rund ${realUS.toFixed(1).replace('.', ',')} % USA und exakt ${realEM} % Schwellenländer`,
-        [
-          `Ungefähr ${usaInWorld},0 % USA und nur ${Math.round(realEM / 3)} % Schwellenländer`,
-          `Über ${(realUS + realEM).toFixed(1).replace('.', ',')} % allein für Europa`,
-          `Exakt 50,0 % USA und 50,0 % Emerging Markets`
-        ],
-        `Durch die ${w2}-%-EM-Beimischung sinkt das reale US-Gewicht von ${usaInWorld} % anteilig auf ${w1} % × ${usaInWorld} % ≈ ${realUS.toFixed(1)} % ab.`
-      );
-    }
-  }
-
-  // 3) Vermögensaufbau: 72er-Regel, Entnahmeregeln & Verlust-Symmetrie (20 Fragen → genau 250)
-  const MATH_SCENARIOS = [
-    { type: 'rule72', cap: 15000, r: 8 }, { type: 'drawdown', pct: 30, start: 100000 },
-    { type: 'rule72', cap: 50000, r: 9 }, { type: 'withdraw', cap: 400000, rate: 4.0 },
-    { type: 'rule72', cap: 25000, r: 4 }, { type: 'drawdown', pct: 25, start: 80000 },
-    { type: 'withdraw', cap: 800000, rate: 3.5 }, { type: 'rule72', cap: 10000, r: 12 },
-    { type: 'drawdown', pct: 60, start: 100000 }, { type: 'withdraw', cap: 500000, rate: 3.0 },
-    { type: 'rule72', cap: 30000, r: 6 }, { type: 'drawdown', pct: 45, start: 200000 },
-    { type: 'withdraw', cap: 1200000, rate: 3.5 }, { type: 'rule72', cap: 40000, r: 5 },
-    { type: 'drawdown', pct: 20, start: 150000 }, { type: 'withdraw', cap: 300000, rate: 4.0 },
-    { type: 'rule72', cap: 60000, r: 10 }, { type: 'drawdown', pct: 35, start: 100000 },
-    { type: 'withdraw', cap: 900000, rate: 3.2 }, { type: 'rule72', cap: 20000, r: 7.2 }
-  ];
-  for (let i = 0; i < MATH_SCENARIOS.length && catCounts.vermoegensaufbau < 250; i++) {
-    const m = MATH_SCENARIOS[i];
-    if (m.type === 'rule72') {
-      const yrs = Number((72 / m.r).toFixed(1));
-      const doubled = m.cap * 2;
-      const quad = m.cap * 4;
-      pushQ(
-        'vermoegensaufbau', 'easy',
-        `72er-Regel im Zinseszins: Nach wie vielen Jahren verdoppeln sich ${m.cap.toLocaleString('de-DE')} € auf ${doubled.toLocaleString('de-DE')} € bei durchschnittlich ${String(m.r).replace('.', ',')} % Nettorendite pro Jahr?`,
-        `In rund ${String(yrs).replace('.', ',')} Jahren (nach weiteren ${String(yrs).replace('.', ',')} Jahren sogar ca. ${quad.toLocaleString('de-DE')} €!)`,
-        [
-          `Erst nach genau ${Math.round(yrs * 2)} Jahren`,
-          `Bereits nach exakt ${Math.max(1, Math.round(yrs / 2))} Jahren`,
-          `Immer exakt nach 10 Jahren unabhängig vom Zinssatz`
-        ],
-        `Nach der 72er-Regel gilt: 72 / ${m.r} % ≈ ${yrs} Jahre pro Verdopplung.`
-      );
-    } else if (m.type === 'drawdown') {
-      const end = Math.round(m.start * (1 - m.pct / 100));
-      const rec = Number((((100 / (100 - m.pct)) - 1) * 100).toFixed(1));
-      pushQ(
-        'vermoegensaufbau', 'mid',
-        `Verlust-Asymmetrie: Ein ${m.start.toLocaleString('de-DE')}-€-Depot fällt im Abschwung um −${m.pct} % (auf ${end.toLocaleString('de-DE')} €). Wie viel % Erholung braucht es ab diesem Tief genau für den alten Stand?`,
-        `Exakt rund +${rec.toFixed(1).replace('.', ',')} % Aufschwung`,
-        [
-          `Genau dieselben +${m.pct},0 %`,
-          `Nur rund +${(m.pct / 2).toFixed(1).replace('.', ',')} %`,
-          `Immer +100,0 % bei jedem Minus`
-        ],
-        `Rechnung: (${m.start.toLocaleString('de-DE')} / ${end.toLocaleString('de-DE')} − 1) × 100 = +${rec.toFixed(1)} %. Genau deshalb wiegen extreme Einzelaktien-Crashs von −80 % (+400 % nötig!) so vernichtend.`
-      );
-    } else {
-      const annual = Math.round(m.cap * (m.rate / 100));
-      const monthly = Math.round(annual / 12);
-      pushQ(
-        'vermoegensaufbau', 'mid',
-        `Ruhestands-Planung: Aus einem ${m.cap.toLocaleString('de-DE')}-€-ETF-Depot werden zum Rentenstart genau ${String(m.rate).replace('.', ',')} % jährlich entnommen. Wie viel Brutto-Zusatzrente ergibt das pro Monat bzw. Jahr?`,
-        `Rund ${monthly.toLocaleString('de-DE')} € pro Monat (${annual.toLocaleString('de-DE')} € pro Jahr brutto)`,
-        [
-          `Knapp ${Math.round(monthly / 2).toLocaleString('de-DE')} € pro Monat`,
-          `Über ${(monthly * 2).toLocaleString('de-DE')} € im Monat steuerfrei`,
-          `Genau ${Math.round(m.cap / 100).toLocaleString('de-DE')} € pro Monat`
-        ],
-        `${m.cap.toLocaleString('de-DE')} € × ${m.rate} % = ${annual.toLocaleString('de-DE')} € pro Jahr / 12 ≈ ${monthly.toLocaleString('de-DE')} € im Monat (vor anteiliger Kapitalertragsteuer auf den Gewinn!).`
-      );
-    }
-  }
-
-  // 4) Steuern & Recht DE: Teilfreistellungs-, Freibetrag- & Vorabpauschale-Rechnungen (20 Fragen → genau 250)
-  const TAX_SCENARIOS = [
-    { kind: 'tfs30', profit: 4000 }, { kind: 'vorab', val: 80000, bz: 2.5 },
-    { kind: 'tfs15', profit: 6000 }, { kind: 'tfs30', profit: 15000 },
-    { kind: 'vorab', val: 120000, bz: 2.3 }, { kind: 'tfs30', profit: 25000 },
-    { kind: 'fsaMax', fsa: 1000 }, { kind: 'tfs30', profit: 8000 },
-    { kind: 'vorab', val: 40000, bz: 2.5 }, { kind: 'tfs15', profit: 10000 },
-    { kind: 'tfs30', profit: 50000 }, { kind: 'vorab', val: 200000, bz: 2.2 },
-    { kind: 'tfs30', profit: 12000 }, { kind: 'fsaMax', fsa: 2000 },
-    { kind: 'tfs30', profit: 30000 }, { kind: 'vorab', val: 150000, bz: 2.4 },
-    { kind: 'tfs30', profit: 2000 }, { kind: 'tfs15', profit: 20000 },
-    { kind: 'vorab', val: 60000, bz: 2.5 }, { kind: 'tfs30', profit: 100000 }
-  ];
-  for (let i = 0; i < TAX_SCENARIOS.length && catCounts.steuern_recht_de < 250; i++) {
-    const t = TAX_SCENARIOS[i];
-    if (t.kind === 'tfs30') {
-      const taxable = Math.round(t.profit * 0.70);
-      const tax = Number((taxable * 0.26375).toFixed(2));
-      const net = Number((t.profit - tax).toFixed(2));
-      pushQ(
-        'steuern_recht_de', 'mid',
-        `Steuerrechner Aktien-ETF (Freibetrag erschöpft, keine KiSt): Bei einem steuerpflichtig verkauften Kursgewinn von ${t.profit.toLocaleString('de-DE')} € bleiben nach 30 % Teilfreistellung genau ${taxable.toLocaleString('de-DE')} € zu versteuern. Wie viel Steuer fällt real an?`,
-        `Rund ${tax.toLocaleString('de-DE')} € Abgeltungsteuer + SolZ (netto bleiben ${net.toLocaleString('de-DE')} € Gewinn!)`,
-        [
-          `Volle ${(t.profit * 0.26375).toLocaleString('de-DE')} € ohne Teilfreistellungs-Rabatt`,
-          `Genau ${(t.profit * 0.30).toLocaleString('de-DE')} € Steuer (= 30 % Abgabe)`,
-          `Exakt 0 € ab dem zweiten Haltejahr`
-        ],
-        `Rechnung: ${t.profit.toLocaleString('de-DE')} € × 70 % × 26,375 % = ${tax.toLocaleString('de-DE')} € Steuer (effektiv nur 18,4625 % auf den Gesamtgewinn!).`
-      );
-    } else if (t.kind === 'tfs15') {
-      const taxable = Math.round(t.profit * 0.85);
-      const tax = Number((taxable * 0.26375).toFixed(2));
-      pushQ(
-        'steuern_recht_de', 'pro',
-        `Steuerrechner Mischfonds-ETF (30 % Aktienquote → 15 % Teilfreistellung, kein FSA übrig): Wie viel deutsche Steuer (inkl. SolZ) zieht die Bank auf ${t.profit.toLocaleString('de-DE')} € reinen Verkaufsgewinn ein?`,
-        `Rund ${tax.toLocaleString('de-DE')} € (auf ${taxable.toLocaleString('de-DE')} € Bemessungsgrundlage nach 15 % TFS)`,
-        [
-          `Nur ${(Math.round(t.profit * 0.7) * 0.26375).toLocaleString('de-DE')} € wie beim reinen Aktien-ETF`,
-          `Genau ${(t.profit * 0.15).toLocaleString('de-DE')} € (= 15 % Abzug)`,
-          `Pauschal genau 500 € ohne Prozentrechnung`
-        ],
-        `Beim Mischfonds (≥ 25 % Aktien) sind 15 % steuerfrei: ${t.profit.toLocaleString('de-DE')} € × 0,85 × 26,375 % ≈ ${tax.toLocaleString('de-DE')} € (effektiv ca. 22,42 %!).`
-      );
-    } else if (t.kind === 'vorab') {
-      const basisErtrag = Number((t.val * (t.bz / 100) * 0.7).toFixed(2));
-      const afterTfs = Number((basisErtrag * 0.7).toFixed(2));
-      pushQ(
-        'steuern_recht_de', 'pro',
-        `Vorabpauschalen-Szenario: Depotwert 01.01. genau ${t.val.toLocaleString('de-DE')} € im thesaurierenden Aktien-ETF (hoher Kursgewinn im Jahr > Basisertrag), Basiszins ${String(t.bz).replace('.', ',')} %. Welcher Betrag wird nach 30 % Teilfreistellung rechnerisch steuerpflichtig (vor Freibetrag)?`,
-        `Basisertrag ~${basisErtrag.toLocaleString('de-DE')} € → davon nach 30 % TFS exakt ~${afterTfs.toLocaleString('de-DE')} € steuerpflichtig`,
-        [
-          `Volle ${(t.val * (t.bz / 100)).toLocaleString('de-DE')} € komplett ohne 0,7-Faktor und ohne TFS`,
-          `Rund ${(t.val * 0.10).toLocaleString('de-DE')} € pro Jahr`,
-          `Immer exakt 0 € unabhängig vom Basiszins`
-        ],
-        `Formel: ${t.val.toLocaleString('de-DE')} € × ${t.bz} % × 0,7 = ${basisErtrag.toLocaleString('de-DE')} € Basisertrag; nach 30 % TFS bleiben davon 70 % = ${afterTfs.toLocaleString('de-DE')} € vor dem Sparerpauschbetrag.`
-      );
-    } else {
-      const maxBruttoGain = Number((t.fsa / 0.7).toFixed(0));
-      pushQ(
-        'steuern_recht_de', 'easy',
-        `Freibetrags-Optimum: Bis zu wie viel € Brutto-Gewinn oder Brutto-Dividende aus einem **Aktien-ETF (mit 30 % Teilfreistellung)** bleiben durch den vollen ${t.fsa.toLocaleString('de-DE')}-€-Sparerpauschbetrag völlig steuerfrei?`,
-        `Bis zu rund ${maxBruttoGain.toLocaleString('de-DE')} € Brutto-Aktien-ETF-Ertrag (` + `${maxBruttoGain.toLocaleString('de-DE')} € × 70 % = ${t.fsa.toLocaleString('de-DE')} €!)`,
-        [
-          `Maximal ${Math.round(t.fsa * 0.7).toLocaleString('de-DE')} € Bruttoertrag`,
-          `Genau exakt ${t.fsa.toLocaleString('de-DE')} € Bruttoertrag`,
-          `Über ${(t.fsa * 5).toLocaleString('de-DE')} € Bruttoertrag`
-        ],
-        `Dank 30 % Teilfreistellung werden immer nur 70 % eines Aktien-ETF-Ertrags auf deinen Freibetrag angerechnet: ${t.fsa} € / 0,70 ≈ ${maxBruttoGain.toLocaleString('de-DE')} €!`
-      );
-    }
-  }
-
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
-    window.ArcadeQuizEngine.registerBank('etfs', questions.slice(0, 1000));
+];
+  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
+    window.ArcadeQuizEngine.registerBank("etfs", DATA);
+  } else {
+    window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
+    window.ARCADE_QUIZ_BANKS["etfs"] = DATA;
   }
 })();
