@@ -1,13 +1,20 @@
 // Prozessoren-Quiz (2000–Heute · 16 Fotos)
 (function () {
-const DATA = [
+  const DATA = [
     {
       id: 1,
       cat: 'ghz_64bit',
       eraLabel: 'Jahr 2000 · Sockel A (462)',
       img: './img/cpu-01.jpg',
-      q: 'Welcher AMD-Prozessor im Keramik-Gehäuse (Sockel A) integrierte im Juni 2000 erstmals 256 KB Full-Speed-On-Die-L2-Cache, besaß keinen Heatspreader und erlaubte das berühmte „Bleistift-Overclocking“ über die L1-Brücken?',
-      a: ['AMD Athlon „Thunderbird“ (K7)', 'AMD K6-2 (Super Socket 7)', 'Intel Pentium III „Coppermine“', 'VIA Cyrix III'],
+      q: 'Welcher AMD-Prozessor im Keramik-Gehäuse (Sockel A) integrierte im Juni 2000 erstmals 256 KB On-Die-L2-Cache, besaß keinen Heatspreader und erlaubte das berühmte „Bleistift-Overclocking“ über L1-Brücken?',
+      a: [
+        'AMD Athlon „Thunderbird“ (K7)',
+        'Intel Pentium III „Coppermine“',
+        'AMD Duron „Spitfire“ (K7)',
+        'VIA Cyrix III „Samuel“'
+      ],
+      explanation: 'Wusstest du, dass Bastler diesen Chip einfach mit einem gewöhnlichen Bleistift übertakteten? Das feine Graphit überbrückte die winzigen Laser-Trennbrücken (L1) auf der Keramik und schaltete den Multiplikator frei!',
+      exp: 'Wusstest du, dass Bastler diesen Chip einfach mit einem gewöhnlichen Bleistift übertakteten? Das feine Graphit überbrückte die winzigen Laser-Trennbrücken (L1) auf der Keramik und schaltete den Multiplikator frei!',
       wasDasIst: {
         title: 'AMD Athlon „Thunderbird“ (K7)',
         nick: '„T-Bird“ · Der Bleistift-Trick-Klassiker',
@@ -15,7 +22,7 @@ const DATA = [
         node: '180 nm (Austin / Fab 30 Dresden mit Kupfer-Interconnects)',
         socket: 'Sockel A (PGA 462)',
         cores: '1 Kern · 1 Thread (3-fach Superskalar)',
-        trivia: 'Beim Athlon Thunderbird lag das empfindliche Silizium-Die noch völlig offen auf dem Keramikträger (vier Moosgummi-Pads schützten vor verkanteten Kühlern). Legendär wurde er, weil man die lasergeschnittenen L1-Brücken auf der Oberseite einfach mit einem Graphit-Bleistift nachzeichnen konnte, um den Multiplikator freizuschalten!'
+        trivia: 'Beim Athlon Thunderbird lag das empfindliche Silizium-Die noch völlig offen auf dem Keramikträger. Legendär wurde er, weil man die lasergeschnittenen L1-Brücken einfach mit einem Graphit-Bleistift nachzeichnen konnte, um den Multiplikator freizuschalten!'
       },
       credit: {
         artist: 'Krdan',
@@ -29,8 +36,15 @@ const DATA = [
       cat: 'ghz_64bit',
       eraLabel: '2000–2004 · NetBurst-Ära',
       img: './img/cpu-02.jpg',
-      q: 'Mit welcher Prozessorfamilie setzte Intel ab 2000 auf die extrem langstufige „NetBurst“-Pipeline (20 bis 31 Stufen), um Taktraten bis fast 4 GHz zu erreichen, und führte den vernickelten Kupfer-Heatspreader (IHS) im Mainstream ein?',
-      a: ['Intel Pentium 4 (Willamette / Northwood / Prescott)', 'Intel Pentium Pro', 'Intel Itanium (IA-64)', 'AMD Sempron'],
+      q: 'Mit welcher legendären Prozessorfamilie jagte Intel ab 2000 den Gigahertz-Rekord mit einer ultralangen Pipeline von bis zu 31 Stufen, bis enorme Hitzeentwicklung den Kurs stoppte?',
+      a: [
+        'Intel Pentium 4 („Northwood“ / NetBurst)',
+        'Intel Pentium III („Tualatin“)',
+        'AMD Athlon XP („Thoroughbred“)',
+        'Intel Itanium 2 („McKinley“)'
+      ],
+      explanation: 'Ursprünglich plante Intel diese NetBurst-Architektur für sagenhafte 10 Gigahertz. Bei knapp 4 GHz rannte der Chip jedoch in eine derart massive Abwärmemauer, dass Intel die Taktjagd abblasen und komplett auf sparsame Mehrkerner umschwenken musste.',
+      exp: 'Ursprünglich plante Intel diese NetBurst-Architektur für sagenhafte 10 Gigahertz. Bei knapp 4 GHz rannte der Chip jedoch in eine derart massive Abwärmemauer, dass Intel die Taktjagd abblasen und komplett auf sparsame Mehrkerner umschwenken musste.',
       wasDasIst: {
         title: 'Intel Pentium 4 („Northwood“ / NetBurst)',
         nick: 'Das Gigahertz-Wettrennen',
@@ -38,7 +52,7 @@ const DATA = [
         node: '180 nm → 130 nm (Northwood) → 90 nm (Prescott)',
         socket: 'Sockel 423 / Sockel 478 / LGA 775',
         cores: '1 Kern (ab 3,06 GHz mit Hyper-Threading = 2 Threads)',
-        trivia: 'Intels NetBurst-Architektur war ursprünglich für bis zu 10 GHz entworfen. Während der 130-nm-„Northwood“ (im Bild) sehr beliebt und kühl blieb, stieß der nachfolgende 90-nm-„Prescott“ mit 31-stufiger Pipeline an die physikalische Abwärmemauer („Power Wall“) und leitete die Wende hin zu Multicore-Prozessoren ein.'
+        trivia: 'Intels NetBurst-Architektur war ursprünglich für bis zu 10 GHz entworfen. Während der 130-nm-„Northwood“ sehr beliebt blieb, stieß der nachfolgende „Prescott“ an die physikalische Abwärmemauer und leitete die Wende hin zu Multicore-Prozessoren ein.'
       },
       credit: {
         artist: 'Raimond Spekking',
@@ -52,8 +66,15 @@ const DATA = [
       cat: 'ghz_64bit',
       eraLabel: 'September 2003 · K8-Revolution',
       img: './img/cpu-03.jpg',
-      q: 'Welcher Meilenstein-Prozessor von AMD brachte im September 2003 erstmals die abwärtskompatible 64-Bit-Erweiterung (AMD64 / x86-64) UND einen direkt im Prozessor integrierten Speichercontroller auf den Desktop?',
-      a: ['AMD Athlon 64 („ClawHammer“ / K8)', 'AMD Phenom X4', 'Intel Core Duo „Yonah“', 'Transmeta Crusoe'],
+      q: 'Welcher revolutionäre Meilenstein-Prozessor brachte 2003 die bis heute im PC-Alltag genutzte 64-Bit-x86-Befehlssatzerweiterung und den ersten integrierten DDR-Speichercontroller auf den Markt?',
+      a: [
+        'AMD Athlon 64 („ClawHammer“)',
+        'Intel Pentium 4 Extreme Edition',
+        'Intel Itanium („Merced“)',
+        'Transmeta Efficeon (TM8800)'
+      ],
+      explanation: 'Während Intel mit dem inkompatiblen 64-Bit-Projekt Itanium scheiterte, entwickelte AMD kurzerhand x86-64 selbst. Die Architektur war so genial abwärtskompatibel, dass Intel sie später für eigene Core-CPUs lizenzieren musste!',
+      exp: 'Während Intel mit dem inkompatiblen 64-Bit-Projekt Itanium scheiterte, entwickelte AMD kurzerhand x86-64 selbst. Die Architektur war so genial abwärtskompatibel, dass Intel sie später für eigene Core-CPUs lizenzieren musste!',
       wasDasIst: {
         title: 'AMD Athlon 64 3200+ („ClawHammer“)',
         nick: 'Begründer von x86-64 (AMD64)',
@@ -61,7 +82,7 @@ const DATA = [
         node: '130 nm SOI (Silicon on Insulator)',
         socket: 'Sockel 754 / Sockel 939',
         cores: '1 Kern · Integrierter DDR-Speichercontroller & HyperTransport',
-        trivia: 'Während Intel mit dem inkompatiblen Itanium (IA-64) scheiterte, erweiterte AMD den klassischen x86-Befehlssatz elegant auf 64 Bit (AMD64) – sodass Intel ihn später als „Intel 64“ (EM64T) lizenzieren musste. Zudem wanderte der RAM-Controller aus der langsamen Northbridge direkt in die CPU.'
+        trivia: 'Während Intel mit dem inkompatiblen Itanium (IA-64) scheiterte, erweiterte AMD den klassischen x86-Befehlssatz elegant auf 64 Bit (AMD64) – sodass Intel ihn später lizenzieren musste. Zudem wanderte der RAM-Controller direkt in die CPU.'
       },
       credit: {
         artist: 'Thomas Nguyen',
@@ -75,8 +96,15 @@ const DATA = [
       cat: 'ghz_64bit',
       eraLabel: 'März 2003 · Centrino-Plattform',
       img: './img/cpu-04.jpg',
-      q: 'Welcher von Intels Forschungszentrum in Haifa (Israel) entwickelte Notebook-Prozessor kehrte 2003 zur effizienten P6/Pentium-III-Basis zurück und wurde zum direkten Urahn der späteren Core-Architektur?',
-      a: ['Intel Pentium M („Banias“ / „Dothan“)', 'Intel Atom N270', 'Intel Celeron „Mendocino“', 'VIA C7-M'],
+      q: 'Welcher hocheffiziente Notebook-Prozessor aus Intels israelischem Haifa-Entwicklungszentrum begründete die Centrino-Revolution und rettete Intel später aus der NetBurst-Sackgasse?',
+      a: [
+        'Intel Pentium M („Banias“ / „Dothan“)',
+        'Intel Celeron M („Shelton“)',
+        'AMD Mobile Sempron („Georgetown“)',
+        'Transmeta Crusoe (TM5800)'
+      ],
+      explanation: 'Ein Pentium M mit nur 1,7 GHz deklassierte damals selbst stromhungrige 3-GHz-Desktop-Rechner spielend. Enthusiasten bauten den kühlen Mobilchip per Asus-Adapter sogar heimlich in ihre High-End-Gaming-PCs ein!',
+      exp: 'Ein Pentium M mit nur 1,7 GHz deklassierte damals selbst stromhungrige 3-GHz-Desktop-Rechner spielend. Enthusiasten bauten den kühlen Mobilchip per Asus-Adapter sogar heimlich in ihre High-End-Gaming-PCs ein!',
       wasDasIst: {
         title: 'Intel Pentium M („Banias“ / „Dothan“)',
         nick: 'Der heimliche Retter von Intel',
@@ -84,7 +112,7 @@ const DATA = [
         node: '130 nm (Banias) / 90 nm (Dothan)',
         socket: 'Sockel 479',
         cores: '1 Kern · Hohe Pro-Takt-Leistung (IPC) bei nur 21–27 W TDP',
-        trivia: 'Ein Pentium M mit 1,7 GHz schlug in vielen Spielen und Anwendungen einen 2,8 GHz schnellen Pentium 4 bei einem Bruchteil des Stromverbrauchs. Enthusiasten bauten ihn per Adapter (ASUS CT-479) sogar in Desktop-Mainboards ein, bevor Intel die Architektur zu Core Duo und Core 2 Duo weiterentwickelte.'
+        trivia: 'Ein Pentium M mit 1,7 GHz schlug in vielen Spielen einen 2,8 GHz schnellen Pentium 4 bei einem Bruchteil des Stromverbrauchs. Enthusiasten bauten ihn per Adapter (ASUS CT-479) sogar in Desktop-Mainboards ein, bevor Intel die Core-Architektur schuf.'
       },
       credit: {
         artist: 'Christiaan Colen',
@@ -98,8 +126,15 @@ const DATA = [
       cat: 'ghz_64bit',
       eraLabel: 'Mai 2005 · Dual-Core-Pionier',
       img: './img/cpu-05.jpg',
-      q: 'Welcher Desktop-Prozessor von AMD vereinte 2005 zwei vollwertige K8-Rechenkerne samt System Request Queue und Crossbar-Switch nativ auf einem gemeinsamen Silizium-Die?',
-      a: ['AMD Athlon 64 X2', 'AMD Duron „Spitfire“', 'Intel Pentium II OverDrive', 'IBM PowerPC G5'],
+      q: 'Welcher Pionier-Prozessor vereinte 2005 erstmals zwei vollwertige 64-Bit-Rechenkerne nativ auf einem einzigen gemeinsamen Silizium-Die für den Desktop-Markt?',
+      a: [
+        'AMD Athlon 64 X2 („Manchester“)',
+        'Intel Pentium D („Smithfield“)',
+        'IBM PowerPC 970FX („G5“)',
+        'Intel Core Duo („Yonah“)'
+      ],
+      explanation: 'Während Intel für seinen ersten Doppelkerner schlicht zwei getrennte Pentium-Dies zusammenklebte, die sich am Nadelöhr des Busses stauten, sprach AMDs nativer Zweikerner blitzschnell direkt auf dem Silizium miteinander.',
+      exp: 'Während Intel für seinen ersten Doppelkerner schlicht zwei getrennte Pentium-Dies zusammenklebte, die sich am Nadelöhr des Busses stauten, sprach AMDs nativer Zweikerner blitzschnell direkt auf dem Silizium miteinander.',
       wasDasIst: {
         title: 'AMD Athlon 64 X2',
         nick: 'Nativer Dual-Core für Sockel 939 & AM2',
@@ -107,7 +142,7 @@ const DATA = [
         node: '90 nm / 65 nm SOI',
         socket: 'Sockel 939 / Sockel AM2',
         cores: '2 Kerne · 2 Threads',
-        trivia: 'Während Intels erster Dual-Core (Pentium D „Smithfield“) noch zwei getrennte Pentium-4-Dies über den langsamen Front-Side-Bus koppelte, kommunizierten die beiden Kerne des Athlon 64 X2 direkt auf dem Chip mit minimaler Latenz.'
+        trivia: 'Während Intels erster Dual-Core noch zwei getrennte Pentium-4-Dies über den langsamen Front-Side-Bus koppelte, kommunizierten die beiden Kerne des Athlon 64 X2 direkt auf dem Chip mit minimaler Latenz.'
       },
       credit: {
         artist: 'Trio3D',
@@ -121,8 +156,15 @@ const DATA = [
       cat: 'ghz_64bit',
       eraLabel: 'Juli 2006 · Conroe-Durchbruch',
       img: './img/cpu-06.jpg',
-      q: 'Mit welchem Dual-Core-Prozessor (Codename „Conroe“, hier das beliebte Modell E6600 mit 4 MB L2-Cache) gelang Intel im Sommer 2006 ein gewaltiger Leistungssprung von +40 % bei gleichzeitig 40 % weniger Energiebedarf?',
-      a: ['Intel Core 2 Duo (E6600 „Conroe“)', 'Intel Pentium D 820', 'Intel Core i3-530', 'AMD Athlon XP 3200+'],
+      q: 'Welcher legendäre 65-nm-Doppelkern-Prozessor läutete im Sommer 2006 Intels glorreiches Comeback mit über 40 % mehr Rechenleistung bei 40 % weniger Stromverbrauch ein?',
+      a: [
+        'Intel Core 2 Duo („Conroe“ E6600)',
+        'AMD Athlon 64 X2 5000+ („Brisbane“)',
+        'Intel Pentium Dual-Core E2140',
+        'AMD Phenom X3 8750 („Toliman“)'
+      ],
+      explanation: 'Der Conroe pulverisierte fast über Nacht AMDs jahrelange Gaming-Dominanz. Hobby-Tuner konnten das 2,4-GHz-Modell oft mit normaler Luftkühlung ohne Spannungsanhebung stabil auf über 3,2 GHz katapultieren!',
+      exp: 'Der Conroe pulverisierte fast über Nacht AMDs jahrelange Gaming-Dominanz. Hobby-Tuner konnten das 2,4-GHz-Modell oft mit normaler Luftkühlung ohne Spannungsanhebung stabil auf über 3,2 GHz katapultieren!',
       wasDasIst: {
         title: 'Intel Core 2 Duo E6600 („Conroe“)',
         nick: 'Intels großes Architektur-Comeback',
@@ -130,7 +172,7 @@ const DATA = [
         node: '65 nm',
         socket: 'LGA 775',
         cores: '2 Kerne · 2,40 GHz · 4 MB geteilter Smart-L2-Cache (65 W TDP)',
-        trivia: 'Der Core 2 Duo E6600 beendete die NetBurst-Ära endgültig: Mit 4-fach superskalarer Ausführung (Wide Dynamic Execution) und Macro-Fusion ließ er sich auf vielen LGA-775-Boards mühelos von 2,4 auf über 3,2 GHz übertakten.'
+        trivia: 'Der Core 2 Duo E6600 beendete die NetBurst-Ära endgültig: Mit 4-fach superskalarer Ausführung und geteiltem L2-Cache ließ er sich auf vielen LGA-775-Boards mühelos von 2,4 auf über 3,2 GHz übertakten.'
       },
       credit: {
         artist: 'Lance Fisher',
@@ -144,8 +186,15 @@ const DATA = [
       cat: 'ghz_64bit',
       eraLabel: 'Januar 2007 · Quad-Core-Legende',
       img: './img/cpu-07.jpg',
-      q: 'Welcher legendäre erste Mainstream-Quad-Core von Intel (2,40 GHz, 8 MB L2-Cache, berühmt im „G0-Stepping“ SLACR) hielt sich dank Übertaktung auf 3,2–3,6 GHz oft über 7 Jahre lang in Gaming-PCs?',
-      a: ['Intel Core 2 Quad Q6600 („Kentsfield“)', 'Intel Core 2 Extreme QX9770', 'AMD Phenom II X4 955', 'Intel Xeon E5450'],
+      q: 'Welcher erste bezahlbare Vierkern-Prozessor der Geschichte wurde dank seines kühleren G0-Steppings und phänomenaler Übertaktbarkeit zur ultimativen Dauerläufer-Legende der 2000er?',
+      a: [
+        'Intel Core 2 Quad Q6600 („Kentsfield“)',
+        'AMD Phenom X4 9950 Black Edition',
+        'Intel Core 2 Extreme QX6700',
+        'AMD Phenom II X4 940 Black Edition'
+      ],
+      explanation: 'Im berühmt-berüchtigten „G0-Stepping“ ließ sich dieser 2,4-GHz-Vierkerner kinderleicht auf 3,6 GHz peitschen. Viele Gamer nutzten den treuen Chip unglaubliche 7 bis 8 Jahre lang als solides Herzstück ihres Spiele-PCs!',
+      exp: 'Im berühmt-berüchtigten „G0-Stepping“ ließ sich dieser 2,4-GHz-Vierkerner kinderleicht auf 3,6 GHz peitschen. Viele Gamer nutzten den treuen Chip unglaubliche 7 bis 8 Jahre lang als solides Herzstück ihres Spiele-PCs!',
       wasDasIst: {
         title: 'Intel Core 2 Quad Q6600 („Kentsfield“)',
         nick: 'Der unsterbliche „G0-Stepping“-Vierkerner',
@@ -153,7 +202,7 @@ const DATA = [
         node: '65 nm (Multi-Chip-Modul aus zwei Conroe-Dual-Core-Dies)',
         socket: 'LGA 775',
         cores: '4 Kerne · 4 Threads · 2,40 GHz · 2× 4 MB L2-Cache',
-        trivia: 'Unter dem Heatspreader des Q6600 saßen zwei eng benachbarte Dual-Core-Dies. Sobald im Sommer 2007 das kühlere 95-Watt-„G0-Stepping“ (S-Spec SLACR) erschien und der Preis auf rund 200 € fiel, wurde der Q6600 zum wohl langlebigsten Preis-Leistungs-Prozessor der 2000er Jahre.'
+        trivia: 'Unter dem Heatspreader des Q6600 saßen zwei benachbarte Dual-Core-Dies. Sobald im Sommer 2007 das kühlere 95-Watt-„G0-Stepping“ erschien, wurde der Q6600 zum wohl langlebigsten Preis-Leistungs-Prozessor der 2000er Jahre.'
       },
       credit: {
         artist: 'Trio3D',
@@ -167,8 +216,15 @@ const DATA = [
       cat: 'ghz_64bit',
       eraLabel: 'November 2006 · STI-Allianz (PS3)',
       img: './img/cpu-08.jpg',
-      q: 'Welcher von Sony, Toshiba und IBM gemeinsam entwickelte heterogene Prozessor kombinierte einen PowerPC-Hauptkern (PPE) mit acht pfeilschnellen Vektor-Co-Prozessoren (SPEs) für die PlayStation 3 und Supercomputer?',
-      a: ['Cell Broadband Engine (Cell BE)', 'IBM PowerPC 970 (Apple G5)', 'Sun UltraSPARC T1', 'MIPS R10000'],
+      q: 'Welcher von Sony, Toshiba und IBM gemeinsam entwickelte Hybrid-Prozessor trieb ab 2006 die PlayStation 3 an und stellte Supercomputer-Rekorde auf?',
+      a: [
+        'STI Cell Broadband Engine (Cell BE)',
+        'Microsoft Xbox 360 Xenon (Waternoose)',
+        'Emotion Engine & Graphics Synthesizer',
+        'Nintendo Broadway (PowerPC 750CL)'
+      ],
+      explanation: 'Mit seinen 8 Vektor-Coprozessoren war der Cell-Chip derart rechenstark, dass die US Air Force aus über 1.700 handelsüblichen PlayStation-3-Konsolen einen gefürchteten Hochleistungs-Supercomputer zusammenstöpselte!',
+      exp: 'Mit seinen 8 Vektor-Coprozessoren war der Cell-Chip derart rechenstark, dass die US Air Force aus über 1.700 handelsüblichen PlayStation-3-Konsolen einen gefürchteten Hochleistungs-Supercomputer zusammenstöpselte!',
       wasDasIst: {
         title: 'STI Cell Broadband Engine (Cell BE)',
         nick: 'Das heterogene Herz der PlayStation 3',
@@ -176,7 +232,7 @@ const DATA = [
         node: '90 nm → 65 nm → 45 nm SOI',
         socket: 'BGA auf dem PlayStation-3-Mainboard / Blade-Server',
         cores: '1× PPE (Power Processing Element) + 8× SPE (Synergistic Processing Elements) @ 3,2 GHz',
-        trivia: 'Für Spieleentwickler war die Cell-CPU anfangs ein Albtraum zu programmieren, bot aber bei sauberer Nutzung der lokalen 256-KB-Speicher (Local Stores) der SPEs und des 200 GB/s schnellen Element Interconnect Bus (EIB) eine für 2006 atemberaubende Gleitkommaleistung (u. a. für Folding@home und den ersten PetaFLOPS-Supercomputer Roadrunner).'
+        trivia: 'Für Spieleentwickler war die Cell-CPU anfangs sehr fordernd zu programmieren, bot aber bei voller Nutzung der 8 Vektorkerne eine atemberaubende Gleitkommaleistung, die sogar in Supercomputern wie Roadrunner eingesetzt wurde.'
       },
       credit: {
         artist: 'Greenpro',
@@ -190,8 +246,15 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: 'November 2008 · Beginn der Core-i-Serie',
       img: './img/cpu-09.jpg',
-      q: 'Welcher Prozessor (Codename „Bloomfield“ / Nehalem, Sockel LGA 1366) begründete Ende 2008 die „Core i7“-Marke, verabschiedete den Front-Side-Bus zugunsten von QPI und brachte einen integrierten Triple-Channel-DDR3-Controller mit?',
-      a: ['Intel Core i7-920 („Nehalem / Bloomfield“)', 'Intel Core i5-750 („Lynnfield“)', 'Intel Core i7-4770K („Haswell“)', 'AMD Phenom X4 9850'],
+      q: 'Welcher Meilenstein-Prozessor begründete Ende 2008 die Core-i7-Marke, ersetzte den betagten Front-Side-Bus durch QPI und führte Triple-Channel-DDR3-Speicher ein?',
+      a: [
+        'Intel Core i7-920 („Bloomfield“)',
+        'AMD Phenom II X4 955 („Deneb“)',
+        'Intel Core 2 Extreme QX9770',
+        'Intel Core i5-750 („Lynnfield“)'
+      ],
+      explanation: 'Mit dem Core i7-920 begründete Intel die bis heute gültige Core-i-Nomenklatur. Die Plattform war so potent, dass findige Tüftler noch zehn Jahre später günstige Sechskern-Xeons auf gebrauchte Sockel-1366-Boards schnallten.',
+      exp: 'Mit dem Core i7-920 begründete Intel die bis heute gültige Core-i-Nomenklatur. Die Plattform war so potent, dass findige Tüftler noch zehn Jahre später günstige Sechskern-Xeons auf gebrauchte Sockel-1366-Boards schnallten.',
       wasDasIst: {
         title: 'Intel Core i7-920 („Bloomfield“ / Nehalem)',
         nick: 'Der erste Core i7 der Geschichte',
@@ -199,7 +262,7 @@ const DATA = [
         node: '45 nm High-k Metal Gate',
         socket: 'LGA 1366',
         cores: '4 Kerne · 8 Threads (SMT / Hyper-Threading) · 2,66 GHz',
-        trivia: 'Mit Nehalem vereinte Intel vier Kerne monolithisch auf einem Die, holte Hyper-Threading in stark verbesserter Form zurück und integrierte erstmals auch bei Intel den Speichercontroller direkt in die CPU (mit gleich drei DDR3-Kanälen auf X58-Mainboards).'
+        trivia: 'Mit Nehalem vereinte Intel vier Kerne monolithisch auf einem Die, holte Hyper-Threading zurück und integrierte erstmals den Speichercontroller direkt in die CPU mit gleich drei DDR3-Kanälen auf X58-Mainboards.'
       },
       credit: {
         artist: 'Alan Lorenzo',
@@ -213,8 +276,15 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: 'Januar 2011 · Die 5-GHz-Übertakter-Ikone',
       img: './img/cpu-10.jpg',
-      q: 'Welche 32-nm-Prozessorgeneration von Intel (hier der legendäre Core i7-2600K neben dem i5-2500K) führte 2011 den Ringbus, AVX-Befehle, verlöteten Heatspreader und ein „K“-Suffix für offene Multiplikatoren bis ~5 GHz mit Luftkühlung ein?',
-      a: ['Intel Core i7-2600K („Sandy Bridge“)', 'Intel Core i7-3770K („Ivy Bridge“)', 'Intel Core i7-6700K („Skylake“)', 'Intel Core i7-7700K („Kaby Lake“)'],
+      q: 'Welcher legendäre 32-nm-Prozessor von 2011 mit verlötetem Heatspreader und offenem Multiplikator gilt unter PC-Schraubern bis heute als der langlebigste Übertaktungs-König aller Zeiten?',
+      a: [
+        'Intel Core i7-2600K („Sandy Bridge“)',
+        'AMD FX-8150 („Bulldozer“)',
+        'Intel Core i7-3770K („Ivy Bridge“)',
+        'Intel Core i7-4790K („Devil’s Canyon“)'
+      ],
+      explanation: 'Dank hochwertig verlötetem Heatspreader knackte Sandy Bridge spielend 4,8 bis 5,0 GHz unter einfachen Luftkühlern. Weil Intel bei Nachfolgern auf billige Wärmeleitpaste setzte, verweigerten Millionen PC-Besitzer jahrelang jedes Upgrade.',
+      exp: 'Dank hochwertig verlötetem Heatspreader knackte Sandy Bridge spielend 4,8 bis 5,0 GHz unter einfachen Luftkühlern. Weil Intel bei Nachfolgern auf billige Wärmeleitpaste setzte, verweigerten Millionen PC-Besitzer jahrelang jedes Upgrade.',
       wasDasIst: {
         title: 'Intel Core i7-2600K („Sandy Bridge“)',
         nick: 'Meisterwerk der 32-nm-Ära (mit verlötetem IHS!)',
@@ -222,7 +292,7 @@ const DATA = [
         node: '32 nm',
         socket: 'LGA 1155',
         cores: '4 Kerne · 8 Threads · 3,40 GHz (Boost 3,80 GHz, OC oft 4,8–5,0 GHz)',
-        trivia: 'Sandy Bridge führte einen internen Micro-Op-Cache, den schnellen Ringbus zwischen Kernen, L3-Cache und iGPU sowie einen mit Indium verlöteten Heatspreader ein (ab Ivy Bridge nutzte Intel jahrelang nur noch Wärmeleitpaste). Deshalb blieben i5-2500K und i7-2600K bei 4,8 GHz kühl und hielten fast ein Jahrzehnt durch.'
+        trivia: 'Sandy Bridge führte einen internen Micro-Op-Cache, den schnellen Ringbus sowie einen mit Indium verlöteten Heatspreader ein. Deshalb blieben i5-2500K und i7-2600K bei 4,8 GHz erstaunlich kühl und hielten fast ein Jahrzehnt durch.'
       },
       credit: {
         artist: 'Laineema',
@@ -236,8 +306,15 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: '2011/2012 · Sockel AM3+ & CMT-Module',
       img: './img/cpu-11.jpg',
-      q: 'Mit welcher Prozessorfamilie für Sockel AM3+ experimentierte AMD ab 2011 mit „Clustered Multithreading“-Modulen (je zwei Integer-Kerne teilten sich eine Gleitkommaeinheit/FPU) und stellte Taktraten-Weltrekorde von über 8,4 GHz unter Flüssigstickstoff auf?',
-      a: ['AMD FX-Serie („Bulldozer“ / „Piledriver“)', 'AMD Phenom II X6 („Thuban“)', 'AMD A10-7850K („Kaveri“)', 'AMD Opteron „Magny-Cours“'],
+      q: 'Welche AMD-Prozessorfamilie sorgte ab 2011 mit geteilten Gleitkomma-Modulen und Flüssigstickstoff-Taktraten von über 8,4 GHz für Aufsehen, enttäuschte aber bei alltäglicher IPC?',
+      a: [
+        'AMD FX-Serie („Bulldozer“)',
+        'AMD Phenom II X6 („Thuban“)',
+        'Intel Core i7-3960X („Sandy Bridge-E“)',
+        'AMD A10-5800K („Trinity“ APU)'
+      ],
+      explanation: 'Obwohl der Chip mit 8,429 GHz einen spektakulären Guinness-Weltrekord aufstellte, floppte die geteilte Modulbauweise in Spielen so gravierend, dass AMD kurz vor dem Ruin stand und Zen völlig neu erfinden musste.',
+      exp: 'Obwohl der Chip mit 8,429 GHz einen spektakulären Guinness-Weltrekord aufstellte, floppte die geteilte Modulbauweise in Spielen so gravierend, dass AMD kurz vor dem Ruin stand und Zen völlig neu erfinden musste.',
       wasDasIst: {
         title: 'AMD FX-Serie („Bulldozer“ / „Piledriver“ · AM3+)',
         nick: 'Taktraten-Rekordhalter mit Modul-Architektur',
@@ -245,7 +322,7 @@ const DATA = [
         node: '32 nm SOI (GlobalFoundries Dresden)',
         socket: 'Sockel AM3+ (PGA 942)',
         cores: 'Bis zu 4 Module / 8 Integer-Kerne (FX-8150 / FX-8350)',
-        trivia: 'Obwohl die geteilten Decoder und Gleitkommaeinheiten in damaligen Single-Thread-Spielen zu einer niedrigen Pro-Takt-Leistung (IPC) führten, erreichte der Bulldozer-Chip extreme Taktraten (8.429 MHz Guinness-Weltrekord 2011) und legte den Grundstein für AMDs Entscheidung, für „Zen“ ein komplett neues Design vom weißen Blatt Papier zu starten.'
+        trivia: 'Obwohl die geteilten Decoder und Gleitkommaeinheiten in damaligen Spielen zu niedriger Pro-Takt-Leistung führten, erreichte Bulldozer unter flüssigem Stickstoff 8.429 MHz und legte den Grundstein für die spätere Neuentwicklung von Zen.'
       },
       credit: {
         artist: 'Raimond Spekking',
@@ -259,12 +336,19 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: 'Seit 2012 · ARM-Einplatinen-Revolution',
       img: './img/cpu-12.jpg',
-      q: 'Welcher kreditkartengroße Einplatinencomputer mit Broadcom-ARM-SoC startete 2012 für 35 US-Dollar, um Schülern das Programmieren beizubringen, und wurde mit über 60 Millionen verkauften Boards zum Kult-Rechner für Maker, Server und Heimautomation?',
-      a: ['Raspberry Pi (Broadcom BCM-ARM-SoC)', 'Arduino Uno (ATmega328P)', 'Intel Galileo (Quark SoC)', 'BBC Micro:bit'],
+      q: 'Welcher kreditkartengroße 35-Dollar-Rechner mit ARM-SoC sollte 2012 eigentlich nur britischen Informatik-Schülern helfen und verkaufte sich stattdessen über 60 Millionen Mal?',
+      a: [
+        'Raspberry Pi (Broadcom BCM)',
+        'Arduino Uno (Microchip AVR)',
+        'BeagleBone Black (TI Sitara)',
+        'Intel Edison (Quark SoC)'
+      ],
+      explanation: 'Die Erfinder hofften anfangs bescheiden auf 10.000 verkaufte Exemplare für britische Schulen. Am Erscheinungstag brachen die Server der Elektronikhändler unter dem weltweiten Ansturm von Bastlern und Nerds komplett zusammen!',
+      exp: 'Die Erfinder hofften anfangs bescheiden auf 10.000 verkaufte Exemplare für britische Schulen. Am Erscheinungstag brachen die Server der Elektronikhändler unter dem weltweiten Ansturm von Bastlern und Nerds komplett zusammen!',
       wasDasIst: {
         title: 'Raspberry Pi (Broadcom ARM SoC)',
         nick: 'Der 35-Dollar-Rechner, der ARM auf den Schreibtisch brachte',
-        year: '2012 (Model B mit BCM2835) bis heute (hier Pi 4 Model B mit BCM2711 Cortex-A72)',
+        year: '2012 (Model B mit BCM2835) bis heute (hier Pi 4 Model B mit BCM2711)',
         node: '40 nm (Pi 1) → 28 nm (Pi 4) → 16 nm (Pi 5)',
         socket: 'BGA System-on-a-Chip (SoC)',
         cores: '1× ARM11 @ 700 MHz (Pi 1) bis 4× Cortex-A76 @ 2,4 GHz (Pi 5)',
@@ -282,8 +366,15 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: 'März 2017 · Das +52-%-IPC-Comeback',
       img: './img/cpu-13.jpg',
-      q: 'Mit welchem Achtkern-Prozessor (16 Threads, Sockel AM4) feierte AMD im März 2017 unter Chefarchitekt Jim Keller einen historischen IPC-Sprung von über +52 % gegenüber „Excavator“ und beendete die jahrelange Vierkern-Stagnation im Mainstream?',
-      a: ['AMD Ryzen 7 1800X („Zen 1“ / Summit Ridge)', 'AMD Ryzen 9 3950X („Zen 2“)', 'Intel Core i7-8700K („Coffee Lake“)', 'AMD Athlon 200GE'],
+      q: 'Mit welchem Achtkern-Prozessor für Sockel AM4 vollbrachte AMD im Frühjahr 2017 einen sensationellen Sprung von +52 % IPC und brach das langjährige Monopol teurer Vierkerner?',
+      a: [
+        'AMD Ryzen 7 1800X („Zen 1“)',
+        'Intel Core i7-7700K („Kaby Lake“)',
+        'AMD Threadripper 1900X',
+        'Intel Core i7-6900K („Broadwell-E“)'
+      ],
+      explanation: 'Vor dem Ryzen-Launch verlangte Intel für einen Achtkerner unverschämte 1.000 Euro. AMD bot die gleiche Multithreading-Power plötzlich für weniger als die Hälfte auf einer bezahlbaren Mainstream-Plattform an!',
+      exp: 'Vor dem Ryzen-Launch verlangte Intel für einen Achtkerner unverschämte 1.000 Euro. AMD bot die gleiche Multithreading-Power plötzlich für weniger als die Hälfte auf einer bezahlbaren Mainstream-Plattform an!',
       wasDasIst: {
         title: 'AMD Ryzen 7 1800X („Summit Ridge“ / Zen 1)',
         nick: 'Der Startschuss der langlebigen AM4-Plattform',
@@ -291,7 +382,7 @@ const DATA = [
         node: '14 nm LPP (GlobalFoundries)',
         socket: 'Sockel AM4 (PGA 1331)',
         cores: '8 Kerne · 16 Threads (2 CCX à 4 Kerne verbunden über Infinity Fabric)',
-        trivia: 'Bis Februar 2017 kostete ein Achtkern-Prozessor von Intel (Core i7-6900K) über 1.000 Euro. Der Ryzen 7 1800X lieferte vergleichbare Multithreading-Leistung zum halben Preis auf der Mainstream-Plattform AM4 – auf der Nutzer später sogar noch bis zum Ryzen 7 5800X3D aufrüsten konnten!'
+        trivia: 'Bis Februar 2017 kostete ein Achtkerner von Intel über 1.000 Euro. Der Ryzen 7 1800X lieferte vergleichbare Multithreading-Leistung zum halben Preis auf der langlebigen Mainstream-Plattform AM4.'
       },
       credit: {
         artist: 'Brian Wong',
@@ -305,8 +396,15 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: '2017–Heute · HEDT & Workstation-Gigant',
       img: './img/cpu-14.jpg',
-      q: 'Welche riesige Workstation-Prozessorfamilie von AMD nutzt ein handtellergroßes LGA-Package (über 4.000 bis 4.844 Kontakte!) und kombiniert bis zu 64 oder 96 Zen-Kerne als Chiplets rund um einen zentralen I/O-Die?',
-      a: ['AMD Ryzen Threadripper (TR4 / sTRX4 / sTR5)', 'Intel Xeon Phi „Knights Landing“', 'AMD Opteron 6386 SE', 'Intel Core i9-7980XE'],
+      q: 'Welche brachiale HEDT- und Workstation-Prozessorfamilie nutzt riesige Sockel mit bis zu 4.844 Pins, um Dutzende Rechenkerne aus modularen Chiplets auf einer Platine zu bündeln?',
+      a: [
+        'AMD Ryzen Threadripper',
+        'Intel Core i9 Extreme Edition',
+        'Intel Xeon Phi Coprozessor',
+        'Apple Mac Pro Afterburner'
+      ],
+      explanation: 'Threadripper startete heimlich als inoffizielles Feierabend-Projekt einiger enthusiastischer AMD-Ingenieure. Das modulare Chiplet-Design erwies sich als so genial, dass es AMDs gesamte Server- und High-End-Sparte revolutionierte!',
+      exp: 'Threadripper startete heimlich als inoffizielles Feierabend-Projekt einiger enthusiastischer AMD-Ingenieure. Das modulare Chiplet-Design erwies sich als so genial, dass es AMDs gesamte Server- und High-End-Sparte revolutionierte!',
       wasDasIst: {
         title: 'AMD Ryzen Threadripper (hier 7970X Unterseite)',
         nick: 'Das Multi-Chiplet-Kraftwerk im Server-Format',
@@ -314,7 +412,7 @@ const DATA = [
         node: '14 nm → 7 nm → 5 nm TSMC (Chiplets / CCDs)',
         socket: 'TR4 / sTRX4 / sTR5 (LGA 4094 / LGA 4844)',
         cores: '16 bis 96 Kerne (32 bis 192 Threads) · Quad- bis Octa-Channel-RAM',
-        trivia: 'Threadripper entstand ursprünglich als Feierabend-Projekt („Skunkworks“) einiger AMD-Ingenieure auf Basis des EPYC-Server-Gehäuses. Durch den modularen Aufbau aus kompakten 8-Kern-Chiplets (CCDs) und einem zentralen I/O-Die revolutionierte AMD die Ausbeute (Yield-Rate) bei Hochleistungsprozessoren.'
+        trivia: 'Threadripper entstand ursprünglich als Feierabend-Projekt einiger AMD-Ingenieure. Durch den modularen Aufbau aus kompakten 8-Kern-Chiplets und einem zentralen I/O-Die revolutionierte AMD die Ausbeute bei Hochleistungsprozessoren.'
       },
       credit: {
         artist: 'PantheraLeo1359531',
@@ -328,8 +426,15 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: 'November 2020 · Apple Silicon Wende',
       img: './img/cpu-15.jpg',
-      q: 'Mit welchem 5-nm-ARM64-System-on-a-Chip (inklusive direkt auf dem Package verlötetem Unified-Memory-LPDDR4X-RAM) verabschiedete sich Apple im November 2020 bei MacBook Air, Pro und Mac mini von Intel-x86-Prozessoren?',
-      a: ['Apple M1 (Apple Silicon)', 'Qualcomm Snapdragon 8cx', 'Apple A4', 'NVIDIA Tegra X1'],
+      q: 'Welcher hocheffiziente 5-nm-ARM-Chip mit direkt ins Package integriertem Arbeitsspeicher leitete Ende 2020 den radikalen Abschied des Mac von Intel-Prozessoren ein?',
+      a: [
+        'Apple M1 (Unified Memory)',
+        'Qualcomm Snapdragon 8cx Gen 2',
+        'Intel Core i7-1185G7 („Tiger Lake“)',
+        'Samsung Exynos 2100'
+      ],
+      explanation: 'Durch die extrem kurze Anbindung des gemeinsamen Speichers (Unified Memory) rechnete selbst das lüfterlose MacBook Air so rasant und kühl, dass es viele schwere, dröhnende Intel-Gaming-Laptops das Fürchten lehrte!',
+      exp: 'Durch die extrem kurze Anbindung des gemeinsamen Speichers (Unified Memory) rechnete selbst das lüfterlose MacBook Air so rasant und kühl, dass es viele schwere, dröhnende Intel-Gaming-Laptops das Fürchten lehrte!',
       wasDasIst: {
         title: 'Apple M1 (Apple Silicon SoC)',
         nick: 'Unified Memory & lüfterlose 5-nm-Effizienz',
@@ -337,7 +442,7 @@ const DATA = [
         node: '5 nm (TSMC N5 · 16 Milliarden Transistoren)',
         socket: 'BGA mit integriertem Unified Memory (zwei DRAM-Chips direkt neben dem Die)',
         cores: '8 CPU-Kerne (4× „Firestorm“ Performance + 4× „Icestorm“ Efficiency) + 8-Kern-GPU + 16-Kern-NPU',
-        trivia: 'Auf dem Foto erkennt man links das glänzende M1-Silizium-Die und rechts direkt daneben auf demselben Träger die beiden LPDDR4X-Speicherpakete (Unified Memory Architecture). Durch seinen enorm breiten 8-fach-Befehlsdecoder im Firestorm-Kern schlug das lüfterlose MacBook Air M1 viele laute High-End-Laptops.'
+        trivia: 'Auf dem Foto erkennt man links das glänzende M1-Silizium-Die und rechts direkt daneben auf demselben Träger die beiden LPDDR4X-Speicherpakete. Durch seinen enorm breiten Befehlsdecoder schlug das lüfterlose MacBook Air viele laute Laptops.'
       },
       credit: {
         artist: 'Sonic8400',
@@ -351,8 +456,15 @@ const DATA = [
       cat: 'modern_chiplets',
       eraLabel: 'April 2022 · Gestapelter 3D-Cache',
       img: './img/cpu-16.jpg',
-      q: 'Welcher Gaming-Prozessor für Sockel AM4 nutzte im Frühjahr 2022 als erster Desktop-Chip ein vertikal per Kupfer-Hybrid-Bonding auf das CCD aufgeschweißtes 64-MB-SRAM-Siliziumstück („3D V-Cache“ für insgesamt 96 MB L3-Cache)?',
-      a: ['AMD Ryzen 7 5800X3D', 'Intel Core i9-12900KS', 'AMD Ryzen 9 5950X', 'Intel Core i7-5775C (eDRAM)'],
+      q: 'Welcher AM4-Prozessor schweißte 2022 als erster Gaming-Chip per mikroskopischem Hybrid-Bonding ein zusätzliches 64-MB-SRAM-Plättchen dreidimensional direkt auf das Rechen-Die?',
+      a: [
+        'AMD Ryzen 7 5800X3D (3D V-Cache)',
+        'Intel Core i9-12900KS („Alder Lake“)',
+        'AMD Ryzen 9 5950X („Zen 3“)',
+        'Intel Core i7-5775C (Iris Pro eDRAM)'
+      ],
+      explanation: 'Mit gigantischen 96 MB L3-Cache mutierte dieser Chip zum absoluten Überflieger für Gamer: Fünf Jahre alte Mainboards aus dem Jahr 2017 überholten damit plötzlich brandneue, teure High-End-Konkurrenten!',
+      exp: 'Mit gigantischen 96 MB L3-Cache mutierte dieser Chip zum absoluten Überflieger für Gamer: Fünf Jahre alte Mainboards aus dem Jahr 2017 überholten damit plötzlich brandneue, teure High-End-Konkurrenten!',
       wasDasIst: {
         title: 'AMD Ryzen 7 5800X3D (mit 3D V-Cache)',
         nick: 'Das krönende Finale für Sockel AM4',
@@ -360,7 +472,7 @@ const DATA = [
         node: '7 nm TSMC + gestapelter 7-nm-SRAM-Die (TSMC SoIC Hybrid Bonding)',
         socket: 'Sockel AM4',
         cores: '8 Kerne · 16 Threads · 96 MB L3-Cache (32 MB Basis + 64 MB 3D V-Cache)',
-        trivia: 'Durch das direkte Kupfer-zu-Kupfer-Bonding ohne Lötkugeln wächst der L3-Cache mit über 2 TB/s Bandbreite in die dritte Dimension. Da Spiele extrem empfindlich auf Speicherlatenzen reagieren, bescherte der 5800X3D Besitzern fünf Jahre alter B350/X370-Mainboards aus dem Jahr 2017 plötzlich wieder Spitzen-Gaming-Leistung.'
+        trivia: 'Durch das direkte Kupfer-zu-Kupfer-Bonding ohne Lötkugeln wächst der L3-Cache in die dritte Dimension. Da Spiele empfindlich auf Speicherlatenzen reagieren, bescherte der 5800X3D alten AM4-Mainboards nochmals Spitzen-Gaming-Leistung.'
       },
       credit: {
         artist: 'Phiarc',
