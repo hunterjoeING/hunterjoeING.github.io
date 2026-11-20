@@ -1,0 +1,773 @@
+import * as Phaser from 'phaser';
+import {
+  CampaignSave,
+  ChargerStation,
+  CityDrivePreset,
+  EventChoice,
+  LevelConfig,
+  RunState,
+  TripPlan,
+  WifeDialogueChoice
+} from './types';
+import { getLevelById } from './data/levels';
+import { getVehicleById } from './data/vehicles';
+import { CHARGERS, getCityById, getEdgeById } from './data/europeMap';
+import { getEventById, getWifeDialogueById } from './data/events';
+import { computeSubscriptionTripCost } from './sim/EnergyModel';
+import { createDefaultPlan, evaluateTripPlan, findNearestAvailableCharger } from './sim/RoutePlanner';
+import { evaluateRun } from './sim/ScoringEngine';
+import { getResaleValue, loadCampaignSave, resetCampaignSave, saveCampaignState } from './sim/SaveState';
+import { BootScene } from './phaser/BootScene';
+import { EuropeMapScene } from './phaser/EuropeMapScene';
+import { AutobahnScene } from './phaser/AutobahnScene';
+import { CityDriveScene } from './phaser/CityDriveScene';
+import { ERoadtripBridge } from './phaser/GameBridge';
+import { PlanningUI } from './ui/PlanningUI';
+import { DrivingHUD } from './ui/DrivingHUD';
+import { EventModal } from './ui/EventModal';
+import { ResultsUI } from './ui/ResultsUI';
+import { SoundFX } from './phaser/SoundFX';
+
+function formatClock(level: LevelConfig, elapsedMin: number): string {
+  const total = Math.round(level.departureTimeHour * 60 + elapsedMin);
+  const hh = String(Math.floor(total / 60) % 24).padStart(2, '0');
+  const mm = String(total % 60).padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
+class ERoadtripController {
+  private save: CampaignSave;
+  private level: LevelConfig;
+  private plan: TripPlan;
+  private game!: Phaser.Game;
+  private bridge: ERoadtripBridge;
+
+  private plannerEl: HTMLElement;
+  private planningUI: PlanningUI;
+  private drivingHUD: DrivingHUD;
+  private eventModal: EventModal;
+  private resultsUI: ResultsUI;
+  private stageWrapEl: HTMLElement;
+
+  constructor() {
+    this.save = loadCampaignSave();
+    this.level = getLevelById('level_1_aachen_hannover');
+    const startCarId = this.save.ownedVehicleId || 'mg4_standard';
+    this.plan = createDefaultPlan(this.level, startCarId);
+
+    this.stageWrapEl = document.getElementById('er-workspace')!;
+    this.plannerEl = document.getElementById('er-planner-panel')!;
+    const hudEl = document.getElementById('er-driving-hud')!;
+    const touchEl = document.getElementById('er-touch-controls')!;
+    const modalEl = document.getElementById('er-modal-overlay')!;
+    const resultsEl = document.getElementById('er-results-overlay')!;
+
+    this.eventModal = new EventModal(modalEl);
+
+    this.bridge = {
+      level: this.level,
+      plan: this.plan,
+      runState: null,
+      timeScale: 5,
+      paused: false,
+      touch: { left: false, right: false, up: false, down: false, brake: false, hornPressed: false },
+      isLightTheme: () => document.documentElement.getAttribute('data-theme') !== 'dark',
+
+      onBootReady: () => {
+        this.renderPlanning();
+      },
+
+      onMapSelectCharger: (station: ChargerStation) => {
+        this.toggleChargerInPlan(station);
+      },
+
+      onAutobahnHudTick: (run: RunState) => {
+        this.drivingHUD.update(this.level, run, this.bridge.timeScale);
+      },
+
+      onTriggerChargerSegment: (station: ChargerStation) => {
+        this.enterChargerSegment(station);
+      },
+
+      onTriggerCitySegment: (preset: CityDrivePreset) => {
+        this.enterCitySegment(preset);
+      },
+
+      onCitySegmentComplete: (preset, cleanArrival) => {
+        this.handleCitySegmentComplete(preset, cleanArrival);
+      },
+
+      onDynamicEventTrigger: (eventId: string) => {
+        this.handleDynamicEvent(eventId);
+      },
+
+      onWifeDialogueTrigger: (dialogueId: string) => {
+        this.handleWifeDialogue(dialogueId);
+      },
+
+      onCollisionEvent: (kind) => {
+        this.handleCollision(kind);
+      },
+
+      onBatteryDepleted: () => {
+        this.handleBatteryDepleted();
+      }
+    };
+
+    this.planningUI = new PlanningUI(this.plannerEl, {
+      onPlanChanged: () => {
+        this.syncMapScene();
+        this.renderPlanning();
+      },
+      onStartTrip: () => this.startTrip(),
+      onSelectLevel: (levelId: string) => {
+        this.level = getLevelById(levelId);
+        this.bridge.level = this.level;
+        const carId = this.save.ownedVehicleId || 'mg4_standard';
+        this.plan = createDefaultPlan(this.level, carId);
+        this.bridge.plan = this.plan;
+        this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
+        this.renderPlanning();
+      },
+      onZoomRoute: () => {
+        const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+        s?.fitCameraToRoute();
+      },
+      onZoomEurope: () => {
+        const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+        s?.zoomFullEurope();
+      }
+    });
+
+    this.drivingHUD = new DrivingHUD(hudEl, touchEl, {
+      onSpeedChange: (spd: number) => {
+        const run = this.bridge.runState;
+        if (!run) return;
+        const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
+        if (lp) lp.targetSpeedKmh = spd;
+        else run.plan.legPlans.push({ legIndex: run.currentLegIndex, targetSpeedKmh: spd });
+        run.currentSpeedKmh = spd;
+        this.drivingHUD.update(this.level, run, this.bridge.timeScale);
+      },
+      onTimeScaleChange: (scale: number) => {
+        this.bridge.timeScale = scale;
+        if (this.bridge.runState) {
+          this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale);
+        }
+      },
+      onForceEarlierStop: () => {
+        this.forceEarlierChargeStop();
+      },
+      onUnplannedToiletStop: () => {
+        const run = this.bridge.runState;
+        if (!run) return;
+        run.elapsedMinutes += 8;
+        run.bladderNeed = 0;
+        run.stress = Math.max(0, run.stress - 14);
+        run.incidentLog.push({
+          timeStr: formatClock(this.level, run.elapsedMinutes),
+          title: 'Ungeplanter WC-/Kaffee-Stopp',
+          detail: '+8 Min · Harndrang 0 % · Stress -14 %',
+          impact: 'positive'
+        });
+        this.drivingHUD.update(this.level, run, this.bridge.timeScale);
+      },
+      onToggleMapPreview: () => {
+        this.openLiveMapPeek();
+      }
+    });
+
+    this.resultsUI = new ResultsUI(resultsEl, {
+      onKeepCarAndReplay: (nextLevelId: string) => {
+        this.returnToPlanning(nextLevelId);
+      },
+      onSellAndBuyCar: (newCarId: string, nextLevelId: string) => {
+        if (this.save.ownedVehicleId) {
+          this.save.cashEur += getResaleValue(this.save.ownedVehicleId);
+        }
+        const nextCar = getVehicleById(newCarId);
+        if (this.save.cashEur >= nextCar.priceEur) {
+          this.save.cashEur -= nextCar.priceEur;
+          this.save.ownedVehicleId = newCarId;
+          saveCampaignState(this.save);
+        }
+        this.returnToPlanning(nextLevelId);
+      }
+    });
+
+    this.bindTopbarButtons();
+    this.bootPhaser();
+  }
+
+  private bindTopbarButtons(): void {
+    document.getElementById('btn-toggle-touch')?.addEventListener('click', () => {
+      SoundFX.click();
+      const on = this.drivingHUD.toggleTouchOverlay();
+      const btn = document.getElementById('btn-toggle-touch');
+      if (btn) btn.textContent = on ? '🎮 Touch: AN' : '🎮 Touch: AUS';
+    });
+
+    document.getElementById('btn-reset-campaign')?.addEventListener('click', () => {
+      SoundFX.click();
+      this.save = resetCampaignSave();
+      this.plan = createDefaultPlan(this.level, 'mg4_standard');
+      this.bridge.plan = this.plan;
+      this.bridge.runState = null;
+      this.eventModal.close();
+      this.resultsUI.hide();
+      this.returnToPlanning(this.level.id);
+    });
+  }
+
+  private bootPhaser(): void {
+    const parent = document.getElementById('phaser-stage')!;
+    const config: Phaser.Types.Core.GameConfig = {
+      type: Phaser.AUTO,
+      parent,
+      width: parent.clientWidth || 720,
+      height: parent.clientHeight || 520,
+      backgroundColor: '#0c1e38',
+      pixelArt: true,
+      roundPixels: true,
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: { x: 0, y: 0 },
+          debug: false
+        }
+      },
+      scale: {
+        mode: Phaser.Scale.RESIZE,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+      },
+      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene]
+    };
+
+    this.game = new Phaser.Game(config);
+    this.game.scene.start('BootScene', { bridge: this.bridge });
+  }
+
+  private renderPlanning(): void {
+    this.planningUI.render(this.level, this.plan, this.save);
+  }
+
+  private syncMapScene(): void {
+    const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+    if (mapScene && mapScene.scene.isActive()) {
+      mapScene.refreshDynamicState();
+    }
+  }
+
+  private toggleChargerInPlan(station: ChargerStation): void {
+    const legIdx = this.level.routeLegs.findIndex(l => l.edgeId === station.edgeId);
+    if (legIdx < 0) return;
+
+    const existingOut = this.plan.plannedStops.findIndex(
+      s => s.chargerId === station.id && s.legIndex === legIdx
+    );
+    if (existingOut >= 0) {
+      this.plan.plannedStops.splice(existingOut, 1);
+    } else {
+      this.plan.plannedStops.push({ chargerId: station.id, legIndex: legIdx, targetSocPct: 80 });
+    }
+    this.renderPlanning();
+  }
+
+  private startTrip(): void {
+    const vehicle = getVehicleById(this.plan.vehicleId);
+    if (this.save.ownedVehicleId !== vehicle.id) {
+      if (this.save.cashEur < vehicle.priceEur) return;
+      if (this.save.ownedVehicleId) {
+        this.save.cashEur += getResaleValue(this.save.ownedVehicleId);
+      }
+      this.save.cashEur -= vehicle.priceEur;
+      this.save.ownedVehicleId = vehicle.id;
+      saveCampaignState(this.save);
+    }
+
+    const subCost = computeSubscriptionTripCost(this.plan.subscriptionIds, vehicle);
+    const clonedPlan: TripPlan = JSON.parse(JSON.stringify(this.plan));
+
+    this.bridge.plan = clonedPlan;
+    this.bridge.paused = false;
+    this.bridge.runState = {
+      levelId: this.level.id,
+      plan: clonedPlan,
+      currentLegIndex: 0,
+      legProgressKm: 0,
+      socPct: 96,
+      elapsedMinutes: 0,
+      stress: this.level.passengers.initialStress,
+      peakStress: this.level.passengers.initialStress,
+      bladderNeed: 10,
+      energyUsedKwh: 0,
+      distanceDrivenKm: 0,
+      chargingCostEur: 0,
+      subscriptionCostEur: subCost,
+      tollsAndFinesEur: 0,
+      decisionScoreAccum: 0,
+      replanCount: 0,
+      goodReplanCount: 0,
+      chargingEfficiencyBonus: 0,
+      collisionsCount: 0,
+      completedStopIds: [],
+      skippedStopIds: [],
+      triggeredEventIds: [],
+      wifeDialogueTriggered: false,
+      incidentLog: [],
+      activeWeather: 'clear',
+      currentSpeedKmh: clonedPlan.legPlans[0]?.targetSpeedKmh || 130,
+      isNight: false
+    };
+
+    // Hide planner drawer during driving
+    this.stageWrapEl.classList.add('driving-active');
+    this.plannerEl.classList.add('hidden');
+    this.enterCitySegment('aachen_start');
+  }
+
+  private stopAllGameplayScenes(): void {
+    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene'].forEach(k => {
+      if (this.game.scene.isActive(k)) {
+        this.game.scene.stop(k);
+      }
+    });
+  }
+
+  private enterCitySegment(preset: CityDrivePreset, chargerId?: string): void {
+    this.stopAllGameplayScenes();
+    this.bridge.paused = false;
+    this.drivingHUD.setMode('city');
+    const titleMap: Record<CityDrivePreset, string> = {
+      aachen_start: 'Aachen Innenstadt → A4 Auffahrt',
+      charger_park: `Ladepark Einfahrt`,
+      hannover_messe: 'Hannover Messe → E-Parkplatz',
+      aachen_finish: 'Aachen Ausfahrt → Ziel-Parkplatz',
+      ferry_denmark: 'Hirtshals Fährhafen'
+    };
+    if (this.bridge.runState) {
+      this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale, titleMap[preset]);
+    }
+    this.game.scene.start('CityDriveScene', {
+      bridge: this.bridge,
+      preset,
+      chargerId
+    });
+  }
+
+  private enterChargerSegment(station: ChargerStation): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    run.activeCityChargerId = station.id;
+    this.enterCitySegment('charger_park', station.id);
+  }
+
+  private enterAutobahn(): void {
+    this.stopAllGameplayScenes();
+    this.bridge.paused = false;
+    this.drivingHUD.setMode('autobahn');
+    if (this.bridge.runState) {
+      this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale);
+    }
+    this.game.scene.start('AutobahnScene', { bridge: this.bridge });
+  }
+
+  private handleCitySegmentComplete(preset: CityDrivePreset, cleanArrival: boolean): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+
+    if (preset === 'aachen_start') {
+      run.elapsedMinutes += 7;
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: 'Aachen Stadt-Ausfahrt → A4',
+        detail: cleanArrival ? 'Sauber auf die A4 aufgefahren!' : 'Mit Zwischenfall auf die A4.',
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      this.enterAutobahn();
+      return;
+    }
+
+    if (preset === 'charger_park') {
+      const stationId = run.activeCityChargerId;
+      const station = stationId ? CHARGERS.find(c => c.id === stationId) : undefined;
+      if (!station) {
+        this.enterAutobahn();
+        return;
+      }
+
+      const startChargingFlow = () => {
+        const stopPlan = run.plan.plannedStops.find(
+          s => s.chargerId === station.id && s.legIndex === run.currentLegIndex
+        );
+        const targetSoc = stopPlan ? stopPlan.targetSocPct : 80;
+        const arriveSoc = run.socPct;
+        this.bridge.paused = true;
+
+        this.eventModal.showChargingSession(station, run, targetSoc, (addedKwh, mins, cost, newSoc) => {
+          run.completedStopIds.push(station.id);
+          run.socPct = newSoc;
+          run.elapsedMinutes += mins;
+          run.chargingCostEur += cost;
+          run.bladderNeed = Math.max(0, run.bladderNeed - 55);
+
+          // Reward charging in sweet spot (10% - 75%)
+          if (arriveSoc <= 24 && newSoc <= 82) {
+            run.chargingEfficiencyBonus += 6;
+          }
+          if (station.hasMcDonalds && run.plan.subscriptionIds.includes('ewe_go')) {
+            run.stress = Math.max(0, run.stress - 12);
+          } else {
+            run.stress = Math.max(0, run.stress - 4);
+          }
+
+          run.incidentLog.push({
+            timeStr: formatClock(this.level, run.elapsedMinutes),
+            title: `Laden: ${station.name}`,
+            detail: `+${addedKwh.toFixed(1)} kWh (${Math.round(arriveSoc)}% → ${newSoc}%) in ${mins} Min · ${cost.toFixed(2)} €`,
+            impact: 'positive'
+          });
+          this.enterAutobahn();
+        });
+      };
+
+      // Check station defect/occupancy risk!
+      if (!run.triggeredEventIds.includes(`def_${station.id}`) && Math.random() < station.defectRisk + station.occupancyRisk * 0.35) {
+        run.triggeredEventIds.push(`def_${station.id}`);
+        const evt = getEventById('evt_charger_defect');
+        if (evt) {
+          this.bridge.paused = true;
+          this.eventModal.showDynamicEvent(
+            evt,
+            choice => {
+              this.applyEventChoice(evt.title, choice);
+              if (choice.insertNearestCharger) {
+                run.skippedStopIds.push(station.id);
+              }
+              return choice.resultText;
+            },
+            () => {
+              if (run.skippedStopIds.includes(station.id)) {
+                this.enterAutobahn();
+              } else {
+                startChargingFlow();
+              }
+            }
+          );
+          return;
+        }
+      }
+
+      startChargingFlow();
+      return;
+    }
+
+    if (preset === 'hannover_messe') {
+      run.elapsedMinutes += 28; // Turnaround / Messe-Termin
+      run.bladderNeed = 0;
+      run.stress = Math.max(0, run.stress - 8);
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: 'Hannover Messe erreicht!',
+        detail: 'Messe-Termin & Turnaround (+28 Min). Jetzt Rückfahrt nach Aachen!',
+        impact: 'positive'
+      });
+
+      this.bridge.paused = true;
+      this.eventModal.showMapPeek(
+        `
+        <p><strong>🎉 Etappenziel Hannover Messe erreicht!</strong></p>
+        <p>Nach 28 Minuten Messe-Checkup geht es jetzt bei aufziehendem Regen und späterer Dämmerung zurück Richtung Aachen.</p>
+        <p>Aktueller Akku: <strong>${Math.round(run.socPct)}%</strong> · Stress: <strong>${Math.round(run.stress)}%</strong></p>
+        `,
+        () => {
+          run.currentLegIndex += 1;
+          run.legProgressKm = 0;
+          this.enterAutobahn();
+        }
+      );
+      return;
+    }
+
+    if (preset === 'aachen_finish') {
+      this.finishLevel(cleanArrival);
+    }
+  }
+
+  private applyEventChoice(title: string, choice: EventChoice): string {
+    const run = this.bridge.runState;
+    if (!run) return choice.resultText;
+
+    run.elapsedMinutes += choice.timeDeltaMin;
+    run.socPct = Math.max(1, Math.min(100, run.socPct + choice.socDeltaPct));
+    run.chargingCostEur += choice.costDeltaEur;
+    run.stress = Phaser.Math.Clamp(run.stress + choice.stressDelta, 0, 100);
+    run.peakStress = Math.max(run.peakStress, run.stress);
+    run.decisionScoreAccum += choice.decisionPoints;
+
+    if (choice.adjustSpeedKmh) {
+      const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
+      if (lp) lp.targetSpeedKmh = choice.adjustSpeedKmh;
+      run.currentSpeedKmh = choice.adjustSpeedKmh;
+    }
+
+    if (choice.insertNearestCharger) {
+      const leg = this.level.routeLegs[run.currentLegIndex];
+      const edge = getEdgeById(leg.edgeId);
+      const nearest = findNearestAvailableCharger(
+        this.level,
+        run.currentLegIndex,
+        run.legProgressKm / edge.distanceKm,
+        run.completedStopIds
+      );
+      if (nearest) {
+        const exists = run.plan.plannedStops.some(
+          s => s.chargerId === nearest.station.id && s.legIndex === nearest.legIndex
+        );
+        if (!exists) {
+          run.plan.plannedStops.push({
+            chargerId: nearest.station.id,
+            legIndex: nearest.legIndex,
+            targetSocPct: 78
+          });
+          run.replanCount += 1;
+          run.goodReplanCount += 1;
+        }
+      }
+    }
+
+    let finalText = choice.resultText;
+    if (choice.fineRisk && Math.random() < choice.fineRisk.probability) {
+      run.tollsAndFinesEur += choice.fineRisk.amountEur;
+      run.stress = Math.min(100, run.stress + 12);
+      run.peakStress = Math.max(run.peakStress, run.stress);
+      finalText += ` ⚠️ Pech gehabt: ${choice.fineRisk.label} (+${choice.fineRisk.amountEur} € Bußgeld)!`;
+    }
+
+    run.incidentLog.push({
+      timeStr: formatClock(this.level, run.elapsedMinutes),
+      title,
+      detail: finalText,
+      impact: choice.decisionPoints >= 10 ? 'positive' : choice.decisionPoints < 0 ? 'negative' : 'neutral'
+    });
+    return finalText;
+  }
+
+  private handleDynamicEvent(eventId: string): void {
+    const evt = getEventById(eventId);
+    if (!evt) {
+      this.bridge.paused = false;
+      return;
+    }
+    this.eventModal.showDynamicEvent(
+      evt,
+      choice => this.applyEventChoice(evt.title, choice),
+      () => {
+        this.bridge.paused = false;
+      }
+    );
+  }
+
+  private handleWifeDialogue(dialogueId: string): void {
+    const dlg = getWifeDialogueById(dialogueId);
+    const run = this.bridge.runState;
+    if (!dlg || !run) {
+      this.bridge.paused = false;
+      return;
+    }
+
+    this.eventModal.showWifeStressDialogue(
+      dlg,
+      this.level,
+      run,
+      action => {
+        if (action === 'insert_stop') {
+          const leg = this.level.routeLegs[run.currentLegIndex];
+          const edge = getEdgeById(leg.edgeId);
+          const nearest = findNearestAvailableCharger(
+            this.level,
+            run.currentLegIndex,
+            run.legProgressKm / edge.distanceKm,
+            run.completedStopIds
+          );
+          if (nearest) {
+            run.plan.plannedStops.push({
+              chargerId: nearest.station.id,
+              legIndex: nearest.legIndex,
+              targetSocPct: 75
+            });
+            run.replanCount += 1;
+            run.goodReplanCount += 1;
+            return `Zwischenstopp „${nearest.station.name}“ eingeplant!`;
+          }
+          return 'Kein weiterer Ladepark vor dem Ziel nötig.';
+        } else {
+          const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
+          if (lp) lp.targetSpeedKmh = 115;
+          run.currentSpeedKmh = 115;
+          run.replanCount += 1;
+          run.goodReplanCount += 1;
+          return 'Zieltempo auf 115 km/h Eco-Modus gesenkt!';
+        }
+      },
+      (choice: WifeDialogueChoice, routeChanged: boolean) => {
+        const extraCalm = routeChanged && choice.tone === 'calming' ? -6 : 0;
+        run.stress = Phaser.Math.Clamp(run.stress + choice.stressDelta + extraCalm, 0, 100);
+        run.peakStress = Math.max(run.peakStress, run.stress);
+        run.decisionScoreAccum += choice.decisionPoints + (routeChanged ? 6 : 0);
+        run.incidentLog.push({
+          timeStr: formatClock(this.level, run.elapsedMinutes),
+          title: 'Stress-Dialog Partnerin',
+          detail: `${choice.text.slice(0, 65)}… → Stress jetzt ${Math.round(run.stress)}%`,
+          impact: choice.stressDelta < 0 ? 'positive' : 'negative'
+        });
+      },
+      () => {
+        this.bridge.paused = false;
+      }
+    );
+  }
+
+  private handleCollision(kind: 'car' | 'pedestrian' | 'cyclist' | 'obstacle'): void {
+    const run = this.bridge.runState;
+    if (!run) {
+      this.bridge.paused = false;
+      return;
+    }
+    this.eventModal.showCollisionDialogue(kind, (cost, mins, stressDelta, summary) => {
+      run.tollsAndFinesEur += cost;
+      run.elapsedMinutes += mins;
+      run.stress = Math.min(100, run.stress + stressDelta);
+      run.peakStress = Math.max(run.peakStress, run.stress);
+      run.decisionScoreAccum -= 6;
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: 'Stadtverkehr-Zwischenfall',
+        detail: summary,
+        impact: 'negative'
+      });
+      this.bridge.paused = false;
+    });
+  }
+
+  private handleBatteryDepleted(): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    run.tollsAndFinesEur += 145;
+    run.elapsedMinutes += 45;
+    run.socPct = 28;
+    run.stress = Math.min(100, run.stress + 28);
+    run.peakStress = Math.max(run.peakStress, run.stress);
+    run.incidentLog.push({
+      timeStr: formatClock(this.level, run.elapsedMinutes),
+      title: 'Akku 0 % – Mobiler Pannenservice!',
+      detail: 'ADAC Notladung bis 28 % (+45 Min, 145 € Servicegebühr).',
+      impact: 'negative'
+    });
+
+    this.eventModal.showMapPeek(
+      `<p><strong>🪫 Batterie leer (0 %)!</strong></p>
+       <p>Der mobile Pannenservice hat dich auf <b>28 % SoC</b> nachgeladen (+45 Min Zeitverlust, 145 € Gebühr). Plane am besten sofort einen Schnelllader ein!</p>`,
+      () => {
+        this.forceEarlierChargeStop();
+        this.bridge.paused = false;
+      }
+    );
+  }
+
+  private forceEarlierChargeStop(): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    const leg = this.level.routeLegs[run.currentLegIndex];
+    const edge = getEdgeById(leg.edgeId);
+    const nearest = findNearestAvailableCharger(
+      this.level,
+      run.currentLegIndex,
+      run.legProgressKm / edge.distanceKm,
+      run.completedStopIds
+    );
+    if (nearest) {
+      const exists = run.plan.plannedStops.some(
+        s => s.chargerId === nearest.station.id && s.legIndex === nearest.legIndex
+      );
+      if (!exists) {
+        run.plan.plannedStops.push({
+          chargerId: nearest.station.id,
+          legIndex: nearest.legIndex,
+          targetSocPct: 80
+        });
+        run.replanCount += 1;
+        run.goodReplanCount += 1;
+        run.incidentLog.push({
+          timeStr: formatClock(this.level, run.elapsedMinutes),
+          title: 'Umplanung während Fahrt',
+          detail: `Ladestopp „${nearest.station.name}“ zusätzlich eingefügt.`,
+          impact: 'positive'
+        });
+      }
+      this.drivingHUD.update(this.level, run, this.bridge.timeScale);
+    }
+  }
+
+  private openLiveMapPeek(): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    this.bridge.paused = true;
+    const forecast = evaluateTripPlan(this.level, run.plan);
+    const upcoming = run.plan.plannedStops
+      .filter(s => s.legIndex >= run.currentLegIndex && !run.completedStopIds.includes(s.chargerId))
+      .map(s => CHARGERS.find(c => c.id === s.chargerId)?.name || s.chargerId);
+
+    const html = `
+      <p><b>Aktuelle Etappe:</b> ${run.currentLegIndex + 1} / ${this.level.routeLegs.length} · <b>Akku:</b> ${Math.round(run.socPct)}%</p>
+      <p><b>Geplante verbleibende Ladestopps:</b> ${upcoming.length > 0 ? upcoming.join(', ') : 'Keine mehr bis zum Ziel'}</p>
+      <p><b>Prognose Restverbrauch:</b> ~${forecast.avgConsumptionKwh100} kWh/100km</p>
+    `;
+    this.eventModal.showMapPeek(html, () => {
+      this.bridge.paused = false;
+    });
+  }
+
+  private finishLevel(cleanArrival: boolean): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    this.stopAllGameplayScenes();
+    this.drivingHUD.setMode('hidden');
+
+    const result = evaluateRun(this.level, run, cleanArrival);
+    this.save.cashEur += result.prizeMoneyEur;
+    if (this.save.unlockedLevelOrder <= this.level.order) {
+      this.save.unlockedLevelOrder = this.level.order + 1;
+    }
+    const prev = this.save.completedLevels[this.level.id];
+    if (!prev || result.totalScore > prev.bestScore) {
+      this.save.completedLevels[this.level.id] = {
+        bestScore: result.totalScore,
+        bestMinutes: result.totalMinutes
+      };
+    }
+    saveCampaignState(this.save);
+    this.resultsUI.show(this.level, run, result, this.save);
+  }
+
+  private returnToPlanning(levelId: string): void {
+    this.level = getLevelById(levelId);
+    this.bridge.level = this.level;
+    this.bridge.runState = null;
+    this.bridge.paused = false;
+    const carId = this.save.ownedVehicleId || 'mg4_standard';
+    this.plan = createDefaultPlan(this.level, carId);
+    this.bridge.plan = this.plan;
+
+    this.drivingHUD.setMode('hidden');
+    this.stageWrapEl.classList.remove('driving-active');
+    this.plannerEl.classList.remove('hidden');
+    this.stopAllGameplayScenes();
+    this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
+    this.renderPlanning();
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  new ERoadtripController();
+});

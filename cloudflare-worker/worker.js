@@ -24,6 +24,7 @@ const CORS_HEADERS = {
 };
 
 const GAMES_META = {
+  eroadtrip: { title: 'E-Roadtrip', lowerIsBetter: false },
   minesweeper: { title: '3D Minesweeper', lowerIsBetter: true },
   minesweeper_3d_prompt_test: { title: 'Minesweeper 3d prompt Version', lowerIsBetter: true },
   roadster: { title: 'Roadster Lander', lowerIsBetter: false },

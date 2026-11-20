@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>E-Roadtrip – Pixel-Art E-Auto Planung &amp; GTA-2 Fahrt</title>
+  <meta name="description" content="Plane reale E-Auto-Roadtrips durch Europa mit Ladekurven, Lade-Abos, Autobahn-Autopilot, GTA-2 Stadtsegmenten, Dynamik-Events und Fahrzeug-Progression." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/e-roadtrip/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">⚡🚗 E-Roadtrip · Pixel Europe &amp; GTA-2</div>
+    </div>
+    <div class="topbar-right">
+      <button type="button" id="btn-toggle-touch" class="hub-action-btn" title="Bildschirm-Touch-Steuerung ein/aus">🎮 Touch</button>
+      <button type="button" id="btn-reset-campaign" class="hub-action-btn" title="Kampagne zurücksetzen">🔄 Neu</button>
+      <button type="button" class="hub-action-btn" id="btn-arcade-theme" data-with-label="1" title="Hell-/Dunkel-Modus wechseln">☀️ Hell</button>
+      <button type="button" id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="er-shell">
+    <div class="er-workspace" id="er-workspace">
+      <section class="er-stage-panel">
+        <div id="phaser-stage"></div>
+        <div id="er-driving-hud" class="er-driving-hud hidden"></div>
+        <div id="er-touch-controls" class="er-touch-controls hidden"></div>
+      </section>
+
+      <aside class="er-planner-panel" id="er-planner-panel" aria-label="Roadtrip-Planung"></aside>
+    </div>
+  </main>
+
+  <div id="er-modal-overlay" class="er-modal-overlay hidden" role="dialog" aria-modal="true"></div>
+  <div id="er-results-overlay" class="er-results-overlay hidden" role="dialog" aria-modal="true"></div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/burger-menu.js"></script>
+  <script src="./dist/phaser.min.js"></script>
+  <script src="./dist/e-roadtrip.js"></script>
+</body>
+</html>

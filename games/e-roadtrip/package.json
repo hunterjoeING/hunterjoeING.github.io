@@ -1,0 +1,10 @@
+{
+  "name": "e-roadtrip",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E-Roadtrip – Pixel-Art E-Car Roadtrip Planning & GTA-2 Style Driving Game (Phaser 3 + TypeScript)",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "esbuild src/main.ts --bundle --format=iife --global-name=ERoadtripApp --outfile=dist/e-roadtrip.js --sourcemap=inline"
+  }
+}
