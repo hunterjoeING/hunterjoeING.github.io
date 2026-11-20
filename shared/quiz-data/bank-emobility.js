@@ -1,1304 +1,983 @@
-// Auto-generated unified quiz bank for "emobility" (108 questions)
+// Auto-generated unified quiz bank for "emobility" (75 questions)
 (function () {
   const DATA = [
   {
     "cat": "allgemein",
     "diff": "easy",
-    "q": "Welches Serien-Elektroauto kam 2019 als erstes mit 800-Volt-Architektur und signifikant über 250 kW (bis zu 270 kW) Ladeleistung auf den Markt?",
+    "q": "Welches Serien-Elektroauto führte 2019 als erstes weltweit die 800-Volt-Systemarchitektur ein?",
     "a": [
       "Porsche Taycan",
-      "Tesla Model S Raven",
+      "Tesla Model S",
       "Audi e-tron 55",
-      "Mercedes EQC"
+      "Mercedes-Benz EQC"
     ],
-    "exp": "Der Porsche Taycan (2019) führte als weltweit erstes Serien-E-Auto das 800-Volt-System ein und lud mit bis zu 270 kW Peak an HPC-Säulen."
+    "explanation": "800 Volt halbiert bei gleicher Ladeleistung den Stromfluss (Ampere) – das spart Kabelgewicht und erlaubt Ladeleistungen bis 270 kW und mehr.",
+    "exp": "800 Volt halbiert bei gleicher Ladeleistung den Stromfluss (Ampere) – das spart Kabelgewicht und erlaubt Ladeleistungen bis 270 kW und mehr."
   },
   {
     "cat": "allgemein",
     "diff": "easy",
-    "q": "Was bezeichnet beim Elektroauto die Rekuperation?",
+    "q": "Was passiert bei der sogenannten „Rekuperation“ beim Ausrollen oder Bremsen eines Elektroautos?",
     "a": [
-      "Rückgewinnung von Bremsenergie in den Akku",
-      "Vorheizen der Batterie über Nacht",
-      "Automatische Spurführung auf der Autobahn",
-      "Kühlung des Ladekabels mit Wasser"
+      "Der Elektromotor arbeitet als Generator und wandelt Bewegungsenergie zurück in Strom für den Akku",
+      "Kühlluft wird von den Bremsscheiben in den Innenraum geblasen",
+      "Überschüssiger Strom wird über Widerstände auf dem Dach in Wärme verpufft",
+      "Der Elektromotor schaltet automatisch in den Leerlauf, um den Akku zu schonen"
     ],
-    "exp": "Beim Verzögern arbeitet der Elektromotor als Generator und speist kinetische Energie wieder als Strom in die Hochvoltbatterie ein."
+    "explanation": "Durch Rekuperation gewinnen E-Autos im Stadtverkehr bis zu 70-80 % der kinetischen Bremsenergie zurück – die mechanische Bremse verschleißt kaum.",
+    "exp": "Der Elektromotor arbeitet als Generator und wandelt Bewegungsenergie zurück in Strom für den Akku"
   },
   {
     "cat": "allgemein",
     "diff": "easy",
-    "q": "Welche Einheit gibt beim Elektroauto direkt den Energieinhalt (die „Tankgröße“) der Batterie an?",
+    "q": "Warum benötigen reine Elektroautos fast ausnahmslos kein mehrgängiges Schaltgetriebe?",
     "a": [
-      "Kilowattstunden (kWh)",
-      "Kilowatt (kW)",
-      "Volt (V)",
-      "Ampere (A)"
+      "Elektromotoren liefern ab der ersten Umdrehung volles Drehmoment und drehen problemlos bis über 18.000 U/min",
+      "Weil Getriebeöle unter Hochspannung sofort entflammen würden",
+      "Gesetzliche Vorgaben verbieten Kupplungspedale in batterieelektrischen Fahrzeugen",
+      "Weil der Rückwärtsgang bei E-Autos rein mechanisch nicht umsetzbar wäre"
     ],
-    "exp": "Kilowattstunden (kWh) beschreiben die gespeicherte Energiemenge, während Kilowatt (kW) die momentane Fahr- oder Ladeleistung angeben."
+    "explanation": "Ein einzelnes festes Untersetzungsgetriebe (ca. 9:1) reicht aus, um aus dem Stand extrem zu beschleunigen und über 200 km/h zu fahren.",
+    "exp": "Elektromotoren liefern ab der ersten Umdrehung volles Drehmoment und drehen problemlos bis über 18.000 U/min"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "mid",
+    "q": "Welche Batteriechemie (LFP) setzt sich bei Standard-Range-Elektroautos wegen Robustheit und Rohstoffpreisen durch?",
+    "a": [
+      "Lithium-Eisenphosphat (LiFePO4) ohne teures Kobalt und Nickel",
+      "Nickel-Mangan-Kobalt mit flüssigem Quecksilber",
+      "Blei-Gel-Akkus mit Nano-Graphen-Beschichtung",
+      "Natrium-Schwefel-Akkus mit 300 Grad Betriebstemperatur"
+    ],
+    "explanation": "LFP-Zellen sind extrem zyklenfest (oft über 3.000 Zyklen), brennen bei Beschädigung praktisch nicht und kommen ganz ohne Kobalt aus.",
+    "exp": "Lithium-Eisenphosphat (LiFePO4) ohne teures Kobalt und Nickel"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "mid",
+    "q": "Warum empfiehlt der Hersteller bei Fahrzeugen mit LFP-Akku ausdrücklich das regelmäßige Laden auf 100 % SoC?",
+    "a": [
+      "Weil die Spannungskurve von LFP extrem flach ist und das Batteriemanagement (BMS) nur bei 100 % die Zellbalance sauber kalibrieren kann",
+      "Weil LFP-Zellen unter 80 Prozent Ladestand sofort Sulfat-Kristalle bilden",
+      "Damit der Kühlerlüfter in der Nacht die Batterieflüssigkeit durchmischen kann",
+      "Um die gesetzlich vorgeschriebene Notstromreserve für das Stromnetz zu garantieren"
+    ],
+    "explanation": "Zwischen 20 % und 80 % ändert sich die Zellspannung kaum – erst bei 100 % steigt sie steil an, wodurch das BMS die genaue Kapazität ermittelt.",
+    "exp": "Weil die Spannungskurve von LFP extrem flach ist und das Batteriemanagement (BMS) nur bei 100 % die Zellbalance sauber kalibrieren kann"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "nerd",
+    "q": "Was unterscheidet eine permanentmagneterregte Synchronmaschine (PSM) von einer Asynchronmaschine (ASM)?",
+    "a": [
+      "PSM hat Neodym-Magnete im Rotor und höchsten Teillast-Wirkungsgrad; ASM induziert das Magnetfeld und rollt stromlos widerstandsfrei im Leerlauf",
+      "ASM funktioniert ausschließlich mit Gleichstrom; PSM benötigt Drehstrom",
+      "PSM darf nur bei Temperaturen unter dem Gefrierpunkt betrieben werden",
+      "ASM benötigt permanente Kohlebürsten wie ein alter Staubsaugermotor"
+    ],
+    "explanation": "Viele Hersteller kombinieren beide: Eine effiziente PSM als Hauptantrieb an der Hinterachse und eine verlustfrei mitrollende ASM an der Vorderachse für Boost.",
+    "exp": "PSM hat Neodym-Magnete im Rotor und höchsten Teillast-Wirkungsgrad; ASM induziert das Magnetfeld und rollt stromlos widerstandsfrei im Leerlauf"
   },
   {
     "cat": "allgemein",
     "diff": "easy",
-    "q": "Welcher Hauptvorteil entsteht bei einer Wärmepumpe gegenüber einem klassischen PTC-Heizstab im Winter?",
+    "q": "Was ist das Prinzip des „One-Pedal-Driving“ bei modernen E-Autos?",
     "a": [
-      "Deutlich geringerer Stromverbrauch beim Heizen des Innenraums",
-      "Doppelte Höchstgeschwindigkeit auf Schnee",
-      "Aufladen ohne Ladekabel",
-      "Vollständiger Verzicht auf Kühlmittel"
+      "Das Fahrzeug bremst beim Lupfen des Fahrpedals über Rekuperation bis zum völligen Stillstand ab",
+      "Gas- und Bremspedal sind mechanisch zu einer einzigen Wippe verschmolzen",
+      "Das Auto fährt autonom ohne jegliche Betätigung von Pedalen",
+      "Man steuert die Beschleunigung ausschließlich über Tasten am Lenkrad"
     ],
-    "exp": "Eine Wärmepumpe nutzt vorhandene Umgebungs- und Abwärme statt elektrischen Strom 1:1 in Wärme umzuwandeln – das spart besonders im Teillastbereich Reichweite."
+    "explanation": "Im Stadtverkehr berührt man das mechanische Bremspedal fast nie mehr – das Fahren wird spürbar entspannter und energiesparender.",
+    "exp": "Das Fahrzeug bremst beim Lupfen des Fahrpedals über Rekuperation bis zum völligen Stillstand ab"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "mid",
+    "q": "Welchen dramatischen Reichweitenvorteil bringt eine Wärmepumpe im Winter gegenüber einer reinen PTC-Elektroheizung?",
+    "a": [
+      "Sie schöpft Umweltwärme und erreicht einen Wirkungsgrad (COP) von 2,5 bis 4 (1 kW Strom erzeugt 3 kW Wärme)",
+      "Sie erwärmt den Innenraum durch Reibung der Reifen auf dem Asphalt",
+      "Sie speichert Sonnenlicht in flüssigem Wachs unter den Fußmatten",
+      "Sie verbrennt kleinste Kerosinreste aus einem Reservebehälter"
+    ],
+    "explanation": "Eine klassische PTC-Heizung wandelt 1 kW Strom in genau 1 kW Wärme um – eine Wärmepumpe spart im Winter enorm wertvolle Kilowattstunden aus dem Akku.",
+    "exp": "Sie schöpft Umweltwärme und erreicht einen Wirkungsgrad (COP) von 2,5 bis 4 (1 kW Strom erzeugt 3 kW Wärme)"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "nerd",
+    "q": "Was beschreibt der „cW-Wert“ und warum ist er bei Elektroautos auf der Autobahn so erfolgskritisch?",
+    "a": [
+      "Der Strömungswiderstandskoeffizient – da der Luftwiderstand quadratisch mit der Geschwindigkeit steigt, entscheidet er primär über den Autobahnverbrauch",
+      "Die Ladeeffizienz des On-Board-Laders bei Wechselstrom",
+      "Der prozentuale Gewichtsanteil des Akkus am Gesamtgewicht des Fahrzeugs",
+      "Die Härte der Stoßdämpfer bei maximaler Zuladung"
+    ],
+    "explanation": "Bei 130 km/h gehen rund zwei Drittel des Energieverbrauchs in die Überwindung des Luftwiderstands. Aerodynamische Formen sparen direkt Akku-Kilos.",
+    "exp": "Der Strömungswiderstandskoeffizient – da der Luftwiderstand quadratisch mit der Geschwindigkeit steigt, entscheidet er primär über den Autobahnverbrauch"
   },
   {
     "cat": "allgemein",
     "diff": "easy",
-    "q": "Warum gilt der cW-Wert (Luftwiderstandsbeiwert) bei E-Autos auf der Autobahn als so entscheidend?",
+    "q": "Was versteht man unter dem Begriff „Frunk“ bei einem Elektrofahrzeug?",
     "a": [
-      "Der Luftwiderstand steigt im Quadrat zur Geschwindigkeit",
-      "Er senkt die Mehrwertsteuer beim Kauf",
-      "Er verhindert das Entladen bei Frost",
-      "Er bestimmt die Anzahl der Bremsbeläge"
+      "Einen vorderen Kofferraum (Front Trunk) unter der Fronthaube, wo früher der Verbrennungsmotor saß",
+      "Ein geheimes Fach im Dachhimmel für Ladekabel",
+      "Die akustische Hupe zur Warnung von Fußgängern bei Schrittgeschwindigkeit",
+      "Einen ausklappbaren Campingtisch in der Heckklappe"
     ],
-    "exp": "Bei Autobahntempo dominiert der Luftwiderstand (proportional zu v²) den Verbrauch – ein guter cW-Wert × Stirnfläche bringt direkt mehr Reichweite."
+    "explanation": "Da Elektromotoren winzig sind, bleibt vorne viel Stauraum – perfekt für schmutzige Ladekabel, Warndreieck oder Einkaufstaschen.",
+    "exp": "Einen vorderen Kofferraum (Front Trunk) unter der Fronthaube, wo früher der Verbrennungsmotor saß"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "mid",
+    "q": "Was ist das Phänomen „Thermal Runaway“ bei einer Lithium-Ionen-Batteriezelle?",
+    "a": [
+      "Eine unkontrollierbare exotherme Kettenreaktion, bei der eine überhitzte Zelle Sauerstoff freisetzt und sich selbst entzündet",
+      "Das Einfrieren der Kühlflüssigkeit bei minus 40 Grad Außentemperatur",
+      "Der plötzliche Abfall der 12-Volt-Bordnetzspannung beim Parken",
+      "Das automatische Entladen des Akkus zur Schonung der Elektromotoren"
+    ],
+    "explanation": "Moderne Batteriepacks verhindern durch massive Zell-Barrieren, Überdruckventile und Kühlkanäle das Übergreifen auf Nachbarzellen.",
+    "exp": "Eine unkontrollierbare exotherme Kettenreaktion, bei der eine überhitzte Zelle Sauerstoff freisetzt und sich selbst entzündet"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "nerd",
+    "q": "Welchen Halbleiter-Werkstoff setzen moderne Wechselrichter (Inverter) statt klassischem Silizium ein, um Verluste drastisch zu senken?",
+    "a": [
+      "Siliziumkarbid (SiC) oder Galliumnitrid (GaN)",
+      "Reines Germanium mit Arsen-Dotierung",
+      "Supraleitendes Niob-Titan bei Raumtemperatur",
+      "Amorphes Kupferoxid mit Diamantstaub"
+    ],
+    "explanation": "SiC-MOSFETs schalten viel schneller, vertragen höhere Temperaturen und Spannungen und steigern die Effizienz des Antriebsstrangs um bis zu 5-10 Prozent.",
+    "exp": "Siliziumkarbid (SiC) oder Galliumnitrid (GaN)"
   },
   {
     "cat": "allgemein",
     "diff": "easy",
-    "q": "Was ist typisch für die Leistungsabgabe eines Elektromotors direkt aus dem Stand?",
+    "q": "Warum verschleißen die mechanischen Bremsbeläge bei vielen Elektroautos oft so langsam, dass sie eher verrosten als abnutzen?",
     "a": [
-      "Volles maximales Drehmoment nahezu ab 0 U/min",
-      "Drehmoment entsteht erst ab 4.000 U/min",
-      "Er benötigt mindestens ein 8-Gang-Schaltgetriebe",
-      "Er kann im Rückwärtsgang nicht beschleunigen"
+      "Weil der Großteil aller normalen Bremsungen rein generatorisch über den Elektromotor abgewickelt wird",
+      "Weil Bremsbeläge bei E-Autos aus unvergänglichem Carbon-Titan gefertigt sind",
+      "Weil die Bremszangen permanent unter elektrischer Hochspannung stehen",
+      "Weil E-Autos bei Bremsmanövern kleine Bremsfallschirme ausstoßen"
     ],
-    "exp": "Elektromotoren liefern ihr hohes Drehmoment direkt ab der ersten Umdrehung – deshalb fahren fast alle E-Autos ohne klassisches Schaltgetriebe."
+    "explanation": "Im Alltag bremst fast immer der Motor – viele Hersteller verbauen hinten sogar wieder wartungsarme Trommelbremsen (wie VW beim ID.3/ID.4), um Rostprobleme zu lösen.",
+    "exp": "Weil der Großteil aller normalen Bremsungen rein generatorisch über den Elektromotor abgewickelt wird"
   },
   {
     "cat": "allgemein",
     "diff": "mid",
-    "q": "Welcher physikalische Hauptgrund macht 800-Volt-Systeme gegenüber 400-Volt-Systemen bei gleicher Ladeleistung effizienter?",
+    "q": "Was bedeutet der Begriff „SoH“ (State of Health) einer Traktionsbatterie?",
     "a": [
-      "Halbierter Strom (A), dadurch nur ein Viertel der I²R-Wärmeverluste im Kabel",
-      "Verdoppelte Kapazität durch doppelte Spannung ohne Zellenänderung",
-      "Kein Isolationswiderstand mehr nötig",
-      "Strom fließt automatisch rückwärts ins Netz"
+      "Der aktuelle Gesundheitszustand der Batterie als Prozentsatz der nutzbaren Restkapazität gegenüber dem Neuzustand",
+      "Die Temperatur des Kühlmittelkreislaufs beim Schnellladen",
+      "Die verbleibende Restreichweite in Kilometern bis zur nächsten Ladestation",
+      "Die Anzahl der Tage bis zur nächsten gesetzlichen Hauptuntersuchung"
     ],
-    "exp": "Bei P = U × I halbiert doppelte Spannung den Strom. Da Wärmeverluste nach P_verlust = I² × R quadratisch mit dem Strom steigen, entstehen deutlich dünnere Kabel und weniger Hitze."
+    "explanation": "Die meisten Hersteller garantieren z. B. 8 Jahre oder 160.000 km mindestens 70 % SoH – moderne Akkus liegen nach 200.000 km oft noch bei über 85-90 %.",
+    "exp": "Der aktuelle Gesundheitszustand der Batterie als Prozentsatz der nutzbaren Restkapazität gegenüber dem Neuzustand"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "nerd",
+    "q": "Was versteht man unter „Cell-to-Pack“ (CTP) oder „Cell-to-Chassis“ (CTC) im modernen Batteriebau?",
+    "a": [
+      "Batteriezellen werden direkt ohne Zwischenschritt über schwere Zwischenmodule ins Pack oder die Karosseriestruktur integriert",
+      "Defekte Einzelzellen können an der Tankstelle per Klick-System ausgetauscht werden",
+      "Jede Zelle besitzt ein eigenes UKW-Funkmodul zur Kommunikation mit dem Zentralrechner",
+      "Die Zellen schwimmen frei beweglich in einem isolierenden Ölbad"
+    ],
+    "explanation": "Durch den Verzicht auf Modulgehäuse, Kabelbäume und Zwischenschrauben steigt die volumetrische Energiedichte massiv und das Leergewicht sinkt.",
+    "exp": "Batteriezellen werden direkt ohne Zwischenschritt über schwere Zwischenmodule ins Pack oder die Karosseriestruktur integriert"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "easy",
+    "q": "Was ist das gesetzlich vorgeschriebene „AVAS“ (Acoustic Vehicle Alerting System) bei neuen Elektroautos?",
+    "a": [
+      "Ein künstliches Fahrgeräusch bei niedrigen Geschwindigkeiten (bis ca. 20 km/h) zum Schutz von Fußgängern und Sehbehinderten",
+      "Ein Warnton bei unangeschnallten Insassen auf der Rückbank",
+      "Ein Sirenenton, der vor herannahenden Rettungsfahrzeugen warnt",
+      "Eine automatische Ansage der verbleibenden Akkuladung beim Aussteigen"
+    ],
+    "explanation": "Da E-Autos bei Schrittgeschwindigkeit lautlos rollen, schreibt die EU ein akustisches Summen vor, um Unfälle mit Passanten zu verhindern.",
+    "exp": "Ein künstliches Fahrgeräusch bei niedrigen Geschwindigkeiten (bis ca. 20 km/h) zum Schutz von Fußgängern und Sehbehinderten"
   },
   {
     "cat": "allgemein",
     "diff": "mid",
-    "q": "Wie realisiert die Hyundai/Kia E-GMP-Plattform (z. B. Ioniq 5, EV6) schnelles Laden an älteren 400-Volt-DC-Säulen trotz 800-Volt-Akku?",
+    "q": "Was bezeichnet der „Rollwiderstand“ bei E-Auto-Reifen und warum haben E-Autos spezielle EV-Reifen?",
     "a": [
-      "Sie nutzt den hinteren Motor-Inverter und Motorwicklungen als Aufwärtswandler (Booster)",
-      "Sie schaltet den Akku mechanisch in 16 Einzelzellen um",
-      "Sie speist die Energie zuerst in die 12V-Bleibatterie",
-      "Sie lädt an 400V-Säulen grundsätzlich nur über den Typ-2-AC-Port"
+      "Sie müssen das höhere Fahrzeuggewicht tragen, sofortiges Drehmoment übertragen und durch geringen Rollwiderstand Reichweite sparen",
+      "EV-Reifen sind komplett luftlos und bestehen aus massivem Vollgummi",
+      "Sie laden während der Fahrt über Reibungselektrizität den 12V-Akku auf",
+      "EV-Reifen dürfen gesetzlich niemals mit Schneeketten gefahren werden"
     ],
-    "exp": "Das patentierte E-GMP-Multicharging nutzt ohne teuren Zusatz-DC/DC-Wandler den ohnehin verbauten Heckmotor samt Inverter, um 400 V auf die 800-V-Batteriespannung hochzusetzen."
+    "explanation": "Spezielle EV-Reifen besitzen zudem Schaumstoffeinlagen (Acoustic Foam) im Reifeninneren, um das Dröhnen im leisen Innenraum zu dämpfen.",
+    "exp": "Sie müssen das höhere Fahrzeuggewicht tragen, sofortiges Drehmoment übertragen und durch geringen Rollwiderstand Reichweite sparen"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "nerd",
+    "q": "Was beschreibt der Begriff „Lithium-Plating“ und warum tritt er vor allem beim Schnellladen von kalten Akkus auf?",
+    "a": [
+      "Metallisches Lithium lagert sich auf der Anode ab, statt sich einzulagern, was Kurzschlüsse und dauerhaften Kapazitätsverlust verursacht",
+      "Das Gehäuse der Batteriezelle wird durch Korrosion mit flüssigem Lithium überzogen",
+      "Lithium-Atome verdampfen bei Kälte durch das Entlüftungsventil",
+      "Die Elektrolytflüssigkeit wird bei Schnellladung schlagartig zu Feststoffkristallen"
+    ],
+    "explanation": "Kalte Graphit-Anoden können Ionen nur langsam aufnehmen – daher drosselt das BMS bei Kälte die Ladeleistung drastisch, bis der Akku warm ist.",
+    "exp": "Metallisches Lithium lagert sich auf der Anode ab, statt sich einzulagern, was Kurzschlüsse und dauerhaften Kapazitätsverlust verursacht"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "easy",
+    "q": "Warum haben Elektroautos trotz schwerer Batterie oft ein extrem stabiles, sportliches Kurven-Fahrverhalten?",
+    "a": [
+      "Weil der schwere Akku im Unterboden zwischen den Achsen für einen extrem tiefen Schwerpunkt und 50:50-Gewichtsverteilung sorgt",
+      "Weil Magnete im Unterboden das Fahrzeug an den Leitplanken festhalten",
+      "Weil der Elektromotor in Kurven wie ein Kreisel-Stabilisator rotiert",
+      "Weil E-Autos grundsätzlich schmalere Spurweiten als Verbrenner besitzen"
+    ],
+    "explanation": "Das sogenannte „Skateboard-Chassis“ verringert die Wankneigung der Karosserie drastisch und schützt das Fahrzeug vor dem Umkippen (Elchtest).",
+    "exp": "Weil der schwere Akku im Unterboden zwischen den Achsen für einen extrem tiefen Schwerpunkt und 50:50-Gewichtsverteilung sorgt"
   },
   {
     "cat": "allgemein",
     "diff": "mid",
-    "q": "Worin liegt ein typischer Unterschied zwischen einem PSM (Permanentmagnet-Synchronmotor) und einer ASM (Asynchronmaschine)?",
+    "q": "Was ist der Wirkungsgrad (Well-to-Wheel) eines modernen batterieelektrischen Autos im Vergleich zu einem Wasserstoff- oder E-Fuel-Fahrzeug?",
     "a": [
-      "ASM hat im Leerlauf ohne Ansteuerung praktisch keine Schleppverluste (gut als Zweitmotor)",
-      "PSM hat gar keine Magnete im Rotor",
-      "ASM benötigt zwangsläufig seltene Erden wie Neodym",
-      "PSM kann grundsätzlich nicht rekuperieren"
+      "Rund 70 bis 80 Prozent (beim E-Auto) gegenüber nur ca. 25–30 % (Wasserstoff) bzw. 10–15 % (E-Fuels)",
+      "Alle drei Antriebe haben exakt denselben Wirkungsgrad von rund 40 Prozent",
+      "Wasserstoffautos sind dreimal effizienter als reine Batterieautos",
+      "E-Fuels erreichen dank Verbrennungsmotor über 95 Prozent Wirkungsgrad"
     ],
-    "exp": "Darum kombinieren viele Allrad-E-Autos (auch Tesla Dual Motor) einen hocheffizienten PSM mit einer ASM als bedarfsgerecht zuschaltbarem Zweitmotor ohne Permanentmagnet-Schleppverlust."
+    "explanation": "Weil der Strom ohne verlustreiche Umwandlungen in Gas und Rückverstromung direkt in den Akku fließt, ist das BEV physikalisch unschlagbar sparsam.",
+    "exp": "Rund 70 bis 80 Prozent (beim E-Auto) gegenüber nur ca. 25–30 % (Wasserstoff) bzw. 10–15 % (E-Fuels)"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "nerd",
+    "q": "Was ist der Unterschied zwischen „Netto-Kapazität“ und „Brutto-Kapazität“ eines Traktionsakkus?",
+    "a": [
+      "Die Bruttokapazität ist die physikalische Gesamtgröße; die Nettokapazität ist der durch Puffer (oben/unten) für den Fahrer freigegebene Bereich",
+      "Brutto umfasst den Akku plus die 12V-Bleibatterie im Kofferraum",
+      "Netto wird bei 20 Grad gemessen, Brutto bei minus 20 Grad Celsius",
+      "Die Bruttokapazität berücksichtigt den Kerosinverbrauch des Begleitfahrzeugs"
+    ],
+    "explanation": "Die Sicherheitspuffer verhindern Tiefentladung und Überladung und stellen sicher, dass der Akku über viele Jahre hinweg stabil bleibt.",
+    "exp": "Die Bruttokapazität ist die physikalische Gesamtgröße; die Nettokapazität ist der durch Puffer (oben/unten) für den Fahrer freigegebene Bereich"
+  },
+  {
+    "cat": "allgemein",
+    "diff": "easy",
+    "q": "Welches Bauteil in jedem Elektroauto steuert die Temperatur von Batterie, Motor und Innenraum und verhindert Hitzeschäden?",
+    "a": [
+      "Das Thermomanagement (Flüssigkeitskühlung mit Kühlmittelkreislauf)",
+      "Ein gigantischer Ventilator auf dem Kofferraumdeckel",
+      "Zwei Schläuche mit Fahrtwind aus den Frontscheinwerfern",
+      "Trockeneis-Behälter unter den Vordersitzen"
+    ],
+    "explanation": "Ein modernes Thermomanagement heizt den Akku im Winter vor und kühlt ihn bei 250-kW-Schnellladungen mit gewaltigen Kälteleistungen herunter.",
+    "exp": "Das Thermomanagement (Flüssigkeitskühlung mit Kühlmittelkreislauf)"
   },
   {
     "cat": "allgemein",
     "diff": "mid",
-    "q": "Warum bremst sich bei fast vollem Akku (z. B. 98–100 %) oder großer Kälte die Rekuperation spürbar ein?",
+    "q": "Was ist das Phänomen der „Kalendarischen Alterung“ im Gegensatz zur „Zyklischen Alterung“ einer Batteriezelle?",
     "a": [
-      "Die Batterie kann hohe Rückströme dann nicht ohne Zellschäden bzw. Lithium-Plating aufnehmen",
-      "Die Elektromotoren drehen im Kalten falsch herum",
-      "Das ABS schaltet Rekuperation gesetzlich über 80 % ab",
-      "Der Onboard-AC-Lader blockiert die Hinterachse"
+      "Der Akku altert rein durch das Verstreichen von Zeit, abhängig von Temperatur und Ladestand (am schlimmsten bei Hitze und 100 % SoC)",
+      "Der Akku verliert an Schaltjahren automatisch 10 Prozent seiner Kapazität",
+      "Die Alterung wird durch den Verschleiß der mechanischen Radlager verursacht",
+      "Der Akku verliert Kapazität, wenn das Fahrzeug an Feiertagen gefahren wird"
     ],
-    "exp": "Bei vollem oder sehr kaltem Akku steigt das Risiko von Lithium-Plating auf der Anode – das BMS drosselt daher automatisch die Rekuperationsleistung."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Welcher Fahrzyklus ermittelt in den USA typischerweise realistischere, niedrigere Reichweitenwerte als der europäische WLTP?",
-    "a": [
-      "EPA-Zyklus",
-      "NEFZ-Zyklus",
-      "NEDC-Zyklus",
-      "Euro-7-Zyklus"
-    ],
-    "exp": "Der US-amerikanische EPA-Standard umfasst härtere Beschleunigungen und Autobahngeschwindigkeiten und liegt meist 10–20 % näher am Realverbrauch als WLTP."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Welche drei Buchstaben stehen bei modernen Halbleiter-Invertern für den Effizienzsprung gegenüber herkömmlichem Silizium (IGBT)?",
-    "a": [
-      "SiC (Siliziumkarbid)",
-      "LTO (Lithium-Titanat)",
-      "PVC (Polyvinylchlorid)",
-      "LED (Leuchtdiode)"
-    ],
-    "exp": "Siliziumkarbid-MOSFETs (SiC) schalten deutlich schneller und mit geringeren Durchlass- und Schaltverlusten – Tesla führte SiC großflächig schon beim Model 3 ein."
+    "explanation": "Wer sein E-Auto wochenlang bei 35 Grad Sommerhitze mit 100 % SoC stehen lässt, beschleunigt parasitäre Reaktionen im Elektrolyten massiv.",
+    "exp": "Der Akku altert rein durch das Verstreichen von Zeit, abhängig von Temperatur und Ladestand (am schlimmsten bei Hitze und 100 % SoC)"
   },
   {
     "cat": "allgemein",
     "diff": "nerd",
-    "q": "Was bezeichnet der Begriff „Lithium-Plating“ bei Schnellladung im tiefkalten Zustand?",
+    "q": "Was bezweckt das Auswuchten („Balancing“) der einzelnen Batteriezellen durch das BMS?",
     "a": [
-      "Metallische Lithium-Ablagerung auf der Graphit-Anode statt regulärer Interkalation",
-      "Galvanische Verchromung der Alufelgen durch Streusalz",
-      "Korrosion am Typ-2-Pilotkontakt",
-      "Verdampfen des flüssigen Elektrolyts im DC-Kabel"
+      "Angleichung der Ladezustände aller in Reihe geschalteten Zellen, damit die schwächste Zelle nicht die Gesamtkapazität vorzeitig limitiert",
+      "Mechanisches Verschieben der Zellen im Pack zur optimalen Achslastverteilung",
+      "Das Umpumpen von flüssigem Lithium zwischen linken und rechten Modulen",
+      "Das Messen der Reifenunwucht über Sensoren im Akkugehäuse"
     ],
-    "exp": "Wenn Lithium-Ionen bei Frost und hohem Ladestrom nicht schnell genug in die Graphitschichten einlagern können, scheidet sich metallisches Lithium dauerhaft ab – das mindert Kapazität und kann Dendriten bilden."
+    "explanation": "Da die Kette nur so stark ist wie ihr schwächstes Glied, verbrennt passives Balancing winzige Überschüsse über Widerstände, bis alle Zellen gleichauf sind.",
+    "exp": "Angleichung der Ladezustände aller in Reihe geschalteten Zellen, damit die schwächste Zelle nicht die Gesamtkapazität vorzeitig limitiert"
   },
   {
     "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Warum besitzen E-Autos wie Lucid Air oder frühe Porsche Taycan bzw. EQS besonders niedrige cW × A Werte – was ist „A“ in dieser Kennzahl?",
+    "diff": "easy",
+    "q": "Warum haben reine Elektroautos keinen klassischen Auspuff und keine Abgasuntersuchung (AU)?",
     "a": [
-      "Die Stirnfläche (projizierte Frontfläche in m²)",
-      "Die Batterieoberfläche in m²",
-      "Der Anpressdruck am Heckspoiler in N",
-      "Die Achsbreite zwischen den Bremsscheiben"
+      "Weil vor Ort im Fahrzeugbetrieb keinerlei fossile Verbrennung stattfindet und null lokale Emissionen entstehen",
+      "Weil der Auspuff unsichtbar im hohlen Heckspoiler versteckt ist",
+      "Weil Abgase im Scheibenwaschwasser gelöst und neutralisiert werden",
+      "Weil das Gesetz Auspuffrohre bei Elektrofahrzeugen aus Brandschutzgründen verbietet"
     ],
-    "exp": "Der wahre Luftwiderstand hängt vom Produkt cW × A (Stirnfläche in m²) ab: Ein großer SUV mit cW 0,25 verdrängt auf der Autobahn trotzdem viel mehr Luft als eine flache Limousine mit cW 0,22."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Welchen entscheidenden Vorteil bietet ein Silizium-Anteil in modernen Graphit-Anoden, und worin liegt sein mechanisches Problem?",
-    "a": [
-      "Deutlich höhere spezifische Kapazität, aber starkes Volumen-Quellen (bis ~300 %) beim Laden",
-      "Kein Thermal Runaway mehr, aber 0 Volt Zellspannung",
-      "Verdoppelte AC-Ladegeschwindigkeit ohne Onboard-Lader",
-      "Vermeidet jeden Bedarf an Separatorfolien"
-    ],
-    "exp": "Silizium speichert rund zehnmal mehr Lithium pro Gramm als reines Graphit, dehnt sich beim Einlagern aber extrem aus – daher mischen Hersteller bislang meist kleine SiOx- oder Si-Nanopartikel-Anteile bei."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Was unterscheidet das „Cell-to-Pack“ (CTP) oder „Structural Pack“ Konzept klassisch vom Modul-Pack?",
-    "a": [
-      "Zellen sitzen ohne zwischengeschaltete Kleinmodule direkt im Batteriegehäuse – mehr Energiedichte",
-      "Jede Einzelzelle erhält einen eigenen 12V-Bleiakku",
-      "Die Batterie wird auf dem Fahrzeugdach verschraubt",
-      "Zellen sind nur noch verklebt und gar nicht mehr elektrisch verbunden"
-    ],
-    "exp": "Der Verzicht auf Modulgehäuse und Zwischenverkabelung erhöht den Pack-to-Cell-Volumennutzungsgrad deutlich; beim Structural Pack wird der Block zusätzlich mittragendes Bodenelement."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Welche Nennspannung besitzt eine einzelne klassische NMC-/NCA-Lithium-Ionen-Zelle ungefähr gegenüber einer LFP-Zelle?",
-    "a": [
-      "NMC/NCA ~3,6–3,7 V vs. LFP ~3,2 V",
-      "NMC/NCA ~1,2 V vs. LFP ~12,0 V",
-      "Beide exakt 6,0 V Nennspannung",
-      "NMC/NCA ~48 V vs. LFP ~24 V"
-    ],
-    "exp": "LFP-Zellen liegen bei ~3,2 V Nennspannung (~3,65 V Ladeschlussspannung), während NMC/NCA bei ~3,6–3,7 V Nennspannung und ~4,2 V Vollladespannung arbeiten."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Warum nutzt Porsche beim Taycan (und e-tron GT) an der Hinterachse ein 2-Gang-Getriebe?",
-    "a": [
-      "Gang 1 für maximale Anfahrbeschleunigung, länger übersetzter Gang 2 für Autobahn-Effizienz & Vmax",
-      "Weil Synchronmotoren keinen Rückwärtsgang kennen",
-      "Zur Kühlung der Keramikbremse bei Regen",
-      "Um ein 400V-Netz auf 800V mechanisch hochzudrehen"
-    ],
-    "exp": "Der kürzer übersetzte erste Gang ermöglicht extreme Launch-Control-Beschleunigung, während der zweite Gang die Motordrehzahl bei hohem Autobahntempo senkt."
+    "explanation": "Elektroautos fahren lokal emissionsfrei – keine Stickoxide, kein Ruß, kein CO₂ am Auspuff, weshalb bei der HU die Abgasprüfung entfällt.",
+    "exp": "Weil vor Ort im Fahrzeugbetrieb keinerlei fossile Verbrennung stattfindet und null lokale Emissionen entstehen"
   },
   {
     "cat": "tesla",
     "diff": "easy",
-    "q": "Welche Ladelimit-Empfehlung gilt im TFF-Forum & bei Tesla für LFP-Akkus im Model 3/Y Standard Range (Hinterradantrieb)?",
+    "q": "Welches Elektroauto stieg im Jahr 2023 zum meistverkauften Automobil der gesamten Welt (über alle Antriebsarten hinweg) auf?",
     "a": [
-      "Mindestens 1× pro Woche auf 100 % laden zur BMS-Kalibrierung",
-      "Niemals über 50 % laden",
-      "Nur mit Haushaltssteckdose laden, sonst erlischt die Garantie",
-      "Immer bei genau 63 % abstecken"
+      "Tesla Model Y",
+      "Toyota Corolla",
+      "Volkswagen Golf",
+      "Ford F-150"
     ],
-    "exp": "Durch die flache LFP-Spannungskurve braucht das BMS regelmäßig den Vollladepunkt (100 %) zur exakten SoC-Kalibrierung – bei NMC/NCA gilt im Alltag dagegen meist max. 80 %."
+    "explanation": "Mit über 1,2 Millionen ausgelieferten Einheiten überholte das Model Y erstmals in der Geschichte etablierte Verbrenner-Ikonen wie den Toyota RAV4.",
+    "exp": "Tesla Model Y"
   },
   {
     "cat": "tesla",
     "diff": "easy",
-    "q": "Wie wird beim Tesla die Akku-Vorkonditionierung für maximales Schnellladen automatisch gestartet?",
+    "q": "Was ist das legendäre „Octovalve“ (Acht-Wege-Ventil) in modernen Tesla-Fahrzeugen?",
     "a": [
-      "Indem man den Supercharger direkt als Ziel ins Tesla-Navi eingibt",
-      "Durch dreimaliges Betätigen der Lichthupe",
-      "Nur durch Drücken eines physischen roten Knopfes im Kofferraum",
-      "Durch Aktivieren des Scheibenwischers auf Stufe IV"
+      "Ein zentrales Wärmepumpen-Ventil, das 8 Kühlkreisläufe schaltet und Abwärme von Motoren, Akku und Kabine flexibel verteilt",
+      "Ein hydraulisches Ventil für die pneumatische Luftfederung",
+      "Eine Einspritzdüse für achtstufige Scheibenreinigung",
+      "Ein Sicherheitsverschluss für den Ladeanschluss bei Gewitter"
     ],
-    "exp": "Sobald ein Supercharger (oder erkannter Schnelllader) als Navigationsziel gewählt ist, temperiert das System die Batterie rechtzeitig vor Ankunft vor."
+    "explanation": "Das patentierte Octovalve verbindet bis zu 15 verschiedene Heiz- und Kühlmodi und spart im Winter enorme Mengen an Heizstrom.",
+    "exp": "Ein zentrales Wärmepumpen-Ventil, das 8 Kühlkreisläufe schaltet und Abwärme von Motoren, Akku und Kabine flexibel verteilt"
   },
   {
     "cat": "tesla",
     "diff": "easy",
-    "q": "Was ist der Tesla „Wächtermodus“ (Sentry Mode)?",
+    "q": "Was macht der sogenannte „Wächtermodus“ (Sentry Mode) bei einem geparkten Tesla?",
     "a": [
-      "Kamera-Überwachung im geparkten Zustand, die Bewegungen ums Auto aufzeichnet",
-      "Autopilot-Spurwechsel auf deutschen Autobahnen",
-      "Kindersicherung für das Handschuhfach",
-      "Automatischer Abblend-Assistent bei Nebel"
+      "Er nutzt die Rundumkameras zur Überwachung der Umgebung und zeichnet Vorfälle automatisch auf einen USB-Stick auf",
+      "Er verriegelt die Türen und setzt das Lenkrad unter schwachen Weidezaun-Strom",
+      "Er lässt den Wagen bei Annäherung von Personen autonom 2 Meter vorrollen",
+      "Er sendet ein Live-Bild an die nächste Polizeidienststelle"
     ],
-    "exp": "Der Wächtermodus nutzt alle Außenkameras als Alarmanlage und Dashcam im Stand – kostet wegen des aktiven Autopilot-Rechners aber spürbar Standby-Strom."
+    "explanation": "Bemerkt das Fahrzeug verdächtige Bewegungen oder Erschütterungen, leuchten die Scheinwerfer auf und das Display zeigt das rote „Auge von HAL 9000“.",
+    "exp": "Er nutzt die Rundumkameras zur Überwachung der Umgebung und zeichnet Vorfälle automatisch auf einen USB-Stick auf"
+  },
+  {
+    "cat": "tesla",
+    "diff": "mid",
+    "q": "Warum führt der Wächtermodus (Sentry Mode) zu einem spürbaren „Vampir-Verlust“ (Phantom Drain) beim Parken?",
+    "a": [
+      "Weil der Haupt-Infotainment-Computer und die Autopilot-Kameras permanent wach bleiben und 150 bis 250 Watt Leistung ziehen",
+      "Weil die Bremslichter im Stand permanent glimmen",
+      "Weil der Akku im Wächtermodus permanent auf 60 Grad aufgeheizt wird",
+      "Weil das Radio geheime Funksignale an Tesla-Satelliten sendet"
+    ],
+    "explanation": "In 24 Stunden verbraucht der Sentry Mode oft 3 bis 5 kWh (ca. 20-30 km Reichweite), weil das Gesamtfahrzeug nicht in den Tiefschlaf (Deep Sleep) gehen kann.",
+    "exp": "Weil der Haupt-Infotainment-Computer und die Autopilot-Kameras permanent wach bleiben und 150 bis 250 Watt Leistung ziehen"
+  },
+  {
+    "cat": "tesla",
+    "diff": "mid",
+    "q": "Was verbirgt sich hinter dem Produktionsverfahren „Giga Casting“ (Megacasting) bei Tesla?",
+    "a": [
+      "Riesige Druckgussmaschinen (Idra Giga Press) gießen komplexe Front- und Heckunterböden aus einem einzigen Stück Aluminium",
+      "Der gesamte Rumpf wird aus geschmolzenem Basaltgestein geblasen",
+      "Roboter stanzen Karosserieteile aus massiven Titanplatten",
+      "Das Fahrzeug wird Schicht für Schicht mit flüssigem Kunststoff im 3D-Druck hergestellt"
+    ],
+    "explanation": "Statt über 70 Einzelteile zu stanzen, schweißen und kleben, entsteht das komplette Heckteil in knapp 90 Sekunden aus einem Guss.",
+    "exp": "Riesige Druckgussmaschinen (Idra Giga Press) gießen komplexe Front- und Heckunterböden aus einem einzigen Stück Aluminium"
+  },
+  {
+    "cat": "tesla",
+    "diff": "nerd",
+    "q": "Welchen dramatischen Technologiesprung führte der Tesla Cybertruck beim Niedervolt-Bordnetz ein?",
+    "a": [
+      "Den kompletten Wechsel von der 70 Jahre alten 12-Volt-Architektur auf 48 Volt sowie reines Steer-by-Wire ohne mechanische Lenksäule",
+      "Die Abschaffung jeglicher 12V-Batterien zugunsten von 230-Volt-Wechselstrom im Kabelbaum",
+      "Kabelbäume aus reinem Golddraht zur Vermeidung von Signalstörungen",
+      "Ein Bordnetz, das über Druckluftschläuche statt Kupferkabel gesteuert wird"
+    ],
+    "explanation": "Vierfache Spannung (48V) bedeutet ein Viertel der Stromstärke (Ampere) – das spart gewaltig Kabelquerschnitt, Kupfergewicht und Kosten.",
+    "exp": "Den kompletten Wechsel von der 70 Jahre alten 12-Volt-Architektur auf 48 Volt sowie reines Steer-by-Wire ohne mechanische Lenksäule"
   },
   {
     "cat": "tesla",
     "diff": "easy",
-    "q": "Unter welchem internen Codenamen kennt die Community das umfassende 2023er Facelift des Tesla Model 3 (mit Ambientelicht & ohne Blinkerhebel)?",
+    "q": "Mit welchem ersten Serienfahrzeug begründete Tesla im Jahr 2008 seine Unternehmensgeschichte?",
     "a": [
-      "Highland",
-      "Juniper",
-      "Palladium",
-      "Raven"
+      "Tesla Roadster (auf Basis eines modifizierten Lotus Elise-Chassis)",
+      "Tesla Model S",
+      "Tesla Model X mit Falcon-Wing-Türen",
+      "Tesla Cybertruck"
     ],
-    "exp": "Das Model-3-Facelift lief unter „Highland“ (Entfall Blinker-/Ganghebel, Akustikglas rundum, Heckdisplay); „Juniper“ bezeichnet das Model-Y-Facelift, „Palladium“ Model S/X Plaid."
+    "explanation": "Der Roadster bewies erstmals der Welt, dass Elektroautos sexy, schnell und langstreckentauglich sein können – und nicht wie langsame Golf-Carts aussehen müssen.",
+    "exp": "Tesla Roadster (auf Basis eines modifizierten Lotus Elise-Chassis)"
+  },
+  {
+    "cat": "tesla",
+    "diff": "mid",
+    "q": "Was bedeutet der Begriff „Tesla Vision“ bei modernen Tesla-Modellen?",
+    "a": [
+      "Der vollständige Verzicht auf Radar- und Ultraschallsensoren (USS) zugunsten reiner optischer Kameras und neuronaler Netze",
+      "Ein Head-Up-Display mit Augmented-Reality-Projektion auf die Windschutzscheibe",
+      "Eine Infrarotkamera im Cockpit, die die Augenfarbe des Fahrers prüft",
+      "Nachtsichtgeräte in den Außenspiegeln für Fahrten bei dichtem Nebel"
+    ],
+    "explanation": "Tesla argumentiert: Da Menschen die Umwelt rein mit zwei Augen steuern, reicht einem KI-System auch ein rein optisches 360-Grad-Kamerabild.",
+    "exp": "Der vollständige Verzicht auf Radar- und Ultraschallsensoren (USS) zugunsten reiner optischer Kameras und neuronaler Netze"
+  },
+  {
+    "cat": "tesla",
+    "diff": "nerd",
+    "q": "Was zeichnet die „Blade-Batterie“ von BYD aus, die u. a. im Model Y aus der Gigafactory Grünheide (Berlin) verbaut wurde?",
+    "a": [
+      "Extrem lange, schwertförmige LFP-Zellen, die quer im Pack liegen, enorme Ladeplateaus bieten und den Nageltest ohne Rauch überstehen",
+      "Zellen mit messerscharfen Titankanten zum Zerschneiden von Unfallwracks",
+      "Zellen, die ihre Form bei Erwärmung wie Rasierklingen verändern",
+      "Akkus mit austauschbaren Flüssigkernen für Sekunden-Tanken"
+    ],
+    "explanation": "Die BYD-Blade-Batterie im Grünheide-Model-Y lädt extrem schnell und hält selbst bis 50 % SoC Ladeleistungen von rund 170 kW konstant aufrecht.",
+    "exp": "Extrem lange, schwertförmige LFP-Zellen, die quer im Pack liegen, enorme Ladeplateaus bieten und den Nageltest ohne Rauch überstehen"
   },
   {
     "cat": "tesla",
     "diff": "easy",
-    "q": "Was bedeutet beim Tesla im Winter das Schneeflocken-Symbol (blau) neben der Akku-Anzeige?",
+    "q": "Was verbirgt sich hinter dem Modus „Hundemodus“ (Dog Mode) in einem Tesla?",
     "a": [
-      "Ein Teil der Batteriekapazität ist durch Kälte vorübergehend eingeschränkt bzw. nicht voll abrufbar",
-      "Schneeketten sind montiert",
-      "Die Reifendruckkontrolle wurde zurückgesetzt",
-      "Die Anhängerkupplung ist ausgefahren"
+      "Die Klimaanlage läuft bei verriegeltem Auto weiter und der Bildschirm zeigt Passanten die Innentemperatur an",
+      "Das Auto bellt Passanten an, die dem Kofferraum zu nahe kommen",
+      "Die Rückbank klappt automatisch in ein wasserdichtes Hundebett um",
+      "Das Auto folgt dem Besitzer wie ein Hund beim Spazierengehen im Park"
     ],
-    "exp": "Bei sehr kaltem Akku sinkt die momentan entnehmbare Energie und die Rekuperation; mit Erwärmung der Zellen verschwindet das Schneeflocken-Symbol und die gesperrte Kapazität wird wieder frei."
+    "explanation": "Auf dem großen Display steht groß: „Mein Besitzer kommt bald zurück. Keine Sorge, die Klimaanlage ist an und es sind 21 °C.“",
+    "exp": "Die Klimaanlage läuft bei verriegeltem Auto weiter und der Bildschirm zeigt Passanten die Innentemperatur an"
+  },
+  {
+    "cat": "tesla",
+    "diff": "mid",
+    "q": "Was beschreibt der „Camp-Modus“ bei Tesla?",
+    "a": [
+      "Lüftung, Temperatur, USB-Steckdosen und Innenbeleuchtung bleiben die ganze Nacht über aktiv, während das Auto verriegelt ist",
+      "Das Auto spannt automatisch ein Sonnensegel aus dem Kofferraum aus",
+      "Der Akku entlädt sich zur Abwehr von Mücken über Hochfrequenzwellen",
+      "Die Motoren wärmen den Boden unter dem Zelt auf 30 Grad auf"
+    ],
+    "explanation": "Mit einer passenden Matratze im umgeklappten Kofferraum wird das Model Y zum vollwertigen, perfekt temperierten Wohnmobil.",
+    "exp": "Lüftung, Temperatur, USB-Steckdosen und Innenbeleuchtung bleiben die ganze Nacht über aktiv, während das Auto verriegelt ist"
+  },
+  {
+    "cat": "tesla",
+    "diff": "nerd",
+    "q": "Was ist das Geheimnis des dreimotorigen „Plaid“-Antriebs im Model S und Model X für Geschwindigkeiten über 300 km/h?",
+    "a": [
+      "Carbon-ummantelte Rotoren (Carbon-Sleeved Rotors), die verhindern, dass die Magnete bei 20.000 U/min durch Fliehkräfte zerbersten",
+      "Ein 4-Gang-Doppelkupplungsgetriebe von ZF am Hinterachsdifferenzial",
+      "Zwei zusätzliche Raketentriebwerke mit komprimiertem Kaltgas im Heck",
+      "Wassereinspritzung direkt in die Statorwicklungen bei Vollgas"
+    ],
+    "explanation": "Da Carbon sich unter Hitze kaum ausdehnt, bleibt der winzige Luftspalt zwischen Rotor und Stator selbst bei extremen Drehzahlen absolut konstant.",
+    "exp": "Carbon-ummantelte Rotoren (Carbon-Sleeved Rotors), die verhindern, dass die Magnete bei 20.000 U/min durch Fliehkräfte zerbersten"
   },
   {
     "cat": "tesla",
     "diff": "easy",
-    "q": "Wofür steht beim Tesla die App-Funktion „Camp Mode“?",
+    "q": "Welche ikonischen Türen besitzt das Tesla Model X für den Einstieg in die zweite und dritte Sitzreihe?",
     "a": [
-      "Klimaanlage/Heizung, Innenbelüftung und USB/12V bleiben dauerhaft aktiv (bei >20 % SoC)",
-      "Offroad-Federung für Waldwege",
-      "Automatisches Aufstellen eines Dachzelts",
-      "Abschalten aller Scheinwerfer während der Fahrt"
+      "Falcon Wing Türen (Doppelgelenk-Flügeltüren, die mit Sensoren auch in engsten Parklücken nach oben öffnen)",
+      "Klassische Schiebetüren wie bei einem Minivan",
+      "Scherentüren wie bei einem Lamborghini Countach",
+      "Selbstmördertüren (Suicide Doors) wie bei Rolls-Royce"
     ],
-    "exp": "Camp Mode hält den Innenraum temperaturstabil und lässt Entertainment/Steckdosen an, bis der Ladestand auf 20 % sinkt – im Unterschied zum Dog Mode mit großem Hinweis-Screen."
+    "explanation": "Ultraschallsensoren „sehen“ durch das Aluminium der Türen hindurch und passen den Knickwinkel millimetergenau an Deckenhöhe und Nachbarautos an.",
+    "exp": "Falcon Wing Türen (Doppelgelenk-Flügeltüren, die mit Sensoren auch in engsten Parklücken nach oben öffnen)"
   },
   {
     "cat": "tesla",
     "diff": "mid",
-    "q": "Was zeichnet die im Grünheide Model Y Standard Range verbaute BYD Blade LFP-Batterie im Vergleich zu vielen früheren CATL-LFP-Akkus im Schnellladetest aus?",
+    "q": "Was ist der Unterschied zwischen der Autopilot-Hardware „HW3“ und „HW4“?",
     "a": [
-      "Eine deutlich bessere Ladekurve: hält die ~170 kW Peak bis ca. 50 % SoC konstant",
-      "Sie lädt an V3-Superchargern konstant mit 350 kW bis 95 %",
-      "Sie nutzt gar keinen Flüssigkeitskreislauf zur Kühlung",
-      "Sie hat 800 Volt Systemspannung wie der Cybertruck"
+      "HW4 bietet 5-Megapixel-Kameras statt 1,2 MP, einen deutlich schnelleren FSD-Computerchip und neue Kamerawinkel",
+      "HW3 funktioniert rein über Radar; HW4 nutzt ausschließlich Satellitenfunk",
+      "HW4 besitzt ein ausfahrbares Periskop auf dem Glasdach",
+      "HW3 durfte nur in den USA betrieben werden; HW4 ist weltweit Pflicht"
     ],
-    "exp": "Im TFF-Forum vielfach dokumentiert: Der strukturelle BYD-Blade-Akku hält ein beeindruckendes ~170-kW-Plateau bis rund 50 % SoC und knackt 10–80 % meist in ~20–25 Min."
+    "explanation": "Mit HW4 wurden die Kameras deutlich höher aufgelöst – Schilder und entfernte Gefahren auf der Autobahn werden viel früher erkannt.",
+    "exp": "HW4 bietet 5-Megapixel-Kameras statt 1,2 MP, einen deutlich schnelleren FSD-Computerchip und neue Kamerawinkel"
+  },
+  {
+    "cat": "tesla",
+    "diff": "nerd",
+    "q": "Welchen Formfaktor besitzen die von Tesla 2020 vorgestellten zylindrischen Großzellen?",
+    "a": [
+      "4680 (46 Millimeter Durchmesser, 80 Millimeter Höhe) mit „Tabless“-Design",
+      "18650 (18 mm Durchmesser, 65 mm Höhe)",
+      "2170 (21 mm Durchmesser, 70 mm Höhe)",
+      "50100 (50 mm Durchmesser, 100 mm Höhe)"
+    ],
+    "explanation": "Das tabless-Design (faltige Stromableiter über die gesamte Kantenlänge) verkürzt den elektrischen Weg drastisch und verhindert gefährliche Hotspots.",
+    "exp": "4680 (46 Millimeter Durchmesser, 80 Millimeter Höhe) mit „Tabless“-Design"
+  },
+  {
+    "cat": "tesla",
+    "diff": "easy",
+    "q": "Was passiert bei einem Tesla, wenn man das Navigationsziel auf einen Supercharger setzt?",
+    "a": [
+      "Das Auto startet automatisch die Vorkonditionierung des Akkus (erwärmt ihn auf ca. 45–50 °C für maximale Ladegeschwindigkeit)",
+      "Der Supercharger blockiert die Säule für alle anderen Fahrer mit einer Schranke",
+      "Das Auto schaltet in den Sportmodus für schnellstmögliche Anfahrt",
+      "Die Batterie entlädt sich vorsorglich auf exakt 10 Prozent"
+    ],
+    "explanation": "Wer ohne Vorkonditionierung an den Schnelllader fährt, lädt mit kalter Batterie anfangs quälend langsam mit oft unter 50 kW.",
+    "exp": "Das Auto startet automatisch die Vorkonditionierung des Akkus (erwärmt ihn auf ca. 45–50 °C für maximale Ladegeschwindigkeit)"
   },
   {
     "cat": "tesla",
     "diff": "mid",
-    "q": "Was steckt technisch hinter Teslas „Octovalve“, das ab Model Y bzw. Model 3 Refresh verbaut wird?",
+    "q": "Was ist die Funktion des „Track Mode“ bei Tesla Model 3 Performance und Model S Plaid?",
     "a": [
-      "Ein intelligentes 8-Wege-Kühlmittelventil für Wärmepumpe zwischen Akku, Motoren und Kabine",
-      "Ein 8-Zylinder-Range-Extender unter dem Frunk",
-      "Ein 8-fach unterteilter Bremssattel für den Track Mode",
-      "Ein spezieller 8-Pin-Typ-2-Adapter"
+      "Individuelle Einstellung der Drehmomentverteilung (Front/Heck), Stabilitätskontrolle, maximale Batteriekühlung und Drift-Modus",
+      "Das Auto fährt Rennstrecken wie den Nürburgring vollkommen autonom im Kreis",
+      "Automatisches Abschalten aller Sicherheitsgurte für Rennsport-Feeling",
+      "Die Verdoppelung der Motorleistung durch Zünden von Stickstoffpatronen"
     ],
-    "exp": "Das Octovalve verschaltet sämtliche Heiz- und Kühlkreisläufe hochflexibel, sodass Abwärme der Statorheizung oder Leistungselektronik direkt für Akku und Kabine genutzt wird."
+    "explanation": "Der Track Mode erlaubt 100 % Heckantrieb für Drifts oder 50:50 für Rundenzeiten und kühlt die Batterie aggressiv zwischen den Stints.",
+    "exp": "Individuelle Einstellung der Drehmomentverteilung (Front/Heck), Stabilitätskontrolle, maximale Batteriekühlung und Drift-Modus"
+  },
+  {
+    "cat": "tesla",
+    "diff": "nerd",
+    "q": "Warum wechselte Tesla beim Infotainment-Computer von „MCU1“ auf „MCU2“ und später „MCU3“?",
+    "a": [
+      "MCU1 litt unter verschleißenden eMMC-Flash-Speichern; MCU2/3 brachten Intel Atom und AMD Ryzen mit flüssiger Grafik und Gaming-Power",
+      "MCU1 war nicht kompatibel mit europäischen Steckdosen",
+      "MCU2 führte erstmals analoge Knöpfe im Cockpit wieder ein",
+      "MCU3 wird durch einen kleinen Kernreaktor im Handschuhfach mit Strom versorgt"
+    ],
+    "explanation": "Das eMMC-Gate bei MCU1 zwang Tesla zu großen Rückrufen – mit der AMD-Ryzen-MCU laufen sogar anspruchsvolle 3D-Videospiele auf Konsolenniveau.",
+    "exp": "MCU1 litt unter verschleißenden eMMC-Flash-Speichern; MCU2/3 brachten Intel Atom und AMD Ryzen mit flüssiger Grafik und Gaming-Power"
+  },
+  {
+    "cat": "tesla",
+    "diff": "easy",
+    "q": "Wozu dient die „Tesla App“ als primärer Schlüsselersatz (Phone Key)?",
+    "a": [
+      "Das Auto entriegelt automatisch via Bluetooth Low Energy bei Annäherung mit dem Smartphone in der Hosentasche",
+      "Man muss das Display des Handys vor eine optische Linse am Scheinwerfer halten",
+      "Man muss bei jedem Einstieg einen sechsstelligen Bestätigungscode per SMS anfordern",
+      "Sie funktioniert ausschließlich bei vorhandener WLAN-Verbindung zum Heimnetzwerk"
+    ],
+    "explanation": "Als Backup dient eine scheckkartengroße NFC-Schlüsselkarte, die an die B-Säule gehalten wird.",
+    "exp": "Das Auto entriegelt automatisch via Bluetooth Low Energy bei Annäherung mit dem Smartphone in der Hosentasche"
   },
   {
     "cat": "tesla",
     "diff": "mid",
-    "q": "Welche drei MCU-Prozessoren folgten bei Tesla in der Media Control Unit historisch aufeinander?",
+    "q": "Was ist das beliebte „Easter Egg“ (Osterei) im Tesla-Menü, das bei Hochzeiten und Feiern für Lacher sorgt?",
     "a": [
-      "MCU1 (Nvidia Tegra) -> MCU2 (Intel Atom) -> MCU3 (AMD Ryzen)",
-      "MCU1 (Apple M1) -> MCU2 (Qualcomm) -> MCU3 (Exynos)",
-      "MCU1 (Intel i9) -> MCU2 (ARM M4) -> MCU3 (Nvidia H100)",
-      "Es gab seit 2012 nur ein einziges unverändertes Steuergerät"
+      "Der Furz-Modus (Emissionsprüfungsmodus) auf Knopfdruck oder beim Blinken",
+      "Ein Sprachgenerator, der in bayerischem Dialekt schimpft",
+      "Das automatische Besprühen der Scheiben mit Konfetti",
+      "Ein integrierter Kaffeekocher im Handschuhfach"
     ],
-    "exp": "MCU1 basierte auf Nvidia Tegra, ab 2018 kam MCU2 mit Intel Atom (Netflix, Dashcam-Viewer), und seit Ende 2021/2022 treibt der schnelle AMD Ryzen (MCU3) das Infotainment an."
+    "explanation": "Man kann den Blinker so einstellen, dass bei jedem Abbiegen ein saftiges Furzgeräusch aus einem frei wählbaren Lautsprecher ertönt.",
+    "exp": "Der Furz-Modus (Emissionsprüfungsmodus) auf Knopfdruck oder beim Blinken"
+  },
+  {
+    "cat": "tesla",
+    "diff": "nerd",
+    "q": "Was ist der technische Unterschied zwischen „EAP“ (Enhanced Autopilot) und „FSD“ (Full Self-Driving)?",
+    "a": [
+      "EAP beherrscht Spurwechselassistent und Autopark; FSD umfasst Ampel-/Stoppschild-Erkennung und die End-to-End-City-Streckenlenkung",
+      "EAP darf nur bei Sonnenschein aktiviert werden; FSD fährt auch bei Glatteis",
+      "FSD übernimmt bei Unfällen die juristische Haftung in ganz Europa",
+      "EAP benötigt zwei Hände am Lenkrad, FSD schaltet das Lenkrad mechanisch ab"
+    ],
+    "explanation": "FSD (Supervised) setzt in den USA auf ein rein neuronales End-to-End-Netzwerk (v12), das von Kamerabildern direkt auf Lenkimpulse lernt.",
+    "exp": "EAP beherrscht Spurwechselassistent und Autopark; FSD umfasst Ampel-/Stoppschild-Erkennung und die End-to-End-City-Streckenlenkung"
+  },
+  {
+    "cat": "tesla",
+    "diff": "easy",
+    "q": "Wie heißt Teslas europäische Automobil- und Batteriefabrik in Brandenburg nahe Berlin?",
+    "a": [
+      "Gigafactory Berlin-Brandenburg (Grünheide)",
+      "Tesla Europe Plant Wolfsburg",
+      "Giga Leipzig",
+      "Tesla Gigaplant Stuttgart"
+    ],
+    "explanation": "Grünheide ist Teslas einzige Produktionsstätte in Europa und fertigt Model Y für den gesamten europäischen und nahöstlichen Markt.",
+    "exp": "Gigafactory Berlin-Brandenburg (Grünheide)"
   },
   {
     "cat": "tesla",
     "diff": "mid",
-    "q": "Welche Energie verbraucht der aktive Tesla Wächtermodus (Sentry Mode) laut TFF-Erfahrungen im Schnitt ungefähr?",
+    "q": "Was bezweckt die „Lichtshow“ (Light Show) bei Tesla-Fahrzeugen?",
     "a": [
-      "Rund 130 bis 300 Watt (ca. 3–7 % Akkuverlust pro Tag)",
-      "Nur ca. 2 Watt (unter 0,1 % pro Woche)",
-      "Über 2.500 Watt wie ein Schnellkocher",
-      "Er erzeugt über Photovoltaik im Glasdach sogar Netto-Strom"
+      "Das Auto choreografiert Musik, Scheinwerfer, Blinker, Fenster und Kofferraumklappe zu einem synchronen Spektakel",
+      "Sie durchleuchtet die Karosserie auf der Suche nach verborgenen Roststellen",
+      "Sie blendet Raubtiere im Wald bei Campingausflügen ab",
+      "Sie kalibriert die Spurhalte-Kameras an der Garagenwand"
     ],
-    "exp": "Da FSD-Computer und Kameras wach bleiben, zieht Sentry rund 130–300 W bzw. ~2,5–5,5 kWh in 24 Stunden."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Wie lassen sich im Alltag Fahrzeuge mit Autopilot Hardware 4 (HW4 / AI4) äußerlich oft am schnellsten an den Kameras von HW3 unterscheiden?",
-    "a": [
-      "Deutlich rötlich-violett schimmernde Kameralinsen (ca. 5 MP statt 1,2 MP)",
-      "Durch zwei klappbare LiDAR-Türme auf den Außenspiegeln",
-      "Gelbe Rundumleuchten am B-Holm",
-      "Durch komplett entfernte Frontscheibenkamera"
-    ],
-    "exp": "HW4 verbaut ~5-Megapixel-Kameras mit größerem Sichtfeld und markantem rot-violetten Objektivschimmer statt der ~1,2-MP-Kameras von HW3."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Welche zwei Hersteller dominieren bei europäischen Tesla Model 3/Y Long Range und Performance (NMC/NCA) primär die Zulieferer-Praxis?",
-    "a": [
-      "Panasonic (NCA) und LG Energy Solution (NMC)",
-      "Duracell (Alkaline) und Varta (NiMH)",
-      "Rolls-Royce und Bosch Brennstoffzellen",
-      "Nur Samsung Blei-Säure"
-    ],
-    "exp": "Je nach Baujahr und Produktionswerk (Fremont vs. Shanghai/Grünheide) finden sich im Long Range/Performance vor allem Panasonic-NCA- oder LG-NMC-Zellen (z. B. LG 5L/5M)."
+    "explanation": "Über Open-Source-Software (xLights) können Fans sogar eigene Musik- und Lichtshows programmieren und per USB-Stick abspielen.",
+    "exp": "Das Auto choreografiert Musik, Scheinwerfer, Blinker, Fenster und Kofferraumklappe zu einem synchronen Spektakel"
   },
   {
     "cat": "tesla",
     "diff": "nerd",
-    "q": "Warum fielen bei alten Tesla Model S/X mit MCU1 (Tegra) reihenweise die Bildschirme mit Bootloops oder Ausfällen aus?",
+    "q": "Warum wechselte Tesla beim Model 3 Highland (Facelift 2023) vom Lenkstockhebel zu Lenkradtasten für den Blinker?",
     "a": [
-      "Verschlissener 8-GB-eMMC-Flashspeicher durch exzessive permanente System-Logs",
-      "Durchgebrannte 800-Volt-Sicherung im Lenkrad",
-      "Abgelaufene SIM-Karte der Wegfahrsperre",
-      "Korrosion am Typ-2-Ladestecker"
+      "Konsequente Reduktion mechanischer Bauteile und Kosten sowie Vorbereitung auf autonomes Fahren ohne Hebel",
+      "Weil der Blinkerhebel bei Crash-Tests regelmäßig abbrach",
+      "Weil die Lenksäule im Highland komplett aus Glas gefertigt ist",
+      "Um das Mitschneiden von Fahrschulprüfungen zu erschweren"
     ],
-    "exp": "Ein TFF-Klassiker: Die MCU1 schrieb unentwegt Debug-Logs auf einen nicht tauschbar verlöteten eMMC-Chip bis zum Schreibzyklen-Tod („eMMC Bug“, später per Rückruf/Upgrade behoben)."
+    "explanation": "Vor allem im Kreisverkehr sorgt das Fehlen des Blinkhebels unter europäischen Fahrern für hitzige Diskussionen in Foren.",
+    "exp": "Konsequente Reduktion mechanischer Bauteile und Kosten sowie Vorbereitung auf autonomes Fahren ohne Hebel"
   },
   {
     "cat": "tesla",
-    "diff": "nerd",
-    "q": "Welches Konstruktionsmerkmal erlaubt den Elektromotoren des Tesla Model S Plaid extreme Drehzahlen bis ~20.000 U/min?",
+    "diff": "easy",
+    "q": "Welches ungewöhnliche eckige Lenkrad bot Tesla optional für Model S und Model X an?",
     "a": [
-      "Eine unter hoher Zugspannung gewickelte Kohlefaser-Hülle (Carbon-Sleeved Rotor)",
-      "Flüssigstickstoff-Kühlung direkt aus der Klima-Anlage",
-      "Reine Kunststoff-Magnete ohne Metallanteil",
-      "Ein mechanisches 4-Gang-Getriebe an der Vorderachse"
+      "Das Yoke-Lenkrad (oben offenes Steuerhorn nach Vorbild von Rennwagen und Flugzeugen)",
+      "Ein Joystick in der Mittelkonsole",
+      "Ein rundes Holzlenkrad mit nostalgischen Nieten",
+      "Ein Doppel-Lenkrad mit zwei parallelen Ringen"
     ],
-    "exp": "Die Kohlefaser-Bandage presst Rotor und Permanentmagnete auch bei enormen Zentrifugalkräften zusammen und erlaubt einen winzigen, hocheffizienten Luftspalt zum Stator."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Welchen typischen internen Code trägt eine LG-Energy-Solution-Batterie im europäischen Model 3/Y Long Range oft im CoC-Dokument oder bei ScanMyTesla (z. B. M50-Zellen)?",
-    "a": [
-      "„E5LD“ / „5L“ (~79 kWh) – erkennbar z. B. am „E5LD“-Schlüssel in der Typgenehmigung",
-      "„BYD60“ für 120-kWh-LFP",
-      "„900D“ für die alte Blei-Starterbatterie",
-      "„HW4-C“ für die Ladesäule"
-    ],
-    "exp": "TFF-Kenner lesen die Variant/Version-Zeile im CoC-Papier: E3LD / E5LD stehen dort etwa für LG-NMC-Packs, E6LR/Y6CR für bestimmte CATL-LFP bzw. BYD-Varianten."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Was änderte Tesla beim Cybertruck sowohl im Niedervolt-Bordnetz als auch bei der Lenkung grundlegend gegenüber Model 3/Y?",
-    "a": [
-      "Umstellung auf ein 48-Volt-Bordnetz sowie rein elektronisches Steer-by-Wire ohne Lenksäule",
-      "Rückkehr zu 6-Volt-Bordnetz mit mechanischer Seilzuglenkung",
-      "Nur noch 24-Volt-LKW-Technik mit Druckluftbremse",
-      "Wegfall jeglicher Hinterachslenkung bei gleichzeitiger Verdopplung des Lenkrad-Einschlags"
-    ],
-    "exp": "Mit dem 48-V-Netz reduziert Tesla Niedervolt-Ströme und Kabelgewicht drastisch – gleichzeitig erlaubt Steer-by-Wire variable Lenkübersetzungen samt Allradlenkung ohne mechanische Welle."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Was ist bei Teslas 4680-Rundzelle im Vergleich zur bekannten 2170-Zelle mit dem „Tabless“-Design gemeint?",
-    "a": [
-      "Durchgehende gelaserte Kontaktfahnen („Shingled Electrodes“) reduzieren Innenwiderstand & Wärmestau",
-      "Verzicht auf jegliche Elektrode innerhalb des Stahlbechers",
-      "Zelle lässt sich drahtlos per Induktion laden",
-      "Jede Zelle besitzt eine abziehbare USB-C-Buchse"
-    ],
-    "exp": "Statt nur eines einzelnen Stromabnehmers am Streifenende fließt der Strom über das gesamte umgelegte Folienende („table-less“), was den Pfad verkürzt und Hitze deutlich senkt."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Warum zeigt ein brandneues Fahrzeug oder lange nicht genutztes E-Auto auf LFP-Basis manchmal plötzlich unerwartete „SoC-Sprünge“ (z. B. von 18 % auf 8 %), wenn es nie auf 100 % war?",
-    "a": [
-      "Auf der flachen LFP-Spannungskurve summiert sich die Coulomb-Counting-Messdrift ohne 100%-Ankerpunkt",
-      "Weil LFP-Zellen bei Regen Strom verlieren",
-      "Weil der Tacho von Meilen auf Kilometer umschaltet",
-      "Wegen des Reifendrucksensors an der Hinterachse"
-    ],
-    "exp": "Im Plateau zwischen ~20 % und 85 % ändert sich die Zellspannung um wenige Millivolt; nur Coulomb-Counting läuft mit der Zeit auseinander, bis eine Vollladung (inkl. Balancing) wieder kalibriert."
+    "explanation": "Das Yoke gibt freie Sicht auf das Fahrerdisplay – erforderte beim Rangieren ohne variable Lenkübersetzung jedoch einiges Umgreifen.",
+    "exp": "Das Yoke-Lenkrad (oben offenes Steuerhorn nach Vorbild von Rennwagen und Flugzeugen)"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Welcher Schnelllade-Steckerstandard dominiert in Europa öffentlich an fast allen HPC-Ladesäulen (Ionity, EnBW, Supercharger)?",
+    "q": "Was ist der fundamentale Unterschied zwischen AC-Laden (Wechselstrom) und DC-Laden (Gleichstrom)?",
     "a": [
-      "CCS2 (Combined Charging System Combo 2)",
+      "Bei AC wandelt der bordeigene Lader im Auto den Strom um; bei DC fließt der Gleichstrom direkt aus der Säule in die Batterie",
+      "AC lädt mit 350 kW, während DC auf maximal 11 kW begrenzt ist",
+      "AC erfordert zwingend flüssigkeitsgekühlte Kabel am Hausanschluss",
+      "DC darf per Gesetz nur bei Vollmond an öffentlichen Straßen genutzt werden"
+    ],
+    "explanation": "Deshalb sind AC-Wallboxen klein und günstig (Wechselrichter sitzt im Auto), während DC-Schnelllader riesige, teure Schaltschränke mit Leistungselektronik sind.",
+    "exp": "Bei AC wandelt der bordeigene Lader im Auto den Strom um; bei DC fließt der Gleichstrom direkt aus der Säule in die Batterie"
+  },
+  {
+    "cat": "laden",
+    "diff": "easy",
+    "q": "Welcher Ladestecker ist der verbindliche europäische Standard für DC-Schnellladung an Autobahnen?",
+    "a": [
+      "CCS2 (Combined Charging System Typ 2)",
       "CHAdeMO",
-      "Schuko-Stecker",
-      "CEE Rot 16A"
+      "Tesla US-NACS Stecker",
+      "Schuko-Stecker mit Adapter"
     ],
-    "exp": "CCS2 kombiniert den oberen Typ-2-Teil (Kommunikation + AC) mit zwei kräftigen DC-Kontakten darunter und ist gesetzlicher EU-Standard für Schnelllader."
+    "explanation": "CCS kombiniert den normalen Typ-2-Wechselstromstecker mit zwei dicken zusätzlichen Gleichstromkontakten im unteren Bereich.",
+    "exp": "CCS2 (Combined Charging System Typ 2)"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Warum werden die meisten Schnellladetests (und Herstellernormen) für den Bereich 10 % bis 80 % angegeben statt 0 % bis 100 %?",
+    "q": "Warum fällt die Ladeleistung eines Elektroautos jenseits von 80 Prozent Ladestand (SoC) drastisch ab?",
     "a": [
-      "Ab etwa 80 % SoC regelt das BMS die Leistung stark herunter, um die Zellen zu schonen",
-      "Nach 80 % fließt an DC-Säulen gesetzlich gar kein Strom mehr",
-      "Oberhalb von 80 % schalten alle Ladesäulen auf Wechselstrom um",
-      "Weil Batterien oberhalb 80 % physisch entladen"
+      "Weil der Innenwiderstand der Zellen steigt und das BMS den Strom drosselt, um schädliche Überspannungen und Überhitzung zu verhindern",
+      "Weil der Stromzähler an der Ladesäule ab 80 Prozent die Taktung drosselt",
+      "Damit der Fahrer rechtzeitig die Parkuhr vor der Säule verlängert",
+      "Weil die Kabel der Ladesäule nach 30 Minuten automatisch abkühlen müssen"
     ],
-    "exp": "Auf der Langstrecke ist es oft schneller, bis ca. 60–80 % im Bereich der hohen Ladekurve nachzuladen und weiterzufahren, als auf die letzten langsamen Prozent zu warten."
+    "explanation": "Wie bei einem voll besetzten Theater wird es für verbleibende Lithium-Ionen immer schwerer, freie Plätze im Graphitgitter zu finden (Konzentrationspolarisation).",
+    "exp": "Weil der Innenwiderstand der Zellen steigt und das BMS den Strom drosselt, um schädliche Überspannungen und Überhitzung zu verhindern"
+  },
+  {
+    "cat": "laden",
+    "diff": "mid",
+    "q": "Was bedeutet der Begriff „Ladekurve“ bei einem Elektroauto?",
+    "a": [
+      "Der Verlauf der tatsächlich aufgenommenen Ladeleistung (kW) in Abhängigkeit vom Ladezustand (SoC) der Batterie",
+      "Die Krümmung des Ladekabels bei kalten Außentemperaturen",
+      "Die monatliche Strompreiskurve an öffentlichen Ladesäulen",
+      "Der Wendekreis des Fahrzeugs beim Rückwärtseinparken an der Ladesäule"
+    ],
+    "explanation": "Ein Auto mit 200 kW Peak, das bei 50 % auf 80 kW abstürzt, lädt auf Langstrecke oft langsamer als ein Auto mit konstanten 150 kW bis 75 %.",
+    "exp": "Der Verlauf der tatsächlich aufgenommenen Ladeleistung (kW) in Abhängigkeit vom Ladezustand (SoC) der Batterie"
+  },
+  {
+    "cat": "laden",
+    "diff": "mid",
+    "q": "Was war das lästige Problem an älteren Tesla Superchargern der Generation V2 (150 kW)?",
+    "a": [
+      "Power-Sharing: Paare wie 1A und 1B teilten sich die Leistung – parkte ein zweites Auto daneben, halbierte sich die Laderate",
+      "Man musste jede Kilowattstunde mit 1-Euro-Münzen bezahlen",
+      "Die Kabel waren so kurz, dass man mit dem Auto auf den Bordstein fahren musste",
+      "V2-Säulen funktionierten nur bei Tag mit direktem Sonnenlicht"
+    ],
+    "explanation": "Bei V3 (250 kW) und V4 gehört das der Vergangenheit an: Jeder Stall verfügt über eine eigene 250-kW-Gleichstromversorgung ohne gegenseitige Drosselung.",
+    "exp": "Power-Sharing: Paare wie 1A und 1B teilten sich die Leistung – parkte ein zweites Auto daneben, halbierte sich die Laderate"
+  },
+  {
+    "cat": "laden",
+    "diff": "nerd",
+    "q": "Was ist der technische Unterschied zwischen „Plug & Charge“ (ISO 15118) und „Autocharge“?",
+    "a": [
+      "Plug & Charge nutzt verschlüsselte Zertifikate im Fahrzeug; Autocharge authentifiziert simpel über die unverschlüsselte MAC-Adresse des Fahrzeugs",
+      "Autocharge funktioniert ausschließlich an Tesla-Säulen; Plug & Charge nur an Schuko-Steckdosen",
+      "Plug & Charge bucht über die Telefonrechnung; Autocharge erfordert PayPal",
+      "Autocharge setzt zwingend eine Kamera mit Gesichtserkennung an der Ladesäule voraus"
+    ],
+    "explanation": "Autocharge (u. a. EnBW, Fastned) ist herrlich unkompliziert, funktioniert aber nicht bei Fahrzeugen mit wechselnden Zufalls-MAC-Adressen (wie bei VW MEB).",
+    "exp": "Plug & Charge nutzt verschlüsselte Zertifikate im Fahrzeug; Autocharge authentifiziert simpel über die unverschlüsselte MAC-Adresse des Fahrzeugs"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Mit wie viel kW lädt eine Standard-Wallbox in Deutschland typischerweise dreiphasig zu Hause?",
+    "q": "Welche maximale Ladeleistung liefert eine typische private AC-Wallbox an einem dreiphasigen 400V/16A-Hausanschluss in Deutschland?",
     "a": [
-      "11 kW (3 × 230 V × 16 A)",
-      "3,7 kW (1 × 230 V × 16 A)",
-      "150 kW Gleichstrom",
-      "500 kW Hochspannung"
+      "Exakt 11 kW (P = √3 × 400 V × 16 A)",
+      "Exakt 22 kW",
+      "Genau 3,7 kW",
+      "Bis zu 50 kW"
     ],
-    "exp": "11 kW (16 A auf 3 Phasen) ist Standard für private Wallboxen in Deutschland – seit 2019 in der Regel nur meldepflichtig, während 22 kW meist genehmigungspflichtig ist."
+    "explanation": "11 kW lädt einen leeren 60-kWh-Akku über Nacht in rund 5 bis 6 Stunden voll auf und ist bei Netzbetreibern meist nur anmelde-, nicht genehmigungspflichtig.",
+    "exp": "Exakt 11 kW (P = √3 × 400 V × 16 A)"
+  },
+  {
+    "cat": "laden",
+    "diff": "mid",
+    "q": "Warum sind Ladekabel an modernen 350-kW-HPC-Schnellladern trotz enormer Stromstärken (bis 500 A) erstaunlich dünn und flexibel?",
+    "a": [
+      "Sie sind aktiv flüssigkeitsgekühlt (Kühlflüssigkeit umströmt die Kupferleiter bis in den Stecker)",
+      "Sie bestehen aus Supraleitern, die keinen Widerstand aufweisen",
+      "Sie nutzen statt Kupfer ultradünne Kohlenstoff-Nanoröhren",
+      "Sie übertragen den Strom per induktivem Mikrowellen-Impuls"
+    ],
+    "explanation": "Ohne aktive Flüssigkeitskühlung müsste das Kupferkabel so dick und schwer wie ein Feuerwehrschlauch sein und wäre von Menschen kaum zu biegen.",
+    "exp": "Sie sind aktiv flüssigkeitsgekühlt (Kühlflüssigkeit umströmt die Kupferleiter bis in den Stecker)"
+  },
+  {
+    "cat": "laden",
+    "diff": "nerd",
+    "q": "Wie signalisiert eine einfache AC-Wallbox dem Auto über den CP-Pin (Control Pilot) den maximal erlaubten Ladestrom?",
+    "a": [
+      "Über ein 1-kHz-Pulsweitenmodulations-Signal (PWM): Der Tastgrad in Prozent bestimmt die Ampere-Freigabe (z. B. 16 % = 10 A, 25 % = 15 A)",
+      "Über eine stufenlose Änderung der Frequenz zwischen 50 und 500 Hz",
+      "Über ein digitales Morse-Signal mit optischen Lichtsignalen",
+      "Über variierende Gleichspannung zwischen 0 und 100 Volt"
+    ],
+    "explanation": "Wird der Tastgrad dynamisch verändert, kann ein Photovoltaik-Überschuss-Ladesystem den Ladestrom in Echtzeit an die Sonnenstrahlung anpassen.",
+    "exp": "Über ein 1-kHz-Pulsweitenmodulations-Signal (PWM): Der Tastgrad in Prozent bestimmt die Ampere-Freigabe (z. B. 16 % = 10 A, 25 % = 15 A)"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Was ist der typische Unterschied zwischen AC-Laden und DC-Schnellladen für die Fahrzeugelektronik?",
+    "q": "Was bedeutet „V2G“ (Vehicle-to-Grid) bei der zukünftigen Integration von Elektroautos ins Stromnetz?",
     "a": [
-      "Beim AC-Laden wandelt der Onboard-Lader im Auto; beim DC-Laden liefert die Säule Gleichstrom direkt in den Akku",
-      "Beim DC-Laden lädt nur die 12-Volt-Batterie",
-      "AC-Laden passiert ohne Stecker über WLAN",
-      "DC-Säulen können prinzipiell keine Elektroautos laden"
+      "Das Auto speist bei Stromspitzen im Netz Energie aus der Batterie zurück ins öffentliche Netz und stabilisiert dieses",
+      "Das Auto lädt sich während der Fahrt drahtlos aus dem Asphalt der Autobahn auf",
+      "Die Übertragung von Videospielen vom Auto auf den heimischen Fernseher",
+      "Die Umwandlung von Bremsstaub in recycelbares Isoliermaterial"
     ],
-    "exp": "Das Auto-OBC begrenzt AC meist auf 11 oder 22 kW; bei DC übernimmt die große Gleichrichter-Technik in der Ladesäule und speist bis zu mehrere Hundert kW direkt ein."
+    "explanation": "Millionen parkende E-Autos werden zu einem gigantischen dezentralen Riesen-Akkuspeicher, der Dunkelflauten und Lastspitzen abfedert.",
+    "exp": "Das Auto speist bei Stromspitzen im Netz Energie aus der Batterie zurück ins öffentliche Netz und stabilisiert dieses"
+  },
+  {
+    "cat": "laden",
+    "diff": "mid",
+    "q": "Was ist „V2L“ (Vehicle-to-Load), wie es z. B. im Hyundai Ioniq 5 oder Kia EV6 verbaut ist?",
+    "a": [
+      "Das Auto besitzt eine vollwertige 230-Volt-Steckdose und kann Kaffeemaschinen, Bohrhämmer oder E-Bikes mit bis zu 3,6 kW betreiben",
+      "Das Auto kann während des Fahrens andere Fahrzeuge mit einer Seilwinde abschleppen",
+      "Ein Notstromaggregat, das das Auto mit Biodiesel antreibt",
+      "Ein spezieller Modus zur schnelleren Beladung des Kofferraums"
+    ],
+    "explanation": "Über einen V2L-Adapter im Ladeport wird das E-Auto zur mobilen Powerbank beim Camping oder auf der Baustelle.",
+    "exp": "Das Auto besitzt eine vollwertige 230-Volt-Steckdose und kann Kaffeemaschinen, Bohrhämmer oder E-Bikes mit bis zu 3,6 kW betreiben"
+  },
+  {
+    "cat": "laden",
+    "diff": "nerd",
+    "q": "Was versteht man unter der sogenannten „Schieflastverordnung“ in Deutschland beim einphasigen Laden?",
+    "a": [
+      "Die Phasendifferenz zwischen den drei Außenleitern darf maximal 4,6 kVA (ca. 20 A bei 230 V) betragen, um das Netz nicht unsymmetrisch zu belasten",
+      "Das Fahrzeug darf beim Laden nicht an Steigungen von mehr als 5 Prozent parken",
+      "Das Gewicht im Kofferraum muss symmetrisch zwischen links und rechts verteilt sein",
+      "Wallboxen müssen exakt im 90-Grad-Winkel an der Wand montiert werden"
+    ],
+    "explanation": "Deshalb laden einphasige Autos (oder mobile Ladeziegel an CEE blau) in Deutschland an privaten Anschlüssen meist gedrosselt auf maximal 3,7 kW oder 4,6 kW.",
+    "exp": "Die Phasendifferenz zwischen den drei Außenleitern darf maximal 4,6 kVA (ca. 20 A bei 230 V) betragen, um das Netz nicht unsymmetrisch zu belasten"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Welche Batterie-Temperatur benötigt ein moderner Lithium-Ionen-Akku ungefähr für volle 250-kW-Spitzenleistung am V3-Supercharger?",
+    "q": "Was ist der sogenannte „Ladeverlust“ beim Aufladen eines Elektroautos?",
     "a": [
-      "Etwa 45 °C bis knapp über 50 °C",
-      "Genau 0 °C (Gefrierpunkt)",
-      "Mindestens 110 °C",
-      "Unter -15 °C"
+      "Energie, die beim Laden als Wärme in Leitungen, On-Board-Lader, Schaltschränken und Akku verloren geht (meist 5–15 %)",
+      "Kerosin, das bei Gewitter aus der Notentlüftung entweicht",
+      "Strom, der durch offene Autofenster aus der Batterie entweicht",
+      "Der Wertverlust des Autos während der Standzeit an der Ladesäule"
     ],
-    "exp": "In den TFF-Datenlogs sieht man beim V3-Peak fast immer Akkutemperaturen im Fenster ~45–55 °C – daher heizt die Vorkonditionierung so stark vor."
+    "explanation": "Aus dem Zähler fließen z. B. 55 kWh, in der Batterie kommen jedoch nur 50 kWh an – der Rest wird zu Wärme in Gleichrichter und Kühlkreislauf.",
+    "exp": "Energie, die beim Laden als Wärme in Leitungen, On-Board-Lader, Schaltschränken und Akku verloren geht (meist 5–15 %)"
+  },
+  {
+    "cat": "laden",
+    "diff": "mid",
+    "q": "Warum ist das Laden an der normalen Haushaltssteckdose (Schuko) mit 2,3 kW über viele Stunden eine Notlösung?",
+    "a": [
+      "Schukosteckdosen sind nicht für dauerhafte Dauerlast (10–16 A) ausgelegt – es drohen Überhitzung und im schlimmsten Fall Kabelbrände",
+      "Weil der Schukostecker Gleichstrom liefert, den das Auto nicht versteht",
+      "Weil das Auto an Schuko-Dosen gesetzlich nur bis maximal 50 Prozent laden darf",
+      "Weil der Ladeziegel bei Regenwasser sofort explodiert"
+    ],
+    "explanation": "Zudem sind die prozentualen Ladeverluste hoch (oft 15-25 %), weil die Steuergeräte des Autos über 30 Stunden lang aktiv Strom verbrauchen.",
+    "exp": "Schukosteckdosen sind nicht für dauerhafte Dauerlast (10–16 A) ausgelegt – es drohen Überhitzung und im schlimmsten Fall Kabelbrände"
+  },
+  {
+    "cat": "laden",
+    "diff": "nerd",
+    "q": "Was passiert bei einem 400-Volt-Elektroauto (wie Tesla Model Y), wenn es an einer 800-Volt-HPC-Säule lädt?",
+    "a": [
+      "Die Ladesäule erkennt die Batteriespannung und liefert automatisch die passende 400-Volt-Spannung heruntergeregelt",
+      "Das Auto explodiert durch Überspannung innerhalb von drei Sekunden",
+      "Das Auto lädt doppelt so schnell mit 500 Kilowatt",
+      "Der Ladevorgang wird verweigert und der Stecker permanent verriegelt"
+    ],
+    "explanation": "Moderne HPC-Säulen decken stufenlos 200 V bis 1.000 V ab und passen sich millimetergenau der vom Fahrzeug-BMS angeforderten Spannung an.",
+    "exp": "Die Ladesäule erkennt die Batteriespannung und liefert automatisch die passende 400-Volt-Spannung heruntergeregelt"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Wann fällt bei öffentlichen Ladesäulen eine „Blockiergebühr“ an?",
+    "q": "Was bedeutet eine „Blockiergebühr“ an öffentlichen Ladesäulen?",
     "a": [
-      "Wenn das Auto deutlich länger angesteckt bleibt als ein festgelegtes Zeitlimit (oft nach 4 Std. bei AC bzw. 45–60 Min. am DC)",
-      "Immer direkt beim Einstecken des Kabels",
-      "Nur wenn man bei Regen lädt",
-      "Sobald man über 50 km/h fährt"
+      "Eine minutengenaue Strafgebühr, wenn das Auto nach beendetem Ladevorgang (oder nach 4 Stunden) die Säule weiter belegt",
+      "Ein Aufpreis für Fahrer, die schief vor der Ladesäule einparken",
+      "Eine Gebühr für das Reservieren einer Ladesäule über die App",
+      "Ein Bußgeld für das versehentliche Abbrechen des Ladevorgangs"
     ],
-    "exp": "Blockiergebühren sollen verhindern, dass vollgeladene Fahrzeuge öffentliche Ladepunkte stundenlang als kostenlosen Parkplatz blockieren."
+    "explanation": "Ladesäulen sind Tankstellen und keine Dauerparkplätze – die Gebühr soll sicherstellen, dass fertige Fahrzeuge die Säule schnell für andere frei machen.",
+    "exp": "Eine minutengenaue Strafgebühr, wenn das Auto nach beendetem Ladevorgang (oder nach 4 Stunden) die Säule weiter belegt"
   },
   {
     "cat": "laden",
     "diff": "mid",
-    "q": "Wie sollte man sich als erfahrener Tesla-Fahrer an älteren V2-Superchargern (max. 150 kW) mit beschrifteten Paaren wie 1A / 1B verhalten?",
+    "q": "Was bedeutet der Begriff „C-Rate“ beim Laden oder Entladen eines Akkus?",
     "a": [
-      "Einen Stall mit freiem Partner wählen (z. B. 2A statt 1B neben einem ladenden 1A), um Power Sharing zu vermeiden",
-      "Immer direkt neben den anderen Tesla an 1B fahren für doppelten Boost",
-      "Das Kabel an beiden Buchsen gleichzeitig einstecken",
-      "Bei V2 teilt die ganze Station 150 kW auf alle 16 Plätze"
+      "Das Verhältnis von Ladeleistung zur Gesamtkapazität des Akkus (z. B. 2C bedeutet: Ein 100-kWh-Akku lädt mit 200 kW)",
+      "Die CO₂-Emissionen bei der Herstellung des Akkus in China",
+      "Die Celsius-Temperatur, bei der der Lader die Leistung drosselt",
+      "Die monatliche Leasingrate des Batteriepakets in Euro"
     ],
-    "exp": "Bei V2 teilen sich je zwei Stalls (A/B) einen 150-kW-Gleichrichter – kommt ein Zweiter ans selbe Paar, bricht die Ladeleistung drastisch ein."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Was ist ein Hauptvorteil von Tesla Supercharger V3 gegenüber V2?",
-    "a": [
-      "Bis zu 250 kW Peak, flüssigkeitsgekühlte schlanke Kabel und kein A/B-Power-Sharing pro Stall-Paar",
-      "V3 lädt ausschließlich mit Wechselstrom über Typ 2",
-      "V3 bietet zwar nur 75 kW, dafür mit Benzin-Notstrom",
-      "V3 hat längere 8-Meter-Kabel auf der linken Seite"
-    ],
-    "exp": "V3 nutzt eine zentrale Power-Unit-Architektur mit dedizierter Ausgangsleistung pro Stall bis 250 kW – ein Parknachbar halbiert deine Leistung nicht mehr wie bei V2."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Wodurch sticht der Tesla Supercharger V4-Dispenser optisch & praktisch sofort ins Auge (wichtig auch für Fremdmarken)?",
-    "a": [
-      "Höheres geschlossenes Gehäuse mit längerem (~3 m) Ladekabel und Kartenleser-Vorbereitung",
-      "Halbierter Preis für Verbrenner",
-      "Ein 400-kg-Schwungrad oben auf der Säule",
-      "Er hat überhaupt kein Kabel mehr und nutzt einen Roboterarm"
-    ],
-    "exp": "Das deutlich längere Kabel des V4-Dispensers löst das Problem vieler Fremdmarken, deren Ladeport nicht hinten links sitzt, ohne zwei Stalls blockieren zu müssen."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Was versteht man unter der „Schieflastgrenze“ in Deutschland (VDE-AR-N 4100) beim einphasigen Laden an einer 22-kW-Wallbox?",
-    "a": [
-      "Ein einphasiger Lader darf maximal 20 A (~4,6 kW) ziehen statt volle 32 A (7,4 kW)",
-      "Das Auto darf nicht schief auf einer Auffahrt stehen",
-      "Dreiphasiges Laden ist nur nachts erlaubt",
-      "Die Wallbox muss mindestens 45° geneigt montiert werden"
-    ],
-    "exp": "Wegen Schieflastbegrenzung auf max. 4,6 kVA (20 A) laden viele einphasige Bordlader an 22-kW-Boxen in Deutschland maximal mit ca. 4,6 kW (außer bei älteren 3,7-kW-OBCs)."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Worin besteht der entscheidende Unterschied zwischen „Plug & Charge“ (ISO 15118) und „Autocharge“?",
-    "a": [
-      "ISO 15118 authentifiziert kryptografisch per Zertifikat, Autocharge nur per unveränderter Fahrzeug-MAC-Adresse",
-      "Plug & Charge funktioniert nur bei Verbrennern",
-      "Autocharge überträgt Geldscheine über den Typ-2-Stecker",
-      "Es gibt technisch überhaupt keinen Unterschied"
-    ],
-    "exp": "Autocharge (z. B. EnBW, Fastned) ist einfach über die MAC-Adresse des EVCC umgesetzt – versagt aber bei E-Autos mit zufälliger/rotierender MAC-Adresse (wie vielen MEB-Modellen)."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Was prüft eine DC-Schnellladesäule direkt nach dem Einstecken noch bevor der eigentliche hohe Ladestrom fließt?",
-    "a": [
-      "Die Isolationsprüfung (mit Prüfspannung) und den Spannungsabgleich (Precharge)",
-      "Den Reifendruck und das Restprofil",
-      "Ob die Sonnenblende heruntergeklappt ist",
-      "Die aktuelle Öltemperatur"
-    ],
-    "exp": "Erst wenn PLC-Handshake, Isolationsmessung der Hochvoltleitung und Precharge auf Batteriespannungs-Niveau erfolgreich sind, schließen die Schütze im Fahrzeug."
+    "explanation": "1C lädt den Akku rechnerisch in einer Stunde voll, 2C in 30 Minuten, 3C in 20 Minuten – moderne Spitzen-E-Autos erreichen Peaks von fast 3C bis 4C.",
+    "exp": "Das Verhältnis von Ladeleistung zur Gesamtkapazität des Akkus (z. B. 2C bedeutet: Ein 100-kWh-Akku lädt mit 200 kW)"
   },
   {
     "cat": "laden",
     "diff": "nerd",
-    "q": "Nach welcher Formel nach IEC 61851-1 berechnet ein Elektroauto beim AC-Laden die zulässige Stromstärke aus dem 1-kHz-PWM-Signal (zwischen 10 % und 85 % Duty Cycle)?",
+    "q": "Was ist die geniale Lösung des Porsche Taycan, um an alten 400-Volt-Schnellladesäulen laden zu können?",
     "a": [
-      "I_max = Duty Cycle (%) × 0,6 A (z. B. 50 % = 30 A)",
-      "I_max = Duty Cycle (%) ÷ 2 A",
-      "I_max = 400 V ÷ Duty Cycle",
-      "I_max = Duty Cycle² × 0,01 A"
+      "Ein integrierter 50-kW- (bzw. 150-kW-) DC/DC-Booster, der die 400 Volt der Säule auf die 800 Volt der Batterie hochtransformiert",
+      "Er schaltet die Batterie mechanisch in zwei parallele 400-Volt-Hälften um",
+      "Er nutzt den Heckmotor als rotierenden Wechselstrom-Transformator",
+      "Er entlädt vor dem Laden 50 Prozent der Batterie über Bremswiderstände"
     ],
-    "exp": "Die IEC-61851-Formel I = D × 0,6 A ist der Klassiker im Ladestandard: 10 % = 6 A (Minimalstrom!), 25 % = 15 A, 50 % = 30 A."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Welche besondere Bedeutung hat exakt 5 % PWM Duty Cycle auf dem Control-Pilot-Pin (CP) eines Typ-2- / CCS2-Anschlusses?",
-    "a": [
-      "Wechsel in den digitalen Modus (High-Level-Communication via PLC nach DIN 70121 / ISO 15118 für DC-Laden)",
-      "Sofortige Abschaltung auf maximal 3 Ampere Notstrom",
-      "Erzwungene Entladung in das Hausnetz (V2H)",
-      "Fehlercode für unterbrochenen Schutzleiter"
-    ],
-    "exp": "5 % Duty Cycle heißt nicht 3 A! Er signalisiert dem Fahrzeug: PWM-Stromlimit wird ignoriert, Kommunikation läuft ab jetzt digital per Power Line Communication auf der CP-Leitung."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Wozu dient bei einem rein passiven Typ-2-Ladekabel der eingebaute Widerstand am PP-Pin (Proximity Pilot) gegen PE?",
-    "a": [
-      "Er codiert dem Fahrzeug und der Säule die maximale Strombelastbarkeit (Querschnitt) des Kabels (z. B. 220 Ω = 32 A)",
-      "Er misst die Außentemperatur des Gehäuses",
-      "Er ersetzt die Hauptsicherung im Zählerschrank",
-      "Er schaltet die Fahrzeug-Blinker bei Volladung ein"
-    ],
-    "exp": "Über den PP-Kodierwiderstand (typisch 1,5 kΩ = 13 A, 680 Ω = 20 A, 220 Ω = 32 A, 100 Ω = 63 A) verhindert das System eine Überhitzung zu dünner Kabel."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Was sagt die sogenannte „C-Rate“ beim Laden eines 80-kWh-Akkus aus, wenn mit konstanten 240 kW geladen wird?",
-    "a": [
-      "Eine Laderate von 3C (240 kW ÷ 80 kWh = 3, theoretisch 1/3 Stunde für Vollhub)",
-      "Eine Laderate von 0,3C",
-      "300 °C Zelltemperatur",
-      "3 Prozent Verlust pro Minute"
-    ],
-    "exp": "1C bedeutet Ladeleistung in kW gleich Kapazität in kWh (80 kW bei 80 kWh). 240 kW auf 80 kWh entspricht einem Peak von 3C!"
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Wie viele Volt liegen beim Ruhe- bzw. Ladezustand auf dem Control-Pilot-(CP)-Pin gemäß IEC 61851 typischerweise positiv an (Zustand A -> B -> C)?",
-    "a": [
-      "+12 V (Standby) -> +9 V (Fahrzeug erkannt) -> +6 V (Laden angefordert)",
-      "+230 V -> +400 V -> +800 V",
-      "+3,3 V -> +1,8 V -> 0 V",
-      "+48 V -> +24 V -> +12 V"
-    ],
-    "exp": "Durch definierte Dioden- und Widerstandskombinationen im Fahrzeug sinkt die positive PWM-Amplitude von +12 V (A) auf +9 V (B: gesteckt) und +6 V (C: bereit zum Laden, ggf. +3 V für Belüftung)."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Warum begrenzen viele ungekühlte CCS2-Ladesäulen auf 400-Volt-Fahrzeuge die Leistung rechnerisch auf maximal ~200 kW oder darunter?",
-    "a": [
-      "Ungekühlte Kabel sind oft auf ~500 A (kurz) bzw. 200–350 A limitiert; 400 V × 500 A = 200 kW (bei Tesla-V3 kurz >600 A dank Flüssigkühlung)",
-      "Weil 400V-Fahrzeuge keinen DC-Stecker besitzen",
-      "Weil über 200 kW immer Wechselstrom fließt",
-      "Wegen eines fehlenden PE-Schutzleiters"
-    ],
-    "exp": "Im CCS2-Standard war der Dauerstrom lange bei 500 A gedeckelt (~200 kW bei 400 V). Erst flüssigkeitsgekühlte Kabel mit höherem Kurzzeitstrom (oder 800 V!) drücken über diese Schwelle."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "easy",
-    "q": "Welche zwei chemischen Batterietypen dominieren aktuell bei fast allen modernen Großserien-Elektroautos?",
-    "a": [
-      "NMC/NCA (Lithium-Nickel-Mangan-Kobalt/Aluminium) und LFP (Lithium-Eisenphosphat)",
-      "Blei-Säure-Batterien und Zink-Kohle-Zellen",
-      "Quecksilberoxid und Feststoff-Uran",
-      "Nickel-Cadmium und Salzwasser-Blei-Akkus"
-    ],
-    "exp": "NMC/NCA punktet mit hoher Energiedichte für maximale Reichweite; LFP verzichtet auf Nickel und Kobalt, ist extrem zyklenfest und preiswert."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "easy",
-    "q": "Warum besitzen fast alle batterieelektrischen Pkw keinen klassischen Vielgang-Schalthebel und kein Kupplungspedal?",
-    "a": [
-      "Weil der Elektromotor über einen sehr breiten Drehzahlbereich hinweg kraftvoll beschleunigt und meist ein festes 1-Gang-Untersetzungsgetriebe genügt",
-      "Weil Elektromotoren technisch maximal 40 km/h ohne Schaltung fahren dürfen",
-      "Weil Rückwärtsfahren bei E-Autos durch einen Extra-Benzinmotor geschieht",
-      "Weil Stromkabel beim Kuppeln abreißen würden"
-    ],
-    "exp": "Dank sofortigem Drehmoment ab 0 U/min und Drehzahlen von teils über 15.000 U/min reicht im Pkw meist eine einzige feste Getriebeübersetzung samt Drehrichtungsumkehr für den Rückwärtsgang."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "easy",
-    "q": "Was zeigt das Kürzel „SoC“ (State of Charge) in Fahrerdisplays oder Lade-Apps beim Elektroauto schlicht an?",
-    "a": [
-      "Den aktuellen Batterieladestand in Prozent (z. B. 64 %)",
-      "Die aktuelle Motortemperatur in Grad Celsius",
-      "Den Abnutzungsgrad der Reifen",
-      "Die verbleibende Bremsbelagdicke"
-    ],
-    "exp": "SoC steht analog zur Tankanzeige für den aktuellen Ladezustand der Hochvoltbatterie zwischen 0 % und 100 %."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "easy",
-    "q": "Was bezeichnet umgekehrt das Kürzel „SoH“ (State of Health) beim Gebrauchtwagenkauf eines Elektroautos?",
-    "a": [
-      "Den verbleibenden Gesundheits- bzw. Kapazitätszustand der Batterie im Vergleich zum Neuzustand (z. B. 93 %)",
-      "Die aktuelle Außentemperatur an der Ladesäule",
-      "Die gesetzliche TÜV-Plakette des Wagens",
-      "Die durchschnittliche Höchstgeschwindigkeit auf Autobahnen"
-    ],
-    "exp": "Der State of Health misst die alters- und nutzungsbedingte Restkapazität der Traktionsbatterie und ist die zentrale Kenngröße beim E-Auto-Gebrauchtkauf."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "easy",
-    "q": "Weshalb sind klassische mechanische Scheiben- oder Trommelbremsen bei einem umsichtig gefahrenen E-Auto oft deutlich weniger abgefahren als beim Verbrenner?",
-    "a": [
-      "Weil der Großteil aller Verzögerungen im Alltag verschleißfrei durch elektrische Rekuperation erfolgt",
-      "Weil Elektroautos gar keine Bremsbeläge eingebaut haben",
-      "Weil hohe Rekuperation immer neue Metallschichten auf die Bremsscheibe schweißt",
-      "Weil E-Autos gesetzlich nicht schneller als 80 km/h fahren"
-    ],
-    "exp": "Durch die Rekuperation bleibt die Reibbremse im Alltag meist arbeitslos – weshalb man gelegentlich gezielt „freibremsen“ sollte, um Rost auf den Scheiben zu verhindern."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "easy",
-    "q": "Warum steigt der Stromverbrauch eines E-Autos im tiefen Winter auf kurzen Stadtfahrten oft spürbar stärker an als auf langen Sommerstrecken?",
-    "a": [
-      "Aufheizung von Innenraum und eiskaltem Akku verschlingen auf den ersten Kilometern viel Zusatzenergie bei höherer Luftdichte",
-      "Elektronen bewegen sich im Winter nur halb so schnell durch Kupferleitungen",
-      "Winterreifen enthalten einen elektrischen Bremswiderstand",
-      "Die Hochvoltbatterie entleert sich durch Kälte über Nacht auf 0 %"
-    ],
-    "exp": "Gerade auf Kurzstrecken schlägt das erstmalige Aufheizen von Kabine, Sitzen und teils der Batterie voll auf den Durchschnittsverbrauch pro 100 km durch."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Was unterscheidet den „Brutto“- vom „Netto“-Energieinhalt eines E-Auto-Akkus (z. B. 82 kWh brutto vs. 77 kWh netto)?",
-    "a": [
-      "Der Hersteller sperrt oben und unten Schutzpuffer ab, sodass nur der Netto-Anteil aktiv zum Fahren freigegeben ist und der Akku vor Tiefentladung/Überladung geschützt bleibt",
-      "Brutto meint den Strom aus der Haussteckdose inkl. Kabelgewicht",
-      "Netto beschreibt das Gewicht der Batterie ohne Aluminiumgehäuse",
-      "Die Differenz darf gesetzlich nur von Werkstätten benutzt werden"
-    ],
-    "exp": "Pufferzonen bei 0 % und 100 % schützen Zellchemie vor extremer Spannungslage, verlängern die Lebensdauer und fangen frühe Degradation unsichtbar ab."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Welchen entscheidenden Vorteil bietet eine 2020/2025 verbreitete „One-Pedal-Driving“-Funktion im Stadtverkehr?",
-    "a": [
-      "Beim bloßen Lupfen des Fahrpedals verzögert das Auto per Rekuperation bis zum völligen Stillstand – das Bremspedal wird fast nur noch für Notbremsungen benötigt",
-      "Gas- und Bremspedal liegen physisch an der Lenksäule",
-      "Das Auto lenkt und bremst komplett ohne menschliches Eingreifen",
-      "Man muss auf der Autobahn das Pedal nur einmal stündlich antippen"
-    ],
-    "exp": "One-Pedal-Driving macht Stop-and-go-Verkehr extrem entspannt und holt maximal viel Bewegungsenergie zurück in die Batterie."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Warum verzeichnet ein typisches E-Auto beim Vergleich Tempo 100 km/h gegen Tempo 140 km/h auf der Autobahn einen drastischen Mehrverbrauch?",
-    "a": [
-      "Weil der aerodynamische Luftwiderstand quadratisch mit der Geschwindigkeit steigt (benötigte Leistung sogar mit der dritten Potenz)",
-      "Weil sich das Getriebe oberhalb von 120 km/h mechanisch verriegelt",
-      "Weil die Klimaanlage ab 130 km/h dreifach läuft",
-      "Weil der Rollwiderstand von Reifen ab 110 km/h plötzlich auf Null sinkt"
-    ],
-    "exp": "Während ein E-Auto im Stadtverkehr fast alles per Rekuperation zurückgewinnen kann, verpufft Luftwiderstandsarbeit unwiederbringlich in der Umgebungsluft."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Worin liegt der wesentliche Unterschied zwischen bidirektionalen Konzepten „V2L“ (Vehicle-to-Load) und „V2H / V2G“ (Vehicle-to-Home/Grid)?",
-    "a": [
-      "V2L versorgt über eine Schuko-Steckdose/Adapter direkt Haushaltsgeräte (meist ~3,6 kW), während V2H/V2G das Auto als Hausspeicher bzw. Netzstabilisator an der Wallbox koppelt",
-      "V2L funktioniert nur während der Autobahnfahrt über Induktionsspulen",
-      "V2G lädt ausschließlich Verbrenner-Starterbatterien per Starthilfekabel",
-      "Es gibt technisch überhaupt keinen Unterschied zwischen beiden Begriffen"
-    ],
-    "exp": "V2L bieten viele Hyundai/Kia/MG/BYD-Modelle per Steckdosen-Adapter ab Werk; echtes V2H/V2G erfordert entsprechende DC-Wallboxen und Netznorm-Freigaben."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Weshalb lassen manche Autohersteller die „12-Volt-Bleibatterie“ auch bei modernen Hochvolt-E-Autos an Bord (oft ersetzt durch kleine 12V-LiFePO4 oder Li-Ion)?",
-    "a": [
-      "Um Steuergeräte, Türschlösser, Licht und vor allem die Sicherheits-Hochvoltschütze überhaupt aktivieren zu können, während der große Fahrakku aus Sicherheitsgründen abgetrennt ruht",
-      "Um im Stau heimlich einen Anlasser drehen zu lassen",
-      "Weil Rückleuchten physisch mit 400 Volt durchbrennen würden und Gleichspannungswandler verboten wären",
-      "Damit das Auto noch als klassisches Starthilfefahrzeug gilt"
-    ],
-    "exp": "Ohne das 12-Volt- (oder neue 48-Volt-) Bordnetz lassen sich die Hochvolt-Schütze der großen Traktionsbatterie gar nicht erst schließen – daher ist eine leere 12V-Batterie die häufigste E-Auto-Pannenursache."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "mid",
-    "q": "Welche Rolle spielt das sogenannte „Thermomanagement“ eines Elektroautos sowohl im Winter als auch am 300-kW-Schnelllader im Sommer?",
-    "a": [
-      "Es wärmt kalte Akkus vor dem HPC-Stopp gezielt vor und kühlt sie beim schnellen Laden/Fahren per Flüssigkeitskreislauf im optimalen Fenster (~20–45 °C)",
-      "Es heizt im Sommer die Reifen künstlich für besseren Kurvengrip auf",
-      "Es sorgt dafür, dass der Fahrgastraum niemals unter +28 °C fällt",
-      "Es kühlt allein das Handschuhfach auf 4 °C"
-    ],
-    "exp": "Lithium-Ionen-Zellen mögen weder klirrende Kälte noch extreme Hitze über ~55 °C – aktive Flüssigkeitskühlung/-heizung hält Ladeleistung und Lebensdauer hoch."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Was bezeichnet der Begriff „Dry Coating“ (Trockenelektroden-Beschichtung), wie sie u. a. Maxwell / Tesla bei der 4680-Fertigung vorantreiben?",
-    "a": [
-      "Das Verpressen des Aktivmaterials auf die Elektrodenfolie ohne giftige Lösungsmittel (NMP) und energieintensive lange Trocknungsöfen",
-      "Das Lackieren der äußeren Autokarosserie ganz ohne Wasser",
-      "Das Versiegeln von Ladekabelsteckern mit Wachs",
-      "Das Lagern fertiger Zellen in Trockeneis bei −78 °C"
-    ],
-    "exp": "Bei klassischer Nassbeschichtung verbrauchen riesige Trocknungsstrecken enorm Platz und Energie; Dry-Coating spart Kosten, Fabrikfläche und giftige Lösungsmittel – ist mechanisch bei sehr dicken Kathoden aber anspruchsvoll."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Was versteht man in der Batteriezellforschung unter „LFP-Blending“ oder „LMFP“ (Lithium-Mangan-Eisenphosphat)?",
-    "a": [
-      "Durch den Zusatz von Mangan in das LFP-Kathodengitter steigt das Spannungsniveau von ~3,2 V auf rund 3,8–4,0 V, was 15–20 % mehr Energiedichte liefert",
-      "Eine Mischung aus Lithium-Batterie und herkömmlichem Blei-Säure-Gel",
-      "Das Aufschmelzen von reinem Metall zu runden Kabelschuhen",
-      "Das Hinzufügen von Wasserstoff unter hohem Druck ins Kühlsystem"
-    ],
-    "exp": "LMFP kombiniert die Kostenvorteile und Zyklenstabilität der Olivin-Struktur von LFP mit deutlich höherer Zellspannung und gravimetrischer Energiedichte."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Warum besitzen „Axialfluss-Motoren“ (z. B. YASA bei Mercedes/Ferrari) bei gleicher Leistung ein deutlich geringeres Gewicht und eine kürzere Bauform als klassische Radialflussmotoren?",
-    "a": [
-      "Der magnetische Fluss verläuft parallel zur Rotorachse an großen Scheibenflächen entlang, was bei größerem wirksamen Hebelradius eine viel höhere Drehmomentdichte liefert",
-      "Sie verwenden überhaupt keine Kupferwicklungen oder Magnete mehr",
-      "Sie laufen ausschließlich mit Gleichstrom von 12 Volt ohne Leistungselektronik",
-      "Die gesamte Wicklung schwebt supraleitend auf flüssigem Stickstoff"
-    ],
-    "exp": "Scheibenläufer/Axialfluss-Maschinen platzieren die Magnete weit außen am Umfang – höherer Hebelarm bei kompakter Bautiefe ergibt enorme Leistungs- und Drehmomentdichte."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Worin liegt der kritische Engpass vieler rein „fremderregter Synchronmaschinen“ (FSM, z. B. bei Renault oder neueren BMW-Modellen) gegenüber PMSM – und was ist ihr großer Vorzug?",
-    "a": [
-      "Sie verzichten komplett auf Seltene-Erden-Permanentmagnete und erlauben verlustfreies Abschalten des Rotorfelds beim Segeln, benötigen aber Bürsten/Schleifringe oder induktive Übertragung zum Rotor",
-      "Sie erreichen grundsätzlich nie mehr als 50 PS Leistung",
-      "Sie können überhaupt nicht rekuperieren",
-      "Sie arbeiten mit flüssigem Natrium als Rotor"
-    ],
-    "exp": "Bei einer FSM wird das Magnetfeld im Rotor über eine Erregerspule geregelt; ohne Dauer-Magnetfeld fällt beim Ausrollen („Segeln“) praktisch kein Schleppverlust an und Neodym/Dysprosium entfallen."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Welchen Effekt nennt man bei großen Hochvolt-Antriebsumrichtern (z. B. 800 V mit hohen Schaltfrequenzen von SiC-MOSFETs) eine Gefahr für Motorlager, sofern man keine Ableitmaßnahmen trifft?",
-    "a": [
-      "Hochfrequente Gleichtaktspannungen (Common-Mode-Störungen) können Funkendurchschläge („EDM-Riffelbildung“) in den Wälzlagern erzeugen",
-      "Das Getriebeöl verwandelt sich bei 800 V durch Funken zu Eis",
-      "Die Aluminiumfelgen laden sich auf über 5.000 Volt auf und explodieren",
-      "Das Glasdach entfärbt sich dauerhaft"
-    ],
-    "exp": "Steile Spannungsflanken (du/dt) moderner SiC-Inverter induzieren über parasitäre Kapazitäten Lagerspannungen – deshalb setzen Hersteller etwa auf Erdungsbürsten oder isolierte Keramik-Hybridlager."
-  },
-  {
-    "cat": "allgemein",
-    "diff": "nerd",
-    "q": "Welches Ziel verfolgen Festkörperbatterien (All-Solid-State Batteries) mit Lithium-Metall-Anode vorrangig gegenüber flüssigen Elektrolytsystemen?",
-    "a": [
-      "Deutlich höhere Energiedichte pro Volumen/Gewicht durch Verzicht auf Graphit-Wirtsmaterial sowie deutlich geringere Entflammbarkeit eines brennbaren Flüssigelektrolyts",
-      "Sie funktionieren ab 0 % SoC kostenlos durch Kernfusion weiter",
-      "Sie erzeugen beim Fahren permanent neues Lithium aus Regenwasser",
-      "Sie benötigen keinen Separator und gar keine Kathode mehr"
-    ],
-    "exp": "Reine Lithium-Metall-Anoden haben eine vielfach höhere spezifische Kapazität als Graphit; feste Keramik- oder Polymer-Elektrolyte sollen Dendritenwachstum hemmen und Sicherheit sowie Energiedichte steigern."
-  },
-  {
-    "cat": "tesla",
-    "diff": "easy",
-    "q": "Mit welchem einfachen Handy-Komfort startet bei fast allen aktuellen Tesla Model 3/Y das Fahrzeug beim Einsteigen automatisch ohne klassischen Zündschlüssel?",
-    "a": [
-      "Per Bluetooth Low Energy über das eigene Smartphone („Handyschlüssel“) oder per NFC-Schlüsselkarte an der B-Säule",
-      "Man muss vor jeder Fahrt einen sechsstelligen Morsecode auf die Hupe klopfen",
-      "Ein fester mechanischer Metallbartschlüssel unter dem Lenkrad",
-      "Per SMS an die lokale Polizeistation"
-    ],
-    "exp": "Sobald man sich dem Auto mit gekoppeltem Smartphone nähert, entriegelt der Wagen über Bluetooth; als Backup dient immer eine kompakte NFC-Keycard."
-  },
-  {
-    "cat": "tesla",
-    "diff": "easy",
-    "q": "Wo befindet sich bei Tesla Model 3 und Model Y standardmäßig die Anzeige für aktuelle Geschwindigkeit, Navigation und Ladestand?",
-    "a": [
-      "Im großen zentralen Querformat-Touchscreen rechts neben dem Lenkrad (es gibt kein klassisches Tacho-Display hinter dem Lenkrad)",
-      "Ausschließlich auf einem kleinen LCD-Display im Kofferraum",
-      "In Form eines analogen Zeigertachos hinter dem Schalthebel",
-      "Auf der rechten Seite des Handschuhfachs"
-    ],
-    "exp": "Seit Einführung des Model 3 setzt Tesla auf das minimalistische Cockpit mit einem zentralen Hauptbildschirm links oben für Tempo und Fahrstufen (während Model S/X zusätzlich ein Fahrerdisplay bieten)."
-  },
-  {
-    "cat": "tesla",
-    "diff": "easy",
-    "q": "Was bezeichnet der aus dem TFF-Forum bekannte Begriff „Frunk“ bei Tesla-Modellen (und vielen modernen E-Autos)?",
-    "a": [
-      "Den zusätzlichen vorderen Kofferraum unter der Fronthaube („Front Trunk“)",
-      "Den geheimen Tresor hinter dem mittleren Bildschirm",
-      "Die abnehmbare Dachreling beim Model Y",
-      "Den kleinen Mülleimer zwischen den Vordersitzen"
-    ],
-    "exp": "Da vorne kein wuchtiger Verbrennungsmotor sitzt, lässt sich der gewonnene Bauraum unter der vorderen Haube ideal für Ladekabel oder Reisetaschen nutzen."
-  },
-  {
-    "cat": "tesla",
-    "diff": "easy",
-    "q": "Welcher witzige Tesla-Software-Modus macht über die großen Scheinwerfer-Lautsprecher oder Außenlautsprecher eine abgestimmte Weihnachts-Choreografie aus Lichtern, Spiegeln und Musik?",
-    "a": [
-      "Die „Light Show“ (Lichtshow in der Toybox)",
-      "Der Autopilot-Track-Mode",
-      "Der Chill-Mode für Winterreifen",
-      "Der Service-Kalibrierungsmodus"
-    ],
-    "exp": "Über die Toybox (oder einen USB-Stick mit eigenen xLights-Sequenzen) tanzen Scheinwerfer, Rücklichter, Fenster und bei Model X sogar die Flügeltüren im Takt."
-  },
-  {
-    "cat": "tesla",
-    "diff": "easy",
-    "q": "Wie schaltet man beim 2023er Tesla Model 3 „Highland“ ohne herkömmliche Lenkstockhebel standardmäßig zwischen Vorwärts (D) und Rückwärts (R)?",
-    "a": [
-      "Über einen vertikalen Streich-Slider ganz links auf dem zentralen Touchscreen (mit kapazitiven Backup-Tasten in der Dachkonsole)",
-      "Per dreimaligem Treten des Bremspedals innerhalb einer Sekunde",
-      "Ausschließlich per Sprachbefehl an die App",
-      "Über ein Handrad in der Mittelkonsole"
-    ],
-    "exp": "Beim Model 3 Highland (und zuvor Model S/X Refresh) wählt man die Fahrstufe via Touch-Swipe am linken Bildschirmrand oder per Auto-Shift – ein Dachkonsolen-Taster bleibt als Hardware-Fallback."
-  },
-  {
-    "cat": "tesla",
-    "diff": "easy",
-    "q": "Was zeigt die Tesla-Funktion „Energie-App“ während oder nach einer Fahrt in Echtzeit sehr übersichtlich auf dem Bildschirm?",
-    "a": [
-      "Wo genau wie viel Prozent Reichweite durch Fahrtempo, Wind, Höhenmeter, Klima oder Wächtermodus gewonnen bzw. zusätzlich verbraucht wurden",
-      "Den aktuellen Börsenkurs in Echtzeit",
-      "Die genaue Profiltiefe aller vier Reifen",
-      "Wie viele andere Teslas im Land gerade eingesteckt sind"
-    ],
-    "exp": "Die Energie-App vergleicht den tatsächlichen Verbrauch mit der Schätzung und schlüsselt Faktoren wie Klimaanlage, Gegenwind, Batterieheizung oder zügige Fahrt genau auf."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Was versteht die Tesla-Community unter dem Begriff „Vampirverlust“ (Phantom Drain) – und warum ist dieser mit modernen Fahrzeugen im Schlafmodus sehr klein?",
-    "a": [
-      "Den langsamen Akkuverlust im geparkten Zustand durch Telemetrie, App-Abfragen, Wächtersensorik oder Zellausgleich; im tiefen Schlaf sinkt er oft auf ca. < 0,5 % pro Tag",
-      "Ein Leck an der Hochvolt-Batteriedichtung im Winter",
-      "Den Abrieb der Bremsscheiben beim Parken am Berg",
-      "Den Stromverbrauch der Ambientebeleuchtung bei 160 km/h"
-    ],
-    "exp": "Schlafen Fahrzeug und alle Bordrechner durch („ohne Wächtermodus und ständiges App-Aufwecken“), bleibt der Ruheverlust oft kaum messbar gering."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Welches berühmte Karosseriebauteil ermöglicht bei vielen Model Y aus Grünheide/Austin den Einsatz riesiger Aluminium-Druckgussteile statt dutzender einzelner Stahlbleche?",
-    "a": [
-      "Die „Giga Press“ (Gigacasting für Vorder- oder Heckwagen-Unterstruktur)",
-      "Die „Solar-Laminat-Stanze“ für die Windschutzscheibe",
-      "Die „Laser-Wickelmaschine“ für Stoßfänger",
-      "Das „Hydroforming“ für Kunststoffkotflügel"
-    ],
-    "exp": "Riesige 6.000- bis 9.000-Tonnen-Druckgussmaschinen gießen ganze Heck- oder Frontstrukturmodule am Stück, was Schweißpunkte, Roboter und Teilezahl drastisch senkt."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Wie lässt sich bei einem eingefrorenen Bildschirm im Tesla Model 3/Y jederzeit (selbst während der Fahrt gefahrlos!) der Infotainment-Computer MCU neu booten?",
-    "a": [
-      "Beide Scrollräder am Lenkrad gleichzeitig für einige Sekunden gedrückt halten, bis das Tesla-T erscheint",
-      "Alle vier Türen während der Fahrt kurz öffnen und schließen",
-      "Das Fahrzeug mit dem Wagenheber komplett anheben",
-      "Den Warnblinker exakt zehnmal im Sekundentakt drücken"
-    ],
-    "exp": "Der Zwei-Daumen-Reset startet nur das Infotainment/Display neu; Antrieb, Lenkung, Bremsen und Blinker bleiben währenddessen vollständig funktionsfähig."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Was steckt hinter dem Umstieg von Ultraschallsensoren (USS) und Radar hin zu „Tesla Vision“ bei neueren Model 3 und Model Y?",
-    "a": [
-      "Die Parkabstandsmessung und Assistenzsysteme stützen sich rein auf die Fahrzeugkameras samt neuronalem Belegungsnetz statt auf eigene Stoßfänger-Sensoren",
-      "Die Frontscheibe arbeitet als riesiges Infrarot-Sonargerät",
-      "Alle Abstände werden nur über GPS-Satelliten geschätzt",
-      "Ein verbauter Laser im Dachhimmel scannt den Asphalt"
-    ],
-    "exp": "Mit Tesla Vision ersetzt Software-Objektrekonstruktion aus Kamerabildern schrittweise Radar und Ultraschall – sichtbar in der 3D-Parkansicht rund um das Fahrzeug."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Warum besitzen viele ältere europäische Tesla Model 3/Y eine „Doppelverglasung“ vorn (Akustikglas) und was brachte das Modelljahr 2021 zusätzlich für den Wirkungsgrad im Winter?",
-    "a": [
-      "Ruhigere Windgeräusche durch Verbund-Akustikglas und der flächendeckende Einbau der Wärmepumpe samt Octovalve",
-      "Heizdrähte aus purem Silber auf jedem Seitenspiegel und Heckspoiler",
-      "Zwei separate Windschutzscheiben mit Wasserkühlung dazwischen",
-      "Ein kleiner Benzin-Zuheizer im Kofferraum"
-    ],
-    "exp": "Ab Ende 2020/Modelljahr 2021 erhielten Model 3 (wie zuvor Model Y) Wärmepumpe, Akustikglas vorn, elektrische Heckklappe und überarbeitete Mittelkonsole."
-  },
-  {
-    "cat": "tesla",
-    "diff": "mid",
-    "q": "Wie funktioniert bei Tesla die im TFF oft diskutierte „Kalibrierung der Kameras“ nach Austausch einer Scheibe oder Werkreset?",
-    "a": [
-      "Man fährt einfach einige zehn Kilometer auf Straßen mit klaren Fahrbahnmarkierungen, bis die Fortschrittsuhr bei 100 % angekommen ist und den Autopilot freigibt",
-      "Man muss vor einer 30 Meter hohen Laserwand in der Fabrik stehen",
-      "Ein Techniker justiert drei Schrauben mit dem Inbus hinter dem Innenspiegel",
-      "Es funktioniert ausschließlich bei völliger Dunkelheit auf einem Feldweg"
-    ],
-    "exp": "Das System lernt während der normalen Fahrt selbstständig die genaue Einbaulage und Ausrichtung der Kameras anhand der Straßenmarkierungen."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Welche Funktion erfüllt der versteckte, über das Touchscreen-Menü („Software -> Fahrzeugmodell gedrückt halten + Code ‚service‘“) erreichbare Tesla Service Mode?",
-    "a": [
-      "Er zeigt Echtzeit-Batteriezellspannungen, Wärmepumpenventile, Kühllüfter, Lenkgeometrie-Offsets, Ladeanschluss-Pins und ermöglicht Bremsen-Einbremsen",
-      "Er hebt ab Werk die Höchstgeschwindigkeit kostenlos auf 320 km/h an",
-      "Er schaltet kostenlos das gekaufte „Full Self-Driving“-Paket frei",
-      "Er verstellt den Tacho-Kilometerstand auf Null"
-    ],
-    "exp": "Im Service-Modus lassen sich viele Live-Sensorwerte, Fehlercodes (Alerts), DC-Isolationswerte und das Thermomanagement transparent diagnostizieren."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Warum begrenzte LG Energy Solution bei früheren 77–79-kWh-NMC-Batterien (z. B. E5LD / 5L) im europäischen Model 3/Y die maximale Peak-Ladeleistung meist bei ~250 kW (und rascheren Abfall ab ~30 % SoC) gegenüber Panasonics US-NCA-Zellen?",
-    "a": [
-      "Wegen thermischer und anodenseitiger Lithium-Plating-Grenzen in der M50/NCMA-Zellchemie für besonders lange Lebensdauer bei europäischem Fahrprofil",
-      "Weil europäische Supercharger mechanisch nur halb so dick sind wie amerikanische",
-      "Weil LG-Akkus mit 120 Volt statt 400 Volt verschaltet sind",
-      "Weil Europa per EU-Gesetz mehr als 180 kW am Tesla untersagt"
-    ],
-    "exp": "Die verschiedenen Zellchemien zeigen sehr unterschiedliche Ladekurven: Manche US-Panasonic-NCA-Zellen hielten im Peak länger hohe Ströme, während LG-NMC-Akkus oft konstanter bis in hohe SoC-Bereiche oder bei Kälte arbeiteten."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Worin bestand die architektonische Neuerung der „Ethernet-Bus-Steuerung“ (und 48V) im Cybertruck gegenüber klassischen Autos mit kiloweise verzweigtem CAN-Kabelbaum?",
-    "a": [
-      "Ein zentrales „Loop“-Daten- und Strom-Backbone reduziert den Verkabelungsaufwand drastisch auf wenige Punkt-zu-Punkt-Zonensteuerungen",
-      "Alle Türen werden durch Druckluftschläuche ohne Strom betätigt",
-      "Steuergeräte senden Daten mittels Schallwellen über die Edelstahl-Außenhaut",
-      "Jedes Rücklicht enthält eine eigene kleine Autobatterie ohne Anschlusskabel"
-    ],
-    "exp": "Durch Zone-Controller entlang einer Hochgeschwindigkeits-Ethernet-Ringleitung sinken Kabelmasse, Komplexität und Fertigungsaufwand enorm."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Was bezeichnet der Ausdruck „Pyro-Fuse“ (pyrotechnische Sicherheitsabschaltung) auf dem Hochvolt-Akku vieler Teslas nach einem schweren Unfall oder Kurzschluss?",
-    "a": [
-      "Eine winzige Treibladung sprengt im Crash-Fall in Millisekunden eine Kupfersammelschiene mechanisch auf, sodass Batterie und Antrieb stromlos sicher sind",
-      "Ein Feuerlöscher mit flüssigem CO₂ im Frunk",
-      "Eine automatische Abschaltung der Innenraumbeleuchtung",
-      "Die pyrotechnische Entriegelung der Tankklappe"
-    ],
-    "exp": "Die Pyro-Fuse trennt den Hochvolt-Akku auch dann dauerhaft und lichtbogensicher ab, wenn ein mechanisches Schütz bei Extremstrom verschweißt wäre."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Wie realisiert Tesla beim Model 3/Y seit Einführung der Wärmepumpe ohne dedizierten Hochvolt-PTC-Zuheizer eine aktive Batterievorwärmung beim Vorkonditionieren?",
-    "a": [
-      "Die Stator-Wicklungen des Antriebsmotors werden gezielt mit Verluststrom („ineffizienter Betriebsmodus“ bis ~3,5–7 kW Abwärme) bestromt, deren Wärme über das Octovalve gezielt ins Kühlwasser der Batterie fließt",
-      "Ein kleiner Benzinbrenner unter dem Beifahrersitz wärmt das Kühlmittel",
-      "Der zentrale Touchscreen läuft absichtlich mit voller Helligkeit als Heizplatte",
-      "Alle vier Sitzheizungen blasen direkt durch Schläuche auf den Unterboden"
-    ],
-    "exp": "Geniales Prinzip: Der ohnehin verbaute Heck- oder Frontmotor dient im Stand oder während der Fahrt als kraftvoller „elektrischer Tauchsieder“, dessen Abwärme per Octovalve exakt in die Batterie geschoben wird."
-  },
-  {
-    "cat": "tesla",
-    "diff": "nerd",
-    "q": "Weshalb unterscheidet sich die Nennspannung einer europäischen BYD Blade LFP-Batterie (im Model Y MiG) oft in Lade- und Leistungseigenschaften stark gegenüber älteren CATL-Prismatic-Packs?",
-    "a": [
-      "Durch lange schmale Blade-Zellen mit großer Kühlkontaktfläche an Ober- und Unterseite sowie angepasste Zellspannungshaltung bleibt die Ladekurve über einen riesigen SoC-Bereich (bis ~50 % SoC) extrem flach auf hohem Plateau (~170 kW)",
-      "Weil das BYD-Pack heimlich mit Natrium-Ionen bei 800 Volt läuft",
-      "Weil jede Blade-Zelle einen eigenen Ventilator eingebaut hat",
-      "Weil das Pack nur halb so viele Batteriemodule besitzt und ungekühlt bleibt"
-    ],
-    "exp": "Der „Tafelberg-Effekt“ (flaches, breites Ladeplateau) machte das Model Y RWD mit BYD Blade Pack in Deutschland zum heimlichen Schnellladestar trotz kleinem Akku."
+    "explanation": "Andere 800V-Fahrzeuge (wie Hyundai E-GMP) nutzen clever die Wicklungen des Heckmotors und den Wechselrichter als DC-DC-Aufwärtswandler ohne Zusatzgewicht.",
+    "exp": "Ein integrierter 50-kW- (bzw. 150-kW-) DC/DC-Booster, der die 400 Volt der Säule auf die 800 Volt der Batterie hochtransformiert"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Welcher Steckertyp ist in Europa an nahezu jeder öffentlichen AC-Ladestation (11 kW oder 22 kW) fest standardisiert?",
+    "q": "Welche Ladeleistung (in kW) erreicht ein typischer DC-Schnelllader an einer Autobahnraststätte (HPC – High Power Charger)?",
     "a": [
-      "Der siebepolige Typ-2-Stecker (Mennekes)",
-      "Der klassische amerikanische Typ-1-Stecker",
-      "Der Japan-CHAdeMO-Stecker",
-      "Der dreipolige Kaltgerätestecker vom PC"
+      "150 bis 350 kW (teilweise bis 400 kW)",
+      "Genau 11 bis 22 kW",
+      "Über 2.000 kW",
+      "Maximal 3,7 kW"
     ],
-    "exp": "Der Typ-2-Stecker wurde von Mennekes entwickelt und 2013/2014 als europäischer AC-Standard festgeschrieben."
+    "explanation": "Bei 300 kW Ladeleistung lädt ein passendes E-Auto in rund 15 bis 20 Minuten Strom für 300 bis 400 Kilometer Autobahnfahrt nach.",
+    "exp": "150 bis 350 kW (teilweise bis 400 kW)"
+  },
+  {
+    "cat": "laden",
+    "diff": "mid",
+    "q": "Was ist eine „Ladekarte“ mit Roaming und warum braucht man oft mehrere Lade-Apps?",
+    "a": [
+      "Sie ermöglicht das Freischalten an Säulen verschiedener Betreiber, allerdings oft zu unterschiedlichen, teils intransparenten Roaming-Preisen",
+      "Sie speichert den Strom magnetisch und überträgt ihn per Berührung",
+      "Sie ist gesetzlich vorgeschrieben und wird vom TÜV ausgestellt",
+      "Sie schützt das Ladekabel vor Diebstahl während des Ladevorgangs"
+    ],
+    "explanation": "Da jeder Betreiber eigene Tarife hat, vergleichen E-Auto-Fahrer Apps wie EnBW mobility+, Ionity, Tesla oder EWE Go für den günstigsten Preis.",
+    "exp": "Sie ermöglicht das Freischalten an Säulen verschiedener Betreiber, allerdings oft zu unterschiedlichen, teils intransparenten Roaming-Preisen"
+  },
+  {
+    "cat": "laden",
+    "diff": "nerd",
+    "q": "Was beschreibt der „Proximity Pilot“ (PP) im Typ-2-Ladekabel?",
+    "a": [
+      "Er signalisiert der Ladesäule und dem Auto über einen festen Widerstand die maximale Stromtragfähigkeit des eingesteckten Kabels (z. B. 13A, 20A, 32A)",
+      "Er misst den Abstand zwischen Stoßstange und Ladesäule per Laser",
+      "Er sperrt die Zündung des Autos bei Annäherung von Gewittern",
+      "Er schaltet die LED-Beleuchtung des Ladeanschlusses ein"
+    ],
+    "explanation": "Dank des Widerstands am PP-Pin weiß die Wallbox sofort: An diesem dünnen Kabel dürfen maximal 20 A gezogen werden, selbst wenn das Auto 32 A fordert.",
+    "exp": "Er signalisiert der Ladesäule und dem Auto über einen festen Widerstand die maximale Stromtragfähigkeit des eingesteckten Kabels (z. B. 13A, 20A, 32A)"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Weshalb gilt das Laden an einer regulären Schuko-Haushaltssteckdose (ca. 2,3 kW) nur als Notlösung für gelegentliche Nutzung statt für ständigen Vollladebetrieb?",
+    "q": "Was ist das ideale Ladefenster im Alltag für Lithium-Ionen-Akkus (NMC/NCA) zur Maximierung der Lebensdauer?",
     "a": [
-      "Normale Schukodosen sind oft nicht auf stundenlange Dauervolllast (16 A) ausgelegt – gealterte Kontakte können sich gefährlich erhitzen",
-      "Schuko-Steckdosen liefern grundsätzlich Gleichstrom, den kein Auto mag",
-      "Aus Schukosteckdosen kommen 400 Volt Drehstrom",
-      "Das E-Auto darf in Deutschland gesetzlich nicht mit 230 V in Kontakt kommen"
+      "Zwischen 20 % und 80 % Ladestand (SoC)",
+      "Immer zwischen 95 % und 100 % Ladestand",
+      "Immer komplett leerfahren auf 0 % und dann auf 100 % laden",
+      "Den Akku niemals über 30 % laden"
     ],
-    "exp": "Dauerlast nahe der Nennleistung über 10–20 Stunden belastet lose Kontakte stark; wenn Schuko nötig ist, begrenzen gute „Ladeziegel“ den Strom auf 8–10 A und nutzen Thermosensoren im Stecker."
+    "explanation": "In diesem mittleren Bereich ist die mechanische Gitterspannung im Kathoden- und Anodenmaterial am geringsten – der Akku altert extrem langsam.",
+    "exp": "Zwischen 20 % und 80 % Ladestand (SoC)"
+  },
+  {
+    "cat": "laden",
+    "diff": "mid",
+    "q": "Was ist das „Dynamische Lastmanagement“ (DLM) bei mehreren Wallboxen in einer Tiefgarage?",
+    "a": [
+      "Es verteilt die verfügbare Anschlussleistung des Hauses intelligent auf alle ladenden Autos, ohne die Hauptsicherung zu überlasten",
+      "Es lädt bevorzugt die teuersten Automodelle zuerst auf",
+      "Es schaltet bei Regen automatisch alle Wallboxen ab",
+      "Es wiegt die Fahrzeuge vor dem Ladevorgang mit Druckplatten"
+    ],
+    "explanation": "Kommen abends 10 Autos gleichzeitig an, lädt jedes zunächst mit 3 kW; sobald die ersten voll sind, steigt die Leistung für die restlichen automatisch.",
+    "exp": "Es verteilt die verfügbare Anschlussleistung des Hauses intelligent auf alle ladenden Autos, ohne die Hauptsicherung zu überlasten"
+  },
+  {
+    "cat": "laden",
+    "diff": "nerd",
+    "q": "Welchen gewaltigen Vorteil bieten modulare Siliziumkarbid-Leistungsblöcke in modernen Ladehubs (wie Alpitronic Hypercharger)?",
+    "a": [
+      "Freie Leistungsmodule (z. B. 50-kW-Blöcke) werden in Echtzeit dynamisch exakt an das Fahrzeug geroutet, das gerade hohe Ladeleistung abnehmen kann",
+      "Die Säule schaltet bei zwei Autos automatisch auf Wasserstoffverbrennung um",
+      "Die Module speichern Gleichstrom in rotierenden Schwungrädern im Fundament",
+      "Die Module machen Ladekabel überflüssig und übertragen per Richtfunk"
+    ],
+    "explanation": "Fällt bei Auto A die Ladekurve bei 80 % auf 40 kW ab, gibt die Säule die freien 50-kW-Blöcke sofort an Auto B ab, das gerade bei 10 % anstöpselt.",
+    "exp": "Freie Leistungsmodule (z. B. 50-kW-Blöcke) werden in Echtzeit dynamisch exakt an das Fahrzeug geroutet, das gerade hohe Ladeleistung abnehmen kann"
   },
   {
     "cat": "laden",
     "diff": "easy",
-    "q": "Was bezahlt man an öffentlichen Ladesäulen bei sogenannten „Ad-hoc“-Tarifen per Kartenzahlung oder QR-Code meist gegenüber festen Vertrags-Ladekarten?",
+    "q": "Was passiert, wenn man während des Ladevorgangs an einer DC-Säule versehentlich versucht, mit dem E-Auto loszufahren?",
     "a": [
-      "Oft einen spürbar höheren Preis pro Kilowattstunde als mit App-/RFID-Vertrag oder markengebundenen Abos",
-      "Immer exakt 0 Cent pro Kilowattstunde durch EU-Förderung",
-      "Grundsätzlich pauschal 500 Euro Kaution pro Minute",
-      "Gar keinen Strompreis, sondern nur Parkhaus-Pfand"
+      "Nichts – das Auto verriegelt den Fahrstufen-Wählhebel elektronisch und verhindert jedes Anfahren, solange der Stecker steckt",
+      "Das Kabel reißt ab und setzt die Umgebung unter Hochspannung",
+      "Die Ladesäule wird aus dem Fundament gerissen",
+      "Das Auto schaltet automatisch in den Rückwärtsgang"
     ],
-    "exp": "Ohne passende Ladekarte oder App liegen Spontanpreise (Ad-hoc) je nach Betreiber teilweise deutlich über Abo- oder Heimstromtarifen – mit Kreditkartenterminals wird die Preisauszeichnung immer transparenter."
-  },
-  {
-    "cat": "laden",
-    "diff": "easy",
-    "q": "Welche Maßeinheit beschreibt beim Laden an einer Wallbox die „Geschwindigkeit“ des Stromflusses gegenüber der tatsächlich getankten „Menge“?",
-    "a": [
-      "Leistung in Kilowatt (kW) beschreibt die Geschwindigkeit; Energiemenge in Kilowattstunden (kWh) beschreibt die getankte Menge",
-      "Volt misst die Energiemenge und Liter die Ladegeschwindigkeit",
-      "Kilowattstunden zeigen an, wie schnell die Räder drehen",
-      "Hertz gibt die getankten Euro an"
-    ],
-    "exp": "Eselsbrücke: kW entspricht der Breite des Wasserrohrs (Wie schnell läuft es?), kWh entspricht der Menge in der Badewanne (Wie viel passte hinein?)."
-  },
-  {
-    "cat": "laden",
-    "diff": "easy",
-    "q": "Wie wird ein öffentliches AC-Ladekabel beim Einstecken vor Diebstahl geschützt, solange der Ladevorgang aktiv oder das Fahrzeug verriegelt ist?",
-    "a": [
-      "Ein elektrischer Stellmotor im Auto (und in der Säule) verriegelt den Stecker mechanisch per Bolzen",
-      "Man muss ein eigenes Vorhängeschloss durch den Griff fädeln",
-      "Durch starkes Ankleben am Ladeport-Deckel",
-      "Der Stecker ist während des Ladens gar nicht gesichert"
-    ],
-    "exp": "Sobald der Stecker steckt und das Auto verriegelt (bzw. geladen) wird, sperrt ein motorischer Pin den Typ-2- oder CCS-Stecker beidseitig."
-  },
-  {
-    "cat": "laden",
-    "diff": "easy",
-    "q": "Was zeigt eine typische Ladekarte per NFC/RFID-Chip vor allem beim Starten einer öffentlichen Ladesäule?",
-    "a": [
-      "Sie identifiziert das eigene Abrechnungskonto sicher und autorisiert den Start der Stromabgabe ohne Kreditkarteneingabe am Terminal",
-      "Sie lädt die Hochvoltbatterie direkt kabellos durch die Luft",
-      "Sie überträgt die gesamte Navigationskarte des Autos auf die Säule",
-      "Sie halbiert automatisch den Strompreis durch einen Magneten"
-    ],
-    "exp": "Die RFID-Karte sendet eine eindeutige Kennung an das Abrechnungs-Backend des Betreibers (Roaming-Netzwerke wie Hubject oder Gireve), das die Säule freischaltet."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Weshalb kann ein rein einphasig oder zweiphasig ladender Onboard-Lader (OBC) an einer deutschen 22-kW-Typ-2-Wallbox oft trotzdem maximal nur ~3,7 kW bis 7,4 kW ziehen?",
-    "a": [
-      "Weil eine 22-kW-Säule 3 × 32 A (400 V) bereitstellt; nutzt der Onboard-Lader nur eine Phase, zieht er davon meist 1 × 16 A (3,7 kW) bzw. gedrosselt 20 A (~4,6 kW Schieflast)",
-      "Weil 22-kW-Wallboxen in Deutschland nachts ausgeschaltet sind",
-      "Weil rote Stecker nicht in blaue Buchsen passen",
-      "Weil das Ladekabel bei 32 A schmilzt"
-    ],
-    "exp": "Das schwächste Glied (Netz/Wallbox/Kabel/Auto-OBC) gibt die AC-Ladeleistung vor: Bei 11 kW im Auto bleiben an einer 22-kW-Säule also stets max. 11 kW."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Was steckt hinter dem Konzept des „PV-Überschussladens“ mit der eigenen Solaranlage auf dem Hausdach?",
-    "a": [
-      "Die Wallbox misst über ein Smartmeter am Hausanschluss den freien Solarüberschuss und regelt den Ladestrom fürs Auto dynamisch hoch oder pausiert bei Wolken",
-      "Das Dach des Elektroautos speist über das Ladekabel die Solarmodule auf dem Haus",
-      "Das Fahrzeug lädt ausschließlich nachts bei Vollmond",
-      "Die Wallbox lädt immer starr mit 22 kW ohne Rücksicht auf die Sonne"
-    ],
-    "exp": "Wenn die PV-Anlage z. B. gerade 4,2 kW ins Netz schieben würde, lenkt die Wallbox genau diesen Strom ab ca. 1,4 kW (1-phasig 6 A) statt Netzstrom kostenlos in die Wallbox zu beziehen."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Warum besitzen viele besonders kleine und leichte AC-Ladekabel (z. B. ein „11-kW-Kabel“) einen dünneren Leiterquerschnitt (2,5 mm²) als ein dickes „22-kW-Kabel“ (6 mm²)?",
-    "a": [
-      "Weil durch das dünnere 11-kW-Kabel maximal 16 Ampere je Phase fließen dürfen, während 22 kW volle 32 Ampere erfordern",
-      "Weil im 11-kW-Kabel gar kein Kupfer steckt, sondern Alu-Folie",
-      "Weil im 22-kW-Kabel zusätzlich Benzin geleitet wird",
-      "Weil ein 11-kW-Kabel nur eine einzige Kupferader enthält"
-    ],
-    "exp": "Ein fest codierter Widerstand im Stecker (PP-Pin) verrät der Ladesäule und dem Fahrzeug das Kabel-Limit: Ein 20-A-Kabel begrenzt selbst eine 22-kW-Säule automatisch auf 11 kW."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Worin liegt der wesentliche Vorteil von „flüssigkeitsgekühlten HPC-Ladekabeln“ (wie an 300–400-kW-Säulen)?",
-    "a": [
-      "Trotz enormer Ströme bis über 500 Ampere bleiben Kabeldurchmesser und Stecker so schlank und biegsam, dass jeder sie bequem einstecken kann",
-      "Sie leiten kühles Trinkwasser in den Kühlschrank des Autos",
-      "Durch das Kühlmittel fließen bis zu 10.000 Volt ohne Isolierung",
-      "Sie verhindern beim Abstecken jeden Regen am Parkplatz"
-    ],
-    "exp": "Ohne aktive Kühlung durch Wasser-Glykol oder Öl müsste ein 500-A-Kupferkabel arm-dick und extrem schwer sein; aktive Wärmeabfuhr spart enormen Querschnitt."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Wieso verliert man bei manchen E-Autos (vor allem mit sehr kalter Batterie) im Winter an einer langsamen 11-kW-Wallbox proportional erstaunlich viel „Ladeverlust“?",
-    "a": [
-      "Weil der Bordrechner des Autos während stundenlangen Ladens wach bleibt (oft 200–400 W Grundverbrauch) und ggf. Batterieheizung betreibt, was bei langsamem Laden prozentual stärker ins Gewicht fällt",
-      "Weil bei Kälte genau die Hälfte aller Elektronen im Stecker stecken bleiben",
-      "Weil der Stromzähler im Winter automatisch 30 % aufschlägt",
-      "Weil Wallboxen ab 0 °C Wechselstrom in Wärme verfeuern müssen"
-    ],
-    "exp": "Läuft ein 300-W-Steuergerät über 10 Stunden beim 2,3-kW-Laden mit, schluckt allein der Grundverbrauch über 13 %; beim 11-kW-Laden über nur 2 Stunden ist dieser Anteil winzig."
-  },
-  {
-    "cat": "laden",
-    "diff": "mid",
-    "q": "Was meint das Kürzel „Eichrecht“ im Zusammenhang mit öffentlichen deutschen Ladesäulen und Abrechnungsbelegen?",
-    "a": [
-      "Strenge gesetzliche Vorgaben, dass gezählte kWh manipuliertungsicher, transparent einsehbar und oft mit kryptografischer Signatur für Kunden prüfbar gemessen werden",
-      "Ein Gesetz, dass alle Ladestationen aus Eichenholz gefertigt sein müssen",
-      "Die Verpflichtung, an jedem Ladepunkt Bäume zu pflanzen",
-      "Die einheitliche Parkplatzbreite von 3,5 Metern"
-    ],
-    "exp": "Das Mess- und Eichrecht schützt Verbraucher vor überhöhten Abrechnungen durch Kabelverluste – erkennbar meist am Zählerfenster an der Säule oder signierten Transparenz-Rechnungsdaten."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Worin besteht das technische Kommunikationsprotokoll auf einer CCS-Schnellladesäule gegenüber der einfachen PWM-Signalisierung beim reinen AC-Typ-2-Laden?",
-    "a": [
-      "Hochfrequente Power-Line-Communication (PLC / HomePlug GreenPHY) über denselben CP-Pin gemäß ISO 15118 / DIN SPEC 70121",
-      "Bluetooth 5.3 direkt zwischen Reifenventil und Säule",
-      "Morsezeichen per Hochvoltschütz über den PE-Schutzleiter",
-      "Reine Glasfaserleitung innerhalb jedes Kupferleiters"
-    ],
-    "exp": "Während AC-Laden nur analoge PWM-Rechteckwellen nutzt, spricht CCS per High-Level-IP-Netzwerk (PLC) über den Control Pilot Pin und tauscht laufend Soll-Spannung, Maximalstrom und Zelltemperaturen aus."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Warum zeigt eine 400-Volt-Ladesäule mit „150-kW“-Aufschrift an einem regulären 400-V-E-Auto oft tatsächlich maximal nur ca. 120–135 kW an?",
-    "a": [
-      "Da viele Säulen auf 300–350 A Stromstärke begrenzt sind: P = U × I ergibt bei 360–380 V realer Akkuspannung × 350 A nur ca. 126–133 kW",
-      "Weil die Ladesäule 25 kW heimlich als Trinkgeld einbehält",
-      "Weil Typ-2-Kabel ab 120 kW mechanisch abschalten",
-      "Weil in Deutschland 150 kW als Brutto-Brummspannung gilt"
-    ],
-    "exp": "Nennwerte (z. B. 150 kW) setzen oft volle 500 V Ausgangsspannung voraus; hat der fast leere 400-V-Akku erst 350–380 V, begrenzt der maximale Kabel-/Säulenstrom (oft 300–350 A) die Leistung spürbar."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Welches sicherheitsrelevante Prinzip überprüft der „Isolationswächter“ (IMD) an einer DC-Säule oder im Fahrzeug laufend vor und während des Ladens?",
-    "a": [
-      "Dass zwischen Plus-/Minus-Hochvoltpotenzial und der geerdeten Fahrzeugkarosserie bzw. Schutzleiter (PE) kein gefährlicher Isolationsfehler/Kriechstrom besteht",
-      "Wie gut die Schalldämmung in den Autotüren verarbeitet wurde",
-      "Ob der Ladekabelmantel mindestens +30 °C hat",
-      "Wie viele andere Fahrzeuge sich im selben Umspannwerk befinden"
-    ],
-    "exp": "Bereits zu Beginn (Pre-Check / Cable Check mit kurzer Testspannung ~500 V) prüft die Säule den Isolationswiderstand, bevor die Schütze des Fahrzeugs geschlossen werden."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Weshalb arbeiten moderne „Mega-Charger“ (MCS – Megawatt Charging System) für Elektro-Lkw jenseits des gewohnten CCS2-Limits mit bis zu 3,75 MW Ladeleistung?",
-    "a": [
-      "Mit bis zu 1.250 Volt Gleichspannung und bis zu 3.000 Ampere Gleichstrom über aktiv gekühlte, stark abgesicherte Kontakte statt max. 500 A bei CCS",
-      "Durch kabellose Mikrowellen-Richtfunkstrahlung aus dem Mast",
-      "Indem zehn CCS2-Stecker gleichzeitig rund um den Lkw gesteckt werden",
-      "Durch reines 230-V-Haushaltsstromnetz mit dreitägiger Vorladung"
-    ],
-    "exp": "Für schwere Fernverkehrs-E-Lkw definiert MCS einen neuen eigenständigen robusten Steckerstandard bis 1.250 V und 3.000 A für 45-Minuten-Lenkzeitpausen."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Welche Funktion erfüllt der Zustand „State D“ gegenüber „State C“ beim Signalpegel (+6 V vs. +3 V positiv) auf dem Control-Pilot-(CP)-Pin nach IEC 61851?",
-    "a": [
-      "State D fordert beim Laden (historisch wichtig für offene Blei-Säure-Akkus mit Wasserstoffgasung) aktiv eine Belüftung des Ladebereichs an",
-      "State D verdoppelt sofort die Ladespannung auf 1.000 Volt",
-      "State D signalisiert einen mechanischen Reifendruckabfall",
-      "State D steht für abgeschlossen und vollständig abgesteckt"
-    ],
-    "exp": "State A (+12 V) = nicht verbunden, B (+9 V) = verbunden/bereit, C (+6 V) = Laden ohne Lüftungsanforderung, D (+3 V) = Laden mit zwingender Raumbelüftung."
-  },
-  {
-    "cat": "laden",
-    "diff": "nerd",
-    "q": "Warum bricht bei einer 800-Volt-Säule mit „Power Sharing“ die Ladeleistung eines einzelnen Fahrzeugs oft kaum merklich ein, wenn zwei Autos in moderner modularer Matrix-Technik dranhängen – ganz anders als früher bei einfachen Twin-Verteilern?",
-    "a": [
-      "Modulare Leistungsmodule (z. B. 25–50-kW-Blöcke in einer Schaltschrank-Matrix) lassen sich dynamisch in feinen Stufen genau dorthin schalten, wo die höhere Ladekurve noch Leistung abnimmt",
-      "Weil moderne Säulen ab zwei Fahrzeugen automatisch auf Kernbatterie umschalten",
-      "Weil der Strom vom zweiten Auto komplett zurück in das erste Auto gepumpt wird",
-      "Weil jedes Auto bei Power-Sharing-Säulen immer konstante 400 kW ab Werk bekommt"
-    ],
-    "exp": "Wenn Auto A bei 82 % SoC nur noch 45 kW abnimmt, schaltet eine modulare Säule freie Leistungseinheiten in Echtzeit zu Auto B bei 15 % SoC um – nahezu volle Auslastung des Netzanschlusses."
+    "explanation": "Die sogenannte „Wegfahrsperre beim Laden“ ist international genormt: Ein Anfahren mit eingestecktem Ladekabel ist physikalisch unmöglich.",
+    "exp": "Nichts – das Auto verriegelt den Fahrstufen-Wählhebel elektronisch und verhindert jedes Anfahren, solange der Stecker steckt"
   }
 ];
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
     window.ArcadeQuizEngine.registerBank("emobility", DATA);
   } else {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
