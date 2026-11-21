@@ -64,6 +64,13 @@ const GAMES_META = {
   quiz_fussball_intl: { title: 'Fußball: Champions League & Weltfußball', lowerIsBetter: false },
   quiz_fussball_rules: { title: 'Fußball: Regeln, Taktik & Kurioses', lowerIsBetter: false },
   quiz_fussball_werder: { title: 'Fußball: SV Werder Bremen Spezial', lowerIsBetter: false },
+  quiz_american_football: { title: 'American Football – Das große NFL-Quiz', lowerIsBetter: false },
+  quiz_af_mix: { title: 'American Football: Alles gemischt', lowerIsBetter: false },
+  quiz_af_rules: { title: 'American Football: Regeln, Positionen & Taktik', lowerIsBetter: false },
+  quiz_af_superbowl: { title: 'American Football: Super Bowl & NFL-Geschichte', lowerIsBetter: false },
+  quiz_af_teams: { title: 'American Football: Teams, Stadien & Fankultur', lowerIsBetter: false },
+  quiz_af_legends: { title: 'American Football: Legenden, Draft & Rekorde', lowerIsBetter: false },
+  quiz_af_packers: { title: 'American Football: Green Bay Packers Special', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
 
