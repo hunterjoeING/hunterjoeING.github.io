@@ -60,7 +60,42 @@ body {
 
 #phaser-stage canvas {
   display: block;
-  image-rendering: pixelated;
+  image-rendering: auto;
+}
+
+.er-map-floating-controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.er-workspace.driving-active .er-map-floating-controls {
+  display: none;
+}
+
+.map-fab {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+.map-fab:hover {
+  border-color: #38bdf8;
+  background: rgba(30, 41, 59, 0.96);
 }
 
 .er-planner-panel {
@@ -1011,17 +1046,218 @@ body {
 }
 .nl-chip.locked { opacity: 0.65; }
 
+/* Route Comparison Cards */
+.route-compare-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.rc-header span {
+  color: var(--text-subtle);
+  font-size: 11px;
+}
+.route-compare-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+.route-opt-card {
+  text-align: left;
+  padding: 7px 8px;
+  border-radius: 11px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.route-opt-card:hover {
+  border-color: var(--rc-color, var(--accent-primary));
+}
+.route-opt-card.selected {
+  border-color: var(--rc-color, var(--accent-primary));
+  background: var(--accent-gold-soft);
+  box-shadow: 0 0 0 1px var(--rc-color, var(--accent-primary));
+}
+.roc-top {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+}
+.roc-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.roc-km {
+  margin-left: auto;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--text-subtle);
+}
+.roc-hwy {
+  font-size: 10px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.roc-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+.roc-pill {
+  font-size: 9.5px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+}
+.roc-pill.traffic-high {
+  background: rgba(239, 68, 68, 0.14);
+  color: var(--accent-red);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.roc-pill.traffic-med {
+  background: rgba(245, 158, 11, 0.16);
+  color: #d97706;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+.roc-pill.traffic-low {
+  background: rgba(22, 163, 74, 0.14);
+  color: var(--accent-green);
+  border-color: rgba(22, 163, 74, 0.3);
+}
+.roc-nets {
+  font-size: 9.5px;
+  color: var(--text-subtle);
+}
+
+.route-active-summary {
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  font-size: 11.5px;
+}
+.route-active-summary p {
+  margin: 3px 0 0;
+  color: var(--text-muted);
+}
+
+/* Forecast SoC status & per-stop target slider */
+.fc-metric.ok strong { color: var(--accent-green); }
+.fc-metric.warn strong { color: #d97706; }
+.psp-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+.psp-soc-ctl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+.psp-soc-ctl input[type="range"] {
+  flex: 1;
+  max-width: 140px;
+}
+.text-danger { color: var(--accent-red); }
+.price-sub-ok { color: var(--accent-green); }
+.price-nosub {
+  color: var(--text-subtle);
+  font-size: 11px;
+}
+
+/* Prominent Next-Destination SoC Prediction in DrivingHUD & Charging Modal */
+.dhud-pill.soc-pred {
+  font-weight: 600;
+}
+.dhud-pill.soc-pred.ok {
+  border-color: #22c55e;
+  color: #bbf7d0;
+}
+.dhud-pill.soc-pred.warn {
+  border-color: #f59e0b;
+  color: #fde68a;
+}
+.dhud-pill.soc-pred.low {
+  border-color: #ef4444;
+  background: rgba(127, 29, 29, 0.9);
+  color: #fecaca;
+}
+
+.charge-arrival-pred {
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+}
+.charge-arrival-pred.ok {
+  border-color: rgba(22, 163, 74, 0.55);
+  background: rgba(22, 163, 74, 0.12);
+}
+.charge-arrival-pred.warn {
+  border-color: rgba(245, 158, 11, 0.65);
+  background: rgba(245, 158, 11, 0.14);
+}
+.charge-arrival-pred.danger {
+  border-color: rgba(239, 68, 68, 0.7);
+  background: rgba(239, 68, 68, 0.14);
+}
+.cap-kicker {
+  display: block;
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+.cap-final {
+  font-size: 12px;
+  white-space: nowrap;
+}
+.charge-btn-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.charge-btn-row .er-primary-btn {
+  flex: 1;
+}
+
 /* Responsive Mobile / Tablet Layout */
 @media (max-width: 920px) {
   .er-workspace {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(220px, 42dvh) minmax(0, 1fr);
+    grid-template-rows: minmax(240px, 44dvh) minmax(0, 1fr);
   }
   .er-workspace.driving-active {
     grid-template-rows: 1fr;
   }
   .forecast-strip {
     grid-template-columns: repeat(3, 1fr);
+  }
+  .route-compare-grid {
+    grid-template-columns: 1fr;
   }
   .res-columns {
     grid-template-columns: 1fr;
