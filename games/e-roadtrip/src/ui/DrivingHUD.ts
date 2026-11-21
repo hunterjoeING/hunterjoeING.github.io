@@ -2,7 +2,7 @@ import { LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { getActiveRouteLegs, predictLiveTripSoc } from '../sim/RoutePlanner';
-import { TouchInput } from '../phaser/GameBridge';
+import { TouchInput, resetTouchInput } from '../phaser/GameBridge';
 import { SoundFX } from '../phaser/SoundFX';
 
 export interface DrivingHUDCallbacks {
@@ -27,21 +27,39 @@ export class DrivingHUD {
 
     try {
       this.forceTouchVisible =
-        window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+        window.matchMedia('(pointer: coarse)').matches ||
+        'ontouchstart' in window ||
+        (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
     } catch (_) {
       this.forceTouchVisible = false;
     }
     this.renderTouchControls();
+    window.addEventListener('blur', () => this.clearTouchStates());
+  }
+
+  public isTouchVisible(): boolean {
+    return this.forceTouchVisible;
+  }
+
+  public clearTouchStates(): void {
+    resetTouchInput();
+    this.touchEl.querySelectorAll('.touch-pad.pressed').forEach(el => {
+      el.classList.remove('pressed');
+    });
   }
 
   public setMode(mode: 'hidden' | 'autobahn' | 'city'): void {
     this.mode = mode;
     this.hudEl.classList.toggle('hidden', mode === 'hidden');
+    if (mode !== 'city') {
+      this.clearTouchStates();
+    }
     this.updateTouchVisibility();
   }
 
   public toggleTouchOverlay(): boolean {
     this.forceTouchVisible = !this.forceTouchVisible;
+    if (!this.forceTouchVisible) this.clearTouchStates();
     this.updateTouchVisibility();
     return this.forceTouchVisible;
   }
@@ -177,26 +195,48 @@ export class DrivingHUD {
       </div>
       <div class="touch-right">
         <button type="button" class="touch-pad horn" data-t="horn" aria-label="Hupen">📯</button>
-        <button type="button" class="touch-pad brake" data-t="down" aria-label="Bremsen / Rückwärts">▼</button>
+        <button type="button" class="touch-pad stop" data-t="brake" aria-label="Handbremse">🛑</button>
+        <button type="button" class="touch-pad brake" data-t="down" aria-label="Rückwärts">▼</button>
         <button type="button" class="touch-pad gas" data-t="up" aria-label="Gas geben">▲</button>
       </div>
     `;
 
-    const bindHold = (btn: Element, key: 'left' | 'right' | 'up' | 'down') => {
-      const setState = (val: boolean) => {
-        TouchInput[key] = val;
-        btn.classList.toggle('pressed', val);
+    const bindHold = (btn: Element, key: 'left' | 'right' | 'up' | 'down' | 'brake') => {
+      const activeIds = new Set<number>();
+      const sync = () => {
+        const down = activeIds.size > 0;
+        TouchInput[key] = down;
+        btn.classList.toggle('pressed', down);
       };
-      btn.addEventListener('pointerdown', e => {
+
+      btn.addEventListener('pointerdown', ev => {
+        const e = ev as PointerEvent;
         e.preventDefault();
-        setState(true);
+        e.stopPropagation();
+        activeIds.add(e.pointerId);
+        try {
+          (btn as HTMLElement).setPointerCapture(e.pointerId);
+        } catch (_) {}
+        sync();
       });
-      btn.addEventListener('pointerup', () => setState(false));
-      btn.addEventListener('pointerleave', () => setState(false));
-      btn.addEventListener('pointercancel', () => setState(false));
+
+      const release = (ev: Event) => {
+        const e = ev as PointerEvent;
+        if (typeof e.pointerId === 'number') {
+          activeIds.delete(e.pointerId);
+        } else {
+          activeIds.clear();
+        }
+        sync();
+      };
+
+      btn.addEventListener('pointerup', release);
+      btn.addEventListener('pointercancel', release);
+      btn.addEventListener('lostpointercapture', release);
+      btn.addEventListener('contextmenu', e => e.preventDefault());
     };
 
-    (['left', 'right', 'up', 'down'] as const).forEach(k => {
+    (['left', 'right', 'up', 'down', 'brake'] as const).forEach(k => {
       const el = this.touchEl.querySelector(`[data-t="${k}"]`);
       if (el) bindHold(el, k);
     });
@@ -204,7 +244,12 @@ export class DrivingHUD {
     const hornBtn = this.touchEl.querySelector('[data-t="horn"]');
     hornBtn?.addEventListener('pointerdown', e => {
       e.preventDefault();
+      e.stopPropagation();
       TouchInput.hornPressed = true;
+      hornBtn.classList.add('pressed');
     });
+    const releaseHorn = () => hornBtn?.classList.remove('pressed');
+    hornBtn?.addEventListener('pointerup', releaseHorn);
+    hornBtn?.addEventListener('pointercancel', releaseHorn);
   }
 }
