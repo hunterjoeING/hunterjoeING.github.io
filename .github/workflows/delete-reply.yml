@@ -1,0 +1,80 @@
+name: Delete Feedback Reply in D1
+
+on:
+  workflow_dispatch:
+    inputs:
+      reply_id:
+        description: 'Reply ID to delete'
+        required: true
+        default: '1'
+      post_id:
+        description: 'Post ID to reset to open (optional)'
+        required: false
+        default: '1'
+
+jobs:
+  delete_reply:
+    name: Delete reply in Cloudflare D1
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Delete reply in D1 via Cloudflare API
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          REPLY_ID: ${{ inputs.reply_id }}
+          POST_ID: ${{ inputs.post_id }}
+        run: |
+          node -e '
+          (async () => {
+            const token = process.env.CLOUDFLARE_API_TOKEN;
+            const replyId = parseInt(process.env.REPLY_ID, 10);
+            const postId = parseInt(process.env.POST_ID, 10);
+            if (!token || !replyId) process.exit(1);
+
+            const cfFetch = async (path, init = {}) => {
+              const res = await fetch("https://api.cloudflare.com/client/v4" + path, {
+                ...init,
+                headers: {
+                  "Authorization": "Bearer " + token,
+                  "Content-Type": "application/json",
+                  ...(init.headers || {})
+                }
+              });
+              const data = await res.json().catch(() => ({}));
+              return { ok: res.ok && data.success, status: res.status, data };
+            };
+
+            const acc = await cfFetch("/accounts");
+            const accountId = acc.data.result[0].id;
+            let dbId = "";
+            const settings = await cfFetch(`/accounts/${accountId}/workers/scripts/hunterjoe-scores/settings`);
+            const dbBinding = settings.data?.result?.bindings?.find(b => b.type === "d1" && b.name === "DB");
+            if (dbBinding?.id) dbId = dbBinding.id;
+            if (!dbId) {
+              const dbs = await cfFetch(`/accounts/${accountId}/d1/database`);
+              const preferred = dbs.data.result.find(d => d.name === "hunterjoe-scores-db") || dbs.data.result[0];
+              dbId = preferred.uuid;
+            }
+
+            await cfFetch(`/accounts/${accountId}/d1/database/${dbId}/query`, {
+              method: "POST",
+              body: JSON.stringify({
+                sql: "DELETE FROM feedback_replies WHERE id = ?1",
+                params: [replyId]
+              })
+            });
+
+            if (postId) {
+              await cfFetch(`/accounts/${accountId}/d1/database/${dbId}/query`, {
+                method: "POST",
+                body: JSON.stringify({
+                  sql: "UPDATE feedback_posts SET status = ?1, updated_at = datetime(\x27now\x27) WHERE id = ?2",
+                  params: ["open", postId]
+                })
+              });
+            }
+            console.log("Deleted reply", replyId, "and reset post", postId);
+          })();
+          '
