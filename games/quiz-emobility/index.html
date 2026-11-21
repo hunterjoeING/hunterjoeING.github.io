@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>E-Mobilität &amp; Tesla Nerd-Quiz · HunterJoe Arcade</title>
-  <meta name="description" content="108 Fragen rund um Elektromobilität, Schnellladen &amp; Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 &amp; ISO 15118." />
+  <meta name="description" content="75 Fragen rund um Elektromobilität, Schnellladen &amp; Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 &amp; ISO 15118." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-emobility/" />
@@ -15,14 +15,14 @@
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
   <meta property="og:title" content="E-Mobilität &amp; Tesla Nerd-Quiz · HunterJoe Arcade" />
-  <meta property="og:description" content="108 Fragen rund um Elektromobilität, Schnellladen &amp; Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 &amp; ISO 15118." />
+  <meta property="og:description" content="75 Fragen rund um Elektromobilität, Schnellladen &amp; Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 &amp; ISO 15118." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/quiz-emobility/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="E-Mobilität &amp; Tesla Nerd-Quiz · HunterJoe Arcade" />
-  <meta name="twitter:description" content="108 Fragen rund um Elektromobilität, Schnellladen &amp; Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 &amp; ISO 15118." />
+  <meta name="twitter:description" content="75 Fragen rund um Elektromobilität, Schnellladen &amp; Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 &amp; ISO 15118." />
   <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
   {
@@ -31,7 +31,7 @@
       {
         "@type": "Quiz",
         "name": "E-Mobilität & Tesla Nerd-Quiz",
-        "description": "108 Fragen rund um Elektromobilität, Schnellladen & Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 & ISO 15118.",
+        "description": "75 Fragen rund um Elektromobilität, Schnellladen & Tesla-Technik in 3 Stufen: 800V-Architektur, BYD Blade vs. CATL LFP, Octovalve, HW4, IEC 61851 & ISO 15118.",
         "url": "https://hunterjoeing.github.io/games/quiz-emobility/",
         "inLanguage": "de",
         "isAccessibleForFree": true,
@@ -334,7 +334,7 @@
     <section id="screen-menu" class="glass-card" style="padding: 20px;">
       <h1 style="margin:0 0 6px; font-size: 23px;">E-Mobilität, Tesla &amp; Schnellladen</h1>
       <p style="margin:0; color: var(--text-muted); font-size: 14px; line-height:1.45;">
-        108 Fragen vom 800-Volt-Pionier bis zum TFF-Expertenwissen zu Zellchemie, Octovalve, PWM-Protokoll &amp; Superchargern (Standard: 20 Fragen pro Runde, Anti-Wiederholungs-Pool).
+        75 Fragen vom 800-Volt-Pionier bis zum TFF-Expertenwissen zu Zellchemie, Octovalve, PWM-Protokoll &amp; Superchargern (Standard: 20 Fragen pro Runde, Anti-Wiederholungs-Pool).
         Härtere Stufen geben bis zu <strong>1,5× Punkte</strong>!
       </p>
 
@@ -421,7 +421,7 @@
       nerd: { label: '🔴 Profi / Nerd', cls: 'nerd', mult: 1.5 }
     };
 
-    // Unified question bank (108 questions, index 0 of a[] is always correct)
+    // Unified question bank (75 questions, index 0 of a[] is always correct)
     const QUESTIONS = ArcadeQuizEngine.getBank('emobility');
 
     let selectedDiff = 'all';
@@ -748,7 +748,7 @@
       onUpdate: () => renderMenu(),
       lengths: [10, 20, 30, 'all'],
       defaultLen: 20,
-      showAllLabel: 'Alle'
+      showAllLabel: 'Alle (75)'
     });
     refreshTopBest();
     renderMenu();
