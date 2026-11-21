@@ -56,27 +56,23 @@ export class PodracerModel {
     this.nozzleGlowMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
       emissive: 0x38bdf8,
-      emissiveIntensity: 2.2,
-      roughness: 0.2,
-      metalness: 0.1
+      emissiveIntensity: 0.95,
+      roughness: 0.25,
+      metalness: 0.15
     });
 
     this.flameOuterMat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(0.35, 1.35, 2.2),
+      color: new THREE.Color(0.24, 0.68, 1.12),
       transparent: true,
-      opacity: 0.82,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      toneMapped: false
+      opacity: 0.46,
+      depthWrite: false
     });
 
     this.flameCoreMat = new THREE.MeshBasicMaterial({
-      color: new THREE.Color(1.9, 2.2, 2.6),
+      color: new THREE.Color(0.82, 0.94, 1.08),
       transparent: true,
-      opacity: 0.94,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      toneMapped: false
+      opacity: 0.64,
+      depthWrite: false
     });
 
     this.spinners = [];
@@ -422,13 +418,13 @@ export class PodracerModel {
     this.turbinesGroup.position.y = turbBob;
     this.turbinesGroup.rotation.z += (targetTurbRoll - this.turbinesGroup.rotation.z) * lerpT;
     this.turbinesGroup.rotation.y += (targetTurbYaw - this.turbinesGroup.rotation.y) * lerpT;
-    this.turbinesGroup.rotation.x = -boostLevel * 0.045 + Math.sin(timeSec * 28) * hitWobble * 0.16;
+    this.turbinesGroup.rotation.x = -boostLevel * 0.035 + Math.sin(timeSec * 24) * hitWobble * 0.10;
 
     this.cockpitGroup.position.y = 0.72 + podBob;
-    this.cockpitGroup.position.x += (-steerInput * 0.16 - this.cockpitGroup.position.x) * lerpP;
+    this.cockpitGroup.position.x += (-steerInput * 0.14 - this.cockpitGroup.position.x) * lerpP;
     this.cockpitGroup.rotation.z += (targetPodRoll - this.cockpitGroup.rotation.z) * lerpP;
     this.cockpitGroup.rotation.y += (targetPodYaw - this.cockpitGroup.rotation.y) * lerpP;
-    this.cockpitGroup.rotation.x = -boostLevel * 0.03;
+    this.cockpitGroup.rotation.x = -boostLevel * 0.025;
 
     // Intake fan rotation
     const spinRate = (14 + speedRatio * 24 + boostLevel * 20) * dt;
@@ -440,20 +436,21 @@ export class PodracerModel {
       this.vanes[i].pivot.rotation.x = boostLevel * 0.12 + Math.abs(steerInput) * 0.15;
     }
 
-    // Engine flame scale & HDR glow intensity
-    const flamePulse = 0.92 + Math.sin(timeSec * 52) * 0.08 + Math.cos(timeSec * 37) * 0.06;
-    const flameLen = (0.75 + speedRatio * 0.55 + boostLevel * 1.15) * flamePulse;
-    const flameRad = 0.88 + boostLevel * 0.34;
+    // Engine flame scale & restrained glow intensity
+    const flamePulse = 0.94 + Math.sin(timeSec * 44) * 0.06 + Math.cos(timeSec * 31) * 0.04;
+    const flameLen = (0.56 + speedRatio * 0.34 + boostLevel * 0.68) * flamePulse;
+    const flameRad = 0.78 + boostLevel * 0.22;
     for (let i = 0; i < 2; i++) {
       this.flameCones[i].scale.set(flameRad, flameRad, flameLen);
-      this.flameCores[i].scale.set(flameRad * 0.95, flameRad * 0.95, flameLen * 0.95);
+      this.flameCores[i].scale.set(flameRad * 0.92, flameRad * 0.92, flameLen * 0.92);
     }
 
-    this.nozzleGlowMat.emissiveIntensity = 1.6 + boostLevel * 2.2;
+    this.nozzleGlowMat.emissiveIntensity = 0.75 + boostLevel * 0.75;
+    this.flameOuterMat.opacity = 0.42 + boostLevel * 0.18;
     this.flameOuterMat.color.setRGB(
-      0.32 + boostLevel * 0.95,
-      1.25 + boostLevel * 0.55,
-      2.2 + boostLevel * 0.4
+      0.22 + boostLevel * 0.45,
+      0.66 + boostLevel * 0.24,
+      1.05
     );
 
     // Crackling energy bolts (~36 Hz)
