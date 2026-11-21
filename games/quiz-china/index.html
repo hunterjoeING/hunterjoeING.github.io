@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Neuere Chinesische Geschichte Quiz · HunterJoe Arcade</title>
-  <meta name="description" content="100 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert." />
+  <meta name="description" content="75 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-china/" />
@@ -15,14 +15,14 @@
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
   <meta property="og:title" content="Neuere Chinesische Geschichte Quiz · HunterJoe Arcade" />
-  <meta property="og:description" content="100 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert." />
+  <meta property="og:description" content="75 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/quiz-china/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Neuere Chinesische Geschichte Quiz · HunterJoe Arcade" />
-  <meta name="twitter:description" content="100 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert." />
+  <meta name="twitter:description" content="75 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 &amp; Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert." />
   <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
   {
@@ -31,7 +31,7 @@
       {
         "@type": "Quiz",
         "name": "Neuere Chinesische Geschichte Quiz",
-        "description": "100 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 & Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert.",
+        "description": "75 Quiz-Fragen zur neueren chinesischen Geschichte: vom späten Qing-Reich über die Republik 1911 & Mao-Ära bis zu Deng Xiaopings Reformen und China im 21. Jahrhundert.",
         "url": "https://hunterjoeing.github.io/games/quiz-china/",
         "inLanguage": "de",
         "isAccessibleForFree": true,
@@ -363,7 +363,7 @@
     <section id="screen-menu" class="glass-card" style="padding:20px;">
       <h1 style="margin:0 0 6px; font-size:22px;">Neuere Chinesische Geschichte (1840–Heute)</h1>
       <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
-        100 Fragen zur modernen Geschichte Chinas – von Opiumkriegen &amp; Xinhai-Revolution über Mao-Ära und Dengs Reformen bis ins 21. Jahrhundert (Standard: 20 Fragen pro Runde, Tasten <code>1–4</code> möglich · Anti-Wiederholungs-Pool &amp; ohne Zeitdruck spielbar).
+        75 Fragen zur modernen Geschichte Chinas – von Opiumkriegen &amp; Xinhai-Revolution über Mao-Ära und Dengs Reformen bis ins 21. Jahrhundert (Standard: 20 Fragen pro Runde, Tasten <code>1–4</code> möglich · Anti-Wiederholungs-Pool &amp; ohne Zeitdruck spielbar).
       </p>
 
       <div class="diff-bar" id="diff-bar">
@@ -440,7 +440,7 @@
   <script src="../../shared/quiz-data/bank-china.js"></script>
   <script>
     const CATS = [
-      { id: 'mix',                 icon: '🏮', name: 'Gesamt-Mix (1840–Heute)',        cls: 'featured',      desc: '100 Fragen quer durch die neuere chinesische Geschichte bis in die Gegenwart.' },
+      { id: 'mix',                 icon: '🏮', name: 'Gesamt-Mix (1840–Heute)',        cls: 'featured',      desc: '75 Fragen quer durch die neuere chinesische Geschichte bis in die Gegenwart.' },
       { id: 'spate_qing_republik', icon: '⚔️', name: 'Späte Qing & Republik',           cls: '',              desc: '1840–1949: Opiumkriege, Taiping, Xinhai 1911, Sun Yat-sen, 4. Mai & Bürgerkrieg.' },
       { id: 'mao_aera',            icon: '🚩', name: 'Mao-Ära & Volksrepublik',         cls: '',              desc: '1949–1976: Staatsgründung, Koreakrieg, Großer Sprung, Kulturrevolution & UN 1971.' },
       { id: 'reform_boom',         icon: '🏗️', name: 'Reform, Öffnung & Aufstieg',      cls: 'featured-gold', desc: '1978–2000: Deng Xiaoping, Shenzhen, Ein-Kind-Politik, Tian’anmen & Hongkong 1997.' },
@@ -455,7 +455,7 @@
       pro:  { label: '🔴 Historiker', cls: 'pro',  mult: 1.5 }
     };
 
-    // Unified question bank (100 questions, index 0 of a[] is always correct)
+    // Unified question bank (75 questions, index 0 of a[] is always correct)
     const QUESTIONS = ArcadeQuizEngine.getBank('china');
 
     let selectedDiff = 'all';
@@ -773,7 +773,7 @@
       onUpdate: () => renderMenu(),
       lengths: [10, 20, 30, 'all'],
       defaultLen: 20,
-      showAllLabel: 'Alle'
+      showAllLabel: 'Alle (75)'
     });
     refreshTopBest();
     renderMenu();
