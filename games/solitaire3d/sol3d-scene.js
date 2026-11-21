@@ -11,12 +11,12 @@ export const CARD_CORNER = 0.060;
 
 const NUM_CARDS = 104;
 const COL_STEP = 1.06;
-const TOP_ROW_Z = -3.02;
+const TOP_ROW_Z = -2.90;
 const TOP_SCALE = 0.74;
-const TABLEAU_Z = -1.58;
-const TABLE_CENTER_Z = -0.18;
+const TABLEAU_Z = -1.50;
+const TABLE_CENTER_Z = -0.10;
 const TABLE_W = 10.96;
-const TABLE_D = 7.60;
+const TABLE_D = 7.40;
 const DRAG_LIFT_Y = 0.52;
 
 function colX(col) {
@@ -181,8 +181,9 @@ export class SolitaireScene {
     this.camera = new THREE.PerspectiveCamera(34, 16 / 10, 0.5, 90);
     this.camCurPos = new THREE.Vector3(0, 10.8, 2.8);
     this.camTargetPos = new THREE.Vector3(0, 10.8, 2.8);
-    this.camCurLook = new THREE.Vector3(0, 0, -0.35);
-    this.camTargetLook = new THREE.Vector3(0, 0, -0.35);
+    this.camCurLook = new THREE.Vector3(0, 0, -0.10);
+    this.camTargetLook = new THREE.Vector3(0, 0, -0.10);
+    this.camInitialized = false;
     this.maxBottomCenterZ = 2.60;
 
     this.renderer = new THREE.WebGLRenderer({
@@ -521,10 +522,10 @@ export class SolitaireScene {
 
   setCameraPreset(preset) {
     this.cameraPreset = preset === 'top' ? 'top' : '3d';
-    this._updateCameraTargets();
+    this._updateCameraTargets(false);
   }
 
-  _updateCameraTargets() {
+  _updateCameraTargets(snap = false) {
     const w = this.containerEl.clientWidth || window.innerWidth;
     const h = this.containerEl.clientHeight || window.innerHeight;
     const aspect = Math.max(0.42, w / Math.max(1, h));
@@ -537,9 +538,9 @@ export class SolitaireScene {
     const tanH = tanV * aspect;
 
     // Frame all 10 columns nearly edge-to-edge (minimal side margins)
-    const needW = aspect < 1.0 ? 10.76 : 10.94;
-    // Active playfield depth from top of Stock/Foundations (-3.92 incl. HUD clearance) to bottom of Tableau (+3.22)
-    const needD = 7.14;
+    const needW = aspect < 1.0 ? 10.74 : 10.90;
+    // Active playfield depth from top of Stock/Foundations (-3.42) to bottom of Tableau (+3.25)
+    const needD = 6.82;
 
     const distH = (needW * 0.5) / tanH;
     const distV = ((needD * Math.sin(pitch)) * 0.5) / tanV;
@@ -548,15 +549,23 @@ export class SolitaireScene {
     // On portrait / taller screens we get extra vertical room so columns can expand further down before compressing
     const visibleWorldH = (2 * dist * tanV) / Math.sin(pitch);
     const extraVert = Math.max(0, visibleWorldH - needD);
-    this.maxBottomCenterZ = Math.min(3.55, 2.52 + extraVert * 0.35);
+    this.maxBottomCenterZ = Math.min(3.55, 2.55 + extraVert * 0.36);
 
-    const lookZ = -0.35 + (aspect < 0.9 ? 0.15 : 0);
+    const lookZ = -0.09 + (aspect < 0.9 ? 0.12 : 0);
     this.camTargetLook.set(0, 0, lookZ);
     this.camTargetPos.set(
       0,
       Math.sin(pitch) * dist,
       lookZ + Math.cos(pitch) * dist
     );
+
+    if (snap || !this.camInitialized) {
+      this.camCurPos.copy(this.camTargetPos);
+      this.camCurLook.copy(this.camTargetLook);
+      this.camera.position.copy(this.camCurPos);
+      this.camera.lookAt(this.camCurLook);
+      this.camInitialized = true;
+    }
   }
 
   resize() {
@@ -565,7 +574,7 @@ export class SolitaireScene {
     this.camera.aspect = w / Math.max(1, h);
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h, false);
-    this._updateCameraTargets();
+    this._updateCameraTargets(true);
   }
 
   _computeColumnSteps(col, engine) {
