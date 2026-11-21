@@ -6,273 +6,273 @@
     "diff": "easy",
     "q": "Welche archäologische Entdeckung widerlegte den populären Mythos, die Pyramiden seien von geknechteten Sklaven erbaut worden?",
     "a": [
-      "Die Entdeckung der Arbeitergräber und Bäckereien bei Gizeh: Sie wurden mit Rindfleisch und Bier versorgt und ehrenvoll bestattet",
-      "Kaufverträge mit phönizischen Söldnern auf Papyrusrollen",
-      "Bilder in Grabkammern, die dressierte Nilpferde als Lasttiere zeigen",
-      "Briefe römischer Touristen, die bezahlte Bauarbeiter interviewten"
+      "Arbeitergräber mit Nachweisen freier Kost und Bestattung",
+      "Verträge mit phönizischen Söldnern auf antiken Papyrusrollen",
+      "Felsbilder in Grabkammern mit abgerichteten Lasttieren am Nil",
+      "Berichte römischer Reisender über bezahlte Handwerkerzünfte"
     ],
     "explanation": "Zehntausende bezahlte Facharbeiter und Bauern während der Nilüberflutung bauten die Pyramiden – der Sklaven-Mythos stammt primär aus griechischen Erzählungen (Herodot).",
-    "exp": "Zehntausende bezahlte Facharbeiter und Bauern während der Nilüberflutung bauten die Pyramiden – der Sklaven-Mythos stammt primär aus griechischen Erzählungen (Herodot)."
+    "exp": "Arbeitergräber mit Nachweisen freier Kost und Bestattung"
   },
   {
     "cat": "altes_reich",
     "diff": "easy",
     "q": "Welches Bauwerk gilt als die älteste monumentale Steinpyramide der Menschheit?",
     "a": [
-      "Die Stufenpyramide des Pharao Djoser in Sakkara",
-      "Die Rote Pyramide von Dahschur",
-      "Die Cheops-Pyramide von Gizeh",
-      "Die Knickpyramide des Pharao Snofru"
+      "Die Stufenpyramide des Djoser in Sakkara",
+      "Die Rote Pyramide des Snofru in Dahschur",
+      "Die Cheops-Pyramide auf dem Plateau von Gizeh",
+      "Die Mykerinos-Pyramide mit Granitsockel"
     ],
     "explanation": "Errichtet um 2650 v. Chr. vom genialen Hofarchitekten Imhotep stapelte sie sechs Mastabas übereinander und leitete das Pyramidenzeitalter ein.",
-    "exp": "Die Stufenpyramide des Pharao Djoser in Sakkara"
+    "exp": "Die Stufenpyramide des Djoser in Sakkara"
   },
   {
     "cat": "altes_reich",
     "diff": "easy",
     "q": "Wie viele Jahre lang war die Cheops-Pyramide mit rund 146,6 Metern das höchste von Menschenhand geschaffene Bauwerk der Erde?",
     "a": [
-      "Über 3.800 Jahre (bis zur Kathedrale von Lincoln im 14. Jahrhundert)",
-      "Rund 500 Jahre (bis zum Bau des Kolosseums in Rom)",
-      "Knapp 1.200 Jahre (bis zur Fertigstellung der Hagia Sophia)",
-      "Über 8.000 Jahre (bis zum Bau des Eiffelturms in Paris)"
+      "Über 3.800 Jahre bis zum Bau der Kathedrale von Lincoln",
+      "Rund 500 Jahre bis zur Einweihung des Kolosseums in Rom",
+      "Knapp 1.200 Jahre bis zur Vollendung der Hagia Sophia",
+      "Über 8.000 Jahre bis zur Errichtung des Eiffelturms"
     ],
     "explanation": "Erst um 1311 n. Chr. überholte der Turm der Kathedrale von Lincoln in England die Cheops-Pyramide – ein unübertroffener Rekord der Baugeschichte.",
-    "exp": "Über 3.800 Jahre (bis zur Kathedrale von Lincoln im 14. Jahrhundert)"
+    "exp": "Über 3.800 Jahre bis zum Bau der Kathedrale von Lincoln"
   },
   {
     "cat": "altes_reich",
     "diff": "mid",
     "q": "Warum heißt die berühmte Knickpyramide von Pharao Snofru in Dahschur so?",
     "a": [
-      "Die Baumeister änderten mittendrin den Neigungswinkel von 54 auf 43 Grad, um einen Einsturz zu verhindern",
-      "Ein Erdbeben knickte die Spitze während der Römerzeit zur Seite",
-      "Der Pharao wollte die Kurve des Nils symbolisch nachbilden",
-      "Ein Meteorit schlug in halber Bauhöhe ein und schmolz den Kalkstein"
+      "Baumeister reduzierten den Neigungswinkel von 54 auf 43 Grad",
+      "Ein Erdbeben knickte die steile Pyramidenspitze zur Seite",
+      "Der Pharao wollte die Krümmung des Nilverlaufs symbolisieren",
+      "Ein Meteoriteneinschlag beschädigte den oberen Baukörper"
     ],
     "explanation": "Wegen Rissbildungen im instabilen Boden reduzierten die Statiker hektisch das Gewicht des oberen Teils – das Ergebnis ist der unverwechselbare Knick.",
-    "exp": "Die Baumeister änderten mittendrin den Neigungswinkel von 54 auf 43 Grad, um einen Einsturz zu verhindern"
+    "exp": "Baumeister reduzierten den Neigungswinkel von 54 auf 43 Grad"
   },
   {
     "cat": "altes_reich",
     "diff": "mid",
     "q": "Was war der ursprüngliche optische Zustand der Pyramiden von Gizeh in der Antike?",
     "a": [
-      "Sie waren komplett mit poliertem, strahlend weißem Tura-Kalkstein verkleidet und spiegelten das Sonnenlicht",
-      "Sie waren mit leuchtend rotem Granitpulver rot bemalt",
-      "Sie waren rundherum mit hängenden Palmengärten bepflanzt",
-      "Sie waren von gigantischen Goldstatuen aller ägyptischen Götter umstellt"
+      "Mit poliertem strahlend weißem Kalkstein verkleidet",
+      "Mit leuchtend rotem Granitpulver flächendeckend bemalt",
+      "Rundherum mit terrassierten Palmengärten bepflanzt",
+      "Von vergoldeten Monumentalstatuen der Götter umstellt"
     ],
     "explanation": "Die blendend weiße Hülle wurde im Mittelalter nach Erdbeben abgetragen, um Paläste und Moscheen im nahen Kairo zu errichten.",
-    "exp": "Sie waren komplett mit poliertem, strahlend weißem Tura-Kalkstein verkleidet und spiegelten das Sonnenlicht"
+    "exp": "Mit poliertem strahlend weißem Kalkstein verkleidet"
   },
   {
     "cat": "altes_reich",
     "diff": "pro",
     "q": "Wer war Imhotep, der Baumeister der Djoser-Pyramide, der Jahrhunderte später vergöttlicht wurde?",
     "a": [
-      "Der erste namentlich überlieferte Architekt, Arzt und Universalgelehrte der Weltgeschichte",
-      "Ein gefangener babylonischer Astronom am Hof des Pharao",
-      "Der Hohepriester, der den ersten Mumifizierungs-Balsam erfand",
-      "Der persische Gesandte, der die Erfindung des Rades nach Ägypten brachte"
+      "Ein Löwenkörper mit dem Kopf eines Königs",
+      "Ein Stierkörper mit dem Haupt eines Widders",
+      "Ein Falkenkörper mit dem Gesicht des Pharao",
+      "Ein Schlangenkörper mit der Krone von Oberägypten"
     ],
     "explanation": "Imhotep genoss einen so legendären Ruf, dass die Griechen ihn später mit Asklepios, dem Gott der Heilkunst, gleichsetzten.",
-    "exp": "Der erste namentlich überlieferte Architekt, Arzt und Universalgelehrte der Weltgeschichte"
+    "exp": "Ein Löwenkörper mit dem Kopf eines Königs"
   },
   {
     "cat": "altes_reich",
     "diff": "easy",
     "q": "Welches Organ beließen die Einbalsamierer bei der Mumifizierung fast immer im Körper des Verstorbenen?",
     "a": [
-      "Das Herz (als Sitz von Verstand, Gefühlen und Seele)",
-      "Das Gehirn",
-      "Die Leber",
-      "Den Magen"
+      "Nekropole mit Gräbern der ersten Dynastien und Stufenpyramide",
+      "Ein Kriegshafen für die königliche Nilflotte im Delta",
+      "Eine befestigte Grenzfestung gegen nubische Einfälle",
+      "Das zentrale Verwaltungszentrum für den Goldbergbau"
     ],
     "explanation": "Das Gehirn hielten die Ägypter für wertlosen Schleim und zogen es mit Haken durch die Nase heraus – das Herz dagegen musste vor Osiris gewogen werden.",
-    "exp": "Das Herz (als Sitz von Verstand, Gefühlen und Seele)"
+    "exp": "Nekropole mit Gräbern der ersten Dynastien und Stufenpyramide"
   },
   {
     "cat": "altes_reich",
     "diff": "mid",
     "q": "Was geschah beim mythischen „Wiegen des Herzens“ im altägyptischen Totengericht?",
     "a": [
-      "Das Herz des Toten wurde gegen die Feder der Wahrheit (Maat) aufgewogen; war es schwerer, fraß das Monster Ammit die Seele",
-      "Das Herz wurde mit purem Gold aufgewogen, um den Status im Jenseits festzulegen",
-      "Gott Anubis prüfte, ob das Herz mehr als drei Liter Blut enthielt",
-      "Zwei Skarabäen zählten die Sünden des Verstorbenen an den Fingern ab"
+      "Rechteckiger Flachbau mit schrägen Wänden als Vorläufer",
+      "Ein unterirdischer Schacht ohne oberirdischen Steinaufbau",
+      "Ein runder Grabhügel aus getrockneten Nilschlammziegeln",
+      "Eine hölzerne Grabkammer mit Schilfdachdeckung der Vorzeit"
     ],
     "explanation": "Nur wessen Herz federleicht und frei von bösen Taten war, durfte in die paradiesischen Gefilde des Jenseits (Aaru) eintreten.",
-    "exp": "Das Herz des Toten wurde gegen die Feder der Wahrheit (Maat) aufgewogen; war es schwerer, fraß das Monster Ammit die Seele"
+    "exp": "Rechteckiger Flachbau mit schrägen Wänden als Vorläufer"
   },
   {
     "cat": "altes_reich",
     "diff": "easy",
     "q": "Welcher König vereinte um 3100 v. Chr. Ober- und Unterägypten und gilt als erster Pharao der 1. Dynastie?",
     "a": [
-      "Narmer (oft mit Menes identifiziert)",
-      "Cheops",
-      "Djoser",
-      "Skorpion II."
+      "Das Herz zur Abwägung gegen die Feder der Wahrheit",
+      "Das Gehirn als Sitz des Denkens und Planens",
+      "Die Leber als Quelle der Lebenskraft und Wärme",
+      "Der Magen zur Aufnahme der Speisen im Jenseits"
     ],
     "explanation": "Die berühmte Narmer-Palette zeigt ihn mit der weißen Krone Oberägyptens und der roten Krone Unterägyptens (Doppelkrone Pschent).",
-    "exp": "Narmer (oft mit Menes identifiziert)"
+    "exp": "Das Herz zur Abwägung gegen die Feder der Wahrheit"
   },
   {
     "cat": "altes_reich",
     "diff": "mid",
     "q": "Was sind die „Kanopen“, die Archäologen regelmäßig in altägyptischen Gräbern finden?",
     "a": [
-      "Vier rituelle Krüge zur Aufbewahrung von Magen, Leber, Lunge und Darm des Verstorbenen",
-      "Spezielle Fackeln mit duftendem Zedernharz für die Grabkammer",
-      "Schutzamulette aus Fayence, die auf die Augen der Mumie gelegt wurden",
-      "Vorratsgefäße für gewürztes Bier für die Ewigkeit"
+      "Kanopen",
+      "Sarkophage",
+      "Uschebtis",
+      "Pylonen"
     ],
     "explanation": "Jeder der vier Kanopenkrüge stand unter dem Schutz eines der vier Horussöhne (Mensch, Pavian, Schakal und Falke).",
-    "exp": "Vier rituelle Krüge zur Aufbewahrung von Magen, Leber, Lunge und Darm des Verstorbenen"
+    "exp": "Kanopen"
   },
   {
     "cat": "altes_reich",
     "diff": "pro",
     "q": "Was besagt die „Traumstele“ zwischen den Pranken der Großen Sphinx von Gizeh?",
     "a": [
-      "Prinz Thutmosis IV. schlief im Schatten der Sphinx ein; sie versprach ihm die Pharaonenkrone, wenn er sie vom Wüstensand befreie",
-      "Eine Warnung vor Grabräubern mit einem tödlichen Fluch",
-      "Ein Rezept für die Herstellung von unvergänglicher roter Schminke",
-      "Ein astronomischer Kalender über die nächste Nilflut"
+      "Ein natürliches Natronsalzgemisch zum Entzug von Feuchtigkeit",
+      "Ein Bad in kochendem Zedernöl und flüssigem Harz",
+      "Eine Einbalsamierung mit reinem Bienenhonig im Steintrog",
+      "Das Räuchern über offenem Weihrauchfeuer in Tempeln"
     ],
     "explanation": "Thutmosis grub die damals bis zum Hals verschüttete Sphinx aus, restaurierte sie und bestieg wie verheißen den Thron.",
-    "exp": "Prinz Thutmosis IV. schlief im Schatten der Sphinx ein; sie versprach ihm die Pharaonenkrone, wenn er sie vom Wüstensand befreie"
+    "exp": "Ein natürliches Natronsalzgemisch zum Entzug von Feuchtigkeit"
   },
   {
     "cat": "altes_reich",
     "diff": "easy",
     "q": "Aus welchem Hauptmaterial fertigten die alten Ägypter das älteste beschreibbare Papier der Welt?",
     "a": [
-      "Aus den Stängeln der Papyrusstaude aus dem Nildelta",
-      "Aus getrockneten Palmwedeln",
-      "Aus fein zermahlener Schilfasche mit Lehm",
-      "Aus gebleichter Tierhaut (Pergament)"
+      "Kleine Ton- oder Fayence-Figuren als symbolische Arbeitsdiener",
+      "Schützende Amulette gegen Dämonen auf der Mumienbinde",
+      "Gefäße für geheime Grabbeigaben wie Parfüm und Schmuck",
+      "Götterfiguren zur Begleitung des Pharao vor das Totengericht"
     ],
     "explanation": "Streifen des Pflanzenmarks wurden kreuzweise übereinandergelegt, gepresst und gehämmert – der Saft der Pflanze wirkte als natürlicher Klebstoff.",
-    "exp": "Aus den Stängeln der Papyrusstaude aus dem Nildelta"
+    "exp": "Kleine Ton- oder Fayence-Figuren als symbolische Arbeitsdiener"
   },
   {
     "cat": "altes_reich",
     "diff": "mid",
     "q": "Welche Rolle spielte das Natron-Salz bei der Mumifizierung im Alten Ägypten?",
     "a": [
-      "Es entzog dem Leichnam über rund 40 Tage hinweg das gesamte Wasser und konservierte das Gewebe",
-      "Es färbte die Haut der Könige in einem edlen Goldton",
-      "Es löste alle Knochen auf, damit die Mumie in schmale Särge passte",
-      "Es diente als Parfüm gegen den Geruch von Myrrhe"
+      "Reines Gold für Fleisch der Götter und Lapislazuli für Haare",
+      "Geschmiedetes Meteoreisen mit Einlagen aus grünem Malachit",
+      "Massives Silber mit Ornamenten aus rotem Jaspis",
+      "Vergoldete Bronze mit Verzierungen aus Elfenbein"
     ],
     "explanation": "Ohne Wasser können Fäulnisbakterien nicht überleben – das Natron aus den Seen des Wadi Natrun war das chemische Geheimnis der unvergänglichen Mumien.",
-    "exp": "Es entzog dem Leichnam über rund 40 Tage hinweg das gesamte Wasser und konservierte das Gewebe"
+    "exp": "Reines Gold für Fleisch der Götter und Lapislazuli für Haare"
   },
   {
     "cat": "altes_reich",
     "diff": "pro",
     "q": "Was zeichnet die „Pyramidentexte“ in der Unas-Pyramide (Ende der 5. Dynastie) aus?",
     "a": [
-      "Sie sind die ältesten erhaltenen religiösen Texte der Menschheit, direkt in die Wände der Grabkammer gemeißelt",
-      "Sie enthalten den ältesten bekannten Bauplan für Zahnradmaschinen",
-      "Sie dokumentieren die erste Volkszählung im Niltal",
-      "Sie beschreiben die Niederlage einer Invasion von Seevölkern"
+      "Der Ba als Seelenvogel und das Ka als spirituelle Lebenskraft",
+      "Der Geist des Körpers und der Schatten der Taten",
+      "Das irdische Denken und der göttliche Atem des Nils",
+      "Die persönliche Tugend und das Schicksal der Geburt"
     ],
     "explanation": "Zuvor waren Pyramiden-Innenräume kahl – ab Unas schützten magische Sprüche und Rituale den Pharao auf seiner Himmelsreise.",
-    "exp": "Sie sind die ältesten erhaltenen religiösen Texte der Menschheit, direkt in die Wände der Grabkammer gemeißelt"
+    "exp": "Der Ba als Seelenvogel und das Ka als spirituelle Lebenskraft"
   },
   {
     "cat": "altes_reich",
     "diff": "easy",
     "q": "Welches Tier galt im Alten Ägypten als heilige Verkörperung der Göttin Bastet und wurde millionenfach mumifiziert?",
     "a": [
-      "Die Katze",
-      "Das Krokodil",
-      "Der Ibis",
-      "Der Skarabäus-Käfer"
+      "Magische Sprüche und Handlungsanweisungen zur Reise ins Jenseits",
+      "Ein Verzeichnis aller Pharaonen und ihrer Regierungsjahre",
+      "Ein Kodex der königlichen Gesetze und Steuersätze",
+      "Ein medizinisches Handbuch über Mumifizierungstechniken"
     ],
     "explanation": "Katzen schützten Getreidespeicher vor Mäusen und Schlangen; wer eine Katze tötete, wurde oft mit dem Tode bestraft.",
-    "exp": "Die Katze"
+    "exp": "Magische Sprüche und Handlungsanweisungen zur Reise ins Jenseits"
   },
   {
     "cat": "altes_reich",
     "diff": "mid",
     "q": "Was war der sogenannte „Skarabäus“ in der ägyptischen Mythologie?",
     "a": [
-      "Ein Pillendreher-Käfer, der als Symbol der Wiedergeburt und der aufgehenden Morgensonne (Chepre) verehrt wurde",
-      "Eine giftige Wüstenspinne, die Grabkammern bewachte",
-      "Ein goldener Ring zur Versiegelung königlicher Dekrete",
-      "Ein Ruderboot zur Überquerung des Nils bei Nacht"
+      "Anubis",
+      "Osiris",
+      "Horus",
+      "Sobek"
     ],
     "explanation": "Weil der Käfer Mistkugeln rollte und Jungtiere scheinbar aus dem Nichts schlüpften, sahen die Ägypter in ihm die Sonne, die über den Himmel gerollt wird.",
-    "exp": "Ein Pillendreher-Käfer, der als Symbol der Wiedergeburt und der aufgehenden Morgensonne (Chepre) verehrt wurde"
+    "exp": "Anubis"
   },
   {
     "cat": "altes_reich",
     "diff": "pro",
     "q": "Welches mysteriöse Land im Süden (vermutlich am Horn von Afrika) war das legendäre Ziel ägyptischer Handelsexpeditionen für Myrrhe und Weihrauch?",
     "a": [
-      "Das Land Punt (Gottesland)",
-      "Atlantis",
-      "Numidien",
-      "Kusch"
+      "Das Horusauge (Udjat)",
+      "Das Lebenskreuz (Ankh-Symbol)",
+      "Der Heilige Pillendreher-Skarabäus",
+      "Der mythologische Djed-Pfeiler"
     ],
     "explanation": "Schon im Alten Reich fuhren Schiffe nach Punt – die berühmteste Reise dorthin ließ Königin Hatschepsut auf den Tempelwänden von Deir el-Bahari verewigen.",
-    "exp": "Das Land Punt (Gottesland)"
+    "exp": "Das Horusauge (Udjat)"
   },
   {
     "cat": "altes_reich",
     "diff": "easy",
     "q": "Warum war die jährliche Nilflut (Inundation) die Lebensader der gesamten ägyptischen Zivilisation?",
     "a": [
-      "Sie lagerte fruchtbaren schwarzen Schlamm auf den Feldern ab, der reiche Ernten ohne Mineraldünger ermöglichte",
-      "Sie schwemmte reines Gold aus den nubischen Bergen direkt an den Strand von Alexandria",
-      "Sie füllte riesige Trinkwassertanks für die fünfjährige Trockenzeit",
-      "Sie vertrieb Krokodile und Flusspferde für sechs Monate ins Mittelmeer"
+      "Ablagerung von fruchtbarem Schlamm für ertragreiche Ernten",
+      "Die Zufuhr von frischem Trinkwasser für die Wüstenstädte",
+      "Die Ermöglichung des Schiffsverkehrs bis nach Babylon",
+      "Die Reinigung des Flussbettes von Treibholz und Schilf"
     ],
     "explanation": "Die Ägypter nannten ihr Land Kemet („das schwarze Land“) nach dem fruchtbaren Nilschlamm, im Gegensatz zu Deshret („dem roten Land“ der Wüste).",
-    "exp": "Sie lagerte fruchtbaren schwarzen Schlamm auf den Feldern ab, der reiche Ernten ohne Mineraldünger ermöglichte"
+    "exp": "Ablagerung von fruchtbarem Schlamm für ertragreiche Ernten"
   },
   {
     "cat": "altes_reich",
     "diff": "mid",
     "q": "Wie transportierten die ägyptischen Bauarbeiter tonnenschwere Steinblöcke über den Sand der Wüste?",
     "a": [
-      "Auf Holzschlitten, während Wasser vor die Kufen gegossen wurde, was die Reibung im Sand um die Hälfte reduzierte",
-      "Auf eisernen Zahnradketten mit Flaschenzügen",
-      "Mit gigantischen Heißluftballons aus Papyrusfasern",
-      "Auf den Rücken von gezähmten afrikanischen Elefanten"
+      "Auf Holzschlitten mit Wasserbefeuchtung vor den Kufen",
+      "Auf eisernen Schienen mit handgetriebenen Rollwagen",
+      "Mithilfe von zahmen Elefanten aus dem inneren Afrika",
+      "Über lange Rutschbahnen aus poliertem Flussmarmor"
     ],
     "explanation": "Physiker der Universität Amsterdam bewiesen anhand alter Grabmalereien: Feuchtet man Wüstensand genau richtig an, sinkt der Schlitten nicht ein und gleitet fast mühelos.",
-    "exp": "Auf Holzschlitten, während Wasser vor die Kufen gegossen wurde, was die Reibung im Sand um die Hälfte reduzierte"
+    "exp": "Auf Holzschlitten mit Wasserbefeuchtung vor den Kufen"
   },
   {
     "cat": "neues_reich",
     "diff": "easy",
     "q": "Was war das Besondere an der Herrschaft der berühmten Pharaonin Hatschepsut (18. Dynastie)?",
     "a": [
-      "Sie regierte über 20 Jahre lang mit voller königlicher Macht und ließ sich mit dem zeremoniellen Pharaonenbart darstellen",
-      "Sie war die erste Pharaonin, die eine Seeschlacht gegen das Römische Reich gewann",
-      "Sie schaffte alle Tempel ab und erklärte sich selbst zur Sonnengöttin",
-      "Sie verlegte die Hauptstadt Ägyptens dauerhaft nach Babylon"
+      "Regierte als Pharao mit vollen Titeln und Pharaonenbart",
+      "Gründete eine völlig neue Hauptstadt im Osten des Deltas",
+      "Führte den Monotheismus mit Verehrung des Nils ein",
+      "Eroberte Babylon und gliederte Syrien dem Reich an"
     ],
     "explanation": "Hatschepsut sicherte eine der friedlichsten und wirtschaftlich blühendsten Epochen Ägyptens – ihr Totentempel in Deir el-Bahari ist ein architektonisches Wunder.",
-    "exp": "Sie regierte über 20 Jahre lang mit voller königlicher Macht und ließ sich mit dem zeremoniellen Pharaonenbart darstellen"
+    "exp": "Regierte als Pharao mit vollen Titeln und Pharaonenbart"
   },
   {
     "cat": "neues_reich",
     "diff": "easy",
     "q": "Welche radikale religiöse Revolution leitete Pharao Echnaton (Amenophis IV.) im 14. Jahrhundert v. Chr. ein?",
     "a": [
-      "Er schaffte die alten Götter um Amun ab und führte die alleinige Verehrung der Sonnenscheibe Aton ein (Frühform des Monotheismus)",
-      "Er erklärte den griechischen Gott Zeus zum obersten Schöpfer des Niltals",
-      "Er verbot jegliche Religion und führte eine rein säkulare Herrschaft ein",
-      "Er ernannte heilige Krokodile zu den einzigen legitimen Richtern"
+      "Ersetzte alte Götter durch die Verehrung der Sonnenscheibe Aton",
+      "Verbot jegliche religiöse Kunst und schloss alle Friedhöfe",
+      "Führte die persische Götterwelt als Staatsreligion ein",
+      "Erklärte sich selbst zum unsterblichen Schöpfer des Himmels"
     ],
     "explanation": "Echnaton gründete eine völlig neue Hauptstadt in der Wüste (Amarna) – nach seinem Tod tilgten Priester seinen Namen als Ketzer aus den Königslisten.",
-    "exp": "Er schaffte die alten Götter um Amun ab und führte die alleinige Verehrung der Sonnenscheibe Aton ein (Frühform des Monotheismus)"
+    "exp": "Ersetzte alte Götter durch die Verehrung der Sonnenscheibe Aton"
   },
   {
     "cat": "neues_reich",
@@ -280,9 +280,9 @@
     "q": "Wer war die weltberühmte Haupt- und Gemahlin von Pharao Echnaton, deren Büste heute im Neuen Museum in Berlin steht?",
     "a": [
       "Nofretete",
-      "Kleopatra",
-      "Nefertari",
-      "Hatschepsut"
+      "Königin Teje",
+      "Große Gemahlin Kija",
+      "Prinzessin Meritaten"
     ],
     "explanation": "Die 1912 von Ludwig Borchardt in Tell el-Amarna entdeckte Kalksteinbüste gilt als eines der vollkommensten Kunstwerke der gesamten Antike.",
     "exp": "Nofretete"
@@ -292,65 +292,65 @@
     "diff": "easy",
     "q": "Wer entdeckte im November 1922 im Tal der Könige das fast unberührte Grab des Pharao Tutanchamun (KV62)?",
     "a": [
-      "Howard Carter (finanziert von Lord Carnarvon)",
-      "Heinrich Schliemann",
-      "Jean-François Champollion",
-      "Flinders Petrie"
+      "Howard Carter",
+      "Flinders Petrie",
+      "Gaston Maspero",
+      "Heinrich Schliemann"
     ],
     "explanation": "Auf Carnarvons Frage, ob er etwas sehe, antwortete Carter durch das Türloch legendär: „Ja, wunderbare Dinge!“ – über 5.000 Grabbeigaben aus purem Gold wurden geborgen.",
-    "exp": "Howard Carter (finanziert von Lord Carnarvon)"
+    "exp": "Howard Carter"
   },
   {
     "cat": "neues_reich",
     "diff": "mid",
     "q": "Was war die mutmaßliche Todesursache des jungen Kindkönigs Tutanchamun laut moderner CT- und DNA-Scans?",
     "a": [
-      "Komplikationen nach einem offenen Beinbruch (evtl. Streitwagensturz) gepaart mit schwerer Malaria und Erbkrankheiten",
-      "Ein Giftmord durch seinen Großwesir Eje im Schlaf",
-      "Eine Enthauptung auf dem Schlachtfeld gegen die Hethiter",
-      "Ein Schlangenbiss durch eine Kobra in der Grabkammer"
+      "Beinbruch und schwere Malaria bei schwacher Gesundheit",
+      "Ein gezielter Giftmord durch seinen obersten Heerführer",
+      "Ein tödlicher Schlangenbiss während einer Jagd am Nil",
+      "Eine Pfeilwunde nach einer Schlacht gegen die Hethiter"
     ],
     "explanation": "Jahre lang kursierten Mordtheorien – forensische Untersuchungen entlarvten jedoch einen infizierten Knochenbruch und Knochennekrosen bei einem immungeschwächten Teenager.",
-    "exp": "Komplikationen nach einem offenen Beinbruch (evtl. Streitwagensturz) gepaart mit schwerer Malaria und Erbkrankheiten"
+    "exp": "Beinbruch und schwere Malaria bei schwacher Gesundheit"
   },
   {
     "cat": "neues_reich",
     "diff": "mid",
     "q": "Welcher Pharao regierte über 66 Jahre lang, zeugte über 100 Kinder und baute Kolossalstatuen von sich in ganz Ägypten?",
     "a": [
-      "Ramses II. (der Große)",
-      "Thutmosis III.",
-      "Amenophis III.",
-      "Sethos I."
+      "Ramses II.",
+      "Seti I.",
+      "Thutmosis I.",
+      "Amenophis III."
     ],
     "explanation": "Ramses II. starb im biblischen Alter von über 90 Jahren und überlebte viele seiner Söhne – seine Mumie ist eine der am besten erhaltenen der Welt.",
-    "exp": "Ramses II. (der Große)"
+    "exp": "Ramses II."
   },
   {
     "cat": "neues_reich",
     "diff": "pro",
     "q": "Was macht den Friedensvertrag zwischen Ramses II. und dem Hethiterkönig Hattusili III. (nach der Schlacht von Kadesch) weltberühmt?",
     "a": [
-      "Er gilt als der älteste erhaltene schriftliche Friedensvertrag der Menschheitsgeschichte (eine Kopie hängt im UN-Hauptquartier)",
-      "Er teilte das gesamte Mittelmeer erstmals in zwei Freihandelszonen",
-      "Er verbot den Einsatz von Pferdestreitwagen in künftigen Kriegen",
-      "Er führte eine gemeinsame Währung aus Silberbarren ein"
+      "Ältester erhaltener schriftlicher Friedensvertrag der Geschichte",
+      "Erste völkerrechtliche Festlegung moderner Seegrenzen",
+      "Erster bekannter Handelsvertrag über Gold und Weihrauch",
+      "Vollständige Kapitulation und Eingliederung des Hethiterreiches"
     ],
     "explanation": "Der Vertrag von ca. 1259 v. Chr. beinhaltete Nichtangriffspakt, gegenseitigen Beistand bei Rebellionen und Auslieferung politischer Flüchtlinge.",
-    "exp": "Er gilt als der älteste erhaltene schriftliche Friedensvertrag der Menschheitsgeschichte (eine Kopie hängt im UN-Hauptquartier)"
+    "exp": "Ältester erhaltener schriftlicher Friedensvertrag der Geschichte"
   },
   {
     "cat": "neues_reich",
     "diff": "easy",
     "q": "Wo ließen sich die Pharaonen des Neuen Reichs begraben, um ihre Schätze vor Grabräubern zu verstecken?",
     "a": [
-      "Im abgelegenen Tal der Könige (Wadi al-Muluk) bei Theben (Luxor)",
-      "In riesigen Pyramiden mitten auf dem Gizeh-Plateau",
-      "In versenkten Sarkophagen auf dem Grund des Nils",
-      "In künstlichen Höhlen am Roten Meer"
+      "Im abgelegenen Tal der Könige bei Theben",
+      "In riesigen Granitpyramiden auf dem Gizeh-Plateau",
+      "Im unterirdischen Serapeum von Sakkara",
+      "In den Felsengräbern am Ufer des Nassersees"
     ],
     "explanation": "Statt auffälliger Pyramiden meißelten Baumeister geheime Schachtgräber tief in die Felsen unter der pyramidenförmigen Bergspitze al-Qurn.",
-    "exp": "Im abgelegenen Tal der Könige (Wadi al-Muluk) bei Theben (Luxor)"
+    "exp": "Im abgelegenen Tal der Könige bei Theben"
   },
   {
     "cat": "neues_reich",
@@ -358,9 +358,9 @@
     "q": "Welcher Pharao der 18. Dynastie wird wegen seiner 17 siegreichen Feldzüge oft als „Napoleon des alten Ägypten“ bezeichnet?",
     "a": [
       "Thutmosis III.",
-      "Ramses III.",
-      "Haremhab",
-      "Ahmose I."
+      "Amenophis III.",
+      "Ramses der Große",
+      "Pharao Haremhab"
     ],
     "explanation": "Thutmosis III. dehnte das Reich vom Euphrat in Syrien bis zum vierten Nilkatarakt im Sudan aus und schuf das größte ägyptische Weltreich.",
     "exp": "Thutmosis III."
@@ -370,13 +370,13 @@
     "diff": "pro",
     "q": "Wer waren die „Hyksos“, die im 17. Jahrhundert v. Chr. Unterägypten eroberten und die Zweite Zwischenzeit dominierten?",
     "a": [
-      "Einwanderer aus dem vorderasiatischen Raum, die den Pferdestreitwagen und Kompositbogen nach Ägypten brachten",
-      "Griechische Seeräuber aus Mykene",
-      "Rebellen aus den Oasen der Libyschen Wüste",
-      "Persische Reiterkrieger unter Kyros dem Großen"
+      "Einwanderer aus Vorderasien mit Streitwagen und Kompositbogen",
+      "Seefahrer aus dem Mittelmeerraum mit bronzenen Rüstungen",
+      "Nubische Reitervölker mit eisernen Speeren und Schilden",
+      "Persische Händler mit Karawanen aus der Wüste Sinai"
     ],
     "explanation": "Erst Pharao Ahmose I. vertrieb die Hyksos aus ihrer Hauptstadt Auaris und begründete das glanzvolle Neue Reich.",
-    "exp": "Einwanderer aus dem vorderasiatischen Raum, die den Pferdestreitwagen und Kompositbogen nach Ägypten brachten"
+    "exp": "Einwanderer aus Vorderasien mit Streitwagen und Kompositbogen"
   },
   {
     "cat": "neues_reich",
@@ -384,9 +384,9 @@
     "q": "Welcher gewaltige Felstempel in Nubien mit vier 20 Meter hohen Kolossalstatuen von Ramses II. wurde für seine Schönheit berühmt?",
     "a": [
       "Abu Simbel",
-      "Karnak",
-      "Kom Ombo",
-      "Philae"
+      "Luxor-Tempel",
+      "Medinet Habu",
+      "Kom Ombo"
     ],
     "explanation": "Zweimal im Jahr (beim Sonnenwunder) dringt das Sonnenlicht 65 Meter tief ins Heiligtum und beleuchtet die Götterstatuen – außer Ptah, den Gott der Unterwelt.",
     "exp": "Abu Simbel"
@@ -396,78 +396,78 @@
     "diff": "mid",
     "q": "Was war der Grund für den ersten historisch dokumentierten Streik der Weltgeschichte unter Ramses III. um 1159 v. Chr.?",
     "a": [
-      "Die Arbeiter im Tal der Könige legten die Arbeit nieder, weil ihre Rationen an Getreide, Fisch und Knoblauch monatelang ausblieben",
-      "Die Weigerung, an Wochenenden Pyramidensteine zu behauen",
-      "Protest gegen die Einführung von ausländischen Werkzeugen aus Bronze",
-      "Ein Verbot von Bierbrauen in der Arbeitersiedlung Deir el-Medina"
+      "Ausbleibende Rationen an Getreide, Fisch und Knoblauch",
+      "Die Verlängerung der täglichen Arbeitszeit auf zwölf Stunden",
+      "Der Verzicht auf freie Tage während der Nilüberschwemmung",
+      "Die Kürzung der Löhne um die Hälfte durch den Pharao"
     ],
     "explanation": "Die Schreiber notierten empört den Hilferuf der Handwerker: „Wir hungern! Wir haben keine Kleidung, kein Fett, keinen Fisch!“ – und die Pharaonenverwaltung zahlte nach.",
-    "exp": "Die Arbeiter im Tal der Könige legten die Arbeit nieder, weil ihre Rationen an Getreide, Fisch und Knoblauch monatelang ausblieben"
+    "exp": "Ausbleibende Rationen an Getreide, Fisch und Knoblauch"
   },
   {
     "cat": "neues_reich",
     "diff": "pro",
     "q": "Was war die berüchtigte „Harem-Verschwörung“ gegen Pharao Ramses III.?",
     "a": [
-      "Eine Nebenfrau (Tije) und Hofbeamte schnitten dem Pharao die Kehle durch, um ihren Sohn Pentawer auf den Thron zu hieven",
-      "Ein Versuch, die Priester von Amun mit Zyankali zu vergiften",
-      "Die Flucht von 50 Konkubinen mit dem königlichen Goldschatz nach Nubien",
-      "Ein Brandanschlag auf den königlichen Palast in Memphis"
+      "Attentat einer Nebenfrau für ihren Sohn auf dem Thron",
+      "Ein Giftanschlag des obersten Amun-Priesters in Karnak",
+      "Eine Meuterei der königlichen Palastwache in Theben",
+      "Ein Entführungsversuch durch hethitische Spione am Hof"
     ],
     "explanation": "CT-Scans der Mumie von Ramses III. enthüllten 2012 eine tiefe Schnittwunde bis zur Halswirbelsäule – der Putsch scheiterte jedoch vor Gericht.",
-    "exp": "Eine Nebenfrau (Tije) und Hofbeamte schnitten dem Pharao die Kehle durch, um ihren Sohn Pentawer auf den Thron zu hieven"
+    "exp": "Attentat einer Nebenfrau für ihren Sohn auf dem Thron"
   },
   {
     "cat": "neues_reich",
     "diff": "easy",
     "q": "Welcher Tempelkomplex bei Luxor war das größte religiöse Heiligtum des antiken Ägyptens (geweiht dem Reichsgott Amun-Re)?",
     "a": [
-      "Karnak-Tempel (Ipet-sut)",
+      "Karnak-Tempel",
+      "Luxor-Tempel",
       "Edfu-Tempel",
-      "Dendera-Tempel",
-      "Kalabscha-Tempel"
+      "Dendera-Tempel"
     ],
     "explanation": "Der monumentale Säulensaal (Hypostyl) in Karnak umfasst 134 gigantische Sandsteinsäulen, die bis zu 21 Meter in den Himmel ragen.",
-    "exp": "Karnak-Tempel (Ipet-sut)"
+    "exp": "Karnak-Tempel"
   },
   {
     "cat": "neues_reich",
     "diff": "mid",
     "q": "Wer war die Lieblings- und Hauptgemahlin von Ramses II., für die er einen eigenen prachtvollen Tempel in Abu Simbel errichten ließ?",
     "a": [
-      "Nefertari („Die Schöne ist gekommen“)",
-      "Nofretete",
-      "Kiyā",
-      "Anchesenamun"
+      "Nefertari",
+      "Isetnofret",
+      "Bintanat",
+      "Henutmire"
     ],
     "explanation": "Ihr Grab im Tal der Königinnen (QV66) gilt wegen seiner leuchtenden, unversehrten Wandmalereien als das schönste Grab Ägyptens.",
-    "exp": "Nefertari („Die Schöne ist gekommen“)"
+    "exp": "Nefertari"
   },
   {
     "cat": "neues_reich",
     "diff": "pro",
     "q": "Welche geheimnisvolle Koalition von Völkern griff um 1200 v. Chr. das östliche Mittelmeer an und stürzte die Bronzezeit ins Chaos?",
     "a": [
-      "Die Seevölker (u. a. Scherden, Peleset und Schikilaju)",
-      "Die Hunnen unter Attila",
-      "Die Goten und Vandalen",
-      "Die Parther zu Pferde"
+      "Die Seevölker",
+      "Die Philister",
+      "Die Assyrer",
+      "Die Phönizier"
     ],
     "explanation": "Pharao Ramses III. besiegte die Seevölker in einer dramatischen Nil-Mündungsschlacht – die Krise schwächte Ägypten jedoch nachhaltig.",
-    "exp": "Die Seevölker (u. a. Scherden, Peleset und Schikilaju)"
+    "exp": "Die Seevölker"
   },
   {
     "cat": "neues_reich",
     "diff": "easy",
     "q": "Was war der Beruf der Bewohner des Dorfes Deir el-Medina westlich von Theben?",
     "a": [
-      "Hoch spezialisierte Handwerker, Künstler und Steinmetze, die die Königsgräber bauten und bemalten",
-      "Priester, die ausschließlich für die Einbalsamierung der Stiere zuständig waren",
-      "Wächter, die Karawanen durch die Libysche Wüste begleiteten",
-      "Töpfer für die Versorgung der Hofküche"
+      "Handwerker und Künstler für den Bau der Königsgräber",
+      "Kriegerische Elitesoldaten zum Schutz der Reichsgrenzen",
+      "Priester für die Aufsicht über den Totenkult in Karnak",
+      "Bäcker und Brauer für die Versorgung des Hofstaates"
     ],
     "explanation": "Ihre Ostraka (beschriebene Tonscherben) geben Historikern einzigartige Einblicke in Scheidungen, Gehaltsstreits und Klatsch vor 3.200 Jahren.",
-    "exp": "Hoch spezialisierte Handwerker, Künstler und Steinmetze, die die Königsgräber bauten und bemalten"
+    "exp": "Handwerker und Künstler für den Bau der Königsgräber"
   },
   {
     "cat": "neues_reich",
@@ -475,9 +475,9 @@
     "q": "Wie nannte sich der altägyptische Schöpfer- und Sonnengott, der im Neuen Reich zur alles beherrschenden Staatsgottheit aufstieg?",
     "a": [
       "Amun-Re",
-      "Osiris",
-      "Horus",
-      "Seth"
+      "Sonnengott Re",
+      "Schöpfergott Ptah",
+      "Nilgott Chnum"
     ],
     "explanation": "Die Thebanischen Priester verschmolzen den unsichtbaren Schöpfergott Amun mit dem Sonnengott Re – die Priesterschaft wurde reicher als der Pharao selbst.",
     "exp": "Amun-Re"
@@ -487,13 +487,13 @@
     "diff": "pro",
     "q": "Welche Inschrift auf der Stele des Pharao Merenptah (ca. 1208 v. Chr.) ist für Alttestamentler von weltweiter Bedeutung?",
     "a": [
-      "Die älteste bekannte außerbiblische Erwähnung des Volkes „Israel“ als Volk im Kanaan-Feldzug",
-      "Die erste Beschreibung einer Sintflut im Zweistromland",
-      "Der erste Vertrag über die Einhaltung des Schabbats",
-      "Ein Loblied auf den Bau der Mauern von Jericho"
+      "Älteste Erwähnung des Volkes Israel als Gruppe in Kanaan",
+      "Der erste Nachweis des Baus eines Staudamms am Nil",
+      "Die Beschreibung einer totalen Sonnenfinsternis in Theben",
+      "Die Auflistung der Tribute aus den nubischen Goldminen"
     ],
     "explanation": "Die sogenannte „Israel-Stele“ berichtet: „Kanaan ist geplündert ... Israel liegt wüst, sein Same ist nicht mehr.“",
-    "exp": "Die älteste bekannte außerbiblische Erwähnung des Volkes „Israel“ als Volk im Kanaan-Feldzug"
+    "exp": "Älteste Erwähnung des Volkes Israel als Gruppe in Kanaan"
   },
   {
     "cat": "ptolemaeer",
@@ -501,9 +501,9 @@
     "q": "Welcher makedonische Welteroberer gründete 331 v. Chr. an der Mittelmeerküste die Metropole Alexandria?",
     "a": [
       "Alexander der Große",
-      "König Philipp II.",
-      "Pyrrhus von Epirus",
-      "Demetrios Poliorketes"
+      "König Philipp II. von Makedonien",
+      "General Ptolemaios Lagides",
+      "Kaiser Augustus Octavianus"
     ],
     "explanation": "Alexander ließ sich in der Oase Siwa vom Orakel des Amun als wahrer Sohn des Gottes bestätigen und wurde als Pharao bejubelt.",
     "exp": "Alexander der Große"
@@ -513,52 +513,52 @@
     "diff": "easy",
     "q": "Welche faszinierende Tatsache über Kleopatra VII. (die berühmte Kleopatra) überrascht die meisten Menschen?",
     "a": [
-      "Sie war ethnisch keine Ägypterin, sondern stammte von makedonisch-griechischen Eroberern ab (Ptolemäer-Dynastie)",
-      "Sie lebte zeitlich näher am Bau der Pyramiden als an der ersten Mondlandung",
-      "Sie konnte weder lesen noch schreiben und herrschte rein über Handzeichen",
-      "Sie weigerte sich zeitlebens, das Nildelta jemals zu betreten"
+      "Sie war makedonisch-griechischer Herkunft der Ptolemäer",
+      "Sie sprach ausschließlich lateinisch und lehnte Griechisch ab",
+      "Sie trug stets traditionelle Männertracht der Pharaonen",
+      "Sie wurde im persischen Persepolis am Königshof geboren"
     ],
     "explanation": "Die Ptolemäer sprachen über 250 Jahre lang nur Griechisch – Kleopatra war die allererste Herrscherin ihrer Linie, die fließend Ägyptisch lernte!",
-    "exp": "Sie war ethnisch keine Ägypterin, sondern stammte von makedonisch-griechischen Eroberern ab (Ptolemäer-Dynastie)"
+    "exp": "Sie war makedonisch-griechischer Herkunft der Ptolemäer"
   },
   {
     "cat": "ptolemaeer",
     "diff": "easy",
     "q": "Welcher Fund aus dem Jahr 1799 ermöglichte 1822 Jean-François Champollion die Entzifferung der ägyptischen Hieroglyphen?",
     "a": [
-      "Der Stein von Rosette (Rosetta Stone mit dreisprachigem Dekret in Hieroglyphen, Demotisch und Griechisch)",
-      "Die Goldmaske des Psusennes I.",
-      "Der Papyrus Ebers aus Theben",
-      "Die Königsliste von Abydos"
+      "Der Stein von Rosette",
+      "Der Papyrus Ebers mit Rezepten",
+      "Die Palermostele mit Königslisten",
+      "Die Stele von Hammurabi mit Recht"
     ],
     "explanation": "Weil der griechische Text bekannt war, konnte Champollion Königsnamen in den ovalen Kartuschen (wie Ptolemaios und Kleopatra) Laut für Laut entschlüsseln.",
-    "exp": "Der Stein von Rosette (Rosetta Stone mit dreisprachigem Dekret in Hieroglyphen, Demotisch und Griechisch)"
+    "exp": "Der Stein von Rosette"
   },
   {
     "cat": "ptolemaeer",
     "diff": "mid",
     "q": "Welches der Sieben Weltwunder der Antike stand auf einer Insel vor dem Hafen von Alexandria?",
     "a": [
-      "Der Pharos von Alexandria (über 100 Meter hoher Leuchtturm)",
+      "Der Pharos von Alexandria",
+      "Das Mausoleum von Halikarnassos",
       "Der Koloss von Rhodos",
-      "Die Hängenden Gärten der Semiramis",
-      "Der Artemistempel"
+      "Der Artemistempel von Ephesos"
     ],
     "explanation": "Mit einem riesigen Hohlspiegel und offenem Feuer leitete der Pharos Seefahrer über 50 km weit sicher durch die Riffe vor Alexandria.",
-    "exp": "Der Pharos von Alexandria (über 100 Meter hoher Leuchtturm)"
+    "exp": "Der Pharos von Alexandria"
   },
   {
     "cat": "ptolemaeer",
     "diff": "mid",
     "q": "Was war das heroische Ziel der Großen Bibliothek von Alexandria unter den ersten Ptolemäern?",
     "a": [
-      "Eine Abschrift von ausnahmslos jedem Buch der gesamten bekannten Welt zu besitzen",
-      "Ausschließlich die Stammbäume makedonischer Generäle zu archivieren",
-      "Die geheimen Zaubersprüche aller mesopotamischen Magier zu sammeln",
-      "Ein Archiv aller Steuererklärungen des Mittelmeerraums anzulegen"
+      "Eine Abschrift von jedem Buch der bekannten Welt zu besitzen",
+      "Die Ausbildung von Generälen für die Eroberung Asiens",
+      "Die Verwahrung von geheimen astrologischen Prophezeiungen",
+      "Das Drucken von Gesetzestexten für das gesamte Mittelmeer"
     ],
     "explanation": "Schiffe im Hafen wurden durchsucht: Bücher wurden beschlagnahmt, kopiert, die Kopie dem Besitzer gegeben und das Original in die Bibliothek gestellt!",
-    "exp": "Eine Abschrift von ausnahmslos jedem Buch der gesamten bekannten Welt zu besitzen"
+    "exp": "Eine Abschrift von jedem Buch der bekannten Welt zu besitzen"
   },
   {
     "cat": "ptolemaeer",
@@ -566,9 +566,9 @@
     "q": "Mit welchen beiden mächtigen römischen Staatsmännern ging Kleopatra VII. Liebes- und Machtbündnisse ein?",
     "a": [
       "Julius Cäsar und Marcus Antonius",
-      "Kaiser Augustus und Nero",
-      "Scipio Africanus und Pompejus",
-      "Tiberius und Pontius Pilatus"
+      "Scipio Africanus und Pompeius Magnus",
+      "Kaiser Augustus und Marcus Agrippa",
+      "Tiberius Gracchus und Sulla"
     ],
     "explanation": "Mit Cäsar hatte sie einen Sohn (Ptolemaios XV. Kaisarion); mit Antonius kämpfte sie um die Vorherrschaft im Mittelmeer gegen Octavian.",
     "exp": "Julius Cäsar und Marcus Antonius"
@@ -578,52 +578,52 @@
     "diff": "mid",
     "q": "Welche Seeschlacht im Jahr 31 v. Chr. besiegelte den Untergang von Kleopatra und Marcus Antonius und das Ende des Pharaonenreichs?",
     "a": [
-      "Die Schlacht bei Actium vor der Westküste Griechenlands",
-      "Die Schlacht von Salamis",
-      "Die Seeschlacht von Lepanto",
-      "Die Schlacht am Kap Ecnomus"
+      "Die Schlacht bei Actium",
+      "Die Schlacht bei Pharsalos",
+      "Die Schlacht bei Philippi",
+      "Die Schlacht von Salamis"
     ],
     "explanation": "Octavian besiegte ihre Flotte – 30 v. Chr. nahmen sich beide in Alexandria das Leben und Ägypten wurde persönliche Provinz des römischen Kaisers.",
-    "exp": "Die Schlacht bei Actium vor der Westküste Griechenlands"
+    "exp": "Die Schlacht bei Actium"
   },
   {
     "cat": "ptolemaeer",
     "diff": "pro",
     "q": "Wer waren die „Schwarzen Pharaonen“ der 25. Dynastie (um 747–656 v. Chr.)?",
     "a": [
-      "Herrscher aus dem nubischen Reich von Kusch (heutiger Sudan), die Ägypten eroberten und die alten Traditionen wiederbelebten",
-      "Äthiopische Söldnergeneräle der griechischen Flotte",
-      "Arabische Beduinenfürsten aus dem Sinai",
-      "Herrscher, die ihre Gesichter rituell mit Ruß schwärzten"
+      "Nubische Herrscher aus Kusch, die Ägypten regierten",
+      "Priesterkönige mit dunkler ritueller Körperbemalung",
+      "Kriegerische Söldnerführer aus dem heutigen Äthiopien",
+      "Pharaonen, die ausschließlich Basalt für Statuen nutzten"
     ],
     "explanation": "Pharaonen wie Pije und Taharqa bauten wieder Pyramiden (im Sudan stehen mehr Pyramiden als in Ägypten!) und verteidigten Ägypten gegen die Assyrer.",
-    "exp": "Herrscher aus dem nubischen Reich von Kusch (heutiger Sudan), die Ägypten eroberten und die alten Traditionen wiederbelebten"
+    "exp": "Nubische Herrscher aus Kusch, die Ägypten regierten"
   },
   {
     "cat": "ptolemaeer",
     "diff": "mid",
     "q": "Wie starb Kleopatra VII. laut der berühmtesten antiken Überlieferung (u. a. Plutarch)?",
     "a": [
-      "Durch den absichtlichen Biss einer Giftschlange (ägyptische Kobra/Uräus), die in einem Feigenkorb geschmuggelt wurde",
-      "Durch einen Dolchstoß ins Herz vor den Truppen Octavians",
-      "Durch das Trinken von geschmolzenem Blei aus einem Kelch",
-      "Durch Verbrennen auf einem Scheiterhaufen im Mausoleum"
+      "Biss einer Giftschlange aus einem Feigenkorb",
+      "Giftbecher mit Schierlingstinktur im Palast",
+      "Dolchstich durch einen verdeckten römischen Legionär",
+      "Ertrinken im königlichen Nilbecken vor Alexandria"
     ],
     "explanation": "Sie wählte den Freitod, um nicht als gefesselte Trophäe im römischen Triumphzug von Octavian durch Rom gezerrt zu werden.",
-    "exp": "Durch den absichtlichen Biss einer Giftschlange (ägyptische Kobra/Uräus), die in einem Feigenkorb geschmuggelt wurde"
+    "exp": "Biss einer Giftschlange aus einem Feigenkorb"
   },
   {
     "cat": "ptolemaeer",
     "diff": "pro",
     "q": "Welchen synkretistischen neuen Gott schufen die Ptolemäer, um Griechen und Ägypter religiös zu verbinden?",
     "a": [
-      "Serapis (eine Verschmelzung von Osiris, dem Apis-Stier, Zeus und Hades)",
-      "Harpokrates der Zweite",
-      "Amun-Apollon",
-      "Anubis-Hermes"
+      "Serapis",
+      "Harpokrates",
+      "Hermanubis",
+      "Bes"
     ],
     "explanation": "Serapis wurde im Serapeum von Alexandria verehrt – dargestellt als bärtiger Grieche mit einem Getreidemaß (Modius) auf dem Kopf.",
-    "exp": "Serapis (eine Verschmelzung von Osiris, dem Apis-Stier, Zeus und Hades)"
+    "exp": "Serapis"
   },
   {
     "cat": "ptolemaeer",
@@ -643,65 +643,65 @@
     "diff": "mid",
     "q": "Wer begründete nach dem Tod Alexanders des Großen die über 275 Jahre regierende ptolemäische Dynastie?",
     "a": [
-      "Ptolemaios I. Soter (ein makedonischer General und Jugendfreund Alexanders)",
+      "Ptolemaios I. Soter",
       "Seleukos I. Nikator",
-      "Kassander",
-      "Antigonos Monophthalmos"
+      "General Lysimachos",
+      "König Kassander"
     ],
     "explanation": "Ptolemaios entführte Alexanders Leichnam auf dem Weg nach Makedonien und überführte ihn in ein prunkvolles Mausoleum nach Alexandria.",
-    "exp": "Ptolemaios I. Soter (ein makedonischer General und Jugendfreund Alexanders)"
+    "exp": "Ptolemaios I. Soter"
   },
   {
     "cat": "ptolemaeer",
     "diff": "pro",
     "q": "Was berechnete der Gelehrte Eratosthenes um 240 v. Chr. in der Bibliothek von Alexandria mit verblüffender Genauigkeit?",
     "a": [
-      "Den Erdumfang anhand des unterschiedlichen Sonnenstandes in Alexandria und Syene (Assuan)",
-      "Die exakte Entfernung von der Erde zur Sonne in Kilometern",
-      "Die Umlaufzeit des Planeten Mars um die Erde",
-      "Das Gesamtvolumen des Wassers im Mittelmeer"
+      "Den Erdumfang anhand unterschiedlicher Sonnenstände",
+      "Die genaue Entfernung der Erde zum Mond im Zenit",
+      "Die Fließgeschwindigkeit des Nils bei Hochwasser",
+      "Die exakte Neigung der Erdachse zur Ekliptik"
     ],
     "explanation": "Mit einem einfachen Schattenstab und der gemessenen Schrittdistanz berechnete er den Erdumfang auf rund 39.375 km – fast exakt der wahre Wert (40.075 km)!",
-    "exp": "Den Erdumfang anhand des unterschiedlichen Sonnenstandes in Alexandria und Syene (Assuan)"
+    "exp": "Den Erdumfang anhand unterschiedlicher Sonnenstände"
   },
   {
     "cat": "ptolemaeer",
     "diff": "easy",
     "q": "Welche Rolle spielte Ägypten für das Römische Kaiserreich nach der Annexion 30 v. Chr.?",
     "a": [
-      "Es war die unverzichtbare „Kornkammer Roms“, die Millionen Bürger der Hauptstadt mit Getreide versorgte",
-      "Es diente als zentraler Flottenstützpunkt gegen germanische Piraten",
-      "Es lieferte ausschließlich Marmor für den Bau von Aquädukten",
-      "Es wurde als reines Straflager für politische Gefangene genutzt"
+      "Wichtige Kornkammer für die Getreideversorgung Roms",
+      "Hauptstützpunkt für den Schiffsbau der römischen Flotte",
+      "Zentrales Abbaugebiet für das Silber der Reichsmünzen",
+      "Rekrutierungsland für die Reiterei der Legionen"
     ],
     "explanation": "Wer Ägypten kontrollierte, hielt Rom am Leben – römische Senatoren durften Ägypten ohne ausdrückliche Erlaubnis des Kaisers nicht einmal betreten.",
-    "exp": "Es war die unverzichtbare „Kornkammer Roms“, die Millionen Bürger der Hauptstadt mit Getreide versorgte"
+    "exp": "Wichtige Kornkammer für die Getreideversorgung Roms"
   },
   {
     "cat": "ptolemaeer",
     "diff": "mid",
     "q": "Was sind die weltberühmten „Fayum-Mumienporträts“ aus der römischen Epoche Ägyptens?",
     "a": [
-      "Auf Holztafeln gemalte, verblüffend lebensechte realistische Porträts, die über das Gesicht der Mumie gebunden wurden",
-      "Goldmasken nach Vorbild von König Tutanchamun",
-      "In Stein gemeißelte Reliefs an den Außenwänden der Tempel",
-      "Miniaturpuppen aus gebranntem Nilschlamm"
+      "Lebensechte Porträts auf Holztafeln über dem Mumienantlitz",
+      "Vergoldete Gipsmasken nach Art der mykenischen Könige",
+      "Reliefschnitzereien aus Zedernholz mit Hieroglyphentexten",
+      "Miniaturstatuen aus Elfenbein in kleinen Sarkophagen"
     ],
     "explanation": "In Enkaustik-Technik (Heißwachsmalerei) geschaffen blicken uns die Verstorbenen aus dem 1. bis 3. Jahrhundert n. Chr. mit fotorealistischer Intensität an.",
-    "exp": "Auf Holztafeln gemalte, verblüffend lebensechte realistische Porträts, die über das Gesicht der Mumie gebunden wurden"
+    "exp": "Lebensechte Porträts auf Holztafeln über dem Mumienantlitz"
   },
   {
     "cat": "ptolemaeer",
     "diff": "pro",
     "q": "Wann und wo wurde die allerletzte datierbare Hieroglyphen-Inschrift der Menschheit eingemeißelt?",
     "a": [
-      "Am 24. August 394 n. Chr. im Tempel von Philae (Inschrift des Esmet-Achom)",
-      "Im Jahr 30 v. Chr. beim Tod von Kleopatra VII.",
-      "Im Jahr 642 n. Chr. bei der arabischen Eroberung Kairos",
-      "Im Jahr 79 n. Chr. beim Ausbruch des Vesuvs"
+      "Im August 394 n. Chr. im Tempel von Philae",
+      "Im Januar 30 v. Chr. im Palast von Alexandria",
+      "Im Mai 642 n. Chr. an der Festung Babylon in Kairo",
+      "Im Dezember 476 n. Chr. am Horus-Tempel von Edfu"
     ],
     "explanation": "Nach dem Mailänder Toleranzedikt und Verbot heidnischer Kulte erlosch das Wissen um die Schrift – für fast 1.500 Jahre konnte niemand mehr Hieroglyphen lesen.",
-    "exp": "Am 24. August 394 n. Chr. im Tempel von Philae (Inschrift des Esmet-Achom)"
+    "exp": "Im August 394 n. Chr. im Tempel von Philae"
   },
   {
     "cat": "ptolemaeer",
@@ -709,9 +709,9 @@
     "q": "Welche Gelehrtin und Philosophin wurde 415 n. Chr. in Alexandria von einem christlichen Fanatiker-Mob ermordet?",
     "a": [
       "Hypatia von Alexandria",
-      "Aspasia",
-      "Diotima",
-      "Sappho"
+      "Kleopatra Selene II.",
+      "Kaiserin Aelia Eudocia",
+      "Philosophin Aspasia"
     ],
     "explanation": "Hypatia lehrte Mathematik, Astronomie und Philosophie – ihr gewaltsamer Tod markierte das tragische Ende der antiken Gelehrtenkultur Alexandrias.",
     "exp": "Hypatia von Alexandria"
@@ -721,26 +721,26 @@
     "diff": "mid",
     "q": "Wie viele Dynastien von Pharaonen zählt die klassische Geschichtsschreibung nach dem Priester Manetho?",
     "a": [
-      "31 Dynastien (bis zur Eroberung durch Alexander den Großen)",
-      "Exakt 10 Dynastien",
-      "Genau 50 Dynastien",
-      "Über 100 Dynastien"
+      "31 Dynastien",
+      "20 Dynastien",
+      "45 Dynastien",
+      "12 Dynastien"
     ],
     "explanation": "Manetho verfasste im 3. Jahrhundert v. Chr. die Aegyptiaca – seine Einteilung in Dynastien und Reiche bildet bis heute das Fundament der Ägyptologie.",
-    "exp": "31 Dynastien (bis zur Eroberung durch Alexander den Großen)"
+    "exp": "31 Dynastien"
   },
   {
     "cat": "ptolemaeer",
     "diff": "pro",
     "q": "Was war der Dendera-Tierkreis, der heute im Pariser Louvre ausgestellt ist?",
     "a": [
-      "Ein berühmtes Deckengemälde aus dem Hathor-Tempel mit den 12 Tierkreiszeichen in ptolemäisch-römischer Mischung",
-      "Ein Kalender zur Vorhersage von Krokodilangriffen im Fayum",
-      "Ein astronomisches Instrument aus massivem Meteoreisen",
-      "Ein babylonisches Orakelspiel für nubische Söldner"
+      "Deckengemälde mit Tierkreiszeichen aus dem Hathor-Tempel",
+      "Ein bronzener Kalenderring zur Berechnung der Nilflut",
+      "Eine Steintafel mit Planetenbahnen im Tempel von Edfu",
+      "Eine vergoldete Sonnenuhr auf dem Tempeldach von Karnak"
     ],
     "explanation": "Napoleonische Forscher bauten das Deckenrelief 1821 aus – es zeigt Sternbilder wie Stier, Löwe und Skorpion mit ägyptischen Gottheiten.",
-    "exp": "Ein berühmtes Deckengemälde aus dem Hathor-Tempel mit den 12 Tierkreiszeichen in ptolemäisch-römischer Mischung"
+    "exp": "Deckengemälde mit Tierkreiszeichen aus dem Hathor-Tempel"
   },
   {
     "cat": "neuzeit",
@@ -748,9 +748,9 @@
     "q": "Wer gründete im Jahr 969 n. Chr. die Stadt Kairo (al-Qahira – „Die Siegreiche“) als neue Hauptstadt?",
     "a": [
       "Die schiitische Dynastie der Fatimiden",
-      "Die Mamluken-Sultane",
-      "Alexander der Große",
-      "Die Osmanen unter Sultan Selim I."
+      "Die sunnitischen Abbasiden aus Bagdad",
+      "Die Omayyaden aus Damaskus",
+      "Die Osmanen unter Sultan Selim"
     ],
     "explanation": "General Dschawhar as-Siqilli eroberte Ägypten für den Fatimiden-Kalifen al-Muizz und gründete Kairo samt der berühmten al-Azhar-Moschee.",
     "exp": "Die schiitische Dynastie der Fatimiden"
@@ -760,39 +760,39 @@
     "diff": "easy",
     "q": "Welcher legendäre muslimische Feldherr eroberte 1187 Jerusalem von den Kreuzfahrern zurück und baute die Zitadelle von Kairo?",
     "a": [
-      "Saladin (Salah ad-Din al-Ayyubi)",
-      "Baibars I.",
-      "Harun ar-Raschid",
-      "Tariq ibn Ziyad"
+      "Saladin",
+      "Baibars",
+      "Qalawun",
+      "Tuman Bay"
     ],
     "explanation": "Saladin begründete die Ayyubiden-Dynastie und befestigte Kairo mit einer mächtigen Mauer und der monumentalen Zitadelle auf dem Mokattam-Hügel.",
-    "exp": "Saladin (Salah ad-Din al-Ayyubi)"
+    "exp": "Saladin"
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
     "q": "Wer waren die „Mamluken“, die Ägypten über Jahrhunderte beherrschten und 1260 die Mongolen in der Schlacht bei Ain Djalut stoppten?",
     "a": [
-      "Eine Kaste von freigelassenen Militärsklaven turkvolk- und kaukasischer Herkunft, die selbst zu Herrschern aufstiegen",
-      "Arabische Wüstenbeduinen aus der Levante",
-      "Persische Händler aus Isfahan",
-      "Christliche Kreuzritter, die zum Islam konvertierten"
+      "Kaste von Militärsklaven, die selbst zur Macht aufstiegen",
+      "Arabische Beduinenstämme aus der östlichen Wüste",
+      "Christliche Kreuzritter im Dienste des Sultans",
+      "Persische Händler mit Privilegien im Mittelmeerhandel"
     ],
     "explanation": "Die Mamluken waren eine der kampfstärksten Ritterkasten der Weltgeschichte und retteten die islamische Welt vor den Verwüstungen der Mongolen.",
-    "exp": "Eine Kaste von freigelassenen Militärsklaven turkvolk- und kaukasischer Herkunft, die selbst zu Herrschern aufstiegen"
+    "exp": "Kaste von Militärsklaven, die selbst zur Macht aufstiegen"
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
     "q": "Mit welchem berühmten Satz feuerte Napoleon Bonaparte 1798 seine Soldaten vor den Pyramiden an?",
     "a": [
-      "„Soldaten, vierzig Jahrhunderte blicken auf euch herab!“",
-      "„Hier beginnt das Tor zu den Schätzen Asiens!“",
-      "„Besiegt die Mamluken und Kairo gehört uns!“",
-      "„Vorwärts für den Ruhm der französischen Republik!“"
+      "Soldaten, vierzig Jahrhunderte blicken auf euch herab!",
+      "Vorwärts Männer, der Ruhm Ägyptens erwartet uns heute!",
+      "Hier am Nil beginnt das goldene Zeitalter Frankreichs!",
+      "Gedenkt der Pharaonen und siegt für die Republik!"
     ],
     "explanation": "In der Schlacht bei den Pyramiden zerschlugen Napoleons moderne Infanterie-Karrees den verzweifelten Reiterangriff der Mamluken.",
-    "exp": "„Soldaten, vierzig Jahrhunderte blicken auf euch herab!“"
+    "exp": "Soldaten, vierzig Jahrhunderte blicken auf euch herab!"
   },
   {
     "cat": "neuzeit",
@@ -800,9 +800,9 @@
     "q": "Wer gilt als „Vater des modernen Ägypten“, der nach Napoleons Abzug die Mamluken entmachtete und das Land industrialisierte?",
     "a": [
       "Muhammad Ali Pascha",
-      "Khedive Ismail",
-      "Gamal Abdel Nasser",
-      "Fuad I."
+      "Khedive Ismail Pascha",
+      "General Ibrahim Pascha",
+      "Khedive Tawfiq Pascha"
     ],
     "explanation": "1811 lockte er rund 500 Mamluken-Führer zu einem Festmahl in die Kairoer Zitadelle und ließ sie in einer engen Gasse komplett niedermetzeln.",
     "exp": "Muhammad Ali Pascha"
@@ -813,9 +813,9 @@
     "q": "In welchem Jahr wurde der von Ferdinand de Lesseps erbaute Suezkanal feierlich für die Weltschifffahrt eröffnet?",
     "a": [
       "1869",
-      "1914",
-      "1805",
-      "1956"
+      "1855",
+      "1882",
+      "1914"
     ],
     "explanation": "Der Kanal verkürzte die Schiffsreise zwischen Europa und Asien um rund 7.000 Kilometer (keine Umrundung Afrikas um das Kap der Guten Hoffnung mehr nötig).",
     "exp": "1869"
@@ -838,26 +838,26 @@
     "diff": "mid",
     "q": "Was löste die „Sueskrise“ im Oktober/November 1956 international aus?",
     "a": [
-      "Die Verstaatlichung des Suezkanals durch den ägyptischen Präsidenten Gamal Abdel Nasser",
-      "Die Sprengung des Assuan-Staudamms durch israelische Flugzeuge",
-      "Die Schließung der Straße von Tiran für britische Kreuzfahrtschiffe",
-      "Ein Streik der ägyptischen Lotsen für höhere Löhne"
+      "Verstaatlichung des Suezkanals durch Präsident Nasser",
+      "Die Schließung der Straße von Tiran für Frachtschiffe",
+      "Der Bau des Assuan-Staudamms mit sowjetischen Geldern",
+      "Die Kündigung des Pachtvertrags mit Großbritannien"
     ],
     "explanation": "Großbritannien, Frankreich und Israel griffen Ägypten militärisch an – auf Druck der USA und der UdSSR mussten sich die Kolonialmächte jedoch beschämt zurückziehen.",
-    "exp": "Die Verstaatlichung des Suezkanals durch den ägyptischen Präsidenten Gamal Abdel Nasser"
+    "exp": "Verstaatlichung des Suezkanals durch Präsident Nasser"
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
     "q": "Was war das gigantische UNESCO-Rettungsprojekt in den 1960er Jahren vor dem Fluten des Nassersees?",
     "a": [
-      "Die Felsentempel von Abu Simbel wurden in 1.036 tonnenschwere Blöcke zersägt und 65 Meter höher auf einem künstlichen Berg wieder aufgebaut",
-      "Der Bau einer 50 Meter hohen Glasmauer um das gesamte antike Theben",
-      "Die Versetzung der Cheops-Pyramide auf das Gizeh-Plateau",
-      "Das Abpumpen des Nilwassers durch kilometerlange Pipelines ins Rote Meer"
+      "Versetzung der Tempel von Abu Simbel auf höheres Niveau",
+      "Der Bau einer Schutzmauer gegen das Nilhochwasser in Luxor",
+      "Die Überdachung der Tempelanlage von Karnak mit Glas",
+      "Die Trockenlegung des Fundaments der Pyramiden von Gizeh"
     ],
     "explanation": "Ein internationales Team von Ingenieuren rettete die Ramses-Tempel vor dem sicheren Versinken im Stausee des neuen Assuan-Hochdamms.",
-    "exp": "Die Felsentempel von Abu Simbel wurden in 1.036 tonnenschwere Blöcke zersägt und 65 Meter höher auf einem künstlichen Berg wieder aufgebaut"
+    "exp": "Versetzung der Tempel von Abu Simbel auf höheres Niveau"
   },
   {
     "cat": "neuzeit",
@@ -867,7 +867,7 @@
       "Anwar as-Sadat",
       "Gamal Abdel Nasser",
       "Husni Mubarak",
-      "Mohammed Mursi"
+      "Mohammed Nagib"
     ],
     "explanation": "Sadat erhielt dafür gemeinsam mit Begin den Friedensnobelpreis – 1981 wurde er bei einer Militärparade in Kairo von Islamisten ermordet.",
     "exp": "Anwar as-Sadat"
@@ -877,13 +877,13 @@
     "diff": "easy",
     "q": "Welcher zentrale Platz in Kairo wurde im Januar 2011 zum weltweiten Symbol der ägyptischen Revolution („Arabischer Frühling“)?",
     "a": [
-      "Tahrir-Platz (Platz der Befreiung)",
+      "Tahrir-Platz",
       "Ramses-Platz",
       "Ataba-Platz",
-      "Giza-Platz"
+      "Talaat-Harb-Platz"
     ],
     "explanation": "Nach 18 Tagen friedlicher Massenproteste trat der autokratische Langzeitherrscher Husni Mubarak nach 30 Jahren Amtszeit zurück.",
-    "exp": "Tahrir-Platz (Platz der Befreiung)"
+    "exp": "Tahrir-Platz"
   },
   {
     "cat": "neuzeit",
@@ -891,9 +891,9 @@
     "q": "Welches gigantische Frachtschiff blockierte im März 2021 sechs Tage lang den Suezkanal und stoppte den Welthandel?",
     "a": [
       "Ever Given",
-      "Emma Mærsk",
+      "Ever Laurel",
       "MSC Gülsün",
-      "CMA CGM Jacques Saadé"
+      "CMA CGM Marco Polo"
     ],
     "explanation": "Das 400 Meter lange Schiff stellte sich bei starkem Wind quer und staute über 400 Schiffe – der Schaden für den globalen Handel ging in die Milliarden.",
     "exp": "Ever Given"
@@ -905,8 +905,8 @@
     "a": [
       "Al-Azhar-Universität",
       "Kairo-Universität",
-      "Ain-Shams-Universität",
-      "Al-Qarawiyyin-Zweigstelle"
+      "Ain-Schams-Universität",
+      "Alexandria-Akademie"
     ],
     "explanation": "Der Groß-Imam der al-Azhar gilt weltweit als eine der höchsten theologischen Autoritäten des sunnitischen Islams.",
     "exp": "Al-Azhar-Universität"
@@ -917,9 +917,9 @@
     "q": "Wie heißt das monumentale neue Museum nahe den Pyramiden von Gizeh, das größte archäologische Museum der Erde?",
     "a": [
       "Grand Egyptian Museum (GEM)",
-      "National Museum of Egyptian Civilization (NMEC)",
-      "Louvre Abu Dhabi",
-      "Kairo Citadel Museum"
+      "National Museum of Civilization",
+      "Ägyptisches Museum am Tahrir",
+      "Alexandria National Museum"
     ],
     "explanation": "Das GEM beherbergt erstmals die gesamte 5.000 Stücke umfassende Tutanchamun-Grabkollektion unter einem einzigen gigantischen Dach.",
     "exp": "Grand Egyptian Museum (GEM)"
@@ -929,54 +929,55 @@
     "diff": "mid",
     "q": "Was war die spektakuläre „Pharaonen-Goldparade“ im April 2021 durch die Straßen von Kairo?",
     "a": [
-      "Der feierliche Umzug von 22 königlichen Mumien (darunter Ramses II. und Hatschepsut) in Spezial-Kapseln ins neue Nationalmuseum NMEC",
-      "Eine Parade zum Jahrestag der Verstaatlichung des Suezkanals",
-      "Der Transport der Totenmaske von Tutanchamun nach Paris",
-      "Ein Karnevalsumzug zum Beginn des Fastenmonats Ramadan"
+      "Feierlicher Umzug von 22 Königsmumien in Spezialkapseln",
+      "Die Rückgabe des Tutanchamun-Schatzes aus Übersee",
+      "Die feierliche Eröffnung der neuen Grabkammer Cheops",
+      "Ein Staatsbesuch aller Staatsoberhäupter am Nilufer"
     ],
     "explanation": "In maßgeschneiderten, stoßgedämpften Gold-Wagen mit Stickstoff-Kapseln fuhren 18 Könige und 4 Königinnen durch die nächtliche Metropole.",
-    "exp": "Der feierliche Umzug von 22 königlichen Mumien (darunter Ramses II. und Hatschepsut) in Spezial-Kapseln ins neue Nationalmuseum NMEC"
+    "exp": "Feierlicher Umzug von 22 Königsmumien in Spezialkapseln"
   },
   {
     "cat": "neuzeit",
     "diff": "pro",
     "q": "Warum baut Ägypten derzeit rund 45 Kilometer östlich von Kairo eine gigantische „Neue Verwaltungshauptstadt“ (NAC) in die Wüste?",
     "a": [
-      "Um das mit über 20 Millionen Einwohnern völlig kollabierende Kairo verkehrstechnisch und administrativ zu entlasten",
-      "Weil Kairo durch den Anstieg des Meeresspiegels überflutet werden soll",
-      "Um eine geheime Festung gegen Angriffe aus Libyen zu errichten",
-      "Um dort die Olympischen Winterspiele 2038 auszurichten"
+      "Entlastung des überfüllten Großraums Kairo",
+      "Bau einer Festungsstadt gegen Angriffe von See",
+      "Bessere Anbindung an die Ölfelder am Roten Meer",
+      "Schaffung eines exklusiven diplomatischen Wohnbezirks"
     ],
     "explanation": "Die neue Planstadt bietet Platz für über 6 Millionen Menschen, beherbergt den höchsten Wolkenkratzer Afrikas (Iconic Tower) und alle Ministerien.",
-    "exp": "Um das mit über 20 Millionen Einwohnern völlig kollabierende Kairo verkehrstechnisch und administrativ zu entlasten"
+    "exp": "Entlastung des überfüllten Großraums Kairo"
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
     "q": "Welcher ägyptische Schriftsteller erhielt 1988 als erster arabischsprachiger Autor den Nobelpreis für Literatur?",
     "a": [
-      "Nagib Mahfuz (berühmt für seine Kairo-Trilogie)",
+      "Nagib Mahfuz",
       "Taha Hussein",
       "Alaa al-Aswani",
-      "Youssef Ziedan"
+      "Yusuf Idris"
     ],
     "explanation": "Mahfuz porträtierte in seinen Meisterwerken das pulsierende Leben in den historischen Gassen der Kairoer Altstadt.",
-    "exp": "Nagib Mahfuz (berühmt für seine Kairo-Trilogie)"
+    "exp": "Nagib Mahfuz"
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
     "q": "Was ist das gigantische Toshka-Projekt (New Valley Project) im Süden Ägyptens?",
     "a": [
-      "Die Ableitung von Wasser aus dem Nassersee, um Hunderttausende Hektar Wüste in fruchtbares Agrarland zu verwandeln",
-      "Der Bau des weltweit größten Solarkraftwerks auf Salzseen",
-      "Die Errichtung einer künstlichen Nil-Mündung ins Rote Meer",
-      "Ein Kanal zur Verbindung des Nils mit dem Kongo-Fluss"
+      "Ableitung von Wasser aus dem Nassersee zur Wüstenbegrünung",
+      "Bau eines riesigen Solarkraftwerks in der Sahara",
+      "Errichtung eines Tiefseehafens am Golf von Sues",
+      "Schaffung einer künstlichen Seenplatte im Nildelta"
     ],
     "explanation": "Mit gewaltigen Pumpstationen und Kanälen will Ägypten seine Abhängigkeit von Weizenimporten senken und neues Siedlungsland schaffen.",
-    "exp": "Die Ableitung von Wasser aus dem Nassersee, um Hunderttausende Hektar Wüste in fruchtbares Agrarland zu verwandeln"
+    "exp": "Ableitung von Wasser aus dem Nassersee zur Wüstenbegrünung"
   }
 ];
+
   if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
     window.ArcadeQuizEngine.registerBank("egypt", DATA);
   } else {
