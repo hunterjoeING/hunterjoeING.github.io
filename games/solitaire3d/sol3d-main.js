@@ -6,6 +6,9 @@ import { SolitaireAudio } from './sol3d-audio.js';
 
 const PREF_CAM_KEY = 'sol3d_cam_preset';
 const PREF_ZOOM_KEY = 'sol3d_zoom';
+const PREF_TABLE_SURFACE_KEY = 'sol3d_table_surface';
+const PREF_TABLE_COLOR_KEY = 'sol3d_table_color';
+const PREF_TARGET_HELP_KEY = 'sol3d_target_help';
 
 function formatTime(sec) {
   const s = Math.max(0, Math.floor(sec));
@@ -40,15 +43,23 @@ function initSolitaire3D() {
 
   const btnUndo = document.getElementById('btn-undo');
   const btnHint = document.getElementById('btn-hint');
+  const btnTargetHelp = document.getElementById('btn-target-help');
   const btnDeal = document.getElementById('btn-deal');
   const elDealBadge = document.getElementById('hud-deal-badge');
   const btnZoomOut = document.getElementById('btn-zoom-out');
   const btnZoomIn = document.getElementById('btn-zoom-in');
   const elZoomVal = document.getElementById('hud-zoom-val');
   const btnCam = document.getElementById('btn-cam');
+  const btnTableTheme = document.getElementById('btn-table-theme');
   const btnFullscreen = document.getElementById('btn-fullscreen');
   const btnMenu = document.getElementById('btn-menu');
   const menuPopover = document.getElementById('sol3d-popover');
+
+  const tablePopover = document.getElementById('sol3d-table-popover');
+  const btnCloseTablePop = document.getElementById('btn-close-table-pop');
+  const surfaceChips = document.querySelectorAll('.surface-chip');
+  const colorSwatches = document.querySelectorAll('.color-swatch');
+  const customColorInput = document.getElementById('table-custom-color');
 
   const btnNewRandom = document.getElementById('menu-new-random');
   const btnRepeatDeal = document.getElementById('menu-repeat-deal');
@@ -59,8 +70,12 @@ function initSolitaire3D() {
   const btnWinRepeat = document.getElementById('btn-win-repeat');
   const btnWinDismiss = document.getElementById('btn-win-dismiss');
 
+  let currentSurface = loadPref(PREF_TABLE_SURFACE_KEY, 'filz');
+  let currentColor = loadPref(PREF_TABLE_COLOR_KEY, '#134d34');
+  let targetHelpActive = loadPref(PREF_TARGET_HELP_KEY, '0') === '1'; // strictly false by default
+
   const engine = new SpiderEngine();
-  const scene = new SolitaireScene(canvas, stageEl);
+  const scene = new SolitaireScene(canvas, stageEl, currentSurface, currentColor);
   const audio = new SolitaireAudio();
 
   const savedCam = loadPref(PREF_CAM_KEY, '3d') === 'top' ? 'top' : '3d';
@@ -143,6 +158,25 @@ function initSolitaire3D() {
     syncFullscreenUI();
   }
 
+  function syncTargetHelpUI() {
+    if (btnTargetHelp) {
+      btnTargetHelp.textContent = targetHelpActive ? '🎯 Hilfe aktiv' : '🎯 Hilfe aktivieren';
+      btnTargetHelp.classList.toggle('active', targetHelpActive);
+    }
+  }
+
+  function syncTableThemeUI() {
+    surfaceChips.forEach((chip) => {
+      chip.classList.toggle('active', chip.dataset.surface === currentSurface);
+    });
+    colorSwatches.forEach((swatch) => {
+      swatch.classList.toggle('active', swatch.dataset.color.toLowerCase() === currentColor.toLowerCase());
+    });
+    if (customColorInput) {
+      customColorInput.value = currentColor;
+    }
+  }
+
   function syncMenuUI() {
     if (btnCam) {
       btnCam.textContent = scene.cameraPreset === 'top' ? '📐 Steil' : '📐 3D';
@@ -154,6 +188,8 @@ function initSolitaire3D() {
     }
     if (btnZoomOut) btnZoomOut.disabled = z <= 0.855;
     if (btnZoomIn) btnZoomIn.disabled = z >= 1.195;
+    syncTargetHelpUI();
+    syncTableThemeUI();
   }
 
   function syncHud() {
@@ -304,6 +340,7 @@ function initSolitaire3D() {
 
   function handleUndo() {
     if (!engine.canUndo()) return;
+    scene.completeAllAnimations();
     const res = engine.undo();
     if (!res.ok) return;
     audio.cardSnap();
@@ -330,15 +367,21 @@ function initSolitaire3D() {
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   }
 
-  // Pointer & Touch Drag-and-Drop + Click Smart-Move
+  let longPressTimer = null;
+
+  // Pointer & Touch Drag-and-Drop + Click Smart-Move + Target Help
   canvas.addEventListener('pointerdown', (e) => {
     audio.unlock();
     if (!menuPopover.classList.contains('hidden')) {
       menuPopover.classList.add('hidden');
     }
+    if (tablePopover && !tablePopover.classList.contains('hidden')) {
+      tablePopover.classList.add('hidden');
+    }
     if (engine.won) return;
     if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
 
+    clearTimeout(longPressTimer);
     pendingStockClick = null;
     pointerSession = null;
 
@@ -372,6 +415,21 @@ function initSolitaire3D() {
         try {
           canvas.setPointerCapture(e.pointerId);
         } catch (_) {}
+
+        // Requirement 2: Only show long-press destination help if explicitly enabled by user
+        if (targetHelpActive) {
+          clearTimeout(longPressTimer);
+          longPressTimer = setTimeout(() => {
+            if (pointerSession && !pointerSession.dragging && pointerSession.pointerId === e.pointerId) {
+              pointerSession.validDests = engine.getValidDestinations(
+                pointerSession.stack.cards,
+                pointerSession.stack.source
+              );
+              scene.setValidDropTargets(pointerSession.validDests, null);
+              audio.hint();
+            }
+          }, 320);
+        }
         return;
       }
 
@@ -410,6 +468,10 @@ function initSolitaire3D() {
 
     const dx = e.clientX - pointerSession.startX;
     const dy = e.clientY - pointerSession.startY;
+    if (Math.hypot(dx, dy) >= 6) {
+      clearTimeout(longPressTimer);
+    }
+
     if (!pointerSession.dragging && Math.hypot(dx, dy) >= 6) {
       const pt = scene.raycastDragPlane(e.clientX, e.clientY);
       if (!pt) return;
@@ -435,6 +497,8 @@ function initSolitaire3D() {
   });
 
   function finishPointer(e) {
+    clearTimeout(longPressTimer);
+
     if (pendingStockClick && e.pointerId === pendingStockClick.pointerId) {
       const dist = Math.hypot(e.clientX - pendingStockClick.x, e.clientY - pendingStockClick.y);
       pendingStockClick = null;
@@ -468,6 +532,9 @@ function initSolitaire3D() {
       return;
     }
 
+    // Single tap/click release: clear target glows if any were active from long-press
+    scene.setValidDropTargets(null, null);
+
     const smart = engine.findSmartTarget(sess.pile.type, sess.pile.idx, sess.pile.cardIdx);
     if (smart) {
       const res = engine.executeMove(smart.stack.cards, smart.stack.source, smart.target);
@@ -482,16 +549,50 @@ function initSolitaire3D() {
   canvas.addEventListener('pointerup', finishPointer);
   canvas.addEventListener('pointercancel', finishPointer);
 
-  // HUD & Menu Buttons
-  btnUndo.addEventListener('click', () => {
+  // Requirement 3: Dual fast-click binding on Undo button for instant mobile/fullscreen responsiveness
+  let lastUndoTriggerTime = 0;
+  function triggerUndo(e) {
+    if (e) {
+      if (e.cancelable) e.preventDefault();
+      e.stopPropagation();
+    }
+    const now = performance.now();
+    if (now - lastUndoTriggerTime < 80) return; // avoid double trigger
+    lastUndoTriggerTime = now;
     audio.unlock();
     handleUndo();
+  }
+
+  btnUndo.addEventListener('pointerup', (e) => {
+    if (e.pointerType === 'touch' || e.pointerType === 'pen') {
+      triggerUndo(e);
+    }
+  });
+
+  btnUndo.addEventListener('click', (e) => {
+    triggerUndo(e);
   });
 
   btnHint.addEventListener('click', () => {
     audio.unlock();
     handleHint();
   });
+
+  // Requirement 2: Toggle Target Card Help
+  if (btnTargetHelp) {
+    btnTargetHelp.addEventListener('click', () => {
+      audio.unlock();
+      targetHelpActive = !targetHelpActive;
+      savePref(PREF_TARGET_HELP_KEY, targetHelpActive ? '1' : '0');
+      syncTargetHelpUI();
+      if (targetHelpActive) {
+        showToast('🎯 Hilfe aktiv: Langes Drücken auf eine Karte zeigt mögliche Zielstapel.', 2800);
+      } else {
+        scene.setValidDropTargets(null, null);
+      }
+      if (window.ArcadeAudio) window.ArcadeAudio.click();
+    });
+  }
 
   if (btnDeal) {
     btnDeal.addEventListener('click', () => {
@@ -523,6 +624,62 @@ function initSolitaire3D() {
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   });
 
+  // Requirement 1: Table Surface & Color Popover Controls
+  if (btnTableTheme) {
+    btnTableTheme.addEventListener('click', (e) => {
+      e.stopPropagation();
+      audio.unlock();
+      menuPopover.classList.add('hidden');
+      if (tablePopover) {
+        tablePopover.classList.toggle('hidden');
+      }
+      if (window.ArcadeAudio) window.ArcadeAudio.click();
+    });
+  }
+
+  if (btnCloseTablePop) {
+    btnCloseTablePop.addEventListener('click', (e) => {
+      e.stopPropagation();
+      audio.unlock();
+      if (tablePopover) tablePopover.classList.add('hidden');
+    });
+  }
+
+  surfaceChips.forEach((chip) => {
+    chip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      audio.unlock();
+      currentSurface = chip.dataset.surface;
+      savePref(PREF_TABLE_SURFACE_KEY, currentSurface);
+      scene.setTableTheme(currentSurface, currentColor);
+      syncTableThemeUI();
+      if (window.ArcadeAudio) window.ArcadeAudio.click();
+    });
+  });
+
+  colorSwatches.forEach((swatch) => {
+    swatch.addEventListener('click', (e) => {
+      e.stopPropagation();
+      audio.unlock();
+      currentColor = swatch.dataset.color;
+      savePref(PREF_TABLE_COLOR_KEY, currentColor);
+      scene.setTableTheme(currentSurface, currentColor);
+      syncTableThemeUI();
+      if (window.ArcadeAudio) window.ArcadeAudio.click();
+    });
+  });
+
+  if (customColorInput) {
+    const handleCustomColor = (e) => {
+      currentColor = e.target.value;
+      savePref(PREF_TABLE_COLOR_KEY, currentColor);
+      scene.setTableTheme(currentSurface, currentColor);
+      syncTableThemeUI();
+    };
+    customColorInput.addEventListener('input', handleCustomColor);
+    customColorInput.addEventListener('change', handleCustomColor);
+  }
+
   if (btnFullscreen) {
     btnFullscreen.addEventListener('click', () => {
       audio.unlock();
@@ -537,6 +694,7 @@ function initSolitaire3D() {
   btnMenu.addEventListener('click', (e) => {
     e.stopPropagation();
     audio.unlock();
+    if (tablePopover) tablePopover.classList.add('hidden');
     menuPopover.classList.toggle('hidden');
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   });
@@ -545,6 +703,11 @@ function initSolitaire3D() {
     if (!menuPopover.classList.contains('hidden')) {
       if (!menuPopover.contains(e.target) && e.target !== btnMenu && !btnMenu.contains(e.target)) {
         menuPopover.classList.add('hidden');
+      }
+    }
+    if (tablePopover && !tablePopover.classList.contains('hidden')) {
+      if (!tablePopover.contains(e.target) && e.target !== btnTableTheme && !btnTableTheme.contains(e.target)) {
+        tablePopover.classList.add('hidden');
       }
     }
   });
@@ -586,6 +749,7 @@ function initSolitaire3D() {
       adjustZoom(-0.05);
     } else if (e.key === 'Escape') {
       menuPopover.classList.add('hidden');
+      if (tablePopover) tablePopover.classList.add('hidden');
       if (document.body.classList.contains('sol3d-pseudo-fs')) {
         document.body.classList.remove('sol3d-pseudo-fs');
         syncFullscreenUI();
