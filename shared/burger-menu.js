@@ -43,6 +43,8 @@
   const QUIZZES_THEMEN_NAV = [
     { id: 'quiz_napoli72h', icon: '🍕', title: 'Napoli72H Pizza-Quiz (Aachen)', meta: '75 Fr.', path: 'games/quiz-napoli72h/index.html', unlisted: true },
     { id: 'quiz_porsche', icon: '🏎️', title: 'Porsche & Taycan Quiz', meta: '75 Fr.', path: 'games/quiz-porsche/index.html' },
+    { id: 'quiz_f1', icon: '🏎️', title: 'Formel 1 Quiz', meta: '75 Fr.', path: 'games/quiz-f1/index.html' },
+    { id: 'quiz_apple', icon: '🍎', title: 'Apple Quiz', meta: '75 Fr.', path: 'games/quiz-apple/index.html' },
     { id: 'quiz_md11', icon: '🛫', title: 'McDonnell Douglas MD-11', meta: '75 Fr.', path: 'games/quiz-md11/index.html' },
     { id: 'quiz_naildesign', icon: '💅', title: 'Nageldesign (Finger & Fuß)', meta: '75 Fr.', path: 'games/quiz-naildesign/index.html' },
     { id: 'quiz_torten', icon: '🎂', title: 'Torten & Patisserie', meta: '75 Fr.', path: 'games/quiz-torten/index.html' },
