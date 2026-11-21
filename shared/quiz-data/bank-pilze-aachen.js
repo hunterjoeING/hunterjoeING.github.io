@@ -268,9 +268,9 @@
     "nameQ": "Welcher Speisepilz mit dunkelbraunem Samthut, roten Röhrenmündungen und rot beflocktem Stiel läuft beim Anschneiden sekundenschnell intensiv indigoblau an?",
     "nameOpts": [
       "Flockenstieliger Hexen-Röhrling (Neoboletus erythropus)",
-      "Satans-Röhrling (Rubroboletus satanas)",
+      "Satans-Röhrling (giftiger Rubroboletus satanas)",
       "Netzstieliger Hexen-Röhrling (Suillellus luridus)",
-      "Schönfuß-Röhrling (Caloboletus calopus)"
+      "Schönfuß-Röhrling (bitterer Caloboletus calopus)"
     ],
     "toxClass": "cooked",
     "toxBadge": "🟡 Roh giftig · Gut durcherhitzt vorzüglich!",
@@ -295,9 +295,9 @@
     "q": "Welcher Speisepilz mit dunkelbraunem Samthut, roten Röhrenmündungen und rot beflocktem Stiel läuft beim Anschneiden sekundenschnell intensiv indigoblau an?",
     "a": [
       "Flockenstieliger Hexen-Röhrling (Neoboletus erythropus)",
-      "Satans-Röhrling (Rubroboletus satanas)",
+      "Satans-Röhrling (giftiger Rubroboletus satanas)",
       "Netzstieliger Hexen-Röhrling (Suillellus luridus)",
-      "Schönfuß-Röhrling (Caloboletus calopus)"
+      "Schönfuß-Röhrling (bitterer Caloboletus calopus)"
     ],
     "explanation": "Wegen seiner rasanten Blaufärbung und roten Poren hielt der Volksglaube ihn für ein Hexenwerk. Gut durchgegart gilt der „Flocki“ heute jedoch als einer der schmackhaftesten Speisepilze überhaupt!",
     "exp": "Wegen seiner rasanten Blaufärbung und roten Poren hielt der Volksglaube ihn für ein Hexenwerk. Gut durchgegart gilt der „Flocki“ heute jedoch als einer der schmackhaftesten Speisepilze überhaupt!"
@@ -655,9 +655,9 @@
     "nameQ": "Welcher weiße bis ziegelrot nachdunkelnde Frühlingspilz mit radial rissigem Hut enthält lebensgefährliche Mengen des Parasympathikus-Gifts Muscarin?",
     "nameOpts": [
       "Ziegelroter Risspilz (Inosperma erubescens)",
-      "Mairitterling (Calocybe gambosa)",
+      "Mairitterling (essbarer Calocybe gambosa)",
       "Wiesen-Champignon (Agaricus campestris)",
-      "Perlpilz (Amanita rubescens)"
+      "Perlpilz (rötender Amanita rubescens)"
     ],
     "toxClass": "deadly",
     "toxBadge": "☠️ STARK BIS TÖDLICH GIFTIG! (Muskarin)",
@@ -682,9 +682,9 @@
     "q": "Welcher weiße bis ziegelrot nachdunkelnde Frühlingspilz mit radial rissigem Hut enthält lebensgefährliche Mengen des Parasympathikus-Gifts Muscarin?",
     "a": [
       "Ziegelroter Risspilz (Inosperma erubescens)",
-      "Mairitterling (Calocybe gambosa)",
+      "Mairitterling (essbarer Calocybe gambosa)",
       "Wiesen-Champignon (Agaricus campestris)",
-      "Perlpilz (Amanita rubescens)"
+      "Perlpilz (rötender Amanita rubescens)"
     ],
     "explanation": "Dieser Risspilz enthält bis zu 500-mal mehr Muscarin als ein Fliegenpilz! Schon ein Bruchteil eines Hutes führt zu Schweißausbrüchen, Sehstörungen und lebensbedrohlichem Herzstillstand.",
     "exp": "Dieser Risspilz enthält bis zu 500-mal mehr Muscarin als ein Fliegenpilz! Schon ein Bruchteil eines Hutes führt zu Schweißausbrüchen, Sehstörungen und lebensbedrohlichem Herzstillstand."

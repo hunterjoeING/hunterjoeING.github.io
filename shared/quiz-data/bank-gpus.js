@@ -14,7 +14,7 @@
       "S3 Savage 2000 AGP 64MB"
     ],
     "explanation": "Wusstest du, dass die Voodoo5 so viel Strom zog, dass sie als erste Consumer-Grafikkarte überhaupt einen separaten Festplatten-Stromstecker brauchte? Ihr butterweiches 4× RGSS-Vollbild-Antialiasing war der Konkurrenz meilenweit voraus.",
-    "exp": "3dfx Voodoo5 5500 AGP",
+    "exp": "Wusstest du, dass die Voodoo5 so viel Strom zog, dass sie als erste Consumer-Grafikkarte überhaupt einen separaten Festplatten-Stromstecker brauchte? Ihr butterweiches 4× RGSS-Vollbild-Antialiasing war der Konkurrenz meilenweit voraus.",
     "wasDasIst": {
       "title": "3dfx Voodoo5 5500 (2× VSA-100)",
       "nick": "Das legendäre letzte Aufbäumen von 3dfx",
@@ -44,7 +44,7 @@
       "ATi Radeon 64 MB DDR VIVO"
     ],
     "explanation": "Vor der GeForce 256 musste die Haupt-CPU jedes einzelne 3D-Polygon und jede Lichtquelle mühsam selbst berechnen. Mit der Auslagerung auf den Grafikchip erfand NVIDIA praktisch im Alleingang den Begriff „GPU“!",
-    "exp": "NVIDIA GeForce 256 DDR",
+    "exp": "Vor der GeForce 256 musste die Haupt-CPU jedes einzelne 3D-Polygon und jede Lichtquelle mühsam selbst berechnen. Mit der Auslagerung auf den Grafikchip erfand NVIDIA praktisch im Alleingang den Begriff „GPU“!",
     "wasDasIst": {
       "title": "NVIDIA GeForce 256 DDR (NV10)",
       "nick": "„The World’s First GPU“ (Hardware T&L)",
@@ -74,7 +74,7 @@
       "Kyro II PowerVR STG4000"
     ],
     "explanation": "Erst programmierbare Shader machten spiegelnde Wasseroberflächen in Spielen wie Morrowind überhaupt möglich. Zuvor konnten Grafikkarten nur starre, fest verdrahtete Rechenschritte ausführen!",
-    "exp": "NVIDIA GeForce3",
+    "exp": "Erst programmierbare Shader machten spiegelnde Wasseroberflächen in Spielen wie Morrowind überhaupt möglich. Zuvor konnten Grafikkarten nur starre, fest verdrahtete Rechenschritte ausführen!",
     "wasDasIst": {
       "title": "NVIDIA GeForce3 Ti 500 (NV20)",
       "nick": "Der Beginn der programmierbaren Shader-Ära",
@@ -104,7 +104,7 @@
       "Matrox Millennium G550"
     ],
     "explanation": "Die Radeon 9700 Pro war so bahnbrechend überlegen, dass selbst Chef-Entwickler John Carmack sie auf der QuakeCon als Meilenstein feierte. Sie deklassierte NVIDIAs Topmodell fast um den Faktor zwei!",
-    "exp": "ATi Radeon 9700 Pro",
+    "exp": "Die Radeon 9700 Pro war so bahnbrechend überlegen, dass selbst Chef-Entwickler John Carmack sie auf der QuakeCon als Meilenstein feierte. Sie deklassierte NVIDIAs Topmodell fast um den Faktor zwei!",
     "wasDasIst": {
       "title": "ATi Radeon 9700 Pro (R300)",
       "nick": "Die wohl dominanteste ATi-Karte aller Zeiten",
@@ -134,7 +134,7 @@
       "3dfx Voodoo Rush AGP Edition"
     ],
     "explanation": "Der „FlowFX“-Lüfter war mit über 60 Dezibel so infernalisch laut, dass frustrierte Gamer Ohrstöpsel tragen mussten. NVIDIA nahm den Spott später sportlich und drehte ein legendäres Selbstironie-Video mit einem Föhn!",
-    "exp": "NVIDIA GeForce FX 5800 Ultra",
+    "exp": "Der „FlowFX“-Lüfter war mit über 60 Dezibel so infernalisch laut, dass frustrierte Gamer Ohrstöpsel tragen mussten. NVIDIA nahm den Spott später sportlich und drehte ein legendäres Selbstironie-Video mit einem Föhn!",
     "wasDasIst": {
       "title": "NVIDIA GeForce FX 5800 Ultra (NV30)",
       "nick": "„FlowFX“ / „Der Laubbläser“ („Dustbuster“)",
@@ -164,7 +164,7 @@
       "ATi Radeon 9800 XT Pro 256MB"
     ],
     "explanation": "Mit 16 vollwertigen Pipelines und 222 Millionen Transistoren verdoppelte NVIDIA die Shader-Power schlagartig. In Kombination mit Far Cry und Splinter Cell zeigte die Karte erstmals atemberaubende HDR-Lichtüberblendungen.",
-    "exp": "NVIDIA GeForce 6800 Ultra",
+    "exp": "Mit 16 vollwertigen Pipelines und 222 Millionen Transistoren verdoppelte NVIDIA die Shader-Power schlagartig. In Kombination mit Far Cry und Splinter Cell zeigte die Karte erstmals atemberaubende HDR-Lichtüberblendungen.",
     "wasDasIst": {
       "title": "NVIDIA GeForce 6800 Ultra (NV40)",
       "nick": "Die Vervierfachung der Pipelines & SLI-Wiedergeburt",
@@ -194,7 +194,7 @@
       "NVIDIA GeForce GTX 280 1GB"
     ],
     "explanation": "Die 8800 GTX war ein Jahrhundert-Wurf: Statt getrennter Pixel- und Vertex-Pipelines rechneten 128 universelle Shader alles flexibel. Sie begründete NVIDIAs CUDA-Plattform, die heute die weltweite KI-Revolution antreibt!",
-    "exp": "NVIDIA GeForce 8800 GTX",
+    "exp": "Die 8800 GTX war ein Jahrhundert-Wurf: Statt getrennter Pixel- und Vertex-Pipelines rechneten 128 universelle Shader alles flexibel. Sie begründete NVIDIAs CUDA-Plattform, die heute die weltweite KI-Revolution antreibt!",
     "wasDasIst": {
       "title": "NVIDIA GeForce 8800 GTX (G80)",
       "nick": "„Der König der Crysis-Ära“ · Geburt von CUDA & Unified Shaders",
@@ -224,7 +224,7 @@
       "NVIDIA GeForce GTX 260"
     ],
     "explanation": "Statt wie NVIDIA auf riesige, teure Monsterchips zu setzen, baute ATi einen schlanken, effizienten Chip mit brandneuem GDDR5-Speicher. Das Preis-Leistungs-Verhältnis war so gnadenlos gut, dass NVIDIA die Preise der GTX 280 über Nacht drastisch senken musste.",
-    "exp": "ATi Radeon HD 4870 mit GDDR5",
+    "exp": "Statt wie NVIDIA auf riesige, teure Monsterchips zu setzen, baute ATi einen schlanken, effizienten Chip mit brandneuem GDDR5-Speicher. Das Preis-Leistungs-Verhältnis war so gnadenlos gut, dass NVIDIA die Preise der GTX 280 über Nacht drastisch senken musste.",
     "wasDasIst": {
       "title": "ATi Radeon HD 4870 (RV770)",
       "nick": "Die „Sweet-Spot“-Strategie & Weltpremiere von GDDR5",
@@ -254,7 +254,7 @@
       "NVIDIA GeForce GTX 295"
     ],
     "explanation": "Wegen ihrer doppelten Heck-Abluftöffnungen tauften Fans sie liebevoll „Batmobile“. Sie war volle sechs Monate vor NVIDIAs DirectX-11-Karten auf dem Markt und zog im Leerlauf gerade einmal sensationelle 27 Watt aus der Steckdose!",
-    "exp": "ATi Radeon HD 5870",
+    "exp": "Wegen ihrer doppelten Heck-Abluftöffnungen tauften Fans sie liebevoll „Batmobile“. Sie war volle sechs Monate vor NVIDIAs DirectX-11-Karten auf dem Markt und zog im Leerlauf gerade einmal sensationelle 27 Watt aus der Steckdose!",
     "wasDasIst": {
       "title": "ATi / AMD Radeon HD 5870 („Cypress“)",
       "nick": "„Batmobile“-Design · Erste DirectX-11-Karte der Welt",
@@ -284,7 +284,7 @@
       "NVIDIA GeForce GTX 285"
     ],
     "explanation": "Die Fermi-Architektur war von Grund auf für wissenschaftliches GPU-Computing konstruiert, weshalb die GTX 480 bis zu 300 Watt verfeuerte. Erst das überarbeitete Nachfolgemodell GTX 580 bekam die Hitzeentwicklung mit einer leisen Vapor-Chamber perfekt in den Griff.",
-    "exp": "NVIDIA GeForce GTX 480",
+    "exp": "Die Fermi-Architektur war von Grund auf für wissenschaftliches GPU-Computing konstruiert, weshalb die GTX 480 bis zu 300 Watt verfeuerte. Erst das überarbeitete Nachfolgemodell GTX 580 bekam die Hitzeentwicklung mit einer leisen Vapor-Chamber perfekt in den Griff.",
     "wasDasIst": {
       "title": "NVIDIA GeForce GTX 480 („Fermi“ GF100)",
       "nick": "Das Tessellations-Kraftwerk mit Außen-Heatpipes",
@@ -314,7 +314,7 @@
       "ATi Radeon HD 5970 2GB Dual"
     ],
     "explanation": "Weil Konsolen wie PS4 und Xbox One ebenfalls auf GCN setzten, alterte die HD 7970 in modernen DirectX-12-Spielen phänomenal gut. Die Community taufte diesen seltenen Reife-Effekt ehrfürchtig „AMD FineWine“!",
-    "exp": "AMD Radeon HD 7970 3GB Tahiti",
+    "exp": "Weil Konsolen wie PS4 und Xbox One ebenfalls auf GCN setzten, alterte die HD 7970 in modernen DirectX-12-Spielen phänomenal gut. Die Community taufte diesen seltenen Reife-Effekt ehrfürchtig „AMD FineWine“!",
     "wasDasIst": {
       "title": "AMD Radeon HD 7970 / 7970M (GCN 1.0)",
       "nick": "Die erste 28-nm-GPU der Welt & Ursprung von „AMD FineWine“",
@@ -344,7 +344,7 @@
       "NVIDIA Quadro K6000 12GB"
     ],
     "explanation": "Der GK110-Chip trieb ursprünglich den weltberühmten Titan-Supercomputer im Oak Ridge National Lab an. Für Heimanwender schuf NVIDIA damit eine völlig neue Ultra-Premium-Kategorie mit damals unvorstellbaren 6 Gigabyte Videospeicher!",
-    "exp": "NVIDIA GeForce GTX TITAN 6GB",
+    "exp": "Der GK110-Chip trieb ursprünglich den weltberühmten Titan-Supercomputer im Oak Ridge National Lab an. Für Heimanwender schuf NVIDIA damit eine völlig neue Ultra-Premium-Kategorie mit damals unvorstellbaren 6 Gigabyte Videospeicher!",
     "wasDasIst": {
       "title": "NVIDIA GeForce GTX TITAN (GK110 „Kepler“)",
       "nick": "Das legendäre Aluminium-Kühler-Design mit Sichtfenster",
@@ -374,7 +374,7 @@
       "NVIDIA GeForce Titan X Maxwell"
     ],
     "explanation": "Weil die vier HBM-Speichertürme direkt neben der GPU auf einem Silizium-Interposer saßen, fiel die Platine winzig aus: Die R9 Nano war kaum länger als der PCIe-Slot selbst! Genau diese HBM-Technologie treibt heute KI-Superchips wie H100 an.",
-    "exp": "AMD Radeon R9 Nano",
+    "exp": "Weil die vier HBM-Speichertürme direkt neben der GPU auf einem Silizium-Interposer saßen, fiel die Platine winzig aus: Die R9 Nano war kaum länger als der PCIe-Slot selbst! Genau diese HBM-Technologie treibt heute KI-Superchips wie H100 an.",
     "wasDasIst": {
       "title": "AMD Radeon R9 Nano / R9 Fury X („Fiji“)",
       "nick": "Der HBM-Speicher-Pionier im 15-Zentimeter-Format",
@@ -404,7 +404,7 @@
       "NVIDIA GeForce RTX 20-Serie"
     ],
     "explanation": "Dank TSMCs 16-nm-FinFET schossen die Taktraten erstmals über 2 GHz bei extrem moderatem Stromverbrauch. Vor allem die legendäre GTX 1080 Ti mit 11 GB VRAM hielt sich bei vielen Gamern über sechs Jahre lang auf Top-Niveau!",
-    "exp": "NVIDIA GeForce GTX 10-Serie",
+    "exp": "Dank TSMCs 16-nm-FinFET schossen die Taktraten erstmals über 2 GHz bei extrem moderatem Stromverbrauch. Vor allem die legendäre GTX 1080 Ti mit 11 GB VRAM hielt sich bei vielen Gamern über sechs Jahre lang auf Top-Niveau!",
     "wasDasIst": {
       "title": "NVIDIA GeForce GTX 10-Serie („Pascal“ Founders Edition)",
       "nick": "Meilenstein für 1440p/4K-Gaming & 16-nm-Effizienz",
@@ -434,7 +434,7 @@
       "Intel Arc A770 Limited"
     ],
     "explanation": "Mit stolzen 754 mm² Chipfläche war der Turing-Chip ein echtes Silizium-Monster. Obwohl Hardware-Raytracing anfangs belächelt wurde, legte die 2080 Ti das Fundament für heutiges Path-Tracing und KI-Rendering via DLSS!",
-    "exp": "NVIDIA GeForce RTX 2080 Ti",
+    "exp": "Mit stolzen 754 mm² Chipfläche war der Turing-Chip ein echtes Silizium-Monster. Obwohl Hardware-Raytracing anfangs belächelt wurde, legte die 2080 Ti das Fundament für heutiges Path-Tracing und KI-Rendering via DLSS!",
     "wasDasIst": {
       "title": "NVIDIA GeForce RTX 2080 Ti („Turing“ TU102)",
       "nick": "Der Startschuss für Hardware-Raytracing & KI-Rendering (DLSS)",
@@ -464,7 +464,7 @@
       "Intel Arc Pro A60 Workstation 12GB"
     ],
     "explanation": "Der Sprung auf TSMCs maßgeschneiderte 4N-Fertigung und ein gigantischer 72-MB-L2-Cache brachten einen historischen Leistungssprung von bis zu +90 % gegenüber dem Vorgänger – wodurch die Karte auch bei KI-Forschern heiß begehrt wurde!",
-    "exp": "NVIDIA GeForce RTX 4090 24GB",
+    "exp": "Der Sprung auf TSMCs maßgeschneiderte 4N-Fertigung und ein gigantischer 72-MB-L2-Cache brachten einen historischen Leistungssprung von bis zu +90 % gegenüber dem Vorgänger – wodurch die Karte auch bei KI-Forschern heiß begehrt wurde!",
     "wasDasIst": {
       "title": "NVIDIA GeForce RTX 4090 Founders Edition („Ada Lovelace“)",
       "nick": "Das 450-Watt-Kraftpaket für 4K-Path-Tracing & lokale KI-Modelle",
