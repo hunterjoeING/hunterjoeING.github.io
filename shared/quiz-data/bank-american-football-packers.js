@@ -462,7 +462,7 @@
     "diff": "mid",
     "q": "Wie viele Quarterback-Sacks erzielte Reggie White in der zweiten Halbzeit von Super Bowl XXXI gegen die Patriots?",
     "a": [
-      "3 Sacks (ein bis heute gültiger Super-Bowl-Rekord)",
+      "3 Sacks",
       "5 Sacks",
       "1 Sack",
       "4 Sacks"
@@ -474,7 +474,7 @@
     "diff": "easy",
     "q": "Wer wurde nach einem 99-Yard-Kickoff-Return-Touchdown zum MVP von Super Bowl XXXI gewählt?",
     "a": [
-      "Desmond Howard (der einzige Special-Teams-Spieler der Historie als MVP)",
+      "Desmond Howard",
       "Brett Favre",
       "Reggie White",
       "Antonio Freeman"
@@ -498,7 +498,7 @@
     "diff": "mid",
     "q": "Welcher 'Golden Boy' der Packers erzielte 1960 den ewigen Rekord von 176 Punkten in einer einzigen Saison mit nur 12 Spielen?",
     "a": [
-      "Paul Hornung (Halfback und Kicker in Personalunion)",
+      "Paul Hornung",
       "Jim Taylor",
       "Boyd Dowler",
       "Bart Starr"
@@ -558,7 +558,7 @@
     "diff": "pro",
     "q": "Welcher herausragende Packers-Receiver musste seine Karriere 1994 wegen einer schweren Halswirbelverletzung tragisch beenden?",
     "a": [
-      "Sterling Sharpe (Bruder von Hall-of-Famer Shannon Sharpe)",
+      "Sterling Sharpe",
       "Robert Brooks",
       "Antonio Freeman",
       "Bill Schroeder"
@@ -798,7 +798,7 @@
     "diff": "easy",
     "q": "Welcher US-Präsident empfing die Packers nach ihrem ersten Super-Bowl-Titel 1967 noch gar nicht im Weißen Haus?",
     "a": [
-      "Lyndon B. Johnson (der Brauch von Empfängen für Super-Bowl-Sieger entstand erst später)",
+      "Lyndon B. Johnson",
       "Richard Nixon",
       "John F. Kennedy",
       "Dwight D. Eisenhower"
@@ -822,7 +822,7 @@
     "diff": "pro",
     "q": "Welcher Packers-Spieler war gleichzeitig einer der gefürchtetsten Baseball-Schiedsrichter der Major League (Umpire)?",
     "a": [
-      "Cal Hubbard (einziges Mitglied in der NFL- und Baseball-Hall-of-Fame)",
+      "Cal Hubbard",
       "Clarke Hinkle",
       "Lavvie Dilweg",
       "Cub Buck"

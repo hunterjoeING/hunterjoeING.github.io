@@ -402,7 +402,7 @@
     "diff": "pro",
     "q": "Welcher legendäre Head Coach der Cowboys revolutionierte den NFL Draft in den 60ern durch den ersten Einsatz von Großrechnern?",
     "a": [
-      "Tom Landry (unterstützt von General Manager Tex Schramm)",
+      "Tom Landry",
       "Vince Lombardi",
       "Don Shula",
       "Chuck Noll"
@@ -750,7 +750,7 @@
     "diff": "mid",
     "q": "Welcher Spieler hält mit 14 aufeinanderfolgenden Pro-Bowl-Teilnahmen den ewigen Rekord der NFL?",
     "a": [
-      "Tom Brady (zusammen mit Tony Gonzalez, Peyton Manning, Bruce Matthews und Merlin Olsen)",
+      "Tom Brady",
       "Jerry Rice",
       "Ray Lewis",
       "Lawrence Taylor"
@@ -808,12 +808,12 @@
   {
     "cat": "legenden_rekorde",
     "diff": "pro",
-    "q": "Welcher Rekord-Quarterback warf in seiner gesamten Karriere keinen einzigen Touchdown-Pass, spielte aber in über 100 Spielen?",
+    "q": "Welcher Ausnahmespieler wurde als allererster reiner Punter der NFL-Geschichte in die Pro Football Hall of Fame aufgenommen?",
     "a": [
-      "Niemand, aber Punter Ray Guy trat als einziger reiner Punter in die Hall of Fame ein",
-      "Dan Pastorini",
-      "Jim Druckenmiller",
-      "Rusty Lisch"
+      "Ray Guy (Oakland Raiders)",
+      "Shane Lechler (Houston Texans)",
+      "Sammy Baugh (Washington Redskins)",
+      "Johnny Hekker (St. Louis Rams)"
     ],
     "exp": "Ray Guy war so dominant, dass er 2014 als erster reiner Punter überhaupt in die Hall of Fame gewählt wurde; die Auszeichnung für den besten College-Punter trägt seinen Namen."
   },
