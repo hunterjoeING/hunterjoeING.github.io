@@ -350,9 +350,9 @@
     "q": "Welcher elegante 250-km/h-Neigezug aus der Alstom-Pendolino-Familie verbindet die Schweiz unter drei Stromsystemen grenzüberschreitend mit Deutschland und Italien?",
     "a": [
       "SBB RABe 503 / ETR 610 („Astoro“)",
-      "SBB RABe 501 („Giruno“)",
-      "FS Frecciarossa 1000",
-      "DB ICE 4 (Baureihe 412)"
+      "SBB RABe 501 („Giruno“ / EC250)",
+      "FS Frecciarossa 1000 (ETR 400)",
+      "DB ICE 4 (Baureihe 412 Triebzug)"
     ],
     "wasDasIst": {
       "title": "SBB RABe 503 / ETR 610 („Astoro“)",
@@ -536,9 +536,9 @@
     "q": "Worin unterschied sich die dunkelblaue BLS-Lokomotive Re 465 technisch wesentlich von ihrer roten SBB-Schwester Re 460 („Lok 2000“)?",
     "a": [
       "Einzelachssteuerung & höhere Leistung für schwere Güterzüge",
-      "Reiner Gleichstromantrieb für den Tunnel",
-      "Zusätzlicher Dieselmotor für Rangierfahrten",
-      "Dreiachsige Drehgestelle für Gebirgsstrecken"
+      "Reiner Gleichstromantrieb für den simplen Tunnelbetrieb",
+      "Zusätzlicher Diesel-Hilfsmotor für Rangierfahrten im Tal",
+      "Dreiachsige Drehgestelle speziell für Gebirgsstrecken"
     ],
     "wasDasIst": {
       "title": "BLS Re 465",
@@ -722,9 +722,9 @@
     "q": "Wofür steht nach traditioneller Schweizer Eisenbahn-Nomenklatur das Kürzel „Am“ bei dieser schweren Vossloh-Diesellokomotive der SBB?",
     "a": [
       "Diesellokomotive (Verbrennungsmotor) mit über 80 km/h Höchstgeschwindigkeit",
-      "Elektrische Rangierlokomotive für den Güterbahnhof",
-      "Zweikraft-Rangiertraktor für Akku- und Fahrleitungsbetrieb",
-      "Akkumulatoren-Lokomotive für feuergefährdete Tunnelanlagen"
+      "Elektrische Rangierlokomotive für den schweren Güterbahnhofsdienst",
+      "Zweikraft-Rangiertraktor für flexiblen Akku- und Fahrleitungsbetrieb",
+      "Akkumulatoren-Lokomotive für feuergefährdete alpine Tunnelanlagen"
     ],
     "wasDasIst": {
       "title": "SBB Am 843 (Vossloh / MaK G 1700 BB)",

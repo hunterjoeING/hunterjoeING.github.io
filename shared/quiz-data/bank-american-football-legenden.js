@@ -6,10 +6,10 @@
     "diff": "easy",
     "q": "An welcher Position wurde Superstar Tom Brady im NFL Draft 2000 von den Patriots ausgewählt?",
     "a": [
-      "Tom Brady",
-      "Peyton Manning",
-      "Joe Montana",
-      "Patrick Mahomes"
+      "An Position 199 in der 6. Runde",
+      "An Position 1 in der 1. Runde",
+      "An Position 64 in der 2. Runde",
+      "Er wurde überhaupt nicht gedraftet"
     ],
     "exp": "Brady galt als unbeweglich und schmächtig. Der 199. Pick der Patriots entwickelte sich zum erfolgreichsten Quarterback der Geschichte (7 Super-Bowl-Ringe).",
     "explanation": "Brady galt als unbeweglich und schmächtig. Der 199. Pick der Patriots entwickelte sich zum erfolgreichsten Quarterback der Geschichte (7 Super-Bowl-Ringe)."
@@ -19,10 +19,10 @@
     "diff": "easy",
     "q": "Welchen Spitznamen trug 49ers-Legende Joe Montana wegen seiner unerschütterlichen Ruhe in Drucksituationen?",
     "a": [
-      "Jerry Rice",
-      "Randy Moss",
-      "Terrell Owens",
-      "Larry Fitzgerald"
+      "'Joe Cool'",
+      "'The Golden Arm'",
+      "'The Miracle Kid'",
+      "'Captain Comeback'"
     ],
     "exp": "Legendär: Vor dem siegbringenden 92-Yard-Drive in Super Bowl XXIII zeigte Montana in der Huddle lässig auf die Tribüne: 'Hey, ist das da drüben nicht John Candy?'",
     "explanation": "Legendär: Vor dem siegbringenden 92-Yard-Drive in Super Bowl XXIII zeigte Montana in der Huddle lässig auf die Tribüne: 'Hey, ist das da drüben nicht John Candy?'"
@@ -32,10 +32,10 @@
     "diff": "easy",
     "q": "Welcher Ausnahme-Receiver hält bis heute die ewigen NFL-Rekorde für Fänge, Touchdowns und Receiving Yards?",
     "a": [
-      "Vince Lombardi",
-      "Don Shula",
-      "Bill Belichick",
-      "Chuck Noll"
+      "Jerry Rice",
+      "Randy Moss",
+      "Terrell Owens",
+      "Larry Fitzgerald"
     ],
     "exp": "Jerry Rice fing unfassbare 1.549 Pässe, erzielte 22.895 Receiving Yards und 208 Touchdowns – Rekorde für die Ewigkeit.",
     "explanation": "Jerry Rice fing unfassbare 1.549 Pässe, erzielte 22.895 Receiving Yards und 208 Touchdowns – Rekorde für die Ewigkeit."
@@ -45,10 +45,10 @@
     "diff": "easy",
     "q": "Welchen akustischen Signalruf machte Quarterback Peyton Manning an der Line of Scrimmage weltweit berühmt?",
     "a": [
-      "Emmitt Smith",
-      "Walter Payton",
-      "Barry Sanders",
-      "Frank Gore"
+      "'Omaha!'",
+      "'Chicago!'",
+      "'Dallas!'",
+      "'Atlanta!'"
     ],
     "exp": "Mannings 'Omaha!'-Rufe vor dem Snap waren ein weltweites Markenzeichen. Dahinter verbargen sich Richtungsänderungen oder ein variierender Snap-Count.",
     "explanation": "Mannings 'Omaha!'-Rufe vor dem Snap waren ein weltweites Markenzeichen. Dahinter verbargen sich Richtungsänderungen oder ein variierender Snap-Count."
@@ -58,10 +58,10 @@
     "diff": "easy",
     "q": "Welcher gefürchtete Linebacker der New York Giants revolutionierte den Pass-Rush und wurde 1986 als Verteidiger zum NFL-MVP gewählt?",
     "a": [
-      "Lawrence Taylor",
-      "Ray Lewis",
-      "Dick Butkus",
-      "Mike Singletary"
+      "Lawrence Taylor ('LT')",
+      "Ray Lewis ('The Raven' / All-Pro)",
+      "Dick Butkus ('The Enforcer' / Bears)",
+      "Mike Singletary ('Samurai Mike' / MVP)"
     ],
     "exp": "Lawrence Taylor terrorisierte gegnerische Quarterbacks mit beispielloser Wucht. Er ist einer von nur zwei Defensivspielern der Geschichte, die zum MVP gewählt wurden.",
     "explanation": "Lawrence Taylor terrorisierte gegnerische Quarterbacks mit beispielloser Wucht. Er ist einer von nur zwei Defensivspielern der Geschichte, die zum MVP gewählt wurden."
@@ -71,10 +71,10 @@
     "diff": "mid",
     "q": "Warum trat Ausnahmeläufer Barry Sanders 1999 völlig überraschend auf dem absoluten Höhepunkt seiner Karriere zurück?",
     "a": [
-      "Joe Montana",
-      "Terry Bradshaw",
-      "Troy Aikman",
-      "John Elway"
+      "Er verlor die Motivation, weil die Detroit Lions keine Chance auf Meisterschaften boten",
+      "Wegen eines irreparablen Kreuzbandrisses im letzten Trainingslager",
+      "Um eine erfolgreiche Zweitkarriere im professionellen Baseball zu starten",
+      "Weil sein Vertrag vom Teambesitzer wegen einer Gehaltsobergrenze gekündigt wurde"
     ],
     "exp": "Sanders brauchte nur noch 1.457 Yards für den Allzeit-Rekord. Frustriert über das fehlende Sieger-Gen der Lions verkündete er per Fax seinen Rücktritt.",
     "explanation": "Sanders brauchte nur noch 1.457 Yards für den Allzeit-Rekord. Frustriert über das fehlende Sieger-Gen der Lions verkündete er per Fax seinen Rücktritt."
@@ -84,10 +84,10 @@
     "diff": "easy",
     "q": "Welcher ikonische Spitzname beschrieb den eleganten Laufstil von Bears-Legende Walter Payton?",
     "a": [
-      "Peyton Manning",
-      "Aaron Rodgers",
-      "Tom Brady",
-      "Brett Favre"
+      "'Sweetness'",
+      "'The Bus'",
+      "'The Beast'",
+      "'The Galloping Ghost'"
     ],
     "exp": "Payton verband tänzerische Eleganz mit kompromissloser Härte. Die NFL benannte ihre wichtigste Auszeichnung für soziales Engagement nach ihm ('Man of the Year').",
     "explanation": "Payton verband tänzerische Eleganz mit kompromissloser Härte. Die NFL benannte ihre wichtigste Auszeichnung für soziales Engagement nach ihm ('Man of the Year')."
@@ -97,10 +97,10 @@
     "diff": "mid",
     "q": "Welcher Quarterback warf 1984 als erster Spieler der Historie über 5.000 Pass-Yards und 48 Touchdowns in einer Saison?",
     "a": [
-      "Dan Marino",
-      "Warren Moon",
-      "Jim Kelly",
-      "Fran Tarkenton"
+      "Dan Marino (Miami Dolphins)",
+      "Joe Montana (San Francisco 49ers)",
+      "Warren Moon (Houston Oilers)",
+      "Dan Fouts (San Diego Chargers)"
     ],
     "exp": "Marino revolutionierte mit seinem extrem schnellen Wurfarm ('Quick Release') das Passspiel der NFL, blieb in seiner Karriere aber tragischerweise ohne Super-Bowl-Sieg.",
     "explanation": "Marino revolutionierte mit seinem extrem schnellen Wurfarm ('Quick Release') das Passspiel der NFL, blieb in seiner Karriere aber tragischerweise ohne Super-Bowl-Sieg."
@@ -110,10 +110,10 @@
     "diff": "mid",
     "q": "Welcher spektakuläre Hechtsprung von Quarterback John Elway in Super Bowl XXXII ging als 'The Helicopter' in die Geschichte ein?",
     "a": [
-      "Sprung bei 3rd Down in zwei Verteidiger mit Drehung um die eigene Achse",
-      "Sprung über die gesamte Defensive Line mit Landung auf dem Center",
-      "Sprung an der Seitenlinie im Hechtsalto über den gegnerischen Coach",
-      "Hechtsprung über die Pylone mit Ballabgabe im Fallen zum Tight End"
+      "Er sprang bei 3rd Down furchtlos in zwei Verteidiger und drehte sich in der Luft um die eigene Achse",
+      "Er sprang im hohen Flug über die gesamte Defensive Line und landete auf dem Rücken des Centers",
+      "Er hechtete an der Seitenlinie im spektakulären Salto über den heranstürmenden gegnerischen Safety",
+      "Er tauchte im Sprung tief über die Pylone und warf den Ball noch im Fallen zu seinem Tight End"
     ],
     "exp": "Der 37-jährige Elway opferte seinen Körper für das First Down: Er wurde in der Luft getroffen, wie ein Hubschrauber-Rotor gedreht – und sicherte Denver den Titel.",
     "explanation": "Der 37-jährige Elway opferte seinen Körper für das First Down: Er wurde in der Luft getroffen, wie ein Hubschrauber-Rotor gedreht – und sicherte Denver den Titel."
@@ -123,10 +123,10 @@
     "diff": "easy",
     "q": "Welcher zweisportliche Superstar spielte 1992 am selben Tag ein Playoff-Spiel im Baseball und ein NFL-Footballspiel?",
     "a": [
-      "Deion Sanders",
-      "Bo Jackson",
-      "Brian Jordan",
-      "Herschel Walker"
+      "Deion Sanders ('Prime Time')",
+      "Bo Jackson (Football- & Baseball-Allstar)",
+      "Brian Jordan (Atlanta Falcons & Cardinals)",
+      "Herschel Walker (Olympia-Bob & Heisman-Gewinner)"
     ],
     "exp": "Deion Sanders flog per Hubschrauber zwischen den Atlanta Falcons (NFL) und den Atlanta Braves (MLB) hin und her – der spektakulärste Doppelprofi aller Zeiten.",
     "explanation": "Deion Sanders flog per Hubschrauber zwischen den Atlanta Falcons (NFL) und den Atlanta Braves (MLB) hin und her – der spektakulärste Doppelprofi aller Zeiten."
@@ -136,10 +136,10 @@
     "diff": "mid",
     "q": "Welchen bis heute unerreichten Rekord hält Ausnahmesprinter Randy Moss aus der Saison 2007?",
     "a": [
-      "Barry Sanders",
-      "Jim Brown",
-      "Gale Sayers",
-      "Earl Campbell"
+      "23 gefangene Touchdown-Pässe in einer einzigen regulären Saison",
+      "300 Receiving Yards in einem einzigen Spielviertel",
+      "Drei gefangene Touchdowns in vier aufeinanderfolgenden Spielen",
+      "100 gefangene Pässe ohne einen einzigen liegengelassenen Ball (Drop)"
     ],
     "exp": "Als kongenialer Partner von Tom Brady fing Moss 2007 sagenhafte 23 Touchdown-Pässe und stellte eine historische Bestmarke für Wide Receiver auf.",
     "explanation": "Als kongenialer Partner von Tom Brady fing Moss 2007 sagenhafte 23 Touchdown-Pässe und stellte eine historische Bestmarke für Wide Receiver auf."
@@ -149,10 +149,10 @@
     "diff": "pro",
     "q": "Wer erfand in den 1960er Jahren den Begriff 'Sack' für das Zu-Boden-Bringen des Quarterbacks?",
     "a": [
-      "Brett Favre",
-      "Philip Rivers",
-      "Eli Manning",
-      "Peyton Manning"
+      "Deacon Jones (Defensive End der Los Angeles Rams)",
+      "Alan Page (legendärer Defensive Tackle der Minnesota Vikings)",
+      "Carl Eller (gefürchteter Pass-Rusher der 'Purple People Eaters')",
+      "Jack Youngblood (spielte ein komplettes Playoff-Spiel mit Wadenbeinbruch)"
     ],
     "exp": "Deacon Jones begründete den Begriff: 'Wie wenn man eine Stadt plündert und in Schutt und Asche legt – man packt den Quarterback in einen Sack (sack a city).'",
     "explanation": "Deacon Jones begründete den Begriff: 'Wie wenn man eine Stadt plündert und in Schutt und Asche legt – man packt den Quarterback in einen Sack (sack a city).'"
@@ -162,10 +162,10 @@
     "diff": "mid",
     "q": "Welcher Star-Running-Back dominierte die 1950er und 60er Jahre so sehr, dass er in jedem einzelnen Karrierejahr zum Pro Bowl gewählt wurde?",
     "a": [
-      "Walter Payton",
-      "Gale Sayers",
-      "Mike Ditka",
-      "Dick Butkus"
+      "Jim Brown (Cleveland Browns)",
+      "Gale Sayers (Chicago Bears)",
+      "O.J. Simpson (Buffalo Bills)",
+      "Earl Campbell (Houston Oilers)"
     ],
     "exp": "Jim Brown gewann in 8 seiner 9 NFL-Jahre die Rushing-Krone, hielt einen Schnitt von 104,3 Yards pro Spiel und trat auf dem Höhepunkt ab, um Filmschauspieler zu werden.",
     "explanation": "Jim Brown gewann in 8 seiner 9 NFL-Jahre die Rushing-Krone, hielt einen Schnitt von 104,3 Yards pro Spiel und trat auf dem Höhepunkt ab, um Filmschauspieler zu werden."
@@ -175,10 +175,10 @@
     "diff": "easy",
     "q": "Mit welchen spektakulären Wurftechniken revolutionierte Patrick Mahomes die moderne Quarterback-Position?",
     "a": [
-      "Kurt Warner",
-      "Jake Delhomme",
-      "Tony Romo",
-      "Warren Moon"
+      "No-Look-Pässe, Baseball-Sidearm-Würfe und Pässe mit der schwachen linken Hand",
+      "Dropkicks aus vollem Lauf über die gegnerische Defensive Line",
+      "Rückwärtspässe durch die eigenen Beine direkt zum Running Back",
+      "Pässe, die er mit der Fußspitze in die Arme seiner Receiver lupft"
     ],
     "exp": "Mahomes nutzte seine Baseball-Vergangenheit für unkonventionelle Wurfwinkel, schaute Verteidiger ins Leere und feierte 3 Super-Bowl-Siege vor seinem 29. Geburtstag.",
     "explanation": "Mahomes nutzte seine Baseball-Vergangenheit für unkonventionelle Wurfwinkel, schaute Verteidiger ins Leere und feierte 3 Super-Bowl-Siege vor seinem 29. Geburtstag."
@@ -188,10 +188,10 @@
     "diff": "easy",
     "q": "Welches Markenzeichen trug Quarterback-Legende Johnny Unitas in den 1950er und 60er Jahren?",
     "a": [
-      "Reggie White",
-      "Bruce Smith",
-      "Deacon Jones",
-      "Michael Strahan"
+      "Einen markanten Bürstenschnitt und klassische schwarze High-Top-Schuhe",
+      "Einen Bart im Holzfäller-Stil und abgeschnittene Trikotärmel",
+      "Zwei verschiedene Schuhfarben als Protest gegen Rassentrennung",
+      "Einen Lederhelm ohne Gesichtsgitter bis zu seinem Karriereende"
     ],
     "exp": "Unitas war der Prototyp des modernen Quarterbacks: Bürstenfrisur, schwarze hohe Schuhe und ein eisernes Gespür für den Two-Minute-Drill.",
     "explanation": "Unitas war der Prototyp des modernen Quarterbacks: Bürstenfrisur, schwarze hohe Schuhe und ein eisernes Gespür für den Two-Minute-Drill."
@@ -201,10 +201,10 @@
     "diff": "mid",
     "q": "Welcher Pass-Rusher hält mit 200 Karrieresacks den ewigen Rekord der NFL-Geschichte?",
     "a": [
-      "Bruce Smith",
-      "Reggie White",
-      "Kevin Greene",
-      "Julius Peppers"
+      "Bruce Smith (Buffalo Bills)",
+      "Reggie White (Packers & Eagles)",
+      "Kevin Greene (Rams & Steelers)",
+      "Julius Peppers (Panthers & Bears)"
     ],
     "exp": "Bruce Smith terrorisierte über zwei Jahrzehnte hinweg die gegnerischen Offensiven und knackte als einziger Spieler der NFL-Historie die 200-Sack-Marke.",
     "explanation": "Bruce Smith terrorisierte über zwei Jahrzehnte hinweg die gegnerischen Offensiven und knackte als einziger Spieler der NFL-Historie die 200-Sack-Marke."
@@ -214,10 +214,10 @@
     "diff": "easy",
     "q": "Welchen emotionalen Tanz zelebrierte Linebacker Ray Lewis vor jedem Heimspiel der Baltimore Ravens beim Einlauf?",
     "a": [
-      "Squirrel Dance",
-      "Raven Glide",
-      "Baltimore Bounce",
-      "Stepptanz"
+      "Den 'Squirrel Dance' (unter ohrenbetäubendem Jubel und Pyro-Effekten)",
+      "Den 'Raven Flight' mit dramatischem Gleitflug über den gesamten Stadionrasen",
+      "Den 'Gladiator Walk' mit martialischem Speerwurf in die gegnerische Endzone",
+      "Den 'Baltimore Bounce' im synchronen Rhythmus mit der gesamten Defensive Line"
     ],
     "exp": "Lewis rutschte auf die Knie, riss Gras aus dem Rasen und schrie: Der martialische 'Squirrel Dance' brachte das M&T Bank Stadium jedes Mal zum Kochen.",
     "explanation": "Lewis rutschte auf die Knie, riss Gras aus dem Rasen und schrie: Der martialische 'Squirrel Dance' brachte das M&T Bank Stadium jedes Mal zum Kochen."
@@ -227,10 +227,10 @@
     "diff": "pro",
     "q": "Welcher legendäre Free Safety der Ravens war berühmt dafür, Quarterbacks mit absichtlichen Fehlstellungen in Interceptions zu locken?",
     "a": [
-      "Franco Harris",
-      "John Stallworth",
-      "Lynn Swann",
-      "Rocky Bleier"
+      "Ed Reed",
+      "Troy Polamalu",
+      "Rod Woodson",
+      "Darren Sharper"
     ],
     "exp": "Ed Reed studierte Videos wie kein Zweiter: Er täuschte bewusst Deckungsfehler an, um Quarterbacks zu riskanten Pässen zu verleiten – und fing sie eiskalt ab.",
     "explanation": "Ed Reed studierte Videos wie kein Zweiter: Er täuschte bewusst Deckungsfehler an, um Quarterbacks zu riskanten Pässen zu verleiten – und fing sie eiskalt ab."
@@ -240,10 +240,10 @@
     "diff": "mid",
     "q": "Welcher Running Back hält mit 18.355 Yards den Allzeit-Rekord für die meisten erlaufenen Yards der NFL-Geschichte?",
     "a": [
-      "David Tyree",
-      "Plaxico Burress",
-      "Victor Cruz",
-      "Amani Toomer"
+      "Emmitt Smith (Dallas Cowboys)",
+      "Walter Payton (Chicago Bears)",
+      "Frank Gore (San Francisco 49ers)",
+      "Adrian Peterson (Minnesota Vikings)"
     ],
     "exp": "Hinter der bärenstarken Cowboys-Offensive Line der 90er Jahre überholte Emmitt Smith im Oktober 2002 Walter Payton und setzte den Meilenstein auf 18.355 Yards.",
     "explanation": "Hinter der bärenstarken Cowboys-Offensive Line der 90er Jahre überholte Emmitt Smith im Oktober 2002 Walter Payton und setzte den Meilenstein auf 18.355 Yards."
@@ -253,10 +253,10 @@
     "diff": "easy",
     "q": "Welcher Quarterback gewann als einziger Spieler in der NFL-Geschichte 5-mal die Auszeichnung als wertvollster Spieler (MVP)?",
     "a": [
-      "Malcolm Butler",
-      "Darrelle Revis",
-      "Devin McCourty",
-      "Stephon Gilmore"
+      "Peyton Manning",
+      "Tom Brady (New England Patriots)",
+      "Aaron Rodgers (Green Bay Packers)",
+      "Brett Favre (drei MVP-Titel in Serie)"
     ],
     "exp": "Manning wurde 2003, 2004, 2008, 2009 (mit den Colts) und 2013 (mit den Broncos) zum MVP gekürt – ein unübertroffener Rekord.",
     "explanation": "Manning wurde 2003, 2004, 2008, 2009 (mit den Colts) und 2013 (mit den Broncos) zum MVP gekürt – ein unübertroffener Rekord."
@@ -266,10 +266,10 @@
     "diff": "mid",
     "q": "Welcher Ausnahmeathlet brach 2012 nur neun Monate nach einem Kreuzbandriss fast den Rushing-Rekord (2.097 Yards)?",
     "a": [
-      "Mike Webster",
-      "Dwight Stephenson",
-      "Jim Otto",
-      "Dermontti Dawson"
+      "Adrian Peterson (Minnesota Vikings)",
+      "Chris Johnson (sprintete für die Tennessee Titans zu 2.006 Yards)",
+      "Jamaal Charles (historischer Allzeit-Schnitt von 5,4 Yards pro Lauf)",
+      "LeGarrette Blount (erzielte 18 Rushing-Touchdowns in einer Saison)"
     ],
     "exp": "Peterson ('All Day') kehrte nach schwerer Knieverletzung wie ein Übermensch zurück, verpasste Eric Dickersons Rekord um nur 8 Yards und wurde MVP.",
     "explanation": "Peterson ('All Day') kehrte nach schwerer Knieverletzung wie ein Übermensch zurück, verpasste Eric Dickersons Rekord um nur 8 Yards und wurde MVP."
@@ -279,10 +279,10 @@
     "diff": "pro",
     "q": "Welcher legendäre Running Back der Rams hält seit 1984 den Rekord für die meisten Rushing-Yards in einer einzigen Saison (2.105 Yards)?",
     "a": [
-      "Don Shula",
-      "George Halas",
-      "Bill Belichick",
-      "Tom Landry"
+      "Eric Dickerson",
+      "O. J. Simpson (erste 2.000-Yard-Saison)",
+      "Barry Sanders (2.053 Rushing-Yards 1997)",
+      "Terrell Davis (MVP-Saison mit 2.008 Yards)"
     ],
     "exp": "Mit seiner markanten Brille und aufrechtem Galopp-Laufstil stellte Dickerson 1984 die Fabelmarke von 2.105 Yards auf, die bis heute Bestand hat.",
     "explanation": "Mit seiner markanten Brille und aufrechtem Galopp-Laufstil stellte Dickerson 1984 die Fabelmarke von 2.105 Yards auf, die bis heute Bestand hat."
@@ -292,10 +292,10 @@
     "diff": "easy",
     "q": "Welcher Tight End bildete mit Tom Brady bei den Patriots und Buccaneers eines der dominantesten Touchdown-Duos der Geschichte?",
     "a": [
-      "Rob Gronkowski",
-      "Travis Kelce",
-      "Tony Gonzalez",
-      "Antonio Gates"
+      "Rob Gronkowski ('Gronk')",
+      "Travis Kelce (Dominator der Kansas City Chiefs)",
+      "Tony Gonzalez (Rekord-Tight-End der Pro Football Hall of Fame)",
+      "Antonio Gates (Touchdown-Maschine der San Diego Chargers)"
     ],
     "exp": "'Gronk' war mit seiner Wucht und Fangtechnik nicht zu stoppen. Seine Touchdown-Feiern ('Gronk Spike') wurden zum Kult der gesamten NFL.",
     "explanation": "'Gronk' war mit seiner Wucht und Fangtechnik nicht zu stoppen. Seine Touchdown-Feiern ('Gronk Spike') wurden zum Kult der gesamten NFL."
@@ -331,10 +331,10 @@
     "diff": "easy",
     "q": "Welcher physische Sprint-Test gilt beim jährlichen NFL Scouting Combine in Indianapolis als Königsdisziplin?",
     "a": [
-      "Der 40-Yard-Dash (Sprint über rund 36,6 Meter)",
-      "Der 100-Meter-Hürdenlauf auf Kunstrasen",
-      "Der 60-Yard-Pendellauf mit Richtungswechsel",
-      "Der 20-Yard-Schlittensprint gegen Widerstand"
+      "Don Shula (347 Siege)",
+      "George Halas (324 Siege mit den Chicago Bears)",
+      "Bill Belichick (333 Siege inklusive Playoffs)",
+      "Tom Landry (270 Siege bei den Dallas Cowboys)"
     ],
     "exp": "Beim 40-Yard-Dash entscheiden Hundertstelsekunden über Millionenverträge und Draft-Positionen. Scouts messen Beschleunigung und Höchstgeschwindigkeit.",
     "explanation": "Beim 40-Yard-Dash entscheiden Hundertstelsekunden über Millionenverträge und Draft-Positionen. Scouts messen Beschleunigung und Höchstgeschwindigkeit."
@@ -370,10 +370,10 @@
     "diff": "easy",
     "q": "Welches markante Kleidungsstück erhalten neu aufgenommene Legenden bei der Zeremonie der Pro Football Hall of Fame?",
     "a": [
-      "Ein maßgeschneidertes goldenes Sakko ('Gold Jacket')",
-      "Einen schweren silbernen Siegelring mit Rubinbesatz",
-      "Eine bestickte Krawatte mit dem Wappen von Ohio",
-      "Einen weißen Seidenschal mit goldener Rückennummer"
+      "Mike Webster ('Iron Mike')",
+      "Jim Otto ('Mr. Double Zero' der Oakland Raiders)",
+      "Dwight Stephenson (legendärer Center der Miami Dolphins)",
+      "Dermontti Dawson (revolutionierte die Center-Position in Pittsburgh)"
     ],
     "exp": "Das berühmte 'Gold Jacket' und die lebensgroße Bronzebüste in Canton (Ohio) sind die höchsten Weihen, die ein Footballspieler erreichen kann.",
     "explanation": "Das berühmte 'Gold Jacket' und die lebensgroße Bronzebüste in Canton (Ohio) sind die höchsten Weihen, die ein Footballspieler erreichen kann."
@@ -410,9 +410,9 @@
     "q": "Welcher Quarterback gilt neben Ryan Leaf als einer der größten 'Draft Busts' der Historie, nachdem ihn die Raiders 2007 an Position 1 zogen?",
     "a": [
       "JaMarcus Russell",
-      "Akili Smith (Bengals)",
-      "David Carr (Texans)",
-      "Vince Young (Titans)"
+      "Akili Smith (Pick 3 im NFL Draft 1999)",
+      "David Carr (wurde als Rookie 76-mal gesackt)",
+      "Vince Young (Offensive Rookie of the Year 2006)"
     ],
     "exp": "Russell kassierte Millionen, erschien übergewichtig und schaute keine Taktikvideos (Coaches gaben ihm leere DVDs, was er nicht bemerkte). Nach 3 Jahren war Schluss.",
     "explanation": "Russell kassierte Millionen, erschien übergewichtig und schaute keine Taktikvideos (Coaches gaben ihm leere DVDs, was er nicht bemerkte). Nach 3 Jahren war Schluss."
@@ -461,10 +461,10 @@
     "diff": "mid",
     "q": "Was sind sogenannte 'Compensatory Picks' im NFL Draft?",
     "a": [
-      "Zusatz-Draftpicks am Ende der Runden 3 bis 7 für Teams, die wertvolle Free Agents verloren haben",
-      "Straf-Picks, die Teams nach groben Regelverstößen an den Gegner abtreten müssen",
-      "Sonder-Wahlrechte für Mannschaften, deren Stadion renoviert werden muss",
-      "Garantierte Erstrunden-Picks für Teams mit mehr als fünf verletzten Stammspielern"
+      "Brock Purdy (San Francisco 49ers)",
+      "Ryan Succop (gewann als Kicker den Super Bowl LV)",
+      "Chad Kelly (Neffe von Bills-Legende Jim Kelly)",
+      "Tae Crowder (startete als Linebacker bei den Giants)"
     ],
     "exp": "Verliert ein Team mehr teure Free Agents als es verpflichtet, vergibt die NFL nach einer Geheimformel Ausgleichs-Picks (Compensatory Picks).",
     "explanation": "Verliert ein Team mehr teure Free Agents als es verpflichtet, vergibt die NFL nach einer Geheimformel Ausgleichs-Picks (Compensatory Picks)."
@@ -474,10 +474,10 @@
     "diff": "pro",
     "q": "Welcher berühmte Draft Pick wurde 1989 an Position 2 als 'The Incredible Bulk' gefeiert, entpuppte sich aber als gigantischer Flop?",
     "a": [
-      "Tony Mandarich (Offensive Tackle)",
-      "Brian Bosworth (Linebacker)",
-      "Charles Rogers (Wide Receiver)",
-      "Courtney Brown (Defensive End)"
+      "Eli Manning (wurde sofort für Philip Rivers getauscht)",
+      "Ben Roethlisberger (zwei Super-Bowl-Ringe mit Pittsburgh)",
+      "Matt Schaub (zweifacher Pro-Bowl-Quarterback der Texans)",
+      "J. P. Losman (Erstrunden-Quarterback der Buffalo Bills)"
     ],
     "exp": "Zwischen Troy Aikman (#1), Barry Sanders (#3), Derrick Thomas (#4) und Deion Sanders (#5) wählten die Packers Mandarich – einer der berühmtesten Draft-Fehlgriffe.",
     "explanation": "Zwischen Troy Aikman (#1), Barry Sanders (#3), Derrick Thomas (#4) und Deion Sanders (#5) wählten die Packers Mandarich – einer der berühmtesten Draft-Fehlgriffe."
@@ -487,10 +487,10 @@
     "diff": "mid",
     "q": "Wie lange hat ein Team in der ersten Runde des NFL Drafts Zeit auf der Uhr, um seinen Pick offiziell einzureichen?",
     "a": [
-      "10 Minuten",
-      "5 Minuten",
-      "15 Minuten",
-      "20 Minuten"
+      "10 Minuten (früher 15 Minuten)",
+      "15 Minuten (reguläre Zeit in früheren Draft-Epochen)",
+      "12 Minuten (zeitweiliger Kompromiss für Fernsehsender)",
+      "07 Minuten (verkürzte Beratungszeit in späteren Runden)"
     ],
     "exp": "In Runde 1 hat jedes Team 10 Minuten Zeit. In Runde 2 sinkt die Zeit auf 7 Minuten, in den Runden 3 bis 7 auf 5 bzw. 4 Minuten.",
     "explanation": "In Runde 1 hat jedes Team 10 Minuten Zeit. In Runde 2 sinkt die Zeit auf 7 Minuten, in den Runden 3 bis 7 auf 5 bzw. 4 Minuten."
@@ -539,10 +539,10 @@
     "diff": "mid",
     "q": "Welcher Kicker wurde als erst dritter reiner Kicker der Geschichte in die Pro Football Hall of Fame aufgenommen?",
     "a": [
-      "Morten Andersen",
-      "Adam Vinatieri",
-      "Gary Anderson",
-      "Jason Hanson"
+      "Morten Andersen (nach Jan Stenerud)",
+      "Adam Vinatieri (vierfacher Super-Bowl-Champion)",
+      "Gary Anderson (perfekte reguläre Saison ohne jeden Fehlschuss)",
+      "Jason Hanson (spielte 21 Jahre lang für dieselbe Franchise)"
     ],
     "exp": "Der Däne Morten Andersen ('The Great Dane') erzielte 2.544 Punkte und wurde 2017 in die Hall of Fame gewählt.",
     "explanation": "Der Däne Morten Andersen ('The Great Dane') erzielte 2.544 Punkte und wurde 2017 in die Hall of Fame gewählt."
@@ -578,10 +578,10 @@
     "diff": "pro",
     "q": "Welcher Spieler hält den Rekord für die meisten Touchdowns in einem einzigen NFL-Spiel (6 Touchdowns)?",
     "a": [
-      "Ernie Nevers, Dub Jones, Gale Sayers und Alvin Kamara",
-      "Jerry Rice, Randy Moss, Terrell Owens und Cris Carter",
-      "Walter Payton, Emmitt Smith, Barry Sanders und Jim Brown",
-      "Tom Brady, Peyton Manning, Patrick Mahomes und Drew Brees"
+      "Ernie Nevers, Dub Jones, Gale Sayers und Alvin Kamara (jeweils 6 Touchdowns)",
+      "Jerry Rice, Randy Moss, Terrell Owens und Steve Largent",
+      "Walter Payton, Emmitt Smith, Barry Sanders und Marshall Faulk",
+      "Tom Brady, Peyton Manning, Patrick Mahomes und Aaron Rodgers"
     ],
     "exp": "Alvin Kamara schaffte das Kunststück an Heiligabend 2020 gegen die Vikings und zog mit den Legenden Nevers (1929), Jones (1951) und Sayers (1965) gleich.",
     "explanation": "Alvin Kamara schaffte das Kunststück an Heiligabend 2020 gegen die Vikings und zog mit den Legenden Nevers (1929), Jones (1951) und Sayers (1965) gleich."
@@ -591,10 +591,10 @@
     "diff": "easy",
     "q": "Was versteht man unter dem popkulturellen Phänomen des 'Madden Curse'?",
     "a": [
-      "Stars auf dem Madden-Cover erleiden in der Folgesaison Verletzungen oder Krisen",
-      "Teams nach einer Niederlage gegen John Madden gewannen jahrelang kein Playoff",
-      "Kommentator John Madden verriet vor laufender Kamera versehentlich Spielzüge",
-      "Stadien mit schlechtem Rasenbelag mussten nach scharfer Kritik abgerissen werden"
+      "Dass Stars auf dem Cover des Videospiels 'Madden NFL' in der Folgesaison schwere Verletzungen oder Leistungseinbrüche erleiden",
+      "Dass Teams nach einer schmerzhaften Playoff-Niederlage gegen John Madden fünf Jahre lang kein einziges Spiel mehr gewannen",
+      "Dass TV-Experte John Madden während Live-Übertragungen versehentlich geheime Spielzug-Varianten der Trainer ausplauderte",
+      "Dass Stadien mit extrem holprigem Kunstrasen nach öffentlicher Madden-Kritik innerhalb eines Jahres abgerissen werden mussten"
     ],
     "exp": "Garrison Hearst, Daunte Culpepper, Michael Vick, Shaun Alexander, Peyton Hillis: Zahlreiche Cover-Stars verletzten sich schwer oder stürzten sportlich ab.",
     "explanation": "Garrison Hearst, Daunte Culpepper, Michael Vick, Shaun Alexander, Peyton Hillis: Zahlreiche Cover-Stars verletzten sich schwer oder stürzten sportlich ab."
@@ -682,10 +682,10 @@
     "diff": "mid",
     "q": "Welche maximale Länge kann ein Touchdown-Spielzug in der NFL theoretisch und praktisch betragen?",
     "a": [
-      "109 Yards Distanz",
-      "100 Yards Distanz",
-      "120 Yards Distanz",
-      "105 Yards Distanz"
+      "109 Yards (vom hintersten Punkt der eigenen Endzone bis zur gegnerischen Endzone)",
+      "100 Yards (nur die reine Distanz zwischen den beiden Goallines zählt)",
+      "120 Yards (die komplette Spielfläche inklusive beider Endzonen)",
+      "105 Yards (gemessen vom Startpunkt an der eigenen 5-Yard-Linie)"
     ],
     "exp": "Antonio Cromartie (2007) und Jamal Agnew (2021) trugen jeweils verfehlte Field Goals über die maximale Rekorddistanz von 109 Yards zum Touchdown zurück.",
     "explanation": "Antonio Cromartie (2007) und Jamal Agnew (2021) trugen jeweils verfehlte Field Goals über die maximale Rekorddistanz von 109 Yards zum Touchdown zurück."
@@ -721,10 +721,10 @@
     "diff": "pro",
     "q": "Was war der 'Snowplow Game' der New England Patriots gegen die Miami Dolphins im Jahr 1982?",
     "a": [
-      "Ein Schneepflug räumte mitten im Spiel eine Stelle für das siegbringende Field Goal frei",
-      "Ein Schneepflug rammte versehentlich den Mannschaftsbus der gegnerischen Dolphins",
-      "Schiedsrichter unterbrachen das Spiel, damit Fans die Goalline mit Schaufeln freilegten",
-      "Ein Schneesturm wehte das Tornetz weg, woraufhin ein Pflug als Ersatzpfosten diente"
+      "Ein Sträfling auf einem Schneepflug räumte mitten im Spiel eine freie Stelle für das siegbringende Field Goal frei",
+      "Ein Schneepflug rammte bei der Anfahrt versehentlich den Mannschaftsbus der angereisten Miami Dolphins",
+      "Die Schiedsrichter unterbrachen das Spiel, damit Freiwillige mit Schaufeln die Markierungen freilegen",
+      "Ein eisiger Schneesturm wehte das Tornetz weg, woraufhin ein gelber Räumpflug als Torpfosten diente"
     ],
     "exp": "Mark Henderson fuhr mit seinem John-Deere-Pflug aufs Feld und räumte auf Geheiß von Coach Ron Meyer exakt die Stelle für Kickers John Smiths 3:0-Siegkick frei.",
     "explanation": "Mark Henderson fuhr mit seinem John-Deere-Pflug aufs Feld und räumte auf Geheiß von Coach Ron Meyer exakt die Stelle für Kickers John Smiths 3:0-Siegkick frei."
@@ -748,9 +748,9 @@
     "q": "Welcher Head Coach gewann mit den New England Patriots sechs Super-Bowl-Titel und trug stets abgeschnittene Kapuzenpullover ('Hoodies')?",
     "a": [
       "Bill Belichick",
-      "Andy Reid (Chiefs)",
-      "Pete Carroll (Seahawks)",
-      "Bill Cowher (Steelers)"
+      "Andy Reid (Kansas City Chiefs)",
+      "Pete Carroll (Seattle Seahawks)",
+      "Bill Cowher (Pittsburgh Steelers)"
     ],
     "exp": "Belichicks mürrische Pressekonferenzen und seine zerschnittenen grauen Hoodies wurden zum Kult-Markenzeichen der erfolgreichsten Dynastie der NFL.",
     "explanation": "Belichicks mürrische Pressekonferenzen und seine zerschnittenen grauen Hoodies wurden zum Kult-Markenzeichen der erfolgreichsten Dynastie der NFL."
@@ -760,10 +760,10 @@
     "diff": "mid",
     "q": "Welcher Star-Cornerback prägte das Zitat 'You play to win the game!' während einer legendären Pressekonferenz?",
     "a": [
-      "Herm Edwards",
-      "Deion Sanders",
-      "Darrelle Revis",
-      "Charles Woodson"
+      "Herm Edwards (damals Head Coach der New York Jets)",
+      "Deion Sanders (prägte legendäre Sprüche als 'Prime Time')",
+      "Darrelle Revis (Gründer der gefürchteten 'Revis Island')",
+      "Charles Woodson (einziger primärer Abwehrspieler mit Heisman-Trophäe)"
     ],
     "exp": "Edwards' emotionale Brandrede aus dem Jahr 2002: 'Hello? You play to win the game! You don't play just to play it!' ist einer der berühmtesten O-Töne der Sportwelt.",
     "explanation": "Edwards' emotionale Brandrede aus dem Jahr 2002: 'Hello? You play to win the game! You don't play just to play it!' ist einer der berühmtesten O-Töne der Sportwelt."
@@ -773,10 +773,10 @@
     "diff": "easy",
     "q": "Was bezeichnet der Begriff 'Revis Island' im Zusammenhang mit Cornerback Darrelle Revis?",
     "a": [
-      "Top-Receiver waren in seiner direkten Manndeckung komplett abgemeldet",
-      "Eine private Südseeinsel, die er nach seinem ersten Rekordvertrag kaufte",
-      "Ein spezielles Reha-Zentrum für verletzte Abwehrspieler in New York",
-      "Ein abgegrenzter Strafbereich auf der Trainerbank für unkonzentrierte Spieler"
+      "Dass gegnerische Top-Receiver in seiner 1-gegen-1-Deckung komplett isoliert und abgemeldet waren",
+      "Eine private Luxusinsel in der Karibik, die Revis nach seinem ersten Mega-Vertrag erwarb",
+      "Ein exklusives Reha-Zentrum für verletzte Abwehrspieler im Großraum New York City",
+      "Einen abgetrennten Strafbereich auf der Trainerbank für unkonzentrierte Passverteidiger"
     ],
     "exp": "Revis deckte die besten Receiver der Welt ohne Safety-Hilfe ab. Wer gegen ihn spielte, war auf 'Revis Island' gefangen und sah keinen einzigen Ball.",
     "explanation": "Revis deckte die besten Receiver der Welt ohne Safety-Hilfe ab. Wer gegen ihn spielte, war auf 'Revis Island' gefangen und sah keinen einzigen Ball."
@@ -838,10 +838,10 @@
     "diff": "pro",
     "q": "Was war der 'Holy Roller' Spielzug im September 1978 zwischen den Raiders und den Chargers?",
     "a": [
-      "QB Ken Stabler rollte den Ball absichtlich nach vorn, Mitspieler kickten ihn zum TD",
-      "Ein Schiedsrichter rollte sich über den Rasen, um einen Fumble unter sich zu sichern",
-      "Der Kicker schoss ein Field Goal flach über den Boden durch die Beine der Abwehr",
-      "Zwei Spieler rollten den verletzten Quarterback an den Beinen aus der Endzone"
+      "Raiders-QB Ken Stabler rollte den Ball kurz vor dem Sack absichtlich nach vorn, Mitspieler kickten ihn zum TD ins Ziel",
+      "Ein Schiedsrichter rollte sich reflexartig über den Naturrasen, um einen freien Fumble unter seinem Körper zu schützen",
+      "Der Kicker schoss ein Field Goal absichtlich flach über den gefrorenen Boden direkt durch die Beine der Abwehrreihe",
+      "Zwei Linemen rollten ihren verletzten Quarterback an beiden Beinen blitzschnell aus der gegnerischen Endzone heraus"
     ],
     "exp": "Stabler 'fumblierte' absichtlich nach vorne, Pete Banaszak und Dave Casper schoben das Ei in die Endzone: Touchdown! Die NFL verbot danach das Vorwärtsrollen bei Fumbles.",
     "explanation": "Stabler 'fumblierte' absichtlich nach vorne, Pete Banaszak und Dave Casper schoben das Ei in die Endzone: Touchdown! Die NFL verbot danach das Vorwärtsrollen bei Fumbles."
@@ -851,10 +851,10 @@
     "diff": "mid",
     "q": "Welcher Spieler hält den Rekord für die meisten abgefangenen Pässe (Interceptions) in einer einzigen Saison (14 Interceptions 1952)?",
     "a": [
-      "Dick Lane (Rams)",
-      "Paul Krause (Vikings)",
-      "Mel Blount (Steelers)",
-      "Emlen Tunnell (Giants)"
+      "Dick 'Night Train' Lane (Los Angeles Rams)",
+      "Paul Krause (Allzeit-Rekordhalter mit 81 Interceptions)",
+      "Mel Blount (Cornerback der legendären 'Steel Curtain')",
+      "Emlen Tunnell (Pionier und Legende der New York Giants)"
     ],
     "exp": "Als Rookie stellte 'Night Train' Lane 1952 in nur 12 Spielen den Fabelrekord von 14 Interceptions auf – eine Bestmarke, die bis heute unberührt blieb.",
     "explanation": "Als Rookie stellte 'Night Train' Lane 1952 in nur 12 Spielen den Fabelrekord von 14 Interceptions auf – eine Bestmarke, die bis heute unberührt blieb."
@@ -890,10 +890,10 @@
     "diff": "easy",
     "q": "Was rief Running Back Marshawn Lynch auf einer berühmt gewordenen Super-Bowl-Pressekonferenz 29-mal hintereinander?",
     "a": [
-      "I'm just here so I won't get fined.",
-      "No comment, ask my coach today.",
-      "Beast Mode all day long every week.",
-      "Talk to my agent, please and thanks."
+      "'I'm just here so I won't get fined.'",
+      "'No comment, please ask my head coach.'",
+      "'Beast Mode all day long, every day.'",
+      "'Talk to my agent, I have nothing to say.'"
     ],
     "exp": "Um der drohenden NFL-Geldstrafe von 500.000 Dollar zu entgehen, erschien Lynch pünktlich – und antwortete auf ausnahmslos jede Frage mit demselben Satz.",
     "explanation": "Um der drohenden NFL-Geldstrafe von 500.000 Dollar zu entgehen, erschien Lynch pünktlich – und antwortete auf ausnahmslos jede Frage mit demselben Satz."
@@ -943,9 +943,9 @@
     "q": "Welchen Meilenstein erreichte Devin Hester 2024 mit seiner Aufnahme in die Hall of Fame?",
     "a": [
       "Er wurde als allererster reiner Return-Specialist der NFL-Geschichte nach Canton gewählt",
-      "Er wurde zum jüngsten Mitglied aller Zeiten in der Pro Football Hall of Fame",
-      "Er trat als einziger Spieler ohne einen einzigen regulären Offense-Snap ein",
-      "Er wurde von allen Stimmberechtigten im allerersten Wahlgang einstimmig gewählt"
+      "Er wurde zum jüngsten Mitglied aller Zeiten in der traditionsreichen Pro Football Hall of Fame",
+      "Er schaffte als einziger Spieler ohne einen einzigen regulären Offense-Snap die Aufnahme",
+      "Er wurde von sämtlichen Stimmberechtigten im allerersten Wahlgang vollkommen einstimmig gewählt"
     ],
     "exp": "Mit 20 Return-Touchdowns (14 Punts, 5 Kickoffs, 1 missed FG) ist Hester der beste Returner aller Zeiten und krönte seine Karriere mit dem Hall-of-Fame-Einzug.",
     "explanation": "Mit 20 Return-Touchdowns (14 Punts, 5 Kickoffs, 1 missed FG) ist Hester der beste Returner aller Zeiten und krönte seine Karriere mit dem Hall-of-Fame-Einzug."
