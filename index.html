@@ -718,11 +718,23 @@
 
     @media (max-width: 640px) {
       #hub-shell {
-        padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 48px;
+        padding: calc(8px + env(safe-area-inset-top, 0px)) 10px 36px;
       }
       .hub-header {
-        padding: 14px 14px;
-        gap: 10px;
+        padding: 10px 12px;
+        gap: 8px;
+        border-radius: 14px;
+      }
+      .brand-logo {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+      .brand-title {
+        font-size: 18px;
+      }
+      .brand-sub {
+        display: none;
       }
       .header-actions {
         width: 100%;
@@ -736,39 +748,90 @@
       }
       .header-actions .hub-action-btn,
       .header-actions .icon-btn {
-        padding: 6px 9px;
-        font-size: 12px;
-        min-width: 32px;
-        height: 32px;
+        padding: 5px 8px;
+        font-size: 11.5px;
+        min-width: 30px;
+        height: 30px;
         white-space: nowrap;
         flex-shrink: 0;
       }
       .domain-tabs {
-        margin-top: 14px;
+        margin-top: 10px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        gap: 5px;
+      }
+      .domain-tabs::-webkit-scrollbar {
+        display: none;
+      }
+      .domain-tab {
+        padding: 6px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .section-block {
+        margin-top: 12px;
+      }
+      .section-head {
+        margin-bottom: 8px;
+        gap: 6px;
+      }
+      .section-head h2 {
+        font-size: 17px;
+      }
+      .filter-row {
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        gap: 5px;
+      }
+      .filter-row::-webkit-scrollbar {
+        display: none;
+      }
+      .filter-pill {
+        padding: 5px 9px;
+        font-size: 11.5px;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
       .games-grid {
         grid-template-columns: 1fr;
-        gap: 16px;
-      }
-      .game-card {
-        padding: 22px 20px;
-      }
-      .hero-stats {
-        width: 100%;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
       }
-      .hero-stat-box {
-        min-width: 0;
+      .game-card {
         padding: 12px 14px;
+        gap: 6px;
+        border-radius: 14px;
       }
-      .domain-tab {
-        padding: 10px 16px;
-        font-size: 13.5px;
+      .game-icon-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+      }
+      .card-title {
+        font-size: 15.5px;
+      }
+      .card-desc {
+        font-size: 12px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .card-footer {
+        margin-top: 2px;
+        padding-top: 8px;
+      }
+      .play-cta {
+        padding: 6px 10px;
+        font-size: 12px;
       }
       #hub-feedback-board {
-        padding: 20px 18px;
+        padding: 14px 12px;
       }
     }
   </style>
@@ -813,7 +876,7 @@
       <button class="domain-tab active" data-domain="all" id="tab-all">✨ Alles (33)</button>
       <button class="domain-tab" data-domain="games" id="tab-games">🎮 Games (10)</button>
       <button class="domain-tab quiz-tab" data-domain="quizzes" id="tab-quizzes">🧠 Quiz-Welten (23)</button>
-      <button class="domain-tab" data-domain="feedback">💬 Wünsche &amp; Bug-Melder</button>
+      <button class="domain-tab" data-domain="feedback">💬 Wünsche</button>
     </div>
 
     <section class="section-block" id="sec-games">
