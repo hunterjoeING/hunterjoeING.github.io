@@ -2,7 +2,16 @@
 // Width-based auto-fit (94-96% viewport width), top-pinned framing, user zoom control, dynamic stacking, and matte Jumbo cards.
 
 import * as THREE from 'three';
-import { createSolitaireAssets, TABLE_THEME } from './sol3d-textures.js';
+import {
+  createSolitaireAssets,
+  createTableTexture,
+  createTableBumpTexture,
+  TABLE_SURFACES,
+  DEFAULT_TABLE_SURFACE,
+  DEFAULT_TABLE_COLOR,
+  parseHexColor,
+  adjustRgb
+} from './sol3d-textures.js';
 
 export const CARD_W = 1.0;
 export const CARD_H = 1.40;
@@ -169,14 +178,17 @@ function createSparkTexture() {
 }
 
 export class SolitaireScene {
-  constructor(canvas, containerEl) {
+  constructor(canvas, containerEl, initialSurface = DEFAULT_TABLE_SURFACE, initialColor = DEFAULT_TABLE_COLOR) {
     this.canvas = canvas;
     this.containerEl = containerEl;
     this.cameraPreset = '3d'; // '3d' (steep playable) or 'top' (near-orthographic)
     this.userZoom = 1.0;
+    this.tableSurface = initialSurface;
+    this.tableColor = initialColor;
 
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(TABLE_THEME.bgHex);
+    const bgRgb = adjustRgb(parseHexColor(initialColor), 0.22);
+    this.scene.background = new THREE.Color(bgRgb.r / 255, bgRgb.g / 255, bgRgb.b / 255);
 
     // Narrow 32 deg FOV minimizes perspective distortion across all 10 columns
     this.camera = new THREE.PerspectiveCamera(32, 16 / 10, 0.5, 90);
@@ -199,7 +211,7 @@ export class SolitaireScene {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
     const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
-    this.assets = createSolitaireAssets(maxAniso);
+    this.assets = createSolitaireAssets(maxAniso, this.tableSurface, this.tableColor);
 
     this.cardGeo = createRoundedCardGeometry(CARD_W, CARD_H, CARD_THICK, CARD_CORNER);
     this.glowTex = createGlowTexture('rgba(255, 214, 110, 0.95)');
@@ -262,12 +274,13 @@ export class SolitaireScene {
     const tableGroup = new THREE.Group();
 
     const feltGeo = new THREE.PlaneGeometry(TABLE_W, TABLE_D);
+    const surfaceDef = TABLE_SURFACES.find((s) => s.id === this.tableSurface) || TABLE_SURFACES[0];
     this.feltMat = new THREE.MeshStandardMaterial({
-      map: this.assets.feltTex,
-      bumpMap: this.assets.feltBump,
-      bumpScale: 0.006,
-      roughness: 0.98,
-      metalness: 0.0
+      map: this.assets.tableTex,
+      bumpMap: this.assets.tableBump,
+      bumpScale: surfaceDef.bumpScale || 0.006,
+      roughness: surfaceDef.roughness ?? 0.95,
+      metalness: surfaceDef.metalness ?? 0.0
     });
     const feltMesh = new THREE.Mesh(feltGeo, this.feltMat);
     feltMesh.rotation.x = -Math.PI / 2;
@@ -403,7 +416,7 @@ export class SolitaireScene {
     });
 
     const edgeMat = new THREE.MeshStandardMaterial({
-      color: 0xb0a89a,
+      color: 0x4e4942,
       roughness: 0.88,
       metalness: 0.0
     });
@@ -513,6 +526,47 @@ export class SolitaireScene {
         maxLife: 0.55 + Math.random() * 0.45
       });
     }
+  }
+
+  setTableTheme(surfaceType, colorHex) {
+    if (surfaceType) this.tableSurface = surfaceType;
+    if (colorHex) this.tableColor = colorHex;
+
+    const surfaceDef = TABLE_SURFACES.find((s) => s.id === this.tableSurface) || TABLE_SURFACES[0];
+    const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
+
+    const newTex = createTableTexture(this.tableSurface, this.tableColor, maxAniso);
+    const newBump = createTableBumpTexture(this.tableSurface);
+
+    if (this.feltMat.map) this.feltMat.map.dispose();
+    if (this.feltMat.bumpMap) this.feltMat.bumpMap.dispose();
+
+    this.feltMat.map = newTex;
+    this.feltMat.bumpMap = newBump;
+    this.feltMat.roughness = surfaceDef.roughness ?? 0.95;
+    this.feltMat.metalness = surfaceDef.metalness ?? 0.0;
+    this.feltMat.bumpScale = surfaceDef.bumpScale || 0.006;
+    this.feltMat.needsUpdate = true;
+
+    const bgRgb = adjustRgb(parseHexColor(this.tableColor), 0.20);
+    this.scene.background.setRGB(bgRgb.r / 255, bgRgb.g / 255, bgRgb.b / 255);
+  }
+
+  completeAllAnimations() {
+    if (this.animations.size === 0) return;
+    for (const [id, anim] of this.animations.entries()) {
+      const vis = this.cardVisuals[id];
+      if (vis) {
+        vis.curPos.copy(anim.toPos);
+        vis.curFlip = anim.toFlip;
+        vis.curYaw = anim.toYaw;
+        vis.curScale = anim.toScale;
+        vis.curTiltX = 0;
+        vis.curTiltZ = 0;
+        this._applyVisual(vis);
+      }
+    }
+    this.animations.clear();
   }
 
   setCameraPreset(preset) {
