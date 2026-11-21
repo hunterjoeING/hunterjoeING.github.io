@@ -645,6 +645,12 @@ function updateHUD(force = false) {
   document.getElementById('hud-lives').textContent = lives;
   document.getElementById('hud-wave').textContent = wave;
   document.getElementById('hud-score').textContent = score;
+  const bGold = document.getElementById('board-gold');
+  const bLives = document.getElementById('board-lives');
+  const bWave = document.getElementById('board-wave');
+  if (bGold) bGold.textContent = gold;
+  if (bLives) bLives.textContent = lives;
+  if (bWave) bWave.textContent = wave;
 
   const ongoing = wave > 0 && (waveQueue.length > 0 || enemies.length > 0);
   const locked = ongoing && earlyWaveLockTimer > 0;
