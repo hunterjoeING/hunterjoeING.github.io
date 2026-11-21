@@ -469,10 +469,10 @@ export class ZBScene {
     this.flashLight.position.set(playerWX, 2.3, Z_NEAR - 0.3);
     this.flashLight.target.position.set(playerWX * 0.72, 0.3, -15);
 
-    // 3. Squad Marines (up to 24 visible, arranged in a narrow, deep 3-column tactical formation)
+    // 3. Squad Marines (up to 24 visible, arranged in a 4-column tactical formation)
     const visCount = Math.min(24, state.squad);
     const firingGlow = state.running && state.shootTimer > (1 / Math.max(1, state.fireRate)) * 0.65;
-    const cols = 3;
+    const cols = 4;
     for (let s = 0; s < 24; s++) {
       const vis = this.models.marines[s];
       if (s >= visCount) {
@@ -491,9 +491,9 @@ export class ZBScene {
     // 4. Forcefield Shield Dome
     if (state.shield > 0 && state.squad > 0) {
       this.shieldGroup.visible = true;
-      const spreadScale = 1 + Math.min(0.45, Math.max(0, visCount - 1) * 0.04);
-      this.shieldGroup.position.set(playerWX, 0.65, Z_NEAR - 0.85);
-      this.shieldGroup.scale.set(spreadScale, 0.85, 1.35);
+      const spreadScale = 1 + Math.min(0.60, Math.max(0, visCount - 1) * 0.055);
+      this.shieldGroup.position.set(playerWX, 0.65, Z_NEAR - 0.75);
+      this.shieldGroup.scale.set(spreadScale, 0.85, 1.20);
       this.shieldWire.rotation.y = nowSec * 0.8;
     } else {
       this.shieldGroup.visible = false;
