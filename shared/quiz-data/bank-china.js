@@ -12,7 +12,7 @@
       "Er verhängte ein Embargo gegen englischen Tee und Porzellanwaren"
     ],
     "explanation": "Großbritannien antwortete mit Kanonenbooten, um den lukrativen Drogenhandel der East India Company militärisch durchzusetzen.",
-    "exp": "Er ließ beschlagnahmtes britisches Opium öffentlich in Gruben vernichten"
+    "exp": "Großbritannien antwortete mit Kanonenbooten, um den lukrativen Drogenhandel der East India Company militärisch durchzusetzen."
   },
   {
     "cat": "spate_qing_republik",
@@ -25,7 +25,7 @@
       "Halbinsel Macau"
     ],
     "explanation": "Der Vertrag von Nanking war der erste der berüchtigten „Ungleichen Verträge“, die in China das „Jahrhundert der Schande“ einläuteten.",
-    "exp": "Hongkong"
+    "exp": "Der Vertrag von Nanking war der erste der berüchtigten „Ungleichen Verträge“, die in China das „Jahrhundert der Schande“ einläuteten."
   },
   {
     "cat": "spate_qing_republik",
@@ -38,7 +38,7 @@
       "Er behauptete, ein von Venus-Bewohnern gesandter Sternenbote zu sein"
     ],
     "explanation": "Der Taiping-Aufstand gegen die Mandschu forderte 20 bis 30 Millionen Menschenleben und war der blutigste Bürgerkrieg der gesamten Menschheitsgeschichte.",
-    "exp": "Er behauptete, der leibliche jüngere Bruder von Jesus Christus zu sein"
+    "exp": "Der Taiping-Aufstand gegen die Mandschu forderte 20 bis 30 Millionen Menschenleben und war der blutigste Bürgerkrieg der gesamten Menschheitsgeschichte."
   },
   {
     "cat": "spate_qing_republik",
@@ -51,7 +51,7 @@
       "Für den Import von tausenden Rennpferden aus dem Osmanischen Reich"
     ],
     "explanation": "Als China 1894 im Ersten Japanisch-Chinesischen Krieg gegen Japans moderne Panzerkreuzer antrat, war die Qing-Flotte hoffnungslos unterlegen.",
-    "exp": "Bau des Neuen Sommerpalasts mit Marmorschiff am Kunming-See"
+    "exp": "Als China 1894 im Ersten Japanisch-Chinesischen Krieg gegen Japans moderne Panzerkreuzer antrat, war die Qing-Flotte hoffnungslos unterlegen."
   },
   {
     "cat": "spate_qing_republik",
@@ -64,20 +64,20 @@
       "Die Xinhai-Revolution"
     ],
     "explanation": "Die Rebellen glaubten durch rituelle Kampfkünste gegen westliche Gewehrkugeln unverwundbar zu sein; ein Acht-Nationen-Bündnis schlug sie blutig nieder.",
-    "exp": "Der Boxeraufstand"
+    "exp": "Die Rebellen glaubten durch rituelle Kampfkünste gegen westliche Gewehrkugeln unverwundbar zu sein; ein Acht-Nationen-Bündnis schlug sie blutig nieder."
   },
   {
     "cat": "spate_qing_republik",
     "diff": "mid",
     "q": "Was war das bizarre Schicksal von Puyi, dem 1912 abgesetzten „Letzten Kaiser“ von China, in seinen späten Lebensjahren?",
     "a": [
-      "Puyi",
-      "Guangxu",
-      "Tongzhi",
-      "Xianfeng"
+      "Er arbeitete nach seiner Begnadigung als Gärtner im Botanischen Garten von Peking",
+      "Er floh nach London und lehrte als Professor für Sinologie an der Universität Oxford",
+      "Er lebte unerkannt als Bibliothekar in einem abgelegenen buddhistischen Bergkloster",
+      "Er wurde von Mao zum zeremoniellen Botschafter bei den Vereinten Nationen ernannt"
     ],
     "explanation": "Nach seiner Rolle als Marionettenkaiser von Mandschukuo und Umerziehungslager lebte Puyi bis 1967 als ganz gewöhnlicher Bürger der Volksrepublik.",
-    "exp": "Puyi"
+    "exp": "Nach seiner Rolle als Marionettenkaiser von Mandschukuo und Umerziehungslager lebte Puyi bis 1967 als ganz gewöhnlicher Bürger der Volksrepublik."
   },
   {
     "cat": "spate_qing_republik",
@@ -90,7 +90,7 @@
       "Li Hongzhang"
     ],
     "explanation": "Sun Yat-sen formulierte die „Drei Prinzipien des Volkes“ (Nationalismus, Demokratie, Wohlstand) und wird bis heute in Festlandchina und Taiwan gleichermaßen verehrt.",
-    "exp": "Sun Yat-sen"
+    "exp": "Sun Yat-sen formulierte die „Drei Prinzipien des Volkes“ (Nationalismus, Demokratie, Wohlstand) und wird bis heute in Festlandchina und Taiwan gleichermaßen verehrt."
   },
   {
     "cat": "spate_qing_republik",
@@ -103,20 +103,20 @@
       "Er führte den Konfuzianismus als Pflicht ein"
     ],
     "explanation": "Enttäuscht von den westlichen Demokratien wandten sich viele junge Intellektuelle der Bewegung des 4. Mai dem Marxismus-Leninismus zu.",
-    "exp": "Er ließ sich selbst zum Kaiser von China krönen"
+    "exp": "Enttäuscht von den westlichen Demokratien wandten sich viele junge Intellektuelle der Bewegung des 4. Mai dem Marxismus-Leninismus zu."
   },
   {
     "cat": "spate_qing_republik",
     "diff": "pro",
     "q": "Was tat General Yuan Shikai 1915, was einen landesweiten Aufstand selbst unter seinen engsten Generälen auslöste?",
     "a": [
-      "Proteste gegen den Versailler Vertrag und Kolonialmächte",
-      "Ein Generalstreik der Seidenweber in Shanghai für höhere Löhne",
-      "Ein friedlicher Trauermarsch nach dem Tod von Sun Yat-sen",
-      "Die feierliche Ausrufung der ersten Verfassung der Republik"
+      "Er rief sich selbst zum neuen Kaiser von China (Hongxian-Dynastie) aus",
+      "Er verkaufte die gesamte verbliebene kaiserliche Flotte an das Japanische Kaiserreich",
+      "Er verbot die chinesische Schrift zugunsten des westlichen lateinischen Alphabets",
+      "Er ernannte einen britischen Diplomaten zum obersten Finanzminister der Republik"
     ],
     "explanation": "Sein Versuch, die Monarchie wiederzubeleben, hielt nur 83 Tage; sein Scheitern stürzte China in die chaotische Ära der Warlords.",
-    "exp": "Proteste gegen den Versailler Vertrag und Kolonialmächte"
+    "exp": "Sein Versuch, die Monarchie wiederzubeleben, hielt nur 83 Tage; sein Scheitern stürzte China in die chaotische Ära der Warlords."
   },
   {
     "cat": "spate_qing_republik",
@@ -129,20 +129,20 @@
       "Im Dezember 1931 in den Bergen der Jiangxi-Sowjetrepublik"
     ],
     "explanation": "Chiang Kai-shek verbündete sich mit der Unterwelt-Triade von Du Yuesheng, um tausende streikende Gewerkschafter und Kommunisten hinzurichten.",
-    "exp": "Im Juli 1921 in der französischen Konzession in Shanghai"
+    "exp": "Chiang Kai-shek verbündete sich mit der Unterwelt-Triade von Du Yuesheng, um tausende streikende Gewerkschafter und Kommunisten hinzurichten."
   },
   {
     "cat": "spate_qing_republik",
     "diff": "pro",
     "q": "Auf welcher legendären Konferenz im Januar 1935 während des Langen Marsches sicherte sich Mao Zedong die Führung der KPCh?",
     "a": [
-      "Guerillakrieg mit Unterstützung der ländlichen Bauernbevölkerung",
-      "Klassischer bewaffneter Arbeiteraufstand in den Großstädten",
-      "Ein parlamentarischer Marsch durch alle bestehenden Institutionen",
-      "Die schrittweise Unterwanderung der nationalchinesischen Armee"
+      "Die Konferenz von Zunyi (während des Langen Marsches)",
+      "Der erste Parteitag der KPCh auf einem Ausflugsboot in Jiaxing",
+      "Die legendären Yan'an-Vorträge über Kunst und Literatur",
+      "Der siebte Kongress der Kommunistischen Internationale in Moskau"
     ],
     "explanation": "In Zunyi entmachtete Mao die von Moskau gesteuerten Komintern-Berater (die „28 Bolschewiken“) und setzte seine Taktik des bäuerlichen Guerillakriegs durch.",
-    "exp": "Guerillakrieg mit Unterstützung der ländlichen Bauernbevölkerung"
+    "exp": "In Zunyi entmachtete Mao die von Moskau gesteuerten Komintern-Berater (die „28 Bolschewiken“) und setzte seine Taktik des bäuerlichen Guerillakriegs durch."
   },
   {
     "cat": "spate_qing_republik",
@@ -155,20 +155,20 @@
       "Der Rückzug der Warlords in das tibetische Hochland"
     ],
     "explanation": "Kommunistische Soldaten hangelten sich unter feindlichem Maschinengewehrfeuer über freiliegende Ketten, da die Bohlen der Brücke abmontiert waren.",
-    "exp": "Der Lange Marsch der Roten Armee über 9.000 Kilometer"
+    "exp": "Kommunistische Soldaten hangelten sich unter feindlichem Maschinengewehrfeuer über freiliegende Ketten, da die Bohlen der Brücke abmontiert waren."
   },
   {
     "cat": "spate_qing_republik",
     "diff": "easy",
     "q": "Welcher Zwischenfall am 7. Juli 1937 gilt als Beginn des vollen Zweiten Japanisch-Chinesischen Krieges?",
     "a": [
-      "Das Massaker von Nanjing",
-      "Die Schlacht von Shanghai",
-      "Die Belagerung von Wuhan",
-      "Das Bombardement von Chongqing"
+      "Der Zwischenfall an der Marco-Polo-Brücke (Lugou Qiao) nahe Peking",
+      "Die Versenkung des britischen Kanonenboots HMS Panay auf dem Jangtse",
+      "Der Mukden-Zwischenfall an der südmandschurischen Eisenbahnlinie",
+      "Die Bombardierung des internationalen Konzessionsgebiets von Shanghai"
     ],
     "explanation": "Japan nutzte die angebliche Suche nach einem vermissten Soldaten an der Brücke als Vorwand für eine Großoffensive auf Peking.",
-    "exp": "Das Massaker von Nanjing"
+    "exp": "Japan nutzte die angebliche Suche nach einem vermissten Soldaten an der Brücke als Vorwand für eine Großoffensive auf Peking."
   },
   {
     "cat": "spate_qing_republik",
@@ -181,7 +181,7 @@
       "Sie versenkten alle Schiffe im Hafenbecken von Shanghai"
     ],
     "explanation": "Die gigantische Flutwelle ertränkte rund 500.000 chinesische Zivilisten und machte Millionen obdachlos – hielt die Japaner aber nur wenige Monate auf.",
-    "exp": "Sie sprengten die Deiche des Gelben Flusses bei Huayuankou"
+    "exp": "Die gigantische Flutwelle ertränkte rund 500.000 chinesische Zivilisten und machte Millionen obdachlos – hielt die Japaner aber nur wenige Monate auf."
   },
   {
     "cat": "spate_qing_republik",
@@ -194,7 +194,7 @@
       "Kaiserstadt Xi’an"
     ],
     "explanation": "Hinter den Schluchten des Jangtse geschützt ertrug Chongqing jahrelange pausenlose Bombardements der japanischen Luftwaffe.",
-    "exp": "Chongqing"
+    "exp": "Hinter den Schluchten des Jangtse geschützt ertrug Chongqing jahrelange pausenlose Bombardements der japanischen Luftwaffe."
   },
   {
     "cat": "spate_qing_republik",
@@ -207,7 +207,7 @@
       "Chinesische Eliteschützen ausgebildet von Schweizer Instruktoren"
     ],
     "explanation": "Die Flying Tigers errangen trotz zahlenmäßiger Unterlegenheit spektakuläre Luftsiege über der berüchtigten Versorgungsroute „The Hump“.",
-    "exp": "Freiwillige US-Piloten mit Curtiss P-40-Jägern mit Haifischmaul"
+    "exp": "Die Flying Tigers errangen trotz zahlenmäßiger Unterlegenheit spektakuläre Luftsiege über der berüchtigten Versorgungsroute „The Hump“."
   },
   {
     "cat": "spate_qing_republik",
@@ -220,7 +220,7 @@
       "US-Diplomaten handelten einen Waffenstillstand zwischen den Parteien aus"
     ],
     "explanation": "Chiang wollte zuerst die Kommunisten vernichten („innen erst befrieden, dann außen abwehren“); seine eigenen Generäle stoppten ihn mit Waffengewalt.",
-    "exp": "Warlord Zhang Xueliang entführte Chiang und erzwang die Einheitsfront"
+    "exp": "Chiang wollte zuerst die Kommunisten vernichten („innen erst befrieden, dann außen abwehren“); seine eigenen Generäle stoppten ihn mit Waffengewalt."
   },
   {
     "cat": "spate_qing_republik",
@@ -233,7 +233,7 @@
       "In die Vereinigten Staaten"
     ],
     "explanation": "In Taipeh führte Chiang die „Republik China“ im Kriegszustand weiter, während auf dem Festland die Volksrepublik ausgerufen wurde.",
-    "exp": "Auf die Insel Taiwan"
+    "exp": "In Taipeh führte Chiang die „Republik China“ im Kriegszustand weiter, während auf dem Festland die Volksrepublik ausgerufen wurde."
   },
   {
     "cat": "spate_qing_republik",
@@ -246,7 +246,7 @@
       "Handelsstadt Xiamen"
     ],
     "explanation": "Das deutsche Pachtgebiet Kiautschou brachte deutsches Baurecht, Kanalisation und 1903 die Tsingtao-Brauerei hervor, die bis heute weltweit exportiert.",
-    "exp": "Qingdao"
+    "exp": "Das deutsche Pachtgebiet Kiautschou brachte deutsches Baurecht, Kanalisation und 1903 die Tsingtao-Brauerei hervor, die bis heute weltweit exportiert."
   },
   {
     "cat": "mao_aera",
@@ -259,7 +259,7 @@
       "15. August 1945"
     ],
     "explanation": "Mit den Worten „Das chinesische Volk ist aufgestanden!“ besiegelte Mao das Ende des Bürgerkriegs und gründete die Volksrepublik.",
-    "exp": "1. Oktober 1949"
+    "exp": "Mit den Worten „Das chinesische Volk ist aufgestanden!“ besiegelte Mao das Ende des Bürgerkriegs und gründete die Volksrepublik."
   },
   {
     "cat": "mao_aera",
@@ -272,7 +272,7 @@
       "Nordkorea bat um Schutzkräfte zur Grenzsicherung"
     ],
     "explanation": "Die überraschende Offensive von hunderttausenden chinesischen Soldaten warf die UN- und US-Truppen bis weit hinter Seoul zurück.",
-    "exp": "US-Truppen rückten bis an den Grenzfluss Yalu vor"
+    "exp": "Die überraschende Offensive von hunderttausenden chinesischen Soldaten warf die UN- und US-Truppen bis weit hinter Seoul zurück."
   },
   {
     "cat": "mao_aera",
@@ -285,7 +285,7 @@
       "Getreidemühlen wurden zu Munitionsfabriken umgebaut"
     ],
     "explanation": "Der erzeugte „Stahl“ war brüchiges, unbrauchbares Roheisen. Da Bauern auf den Feldern fehlten, verrottete die Ernte und Millionen verhungerten.",
-    "exp": "Bauern sollten in primitiven Lehmöfen Schrott einschmelzen"
+    "exp": "Der erzeugte „Stahl“ war brüchiges, unbrauchbares Roheisen. Da Bauern auf den Feldern fehlten, verrottete die Ernte und Millionen verhungerten."
   },
   {
     "cat": "mao_aera",
@@ -298,7 +298,7 @@
       "Mücken verseuchten das Trinkwasser mit Cholerabakterien"
     ],
     "explanation": "Mao ließ Spatzen tagelang mit Trommeln und Töpfen scheuchen, bis sie tot vom Himmel fielen – die folgende Insektenplage verschärfte die Große Hungersnot.",
-    "exp": "Ohne Spatzen fraßen Heuschrecken und Schädlinge die Felder kahl"
+    "exp": "Mao ließ Spatzen tagelang mit Trommeln und Töpfen scheuchen, bis sie tot vom Himmel fielen – die folgende Insektenplage verschärfte die Große Hungersnot."
   },
   {
     "cat": "mao_aera",
@@ -311,7 +311,7 @@
       "Vorwärts im revolutionären Kampf gegen den Imperialismus"
     ],
     "explanation": "Zunächst ermunterte Mao zu offener Kritik; als diese die Partei fundamental infrage stellte, wurden über 500.000 Intellektuelle in Arbeitslager deportiert.",
-    "exp": "Lasst hundert Blumen blühen, lasst hundert Schulen streiten"
+    "exp": "Zunächst ermunterte Mao zu offener Kritik; als diese die Partei fundamental infrage stellte, wurden über 500.000 Intellektuelle in Arbeitslager deportiert."
   },
   {
     "cat": "mao_aera",
@@ -324,7 +324,7 @@
       "Peking forderte die Rückgabe historischer Gebiete Sibiriens"
     ],
     "explanation": "Der Bruch führte 1969 sogar zu blutigen Grenzgefechten am Fluss Ussuri und trieb China schließlich in die diplomatische Annäherung an die USA.",
-    "exp": "Mao verurteilte Chruschtschows Entstalinisierung als Verrat"
+    "exp": "Der Bruch führte 1969 sogar zu blutigen Grenzgefechten am Fluss Ussuri und trieb China schließlich in die diplomatische Annäherung an die USA."
   },
   {
     "cat": "mao_aera",
@@ -337,7 +337,7 @@
       "Revolutionsbrigaden"
     ],
     "explanation": "Auf Maos Aufruf „Bombardiert die Hauptquartiere!“ zerstörten die Roten Garden Tempel, historische Schätze und demütigten Lehrer und Parteifunktionäre.",
-    "exp": "Rote Garden"
+    "exp": "Auf Maos Aufruf „Bombardiert die Hauptquartiere!“ zerstörten die Roten Garden Tempel, historische Schätze und demütigten Lehrer und Parteifunktionäre."
   },
   {
     "cat": "mao_aera",
@@ -350,7 +350,7 @@
       "Das Kommunistische Handbuch Chinas"
     ],
     "explanation": "Jeder Bürger musste die Rote Fibel stets bei sich tragen, Passagen auswendig aufsagen und bei Kundgebungen im Chor in die Luft recken.",
-    "exp": "Worte des Vorsitzenden Mao Tsetung"
+    "exp": "Jeder Bürger musste die Rote Fibel stets bei sich tragen, Passagen auswendig aufsagen und bei Kundgebungen im Chor in die Luft recken."
   },
   {
     "cat": "mao_aera",
@@ -363,7 +363,7 @@
       "Alter Aberglaube, alter Handel, altes Geld und altes Recht"
     ],
     "explanation": "Unzählige unersetzliche Kulturschätze aus Jahrtausenden chinesischer Geschichte wurden von fanatischen Jugendlichen zertrümmert und verbrannt.",
-    "exp": "Alte Ideen, alte Kultur, alte Gewohnheiten und alte Sitten"
+    "exp": "Unzählige unersetzliche Kulturschätze aus Jahrtausenden chinesischer Geschichte wurden von fanatischen Jugendlichen zertrümmert und verbrannt."
   },
   {
     "cat": "mao_aera",
@@ -376,7 +376,7 @@
       "Er beging Selbstmord in seinem Pekinger Arbeitszimmer"
     ],
     "explanation": "Der Tod von Lin Biao, der zuvor als Maos treuester Waffenbruder galt, erschütterte den Glauben der Bevölkerung an die Führung zutiefst.",
-    "exp": "Sein Flugzeug stürzte bei der Flucht über der Mongolei ab"
+    "exp": "Der Tod von Lin Biao, der zuvor als Maos treuester Waffenbruder galt, erschütterte den Glauben der Bevölkerung an die Führung zutiefst."
   },
   {
     "cat": "mao_aera",
@@ -389,7 +389,7 @@
       "Schachturnier"
     ],
     "explanation": "Eine zufällige Begegnung bei der WM in Japan führte zur Einladung des US-Tischtennisteams nach Peking – kurz darauf reiste Henry Kissinger geheim an.",
-    "exp": "Tischtennis"
+    "exp": "Eine zufällige Begegnung bei der WM in Japan führte zur Einladung des US-Tischtennisteams nach Peking – kurz darauf reiste Henry Kissinger geheim an."
   },
   {
     "cat": "mao_aera",
@@ -402,7 +402,7 @@
       "Lyndon B. Johnson"
     ],
     "explanation": "Nixons Besuch war ein diplomatisches Erdbeben im Kalten Krieg und isolierte die Sowjetunion geopolitisch.",
-    "exp": "Richard Nixon"
+    "exp": "Nixons Besuch war ein diplomatisches Erdbeben im Kalten Krieg und isolierte die Sowjetunion geopolitisch."
   },
   {
     "cat": "mao_aera",
@@ -415,7 +415,7 @@
       "Hongkong wurde unter provisorische UN-Verwaltung gestellt"
     ],
     "explanation": "Seitdem vertritt allein Peking völkerrechtlich ganz China in den Vereinten Nationen.",
-    "exp": "Volksrepublik erhielt Sitz Chinas und Taiwans Vertreter gingen"
+    "exp": "Seitdem vertritt allein Peking völkerrechtlich ganz China in den Vereinten Nationen."
   },
   {
     "cat": "mao_aera",
@@ -428,7 +428,7 @@
       "Erster ziviler Präsident der Volksrepublik China"
     ],
     "explanation": "Zhou Enlai rettete hinter den Kulissen viele Intellektuelle und Regierungsbeamte vor den Exzessen der Kulturrevolution.",
-    "exp": "Pragmatischer Chefdiplomat und Premierminister Chinas"
+    "exp": "Zhou Enlai rettete hinter den Kulissen viele Intellektuelle und Regierungsbeamte vor den Exzessen der Kulturrevolution."
   },
   {
     "cat": "mao_aera",
@@ -441,7 +441,7 @@
       "Die Gouverneure der vier südlichen Küstenprovinzen"
     ],
     "explanation": "Mit der Verhaftung der Viererbande im Oktober 1976 endete die zerstörerische Ära der Kulturrevolution schlagartig.",
-    "exp": "Maos Witwe Jiang Qing und drei radikale Funktionäre"
+    "exp": "Mit der Verhaftung der Viererbande im Oktober 1976 endete die zerstörerische Ära der Kulturrevolution schlagartig."
   },
   {
     "cat": "mao_aera",
@@ -454,7 +454,7 @@
       "Die geheime Stationierung von U-Booten im Südchinesischen Meer"
     ],
     "explanation": "Mao fürchtete einen sowjetischen oder amerikanischen Erstschlag – Fabriken wurden unter unvorstellbaren Mühen in Bergkuppen und Täler von Sichuan verlegt.",
-    "exp": "Aufbau von Industrie in Bergen und Höhlen gegen Atomangriffe"
+    "exp": "Mao fürchtete einen sowjetischen oder amerikanischen Erstschlag – Fabriken wurden unter unvorstellbaren Mühen in Bergkuppen und Täler von Sichuan verlegt."
   },
   {
     "cat": "mao_aera",
@@ -467,7 +467,7 @@
       "1976"
     ],
     "explanation": "Trotz des Bruchs mit Moskau und verheerender Hungersnöte schaffte China den Aufstieg zur Atommacht in Rekordzeit.",
-    "exp": "1964"
+    "exp": "Trotz des Bruchs mit Moskau und verheerender Hungersnöte schaffte China den Aufstieg zur Atommacht in Rekordzeit."
   },
   {
     "cat": "mao_aera",
@@ -480,7 +480,7 @@
       "Erdbeben von Yunnan"
     ],
     "explanation": "Im traditionellen Volksglauben galt die Naturkatastrophe vielen als Zeichen, dass die Herrscher das „Mandat des Himmels“ verloren hatten.",
-    "exp": "Erdbeben von Tangshan"
+    "exp": "Im traditionellen Volksglauben galt die Naturkatastrophe vielen als Zeichen, dass die Herrscher das „Mandat des Himmels“ verloren hatten."
   },
   {
     "cat": "mao_aera",
@@ -493,7 +493,7 @@
       "In den Ming-Gräbern nördlich von Peking"
     ],
     "explanation": "Obwohl Mao ausdrücklich eingeäschert werden wollte, entschied das Politbüro nach seinem Tod, ihn in einem Kristallkristall-Sarkophag aufzubahren.",
-    "exp": "Im Mao-Mausoleum auf dem Tian’anmen-Platz"
+    "exp": "Obwohl Mao ausdrücklich eingeäschert werden wollte, entschied das Politbüro nach seinem Tod, ihn in einem Kristallkristall-Sarkophag aufzubahren."
   },
   {
     "cat": "reform_boom",
@@ -506,7 +506,7 @@
       "Premier Zhao Ziyang"
     ],
     "explanation": "Deng Xiaoping überlebte zwei Säuberungswellen unter Mao und führte China ohne formales Staatspräsidentenamt in die Moderne.",
-    "exp": "Deng Xiaoping"
+    "exp": "Deng Xiaoping überlebte zwei Säuberungswellen unter Mao und führte China ohne formales Staatspräsidentenamt in die Moderne."
   },
   {
     "cat": "reform_boom",
@@ -519,7 +519,7 @@
       "Wer den Tiger reitet, darf niemals freiwillig absteigen"
     ],
     "explanation": "Deng machte Schluss mit ideologischen Grabenkämpfen: Wenn kapitalistische Methoden Wohlstand schaffen, werden sie im Sozialismus genutzt.",
-    "exp": "Egal ob die Katze schwarz oder weiß ist, sie muss Mäuse fangen"
+    "exp": "Deng machte Schluss mit ideologischen Grabenkämpfen: Wenn kapitalistische Methoden Wohlstand schaffen, werden sie im Sozialismus genutzt."
   },
   {
     "cat": "reform_boom",
@@ -532,7 +532,7 @@
       "Xiamen im Süden"
     ],
     "explanation": "Shenzhen wuchs in vier Jahrzehnten von 30.000 Einwohnern zu einer hochmodernen Tech-Megacity mit über 17 Millionen Menschen.",
-    "exp": "Shenzhen"
+    "exp": "Shenzhen wuchs in vier Jahrzehnten von 30.000 Einwohnern zu einer hochmodernen Tech-Megacity mit über 17 Millionen Menschen."
   },
   {
     "cat": "reform_boom",
@@ -545,7 +545,7 @@
       "Flohen gemeinsam über den Grenzfluss nach Hongkong"
     ],
     "explanation": "Der Pakt war illegal (bei Entdeckung drohte Todesstrafe), doch der Ertrag explodierte – Deng Xiaoping legalisierte das Modell als „Haushaltsverantwortungssystem“.",
-    "exp": "Teilten Kommuneland heimlich in Parzellen mit Daumenabdrücken in Blut"
+    "exp": "Der Pakt war illegal (bei Entdeckung drohte Todesstrafe), doch der Ertrag explodierte – Deng Xiaoping legalisierte das Modell als „Haushaltsverantwortungssystem“."
   },
   {
     "cat": "reform_boom",
@@ -558,7 +558,7 @@
       "Familienstopp"
     ],
     "explanation": "Die Politik verhinderte Hunderte Millionen Geburten, führte aber zu einer extremen Überalterung der Gesellschaft und einem Mangel an Frauen.",
-    "exp": "Ein-Kind-Politik"
+    "exp": "Die Politik verhinderte Hunderte Millionen Geburten, führte aber zu einer extremen Überalterung der Gesellschaft und einem Mangel an Frauen."
   },
   {
     "cat": "reform_boom",
@@ -571,7 +571,7 @@
       "Ein Soldat, der sein Gewehr im Regen auf den Boden warf"
     ],
     "explanation": "Die Identität und das Schicksal des Mannes sind bis heute unbekannt – das Bild wurde zur weltweiten Ikone des Widerstands gegen Tyrannei.",
-    "exp": "Unbewaffneter Mann mit Taschen vor einer Kolonne von Panzern"
+    "exp": "Die Identität und das Schicksal des Mannes sind bis heute unbekannt – das Bild wurde zur weltweiten Ikone des Widerstands gegen Tyrannei."
   },
   {
     "cat": "reform_boom",
@@ -584,7 +584,7 @@
       "Die Verdoppelung der Rüstungsausgaben für die Armee"
     ],
     "explanation": "Studenten versammelten sich zunächst zur Trauerfeier auf dem Platz des Himmlischen Friedens – daraus entwickelte sich eine wochenlange Besetzung.",
-    "exp": "Kampf gegen Parteikorruption und mehr Meinungsfreiheit"
+    "exp": "Studenten versammelten sich zunächst zur Trauerfeier auf dem Platz des Himmlischen Friedens – daraus entwickelte sich eine wochenlange Besetzung."
   },
   {
     "cat": "reform_boom",
@@ -597,7 +597,7 @@
       "Er unterzeichnete ein Sonderabkommen mit den USA"
     ],
     "explanation": "Nach Tian’anmen wollten Dogmatiker die Marktwirtschaft zurückdrehen; Deng mobilisierte die südlichen Boomregionen und setzte sich durch.",
-    "exp": "Er reiste in den Süden und erzwang Fortsetzung der Reformen"
+    "exp": "Nach Tian’anmen wollten Dogmatiker die Marktwirtschaft zurückdrehen; Deng mobilisierte die südlichen Boomregionen und setzte sich durch."
   },
   {
     "cat": "reform_boom",
@@ -610,7 +610,7 @@
       "Großer Sprung nach vorn"
     ],
     "explanation": "Deng Xiaoping versprach, dass Hongkongs kapitalistisches System, Lebensweise und Rechtssystem für mindestens 50 Jahre unverändert bleiben sollten.",
-    "exp": "Ein Land, zwei Systeme"
+    "exp": "Deng Xiaoping versprach, dass Hongkongs kapitalistisches System, Lebensweise und Rechtssystem für mindestens 50 Jahre unverändert bleiben sollten."
   },
   {
     "cat": "reform_boom",
@@ -623,7 +623,7 @@
       "Malakka"
     ],
     "explanation": "Macau war über 440 Jahre unter portugiesischer Verwaltung und entwickelte sich unter chinesischer Hoheit zur glücksspielstärksten Casinometropole der Welt.",
-    "exp": "Macau"
+    "exp": "Macau war über 440 Jahre unter portugiesischer Verwaltung und entwickelte sich unter chinesischer Hoheit zur glücksspielstärksten Casinometropole der Welt."
   },
   {
     "cat": "reform_boom",
@@ -636,7 +636,7 @@
       "Li Keqiang"
     ],
     "explanation": "Der furchtlose „Eiserne Zhu“ entließ über 30 Millionen Arbeiter aus staatlichen Zombie-Betrieben und verhandelte Chinas WTO-Beitritt hartnäckig zu Ende.",
-    "exp": "Zhu Rongji"
+    "exp": "Der furchtlose „Eiserne Zhu“ entließ über 30 Millionen Arbeiter aus staatlichen Zombie-Betrieben und verhandelte Chinas WTO-Beitritt hartnäckig zu Ende."
   },
   {
     "cat": "reform_boom",
@@ -649,7 +649,7 @@
       "Den Bambus biegen, ohne ihn zu brechen"
     ],
     "explanation": "Statt radikaler Schocktherapien (wie im post-sowjetischen Russland) testete China Reformen immer erst regional in kleinem Maßstab.",
-    "exp": "Die Steine ertastend den Fluss überqueren"
+    "exp": "Statt radikaler Schocktherapien (wie im post-sowjetischen Russland) testete China Reformen immer erst regional in kleinem Maßstab."
   },
   {
     "cat": "reform_boom",
@@ -662,7 +662,7 @@
       "Xiluodu-Bogenstaumauer"
     ],
     "explanation": "Die größte Talsperre der Welt überflutete 13 Städte und über 1.300 Dörfer und zwang mehr als 1,3 Millionen Menschen zur Umsiedlung.",
-    "exp": "Drei-Schluchten-Staudamm"
+    "exp": "Die größte Talsperre der Welt überflutete 13 Städte und über 1.300 Dörfer und zwang mehr als 1,3 Millionen Menschen zur Umsiedlung."
   },
   {
     "cat": "reform_boom",
@@ -675,7 +675,7 @@
       "Ein Luftzwischenfall zwischen Jagdflugzeugen beider Seiten"
     ],
     "explanation": "Präsident Clinton schickte die Flugzeugträger USS Nimitz und USS Independence – die Demütigung trieb Chinas massive Modernisierung der Marine an.",
-    "exp": "Raketentests und Manöver vor Taiwans Küste nach USA-Besuch"
+    "exp": "Präsident Clinton schickte die Flugzeugträger USS Nimitz und USS Independence – die Demütigung trieb Chinas massive Modernisierung der Marine an."
   },
   {
     "cat": "reform_boom",
@@ -688,7 +688,7 @@
       "Qiao Shi"
     ],
     "explanation": "Jiang Zemin öffnete die Kommunistische Partei offiziell für private Unternehmer und Kapitalisten – ein ideologischer Meilenstein.",
-    "exp": "Jiang Zemin"
+    "exp": "Jiang Zemin öffnete die Kommunistische Partei offiziell für private Unternehmer und Kapitalisten – ein ideologischer Meilenstein."
   },
   {
     "cat": "reform_boom",
@@ -701,7 +701,7 @@
       "Die Festnahme chinesischer Diplomaten am Flughafen"
     ],
     "explanation": "Die USA sprachen von einem Zielfehler durch veraltete Karten; Peking und die chinesische Bevölkerung hielten es für eine vorsätzliche Provokation.",
-    "exp": "NATO-Bomben trafen chinesische Botschaft in Belgrad"
+    "exp": "Die USA sprachen von einem Zielfehler durch veraltete Karten; Peking und die chinesische Bevölkerung hielten es für eine vorsätzliche Provokation."
   },
   {
     "cat": "reform_boom",
@@ -714,7 +714,7 @@
       "Bürgerforum Peking"
     ],
     "explanation": "Der Dissident Wei Jingsheng forderte dort in Wandzeitungen die „Fünfte Modernisierung“ – die Demokratie. Er wurde zu 15 Jahren Haft verurteilt.",
-    "exp": "Mauer der Demokratie"
+    "exp": "Der Dissident Wei Jingsheng forderte dort in Wandzeitungen die „Fünfte Modernisierung“ – die Demokratie. Er wurde zu 15 Jahren Haft verurteilt."
   },
   {
     "cat": "reform_boom",
@@ -727,7 +727,7 @@
       "Juli 1997"
     ],
     "explanation": "Der WTO-Beitritt war die Startrampe für Chinas Aufstieg zur unangefochtenen „Werkbank der Welt“ und größten Exportnation.",
-    "exp": "Dezember 2001"
+    "exp": "Der WTO-Beitritt war die Startrampe für Chinas Aufstieg zur unangefochtenen „Werkbank der Welt“ und größten Exportnation."
   },
   {
     "cat": "reform_boom",
@@ -740,7 +740,7 @@
       "Das Devisenkontrollgesetz der Zentralbank"
     ],
     "explanation": "Zuvor behielten die reichen Küstenprovinzen die meisten Gelder selbst – das System sicherte der Zentralregierung in Peking wieder volle Kassen.",
-    "exp": "Steuerrabatt- und Teilungssystem (Fenshuizhi)"
+    "exp": "Zuvor behielten die reichen Küstenprovinzen die meisten Gelder selbst – das System sicherte der Zentralregierung in Peking wieder volle Kassen."
   },
   {
     "cat": "gegenwart",
@@ -753,7 +753,7 @@
       "Green China 2008"
     ],
     "explanation": "Die monumentale Eröffnungsfeier im „Vogelnest“-Stadion unter Regisseur Zhang Yimou gilt als Chinas globales Debüt als Supermacht.",
-    "exp": "One World, One Dream"
+    "exp": "Die monumentale Eröffnungsfeier im „Vogelnest“-Stadion unter Regisseur Zhang Yimou gilt als Chinas globales Debüt als Supermacht."
   },
   {
     "cat": "gegenwart",
@@ -766,7 +766,7 @@
       "Über 80.000 Kilometer Trassennetz"
     ],
     "explanation": "In weniger als 15 Jahren baute China aus dem Nichts das mit Abstand gigantischste und modernste Schnellzugnetz der Erde.",
-    "exp": "Über 45.000 Kilometer Trassennetz"
+    "exp": "In weniger als 15 Jahren baute China aus dem Nichts das mit Abstand gigantischste und modernste Schnellzugnetz der Erde."
   },
   {
     "cat": "gegenwart",
@@ -779,7 +779,7 @@
       "Asiatischer Infrastrukturkorridor"
     ],
     "explanation": "Mit Straßen, Häfen, Brücken und Eisenbahnlinien in über 140 Ländern bindet China globale Handelswege strategisch an sich.",
-    "exp": "Neue Seidenstraße (BRI)"
+    "exp": "Mit Straßen, Häfen, Brücken und Eisenbahnlinien in über 140 Ländern bindet China globale Handelswege strategisch an sich."
   },
   {
     "cat": "gegenwart",
@@ -792,7 +792,7 @@
       "Die Landung eines Rovers auf dem Merkur"
     ],
     "explanation": "Da direkter Funkkontakt durch den Mond blockiert ist, koordinierte China die Landung über den Relaissatelliten Queqiao.",
-    "exp": "Erste weiche Landung auf der Mondrückseite"
+    "exp": "Da direkter Funkkontakt durch den Mond blockiert ist, koordinierte China die Landung über den Relaissatelliten Queqiao."
   },
   {
     "cat": "gegenwart",
@@ -805,7 +805,7 @@
       "Chang’e"
     ],
     "explanation": "Nachdem der US-Kongress chinesischen Taikonauten den Zugang zur ISS verboten hatte, baute China seine eigene modulare Raumstation.",
-    "exp": "Tiangong"
+    "exp": "Nachdem der US-Kongress chinesischen Taikonauten den Zugang zur ISS verboten hatte, baute China seine eigene modulare Raumstation."
   },
   {
     "cat": "gegenwart",
@@ -818,7 +818,7 @@
       "Die Verlegung des Regierungssitzes nach Shanghai beschlossen"
     ],
     "explanation": "Die Reform ermöglichte Xi Jinping eine beispiellose dritte (und potenziell lebenslange) Amtszeit an der Staatsspitze.",
-    "exp": "Begrenzung auf maximal zwei Amtszeiten gestrichen"
+    "exp": "Die Reform ermöglichte Xi Jinping eine beispiellose dritte (und potenziell lebenslange) Amtszeit an der Staatsspitze."
   },
   {
     "cat": "gegenwart",
@@ -831,7 +831,7 @@
       "Wukong-Forschungssatellit"
     ],
     "explanation": "In einer natürlichen Karstmulde erbaut spürt FAST schwächste Signale von Pulsaren und fernen Galaxien auf.",
-    "exp": "FAST-Radioteleskop"
+    "exp": "In einer natürlichen Karstmulde erbaut spürt FAST schwächste Signale von Pulsaren und fernen Galaxien auf."
   },
   {
     "cat": "gegenwart",
@@ -844,7 +844,7 @@
       "Alipay"
     ],
     "explanation": "Bargeld und physische Kreditkarten sind in Chinas Städten fast ausgestorben – fast alles läuft kontaktlos per QR-Code über WeChat Pay oder Alipay.",
-    "exp": "WeChat"
+    "exp": "Bargeld und physische Kreditkarten sind in Chinas Städten fast ausgestorben – fast alles läuft kontaktlos per QR-Code über WeChat Pay oder Alipay."
   },
   {
     "cat": "gegenwart",
@@ -857,7 +857,7 @@
       "Eine staatliche Firewall zur Verschlüsselung von Behördendaten"
     ],
     "explanation": "Ausländische Plattformen wie Google, YouTube, Instagram, Wikipedia und westliche Medien sind ohne VPN in Festlandchina nicht erreichbar.",
-    "exp": "System aus Zensur, DNS-Blockaden und Inhaltsfiltern"
+    "exp": "Ausländische Plattformen wie Google, YouTube, Instagram, Wikipedia und westliche Medien sind ohne VPN in Festlandchina nicht erreichbar."
   },
   {
     "cat": "gegenwart",
@@ -870,7 +870,7 @@
       "Die Umstellung aller Fabriken auf emissionsfreie Energie"
     ],
     "explanation": "Bis zum 100. Jahrestag der Staatsgründung 2049 soll China ein führendes, wohlhabendes und militärisch modernes Land sein.",
-    "exp": "Große Wiedergeburt der Nation und Spitzenstatus bis 2049"
+    "exp": "Bis zum 100. Jahrestag der Staatsgründung 2049 soll China ein führendes, wohlhabendes und militärisch modernes Land sein."
   },
   {
     "cat": "gegenwart",
@@ -883,7 +883,7 @@
       "Das Sonderverwaltungs-Ermächtigungsgesetz"
     ],
     "explanation": "Nach den Massenprotesten von 2019 stellte das Gesetz Sezession, Subversion und Kollusion unter drakonische Strafen.",
-    "exp": "Sicherheitsgesetz für Hongkong"
+    "exp": "Nach den Massenprotesten von 2019 stellte das Gesetz Sezession, Subversion und Kollusion unter drakonische Strafen."
   },
   {
     "cat": "gegenwart",
@@ -896,7 +896,7 @@
       "XPeng"
     ],
     "explanation": "BYD begann als Batteriehersteller für Handys und stieg durch vertikale Integration und eigene LFP-Akkus zum E-Auto-Giganten auf.",
-    "exp": "BYD"
+    "exp": "BYD begann als Batteriehersteller für Handys und stieg durch vertikale Integration und eigene LFP-Akkus zum E-Auto-Giganten auf."
   },
   {
     "cat": "gegenwart",
@@ -909,7 +909,7 @@
       "Der Verzicht auf jegliche Importe aus westlichen Industrieländern"
     ],
     "explanation": "China wollte die Rolle als Billiglohnland hinter sich lassen und Kerntechnologien unabhängig von westlichen Lieferketten beherrschen.",
-    "exp": "Technologieführerschaft in zehn Schlüsselbranchen wie Chips und E-Mobilität"
+    "exp": "China wollte die Rolle als Billiglohnland hinter sich lassen und Kerntechnologien unabhängig von westlichen Lieferketten beherrschen."
   },
   {
     "cat": "gegenwart",
@@ -922,7 +922,7 @@
       "Die Ausweisung aller ausländischen Staatsbürger aus dem Land"
     ],
     "explanation": "Nach heftigen Protesten (die „Weiße-Blätter-Bewegung“) wurde die strikte Strategie Ende 2022 schlagartig und vollständig aufgegeben.",
-    "exp": "Null-Covid-Politik mit Massentests und Lockdowns"
+    "exp": "Nach heftigen Protesten (die „Weiße-Blätter-Bewegung“) wurde die strikte Strategie Ende 2022 schlagartig und vollständig aufgegeben."
   },
   {
     "cat": "gegenwart",
@@ -935,7 +935,7 @@
       "Shaanxi Y-9"
     ],
     "explanation": "Die C919 tritt als zweistrahliger Mittelstreckenjet in direkte Konkurrenz zu den globalen Marktführern Airbus A320 und Boeing 737.",
-    "exp": "COMAC C919"
+    "exp": "Die C919 tritt als zweistrahliger Mittelstreckenjet in direkte Konkurrenz zu den globalen Marktführern Airbus A320 und Boeing 737."
   },
   {
     "cat": "gegenwart",
@@ -948,7 +948,7 @@
       "Ein Satellitennetzwerk zur Beobachtung der Eiskappen am Südpol"
     ],
     "explanation": "Beidou-3 verfügt über mehr als 30 Satelliten im All und garantiert Chinas Militär und Zivilleben Unabhängigkeit von US-Signalen.",
-    "exp": "Globales Satellitennavigationssystem als GPS-Alternative"
+    "exp": "Beidou-3 verfügt über mehr als 30 Satelliten im All und garantiert Chinas Militär und Zivilleben Unabhängigkeit von US-Signalen."
   },
   {
     "cat": "gegenwart",
@@ -961,7 +961,7 @@
       "Xiaohongshu"
     ],
     "explanation": "TikTok ist die erste chinesische Konsumenten-App, die im Westen eine marktbeherrschende Stellung unter Jugendlichen erreichte.",
-    "exp": "TikTok"
+    "exp": "TikTok ist die erste chinesische Konsumenten-App, die im Westen eine marktbeherrschende Stellung unter Jugendlichen erreichte."
   },
   {
     "cat": "gegenwart",
@@ -974,14 +974,18 @@
       "Jiaozhou-Bucht-Autobahnbrücke"
     ],
     "explanation": "Das Meisterwerk der Ingenieurskunst verbindet die drei Metropolen des Perlflussdeltas und verkürzt die Fahrzeit von 4 Stunden auf 45 Minuten.",
-    "exp": "Hongkong-Zhuhai-Macau-Brücke"
+    "exp": "Das Meisterwerk der Ingenieurskunst verbindet die drei Metropolen des Perlflussdeltas und verkürzt die Fahrzeit von 4 Stunden auf 45 Minuten."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("china", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["china"] = DATA;
+    window.ARCADE_QUIZ_BANKS['china'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('china', DATA);
+    }
   }
 })();

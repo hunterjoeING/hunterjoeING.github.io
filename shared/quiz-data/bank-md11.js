@@ -12,7 +12,7 @@
       "Ein doppeldeckerartiger Hilfsflügel über den äußeren Querrudern"
     ],
     "explanation": "Die markanten Winglets der MD-11 besitzen neben dem großen oberen Winglet auch eine kleine untere Finne zur Reduktion von Randwirbeln.",
-    "exp": "Große Winglets mit einem oberen und einem kleinen unteren Flügel"
+    "exp": "Die markanten Winglets der MD-11 besitzen neben dem großen oberen Winglet auch eine kleine untere Finne zur Reduktion von Randwirbeln."
   },
   {
     "cat": "technik",
@@ -25,7 +25,7 @@
       "Nur eine Person dank eines autonomen Flugleitsystems"
     ],
     "explanation": "Die MD-11 führte ein modernes Zwei-Personen-Glas-Cockpit mit sechs CRT-Bildschirmen ein und machte den Flugingenieur der DC-10 überflüssig.",
-    "exp": "Zwei Personen (Kapitän und Erster Offizier)"
+    "exp": "Die MD-11 führte ein modernes Zwei-Personen-Glas-Cockpit mit sechs CRT-Bildschirmen ein und machte den Flugingenieur der DC-10 überflüssig."
   },
   {
     "cat": "technik",
@@ -38,7 +38,7 @@
       "Fünf Triebwerke"
     ],
     "explanation": "Als klassischer Trijet besitzt die MD-11 zwei Pylon-Triebwerke unter den Flügeln und ein drittes Triebwerk direkt in der Basis des Seitenleitwerks.",
-    "exp": "Drei Triebwerke"
+    "exp": "Als klassischer Trijet besitzt die MD-11 zwei Pylon-Triebwerke unter den Flügeln und ein drittes Triebwerk direkt in der Basis des Seitenleitwerks."
   },
   {
     "cat": "technik",
@@ -51,7 +51,7 @@
       "Zur Aufnahme von Spezialbremsen für ultrakurze Landebahnen"
     ],
     "explanation": "Das zusätzliche Center-Gear mit zwei Rädern verteilt das maximale Startgewicht von über 280 Tonnen bodenschonend auf den Asphalt.",
-    "exp": "Um das hohe Startgewicht besser auf der Bahn zu verteilen"
+    "exp": "Das zusätzliche Center-Gear mit zwei Rädern verteilt das maximale Startgewicht von über 280 Tonnen bodenschonend auf den Asphalt."
   },
   {
     "cat": "technik",
@@ -64,7 +64,7 @@
       "Analoge Uhreninstrumente ohne digitale Bildschirme"
     ],
     "explanation": "Bei ihrem Debüt galt das Cockpit mit sechs farbigen Kathodenstrahlröhren (CRTs) als hochmodernes Vorzeigebeispiel für Automation.",
-    "exp": "Sechs Kathodenstrahlröhren (CRT-Farbbildschirme)"
+    "exp": "Bei ihrem Debüt galt das Cockpit mit sechs farbigen Kathodenstrahlröhren (CRTs) als hochmodernes Vorzeigebeispiel für Automation."
   },
   {
     "cat": "technik",
@@ -77,111 +77,111 @@
       "V-förmig nach oben geknickte Flügelspitzen am Rumpf"
     ],
     "explanation": "Zwei Rumpfplugs (3,05 m vor der Tragfläche und 2,60 m dahinter) machten die MD-11 insgesamt gut 5,66 Meter länger als die DC-10-30.",
-    "exp": "Ein um rund 30 Prozent verkleinertes Höhenleitwerk"
+    "exp": "Zwei Rumpfplugs (3,05 m vor der Tragfläche und 2,60 m dahinter) machten die MD-11 insgesamt gut 5,66 Meter länger als die DC-10-30."
   },
   {
     "cat": "technik",
     "diff": "mid",
     "q": "Warum wurde das Höhenleitwerk (Horizontal Stabilizer) der MD-11 gegenüber der DC-10 um rund 30 Prozent verkleinert?",
     "a": [
-      "Rumpf um rund 5,6 Meter gestreckt",
-      "Rumpf um 12 Meter verkürzt für mehr Reichweite",
-      "Rumpfdurchmesser um einen halben Meter vergrößert",
-      "Rumpfquerschnitt von rund auf oval umgestellt"
+      "Um aerodynamischen Widerstand und Gewicht auf Langstrecken spürbar zu senken",
+      "Weil die Triebwerke im Heck kleiner dimensioniert waren als bei der DC-10",
+      "Um die Bauhöhe des Flugzeugs für kleinere Wartungshangars zu reduzieren",
+      "Weil moderne Werkstoffe eine viel dünnere Profiltiefe am Leitwerk erlaubten"
     ],
     "explanation": "Das kleinere Höhenleitwerk verringerte den Trimm- und Reibungswiderstand erheblich, erforderte aber computergestützte Stabilitätshilfen.",
-    "exp": "Rumpf um rund 5,6 Meter gestreckt"
+    "exp": "Das kleinere Höhenleitwerk verringerte den Trimm- und Reibungswiderstand erheblich, erforderte aber computergestützte Stabilitätshilfen."
   },
   {
     "cat": "technik",
     "diff": "mid",
     "q": "Wofür steht das entscheidende Flugsteuersystem LSAS in der MD-11?",
     "a": [
-      "Reduktion des aerodynamischen Luftwiderstands im Reiseflug",
-      "Zusätzlicher Auftrieb bei extrem steilen Landeanflügen",
-      "Erleichterung des Enteisungsvorgangs am Boden im Winter",
-      "Vollständige Vermeidung von Seitenwindempfindlichkeit"
+      "Longitudinal Stability Augmentation System zur Nickachsen-Stabilisierung",
+      "Lateral Steering and Autopilot System für präzise Landeanflüge bei Seitenwind",
+      "Low Speed Alert System zur Warnung vor gefährlichen Strömungsabrissen",
+      "Leading-edge Slat Actuation System zur Steuerung der vorderen Vorflügel"
     ],
     "explanation": "LSAS gleicht die reduzierte aerodynamische Längsstabilität des kleinen Höhenleitwerks durch automatische Trimm- und Rudereingriffe aus.",
-    "exp": "Reduktion des aerodynamischen Luftwiderstands im Reiseflug"
+    "exp": "LSAS gleicht die reduzierte aerodynamische Längsstabilität des kleinen Höhenleitwerks durch automatische Trimm- und Rudereingriffe aus."
   },
   {
     "cat": "technik",
     "diff": "mid",
     "q": "Wo befindet sich bei der MD-11 ein spezieller Treibstofftank, der während des Reiseflugs aktiv zur Schwerpunktoptimierung genutzt wird?",
     "a": [
-      "LSAS (Longitudinal Stability Augmentation System)",
-      "MCAS (Maneuvering Characteristics Augmentation System)",
-      "TCAS (Traffic Collision Avoidance System)",
-      "GPWS (Ground Proximity Warning System)"
+      "Im horizontalen Höhenleitwerk (Horizontal Stabilizer)",
+      "In den beiden doppelten Winglets an den äußeren Flügelspitzen",
+      "Unter dem Kabinenboden der ersten Passagierklasse im Vorderrumpf",
+      "In der hohlen Verkleidung des mittleren Hecktriebwerks Nummer 2"
     ],
     "explanation": "Der Tail Fuel Tank im Höhenleitwerk fasst rund 7.500 Liter. Durch Umpumpen nach hinten wandert der Schwerpunkt nach hinten, was Trimmwiderstand spart.",
-    "exp": "LSAS (Longitudinal Stability Augmentation System)"
+    "exp": "Der Tail Fuel Tank im Höhenleitwerk fasst rund 7.500 Liter. Durch Umpumpen nach hinten wandert der Schwerpunkt nach hinten, was Trimmwiderstand spart."
   },
   {
     "cat": "technik",
     "diff": "mid",
     "q": "Wie werden die primären Steuerflächen der MD-11 mechanisch und hydraulisch bewegt?",
     "a": [
-      "Treibstofftank im Höhenleitwerk zur dynamischen Trimmung",
-      "Zusätzliche Wassertanks unter den Passagiersitzen im Gang",
-      "Verschiebbare schwere Bleigewichte im Frachtunterdeck",
-      "Automatisches Auspumpen von Kerosin im Reiseflug über Bord"
+      "Über konventionelle Seilzüge zu hydraulischen Servoventilen mit Rechnerhilfe",
+      "Rein elektronisch über volldigitales Fly-by-Wire ohne mechanische Verbindung",
+      "Über ein pneumatisches Druckluftsystem aus den Triebwerkskompressoren",
+      "Über mechanische Stoßstangen aus Titan direkt vom Steuerhorn zu den Rudern"
     ],
     "explanation": "Die MD-11 ist kein reines Fly-by-Wire-Flugzeug wie die A320; Steuerhörner und Pedale steuern Hydraulikaktoren über klassische Steuerseile an.",
-    "exp": "Treibstofftank im Höhenleitwerk zur dynamischen Trimmung"
+    "exp": "Die MD-11 ist kein reines Fly-by-Wire-Flugzeug wie die A320; Steuerhörner und Pedale steuern Hydraulikaktoren über klassische Steuerseile an."
   },
   {
     "cat": "technik",
     "diff": "mid",
     "q": "Über wie viele voneinander unabhängige Hydrauliksysteme verfügt die McDonnell Douglas MD-11?",
     "a": [
-      "Er wird nach hinten gepumpt, um den Trimmwiderstand zu senken",
-      "Er wird nach vorn gepumpt, um die Nase stets nach unten zu drücken",
-      "Er wird in die Flügelspitzen geleitet, um Randwirbel zu dämpfen",
-      "Er bleibt im Rumpftank, um die Tragflächenwurzeln zu entlasten"
+      "Drei voneinander unabhängige Hydrauliksysteme (System 1, 2 und 3)",
+      "Zwei getrennte Systeme mit automatischer Umschaltung im Notfall",
+      "Vier redundante Systeme wie bei der vierstrahligen Boeing 747",
+      "Ein einzelnes Hochdrucksystem mit doppelten Notfall-Akkumulatoren"
     ],
     "explanation": "Drei Hydrauliksysteme versorgen Flugsteuerungen und Fahrwerk. Jedes Triebwerk treibt primär eine der drei Hydraulikpumpen an.",
-    "exp": "Er wird nach hinten gepumpt, um den Trimmwiderstand zu senken"
+    "exp": "Drei Hydrauliksysteme versorgen Flugsteuerungen und Fahrwerk. Jedes Triebwerk treibt primär eine der drei Hydraulikpumpen an."
   },
   {
     "cat": "technik",
     "diff": "mid",
     "q": "Was zeichnet die Landegeschwindigkeit (Vref) einer voll beladenen MD-11 im Vergleich zu vielen anderen Großraumjets aus?",
     "a": [
-      "Hohe Anfluggeschwindigkeit und Nick-Empfindlichkeit bei Landung",
-      "Gefahr von Strömungsabrissen bereits bei geringer Schräglage",
-      "Unkontrollierbares Gieren bei Ausfall eines Triebwerks",
-      "Verzögertes Ansprechen der Querruder im Langsamflug"
+      "Sie ist mit bis zu 155 bis 160 Knoten spürbar höher als bei vielen Zweistrahlern",
+      "Sie ist mit unter 120 Knoten außergewöhnlich langsam und extrem gutmütig",
+      "Sie variiert im Landeanflug automatisch um bis zu fünfzig Knoten nach Wind",
+      "Sie erfordert grundsätzlich das Ausfahren der Triebwerksumkehr im Flug"
     ],
     "explanation": "Aufgrund des kleineren Flügels und der hohen Flächenbelastung nähert sich die MD-11 der Piste oft mit rasanten 150 bis 160 Knoten Vref.",
-    "exp": "Hohe Anfluggeschwindigkeit und Nick-Empfindlichkeit bei Landung"
+    "exp": "Aufgrund des kleineren Flügels und der hohen Flächenbelastung nähert sich die MD-11 der Piste oft mit rasanten 150 bis 160 Knoten Vref."
   },
   {
     "cat": "technik",
     "diff": "pro",
     "q": "Welche Funktion hat das sogenannte RCWS (Roll Control Wheel Steering) im Autopilotensystem der MD-11?",
     "a": [
-      "150 bis 160 Knoten (ca. 280 bis 300 km/h)",
-      "110 bis 120 Knoten (ca. 200 bis 220 km/h)",
-      "Über 200 Knoten (ca. 370 bis 390 km/h)",
-      "Knapp 90 Knoten (ca. 165 bis 175 km/h)"
+      "Es hält nach manueller Querruder-Eingabe den gewählten Querneigungswinkel stabil",
+      "Es schüttelt das Steuerhorn bei drohendem Strömungsabriss im Landeanflug",
+      "Es koppelt das Bugrad mechanisch an die Ruderpedale während des Rollens",
+      "Es trimmt die Querruder bei Triebwerksausfall vollautomatisch auf Nullage"
     ],
     "explanation": "RCWS unterstützt den Piloten bei manueller Steuerung, indem es Querlagen bis 30 Grad nach Loslassen des Horns automatisch stabil weiterfliegt.",
-    "exp": "150 bis 160 Knoten (ca. 280 bis 300 km/h)"
+    "exp": "RCWS unterstützt den Piloten bei manueller Steuerung, indem es Querlagen bis 30 Grad nach Loslassen des Horns automatisch stabil weiterfliegt."
   },
   {
     "cat": "technik",
     "diff": "pro",
     "q": "Was passiert automatisch mit dem Treibstoff im Höhenleitwerkstank (Tail Tank), wenn die MD-11 in den Sinkflug übergeht?",
     "a": [
-      "Drei voneinander unabhängige Hydrauliksysteme",
-      "Zwei rein elektrische Fly-by-Wire-Leitungen",
-      "Vier getrennte Hydraulikkreisläufe mit Notpumpe",
-      "Mechanische Seilzüge ohne jede hydraulische Kraft"
+      "Der Treibstoff wird automatisch nach vorne in die Haupttanks umgepumpt",
+      "Der verbliebene Kerosinrest wird über Düsen an den Flügelspitzen abgelassen",
+      "Der Kraftstoff wird sofort im mittleren Triebwerk Nummer 2 verbrannt",
+      "Die Pumpen sperren den Tail Tank ab und isolieren ihn gegen Vereisung"
     ],
     "explanation": "Vor der Landung muss der Schwerpunkt wieder nach vorne wandern; das Treibstoffsystem pumpt den Heckinhalt automatisch in die Flügeltanks um.",
-    "exp": "Drei voneinander unabhängige Hydrauliksysteme"
+    "exp": "Vor der Landung muss der Schwerpunkt wieder nach vorne wandern; das Treibstoffsystem pumpt den Heckinhalt automatisch in die Flügeltanks um."
   },
   {
     "cat": "technik",
@@ -194,20 +194,20 @@
       "Blockieren der Bremsen beim schnellen Rollen am Boden"
     ],
     "explanation": "Wegen des kleinen Höhenleitwerks reagiert die MD-11 im Flare sehr empfindlich auf Überkorrekturen, was zu gefürchteten harten Aufsetzern führen konnte.",
-    "exp": "Steuerverzögerung und Nick-Empfindlichkeit bei Landung"
+    "exp": "Wegen des kleinen Höhenleitwerks reagiert die MD-11 im Flare sehr empfindlich auf Überkorrekturen, was zu gefürchteten harten Aufsetzern führen konnte."
   },
   {
     "cat": "technik",
     "diff": "pro",
     "q": "Aus welchem Werkstoff bestehen wesentliche Teile des Hecktriebwerkseinlaufs und der Steuerflächen der MD-11 zur Gewichtseinsparung?",
     "a": [
-      "Aus Faserverbundwerkstoffen",
-      "Aus massivem Titanblech",
-      "Aus geschmiedetem Edelstahl",
-      "Aus Buchenholz und Segeltuch"
+      "Aus kohlenstofffaser- und glasfaserverstärkten Verbundwerkstoffen (CFK/GFK)",
+      "Aus geschmiedetem Magnesium und hochfesten Beryllium-Legierungen",
+      "Aus mehrlagigem Panzer-Aluminium mit einer reinen Titan-Beschichtung",
+      "Aus temperaturbeständiger Keramik aus dem NASA-Space-Shuttle-Programm"
     ],
     "explanation": "McDonnell Douglas setzte an Verkleidungen, Rudern und Triebwerkseinläufen umfangreich moderne Verbundwerkstoffe ein.",
-    "exp": "Aus Faserverbundwerkstoffen"
+    "exp": "McDonnell Douglas setzte an Verkleidungen, Rudern und Triebwerkseinläufen umfangreich moderne Verbundwerkstoffe ein."
   },
   {
     "cat": "technik",
@@ -220,7 +220,7 @@
       "Das Abklemmen der Sauerstoffzufuhr im Einlauf"
     ],
     "explanation": "Wie bei den Flügeltriebwerken stehen auch für das Triebwerk 2 elektromechanisch ausgelöste Feuerlöschkugeln mit Halon zur Verfügung.",
-    "exp": "Zwei Halon-Löschflaschen im hinteren Rumpf"
+    "exp": "Wie bei den Flügeltriebwerken stehen auch für das Triebwerk 2 elektromechanisch ausgelöste Feuerlöschkugeln mit Halon zur Verfügung."
   },
   {
     "cat": "technik",
@@ -233,7 +233,7 @@
       "Rund 420.000 kg Startmasse"
     ],
     "explanation": "Die schwerste Frachtvariante (Heavy Gross Weight) der MD-11F bot 285.990 kg MTOW für maximale Langstrecken-Nutzlast.",
-    "exp": "Rund 286.000 kg Startmasse"
+    "exp": "Die schwerste Frachtvariante (Heavy Gross Weight) der MD-11F bot 285.990 kg MTOW für maximale Langstrecken-Nutzlast."
   },
   {
     "cat": "technik",
@@ -246,7 +246,7 @@
       "Ein akustischer Alarmton im Cockpitpanel"
     ],
     "explanation": "Spätere LSAS-Softwareversionen führten Pitch-Rate-Begrenzungen ein, um ein Überziehen und Heckaufschläge beim Abheben zu verhindern.",
-    "exp": "Ein Pitch-Rate-Begrenzer in der LSAS-Software"
+    "exp": "Spätere LSAS-Softwareversionen führten Pitch-Rate-Begrenzungen ein, um ein Überziehen und Heckaufschläge beim Abheben zu verhindern."
   },
   {
     "cat": "triebwerke",
@@ -259,7 +259,7 @@
       "Kusnezow und Iwtschenko Progress"
     ],
     "explanation": "Kunden konnten zwischen dem General Electric CF6-80C2 und dem Pratt & Whitney PW4460/4462 wählen.",
-    "exp": "General Electric und Pratt & Whitney"
+    "exp": "Kunden konnten zwischen dem General Electric CF6-80C2 und dem Pratt & Whitney PW4460/4462 wählen."
   },
   {
     "cat": "triebwerke",
@@ -272,7 +272,7 @@
       "General Electric TF39-GE"
     ],
     "explanation": "Das CF6-80C2 in der D1F-Variante war der dominierende Antrieb und leistete rund 273 kN Startschub pro Triebwerk.",
-    "exp": "General Electric CF6-80C2"
+    "exp": "Das CF6-80C2 in der D1F-Variante war der dominierende Antrieb und leistete rund 273 kN Startschub pro Triebwerk."
   },
   {
     "cat": "triebwerke",
@@ -285,7 +285,7 @@
       "Pratt & Whitney F117-PW"
     ],
     "explanation": "Die PW4000-Familie trieb u. a. die MD-11-Flotten von Swissair, Delta Air Lines und FedEx an.",
-    "exp": "Pratt & Whitney PW4460"
+    "exp": "Die PW4000-Familie trieb u. a. die MD-11-Flotten von Swissair, Delta Air Lines und FedEx an."
   },
   {
     "cat": "triebwerke",
@@ -298,7 +298,7 @@
       "Über einen Bremsschirm im hinteren Rumpfheck"
     ],
     "explanation": "Alle drei Triebwerke verfügen über kaskadenförmige Schubumkehrer, die den Fan-Luftstrom nach vorne leiten.",
-    "exp": "Über Schubumkehrer an allen drei Triebwerken"
+    "exp": "Alle drei Triebwerke verfügen über kaskadenförmige Schubumkehrer, die den Fan-Luftstrom nach vorne leiten."
   },
   {
     "cat": "triebwerke",
@@ -311,7 +311,7 @@
       "Durch Ansaugöffnungen im vorderen Frachtraum"
     ],
     "explanation": "Die MD-11 behielt den geraden Banjo-Einlass der DC-10 bei, während die L-1011 TriStar einen gekrümmten S-Kanal nutzte.",
-    "exp": "Gerade durch einen geradlinigen Einlaufschacht im Heck"
+    "exp": "Die MD-11 behielt den geraden Banjo-Einlass der DC-10 bei, während die L-1011 TriStar einen gekrümmten S-Kanal nutzte."
   },
   {
     "cat": "triebwerke",
@@ -324,7 +324,7 @@
       "Direkt unter dem Cockpitboden"
     ],
     "explanation": "Die Hilfsgasturbine sitzt im Heckkonus unterhalb des Leitwerks und liefert Strom und Druckluft am Boden oder im Notfall.",
-    "exp": "Ganz hinten im äußersten Heckkonus"
+    "exp": "Die Hilfsgasturbine sitzt im Heckkonus unterhalb des Leitwerks und liefert Strom und Druckluft am Boden oder im Notfall."
   },
   {
     "cat": "triebwerke",
@@ -337,7 +337,7 @@
       "Die britische Regierung untersagte den Technologietransfer"
     ],
     "explanation": "Der Einbau des RB211-524L hätte aufwendige strukturelle Änderungen an der Rumpfheck-Aufhängung erfordert, weshalb Rolls-Royce ausstieg.",
-    "exp": "Modifikationen am Heck für Rolls-Royce wären zu teuer gewesen"
+    "exp": "Der Einbau des RB211-524L hätte aufwendige strukturelle Änderungen an der Rumpfheck-Aufhängung erfordert, weshalb Rolls-Royce ausstieg."
   },
   {
     "cat": "triebwerke",
@@ -350,7 +350,7 @@
       "Die Turbinen waren zu laut für europäische Großflughäfen"
     ],
     "explanation": "Die MD-11 verfehlte anfangs ihre Reichweitenziele um bis zu 8 %, weil Triebwerke und Flugzeug mehr Kerosin schluckten als versprochen.",
-    "exp": "Der Treibstoffverbrauch lag über den Garantiewerten"
+    "exp": "Die MD-11 verfehlte anfangs ihre Reichweitenziele um bis zu 8 %, weil Triebwerke und Flugzeug mehr Kerosin schluckten als versprochen."
   },
   {
     "cat": "triebwerke",
@@ -363,7 +363,7 @@
       "Durch den Wechsel zu Turboprop-Triebwerken"
     ],
     "explanation": "Das PIP-Programm verbesserte Pylonverkleidungen, Lufteinläufe und Triebwerkskomponenten schrittweise und stellte die Reichweite weitgehend her.",
-    "exp": "Mit dem Performance Improvement Program (PIP)"
+    "exp": "Das PIP-Programm verbesserte Pylonverkleidungen, Lufteinläufe und Triebwerkskomponenten schrittweise und stellte die Reichweite weitgehend her."
   },
   {
     "cat": "triebwerke",
@@ -376,7 +376,7 @@
       "Über eine manuelle Treibstoffdosierung per Handhebel"
     ],
     "explanation": "FADEC (Full Authority Digital Engine Control) überwacht und regelt Schub, Gemisch und Verdichterstufen hochpräzise digital.",
-    "exp": "Voll digital über zwei redundante Rechnerkanäle"
+    "exp": "FADEC (Full Authority Digital Engine Control) überwacht und regelt Schub, Gemisch und Verdichterstufen hochpräzise digital."
   },
   {
     "cat": "triebwerke",
@@ -389,7 +389,7 @@
       "Knapp 250 Kilonewton Gesamtschub"
     ],
     "explanation": "Mit etwa 270 kN Einzelschub pro Triebwerk bringt es das Trio zusammen auf mehr als 800 kN Startschub.",
-    "exp": "Rund 800 bis 820 Kilonewton Gesamtschub"
+    "exp": "Mit etwa 270 kN Einzelschub pro Triebwerk bringt es das Trio zusammen auf mehr als 800 kN Startschub."
   },
   {
     "cat": "triebwerke",
@@ -402,7 +402,7 @@
       "Das Blockieren der gesamten Höhenruderschnittstelle"
     ],
     "explanation": "Weil Triebwerk 2 zentral in der Flugzeugachse liegt, führt sein Ausfall zu fast keinem Gieren – im Gegensatz zu den Flügeltriebwerken.",
-    "exp": "Kaum Giermoment, da die Schublinie mittig liegt"
+    "exp": "Weil Triebwerk 2 zentral in der Flugzeugachse liegt, führt sein Ausfall zu fast keinem Gieren – im Gegensatz zu den Flügeltriebwerken."
   },
   {
     "cat": "triebwerke",
@@ -415,7 +415,7 @@
       "Keinerlei spürbare Auswirkung auf die Fluglage"
     ],
     "explanation": "Weil Triebwerk 2 hoch oben im Heck thront, drückt sein Schubimpuls die Nase des Flugzeugs physikalisch leicht nach unten.",
-    "exp": "Ein leichtes kopflastiges Nickmoment bei Schubanstieg"
+    "exp": "Weil Triebwerk 2 hoch oben im Heck thront, drückt sein Schubimpuls die Nase des Flugzeugs physikalisch leicht nach unten."
   },
   {
     "cat": "triebwerke",
@@ -428,7 +428,7 @@
       "Durch Auseinanderbauen in viele Einzelteile im Schacht"
     ],
     "explanation": "Spezielle Hebevorrichtungen (Engine Cranes) erlauben den Tausch des Triebwerks 2 in luftiger Höhe von über 10 Metern über dem Hallenboden.",
-    "exp": "Mit Spezialkränen oder Hebebühnen nach unten"
+    "exp": "Spezielle Hebevorrichtungen (Engine Cranes) erlauben den Tausch des Triebwerks 2 in luftiger Höhe von über 10 Metern über dem Hallenboden."
   },
   {
     "cat": "triebwerke",
@@ -441,7 +441,7 @@
       "Knapp 1,20 Meter Fan-Durchmesser"
     ],
     "explanation": "Der 100-Zoll-Bläser des PW4460 sorgt für einen hohen Nebenstromanteil und damals zeitgemäße Lärm- und Verbrauchswerte.",
-    "exp": "Rund 2,54 Meter Fan-Durchmesser"
+    "exp": "Der 100-Zoll-Bläser des PW4460 sorgt für einen hohen Nebenstromanteil und damals zeitgemäße Lärm- und Verbrauchswerte."
   },
   {
     "cat": "triebwerke",
@@ -454,7 +454,7 @@
       "Takeoff Overdrive System (TOS)"
     ],
     "explanation": "Fällt beim Startlauf ein Triebwerk aus, regelt das System die verbleibenden zwei Triebwerke automatisch auf Notfall-Maximalschub hoch.",
-    "exp": "Automatic Reserve Thrust (ART)"
+    "exp": "Fällt beim Startlauf ein Triebwerk aus, regelt das System die verbleibenden zwei Triebwerke automatisch auf Notfall-Maximalschub hoch."
   },
   {
     "cat": "triebwerke",
@@ -467,7 +467,7 @@
       "Mit aufblasbaren Gummischläuchen am Einlauf"
     ],
     "explanation": "Triebwerkszapfluft (Bleed Air) heizt die Einlasslippen aller drei Triebwerke auf, um Eisansatz und gefürchteten Eis-Schlag zu verhindern.",
-    "exp": "Durch heiße Zapfluft aus den Verdichterstufen"
+    "exp": "Triebwerkszapfluft (Bleed Air) heizt die Einlasslippen aller drei Triebwerke auf, um Eisansatz und gefürchteten Eis-Schlag zu verhindern."
   },
   {
     "cat": "triebwerke",
@@ -480,7 +480,7 @@
       "Ein eigener kleiner Tanker fliegt im Heck zur Versorgung mit"
     ],
     "explanation": "Da Triebwerk 2 mehrere Meter oberhalb der Flügeltanks liegt, garantieren leistungsstarke Förderpumpen die kontinuierliche Spritzufuhr.",
-    "exp": "Zusätzliche elektrische Boost-Pumpen sichern den Kerosindruck"
+    "exp": "Da Triebwerk 2 mehrere Meter oberhalb der Flügeltanks liegt, garantieren leistungsstarke Förderpumpen die kontinuierliche Spritzufuhr."
   },
   {
     "cat": "triebwerke",
@@ -493,7 +493,7 @@
       "Der Verzicht auf jegliche Turbinenschaufeln im Abgasstrahl"
     ],
     "explanation": "Die D1F-Variante ist maßgeschneidert für das Flugwerksdesign und die Schubanforderungen der MD-11 von McDonnell Douglas.",
-    "exp": "Spezifische Anbaugeräte, Schubwerte und Aufhängungspunkte"
+    "exp": "Die D1F-Variante ist maßgeschneidert für das Flugwerksdesign und die Schubanforderungen der MD-11 von McDonnell Douglas."
   },
   {
     "cat": "airlines_cargo",
@@ -506,7 +506,7 @@
       "Delta Air Lines aus den USA"
     ],
     "explanation": "Finnair übernahm am 7. Dezember 1990 die allererste Passagier-MD-11 und flog damit von Helsinki nach Teneriffa.",
-    "exp": "Finnair aus Finnland"
+    "exp": "Finnair übernahm am 7. Dezember 1990 die allererste Passagier-MD-11 und flog damit von Helsinki nach Teneriffa."
   },
   {
     "cat": "airlines_cargo",
@@ -519,7 +519,7 @@
       "Atlas Air"
     ],
     "explanation": "FedEx betrieb in der Spitze fast 60 Maschinen des Typs MD-11F und machte den Dreistrahler zum Rückgrat seines weltweiten Expressnetzes.",
-    "exp": "FedEx Express"
+    "exp": "FedEx betrieb in der Spitze fast 60 Maschinen des Typs MD-11F und machte den Dreistrahler zum Rückgrat seines weltweiten Expressnetzes."
   },
   {
     "cat": "airlines_cargo",
@@ -532,7 +532,7 @@
       "Martinair Cargo"
     ],
     "explanation": "Lufthansa Cargo musterte ihre letzte MD-11F (D-ALCC mit der Aufschrift 'Goodbye' und 'Danke MD-11') im Herbst 2021 zugunsten der Boeing 777F aus.",
-    "exp": "Lufthansa Cargo"
+    "exp": "Lufthansa Cargo musterte ihre letzte MD-11F (D-ALCC mit der Aufschrift 'Goodbye' und 'Danke MD-11') im Herbst 2021 zugunsten der Boeing 777F aus."
   },
   {
     "cat": "airlines_cargo",
@@ -545,7 +545,7 @@
       "Scandinavian Airlines SAS"
     ],
     "explanation": "KLM war die letzte Airline weltweit, die Passagierflüge mit der MD-11 durchführte, und bot vor der Ausmusterung sogar Abschieds-Rundflüge an.",
-    "exp": "KLM Royal Dutch Airlines"
+    "exp": "KLM war die letzte Airline weltweit, die Passagierflüge mit der MD-11 durchführte, und bot vor der Ausmusterung sogar Abschieds-Rundflüge an."
   },
   {
     "cat": "airlines_cargo",
@@ -558,7 +558,7 @@
       "Genau 14 Spezialcontainer im gesamten Innenraum"
     ],
     "explanation": "Mit 26 Hauptdeck-Positionen (88 x 125 Zoll bzw. 96 x 125 Zoll) war die MD-11F ein enorm vielseitiges und profitables Frachtflugzeug.",
-    "exp": "Bis zu 26 Paletten auf dem Hauptdeck plus Unterdeckfracht"
+    "exp": "Mit 26 Hauptdeck-Positionen (88 x 125 Zoll bzw. 96 x 125 Zoll) war die MD-11F ein enorm vielseitiges und profitables Frachtflugzeug."
   },
   {
     "cat": "airlines_cargo",
@@ -571,20 +571,20 @@
       "Alitalia"
     ],
     "explanation": "Die Swissair modernisierte in den 1990er-Jahren ihre Flotte mit 16 fabrikneuen MD-11-Flugzeugen mit Pratt & Whitney-Antrieben.",
-    "exp": "Swissair"
+    "exp": "Die Swissair modernisierte in den 1990er-Jahren ihre Flotte mit 16 fabrikneuen MD-11-Flugzeugen mit Pratt & Whitney-Antrieben."
   },
   {
     "cat": "airlines_cargo",
     "diff": "mid",
     "q": "Warum war die MD-11 bei Frachtgesellschaften wie FedEx und UPS so viel beliebter als bei Passagierlinien?",
     "a": [
-      "Hohes Ladevolumen, günstige Anschaffung und ETOPS-Freiheit",
-      "Weil die MD-11 auf unbefestigten Sandbahnen landen konnte",
-      "Wegen kostenloser Kerosinlieferungen durch Boeing",
-      "Weil für Frachtflüge keine Pilotenlizenzen nötig waren"
+      "Großes Ladevolumen, günstige Anschaffung und keine ETOPS-Auflagen über Ozeanen",
+      "Das Hecktriebwerk konnte am Boden als bordeigener Kran zum Beladen dienen",
+      "Sie durfte als einziges Flugzeug radioaktive Fracht ohne Begleitpapiere fliegen",
+      "Ihre Reisegeschwindigkeit lag um zwanzig Prozent über der von Zweistrahlern"
     ],
     "explanation": "Frachtgesellschaften profitierten von günstigen Gebrauchtpreisen, riesigem Ladevolumen und der Befreiung von strengen ETOPS-Auflagen.",
-    "exp": "Hohes Ladevolumen, günstige Anschaffung und ETOPS-Freiheit"
+    "exp": "Frachtgesellschaften profitierten von günstigen Gebrauchtpreisen, riesigem Ladevolumen und der Befreiung von strengen ETOPS-Auflagen."
   },
   {
     "cat": "airlines_cargo",
@@ -597,7 +597,7 @@
       "Northwest Airlines"
     ],
     "explanation": "American Airlines war unzufrieden mit der realen Reichweite auf Pazifikrouten und verkaufte alle 19 Passagiermaschinen vorzeitig an FedEx.",
-    "exp": "American Airlines"
+    "exp": "American Airlines war unzufrieden mit der realen Reichweite auf Pazifikrouten und verkaufte alle 19 Passagiermaschinen vorzeitig an FedEx."
   },
   {
     "cat": "airlines_cargo",
@@ -610,7 +610,7 @@
       "MD-11 TwinDeck und MultiLoad"
     ],
     "explanation": "Die MD-11CF besaß eine große vordere Frachttür und konnte je nach Saison binnen Stunden von Passagier- auf Frachtkonfiguration umgebaut werden.",
-    "exp": "MD-11 Combi und MD-11CF"
+    "exp": "Die MD-11CF besaß eine große vordere Frachttür und konnte je nach Saison binnen Stunden von Passagier- auf Frachtkonfiguration umgebaut werden."
   },
   {
     "cat": "airlines_cargo",
@@ -623,7 +623,7 @@
       "Über 600 Exemplare"
     ],
     "explanation": "Nach exakt 200 ausgelieferten Maschinen wurde das MD-11-Programm nach der Übernahme von McDonnell Douglas durch Boeing im Jahr 2000 eingestellt.",
-    "exp": "Exakt 200 Exemplare"
+    "exp": "Nach exakt 200 ausgelieferten Maschinen wurde das MD-11-Programm nach der Übernahme von McDonnell Douglas durch Boeing im Jahr 2000 eingestellt."
   },
   {
     "cat": "airlines_cargo",
@@ -636,7 +636,7 @@
       "Emirates SkyCargo Flotte"
     ],
     "explanation": "UPS kaufte zahlreiche gebrauchte Passagier-MD-11 auf und ließ sie zu Frachtern (BCF - Boeing Converted Freighter) umrüsten.",
-    "exp": "United Parcel Service"
+    "exp": "UPS kaufte zahlreiche gebrauchte Passagier-MD-11 auf und ließ sie zu Frachtern (BCF - Boeing Converted Freighter) umrüsten."
   },
   {
     "cat": "airlines_cargo",
@@ -649,7 +649,7 @@
       "Air China und All Nippon Airways"
     ],
     "explanation": "JAL betrieb sowohl Passagier-MD-11 (als 'J-Bird' getauft) als auch Frachtmaschinen auf anspruchsvollen Langstrecken.",
-    "exp": "Japan Airlines und EVA Air"
+    "exp": "JAL betrieb sowohl Passagier-MD-11 (als 'J-Bird' getauft) als auch Frachtmaschinen auf anspruchsvollen Langstrecken."
   },
   {
     "cat": "airlines_cargo",
@@ -662,7 +662,7 @@
       "Stationierung von Maschinen an Flughäfen in Alaska"
     ],
     "explanation": "Delta betrieb 17 MD-11 und ersetzte sie ab 1999 schrittweise durch die wirtschaftlichere zweistrahlige Boeing 777-200ER.",
-    "exp": "Einsatz ab Atlanta nach Europa, Tokio und Brasilien"
+    "exp": "Delta betrieb 17 MD-11 und ersetzte sie ab 1999 schrittweise durch die wirtschaftlichere zweistrahlige Boeing 777-200ER."
   },
   {
     "cat": "airlines_cargo",
@@ -675,7 +675,7 @@
       "MD-11 AF (Advanced Freighter Upgrade)"
     ],
     "explanation": "Nach der Fusion bot Boeing die offizielle BCF-Modifikation an: Einbau einer Frachttür, Bodenverstärkung und Deaktivierung der Passagiersysteme.",
-    "exp": "MD-11 BCF (Boeing Converted Freighter)"
+    "exp": "Nach der Fusion bot Boeing die offizielle BCF-Modifikation an: Einbau einer Frachttür, Bodenverstärkung und Deaktivierung der Passagiersysteme."
   },
   {
     "cat": "airlines_cargo",
@@ -688,7 +688,7 @@
       "Avianca Colombia"
     ],
     "explanation": "Varig flog viele Jahre lang mit einer großen MD-11-Flotte unter anderem täglich nach Frankfurt, Paris, London und New York.",
-    "exp": "Varig aus Brasilien"
+    "exp": "Varig flog viele Jahre lang mit einer großen MD-11-Flotte unter anderem täglich nach Frankfurt, Paris, London und New York."
   },
   {
     "cat": "airlines_cargo",
@@ -701,20 +701,20 @@
       "Entfernung sämtlicher Bildschirme für analoge Instrumente"
     ],
     "explanation": "Das FedEx-Cockpit-Upgrade modernisierte die Avionik auf Flüssigkristallanzeigen und EFVS (Enhanced Flight Vision System) mit Infrarotkamera.",
-    "exp": "Ersatz veralteter CRT-Röhren durch LCDs für CAT IIIb"
+    "exp": "Das FedEx-Cockpit-Upgrade modernisierte die Avionik auf Flüssigkristallanzeigen und EFVS (Enhanced Flight Vision System) mit Infrarotkamera."
   },
   {
     "cat": "airlines_cargo",
     "diff": "pro",
     "q": "Welche Airline stattete eine MD-11 mit einer luxuriösen VIP-Ausstattung für Staatsgäste und Scheichs aus?",
     "a": [
-      "Saudia Royal Flight",
-      "Kuwait Airways VIP",
-      "Qatar Amiri Flight",
-      "Emirates Royal Flight"
+      "Saudi Arabian Airlines (Saudia Royal Flight für Staatsgäste und Königshaus)",
+      "Lufthansa mit einer exklusiven Senator-VIP-Maschine auf der Nordatlantikroute",
+      "Pan American World Airways für Luxus-Rundreisen um den gesamten Globus",
+      "Air France für diplomatische Sonderflüge des französischen Staatspräsidenten"
     ],
     "explanation": "Saudia betrieb zwei VIP-MD-11 für das saudische Königshaus, ausgestattet mit Prunksälen, Schlafzimmern und modernster Satellitenkommunikation.",
-    "exp": "Saudia Royal Flight"
+    "exp": "Saudia betrieb zwei VIP-MD-11 für das saudische Königshaus, ausgestattet mit Prunksälen, Schlafzimmern und modernster Satellitenkommunikation."
   },
   {
     "cat": "airlines_cargo",
@@ -727,7 +727,7 @@
       "D-AQUI"
     ],
     "explanation": "Die D-ALCC flog am 17. Oktober 2021 als letzter europäischer MD-11-Frachter von Frankfurt nach Tel Aviv und Kairo und beendete das Trijet-Zeitalter der Kranich-Linie.",
-    "exp": "D-ALCC"
+    "exp": "Die D-ALCC flog am 17. Oktober 2021 als letzter europäischer MD-11-Frachter von Frankfurt nach Tel Aviv und Kairo und beendete das Trijet-Zeitalter der Kranich-Linie."
   },
   {
     "cat": "airlines_cargo",
@@ -740,7 +740,7 @@
       "Streiks in den Fertigungshallen in Long Beach"
     ],
     "explanation": "Singapore Airlines stellte fest, dass die MD-11 die Nonstop-Route Singapur-Paris mit voller Fracht nicht schaffte, und wechselte zum Airbus A340-300.",
-    "exp": "Unzureichende Reichweite und Nichterfüllung von Garantien"
+    "exp": "Singapore Airlines stellte fest, dass die MD-11 die Nonstop-Route Singapur-Paris mit voller Fracht nicht schaffte, und wechselte zum Airbus A340-300."
   },
   {
     "cat": "historie_sicherheit",
@@ -753,7 +753,7 @@
       "1. Mai 1989"
     ],
     "explanation": "Der Erstflug der MD-11 erfolgte am 10. Januar 1990 auf dem Flughafen von Long Beach, Kalifornien.",
-    "exp": "10. Januar 1990"
+    "exp": "Der Erstflug der MD-11 erfolgte am 10. Januar 1990 auf dem Flughafen von Long Beach, Kalifornien."
   },
   {
     "cat": "historie_sicherheit",
@@ -766,7 +766,7 @@
       "Absturz im Dschungel nach Strömungsabriss"
     ],
     "explanation": "Swissair 111 stürzte nach einem unkontrollierbaren Kabelbrand über dem Atlantik nahe Halifax ab. Alle 229 Menschen an Bord starben.",
-    "exp": "Absturz von Swissair-Flug 111 nach Cockpitbrand"
+    "exp": "Swissair 111 stürzte nach einem unkontrollierbaren Kabelbrand über dem Atlantik nahe Halifax ab. Alle 229 Menschen an Bord starben."
   },
   {
     "cat": "historie_sicherheit",
@@ -779,7 +779,7 @@
       "Ein technischer Defekt an den Sauerstoffmasken"
     ],
     "explanation": "Fehlerhafte Isolierung an Kabeln des IFE-Systems entzündete leicht brennbare Dämmmatten aus metallisiertem Mylar über der Cockpitdecke.",
-    "exp": "Lichtbögen am Kabel des Passagier-Entertainment-Systems"
+    "exp": "Fehlerhafte Isolierung an Kabeln des IFE-Systems entzündete leicht brennbare Dämmmatten aus metallisiertem Mylar über der Cockpitdecke."
   },
   {
     "cat": "historie_sicherheit",
@@ -792,7 +792,7 @@
       "General Dynamics"
     ],
     "explanation": "Boeing übernahm McDonnell Douglas 1997 und entschied sich für die eigene B777, weshalb die MD-11-Fertigung im Jahr 2000 auslief.",
-    "exp": "The Boeing Company"
+    "exp": "Boeing übernahm McDonnell Douglas 1997 und entschied sich für die eigene B777, weshalb die MD-11-Fertigung im Jahr 2000 auslief."
   },
   {
     "cat": "historie_sicherheit",
@@ -805,7 +805,7 @@
       "Zum Wegknicken des Bugfahrwerks beim Bremsen"
     ],
     "explanation": "Harte Landungen führten oft zu einem Wiederaufsteigen (Bounce). Überkorrekturen mit Drücken des Steuerhorns überlasteten die Fahrwerksaufhängung.",
-    "exp": "Zum Bounce mit Überreaktion der Steuerung (PIO)"
+    "exp": "Harte Landungen führten oft zu einem Wiederaufsteigen (Bounce). Überkorrekturen mit Drücken des Steuerhorns überlasteten die Fahrwerksaufhängung."
   },
   {
     "cat": "historie_sicherheit",
@@ -818,7 +818,7 @@
       "FedEx-Flug 705 in Atlanta"
     ],
     "explanation": "FedEx 14 sprang nach dem Aufsetzen auf, der Rumpf knickte nach zweitem Bodenkontakt ein und der Jet überschlug sich. Die Besatzung überlebte.",
-    "exp": "FedEx-Flug 14 in Newark"
+    "exp": "FedEx 14 sprang nach dem Aufsetzen auf, der Rumpf knickte nach zweitem Bodenkontakt ein und der Jet überschlug sich. Die Besatzung überlebte."
   },
   {
     "cat": "historie_sicherheit",
@@ -831,7 +831,7 @@
       "Das Flugzeug rutschte über das Bahnende in ein Hafenbecken"
     ],
     "explanation": "FedEx 80 verunglückte bei orkanartigen Böen in Narita durch heftige Bounce-Reaktionen. Beide Piloten kamen im brennenden Wrack ums Leben.",
-    "exp": "Maschine sprang bei Scherwind auf, überschlug sich und brannte"
+    "exp": "FedEx 80 verunglückte bei orkanartigen Böen in Narita durch heftige Bounce-Reaktionen. Beide Piloten kamen im brennenden Wrack ums Leben."
   },
   {
     "cat": "historie_sicherheit",
@@ -844,7 +844,7 @@
       "Verpflichtung zur Mitnahme von Rettungsinseln auf Inlandsflügen"
     ],
     "explanation": "Metallisierte Mylar-Dämmmatten, die sich bei Swissair 111 rasend schnell entzündeten, wurden weltweit aus Passagierflugzeugen verbannt.",
-    "exp": "Verbot von metallisiertem Mylar als Isolationsmaterial"
+    "exp": "Metallisierte Mylar-Dämmmatten, die sich bei Swissair 111 rasend schnell entzündeten, wurden weltweit aus Passagierflugzeugen verbannt."
   },
   {
     "cat": "historie_sicherheit",
@@ -857,7 +857,7 @@
       "Alle drei Triebwerke fielen nach Vogelschlag gleichzeitig aus"
     ],
     "explanation": "Ein suspendierter FedEx-Mitarbeiter versuchte die Crew zu töten. Trotz schwerster Schädelverletzungen überwältigten die Piloten den Angreifer.",
-    "exp": "Angestellter attackierte die Crew mit Hämmern und Harpunen"
+    "exp": "Ein suspendierter FedEx-Mitarbeiter versuchte die Crew zu töten. Trotz schwerster Schädelverletzungen überwältigten die Piloten den Angreifer."
   },
   {
     "cat": "historie_sicherheit",
@@ -870,7 +870,7 @@
       "Mangelnde Verfügbarkeit von Triebwerken mit Heckauslass"
     ],
     "explanation": "Moderne Twins durften dank ETOPS-180 und mehr direkt über Ozeane fliegen. Zwei Triebwerke sparen enorm viel Sprit und Wartungskosten gegenüber dreien.",
-    "exp": "ETOPS-Zulassung und Treibstoffvorteile zweier Triebwerke"
+    "exp": "Moderne Twins durften dank ETOPS-180 und mehr direkt über Ozeane fliegen. Zwei Triebwerke sparen enorm viel Sprit und Wartungskosten gegenüber dreien."
   },
   {
     "cat": "historie_sicherheit",
@@ -883,7 +883,7 @@
       "Ein Zusammenstoß mit einer Wettersonde in großer Höhe"
     ],
     "explanation": "Die versehentlich betätigten Vorflügel führten zu extremen Nick-Schwingungen mit schweren Personenverletzungen in der Kabine.",
-    "exp": "Ausfahren der Vorflügel im Reiseflug führte zu Oszillationen"
+    "exp": "Die versehentlich betätigten Vorflügel führten zu extremen Nick-Schwingungen mit schweren Personenverletzungen in der Kabine."
   },
   {
     "cat": "historie_sicherheit",
@@ -896,7 +896,7 @@
       "Begrenzung der Triebwerksleistung beim Durchstarten"
     ],
     "explanation": "Softwareupdates verbesserten das LSAS und das Autopilot-Verhalten im Nahbereich der Piste, um Springen und Überreaktionen zu dämpfen.",
-    "exp": "Modifizierte Dämpfung in Bodennähe zur Bounce-Unterdrückung"
+    "exp": "Softwareupdates verbesserten das LSAS und das Autopilot-Verhalten im Nahbereich der Piste, um Springen und Überreaktionen zu dämpfen."
   },
   {
     "cat": "historie_sicherheit",
@@ -909,7 +909,7 @@
       "Ein fehlerhafter Reifendruck am mittleren Hauptfahrwerk"
     ],
     "explanation": "Die Crew verwechselte 1.500 Meter Freigabehöhe mit 1.500 Fuß, glaubte sich viel zu hoch und drückte die Maschine abrupt in den Boden.",
-    "exp": "Verwechslung von Höhenangaben in Metern und Fuß"
+    "exp": "Die Crew verwechselte 1.500 Meter Freigabehöhe mit 1.500 Fuß, glaubte sich viel zu hoch und drückte die Maschine abrupt in den Boden."
   },
   {
     "cat": "historie_sicherheit",
@@ -922,7 +922,7 @@
       "Der Hersteller stand unmittelbar vor einer feindlichen Übernahme"
     ],
     "explanation": "Verzögerungen bei Tests und Software brachten McDonnell Douglas in enorme finanzielle Bedrängnis und erforderten Tag-und-Nacht-Prüfungen.",
-    "exp": "Horrende Vertragsstrafen drohten bei weiteren Verzögerungen"
+    "exp": "Verzögerungen bei Tests und Software brachten McDonnell Douglas in enorme finanzielle Bedrängnis und erforderten Tag-und-Nacht-Prüfungen."
   },
   {
     "cat": "historie_sicherheit",
@@ -935,7 +935,7 @@
       "Blindflug ohne funktionierende Funknavigation"
     ],
     "explanation": "Das spezielle Recovery-Training lehrte Piloten: Bei einem Bounce keinesfalls die Nase nach unten drücken, sondern Anstellwinkel stabil halten.",
-    "exp": "Bounced Landing Recovery Training"
+    "exp": "Das spezielle Recovery-Training lehrte Piloten: Bei einem Bounce keinesfalls die Nase nach unten drücken, sondern Anstellwinkel stabil halten."
   },
   {
     "cat": "historie_sicherheit",
@@ -948,20 +948,20 @@
       "Flugzeug wurde von einem Sandsturm von der Piste geweht"
     ],
     "explanation": "LH 8460 setzte hart auf, sprang dreimal auf und brach hinter den Tragflächen auseinander. Beide Piloten konnten sich über die Rutsche retten.",
-    "exp": "MD-11F sprang auf, zerbrach und brannte in Riad aus"
+    "exp": "LH 8460 setzte hart auf, sprang dreimal auf und brach hinter den Tragflächen auseinander. Beide Piloten konnten sich über die Rutsche retten."
   },
   {
     "cat": "historie_sicherheit",
     "diff": "pro",
     "q": "Welche Rolle spielte die MD-11 bei NASA-Forschungsprogrammen zum sogenannten PCA-System?",
     "a": [
-      "Notlandung nur durch Steuerung des Triebwerksschubs",
-      "Erprobung von Solarmodulen auf den Tragflächenoberseiten",
-      "Flugversuche mit Wasserstoff als alternativem Treibstoff",
-      "Messung der Ozonschicht in der Stratosphäre über der Arktis"
+      "Propulsion Controlled Aircraft (Notlandung rein über Triebwerksschub-Steuerung)",
+      "Post Crash Avoidance (automatisches Löschsystem bei Treibstoffbränden am Boden)",
+      "Precision Cloud Avoidance (Früherkennung von gefährlichen Gewitterzellen)",
+      "Pilot Comfort Architecture (aktive Lärmunterdrückung in der Pilotenkanzel)"
     ],
     "explanation": "Die NASA modifizierte eine MD-11 und bewies, dass ein Großraumjet bei komplettem Ausfall der Hydraulik allein mit Triebwerksschub landen kann.",
-    "exp": "Notlandung nur durch Steuerung des Triebwerksschubs"
+    "exp": "Die NASA modifizierte eine MD-11 und bewies, dass ein Großraumjet bei komplettem Ausfall der Hydraulik allein mit Triebwerksschub landen kann."
   },
   {
     "cat": "historie_sicherheit",
@@ -974,14 +974,18 @@
       "Im Royal Air Force Museum Cosford"
     ],
     "explanation": "Historische Artefakte, Simulatoren und Exponate der MD-11 werden unter anderem im Delta Flight Museum in Atlanta gepflegt.",
-    "exp": "Im Delta Flight Museum in Atlanta"
+    "exp": "Historische Artefakte, Simulatoren und Exponate der MD-11 werden unter anderem im Delta Flight Museum in Atlanta gepflegt."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("md11", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["md11"] = DATA;
+    window.ARCADE_QUIZ_BANKS['md11'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('md11', DATA);
+    }
   }
 })();

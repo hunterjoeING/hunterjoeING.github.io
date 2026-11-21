@@ -12,7 +12,7 @@
       "Bitcoins existieren als fortlaufende Seriennummern auf Disketten"
     ],
     "explanation": "Wer 1 BTC besitzt, hat in Wahrheit einen UTXO im Wert von 1 BTC. Zahlt man 0,2 BTC, wird der ganze 1-BTC-Output zerstört und man erhält 0,8 BTC Wechselgeld-UTXO.",
-    "exp": "Guthaben besteht aus unteilbaren Münzen mit Wechselgeld-Outputs"
+    "exp": "Wer 1 BTC besitzt, hat in Wahrheit einen UTXO im Wert von 1 BTC. Zahlt man 0,2 BTC, wird der ganze 1-BTC-Output zerstört und man erhält 0,8 BTC Wechselgeld-UTXO."
   },
   {
     "cat": "protokoll_krypto",
@@ -25,7 +25,7 @@
       "Scrypt mit Speichertiefe"
     ],
     "explanation": "Bitcoin wendet SHA-256 gleich zweimal hintereinander an (SHA-256(SHA-256(Daten))), um gegen Längen-Erweiterungs-Angriffe immun zu sein.",
-    "exp": "Doppeltes SHA-256"
+    "exp": "Bitcoin wendet SHA-256 gleich zweimal hintereinander an (SHA-256(SHA-256(Daten))), um gegen Längen-Erweiterungs-Angriffe immun zu sein."
   },
   {
     "cat": "protokoll_krypto",
@@ -38,7 +38,7 @@
       "10.000 Satoshis"
     ],
     "explanation": "Jeder Bitcoin ist auf 8 Nachkommastellen teilbar – die kleinste Basiseinheit auf der Blockchain ist ein Satoshi (0,00000001 BTC).",
-    "exp": "100.000.000 Satoshis"
+    "exp": "Jeder Bitcoin ist auf 8 Nachkommastellen teilbar – die kleinste Basiseinheit auf der Blockchain ist ein Satoshi (0,00000001 BTC)."
   },
   {
     "cat": "protokoll_krypto",
@@ -51,7 +51,7 @@
       "Ein permanentes Archiv aller jemals abgelehnten Spam-Zahlungen"
     ],
     "explanation": "Miner wählen aus dem Mempool bevorzugt Transaktionen mit den höchsten Gebühren pro vByte aus, um sie in den nächsten Block aufzunehmen.",
-    "exp": "Der Warteraum im Speicher für unbestätigte Transaktionen"
+    "exp": "Miner wählen aus dem Mempool bevorzugt Transaktionen mit den höchsten Gebühren pro vByte aus, um sie in den nächsten Block aufzunehmen."
   },
   {
     "cat": "protokoll_krypto",
@@ -64,7 +64,7 @@
       "Das Proof-of-Work-Verfahren wurde durch Proof-of-Stake ersetzt"
     ],
     "explanation": "SegWit trennte Signaturen ab, führte das Konzept von Block-Weight (4 Millionen Weight Units) ein und schuf das Fundament für das Lightning Network.",
-    "exp": "Signaturdaten wurden abgetrennt und Blockkapazität stieg"
+    "exp": "SegWit trennte Signaturen ab, führte das Konzept von Block-Weight (4 Millionen Weight Units) ein und schuf das Fundament für das Lightning Network."
   },
   {
     "cat": "protokoll_krypto",
@@ -77,59 +77,59 @@
       "Ein Verbot von dezentralem Mining auf heimischen Computern"
     ],
     "explanation": "Schnorr-Signaturen ermöglichen MuSig2: Mehrere Parteien erzeugen gemeinsam eine einzige, ununterscheidbare Standardsignatur – das spart Platz und stärkt Privatsphäre.",
-    "exp": "Schnorr-Signaturen und MAST für mehr Privatsphäre"
+    "exp": "Schnorr-Signaturen ermöglichen MuSig2: Mehrere Parteien erzeugen gemeinsam eine einzige, ununterscheidbare Standardsignatur – das spart Platz und stärkt Privatsphäre."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "mid",
     "q": "Was bedeutet das Feature „RBF“ (Replace-by-Fee) bei einer im Mempool hängenden Bitcoin-Transaktion?",
     "a": [
-      "Alle 2.016 Blöcke (rund alle zwei Wochen)",
-      "Einmal jährlich zum 1. Januar um Mitternacht",
-      "Jeden Sonntag nach Abschluss der US-Börsen",
-      "Dynamisch nach jedem einzelnen gefundenen Block"
+      "Man kann eine unbestätigte Transaktion mit höherer Gebühr ersetzen, um sie zu beschleunigen",
+      "Der Absender kann eine versehentlich gesendete Zahlung innerhalb von 24 Stunden stornieren",
+      "Miner können fehlerhafte Transaktionen automatisch löschen und die Gebühr einbehalten",
+      "Die Transaktionsgebühr wird bei steigenden Kursen automatisch verdoppelt und gutgeschrieben"
     ],
     "explanation": "Bietet man mehr Gebühr für dieselben Inputs, ersetzen Full Nodes die alte Transaktion im Mempool und Miner bestätigen sie schnell.",
-    "exp": "Alle 2.016 Blöcke (rund alle zwei Wochen)"
+    "exp": "Bietet man mehr Gebühr für dieselben Inputs, ersetzen Full Nodes die alte Transaktion im Mempool und Miner bestätigen sie schnell."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "pro",
     "q": "Warum ist die Skriptsprache „Bitcoin Script“ absichtlich nicht Turing-vollständig (keine freien Schleifen)?",
     "a": [
-      "Kryptografischer Prüfwert aller Transaktionen eines Blocks",
-      "Ein Algorithmus zur Vorhersage künftiger Kursbewegungen",
-      "Ein Verzeichnis aller gesperrten Adressen im Netzwerk",
-      "Ein mathematisches Verfahren zur Komprimierung von Wallets"
+      "Um Endlosschleifen und Denial-of-Service-Angriffe auf validierende Nodes auszuschließen",
+      "Weil Satoshi Nakamoto keine Zeit mehr hatte, Schleifen in C++ zu implementieren",
+      "Weil Quantencomputer Turing-vollständige Skripte in Sekundenschnelle knacken könnten",
+      "Um das Ausführen von mathematischen Divisionen auf der Blockchain gesetzlich zu verbieten"
     ],
     "explanation": "Hätte Bitcoin freie Schleifen (wie Solidity in Ethereum), könnte ein Angreifer eine Endlosschleife senden, die alle weltweiten Nodes einfrieren lässt.",
-    "exp": "Kryptografischer Prüfwert aller Transaktionen eines Blocks"
+    "exp": "Hätte Bitcoin freie Schleifen (wie Solidity in Ethereum), könnte ein Angreifer eine Endlosschleife senden, die alle weltweiten Nodes einfrieren lässt."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "easy",
     "q": "Wozu dient der „Merkle Tree“ (Hash-Baum) in einem Bitcoin-Block-Header?",
     "a": [
-      "Genau 21.000.000 BTC",
-      "Genau 100.000.000 BTC",
-      "Unbegrenzt mit 2 % Inflation",
-      "Exakt 18.500.000 BTC"
+      "Er fasst tausende Transaktionen in einem einzigen kompakten 32-Byte-Root-Hash zusammen",
+      "Er speichert die IP-Adressen aller weltweiten Mining-Pools in einer verschlüsselten Liste",
+      "Er berechnet die voraussichtlichen Stromkosten der Miner für die nächste Difficulty-Periode",
+      "Er verteilt die Block-Belohnung automatisch auf alle angeschlossenen Lightning-Nodes"
     ],
     "explanation": "Dank der Merkle-Root kann ein Smartphone (SPV-Client) mit wenigen Hashes mathematisch beweisen, dass eine Transaktion im Block enthalten ist.",
-    "exp": "Genau 21.000.000 BTC"
+    "exp": "Dank der Merkle-Root kann ein Smartphone (SPV-Client) mit wenigen Hashes mathematisch beweisen, dass eine Transaktion im Block enthalten ist."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "mid",
     "q": "An welchem Präfix erkennt man eine moderne native SegWit-Adresse (Bech32)?",
     "a": [
-      "Halbierung der Block-Subvention alle 210.000 Blöcke",
-      "Eine jährliche Entwertung aller ruhenden Wallets um 50 %",
-      "Die Halbierung der Transaktionsgebühren im Mempool",
-      "Die Verdoppelung der Blockgröße alle vier Jahre"
+      "bc1q...",
+      "1BvBM...",
+      "3J98t...",
+      "bc1p..."
     ],
     "explanation": "bc1q-Adressen sind komplett kleingeschrieben, haben integrierte Fehlerkorrektur (BCH-Code) und sparen gegenüber Legacy-Adressen (Präfix 1) massiv Transaktionsgebühren.",
-    "exp": "Halbierung der Block-Subvention alle 210.000 Blöcke"
+    "exp": "bc1q-Adressen sind komplett kleingeschrieben, haben integrierte Fehlerkorrektur (BCH-Code) und sparen gegenüber Legacy-Adressen (Präfix 1) massiv Transaktionsgebühren."
   },
   {
     "cat": "protokoll_krypto",
@@ -142,189 +142,189 @@
       "Die IP-Adresse des ersten Mining-Pools im Netzwerk"
     ],
     "explanation": "Miner wollen die lukrative Folge-Transaktion (Child) kassieren – das geht aber nur, wenn sie zuvor die feststeckende Eltern-Transaktion (Parent) minen.",
-    "exp": "Eine 32-Bit-Zahl, die Miner zur Erfüllung des Hash-Ziels variieren"
+    "exp": "Miner wollen die lukrative Folge-Transaktion (Child) kassieren – das geht aber nur, wenn sie zuvor die feststeckende Eltern-Transaktion (Parent) minen."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "easy",
     "q": "Welche elliptische Kurve verwendet Bitcoin zur Generierung öffentlicher Schlüssel aus privaten Schlüsseln?",
     "a": [
-      "Nachweis geleisteter Rechenarbeit durch Kryptografie",
-      "Er ermittelt Gewinner durch ein staatlich überwachtes Losverfahren",
-      "Er verteilt Belohnungen nach der Anzahl gehaltener Token im Depot",
-      "Er delegiert Transaktionsprüfungen an gewählte Notare und Banken"
+      "secp256k1 (Koblitz-Kurve)",
+      "ed25519 (Edwards-Kurve)",
+      "RSA-4096 (Primzahl-Faktorisierung)",
+      "NIST P-256 (NSA-Standardkurve)"
     ],
     "explanation": "Satoshi wählte die Koblitz-Kurve secp256k1 – viele Kryptografen vermuten, weil sie im Gegensatz zu NIST-Kurven keine verdächtigen, von der NSA gewählten Konstanten enthält.",
-    "exp": "Nachweis geleisteter Rechenarbeit durch Kryptografie"
+    "exp": "Satoshi wählte die Koblitz-Kurve secp256k1 – viele Kryptografen vermuten, weil sie im Gegensatz zu NIST-Kurven keine verdächtigen, von der NSA gewählten Konstanten enthält."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "mid",
     "q": "Was bedeutet „Transaction Malleability“ (Transaktions-Verformbarkeit), die durch SegWit behoben wurde?",
     "a": [
-      "Sie prüft alle Regeln unabhängig und wahrt die Dezentralität",
-      "Sie erzeugt automatisch neue Bitcoins ohne jeglichen Stromverbrauch",
-      "Sie dient als zentraler Server für den weltweiten Zahlungsverkehr",
-      "Sie meldet steuerrelevante Transaktionen direkt an Finanzämter"
+      "Signaturen konnten leicht modifiziert werden, wodurch sich die TXID änderte",
+      "Hacker konnten den Betrag einer unbestätigten Transaktion nachträglich verdoppeln",
+      "Die Blockchain konnte durch zu große Blöcke in zwei getrennte Stränge zerfallen",
+      "Miner konnten Transaktionen ohne Wissen des Absenders an neue Adressen umleiten"
     ],
     "explanation": "Malleability verhinderte verlässliche Ketten unbestätigter Transaktionen – erst durch die Behebung konnte das Lightning Network sicher realisiert werden.",
-    "exp": "Sie prüft alle Regeln unabhängig und wahrt die Dezentralität"
+    "exp": "Malleability verhinderte verlässliche Ketten unbestätigter Transaktionen – erst durch die Behebung konnte das Lightning Network sicher realisiert werden."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "pro",
     "q": "Wie viele Byte umfasst der reine Block-Header eines Bitcoin-Blocks exakt?",
     "a": [
-      "Jeder Teilnehmer kann ohne Erlaubnis oder Ausweis mitmachen",
-      "Teilnehmer müssen einen verifizierten Wohnsitz vorweisen",
-      "Zahlungen sind nur innerhalb der EU-Grenzen rechtlich erlaubt",
-      "Nur zertifizierte Banken dürfen Transaktionen weiterleiten"
+      "Exakt 80 Bytes (Versionsnummer, Hashes, Zeitstempel, Target, Nonce)",
+      "Genau 1 Megabyte wie das ursprüngliche Blockgrößen-Limit",
+      "Rund 4 Kilobyte wie der RAM-Speicher der Apollo-11-Mondlandefähre",
+      "Exakt 256 Bits wie ein kryptografischer SHA-256-Hashwert"
     ],
     "explanation": "Version (4B) + Hash Vorblock (32B) + Merkle Root (32B) + Timestamp (4B) + Bits/Difficulty (4B) + Nonce (4B) = exakt 80 Bytes.",
-    "exp": "Jeder Teilnehmer kann ohne Erlaubnis oder Ausweis mitmachen"
+    "exp": "Version (4B) + Hash Vorblock (32B) + Merkle Root (32B) + Timestamp (4B) + Bits/Difficulty (4B) + Nonce (4B) = exakt 80 Bytes."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "easy",
     "q": "Was passiert, wenn du versehentlich Bitcoin an eine gültige Adresse sendest, deren privaten Schlüssel niemand auf der Welt besitzt?",
     "a": [
-      "Aus dem öffentlichen Schlüssel durch Hashing",
-      "Aus der Steuernummer des jeweiligen Kontoinhabers",
-      "Durch die Registrierung auf einer zentralen Krypto-Börse",
-      "Durch zufälliges Auswürfeln im Block-Explorer"
+      "Die Bitcoins sind für immer unwiderruflich verloren und von niemandem bewegbar",
+      "Sie werden nach 100 Blöcken automatisch an die ursprüngliche Wallet zurückgebucht",
+      "Die Miner teilen die verlorenen Bitcoins als zusätzliche Gebühr unter sich auf",
+      "Der Schöpfer Satoshi Nakamoto besitzt einen Master-Key zur Rettung verlorener Münzen"
     ],
     "explanation": "Auf der Blockchain gibt es keinen Kundenservice: Ohne den passenden privaten Schlüssel kann niemand die mathematische Signatur erzeugen.",
-    "exp": "Aus dem öffentlichen Schlüssel durch Hashing"
+    "exp": "Auf der Blockchain gibt es keinen Kundenservice: Ohne den passenden privaten Schlüssel kann niemand die mathematische Signatur erzeugen."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "mid",
     "q": "Welches Präfix besitzen modernste Taproot-Adressen auf der Bitcoin-Blockchain?",
     "a": [
-      "Eine 24-stündige Bedenkzeit vor jeder Ausführung",
-      "Gültige kryptografische Signatur mit dem Private Key",
-      "Die Zustimmung von mindestens drei Vollknoten",
-      "Die handschriftliche Bestätigung auf Papier"
+      "bc1p... (BIP341)",
+      "bc1q... (BIP173)",
+      "1A1zP... (Legacy)",
+      "342ft... (P2SH)"
     ],
     "explanation": "bc1p steht für SegWit Version 1 (Taproot) – diese Adressen nutzen 32-Byte Schnorr-Outputs und bieten modernste Privatsphäre und Skalierbarkeit.",
-    "exp": "Eine 24-stündige Bedenkzeit vor jeder Ausführung"
+    "exp": "bc1p steht für SegWit Version 1 (Taproot) – diese Adressen nutzen 32-Byte Schnorr-Outputs und bieten modernste Privatsphäre und Skalierbarkeit."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "pro",
     "q": "Was ermöglicht der Script-Opcode „OP_CHECKLOCKTIMEVERIFY“ (CLTV, BIP65)?",
     "a": [
-      "ECDSA auf der Kurve secp256k1",
-      "RSA mit 2048-Bit-Schlüssellänge",
-      "Diffie-Hellman mit elliptischen Kurven",
-      "Ed25519 mit SHA-512-Signatur"
+      "Einen Output bis zu einer bestimmten Blockhöhe oder Zeit unbeweglich einzufrieren",
+      "Den privaten Schlüssel nach drei Fehlversuchen auf der Hardware-Wallet zu löschen",
+      "Die Transaktionsgebühr automatisch an den aktuellen Bitcoin-Kurs anzupassen",
+      "Eine Zahlung erst dann freizugeben, wenn drei von fünf Parteien gleichzeitig unterschreiben"
     ],
     "explanation": "CLTV macht es möglich, Auszahlungen mathematisch zu sperren – essenziell für Zeitschlösser, Escrow-Verträge und Zahlungskanäle.",
-    "exp": "ECDSA auf der Kurve secp256k1"
+    "exp": "CLTV macht es möglich, Auszahlungen mathematisch zu sperren – essenziell für Zeitschlösser, Escrow-Verträge und Zahlungskanäle."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "easy",
     "q": "Was ist der fundamentale Unterschied zwischen einer „Full Node“ und einem reinen „Miner“?",
     "a": [
-      "Bestätigte Transaktionen können nicht storniert werden",
-      "Einmal geschriebene Blöcke lassen sich per Software überschreiben",
-      "Transaktionen verfallen nach 30 Tagen ohne Bestätigung",
-      "Das Guthaben wird bei Inaktivität automatisch eingefroren"
+      "Full Nodes prüfen und erzwingen alle Konsensregeln; Miner erzeugen neue Block-Kandidaten",
+      "Miner verwalten die Guthaben der Wallets; Full Nodes berechnen die Hashrate des Netzwerks",
+      "Full Nodes erhalten die Block-Belohnung; Miner arbeiten ehrenamtlich für das Netzwerk",
+      "Miner entscheiden per Abstimmung über Software-Updates; Full Nodes führen diese nur aus"
     ],
     "explanation": "Nicht die Miner bestimmen die Spielregeln von Bitcoin, sondern die zehntausenden unabhängigen Full Nodes weltweit – ungültige Blöcke werden sofort verworfen.",
-    "exp": "Bestätigte Transaktionen können nicht storniert werden"
+    "exp": "Nicht die Miner bestimmen die Spielregeln von Bitcoin, sondern die zehntausenden unabhängigen Full Nodes weltweit – ungültige Blöcke werden sofort verworfen."
   },
   {
     "cat": "protokoll_krypto",
     "diff": "mid",
     "q": "Warum beträgt die Ziel-Blockzeit bei Bitcoin im Mittel genau 10 Minuten?",
     "a": [
-      "BIP (Bitcoin Improvement Proposal)",
-      "RFC (Request for Comments)",
-      "EIP (Ethereum Improvement Proposal)",
-      "ISO (International Standard Order)"
+      "Um globalen Nodes ausreichend Zeit zur fehlerfreien Block-Propagierung zu geben",
+      "Weil menschliche Banküberweisungen im Durchschnitt ebenfalls zehn Minuten dauern",
+      "Weil die ASIC-Mining-Hardware nach zehn Minuten Rechenzeit abkühlen muss",
+      "Weil Satoshi Nakamoto diesen Wert zufällig per Würfelentscheid festgelegt hat"
     ],
     "explanation": "Wäre die Blockzeit nur 5 Sekunden, würden ständig konkurrierende Blöcke gleichzeitig gefunden – das würde große Mining-Konzerne unfair bevorteilen.",
-    "exp": "BIP (Bitcoin Improvement Proposal)"
+    "exp": "Wäre die Blockzeit nur 5 Sekunden, würden ständig konkurrierende Blöcke gleichzeitig gefunden – das würde große Mining-Konzerne unfair bevorteilen."
   },
   {
     "cat": "mining_konsens",
     "diff": "easy",
     "q": "Wie viele Bitcoins wird es jemals im mathematisch festgelegten Maximum geben?",
     "a": [
-      "3. Januar 2009",
-      "31. Oktober 2008",
-      "22. Mai 2010",
-      "1. Januar 2011"
+      "Exakt knapp 21 Millionen Bitcoins (genau 20.999.999,9769 BTC)",
+      "Unbegrenzt viele Münzen mit einer festen jährlichen Inflationsrate von zwei Prozent",
+      "Exakt 100 Millionen Bitcoins analog zu den 100 Millionen Satoshi pro Coin",
+      "Genau 18,5 Millionen Bitcoins, von denen bereits alle geschürft wurden"
     ],
     "explanation": "Durch die Halbierung der Blockbelohnung alle 210.000 Blöcke summiert sich die geometrische Reihe exakt auf 21 Millionen BTC.",
-    "exp": "3. Januar 2009"
+    "exp": "Durch die Halbierung der Blockbelohnung alle 210.000 Blöcke summiert sich die geometrische Reihe exakt auf 21 Millionen BTC."
   },
   {
     "cat": "mining_konsens",
     "diff": "easy",
     "q": "In welchem Intervall findet das legendäre Bitcoin-Halving statt?",
     "a": [
-      "Die Gefahr, dass dieselben Bitcoins zweimal ausgegeben werden",
-      "Die Verdoppelung der Block-Subvention durch Programmierfehler",
-      "Das gleichzeitige Betreiben zweier Wallets auf einem Rechner",
-      "Die Erhebung doppelter Transaktionsgebühren durch Miner"
+      "Alle 210.000 Blöcke (im Schnitt ungefähr alle vier Jahre)",
+      "Pünktlich am ersten Tag eines jeden Schaltjahres um Mitternacht",
+      "Immer dann, wenn sich die weltweite Rechenleistung verdoppelt hat",
+      "Alle 100.000 Blöcke nach einem gemeinsamen Beschluss der Kernentwickler"
     ],
     "explanation": "Das Halving ist nicht an einen Kalender gebunden, sondern an die Blockhöhe: Bei 210.000, 420.000, 630.000, 840.000 Blöcken usw. halbiert sich die Belohnung.",
-    "exp": "Die Gefahr, dass dieselben Bitcoins zweimal ausgegeben werden"
+    "exp": "Das Halving ist nicht an einen Kalender gebunden, sondern an die Blockhöhe: Bei 210.000, 420.000, 630.000, 840.000 Blöcken usw. halbiert sich die Belohnung."
   },
   {
     "cat": "mining_konsens",
     "diff": "easy",
     "q": "Was sucht ein Bitcoin-Miner bei Proof-of-Work eigentlich ganz genau?",
     "a": [
-      "Rund 10 Minuten",
-      "Exakt 60 Sekunden",
-      "Rund 15 Minuten",
-      "Etwa 2,5 Minuten"
+      "Eine Nonce, sodass der SHA-256-Hash des Headers kleiner als das Target ist",
+      "Ein mathematisches Primzahl-Muster mit mehr als eintausend Dezimalstellen",
+      "Die exakten GPS-Koordinaten des nächsten am Netzwerk angeschlossenen Großrechners",
+      "Ein ungelöstes Schachproblem aus einer weltweiten historischen Datenbank"
     ],
     "explanation": "Mining ist wie eine gigantische globale Lotterie: Wer Billionen Zahlen durchprobiert, findet irgendwann einen Hash mit genügend führenden Nullen.",
-    "exp": "Rund 10 Minuten"
+    "exp": "Mining ist wie eine gigantische globale Lotterie: Wer Billionen Zahlen durchprobiert, findet irgendwann einen Hash mit genügend führenden Nullen."
   },
   {
     "cat": "mining_konsens",
     "diff": "mid",
     "q": "Wie oft passt das Bitcoin-Netzwerk die Mining-Schwierigkeit (Difficulty Adjustment) automatisch an?",
     "a": [
-      "Sie bestimmt führende Nullen des gültigen Block-Hashes",
-      "Sie legt fest, wie viele Transaktionen ein Block maximal enthält",
-      "Sie begrenzt die Anzahl gleichzeitiger Nutzer im Netzwerk",
-      "Sie bestimmt die Höhe der Transaktionsgebühren im Mempool"
+      "Alle 2.016 Blöcke (ungefähr alle zwei Wochen im Netzwerk)",
+      "Nach jedem einzelnen gefundenen Block in Echtzeit",
+      "Einmal pro Kalenderjahr am Jahrestag des Genesis-Blocks",
+      "Nur bei extremen Kursschwankungen von mehr als dreißig Prozent"
     ],
     "explanation": "Dauerten die letzten 2.016 Blöcke weniger als zwei Wochen, steigt die Difficulty; dauerten sie länger, sinkt sie – so bleibt der Takt bei ~10 Minuten.",
-    "exp": "Sie bestimmt führende Nullen des gültigen Block-Hashes"
+    "exp": "Dauerten die letzten 2.016 Blöcke weniger als zwei Wochen, steigt die Difficulty; dauerten sie länger, sinkt sie – so bleibt der Takt bei ~10 Minuten."
   },
   {
     "cat": "mining_konsens",
     "diff": "mid",
     "q": "Was passiert mit der Sicherheit von Bitcoin, wenn 80 Prozent aller weltweiten Miner schlagartig ihren Strom abschalten?",
     "a": [
-      "Ein Hard Fork spaltet die Kette, ein Soft Fork bleibt abwärtskompatibel",
-      "Ein Soft Fork erfordert neue Hardware, ein Hard Fork nur Software",
-      "Ein Hard Fork betrifft nur Miner, ein Soft Fork nur Full Nodes",
-      "Ein Soft Fork ist illegal, ein Hard Fork ein offizieller Standard"
+      "Blöcke kommen langsamer; nach max. 2.016 Blöcken passt sich die Difficulty an",
+      "Das gesamte Netzwerk bricht zusammen und alle Guthaben werden unwiderruflich gelöscht",
+      "Die Transaktionsgebühren fallen sofort auf null, da kein Wettbewerb mehr herrscht",
+      "Die verbliebenen Nodes müssen manuell per Hard Fork eine neue Blockchain starten"
     ],
     "explanation": "Genau das geschah im Mai 2021 beim chinesischen Mining-Verbot: Über 50 % der Hashrate fielen aus – das Netzwerk lief unterbrechungsfrei weiter.",
-    "exp": "Ein Hard Fork spaltet die Kette, ein Soft Fork bleibt abwärtskompatibel"
+    "exp": "Genau das geschah im Mai 2021 beim chinesischen Mining-Verbot: Über 50 % der Hashrate fielen aus – das Netzwerk lief unterbrechungsfrei weiter."
   },
   {
     "cat": "mining_konsens",
     "diff": "pro",
     "q": "Warum ist der Begriff „51%-Angriff“ oft missverstanden und was KANN ein Angreifer mit 51% Hashrate NICHT tun?",
     "a": [
-      "Der Block enthält mehr als eine Million Transaktionen",
-      "Ein Angreifer kontrolliert über 50 % der weltweiten Hashrate",
-      "Mehr als die Hälfte aller Full Nodes fallen gleichzeitig aus",
-      "Der Bitcoin-Kurs bricht an einem Tag um 51 Prozent ein"
+      "Er kann keine fremden Coins stehlen, keine Keys knacken und keine Regeln ändern",
+      "Er kann beliebige neue Bitcoins aus dem Nichts erschaffen und an sich überweisen",
+      "Er kann die Kontostände aller Nutzer weltweit auf null setzen und sperren",
+      "Er kann die mathematische Obergrenze von 21 Millionen Münzen beliebig anheben"
     ],
     "explanation": "Jede Full Node prüft Signaturen und Regeln selbstständig. Ein 51%-Miner kann lediglich eigene Transaktionen reorganisieren (Double Spend) oder Transaktionen zensieren.",
-    "exp": "Der Block enthält mehr als eine Million Transaktionen"
+    "exp": "Jede Full Node prüft Signaturen und Regeln selbstständig. Ein 51%-Miner kann lediglich eigene Transaktionen reorganisieren (Double Spend) oder Transaktionen zensieren."
   },
   {
     "cat": "mining_konsens",
@@ -337,7 +337,7 @@
       "Der Zinsgewinn aus dem Halten geschürfter Bitcoins"
     ],
     "explanation": "Wenn in Zukunft die Block-Subvention gegen Null geht, finanzieren allein die Transaktionsgebühren die Sicherheit des Mining-Netzwerks.",
-    "exp": "Fester Block-Reward plus Gebühren der Transaktionen"
+    "exp": "Wenn in Zukunft die Block-Subvention gegen Null geht, finanzieren allein die Transaktionsgebühren die Sicherheit des Mining-Netzwerks."
   },
   {
     "cat": "mining_konsens",
@@ -350,7 +350,7 @@
       "Ein optischer Sensor zur Messung der Serverraumtemperatur"
     ],
     "explanation": "ASIC steht für Application-Specific Integrated Circuit – normale CPUs und GPUs sind im Bitcoin-Mining seit 2013 völlig chancenlos.",
-    "exp": "Spezialisierter Mikrochip ausschließlich für SHA-256-Berechnungen"
+    "exp": "ASIC steht für Application-Specific Integrated Circuit – normale CPUs und GPUs sind im Bitcoin-Mining seit 2013 völlig chancenlos."
   },
   {
     "cat": "mining_konsens",
@@ -363,7 +363,7 @@
       "Die Gewinnung von Strom aus geothermalen Meeresströmungen"
     ],
     "explanation": "Begleitgas, das sonst nutzlos in die Atmosphäre abgefackelt oder entweicht würde, treibt mobile Mining-Container an und reduziert Treibhausgasemissionen.",
-    "exp": "Nutzung von abgefackeltem Erdöl-Begleitgas zur Stromerzeugung vor Ort"
+    "exp": "Begleitgas, das sonst nutzlos in die Atmosphäre abgefackelt oder entweicht würde, treibt mobile Mining-Container an und reduziert Treibhausgasemissionen."
   },
   {
     "cat": "mining_konsens",
@@ -376,7 +376,7 @@
       "12,5 BTC pro Block"
     ],
     "explanation": "Von 2009 bis 2012 gab es 50 BTC pro Block, dann 25 BTC, dann 12,5 BTC, dann 6,25 BTC und seit April 2024 sind es noch 3,125 BTC.",
-    "exp": "50 BTC pro Block"
+    "exp": "Von 2009 bis 2012 gab es 50 BTC pro Block, dann 25 BTC, dann 12,5 BTC, dann 6,25 BTC und seit April 2024 sind es noch 3,125 BTC."
   },
   {
     "cat": "mining_konsens",
@@ -389,7 +389,7 @@
       "Mining-Transaktion"
     ],
     "explanation": "Die Coinbase-Transaktion hat keine Inputs – hier generiert der Finder des Blocks die Block-Subvention plus alle Gebühren auf seine eigene Adresse.",
-    "exp": "Coinbase-Transaktion"
+    "exp": "Die Coinbase-Transaktion hat keine Inputs – hier generiert der Finder des Blocks die Block-Subvention plus alle Gebühren auf seine eigene Adresse."
   },
   {
     "cat": "mining_konsens",
@@ -402,7 +402,7 @@
       "Transaktionen können ohne die Zahlung von Gebühren abgewickelt werden"
     ],
     "explanation": "Bisher bestimmen Pool-Betreiber, welche Transaktionen gemint werden – Stratum V2 gibt diese Macht zurück an die tausenden einzelnen Miner.",
-    "exp": "Miner können eigene Blöcke selbst bauen statt Vorgaben des Pools zu nutzen"
+    "exp": "Bisher bestimmen Pool-Betreiber, welche Transaktionen gemint werden – Stratum V2 gibt diese Macht zurück an die tausenden einzelnen Miner."
   },
   {
     "cat": "mining_konsens",
@@ -415,7 +415,7 @@
       "Erst im Jahr 2250"
     ],
     "explanation": "Wegen der 32 Halvings wird der letzte Bruchteil eines Bitcoins ca. 2140 geschöpft – danach speisen sich Miner-Einnahmen zu 100 % aus Transaktionsgebühren.",
-    "exp": "Um das Jahr 2140"
+    "exp": "Wegen der 32 Halvings wird der letzte Bruchteil eines Bitcoins ca. 2140 geschöpft – danach speisen sich Miner-Einnahmen zu 100 % aus Transaktionsgebühren."
   },
   {
     "cat": "mining_konsens",
@@ -428,7 +428,7 @@
       "Die Speicherkapazität aller angeschlossenen Festplatten weltweit"
     ],
     "explanation": "Die Hashrate liegt heute bei über 600 Exahashes pro Sekunde – das sind 600 Trillionen Berechnungen jede einzelne Sekunde weltweit.",
-    "exp": "Geschätzte Anzahl der SHA-256-Rechenoperationen aller Miner pro Sekunde"
+    "exp": "Die Hashrate liegt heute bei über 600 Exahashes pro Sekunde – das sind 600 Trillionen Berechnungen jede einzelne Sekunde weltweit."
   },
   {
     "cat": "mining_konsens",
@@ -441,7 +441,7 @@
       "Das Netzwerk friert alle Transaktionen bis zur Kurserholung ein"
     ],
     "explanation": "Das mathematische Regelwerk passt sich stets an: Egal wie viel oder wenig Rechenleistung existiert, das Angebot an neuen BTC bleibt exakt nach Plan.",
-    "exp": "Die Difficulty senkt die Rechenhürde automatisch an"
+    "exp": "Das mathematische Regelwerk passt sich stets an: Egal wie viel oder wenig Rechenleistung existiert, das Angebot an neuen BTC bleibt exakt nach Plan."
   },
   {
     "cat": "mining_konsens",
@@ -454,7 +454,7 @@
       "Ein Block, dessen Finder seine Belohnung nicht abgeholt hat"
     ],
     "explanation": "Finden zwei Miner gleichzeitig einen Block, spaltet sich die Kette kurz – sobald der nächste Block gefunden wird, gewinnt die längere Kette und der andere wird verworfen.",
-    "exp": "Ein gültiger Block, der sich in der Kette letztlich nicht durchsetzte"
+    "exp": "Finden zwei Miner gleichzeitig einen Block, spaltet sich die Kette kurz – sobald der nächste Block gefunden wird, gewinnt die längere Kette und der andere wird verworfen."
   },
   {
     "cat": "mining_konsens",
@@ -467,7 +467,7 @@
       "Miner verpflichten sich vertraglich zur Abnahme von teurem Spitzenstrom"
     ],
     "explanation": "Wind- und Wasserkraftwerke an entlegenen Orten können Strom nicht immer transportieren – Bitcoin-Miner wandeln diese sonst verlorene Energie in ökonomischen Wert um.",
-    "exp": "Miner nehmen ortsunabhängig überschüssigen Strom ab, der sonst verpufft"
+    "exp": "Wind- und Wasserkraftwerke an entlegenen Orten können Strom nicht immer transportieren – Bitcoin-Miner wandeln diese sonst verlorene Energie in ökonomischen Wert um."
   },
   {
     "cat": "mining_konsens",
@@ -480,7 +480,7 @@
       "Der fehlerhafte Block wird von anderen Minern automatisch repariert"
     ],
     "explanation": "Konsensregeln sind absolut kompromisslos: Selbst wenn 99 % der Miner einen falschen Block unterstützen würden, wirft ihn jede Node sofort in den Papierkorb.",
-    "exp": "Unabhängige Full Nodes verwerfen den Block sofort als ungültig"
+    "exp": "Konsensregeln sind absolut kompromisslos: Selbst wenn 99 % der Miner einen falschen Block unterstützen würden, wirft ihn jede Node sofort in den Papierkorb."
   },
   {
     "cat": "mining_konsens",
@@ -493,7 +493,7 @@
       "Stromverbrauch verhindert das Auftreten von Software-Bugs im Code"
     ],
     "explanation": "PoW verbindet Information mit Thermodynamik: Wer die Vergangenheit umschreiben will, müsste mehr Energie aufwenden als das gesamte ehrliche Netzwerk zusammen.",
-    "exp": "Thermodynamische Arbeit verankert Sicherheit fest in der Realität"
+    "exp": "PoW verbindet Information mit Thermodynamik: Wer die Vergangenheit umschreiben will, müsste mehr Energie aufwenden als das gesamte ehrliche Netzwerk zusammen."
   },
   {
     "cat": "layer2_skalierung",
@@ -506,7 +506,7 @@
       "Ein Cloud-Dienst zur sicheren Verwahrung von Hardware-Wallets"
     ],
     "explanation": "Im Lightning Network können Millionen Transaktionen pro Sekunde abgewickelt werden, während die Basisschicht nur zum Öffnen und Schließen von Kanälen dient.",
-    "exp": "Dezentrales Layer-2-Netzwerk für sekundenschnelle Off-Chain-Zahlungen"
+    "exp": "Im Lightning Network können Millionen Transaktionen pro Sekunde abgewickelt werden, während die Basisschicht nur zum Öffnen und Schließen von Kanälen dient."
   },
   {
     "cat": "layer2_skalierung",
@@ -519,7 +519,7 @@
       "Ein Verzeichnis der meistgenutzten Adressen im Adressbuch"
     ],
     "explanation": "Aus diesen 12 oder 24 Wörtern aus der standardisierten BIP-39-Wortliste (2.048 Wörter) lassen sich mathematisch unendlich viele Adressen und Schlüssel ableiten.",
-    "exp": "Lesbare Codierung des Master-Private-Keys für alle Wallet-Adressen"
+    "exp": "Aus diesen 12 oder 24 Wörtern aus der standardisierten BIP-39-Wortliste (2.048 Wörter) lassen sich mathematisch unendlich viele Adressen und Schlüssel ableiten."
   },
   {
     "cat": "layer2_skalierung",
@@ -532,7 +532,7 @@
       "SPV (Simplified Payment Verification)"
     ],
     "explanation": "Ein HTLC garantiert: Entweder wird das Geheimnis (Preimage) rechtzeitig vorgelegt und das Geld fließt, oder beide Parteien erhalten ihr Guthaben automatisch zurück.",
-    "exp": "HTLC (Hash Time Locked Contract)"
+    "exp": "Ein HTLC garantiert: Entweder wird das Geheimnis (Preimage) rechtzeitig vorgelegt und das Geld fließt, oder beide Parteien erhalten ihr Guthaben automatisch zurück."
   },
   {
     "cat": "layer2_skalierung",
@@ -545,7 +545,7 @@
       "Verdoppelt den Wert der gehaltenen Bitcoins bei Kursanstiegen"
     ],
     "explanation": "Jede unterschiedliche Passphrase öffnet eine völlig neue Kette von Adressen – ein Angreifer kann nicht feststellen, ob noch eine weitere geheime Wallet existiert.",
-    "exp": "Generiert eine komplett eigenständige Wallet zum Schutz vor Erpressung"
+    "exp": "Jede unterschiedliche Passphrase öffnet eine völlig neue Kette von Adressen – ein Angreifer kann nicht feststellen, ob noch eine weitere geheime Wallet existiert."
   },
   {
     "cat": "layer2_skalierung",
@@ -558,7 +558,7 @@
       "Verwahrt private Schlüssel auf externen Sicherheitsservern"
     ],
     "explanation": "Versucht ein Partner einen alten Kanalstand auf der Kette zu veröffentlichen, greift der Watchtower mit der Revocation-Transaktion ein und straft ihn rigoros ab.",
-    "exp": "Überwacht die Blockchain auf alte Zustände und bestraft Betrug"
+    "exp": "Versucht ein Partner einen alten Kanalstand auf der Kette zu veröffentlichen, greift der Watchtower mit der Revocation-Transaktion ein und straft ihn rigoros ab."
   },
   {
     "cat": "layer2_skalierung",
@@ -571,7 +571,7 @@
       "Ohne amtlichen Ausweis verliert man das Eigentum an Bitcoins"
     ],
     "explanation": "Zusammenbrüche wie Mt. Gox oder FTX bewiesen: Nur wer seine Schlüssel (Non-Custodial) selbst verwahrt, ist vor Veruntreuung und Pleiten geschützt.",
-    "exp": "Ohne eigene Schlüssel besitzt man nur ein Versprechen"
+    "exp": "Zusammenbrüche wie Mt. Gox oder FTX bewiesen: Nur wer seine Schlüssel (Non-Custodial) selbst verwahrt, ist vor Veruntreuung und Pleiten geschützt."
   },
   {
     "cat": "layer2_skalierung",
@@ -584,7 +584,7 @@
       "Schlüssel werden alle zwei Monate automatisch neu generiert"
     ],
     "explanation": "Geht ein Schlüssel verloren oder wird gestohlen, bleibt das Geld sicher – Multisig ist der Goldstandard für Firmen und große private Vermögen.",
-    "exp": "Mindestens 2 von 3 separaten Schlüsseln müssen signieren"
+    "exp": "Geht ein Schlüssel verloren oder wird gestohlen, bleibt das Geld sicher – Multisig ist der Goldstandard für Firmen und große private Vermögen."
   },
   {
     "cat": "layer2_skalierung",
@@ -597,7 +597,7 @@
       "Zahlungen können innerhalb von 24 Stunden widerrufen werden"
     ],
     "explanation": "PSBT trennt das Vorbereiten, Koordinieren und Signieren – die Hardware-Wallet berührt niemals das Internet und signiert sicher per QR-Code oder SD-Karte.",
-    "exp": "Transaktionen können offline auf Air-Gapped-Geräten signiert werden"
+    "exp": "PSBT trennt das Vorbereiten, Koordinieren und Signieren – die Hardware-Wallet berührt niemals das Internet und signiert sicher per QR-Code oder SD-Karte."
   },
   {
     "cat": "layer2_skalierung",
@@ -610,7 +610,7 @@
       "Sie besteht aus feuerfestem Titan und wiegt über ein Kilogramm"
     ],
     "explanation": "Selbst wenn der verbundene Computer voller Viren und Trojaner ist, kann der Angreifer den privaten Schlüssel nicht auslesen.",
-    "exp": "Der private Schlüssel verlässt den Sicherheitschip niemals"
+    "exp": "Selbst wenn der verbundene Computer voller Viren und Trojaner ist, kann der Angreifer den privaten Schlüssel nicht auslesen."
   },
   {
     "cat": "layer2_skalierung",
@@ -623,7 +623,7 @@
       "Die Verschlüsselung von IP-Adressen aller beteiligten Knoten"
     ],
     "explanation": "Klassische BOLT-11-Rechnungen waren Einweg-Invoices – BOLT-12 ermöglicht Spenden-QR-Codes, die dauerhaft gültig sind, und automatische Rechnungsstellung.",
-    "exp": "Wiederverwendbare statische Zahlungsanfragen und Abonnements"
+    "exp": "Klassische BOLT-11-Rechnungen waren Einweg-Invoices – BOLT-12 ermöglicht Spenden-QR-Codes, die dauerhaft gültig sind, und automatische Rechnungsstellung."
   },
   {
     "cat": "layer2_skalierung",
@@ -636,7 +636,7 @@
       "Empfangene Zahlungen müssen innerhalb einer Stunde bestätigt werden"
     ],
     "explanation": "Um empfangen zu können, müssen Satoshis auf der Gegenseite des Kanals liegen. Fehlt Gegenstellen-Guthaben, können Zahlungen nicht zu einem geroutet werden.",
-    "exp": "Man kann erst empfangen, wenn andere Kanäle zu einem öffnen"
+    "exp": "Um empfangen zu können, müssen Satoshis auf der Gegenseite des Kanals liegen. Fehlt Gegenstellen-Guthaben, können Zahlungen nicht zu einem geroutet werden."
   },
   {
     "cat": "layer2_skalierung",
@@ -649,7 +649,7 @@
       "Die Aufbewahrung von Bitcoins auf Schweizer Bankkonten"
     ],
     "explanation": "Hardware-Wallets, Paper-Wallets oder Metallplatten, die keinen Internetkontakt haben, sind vor Online-Hacking absolut sicher.",
-    "exp": "Private Schlüssel werden auf Medien ohne Internetverbindung verwahrt"
+    "exp": "Hardware-Wallets, Paper-Wallets oder Metallplatten, die keinen Internetkontakt haben, sind vor Online-Hacking absolut sicher."
   },
   {
     "cat": "layer2_skalierung",
@@ -662,7 +662,7 @@
       "Weil Papier nach zehn Jahren automatisch unlesbar wird"
     ],
     "explanation": "Papier verbrennt bei 230 °C und löst sich in Wasser auf – Edelstahl widersteht über 1.400 °C Hitze bei einem Wohnungsbrand mühelos.",
-    "exp": "Schutz des Backups gegen Feuer, Wasser, Säure und Zerstörung"
+    "exp": "Papier verbrennt bei 230 °C und löst sich in Wasser auf – Edelstahl widersteht über 1.400 °C Hitze bei einem Wohnungsbrand mühelos."
   },
   {
     "cat": "layer2_skalierung",
@@ -675,7 +675,7 @@
       "Liquid erfordert keinerlei Transaktionsgebühren für Zahlungen"
     ],
     "explanation": "Auf Sidechains werden Bitcoins eingesperrt (Peg-in) und als Stellvertreter-Token bewegt – Lightning bewegt echte native UTXOs in Zahlungskanälen.",
-    "exp": "Liquid ist eine Sidechain mit Funktionären, Lightning nutzt echtes BTC"
+    "exp": "Auf Sidechains werden Bitcoins eingesperrt (Peg-in) und als Stellvertreter-Token bewegt – Lightning bewegt echte native UTXOs in Zahlungskanälen."
   },
   {
     "cat": "layer2_skalierung",
@@ -688,7 +688,7 @@
       "Knapp 2.000 Transaktionen pro Sekunde"
     ],
     "explanation": "Wegen der Blockgröße von ~1-2 MB und 10 Minuten Blockzeit ist Layer 1 bewusst als unveränderliches, globales Abrechnungsnetzwerk (Settlement Layer) konzipiert.",
-    "exp": "Rund 7 bis 10 Transaktionen pro Sekunde"
+    "exp": "Wegen der Blockgröße von ~1-2 MB und 10 Minuten Blockzeit ist Layer 1 bewusst als unveränderliches, globales Abrechnungsnetzwerk (Settlement Layer) konzipiert."
   },
   {
     "cat": "layer2_skalierung",
@@ -701,7 +701,7 @@
       "Die Wallet löscht alle privaten Schlüssel zur Sicherheit"
     ],
     "explanation": "Tausende Zahlungen liefen blitzschnell off-chain ab – nur Start (Open) und Ende (Close) hinterlassen jeweils exakt eine Spur auf der Bitcoin-Blockchain.",
-    "exp": "Finaler Stand wird in einer On-Chain-Transaktion fixiert"
+    "exp": "Tausende Zahlungen liefen blitzschnell off-chain ab – nur Start (Open) und Ende (Close) hinterlassen jeweils exakt eine Spur auf der Bitcoin-Blockchain."
   },
   {
     "cat": "layer2_skalierung",
@@ -714,7 +714,7 @@
       "Knotenbetreiber müssen für jedes Routing Gebühren in bar zahlen"
     ],
     "explanation": "Wie bei Tor ist das Zahlungspaket mehrfach verschlüsselt: Jeder Knoten schält nur seine eigene Schicht ab und leitet das Paket weiter – maximale Privatsphäre.",
-    "exp": "Jeder Knoten kennt nur direkten Vorgänger und Nachfolger"
+    "exp": "Wie bei Tor ist das Zahlungspaket mehrfach verschlüsselt: Jeder Knoten schält nur seine eigene Schicht ab und leitet das Paket weiter – maximale Privatsphäre."
   },
   {
     "cat": "layer2_skalierung",
@@ -727,7 +727,7 @@
       "Der Hersteller schickt per Post einen Generalschlüssel zu"
     ],
     "explanation": "Bitcoins liegen niemals auf der Hardware-Wallet selbst, sondern auf der weltweiten Blockchain. Das Gerät speichert nur den Schlüssel zur Autorisierung.",
-    "exp": "Neues Gerät kaufen und Wallet mit den 12 oder 24 Wörtern wiederherstellen"
+    "exp": "Bitcoins liegen niemals auf der Hardware-Wallet selbst, sondern auf der weltweiten Blockchain. Das Gerät speichert nur den Schlüssel zur Autorisierung."
   },
   {
     "cat": "layer2_skalierung",
@@ -740,7 +740,7 @@
       "Die Grenze für freiwillige Trinkgelder an Knotenbetreiber"
     ],
     "explanation": "Um zu verhindern, dass die UTXO-Datenbank aller Nodes mit unwirtschaftlichem Müll zugemüllt wird, lehnen Nodes Transaktionen unter dem Dust Limit (~546 Satoshis) ab.",
-    "exp": "Schwellenwert für Beträge, deren Ausgabe mehr Gebühren als Wert kostet"
+    "exp": "Um zu verhindern, dass die UTXO-Datenbank aller Nodes mit unwirtschaftlichem Müll zugemüllt wird, lehnen Nodes Transaktionen unter dem Dust Limit (~546 Satoshis) ab."
   },
   {
     "cat": "historie_oekonomie",
@@ -753,7 +753,7 @@
       "New York Times: Weltwirtschaft rutscht in schwere Rezession"
     ],
     "explanation": "Satoshi bewies damit nicht nur das exakte Startdatum, sondern hinterließ einen dauerhaften Protest gegen das unbegrenzte Gelddrucken und Bankenrettungen.",
-    "exp": "The Times: Kanzler vor zweiter Bankenrettung"
+    "exp": "Satoshi bewies damit nicht nur das exakte Startdatum, sondern hinterließ einen dauerhaften Protest gegen das unbegrenzte Gelddrucken und Bankenrettungen."
   },
   {
     "cat": "historie_oekonomie",
@@ -766,7 +766,7 @@
       "Zehn Kilo Kaffeebohnen aus kolumbianischem Anbau"
     ],
     "explanation": "Es war die allererste dokumentierte kommerzielle Warentransaktion mit Bitcoin – damals waren 10.000 BTC rund 41 US-Dollar wert.",
-    "exp": "Zwei Pizzen von Papa John’s über ein Forenmitglied"
+    "exp": "Es war die allererste dokumentierte kommerzielle Warentransaktion mit Bitcoin – damals waren 10.000 BTC rund 41 US-Dollar wert."
   },
   {
     "cat": "historie_oekonomie",
@@ -779,7 +779,7 @@
       "Man muss 50 Prozent aller Erträge an das Finanzamt abführen"
     ],
     "explanation": "In Deutschland gilt Bitcoin steuerlich als privates Wirtschaftsgut (wie Gold oder Kunst) – wer mindestens 365 Tage hodlt, zahlt keinen einzigen Cent Steuer.",
-    "exp": "Nach mindestens einem Jahr Haltedauer zu 100 % steuerfrei"
+    "exp": "In Deutschland gilt Bitcoin steuerlich als privates Wirtschaftsgut (wie Gold oder Kunst) – wer mindestens 365 Tage hodlt, zahlt keinen einzigen Cent Steuer."
   },
   {
     "cat": "historie_oekonomie",
@@ -792,7 +792,7 @@
       "Gavin Andresen"
     ],
     "explanation": "Hal Finney twitterte legendär am 11. Januar 2009 „Running bitcoin“ und half Satoshi beim Testen und Debuggen des ersten Quellcodes.",
-    "exp": "Hal Finney"
+    "exp": "Hal Finney twitterte legendär am 11. Januar 2009 „Running bitcoin“ und half Satoshi beim Testen und Debuggen des ersten Quellcodes."
   },
   {
     "cat": "historie_oekonomie",
@@ -805,7 +805,7 @@
       "Entwickler stritten über die Programmiersprache von Bitcoin"
     ],
     "explanation": "Wären Blöcke gigantisch groß, könnten nur noch Großrechenzentren Nodes betreiben – Bitcoin hätte seine zensurresistente Dezentralisierung verloren.",
-    "exp": "Große Blöcke für Firmen gegen kleine Blöcke für Dezentralität"
+    "exp": "Wären Blöcke gigantisch groß, könnten nur noch Großrechenzentren Nodes betreiben – Bitcoin hätte seine zensurresistente Dezentralisierung verloren."
   },
   {
     "cat": "historie_oekonomie",
@@ -818,7 +818,7 @@
       "Zentralbanken schütten Gewinne gleichmäßig an alle Bürger aus"
     ],
     "explanation": "Richard Cantillon erkannte 1755: Fiat-Geldumverteilung bereichert die Elite nah an der Druckerpresse. Bei Bitcoin kann niemand neues Geld bevorzugt aus dem Nichts schöpfen.",
-    "exp": "Erstempfänger von neuem Geld profitieren auf Kosten der Letztempfänger"
+    "exp": "Richard Cantillon erkannte 1755: Fiat-Geldumverteilung bereichert die Elite nah an der Druckerpresse. Bei Bitcoin kann niemand neues Geld bevorzugt aus dem Nichts schöpfen."
   },
   {
     "cat": "historie_oekonomie",
@@ -831,7 +831,7 @@
       "Argentinien"
     ],
     "explanation": "Präsident Nayib Bukele verabschiedete das Bitcoin-Gesetz und stattete Bürger mit der Chivo-Wallet und 30 Dollar Startguthaben aus.",
-    "exp": "El Salvador"
+    "exp": "Präsident Nayib Bukele verabschiedete das Bitcoin-Gesetz und stattete Bürger mit der Chivo-Wallet und 30 Dollar Startguthaben aus."
   },
   {
     "cat": "historie_oekonomie",
@@ -844,7 +844,7 @@
       "Digicash für anonyme Zahlungen im Web"
     ],
     "explanation": "Hashcash verlangte vom E-Mail-Absender den Nachweis einer kleinen Rechenleistung – Satoshi zitierte Backs Paper direkt im Bitcoin-Whitepaper.",
-    "exp": "Hashcash zur Bekämpfung von E-Mail-Spam"
+    "exp": "Hashcash verlangte vom E-Mail-Absender den Nachweis einer kleinen Rechenleistung – Satoshi zitierte Backs Paper direkt im Bitcoin-Whitepaper."
   },
   {
     "cat": "historie_oekonomie",
@@ -857,7 +857,7 @@
       "Die Einstufung von Bitcoin als offizielle Währung in der EU"
     ],
     "explanation": "Der BlackRock iShares Bitcoin Trust (IBIT) wurde zum am schnellsten wachsenden ETF der gesamten Wall-Street-Geschichte.",
-    "exp": "Genehmigung von elf Bitcoin-Spot-ETFs durch die US-Börsenaufsicht"
+    "exp": "Der BlackRock iShares Bitcoin Trust (IBIT) wurde zum am schnellsten wachsenden ETF der gesamten Wall-Street-Geschichte."
   },
   {
     "cat": "historie_oekonomie",
@@ -870,7 +870,7 @@
       "Im Mai 2017"
     ],
     "explanation": "Am 12. Dezember 2010 postete Satoshi über Software-Verbesserungen gegen DoS-Angriffe. Im April 2011 schrieb er Mike Hearn: „I’ve moved on to other things.“",
-    "exp": "Im Dezember 2010"
+    "exp": "Am 12. Dezember 2010 postete Satoshi über Software-Verbesserungen gegen DoS-Angriffe. Im April 2011 schrieb er Mike Hearn: „I’ve moved on to other things.“"
   },
   {
     "cat": "historie_oekonomie",
@@ -883,7 +883,7 @@
       "DarkMarket"
     ],
     "explanation": "Silk Road bewies einerseits die Funktionsfähigkeit zensurresistenter Zahlungen, prägte aber jahrelang das falsche Vorurteil, Bitcoin sei rein für Kriminelle.",
-    "exp": "Silk Road"
+    "exp": "Silk Road bewies einerseits die Funktionsfähigkeit zensurresistenter Zahlungen, prägte aber jahrelang das falsche Vorurteil, Bitcoin sei rein für Kriminelle."
   },
   {
     "cat": "historie_oekonomie",
@@ -896,7 +896,7 @@
       "Ein plötzlicher Programmierfehler in der Handelssoftware"
     ],
     "explanation": "Mt. Gox wickelte damals über 70 Prozent des weltweiten Bitcoin-Handels ab – die Pleite löste einen mehrjährigen Bärenmarkt aus.",
-    "exp": "Jahrelanger unbemerkter Diebstahl von 850.000 Bitcoins"
+    "exp": "Mt. Gox wickelte damals über 70 Prozent des weltweiten Bitcoin-Handels ab – die Pleite löste einen mehrjährigen Bärenmarkt aus."
   },
   {
     "cat": "historie_oekonomie",
@@ -909,7 +909,7 @@
       "Die Relation zwischen Marktkapitalisierung und Rechenleistung"
     ],
     "explanation": "Je höher das Stock-to-Flow-Verhältnis, desto härter das Geld – seit dem Halving 2024 hat Bitcoin ein höheres Stock-to-Flow-Verhältnis als Gold.",
-    "exp": "Verhältnis des vorhandenen Bestands zur jährlichen Neuproduktion"
+    "exp": "Je höher das Stock-to-Flow-Verhältnis, desto härter das Geld – seit dem Halving 2024 hat Bitcoin ein höheres Stock-to-Flow-Verhältnis als Gold."
   },
   {
     "cat": "historie_oekonomie",
@@ -922,7 +922,7 @@
       "Die Free Software Foundation"
     ],
     "explanation": "Aus ihrer Mailingliste, auf der auch Hal Finney, Nick Szabo und Adam Back aktiv waren, entsprang 2008 das Bitcoin-Whitepaper.",
-    "exp": "Die Cypherpunks"
+    "exp": "Aus ihrer Mailingliste, auf der auch Hal Finney, Nick Szabo und Adam Back aktiv waren, entsprang 2008 das Bitcoin-Whitepaper."
   },
   {
     "cat": "historie_oekonomie",
@@ -935,7 +935,7 @@
       "Mining wurde für vier Wochen weltweit unterbrochen"
     ],
     "explanation": "Weil Bitcoin Cash die Historie kopierte, besaß jeder Wallet-Inhaber plötzlich beide Coins – der Markt entschied sich jedoch eindeutig für das Original (BTC).",
-    "exp": "Abspaltung mit Erhalt derselben Menge an Bitcoin Cash"
+    "exp": "Weil Bitcoin Cash die Historie kopierte, besaß jeder Wallet-Inhaber plötzlich beide Coins – der Markt entschied sich jedoch eindeutig für das Original (BTC)."
   },
   {
     "cat": "historie_oekonomie",
@@ -948,7 +948,7 @@
       "Nick Szabo"
     ],
     "explanation": "Bis heute ist die wahre Identität von Satoshi Nakamoto eines der größten und faszinierendsten Geheimnisse der modernen Menschheit.",
-    "exp": "Satoshi Nakamoto"
+    "exp": "Bis heute ist die wahre Identität von Satoshi Nakamoto eines der größten und faszinierendsten Geheimnisse der modernen Menschheit."
   },
   {
     "cat": "historie_oekonomie",
@@ -961,7 +961,7 @@
       "Coinbase Global"
     ],
     "explanation": "MicroStrategy wandelte seine gesamten Cash-Bestände in Bitcoin um, emittierte Wandelanleihen und besitzt heute über 1 % aller existierenden Bitcoins.",
-    "exp": "MicroStrategy"
+    "exp": "MicroStrategy wandelte seine gesamten Cash-Bestände in Bitcoin um, emittierte Wandelanleihen und besitzt heute über 1 % aller existierenden Bitcoins."
   },
   {
     "cat": "historie_oekonomie",
@@ -974,14 +974,18 @@
       "Kryptogewinne sind in Deutschland unbegrenzt steuerfrei"
     ],
     "explanation": "Achtung: Es ist eine Freigrenze, kein Freibetrag! Wer 999 € Gewinn macht, zahlt 0 €; wer 1.001 € Gewinn innerhalb der Jahresfrist macht, versteuert die vollen 1.001 €.",
-    "exp": "1.000 Euro Freigrenze pro Kalenderjahr"
+    "exp": "Achtung: Es ist eine Freigrenze, kein Freibetrag! Wer 999 € Gewinn macht, zahlt 0 €; wer 1.001 € Gewinn innerhalb der Jahresfrist macht, versteuert die vollen 1.001 €."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("bitcoin", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["bitcoin"] = DATA;
+    window.ARCADE_QUIZ_BANKS['bitcoin'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('bitcoin', DATA);
+    }
   }
 })();
