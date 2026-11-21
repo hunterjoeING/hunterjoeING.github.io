@@ -551,7 +551,8 @@ export class SolitaireScene {
     const extraVert = Math.max(0, visibleWorldH - needD);
     this.maxBottomCenterZ = Math.min(3.55, 2.55 + extraVert * 0.36);
 
-    const lookZ = -0.09 + (aspect < 0.9 ? 0.12 : 0);
+    const portraitBiasZ = aspect < 0.85 ? Math.min(1.8, extraVert * 0.16) : 0;
+    const lookZ = -0.09 + portraitBiasZ;
     this.camTargetLook.set(0, 0, lookZ);
     this.camTargetPos.set(
       0,
