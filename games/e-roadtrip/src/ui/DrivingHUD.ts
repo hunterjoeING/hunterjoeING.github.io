@@ -1,6 +1,7 @@
 import { LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
+import { getActiveRouteLegs, predictLiveTripSoc } from '../sim/RoutePlanner';
 import { TouchInput } from '../phaser/GameBridge';
 import { SoundFX } from '../phaser/SoundFX';
 
@@ -52,17 +53,28 @@ export class DrivingHUD {
 
   public update(level: LevelConfig, run: RunState, timeScale: number, citySubtitle?: string): void {
     if (this.mode === 'hidden') return;
-    const leg = level.routeLegs[run.currentLegIndex] || level.routeLegs[0];
+    const activeLegs = getActiveRouteLegs(level, run.plan);
+    const leg = activeLegs[run.currentLegIndex] || activeLegs[0];
     const edge = getEdgeById(leg.edgeId);
     const from = getCityById(leg.reverse ? edge.toCityId : edge.fromCityId);
     const to = getCityById(leg.reverse ? edge.fromCityId : edge.toCityId);
     const vehicle = getVehicleById(run.plan.vehicleId);
 
+    const pred = predictLiveTripSoc(level, run);
     const clockTotalMin = Math.round(level.departureTimeHour * 60 + run.elapsedMinutes);
     const hh = String(Math.floor(clockTotalMin / 60) % 24).padStart(2, '0');
     const mm = String(clockTotalMin % 60).padStart(2, '0');
     const socRound = Math.round(run.socPct);
-    const rangeEstKm = Math.round(((run.socPct / 100) * vehicle.batteryKwh) / (vehicle.baseConsumption100 / 100));
+    const rangeEstKm = Math.round(
+      ((run.socPct / 100) * vehicle.batteryKwh) / (Math.max(10, pred.consumptionKwh100) / 100)
+    );
+
+    const nextSocClass =
+      pred.predictedArrivalNextSocPct <= 5
+        ? 'low'
+        : pred.predictedArrivalNextSocPct < 15
+          ? 'warn'
+          : 'ok';
 
     const moodEmoji =
       run.stress < 25 ? '😌' : run.stress < 50 ? '😐' : run.stress < 75 ? '😟' : '😤';
@@ -74,7 +86,12 @@ export class DrivingHUD {
     this.hudEl.innerHTML = `
       <div class="dhud-row">
         <div class="dhud-pill soc ${socRound < 15 ? 'low' : ''}">
-          🔋 <strong>${socRound}%</strong> (~${rangeEstKm} km)
+          🔋 <strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)
+        </div>
+        <div class="dhud-pill soc-pred ${nextSocClass}">
+          🎯 <span>${pred.nextStopName} (${pred.distanceToNextKm} km):</span>
+          <strong>Ankunft ${pred.predictedArrivalNextSocPct}%</strong>
+          ${pred.nextStopKind !== 'destination' ? ` · 🏁 Ziel: <strong>${pred.predictedFinalSocPct}%</strong>` : ''}
         </div>
         <div class="dhud-pill">
           🛣️ ${citySubtitle || `${from.name} → ${to.name} (${Math.round(run.legProgressKm)}/${edge.distanceKm} km)`}
