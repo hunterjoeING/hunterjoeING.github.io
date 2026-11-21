@@ -1,14 +1,14 @@
 html, body {
-  height: 100%;
+  min-height: 100%;
   margin: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 body {
   display: flex;
   flex-direction: column;
-  height: 100dvh;
-  max-height: 100dvh;
+  min-height: 100dvh;
   background: var(--bg-deep);
   color: var(--text-main);
 }
@@ -18,8 +18,7 @@ body {
 }
 
 .er-shell {
-  flex: 1 1 0;
-  min-height: 0;
+  flex: 0 0 auto;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -30,10 +29,9 @@ body {
 }
 
 .er-workspace {
-  flex: 1 1 0;
-  min-height: 0;
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(350px, 0.85fr);
+  align-items: start;
   gap: 10px;
   position: relative;
 }
@@ -44,12 +42,17 @@ body {
 
 .er-stage-panel {
   position: relative;
+  height: clamp(460px, 76dvh, 780px);
   min-height: 260px;
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
   background: #0c1e38;
   box-shadow: var(--shadow-soft);
+}
+
+.er-workspace.driving-active .er-stage-panel {
+  height: clamp(420px, 82dvh, 820px);
 }
 
 #phaser-stage {
@@ -61,6 +64,7 @@ body {
 #phaser-stage canvas {
   display: block;
   image-rendering: auto;
+  touch-action: none;
 }
 
 .er-map-floating-controls {
@@ -101,8 +105,7 @@ body {
 .er-planner-panel {
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow-y: auto;
+  overflow: visible;
   border-radius: 16px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-surface);
@@ -1581,10 +1584,16 @@ body {
 @media (max-width: 920px) {
   .er-workspace {
     grid-template-columns: 1fr;
-    grid-template-rows: minmax(250px, 46dvh) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+  }
+  .er-stage-panel {
+    height: clamp(260px, 46dvh, 440px);
   }
   .er-workspace.driving-active {
-    grid-template-rows: 1fr;
+    grid-template-rows: auto;
+  }
+  .er-workspace.driving-active .er-stage-panel {
+    height: clamp(360px, 78dvh, 720px);
   }
   .forecast-strip {
     grid-template-columns: repeat(3, 1fr);
