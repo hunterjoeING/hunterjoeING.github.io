@@ -72,9 +72,9 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_duesseldorf', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
         ],
         defaultPlannedStops: [
-          { chargerId: 'chg_muenster_tesla', legIndex: 2, targetSocPct: 82 },
-          { chargerId: 'chg_garbsen_enbw', legIndex: 3, targetSocPct: 78 },
-          { chargerId: 'chg_haltern_ewego', legIndex: 6, targetSocPct: 76 }
+          { chargerId: 'chg_haltern_ewego', legIndex: 1, targetSocPct: 80 },
+          { chargerId: 'chg_garbsen_enbw', legIndex: 3, targetSocPct: 82 },
+          { chargerId: 'chg_muenster_tesla', legIndex: 5, targetSocPct: 82 }
         ]
       },
       {
@@ -98,9 +98,9 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_koeln', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
         ],
         defaultPlannedStops: [
-          { chargerId: 'chg_diemelstadt_ionity', legIndex: 2, targetSocPct: 82 },
-          { chargerId: 'chg_seesen_tesla', legIndex: 3, targetSocPct: 76 },
-          { chargerId: 'chg_olpe_enbw', legIndex: 6, targetSocPct: 75 }
+          { chargerId: 'chg_olpe_enbw', legIndex: 1, targetSocPct: 82 },
+          { chargerId: 'chg_seesen_tesla', legIndex: 3, targetSocPct: 80 },
+          { chargerId: 'chg_diemelstadt_ionity', legIndex: 5, targetSocPct: 82 }
         ]
       }
     ],
