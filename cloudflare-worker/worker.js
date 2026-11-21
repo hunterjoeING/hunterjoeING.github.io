@@ -900,6 +900,112 @@ export default {
         });
       }
 
+      // ----------------------------------------------------------------------
+      // TELEGRAM WEBHOOK: POST /api/telegram/webhook
+      // Ermöglicht direkte Antworten aus Telegram als KI-Agent auf Community-Beiträge
+      // ----------------------------------------------------------------------
+      if (path === '/api/telegram/webhook' && request.method === 'POST') {
+        const update = await request.json().catch(() => ({}));
+        const msg = update?.message || update?.edited_message;
+        if (!msg || !msg.text) {
+          return jsonResponse({ ok: true, ignored: true });
+        }
+
+        const chatId = String(msg.chat?.id || '');
+        if (!env.TELEGRAM_CHAT_ID || chatId !== String(env.TELEGRAM_CHAT_ID)) {
+          return jsonResponse({ ok: true, ignored: 'unauthorized_chat' });
+        }
+
+        const rawText = String(msg.text || '').trim();
+        if (!rawText || rawText === '/start' || rawText === '/help') {
+          notifyTelegram(
+            env,
+            ctx,
+            `🤖 <b>HunterJoe Telegram-Bridge aktiv</b>\n\n`
+            + `Antworte einfach direkt auf eine Community-Meldung (oder nutze <code>/fix &lt;Text&gt;</code> bzw. <code>/reply &lt;Text&gt;</code>), um sofort als <b>KI-Agent (Antigravity)</b> zu antworten.\n`
+            + `Ohne Text nach <code>/fix</code> wird automatisch eine „Behoben“-Antwort gepostet.`
+          );
+          return jsonResponse({ ok: true });
+        }
+
+        // 1. Post-ID bestimmen: aus beantworteter Bot-Nachricht "(#123)", aus Text "#123" / "/fix 123" oder neuester offener Beitrag
+        let postId = null;
+        const replySrc = String(msg.reply_to_message?.text || '');
+        const replyIdMatch = /\(#(\d+)\)/.exec(replySrc) || /Beitrag #(\d+)/.exec(replySrc);
+        if (replyIdMatch) {
+          postId = parseInt(replyIdMatch[1], 10);
+        }
+
+        let cmd = 'fix';
+        let bodyText = rawText;
+        const cmdMatch = /^\/(fix|fixed|reply|wip)(?:@\w+)?\s*([\s\S]*)$/i.exec(rawText);
+        if (cmdMatch) {
+          cmd = cmdMatch[1].toLowerCase();
+          bodyText = (cmdMatch[2] || '').trim();
+          const numPrefix = /^(?:#?)(\d+)\b\s*([\s\S]*)$/.exec(bodyText);
+          if (numPrefix && !postId) {
+            postId = parseInt(numPrefix[1], 10);
+            bodyText = (numPrefix[2] || '').trim();
+          }
+        } else {
+          const hashMatch = /^#(\d+)\s+([\s\S]+)$/.exec(rawText);
+          if (hashMatch && !postId) {
+            postId = parseInt(hashMatch[1], 10);
+            bodyText = hashMatch[2].trim();
+          }
+        }
+
+        if (!postId) {
+          const latestOpen = await db.prepare(
+            `SELECT id FROM feedback_posts WHERE status != 'fixed' ORDER BY id DESC LIMIT 1`
+          ).first().catch(() => null);
+          const latestAny = latestOpen || await db.prepare(
+            `SELECT id FROM feedback_posts ORDER BY id DESC LIMIT 1`
+          ).first().catch(() => null);
+          if (latestAny?.id) postId = Number(latestAny.id);
+        }
+
+        if (!postId) {
+          notifyTelegram(env, ctx, '⚠️ Kein Community-Beitrag in der Datenbank gefunden.');
+          return jsonResponse({ ok: true, error: 'no_post_found' });
+        }
+
+        const postRow = await db.prepare(
+          'SELECT id, title, target_id FROM feedback_posts WHERE id = ?1'
+        ).bind(postId).first().catch(() => null);
+
+        if (!postRow) {
+          notifyTelegram(env, ctx, `⚠️ Beitrag #${escapeTelegramHtml(postId)} existiert nicht.`);
+          return jsonResponse({ ok: true, error: 'post_not_found' });
+        }
+
+        const finalText = cleanText(
+          bodyText || 'Vielen Dank für dein Feedback! Dieser Punkt wurde inzwischen umgesetzt und behoben. Viel Spaß beim Weiterzocken!',
+          1500
+        );
+        const newStatus = (cmd === 'reply' || cmd === 'wip') ? 'in_progress' : 'fixed';
+
+        await db.prepare(
+          `INSERT INTO feedback_replies (post_id, author_id, author_name, author_role, body, new_status)
+           VALUES (?1, 0, '🤖 KI-Agent (Antigravity)', 'agent', ?2, ?3)`
+        ).bind(postId, finalText, newStatus).run();
+
+        await db.prepare(
+          `UPDATE feedback_posts SET status = ?1, updated_at = datetime('now') WHERE id = ?2`
+        ).bind(newStatus, postId).run();
+
+        notifyTelegram(
+          env,
+          ctx,
+          `✅ <b>Antwort veröffentlicht</b> (Beitrag #${escapeTelegramHtml(postId)})\n`
+          + `<b>Titel:</b> ${escapeTelegramHtml(postRow.title || '')}\n`
+          + `<b>Status:</b> ${newStatus === 'fixed' ? '✅ Behoben' : '🛠️ In Arbeit'}\n`
+          + `<b>Text:</b> ${escapeTelegramHtml(finalText)}`
+        );
+
+        return jsonResponse({ ok: true, postId, newStatus });
+      }
+
       return jsonResponse({ ok: false, error: 'Route not found: ' + path }, 404);
     } catch (err) {
       return jsonResponse({ ok: false, error: String(err?.message || err) }, 500);
