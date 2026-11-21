@@ -6,78 +6,78 @@
     "diff": "easy",
     "q": "Was unternahm der kaiserliche Sondergesandte Lin Zexu 1839 in Humen, was direkt den Ersten Opiumkrieg auslöste?",
     "a": [
-      "Er ließ über 1.200 Tonnen beschlagnahmtes britisches Opium öffentlich in Gruben mit Kalk und Meerwasser vernichten",
-      "Er kaperte das persönliche Flaggschiff der britischen Kronprinzessin im Gelben Meer",
-      "Er ließ alle britischen Händler in Ketten durch die Verbotene Stadt nach Tibet treiben",
-      "Er verhängte ein weltweites Embargo gegen englischen Schwarztee und Porzellan"
+      "Er ließ beschlagnahmtes britisches Opium öffentlich in Gruben vernichten",
+      "Er kaperte das persönliche Flaggschiff der britischen Krone im Gelben Meer",
+      "Er ließ alle britischen Kaufleute in Ketten nach Tibet deportieren",
+      "Er verhängte ein Embargo gegen englischen Tee und Porzellanwaren"
     ],
     "explanation": "Großbritannien antwortete mit Kanonenbooten, um den lukrativen Drogenhandel der East India Company militärisch durchzusetzen.",
-    "exp": "Großbritannien antwortete mit Kanonenbooten, um den lukrativen Drogenhandel der East India Company militärisch durchzusetzen."
+    "exp": "Er ließ beschlagnahmtes britisches Opium öffentlich in Gruben vernichten"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "easy",
     "q": "Welche Insel musste das kaiserliche China nach der Niederlage im Ersten Opiumkrieg 1842 im Vertrag von Nanking an Großbritannien abtreten?",
     "a": [
-      "Hongkong (Hong Kong Island)",
-      "Taiwan (Formosa)",
-      "Hainan",
-      "Macau"
+      "Hongkong",
+      "Insel Taiwan",
+      "Insel Hainan",
+      "Halbinsel Macau"
     ],
     "explanation": "Der Vertrag von Nanking war der erste der berüchtigten „Ungleichen Verträge“, die in China das „Jahrhundert der Schande“ einläuteten.",
-    "exp": "Der Vertrag von Nanking war der erste der berüchtigten „Ungleichen Verträge“, die in China das „Jahrhundert der Schande“ einläuteten."
+    "exp": "Hongkong"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "mid",
     "q": "Was war der kuriose religiöse Anspruch von Hong Xiuquan, dem Anführer des verheerenden Taiping-Aufstands (1851–1864)?",
     "a": [
-      "Er behauptete nach Fiebervisionen, der leibliche jüngere Bruder von Jesus Christus zu sein",
-      "Er erklärte sich zur Wiedergeburt von Konfuzius und dem Propheten Mohammed gleichzeitig",
+      "Er behauptete, der leibliche jüngere Bruder von Jesus Christus zu sein",
+      "Er erklärte sich zur Wiedergeburt von Konfuzius und Mohammed zugleich",
       "Er verkündete, die Reinkarnation des ersten Kaisers Qin Shi Huangdi zu sein",
       "Er behauptete, ein von Venus-Bewohnern gesandter Sternenbote zu sein"
     ],
     "explanation": "Der Taiping-Aufstand gegen die Mandschu forderte 20 bis 30 Millionen Menschenleben und war der blutigste Bürgerkrieg der gesamten Menschheitsgeschichte.",
-    "exp": "Der Taiping-Aufstand gegen die Mandschu forderte 20 bis 30 Millionen Menschenleben und war der blutigste Bürgerkrieg der gesamten Menschheitsgeschichte."
+    "exp": "Er behauptete, der leibliche jüngere Bruder von Jesus Christus zu sein"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "mid",
     "q": "Wofür zweckentfremdete Kaiserinwitwe Cixi angeblich Gelder, die für die Modernisierung der kaiserlichen Flotte bestimmt waren?",
     "a": [
-      "Für den Bau des prunkvollen Neuen Sommerpalasts samt einem Marmorschiff am Kunming-See",
-      "Für den Kauf einer gigantischen Diamantensammlung von europäischen Juwelieren",
+      "Bau des Neuen Sommerpalasts mit Marmorschiff am Kunming-See",
+      "Für den Kauf einer Diamantensammlung von europäischen Juwelieren",
       "Für den Bau einer unterirdischen Grabkammer aus massivem Feingold",
       "Für den Import von tausenden Rennpferden aus dem Osmanischen Reich"
     ],
     "explanation": "Als China 1894 im Ersten Japanisch-Chinesischen Krieg gegen Japans moderne Panzerkreuzer antrat, war die Qing-Flotte hoffnungslos unterlegen.",
-    "exp": "Für den Bau des prunkvollen Neuen Sommerpalasts samt einem Marmorschiff am Kunming-See"
+    "exp": "Bau des Neuen Sommerpalasts mit Marmorschiff am Kunming-See"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "easy",
     "q": "Welcher verheerende Aufstand von 1900 richtete sich gewaltsam gegen alle Ausländer, Missionare und christliche Chinesen?",
     "a": [
-      "Der Boxeraufstand (Bewegung der Fäuste für Rechtchaffenheit und Harmonie)",
-      "Die Rebellion der Weißen Lotus-Sekte",
-      "Der Dunganen-Aufstand der Hui-Muslime",
-      "Die Xinhai-Revolution der Geheimbünde"
+      "Der Boxeraufstand",
+      "Die Lotus-Rebellion",
+      "Der Dunganen-Aufstand",
+      "Die Xinhai-Revolution"
     ],
     "explanation": "Die Rebellen glaubten durch rituelle Kampfkünste gegen westliche Gewehrkugeln unverwundbar zu sein; ein Acht-Nationen-Bündnis schlug sie blutig nieder.",
-    "exp": "Der Boxeraufstand (Bewegung der Fäuste für Rechtchaffenheit und Harmonie)"
+    "exp": "Der Boxeraufstand"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "mid",
     "q": "Was war das bizarre Schicksal von Puyi, dem 1912 abgesetzten „Letzten Kaiser“ von China, in seinen späten Lebensjahren?",
     "a": [
-      "Er arbeitete nach seiner Begnadigung durch Mao als einfacher Gärtner im Botanischen Garten von Peking",
-      "Er floh nach London und eröffnete ein berühmtes chinesisches Restaurant in Soho",
-      "Er wurde Generalgouverneur der chinesischen Eisenbahngesellschaft in Shanghai",
-      "Er verbrachte sein restliches Leben in einem buddhistischen Schweigekloster in Tibet"
+      "Puyi",
+      "Guangxu",
+      "Tongzhi",
+      "Xianfeng"
     ],
     "explanation": "Nach seiner Rolle als Marionettenkaiser von Mandschukuo und Umerziehungslager lebte Puyi bis 1967 als ganz gewöhnlicher Bürger der Volksrepublik.",
-    "exp": "Er arbeitete nach seiner Begnadigung durch Mao als einfacher Gärtner im Botanischen Garten von Peking"
+    "exp": "Puyi"
   },
   {
     "cat": "spate_qing_republik",
@@ -97,130 +97,130 @@
     "diff": "mid",
     "q": "Was löste am 4. Mai 1919 in Peking riesige Studentenproteste aus, die eine intellektuelle Zeitenwende einleiteten?",
     "a": [
-      "Der Versailler Vertrag sprach ehemals deutsche Kolonialpachtgebiete in Shandong an Japan statt an China zu",
-      "Die Wiedereinführung der Prüfungen über klassische konfuzianische Schriften",
-      "Ein totales Ausreiseverbot für chinesische Akademiker nach Europa",
-      "Die Festnahme von Sun Yat-sen durch britische Polizisten in Shanghai"
+      "Er ließ sich selbst zum Kaiser von China krönen",
+      "Er floh mit der Staatskasse nach Japan ins Exil",
+      "Er trat freiwillig zurück und wurde Mönch",
+      "Er führte den Konfuzianismus als Pflicht ein"
     ],
     "explanation": "Enttäuscht von den westlichen Demokratien wandten sich viele junge Intellektuelle der Bewegung des 4. Mai dem Marxismus-Leninismus zu.",
-    "exp": "Der Versailler Vertrag sprach ehemals deutsche Kolonialpachtgebiete in Shandong an Japan statt an China zu"
+    "exp": "Er ließ sich selbst zum Kaiser von China krönen"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "pro",
     "q": "Was tat General Yuan Shikai 1915, was einen landesweiten Aufstand selbst unter seinen engsten Generälen auslöste?",
     "a": [
-      "Er rief sich selbst zum neuen Kaiser von China (Hongxian-Dynastie) aus",
-      "Er verkaufte die Verbotene Stadt an eine US-amerikanische Hotelkette",
-      "Er ernannte den japanischen Botschafter zum chinesischen Premierminister",
-      "Er verbot die chinesische Schrift zugunsten des lateinischen Alphabets"
+      "Proteste gegen den Versailler Vertrag und Kolonialmächte",
+      "Ein Generalstreik der Seidenweber in Shanghai für höhere Löhne",
+      "Ein friedlicher Trauermarsch nach dem Tod von Sun Yat-sen",
+      "Die feierliche Ausrufung der ersten Verfassung der Republik"
     ],
     "explanation": "Sein Versuch, die Monarchie wiederzubeleben, hielt nur 83 Tage; sein Scheitern stürzte China in die chaotische Ära der Warlords.",
-    "exp": "Er rief sich selbst zum neuen Kaiser von China (Hongxian-Dynastie) aus"
+    "exp": "Proteste gegen den Versailler Vertrag und Kolonialmächte"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "mid",
     "q": "Welches berüchtigte Massaker im April 1927 in Shanghai beendete die Erste Einheitsfront zwischen Guomindang und Kommunisten?",
     "a": [
-      "Das Massaker von Shanghai (Weißer Terror durch Chiang Kai-shek und die Grüne Bande)",
-      "Die Plünderung des französischen Konsulats durch warlord-Truppen",
-      "Der Bombenanschlag auf das Peace Hotel am Bund durch Anarchisten",
-      "Die Verhaftung der gesamten Sowjet-Delegation am Bahnhof Nord"
+      "Im Juli 1921 in der französischen Konzession in Shanghai",
+      "Im Oktober 1917 an der Kaiserlichen Universität in Peking",
+      "Im Mai 1925 während des Generalstreiks in Guangzhou",
+      "Im Dezember 1931 in den Bergen der Jiangxi-Sowjetrepublik"
     ],
     "explanation": "Chiang Kai-shek verbündete sich mit der Unterwelt-Triade von Du Yuesheng, um tausende streikende Gewerkschafter und Kommunisten hinzurichten.",
-    "exp": "Das Massaker von Shanghai (Weißer Terror durch Chiang Kai-shek und die Grüne Bande)"
+    "exp": "Im Juli 1921 in der französischen Konzession in Shanghai"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "pro",
     "q": "Auf welcher legendären Konferenz im Januar 1935 während des Langen Marsches sicherte sich Mao Zedong die Führung der KPCh?",
     "a": [
-      "Konferenz von Zunyi",
-      "Plenum von Yan’an",
-      "Kongress von Wuhan",
-      "Treffen von Ruijin"
+      "Guerillakrieg mit Unterstützung der ländlichen Bauernbevölkerung",
+      "Klassischer bewaffneter Arbeiteraufstand in den Großstädten",
+      "Ein parlamentarischer Marsch durch alle bestehenden Institutionen",
+      "Die schrittweise Unterwanderung der nationalchinesischen Armee"
     ],
     "explanation": "In Zunyi entmachtete Mao die von Moskau gesteuerten Komintern-Berater (die „28 Bolschewiken“) und setzte seine Taktik des bäuerlichen Guerillakriegs durch.",
-    "exp": "Konferenz von Zunyi"
+    "exp": "Guerillakrieg mit Unterstützung der ländlichen Bauernbevölkerung"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "easy",
     "q": "Welche heldenhafte Flussüberquerung über glühende Eisenketten wurde zum bekanntesten Mythos des Langen Marsches?",
     "a": [
-      "Die Überquerung der Luding-Brücke über den reißenden Dadu-Fluss",
-      "Der Übergang über die Gelbe-Fluss-Schlucht bei Lanzhou",
-      "Die Durchquerung der Perlfluss-Mündung bei Nacht",
-      "Die Überquerung des Jangtsekiang auf Bambusflößen bei Wuhan"
+      "Der Lange Marsch der Roten Armee über 9.000 Kilometer",
+      "Der Vormarsch der Guomindang-Truppen nach Peking",
+      "Die Flucht der Mandschu-Aristokratie nach Harbin",
+      "Der Rückzug der Warlords in das tibetische Hochland"
     ],
     "explanation": "Kommunistische Soldaten hangelten sich unter feindlichem Maschinengewehrfeuer über freiliegende Ketten, da die Bohlen der Brücke abmontiert waren.",
-    "exp": "Die Überquerung der Luding-Brücke über den reißenden Dadu-Fluss"
+    "exp": "Der Lange Marsch der Roten Armee über 9.000 Kilometer"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "easy",
     "q": "Welcher Zwischenfall am 7. Juli 1937 gilt als Beginn des vollen Zweiten Japanisch-Chinesischen Krieges?",
     "a": [
-      "Der Zwischenfall an der Marco-Polo-Brücke (Lugou Qiao) nahe Peking",
-      "Der Mukden-Zwischenfall an der südmandschurischen Eisenbahnlinie",
-      "Die Versenkung des britischen Kanonenboots HMS Ladybird",
-      "Die Beschießung der deutschen Festung Tsingtau"
+      "Das Massaker von Nanjing",
+      "Die Schlacht von Shanghai",
+      "Die Belagerung von Wuhan",
+      "Das Bombardement von Chongqing"
     ],
     "explanation": "Japan nutzte die angebliche Suche nach einem vermissten Soldaten an der Brücke als Vorwand für eine Großoffensive auf Peking.",
-    "exp": "Der Zwischenfall an der Marco-Polo-Brücke (Lugou Qiao) nahe Peking"
+    "exp": "Das Massaker von Nanjing"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "mid",
     "q": "Was taten Chiangs Truppen 1938 verzweifelt, um den Vormarsch der Japaner zu stoppen, was zu einer humanitären Katastrophe führte?",
     "a": [
-      "Sie sprengten absichtlich die Deiche des Gelben Flusses bei Huayuankou",
-      "Sie brannten die gesamte Millionenstadt Shanghai nieder",
-      "Sie vergifteten alle Reisfelder der Provinz Sichuan mit Blausäure",
-      "Sie ließen hunderte Kerosintanks im Hafen von Guangzhou explodieren"
+      "Sie sprengten die Deiche des Gelben Flusses bei Huayuankou",
+      "Sie legten einen riesigen Waldbrand in den Bergen von Sichuan",
+      "Sie vergifteten sämtliche Trinkwasserbrunnen entlang der Bahnlinie",
+      "Sie versenkten alle Schiffe im Hafenbecken von Shanghai"
     ],
     "explanation": "Die gigantische Flutwelle ertränkte rund 500.000 chinesische Zivilisten und machte Millionen obdachlos – hielt die Japaner aber nur wenige Monate auf.",
-    "exp": "Sie sprengten absichtlich die Deiche des Gelben Flusses bei Huayuankou"
+    "exp": "Sie sprengten die Deiche des Gelben Flusses bei Huayuankou"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "easy",
     "q": "Welche Stadt diente der nationalchinesischen Regierung während der japanischen Besatzung als schwer bombardierte Kriegshauptstadt?",
     "a": [
-      "Chongqing (Chungking)",
-      "Chengdu",
-      "Kunming",
-      "Xi’an"
+      "Chongqing",
+      "Provinzstadt Chengdu",
+      "Provinzstadt Kunming",
+      "Kaiserstadt Xi’an"
     ],
     "explanation": "Hinter den Schluchten des Jangtse geschützt ertrug Chongqing jahrelange pausenlose Bombardements der japanischen Luftwaffe.",
-    "exp": "Chongqing (Chungking)"
+    "exp": "Chongqing"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "mid",
     "q": "Wer waren die legendären „Flying Tigers“ (First American Volunteer Group) unter Claire Chennault im Zweiten Weltkrieg?",
     "a": [
-      "Freiwillige US-Piloten mit Curtiss P-40-Jägern mit Haifischmaul-Lackierung, die China gegen Japan verteidigten",
-      "Chinesische Fallschirmjäger, die Sabotage hinter den feindlichen Linien ausübten",
-      "Britische Spione, die kaiserliche Flugzeugpläne nach Indien schmuggelten",
-      "Einheimische Schmuggler, die per Seilbahn Waffen über den Himalaya brachten"
+      "Freiwillige US-Piloten mit Curtiss P-40-Jägern mit Haifischmaul",
+      "Sowjetische Panzersoldaten mit gepanzerten T-34-Spähfahrzeugen",
+      "Britische Fallschirmjäger im dichten birmanischen Dschungel",
+      "Chinesische Eliteschützen ausgebildet von Schweizer Instruktoren"
     ],
     "explanation": "Die Flying Tigers errangen trotz zahlenmäßiger Unterlegenheit spektakuläre Luftsiege über der berüchtigten Versorgungsroute „The Hump“.",
-    "exp": "Freiwillige US-Piloten mit Curtiss P-40-Jägern mit Haifischmaul-Lackierung, die China gegen Japan verteidigten"
+    "exp": "Freiwillige US-Piloten mit Curtiss P-40-Jägern mit Haifischmaul"
   },
   {
     "cat": "spate_qing_republik",
     "diff": "pro",
     "q": "Was war der Xi’an-Zwischenfall im Dezember 1936, der Chiang Kai-shek zur Zusammenarbeit mit Mao zwang?",
     "a": [
-      "Der eigene Warlord Zhang Xueliang („Der junge Marschall“) entführte Chiang und erzwang die Zweite Einheitsfront gegen Japan",
-      "Mao Zedong besuchte Chiang verkleidet als Mönch im Regierungspalast",
-      "Japanische Kommandotruppen nahmen den gesamten nationalchinesischen Generalstab gefangen",
-      "Ein Erdbeben zerstörte Chiangs Hauptquartier und ließ ihn Zuflucht bei Bauern suchen"
+      "Warlord Zhang Xueliang entführte Chiang und erzwang die Einheitsfront",
+      "Mao Zedong und Chiang Kai-shek trafen sich zu Geheimverhandlungen",
+      "Japanische Attentäter verübten einen Anschlag auf das Hauptquartier",
+      "US-Diplomaten handelten einen Waffenstillstand zwischen den Parteien aus"
     ],
     "explanation": "Chiang wollte zuerst die Kommunisten vernichten („innen erst befrieden, dann außen abwehren“); seine eigenen Generäle stoppten ihn mit Waffengewalt.",
-    "exp": "Der eigene Warlord Zhang Xueliang („Der junge Marschall“) entführte Chiang und erzwang die Zweite Einheitsfront gegen Japan"
+    "exp": "Warlord Zhang Xueliang entführte Chiang und erzwang die Einheitsfront"
   },
   {
     "cat": "spate_qing_republik",
@@ -228,9 +228,9 @@
     "q": "Wohin floh Chiang Kai-shek mit rund zwei Millionen Soldaten, Beamten und den Goldschätzen der Verbotenen Stadt 1949?",
     "a": [
       "Auf die Insel Taiwan",
-      "In die britische Kronkolonie Hongkong",
-      "Auf die philippinische Insel Luzon",
-      "In die Vereinigten Staaten nach San Francisco"
+      "Auf die Philippinen",
+      "In die Kolonie Hongkong",
+      "In die Vereinigten Staaten"
     ],
     "explanation": "In Taipeh führte Chiang die „Republik China“ im Kriegszustand weiter, während auf dem Festland die Volksrepublik ausgerufen wurde.",
     "exp": "Auf die Insel Taiwan"
@@ -240,13 +240,13 @@
     "diff": "mid",
     "q": "Welche deutsche Kolonialstadt in China wurde ab 1898 zum Marinestützpunkt und zur Wiege einer weltberühmten Brauerei?",
     "a": [
-      "Qingdao (Tsingtau)",
-      "Weihaiwei",
-      "Guangzhouwan",
-      "Tianjin"
+      "Qingdao",
+      "Hafenstadt Tianjin",
+      "Marinestützpunkt Dalian",
+      "Handelsstadt Xiamen"
     ],
     "explanation": "Das deutsche Pachtgebiet Kiautschou brachte deutsches Baurecht, Kanalisation und 1903 die Tsingtao-Brauerei hervor, die bis heute weltweit exportiert.",
-    "exp": "Qingdao (Tsingtau)"
+    "exp": "Qingdao"
   },
   {
     "cat": "mao_aera",
@@ -254,9 +254,9 @@
     "q": "An welchem historischen Datum rief Mao Zedong auf dem Tor des Himmlischen Friedens die Volksrepublik China aus?",
     "a": [
       "1. Oktober 1949",
-      "1. Mai 1945",
-      "4. Juli 1953",
-      "9. September 1976"
+      "4. Mai 1919",
+      "1. Juli 1921",
+      "15. August 1945"
     ],
     "explanation": "Mit den Worten „Das chinesische Volk ist aufgestanden!“ besiegelte Mao das Ende des Bürgerkriegs und gründete die Volksrepublik.",
     "exp": "1. Oktober 1949"
@@ -266,91 +266,91 @@
     "diff": "easy",
     "q": "Unter welchem Vorwand griffen chinesische „Freiwilligenverbände“ (PVA) im Oktober 1950 in den Koreakrieg ein?",
     "a": [
-      "US-Truppen rückten bis an den Grenzfluss Yalu vor und bedrohten chinesisches Staatsgebiet",
-      "Nordkorea hatte China offiziell den Krieg wegen Grenzstreitigkeiten erklärt",
-      "China wollte die Halbinsel Korea als 24. Provinz direkt annektieren",
-      "Die Sowjetunion verweigerte China Kredite ohne sofortigen Kriegseintritt"
+      "US-Truppen rückten bis an den Grenzfluss Yalu vor",
+      "Südkoreanische Einheiten drangen in die Mandschurei ein",
+      "Die Sowjetunion drohte China mit wirtschaftlichen Sanktionen",
+      "Nordkorea bat um Schutzkräfte zur Grenzsicherung"
     ],
     "explanation": "Die überraschende Offensive von hunderttausenden chinesischen Soldaten warf die UN- und US-Truppen bis weit hinter Seoul zurück.",
-    "exp": "US-Truppen rückten bis an den Grenzfluss Yalu vor und bedrohten chinesisches Staatsgebiet"
+    "exp": "US-Truppen rückten bis an den Grenzfluss Yalu vor"
   },
   {
     "cat": "mao_aera",
     "diff": "mid",
     "q": "Was war das fatale Ziel der Kampagne „Hinterhof-Hochöfen“ während des Großen Sprungs nach vorn (1958–1961)?",
     "a": [
-      "Bauern sollten in primitiven Lehmöfen Schrott einschmelzen, um Großbritannien bei der Stahlproduktion zu überholen",
-      "Jedes Dorf sollte eigene Munition für die Invasion von Taiwan gießen",
-      "Die Verbrennung von konfuzianischen Büchern zur Beheizung von Treibhäusern",
-      "Das Schmelzen von Kupferkabeln zur Gewinnung von Goldstaub"
+      "Bauern sollten in primitiven Lehmöfen Schrott einschmelzen",
+      "Dörfer wurden verpflichtet, Steinkohle im Tagebau zu fördern",
+      "Frauen mussten Kupfergeschirr für die Rüstung abliefern",
+      "Getreidemühlen wurden zu Munitionsfabriken umgebaut"
     ],
     "explanation": "Der erzeugte „Stahl“ war brüchiges, unbrauchbares Roheisen. Da Bauern auf den Feldern fehlten, verrottete die Ernte und Millionen verhungerten.",
-    "exp": "Bauern sollten in primitiven Lehmöfen Schrott einschmelzen, um Großbritannien bei der Stahlproduktion zu überholen"
+    "exp": "Bauern sollten in primitiven Lehmöfen Schrott einschmelzen"
   },
   {
     "cat": "mao_aera",
     "diff": "easy",
     "q": "Welche fatale biologische Kettenreaktion löste Maos „Ausrottung der vier Plagen“ (Spatzenkampagne) aus?",
     "a": [
-      "Ohne Spatzen vermehrten sich Heuschrecken und Schädlinge explosionsartig und fraßen alle Felder kahl",
-      "Wildvögel aus Sibirien brachten eine Tierseuche über die Wasserbüffel",
-      "Die Waldbestände vertrockneten, weil Vögel keine Baumsamen mehr verteilten",
-      "Flüsse verschlammten durch das Fehlen von Enten und Gänsen"
+      "Ohne Spatzen fraßen Heuschrecken und Schädlinge die Felder kahl",
+      "Fliegen übertrugen tödliche Krankheiten auf Nutztiere",
+      "Ratten vermehrten sich und zerstörten Getreidespeicher",
+      "Mücken verseuchten das Trinkwasser mit Cholerabakterien"
     ],
     "explanation": "Mao ließ Spatzen tagelang mit Trommeln und Töpfen scheuchen, bis sie tot vom Himmel fielen – die folgende Insektenplage verschärfte die Große Hungersnot.",
-    "exp": "Ohne Spatzen vermehrten sich Heuschrecken und Schädlinge explosionsartig und fraßen alle Felder kahl"
+    "exp": "Ohne Spatzen fraßen Heuschrecken und Schädlinge die Felder kahl"
   },
   {
     "cat": "mao_aera",
     "diff": "mid",
     "q": "Was war der Slogan der Hundert-Blumen-Bewegung (1956/57), bevor Mao die Kritiker in der „Anti-Rechts-Bewegung“ verfolgen ließ?",
     "a": [
-      "„Lasst hundert Blumen blühen, lasst hundert Eulenschulen streiten!“",
-      "„Vorwärts auf dem Pfad des glorreichen Eisens und Stahls!“",
-      "„Wissen ist Macht, Disziplin ist der Schlüssel zum Erfolg!“",
-      "„Ein Funke kann die gesamte Steppe in Brand stecken!“"
+      "Lasst hundert Blumen blühen, lasst hundert Schulen streiten",
+      "Ein Funke kann ein gewaltiges Steppenfeuer entfachen",
+      "Die Macht kommt aus den Gewehrläufen der Partei",
+      "Vorwärts im revolutionären Kampf gegen den Imperialismus"
     ],
     "explanation": "Zunächst ermunterte Mao zu offener Kritik; als diese die Partei fundamental infrage stellte, wurden über 500.000 Intellektuelle in Arbeitslager deportiert.",
-    "exp": "„Lasst hundert Blumen blühen, lasst hundert Eulenschulen streiten!“"
+    "exp": "Lasst hundert Blumen blühen, lasst hundert Schulen streiten"
   },
   {
     "cat": "mao_aera",
     "diff": "pro",
     "q": "Worum ging es beim „Chinesisch-Sowjetischen Zerwürfnis“ (Sino-Soviet Split) ab Ende der 1950er Jahre?",
     "a": [
-      "Mao verurteilte Chruschtschows Entstalinisierung und friedliche Koexistenz mit dem Westen als revisionistischen Verrat",
-      "Einen Streit über den Bau einer Gaspipeline von Wladiwostok nach Shanghai",
-      "Die Weigerung der UdSSR, Maos Rote Fibel ins Russische zu übersetzen",
-      "Den sowjetischen Plan, die Mongolei und Tibet zu einem neuen Staat zu vereinen"
+      "Mao verurteilte Chruschtschows Entstalinisierung als Verrat",
+      "Streit über die Grenzziehung am Fluss Amur eskalierte",
+      "Moskau verweigerte Kredite für den Bau von Staudämmen",
+      "Peking forderte die Rückgabe historischer Gebiete Sibiriens"
     ],
     "explanation": "Der Bruch führte 1969 sogar zu blutigen Grenzgefechten am Fluss Ussuri und trieb China schließlich in die diplomatische Annäherung an die USA.",
-    "exp": "Mao verurteilte Chruschtschows Entstalinisierung und friedliche Koexistenz mit dem Westen als revisionistischen Verrat"
+    "exp": "Mao verurteilte Chruschtschows Entstalinisierung als Verrat"
   },
   {
     "cat": "mao_aera",
     "diff": "easy",
     "q": "Wie nannten sich die radikalisierten Schüler und Studenten, die während der Kulturrevolution (ab 1966) das Land ins Chaos stürzten?",
     "a": [
-      "Rote Garden (Hongweibing)",
-      "Befreiungstrupps des Proletariats",
-      "Junge Pioniere der Flamme",
-      "Sturmbataillone des Ostens"
+      "Rote Garden",
+      "Jungpioniere",
+      "Volksmilizen",
+      "Revolutionsbrigaden"
     ],
     "explanation": "Auf Maos Aufruf „Bombardiert die Hauptquartiere!“ zerstörten die Roten Garden Tempel, historische Schätze und demütigten Lehrer und Parteifunktionäre.",
-    "exp": "Rote Garden (Hongweibing)"
+    "exp": "Rote Garden"
   },
   {
     "cat": "mao_aera",
     "diff": "easy",
     "q": "Was war die sogenannte „Rote Fibel“ (Mao-Bibel), die damals in Milliardenauflage gedruckt werden musste?",
     "a": [
-      "Worte des Vorsitzenden Mao Tsetung (Zitate Maos im roten Plastikeinband)",
-      "Ein Kochbuch mit traditionellen Rezepten aus Hunan für revolutionäre Soldaten",
-      "Ein Gesetzbuch mit den neuen Strafgesetzen für Wirtschaftsverbrecher",
-      "Ein Notizbuch für Schüler mit Anleitungen zum Bau von Partisanenwaffen"
+      "Worte des Vorsitzenden Mao Tsetung",
+      "Das Rote Banner der Revolution",
+      "Leitfaden für den Klassenkampf",
+      "Das Kommunistische Handbuch Chinas"
     ],
     "explanation": "Jeder Bürger musste die Rote Fibel stets bei sich tragen, Passagen auswendig aufsagen und bei Kundgebungen im Chor in die Luft recken.",
-    "exp": "Worte des Vorsitzenden Mao Tsetung (Zitate Maos im roten Plastikeinband)"
+    "exp": "Worte des Vorsitzenden Mao Tsetung"
   },
   {
     "cat": "mao_aera",
@@ -358,9 +358,9 @@
     "q": "Welche „Vier Alten“ (Si Jiu) sollten die Roten Garden in der Kulturrevolution radikal vernichten?",
     "a": [
       "Alte Ideen, alte Kultur, alte Gewohnheiten und alte Sitten",
-      "Alte Tempel, alte Brücken, alte Kaisergräber und alte Pagoden",
-      "Alte Kaiser, alte Mandarine, alte Händler und alte Mönche",
-      "Alte Münzen, alte Bücher, alte Waffen und alte Gemälde"
+      "Alter Feudalismus, alter Kapitalismus, alte Religion und alter Adel",
+      "Alte Tempel, alte Schriften, alte Kleidung und alte Beamte",
+      "Alter Aberglaube, alter Handel, altes Geld und altes Recht"
     ],
     "explanation": "Unzählige unersetzliche Kulturschätze aus Jahrtausenden chinesischer Geschichte wurden von fanatischen Jugendlichen zertrümmert und verbrannt.",
     "exp": "Alte Ideen, alte Kultur, alte Gewohnheiten und alte Sitten"
@@ -370,26 +370,26 @@
     "diff": "pro",
     "q": "Was geschah 1971 mit Maos designiertem Nachfolger Lin Biao, als dieser angeblich einen Staatsstreich („Projekt 571“) plante?",
     "a": [
-      "Sein Flugzeug stürzte bei der überstürzten Flucht in Richtung Sowjetunion über der Mongolei ab",
-      "Er wurde auf einer geheimen Parteisitzung in Peking verhaftet und zum Tode verurteilt",
-      "Er setzte sich per U-Boot nach Nordkorea ab und lebte dort im Exil",
-      "Er ergab sich den Roten Garden und wurde vor der Verbotenen Stadt öffentlich verurteilt"
+      "Sein Flugzeug stürzte bei der Flucht über der Mongolei ab",
+      "Er wurde auf einem Parteitag verhaftet und zum Tode verurteilt",
+      "Er floh nach Taiwan und trat der Guomindang bei",
+      "Er beging Selbstmord in seinem Pekinger Arbeitszimmer"
     ],
     "explanation": "Der Tod von Lin Biao, der zuvor als Maos treuester Waffenbruder galt, erschütterte den Glauben der Bevölkerung an die Führung zutiefst.",
-    "exp": "Sein Flugzeug stürzte bei der überstürzten Flucht in Richtung Sowjetunion über der Mongolei ab"
+    "exp": "Sein Flugzeug stürzte bei der Flucht über der Mongolei ab"
   },
   {
     "cat": "mao_aera",
     "diff": "easy",
     "q": "Welche ungewöhnliche Sportart leitete 1971 das historische Tauwetter zwischen den USA und der Volksrepublik China ein?",
     "a": [
-      "Tischtennis („Ping-Pong-Diplomatie“)",
-      "Badminton",
-      "Volleyball",
-      "Schach"
+      "Tischtennis",
+      "Badmintonsport",
+      "Volleyballspiel",
+      "Schachturnier"
     ],
     "explanation": "Eine zufällige Begegnung bei der WM in Japan führte zur Einladung des US-Tischtennisteams nach Peking – kurz darauf reiste Henry Kissinger geheim an.",
-    "exp": "Tischtennis („Ping-Pong-Diplomatie“)"
+    "exp": "Tischtennis"
   },
   {
     "cat": "mao_aera",
@@ -397,9 +397,9 @@
     "q": "Welcher US-Präsident reiste im Februar 1972 sensationell nach Peking und traf Mao Zedong persönlich?",
     "a": [
       "Richard Nixon",
-      "Dwight D. Eisenhower",
-      "John F. Kennedy",
-      "Jimmy Carter"
+      "Gerald Ford",
+      "Jimmy Carter",
+      "Lyndon B. Johnson"
     ],
     "explanation": "Nixons Besuch war ein diplomatisches Erdbeben im Kalten Krieg und isolierte die Sowjetunion geopolitisch.",
     "exp": "Richard Nixon"
@@ -409,52 +409,52 @@
     "diff": "pro",
     "q": "Was beschloss die UN-Generalversammlung am 25. Oktober 1971 mit der Resolution 2758?",
     "a": [
-      "Die Volksrepublik China erhielt den Sitz Chinas und den ständigen Sitz im UN-Sicherheitsrat; Taiwans Vertreter wurden ausgeschlossen",
-      "Taiwan wurde als unabhängiges 130. Mitgliedsland der Vereinten Nationen anerkannt",
-      "Ein weltweites Waffenembargo gegen beide Seiten der Taiwanstraße",
-      "Die Verlegung des asiatischen UN-Hauptsitzes von Genf nach Shanghai"
+      "Volksrepublik erhielt Sitz Chinas und Taiwans Vertreter gingen",
+      "Taiwan und die Volksrepublik wurden als zwei Staaten anerkannt",
+      "China wurde verpflichtet, atomare Rüstungsgüter abzubauen",
+      "Hongkong wurde unter provisorische UN-Verwaltung gestellt"
     ],
     "explanation": "Seitdem vertritt allein Peking völkerrechtlich ganz China in den Vereinten Nationen.",
-    "exp": "Die Volksrepublik China erhielt den Sitz Chinas und den ständigen Sitz im UN-Sicherheitsrat; Taiwans Vertreter wurden ausgeschlossen"
+    "exp": "Volksrepublik erhielt Sitz Chinas und Taiwans Vertreter gingen"
   },
   {
     "cat": "mao_aera",
     "diff": "easy",
     "q": "Wer war Zhou Enlai, der von 1949 bis zu seinem Krebstod 1976 ununterbrochen als Ministerpräsident amtierte?",
     "a": [
-      "Der pragmatische, international hoch angesehene Chefdiplomat und Premierminister Chinas",
-      "Der radikale Chefpropagandist der Roten Garden in Shanghai",
-      "Der oberste Befehlshaber der chinesischen Atomstreitkräfte",
-      "Der Gründer der chinesischen Nationalbank in Hongkong"
+      "Pragmatischer Chefdiplomat und Premierminister Chinas",
+      "Oberbefehlshaber der chinesischen Atomstreitkräfte",
+      "Gründer der chinesischen Sonderwirtschaftszonen",
+      "Erster ziviler Präsident der Volksrepublik China"
     ],
     "explanation": "Zhou Enlai rettete hinter den Kulissen viele Intellektuelle und Regierungsbeamte vor den Exzessen der Kulturrevolution.",
-    "exp": "Der pragmatische, international hoch angesehene Chefdiplomat und Premierminister Chinas"
+    "exp": "Pragmatischer Chefdiplomat und Premierminister Chinas"
   },
   {
     "cat": "mao_aera",
     "diff": "mid",
     "q": "Wer bildete nach Maos Tod im September 1976 die berüchtigte „Viererbande“, die kurz darauf verhaftet wurde?",
     "a": [
-      "Maos Witwe Jiang Qing und drei radikale Spitzenfunktionäre aus Shanghai",
-      "Vier desertierte Generäle der Luftwaffe, die einen Putsch versuchten",
-      "Vier westliche Wirtschaftsberater, die geheime Kredite anboten",
-      "Die vier ältesten Brüder von Zhou Enlai aus der Provinz Jiangsu"
+      "Maos Witwe Jiang Qing und drei radikale Funktionäre",
+      "Vier Generale der Volksbefreiungsarmee aus Peking",
+      "Die vier Gründer der ersten chinesischen Volksbanken",
+      "Die Gouverneure der vier südlichen Küstenprovinzen"
     ],
     "explanation": "Mit der Verhaftung der Viererbande im Oktober 1976 endete die zerstörerische Ära der Kulturrevolution schlagartig.",
-    "exp": "Maos Witwe Jiang Qing und drei radikale Spitzenfunktionäre aus Shanghai"
+    "exp": "Maos Witwe Jiang Qing und drei radikale Funktionäre"
   },
   {
     "cat": "mao_aera",
     "diff": "pro",
     "q": "Was war das gigantische, streng geheime Projekt der „Dritten Front“ (Third Front) in den 1960er Jahren?",
     "a": [
-      "Der massive Aufbau von Schwer- und Rüstungsindustrie in abgelegenen Gebirgen und Höhlen im Landesinneren aus Angst vor Atomangriffen",
-      "Ein Netz aus Spionagetunneln unter der Grenze zur Sowjetunion",
-      "Die Errichtung von unterseeischen Tankstellen im Südchinesischen Meer",
-      "Die Umsiedlung von 50 Millionen Großstadtbürgern in die Wüste Gobi"
+      "Aufbau von Industrie in Bergen und Höhlen gegen Atomangriffe",
+      "Der Bau eines unterirdischen Kanalsystems vom Jangtse zum Norden",
+      "Die Errichtung einer befestigten Mauer entlang der Grenze zu Indien",
+      "Die geheime Stationierung von U-Booten im Südchinesischen Meer"
     ],
     "explanation": "Mao fürchtete einen sowjetischen oder amerikanischen Erstschlag – Fabriken wurden unter unvorstellbaren Mühen in Bergkuppen und Täler von Sichuan verlegt.",
-    "exp": "Der massive Aufbau von Schwer- und Rüstungsindustrie in abgelegenen Gebirgen und Höhlen im Landesinneren aus Angst vor Atomangriffen"
+    "exp": "Aufbau von Industrie in Bergen und Höhlen gegen Atomangriffe"
   },
   {
     "cat": "mao_aera",
@@ -462,9 +462,9 @@
     "q": "In welchem Jahr zündete China auf dem Testgelände Lop Nor erfolgreich seine erste eigene Atombombe („Projekt 596“)?",
     "a": [
       "1964",
-      "1949",
-      "1976",
-      "1985"
+      "1958",
+      "1971",
+      "1976"
     ],
     "explanation": "Trotz des Bruchs mit Moskau und verheerender Hungersnöte schaffte China den Aufstieg zur Atommacht in Rekordzeit.",
     "exp": "1964"
@@ -474,26 +474,26 @@
     "diff": "mid",
     "q": "Welches gigantische Erdbeben erschütterte Nordchina im Juli 1976 wenige Wochen vor Maos Tod mit Hunderttausenden Toten?",
     "a": [
-      "Das Erdbeben von Tangshan",
-      "Das Erdbeben von Wenchuan",
-      "Das Erdbeben von Haiyuan",
-      "Das Erdbeben von Yushu"
+      "Erdbeben von Tangshan",
+      "Erdbeben von Sichuan",
+      "Erdbeben von Gansu",
+      "Erdbeben von Yunnan"
     ],
     "explanation": "Im traditionellen Volksglauben galt die Naturkatastrophe vielen als Zeichen, dass die Herrscher das „Mandat des Himmels“ verloren hatten.",
-    "exp": "Das Erdbeben von Tangshan"
+    "exp": "Erdbeben von Tangshan"
   },
   {
     "cat": "mao_aera",
     "diff": "easy",
     "q": "Wo ruht der einbalsamierte Leichnam von Mao Zedong bis heute für Besucher aufgebahrt?",
     "a": [
-      "Im Mao-Mausoleum mitten auf dem Tian’anmen-Platz in Peking",
-      "In einer Felsenhöhle in seinem Geburtsort Shaoshan",
-      "Im Untergeschoss des Palastmuseums in der Verbotenen Stadt",
-      "In den Ming-Gräbern nordwestlich der Hauptstadt"
+      "Im Mao-Mausoleum auf dem Tian’anmen-Platz",
+      "In einer Felsenhöhle nahe seiner Heimatstadt Shaoshan",
+      "Im unterirdischen Bunker der Militärkommission",
+      "In den Ming-Gräbern nördlich von Peking"
     ],
     "explanation": "Obwohl Mao ausdrücklich eingeäschert werden wollte, entschied das Politbüro nach seinem Tod, ihn in einem Kristallkristall-Sarkophag aufzubahren.",
-    "exp": "Im Mao-Mausoleum mitten auf dem Tian’anmen-Platz in Peking"
+    "exp": "Im Mao-Mausoleum auf dem Tian’anmen-Platz"
   },
   {
     "cat": "reform_boom",
@@ -501,9 +501,9 @@
     "q": "Welcher pragmatische Politiker prägte ab Ende 1978 Chinas historische Wende zu „Reform und Öffnung“?",
     "a": [
       "Deng Xiaoping",
-      "Hua Guofeng",
-      "Hu Yaobang",
-      "Zhao Ziyang"
+      "Staatsmann Hua Guofeng",
+      "Reformer Hu Yaobang",
+      "Premier Zhao Ziyang"
     ],
     "explanation": "Deng Xiaoping überlebte zwei Säuberungswellen unter Mao und führte China ohne formales Staatspräsidentenamt in die Moderne.",
     "exp": "Deng Xiaoping"
@@ -513,13 +513,13 @@
     "diff": "easy",
     "q": "Mit welchem berühmten Katzen-Gleichnis begründete Deng Xiaoping seinen wirtschaftlichen Pragmatismus?",
     "a": [
-      "„Egal ob die Katze schwarz oder weiß ist – Hauptsache, sie fängt Mäuse.“",
-      "„Wer eine Katze reitet, darf niemals absteigen.“",
-      "„Eine schlafende Katze soll man nicht mit Reformen wecken.“",
-      "„Zwei Katzen auf einem Baum fangen doppelt so viele Spatzen.“"
+      "Egal ob die Katze schwarz oder weiß ist, sie muss Mäuse fangen",
+      "Man muss das Eisen schmieden, solange es revolutionär glüht",
+      "Ein Drache fliegt auch bei stürmischem Gegenwind zum Himmel",
+      "Wer den Tiger reitet, darf niemals freiwillig absteigen"
     ],
     "explanation": "Deng machte Schluss mit ideologischen Grabenkämpfen: Wenn kapitalistische Methoden Wohlstand schaffen, werden sie im Sozialismus genutzt.",
-    "exp": "„Egal ob die Katze schwarz oder weiß ist – Hauptsache, sie fängt Mäuse.“"
+    "exp": "Egal ob die Katze schwarz oder weiß ist, sie muss Mäuse fangen"
   },
   {
     "cat": "reform_boom",
@@ -527,9 +527,9 @@
     "q": "Welches verschlafene Fischerdorf nahe Hongkong wurde 1980 zur ersten Sonderwirtschaftszone (SEZ) und zum Silicon Valley Chinas?",
     "a": [
       "Shenzhen",
-      "Zhuhai",
-      "Xiamen",
-      "Shantou"
+      "Zhuhai an der Grenze",
+      "Shantou an der Küste",
+      "Xiamen im Süden"
     ],
     "explanation": "Shenzhen wuchs in vier Jahrzehnten von 30.000 Einwohnern zu einer hochmodernen Tech-Megacity mit über 17 Millionen Menschen.",
     "exp": "Shenzhen"
@@ -539,78 +539,78 @@
     "diff": "mid",
     "q": "Was war der geheime Pakt der 18 Bauern von Xiaogang im Jahr 1978, der die chinesische Landwirtschaft revolutionierte?",
     "a": [
-      "Sie teilten das Kommuneland heimlich in Familienparzellen auf und unterschrieben mit Daumenabdrücken in Blut",
-      "Sie schmuggelten Traktoren aus den USA über den Hafen von Tianjin",
-      "Sie weigerten sich kollektiv, Steuern an die Kreisverwaltung zu zahlen",
-      "Sie pflanzten statt Getreide heimlich Kaffeebohnen für den Export an"
+      "Teilten Kommuneland heimlich in Parzellen mit Daumenabdrücken in Blut",
+      "Gründeten die erste private Aktiengesellschaft für Getreide",
+      "Verweigerten die Abgabe von Steuern an die Kreisverwaltung",
+      "Flohen gemeinsam über den Grenzfluss nach Hongkong"
     ],
     "explanation": "Der Pakt war illegal (bei Entdeckung drohte Todesstrafe), doch der Ertrag explodierte – Deng Xiaoping legalisierte das Modell als „Haushaltsverantwortungssystem“.",
-    "exp": "Sie teilten das Kommuneland heimlich in Familienparzellen auf und unterschrieben mit Daumenabdrücken in Blut"
+    "exp": "Teilten Kommuneland heimlich in Parzellen mit Daumenabdrücken in Blut"
   },
   {
     "cat": "reform_boom",
     "diff": "easy",
     "q": "Welche radikale Bevölkerungspolitik führte China ab 1979 ein, um das rasante Bevölkerungswachstum zu bremsen?",
     "a": [
-      "Die Ein-Kind-Politik",
-      "Ein Verbot von Hochzeiten vor dem 30. Lebensjahr",
-      "Die Zwangsumsiedlung von Familien mit mehr als zwei Töchtern",
-      "Eine Luxussteuer auf Kinderkleidung und Schulbücher"
+      "Ein-Kind-Politik",
+      "Drei-Kinder-Regel",
+      "Geburtenquote",
+      "Familienstopp"
     ],
     "explanation": "Die Politik verhinderte Hunderte Millionen Geburten, führte aber zu einer extremen Überalterung der Gesellschaft und einem Mangel an Frauen.",
-    "exp": "Die Ein-Kind-Politik"
+    "exp": "Ein-Kind-Politik"
   },
   {
     "cat": "reform_boom",
     "diff": "mid",
     "q": "Was symbolisierte das berühmte Foto des „Tank Man“ (Panzermann) vom 5. Juni 1989 weltweit?",
     "a": [
-      "Einen unbewaffneten Mann mit Einkaufstaschen, der sich mutig einer Kolonne von Panzern auf der Chang’an-Allee in den Weg stellte",
-      "Einen desertierten Panzersoldaten, der Blumen in sein Kanonenrohr steckte",
-      "Einen Studenten, der eine US-Flagge auf einem Panzer anbrachte",
-      "Einen Reporter, der die Verhandlungen zwischen Generälen filmte"
+      "Unbewaffneter Mann mit Taschen vor einer Kolonne von Panzern",
+      "Ein Demonstrant, der die rote Fahne vom Fahnenmast riss",
+      "Ein Student, der hungernd vor dem Großen Volkshaus lag",
+      "Ein Soldat, der sein Gewehr im Regen auf den Boden warf"
     ],
     "explanation": "Die Identität und das Schicksal des Mannes sind bis heute unbekannt – das Bild wurde zur weltweiten Ikone des Widerstands gegen Tyrannei.",
-    "exp": "Einen unbewaffneten Mann mit Einkaufstaschen, der sich mutig einer Kolonne von Panzern auf der Chang’an-Allee in den Weg stellte"
+    "exp": "Unbewaffneter Mann mit Taschen vor einer Kolonne von Panzern"
   },
   {
     "cat": "reform_boom",
     "diff": "mid",
     "q": "Was forderte der Reformer Hu Yaobang, dessen Tod im April 1989 die Proteste auf dem Tian’anmen-Platz auslöste?",
     "a": [
-      "Kampf gegen Parteikorruption, mehr Meinungsfreiheit und Beschleunigung demokratischer Reformen",
-      "Die sofortige Rückkehr zur Planwirtschaft der 1950er Jahre",
-      "Die Ausweisung aller ausländischen Botschafter aus Peking",
-      "Die Schließung aller Universitäten für fünf Jahre"
+      "Kampf gegen Parteikorruption und mehr Meinungsfreiheit",
+      "Die sofortige Wiedereinführung der Planwirtschaft",
+      "Den Austritt Chinas aus allen internationalen Abkommen",
+      "Die Verdoppelung der Rüstungsausgaben für die Armee"
     ],
     "explanation": "Studenten versammelten sich zunächst zur Trauerfeier auf dem Platz des Himmlischen Friedens – daraus entwickelte sich eine wochenlange Besetzung.",
-    "exp": "Kampf gegen Parteikorruption, mehr Meinungsfreiheit und Beschleunigung demokratischer Reformen"
+    "exp": "Kampf gegen Parteikorruption und mehr Meinungsfreiheit"
   },
   {
     "cat": "reform_boom",
     "diff": "pro",
     "q": "Was tat Deng Xiaoping Anfang 1992 mit seiner berühmten „Südreise“ (Nanxun), um die erstarrten Reformen zu retten?",
     "a": [
-      "Er reiste als 87-Jähriger nach Shenzhen und Guangzhou und zwang konservative Parteikreise zur Fortsetzung des Kapitalismus",
-      "Er inspizierte die U-Boot-Basen auf Hainan für eine Militärparade",
-      "Er unterzeichnete in Hongkong den Übergabevertrag mit Margaret Thatcher",
-      "Er verlegte seinen dauerhaften Alterssitz in ein Kloster in Yunnan"
+      "Er reiste in den Süden und erzwang Fortsetzung der Reformen",
+      "Er trat vor die Vereinten Nationen und forderte Freihandel",
+      "Er entließ alle Minister und ernannte junge Ökonomen",
+      "Er unterzeichnete ein Sonderabkommen mit den USA"
     ],
     "explanation": "Nach Tian’anmen wollten Dogmatiker die Marktwirtschaft zurückdrehen; Deng mobilisierte die südlichen Boomregionen und setzte sich durch.",
-    "exp": "Er reiste als 87-Jähriger nach Shenzhen und Guangzhou und zwang konservative Parteikreise zur Fortsetzung des Kapitalismus"
+    "exp": "Er reiste in den Süden und erzwang Fortsetzung der Reformen"
   },
   {
     "cat": "reform_boom",
     "diff": "easy",
     "q": "Unter welchem historischen Formelbegriff übergab Großbritannien am 1. Juli 1997 Hongkong an China zurück?",
     "a": [
-      "„Ein Land, zwei Systeme“",
-      "„Gemeinsamer Wohlstand in Harmonie“",
-      "„Sozialistische Marktwirtschaft mit Pachtrecht“",
-      "„Konföderation des Perlflussdeltas“"
+      "Ein Land, zwei Systeme",
+      "Harmonische Gesellschaft",
+      "Gemeinsamer Wohlstand",
+      "Großer Sprung nach vorn"
     ],
     "explanation": "Deng Xiaoping versprach, dass Hongkongs kapitalistisches System, Lebensweise und Rechtssystem für mindestens 50 Jahre unverändert bleiben sollten.",
-    "exp": "„Ein Land, zwei Systeme“"
+    "exp": "Ein Land, zwei Systeme"
   },
   {
     "cat": "reform_boom",
@@ -619,7 +619,7 @@
     "a": [
       "Macau",
       "Goa",
-      "Dili",
+      "Timor",
       "Malakka"
     ],
     "explanation": "Macau war über 440 Jahre unter portugiesischer Verwaltung und entwickelte sich unter chinesischer Hoheit zur glücksspielstärksten Casinometropole der Welt.",
@@ -632,8 +632,8 @@
     "a": [
       "Zhu Rongji",
       "Li Peng",
-      "Qiao Shi",
-      "Bo Xilai"
+      "Wen Jiabao",
+      "Li Keqiang"
     ],
     "explanation": "Der furchtlose „Eiserne Zhu“ entließ über 30 Millionen Arbeiter aus staatlichen Zombie-Betrieben und verhandelte Chinas WTO-Beitritt hartnäckig zu Ende.",
     "exp": "Zhu Rongji"
@@ -643,39 +643,39 @@
     "diff": "easy",
     "q": "Wie beschrieb Deng Xiaoping die methodische Vorsicht bei wirtschaftlichen Reformexperimenten bildhaft?",
     "a": [
-      "„Die Steine ertastend den Fluss überqueren.“",
-      "„Wer schnell schwimmt, verschluckt kein Wasser.“",
-      "„Im Nebel baut man die stärksten Brücken.“",
-      "„Ein Berg weicht nur dem stetigen Tropfen.“"
+      "Die Steine ertastend den Fluss überqueren",
+      "Mit vollen Segeln in den neuen Hafen einfahren",
+      "Auf festem Fels ein neues Haus errichten",
+      "Den Bambus biegen, ohne ihn zu brechen"
     ],
     "explanation": "Statt radikaler Schocktherapien (wie im post-sowjetischen Russland) testete China Reformen immer erst regional in kleinem Maßstab.",
-    "exp": "„Die Steine ertastend den Fluss überqueren.“"
+    "exp": "Die Steine ertastend den Fluss überqueren"
   },
   {
     "cat": "reform_boom",
     "diff": "mid",
     "q": "Was war das gigantische, aber umstrittene Wasserkraftprojekt am Jangtsekiang, das 1994 begonnen wurde?",
     "a": [
-      "Der Drei-Schluchten-Staudamm (Sanxia)",
-      "Der Baihetan-Mega-Damm",
-      "Das Gelbe-Fluss-Umleitungsprojekt",
-      "Der Danjiangkou-Stausee"
+      "Drei-Schluchten-Staudamm",
+      "Xiaolangdi-Staudammprojekt",
+      "Baihetan-Wasserkraftwerk",
+      "Xiluodu-Bogenstaumauer"
     ],
     "explanation": "Die größte Talsperre der Welt überflutete 13 Städte und über 1.300 Dörfer und zwang mehr als 1,3 Millionen Menschen zur Umsiedlung.",
-    "exp": "Der Drei-Schluchten-Staudamm (Sanxia)"
+    "exp": "Drei-Schluchten-Staudamm"
   },
   {
     "cat": "reform_boom",
     "diff": "pro",
     "q": "Was war der Grund für die Dritte Taiwanstraßen-Krise (1995/1996), bei der die USA zwei Flugzeugträger-Kampfgruppen entsandten?",
     "a": [
-      "Chinas Raketentests und Manöver vor Taiwans Küste nach einem USA-Besuch von Präsident Lee Teng-hui",
-      "Taiwans Versuch, Atomwaffen von Südafrika zu kaufen",
-      "Die Verhaftung von 100 taiwanischen Fischern durch die Küstenwache",
-      "Der Bau einer künstlichen Landebahn auf den Matsu-Inseln"
+      "Raketentests und Manöver vor Taiwans Küste nach USA-Besuch",
+      "Die Beschlagnahmung eines taiwanesischen Frachters im Hafen",
+      "Die Ausrufung der Republik Taiwan durch das Parlament",
+      "Ein Luftzwischenfall zwischen Jagdflugzeugen beider Seiten"
     ],
     "explanation": "Präsident Clinton schickte die Flugzeugträger USS Nimitz und USS Independence – die Demütigung trieb Chinas massive Modernisierung der Marine an.",
-    "exp": "Chinas Raketentests und Manöver vor Taiwans Küste nach einem USA-Besuch von Präsident Lee Teng-hui"
+    "exp": "Raketentests und Manöver vor Taiwans Küste nach USA-Besuch"
   },
   {
     "cat": "reform_boom",
@@ -684,8 +684,8 @@
     "a": [
       "Jiang Zemin",
       "Hu Jintao",
-      "Deng Xiaoping",
-      "Xi Jinping"
+      "Zhao Ziyang",
+      "Qiao Shi"
     ],
     "explanation": "Jiang Zemin öffnete die Kommunistische Partei offiziell für private Unternehmer und Kapitalisten – ein ideologischer Meilenstein.",
     "exp": "Jiang Zemin"
@@ -695,26 +695,26 @@
     "diff": "mid",
     "q": "Was ereignete sich am 7. Mai 1999 in Belgrad, was in ganz China zu wütenden antiamerikanischen Massenprotesten führte?",
     "a": [
-      "NATO-Bomber trafen während des Kosovo-Kriegs die chinesische Botschaft und töteten drei Journalisten",
-      "US-Marines entführten einen chinesischen Frachter in der Adria",
-      "Ein US-Spionageflugzeug kollidierte mit einer Passagiermaschine über Belgrad",
-      "Die serbische Regierung enteignete alle chinesischen Textilhändler"
+      "NATO-Bomben trafen chinesische Botschaft in Belgrad",
+      "Ein serbisches Waffendepot wurde von Rebellen gestürmt",
+      "Die Schließung der Handelsvertretung durch Jugoslawien",
+      "Die Festnahme chinesischer Diplomaten am Flughafen"
     ],
     "explanation": "Die USA sprachen von einem Zielfehler durch veraltete Karten; Peking und die chinesische Bevölkerung hielten es für eine vorsätzliche Provokation.",
-    "exp": "NATO-Bomber trafen während des Kosovo-Kriegs die chinesische Botschaft und töteten drei Journalisten"
+    "exp": "NATO-Bomben trafen chinesische Botschaft in Belgrad"
   },
   {
     "cat": "reform_boom",
     "diff": "pro",
     "q": "Welche Bewegung für Bürgerrechte entstand im Winter 1978/79 an einer Ziegelmauer im Pekinger Stadtteil Xidan?",
     "a": [
-      "Die Mauer der Demokratie (Democracy Wall)",
-      "Die Bewegung der Freien Bauern",
-      "Das Forum der Unabhängigen Schreiber",
-      "Die Liga der Roten Reformer"
+      "Mauer der Demokratie",
+      "Pekinger Frühling",
+      "Neue Jugend Chinas",
+      "Bürgerforum Peking"
     ],
     "explanation": "Der Dissident Wei Jingsheng forderte dort in Wandzeitungen die „Fünfte Modernisierung“ – die Demokratie. Er wurde zu 15 Jahren Haft verurteilt.",
-    "exp": "Die Mauer der Demokratie (Democracy Wall)"
+    "exp": "Mauer der Demokratie"
   },
   {
     "cat": "reform_boom",
@@ -722,9 +722,9 @@
     "q": "Wann trat die Volksrepublik China nach 15 Jahren zäher Verhandlungen offiziell der Welthandelsorganisation (WTO) bei?",
     "a": [
       "Dezember 2001",
-      "Januar 1995",
-      "Mai 1989",
-      "Oktober 2008"
+      "Oktober 1999",
+      "Januar 2005",
+      "Juli 1997"
     ],
     "explanation": "Der WTO-Beitritt war die Startrampe für Chinas Aufstieg zur unangefochtenen „Werkbank der Welt“ und größten Exportnation.",
     "exp": "Dezember 2001"
@@ -734,195 +734,195 @@
     "diff": "mid",
     "q": "Welches Gesetz führte China 1994 ein, das das Steuersystem modernisierte und Pekings Finanzmacht wieder stärkte?",
     "a": [
-      "Das Steuerrabatt- und Teilungssystem (Fenshuizhi)",
-      "Die Kopfsteuer für Provinzgouverneure",
-      "Die Mehrwertsteuerbefreiung für Staatsbetriebe",
-      "Die Sonderabgabe für Exportwaren nach Japan"
+      "Steuerrabatt- und Teilungssystem (Fenshuizhi)",
+      "Das Gesetz über Sonderwirtschaftszonen",
+      "Die Mehrwertsteuer-Rahmenverordnung",
+      "Das Devisenkontrollgesetz der Zentralbank"
     ],
     "explanation": "Zuvor behielten die reichen Küstenprovinzen die meisten Gelder selbst – das System sicherte der Zentralregierung in Peking wieder volle Kassen.",
-    "exp": "Das Steuerrabatt- und Teilungssystem (Fenshuizhi)"
+    "exp": "Steuerrabatt- und Teilungssystem (Fenshuizhi)"
   },
   {
     "cat": "gegenwart",
     "diff": "easy",
     "q": "Unter welchem spektakulären Motto richtete Peking im August 2008 die Olympischen Sommerspiele aus?",
     "a": [
-      "„One World, One Dream“",
-      "„Harmonie unter dem Himmel“",
-      "„Aufstieg des Ostens“",
-      "„Gemeinsam in die Zukunft“"
+      "One World, One Dream",
+      "Harmony and Peace",
+      "Future in Motion",
+      "Green China 2008"
     ],
     "explanation": "Die monumentale Eröffnungsfeier im „Vogelnest“-Stadion unter Regisseur Zhang Yimou gilt als Chinas globales Debüt als Supermacht.",
-    "exp": "„One World, One Dream“"
+    "exp": "One World, One Dream"
   },
   {
     "cat": "gegenwart",
     "diff": "easy",
     "q": "Wie viele Kilometer umfasst Chinas Hochgeschwindigkeits-Schienennetz (CRH / Fuxing) heute ungefähr?",
     "a": [
-      "Über 45.000 Kilometer – mehr als der gesamte Rest der Welt zusammen",
-      "Rund 8.000 Kilometer – etwa gleichauf mit Frankreich und Spanien",
-      "Knapp 2.500 Kilometer – primär zwischen Peking und Shanghai",
-      "Über 120.000 Kilometer – auf allen existierenden Strecken"
+      "Über 45.000 Kilometer Trassennetz",
+      "Rund 15.000 Kilometer Trassennetz",
+      "Knapp 25.000 Kilometer Trassennetz",
+      "Über 80.000 Kilometer Trassennetz"
     ],
     "explanation": "In weniger als 15 Jahren baute China aus dem Nichts das mit Abstand gigantischste und modernste Schnellzugnetz der Erde.",
-    "exp": "Über 45.000 Kilometer – mehr als der gesamte Rest der Welt zusammen"
+    "exp": "Über 45.000 Kilometer Trassennetz"
   },
   {
     "cat": "gegenwart",
     "diff": "easy",
     "q": "Welches weltumspannende Infrastruktur- und Investitionsprojekt startete Xi Jinping im Jahr 2013?",
     "a": [
-      "Die Neue Seidenstraße (Belt and Road Initiative, BRI)",
-      "Der Transasiatische Friedenskanal",
-      "Das Globale Breitband-Satellitennetzwerk",
-      "Die Eurasische Energieallianz"
+      "Neue Seidenstraße (BRI)",
+      "Pazifische Handelsallianz",
+      "Eurasische Wirtschaftsunion",
+      "Asiatischer Infrastrukturkorridor"
     ],
     "explanation": "Mit Straßen, Häfen, Brücken und Eisenbahnlinien in über 140 Ländern bindet China globale Handelswege strategisch an sich.",
-    "exp": "Die Neue Seidenstraße (Belt and Road Initiative, BRI)"
+    "exp": "Neue Seidenstraße (BRI)"
   },
   {
     "cat": "gegenwart",
     "diff": "mid",
     "q": "Was gelang der chinesischen Raumsonde Chang’e-4 im Januar 2019 als historischer Premiere in der Raumfahrt?",
     "a": [
-      "Die allererste kontrollierte weiche Landung auf der erdabgewandten Rückseite des Mondes",
-      "Die erste bemannte Landung eines Taikonauten auf dem Mond",
-      "Das Bergen von reinem Wassereis am Mondsüdpol",
-      "Der Bau einer automatischen Solarkraftstation im Mondorbit"
+      "Erste weiche Landung auf der Mondrückseite",
+      "Die Bergung von zwei Kilo Marsgestein",
+      "Die Umrundung der Venus in tiefer Bahn",
+      "Die Landung eines Rovers auf dem Merkur"
     ],
     "explanation": "Da direkter Funkkontakt durch den Mond blockiert ist, koordinierte China die Landung über den Relaissatelliten Queqiao.",
-    "exp": "Die allererste kontrollierte weiche Landung auf der erdabgewandten Rückseite des Mondes"
+    "exp": "Erste weiche Landung auf der Mondrückseite"
   },
   {
     "cat": "gegenwart",
     "diff": "mid",
     "q": "Wie heißt die moderne chinesische Raumstation, die seit 2022 dauerhaft im Erdorbit betrieben wird?",
     "a": [
-      "Tiangong („Himmlischer Palast“)",
-      "Shenzhou („Göttliches Schiff“)",
-      "Tianwen („Himmelsfragen“)",
-      "Yutu („Jadehase“)"
+      "Tiangong",
+      "Shenzhou",
+      "Tianzhou",
+      "Chang’e"
     ],
     "explanation": "Nachdem der US-Kongress chinesischen Taikonauten den Zugang zur ISS verboten hatte, baute China seine eigene modulare Raumstation.",
-    "exp": "Tiangong („Himmlischer Palast“)"
+    "exp": "Tiangong"
   },
   {
     "cat": "gegenwart",
     "diff": "pro",
     "q": "Was beschloss der Nationale Volkskongress im März 2018 bezüglich der Amtszeit des chinesischen Staatspräsidenten?",
     "a": [
-      "Die bisherige Begrenzung auf maximal zwei fünfjährige Amtszeiten wurde aus der Verfassung gestrichen",
-      "Die Amtszeit wurde von 5 auf 10 Jahre verlängert",
-      "Der Staatspräsident muss ab dem 70. Lebensjahr obligatorisch abdanken",
-      "Die Direktwahl des Präsidenten durch alle Parteimitglieder per App"
+      "Begrenzung auf maximal zwei Amtszeiten gestrichen",
+      "Das Mindestalter für Präsidentschaftskandidaten auf 70 angehoben",
+      "Die Wiedereinführung des lebenslangen Titels Vorsitzender",
+      "Die Verlegung des Regierungssitzes nach Shanghai beschlossen"
     ],
     "explanation": "Die Reform ermöglichte Xi Jinping eine beispiellose dritte (und potenziell lebenslange) Amtszeit an der Staatsspitze.",
-    "exp": "Die bisherige Begrenzung auf maximal zwei fünfjährige Amtszeiten wurde aus der Verfassung gestrichen"
+    "exp": "Begrenzung auf maximal zwei Amtszeiten gestrichen"
   },
   {
     "cat": "gegenwart",
     "diff": "mid",
     "q": "Welches gigantische Teleskop in Guizhou mit 500 Metern Durchmesser ist das größte Einzelradioteleskop der Welt?",
     "a": [
-      "FAST („Tianyan“ – Himmelsauge)",
-      "Arecibo II",
-      "Sky-Dish 500",
-      "Qomolangma Deep Array"
+      "FAST-Radioteleskop",
+      "LAMOST-Observatorium",
+      "DAMPE-Detektor im All",
+      "Wukong-Forschungssatellit"
     ],
     "explanation": "In einer natürlichen Karstmulde erbaut spürt FAST schwächste Signale von Pulsaren und fernen Galaxien auf.",
-    "exp": "FAST („Tianyan“ – Himmelsauge)"
+    "exp": "FAST-Radioteleskop"
   },
   {
     "cat": "gegenwart",
     "diff": "easy",
     "q": "Welche chinesische Smartphone-App dominiert den Alltag mit Bezahlung, Chats, Behördengängen und Taxis („Alles-in-einem-App“)?",
     "a": [
-      "WeChat (Weixin von Tencent)",
-      "Weibo (Sina)",
-      "Baidu Tieba",
-      "Douyin Life"
+      "WeChat",
+      "Weibo",
+      "Baidu",
+      "Alipay"
     ],
     "explanation": "Bargeld und physische Kreditkarten sind in Chinas Städten fast ausgestorben – fast alles läuft kontaktlos per QR-Code über WeChat Pay oder Alipay.",
-    "exp": "WeChat (Weixin von Tencent)"
+    "exp": "WeChat"
   },
   {
     "cat": "gegenwart",
     "diff": "mid",
     "q": "Was versteht man unter der berüchtigten „Great Firewall of China“ (Projekt Goldener Schild)?",
     "a": [
-      "Das staatliche System aus Zensur, DNS-Blockaden und Inhaltsfiltern für das chinesische Inlands-Internet",
-      "Eine physische Grenzbefestigung entlang der gesamten Nordgrenze zu Russland",
-      "Ein Notstromaggregat-Netzwerk für Regierungsrechenzentren",
-      "Ein staatliches Antivirenprogramm, das auf allen verkauften PCs vorinstalliert ist"
+      "System aus Zensur, DNS-Blockaden und Inhaltsfiltern",
+      "Ein physischer Schutzwall entlang der mongolischen Grenze",
+      "Ein militärisches Abwehrsystem gegen feindliche Satelliten",
+      "Eine staatliche Firewall zur Verschlüsselung von Behördendaten"
     ],
     "explanation": "Ausländische Plattformen wie Google, YouTube, Instagram, Wikipedia und westliche Medien sind ohne VPN in Festlandchina nicht erreichbar.",
-    "exp": "Das staatliche System aus Zensur, DNS-Blockaden und Inhaltsfiltern für das chinesische Inlands-Internet"
+    "exp": "System aus Zensur, DNS-Blockaden und Inhaltsfiltern"
   },
   {
     "cat": "gegenwart",
     "diff": "pro",
     "q": "Was bedeutet das von Xi Jinping propagierte Konzept des „Chinesischen Traums“ (Zhongguo Meng)?",
     "a": [
-      "Die „Große Wiedergeburt der chinesischen Nation“ und Wiedererlangung des weltweiten Spitzenstatus bis 2049",
-      "Der Kauf eines eigenen Einfamilienhauses für jeden Bürger im Grünen",
-      "Die vollständige Privatisierung aller staatlichen Banken und Energiekonzerne",
-      "Die Einführung eines allgemeinen bedingungslosen Grundeinkommens"
+      "Große Wiedergeburt der Nation und Spitzenstatus bis 2049",
+      "Die vollständige Entmilitarisierung ganz Ostasiens",
+      "Die Verdoppelung des Bruttoinlandsprodukts innerhalb von drei Jahren",
+      "Die Umstellung aller Fabriken auf emissionsfreie Energie"
     ],
     "explanation": "Bis zum 100. Jahrestag der Staatsgründung 2049 soll China ein führendes, wohlhabendes und militärisch modernes Land sein.",
-    "exp": "Die „Große Wiedergeburt der chinesischen Nation“ und Wiedererlangung des weltweiten Spitzenstatus bis 2049"
+    "exp": "Große Wiedergeburt der Nation und Spitzenstatus bis 2049"
   },
   {
     "cat": "gegenwart",
     "diff": "easy",
     "q": "Welches Gesetz erließ Peking im Juni 2020, das die pro-demokratische Opposition in Hongkong weitgehend beendete?",
     "a": [
-      "Das Gesetz zur Wahrung der nationalen Sicherheit in Hongkong",
-      "Die sofortige Einführung der Festlandswährung Renminbi",
-      "Die Umstellung auf chinesischen Rechtsverkehr für Taxis",
-      "Das Verbot von englischer Sprache im Schulunterricht"
+      "Sicherheitsgesetz für Hongkong",
+      "Das Auslieferungsgesetz für Straftäter",
+      "Die Wahlrechtsreform der Sonderzone",
+      "Das Sonderverwaltungs-Ermächtigungsgesetz"
     ],
     "explanation": "Nach den Massenprotesten von 2019 stellte das Gesetz Sezession, Subversion und Kollusion unter drakonische Strafen.",
-    "exp": "Das Gesetz zur Wahrung der nationalen Sicherheit in Hongkong"
+    "exp": "Sicherheitsgesetz für Hongkong"
   },
   {
     "cat": "gegenwart",
     "diff": "mid",
     "q": "Welcher chinesische Automobilhersteller überholte Tesla Ende 2023 zeitweise bei den weltweiten Verkaufszahlen reiner Elektroautos?",
     "a": [
-      "BYD (Build Your Dreams)",
+      "BYD",
       "NIO",
       "Geely",
       "XPeng"
     ],
     "explanation": "BYD begann als Batteriehersteller für Handys und stieg durch vertikale Integration und eigene LFP-Akkus zum E-Auto-Giganten auf.",
-    "exp": "BYD (Build Your Dreams)"
+    "exp": "BYD"
   },
   {
     "cat": "gegenwart",
     "diff": "pro",
     "q": "Was ist das Ziel der strategischen Industrie-Initiative „Made in China 2025“?",
     "a": [
-      "Die globale Technologieführerschaft in zehn Schlüsselbranchen wie Halbleitern, Robotik, E-Mobilität und Luftfahrt",
-      "Die Senkung der Löhne chinesischer Fabrikarbeiter zur Abwehr indischer Konkurrenz",
-      "Der vollständige Ausstieg aus der Kohleverstromung bis zum Jahr 2025",
-      "Die Verstaatlichung aller ausländischen Joint Ventures in Shanghai"
+      "Technologieführerschaft in zehn Schlüsselbranchen wie Chips und E-Mobilität",
+      "Die Verlagerung aller Schwerindustrien in das benachbarte Ausland",
+      "Die vollständige Schließung aller privaten Unternehmen im Land",
+      "Der Verzicht auf jegliche Importe aus westlichen Industrieländern"
     ],
     "explanation": "China wollte die Rolle als Billiglohnland hinter sich lassen und Kerntechnologien unabhängig von westlichen Lieferketten beherrschen.",
-    "exp": "Die globale Technologieführerschaft in zehn Schlüsselbranchen wie Halbleitern, Robotik, E-Mobilität und Luftfahrt"
+    "exp": "Technologieführerschaft in zehn Schlüsselbranchen wie Chips und E-Mobilität"
   },
   {
     "cat": "gegenwart",
     "diff": "easy",
     "q": "Welche beispiellose Politik verfolgte China fast drei Jahre lang bis Dezember 2022 zur Bekämpfung der Corona-Pandemie?",
     "a": [
-      "Null-Covid-Politik mit Massentests, rigorosen Lockdowns und Quarantänelagern",
-      "Freiwillige Durchseuchung der Bevölkerung nach schwedischem Vorbild",
-      "Verpflichtende tägliche Einnahme traditioneller Kräutermedizin",
-      "Evakuierung aller über 60-Jährigen auf Kreuzfahrtschiffe"
+      "Null-Covid-Politik mit Massentests und Lockdowns",
+      "Vollständige Durchseuchung ohne jegliche Schutzmaßnahmen",
+      "Ausschließlicher Einsatz von importierten mRNA-Impfstoffen",
+      "Die Ausweisung aller ausländischen Staatsbürger aus dem Land"
     ],
     "explanation": "Nach heftigen Protesten (die „Weiße-Blätter-Bewegung“) wurde die strikte Strategie Ende 2022 schlagartig und vollständig aufgegeben.",
-    "exp": "Null-Covid-Politik mit Massentests, rigorosen Lockdowns und Quarantänelagern"
+    "exp": "Null-Covid-Politik mit Massentests und Lockdowns"
   },
   {
     "cat": "gegenwart",
@@ -931,8 +931,8 @@
     "a": [
       "COMAC C919",
       "ARJ21 Xiangfeng",
-      "Y-20 Kunpeng",
-      "Aero-Dragon 900"
+      "Xian Y-20",
+      "Shaanxi Y-9"
     ],
     "explanation": "Die C919 tritt als zweistrahliger Mittelstreckenjet in direkte Konkurrenz zu den globalen Marktführern Airbus A320 und Boeing 737.",
     "exp": "COMAC C919"
@@ -942,41 +942,42 @@
     "diff": "pro",
     "q": "Was ist das weltweit einzigartige „Beidou“-System, das China 2020 vollständig fertiggestellt hat?",
     "a": [
-      "Ein eigenes globales Satellitennavigationssystem als unabhängige Alternative zum US-amerikanischen GPS",
-      "Ein Weltraum-Abfanglaser zur Zerstörung ausgedienter Spionagesatelliten",
-      "Ein Tiefsee-Forschungsnetzwerk im Marianengraben",
-      "Ein Quantenverschlüsselungs-Kabel zwischen Peking und Moskau"
+      "Globales Satellitennavigationssystem als GPS-Alternative",
+      "Ein satellitengestütztes Frühwarnsystem gegen Taifune",
+      "Ein weltraumgestütztes Solarkraftwerk im geostationären Orbit",
+      "Ein Satellitennetzwerk zur Beobachtung der Eiskappen am Südpol"
     ],
     "explanation": "Beidou-3 verfügt über mehr als 30 Satelliten im All und garantiert Chinas Militär und Zivilleben Unabhängigkeit von US-Signalen.",
-    "exp": "Ein eigenes globales Satellitennavigationssystem als unabhängige Alternative zum US-amerikanischen GPS"
+    "exp": "Globales Satellitennavigationssystem als GPS-Alternative"
   },
   {
     "cat": "gegenwart",
     "diff": "easy",
     "q": "Welche weltweit erfolgreiche Kurzvideo-App stammt vom chinesischen Technologiekonzern ByteDance?",
     "a": [
-      "TikTok (in China als Douyin bekannt)",
+      "TikTok",
       "Kuaishou",
       "Bilibili",
       "Xiaohongshu"
     ],
     "explanation": "TikTok ist die erste chinesische Konsumenten-App, die im Westen eine marktbeherrschende Stellung unter Jugendlichen erreichte.",
-    "exp": "TikTok (in China als Douyin bekannt)"
+    "exp": "TikTok"
   },
   {
     "cat": "gegenwart",
     "diff": "mid",
     "q": "Wie heißt die längste Meeresüberquerung der Welt (55 km Brücken und Unterwassertunnel), die 2018 eröffnet wurde?",
     "a": [
-      "Hongkong-Zhuhai-Macau-Brücke (HZMB)",
-      "Hangzhou-Bucht-Brücke",
-      "Danyang-Kunshan-Viadukt",
-      "Jiaozhou-Bucht-Seequerung"
+      "Hongkong-Zhuhai-Macau-Brücke",
+      "Hangzhou-Bucht-Seebrücke",
+      "Danyang-Kunshan-Eisenbahnbrücke",
+      "Jiaozhou-Bucht-Autobahnbrücke"
     ],
     "explanation": "Das Meisterwerk der Ingenieurskunst verbindet die drei Metropolen des Perlflussdeltas und verkürzt die Fahrzeit von 4 Stunden auf 45 Minuten.",
-    "exp": "Hongkong-Zhuhai-Macau-Brücke (HZMB)"
+    "exp": "Hongkong-Zhuhai-Macau-Brücke"
   }
 ];
+
   if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
     window.ArcadeQuizEngine.registerBank("china", DATA);
   } else {
