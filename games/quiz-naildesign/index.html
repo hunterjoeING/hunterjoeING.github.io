@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Nageldesign Quiz · 75 Fragen zu Finger- &amp; Fußnägeln</title>
+  <meta name="description" content="75 kuratierte Fragen zu Nageldesign, Maniküre &amp; Pediküre: Gel, Acryl, Polygel, Shellac, Nagelformen &amp; Trends, Fußnägel &amp; Podologie, Anatomie, Mythen &amp; Geschichte." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-naildesign/" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="Nageldesign Quiz · Finger- &amp; Fußnägel (75 Fragen)" />
+  <meta property="og:description" content="75 kuratierte Fragen zu Maniküre &amp; Pediküre: Techniken, Nagelformen, Trends, Podologie, Anatomie, Mythen &amp; Kurioses." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/quiz-naildesign/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nageldesign Quiz · Finger- &amp; Fußnägel" />
+  <meta name="twitter:description" content="75 Fragen rund um Gel, Shellac, Nagelformen, Pediküre, Anatomie &amp; Nagel-Mythen." />
+  <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Quiz",
+        "name": "Nageldesign Quiz – Finger- & Fußnägel",
+        "description": "75 kuratierte Fragen zu Maniküre und Pediküre: Techniken & Materialien, Nagelformen & Trends, Fußnägel & Podologie, Anatomie & Mythen sowie Geschichte & Kurioses.",
+        "url": "https://hunterjoeing.github.io/games/quiz-naildesign/",
+        "inLanguage": "de",
+        "isAccessibleForFree": true,
+        "about": "Nageldesign, Maniküre, Pediküre, Podologie, Nail Art & Nagelpflege",
+        "educationalUse": "Selbsttest / Wissensquiz",
+        "image": "https://hunterjoeing.github.io/og-cover.png",
+        "author": {
+          "@type": "Person",
+          "name": "Johannes Rudolph"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "HunterJoe Arcade",
+            "item": "https://hunterjoeing.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Nageldesign Quiz – Finger- & Fußnägel",
+            "item": "https://hunterjoeing.github.io/games/quiz-naildesign/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 18px 14px 44px;
+    }
+
+    .nail-info-note {
+      margin: 10px 0 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--bg-sand);
+      border: 1px solid var(--border-hairline);
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: var(--accent-primary);
+      background: var(--bg-sand);
+    }
+    .diff-pill.active {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+      color: #fff;
+      box-shadow: var(--shadow-btn);
+    }
+    .diff-pill.pro.active {
+      background: linear-gradient(135deg, #9f1239, #db2777);
+      border-color: #f9a8d4;
+      color: #fff;
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 18px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-primary);
+      background: var(--bg-sand);
+    }
+    .cat-card.featured {
+      grid-column: 1 / -1;
+    }
+    .cat-icon { font-size: 27px; }
+    .cat-name { font-size: 16px; font-weight: 800; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.48; flex: 1; }
+    .cat-meta {
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      color: var(--accent-primary);
+      margin-top: 4px;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+    .timer-track {
+      height: 8px;
+      border-radius: 999px;
+      background: var(--bg-sand);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--accent-primary);
+      transition: width 0.1s linear, background 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .q-cat-pill, .q-diff-pill {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .q-text {
+      font-size: clamp(17.5px, 2.7vw, 22px);
+      font-weight: 800;
+      line-height: 1.38;
+      margin: 0 0 18px;
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr; }
+    }
+    .ans-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.38;
+      cursor: pointer;
+    }
+    .ans-key {
+      width: 26px;
+      height: 26px;
+      border-radius: 7px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .ans-btn.eliminated {
+      opacity: 0.22;
+      pointer-events: none;
+    }
+
+    .joker-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 14px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .joker-btn {
+      padding: 7px 12px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .joker-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .result-card {
+      text-align: center;
+      padding: 28px 20px;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      max-width: 480px;
+      margin: 18px auto 22px;
+    }
+    .res-box { padding: 12px 8px; }
+    .res-box b {
+      display: block;
+      font-size: 20px;
+      font-family: var(--font-mono);
+    }
+    .res-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    .menu-board-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">💅 Nageldesign · Finger- &amp; Fußnägel</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Difficulty Menu -->
+    <section id="screen-menu" class="glass-card" style="padding:22px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">💅 Nageldesign Quiz · Finger- &amp; Fußnägel</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.5;">
+        <strong>75 handverlesene Fragen</strong> rund um Maniküre &amp; Pediküre: Von Gel, Acryl, Polygel &amp; Shellac über trendige Nagelformen, Podologie und Fußpflege-Basics bis zu Nagel-Anatomie, hartnäckigen Mythen und verrückten Weltrekorden. Pro Runde warten <strong>12 frische Fragen</strong> ohne Wiederholung.
+      </p>
+      <div class="nail-info-note">
+        ✨ <strong>Perfekt für zwischendurch oder die Studio-Wartezeit:</strong> Nach jeder Antwort gibt es eine knackige Fun-Fact-Auflösung – und am Ende eine optionale Bestenliste.
+      </div>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Basis-Pflege</button>
+        <button class="diff-pill" data-diff="mid">🟡 Studio-Praxis</button>
+        <button class="diff-pill pro" data-diff="pro">🔴 Profi-Wissen (1,5× Pkt)</button>
+      </div>
+
+      <div class="quiz-time-bar" id="time-mode-bar">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700;">Tempo:</span>
+        <button type="button" class="time-mode-pill active" data-relaxed="0">⚡ Mit Zeitbonus (25–35s, sanfter Ablauf)</button>
+        <button type="button" class="time-mode-pill relaxed" data-relaxed="1">☕ Ohne Zeitlimit (ganz entspannt)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+
+      <div class="menu-board-row">
+        <button type="button" class="secondary-btn" onclick="openLocalBoard()">🏆 Lokale Bestenliste</button>
+        <button type="button" class="secondary-btn" onclick="if(window.ArcadeScores)ArcadeScores.openLeaderboardModal('quiz_naildesign')">🌐 Globale Bestenliste</button>
+      </div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">12</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Ohne Zeitlimit umschalten">⏱ <strong id="q-sec">25</strong>s</button>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Thema</span>
+        <span id="q-diff" class="q-diff-pill mid">Studio-Praxis</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Themen</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div id="res-emoji" style="font-size:48px;">💅</div>
+      <h2 id="res-heading" style="margin:8px 0 4px;">Runde abgeschlossen!</h2>
+      <p id="res-sub" style="margin:0;color:var(--text-muted);font-size:13.5px;"></p>
+
+      <div class="result-stats">
+        <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
+        <div class="res-box"><b id="res-correct">0/12</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Neue Runde starten</button>
+        <button class="secondary-btn" onclick="openLocalBoard()">🏆 Lokale Bestenliste</button>
+        <button class="secondary-btn" onclick="backToMenu()">💅 Anderes Themengebiet</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-naildesign.js"></script>
+  <script>
+    const QUIZ_ID = 'quiz_naildesign';
+
+    const CATS = [
+      { id: 'mix',                   icon: '💅', name: 'Komplett-Mix: Maniküre & Pediküre (75 Fragen)', cls: 'featured',       desc: 'Alle Themenbereiche bunt gemischt: Gel & Shellac, Nagelformen & Trends, Fußpflege, Anatomie & spannende Fakten.' },
+      { id: 'techniken_materialien', icon: '💎', name: 'Techniken & Materialien (18 Fragen)',           cls: '',               desc: 'Gel, Acryl, Polygel, Shellac, Dipping Powder, Press-Ons, Fiberglas, UV/LED-Härtung, Primer & Schwitzschicht.' },
+      { id: 'formen_trends',         icon: '✨', name: 'Nagelformen, Trends & Nail Art (16 Fragen)',    cls: '',               desc: 'Almond, Coffin/Ballerina, Stiletto, Squoval, French, Babyboomer, Ombré, Cat-Eye, Chrome & Stamping.' },
+      { id: 'fuesse_pedikuere',      icon: '🦶', name: 'Fußnägel & Pediküre (16 Fragen)',               cls: '',               desc: 'Wachstum, gerader Schnitt gegen Einwachsen, Podologie vs. Kosmetik, Shellac auf Zehen & Hornhaut-Basics.' },
+      { id: 'anatomie_mythen',       icon: '🔬', name: 'Anatomie, Pflege & Mythen (15 Fragen)',         cls: '',               desc: 'Nagelmatrix, Lunula, Cuticula, Feilen-Grit, Buffer, Nagelöl, weiße Flecken, Atem-Mythos & Studio-Hygiene.' },
+      { id: 'geschichte_kurioses',   icon: '🏛️', name: 'Geschichte, Kultur & Kurioses (10 Fragen)',     cls: 'featured-amber', desc: 'Altes China & Ägypten, Autolack-Erfindung, Hollywoods French Manicure, Chanel Rouge Noir & Weltrekorde.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Basis-Pflege',  cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Studio-Praxis', cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Profi-Wissen',  cls: 'pro',  mult: 1.5 }
+    };
+
+    const QUESTIONS = ArcadeQuizEngine.getBank('naildesign');
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let menuControls = null;
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 25;
+    let questionMaxTime = 25;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      return ArcadeQuizEngine.shuffle(arr);
+    }
+
+    function openLocalBoard() {
+      if (window.ArcadeQuizBoard) {
+        window.ArcadeQuizBoard.show(QUIZ_ID, 'Nageldesign · Lokale Bestenliste');
+      }
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest(QUIZ_ID);
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const reqLen = menuControls ? menuControls.getLength() : 12;
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const pool = getMatchingPool(c.id);
+        const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, pool);
+        const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 12);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')" ${stats.total === 0 ? 'disabled style="opacity:0.45;cursor:not-allowed;"' : ''}>
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      if (menuControls) menuControls.refresh();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const reqLen = menuControls ? menuControls.getLength() : 12;
+      const drawn = ArcadeQuizEngine.drawDeck(QUIZ_ID, pool, reqLen, 12);
+      deck = drawn.deck;
+      if (!deck.length) return;
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      timerId = null;
+      answered = false;
+
+      const item = deck[qIdx];
+      questionMaxTime = ArcadeQuizPrefs.getDurationSec(item.diff);
+      timeLeft = ArcadeQuizPrefs.isRelaxed() ? 0 : questionMaxTime;
+      const di = DIFF_INFO[item.diff] || DIFF_INFO.mid;
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      if (!ArcadeQuizPrefs.isRelaxed()) startBonusTimer();
+    }
+
+    function startBonusTimer() {
+      clearInterval(timerId);
+      let lastTick = performance.now();
+      timerId = setInterval(() => {
+        const now = performance.now();
+        timeLeft = Math.max(0, timeLeft - (now - lastTick) / 1000);
+        lastTick = now;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          clearInterval(timerId);
+          timerId = null;
+        }
+        updateTimerUI();
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      ArcadeQuizPrefs.updateTimerUI({
+        btnEl: document.getElementById('btn-timer-mode'),
+        fillEl: document.getElementById('timer-fill'),
+        jokerTimeEl: document.getElementById('joker-time'),
+        jokerTimeAvailable: jokers.time,
+        timeLeft,
+        maxTime: questionMaxTime,
+        answered
+      });
+    }
+
+    function toggleTimerModeInPlay() {
+      const nextRelaxed = !ArcadeQuizPrefs.isRelaxed();
+      ArcadeQuizPrefs.setRelaxed(nextRelaxed);
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      clearInterval(timerId);
+      timerId = null;
+      ArcadeAudio.click();
+      if (nextRelaxed) {
+        timeLeft = 0;
+        updateTimerUI();
+      } else if (!answered) {
+        if (timeLeft <= 0) timeLeft = questionMaxTime;
+        updateTimerUI();
+        startBonusTimer();
+      } else {
+        updateTimerUI();
+      }
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      ArcadeQuizEngine.markSeen(QUIZ_ID, item);
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = (DIFF_INFO[item.diff] || DIFF_INFO.mid).mult;
+        const speedBonus = (ArcadeQuizPrefs.isRelaxed() || timeLeft <= 0) ? 0 : Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
+      updateTimerUI();
+      showFact(chosen.isRight);
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Richtig! ' : '❌ Nicht ganz: ')}</strong>${item.exp || item.explanation}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered || ArcadeQuizPrefs.isRelaxed()) return;
+      jokers.time = false;
+      timeLeft = Math.min(questionMaxTime + 10, timeLeft + 10);
+      updateTimerUI();
+      startBonusTimer();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeQuizEngine.markSeen(QUIZ_ID, deck[qIdx]);
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore(QUIZ_ID, score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      const isNewRecord = scoreRes.isNewRecord;
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '💅' : '✨');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Studio-Rekord!' : 'Nageldesign-Runde abgeschlossen!';
+      const normNote = scoreRes.normalized ? ` · Bestenliste (20er-Norm): ${scoreRes.recordedScore} Pkt` : '';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}${normNote}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+      if (menuControls) menuControls.refresh();
+      renderMenu();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const ae = document.activeElement;
+      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+          document.querySelector('.arcade-modal-backdrop, .qb-backdrop, #abm-drawer.open')) {
+        return;
+      }
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    menuControls = ArcadeQuizEngine.initMenuControls({
+      quizId: QUIZ_ID,
+      getPool: () => getMatchingPool('mix'),
+      onUpdate: () => renderMenu(),
+      lengths: [12],
+      defaultLen: 12,
+      showAllLabel: '12 Fragen'
+    });
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>
