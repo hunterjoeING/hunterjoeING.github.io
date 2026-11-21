@@ -1,10 +1,11 @@
-// Main controller for 3D Spider Solitaire (4 Suits): HUD, Pointer/Touch Drag & Drop, Toast Hints & Arcade Integration
+// Main controller for 3D Spider Solitaire (4 Suits): Fullscreen, Zoom, HUD, Pointer/Touch Drag & Drop & Arcade Integration
 
 import { SpiderEngine, SUITS } from './sol3d-logic.js';
 import { SolitaireScene } from './sol3d-scene.js';
 import { SolitaireAudio } from './sol3d-audio.js';
 
 const PREF_CAM_KEY = 'sol3d_cam_preset';
+const PREF_ZOOM_KEY = 'sol3d_zoom';
 
 function formatTime(sec) {
   const s = Math.max(0, Math.floor(sec));
@@ -41,7 +42,11 @@ function initSolitaire3D() {
   const btnHint = document.getElementById('btn-hint');
   const btnDeal = document.getElementById('btn-deal');
   const elDealBadge = document.getElementById('hud-deal-badge');
+  const btnZoomOut = document.getElementById('btn-zoom-out');
+  const btnZoomIn = document.getElementById('btn-zoom-in');
+  const elZoomVal = document.getElementById('hud-zoom-val');
   const btnCam = document.getElementById('btn-cam');
+  const btnFullscreen = document.getElementById('btn-fullscreen');
   const btnMenu = document.getElementById('btn-menu');
   const menuPopover = document.getElementById('sol3d-popover');
 
@@ -59,7 +64,12 @@ function initSolitaire3D() {
   const audio = new SolitaireAudio();
 
   const savedCam = loadPref(PREF_CAM_KEY, '3d') === 'top' ? 'top' : '3d';
+  const savedZoom = parseFloat(loadPref(PREF_ZOOM_KEY, '1.0'));
   scene.setCameraPreset(savedCam);
+  if (!Number.isNaN(savedZoom)) {
+    scene.setZoom(savedZoom);
+  }
+  scene.resize();
 
   let elapsedSec = 0;
   let timerStarted = false;
@@ -80,11 +90,70 @@ function initSolitaire3D() {
     }, durationMs);
   }
 
+  function isNativeFullscreen() {
+    return !!(document.fullscreenElement || document.webkitFullscreenElement);
+  }
+
+  function isFullscreenActive() {
+    return isNativeFullscreen() || document.body.classList.contains('sol3d-pseudo-fs');
+  }
+
+  function syncFullscreenUI() {
+    const active = isFullscreenActive();
+    document.body.classList.toggle('sol3d-is-fs', isNativeFullscreen());
+    if (btnFullscreen) {
+      btnFullscreen.textContent = active ? '✕ Beenden' : '⛶ Vollbild';
+      btnFullscreen.classList.toggle('active', active);
+    }
+    scene.resize();
+    requestAnimationFrame(() => scene.resize());
+    setTimeout(() => scene.resize(), 90);
+  }
+
+  async function toggleFullscreen() {
+    if (isFullscreenActive()) {
+      document.body.classList.remove('sol3d-pseudo-fs');
+      if (isNativeFullscreen()) {
+        try {
+          if (document.exitFullscreen) await document.exitFullscreen();
+          else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        } catch (_) {}
+      }
+      syncFullscreenUI();
+      return;
+    }
+
+    const target = document.documentElement;
+    let enteredNative = false;
+    try {
+      if (target.requestFullscreen) {
+        await target.requestFullscreen();
+        enteredNative = true;
+      } else if (target.webkitRequestFullscreen) {
+        target.webkitRequestFullscreen();
+        enteredNative = true;
+      }
+    } catch (_) {
+      enteredNative = false;
+    }
+
+    if (!enteredNative) {
+      document.body.classList.add('sol3d-pseudo-fs');
+    }
+    syncFullscreenUI();
+  }
+
   function syncMenuUI() {
     if (btnCam) {
       btnCam.textContent = scene.cameraPreset === 'top' ? '📐 Steil' : '📐 3D';
       btnCam.classList.toggle('active', scene.cameraPreset === 'top');
     }
+    const z = scene.getZoom();
+    if (elZoomVal) {
+      elZoomVal.textContent = `${Math.round(z * 100)}%`;
+    }
+    if (btnZoomOut) btnZoomOut.disabled = z <= 0.855;
+    if (btnZoomIn) btnZoomIn.disabled = z >= 1.195;
   }
 
   function syncHud() {
@@ -254,6 +323,13 @@ function initSolitaire3D() {
     scene.triggerHintPulse(hint);
   }
 
+  function adjustZoom(delta) {
+    const next = scene.setZoom(Math.round((scene.getZoom() + delta) * 100) / 100);
+    savePref(PREF_ZOOM_KEY, next);
+    syncMenuUI();
+    if (window.ArcadeAudio) window.ArcadeAudio.click();
+  }
+
   // Pointer & Touch Drag-and-Drop + Click Smart-Move
   canvas.addEventListener('pointerdown', (e) => {
     audio.unlock();
@@ -306,7 +382,6 @@ function initSolitaire3D() {
       }
     }
 
-    // Check stock slot click (e.g. when empty or slightly beside top card)
     const slotRes = scene.raycastFromClient(e.clientX, e.clientY, scene.slotHitMeshes);
     if (slotRes.hits.length > 0) {
       const meta = slotRes.hits[0].object.userData.slotMeta;
@@ -393,7 +468,6 @@ function initSolitaire3D() {
       return;
     }
 
-    // Tap / Click without drag -> smart auto-move
     const smart = engine.findSmartTarget(sess.pile.type, sess.pile.idx, sess.pile.cardIdx);
     if (smart) {
       const res = engine.executeMove(smart.stack.cards, smart.stack.source, smart.target);
@@ -426,6 +500,20 @@ function initSolitaire3D() {
     });
   }
 
+  if (btnZoomOut) {
+    btnZoomOut.addEventListener('click', () => {
+      audio.unlock();
+      adjustZoom(-0.05);
+    });
+  }
+
+  if (btnZoomIn) {
+    btnZoomIn.addEventListener('click', () => {
+      audio.unlock();
+      adjustZoom(0.05);
+    });
+  }
+
   btnCam.addEventListener('click', () => {
     audio.unlock();
     const nextCam = scene.cameraPreset === '3d' ? 'top' : '3d';
@@ -434,6 +522,17 @@ function initSolitaire3D() {
     syncMenuUI();
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   });
+
+  if (btnFullscreen) {
+    btnFullscreen.addEventListener('click', () => {
+      audio.unlock();
+      toggleFullscreen();
+      if (window.ArcadeAudio) window.ArcadeAudio.click();
+    });
+  }
+
+  document.addEventListener('fullscreenchange', syncFullscreenUI);
+  document.addEventListener('webkitfullscreenchange', syncFullscreenUI);
 
   btnMenu.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -479,8 +578,18 @@ function initSolitaire3D() {
     } else if (e.key.toLowerCase() === 'd' || e.key === ' ') {
       e.preventDefault();
       handleDrawStock();
+    } else if (e.key.toLowerCase() === 'f') {
+      toggleFullscreen();
+    } else if (e.key === '+' || e.key === '=') {
+      adjustZoom(0.05);
+    } else if (e.key === '-') {
+      adjustZoom(-0.05);
     } else if (e.key === 'Escape') {
       menuPopover.classList.add('hidden');
+      if (document.body.classList.contains('sol3d-pseudo-fs')) {
+        document.body.classList.remove('sol3d-pseudo-fs');
+        syncFullscreenUI();
+      }
     }
   });
 
