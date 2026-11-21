@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Fußball – Das große Quiz · 375 Fragen zu Bundesliga, WM, Champions League &amp; Werder Bremen</title>
+  <meta name="description" content="375 handverlesene Fragen in 6 Kategorien: Bundesliga &amp; DFB-Pokal, WM &amp; EM, Champions League &amp; Weltfußball, Regeln &amp; Kurioses sowie das große SV Werder Bremen Vereins-Special." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-fussball/" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="Fußball – Das große Quiz · 375 Fragen" />
+  <meta property="og:description" content="375 Fragen zu Bundesliga, WM/EM, Champions League, Regeln, Taktik &amp; SV Werder Bremen Special mit lokaler Bestenliste." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/quiz-fussball/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Fußball – Das große Quiz · 375 Fragen" />
+  <meta name="twitter:description" content="Bundesliga, WM, Champions League, Regeln &amp; SV Werder Bremen Vereins-Special." />
+  <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Quiz",
+        "name": "Fußball – Das große Quiz",
+        "description": "375 handverlesene Fragen in 6 Kategorien: Bundesliga & DFB-Pokal, WM & EM, Champions League & Weltfußball, Regeln & Kurioses sowie SV Werder Bremen Special.",
+        "url": "https://hunterjoeing.github.io/games/quiz-fussball/",
+        "inLanguage": "de",
+        "isAccessibleForFree": true,
+        "about": "Fußballgeschichte, Bundesliga, DFB-Pokal, Weltmeisterschaft, Europameisterschaft, Champions League, Fußballregeln, SV Werder Bremen",
+        "educationalUse": "Selbsttest / Wissensquiz",
+        "image": "https://hunterjoeing.github.io/og-cover.png",
+        "author": {
+          "@type": "Person",
+          "name": "Johannes Rudolph"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "HunterJoe Arcade",
+            "item": "https://hunterjoeing.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Fußball – Das große Quiz",
+            "item": "https://hunterjoeing.github.io/games/quiz-fussball/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 18px 14px 44px;
+    }
+
+    .fb-info-note {
+      margin: 10px 0 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(22, 163, 74, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.48;
+    }
+    html[data-theme="light"] .fb-info-note {
+      background: var(--bg-sand);
+      border-color: var(--border-hairline);
+      color: var(--text-main);
+    }
+
+    .diff-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0 6px;
+    }
+    .diff-pill {
+      padding: 7px 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(34, 197, 94, 0.38);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e2e8f0;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .diff-pill:hover {
+      border-color: #86efac;
+      color: #f0fdf4;
+    }
+    .diff-pill.active {
+      background: linear-gradient(135deg, #15803d, #22c55e);
+      border-color: #bbf7d0;
+      color: #fff;
+      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.36);
+    }
+    .diff-pill.pro.active {
+      background: linear-gradient(135deg, #b45309, #f59e0b);
+      border-color: #fde68a;
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.36);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 20px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title span.badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.18);
+      color: #16a34a;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    html[data-theme="dark"] .section-title span.badge {
+      color: #86efac;
+    }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+    .cat-card {
+      text-align: left;
+      padding: 16px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(34, 197, 94, 0.28);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: transform 0.14s, border-color 0.14s, background 0.14s;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    .cat-card:hover {
+      transform: translateY(-2px);
+      border-color: #22c55e;
+      background: rgba(20, 83, 45, 0.32);
+    }
+    html[data-theme="light"] .cat-card {
+      background: var(--bg-card);
+      border-color: var(--border-hairline);
+    }
+    html[data-theme="light"] .cat-card:hover {
+      border-color: #16a34a;
+      background: var(--bg-sand);
+    }
+    .cat-card.featured {
+      grid-column: 1 / -1;
+      border-color: rgba(34, 197, 94, 0.55);
+      background: linear-gradient(135deg, rgba(20, 83, 45, 0.35), rgba(15, 23, 42, 0.94));
+    }
+    html[data-theme="light"] .cat-card.featured {
+      background: linear-gradient(135deg, rgba(220, 252, 231, 0.75), var(--bg-card));
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+    .cat-card.special-werder {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: linear-gradient(135deg, rgba(6, 78, 59, 0.4), rgba(15, 23, 42, 0.94));
+    }
+    html[data-theme="light"] .cat-card.special-werder {
+      background: linear-gradient(135deg, rgba(209, 250, 229, 0.75), var(--bg-card));
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .cat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .cat-icon { font-size: 26px; }
+    .cat-board-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.14s;
+    }
+    .cat-board-btn:hover {
+      color: #22c55e;
+      border-color: #22c55e;
+    }
+    .cat-name { font-size: 15.5px; font-weight: 800; }
+    .cat-desc { font-size: 12px; color: var(--text-muted); line-height: 1.44; flex: 1; }
+    .cat-meta {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: #4ade80;
+      margin-top: 4px;
+    }
+    html[data-theme="light"] .cat-meta {
+      color: #15803d;
+    }
+
+    .quiz-stage { padding: 20px; }
+    .quiz-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .quiz-meta-row strong { color: var(--text-main); }
+    .quiz-speed-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      padding: 3px 10px;
+      font: inherit;
+      font-size: 12px;
+      color: var(--text-main);
+      cursor: pointer;
+    }
+
+    .timer-track {
+      width: 100%;
+      height: 6px;
+      background: var(--border-hairline);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 12px 0 16px;
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      transition: width 0.1s linear, background-color 0.2s;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .q-cat-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.18);
+      color: #4ade80;
+    }
+    html[data-theme="light"] .q-cat-pill {
+      color: #15803d;
+      background: rgba(34, 197, 94, 0.14);
+    }
+    .q-diff-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+    .q-diff-pill.easy { background: rgba(34, 197, 94, 0.18); color: #4ade80; }
+    .q-diff-pill.mid  { background: rgba(245, 158, 11, 0.18); color: #fbbf24; }
+    .q-diff-pill.pro  { background: rgba(239, 68, 68, 0.18); color: #f87171; }
+
+    .q-text {
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 1.42;
+      margin: 6px 0 16px;
+      color: var(--text-main);
+    }
+
+    .answers-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .ans-btn {
+      text-align: left;
+      padding: 13px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.35;
+    }
+    .ans-btn:hover:not(:disabled) {
+      border-color: #22c55e;
+      background: rgba(34, 197, 94, 0.1);
+      transform: translateY(-1px);
+    }
+    .ans-key {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: var(--border-hairline);
+      color: var(--text-muted);
+    }
+    .ans-btn.correct {
+      border-color: #22c55e !important;
+      background: rgba(34, 197, 94, 0.22) !important;
+      color: #fff;
+    }
+    html[data-theme="light"] .ans-btn.correct { color: #14532d; }
+    .ans-btn.wrong {
+      border-color: #ef4444 !important;
+      background: rgba(239, 68, 68, 0.2) !important;
+      color: #fff;
+    }
+    html[data-theme="light"] .ans-btn.wrong { color: #7f1d1d; }
+    .ans-btn.eliminated {
+      opacity: 0.28;
+      pointer-events: none;
+    }
+
+    .fact-box {
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      color: var(--text-main);
+      font-size: 13.5px;
+      line-height: 1.45;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .joker-bar {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .joker-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .joker-btn:disabled { opacity: 0.35; cursor: default; }
+
+    .result-card {
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .result-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .res-box {
+      padding: 14px 8px;
+      border-radius: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+    }
+    .res-box b {
+      display: block;
+      font-size: 22px;
+      font-family: var(--font-mono);
+      color: #22c55e;
+    }
+    .res-box span {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .hub-footer-links {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      align-items: center;
+    }
+    .hub-footer-links a, .hub-footer-links button {
+      color: inherit;
+      text-decoration: none;
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.14s;
+    }
+    .hub-footer-links a:hover, .hub-footer-links button:hover {
+      opacity: 1;
+      color: #22c55e;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">⚽ Fußball – Das große Quiz · 375 Fragen</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Menu Selection -->
+    <section id="screen-menu" class="glass-card" style="padding:20px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">⚽ Fußball – Das große Wissensquiz</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
+        <strong>375 handverlesene Fragen</strong> ohne Wiederholung in 6 thematischen Spielwelten: Bundesliga &amp; DFB-Pokal, WM &amp; EM, Champions League, Regeln &amp; Taktik sowie das große SV Werder Bremen Vereins-Special.
+      </p>
+
+      <div class="fb-info-note">
+        💡 <strong>Spielmodus:</strong> Wähle unten eine Kategorie. Jede Runde zieht per Zufall <strong>12 Fragen</strong>. Jede Kategorie besitzt ihre eigene, eindeutig zugeordnete Bestenliste!
+      </div>
+
+      <div class="diff-bar" id="diff-bar">
+        <button type="button" class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button type="button" class="diff-pill" data-diff="easy">🟢 Tribünengast (Leicht)</button>
+        <button type="button" class="diff-pill" data-diff="mid">🟡 Stammspieler (Mittel)</button>
+        <button type="button" class="diff-pill pro" data-diff="pro">🔴 Fußball-Guru (Knifflig, 1,5× Pkt)</button>
+      </div>
+
+      <div class="quiz-time-bar" id="time-mode-bar">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700;">Tempo:</span>
+        <button type="button" class="time-mode-pill active" data-relaxed="0">⚡ Mit Zeitbonus (25–35s)</button>
+        <button type="button" class="time-mode-pill relaxed" data-relaxed="1">☕ Ohne Zeitlimit (Entspannt)</button>
+      </div>
+
+      <!-- Section: Allgemeiner Fußball -->
+      <div class="section-title">
+        <span>🌍 Allgemeiner Fußball</span>
+        <span class="badge">5 Spielmodi · 300 Fragen</span>
+      </div>
+      <div id="cat-grid-general" class="cat-grid"></div>
+
+      <!-- Section: Vereins-Specials -->
+      <div class="section-title" style="margin-top:26px;">
+        <span>💚 Vereins-Specials</span>
+        <span class="badge">1 Special · 75 Fragen</span>
+      </div>
+      <div id="cat-grid-special" class="cat-grid"></div>
+
+      <div class="hub-footer-links">
+        <button type="button" onclick="openAdminModal()">🔒 Admin-Bereich &amp; Bestenlisten</button>
+        <span>·</span>
+        <a href="../../impressum.html">Impressum</a>
+        <span>·</span>
+        <a href="../../datenschutz.html">Datenschutz</a>
+      </div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">12</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Entspannt umschalten">⏱ <strong id="q-sec">25</strong>s</button>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Thema</span>
+        <span id="q-diff" class="q-diff-pill mid">Stammspieler</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button type="button" id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button type="button" id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button type="button" id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button type="button" class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Themen</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div id="res-emoji" style="font-size:48px;">⚽</div>
+      <h2 id="res-heading" style="margin:8px 0 4px;">Fußball-Quiz abgeschlossen!</h2>
+      <p id="res-sub" style="margin:0;color:var(--text-muted);font-size:13.5px;"></p>
+
+      <div class="result-stats">
+        <div class="res-box"><b id="res-score">0</b><span>Punkte</span></div>
+        <div class="res-box"><b id="res-correct">0/12</b><span>Treffer</span></div>
+        <div class="res-box"><b id="res-streak">0×</b><span>Beste Serie</span></div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button type="button" class="primary-btn" onclick="replayCategory()">🔄 Neue Runde starten</button>
+        <button type="button" class="secondary-btn" onclick="showActiveBoard()">🏆 Bestenliste ansehen</button>
+        <button type="button" class="secondary-btn" onclick="backToMenu()">⚽ Andere Kategorie</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/burger-menu.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-board.js"></script>
+  <script src="../../shared/quiz-data/bank-fussball-bundesliga.js"></script>
+  <script src="../../shared/quiz-data/bank-fussball-wm-em.js"></script>
+  <script src="../../shared/quiz-data/bank-fussball-international.js"></script>
+  <script src="../../shared/quiz-data/bank-fussball-regeln.js"></script>
+  <script src="../../shared/quiz-data/bank-fussball-werder.js"></script>
+  <script>
+    const CATS_GENERAL = [
+      {
+        id: 'mix',
+        boardId: 'quiz_fussball_mix',
+        icon: '⚽',
+        name: 'Alles gemischt (Fußball-Mix)',
+        cls: 'featured',
+        desc: 'Zieht 12 Fragen quer aus den 4 allgemeinen Kategorien (ohne Vereins-Specials, für einen ausgewogenen Mix).',
+        bankTopic: 'mix'
+      },
+      {
+        id: 'bundesliga',
+        boardId: 'quiz_fussball_buli',
+        icon: '🏆',
+        name: 'Bundesliga & DFB-Pokal',
+        cls: '',
+        desc: 'Gründung 1963, Meisterschale, Traditionsvereine, Pokalsensationen, Trainer-Ikonen & ewige Rekorde.',
+        bankTopic: 'fussball_bundesliga'
+      },
+      {
+        id: 'wm_em',
+        boardId: 'quiz_fussball_wmem',
+        icon: '🌍',
+        name: 'WM, EM & Nationalelf',
+        cls: '',
+        desc: 'Vier deutsche WM-Titel (1954, 1974, 1990, 2014), drei EM-Titel, 7:1 in Belo Horizonte, Wembley-Tor & Klassiker.',
+        bankTopic: 'fussball_wm_em'
+      },
+      {
+        id: 'international',
+        boardId: 'quiz_fussball_intl',
+        icon: '⭐',
+        name: 'Champions League & Weltfußball',
+        cls: '',
+        desc: 'Landesmeisterpokal, Wunder von Istanbul 2005, Camp Nou 1999, El Clásico, Premier League, Pelé, Messi & Ronaldo.',
+        bankTopic: 'fussball_international'
+      },
+      {
+        id: 'regeln_kurioses',
+        boardId: 'quiz_fussball_rules',
+        icon: '📜',
+        name: 'Regeln, Taktik & Kurioses',
+        cls: '',
+        desc: 'Abseits-Sonderfälle, Rückpassregel, VAR, Catenaccio, Gegenpressing, legendäre Zitate & kuriose Pannen.',
+        bankTopic: 'fussball_regeln'
+      }
+    ];
+
+    const CATS_SPECIAL = [
+      {
+        id: 'werder_bremen',
+        boardId: 'quiz_fussball_werder',
+        icon: '💚',
+        name: 'SV Werder Bremen',
+        cls: 'special-werder',
+        desc: 'Gründung 1899, Meistertitel & Double 2004, Europapokal 1992, Rehhagel & Schaaf, Pizarro, Micoud, Diego, Weser-Wunder & Papierkugel.',
+        bankTopic: 'fussball_werder'
+      }
+    ];
+
+    const ALL_CATS = [...CATS_GENERAL, ...CATS_SPECIAL];
+    const CAT_BY_ID = Object.fromEntries(ALL_CATS.map(c => [c.id, c]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Tribünengast', cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Stammspieler',  cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Fußball-Guru',  cls: 'pro',  mult: 1.5 }
+    };
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 25;
+    let questionMaxTime = 25;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      return ArcadeQuizEngine.shuffle(arr);
+    }
+
+    function getBankPool(catId) {
+      if (catId === 'mix') {
+        const p1 = ArcadeQuizEngine.getBank('fussball_bundesliga');
+        const p2 = ArcadeQuizEngine.getBank('fussball_wm_em');
+        const p3 = ArcadeQuizEngine.getBank('fussball_international');
+        const p4 = ArcadeQuizEngine.getBank('fussball_regeln');
+        return [...p1, ...p2, ...p3, ...p4];
+      }
+      const c = CAT_BY_ID[catId];
+      return c ? ArcadeQuizEngine.getBank(c.bankTopic) : [];
+    }
+
+    function getMatchingPool(catId) {
+      const full = getBankPool(catId);
+      return full.filter(q => {
+        if (selectedDiff === 'all') return true;
+        return q.diff === selectedDiff;
+      });
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest('quiz_fussball');
+      const bMix = ArcadeScores.getBest('quiz_fussball_mix');
+      const bestVal = Math.max(b ? b.best : 0, bMix ? bMix.best : 0);
+      document.getElementById('top-best').textContent = bestVal;
+    }
+
+    function renderCard(c) {
+      const pool = getMatchingPool(c.id);
+      const stats = ArcadeQuizEngine.getSeenStats(c.boardId, pool);
+      const roundLen = ArcadeQuizEngine.resolveRoundCount(12, stats.total, 12);
+      return `
+        <div class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
+          <div class="cat-header">
+            <span class="cat-icon">${c.icon}</span>
+            <button type="button" class="cat-board-btn" onclick="event.stopPropagation(); openCategoryBoard('${c.boardId}', '${c.name}')" title="Bestenliste für ${c.name} ansehen">🏆 Bestenliste</button>
+          </div>
+          <div class="cat-name">${c.name}</div>
+          <div class="cat-desc">${c.desc}</div>
+          <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
+        </div>
+      `;
+    }
+
+    function renderMenu() {
+      document.getElementById('cat-grid-general').innerHTML = CATS_GENERAL.map(renderCard).join('');
+      document.getElementById('cat-grid-special').innerHTML = CATS_SPECIAL.map(renderCard).join('');
+      refreshTopBest();
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      renderMenu();
+    });
+
+    function openCategoryBoard(boardId, title) {
+      if (window.ArcadeQuizBoard) {
+        window.ArcadeQuizBoard.show(boardId, `${title} · Bestenliste`);
+      }
+    }
+
+    function showActiveBoard() {
+      const cat = CAT_BY_ID[activeCat] || CATS_GENERAL[0];
+      openCategoryBoard(cat.boardId, cat.name);
+    }
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const c = CAT_BY_ID[catId] || CATS_GENERAL[0];
+      const pool = getMatchingPool(catId);
+      const drawn = ArcadeQuizEngine.drawDeck(c.boardId, pool, 12, 12);
+      deck = drawn.deck;
+      if (!deck.length) {
+        alert('Keine Fragen für diese Filterauswahl verfügbar.');
+        return;
+      }
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      timerId = null;
+      answered = false;
+
+      const item = deck[qIdx];
+      questionMaxTime = ArcadeQuizPrefs.getDurationSec(item.diff);
+      timeLeft = ArcadeQuizPrefs.isRelaxed() ? 0 : questionMaxTime;
+      const di = DIFF_INFO[item.diff] || DIFF_INFO.mid;
+
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+
+      const c = CAT_BY_ID[activeCat] || CATS_GENERAL[0];
+      document.getElementById('q-cat').textContent = c.name.replace(/\s*\(.*\)/, '');
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button type="button" class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      if (!ArcadeQuizPrefs.isRelaxed()) startBonusTimer();
+    }
+
+    function startBonusTimer() {
+      clearInterval(timerId);
+      let lastTick = performance.now();
+      timerId = setInterval(() => {
+        const now = performance.now();
+        timeLeft = Math.max(0, timeLeft - (now - lastTick) / 1000);
+        lastTick = now;
+        if (timeLeft <= 0) {
+          timeLeft = 0;
+          clearInterval(timerId);
+          timerId = null;
+        }
+        updateTimerUI();
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      ArcadeQuizPrefs.updateTimerUI({
+        btnEl: document.getElementById('btn-timer-mode'),
+        fillEl: document.getElementById('timer-fill'),
+        jokerTimeEl: document.getElementById('joker-time'),
+        jokerTimeAvailable: jokers.time,
+        timeLeft,
+        maxTime: questionMaxTime,
+        answered
+      });
+    }
+
+    function toggleTimerModeInPlay() {
+      const nextRelaxed = !ArcadeQuizPrefs.isRelaxed();
+      ArcadeQuizPrefs.setRelaxed(nextRelaxed);
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      clearInterval(timerId);
+      timerId = null;
+      ArcadeAudio.click();
+      if (nextRelaxed) {
+        timeLeft = 0;
+        updateTimerUI();
+      } else if (!answered) {
+        if (timeLeft <= 0) timeLeft = questionMaxTime;
+        updateTimerUI();
+        startBonusTimer();
+      } else {
+        updateTimerUI();
+      }
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const c = CAT_BY_ID[activeCat] || CATS_GENERAL[0];
+      ArcadeQuizEngine.markSeen(c.boardId, item);
+      const chosen = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+
+      if (chosen.isRight) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const mult = (DIFF_INFO[item.diff] || DIFF_INFO.mid).mult;
+        const speedBonus = (ArcadeQuizPrefs.isRelaxed() || timeLeft <= 0) ? 0 : Math.round(timeLeft * 5);
+        const streakBonus = Math.min(4, streak - 1) * 25;
+        score += Math.round((100 + speedBonus + streakBonus) * mult);
+        ArcadeAudio.perkGood();
+      } else {
+        buttons[idx].classList.add('wrong');
+        streak = 0;
+        ArcadeAudio.perkBad();
+      }
+
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('joker-50').disabled = true;
+      document.getElementById('joker-skip').disabled = true;
+      updateTimerUI();
+      showFact(chosen.isRight);
+    }
+
+    function showFact(isRight, prefix = '') {
+      const item = deck[qIdx];
+      document.getElementById('fact-text').innerHTML =
+        `<strong>${prefix || (isRight ? '✅ Richtig! ' : '❌ Nicht ganz: ')}</strong>${item.exp || item.explanation}`;
+      document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      ArcadeAudio.click();
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered || ArcadeQuizPrefs.isRelaxed()) return;
+      jokers.time = false;
+      timeLeft = Math.min(questionMaxTime + 10, timeLeft + 10);
+      updateTimerUI();
+      startBonusTimer();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      const c = CAT_BY_ID[activeCat] || CATS_GENERAL[0];
+      ArcadeQuizEngine.markSeen(c.boardId, deck[qIdx]);
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const c = CAT_BY_ID[activeCat] || CATS_GENERAL[0];
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore(c.boardId, score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      // Auch im übergeordneten Gesamt-Eintrag erfassen
+      if (c.boardId !== 'quiz_fussball') {
+        ArcadeScores.record('quiz_fussball', score, `${score} Pkt (${correctCount}/${deck.length})`, false, {
+          meta: { cat: activeCat, diff: selectedDiff }
+        });
+      }
+
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '⚽' : '👟');
+      document.getElementById('res-heading').textContent = scoreRes.isNewRecord ? 'Neuer Fußball-Rekord!' : 'Runde abgeschlossen!';
+      document.getElementById('res-sub').textContent = `${c.name} · Stufe: ${diffTag}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+      renderMenu();
+    }
+
+    function openAdminModal() {
+      const pin = window.prompt('Admin-PIN zur Bestenlisten-Verwaltung:');
+      if (pin === null) return;
+      if (pin !== '2408' && !(window.ArcadeAuth && window.ArcadeAuth.isAdmin())) {
+        alert('Falsche PIN.');
+        return;
+      }
+      const board = window.ArcadeQuizBoard;
+      if (!board) { alert('Bestenlisten-Modul nicht verfügbar.'); return; }
+      const rows = ALL_CATS.map(c => {
+        const count = board.get(c.boardId).length;
+        return `
+          <div style="border:1px solid var(--border-subtle,rgba(15,23,42,.14));border-radius:12px;padding:10px;margin-bottom:10px;">
+            <div style="font-weight:800;margin-bottom:6px;">${c.icon} ${c.name} <span style="opacity:.6;font-size:12px;">(${count} Einträge)</span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button type="button" data-act="show" data-bid="${c.boardId}" data-title="${c.name}" style="${board.btnCss}">🏆 Anzeigen</button>
+              <button type="button" data-act="reset" data-bid="${c.boardId}" data-title="${c.name}" style="${board.btnCss}color:#ef4444;">🗑 Zurücksetzen</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const m = board.modal(`
+        <h3 style="margin:0 0 12px;">🔒 Fußball-Quiz Admin</h3>
+        <p style="margin:0 0 12px;font-size:13px;opacity:.75;">Verwalte die 6 einzelnen Bestenlisten der Fußball-Unterkategorien.</p>
+        ${rows}
+        <div style="text-align:right;margin-top:14px;"><button type="button" class="adm-close" style="${board.btnCss}">Schließen</button></div>
+      `);
+
+      m.querySelector('.adm-close').onclick = () => board.closeModal(m);
+      m.addEventListener('click', (e) => {
+        if (e.target === m) return board.closeModal(m);
+        const btn = e.target.closest('button[data-act]');
+        if (!btn) return;
+        const bid = btn.dataset.bid;
+        const title = btn.dataset.title;
+        if (btn.dataset.act === 'show') {
+          board.show(bid, title);
+        } else if (confirm(`Bestenliste für "${title}" wirklich löschen?`)) {
+          board.reset(bid);
+          board.closeModal(m);
+          openAdminModal();
+        }
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const ae = document.activeElement;
+      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+          document.querySelector('.arcade-modal-backdrop, #abm-drawer.open, .qb-backdrop')) {
+        return;
+      }
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    if (/[?&]admin=1(&|$)/.test(location.search)) {
+      setTimeout(openAdminModal, 300);
+    }
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    renderMenu();
+  </script>
+</body>
+</html>
