@@ -718,16 +718,33 @@
 
     @media (max-width: 640px) {
       #hub-shell {
-        padding: calc(16px + env(safe-area-inset-top, 0px)) 16px 48px;
+        padding: calc(12px + env(safe-area-inset-top, 0px)) 14px 48px;
       }
       .hub-header {
-        padding: 18px 20px;
-        gap: 14px;
+        padding: 14px 14px;
+        gap: 10px;
       }
-      .hub-hero {
-        margin-top: 18px;
-        padding: 24px 20px;
-        gap: 18px;
+      .header-actions {
+        width: 100%;
+        flex-wrap: nowrap;
+        gap: 5px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .header-actions::-webkit-scrollbar {
+        display: none;
+      }
+      .header-actions .hub-action-btn,
+      .header-actions .icon-btn {
+        padding: 6px 9px;
+        font-size: 12px;
+        min-width: 32px;
+        height: 32px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+      .domain-tabs {
+        margin-top: 14px;
       }
       .games-grid {
         grid-template-columns: 1fr;
@@ -787,24 +804,10 @@
         <button class="hub-action-btn arcade-nav-pill" id="btn-arcade-player" title="Spielername für globale Bestenlisten">👤 Name setzen</button>
         <button class="hub-action-btn" id="btn-hub-leaderboard" title="Globale Bestenliste aller Spiele öffnen">🏆 Bestenliste</button>
         <button class="hub-action-btn" id="btn-hub-feedback" data-arcade-feedback-btn="1" title="Verbesserungswünsche, Bugs &amp; Kommentare öffnen">💬 Wünsche <span class="arcade-feedback-count" id="hub-fb-count">3</span></button>
-        <button class="hub-action-btn" id="btn-replay-zoom" title="2-Sekunden-Kamerafahrt erneut abspielen">🔭 2s-Anflug</button>
         <button type="button" class="hub-action-btn" id="btn-arcade-theme" data-with-label="1" title="Hell-/Dunkel-Modus wechseln">☀️ Hell</button>
         <button class="icon-btn" id="btn-mute" title="Ton an/aus">🔊</button>
       </div>
     </header>
-
-    <section class="hub-hero">
-      <div class="hero-copy">
-        <h2>Games &amp; Quiz-Welten</h2>
-        <p>Wähle oben direkt zwischen der <strong>Games-Kategorie</strong> (Action, Strategie, 3D-Logik, Karten &amp; Zahlenrätsel) und unseren <strong>26 Quiz-Welten mit 2.121 Fragen &amp; Motiven</strong> (Wiederholschutz &amp; 12 Fragen/Runde: Apple, Formel 1, Fußball mit 5 Welten + Werder Bremen Special, Torten &amp; Patisserie, Schwangerschaft &amp; sanfte Geburt, Nageldesign, MD-11 Trijet, Porsche &amp; Taycan, Bitcoin, ETFs, Militär- &amp; Passagierflugzeuge mit je <strong>75 kuratierten Fragen</strong>, dazu KI, Kino, Ägypten, Tauchen, Hardware- &amp; Pilz-Fotos, Schweizer Loks, E-Mobilität, Geschichte, Politik &amp; der 675-Fragen Mega-Mix).</p>
-      </div>
-      <div class="hero-stats">
-        <div class="hero-stat-box"><b id="stat-games">36</b><span>Module</span></div>
-        <div class="hero-stat-box"><b id="stat-questions">2.121</b><span>Quiz-Pool</span></div>
-        <div class="hero-stat-box"><b id="stat-records">0</b><span>Rekorde</span></div>
-        <div class="hero-stat-box"><b id="stat-plays">0</b><span>Partien</span></div>
-      </div>
-    </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
       <button class="domain-tab active" data-domain="all" id="tab-all">✨ Alles (33)</button>
@@ -1643,7 +1646,8 @@
         const summary = ArcadeScores.getSummaryCache ? ArcadeScores.getSummaryCache() : null;
         const totalMods = GAMES.length + QUIZZES.length;
         const poolTotal = 2046;
-        document.getElementById('stat-games').textContent = totalMods;
+        const elG = document.getElementById('stat-games');
+        if (elG) elG.textContent = totalMods;
         const elQ = document.getElementById('stat-questions');
         if (elQ) elQ.textContent = poolTotal.toLocaleString('de-DE');
         const elTabAll = document.getElementById('tab-all');
@@ -1659,17 +1663,19 @@
           const elFbCnt = document.getElementById('hub-fb-count');
           if (elFbCnt) elFbCnt.textContent = fbCnt.total;
         }
+        const elRec = document.getElementById('stat-records');
+        const elPlays = document.getElementById('stat-plays');
         if (summary && summary.games) {
-          document.getElementById('stat-records').textContent = Number(summary.totalRecords || 0);
-          document.getElementById('stat-plays').textContent = Number(summary.totalPlays || 0);
+          if (elRec) elRec.textContent = Number(summary.totalRecords || 0);
+          if (elPlays) elPlays.textContent = Number(summary.totalPlays || 0);
           return;
         }
         const all = ArcadeScores.getAll();
         const ms = ArcadeScores.getMinesweeperBest();
         const records = Object.keys(all).length + (ms ? 1 : 0);
         const plays = Object.values(all).reduce((s, item) => s + (item.plays || 0), 0) + (ms ? 1 : 0);
-        document.getElementById('stat-records').textContent = records;
-        document.getElementById('stat-plays').textContent = plays;
+        if (elRec) elRec.textContent = records;
+        if (elPlays) elPlays.textContent = plays;
       }
 
       function buildCard(g) {
@@ -1878,11 +1884,7 @@
         ArcadeAudio.click();
       }
 
-      elIntroHud.addEventListener('click', skipIntro);
-      document.getElementById('btn-replay-zoom').addEventListener('click', () => {
-        ArcadeAudio.pop();
-        startZoomIntro();
-      });
+      if (elIntroHud) elIntroHud.addEventListener('click', skipIntro);
       window.addEventListener('keydown', (e) => {
         const tag = e.target && e.target.tagName;
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
