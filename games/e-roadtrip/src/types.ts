@@ -375,3 +375,16 @@ export interface CampaignSave {
   unlockedLevelOrder: number;
   completedLevels: Record<string, { bestScore: number; bestMinutes: number }>;
 }
+
+export type BreakActivityKind = 'eat' | 'toilet' | 'dog' | 'children' | 'shopping';
+
+export type PoliceViolationKind = 'red_light' | 'zebra_crossing';
+
+export interface CollisionInfo {
+  kind: 'car' | 'pedestrian' | 'cyclist' | 'obstacle';
+  playerAtFault: boolean;
+  reason: string;
+}
+
+export type ProviderFilterMap = Record<ChargerNetwork, boolean>;
+
