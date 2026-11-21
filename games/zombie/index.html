@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b19'/%3E%3Ccircle cx='32' cy='32' r='20' fill='%2316a34a'/%3E%3Ccircle cx='25' cy='28' r='3.5' fill='%23f87171'/%3E%3Ccircle cx='39' cy='28' r='3.5' fill='%23f87171'/%3E%3Crect x='23' y='38' width='18' height='4' rx='2' fill='%230f172a'/%3E%3C/svg%3E">
-  <title>Zombie Horde: Gate Runner</title>
-  <meta name="description" content="Rasantes Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer." />
+  <title>Zombie Horde: Gate Runner 3D</title>
+  <meta name="description" content="Rasantes 3D-Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/zombie/" />
@@ -16,15 +16,15 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
-  <meta property="og:title" content="Zombie Horde: Gate Runner" />
-  <meta property="og:description" content="Rasantes Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer." />
+  <meta property="og:title" content="Zombie Horde: Gate Runner 3D" />
+  <meta property="og:description" content="Rasantes 3D-Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/zombie/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Zombie Horde: Gate Runner" />
-  <meta name="twitter:description" content="Rasantes Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer." />
+  <meta name="twitter:title" content="Zombie Horde: Gate Runner 3D" />
+  <meta name="twitter:description" content="Rasantes 3D-Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer." />
   <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
   {
@@ -33,7 +33,7 @@
       {
         "@type": "VideoGame",
         "name": "Zombie Horde: Gate Runner",
-        "description": "Rasantes Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer.",
+        "description": "Rasantes 3D-Browser-Actionspiel: Weiche Zombie-Horden auf der Perspektiv-Brücke aus, verbessere Truppen durch Energietore (+Soldaten, Streuschuss, Feuerrate) und sprenge Fässer.",
         "url": "https://hunterjoeing.github.io/games/zombie/",
         "inLanguage": "de",
         "isAccessibleForFree": true,
@@ -68,6 +68,18 @@
   }
   </script>
   <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+      "EffectComposer": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/EffectComposer.js",
+      "RenderPass": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/RenderPass.js",
+      "UnrealBloomPass": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "OutputPass": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/OutputPass.js"
+    }
+  }
+  </script>
   <link rel="stylesheet" href="../../shared/arcade.css">
   <style>
     html, body {
@@ -86,7 +98,7 @@
       flex: 1 1 0;
       min-height: 0;
       width: 100%;
-      max-width: 980px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
       gap: 8px;
@@ -100,7 +112,7 @@
       flex-wrap: wrap;
       gap: 8px 10px;
       padding: 10px 14px;
-      border-radius: 14px;
+      border-radius: 16px;
       background: var(--bg-surface);
       border: 1px solid var(--border-hairline);
       box-shadow: var(--shadow-soft);
@@ -109,26 +121,122 @@
     }
     .hud-group {
       display: flex;
-      gap: 12px;
+      gap: 7px;
       flex-wrap: wrap;
       align-items: center;
+    }
+    .zb-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-sand);
+      border: 1px solid var(--border-hairline);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .zb-pill strong {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+    .zb-squad-bar-wrap {
+      width: 46px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(100, 116, 139, 0.25);
+      overflow: hidden;
+    }
+    .zb-squad-bar {
+      height: 100%;
+      width: 3.3%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #38bdf8);
+      transition: width 0.16s ease;
+    }
+    .hud-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .zb-cam-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .zb-cam-btn.active {
+      border-color: var(--accent-primary);
+      background: var(--accent-primary);
+      color: #ffffff;
     }
     .stage-wrap {
       position: relative;
       flex: 1 1 0;
-      min-height: 200px;
-      border-radius: 16px;
+      min-height: 220px;
+      border-radius: 18px;
       overflow: hidden;
       border: 1px solid var(--border-hairline);
       box-shadow: var(--shadow-soft);
-      background: #0B1220;
+      background: #070b1a;
       touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    html[data-theme="light"] .stage-wrap {
+      background: #cfe4f7;
     }
     canvas#zCanvas {
       display: block;
       width: 100%;
       height: 100%;
+      touch-action: none;
     }
+
+    /* Responsive Touch Virtual Steering Stick */
+    .zb-stick-wrap {
+      display: none;
+      position: absolute;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      width: 156px;
+      height: 46px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.48);
+      border: 1px solid rgba(125, 211, 252, 0.42);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      z-index: 12;
+      touch-action: none;
+    }
+    @media (pointer: coarse), (max-width: 760px) {
+      .zb-stick-wrap {
+        display: flex;
+      }
+    }
+    .zb-stick-track {
+      position: absolute;
+      inset: 50% 18px auto;
+      height: 2px;
+      transform: translateY(-50%);
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+    .zb-stick-knob {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38bdf8, #0284c7);
+      border: 2px solid #e0f2fe;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.55);
+      pointer-events: none;
+      will-change: transform;
+    }
+
     .overlay-card {
       position: absolute;
       inset: 0;
@@ -136,20 +244,31 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(15, 23, 42, 0.38);
-      backdrop-filter: blur(6px);
+      background: rgba(246, 248, 252, 0.52);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       z-index: 20;
+    }
+    html[data-theme="dark"] .overlay-card {
+      background: rgba(7, 11, 26, 0.70);
     }
     .overlay-card.hidden { display: none !important; }
     .modal-inner {
       width: min(440px, 100%);
-      padding: 28px 30px;
-      border-radius: 16px;
+      padding: 26px 28px;
+      border-radius: 18px;
       background: var(--bg-surface);
       border: 1px solid var(--border-hairline);
       color: var(--text-main);
       text-align: center;
-      box-shadow: var(--shadow-soft);
+      box-shadow: var(--shadow-hover);
+      animation: editorialFadeIn 0.28s var(--ease-boutique);
+    }
+    #ov-desc {
+      margin: 0 0 18px;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      line-height: 1.55;
     }
     .hint-foot {
       flex-shrink: 0;
@@ -157,21 +276,18 @@
       font-size: 11.5px;
       color: var(--text-muted);
     }
-
-    html[data-theme="dark"] .overlay-card {
-      background: rgba(11, 17, 32, 0.72);
+    @media (max-width: 640px) {
+      .hud-strip { padding: 8px 10px; gap: 6px; }
+      .zb-pill { padding: 3px 8px; font-size: 11px; }
+      .hint-foot { display: none; }
     }
-    html[data-theme="light"] .stage-wrap {
-      background: #DCE3EE;
-    }
-    html[data-theme="light"] #ov-desc { color: var(--text-muted) !important; }
   </style>
 </head>
 <body>
   <header class="arcade-topbar">
     <div class="topbar-left">
       <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
-      <div class="topbar-title">🧟 Zombie Horde: Gate Runner</div>
+      <div class="topbar-title">🧟 Zombie Horde: Gate Runner 3D</div>
     </div>
     <div class="topbar-right">
       <span class="pill-stat">🏆 <span id="top-best">0</span></span>
@@ -182,27 +298,38 @@
   <div class="zombie-shell">
     <div class="hud-strip">
       <div class="hud-group">
-        <span>👥 Trupp: <strong id="hud-squad">1</strong></span>
-        <span>🌊 Welle: <strong id="hud-wave">1</strong></span>
-        <span>⚡ Kadenz: <strong id="hud-rate">1.0×</strong></span>
-        <span>🔥 Waffe: <strong id="hud-weapon">Standard</strong></span>
-        <span>🛡️ Schild: <strong id="hud-shield">0</strong></span>
-        <span>⭐ Punkte: <strong id="hud-score">0</strong></span>
+        <span class="zb-pill">
+          👥 Trupp: <strong id="hud-squad">1</strong>
+          <span class="zb-squad-bar-wrap" aria-hidden="true"><span id="hud-squad-bar" class="zb-squad-bar"></span></span>
+        </span>
+        <span class="zb-pill">🌊 Welle: <strong id="hud-wave">1</strong></span>
+        <span class="zb-pill">⚡ Kadenz: <strong id="hud-rate">1.0×</strong></span>
+        <span class="zb-pill">🔥 Waffe: <strong id="hud-weapon">Standard</strong></span>
+        <span class="zb-pill">🛡️ Schild: <strong id="hud-shield">0</strong></span>
+        <span class="zb-pill">⭐ Punkte: <strong id="hud-score">0</strong></span>
       </div>
-      <button class="secondary-btn" style="padding:5px 10px;font-size:12px;" onclick="startGame()">🔄 Neustart</button>
+      <div class="hud-actions">
+        <button id="btn-cam" type="button" class="secondary-btn zb-cam-btn" onclick="toggleZBCam()" title="Kamerawinkel wechseln">📐 Kamera</button>
+        <button class="secondary-btn" style="padding:5px 10px;font-size:12px;" onclick="startGame()">🔄 Neustart</button>
+      </div>
     </div>
 
     <div class="stage-wrap" id="stage">
       <canvas id="zCanvas"></canvas>
 
+      <div id="zb-stick-wrap" class="zb-stick-wrap" aria-label="Virtueller Steuer-Stick">
+        <div class="zb-stick-track"></div>
+        <div id="zb-stick-knob" class="zb-stick-knob"></div>
+      </div>
+
       <div id="overlay" class="overlay-card">
         <div class="modal-inner">
           <div style="font-size:40px; margin-bottom:6px;" id="ov-emoji">🧟🔫</div>
-          <h2 id="ov-title" style="margin:0 0 8px;">Zombie Horde Survival</h2>
-          <p id="ov-desc" style="margin:0 0 16px; color:#cbd5e1; font-size:13.5px; line-height:1.5;">
-            Dein Trupp schießt automatisch nach vorn! Steuere <strong>links &amp; rechts</strong> über die Brücke, lade schießbare Tore mit Dauerfeuer hoch und weiche gepanzerten <strong>🔒-Fallen</strong> &amp; schnellen Flanken-Horden aus!<br><br>
+          <h2 id="ov-title" style="margin:0 0 8px;">Zombie Horde Survival 3D</h2>
+          <p id="ov-desc">
+            Dein Trupp schießt automatisch nach vorn! Steuere <strong>links &amp; rechts</strong> über die 3D-Brücke, lade schießbare Energietore mit Dauerfeuer hoch und weiche gepanzerten <strong>🔒-Fallen</strong> &amp; schnellen Flanken-Horden aus!<br><br>
             <strong>Steuerung:</strong><br>
-            Finger / Maus direkt ziehen <b>oder</b> <b>← / → / A / D</b>
+            Finger / Maus ziehen, Touch-Stick <b>oder</b> <b>← / → / A / D</b>
           </p>
           <button id="ov-btn" class="primary-btn" onclick="startGame()">🔥 Welle starten!</button>
         </div>
@@ -215,1718 +342,6 @@
   </div>
 
   <script src="../../shared/arcade.js"></script>
-  <script>
-    const canvas = document.getElementById('zCanvas');
-    const ctx = canvas.getContext('2d');
-    const stage = document.getElementById('stage');
-
-    const MAX_SQUAD = 30;
-    const MAX_RATE = 10.5;
-    const MAX_DMG = 3.5;
-    const MAX_SHIELD = 2;
-
-    let running = false;
-    let gameOver = false;
-    let playerU = 0; // -0.85 .. +0.85
-    let targetU = 0;
-    let squad = 1;
-    let fireRate = 4.5; // shots/sec per shooter (clamped sensibly)
-    let spreadLevel = 1; // 1 = standard, 2 = 3-way spread, 3 = 5-way mega-spread
-    let dmgMult = 1.0;
-    let shield = 0;
-    let score = 0;
-    let kills = 0;
-    let wave = 1;
-    let elapsed = 0;
-    let roadScroll = 0;
-    let shootTimer = 0;
-    let gateTimer = 3.2;
-    let waveSpawnTimer = 0.6;
-    let bossCooldown = 16;
-    let sfxShotCd = 0;
-    let shakeAmt = 0;
-
-    let bullets = [];
-    let zombies = [];
-    let gates = [];
-    let barrels = [];
-    let fx = [];
-    let floaters = [];
-
-    function spawnBurst(u, z, color, count = 8, spread = 0.08, big = false) {
-      fx.push({
-        u, z, ring: true,
-        color: big ? '#fde047' : color,
-        life: big ? 0.42 : 0.22,
-        maxLife: big ? 0.42 : 0.22,
-        maxR: big ? 76 : 26
-      });
-      for (let i = 0; i < count; i++) {
-        const life = (big ? 0.44 : 0.24) + Math.random() * 0.16;
-        fx.push({
-          u, z,
-          vu: (Math.random() - 0.5) * spread * 2.6,
-          vz: (Math.random() - 0.35) * spread * 1.5,
-          vy: -(20 + Math.random() * (big ? 58 : 30)),
-          color: (big && i % 3 === 0) ? '#fef08a' : color,
-          size: (big ? 3.8 : 2.2) + Math.random() * 2.2,
-          life,
-          maxLife: life
-        });
-      }
-    }
-
-    const keys = { left: false, right: false };
-    let pointerActive = false;
-
-    function refreshTopBest() {
-      const b = ArcadeScores.getBest('zombie');
-      document.getElementById('top-best').textContent = b ? b.best : 0;
-    }
-
-    function resize() {
-      const r = stage.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.max(300, Math.floor(r.width * dpr));
-      canvas.height = Math.max(240, Math.floor(r.height * dpr));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    }
-    window.addEventListener('resize', resize);
-    if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
-    resize();
-
-    // 2.5D Bridge Projection: z=1 far horizon, z=0 player line near bottom
-    function project(u, z) {
-      const r = stage.getBoundingClientRect();
-      const w = r.width, h = r.height;
-      const horizonY = h * 0.14;
-      const groundY = h * 0.89;
-      // Exponential perspective depth so close objects accelerate naturally
-      const depthCurve = Math.pow(1 - z, 1.55);
-      const y = horizonY + depthCurve * (groundY - horizonY);
-      const halfRoadTop = w * 0.14;
-      const halfRoadBot = Math.min(w * 0.45, 330);
-      const halfW = halfRoadTop + depthCurve * (halfRoadBot - halfRoadTop);
-      const x = w * 0.5 + u * halfW;
-      const scale = 0.25 + depthCurve * 0.95;
-      return { x, y, scale, halfW };
-    }
-
-    function startGame() {
-      ArcadeAudio.click();
-      document.getElementById('overlay').classList.add('hidden');
-      keys.left = false;
-      keys.right = false;
-      pointerActive = false;
-      running = true;
-      gameOver = false;
-      playerU = 0;
-      targetU = 0;
-      squad = 1;
-      fireRate = 4.5;
-      spreadLevel = 1;
-      dmgMult = 1.0;
-      shield = 0;
-      score = 0;
-      kills = 0;
-      wave = 1;
-      elapsed = 0;
-      roadScroll = 0;
-      shootTimer = 0;
-      gateTimer = 1.4;
-      waveSpawnTimer = 2.1;
-      bossCooldown = 18;
-      bullets = [];
-      zombies = [];
-      gates = [];
-      barrels = [];
-      fx = [];
-      floaters = [];
-      spawnZombiePack(2);
-      updateHUD();
-    }
-
-    function spawnZombiePack(count) {
-      const sideBias = Math.random() < 0.5 ? -0.45 : 0.45;
-      const speedScale = 1 + Math.min(0.75, (wave - 1) * 0.075);
-      const fastProb = wave >= 2 ? Math.min(0.36, 0.20 + wave * 0.025) : 0;
-      const bruteProb = wave >= 3 ? Math.min(0.28, 0.12 + (wave - 2) * 0.025) : 0;
-      const phalanx = wave >= 3 && Math.random() < 0.26;
-      const normalHp = wave === 1 ? 1.85 : (1.8 + Math.pow(wave, 1.52) * 1.35 + squad * 0.14);
-
-      for (let i = 0; i < count; i++) {
-        const roll = Math.random();
-        const brute = roll < bruteProb;
-        const fast = !brute && roll < bruteProb + fastProb;
-        const hpBase = brute ? normalHp * 2.7 : (fast ? normalHp * 0.65 : normalHp);
-        const uPos = phalanx
-          ? -0.78 + (1.56 * i) / Math.max(1, count - 1)
-          : (Math.random() < 0.6 ? sideBias + (Math.random() - 0.5) * 0.65 : (Math.random() - 0.5) * 1.72);
-        zombies.push({
-          u: Math.max(-0.88, Math.min(0.88, uPos)),
-          z: 0.95 + Math.random() * 0.13,
-          speed: (fast ? 0.245 : (brute ? 0.115 : 0.165)) * speedScale,
-          hp: hpBase,
-          maxHp: hpBase,
-          radius: brute ? 0.12 : 0.08,
-          kind: brute ? 'brute' : (fast ? 'fast' : 'normal'),
-          hitFlash: 0
-        });
-      }
-      if (Math.random() < 0.38) {
-        barrels.push({
-          u: (Math.random() - 0.5) * 1.45,
-          z: 0.98,
-          hp: 2.2 + wave * 0.95,
-          speed: 0.15 * speedScale
-        });
-      }
-    }
-
-    function spawnBoss() {
-      const playerEstDps = squad * dmgMult * fireRate;
-      const hp = Math.max(55 + wave * 42, playerEstDps * (3.6 + Math.min(2.2, wave * 0.22)));
-      zombies.push({
-        u: (Math.random() - 0.5) * 0.7,
-        z: 1.0,
-        speed: 0.095 + Math.min(0.055, wave * 0.0055),
-        hp,
-        maxHp: hp,
-        radius: 0.17,
-        kind: 'boss',
-        hitFlash: 0
-      });
-      spawnZombiePack(2 + Math.min(5, wave));
-      floaters.push({ u: 0, z: 0.75, text: `⚠️ BOSS WELLE ${wave}!`, color: '#fb7185', life: 1.5 });
-    }
-
-    function makeRandomGatePair() {
-      const weaponTypes = [
-        { op: 'rate', val: 0.25, label: '⚡ +25% Kadenz' },
-        { op: 'spread', val: 1, label: '🔥 Streuschuss' },
-        { op: 'dmg', val: 0.30, label: '💥 +30% Schaden' },
-        { op: 'shield', val: 1, label: '🛡️ +1 Schild' }
-      ];
-      const stepCost = Math.round((2.4 + (wave - 1) * 1.55 + Math.sqrt(squad) * 1.25) * 10) / 10;
-      const maxBoost = Math.min(8, 4 + Math.floor(wave * 0.6));
-
-      const makeShootableGate = (side) => {
-        const startNeg = wave >= 2 ? -(2 + Math.floor(Math.random() * Math.min(5, 2 + wave * 0.5))) : -(1 + Math.floor(Math.random() * 2));
-        const val = Math.random() < 0.78 ? startNeg : 1;
-        return {
-          side,
-          uMin: side < 0 ? -0.94 : 0.05,
-          uMax: side < 0 ? -0.05 : 0.94,
-          z: 1.0,
-          kind: 'add',
-          val,
-          maxVal: maxBoost,
-          dmgAccum: 0,
-          stepCost,
-          shootable: true,
-          locked: false
-        };
-      };
-
-      const makeHazardGate = (side) => {
-        const hazards = [
-          { op: 'add', val: -(2 + Math.min(5, wave)), label: null },
-          { op: 'add', val: -(3 + Math.min(6, wave)), label: null }
-        ];
-        if (wave >= 3) {
-          hazards.push({ op: 'rateBad', val: -0.20, label: '🔒 -20% Kadenz' });
-          hazards.push({ op: 'div', val: 2, label: '🔒 ÷2 Trupp!' });
-        }
-        const h = hazards[Math.floor(Math.random() * hazards.length)];
-        return {
-          side,
-          uMin: side < 0 ? -0.94 : 0.05,
-          uMax: side < 0 ? -0.05 : 0.94,
-          z: 1.0,
-          kind: h.op,
-          val: h.val,
-          label: h.label,
-          shootable: false,
-          locked: true
-        };
-      };
-
-      const makePerkOrMultGate = (side) => {
-        if (wave >= 2 && squad <= 12 && Math.random() < 0.20) {
-          return {
-            side,
-            uMin: side < 0 ? -0.94 : 0.05,
-            uMax: side < 0 ? -0.05 : 0.94,
-            z: 1.0,
-            kind: 'mult',
-            val: 2,
-            shootable: false,
-            locked: false
-          };
-        }
-        const available = weaponTypes.filter(w =>
-          !(w.op === 'spread' && spreadLevel >= 3) &&
-          !(w.op === 'rate' && fireRate >= MAX_RATE) &&
-          !(w.op === 'dmg' && dmgMult >= MAX_DMG) &&
-          !(w.op === 'shield' && shield >= MAX_SHIELD)
-        );
-        if (available.length === 0) return makeShootableGate(side);
-        const wp = available[Math.floor(Math.random() * available.length)];
-        return {
-          side,
-          uMin: side < 0 ? -0.94 : 0.05,
-          uMax: side < 0 ? -0.05 : 0.94,
-          z: 1.0,
-          kind: wp.op,
-          val: wp.val,
-          label: wp.label,
-          shootable: false,
-          locked: false
-        };
-      };
-
-      const leftSide = Math.random() < 0.5;
-      const hazardChance = wave >= 2 ? Math.min(0.42, 0.18 + (wave - 1) * 0.05) : 0;
-      const leftGate = makeShootableGate(leftSide ? -1 : 1);
-      const rightGate = Math.random() < hazardChance
-        ? makeHazardGate(leftSide ? 1 : -1)
-        : (Math.random() < 0.58 ? makePerkOrMultGate(leftSide ? 1 : -1) : makeShootableGate(leftSide ? 1 : -1));
-      gates.push(leftGate, rightGate);
-    }
-
-    function applyGate(g) {
-      let msg = '';
-      let good = true;
-      if (g.kind === 'add') {
-        const next = Math.max(0, squad + g.val);
-        good = g.val >= 0;
-        msg = (g.val >= 0 ? `+${g.val}` : `${g.val}`) + ' Schützen';
-        squad = Math.min(MAX_SQUAD, next);
-      } else if (g.kind === 'mult') {
-        const bonus = Math.min(10, squad * (g.val - 1));
-        squad = Math.min(MAX_SQUAD, squad + bonus);
-        msg = `+${bonus} Trupp (×${g.val})!`;
-      } else if (g.kind === 'div') {
-        const lost = Math.max(1, Math.floor(squad / 2));
-        squad = Math.max(0, squad - lost);
-        good = false;
-        msg = `÷2 (-${lost} Schützen)!`;
-      } else if (g.kind === 'rate') {
-        fireRate = Math.min(MAX_RATE, fireRate * (1 + g.val));
-        msg = '⚡ Feuerrate!';
-      } else if (g.kind === 'rateBad') {
-        fireRate = Math.max(2.6, fireRate * (1 + g.val));
-        good = false;
-        msg = '⚠️ -20% Kadenz!';
-      } else if (g.kind === 'spread') {
-        spreadLevel = Math.min(3, spreadLevel + 1);
-        msg = spreadLevel === 2 ? '🔥 3× Streuschuss!' : '🔥 5× Mega-Streu!';
-      } else if (g.kind === 'dmg') {
-        dmgMult = Math.min(MAX_DMG, dmgMult + g.val);
-        msg = '💥 Stärkere Munition!';
-      } else if (g.kind === 'shield') {
-        shield = Math.min(MAX_SHIELD, shield + 1);
-        msg = '🛡️ Schild aktiv!';
-      }
-
-      if (squad <= 0) {
-        squad = 0;
-        updateHUD();
-        triggerGameOver('Trupp durch rotes Tor auf 0 gefallen!');
-        return;
-      }
-      if (good) ArcadeAudio.perkGood(); else ArcadeAudio.perkBad();
-      floaters.push({ u: playerU, z: 0.08, text: msg, color: good ? '#4ade80' : '#fb7185', life: 1.1 });
-      updateHUD();
-    }
-
-    function fireVolley() {
-      // Visual squad fires scaled streams so FPS stays rock-solid even with 30 squad members
-      const streams = Math.min(7, squad);
-      const dmgPerBullet = (1.0 * dmgMult) * (squad / streams);
-      const spreadAngles = spreadLevel === 1
-        ? [0]
-        : (spreadLevel === 2 ? [-0.85, 0, 0.85] : [-1.55, -0.78, 0, 0.78, 1.55]);
-      const volleyMult = spreadLevel === 1 ? 1.0 : (spreadLevel === 2 ? 1.35 : 1.70);
-      const pelletDmg = (dmgPerBullet * volleyMult) / spreadAngles.length;
-      const span = Math.min(0.32, (streams - 1) * 0.055);
-      for (let i = 0; i < streams; i++) {
-        const uOff = streams === 1 ? 0 : -span + (2 * span * i) / (streams - 1);
-        for (const du of spreadAngles) {
-          bullets.push({
-            u: playerU + uOff,
-            z: 0.04,
-            du,
-            dz: 1.45,
-            dmg: pelletDmg,
-            isSpread: du !== 0
-          });
-        }
-      }
-      if (sfxShotCd <= 0) {
-        ArcadeAudio.laser();
-        sfxShotCd = 0.095;
-      }
-    }
-
-    function triggerGameOver(reason) {
-      running = false;
-      gameOver = true;
-      ArcadeAudio.fail();
-      const isNew = ArcadeScores.record('zombie', score, `${score} Pkt (Welle ${wave})`, false);
-      refreshTopBest();
-      document.getElementById('ov-emoji').textContent = isNew ? '🏆' : '💀';
-      document.getElementById('ov-title').textContent = isNew ? 'Neuer Zombie-Rekord!' : 'Überrannt!';
-      document.getElementById('ov-desc').innerHTML = `${reason}<br><br>Welle: <strong>${wave}</strong> · Erledigte Zombies: <strong>${kills}</strong> · Punkte: <strong>${score}</strong>`;
-      document.getElementById('ov-btn').textContent = '🔄 Nochmal kämpfen!';
-      document.getElementById('overlay').classList.remove('hidden');
-    }
-
-    function updateHUD() {
-      document.getElementById('hud-squad').textContent = squad;
-      document.getElementById('hud-wave').textContent = wave;
-      document.getElementById('hud-rate').textContent = (fireRate / 4.5).toFixed(1) + '×';
-      document.getElementById('hud-weapon').textContent = spreadLevel === 3 ? '5× Streu' : (spreadLevel === 2 ? '3× Streu' : 'Standard');
-      document.getElementById('hud-shield').textContent = shield;
-      document.getElementById('hud-score').textContent = score;
-    }
-
-    function step(dt) {
-      if (!running) return;
-      elapsed += dt;
-      roadScroll = (roadScroll + dt * 1.35) % 1000;
-      sfxShotCd -= dt;
-      shakeAmt = Math.max(0, shakeAmt - dt * 30);
-
-      const moveSpd = 1.45;
-      if (keys.left) targetU -= moveSpd * dt;
-      if (keys.right) targetU += moveSpd * dt;
-      targetU = Math.max(-0.82, Math.min(0.82, targetU));
-      playerU += (targetU - playerU) * Math.min(1, dt * 18);
-
-      // Wave progression (faster intensity curve)
-      const newWave = 1 + Math.floor(elapsed / 12);
-      if (newWave > wave) {
-        wave = newWave;
-        floaters.push({ u: 0, z: 0.65, text: `🌊 WELLE ${wave}!`, color: '#38bdf8', life: 1.3 });
-        updateHUD();
-      }
-
-      // Auto-fire
-      shootTimer -= dt;
-      if (shootTimer <= 0) {
-        fireVolley();
-        shootTimer = 1 / fireRate;
-      }
-
-      // Spawns
-      gateTimer -= dt;
-      if (gateTimer <= 0) {
-        makeRandomGatePair();
-        gateTimer = Math.max(4.4, 5.4 - wave * 0.12);
-      }
-      waveSpawnTimer -= dt;
-      if (waveSpawnTimer <= 0) {
-        const packSz = wave === 1
-          ? (2 + (Math.random() < 0.35 ? 1 : 0))
-          : (3 + Math.min(10, Math.floor(wave * 1.0 + Math.random() * 2.2)));
-        spawnZombiePack(packSz);
-        waveSpawnTimer = wave === 1 ? 2.15 : Math.max(0.58, 2.0 - wave * 0.14);
-      }
-      bossCooldown -= dt;
-      if (bossCooldown <= 0) {
-        spawnBoss();
-        bossCooldown = Math.max(13, 18 - Math.floor(wave * 0.5));
-      }
-
-      // Update Gates
-      for (let i = gates.length - 1; i >= 0; i--) {
-        const g = gates[i];
-        g.z -= 0.195 * dt;
-        if (g.z <= 0.05) {
-          const hit = playerU >= g.uMin && playerU <= g.uMax;
-          if (hit) applyGate(g);
-          gates.splice(i, 1);
-        }
-      }
-
-      // Update Barrels
-      for (let i = barrels.length - 1; i >= 0; i--) {
-        const b = barrels[i];
-        b.z -= b.speed * dt;
-        if (b.z <= 0.04) {
-          barrels.splice(i, 1);
-        }
-      }
-
-      // Update Bullets + Collisions
-      for (let i = bullets.length - 1; i >= 0; i--) {
-        const b = bullets[i];
-        b.u += b.du * dt;
-        b.z += b.dz * dt;
-        if (b.z > 1.05 || Math.abs(b.u) > 1.1) {
-          bullets.splice(i, 1);
-          continue;
-        }
-        let consumed = false;
-
-        // Hit shootable Gates? (requires sustained damage rather than 1-bullet exploit)
-        for (let gi = 0; gi < gates.length; gi++) {
-          const g = gates[gi];
-          if (g.shootable && Math.abs(b.z - g.z) < 0.045 && b.u >= g.uMin && b.u <= g.uMax) {
-            consumed = true;
-            if (g.val < g.maxVal) {
-              g.dmgAccum += b.dmg;
-              while (g.dmgAccum >= g.stepCost && g.val < g.maxVal) {
-                g.dmgAccum -= g.stepCost;
-                g.val += 1;
-              }
-              if (g.val >= g.maxVal) g.dmgAccum = g.stepCost;
-            }
-            fx.push({ u: b.u, z: g.z, color: g.val >= 0 ? '#4ade80' : '#38bdf8', life: 0.16 });
-            break;
-          }
-        }
-        if (consumed) { bullets.splice(i, 1); continue; }
-
-        // Hit explosive Barrels?
-        for (let bi = barrels.length - 1; bi >= 0; bi--) {
-          const br = barrels[bi];
-          if (Math.abs(b.z - br.z) < 0.055 && Math.abs(b.u - br.u) < 0.11) {
-            br.hp -= b.dmg;
-            consumed = true;
-            if (br.hp <= 0) {
-              ArcadeAudio.explosion();
-              shakeAmt = Math.max(shakeAmt, 10);
-              spawnBurst(br.u, br.z, '#fb923c', 16, 0.24, true);
-              spawnBurst(br.u, br.z, '#fde047', 8, 0.14, false);
-              // Area blast damages nearby zombies
-              for (let zi = zombies.length - 1; zi >= 0; zi--) {
-                const zm = zombies[zi];
-                if (Math.hypot(zm.u - br.u, (zm.z - br.z) * 1.8) < 0.55) {
-                  zm.hp -= (12 + wave * 6.5);
-                  zm.hitFlash = 0.15;
-                }
-              }
-              barrels.splice(bi, 1);
-            }
-            break;
-          }
-        }
-        if (consumed) { bullets.splice(i, 1); continue; }
-
-        // Hit Zombies?
-        for (let zi = zombies.length - 1; zi >= 0; zi--) {
-          const zm = zombies[zi];
-          if (zm.hp <= 0) continue;
-          if (Math.abs(b.z - zm.z) < 0.055 && Math.abs(b.u - zm.u) < zm.radius + 0.04) {
-            zm.hp -= b.dmg;
-            zm.hitFlash = 0.08;
-            consumed = true;
-            const bloodCol = zm.kind === 'fast' ? '#22d3ee' : (zm.kind === 'brute' ? '#c084fc' : '#4ade80');
-            spawnBurst(b.u, zm.z, bloodCol, 4, 0.06, false);
-            break;
-          }
-        }
-        if (consumed) bullets.splice(i, 1);
-      }
-
-      // Process dead or breaching Zombies
-      const visCols = Math.min(6, squad);
-      const squadHalfW = 0.22 + Math.max(0, visCols - 1) * 0.036;
-      for (let i = zombies.length - 1; i >= 0; i--) {
-        const zm = zombies[i];
-        if (zm.hp <= 0) {
-          kills++;
-          const pts = zm.kind === 'boss' ? 400 : (zm.kind === 'brute' ? 45 : 15);
-          score += pts;
-          if (zm.kind === 'boss') {
-            ArcadeAudio.win();
-            dmgMult = Math.min(MAX_DMG, dmgMult + 0.15);
-            shakeAmt = Math.max(shakeAmt, 12);
-            floaters.push({ u: zm.u, z: zm.z, text: `🏆 BOSS BESIEGT +${pts}`, color: '#fbbf24', life: 1.4 });
-          }
-          spawnBurst(zm.u, zm.z, zm.kind === 'boss' ? '#fb7185' : '#ef4444', zm.kind === 'boss' ? 20 : 8, zm.kind === 'boss' ? 0.22 : 0.1, zm.kind === 'boss');
-          zombies.splice(i, 1);
-          updateHUD();
-          continue;
-        }
-        zm.z -= zm.speed * dt;
-        if (zm.z < 0.72 && zm.z > 0.06) {
-          const trackSpd = zm.kind === 'fast' ? 0.24 : (zm.kind === 'boss' ? 0.12 : (zm.kind === 'brute' ? 0.09 : 0.14));
-          const du = playerU - zm.u;
-          if (Math.abs(du) > 0.04) {
-            zm.u += Math.sign(du) * Math.min(Math.abs(du), trackSpd * dt);
-          }
-        }
-        zm.hitFlash = Math.max(0, zm.hitFlash - dt);
-        if (zm.z <= 0.045) {
-          // Breach!
-          if (Math.abs(zm.u - playerU) < squadHalfW + zm.radius) {
-            if (shield > 0) {
-              shield--;
-              ArcadeAudio.explosion();
-              shakeAmt = Math.max(shakeAmt, 7);
-              spawnBurst(playerU, 0.05, '#38bdf8', 10, 0.12, true);
-              floaters.push({ u: playerU, z: 0.08, text: '🛡️ Schild abgefangen!', color: '#38bdf8', life: 0.9 });
-            } else {
-              const loss = zm.kind === 'boss' ? Math.max(4, Math.ceil(squad * 0.55)) : (zm.kind === 'brute' ? 2 : 1);
-              squad -= loss;
-              ArcadeAudio.perkBad();
-              shakeAmt = Math.max(shakeAmt, 9);
-              spawnBurst(playerU, 0.04, '#fb7185', 8, 0.1, false);
-              floaters.push({ u: playerU, z: 0.08, text: `-${loss} Trupp!`, color: '#fb7185', life: 0.9 });
-            }
-            zombies.splice(i, 1);
-            updateHUD();
-            if (squad <= 0) {
-              squad = 0;
-              updateHUD();
-              triggerGameOver('Die Zombie-Horde hat deinen Trupp überrannt!');
-              return;
-            }
-          } else {
-            zombies.splice(i, 1);
-          }
-        }
-      }
-
-      // FX & floaters
-      for (let i = fx.length - 1; i >= 0; i--) {
-        const f = fx[i];
-        f.life -= dt;
-        if (f.vu) f.u += f.vu * dt;
-        if (f.vz) f.z += f.vz * dt;
-        if (f.vy !== undefined) f.vy += 120 * dt;
-        if (f.life <= 0) fx.splice(i, 1);
-      }
-      for (let i = floaters.length - 1; i >= 0; i--) {
-        floaters[i].life -= dt;
-        floaters[i].z += 0.04 * dt;
-        if (floaters[i].life <= 0) floaters.splice(i, 1);
-      }
-    }
-
-    function drawSceneBackdrop(w, h, horizonY, nowSec) {
-      const isLight = window.ArcadeTheme && ArcadeTheme.isLight();
-      if (isLight) {
-        const sky = ctx.createLinearGradient(0, 0, 0, horizonY + 42);
-        sky.addColorStop(0, '#0284c7');
-        sky.addColorStop(0.5, '#38bdf8');
-        sky.addColorStop(0.84, '#bae6fd');
-        sky.addColorStop(1, '#fed7aa');
-        ctx.fillStyle = sky;
-        ctx.fillRect(0, 0, w, horizonY + 42);
-
-        const sunX = w * 0.78, sunY = horizonY * 0.44;
-        const sunR = Math.max(16, Math.min(28, w * 0.035));
-        const corona = ctx.createRadialGradient(sunX, sunY, sunR * 0.3, sunX, sunY, sunR * 4.5);
-        corona.addColorStop(0, 'rgba(254, 240, 138, 0.78)');
-        corona.addColorStop(0.45, 'rgba(253, 224, 71, 0.25)');
-        corona.addColorStop(1, 'rgba(253, 224, 71, 0)');
-        ctx.fillStyle = corona;
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, sunR * 4.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        const sunBody = ctx.createRadialGradient(sunX - sunR * 0.2, sunY - sunR * 0.2, 2, sunX, sunY, sunR);
-        sunBody.addColorStop(0, '#fefce8');
-        sunBody.addColorStop(0.65, '#fde047');
-        sunBody.addColorStop(1, '#f59e0b');
-        ctx.fillStyle = sunBody;
-        ctx.beginPath();
-        ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Soft drifting clouds
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.72)';
-        for (let ci = 0; ci < 4; ci++) {
-          const cxPos = (((ci * 230 + nowSec * 9) % (w + 140)) + (w + 140)) % (w + 140) - 70;
-          const cyPos = horizonY * (0.24 + (ci % 3) * 0.16);
-          ctx.beginPath();
-          ctx.ellipse(cxPos, cyPos, 38, 12, 0, 0, Math.PI * 2);
-          ctx.ellipse(cxPos + 20, cyPos - 4, 24, 10, 0, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        // Far sunlit skyline
-        const farWidths = [34, 24, 42, 26, 48, 28, 36];
-        let fxPos = 0, fi = 0;
-        ctx.fillStyle = '#64748b';
-        while (fxPos < w) {
-          const bw = farWidths[fi % farWidths.length];
-          const bh = 22 + ((fi * 23) % 38);
-          ctx.fillRect(fxPos, horizonY + 10 - bh, bw - 2, bh);
-          fxPos += bw;
-          fi++;
-        }
-
-        // Near skyline with daytime glass highlights
-        const nearWidths = [26, 18, 34, 22, 38, 20, 30, 24, 36, 19];
-        let sx = 0, bi = 0;
-        while (sx < w) {
-          const bw = nearWidths[bi % nearWidths.length];
-          const bh = 16 + ((bi * 19) % 34);
-          const topY = horizonY + 8 - bh;
-          ctx.fillStyle = '#334155';
-          ctx.fillRect(sx, topY, bw - 2, bh);
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
-          ctx.fillRect(sx, topY, bw - 2, 1.5);
-          if (bw >= 22) {
-            for (let wy = topY + 5; wy < horizonY + 2; wy += 6) {
-              for (let wx = sx + 4; wx < sx + bw - 7; wx += 6) {
-                if (((wx * 7 + wy * 13 + bi) % 5) === 0) {
-                  ctx.fillStyle = 'rgba(186, 230, 253, 0.65)';
-                  ctx.fillRect(wx, wy, 2.5, 2.5);
-                }
-              }
-            }
-          }
-          if (bi % 4 === 1) {
-            ctx.fillStyle = '#475569';
-            ctx.fillRect(sx + bw * 0.45, topY - 9, 1.5, 9);
-          }
-          sx += bw;
-          bi++;
-        }
-
-        // Bright sunlit river canyon
-        const waterGrad = ctx.createLinearGradient(0, horizonY + 6, 0, h);
-        waterGrad.addColorStop(0, '#0284c7');
-        waterGrad.addColorStop(0.4, '#0e7490');
-        waterGrad.addColorStop(1, '#0369a1');
-        ctx.fillStyle = waterGrad;
-        ctx.fillRect(0, horizonY + 6, w, h - horizonY);
-
-        const refCenterX = w * 0.78;
-        const refHalfW = w * 0.11;
-        const sunRefH = ctx.createLinearGradient(refCenterX - refHalfW, 0, refCenterX + refHalfW, 0);
-        sunRefH.addColorStop(0, 'rgba(254, 240, 138, 0)');
-        sunRefH.addColorStop(0.5, 'rgba(254, 240, 138, 0.35)');
-        sunRefH.addColorStop(1, 'rgba(254, 240, 138, 0)');
-        ctx.fillStyle = sunRefH;
-        ctx.fillRect(refCenterX - refHalfW, horizonY + 6, refHalfW * 2, (h - horizonY) * 0.58);
-
-        for (let i = 0; i < 36; i++) {
-          const z = 0.04 + ((i / 36 + (roadScroll * 0.07)) % 0.94);
-          const depth = Math.pow(1 - z, 1.55);
-          const ry = horizonY + depth * (h * 0.89 - horizonY);
-          const side = i % 2 === 0 ? -1 : 1;
-          const spread = ((i * 37) % 100) / 100;
-          const rx = side < 0 ? w * (0.02 + spread * 0.22) : w * (0.74 + spread * 0.22);
-          const rw = (14 + depth * 42);
-          ctx.fillStyle = (side > 0 && rx < w * 0.88)
-            ? `rgba(254, 249, 195, ${(0.28 + 0.25 * (1 - z)).toFixed(2)})`
-            : `rgba(224, 242, 254, ${(0.24 + 0.26 * (1 - z)).toFixed(2)})`;
-          ctx.fillRect(rx, ry, rw, 1.4 + depth * 2.0);
-        }
-        return;
-      }
-
-      // Deep cyber-apocalypse twilight sky
-      const sky = ctx.createLinearGradient(0, 0, 0, horizonY + 42);
-      sky.addColorStop(0, '#020617');
-      sky.addColorStop(0.45, '#130b2e');
-      sky.addColorStop(0.82, '#3b0764');
-      sky.addColorStop(1, '#7f1d1d');
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, w, horizonY + 42);
-
-      // Crisp stars in upper atmosphere
-      for (let i = 0; i < 34; i++) {
-        const sx = ((i * 197 + 41) % 997) / 997 * w;
-        const sy = ((i * 89 + 17) % 311) / 311 * (horizonY * 0.72);
-        const tw = 0.25 + 0.55 * (0.5 + 0.5 * Math.sin(nowSec * 1.8 + i * 2.3));
-        ctx.fillStyle = `rgba(226, 232, 240, ${tw.toFixed(2)})`;
-        ctx.fillRect(sx, sy, (i % 4 === 0 ? 1.8 : 1.1), (i % 4 === 0 ? 1.8 : 1.1));
-      }
-
-      // Crimson moon & atmospheric corona behind ruined horizon
-      const moonX = w * 0.78, moonY = horizonY * 0.52;
-      const moonR = Math.max(14, Math.min(26, w * 0.032));
-      const corona = ctx.createRadialGradient(moonX, moonY, moonR * 0.4, moonX, moonY, moonR * 4.2);
-      corona.addColorStop(0, 'rgba(251, 113, 133, 0.52)');
-      corona.addColorStop(0.45, 'rgba(190, 24, 93, 0.2)');
-      corona.addColorStop(1, 'rgba(190, 24, 93, 0)');
-      ctx.fillStyle = corona;
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, moonR * 4.2, 0, Math.PI * 2);
-      ctx.fill();
-
-      const moonBody = ctx.createRadialGradient(moonX - moonR * 0.3, moonY - moonR * 0.3, 2, moonX, moonY, moonR);
-      moonBody.addColorStop(0, '#fecdd3');
-      moonBody.addColorStop(0.6, '#fb7185');
-      moonBody.addColorStop(1, '#9f1239');
-      ctx.fillStyle = moonBody;
-      ctx.beginPath();
-      ctx.arc(moonX, moonY, moonR, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Sweeping anti-air searchlights
-      ctx.save();
-      for (let b = 0; b < 2; b++) {
-        const bx = w * (b === 0 ? 0.18 : 0.82);
-        const sweep = Math.sin(nowSec * 0.85 + b * 2.1) * 0.42;
-        const beamGrad = ctx.createLinearGradient(bx, horizonY, bx + Math.sin(sweep) * w * 0.3, 0);
-        beamGrad.addColorStop(0, 'rgba(56, 189, 248, 0.16)');
-        beamGrad.addColorStop(1, 'rgba(56, 189, 248, 0)');
-        ctx.fillStyle = beamGrad;
-        ctx.beginPath();
-        ctx.moveTo(bx - 10, horizonY + 8);
-        ctx.lineTo(bx + Math.sin(sweep) * w * 0.32 - 44, 0);
-        ctx.lineTo(bx + Math.sin(sweep) * w * 0.32 + 44, 0);
-        ctx.lineTo(bx + 10, horizonY + 8);
-        ctx.closePath();
-        ctx.fill();
-      }
-      ctx.restore();
-
-      // Far purple skyline layer
-      const farWidths = [34, 24, 42, 26, 48, 28, 36];
-      let fxPos = 0, fi = 0;
-      ctx.fillStyle = '#170f38';
-      while (fxPos < w) {
-        const bw = farWidths[fi % farWidths.length];
-        const bh = 22 + ((fi * 23) % 38);
-        ctx.fillRect(fxPos, horizonY + 10 - bh, bw - 2, bh);
-        fxPos += bw;
-        fi++;
-      }
-
-      // Near detailed cyber-ruins skyline with lit windows & spire beacons
-      const nearWidths = [26, 18, 34, 22, 38, 20, 30, 24, 36, 19];
-      let sx = 0, bi = 0;
-      while (sx < w) {
-        const bw = nearWidths[bi % nearWidths.length];
-        const bh = 16 + ((bi * 19) % 34);
-        const topY = horizonY + 8 - bh;
-        ctx.fillStyle = '#070b1a';
-        ctx.fillRect(sx, topY, bw - 2, bh);
-        ctx.fillStyle = 'rgba(244, 63, 94, 0.18)';
-        ctx.fillRect(sx, topY, bw - 2, 1.5);
-        if (bw >= 22) {
-          for (let wy = topY + 5; wy < horizonY + 2; wy += 6) {
-            for (let wx = sx + 4; wx < sx + bw - 7; wx += 6) {
-              if (((wx * 7 + wy * 13 + bi) % 5) === 0) {
-                ctx.fillStyle = ((bi + wy) % 3 === 0) ? 'rgba(56, 189, 248, 0.45)' : 'rgba(251, 191, 36, 0.38)';
-                ctx.fillRect(wx, wy, 2.5, 2.5);
-              }
-            }
-          }
-        }
-        if (bi % 4 === 1) {
-          ctx.fillStyle = '#1e293b';
-          ctx.fillRect(sx + bw * 0.45, topY - 9, 1.5, 9);
-          if (Math.sin(nowSec * 3.8 + bi) > 0) {
-            ctx.fillStyle = '#fb7185';
-            ctx.beginPath();
-            ctx.arc(sx + bw * 0.45 + 0.7, topY - 9, 1.8, 0, Math.PI * 2);
-            ctx.fill();
-          }
-        }
-        sx += bw;
-        bi++;
-      }
-
-      // River canyon flanking the bridge + moonlit water waves & misty reflections
-      const waterGrad = ctx.createLinearGradient(0, horizonY + 6, 0, h);
-      waterGrad.addColorStop(0, '#0b1026');
-      waterGrad.addColorStop(0.35, '#07142b');
-      waterGrad.addColorStop(1, '#020712');
-      ctx.fillStyle = waterGrad;
-      ctx.fillRect(0, horizonY + 6, w, h - horizonY);
-
-      // Feathered moonlit river vertical reflection shimmer under right moon
-      const refCenterX = w * 0.78;
-      const refHalfW = w * 0.10;
-      const moonRefH = ctx.createLinearGradient(refCenterX - refHalfW, 0, refCenterX + refHalfW, 0);
-      moonRefH.addColorStop(0, 'rgba(251, 113, 133, 0)');
-      moonRefH.addColorStop(0.5, 'rgba(251, 113, 133, 0.16)');
-      moonRefH.addColorStop(1, 'rgba(251, 113, 133, 0)');
-      ctx.fillStyle = moonRefH;
-      ctx.fillRect(refCenterX - refHalfW, horizonY + 6, refHalfW * 2, (h - horizonY) * 0.58);
-
-      for (let i = 0; i < 36; i++) {
-        const z = 0.04 + ((i / 36 + (roadScroll * 0.07)) % 0.94);
-        const depth = Math.pow(1 - z, 1.55);
-        const ry = horizonY + depth * (h * 0.89 - horizonY);
-        const side = i % 2 === 0 ? -1 : 1;
-        const spread = ((i * 37) % 100) / 100;
-        const rx = side < 0 ? w * (0.02 + spread * 0.22) : w * (0.74 + spread * 0.22);
-        const rw = (14 + depth * 42);
-        ctx.fillStyle = (side > 0 && rx < w * 0.88)
-          ? `rgba(251, 113, 133, ${(0.10 + 0.16 * (1 - z)).toFixed(2)})`
-          : `rgba(56, 189, 248, ${(0.08 + 0.18 * (1 - z)).toFixed(2)})`;
-        ctx.fillRect(rx, ry, rw, 1.4 + depth * 2.0);
-      }
-    }
-
-    function drawBridge(w, h, horizonY, nowSec) {
-      const isLight = window.ArcadeTheme && ArcadeTheme.isLight();
-      const tl = project(-1, 1), tr = project(1, 1);
-      const bl = project(-1, 0), br = project(1, 0);
-      const otl = project(-1.14, 1), otr = project(1.14, 1);
-      const obl = project(-1.14, 0), obr = project(1.14, 0);
-
-      // Steel bridge deck outer aprons & structural under-girder walls dropping toward river
-      ctx.fillStyle = isLight ? '#334155' : '#060c1c';
-      ctx.beginPath();
-      ctx.moveTo(otl.x, otl.y); ctx.lineTo(obl.x, obl.y); ctx.lineTo(obl.x - 28, h); ctx.lineTo(otl.x - 6, otl.y + 18);
-      ctx.closePath(); ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(otr.x, otr.y); ctx.lineTo(obr.x, obr.y); ctx.lineTo(obr.x + 28, h); ctx.lineTo(otr.x + 6, otr.y + 18);
-      ctx.closePath(); ctx.fill();
-
-      // Raised steel pedestrian catwalks flanking asphalt deck
-      ctx.fillStyle = isLight ? '#64748b' : '#141e38';
-      ctx.beginPath();
-      ctx.moveTo(otl.x, otl.y); ctx.lineTo(tl.x, tl.y); ctx.lineTo(bl.x, bl.y); ctx.lineTo(obl.x, obl.y);
-      ctx.closePath(); ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(tr.x, tr.y); ctx.lineTo(otr.x, otr.y); ctx.lineTo(obr.x, obr.y); ctx.lineTo(br.x, br.y);
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.28)' : 'rgba(148, 163, 184, 0.25)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      ctx.moveTo(otl.x, otl.y); ctx.lineTo(obl.x, obl.y);
-      ctx.moveTo(otr.x, otr.y); ctx.lineTo(obr.x, obr.y);
-      ctx.stroke();
-
-      // Weathered asphalt roadway deck
-      const deckGrad = ctx.createLinearGradient(0, tl.y, 0, h);
-      if (isLight) {
-        deckGrad.addColorStop(0, '#64748b');
-        deckGrad.addColorStop(0.35, '#475569');
-        deckGrad.addColorStop(0.75, '#334155');
-        deckGrad.addColorStop(1, '#1e293b');
-      } else {
-        deckGrad.addColorStop(0, '#1e1b4b');
-        deckGrad.addColorStop(0.35, '#131d36');
-        deckGrad.addColorStop(0.75, '#0b1224');
-        deckGrad.addColorStop(1, '#060a14');
-      }
-      ctx.fillStyle = deckGrad;
-      ctx.beginPath();
-      ctx.moveTo(tl.x, tl.y); ctx.lineTo(tr.x, tr.y); ctx.lineTo(br.x, br.y); ctx.lineTo(bl.x, bl.y);
-      ctx.closePath(); ctx.fill();
-
-      // Worn tire tracks down both lanes
-      [-0.46, 0.46].forEach(uTrack => {
-        const ttTop = project(uTrack, 1), ttBot = project(uTrack, 0);
-        ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.24)' : 'rgba(2, 6, 23, 0.42)';
-        ctx.lineWidth = Math.max(4, 28 * ttBot.scale);
-        ctx.beginPath();
-        ctx.moveTo(ttTop.x, ttTop.y);
-        ctx.lineTo(ttBot.x, ttBot.y);
-        ctx.stroke();
-      });
-
-      // Steel expansion joints + alternating amber/dark safety curbs
-      const deckBands = 12;
-      const scrollFrac = roadScroll % 1;
-      for (let i = 0; i < deckBands; i++) {
-        const z = 1 - ((i + scrollFrac) / deckBands);
-        if (z <= 0.01 || z >= 0.99) continue;
-        const pL = project(-1, z);
-        const pR = project(1, z);
-        ctx.strokeStyle = isLight
-          ? `rgba(241, 245, 249, ${(0.14 + (1 - z) * 0.18).toFixed(2)})`
-          : `rgba(148, 163, 184, ${(0.06 + (1 - z) * 0.14).toFixed(2)})`;
-        ctx.lineWidth = Math.max(1, 2.2 * pL.scale);
-        ctx.beginPath();
-        ctx.moveTo(pL.x, pL.y);
-        ctx.lineTo(pR.x, pR.y);
-        ctx.stroke();
-
-        const zPrev = Math.min(1, z + 0.045);
-        const qL0 = project(-1.04, zPrev), qL1 = project(-1.04, z);
-        const qR0 = project(1.04, zPrev), qR1 = project(1.04, z);
-        ctx.strokeStyle = (i % 2 === 0)
-          ? (isLight ? 'rgba(217, 119, 6, 0.88)' : 'rgba(245, 158, 11, 0.72)')
-          : (isLight ? 'rgba(226, 232, 240, 0.85)' : 'rgba(30, 41, 59, 0.85)');
-        ctx.lineWidth = Math.max(2, 5.5 * qL1.scale);
-        ctx.beginPath();
-        ctx.moveTo(qL0.x, qL0.y); ctx.lineTo(qL1.x, qL1.y);
-        ctx.moveTo(qR0.x, qR0.y); ctx.lineTo(qR1.x, qR1.y);
-        ctx.stroke();
-      }
-
-      // Dashed illuminated center lane divider
-      const laneSegments = 10;
-      for (let i = 0; i < laneSegments; i++) {
-        const z1 = Math.min(1, 1 - ((i + scrollFrac) / laneSegments));
-        const z0 = Math.max(0, z1 - 0.042);
-        if (z1 <= z0 || z1 < 0) continue;
-        const p1 = project(0, z1);
-        const p0 = project(0, z0);
-        ctx.strokeStyle = isLight ? 'rgba(248, 250, 252, 0.72)' : 'rgba(125, 211, 252, 0.42)';
-        ctx.lineWidth = Math.max(1.5, 4.2 * p0.scale);
-        ctx.beginPath();
-        ctx.moveTo(p1.x, p1.y);
-        ctx.lineTo(p0.x, p0.y);
-        ctx.stroke();
-      }
-
-      // Glowing bridge rail neon guide strips
-      ctx.strokeStyle = isLight ? '#0284c7' : '#38bdf8';
-      ctx.lineWidth = 2.6;
-      ctx.beginPath();
-      ctx.moveTo(tl.x, tl.y); ctx.lineTo(bl.x, bl.y);
-      ctx.moveTo(tr.x, tr.y); ctx.lineTo(br.x, br.y);
-      ctx.stroke();
-
-      // Massive Suspension Bridge Pylon Gantries + Cables
-      [0.0, 0.5].forEach((offset) => {
-        const pz = 1 - ((roadScroll * 0.16 + offset) % 1);
-        if (pz > 0.04 && pz < 0.98) {
-          const pL = project(-1.08, pz);
-          const pR = project(1.08, pz);
-          const sc = pL.scale;
-          const archH = 145 * sc;
-          const alpha = Math.min(0.92, 0.25 + (1 - pz) * 0.72);
-          ctx.save();
-          ctx.globalAlpha = alpha;
-
-          const colW = Math.max(3, 11 * sc);
-          ctx.fillStyle = isLight ? '#475569' : '#1e293b';
-          ctx.fillRect(pL.x - colW * 0.5, pL.y - archH, colW, archH);
-          ctx.fillRect(pR.x - colW * 0.5, pR.y - archH, colW, archH);
-          ctx.fillStyle = isLight ? '#0284c7' : '#38bdf8';
-          ctx.fillRect(pL.x + colW * 0.25, pL.y - archH, Math.max(1, 2 * sc), archH);
-          ctx.fillRect(pR.x - colW * 0.45, pR.y - archH, Math.max(1, 2 * sc), archH);
-
-          ctx.fillStyle = isLight ? '#334155' : '#0f172a';
-          ctx.strokeStyle = isLight ? '#0284c7' : '#0ea5e9';
-          ctx.lineWidth = Math.max(1.2, 2.2 * sc);
-          const beamY1 = pL.y - archH + 4 * sc;
-          const beamY2 = pL.y - archH * 0.76;
-          ctx.fillRect(pL.x, beamY1, pR.x - pL.x, 9 * sc);
-          ctx.strokeRect(pL.x, beamY1, pR.x - pL.x, 9 * sc);
-          ctx.fillRect(pL.x, beamY2, pR.x - pL.x, 5 * sc);
-
-          ctx.strokeStyle = isLight ? 'rgba(15, 23, 42, 0.36)' : 'rgba(56, 189, 248, 0.45)';
-          ctx.lineWidth = Math.max(1, 1.4 * sc);
-          for (let c = 1; c <= 3; c++) {
-            const zSpan = Math.max(0.02, pz - c * 0.08);
-            const tL = project(-1.02, zSpan);
-            const tR = project(1.02, zSpan);
-            ctx.beginPath();
-            ctx.moveTo(pL.x, pL.y - archH + 6 * sc);
-            ctx.lineTo(tL.x, tL.y);
-            ctx.moveTo(pR.x, pR.y - archH + 6 * sc);
-            ctx.lineTo(tR.x, tR.y);
-            ctx.stroke();
-          }
-
-          const blink = 0.65 + 0.35 * Math.sin(nowSec * 3 + offset * 6);
-          ctx.fillStyle = `rgba(251, 191, 36, ${blink.toFixed(2)})`;
-          ctx.beginPath();
-          ctx.arc(pL.x, pL.y - archH, 3.2 * sc, 0, Math.PI * 2);
-          ctx.arc(pR.x, pR.y - archH, 3.2 * sc, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-      });
-    }
-
-    function drawGate(g, nowSec) {
-      const pL = project(g.uMin, g.z);
-      const pR = project(g.uMax, g.z);
-      const sc = pL.scale;
-      const gh = 58 * sc;
-      const gw = pR.x - pL.x;
-      const good = g.kind === 'add' ? g.val >= 0 : g.kind === 'mult' ? true : (g.kind !== 'trap' && g.kind !== 'div' && g.kind !== 'rateBad');
-      const mainCol = good ? '#22d3ee' : '#fb7185';
-      const darkCol = good ? '#0e7490' : '#9f1239';
-
-      const curtain = ctx.createLinearGradient(0, pL.y - gh, 0, pL.y);
-      curtain.addColorStop(0, good ? 'rgba(34, 211, 238, 0.34)' : 'rgba(251, 113, 133, 0.36)');
-      curtain.addColorStop(0.5, good ? 'rgba(14, 165, 233, 0.16)' : 'rgba(244, 63, 94, 0.18)');
-      curtain.addColorStop(1, good ? 'rgba(14, 165, 233, 0.42)' : 'rgba(244, 63, 94, 0.42)');
-      ctx.fillStyle = curtain;
-      ctx.fillRect(pL.x, pL.y - gh, gw, gh);
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(pL.x, pL.y - gh, gw, gh);
-      ctx.clip();
-      const scanOffset = (nowSec * 36 * sc) % (14 * sc);
-      ctx.strokeStyle = good ? 'rgba(165, 243, 252, 0.25)' : 'rgba(254, 205, 211, 0.25)';
-      ctx.lineWidth = Math.max(1, 1.8 * sc);
-      for (let y = pL.y - gh - 14 * sc + scanOffset; y < pL.y + 10; y += 12 * sc) {
-        ctx.beginPath();
-        ctx.moveTo(pL.x, y);
-        ctx.lineTo(pR.x, y - 8 * sc);
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      ctx.strokeStyle = mainCol;
-      ctx.lineWidth = Math.max(1.5, 2.6 * sc);
-      ctx.strokeRect(pL.x, pL.y - gh, gw, gh);
-
-      [pL.x, pR.x].forEach(px => {
-        const pw = 8 * sc;
-        ctx.fillStyle = '#0f172a';
-        ctx.fillRect(px - pw * 0.5, pL.y - gh - 4 * sc, pw, gh + 4 * sc);
-        ctx.fillStyle = darkCol;
-        ctx.fillRect(px - pw * 0.35, pL.y - gh * 0.85, pw * 0.7, gh * 0.7);
-        ctx.fillStyle = mainCol;
-        ctx.fillRect(px - pw * 0.6, pL.y - gh - 5 * sc, pw * 1.2, 5 * sc);
-        ctx.fillRect(px - pw * 0.6, pL.y - 5 * sc, pw * 1.2, 5 * sc);
-      });
-
-      const baseText = g.kind === 'add' ? (g.val >= 0 ? `+${g.val}` : `${g.val}`)
-                 : g.kind === 'mult' ? `×${g.val}`
-                 : g.label;
-      const text = (g.locked && g.kind === 'add') ? `🔒 ${baseText}` : baseText;
-      const fontSize = Math.max(11, Math.round(18 * sc));
-      ctx.font = `900 ${fontSize}px system-ui`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      const midX = (pL.x + pR.x) * 0.5;
-      const midY = pL.y - gh * 0.50;
-      const tw = Math.min(gw - 10 * sc, ctx.measureText(text).width + 14 * sc);
-      ctx.fillStyle = 'rgba(2, 6, 23, 0.78)';
-      ctx.beginPath();
-      ctx.roundRect(midX - tw * 0.5, midY - fontSize * 0.72, tw, fontSize * 1.44, 6 * sc);
-      ctx.fill();
-      ctx.strokeStyle = mainCol;
-      ctx.lineWidth = Math.max(1, 1.5 * sc);
-      ctx.stroke();
-
-      ctx.lineWidth = Math.max(2, 3 * sc);
-      ctx.strokeStyle = '#020617';
-      ctx.strokeText(text, midX, midY);
-      ctx.fillStyle = '#f8fafc';
-      ctx.fillText(text, midX, midY);
-      ctx.textBaseline = 'alphabetic';
-
-      if (g.shootable && g.stepCost > 0) {
-        const barW = Math.max(18, gw * 0.58);
-        const barH = Math.max(3, 5 * sc);
-        const barX = midX - barW * 0.5;
-        const barY = pL.y - 10 * sc;
-        const pct = g.val >= g.maxVal ? 1 : Math.max(0, Math.min(1, g.dmgAccum / g.stepCost));
-        ctx.fillStyle = 'rgba(2, 6, 23, 0.85)';
-        ctx.fillRect(barX - 1, barY - 1, barW + 2, barH + 2);
-        ctx.fillStyle = g.val >= g.maxVal ? '#fbbf24' : '#4ade80';
-        ctx.fillRect(barX, barY, barW * pct, barH);
-      }
-    }
-
-    function drawBarrel(br, nowSec) {
-      const p = project(br.u, br.z);
-      const s = p.scale;
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.scale(s, s);
-
-      ctx.fillStyle = 'rgba(0,0,0,0.55)';
-      ctx.beginPath();
-      ctx.ellipse(0, 1, 16, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      const bodyGrad = ctx.createLinearGradient(-14, 0, 14, 0);
-      bodyGrad.addColorStop(0, '#7c2d12');
-      bodyGrad.addColorStop(0.28, '#ea580c');
-      bodyGrad.addColorStop(0.55, '#fb923c');
-      bodyGrad.addColorStop(0.85, '#c2410c');
-      bodyGrad.addColorStop(1, '#431407');
-      ctx.fillStyle = bodyGrad;
-      ctx.beginPath();
-      ctx.roundRect(-14, -33, 28, 33, 4);
-      ctx.fill();
-      ctx.strokeStyle = '#1c1917';
-      ctx.lineWidth = 1.4;
-      ctx.stroke();
-
-      ctx.fillStyle = '#334155';
-      ctx.beginPath();
-      ctx.ellipse(0, -32, 13.5, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#94a3b8';
-      ctx.lineWidth = 1.1;
-      ctx.stroke();
-
-      ctx.fillStyle = '#facc15';
-      ctx.fillRect(-14, -24, 28, 5);
-      ctx.fillStyle = '#0f172a';
-      for (let x = -12; x < 12; x += 6) {
-        ctx.beginPath();
-        ctx.moveTo(x, -24); ctx.lineTo(x + 3, -24); ctx.lineTo(x + 1, -19); ctx.lineTo(x - 2, -19);
-        ctx.closePath(); ctx.fill();
-      }
-      ctx.fillStyle = '#334155';
-      ctx.fillRect(-14.5, -18, 29, 2.2);
-      ctx.fillRect(-14.5, -7, 29, 2.2);
-
-      ctx.fillStyle = '#fef08a';
-      ctx.font = '900 10.5px monospace';
-      ctx.textAlign = 'center';
-      ctx.strokeStyle = '#450a0a';
-      ctx.lineWidth = 2.4;
-      ctx.strokeText('TNT', 0, -9);
-      ctx.fillText('TNT', 0, -9);
-
-      const blink = Math.sin(nowSec * 14) > 0;
-      ctx.fillStyle = blink ? '#fef08a' : '#ef4444';
-      ctx.beginPath();
-      ctx.arc(0, -34, blink ? 4.2 : 3.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function drawZombie(zm, p, nowSec) {
-      const isBoss = zm.kind === 'boss';
-      const isBrute = zm.kind === 'brute';
-      const isFast = zm.kind === 'fast';
-      const unitScale = isBoss ? 2.35 : (isBrute ? 1.58 : (isFast ? 1.18 : 1.28));
-      const sc = p.scale * unitScale;
-      const gaitSpd = isFast ? 15 : (isBoss ? 7 : 9.5);
-      const phase = nowSec * gaitSpd + zm.u * 11 + zm.z * 7;
-      const stride = Math.sin(phase);
-      const bob = Math.abs(stride) * 2.4;
-      const flash = zm.hitFlash > 0;
-
-      ctx.save();
-      ctx.translate(p.x, p.y);
-
-      if (isBoss) {
-        const pulse = 0.7 + 0.3 * Math.sin(nowSec * 5);
-        ctx.strokeStyle = `rgba(244, 63, 94, ${(0.5 * pulse).toFixed(2)})`;
-        ctx.lineWidth = 2.5 * p.scale;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, 32 * sc, 10 * sc, 0, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 17 * sc, 6.2 * sc, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.save();
-      ctx.scale(sc, sc);
-
-      const skinA = flash ? '#ffffff' : (isBoss ? '#fb7185' : isBrute ? '#c084fc' : isFast ? '#67e8f9' : '#86efac');
-      const skinB = flash ? '#f8fafc' : (isBoss ? '#9f1239' : isBrute ? '#6b21a8' : isFast ? '#0e7490' : '#15803d');
-      const coatA = flash ? '#ffffff' : (isBoss ? '#450a0a' : isBrute ? '#312e81' : isFast ? '#164e63' : '#1e293b');
-      const coatB = flash ? '#e2e8f0' : (isBoss ? '#881337' : isBrute ? '#581c87' : isFast ? '#083344' : '#0f172a');
-      const trouserCol = flash ? '#ffffff' : (isBoss ? '#2a0812' : '#1e293b');
-
-      // Articulated Striding Legs & Combat Boots
-      [-1, 1].forEach((side) => {
-        const legOff = side * 5.2;
-        const stepY = side < 0 ? Math.max(0, stride) * 4.5 : Math.max(0, -stride) * 4.5;
-        const hipX = legOff, hipY = -16 - bob * 0.5;
-        ctx.fillStyle = trouserCol;
-        ctx.beginPath();
-        ctx.roundRect(hipX - 3.6, hipY, 7.2, 13 - stepY * 0.5, 2.5);
-        ctx.fill();
-        ctx.fillStyle = flash ? '#ffffff' : '#090d16';
-        ctx.beginPath();
-        ctx.roundRect(hipX - 4.2, -5 - stepY, 8.4, 5.2, 2);
-        ctx.fill();
-      });
-
-      // Back Clawed Arm + pale claws
-      const swayL = Math.sin(phase) * 2.5;
-      ctx.lineCap = 'round';
-      ctx.strokeStyle = skinA;
-      ctx.lineWidth = isBrute || isBoss ? 6.2 : 4.4;
-      ctx.beginPath();
-      ctx.moveTo(-10, -31 - bob);
-      ctx.lineTo(-17, -23 - bob + swayL);
-      ctx.lineTo(-15, -13 - bob + swayL * 0.6);
-      ctx.stroke();
-      ctx.strokeStyle = flash ? '#ffffff' : '#fef2f2';
-      ctx.lineWidth = 1.2;
-      for (let cl = -1; cl <= 1; cl++) {
-        ctx.beginPath();
-        ctx.moveTo(-15 + cl * 2, -13 - bob + swayL * 0.6);
-        ctx.lineTo(-14.5 + cl * 2.5, -9 - bob + swayL * 0.6);
-        ctx.stroke();
-      }
-
-      // Shaded Torso / Armor / Ribs
-      const tGrad = ctx.createLinearGradient(-12, -37 - bob, 12, -16 - bob);
-      tGrad.addColorStop(0, coatA);
-      tGrad.addColorStop(0.55, coatB);
-      tGrad.addColorStop(1, '#020617');
-      ctx.fillStyle = tGrad;
-      ctx.beginPath();
-      ctx.moveTo(-12.5, -34 - bob);
-      ctx.quadraticCurveTo(0, -39 - bob, 12.5, -34 - bob);
-      ctx.lineTo(10, -15 - bob);
-      ctx.lineTo(-10, -15 - bob);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.65)';
-      ctx.lineWidth = 1.1;
-      ctx.stroke();
-
-      if (!flash) {
-        if (isBoss) {
-          const coreG = ctx.createRadialGradient(0, -26 - bob, 1, 0, -26 - bob, 7.5);
-          coreG.addColorStop(0, '#fef08a');
-          coreG.addColorStop(0.5, '#f97316');
-          coreG.addColorStop(1, 'rgba(225, 29, 72, 0)');
-          ctx.fillStyle = coreG;
-          ctx.beginPath();
-          ctx.arc(0, -26 - bob, 7.5, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.fillStyle = '#7f1d1d';
-          [-13, 13].forEach(sx => {
-            ctx.beginPath();
-            ctx.arc(sx, -32 - bob, 6.2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#fbbf24';
-            ctx.lineWidth = 1.2;
-            ctx.stroke();
-          });
-        } else if (isBrute) {
-          ctx.fillStyle = '#4c1d95';
-          ctx.fillRect(-8, -33 - bob, 16, 11);
-          ctx.fillStyle = '#facc15';
-          ctx.fillRect(-7, -25 - bob, 14, 2.2);
-          ctx.fillStyle = '#64748b';
-          ctx.beginPath();
-          ctx.arc(-12, -32 - bob, 4.5, 0, Math.PI * 2);
-          ctx.arc(12, -32 - bob, 4.5, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (isFast) {
-          ctx.strokeStyle = '#22d3ee';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(0, -34 - bob); ctx.lineTo(-4, -27 - bob); ctx.lineTo(3, -21 - bob);
-          ctx.stroke();
-        } else {
-          ctx.fillStyle = '#334155';
-          ctx.fillRect(-2.5, -34 - bob, 5, 16);
-          ctx.fillStyle = '#bef264';
-          ctx.fillRect(-5, -30 - bob, 4, 1.5);
-          ctx.fillRect(-5, -26 - bob, 4, 1.5);
-        }
-      }
-
-      // Forward Reaching Clawed Arm
-      const swayR = -swayL;
-      ctx.strokeStyle = skinA;
-      ctx.lineWidth = isBrute || isBoss ? 6.2 : 4.2;
-      ctx.beginPath();
-      ctx.moveTo(10, -31 - bob);
-      ctx.lineTo(17, -22 - bob + swayR);
-      ctx.lineTo(15, -13 - bob + swayR);
-      ctx.stroke();
-      ctx.strokeStyle = flash ? '#ffffff' : '#fef2f2';
-      ctx.lineWidth = 1.2;
-      for (let cl = -1; cl <= 1; cl++) {
-        ctx.beginPath();
-        ctx.moveTo(15 + cl * 2, -13 - bob + swayR);
-        ctx.lineTo(14.5 + cl * 2.5, -9 - bob + swayR);
-        ctx.stroke();
-      }
-
-      // Sculpted Head, Jaw, Teeth & Glowing Eyes
-      const headY = -43 - bob - (isFast ? -2 : 0);
-      const hRad = isBoss ? 10.2 : (isBrute ? 9.2 : 8.5);
-      const headGrad = ctx.createRadialGradient(-2.5, headY - 2.5, 1.5, 0, headY, hRad);
-      headGrad.addColorStop(0, skinA);
-      headGrad.addColorStop(1, skinB);
-      ctx.fillStyle = headGrad;
-      ctx.beginPath();
-      ctx.arc(0, headY, hRad, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.roundRect(-hRad * 0.62, headY + 1, hRad * 1.24, hRad * 0.95, 3);
-      ctx.fill();
-
-      if (!flash) {
-        ctx.fillStyle = '#1f050b';
-        ctx.beginPath();
-        ctx.roundRect(-hRad * 0.42, headY + 2.8, hRad * 0.84, 4.2, 1.8);
-        ctx.fill();
-        ctx.fillStyle = '#f8fafc';
-        for (let tx = -2.4; tx <= 2.4; tx += 2.4) {
-          ctx.fillRect(tx - 0.7, headY + 2.8, 1.4, 1.8);
-          ctx.fillRect(tx - 0.5, headY + 5.2, 1.2, 1.6);
-        }
-
-        ctx.fillStyle = '#090d16';
-        ctx.beginPath();
-        ctx.ellipse(-3.1, headY - 1.5, 2.5, 1.8, -0.2, 0, Math.PI * 2);
-        ctx.ellipse(3.1, headY - 1.5, 2.5, 1.8, 0.2, 0, Math.PI * 2);
-        ctx.fill();
-
-        const eyeGlow = isBoss ? '#fde047' : (isFast ? '#a5f3fc' : '#f87171');
-        ctx.fillStyle = eyeGlow;
-        ctx.beginPath();
-        ctx.arc(-3.0, headY - 1.5, 1.3, 0, Math.PI * 2);
-        ctx.arc(3.0, headY - 1.5, 1.3, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (isBoss) {
-          ctx.fillStyle = '#fef3c7';
-          ctx.beginPath();
-          ctx.moveTo(-7, headY - 6); ctx.lineTo(-15, headY - 18); ctx.lineTo(-4, headY - 9);
-          ctx.moveTo(7, headY - 6); ctx.lineTo(15, headY - 18); ctx.lineTo(4, headY - 9);
-          ctx.fill();
-          ctx.strokeStyle = '#fbbf24';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(-5, headY - 9); ctx.lineTo(-2.5, headY - 13); ctx.lineTo(0, headY - 9.5);
-          ctx.lineTo(2.5, headY - 13); ctx.lineTo(5, headY - 9);
-          ctx.stroke();
-        } else if (isBrute) {
-          ctx.fillStyle = '#475569';
-          ctx.fillRect(-hRad * 0.9, headY - 6.5, hRad * 1.8, 3.2);
-        }
-      }
-
-      ctx.restore();
-
-      if (zm.hp < zm.maxHp || isBoss || isBrute) {
-        const bw = (isBoss ? 52 : 30) * sc;
-        const barY = -59 * sc;
-        const ratio = Math.max(0, Math.min(1, zm.hp / zm.maxHp));
-        ctx.fillStyle = 'rgba(2, 6, 23, 0.88)';
-        ctx.beginPath();
-        ctx.roundRect(-bw * 0.5 - 1, barY - 1, bw + 2, 6.5, 3);
-        ctx.fill();
-        ctx.strokeStyle = isBoss ? '#fbbf24' : 'rgba(148, 163, 184, 0.45)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-
-        ctx.fillStyle = isBoss ? '#f43f5e' : (ratio > 0.5 ? '#4ade80' : '#facc15');
-        if (bw * ratio > 1) {
-          ctx.beginPath();
-          ctx.roundRect(-bw * 0.5, barY, bw * ratio, 4.5, 2);
-          ctx.fill();
-        }
-      }
-      ctx.restore();
-    }
-
-    function drawMarine(p, idx, nowSec, firingGlow) {
-      const sc = p.scale * 1.28;
-      const stride = Math.sin(nowSec * 12 + idx * 1.3);
-      const bob = Math.abs(stride) * 1.6;
-
-      ctx.save();
-      ctx.translate(p.x, p.y);
-
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.52)';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 12.5 * sc, 4.8 * sc, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.scale(sc, sc);
-
-      [-1, 1].forEach((side) => {
-        const lx = side * 4.2;
-        const lift = side < 0 ? Math.max(0, stride) * 3.5 : Math.max(0, -stride) * 3.5;
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        ctx.roundRect(lx - 2.8, -14 - bob * 0.4, 5.6, 11 - lift * 0.4, 2);
-        ctx.fill();
-        ctx.fillStyle = '#0f172a';
-        ctx.beginPath();
-        ctx.roundRect(lx - 3.3, -4 - lift, 6.6, 4.2, 1.5);
-        ctx.fill();
-      });
-
-      ctx.fillStyle = '#334155';
-      ctx.beginPath();
-      ctx.roundRect(-9.5, -29 - bob, 19, 13, 3);
-      ctx.fill();
-      ctx.fillStyle = '#38bdf8';
-      ctx.fillRect(-7.5, -26 - bob, 2.2, 6);
-      ctx.fillRect(5.3, -26 - bob, 2.2, 6);
-
-      const armorG = ctx.createLinearGradient(-9, -31 - bob, 9, -13 - bob);
-      armorG.addColorStop(0, '#0ea5e9');
-      armorG.addColorStop(0.55, '#0369a1');
-      armorG.addColorStop(1, '#0c4a6e');
-      ctx.fillStyle = armorG;
-      ctx.beginPath();
-      ctx.roundRect(-9, -30 - bob, 18, 16, 4);
-      ctx.fill();
-      ctx.strokeStyle = '#7dd3fc';
-      ctx.lineWidth = 0.9;
-      ctx.stroke();
-
-      ctx.fillStyle = '#e0f2fe';
-      ctx.beginPath();
-      ctx.arc(0, -23 - bob, 2.5, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#0f172a';
-      ctx.fillRect(-8.5, -16.5 - bob, 17, 3);
-      ctx.fillStyle = '#fbbf24';
-      ctx.fillRect(-1.5, -16.2 - bob, 3, 2.2);
-
-      ctx.fillStyle = '#38bdf8';
-      ctx.beginPath();
-      ctx.arc(-9.2, -26.5 - bob, 4, 0, Math.PI * 2);
-      ctx.arc(9.2, -26.5 - bob, 4, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = '#0284c7';
-      ctx.lineWidth = 3.6;
-      ctx.lineCap = 'round';
-      ctx.beginPath();
-      ctx.moveTo(8, -25 - bob);
-      ctx.lineTo(10, -20 - bob);
-      ctx.lineTo(7, -23 - bob);
-      ctx.stroke();
-
-      const recoil = firingGlow && (idx % 2 === 0 || firingGlow) ? 1.8 : 0;
-      ctx.fillStyle = '#1e293b';
-      ctx.fillRect(5.2, -31 - bob + recoil, 5.2, 13.5);
-      ctx.fillStyle = '#94a3b8';
-      ctx.fillRect(6.8, -36 - bob + recoil, 2.4, 7.5);
-      ctx.fillStyle = dmgMult >= 2 ? '#f472b6' : (spreadLevel >= 2 ? '#fb923c' : '#22d3ee');
-      ctx.fillRect(6.2, -29 - bob + recoil, 1.5, 8);
-      ctx.fillStyle = '#ef4444';
-      ctx.fillRect(8.4, -27 - bob + recoil, 1.4, 1.4);
-
-      if (firingGlow && ((idx + Math.floor(nowSec * 30)) % 2 === 0)) {
-        const mx = 8, my = -37.5 - bob + recoil;
-        ctx.fillStyle = dmgMult >= 2 ? '#f472b6' : (spreadLevel >= 2 ? '#fb923c' : '#fde047');
-        ctx.beginPath();
-        ctx.moveTo(mx, my - 7); ctx.lineTo(mx + 2, my - 2);
-        ctx.lineTo(mx + 7, my); ctx.lineTo(mx + 2, my + 2);
-        ctx.lineTo(mx, my + 7); ctx.lineTo(mx - 2, my + 2);
-        ctx.lineTo(mx - 7, my); ctx.lineTo(mx - 2, my - 2);
-        ctx.closePath(); ctx.fill();
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(mx, my, 2.4, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      const hy = -35.5 - bob;
-      const helmG = ctx.createRadialGradient(-2, hy - 2, 1.5, 0, hy, 7.4);
-      helmG.addColorStop(0, '#f8fafc');
-      helmG.addColorStop(0.6, '#cbd5e1');
-      helmG.addColorStop(1, '#475569');
-      ctx.fillStyle = helmG;
-      ctx.beginPath();
-      ctx.arc(0, hy, 7.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.strokeStyle = '#0f172a';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      ctx.fillStyle = '#0284c7';
-      ctx.fillRect(-1.4, hy - 7.5, 2.8, 3.2);
-      ctx.fillStyle = '#334155';
-      ctx.fillRect(-8, hy - 2, 1.8, 4);
-      ctx.fillRect(6.2, hy - 2, 1.8, 4);
-
-      ctx.fillStyle = '#0f172a';
-      ctx.beginPath();
-      ctx.roundRect(-5.2, hy - 3.0, 10.4, 4.2, 1.8);
-      ctx.fill();
-      ctx.fillStyle = '#22d3ee';
-      ctx.beginPath();
-      ctx.roundRect(-4.5, hy - 2.4, 9.0, 3.0, 1.4);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.78)';
-      ctx.fillRect(-3.6, hy - 2.0, 3.4, 1.0);
-
-      ctx.restore();
-    }
-
-    function draw() {
-      const r = stage.getBoundingClientRect();
-      const w = r.width, h = r.height;
-      const nowSec = performance.now() * 0.001;
-      const horizonY = h * 0.14;
-
-      ctx.save();
-      if (shakeAmt > 0.2) {
-        ctx.translate((Math.random() - 0.5) * shakeAmt, (Math.random() - 0.5) * shakeAmt);
-      }
-
-      drawSceneBackdrop(w, h, horizonY, nowSec);
-      drawBridge(w, h, horizonY, nowSec);
-
-      const drawList = [];
-      gates.forEach(g => drawList.push({ type: 'gate', z: g.z, item: g }));
-      barrels.forEach(br => drawList.push({ type: 'barrel', z: br.z, item: br }));
-      zombies.forEach(zm => drawList.push({ type: 'zombie', z: zm.z, item: zm }));
-      drawList.sort((a, b) => b.z - a.z);
-
-      drawList.forEach(entry => {
-        if (entry.type === 'gate') {
-          drawGate(entry.item, nowSec);
-        } else if (entry.type === 'barrel') {
-          drawBarrel(entry.item, nowSec);
-        } else if (entry.type === 'zombie') {
-          drawZombie(entry.item, project(entry.item.u, entry.item.z), nowSec);
-        }
-      });
-
-      // 3. Laser Plasma Tracer Bolts
-      const tailDt = 0.032;
-      bullets.forEach(b => {
-        const p = project(b.u, b.z);
-        const pTail = project(b.u - b.du * tailDt, Math.max(0.01, b.z - b.dz * tailDt));
-        const boltCol = b.isSpread
-          ? (dmgMult >= 2 ? '#fb7185' : '#fb923c')
-          : (dmgMult >= 2 ? '#f472b6' : '#38bdf8');
-        const haloCol = b.isSpread
-          ? (dmgMult >= 2 ? 'rgba(251, 113, 133, 0.38)' : 'rgba(251, 146, 60, 0.42)')
-          : (dmgMult >= 2 ? 'rgba(244, 114, 182, 0.38)' : 'rgba(56, 189, 248, 0.38)');
-
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = haloCol;
-        ctx.lineWidth = Math.max(5, 8.5 * p.scale);
-        ctx.beginPath();
-        ctx.moveTo(pTail.x, pTail.y); ctx.lineTo(p.x, p.y); ctx.stroke();
-
-        ctx.strokeStyle = boltCol;
-        ctx.lineWidth = Math.max(2.2, 4.2 * p.scale);
-        ctx.beginPath();
-        ctx.moveTo(pTail.x, pTail.y); ctx.lineTo(p.x, p.y); ctx.stroke();
-
-        ctx.fillStyle = b.isSpread ? '#fef08a' : '#ffffff';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, Math.max(1.8, 2.8 * p.scale), 0, Math.PI * 2);
-        ctx.fill();
-      });
-
-      // 4. High-Detail Squad Spec-Ops Exo-Marines
-      const visCount = Math.min(24, squad);
-      const firingGlow = running && shootTimer > (1 / Math.max(1, fireRate)) * 0.68;
-      for (let s = 0; s < visCount; s++) {
-        const row = Math.floor(s / 6);
-        const colIdx = s % 6;
-        const rowSize = Math.min(6, visCount - row * 6);
-        const uOff = (colIdx - (rowSize - 1) * 0.5) * 0.095;
-        const p = project(playerU + uOff, 0.02 + row * 0.028);
-        drawMarine(p, s, nowSec, firingGlow);
-      }
-
-      // 5. Hexagonal Shimmer Forcefield Shield
-      if (shield > 0) {
-        const ps = project(playerU, 0.03);
-        const shRad = 54 * ps.scale;
-        const sg = ctx.createRadialGradient(ps.x, ps.y - 14, shRad * 0.35, ps.x, ps.y - 14, shRad);
-        sg.addColorStop(0, 'rgba(56, 189, 248, 0.04)');
-        sg.addColorStop(0.75, 'rgba(14, 165, 233, 0.22)');
-        sg.addColorStop(1, 'rgba(125, 211, 252, 0.48)');
-        ctx.fillStyle = sg;
-        ctx.strokeStyle = 'rgba(165, 243, 252, 0.9)';
-        ctx.lineWidth = 2.6;
-        ctx.beginPath();
-        ctx.arc(ps.x, ps.y - 14, shRad, Math.PI * 1.04, -Math.PI * 0.04);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(224, 242, 254, 0.45)';
-        ctx.lineWidth = 1.2;
-        ctx.setLineDash([7, 5]);
-        ctx.beginPath();
-        ctx.arc(ps.x, ps.y - 14, shRad * 0.86, Math.PI * 1.08, -Math.PI * 0.08);
-        ctx.stroke();
-        ctx.setLineDash([]);
-      }
-
-      // 6. Explosion Shockwaves & Particle Bursts
-      fx.forEach(f => {
-        const p = project(f.u, Math.max(0, Math.min(1, f.z)));
-        const maxL = f.maxLife || 0.35;
-        const frac = Math.max(0, f.life / maxL);
-        if (f.ring) {
-          const rad = Math.max(4, (f.maxR || 32) * (1.12 - frac * 0.85) * p.scale);
-          ctx.save();
-          ctx.globalAlpha = frac * 0.85;
-          ctx.strokeStyle = f.color;
-          ctx.lineWidth = Math.max(1.5, 4.2 * frac * p.scale);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y - 14 * p.scale, rad, 0, Math.PI * 2);
-          ctx.stroke();
-          ctx.restore();
-        } else {
-          const rad = Math.max(1.4, (f.size || 3) * (0.4 + frac * 0.8) * p.scale);
-          const yLift = -14 * p.scale + (f.vy ? (f.vy * (maxL - f.life) * 0.45 * p.scale) : 0);
-          ctx.save();
-          ctx.globalAlpha = Math.min(1, frac * 1.3);
-          ctx.fillStyle = f.color;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y + yLift, rad, 0, Math.PI * 2);
-          ctx.fill();
-          ctx.restore();
-        }
-      });
-
-      // 7. Outlined Floating Combat Texts
-      floaters.forEach(fl => {
-        const p = project(fl.u, fl.z);
-        ctx.save();
-        ctx.globalAlpha = Math.min(1, fl.life * 1.5);
-        ctx.font = '800 14px system-ui';
-        ctx.textAlign = 'center';
-        ctx.lineWidth = 3.2;
-        ctx.strokeStyle = 'rgba(2, 6, 23, 0.88)';
-        ctx.strokeText(fl.text, p.x, p.y - 52);
-        ctx.fillStyle = fl.color;
-        ctx.fillText(fl.text, p.x, p.y - 52);
-        ctx.restore();
-      });
-
-      ctx.restore();
-    }
-    let last = performance.now();
-    function loop(now) {
-      const dt = Math.min(0.05, (now - last) / 1000);
-      last = now;
-      step(dt);
-      draw();
-      requestAnimationFrame(loop);
-    }
-
-    // Touch & Pointer Drag anywhere on canvas maps horizontally to bridge coordinate
-    function pointerToU(clientX) {
-      const r = stage.getBoundingClientRect();
-      const rel = ((clientX - r.left) / r.width) * 2 - 1;
-      targetU = Math.max(-0.82, Math.min(0.82, rel * 1.15));
-    }
-    stage.addEventListener('pointerdown', (e) => {
-      if (!running) return;
-      pointerActive = true;
-      pointerToU(e.clientX);
-    });
-    stage.addEventListener('pointermove', (e) => {
-      if (pointerActive && running) pointerToU(e.clientX);
-    });
-    window.addEventListener('pointerup', () => { pointerActive = false; });
-    window.addEventListener('pointercancel', () => { pointerActive = false; });
-
-    window.addEventListener('keydown', (e) => {
-      const ae = document.activeElement;
-      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
-          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
-          document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) {
-        return;
-      }
-      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = true;
-      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = true;
-    });
-    window.addEventListener('keyup', (e) => {
-      if (['ArrowLeft', 'a', 'A'].includes(e.key)) keys.left = false;
-      if (['ArrowRight', 'd', 'D'].includes(e.key)) keys.right = false;
-    });
-    window.addEventListener('blur', () => {
-      keys.left = false;
-      keys.right = false;
-      pointerActive = false;
-    });
-
-    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
-    refreshTopBest();
-    requestAnimationFrame(loop);
-  </script>
+  <script type="module" src="./zb-game.js"></script>
 </body>
 </html>
