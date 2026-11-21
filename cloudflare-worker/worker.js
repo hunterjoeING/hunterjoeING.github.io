@@ -71,6 +71,13 @@ const GAMES_META = {
   quiz_af_teams: { title: 'American Football: Teams, Stadien & Fankultur', lowerIsBetter: false },
   quiz_af_legends: { title: 'American Football: Legenden, Draft & Rekorde', lowerIsBetter: false },
   quiz_af_packers: { title: 'American Football: Green Bay Packers Special', lowerIsBetter: false },
+  quiz_f1: { title: 'Formel 1 – Legenden, Technik & Königsklasse', lowerIsBetter: false },
+  quiz_f1_mix: { title: 'Formel 1: Komplett-Mix', lowerIsBetter: false },
+  quiz_f1_legenden: { title: 'Formel 1: Weltmeister & Rivalitäten', lowerIsBetter: false },
+  quiz_f1_technik: { title: 'Formel 1: Technik & Aerodynamik', lowerIsBetter: false },
+  quiz_f1_strecken: { title: 'Formel 1: Legendäre Strecken', lowerIsBetter: false },
+  quiz_f1_regeln: { title: 'Formel 1: Regeln & Boxenstopps', lowerIsBetter: false },
+  quiz_f1_teams: { title: 'Formel 1: Teams & Geschichte', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
 
