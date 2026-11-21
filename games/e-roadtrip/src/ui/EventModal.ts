@@ -1,8 +1,11 @@
 import {
+  BreakActivityKind,
   ChargerStation,
+  CollisionInfo,
   EventChoice,
   GameEventDef,
   LevelConfig,
+  PoliceViolationKind,
   RunState,
   WifeDialogueChoice,
   WifeDialogueDef
@@ -11,10 +14,24 @@ import { getVehicleById } from '../data/vehicles';
 import { estimateChargeSession, getChargingPowerKw } from '../sim/EnergyModel';
 import { findNearestAvailableCharger, predictLiveTripSoc } from '../sim/RoutePlanner';
 import { SoundFX } from '../phaser/SoundFX';
+import { playBreakPixelAnimation } from './BreakPixelAnim';
+import { renderVehicleTouchscreenHtml } from './TouchscreenWidget';
+
+export interface ChargingCompletePayload {
+  addedKwh: number;
+  minutesSpent: number;
+  chargingCostEur: number;
+  breakCostEur: number;
+  newSoc: number;
+  stressDelta: number;
+  resetBladder: boolean;
+  takenBreaks: string[];
+}
 
 export class EventModal {
   private modalEl: HTMLElement;
   private chargeTimer: number | null = null;
+  private stopBreakAnim: (() => void) | null = null;
 
   constructor(modalEl: HTMLElement) {
     this.modalEl = modalEl;
@@ -24,6 +41,10 @@ export class EventModal {
     if (this.chargeTimer !== null) {
       window.clearInterval(this.chargeTimer);
       this.chargeTimer = null;
+    }
+    if (this.stopBreakAnim) {
+      this.stopBreakAnim();
+      this.stopBreakAnim = null;
     }
     this.modalEl.classList.add('hidden');
     this.modalEl.innerHTML = '';
@@ -206,49 +227,255 @@ export class EventModal {
   }
 
   public showCollisionDialogue(
-    kind: 'car' | 'pedestrian' | 'cyclist' | 'obstacle',
-    onResolve: (costEur: number, timeMin: number, stressDelta: number, summary: string) => void
+    info: CollisionInfo,
+    onResolve: (
+      costEur: number,
+      timeMin: number,
+      stressDelta: number,
+      decisionPts: number,
+      punishCollision: boolean,
+      summary: string
+    ) => void
   ): void {
     const labelMap = {
-      car: 'Blechschaden / Rempler mit anderem Fahrzeug',
-      pedestrian: 'Beinahe-Zusammenstoß mit Fußgänger!',
-      cyclist: 'Kontakt am Radweg mit Radfahrer!',
+      car: 'Kollision im Stadtverkehr',
+      pedestrian: 'Kontakt / Beinahe-Unfall mit Fußgänger',
+      cyclist: 'Kontakt am Radweg mit Radfahrer',
       obstacle: 'Baustellen-Pylone / Bordstein gestreift'
     };
 
     this.modalEl.classList.remove('hidden');
+
+    if (!info.playerAtFault) {
+      this.modalEl.innerHTML = `
+        <div class="er-modal-card">
+          <div class="er-modal-head">
+            <span class="er-modal-icon">🛡️</span>
+            <div>
+              <div class="er-modal-kicker">GTA-Stadtverkehr · Keine Schuld</div>
+              <h3>${labelMap[info.kind]}</h3>
+            </div>
+          </div>
+          <p class="er-modal-body">${info.reason}</p>
+          <div class="er-outcome-box">
+            <strong>✅ Keine Strafe!</strong> Du warst ordnungsgemäß gestoppt bzw. hattest Vorfahrt – die gegnerische Versicherung übernimmt alles (0 € · 0 Strafpunkte).
+          </div>
+          <button type="button" class="er-primary-btn" id="col-nofault-ok">Weiterfahren →</button>
+        </div>
+      `;
+      this.modalEl.querySelector('#col-nofault-ok')?.addEventListener('click', () => {
+        SoundFX.click();
+        this.close();
+        onResolve(0, 1, 2, 4, false, `Unverschuldeter Kontakt (${info.reason}) – 0 € Schaden.`);
+      });
+      return;
+    }
+
+    const baseDamage = info.kind === 'obstacle' ? 0 : 45;
     this.modalEl.innerHTML = `
       <div class="er-modal-card">
         <div class="er-modal-head">
           <span class="er-modal-icon">💥</span>
           <div>
-            <div class="er-modal-kicker">GTA-Stadtverkehr · Zwischenfall</div>
-            <h3>${labelMap[kind]}</h3>
+            <div class="er-modal-kicker">GTA-Stadtverkehr · Eigenverschulden</div>
+            <h3>${labelMap[info.kind]}</h3>
           </div>
         </div>
-        <p class="er-modal-body">Wie reagierst du auf die Situation im Stadtverkehr?</p>
-        <div class="er-modal-choices">
-          <button type="button" class="er-choice-btn" id="col-calm">
-            <strong>Ruhig aussteigen, entschuldigen &amp; sauber klären</strong>
-            <span>+8 Min Zeit · ${kind === 'obstacle' ? '0 €' : '65 € Kleinschaden'} · moderater Stress</span>
+        <p class="er-modal-body">${info.reason} Wähle deine Reaktion mit klarem Risiko/Nutzen-Verhältnis:</p>
+        <div class="er-modal-choices" id="col-choices">
+          <button type="button" class="er-choice-btn" id="col-polite">
+            <strong>🤝 Ruhig aussteigen, entschuldigen &amp; sauber klären</strong>
+            <span>Sicher · +10 Min Zeit · ${baseDamage} € Schaden · +5 Stress · +6 Entscheidungs-Punkte</span>
           </button>
-          <button type="button" class="er-choice-btn" id="col-rush">
-            <strong>Hektisch weiterwinken</strong>
-            <span>+2 Min Zeit · höheres Bußgeld-/Stressrisiko (+120 €, +16 Stress)</span>
+          <button type="button" class="er-choice-btn" id="col-negotiate">
+            <strong>📹 Mit E-Auto-Kamera ruhig auf Teilschuld verhandeln</strong>
+            <span>50/50 Chance: 20 € (sonst 95 €) · +7 Min Zeit · +8 Stress · +4 Punkte</span>
+          </button>
+          <button type="button" class="er-choice-btn" id="col-cash">
+            <strong>💶 Schnelle Bar-Einigung anbieten &amp; sofort weiter</strong>
+            <span>Zeitsparend · nur +2 Min · 150 € Kosten · +4 Stress · 0 Punkte</span>
+          </button>
+          <button type="button" class="er-choice-btn" id="col-flee">
+            <strong>💨 Hektisch abwimmeln &amp; einfach weiterfahren (Risiko!)</strong>
+            <span>+1 Min, aber 70 % Risiko auf 240 € Anzeige (+15 Min Polizei, +22 Stress) · -10 Punkte</span>
           </button>
         </div>
+        <div id="col-outcome" class="hidden"></div>
       </div>
     `;
 
-    this.modalEl.querySelector('#col-calm')?.addEventListener('click', () => {
+    const finishWithOutcome = (
+      cost: number,
+      mins: number,
+      stress: number,
+      pts: number,
+      summary: string
+    ) => {
+      const ch = this.modalEl.querySelector('#col-choices');
+      const out = this.modalEl.querySelector('#col-outcome');
+      if (ch) ch.classList.add('hidden');
+      if (out) {
+        out.classList.remove('hidden');
+        out.innerHTML = `
+          <div class="er-outcome-box">${summary}</div>
+          <button type="button" class="er-primary-btn" id="col-done">Weiterfahren →</button>
+        `;
+        out.querySelector('#col-done')?.addEventListener('click', () => {
+          SoundFX.click();
+          this.close();
+          onResolve(cost, mins, stress, pts, true, summary);
+        });
+      }
+    };
+
+    this.modalEl.querySelector('#col-polite')?.addEventListener('click', () => {
       SoundFX.click();
-      this.close();
-      onResolve(kind === 'obstacle' ? 0 : 65, 8, 9, `${labelMap[kind]} ruhig & fair geklärt.`);
+      finishWithOutcome(
+        baseDamage,
+        10,
+        5,
+        6,
+        `${labelMap[info.kind]} ruhig & vorbildlich geklärt (${baseDamage} €, +10 Min).`
+      );
     });
-    this.modalEl.querySelector('#col-rush')?.addEventListener('click', () => {
+
+    this.modalEl.querySelector('#col-negotiate')?.addEventListener('click', () => {
       SoundFX.click();
-      this.close();
-      onResolve(120, 2, 16, `${labelMap[kind]} hektisch geregelt (Anzeige/Bußgeld).`);
+      const won = Math.random() < 0.5;
+      const cost = won ? 20 : 95;
+      finishWithOutcome(
+        cost,
+        7,
+        8,
+        won ? 8 : 2,
+        won
+          ? 'Teilschuld anerkannt! Nur 20 € Bagatellbetrag (+7 Min).'
+          : 'Gegner blieb hart – 95 € Regulierung nötig (+7 Min).'
+      );
+    });
+
+    this.modalEl.querySelector('#col-cash')?.addEventListener('click', () => {
+      SoundFX.click();
+      finishWithOutcome(
+        150,
+        2,
+        4,
+        0,
+        'Sofortige Bar-Einigung (150 €) – kaum Zeitverlust (+2 Min)!'
+      );
+    });
+
+    this.modalEl.querySelector('#col-flee')?.addEventListener('click', () => {
+      SoundFX.click();
+      const caught = Math.random() < 0.7;
+      if (caught) {
+        finishWithOutcome(
+          240,
+          16,
+          22,
+          -10,
+          '🚨 Kennzeichen notiert & Polizei gestoppt! +240 € Bußgeld, +16 Min, +22 Stress!'
+        );
+      } else {
+        finishWithOutcome(
+          0,
+          1,
+          12,
+          -4,
+          'Glück gehabt – der andere winkt ab und es bleibt bei +1 Min & +12 Stress.'
+        );
+      }
+    });
+  }
+
+  public showPoliceViolationDialogue(
+    kind: PoliceViolationKind,
+    onResolve: (costEur: number, timeMin: number, stressDelta: number, decisionPts: number, summary: string) => void
+  ): void {
+    const isRed = kind === 'red_light';
+    const title = isRed ? 'Rote Ampel überfahren!' : 'Zebrastreifen missachtet!';
+    const desc = isRed
+      ? 'Die Polizeistreife hat dein Rotlicht-Manöver gefilmt und winkt dich mit Blaulicht heraus!'
+      : 'Du bist über einen Zebrastreifen gefahren, obwohl Fußgänger queren wollten – Polizei stoppt dich!';
+    const stdFine = isRed ? 90 : 80;
+
+    this.modalEl.classList.remove('hidden');
+    this.modalEl.innerHTML = `
+      <div class="er-modal-card">
+        <div class="er-modal-head">
+          <span class="er-modal-icon">🚓</span>
+          <div>
+            <div class="er-modal-kicker">Polizeikontrolle · Verkehrsregel</div>
+            <h3>${title}</h3>
+          </div>
+        </div>
+        <p class="er-modal-body">${desc}</p>
+        <div class="er-modal-choices" id="pol-choices">
+          <button type="button" class="er-choice-btn" id="pol-admit">
+            <strong>📋 Fehler sofort einsehen &amp; Verwarnung akzeptieren</strong>
+            <span>+8 Min · ${stdFine} € Bußgeld · +8 Stress · +4 Punkte</span>
+          </button>
+          <button type="button" class="er-choice-btn" id="pol-plead">
+            <strong>🙏 Höflich um Nachsicht bitten (Ortsfremd / E-Navi-Ablenkung)</strong>
+            <span>45 % Chance auf 35 € Verwarnung (sonst 110 €) · +10 Min · +10 Stress</span>
+          </button>
+          <button type="button" class="er-choice-btn" id="pol-argue">
+            <strong>😤 Diskutieren („Die Ampel war doch noch Gelb!“)</strong>
+            <span>75 % Risiko auf 165 € + +14 Min Kontrolle · +18 Stress · -8 Punkte</span>
+          </button>
+        </div>
+        <div id="pol-outcome" class="hidden"></div>
+      </div>
+    `;
+
+    const finish = (cost: number, mins: number, stress: number, pts: number, msg: string) => {
+      const ch = this.modalEl.querySelector('#pol-choices');
+      const out = this.modalEl.querySelector('#pol-outcome');
+      if (ch) ch.classList.add('hidden');
+      if (out) {
+        out.classList.remove('hidden');
+        out.innerHTML = `
+          <div class="er-outcome-box">${msg}</div>
+          <button type="button" class="er-primary-btn" id="pol-done">Weiterfahren →</button>
+        `;
+        out.querySelector('#pol-done')?.addEventListener('click', () => {
+          SoundFX.click();
+          this.close();
+          onResolve(cost, mins, stress, pts, msg);
+        });
+      }
+    };
+
+    this.modalEl.querySelector('#pol-admit')?.addEventListener('click', () => {
+      SoundFX.click();
+      finish(stdFine, 8, 8, 4, `${title} Kooperativ geregelt: ${stdFine} € Bußgeld (+8 Min).`);
+    });
+    this.modalEl.querySelector('#pol-plead')?.addEventListener('click', () => {
+      SoundFX.click();
+      const mercy = Math.random() < 0.45;
+      const cost = mercy ? 35 : 110;
+      finish(
+        cost,
+        10,
+        10,
+        mercy ? 8 : 0,
+        mercy
+          ? 'Der Polizist drückt ein Auge zu: nur 35 € Verwarnungsgeld (+10 Min)!'
+          : 'Leider kein Pardon – regulärer Bußgeldbescheid über 110 € (+10 Min).'
+      );
+    });
+    this.modalEl.querySelector('#pol-argue')?.addEventListener('click', () => {
+      SoundFX.click();
+      const escalated = Math.random() < 0.75;
+      finish(
+        escalated ? 165 : 55,
+        14,
+        18,
+        -8,
+        escalated
+          ? 'Das Video war eindeutig – volle Kontrolle & 165 € Bußgeld (+14 Min, +18 Stress)!'
+          : 'Nach langer Diskussion bleibt es bei 55 € Verwarnung (+14 Min).'
+      );
     });
   }
 
@@ -257,7 +484,7 @@ export class EventModal {
     level: LevelConfig,
     run: RunState,
     targetSocPct: number,
-    onComplete: (addedKwh: number, minutesSpent: number, costEur: number, newSoc: number) => void
+    onComplete: (payload: ChargingCompletePayload) => void
   ): void {
     const vehicle = getVehicleById(run.plan.vehicleId);
     const startSoc = Math.max(2, Math.round(run.socPct));
@@ -272,42 +499,193 @@ export class EventModal {
 
     let currentSoc = startSoc;
     let addedKwh = 0;
-    let elapsedMin = 2.5;
-    let costEur = 0;
+    let chargeMinutes = 2.5;
+    let chargingCostEur = 0;
+    let breakMinutes = 0;
+    let breakCostEur = 0;
+    let breakStressDelta = 0;
+    let resetBladder = false;
     let finished = false;
+    let breakBusy = false;
+    const usedBreaks = new Set<BreakActivityKind>();
+    const takenBreakLabels: string[] = [];
 
     SoundFX.plugIn();
 
-    const startTicker = () => {
-      if (this.chargeTimer !== null) return;
-      this.chargeTimer = window.setInterval(() => {
-        if (currentSoc >= activeTarget) {
-          finished = true;
-          SoundFX.chargeDone();
-          if (this.chargeTimer !== null) {
-            window.clearInterval(this.chargeTimer);
-            this.chargeTimer = null;
-          }
-          renderCharge();
-          return;
-        }
+    // Build stable modal + top-right touchscreen shell so BreakPixelAnim canvas isn't destroyed on ticks!
+    this.modalEl.classList.remove('hidden');
+    this.modalEl.innerHTML = `
+      <div class="er-charge-layout">
+        <div id="vts-mount" class="er-vts-corner"></div>
+        <div class="er-modal-card charge-card">
+          <div id="charge-dynamic-top"></div>
+          <div id="break-stage-box" class="break-stage-box hidden">
+            <canvas id="break-anim-canvas" class="break-anim-canvas"></canvas>
+            <div id="break-stage-caption" class="break-stage-caption"></div>
+          </div>
+          <div id="break-buttons-box" class="break-buttons-box"></div>
+          <div id="charge-dynamic-actions" class="charge-btn-row"></div>
+        </div>
+      </div>
+    `;
 
-        const stepSoc = 2.5;
-        const nextSoc = Math.min(activeTarget, currentSoc + stepSoc);
-        const dSoc = nextSoc - currentSoc;
-        const midSoc = (currentSoc + nextSoc) / 2;
-        const kw = getChargingPowerKw(vehicle, station, midSoc);
-        const kwhStep = (vehicle.batteryKwh * dSoc) / 100;
-        const billedKwh = kwhStep * 1.04;
-        addedKwh += billedKwh;
-        costEur += billedKwh * est.tariff.pricePerKwh;
-        elapsedMin += (kwhStep / kw) * 60;
-        currentSoc = nextSoc;
-        renderCharge();
-      }, 170);
+    const vtsMount = this.modalEl.querySelector('#vts-mount') as HTMLElement;
+    const dynTop = this.modalEl.querySelector('#charge-dynamic-top') as HTMLElement;
+    const breakStageBox = this.modalEl.querySelector('#break-stage-box') as HTMLElement;
+    const breakCanvas = this.modalEl.querySelector('#break-anim-canvas') as HTMLCanvasElement;
+    const breakCaption = this.modalEl.querySelector('#break-stage-caption') as HTMLElement;
+    const breakButtonsBox = this.modalEl.querySelector('#break-buttons-box') as HTMLElement;
+    const dynActions = this.modalEl.querySelector('#charge-dynamic-actions') as HTMLElement;
+
+    const triggerBreak = (kind: BreakActivityKind) => {
+      if (breakBusy || usedBreaks.has(kind)) return;
+      usedBreaks.add(kind);
+      breakBusy = true;
+      SoundFX.click();
+
+      const meta: Record<
+        BreakActivityKind,
+        { label: string; mins: number; cost: number; stress: number; bladder: boolean; caption: string }
+      > = {
+        eat: {
+          label: '🍔 Etwas gegessen (+20 Min)',
+          mins: 20,
+          cost: 0,
+          stress: -10,
+          bladder: false,
+          caption: '🍔 Pause im Bistro: Du holst dir eine warme Mahlzeit & Kaffee (+20 Min, -10 Stress)…'
+        },
+        toilet: {
+          label: '🚻 Toilettenpause (+5 Min)',
+          mins: 5,
+          cost: 0,
+          stress: -6,
+          bladder: true,
+          caption: '🚻 Kurzer Gang zur Toilette (+5 Min, Harndrang 0 %, -6 Stress)…'
+        },
+        dog: {
+          label: '🐕 Mit Hund Gassi gegangen (+8 Min)',
+          mins: 8,
+          cost: 0,
+          stress: -14,
+          bladder: false,
+          caption: '🐕 Gassirunde im Grünen: Der Hund tobt sich aus (+8 Min, -14 Hunde-Stress)…'
+        },
+        children: {
+          label: '🛝 Kinder auf Spielplatz (+10 Min)',
+          mins: 10,
+          cost: 0,
+          stress: -16,
+          bladder: false,
+          caption: '🛝 Spielplatz-Stopp: Die Kinder rutschen & schaukeln (+10 Min, -16 Kinder-Stress)…'
+        },
+        shopping: {
+          label: '🛍️ Frau war shoppen (+10 Min, -50 €)',
+          mins: 10,
+          cost: 50,
+          stress: -18,
+          bladder: false,
+          caption: '🛍️ Shopping-Ausflug: Deine Frau stöbert in der Boutique (+10 Min, -50 €, -18 Stress)…'
+        }
+      };
+
+      const cfg = meta[kind];
+      breakMinutes += cfg.mins;
+      breakCostEur += cfg.cost;
+      breakStressDelta += cfg.stress;
+      if (cfg.bladder) resetBladder = true;
+      takenBreakLabels.push(cfg.label);
+
+      breakStageBox.classList.remove('hidden');
+      breakCaption.textContent = cfg.caption;
+      renderActionsAndBreaks();
+
+      if (this.stopBreakAnim) this.stopBreakAnim();
+      this.stopBreakAnim = playBreakPixelAnimation(breakCanvas, kind, 2800, () => {
+        breakBusy = false;
+        breakStageBox.classList.add('hidden');
+        renderChargeNumbers();
+        renderActionsAndBreaks();
+      });
     };
 
-    const renderCharge = () => {
+    const renderActionsAndBreaks = () => {
+      const pax = level.passengers;
+      const mkBtn = (kind: BreakActivityKind, text: string, show: boolean) => {
+        if (!show) return '';
+        const used = usedBreaks.has(kind);
+        return `
+          <button type="button" class="er-mini-btn break-btn ${used ? 'used' : ''}" data-break="${kind}" ${breakBusy || used ? 'disabled' : ''}>
+            ${used ? '✓ ' : ''}${text}
+          </button>
+        `;
+      };
+
+      breakButtonsBox.innerHTML = `
+        <div class="break-box-title">
+          ☕ Pausen-Aktivitäten während des Ladens ${breakBusy ? '<span class="break-lock-badge">🔒 Pause läuft – Laden nicht unterbrechbar</span>' : ''}
+        </div>
+        <div class="break-btn-grid">
+          ${mkBtn('eat', '🍔 Etwas essen (+20 Min)', true)}
+          ${mkBtn('toilet', '🚻 Toilette (+5 Min)', true)}
+          ${mkBtn('dog', '🐕 Hund Gassi (+8 Min · -Stress)', pax.hasDog)}
+          ${mkBtn('children', '🛝 Kinder Spielplatz (+10 Min · -Stress)', pax.childrenCount > 0)}
+          ${mkBtn('shopping', '🛍️ Frau shoppen (+10 Min · -50 € · -Stress)', pax.hasWife)}
+        </div>
+      `;
+
+      breakButtonsBox.querySelectorAll('.break-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const k = (btn as HTMLElement).dataset.break as BreakActivityKind | undefined;
+          if (k) triggerBreak(k);
+        });
+      });
+
+      dynActions.innerHTML = `
+        ${
+          activeTarget < 100
+            ? `<button type="button" class="er-mini-btn" id="btn-charge-more" ${breakBusy ? 'disabled' : ''}>+10 % Ziel (${Math.min(100, activeTarget + 10)}%)</button>`
+            : ''
+        }
+        <button type="button" class="er-primary-btn" id="btn-unplug" ${breakBusy ? 'disabled' : ''}>
+          ${
+            breakBusy
+              ? '⏳ Pause aktiv – Abstecken gesperrt…'
+              : finished
+                ? '🔌 Ladevorgang komplett – Weiterfahren!'
+                : '🔌 Jetzt abstecken & weiterfahren'
+          }
+        </button>
+      `;
+
+      dynActions.querySelector('#btn-charge-more')?.addEventListener('click', () => {
+        if (breakBusy) return;
+        SoundFX.click();
+        activeTarget = Math.min(100, activeTarget + 10);
+        finished = false;
+        renderChargeNumbers();
+        renderActionsAndBreaks();
+        startTicker();
+      });
+
+      dynActions.querySelector('#btn-unplug')?.addEventListener('click', () => {
+        if (breakBusy) return;
+        SoundFX.click();
+        this.close();
+        onComplete({
+          addedKwh,
+          minutesSpent: Math.round(chargeMinutes + breakMinutes),
+          chargingCostEur: Number(chargingCostEur.toFixed(2)),
+          breakCostEur,
+          newSoc: Math.round(currentSoc),
+          stressDelta: breakStressDelta,
+          resetBladder,
+          takenBreaks: takenBreakLabels
+        });
+      });
+    };
+
+    const renderChargeNumbers = () => {
       const kwNow = Math.round(getChargingPowerKw(vehicle, station, currentSoc));
       const pctProgress = Math.min(100, Math.round(currentSoc));
       const livePred = predictLiveTripSoc(level, run, {
@@ -321,7 +699,6 @@ export class EventModal {
             ? 'warn'
             : 'ok';
 
-      // Build charging curve SVG with active live marker
       const w = 260;
       const h = 76;
       const maxKw = 330;
@@ -335,90 +712,96 @@ export class EventModal {
       const dotX = (currentSoc / 100) * (w - 16) + 8;
       const dotY = h - 10 - (kwNow / maxKw) * (h - 20);
 
-      this.modalEl.classList.remove('hidden');
-      this.modalEl.innerHTML = `
-        <div class="er-modal-card charge-card">
-          <div class="er-modal-head">
-            <span class="er-modal-icon">⚡</span>
-            <div>
-              <div class="er-modal-kicker">Schnellladen aktiv · ${station.network.toUpperCase()}</div>
-              <h3>${station.name}</h3>
-            </div>
-            <span class="charge-kw-pill">${kwNow} kW</span>
-          </div>
+      vtsMount.innerHTML = renderVehicleTouchscreenHtml(level, run, currentSoc, station.id);
 
-          <div class="charge-soc-bar-wrap">
-            <div class="charge-soc-bar" style="width:${pctProgress}%"></div>
-            <span class="charge-soc-label">${pctProgress}% SoC (Ziel ${activeTarget}%)</span>
+      dynTop.innerHTML = `
+        <div class="er-modal-head">
+          <span class="er-modal-icon">⚡</span>
+          <div>
+            <div class="er-modal-kicker">Schnellladen aktiv · ${station.network.toUpperCase()}</div>
+            <h3>${station.name}</h3>
           </div>
-
-          <div class="charge-arrival-pred ${predClass}">
-            <div>
-              <span class="cap-kicker">🎯 Prognose bei Abstecken jetzt (${pctProgress}% SoC):</span>
-              <strong>Ankunft ${livePred.nextStopName} (${livePred.distanceToNextKm} km): ${livePred.predictedArrivalNextSocPct}% SoC</strong>
-            </div>
-            ${
-              livePred.nextStopKind !== 'destination'
-                ? `<div class="cap-final">🏁 Ziel-Prognose: <strong>${livePred.predictedFinalSocPct}%</strong></div>`
-                : ''
-            }
-          </div>
-
-          <div class="charge-curve-box">
-            <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-              <polyline fill="none" stroke="rgba(148,163,184,0.3)" stroke-width="1" points="8,${h - 10} ${w - 8},${h - 10}" />
-              <polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="${pts}" />
-              <line x1="${dotX.toFixed(1)}" y1="6" x2="${dotX.toFixed(1)}" y2="${h - 10}" stroke="#22c55e" stroke-dasharray="3 2" />
-              <circle cx="${dotX.toFixed(1)}" cy="${dotY.toFixed(1)}" r="5" fill="#22c55e" stroke="#ffffff" stroke-width="1.5" />
-            </svg>
-          </div>
-
-          <div class="charge-stats-grid">
-            <div><span>Geladen</span><strong>+${addedKwh.toFixed(1)} kWh</strong></div>
-            <div><span>Ladezeit</span><strong>${Math.round(elapsedMin)} Min</strong></div>
-            <div>
-              <span>Tarif</span>
-              <strong>${est.tariff.pricePerKwh.toFixed(2)} €/kWh</strong>
-              ${est.tariff.hasSubscriptionDiscount ? `<small style="opacity:0.7;text-decoration:line-through">${est.tariff.pricePerKwhWithoutSub.toFixed(2)} €</small>` : ''}
-            </div>
-            <div><span>Kosten</span><strong>${costEur.toFixed(2)} €</strong></div>
-          </div>
-
-          ${
-            est.tariff.hasMcDonaldsBonus
-              ? `<div class="mcd-bonus-banner">🍔 EWE Go @ McDonald’s Bonus: Frischer Snack &amp; WC (-12 Stress)!</div>`
-              : `<div class="charge-tarif-note">Abgerechnet über: <b>${est.tariff.usedSubscriptionName}</b></div>`
-          }
-
-          <div class="charge-btn-row">
-            ${
-              activeTarget < 100
-                ? `<button type="button" class="er-mini-btn" id="btn-charge-more">+10 % Ziel (${Math.min(100, activeTarget + 10)}%)</button>`
-                : ''
-            }
-            <button type="button" class="er-primary-btn" id="btn-unplug">
-              ${finished ? '🔌 Ladevorgang komplett – Weiterfahren!' : '🔌 Jetzt abstecken & weiterfahren'}
-            </button>
-          </div>
+          <span class="charge-kw-pill">${kwNow} kW</span>
         </div>
+
+        <div class="charge-soc-bar-wrap">
+          <div class="charge-soc-bar" style="width:${pctProgress}%"></div>
+          <span class="charge-soc-label">${pctProgress}% SoC (Ziel ${activeTarget}%)</span>
+        </div>
+
+        <div class="charge-arrival-pred ${predClass}">
+          <div>
+            <span class="cap-kicker">🎯 Prognose bei Abstecken jetzt (${pctProgress}% SoC):</span>
+            <strong>Ankunft ${livePred.nextStopName} (${livePred.distanceToNextKm} km): ${livePred.predictedArrivalNextSocPct}% SoC</strong>
+          </div>
+          ${
+            livePred.nextStopKind !== 'destination'
+              ? `<div class="cap-final">🏁 Ziel-Prognose: <strong>${livePred.predictedFinalSocPct}%</strong></div>`
+              : ''
+          }
+        </div>
+
+        <div class="charge-curve-box">
+          <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+            <polyline fill="none" stroke="rgba(148,163,184,0.3)" stroke-width="1" points="8,${h - 10} ${w - 8},${h - 10}" />
+            <polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="${pts}" />
+            <line x1="${dotX.toFixed(1)}" y1="6" x2="${dotX.toFixed(1)}" y2="${h - 10}" stroke="#22c55e" stroke-dasharray="3 2" />
+            <circle cx="${dotX.toFixed(1)}" cy="${dotY.toFixed(1)}" r="5" fill="#22c55e" stroke="#ffffff" stroke-width="1.5" />
+          </svg>
+        </div>
+
+        <div class="charge-stats-grid">
+          <div><span>Geladen</span><strong>+${addedKwh.toFixed(1)} kWh</strong></div>
+          <div><span>Zeit (+Pause)</span><strong>${Math.round(chargeMinutes + breakMinutes)} Min</strong></div>
+          <div>
+            <span>Tarif</span>
+            <strong>${est.tariff.pricePerKwh.toFixed(2)} €/kWh</strong>
+            ${est.tariff.hasSubscriptionDiscount ? `<small style="opacity:0.7;text-decoration:line-through">${est.tariff.pricePerKwhWithoutSub.toFixed(2)} €</small>` : ''}
+          </div>
+          <div><span>Laden + Shop</span><strong>${(chargingCostEur + breakCostEur).toFixed(2)} €</strong></div>
+        </div>
+
+        ${
+          est.tariff.hasMcDonaldsBonus
+            ? `<div class="mcd-bonus-banner">🍔 EWE Go @ McDonald’s Partner-Standort: Komfort-Bonus (-12 Stress)!</div>`
+            : `<div class="charge-tarif-note">Abgerechnet über: <b>${est.tariff.usedSubscriptionName}</b></div>`
+        }
       `;
-
-      this.modalEl.querySelector('#btn-charge-more')?.addEventListener('click', () => {
-        SoundFX.click();
-        activeTarget = Math.min(100, activeTarget + 10);
-        finished = false;
-        renderCharge();
-        startTicker();
-      });
-
-      this.modalEl.querySelector('#btn-unplug')?.addEventListener('click', () => {
-        SoundFX.click();
-        this.close();
-        onComplete(addedKwh, Math.round(elapsedMin), Number(costEur.toFixed(2)), Math.round(currentSoc));
-      });
     };
 
-    renderCharge();
+    const startTicker = () => {
+      if (this.chargeTimer !== null) return;
+      // Slowed down charging curve animation (1% per 360ms) so player has ample time to react
+      this.chargeTimer = window.setInterval(() => {
+        if (currentSoc >= activeTarget) {
+          finished = true;
+          SoundFX.chargeDone();
+          if (this.chargeTimer !== null) {
+            window.clearInterval(this.chargeTimer);
+            this.chargeTimer = null;
+          }
+          renderChargeNumbers();
+          renderActionsAndBreaks();
+          return;
+        }
+
+        const stepSoc = 1.0;
+        const nextSoc = Math.min(activeTarget, currentSoc + stepSoc);
+        const dSoc = nextSoc - currentSoc;
+        const midSoc = (currentSoc + nextSoc) / 2;
+        const kw = getChargingPowerKw(vehicle, station, midSoc);
+        const kwhStep = (vehicle.batteryKwh * dSoc) / 100;
+        const billedKwh = kwhStep * 1.04;
+        addedKwh += billedKwh;
+        chargingCostEur += billedKwh * est.tariff.pricePerKwh;
+        chargeMinutes += (kwhStep / kw) * 60;
+        currentSoc = nextSoc;
+        renderChargeNumbers();
+      }, 360);
+    };
+
+    renderChargeNumbers();
+    renderActionsAndBreaks();
     startTicker();
   }
 
