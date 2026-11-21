@@ -20,6 +20,7 @@ export interface ERoadtripBridge {
 
   onBootReady: () => void;
   onMapSelectCharger: (station: ChargerStation) => void;
+  onMapSelectRoute: (routeId: string) => void;
   onAutobahnHudTick: (run: RunState) => void;
   onTriggerChargerSegment: (station: ChargerStation) => void;
   onTriggerCitySegment: (preset: CityDrivePreset) => void;
