@@ -153,6 +153,7 @@
     { id: 'roadster', title: 'Roadster Lander', icon: '🚀', lowerIsBetter: false },
     { id: 'zombie', title: 'Zombie Swarm', icon: '🧟', lowerIsBetter: false },
     { id: 'tower', title: 'Orbital Tower Defense', icon: '🛸', lowerIsBetter: false },
+    { id: 'solitaire3d', title: '3D Solitär (Klondike)', icon: '🃏', lowerIsBetter: false },
     { id: 'solitaire', title: 'Klondike Solitaire', icon: '🃏', lowerIsBetter: false },
     { id: 'p2048', title: '2048 Prism', icon: '🔷', lowerIsBetter: false },
     { id: 'quiz_emob', title: 'E-Mobilität & Tesla Quiz', icon: '⚡', lowerIsBetter: false },
@@ -193,6 +194,7 @@
       if (p.includes('/games/roadster')) return 'roadster';
       if (p.includes('/games/zombie')) return 'zombie';
       if (p.includes('/games/tower')) return 'tower';
+      if (p.includes('/games/solitaire3d')) return 'solitaire3d';
       if (p.includes('/games/solitaire')) return 'solitaire';
       if (p.includes('/games/quiz-emobility')) return 'quiz_emob';
       if (p.includes('/games/quiz-politics')) return 'quiz_pol';
@@ -817,6 +819,7 @@
     { id: 'roadster', title: 'Hyper-Roadster Lander', icon: '🚀' },
     { id: 'zombie', title: 'Zombie Horde: Gate Runner', icon: '🧟' },
     { id: 'tower', title: 'Bastion Tower Defense', icon: '🛸' },
+    { id: 'solitaire3d', title: '3D Solitär (Klondike)', icon: '🃏' },
     { id: 'solitaire', title: 'Klondike Solitaire', icon: '🃏' },
     { id: 'p2048', title: '2048 Prism', icon: '🔷' },
     { id: 'quiz_ai', title: 'KI: Entstehung & Funktionsweise Quiz', icon: '🤖' },
