@@ -52,8 +52,8 @@ export class ZBScene {
     this.composer.addPass(this.outputPass);
 
     this.camX = 0;
-    this.camY = 10.6;
-    this.camZ = 12.6;
+    this.camY = 13.6;
+    this.camZ = 16.8;
     this.prevPlayerU = 0;
 
     this.envGroup = new THREE.Group();
@@ -450,20 +450,20 @@ export class ZBScene {
     const leanAngle = Math.max(-1.2, Math.min(1.2, (state.playerU - this.prevPlayerU) / Math.max(0.008, dt) * 0.15));
     this.prevPlayerU = state.playerU;
 
-    const targetCamX = playerWX * 0.44;
-    const targetCamY = this.tacticalCam ? 16.8 : 10.6;
-    const targetCamZ = this.tacticalCam ? 11.4 : 12.6;
-    const damp = Math.min(1, dt * 8.5);
+    const targetCamX = playerWX * 0.28;
+    const targetCamY = this.tacticalCam ? 20.0 : 13.6;
+    const targetCamZ = this.tacticalCam ? 15.2 : 16.8;
+    const damp = Math.min(1, dt * 6.5);
     this.camX += (targetCamX - this.camX) * damp;
     this.camY += (targetCamY - this.camY) * damp;
     this.camZ += (targetCamZ - this.camZ) * damp;
 
-    const shake = state.shakeAmt > 0.2 ? state.shakeAmt * 0.025 : 0;
+    const shake = state.shakeAmt > 0.2 ? state.shakeAmt * 0.022 : 0;
     const sx = shake ? (Math.random() - 0.5) * shake : 0;
     const sy = shake ? (Math.random() - 0.5) * shake : 0;
 
     this.camera.position.set(this.camX + sx, this.camY + sy, this.camZ);
-    this.camera.lookAt(playerWX * 0.28, 0.75, this.tacticalCam ? -4.8 : -7.2);
+    this.camera.lookAt(playerWX * 0.18, 0.75, this.tacticalCam ? -3.0 : -4.2);
 
     // Tactical Flashlight tracks squad
     this.flashLight.position.set(playerWX, 2.3, Z_NEAR - 0.3);
