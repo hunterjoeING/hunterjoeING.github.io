@@ -19,7 +19,7 @@ function hash2d(x, y, seed) {
 }
 
 function buildSandTextures() {
-  const size = 512;
+  const size = 1024;
   const albedoC = createCanvas(size, size);
   const bumpC = createCanvas(size, size);
   const aCtx = albedoC.getContext('2d');
@@ -34,19 +34,24 @@ function buildSandTextures() {
     const ny = (y / size) * Math.PI * 2;
     for (let x = 0; x < size; x++) {
       const nx = (x / size) * Math.PI * 2;
-      // Seamless periodic wind-carved sand ripples across track
-      const ripple =
-        Math.sin(ny * 10 + Math.sin(nx * 2) * 1.15) * 0.52 +
-        Math.sin(ny * 20 - Math.cos(nx * 3) * 0.6) * 0.24 +
-        Math.sin(nx * 4 + ny * 6) * 0.14;
-      const grain = (hash2d(x, y, 1) - 0.5) * 0.34;
-      const h = Math.max(0, Math.min(1, 0.5 + ripple * 0.28 + grain * 0.25));
+      // Asymmetric wind-carved sand ripples with crisp crests
+      const phase = ny * 14 + Math.sin(nx * 2) * 1.2 + Math.cos(nx * 4 + ny * 2) * 0.35;
+      const wave1 = Math.sin(phase);
+      const crest = Math.pow(Math.max(0, wave1), 2.2) * 0.65 - Math.max(0, -wave1) * 0.35;
+      const micro = Math.sin(ny * 36 - Math.cos(nx * 5) * 0.9) * 0.16;
+
+      // Coarse multi-pixel gravel & pebble flecks so mipmaps stay crisp
+      const gx = Math.floor(x / 3);
+      const gy = Math.floor(y / 3);
+      const pebble = hash2d(gx, gy, 3) > 0.965 ? -0.28 : (hash2d(gx, gy, 7) > 0.97 ? 0.22 : 0);
+      const grain = (hash2d(x, y, 1) - 0.5) * 0.22;
+
+      const h = Math.max(0, Math.min(1, 0.52 + crest * 0.32 + micro + pebble + grain));
 
       const idx = (y * size + x) * 4;
-      // Warm golden desert sand palette
-      ad[idx] = Math.min(255, Math.round(196 + h * 46));
-      ad[idx + 1] = Math.min(255, Math.round(142 + h * 40));
-      ad[idx + 2] = Math.min(255, Math.round(84 + h * 30));
+      ad[idx] = Math.min(255, Math.round(184 + h * 62));
+      ad[idx + 1] = Math.min(255, Math.round(128 + h * 54));
+      ad[idx + 2] = Math.min(255, Math.round(72 + h * 40));
       ad[idx + 3] = 255;
 
       const bv = Math.round(h * 255);
@@ -60,13 +65,15 @@ function buildSandTextures() {
   aCtx.putImageData(aImg, 0, 0);
   bCtx.putImageData(bImg, 0, 0);
 
-  // Subtle darker tire/skimmer track streaks down the center
+  // Subtle darker skimmer track ruts & canyon edge shading
   const trackGrad = aCtx.createLinearGradient(0, 0, size, 0);
-  trackGrad.addColorStop(0, 'rgba(130, 82, 42, 0.16)');
-  trackGrad.addColorStop(0.22, 'rgba(255, 224, 178, 0.04)');
-  trackGrad.addColorStop(0.5, 'rgba(160, 108, 58, 0.08)');
-  trackGrad.addColorStop(0.78, 'rgba(255, 224, 178, 0.04)');
-  trackGrad.addColorStop(1, 'rgba(130, 82, 42, 0.16)');
+  trackGrad.addColorStop(0, 'rgba(110, 64, 30, 0.24)');
+  trackGrad.addColorStop(0.18, 'rgba(255, 224, 178, 0.05)');
+  trackGrad.addColorStop(0.36, 'rgba(120, 74, 36, 0.14)');
+  trackGrad.addColorStop(0.5, 'rgba(255, 228, 185, 0.06)');
+  trackGrad.addColorStop(0.64, 'rgba(120, 74, 36, 0.14)');
+  trackGrad.addColorStop(0.82, 'rgba(255, 224, 178, 0.05)');
+  trackGrad.addColorStop(1, 'rgba(110, 64, 30, 0.24)');
   aCtx.fillStyle = trackGrad;
   aCtx.fillRect(0, 0, size, size);
 
@@ -74,32 +81,35 @@ function buildSandTextures() {
   sandAlbedo.wrapS = THREE.RepeatWrapping;
   sandAlbedo.wrapT = THREE.RepeatWrapping;
   sandAlbedo.colorSpace = THREE.SRGBColorSpace;
-  sandAlbedo.anisotropy = 8;
+  sandAlbedo.anisotropy = 16;
 
   const sandBump = new THREE.CanvasTexture(bumpC);
   sandBump.wrapS = THREE.RepeatWrapping;
   sandBump.wrapT = THREE.RepeatWrapping;
-  sandBump.anisotropy = 4;
+  sandBump.anisotropy = 16;
 
   return { sandAlbedo, sandBump };
 }
 
 function buildRockTextures() {
-  const size = 512;
+  const size = 1024;
   const albedoC = createCanvas(size, size);
   const bumpC = createCanvas(size, size);
   const aCtx = albedoC.getContext('2d');
   const bCtx = bumpC.getContext('2d');
 
-  // Stratified sedimentary canyon bands
+  // Crisp stratified sedimentary canyon bands
   const strataColors = [
-    [168, 76, 44],
-    [194, 106, 62],
-    [142, 62, 38],
-    [212, 138, 86],
-    [156, 74, 46],
-    [122, 52, 34],
-    [186, 98, 56]
+    [164, 72, 40],
+    [206, 118, 68],
+    [130, 52, 32],
+    [224, 152, 96],
+    [148, 66, 40],
+    [108, 42, 26],
+    [192, 102, 58],
+    [172, 84, 48],
+    [214, 138, 82],
+    [122, 48, 30]
   ];
 
   const aImg = aCtx.createImageData(size, size);
@@ -111,30 +121,37 @@ function buildRockTextures() {
     const ny = (y / size) * Math.PI * 2;
     for (let x = 0; x < size; x++) {
       const nx = (x / size) * Math.PI * 2;
-      // Wavy geological strata height
-      const warp = Math.sin(nx * 2) * 0.05 + Math.sin(nx * 5 + 1.3) * 0.02;
+      // Wavy geological strata with sharp bedding seams
+      const warp = Math.sin(nx * 2) * 0.035 + Math.sin(nx * 6 + 1.3) * 0.014;
       const sy = ((y / size) + warp + 1) % 1;
       const bandPos = sy * strataColors.length;
       const bi = Math.floor(bandPos) % strataColors.length;
       const bn = (bi + 1) % strataColors.length;
       const bf = bandPos - Math.floor(bandPos);
-      const smooth = bf * bf * (3 - 2 * bf);
+      // Sharper step transition between strata layers
+      const sharp = Math.pow(bf, 1.8);
+      const seam = bf < 0.08 ? (1 - bf / 0.08) * 0.42 : 0;
 
       const c0 = strataColors[bi];
       const c1 = strataColors[bn];
 
-      const crack = Math.pow(Math.abs(Math.sin(nx * 6 + Math.sin(ny * 4) * 0.7)), 14);
-      const pit = (hash2d(x, y, 9) - 0.5) * 24;
-      const ridge = Math.sin(ny * 18 + Math.sin(nx * 4)) * 0.5 + 0.5;
+      // Vertical erosion fissures & chiseled rock facets
+      const crackA = Math.pow(Math.abs(Math.sin(nx * 8 + Math.sin(ny * 5) * 0.85)), 18);
+      const crackB = Math.pow(Math.abs(Math.sin(nx * 19 - Math.cos(ny * 9) * 0.5)), 24) * 0.6;
+      const crack = Math.min(1, crackA + crackB);
+
+      const blockNoise = (hash2d(Math.floor(x / 4), Math.floor(y / 2), 11) - 0.5) * 26;
+      const pit = (hash2d(x, y, 9) - 0.5) * 18 + blockNoise;
+      const ridge = Math.sin(ny * 26 + Math.sin(nx * 5)) * 0.5 + 0.5;
 
       const idx = (y * size + x) * 4;
-      const shade = 1 - crack * 0.34;
-      ad[idx] = Math.max(0, Math.min(255, Math.round((c0[0] + (c1[0] - c0[0]) * smooth) * shade + pit)));
-      ad[idx + 1] = Math.max(0, Math.min(255, Math.round((c0[1] + (c1[1] - c0[1]) * smooth) * shade + pit * 0.7)));
-      ad[idx + 2] = Math.max(0, Math.min(255, Math.round((c0[2] + (c1[2] - c0[2]) * smooth) * shade + pit * 0.5)));
+      const shade = 1 - crack * 0.45 - seam;
+      ad[idx] = Math.max(0, Math.min(255, Math.round((c0[0] + (c1[0] - c0[0]) * sharp) * shade + pit)));
+      ad[idx + 1] = Math.max(0, Math.min(255, Math.round((c0[1] + (c1[1] - c0[1]) * sharp) * shade + pit * 0.72)));
+      ad[idx + 2] = Math.max(0, Math.min(255, Math.round((c0[2] + (c1[2] - c0[2]) * sharp) * shade + pit * 0.52)));
       ad[idx + 3] = 255;
 
-      const bumpVal = Math.max(0, Math.min(255, Math.round((0.45 + ridge * 0.32 - crack * 0.42) * 255 + pit * 1.4)));
+      const bumpVal = Math.max(0, Math.min(255, Math.round((0.5 + ridge * 0.34 - crack * 0.48 - seam * 0.6) * 255 + pit * 1.5)));
       bd[idx] = bumpVal;
       bd[idx + 1] = bumpVal;
       bd[idx + 2] = bumpVal;
@@ -149,12 +166,12 @@ function buildRockTextures() {
   rockAlbedo.wrapS = THREE.RepeatWrapping;
   rockAlbedo.wrapT = THREE.RepeatWrapping;
   rockAlbedo.colorSpace = THREE.SRGBColorSpace;
-  rockAlbedo.anisotropy = 8;
+  rockAlbedo.anisotropy = 16;
 
   const rockBump = new THREE.CanvasTexture(bumpC);
   rockBump.wrapS = THREE.RepeatWrapping;
   rockBump.wrapT = THREE.RepeatWrapping;
-  rockBump.anisotropy = 4;
+  rockBump.anisotropy = 16;
 
   return { rockAlbedo, rockBump };
 }
