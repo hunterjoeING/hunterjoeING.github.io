@@ -6,7 +6,7 @@
     "diff": "easy",
     "q": "Welches zentrale Wechselspiel beschrieb der britische Geburtshelfer Grantly Dick-Read bereits im frühen 20. Jahrhundert als Ursache für unnötig schmerzhafte Geburten?",
     "a": [
-      "Das Angst-Spannungs-Schmerz-Syndrom, bei dem Furcht zu muskulärer Verkrampfung führt",
+      "Das Angst-Spannungs-Schmerz-Syndrom, bei dem Furcht zu muskulärer Verkrampfung und verringerter Durchblutung führt",
       "Das Erschöpfungs-Druck-Stress-Muster, bei dem Schlafmangel die hormonelle Ausschüttung von Insulin blockiert",
       "Das Zweifel-Atmungs-Trauma-Modell, bei dem unruhiges Luftholen zu starkem Sauerstoffmangel im Gewebe beiträgt",
       "Das Haltungs-Lage-Blockade-Gefüge, bei dem falsches Liegen die Beweglichkeit der Beckenknochen dauerhaft stört"
@@ -19,8 +19,8 @@
     "diff": "easy",
     "q": "Warum wird in Konzepten der achtsamen Geburtsbegleitung bewusst der Begriff „Wellen“ anstelle von „Wehen“ verwendet?",
     "a": [
-      "Weil Wehe von Schmerz abstammt, während Welle das rhythmische An- und Abfluten beschreibt",
-      "Weil Welle eine geschützte medizinische Fachbezeichnung darstellt, die nur von Hebammen verwendet werden darf",
+      "Weil der Begriff Wehe etymologisch von Schmerz abstammt, während Welle das rhythmische An- und Abfluten treffend beschreibt",
+      "Das Erlernen von esoterischen Zaubersprüchen zur vollständigen mentalen Schmerzausschaltung ohne jede medizinische Vorbereitung",
       "Weil Wehe im deutschen Sprachgebrauch ausschließlich für pathologische Komplikationen in der Klinik reserviert ist",
       "Weil Welle den physikalischen Wasserdruck im Fruchtblasenraum messbar verringert und Krämpfe psychologisch verhindert"
     ],
@@ -58,10 +58,10 @@
     "diff": "mid",
     "q": "Wie unterscheidet sich die physiologische „Geburtsatmung“ vom klassischen angeleiteten Pressen (Valsalva-Manöver) beim Tiefertreten des Kindes?",
     "a": [
-      "Erhöhte Ausschüttung von Endorphinen, körpereigenen schmerzlindernden Botenstoffen",
-      "Ein massiver Anstieg des Stresshormons Adrenalin, der die Skelettmuskulatur dauerhaft versteift",
-      "Eine drastische Senkung des Blutzuckerspiegels, die zu tiefer Bewusstlosigkeit der Mutter führt",
-      "Die vollständige Lähmung der glatten Gebärmuttermuskulatur durch das Hormon Cortisol im Kreislauf"
+      "Die Mutter atmet lang und sanft nach unten aus, statt mit angehaltenem Atem und verkrampftem Zwerchfell forciert zu drücken",
+      "Die Mutter hält die Luft für mindestens dreißig Sekunden an, um den intraabdominellen Druck auf das Maximum zu steigern",
+      "Die Mutter nutzt schnelle, stoßartige Atemzüge nach oben, um den Beckenboden während des Durchtritts maximal anzuspannen",
+      "Die Mutter wechselt im Zehn-Sekunden-Takt zwischen Hyperventilation und absolutem Atemstillstand bei geschlossener Glottis"
     ],
     "explanation": "Beim sanften Hinausatmen bleibt der Beckenboden weich, die Sauerstoffversorgung des Babys bleibt optimal stabil und das Risiko von Dammverletzungen sinkt deutlich.",
     "exp": "Die Mutter atmet lang und sanft nach unten aus, statt mit angehaltenem Atem und verkrampftem Zwerchfell forciert zu drücken"
@@ -97,10 +97,10 @@
     "diff": "pro",
     "q": "Was versteht man in der Entspannungslehre unter einem „olfaktorischen oder taktilen Entspannungsanker“ für den Geburtsraum?",
     "a": [
-      "Dass Gebärende ein intuitives Urwissen über den Geburtsvorgang besitzen",
-      "Dass Geburten ohne kontinuierliche ärztliche Medikamentengabe grundsätzlich unmöglich sind",
-      "Dass Frauen während der Geburt keinerlei körperliche Schmerzreize empfinden können",
-      "Dass die moderne Apparatemedizin alle natürlichen Geburtsprozesse vollständig ersetzt"
+      "Einen in der Schwangerschaft auf Ruhe konditionierten Reiz wie einen Duft oder eine Berührung, der blitzschnell Entspannung abruft",
+      "Sofortiges unaufhaltsames Einsetzen von extremen Presswehen innerhalb von genau sechzig Sekunden nach dem Platzen der Fruchtblase",
+      "Ein spezielles medizinisches Desinfektionsmittel, dessen stechender Geruch das Schmerzgedächtnis im Hirnstamm löscht",
+      "Einen festen Metallhaken an der Kreißsaalwand, an dem sich die Frau während starker Wellen mit beiden Händen festhält"
     ],
     "explanation": "Wird ein Duft (wie Lavendel) bei täglicher Entspannung gerochen, löst er unter der Geburt im limbischen System sofort das gewohnte Gefühl von Geborgenheit aus.",
     "exp": "Einen in der Schwangerschaft auf Ruhe konditionierten Reiz wie einen Duft oder eine Berührung, der blitzschnell Entspannung abruft"
@@ -136,10 +136,10 @@
     "diff": "pro",
     "q": "Welcher faszinierende anatomische Zusammenhang verbirgt sich hinter der bekannten Hebammen-Weisheit „Lockerer Kiefer, lockeres Becken“?",
     "a": [
-      "Oxytocin, das auch als Liebes- und Bindungshormon bekannt ist",
-      "Adrenalin, das den Flucht- und Kampfmodus im mütterlichen Körper auslöst",
-      "Cortisol, das den mütterlichen Stoffwechsel dauerhaft auf Hochtouren hält",
-      "Dopamin, das primär bei sportlichen Höchstleistungen ausgeschüttet wird"
+      "Die Kiefer- und Mundmuskulatur ist über myofasziale Bahnen und das vegetative Nervensystem eng mit dem Beckenboden verknüpft",
+      "Der Unterkieferknochen drückt bei starkem Zusammenbeißen mechanisch auf die Halsschlagader und stoppt die Wehenbildung",
+      "Die Zähne stehen in direkter nervlicher Verbindung mit den Dehnungsrezeptoren der Gebärmutterbänder im kleinen Becken",
+      "Ein geöffneter Mund erhöht den Sauerstoffgehalt in den Lungenbläschen schlagartig um das Vierfache der normalen Menge"
     ],
     "explanation": "Wer die Zähne zusammenbeißt, spannt unwillkürlich auch den Schließmuskel- und Beckenbereich an – ein weicher Mund, Tönen oder Pusten öffnet unten den Raum.",
     "exp": "Die Kiefer- und Mundmuskulatur ist über myofasziale Bahnen und das vegetative Nervensystem eng mit dem Beckenboden verknüpft"
@@ -175,10 +175,10 @@
     "diff": "mid",
     "q": "Welchem Zweck dient ein vorab verfasster „Geburtsplan“ (oder Geburtswünsche-Bogen) aus Sicht einer bewussten Geburtsvorbereitung vorrangig?",
     "a": [
-      "Ein vertrauensvolles Gefühl von Ruhe, Geborgenheit und Dämmerlicht",
-      "Helles Neonlicht und laute technische Monitorgeräusche im Raum",
-      "Häufige Schichtwechsel des betreuenden Personals und offene Zimmertüren",
-      "Kühle Raumtemperaturen unter achtzehn Grad zur Kreislaufstimulation"
+      "Als wertvolle Reflexion eigener Werte und Kommunikationshilfe, um dem Geburtsteam persönliche Prioritäten transparent zu machen",
+      "Der Muttermund verkürzt sich auf zwei Millimeter, bleibt aber bis zur eigentlichen späten Austreibungsphase steinhart verschlossen",
+      "Als minutiöser Ablaufplan, der den genauen zeitlichen Verlauf der einzelnen Geburtsphasen auf die Minute festlegt",
+      "Als bürokratische Voraussetzung, ohne deren Einreichung die Aufnahme im Kreißsaal gesetzlich verweigert werden muss"
     ],
     "explanation": "Ein Geburtsplan ist kein starrer Fahrplan, sondern ein Dialogwerkzeug – er klärt Wünsche (z. B. zu Licht, Nabelschnur, Bonding) für den Fall eines ungestörten Verlaufs.",
     "exp": "Als wertvolle Reflexion eigener Werte und Kommunikationshilfe, um dem Geburtsteam persönliche Prioritäten transparent zu machen"
@@ -188,10 +188,10 @@
     "diff": "pro",
     "q": "Auf welcher neurobiologischen Ebene moduliert achtsamkeitsbasierte mentale Geburtsvorbereitung das menschliche Schmerzempfinden?",
     "a": [
-      "Adrenalin verengt Blutgefäße und kann Wellen schwächen oder anhalten",
-      "Cortisol beschleunigt die Wehenfolge unkontrolliert auf wenige Sekunden",
-      "Noradrenalin entspannt den Beckenboden vorzeitig und senkt den Blutdruck",
-      "Stresshormone blockieren die Sauerstoffaufnahme in den Lungenbläschen"
+      "Auf Ebene des Thalamus und des limbischen Systems, indem die emotionale Bewertung des Reizes vom Schmerzsignal entkoppelt wird",
+      "Ein plötzlicher drastischer Abfall der Körperkerntemperatur um mehrere Grad Celsius mit akutem Schüttelfrost und Bewusstlosigkeit",
+      "Auf Ebene der Myelinscheiden, indem die Leitungsgeschwindigkeit der motorischen Nervenbahnen dauerhaft halbiert wird",
+      "Auf Ebene der Großhirnrinde, indem das Sprachzentrum im Broca-Areal während jeder Kontraktion komplett deaktiviert wird"
     ],
     "explanation": "Schmerz besteht aus Signal plus Bewertung: Gelingt es, die Welle als kraftvolle, produktive Arbeit statt als bedrohlichen Schmerz wahrzunehmen, sinkt das Leiden drastisch.",
     "exp": "Auf Ebene des Thalamus und des limbischen Systems, indem die emotionale Bewertung des Reizes vom Schmerzsignal entkoppelt wird"
@@ -201,10 +201,10 @@
     "diff": "mid",
     "q": "Welche beruhigende Rolle spielt die Gestaltung der Geburtsumgebung (z. B. gedimmtes Licht, eigene Musik, gewohnte Kissen)?",
     "a": [
-      "Körpereigene Endorphine, die wie ein sanftes Schmerzmittel wirken",
-      "Künstliches Morphin, das über die Plazentaschranke gebildet wird",
-      "Reines Histamin, das die Schmerzrezeptoren im Gehirn betäubt",
-      "Hohe Mengen Serotonin, die einen tiefen Dämmerschlaf erzwingen"
+      "Sie vermittelt dem Stammhirn Sicherheit, schirmt Reize ab und verhindert, dass das logisch denkende Großhirn aktiv stört",
+      "Sie reduziert die Keimbelastung im Raum durch Vermeidung von ultraviolettem Licht aus herkömmlichen Deckenleuchten",
+      "Sie sorgt dafür, dass das Neugeborene nach der Geburt keine akustischen Reize wahrnimmt und sofort einschläft",
+      "Sie garantiert eine Erhöhung der Luftfeuchtigkeit, wodurch das Risiko eines vorzeitigen Blasensprungs gemindert wird"
     ],
     "explanation": "Säugetiere gebären instinktiv im Dunkeln und Verborgenen – zu viel Helligkeit und fremde Beobachtung aktivieren den Neokortex und hemmen den natürlichen Geburtsfluss.",
     "exp": "Sie vermittelt dem Stammhirn Sicherheit, schirmt Reize ab und verhindert, dass das logisch denkende Großhirn aktiv stört"
@@ -253,10 +253,10 @@
     "diff": "mid",
     "q": "Welche körpereigenen Botenstoffe wirken unter einer interventionsarmen Geburt als natürliches Schmerzmittel und erzeugen ein Gefühl von Losgelöstheit?",
     "a": [
-      "Den aufrechten Stand oder das Vorbeugen im Vierfüßlerstand",
-      "Das flache Liegen auf dem Rücken mit hochgelagerten Beinen",
-      "Das feste Anschnallen im gynäkologischen Geburtsstuhl",
-      "Ein unbewegliches Sitzen im engen Schneidersitz am Boden"
+      "Endorphine, deren schmerzlindernde Potenz die Wirkung von Morphin um ein Vielfaches übertreffen kann",
+      "Prostaglandine, die primär Entzündungsreaktionen im Gewebe anfachen und Blutgerinnsel auflösen",
+      "Histamine, die allergische Reaktionen auslösen und die Magensäureproduktion ankurbeln",
+      "Schilddrüsenhormone, die den Grundumsatz der Körperzellen und den Fettstoffwechsel regeln"
     ],
     "explanation": "Mit steigender Intensität der Wellen schüttet der Körper vermehrt Endorphine aus – eine Art körpereigenes Betäubungsmittel, das Gelassenheit und Kraft schenkt.",
     "exp": "Endorphine, deren schmerzlindernde Potenz die Wirkung von Morphin um ein Vielfaches übertreffen kann"
@@ -266,10 +266,10 @@
     "diff": "pro",
     "q": "Welche synergistische Rolle spielt das Schlaf- und Dunkelheitshormon Melatonin während des natürlichen Geburtsbeginns?",
     "a": [
-      "Die Schwerkraft unterstützt das Tiefertreten des kindlichen Kopfes",
-      "Die Gebärmutter wird dabei von außen mit mechanischem Druck entlastet",
-      "Der mütterliche Puls fällt automatisch auf unter fünfzig Schläge",
-      "Das Becken wird durch den aufrechten Stand absolut starr fixiert"
+      "Melatonin verstärkt im Gehirn die Wirkung von Oxytocin, weshalb natürliche Geburten besonders häufig nachts starten",
+      "Melatonin baut das Gewebehormon Relaxin vollständig ab und führt zu einer sofortigen Versteifung aller mütterlichen Beckengelenke",
+      "Melatonin blockiert die Reifung des Gebärmutterhalses und verhindert den spontanen Blasensprung bei Tageslicht",
+      "Melatonin regt die fetale Nierenfunktion an und verdoppelt das Fruchtwasservolumen innerhalb weniger Minuten"
     ],
     "explanation": "Gebärmutterzellen besitzen Melatonin-Rezeptoren: Zusammen mit Oxytocin entfaltet Melatonin eine stark wehenfördernde Synergie – gedimmtes Licht ist daher pure Geburtsbiologie.",
     "exp": "Melatonin verstärkt im Gehirn die Wirkung von Oxytocin, weshalb natürliche Geburten besonders häufig nachts starten"
@@ -292,10 +292,10 @@
     "diff": "easy",
     "q": "Welchen messbaren mechanischen Vorteil bieten aufrechte Gebärhaltungen (wie Hocke, Stehen oder Vierfüßlerstand) gegenüber flachem Liegen?",
     "a": [
-      "Er öffnet das Becken und entlastet den Rücken bei Kreuzschmerzen",
-      "Er blockiert das Tiefertreten des Kindes zur gezielten Geburtsverzögerung",
-      "Er verhindert das rhythmische Veratmen von intensiven Wehenwellen",
-      "Er dient ausschließlich der Schonung der Kniegelenke der Hebamme"
+      "Der Beckenausgang kann sich um bis zu zwanzig bis dreißig Prozent weiter öffnen, und die Schwerkraft unterstützt den Tiefertritt",
+      "Der Blutdruck im Gehirn sinkt auf ein Minimum, wodurch Schmerzrezeptoren im gesamten Körper temporär betäubt werden",
+      "Das Gewicht des Kindes wird komplett von den Bauchmuskeln getragen, sodass die Gebärmutter keine Kontraktionen benötigt",
+      "Die Nabelschnur wird durch das Körpergewicht komprimiert, was den Herzschlag des Fötus zur Schonung künstlich halbiert"
     ],
     "explanation": "Im Sitzen oder Knien kann das Kreuzbein frei nach hinten ausweichen, während auf dem Rücken der Druck des Bettes die knöcherne Beckenöffnung verengt.",
     "exp": "Der Beckenausgang kann sich um bis zu zwanzig bis dreißig Prozent weiter öffnen, und die Schwerkraft unterstützt den Tiefertritt"
@@ -305,10 +305,10 @@
     "diff": "mid",
     "q": "Welches Hormon lockert in der Schwangerschaft gezielt Bänder, Knorpel und Gelenke des mütterlichen Beckens für den Geburtsvorgang?",
     "a": [
-      "Relaxin, das Schambeinfuge und Beckenringbänder dehnbarer macht",
-      "Progesteron, das ausschließlich den Cholesterinspiegel im Blut regelt",
-      "Östrogen, das die Knochensubstanz des Beckens dauerhaft verhärtet",
-      "Thyroxin, das den Sauerstoffverbrauch der Skelettmuskeln verdoppelt"
+      "Relaxin, das die Dehnbarkeit der Schambeinfuge (Symphyse) und der Iliosakralgelenke im Beckenring maßgeblich erhöht",
+      "Regelmäßige Positionswechsel verdoppeln die mütterliche Herzfrequenz und erhöhen das Risiko für kindliche Kreislaufprobleme",
+      "Prolaktin, das für die Verkalkung der Schädelknochen beim Fötus und den Schutz vor Stauchungen verantwortlich ist",
+      "Testosteron, das den Muskelaufbau der Gebärmutterwand hemmt und die Elastizität der Haut am Bauch reduziert"
     ],
     "explanation": "Relaxin macht das harte Becken elastisch – erst dadurch können sich Schambein und Kreuzbein unter der Geburt flexibel dem Köpfchen anpassen.",
     "exp": "Relaxin, das die Dehnbarkeit der Schambeinfuge (Symphyse) und der Iliosakralgelenke im Beckenring maßgeblich erhöht"
@@ -331,10 +331,10 @@
     "diff": "mid",
     "q": "Wie ist die „Eröffnungsphase“ einer Geburt medizinisch definiert?",
     "a": [
-      "Vom Beginn regelmäßiger Wellen bis zur vollständigen Muttermundsöffnung",
-      "Ausschließlich die letzten fünf Minuten des Kopfdurchtritts durch das Becken",
-      "Die ersten zwei Wochen vor dem errechneten Geburtstermin mit Vorwehen",
-      "Die Phase zwischen Plazentaausstoßung und dem ersten Anlegen an die Brust"
+      "Sie umfasst den Zeitraum vom Beginn regelmäßiger wirksamer Wellen bis zur vollständigen Öffnung des Muttermunds auf zehn Zentimeter",
+      "Er blockiert das Tiefertreten des kindlichen Kopfes im Becken und dient der künstlichen Verzögerung des gesamten Geburtsfortschritts",
+      "Sie beginnt mit dem Einsetzen der ersten Übungswehen um die zwanzigste Schwangerschaftswoche und endet mit dem Blasensprung",
+      "Sie bezeichnet den Zeitraum zwischen der Geburt des Kindes und dem vollständigen Ausstoßen der Plazenta samt Eihäuten"
     ],
     "explanation": "In dieser Phase öffnet sich die Zervix Zentimeter für Zentimeter, bis der Weg für das Tiefertreten des Babys frei ist.",
     "exp": "Sie umfasst den Zeitraum vom Beginn regelmäßiger wirksamer Wellen bis zur vollständigen Öffnung des Muttermunds auf zehn Zentimeter"
@@ -344,10 +344,10 @@
     "diff": "mid",
     "q": "Warum gilt die sogenannte „Übergangsphase“ (Transition) kurz vor Erreichen der vollen Muttermundsweite als emotional besonders intensiv?",
     "a": [
-      "Ein Hormonschub bringt Frauen an Grenzen – ein Zeichen der nahen Geburt",
-      "Die Schmerzrezeptoren schalten sich plötzlich komplett und dauerhaft ab",
-      "Das vegetative Nervensystem wechselt unvermittelt in eine tiefe Starre",
-      "Die Gebärmuttermuskulatur stellt die Kontraktionen für mehrere Stunden ein"
+      "Ein Hormonschub lässt viele Frauen an ihre Grenzen stoßen und zweifeln, was Hebammen als untrügliches Zeichen der nahen Geburt kennen",
+      "Die Schmerzrezeptoren schalten sich plötzlich komplett ab, sodass die Gebärende eine tiefe Gleichgültigkeit verspürt",
+      "Der Herzschlag der Mutter verdoppelt sich schlagartig, während die Kontraktionen für mehrere Stunden vollständig pausieren",
+      "Das vegetative Nervensystem zwingt die Gebärende zu plötzlicher körperlicher Starre ohne jegliche Sprechfähigkeit"
     ],
     "explanation": "Sätze wie „Ich schaffe das nicht mehr!“ oder „Ich will nach Hause!“ signalisieren erfahrenen Geburtsbegleitern: Die Geburt biegt auf die Zielgerade ein.",
     "exp": "Ein Hormonschub lässt viele Frauen an ihre Grenzen stoßen und zweifeln, was Hebammen als untrügliches Zeichen der nahen Geburt kennen"
@@ -357,10 +357,10 @@
     "diff": "pro",
     "q": "Was beschrieb der renommierte französische Geburtshelfer Michel Odent mit dem Phänomen des „Fötalen Ausstoßreflexes“?",
     "a": [
-      "Den kraftvollen, unwillkürlichen Schiebereflex am Ende der Geburt",
-      "Eine krankhafte Abstoßungsreaktion der Gebärmutter gegen fetale Proteine",
-      "Ein reflexartiges Schließen des Muttermunds bei starker Erschöpfung",
-      "Das bewusste Anhalten der Atmung unter maximaler Anspannung im Liegen"
+      "Einen unwillkürlichen, kraftvollen Schiebereflex des Körpers am Ende der Geburt, der ohne bewusstes Forcieren geschieht",
+      "Beckenkreisen versteift die Iliosakralgelenke und verhindert das harmonische Einschwingen des kindlichen Kopfes in die Beckenmitte",
+      "Einen Schutzreflex des Fötus, bei dem das Baby sich mit den Füßen an der Gebärmutterwand abstößt",
+      "Ein plötzliches Erschlaffen aller Bauchmuskeln durch plötzlichen Abfall des oxytocinergen Tonus im Uterus"
     ],
     "explanation": "Ist eine Frau völlig ungestört und fühlt sich sicher, schiebt der Körper das Kind durch einen archaischen Reflex fast von selbst heraus – aktives Pressen ist oft gar nicht nötig.",
     "exp": "Einen unwillkürlichen, kraftvollen Schiebereflex des Körpers am Ende der Geburt, der ohne bewusstes Forcieren geschieht"
@@ -370,10 +370,10 @@
     "diff": "mid",
     "q": "Welches zentrale Ereignis leitet die „Plazentaphase“ (Nachgeburtsphase) unmittelbar nach der Geburt des Babys ein?",
     "a": [
-      "Ein erneuter Oxytocinschub durch Haut- und Blickkontakt mit dem Baby",
-      "Die sofortige medikamentöse Injektion von Gerinnungshemmern in die Nabelschnur",
-      "Ein operativer Schnitt zur manuellen Ablösung der Plazenta von der Uteruswand",
-      "Das unverzügliche Baden des Neugeborenen in kaltem Wasser zur Kreislaufbelebung"
+      "Ein erneuter mütterlicher Oxytocinschub, der durch den ersten Hautkontakt und den Blickkontakt mit dem Neugeborenen verstärkt wird",
+      "Krampfhaftes Anhalten der Atemluft (Pressatmung) ab der allerersten leichten Vorwehe, um den Wehenschmerz mental vollkommen zu betäuben",
+      "Ein drastischer Abfall der Körpertemperatur der Mutter um zwei Grad Celsius zur Beschleunigung der Wundheilung",
+      "Das mechanische Ziehen an der Nabelschnur mit maximaler Kraft durch die Hebamme innerhalb der ersten sechzig Sekunden"
     ],
     "explanation": "Sobald das Baby auf der Brust liegt, schießt Oxytocin hoch – die Gebärmutter zieht sich zusammen und löst den Mutterkuchen sicher und blutungsarm ab.",
     "exp": "Ein erneuter mütterlicher Oxytocinschub, der durch den ersten Hautkontakt und den Blickkontakt mit dem Neugeborenen verstärkt wird"
@@ -383,10 +383,10 @@
     "diff": "mid",
     "q": "Was versteht man unter dem sogenannten „Nestbautrieb“ in den letzten Wochen vor der Entbindung?",
     "a": [
-      "Einen Energieschub, bei dem Schwangere instinktiv das Zuhause vorbereiten",
-      "Eine behandlungsbedürftige Zwangsstörung durch extremen Kalziummangel",
-      "Ein depressives Erschöpfungsmuster kurz vor dem errechneten Entbindungstermin",
-      "Einen plötzlichen Appetitverlust zum Abbau mütterlicher Fettreserven"
+      "Einen biologisch gesteuerten Energieschub, bei dem Schwangere instinktiv das Zuhause putzen, einrichten und vorbereiten",
+      "Eine behandlungsbedürftige Zwangsstörung, die durch extremen Kalziummangel im mütterlichen Gehirn ausgelöst wird",
+      "Den drängenden Wunsch des ungeborenen Kindes, durch heftige Tritte die mütterliche Schlafposition zu korrigieren",
+      "Eine vorübergehende Schlaflähmung, die Schwangere dazu zwingt, das Bett für mehrere Tage gar nicht mehr zu verlassen"
     ],
     "explanation": "Gesteuert durch Östrogene und Prolaktin: Wie Vögel vor dem Schlüpfen bereiten werdende Mütter instinktiv eine sichere, saubere Umgebung für das Neugeborene vor.",
     "exp": "Einen biologisch gesteuerten Energieschub, bei dem Schwangere instinktiv das Zuhause putzen, einrichten und vorbereiten"
@@ -396,10 +396,10 @@
     "diff": "mid",
     "q": "Warum wird Schwangeren im letzten Trimester und unter der Geburt von flachem Liegen auf dem Rücken (Vena-Cava-Syndrom) abgeraten?",
     "a": [
-      "Die Gebärmutter kann die untere Hohlvene komprimieren (Vena-Cava-Syndrom)",
-      "Die Lendenwirbelkörper können unter dem Gewicht der Fruchtblase anbrechen",
-      "Der Mageninhalt gelangt dabei unweigerlich in die Bronchien der Schwangeren",
-      "Das kindliche Gehirn erhält in Rückenlage zu viel sauerstoffreiches Blut"
+      "Die schwere Gebärmutter drückt auf die untere Hohlvene und kann den Blutrückfluss zum Herzen sowie zum Baby behindern",
+      "Die Wassertemperatur führt zu einer extremen Unterkühlung des kindlichen Organismus und hemmt die kindlichen Lungenreflexe",
+      "Das Fruchtwasser staut sich im oberen Gebärmutterbereich und blockiert die Reifung der fetalen Lungenbläschen",
+      "Die Bauchmuskeln dehnen sich im Liegen so stark, dass nach der Entbindung keine spontane Rückbildung möglich ist"
     ],
     "explanation": "Schwindel, Übelkeit und Herzrasen im Liegen sind typische Zeichen: Aufrechte oder seitliche Haltungen halten den Kreislauf stabil und die Sauerstoffversorgung optimal.",
     "exp": "Die schwere Gebärmutter drückt auf die untere Hohlvene und kann den Blutrückfluss zum Herzen sowie zum Baby behindern"
@@ -422,10 +422,10 @@
     "diff": "easy",
     "q": "Welche rechtliche Besonderheit gilt in Deutschland bezüglich der Betreuung einer normalen Schwangerschaft und Geburt durch Hebammen?",
     "a": [
-      "Hebammen sind Fachkräfte für Physiologie; ihre Anwesenheit ist gesetzlich vorgeschrieben",
-      "Hebammen dürfen Schwangere nur nach ausdrücklicher Genehmigung eines Facharztes betreuen",
-      "Geburten dürfen in Deutschland ausschließlich von promovierten Chirurgen geleitet werden",
-      "Hebammen arbeiten grundsätzlich nur ehrenamtlich ohne rechtliche Absicherung im Kreißsaal"
+      "Hebammen sind eigenständige Fachkräfte für Physiologie; bei jeder Geburt (auch in der Klinik) muss gesetzlich eine Hebamme anwesend sein",
+      "Hebammen dürfen Geburten nur nach vorheriger schriftlicher Einzelgenehmigung des jeweils zuständigen städtischen Gesundheitsamtes betreuen",
+      "Hebammen sind rechtlich verpflichtet, jede Schwangerschaftsvorsorge mit mindestens zwei Ultraschallbildern zu dokumentieren",
+      "Hebammenbetreuung ist eine reine Privatleistung und wird von den gesetzlichen Krankenkassen grundsätzlich nicht erstattet"
     ],
     "explanation": "Die sogenannte Hebammenhinzuziehungspflicht (§ 4 HebG) garantiert, dass keine Geburt in Deutschland ohne fachkundige Hebamme stattfinden darf – Ärzte hingegen sind bei normalem Verlauf nicht zwingend nötig.",
     "exp": "Hebammen sind eigenständige Fachkräfte für Physiologie; bei jeder Geburt (auch in der Klinik) muss gesetzlich eine Hebamme anwesend sein"
@@ -435,10 +435,10 @@
     "diff": "easy",
     "q": "Worin liegt der primäre Unterschied zwischen den Aufgaben einer Hebamme und den Aufgaben einer Doula (Geburtsbegleiterin)?",
     "a": [
-      "Die Hebamme trägt medizinische Verantwortung, die Doula begleitet kontinuierlich emotional",
-      "Die Doula führt operative Eingriffe durch, während die Hebamme für die Schmerztherapie zuständig ist",
-      "Hebammen begleiten ausschließlich Hausgeburten, Doulas arbeiten nur in Universitätskliniken",
-      "Doulas verschreiben rezeptpflichtige Medikamente, Hebammen leisten ausschließlich mentale Hilfe"
+      "Die Hebamme trägt die medizinische Verantwortung, während die Doula kontinuierliche emotionale, seelische und praktische Unterstützung leistet",
+      "Die Doula führt operative Eingriffe wie Saugglockengeburten durch, während die Hebamme für die Narkose zuständig ist",
+      "Die Hebamme darf nur Hausgeburten betreuen, während die Doula ausschließlich in Universitätskliniken praktizieren darf",
+      "Die Doula verordnet rezeptpflichtige Medikamente, während die Hebamme rein homöopathische Mittel verabreichen darf"
     ],
     "explanation": "Eine Doula ersetzt keine Hebamme: Sie weicht der Frau nicht von der Seite, massiert, ermutigt und bietet eine ununterbrochene 1:1-Präsenz.",
     "exp": "Die Hebamme trägt die medizinische Verantwortung, während die Doula kontinuierliche emotionale, seelische und praktische Unterstützung leistet"
@@ -461,10 +461,10 @@
     "diff": "pro",
     "q": "Was versteht man unter dem traditionellen Verfahren der „Moxibustion“ bei einer Beckenendlage (Steißlage) des Kindes um die 33. bis 36. Woche?",
     "a": [
-      "Gezielte Erwärmung des Punkts Blase 67 am kleinen Zeh mit Beifußkraut",
-      "Das mechanische Drehen des Babys von außen durch zwei Ärzte unter Druck",
-      "Eine Akupunkturbehandlung an der Ohrmuschel mit feinen Goldnadeln",
-      "Das rhythmische Abklopfen des Kreuzbeins mit einer Holzklöppel-Technik"
+      "Die gezielte Erwärmung des Akupunkturpunkts Blase 67 am kleinen Zeh mit einer glimmenden Beifußkraut-Zigarre zur Bewegungsanregung",
+      "Eine operative manuelle Wendung des Kindes durch die mütterliche Bauchdecke unter Vollnarkose im sterilen Operationssaal der Klinik",
+      "Ein spezielles heißes Vollbad mit Meersalz und Pfefferminzöl zur Entspannung der tiefen Gebärmutterbänder",
+      "Eine Bestrahlung des Bauches mit ultraviolettem Laserlicht, um die kindliche Orientierung zur Schwerkraft zu stärken"
     ],
     "explanation": "Die milde Hitze am Akupunkturpunkt am äußeren Nagelwinkel des kleinen Zehs regt die Kindsbewegungen an und kann das Baby dazu motivieren, sich kopfüber zu drehen.",
     "exp": "Die gezielte Erwärmung des Akupunkturpunkts Blase 67 am kleinen Zeh mit einer glimmenden Beifußkraut-Zigarre zur Bewegungsanregung"
@@ -474,10 +474,10 @@
     "diff": "mid",
     "q": "Aus welcher Hebammen-Tradition stammt die Rebozo-Technik, bei der ein langes gewebtes Tuch zur Beckenentspannung genutzt wird?",
     "a": [
-      "Aus der mexikanischen und mittelamerikanischen Hebammentradition",
-      "Aus der skandinavischen Volksheilkunde des neunzehnten Jahrhunderts",
-      "Aus alten Klosterschriften des mitteleuropäischen Frühmittelalters",
-      "Aus der traditionellen japanischen Medizin zur Schmerzlinderung"
+      "Aus der traditionellen mexikanischen und mittelamerikanischen Hebammenkunst, wo Tücher seit Jahrhunderten Begleiterinnen sind",
+      "Aus der skandinavischen Volksheilkunde des 19. Jahrhunderts zur Behandlung von Unterkühlungen im Wochenbett",
+      "Aus der antiken griechischen Tempelmedizin nach Hippokrates zur Repositionierung verrenkter Oberschenkelknochen",
+      "Aus dem hawaiianischen Lomi-Lomi-Ritual zur rituellen Waschung der Schwangeren am Meeresufer vor der Niederkunft"
     ],
     "explanation": "Mit dem Rebozo-Tuch wiegt die Hebamme sanft das Becken der Schwangeren – das lockert tiefe Verspannungen und hilft dem Baby, die beste Position einzunehmen.",
     "exp": "Aus der traditionellen mexikanischen und mittelamerikanischen Hebammenkunst, wo Tücher seit Jahrhunderten Begleiterinnen sind"
@@ -514,7 +514,7 @@
     "q": "Welche traditionelle Wirkung wird dem Trinken von Himbeerblättertee in den letzten vier bis sechs Wochen vor der Entbindung nachgesagt?",
     "a": [
       "Er soll die Beckenmuskulatur und den Gebärmutterhals auflockern sowie die Durchblutung des kleinen Beckens fördern",
-      "Er verhindert zuverlässig jede Form von morgendlicher Schwangerschaftsübelkeit im gesamten ersten Trimester",
+      "Er blockiert die kindliche Nierenfunktion und verdickt das Fruchtwasser zur Vorbereitung auf den natürlichen Blasensprung",
       "Er erhöht den Hämoglobinwert im Blut schlagartig und ersetzt die Zufuhr von eisenreichen Lebensmitteln komplett",
       "Er desinfiziert das Fruchtwasser von innen heraus und schützt vor einer vorzeitigen bakteriellen Infektion"
     ],
@@ -526,10 +526,10 @@
     "diff": "mid",
     "q": "Wie wird ein traditionelles Heublumendampfbad ab der etwa 38. Schwangerschaftswoche angewendet und was bewirkt es?",
     "a": [
-      "Die Schwangere sitzt über heißem Heublumendampf; das Dammgewebe entspannt",
-      "Heublumen werden als heißer Wickel fest um den Brustkorb der Mutter gewickelt",
-      "Heublumensud wird zur Förderung der Blutgerinnung vor der Geburt getrunken",
-      "Trockene Heublumen werden auf die Bettwäsche gestreut zur Raumluftbefeuchtung"
+      "Die Schwangere setzt sich über eine Schüssel mit heißem Heublumen-Aufguss; der feuchte Dampf entspannt das Dammgewebe",
+      "Die Schwangere inhaliert den aromatischen Dampf über eine Gesichtsmaske zur Beruhigung der Bronchien und des vegetativen Nervensystems",
+      "Die Heublumenbrühe wird inhaliert, um die Lungenkapazität für spätere Atemübungen im Kreißsaal zu verdoppeln",
+      "Aus Heublumen wird ein zähflüssiger Brei gekocht, der auf den Rücken aufgetragen wird, um Wehen sofort zu stoppen"
     ],
     "explanation": "Die aufsteigende feuchte Wärme fördert die Durchblutung, erweicht die Muskulatur des Beckenbodens und wird von vielen Frauen als wohltuend empfunden.",
     "exp": "Die Schwangere setzt sich über eine Schüssel mit heißem Heublumen-Aufguss; der feuchte Dampf entspannt das Dammgewebe"
@@ -539,10 +539,10 @@
     "diff": "pro",
     "q": "Auf welcher physiologischen Hypothese basiert das sogenannte Ernährungskonzept nach Prof. Dr. Frank Louwen in den letzten sechs Schwangerschaftswochen?",
     "a": [
-      "Wenig einfache Kohlenhydrate senken Insulinspitzen, Oxytocin dockt besser an",
-      "Reine Rohkost-Ernährung verringert die Knochendichte des kindlichen Schädels",
-      "Fettreiche Kost stimuliert die vorzeitige Bildung von Kolostrum in den Brüsten",
-      "Salzfreies Fasten trocknet das Fruchtwasser gezielt zur Wehenauslösung aus"
+      "Der Verzicht auf einfache Kohlenhydrate senkt Insulinspitzen, wodurch körpereigenes Oxytocin ungehindert an Rezeptoren andocken kann",
+      "Eine reine Rohkost-Ernährung verringert die Knochendichte des kindlichen Schädels für einen leichteren Durchtritt",
+      "Ein hoher Zuckerkonsum verdickt das Fruchtwasser und führt zu krampfartigen Vorwehen ohne Öffnungseffekt",
+      "Der Verzicht auf tierische Fette stimuliert die Progesteronbildung zur dauerhaften Verlängerung der Tragzeit"
     ],
     "explanation": "Insulin und Prostaglandine nutzen teils ähnliche Rezeptoren: Hohe Insulinspiegel können die Rezeptoren für Geburtshormone blockieren und Schmerzen verstärken.",
     "exp": "Der Verzicht auf einfache Kohlenhydrate senkt Insulinspitzen, wodurch körpereigenes Oxytocin ungehindert an Rezeptoren andocken kann"
@@ -552,10 +552,10 @@
     "diff": "easy",
     "q": "Welches ätherische Öl gilt in der Aromatherapie der Geburtshilfe als bewährter Begleiter für Ruhe, Entspannung und Schmerzlinderung?",
     "a": [
-      "Echtes Lavendelöl (Lavandula angustifolia)",
-      "Scharfes Pfefferminzöl in hoher Dosierung",
-      "Reines Nelkenblätteröl als Raumspray",
-      "Konzentriertes Rosmarinöl zur Hautkühlung"
+      "Echtes Lavendelöl (Lavandula angustifolia), das nachweislich beruhigend auf das zentrale Nervensystem wirkt",
+      "Scharfes Pfefferminzöl (Mentha piperita), das durch starken Kältereiz die lokale Durchblutung der Hautdrüsen anregt",
+      "Reines Teebaumöl, das unverdünnt im gesamten Geburtsraum zur Keimabtötung versprüht werden sollte",
+      "Intensives Nelkenöl, das die Schmerzweiterleitung im Ischiasnerv durch chemische Hitzereize komplett lähmt"
     ],
     "explanation": "Lavendelduft senkt nachweislich Angst und Anspannung – ob in der Duftlampe, als Massageölzusatz oder als Riechtuch am Kissen.",
     "exp": "Echtes Lavendelöl (Lavandula angustifolia), das nachweislich beruhigend auf das zentrale Nervensystem wirkt"
@@ -578,10 +578,10 @@
     "diff": "easy",
     "q": "Wie lässt sich die pflanzliche Eisenaufnahme aus Lebensmitteln wie Haferflocken, Nüssen oder Hirse am effektivsten steigern?",
     "a": [
-      "Kombination mit Vitamin C wie Orangensaft oder Paprika",
-      "Gleichzeitiges Trinken von schwarzem Kaffee oder Tee",
-      "Verzehr großer Mengen Kalzium in Milchprodukten dazu",
-      "Erhitzen der pflanzlichen Nahrung auf über hundert Grad"
+      "Durch die gleichzeitige Kombination mit Vitamin-C-reichen Lebensmitteln wie Orangensaft, Beeren oder Paprika",
+      "Durch den gleichzeitigen reichlichen Konsum von schwarzem Tee, Filterkaffee oder kalziumreicher Kuhmilch zu den Hauptmahlzeiten",
+      "Durch den gleichzeitigen Verzehr großer Mengen pasteurisierter Kuhmilch zur Förderung der Magenpassage",
+      "Durch langes Kochen der Getreidekörner in offenem Aluminiumgeschirr zur Freisetzung metallischer Ionen"
     ],
     "explanation": "Vitamin C wandelt pflanzliches dreiwertiges Eisen in die vom Darm leicht aufnehmbare zweiwertige Form um; Kaffee und schwarzer Tee hemmen die Aufnahme.",
     "exp": "Durch die gleichzeitige Kombination mit Vitamin-C-reichen Lebensmitteln wie Orangensaft, Beeren oder Paprika"
@@ -591,10 +591,10 @@
     "diff": "mid",
     "q": "Welchem Zweck dient der freiwillige Screening-Abstrich auf B-Streptokokken (GBS) zwischen der 35. und 37. Schwangerschaftswoche?",
     "a": [
-      "Prüfung der Vaginalflora zum Schutz des Kindes vor B-Streptokokken",
-      "Messung der genauen Fruchtwassermenge zur Nierenfunktionsprüfung",
-      "Ausschluss von chromosomalen Anomalien durch Zellanalyse der Mutter",
-      "Bestimmung der kindlichen Blutgruppe vor dem Durchtritt durchs Becken"
+      "Er prüft die Besiedlung der Vaginalflora, um Neugeborene bei Bedarf unter der Geburt durch Antibiotika vor Infektionen zu schützen",
+      "Er ermittelt die genaue Zusammensetzung der Fruchtwassermenge zur rechtzeitigen Diagnose einer fetalen Niereninsuffizienz",
+      "Er stellt fest, ob die Mutter über ausreichende Antikörper gegen Windpocken und Rötelnviren im Blutkreislauf verfügt",
+      "Er misst den pH-Wert der Gebärmutterschleimhaut zur exakten Vorhersage des Einsetzens der ersten Geburtswehe"
     ],
     "explanation": "B-Streptokokken sind für gesunde Frauen harmlos, können beim Kind beim Durchtritt aber selten Lungenentzündungen auslösen – ein Schnellschutz unter der Geburt beugt vor.",
     "exp": "Er prüft die Besiedlung der Vaginalflora, um Neugeborene bei Bedarf unter der Geburt durch Antibiotika vor Infektionen zu schützen"
@@ -605,7 +605,7 @@
     "q": "Was besagt die offizielle Leitlinie zur Betreuung unkomplizierter Schwangerschaften bezüglich des routinemäßigen Dauer-CTGs?",
     "a": [
       "Bei gesunden Schwangeren ohne Risiken bringt Dauer-CTG keinen Überlebensvorteil, erhöht aber die Rate operativer Eingriffe",
-      "Ein kontinuierliches Dauer-CTG ab der zwanzigsten Woche ist gesetzlich verpflichtend für jede Schwangerschaftsvorsorge",
+      "Die Akupunktur soll Wehen vorzeitig in der dreißigsten Woche auslösen, um eine Übertragung des Kindes sicher zu verhindern",
       "Das CTG sollte grundsätzlich nur im Stehen durchgeführt werden, da die Herztöne im Liegen technisch nicht erfassbar sind",
       "Durch Ultraschallwellen des CTG-Geräts wird die kindliche Knochenbildung nachweislich im letzten Trimester gestärkt"
     ],
@@ -617,10 +617,10 @@
     "diff": "mid",
     "q": "Welche ganzheitliche Maßnahme hilft vielen Schwangeren bei typischen Wassereinlagerungen (Ödemen) in den Beinen am besten?",
     "a": [
-      "Ausreichend Wasser trinken, Beine hochlegen und kühle Fußbäder",
-      "Strikte Reduzierung der Trinkmenge auf unter einen halben Liter",
-      "Kompletter Verzicht auf Speisesalz und dauerhafte Bettruhe",
-      "Einnahme von entwässernden Medikamenten ohne ärztlichen Rat"
+      "Ausreichend Wasser trinken, salzreiche Kost beibehalten, Beine hochlegen und Spaziergänge im kühlen Wasser (Kneippen)",
+      "Eine strikte Entwässerungskur mit radikalem Verzicht auf Speisesalz und starker Einschränkung der täglichen Trinkmenge",
+      "Die Einnahme starker chemischer Entwässerungstabletten (Diuretika) zur schnellen Entlastung des Gewebes",
+      "Langes, unbewegliches Stehen in heißen Saunen zur maximalen Ausschwemmung von Wasser über den Schweiß"
     ],
     "explanation": "Veraltete Ratschläge wie „Salz- und Trinkverzicht“ sind überholt und gefährlich – der Körper benötigt ausreichend Salz und Flüssigkeit, um das Plazentavolumen stabil zu halten.",
     "exp": "Ausreichend Wasser trinken, salzreiche Kost beibehalten, Beine hochlegen und Spaziergänge im kühlen Wasser (Kneippen)"
@@ -630,10 +630,10 @@
     "diff": "easy",
     "q": "Was zeichnet einen hebammengeleiteten Kreißsaal (Hebammenkreißsaal) an einer Geburtsklinik im Wesentlichen aus?",
     "a": [
-      "Gesunde Frauen werden eigenverantwortlich von Hebammen betreut",
-      "Die Geburt wird vollständig von Studenten ohne Hebamme geleitet",
-      "Ein OP-Team steht permanent steril gewaschen am Kopfende bereit",
-      "Schwangere müssen während der gesamten Geburt fest im Bett liegen"
+      "Gesunde Frauen werden eigenverantwortlich von Hebammen ohne ärztliche Eingriffe betreut, die Klinikmedizin steht im Hintergrund bereit",
+      "Die Geburt wird vollständig von Medizinstudenten ohne Anwesenheit einer examinierten Hebamme als Lehrprojekt durchgeführt",
+      "Es dürfen grundsätzlich keinerlei Schmerzmittel, warme Bäder oder aufrechte Gebärpositionen in Anspruch genommen werden",
+      "Die Schwangere muss die Klinik nach der Entbindung innerhalb von sechzig Minuten ohne Nachuntersuchung verlassen"
     ],
     "explanation": "Das Beste aus zwei Welten: Selbstbestimmte 1:1-Hebammenbetreuung in wohnlicher Atmosphäre mit dem Sicherheitsnetz eines OP-Teams im selben Haus.",
     "exp": "Gesunde Frauen werden eigenverantwortlich von Hebammen ohne ärztliche Eingriffe betreut, die Klinikmedizin steht im Hintergrund bereit"
@@ -643,10 +643,10 @@
     "diff": "easy",
     "q": "Was ist ein Geburtshaus und welche Voraussetzungen müssen für eine Geburt dort typischerweise erfüllt sein?",
     "a": [
-      "Eine außerklinische Hebammen-Einrichtung für physiologische Geburten",
-      "Ein Sanatorium für mehrwöchige stationäre Aufenthalte vor der Entbindung",
-      "Eine chirurgische Spezialklinik ausschließlich für Wunschkaiserschnitte",
-      "Eine ambulante Praxis nur für Hebammensprechstunden ohne Entbindungsraum"
+      "Eine außerklinische, von Hebammen geführte Einrichtung für Frauen mit unkomplizierter Schwangerschaft und physiologischem Verlauf",
+      "Eine rein ärztlich geführte universitäre Spezialklinik für Risikoschwangerschaften mit maximaler intensivmedizinischer Apparatemedizin",
+      "Ein reines Hotel ohne medizinisches Personal, in dem Geburten ausschließlich durch Familienangehörige begleitet werden",
+      "Eine Spezialklinik für Drillingsgeburten und Risikoschwangerschaften mit angeschlossenem Perinatalzentrum Level 1"
     ],
     "explanation": "Im Geburtshaus steht die persönliche Beziehung zur vertrauten Hebamme im Mittelpunkt – bei auftretenden Komplikationen wird ruhig in eine Klinik verlegt.",
     "exp": "Eine außerklinische, von Hebammen geführte Einrichtung für Frauen mit unkomplizierter Schwangerschaft und physiologischem Verlauf"
@@ -656,10 +656,10 @@
     "diff": "mid",
     "q": "Was zeigen wissenschaftliche Untersuchungen (wie die QUAG-Statistiken) zur Sicherheit geplanter außerklinischer Geburten bei gesunden Schwangeren?",
     "a": [
-      "Signifikant weniger Interventionen bei gleicher kindlicher Sicherheit",
-      "Über fünfzig Prozent Notfälle durch fehlende Sauerstoffflaschen",
-      "Verdopplung der Kaiserschnittrate durch mangelnde Überwachung",
-      "Grundsätzliches Verbot jeglicher Schmerzlinderung bei Wehen"
+      "Sie weisen bei gleicher kindlicher Sicherheit signifikant weniger Interventionen wie Dammschnitte oder Kaiserschnitte auf",
+      "Sie führen in über fünfzig Prozent der registrierten Fälle zu lebensbedrohlichen Notfällen durch fehlende Sauerstoffflaschen",
+      "Sie sind mit einer Verdreifachung der mütterlichen Infektionsrate im Vergleich zu Universitätskliniken verbunden",
+      "Sie zeigen keinerlei statistische Unterschiede hinsichtlich medizinischer Eingriffe im Vergleich zu Standardkreißsälen"
     ],
     "explanation": "Die Gesellschaft für Qualität in der außerklinischen Geburtshilfe belegt: Bei sorgfältiger Vorsorge und erfahrener Hebamme sind Hausgeburten und Geburtshausgeburten sehr sicher.",
     "exp": "Sie weisen bei gleicher kindlicher Sicherheit signifikant weniger Interventionen wie Dammschnitte oder Kaiserschnitte auf"
@@ -669,10 +669,10 @@
     "diff": "easy",
     "q": "Welche wohltuenden physiologischen Vorteile bietet das Verweilen in einer warmen Geburtswanne (Wassergeburt)?",
     "a": [
-      "Auftrieb entlastet Gelenke, warmes Wasser lindert Schmerzen und weicht Damm",
-      "Das Wasser kühlt die Körpertemperatur gezielt ab, um Wehen zu verlangsamen",
-      "Der Wasserdruck verhindert das Öffnen des Muttermunds vor Eintreffen des Arztes",
-      "Wassergeburten sind gesetzlich nur bei Mehrlingsgeburten im Krankenhaus erlaubt"
+      "Der hydrostatische Auftrieb entlastet Muskeln und Gelenke, warmes Wasser wirkt schmerzlindernd und das Dammgewebe wird weich",
+      "Das Wasser kühlt die Körpertemperatur der Gebärenden gezielt auf dreißig Grad ab, um den Kreislauf herunterzufahren",
+      "Durch den Wasserdruck wird das ungeborene Baby im Uterus fixiert, sodass unwillkürliche Kindsbewegungen unterbleiben",
+      "Das Wasser bewirkt eine sofortige chemische Gerinnung aller Körperflüssigkeiten zur Vermeidung jeglichen Blutverlusts"
     ],
     "explanation": "Wasser wird oft als „natürliche PDA“ bezeichnet: Frauen fühlen sich leichter, können die Position mühelos wechseln und das Beckengewebe dehnt sich sanfter.",
     "exp": "Der hydrostatische Auftrieb entlastet Muskeln und Gelenke, warmes Wasser wirkt schmerzlindernd und das Dammgewebe wird weich"
@@ -682,10 +682,10 @@
     "diff": "pro",
     "q": "Warum atmet ein gesundes Neugeborenes bei einer Wassergeburt unter Wasser nicht ein, bevor es an die Oberfläche gehoben wird?",
     "a": [
-      "Wegen des Tauchreflexes; der Atemreiz entsteht erst durch Luftkontakt im Gesicht",
-      "Weil die Lungen des Babys vor der Geburt vollkommen mit Schleim verklebt sind",
-      "Weil das Neugeborene unter Wasser über die Nabelschnur vollbeatmet wird",
-      "Weil Neugeborene in den ersten Lebensminuten keinen Sauerstoff benötigen"
+      "Wegen des angeborenen Tauchreflexes (Diving Reflex), da der erste Atemzug erst durch Kältereiz und Luftkontakt an der Gesichtshaut ausgelöst wird",
+      "Weil die Lungen des Neugeborenen vor der Geburt vollkommen verklebt sind und erst durch einen von außen gesetzten elektrischen Impuls entfaltet werden",
+      "Weil das Baby während der gesamten Geburt über einen Kiemenmechanismus an den Halsfalten Sauerstoff aus dem Wasser filtert",
+      "Weil der Kehldeckel des Neugeborenen bis zum sechsten Lebenstag fest mit der Zungenwurzel knöchern verwachsen bleibt"
     ],
     "explanation": "Solange das Baby unter Wasser ist und die Nabelschnur pulsiert, wird es wie im Bauch versorgt – erst der kühle Luftzug an Nase und Mund triggert den ersten Atemzug.",
     "exp": "Wegen des angeborenen Tauchreflexes (Diving Reflex), da der erste Atemzug erst durch Kältereiz und Luftkontakt an der Gesichtshaut ausgelöst wird"
@@ -708,10 +708,10 @@
     "diff": "easy",
     "q": "Was beschreibt der Begriff der „Golden Hour“ unmittelbar nach der Entbindung?",
     "a": [
-      "Erste ungestörte Stunde voller Hautkontakt und Ruhe zur Bindungsförderung",
-      "Exakt sechzig Minuten dauernde Phase, in der das Kind gebadet werden muss",
-      "Zeitfenster für die routinemäßige Gabe von künstlichem Vitamin K per Spritze",
-      "Zeitspanne, in der das Neugeborene dem Vater zur Erstversorgung übergeben wird"
+      "Die erste ungestörte Stunde voller Hautkontakt und Ruhe zwischen Eltern und Neugeborenem zur optimalen Bindungsförderung",
+      "Die exakt sechzig Minuten dauernde Phase, in der das Neugeborene zwingend gebadet, gewogen und angezogen werden muss",
+      "Ein medizinisches Zeitfenster, in dem die Mutter zwingend unter hellen Strahlern auf dem Rücken liegen muss",
+      "Die erste Stunde nach der Plazentageburt, in der die Gebärende eine feste Vollnarkose zur Erholung erhält"
     ],
     "explanation": "Wiegen und Messen können warten: Ununterbrochener Haut-zu-Haut-Kontakt in der ersten Stunde prägt das Urvertrauen und stabilisiert Atmung und Temperatur des Babys.",
     "exp": "Die erste ungestörte Stunde voller Hautkontakt und Ruhe zwischen Eltern und Neugeborenem zur optimalen Bindungsförderung"
@@ -721,10 +721,10 @@
     "diff": "easy",
     "q": "Welche lebenswichtigen Körperfunktionen stabilisiert der direkte Haut-zu-Haut-Kontakt (Känguruhen) beim Neugeborenen nachweislich?",
     "a": [
-      "Körpertemperatur, Herzfrequenz, Atmung und Blutzuckerspiegel",
-      "Sehstärke und räumliches Sehvermögen des Neugeborenen",
-      "Vollständige Ausreifung der Nierenrinde und Harnblase",
-      "Dauerhaftes Schließen der Schädelknochen und Fontanellen"
+      "Körpertemperatur, Herzfrequenz, Atemfrequenz und Blutzuckerspiegel des Babys regulieren sich im Hautkontakt signifikant schneller",
+      "Die Sehstärke des Neugeborenen passt sich innerhalb weniger Minuten dauerhaft an die Schärfe und Farbwahrnehmung eines Erwachsenen an",
+      "Der Knochenbau der Schädelplatten verhärtet sich schlagartig, um Verletzungen durch Stöße komplett auszuschließen",
+      "Das Neugeborene verliert das Verlangen nach Muttermilch und kann sofort feste Nahrung über den Magen aufnehmen"
     ],
     "explanation": "Die mütterliche Brust fungiert wie ein intelligenter Wärmeregler: Ist das Baby kühl, steigt die Hauttemperatur der Mutter messbar an, um das Kind zu wärmen.",
     "exp": "Körpertemperatur, Herzfrequenz, Atemfrequenz und Blutzuckerspiegel des Babys regulieren sich im Hautkontakt signifikant schneller"
@@ -734,10 +734,10 @@
     "diff": "mid",
     "q": "Was versteht man unter dem faszinierenden angeborenen Reflex des sogenannten „Breast Crawl“?",
     "a": [
-      "Das Baby robbt auf dem mütterlichen Bauch selbstständig zur Brustwarze",
-      "Das Neugeborene kriecht reflexartig in die wärmste Ecke des Wärmebetts",
-      "Das Baby richtet sich im Vierfüßlerstand auf den Oberschenkeln auf",
-      "Das Kind greift nach den Händen der Hebamme zur Gleichgewichtssuche"
+      "Das Neugeborene robbt auf dem Bauch der Mutter durch instinktive Beinbewegungen selbstständig nach oben zur Brustwarze",
+      "Das Baby krallt sich mit beiden Händen an der Kleidung des Vaters fest, um die Balance im aufrechten Stehen eigenständig zu erproben",
+      "Der Säugling stößt rhythmische Pfeiflaute aus, um die Milchdrüsen der Mutter hormonell auf Distanz zu aktivieren",
+      "Das Kind dreht sich im Schlaf automatisch im Kreis, um die Ausrichtung des Erdmagnetfelds im Kopf abzuspeichern"
     ],
     "explanation": "Wird das Baby auf den mütterlichen Bauch gelegt, findet es geleitet durch Geruch und Sehsinn oft ganz ohne Hilfe den Weg zur Brust und dockt eigenständig an.",
     "exp": "Das Neugeborene robbt auf dem Bauch der Mutter durch instinktive Beinbewegungen selbstständig nach oben zur Brustwarze"
@@ -747,10 +747,10 @@
     "diff": "mid",
     "q": "Was zeichnet das alternative Konzept einer „Lotusgeburt“ aus, das von manchen Eltern praktiziert wird?",
     "a": [
-      "Die Nabelschnur bleibt unberührt, bis sie nach einigen Tagen von selbst abfällt",
-      "Die Geburt findet rituell in einem mit Seerosenblättern gefüllten Becken statt",
-      "Die Plazenta wird unmittelbar nach der Geburt getrocknet und pulverisiert",
-      "Die Mutter fastet während der gesamten Austreibungsphase nach Lotus-Regeln"
+      "Die Nabelschnur wird gar nicht durchtrennt; Baby und Plazenta bleiben verbunden, bis die Schnur nach einigen Tagen von selbst abfällt",
+      "Die Geburt findet rituell in einem mit schwimmenden Seerosenblättern gefüllten Bassin unter freiem Himmel statt",
+      "Die Plazenta wird unmittelbar nach dem Austritt getrocknet, pulverisiert und in Kapseln an das Neugeborene verfüttert",
+      "Die Mutter verbleibt während der gesamten Wehenarbeit in einem starren Schneidersitz auf einer Meditationsmatte"
     ],
     "explanation": "Bei der Lotusgeburt wird die Plazenta mit Kräutern und Meersalz gepflegt und in einem Tuch neben dem Baby aufbewahrt, bis die Verbindung nach 3 bis 10 Tagen schonend eintrocknet.",
     "exp": "Die Nabelschnur wird gar nicht durchtrennt; Baby und Plazenta bleiben verbunden, bis die Schnur nach einigen Tagen von selbst abfällt"
@@ -760,10 +760,10 @@
     "diff": "easy",
     "q": "Was ist das sogenannte „Kolostrum“ und warum wird es häufig auch als „flüssiges Gold“ bezeichnet?",
     "a": [
-      "Die nährstoffreiche Vormilch der ersten Tage mit wertvollen Antikörpern",
-      "Eine zuckerfreie Ersatzflüssigkeit aus Fencheltee und Traubenzucker, die im Krankenhaus standardmäßig zugefüttert wird",
-      "Ein künstliches Gemisch aus sterilem Wasser und Traubenzuckerlösung zur Stabilisierung des mütterlichen Blutzuckers",
-      "Ein standardisiertes pharmazeutisches Kolostrum-Präparat auf Basis von gereinigtem Rinderserum für Frühgeborene"
+      "Die hochkonzentrierte Vormilch der ersten Tage, reich an schützenden Antikörpern (Immunglobulin A) und Wachstumsfaktoren",
+      "Eine künstliche Ersatzflüssigkeit aus Fencheltee und Traubenzucker, die im Krankenhaus auf der Neugeborenenstation zugefüttert wird",
+      "Ein spezielles Badeöl aus reinem Arganöl, das zum ersten Waschen des kindlichen Körpers im Kreißsaal genutzt wird",
+      "Die klare Tränenflüssigkeit des Neugeborenen, die die Hornhaut vor dem Austrocknen durch Raumluft schützt"
     ],
     "explanation": "Wenige Tropfen genügen vollkommen: Kolostrum versiegelt die Darmwand des Neugeborenen gegen Krankheitserreger und liefert die perfekte erste Immunisierung.",
     "exp": "Die hochkonzentrierte Vormilch der ersten Tage, reich an schützenden Antikörpern (Immunglobulin A) und Wachstumsfaktoren"
@@ -786,10 +786,10 @@
     "diff": "easy",
     "q": "Welche fünf Vitalzeichen beurteilt der nach Virginia Apgar benannte Apgar-Score standardmäßig nach 1, 5 und 10 Minuten?",
     "a": [
-      "Atmung, Puls, Muskeltonus, Hautfarbe und Reflexe auf Reize",
+      "Atmung, Puls (Herzfrequenz), Grundtonus (Muskelspannung), Aussehen (Hautfarbe) und Reflexe auf Reize",
       "Körpergewicht, Kopfumfang, Körperlänge, Geburtszeitpunkt und Lautstärke des ersten Schreiens",
-      "Blutdruck, Pupillenreaktion, Temperatur, Blutzucker und Sauerstoffsättigung im Nabelschnurblut",
-      "Hörvermögen, Greifreflex, Saugreflex, Schlafdauer und Trinkmenge in den ersten zwanzig Minuten"
+      "Augenfarbe, Nagelbettbeschaffenheit, Nabelschnurdurchmesser, Zahnanlagen und Fußgewölbewinkel",
+      "Blutzuckerwert, Bilirubinspiegel, Lebergröße, Körperkerntemperatur und Hämoglobingehalt im Vollblut"
     ],
     "explanation": "Der Apgar-Test ist schnell und nicht-invasiv: Werte von 8 bis 10 Punkten zeigen, dass sich das Baby hervorragend an das Leben außerhalb des Bauches angepasst hat.",
     "exp": "Atmung, Puls (Herzfrequenz), Grundtonus (Muskelspannung), Aussehen (Hautfarbe) und Reflexe auf Reize"
@@ -812,10 +812,10 @@
     "diff": "pro",
     "q": "Warum kann die Anwesenheit von zu vielen fremden Personen oder häufig wechselndem Personal im Geburtsraum den Geburtsfortschritt hemmen?",
     "a": [
-      "Beobachtung aktiviert den Neokortex und die Stressachse, was Wehen hemmt",
-      "Der Sauerstoffgehalt der Raumluft sinkt durch mehr anwesende Personen so drastisch, dass Wehenkrämpfe ausbleiben",
-      "Die Körpertemperatur der Mutter steigt durch die Anwesenheit vieler Menschen unkontrolliert auf über 39 Grad",
-      "Die Herzfrequenz des Kindes synchronisiert sich messbar mit den Pulsschlägen aller im Raum stehenden Personen"
+      "Das Gefühl des Beobachtetwerdens aktiviert den Neokortex und die Stressachse, was die rhythmische Wehentätigkeit stören kann",
+      "Der Sauerstoffgehalt der Raumluft sinkt durch mehr anwesende Personen so drastisch, dass Wehenkrämpfe physikalisch ausbleiben",
+      "Die Temperatur im Kreißsaal steigt durch Körperwärme über vierzig Grad und führt zu mütterlicher Hyperthermie",
+      "Die Schallwellen vieler Stimmen neutralisieren die mechanische Schwingung des Gebärmuttermuskels auf physikalischer Ebene"
     ],
     "explanation": "Gebären ist ein zutiefst intimer Akt wie die Zeugung: Ständige Störungen signalisieren Gefahr und sabotieren das empfindliche Hormongefüge.",
     "exp": "Das Gefühl des Beobachtetwerdens aktiviert den Neokortex und die Stressachse, was die rhythmische Wehentätigkeit stören kann"
@@ -852,7 +852,7 @@
     "q": "Welcher Zeitraum wird in der Medizin und Hebammenkunde traditionell als das „Wochenbett“ (Puerperium) definiert?",
     "a": [
       "Die ersten sechs bis acht Wochen nach der Entbindung, in denen sich Organe regenerieren und die Hormonumstellung erfolgt",
-      "Ausschließlich die ersten sieben Tage nach der Geburt, in denen die Mutter das Schlafzimmer nicht verlassen darf",
+      "Ausschließlich die ersten sieben Tage nach der Entbindung, in denen die Wöchnerin das Schlafzimmer keinesfalls verlassen darf",
       "Die gesamten neun Monate nach der Geburt, bis das Kind das freie Laufen ohne fremde Hilfe erlernt hat",
       "Genau vierundzwanzig Stunden nach Ausstoßung der Plazenta, bis der Uterus seine ursprüngliche Größe erreicht hat"
     ],
@@ -904,7 +904,7 @@
     "q": "Wann sollte nach einer unkomplizierten vaginalen Geburt frühestens mit einem gezielten Rückbildungskurs begonnen werden?",
     "a": [
       "Etwa sechs bis acht Wochen nach der Geburt, wenn die Wundheilung abgeschlossen ist und der Beckenboden geschont wurde",
-      "Bereits am Tag nach der Entbindung mit intensivem Joggen und Sprungübungen zur Straffung des Bindegewebes",
+      "Bereits am Tag nach der Entbindung mit hochintensivem Joggen und Sprungübungen zur raschen Straffung des Bindegewebes",
       "Frühestens nach zwei Jahren, da der Körper vorher auf keinerlei muskuläre Reize und Kräftigung anspricht",
       "Ausschließlich dann, wenn Beschwerden wie akute Inkontinenz oder eine Gebärmuttersenkung diagnostiziert wurden"
     ],
@@ -917,7 +917,7 @@
     "q": "Was zeichnet die ergonomische „Anhock-Spreiz-Haltung“ (M-Position) beim Tragen des Babys im Tragetuch aus?",
     "a": [
       "Die Knie des Babys sind etwa auf Bauchnabelhöhe angehockt, die Beine leicht gespreizt und der Rücken bildet eine Rundung",
-      "Die Beine des Babys hängen kerzengerade nach unten durch, während der Rücken starr an ein Holzbrett gedrückt wird",
+      "Die Beine des Babys hängen kerzengerade nach unten durch, während der Rücken starr an ein festes Tragebrett gedrückt wird",
       "Das Baby wird grundsätzlich mit dem Blick nach vorne getragen, sodass die Wirbelsäule in ein extremes Hohlkreuz fällt",
       "Die Füße des Babys werden eng aneinandergebunden, um die Streckung der Kniegelenke frühzeitig zu trainieren"
     ],
@@ -943,7 +943,7 @@
     "q": "Stimmt der weitverbreitete Mythos, eine Schwangere müsse von Beginn an sprichwörtlich „für zwei essen“?",
     "a": [
       "Nein, der tatsächliche Kalorienmehrbedarf liegt ab dem zweiten Trimester im Schnitt bei nur etwa zweihundert bis dreihundert Kalorien pro Tag",
-      "Ja, der Kalorienbedarf verdoppelt sich ab der sechsten Schwangerschaftswoche exakt auf die zweifache Tagesmenge",
+      "Ja, der tatsächliche tägliche Kalorienbedarf verdoppelt sich bereits ab der sechsten Schwangerschaftswoche ganz exakt auf die zweifache Tagesmenge",
       "Nein, Schwangere sollten ihre Kalorienzufuhr um die Hälfte reduzieren, um das Geburtsgewicht des Kindes niedrig zu halten",
       "Ja, der mütterliche Stoffwechsel verbrennt im Ruhezustand die fünffache Menge an Fettreserven für das Gehirn des Fötus"
     ],
@@ -956,7 +956,7 @@
     "q": "Was unterscheidet den weitverbreiteten „Babyblues“ (Heultage) von einer echten postpartalen Depression (Wochenbettdepression)?",
     "a": [
       "Der Babyblues tritt um den 3. bis 5. Tag durch den rapiden Hormonabfall auf und vergeht meist rasch; eine Depression hält länger an und braucht Hilfe",
-      "Der Babyblues erfordert eine sofortige lebenslange medikamentöse Therapie, während eine Depression nach zwei Stunden verschwindet",
+      "Der Babyblues erfordert eine sofortige lebenslange medikamentöse Psychotherapie, während eine schwere Wochenbettdepression nach zwei Stunden von selbst vergeht",
       "Beim Babyblues handelt es sich um eine rein körperliche Unverträglichkeit gegen Muttermilch ohne emotionale Beteiligung",
       "Eine postpartale Depression betrifft ausschließlich Adoptiveltern, während leibliche Mütter biologisch davor geschützt sind"
     ],
@@ -969,7 +969,7 @@
     "q": "Was besagt der Mythos um Sodbrennen in der Schwangerschaft und den Haarwuchs des ungeborenen Babys aus wissenschaftlicher Sicht?",
     "a": [
       "Eine klinische Studie fand tatsächlich eine Korrelation: Dieselben Schwangerschaftshormone lockern den Magen und regen den fetalen Haarwuchs an",
-      "Die Haare des Fötus ragen durch winzige Öffnungen in der Gebärmutterwand direkt in den Magen und lösen dort mechanische Reizungen aus",
+      "Die Haare des Fötus ragen durch winzige physiologische Öffnungen in der Gebärmutterwand direkt in den Magen und lösen dort mechanische Reizungen aus",
       "Das Phänomen beruht ausschließlich auf der mechanischen Lage des kindlichen Schädels, der die Gallenflüssigkeit stetig nach oben drückt",
       "Wissenschaftliche Reihenuntersuchungen bewiesen zweifelsfrei, dass starkes mütterliches Sodbrennen ausnahmslos zu haarlosen Babys führt"
     ],

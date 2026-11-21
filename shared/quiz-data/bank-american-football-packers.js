@@ -7,9 +7,9 @@
     "q": "Wer gründete die Green Bay Packers im August 1919 gemeinsam mit George Whitney Calhoun?",
     "a": [
       "Earl 'Curly' Lambeau",
-      "Vincent 'Vince' Lombardi",
-      "Bryan 'Bart' Starr",
-      "Donald 'Don' Hutson"
+      "Vince Lombardi (legendärer Cheftrainer)",
+      "Bart Starr (MVP der ersten beiden Super Bowls)",
+      "Don Hutson (revolutionärer Pass-Receiver)"
     ],
     "exp": "Curly Lambeau und Sportreporter George Whitney Calhoun gründeten das Team in der Redaktionsstube der 'Green Bay Press-Gazette'.",
     "explanation": "Curly Lambeau und Sportreporter George Whitney Calhoun gründeten das Team in der Redaktionsstube der 'Green Bay Press-Gazette'."
@@ -19,10 +19,10 @@
     "diff": "easy",
     "q": "Woher stammt der Vereinsname 'Packers'?",
     "a": [
-      "Indian Packing Company",
-      "Acme Meat Company",
-      "Wisconsin Cheese Corp.",
-      "Midwest Lumber Mills"
+      "Von der Indian Packing Company, die 500 Dollar für die ersten Trikots spendete",
+      "Von einem Fleischgroßhandel in Chicago für die allerersten Spieltrikots",
+      "Von der örtlichen Eisenbahngesellschaft für Frachttransporte nach Milwaukee",
+      "Vom Hafenmeister von Green Bay, der Frachtschiffe im Michigansee belud"
     ],
     "exp": "Lambeaus Arbeitgeber, die Fleischverpackungsfirma Indian Packing Company, stellte 500 $ für Trikots bereit – unter der Bedingung, dass das Team nach ihr benannt wird.",
     "explanation": "Lambeaus Arbeitgeber, die Fleischverpackungsfirma Indian Packing Company, stellte 500 $ für Trikots bereit – unter der Bedingung, dass das Team nach ihr benannt wird."
@@ -32,10 +32,10 @@
     "diff": "easy",
     "q": "Was unterscheidet das Eigentümermodell der Packers von allen anderen US-Profisport-Franchises?",
     "a": [
-      "Blau und Gold",
-      "Grün und Weiß",
-      "Rot und Schwarz",
-      "Gelb und Braun"
+      "Sie gehören über 530.000 Fan-Aktionären als gemeinnützige Aktiengesellschaft",
+      "Sie sind im ungeteilten Gemeinschaftsbesitz des Bundesstaates Wisconsin",
+      "Sie werden als Genossenschaft direkt von den Dauerkarteninhabern geführt",
+      "Sie gehören einem Stiftungsfonds ehemaliger Spieler und Trainerlegenden"
     ],
     "exp": "Die Packers sind das einzige Fan-eigene Franchise der US-Major-Leagues. Es gibt keinen Milliardärs-Besitzer; Aktien werfen keine Dividende ab und sind unverkäuflich.",
     "explanation": "Die Packers sind das einzige Fan-eigene Franchise der US-Major-Leagues. Es gibt keinen Milliardärs-Besitzer; Aktien werfen keine Dividende ab und sind unverkäuflich."
@@ -45,10 +45,10 @@
     "diff": "easy",
     "q": "Warum trägt die Stadt Green Bay (rund 107.000 Einwohner) stolz den Beinamen 'Titletown'?",
     "a": [
-      "1921",
-      "1933",
-      "1919",
-      "1925"
+      "Wegen der Rekordzahl von 13 NFL-Meisterschaften in der Clubgeschichte",
+      "Weil Vince Lombardi das Rathaus nach dem ersten Super Bowl so taufte",
+      "Weil das Rathaus die meisten Sporttrophäen der gesamten USA besitzt",
+      "Weil hier die erste Meisterschaftstrophäe der NFL gegossen wurde"
     ],
     "exp": "Mit 13 NFL-Titeln (9 NFL Championships vor der Super-Bowl-Ära plus 4 Super Bowls) ist Green Bay die erfolgreichste Stadt der Football-Geschichte.",
     "explanation": "Mit 13 NFL-Titeln (9 NFL Championships vor der Super-Bowl-Ära plus 4 Super Bowls) ist Green Bay die erfolgreichste Stadt der Football-Geschichte."
@@ -58,10 +58,10 @@
     "diff": "mid",
     "q": "Was würde laut Vereinssatzung mit dem Vermögen geschehen, falls die Packers jemals aufgelöst werden sollten?",
     "a": [
-      "Green Bay Press-Gazette",
-      "Milwaukee Journal",
-      "Chicago Tribune",
-      "Wisconsin State Journal"
+      "Der gesamte Erlös ginge an die örtliche Kriegsveteranen-Stiftung 'Sullivan-Wallen Post'",
+      "Das gesamte Vereinsvermögen würde gleichmäßig an alle Bürger von Green Bay ausgezahlt",
+      "Das Geld fiele automatisch an den Schulsportverband des Bundesstaates Wisconsin",
+      "Die Summe würde zur Hälfte an die NFL und zur Hälfte an den US-Kongress überwiesen"
     ],
     "exp": "Die Satzung schützt das Team vor Spekulanten: Niemand kann sich bereichern, ein Liquidationserlös flöße an die Veteranen-Organisation.",
     "explanation": "Die Satzung schützt das Team vor Spekulanten: Niemand kann sich bereichern, ein Liquidationserlös flöße an die Veteranen-Organisation."
@@ -71,10 +71,10 @@
     "diff": "easy",
     "q": "Wie lang ist die Warteliste für Dauerkarten im Lambeau Field mittlerweile rund?",
     "a": [
-      "Über 500.000 Aktionäre",
-      "Genau 100.000 Aktionäre",
-      "Über 2 Millionen Fans",
-      "Rund 50.000 Einwohner"
+      "Über 140.000 Fans (Wartezeit oft über 30 bis 50 Jahre)",
+      "Rund 80.000 registrierte Interessenten aus aller Welt",
+      "Exakt 75.000 Bewerber auf einer limitierten Liste",
+      "Über 90.000 Dauerkarten-Anwärter mit langer Bindung"
     ],
     "exp": "In Green Bay werden Neugeborene oft sofort nach der Geburt auf die Warteliste gesetzt. Jedes Spiel seit 1960 ist restlos ausverkauft.",
     "explanation": "In Green Bay werden Neugeborene oft sofort nach der Geburt auf die Warteliste gesetzt. Jedes Spiel seit 1960 ist restlos ausverkauft."
@@ -84,10 +84,10 @@
     "diff": "mid",
     "q": "Wofür steht das berühmte weiße ovale 'G' auf den Helmen der Packers laut Original-Designer Dad Braisher?",
     "a": [
-      "Keine Dividendenausschüttung und kein gewinnorientierter Weiterverkauf",
-      "Verpflichtung zu mindestens fünf Stadionbesuchen pro NFL-Saison",
-      "Stimmrecht nur bei persönlicher Anwesenheit in Green Bay",
-      "Automatisches Vorkaufsrecht für Tickets bei jedem Super Bowl"
+      "Es stand ursprünglich für 'Greatness' (Größe/Exzellenz)",
+      "Es stand von Beginn an ausschließlich für die Stadt 'Green Bay'",
+      "Es symbolisierte die Goldreserven des Bundesstaates Wisconsin",
+      "Es war eine Hommage an Gründer George Whitney Calhoun"
     ],
     "exp": "Ausrüster Dad Braisher entwarf das Logo 1961 unter Vince Lombardi mit dem Leitgedanken 'Greatness' – heute steht es weltweit für Green Bay.",
     "explanation": "Ausrüster Dad Braisher entwarf das Logo 1961 unter Vince Lombardi mit dem Leitgedanken 'Greatness' – heute steht es weltweit für Green Bay."
@@ -97,10 +97,10 @@
     "diff": "mid",
     "q": "In welchen Jahren gewannen die Packers ihre bisherigen vier Super-Bowl-Titel?",
     "a": [
-      "13 NFL-Championships",
-      "9 NFL-Championships",
-      "15 NFL-Championships",
-      "11 NFL-Championships"
+      "Super Bowl I (1967), II (1968), XXXI (1997) und XLV (2011)",
+      "Super Bowl III (1969), IV (1970), XX (1986) und L (2016)",
+      "Super Bowl VI (1972), XII (1978), XXII (1988) und XXXII (1998)",
+      "Super Bowl V (1971), X (1976), XXV (1991) und XLIX (2015)"
     ],
     "exp": "Die Packers gewannen die ersten beiden Super Bowls unter Lombardi, triumphierten 1997 mit Brett Favre und holten 2011 mit Aaron Rodgers den vierten Ring.",
     "explanation": "Die Packers gewannen die ersten beiden Super Bowls unter Lombardi, triumphierten 1997 mit Brett Favre und holten 2011 mit Aaron Rodgers den vierten Ring."
@@ -110,10 +110,10 @@
     "diff": "easy",
     "q": "Wie lautet der berühmteste Schlachtruf und Anfeuerungsgesang der Fans im Lambeau Field?",
     "a": [
-      "Vier Super-Bowl-Titel",
-      "Sechs Super-Bowl-Titel",
-      "Drei Super-Bowl-Titel",
-      "Fünf Super-Bowl-Titel"
+      "'Go Pack Go!'",
+      "'Green and Gold forever!'",
+      "'Packers rolling on!'",
+      "'Hail to the Cheese!'"
     ],
     "exp": "Das eingängige 'Go Pack Go!' mit den markanten Fanfaren-Tönen ist einer der bekanntesten Fangesänge der gesamten Sportwelt.",
     "explanation": "Das eingängige 'Go Pack Go!' mit den markanten Fanfaren-Tönen ist einer der bekanntesten Fangesänge der gesamten Sportwelt."
@@ -123,10 +123,10 @@
     "diff": "easy",
     "q": "Welches Kopfbedeckungs-Utensil machten die Fans der Packers als Markenzeichen berühmt?",
     "a": [
-      "Vince Lombardi Trophy",
-      "George Halas Trophy",
-      "Lamar Hunt Trophy",
-      "Walter Payton Trophy"
+      "Die dreieckigen gelben Schaumstoff-Käsehüte ('Cheeseheads')",
+      "Grün-goldene Wollmützen mit echtem Fuchsfell-Bommel für den Frost",
+      "Gefütterte Fliegermützen mit Ohrenschützern gegen die Kälte",
+      "Gelbe Bauarbeiterhelme mit aufgedrucktem Packers-Vereinswappen"
     ],
     "exp": "Ralph Bruno erfand den 'Cheesehead' 1987 aus einer alten Schaumstoff-Couch, um den Spott von White-Sox-Fans über 'Käsefresser aus Wisconsin' mit Stolz zu tragen.",
     "explanation": "Ralph Bruno erfand den 'Cheesehead' 1987 aus einer alten Schaumstoff-Couch, um den Spott von White-Sox-Fans über 'Käsefresser aus Wisconsin' mit Stolz zu tragen."
@@ -136,10 +136,10 @@
     "diff": "mid",
     "q": "Welche sympathische Tradition pflegen die Packers-Profis seit den 1950ern im sommerlichen Training Camp?",
     "a": [
-      "Sweeper / Lombardi Power Sweep",
-      "West Coast Short Pass Attack",
-      "Option Pitch Run Offense",
-      "Shotgun Spread Formation"
+      "Sie fahren auf Fahrrädern von einheimischen Kindern vom Stadion zum Trainingsplatz",
+      "Sie marschieren in voller Spielmontur gemeinsam im Fan-Marsch durch die Vorstadt",
+      "Sie servieren den Fans vor der ersten Trainingseinheit persönlich frischen Kaffee",
+      "Sie signieren traditionell einen riesigen Käselaib vor den Toren des Lambeau Fields"
     ],
     "exp": "Kinder warten mit ihren Rädern vor der Kabine: Die Stars schnappen sich die kleinen Fahrräder, die Kinder tragen die Helme und laufen nebenher.",
     "explanation": "Kinder warten mit ihren Rädern vor der Kabine: Die Stars schnappen sich die kleinen Fahrräder, die Kinder tragen die Helme und laufen nebenher."
@@ -149,10 +149,10 @@
     "diff": "pro",
     "q": "In welchen Original-Farben spielten die Packers in ihren Anfangsjahren unter Curly Lambeau?",
     "a": [
-      "Paul Hornung",
-      "Jim Taylor",
-      "Boyd Dowler",
-      "Max McGee"
+      "In Dunkelblau und Gold (Farben der University of Notre Dame)",
+      "In Schwarz und Weiß (analog zur Acme Packing Company)",
+      "In Rubinrot und Silber (Farben der regionalen Handelskammer)",
+      "Von Beginn an exakt im heutigen Waldgrün und Sonnengelb"
     ],
     "exp": "Lambeau hatte für Knute Rocknes Notre Dame Fighting Irish gespielt und übernahm deren blau-goldene Farbkombination. Erst 1950 kam das heutige Grün.",
     "explanation": "Lambeau hatte für Knute Rocknes Notre Dame Fighting Irish gespielt und übernahm deren blau-goldene Farbkombination. Erst 1950 kam das heutige Grün."
@@ -162,10 +162,10 @@
     "diff": "mid",
     "q": "Welche Großstadt in Wisconsin trug von 1933 bis 1994 regelmäßig Heimspiele der Packers im County Stadium aus?",
     "a": [
-      "1957",
-      "1965",
-      "1950",
-      "1972"
+      "Milwaukee",
+      "Madison (Hauptstadt von Wisconsin)",
+      "Chicago (im traditionsreichen Soldier Field)",
+      "Minneapolis (Heimat der Minnesota Vikings)"
     ],
     "exp": "Um wirtschaftlich im größeren Markt präsent zu sein, spielten die Packers 62 Jahre lang zwei bis drei Heimspiele pro Saison in Milwaukee.",
     "explanation": "Um wirtschaftlich im größeren Markt präsent zu sein, spielten die Packers 62 Jahre lang zwei bis drei Heimspiele pro Saison in Milwaukee."
@@ -175,10 +175,10 @@
     "diff": "mid",
     "q": "Was war der 'Lombardi Time'-Grundsatz, den Trainerlegende Vince Lombardi von allen Spielern eisern einforderte?",
     "a": [
-      "City Stadium",
-      "Packer Bowl",
-      "Brown County Arena",
-      "Titletown Stadium"
+      "Wer nicht mindestens 15 Minuten vor dem Termin da war, galt als unentschuldigt zu spät",
+      "Jedes Training endete exakt 60 Minuten nach dem allerersten Pfiff des Trainers",
+      "Spielzüge mussten in maximal 10 Sekunden fehlerfrei an der Line angesagt werden",
+      "Die Uhren in den Umkleiden gingen absichtlich genau eine Stunde vor der Ortszeit"
     ],
     "exp": "'If you are 15 minutes early, you are on time. If you are on time, you are late!' Die 'Lombardi Time' prägte die Disziplin des Erfolgsteams.",
     "explanation": "'If you are 15 minutes early, you are on time. If you are on time, you are late!' Die 'Lombardi Time' prägte die Disziplin des Erfolgsteams."
@@ -188,10 +188,10 @@
     "diff": "easy",
     "q": "Wie viele NFL-Meisterschaften errangen die Packers vor der Einführung des Super Bowls (1929–1965)?",
     "a": [
-      "The Frozen Tundra",
-      "The Ice Box",
-      "The Green Hell",
-      "The Blizzard Bowl"
+      "9 NFL Championships",
+      "5 NFL Championships",
+      "12 NFL Championships",
+      "3 NFL Championships"
     ],
     "exp": "Curly Lambeau gewann 6 Titel (1929, 1930, 1931, 1936, 1939, 1944), Vince Lombardi legte vor dem Super Bowl drei weitere nach (1961, 1962, 1965).",
     "explanation": "Curly Lambeau gewann 6 Titel (1929, 1930, 1931, 1936, 1939, 1944), Vince Lombardi legte vor dem Super Bowl drei weitere nach (1961, 1962, 1965)."
@@ -201,10 +201,10 @@
     "diff": "mid",
     "q": "Welche kulinarische Spezialität darf bei keinem Tailgating vor einem Packers-Spiel in Wisconsin fehlen?",
     "a": [
-      "Bratwurst und frische Cheese Curds",
-      "Clam Chowder Suppe im Sauerteigbrot",
-      "Deep-Dish-Pizza nach Chicagoer Art",
-      "Räucherlachs-Häppchen mit Frischkäse"
+      "Bratwurst (in Bier und Zwiebeln pochiert und gegrillt) sowie Cheese Curds",
+      "Clam Chowder Muschelsuppe serviert im ausgehöhlten Sauerteigbrot",
+      "Traditionelle Deep-Dish-Pizza frisch nach deftiger Chicagoer Rezeptur",
+      "Frische Räucherlachs-Häppchen auf knusprigem Bagel mit cremigem Käse"
     ],
     "exp": "Wisconsin ist stark deutsch geprägt: Bier, 'Beer Brats' (Bratwürste) und frittierte 'Cheese Curds' (Käsebruch) sind das Herzstück der Fankultur.",
     "explanation": "Wisconsin ist stark deutsch geprägt: Bier, 'Beer Brats' (Bratwürste) und frittierte 'Cheese Curds' (Käsebruch) sind das Herzstück der Fankultur."
@@ -279,10 +279,10 @@
     "diff": "mid",
     "q": "Wie erzielte Bart Starr 13 Sekunden vor dem Ende des 'Ice Bowl' den siegbringenden Touchdown zum 21:17?",
     "a": [
-      "Quarterback Sneak hinter dem Block von Kramer",
-      "Mit einem 40-Yard-Pass in die Ecke auf Dowler",
-      "Durch einen verdeckten Handoff auf Fullback Mercein",
-      "Durch ein artistisches 45-Yard-Field-Goal bei Frost"
+      "Mit einem Quarterback Sneak durch die Mitte hinter dem Block von Jerry Kramer",
+      "Mit einem präzisen 40-Yard-Pass in die Ecke auf Wide Receiver Boyd Dowler",
+      "Durch einen blitzschnell verdeckten Handoff auf Fullback Chuck Mercein",
+      "Durch ein artistisches 45-Yard-Field-Goal mit dem gefrorenen Lederball"
     ],
     "exp": "Starr sprach den Spielzug in der Auszeit mit Lombardi ab: Statt zu passen, glitt er hinter Kramers perfektem Block über die Torlinie – Packers-Sieg!",
     "explanation": "Starr sprach den Spielzug in der Auszeit mit Lombardi ab: Statt zu passen, glitt er hinter Kramers perfektem Block über die Torlinie – Packers-Sieg!"
@@ -318,10 +318,10 @@
     "diff": "easy",
     "q": "Welche beiden imposanten Bronzestatuen begrüßen die Fans vor dem Haupteingang des Lambeau Fields?",
     "a": [
-      "Curly Lambeau und Vince Lombardi",
-      "Bart Starr und Brett Favre",
-      "Reggie White und Ray Nitschke",
-      "Don Hutson und Paul Hornung"
+      "LeRoy Butler (nach einem eroberten Fumble gegen die Raiders)",
+      "Robert Brooks (der den Sprung danach als Markenzeichen etablierte)",
+      "Reggie White (der 'Minister of Defense' sprang in die Endzonen-Fans)",
+      "Antonio Freeman (bejubelte so seinen legendären Touchdown im Regen)"
     ],
     "exp": "Die überlebensgroßen Statuen von Gründer Curly Lambeau und Erfolgstrainer Vince Lombardi flankieren das Atrium des Stadions.",
     "explanation": "Die überlebensgroßen Statuen von Gründer Curly Lambeau und Erfolgstrainer Vince Lombardi flankieren das Atrium des Stadions."
@@ -344,10 +344,10 @@
     "diff": "pro",
     "q": "Was passierte mit der unterirdischen Rasenheizung des Lambeau Fields in der Nacht vor dem Ice Bowl?",
     "a": [
-      "Kondenswasser fror ein und verwandelte den Boden in glattes Eis",
-      "Ein Stromausfall im gesamten County legte die Heizanlage lahm",
-      "Die Heizrohre barsten unter dem Druck heißer Dampfschwaden",
-      "Saboteure aus Dallas drehten heimlich die Hauptventile ab"
+      "Das Kondenswasser fror ein und verwandelte die Feuchtigkeit im Boden in spiegelglattes Eis",
+      "Ein Stromausfall im gesamten Brown County legte die gesamte elektrische Anlage lahm",
+      "Die Heizrohre explodierten unter dem plötzlichen Druck heißer aufsteigender Dampfschwaden",
+      "Saboteure aus Texas drehten heimlich vor dem Anpfiff die Hauptventile der Heizung ab"
     ],
     "exp": "Als die Plane morgens abgezogen wurde, traf die feuchte Luft auf arktische minus 25 Grad: Das Wasser gefror blitzartig zu einer Betonschicht aus Eis.",
     "explanation": "Als die Plane morgens abgezogen wurde, traf die feuchte Luft auf arktische minus 25 Grad: Das Wasser gefror blitzartig zu einer Betonschicht aus Eis."
@@ -357,10 +357,10 @@
     "diff": "easy",
     "q": "Welche beiden Teams standen den Packers in Super Bowl I und Super Bowl II als AFL-Gegner gegenüber?",
     "a": [
-      "Kansas City Chiefs und Oakland Raiders",
-      "New York Jets und Miami Dolphins",
-      "San Diego Chargers und Boston Patriots",
-      "Buffalo Bills und Houston Oilers"
+      "Kansas City Chiefs (Super Bowl I) und Oakland Raiders (Super Bowl II)",
+      "New York Jets (Super Bowl I) und Miami Dolphins (Super Bowl II)",
+      "San Diego Chargers (Super Bowl I) und Boston Patriots (SB II)",
+      "Buffalo Bills (Super Bowl I) und Houston Oilers (Super Bowl II)"
     ],
     "exp": "Die Packers schlugen die Chiefs mit 35:10 in Los Angeles und verteidigten den Titel ein Jahr später mit 33:14 gegen die Raiders in Miami.",
     "explanation": "Die Packers schlugen die Chiefs mit 35:10 in Los Angeles und verteidigten den Titel ein Jahr später mit 33:14 gegen die Raiders in Miami."
@@ -383,10 +383,10 @@
     "diff": "mid",
     "q": "Welches legendäre Zitat von Vince Lombardi über den unbedingten Siegeswillen ging in den US-Sprachgebrauch ein?",
     "a": [
-      "'Winning isn't everything; it's the only thing.'",
-      "'The best defense is a relentless offense.'",
-      "'Show me a good loser and I show you a winner.'",
-      "'Pain is temporary, a Packers ring is forever.'"
+      "Gott habe ihm im Gebet gesagt, er solle nach Green Bay gehen",
+      "Green Bay bot ihm das mit Abstand höchste Gehalt der NFL-Geschichte",
+      "Er wollte unbedingt unter Cheftrainer Mike Holmgren verteidigen",
+      "Seine Frau stammte gebürtig aus der Region um den Lake Michigan"
     ],
     "exp": "Obwohl das Zitat ursprünglich von UCLA-Coach Red Sanders stammte, machte Lombardi den Satz zur weltweiten Philosophie für Spitzenleistung.",
     "explanation": "Obwohl das Zitat ursprünglich von UCLA-Coach Red Sanders stammte, machte Lombardi den Satz zur weltweiten Philosophie für Spitzenleistung."
@@ -396,10 +396,10 @@
     "diff": "pro",
     "q": "Was antwortete Vince Lombardi auf die Frage, was er von Perfektion im Sport halte?",
     "a": [
-      "'Perfection is not attainable, but if we chase perfection we can catch excellence.'",
-      "'Perfection is what happens when talent works harder than luck.'",
-      "'Perfection belongs to the angels, not to mortal football players.'",
-      "'Perfection is boring; give me ten disciplined fighters instead.'"
+      "Ein 99-Yard-Kickoff-Return zum Touchdown (erster Special-Teams-MVP)",
+      "Drei abgefangene Interceptions gegen Patriots-Star Drew Bledsoe",
+      "Zwei gefangene Touchdown-Pässe von Spielmacher Brett Favre",
+      "Ein eroberter Onside-Kick in den Schlussminuten des Finales"
     ],
     "exp": "'Perfektion ist unerreichbar, aber wenn wir Perfektion jagen, können wir Exzellenz einfangen.' Einer der schönsten Leitsätze der Sportgeschichte.",
     "explanation": "'Perfektion ist unerreichbar, aber wenn wir Perfektion jagen, können wir Exzellenz einfangen.' Einer der schönsten Leitsätze der Sportgeschichte."
@@ -422,10 +422,10 @@
     "diff": "mid",
     "q": "Wie viele Zuschauer fasst das traditionsreiche Lambeau Field nach seinen modernen Tribünenerweiterungen?",
     "a": [
-      "Rund 81.440 Zuschauer",
-      "Exakt 60.000 Zuschauer",
-      "Über 105.000 Zuschauer",
-      "Knapp 45.000 Zuschauer"
+      "Rund 81.440 Zuschauer (Platz 2 der gesamten NFL)",
+      "Exakt 72.500 Zuschauer im modernisierten Rund",
+      "Rund 76.000 Zuschauer inklusive aller Logen",
+      "Knapp 68.000 Zuschauer nach dem letzten Umbau"
     ],
     "exp": "Mit 81.441 Plätzen ist das Lambeau Field nach dem MetLife Stadium das zweitgrößte Stadion der NFL – in einer Stadt mit kaum mehr Einwohnern als Plätzen!",
     "explanation": "Mit 81.441 Plätzen ist das Lambeau Field nach dem MetLife Stadium das zweitgrößte Stadion der NFL – in einer Stadt mit kaum mehr Einwohnern als Plätzen!"
@@ -461,10 +461,10 @@
     "diff": "easy",
     "q": "Welchen scheinbar unbrechbaren 'Iron Man'-Rekord stellte Brett Favre in seiner Karriere auf?",
     "a": [
-      "297 aufeinanderfolgende Starts als Quarterback",
-      "50 Spiele ohne eine einzige geworfene Interception",
-      "15 Saisons mit jeweils über 40 Touchdown-Pässen",
-      "100 Siege in Serie bei eisigen Minusgraden"
+      "297 aufeinanderfolgende Starts als Quarterback in der regulären Saison (321 inkl. Playoffs)",
+      "50 Spiele hintereinander ohne eine einzige Interception oder einen Ballverlust zu werfen",
+      "15 aufeinanderfolgende Spielzeiten mit jeweils mindestens 35 geworfenen Touchdowns",
+      "100 Siege in Serie bei frostigen Wintertemperaturen weit unter dem Gefrierpunkt"
     ],
     "exp": "Über 16 Jahre lang stand Favre jeden einzelnen Sonntag auf dem Feld – trotz gebrochener Daumen, Gehirnerschütterungen und Zerrungen. Unfassbare Härte.",
     "explanation": "Über 16 Jahre lang stand Favre jeden einzelnen Sonntag auf dem Feld – trotz gebrochener Daumen, Gehirnerschütterungen und Zerrungen. Unfassbare Härte."
@@ -539,10 +539,10 @@
     "diff": "mid",
     "q": "Welcher 'Golden Boy' der Packers erzielte 1960 den ewigen Rekord von 176 Punkten in einer einzigen Saison mit nur 12 Spielen?",
     "a": [
-      "Paul Hornung",
-      "Jim Taylor",
-      "Boyd Dowler",
-      "Bart Starr"
+      "Donald Driver (10.137 Yards)",
+      "James Lofton (9.656 Yards für die Packers)",
+      "Sterling Sharpe (dreifacher NFL-Receptions-Leader)",
+      "Davante Adams (führte die Liga 2020 bei Touchdowns an)"
     ],
     "exp": "Hornung lief Touchdowns, fing Pässe und verwandelte alle Kicks. Sein Punkteschnitt pro Spiel aus der 12-Spiele-Saison 1960 ist bis heute unübertroffen.",
     "explanation": "Hornung lief Touchdowns, fing Pässe und verwandelte alle Kicks. Sein Punkteschnitt pro Spiel aus der 12-Spiele-Saison 1960 ist bis heute unübertroffen."
@@ -643,10 +643,10 @@
     "diff": "mid",
     "q": "Welcher spektakuläre 'Miracle in Motown' Wurf von Aaron Rodgers gegen die Lions im Dezember 2015 ging in die NFL-Geschichte ein?",
     "a": [
-      "Eine 61-Yard-Hail-Mary ohne Spielzeit auf Richard Rodgers",
-      "Ein 90-Yard-Pass auf Randall Cobb nach doppeltem Rückpass",
-      "Ein Schuss mit dem Fuß aus vollem Lauf über die Torlatte",
-      "Ein Unterhandwurf im Hechtsprung über drei Linebacker"
+      "Eine 61-Yard-Hail-Mary ohne verbleibende Spielzeit nach einer Facemask-Strafe auf Richard Rodgers",
+      "Ein 90-Yard-Pass auf Randall Cobb nach einem doppelten Rückpass an der eigenen Goalline",
+      "Ein Schuss mit dem Fuß aus vollem Lauf über die gegnerische Torlatte zur Entscheidung",
+      "Ein artistischer Unterhandwurf im Hechtsprung über drei heranstürmende Linebacker"
     ],
     "exp": "Rodgers feuerte das Ei im Ford Field fast bis unter das Hallendach: Richard Rodgers fing die 61-Yard-Bogenlampe in der Traube zum 27:23-Sieg.",
     "explanation": "Rodgers feuerte das Ei im Ford Field fast bis unter das Hallendach: Richard Rodgers fing die 61-Yard-Bogenlampe in der Traube zum 27:23-Sieg."
@@ -656,10 +656,10 @@
     "diff": "pro",
     "q": "Was passierte 1980 bei Chester Marcols berühmtem 'Glasses Touchdown' gegen die Chicago Bears?",
     "a": [
-      "Geblocktes Field Goal flog ihm in die Arme, TD-Lauf",
-      "Er verlor seine Brille im Schlamm und kickte blind das Siegtor",
-      "Er täuschte einen Schuss an und warf einen Rückpass zum Center",
-      "Ein Fan warf eine Brille aufs Feld, die den Ball ablenkte"
+      "Sein eigenes geblocktes Field Goal flog ihm direkt in die Arme und er lief zum Touchdown durch",
+      "Er verlor seine dicke Hornbrille im Schlamm und kickte das entscheidende Siegtor völlig blind",
+      "Er täuschte einen Schuss an und warf einen Rückpass auf den heranstürmenden Center",
+      "Ein Fan warf eine Brille aufs Spielfeld, die den abgefälschten Ball direkt ins Tor lenkte"
     ],
     "exp": "Marcol lief zum Field Goal in der Overtime an: Der Ball prallte von der Bears-Brust direkt zurück in seine Arme – Marcol rannte mit Brille zum 12:6-Walk-Off-TD!",
     "explanation": "Marcol lief zum Field Goal in der Overtime an: Der Ball prallte von der Bears-Brust direkt zurück in seine Arme – Marcol rannte mit Brille zum 12:6-Walk-Off-TD!"
@@ -695,10 +695,10 @@
     "diff": "mid",
     "q": "Was vollbrachte Brett Favre am 22. Dezember 2003 bei 'Monday Night Football' gegen die Raiders, nur einen Tag nach dem plötzlichen Tod seines Vaters?",
     "a": [
-      "399 Yards und 4 Touchdowns in der ersten Halbzeit",
-      "Er kniete beim ersten Spielzug ab und verließ das Feld",
-      "Er erzielte als Kicker alle Punkte der Packers im Spiel",
-      "Er verzichtete erstmals nach 200 Spielen auf den Start"
+      "Er spielte das Spiel seines Lebens mit 399 Yards und 4 Touchdowns in der ersten Halbzeit",
+      "Er kniete beim ersten Spielzug ab und verließ unter stehenden Ovationen das Spielfeld",
+      "Er erzielte als Kicker und Quarterback alle Punkte der Packers vollkommen im Alleingang",
+      "Er verzichtete erstmals nach über 200 Spielen auf seinen festen Stammplatz als Starter"
     ],
     "exp": "'Ich wusste, dass mein Vater gewollt hätte, dass ich spiele.' Favre verzauberte die Welt mit fehlerfreien Pässen; selbst die berüchtigten Raiders-Fans applaudierten stehend.",
     "explanation": "'Ich wusste, dass mein Vater gewollt hätte, dass ich spiele.' Favre verzauberte die Welt mit fehlerfreien Pässen; selbst die berüchtigten Raiders-Fans applaudierten stehend."
@@ -708,10 +708,10 @@
     "diff": "pro",
     "q": "Welcher Packers-Offensive-Lineman hielt laut Vince Lombardi den Titel als 'der beste Spieler, den ich je trainiert habe'?",
     "a": [
-      "Forrest Gregg",
-      "Jerry Kramer",
-      "Fuzzy Thurston",
-      "Ken Bowman"
+      "Forrest Gregg (Offensive Tackle)",
+      "Jerry Kramer (legendärer All-Pro Guard)",
+      "Fuzzy Thurston (kraftvoller Guard im Power Sweep)",
+      "Ken Bowman (Center beim legendären Ice Bowl Sneak)"
     ],
     "exp": "Lombardi lobte selten überschwänglich, doch über Forrest Gregg sagte er: 'Forrest Gregg is the finest player I ever coached.' Gregg spielte 188 Spiele in Serie.",
     "explanation": "Lombardi lobte selten überschwänglich, doch über Forrest Gregg sagte er: 'Forrest Gregg is the finest player I ever coached.' Gregg spielte 188 Spiele in Serie."
@@ -734,10 +734,10 @@
     "diff": "mid",
     "q": "Welcher Packers-Defensive-Tackle feierte Mitte der 90er jeden Tackle mit dem 'Gravedigger'-Grabschaufel-Tanz?",
     "a": [
-      "Gilbert Brown",
-      "Santana Dotson",
-      "Sean Jones",
-      "Cullen Jenkins"
+      "Gilbert Brown (340 Pfund schwerer Fan-Liebling)",
+      "Santana Dotson (starker Defensive Tackle der Super-Bowl-Saison)",
+      "Sean Jones (Pass-Rush-Partner von Superstar Reggie White)",
+      "Cullen Jenkins (wichtige Säule beim Triumph in Super Bowl XLV)"
     ],
     "exp": "Gilbert Brown stopfte Laufwege wie eine Wand und aß im lokalen Fast-Food-Laden den nach ihm benannten 'Gilbert Burger'. Sein Schaufel-Jubel war Kult.",
     "explanation": "Gilbert Brown stopfte Laufwege wie eine Wand und aß im lokalen Fast-Food-Laden den nach ihm benannten 'Gilbert Burger'. Sein Schaufel-Jubel war Kult."
@@ -786,10 +786,10 @@
     "diff": "mid",
     "q": "Was verbirgt sich hinter dem 'Titletown District' unmittelbar westlich des Lambeau Fields?",
     "a": [
-      "Ein modernes Fan-Areal mit öffentlichem Footballfeld, Eislaufbahn und Sommerpark",
-      "Ein Hochsicherheits-Trainingsgelände ausschließlich für NFL-Scouts",
-      "Ein Industriepark für Papierverpackungen und Milchwirtschaft",
-      "Eine geschlossene Wohnsiedlung für aktive Spieler und deren Familien"
+      "Tony Canadeo ('The Gray Ghost')",
+      "Johnny 'Blood' McNally (exzentrischer Star der Gründerjahre)",
+      "Clarke Hinkle (hartgesottener Fullback und Hall of Famer)",
+      "Mike Michalske (erster Guard in der Pro Football Hall of Fame)"
     ],
     "exp": "Die Packers investierten in den 'Titletown District': Im Winter rodeln Fans auf dem 'Ariens Hill', im Sommer spielen Kinder auf dem Football-Kunstrasen.",
     "explanation": "Die Packers investierten in den 'Titletown District': Im Winter rodeln Fans auf dem 'Ariens Hill', im Sommer spielen Kinder auf dem Football-Kunstrasen."
@@ -825,10 +825,10 @@
     "diff": "mid",
     "q": "Was geschieht mit Green Bays Straßen und Geschäften während eines Sonntagsspiels der Packers?",
     "a": [
-      "Die Straßen sind wie leergefegt und Supermärkte übertragen den Radiokommentar über Lautsprecher",
-      "Es gilt ein offizielles städtisches Fahrverbot für alle Fahrzeuge ohne Fan-Flagge",
-      "Alle Brücken über den Fox River werden aus Sicherheitsgründen hochgeklappt",
-      "Die Bürger versammeln sich im Rathaus zum gemeinsamen Fahnenschwenken"
+      "Charles Woodson (2009)",
+      "Herb Adderley (Cornerback der Lombardi-Dynastie)",
+      "Willie Wood (achtfacher Pro-Bowl-Safety der Packers)",
+      "Nick Collins (drei aufeinanderfolgende Pro Bowls)"
     ],
     "exp": "Während des Spiels steht das öffentliche Leben komplett still. Wer nicht im Stadion ist, sitzt vor dem Fernseher oder hört das Radio von Wayne Larrivee.",
     "explanation": "Während des Spiels steht das öffentliche Leben komplett still. Wer nicht im Stadion ist, sitzt vor dem Fernseher oder hört das Radio von Wayne Larrivee."
@@ -851,10 +851,10 @@
     "diff": "mid",
     "q": "Wie viele Personen umfasst der Verwaltungsrat ('Board of Directors') der Packers-Aktiengesellschaft?",
     "a": [
-      "Rund 45 ehrenamtliche Mitglieder aus der Region",
-      "Genau 3 vom Bürgermeister berufene Personen",
-      "12 frühere Super-Bowl-Champions des Vereins",
-      "Über 1.000 ausgeloste Dauerkarteninhaber"
+      "Rund 45 Mitglieder aus der lokalen Wirtschaft und Gemeinschaft (ehrenamtlich)",
+      "Genau 3 Personen (vom amtierenden Bürgermeister von Green Bay persönlich bestimmt)",
+      "12 ehemalige verdiente Super-Bowl-Champions des Traditionsvereins aus Wisconsin",
+      "Über 1.000 im Losverfahren ausgewählte Dauerkarteninhaber des Lambeau Fields"
     ],
     "exp": "Ein siebenköpfiges Exekutivkomitee um den Club-Präsidenten leitet das operative Geschäft, überwacht von einem ehrenamtlichen 45-köpfigen Aufsichtsrat.",
     "explanation": "Ein siebenköpfiges Exekutivkomitee um den Club-Präsidenten leitet das operative Geschäft, überwacht von einem ehrenamtlichen 45-köpfigen Aufsichtsrat."
@@ -904,9 +904,9 @@
     "q": "Welcher Radiosprecher prägte bei jedem Packers-Touchdown den ikonischen Spruch 'There is your dagger!'?",
     "a": [
       "Wayne Larrivee",
-      "Jim Irwin (WTMJ)",
-      "Max McGee (Packers)",
-      "Larry McCarren (Analyst)"
+      "Jim Irwin (jahrzehntelange legendäre Radio-Stimme)",
+      "Max McGee (Kult-Radiomoderator und Receiver)",
+      "Larry McCarren ('The Rock' / Packers Hall of Famer)"
     ],
     "exp": "Larrivees Markenzeichen auf 'Packers Radio Network': Sobald der entscheidende Spielzug gelingt, ruft er emotional: 'There is your dagger!'",
     "explanation": "Larrivees Markenzeichen auf 'Packers Radio Network': Sobald der entscheidende Spielzug gelingt, ruft er emotional: 'There is your dagger!'"
@@ -929,10 +929,10 @@
     "diff": "mid",
     "q": "Was schenkte Aaron Rodgers seinen Offensive Linemen traditionell zu Weihnachten als Dank für ihren Schutz?",
     "a": [
-      "Maßgeschneiderte Luxus-Quads / ATVs oder teure Schweizer Chronometer",
-      "Gefüllte Tiefkühltruhen mit feinstem Wisconsin-Cheddarkäse",
-      "Goldene Repliken der Vince-Lombardi-Trophäe für das Wohnzimmer",
-      "Jahresabonnements für die besten Golfplätze in Wisconsin"
+      "Utah State University",
+      "University of California, Berkeley",
+      "University of Southern Mississippi",
+      "University of Wisconsin-Madison"
     ],
     "exp": "Rodgers belohnte seine Beschützer königlich: Polaris-Quads, maßgeschneiderte Koffer und Luxus-Uhren gehörten zu seinen Weihnachtsgeschenken.",
     "explanation": "Rodgers belohnte seine Beschützer königlich: Polaris-Quads, maßgeschneiderte Koffer und Luxus-Uhren gehörten zu seinen Weihnachtsgeschenken."
@@ -942,10 +942,10 @@
     "diff": "easy",
     "q": "Wie viele Aktienanteile darf eine einzelne Person an den Green Bay Packers maximal besitzen?",
     "a": [
-      "Maximal 200.000 Aktien (knapp 4 Prozent), um eine Übernahme auszuschließen",
-      "Es gibt keinerlei Obergrenze für den Erwerb von Anteilen",
-      "Genau eine einzige Aktie pro Person ist gesetzlich erlaubt",
-      "Maximal 51 Prozent für den gewählten Präsidenten des Clubs"
+      "Ein 37-Yard-Interception-Return zum Touchdown nach Pass von Roethlisberger",
+      "Zwei eroberte Fumbles tief in der eigenen Redzone im vierten Spielviertel",
+      "Ein geblockter Punt kurz vor Schluss, der direkt zum Field Goal führte",
+      "Drei wichtige Sacks gegen die Offensive Line der Pittsburgh Steelers"
     ],
     "exp": "Um jede feindliche Übernahme durch Milliardäre im Keim zu ersticken, begrenzt die Satzung den Besitz einer Einzelperson auf unter 4 Prozent.",
     "explanation": "Um jede feindliche Übernahme durch Milliardäre im Keim zu ersticken, begrenzt die Satzung den Besitz einer Einzelperson auf unter 4 Prozent."
@@ -955,10 +955,10 @@
     "diff": "mid",
     "q": "Welcher Leitspruch prangt über dem Kabinenausgang des Lambeau Fields, den die Spieler beim Betreten des Rasens berühren?",
     "a": [
-      "Schild 'Lambeau Field' mit den Meisterschaftsjahren",
-      "Der Spruch 'Play like a Champion today' an der Wand",
-      "Die Mahnung 'Defend the Frozen Tundra at all costs'",
-      "Das Zitat 'Leave everything on this sacred turf'"
+      "Das Schild 'Lambeau Field' mit den historischen Meisterschaftsjahren",
+      "Der Leitspruch 'Play like a Champion today' der Notre-Dame-Schule",
+      "Die mahnenden Worte 'Defend the Frozen Tundra at all costs' am Tor",
+      "Das historische Zitat 'Leave everything on this turf' vor Ort"
     ],
     "exp": "Beim Sprint durch den Spielertunnel tippen die Profis traditionsgemäß an die gelb-grüne Ehrentafel mit dem Packers-Logo und den 13 Titeln.",
     "explanation": "Beim Sprint durch den Spielertunnel tippen die Profis traditionsgemäß an die gelb-grüne Ehrentafel mit dem Packers-Logo und den 13 Titeln."
