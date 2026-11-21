@@ -1,5 +1,5 @@
-// Procedural High-DPI Canvas Textures for 3D Spider Solitaire
-// Generates 52 crisp 768x1075 high-contrast card faces, matte card back, dark calm felt, walnut rim, and slot decals.
+// Procedural High-DPI Jumbo-Index Canvas Textures for 3D Spider Solitaire
+// Generates 52 crisp 768x1075 high-contrast cards with oversized Jumbo header indices & simplified bold center symbols.
 
 import * as THREE from 'three';
 import { SUITS, RANK_LABELS } from './sol3d-logic.js';
@@ -7,10 +7,10 @@ import { SUITS, RANK_LABELS } from './sol3d-logic.js';
 export const TABLE_THEME = {
   id: 'dark_felt',
   label: 'Dunkler Filz',
-  center: '#153d2e',
-  mid: '#0e2b20',
-  edge: '#071710',
-  bgHex: 0x07140f
+  center: '#133a2b',
+  mid: '#0c271d',
+  edge: '#06150f',
+  bgHex: 0x06130e
 };
 
 function drawRoundedRectPath(ctx, x, y, w, h, r) {
@@ -42,9 +42,9 @@ export function drawSuitPip(ctx, suitKey, cx, cy, size, color) {
     ctx.bezierCurveTo(s * 1.08, -s * 0.88, s * 1.15, s * 0.12, 0, s * 0.88);
   } else if (suitKey === 'diamonds') {
     ctx.moveTo(0, -s * 0.96);
-    ctx.quadraticCurveTo(s * 0.28, -s * 0.28, s * 0.86, 0);
+    ctx.quadraticCurveTo(s * 0.28, -s * 0.28, s * 0.88, 0);
     ctx.quadraticCurveTo(s * 0.28, s * 0.28, 0, s * 0.96);
-    ctx.quadraticCurveTo(-s * 0.28, s * 0.28, -s * 0.86, 0);
+    ctx.quadraticCurveTo(-s * 0.28, s * 0.28, -s * 0.88, 0);
     ctx.quadraticCurveTo(-s * 0.28, -s * 0.28, 0, -s * 0.96);
   } else if (suitKey === 'spades') {
     ctx.moveTo(0, -s * 0.96);
@@ -76,68 +76,34 @@ export function drawSuitPip(ctx, suitKey, cx, cy, size, color) {
   ctx.restore();
 }
 
-const PIP_LAYOUTS = {
-  2: [[0.5, 0.22, false], [0.5, 0.78, true]],
-  3: [[0.5, 0.2, false], [0.5, 0.5, false], [0.5, 0.8, true]],
-  4: [[0.3, 0.22, false], [0.7, 0.22, false], [0.3, 0.78, true], [0.7, 0.78, true]],
-  5: [[0.3, 0.22, false], [0.7, 0.22, false], [0.5, 0.5, false], [0.3, 0.78, true], [0.7, 0.78, true]],
-  6: [[0.3, 0.2, false], [0.7, 0.2, false], [0.3, 0.5, false], [0.7, 0.5, false], [0.3, 0.8, true], [0.7, 0.8, true]],
-  7: [
-    [0.3, 0.2, false], [0.7, 0.2, false], [0.5, 0.35, false],
-    [0.3, 0.5, false], [0.7, 0.5, false], [0.3, 0.8, true], [0.7, 0.8, true]
-  ],
-  8: [
-    [0.3, 0.2, false], [0.7, 0.2, false], [0.5, 0.35, false],
-    [0.3, 0.5, false], [0.7, 0.5, false], [0.5, 0.65, true],
-    [0.3, 0.8, true], [0.7, 0.8, true]
-  ],
-  9: [
-    [0.3, 0.18, false], [0.7, 0.18, false],
-    [0.3, 0.39, false], [0.7, 0.39, false],
-    [0.5, 0.5, false],
-    [0.3, 0.61, true], [0.7, 0.61, true],
-    [0.3, 0.82, true], [0.7, 0.82, true]
-  ],
-  10: [
-    [0.3, 0.18, false], [0.7, 0.18, false], [0.5, 0.29, false],
-    [0.3, 0.39, false], [0.7, 0.39, false],
-    [0.3, 0.61, true], [0.7, 0.61, true],
-    [0.5, 0.71, true],
-    [0.3, 0.82, true], [0.7, 0.82, true]
-  ]
-};
-
 function drawPaperBase(ctx, w, h) {
-  // Clean bright matte white-ivory surface for maximum contrast with red & black inks
-  const grad = ctx.createRadialGradient(w * 0.5, h * 0.45, w * 0.1, w * 0.5, h * 0.5, h * 0.75);
-  grad.addColorStop(0, '#ffffff');
-  grad.addColorStop(1, '#f4f2ec');
-  ctx.fillStyle = grad;
+  // Pure bright white matte paper for maximum contrast
+  ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, w, h);
 
-  // Subtle top header tint band so stacked cards separate cleanly at a glance
-  ctx.fillStyle = 'rgba(15, 23, 36, 0.03)';
-  ctx.fillRect(0, 0, w, 178);
-  ctx.fillRect(0, h - 178, w, 178);
+  // Subtle cool-neutral header band for instant visual separation of stacked cards
+  ctx.fillStyle = 'rgba(15, 23, 36, 0.045)';
+  ctx.fillRect(0, 0, w, 224);
+  ctx.fillRect(0, h - 224, w, 224);
 
-  // Thin crisp header separator line
-  ctx.strokeStyle = 'rgba(20, 28, 40, 0.11)';
-  ctx.lineWidth = 2;
+  // Crisp header divider line
+  ctx.strokeStyle = 'rgba(18, 26, 38, 0.16)';
+  ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(22, 178);
-  ctx.lineTo(w - 22, 178);
+  ctx.moveTo(20, 224);
+  ctx.lineTo(w - 20, 224);
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.moveTo(22, h - 178);
-  ctx.lineTo(w - 22, h - 178);
+  ctx.moveTo(20, h - 224);
+  ctx.lineTo(w - 20, h - 224);
   ctx.stroke();
 
-  // Crisp perimeter border so overlapping cards always show a sharp edge
+  // Sharp dark outer border so every overlapping card casts a crisp silhouette edge
   ctx.save();
-  ctx.strokeStyle = 'rgba(18, 24, 34, 0.42)';
-  ctx.lineWidth = 6;
-  drawRoundedRectPath(ctx, 3, 3, w - 6, h - 6, 44);
+  ctx.strokeStyle = 'rgba(12, 18, 28, 0.62)';
+  ctx.lineWidth = 8;
+  drawRoundedRectPath(ctx, 4, 4, w - 8, h - 8, 42);
   ctx.stroke();
   ctx.restore();
 }
@@ -145,134 +111,110 @@ function drawPaperBase(ctx, w, h) {
 function drawCourtCardArt(ctx, w, h, rank, suitKey, suitColor, isRed) {
   const cx = w * 0.5;
   const cy = h * 0.5;
-  const boxW = w * 0.64;
-  const boxH = h * 0.54;
+  const boxW = w * 0.72;
+  const boxH = h * 0.48;
   const bx = cx - boxW * 0.5;
   const by = cy - boxH * 0.5;
   const gold = '#b38632';
-  const goldLight = '#e4c377';
-  const accentSoft = isRed ? 'rgba(216, 18, 32, 0.07)' : 'rgba(14, 20, 30, 0.06)';
+  const goldLight = '#e8c87d';
+  const accentSoft = isRed ? 'rgba(217, 15, 28, 0.06)' : 'rgba(11, 15, 23, 0.05)';
 
   ctx.save();
-  drawRoundedRectPath(ctx, bx, by, boxW, boxH, 20);
+  drawRoundedRectPath(ctx, bx, by, boxW, boxH, 24);
   ctx.fillStyle = accentSoft;
   ctx.fill();
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 5;
   ctx.strokeStyle = gold;
   ctx.stroke();
-
-  drawRoundedRectPath(ctx, bx + 12, by + 12, boxW - 24, boxH - 24, 14);
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = suitColor;
-  ctx.globalAlpha = 0.45;
-  ctx.stroke();
-  ctx.globalAlpha = 1;
-
-  // Central medallion
-  ctx.beginPath();
-  ctx.arc(cx, cy, 114, 0, Math.PI * 2);
-  ctx.fillStyle = '#fcfaf4';
-  ctx.fill();
-  ctx.lineWidth = 4.5;
-  ctx.strokeStyle = gold;
-  ctx.stroke();
-
-  ctx.beginPath();
-  ctx.arc(cx, cy, 98, 0, Math.PI * 2);
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = suitColor;
-  ctx.globalAlpha = 0.55;
-  ctx.stroke();
-  ctx.globalAlpha = 1;
 
   if (rank === 13) {
-    // King: royal crown
+    // Bold King crown + large suit symbol
     ctx.save();
-    ctx.translate(cx, cy - 22);
+    ctx.translate(cx, cy - 92);
     ctx.fillStyle = goldLight;
-    ctx.strokeStyle = '#755215';
-    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = '#6b4a10';
+    ctx.lineWidth = 4.5;
     ctx.beginPath();
-    ctx.moveTo(-72, 32);
-    ctx.lineTo(-80, -28);
-    ctx.lineTo(-36, 4);
-    ctx.lineTo(0, -52);
-    ctx.lineTo(36, 4);
-    ctx.lineTo(80, -28);
-    ctx.lineTo(72, 32);
+    ctx.moveTo(-96, 42);
+    ctx.lineTo(-108, -36);
+    ctx.lineTo(-48, 8);
+    ctx.lineTo(0, -68);
+    ctx.lineTo(48, 8);
+    ctx.lineTo(108, -36);
+    ctx.lineTo(96, 42);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = suitColor;
-    [[-80, -34], [0, -58], [80, -34]].forEach(([jx, jy]) => {
+    [[-108, -42], [0, -76], [108, -42]].forEach(([jx, jy]) => {
       ctx.beginPath();
-      ctx.arc(jx, jy, 7.5, 0, Math.PI * 2);
+      ctx.arc(jx, jy, 10, 0, Math.PI * 2);
       ctx.fill();
     });
     ctx.fillStyle = gold;
-    ctx.fillRect(-72, 32, 144, 18);
-    ctx.strokeRect(-72, 32, 144, 18);
+    ctx.fillRect(-96, 42, 192, 22);
+    ctx.strokeRect(-96, 42, 192, 22);
     ctx.restore();
 
-    drawSuitPip(ctx, suitKey, cx, cy + 54, 62, suitColor);
+    drawSuitPip(ctx, suitKey, cx, cy + 104, 210, suitColor);
   } else if (rank === 12) {
-    // Queen: tiara
+    // Bold Queen tiara + large suit symbol
     ctx.save();
-    ctx.translate(cx, cy - 20);
+    ctx.translate(cx, cy - 88);
     ctx.fillStyle = goldLight;
-    ctx.strokeStyle = '#755215';
-    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = '#6b4a10';
+    ctx.lineWidth = 4.5;
     ctx.beginPath();
-    ctx.moveTo(-64, 30);
-    ctx.quadraticCurveTo(-66, -12, -32, -6);
-    ctx.quadraticCurveTo(0, -54, 0, -54);
-    ctx.quadraticCurveTo(0, -54, 32, -6);
-    ctx.quadraticCurveTo(66, -12, 64, 30);
+    ctx.moveTo(-88, 38);
+    ctx.quadraticCurveTo(-92, -16, -44, -8);
+    ctx.quadraticCurveTo(0, -72, 0, -72);
+    ctx.quadraticCurveTo(0, -72, 44, -8);
+    ctx.quadraticCurveTo(92, -16, 88, 38);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = suitColor;
     ctx.beginPath();
-    ctx.arc(0, -22, 11, 0, Math.PI * 2);
+    ctx.arc(0, -28, 15, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#fff9ec';
-    [[-36, -6], [36, -6]].forEach(([px, py]) => {
+    ctx.fillStyle = '#fffaf0';
+    [[-48, -8], [48, -8]].forEach(([px, py]) => {
       ctx.beginPath();
-      ctx.arc(px, py, 7, 0, Math.PI * 2);
+      ctx.arc(px, py, 9.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
     });
     ctx.restore();
 
-    drawSuitPip(ctx, suitKey, cx, cy + 50, 62, suitColor);
+    drawSuitPip(ctx, suitKey, cx, cy + 104, 210, suitColor);
   } else {
-    // Jack: knight shield
+    // Bold Jack shield + large suit symbol
     ctx.save();
-    ctx.translate(cx, cy - 6);
+    ctx.translate(cx, cy - 82);
     ctx.fillStyle = '#f6eedb';
     ctx.strokeStyle = gold;
-    ctx.lineWidth = 4.5;
+    ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.moveTo(-54, -52);
-    ctx.lineTo(54, -52);
-    ctx.lineTo(54, 8);
-    ctx.quadraticCurveTo(54, 60, 0, 82);
-    ctx.quadraticCurveTo(-54, 60, -54, 8);
+    ctx.moveTo(-68, -62);
+    ctx.lineTo(68, -62);
+    ctx.lineTo(68, 12);
+    ctx.quadraticCurveTo(68, 72, 0, 96);
+    ctx.quadraticCurveTo(-68, 72, -68, 12);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
 
     ctx.strokeStyle = suitColor;
-    ctx.lineWidth = 3.5;
+    ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.moveTo(-42, -32);
-    ctx.lineTo(42, 36);
+    ctx.moveTo(-50, -36);
+    ctx.lineTo(50, 44);
     ctx.stroke();
     ctx.restore();
 
-    drawSuitPip(ctx, suitKey, cx, cy + 4, 64, suitColor);
+    drawSuitPip(ctx, suitKey, cx, cy + 106, 200, suitColor);
   }
 
   ctx.restore();
@@ -289,10 +231,10 @@ function createCardFaceTexture(card, maxAnisotropy) {
   drawPaperBase(ctx, w, h);
 
   const isRed = card.color === 'red';
-  const inkColor = isRed ? '#d81320' : '#0b0f17';
+  const inkColor = isRed ? '#d90f1c' : '#090d14';
   const rankStr = RANK_LABELS[card.rank];
 
-  // Generous high-contrast header indices (top 16.5% of card) so stacked columns remain effortlessly readable
+  // Jumbo-Index Header: giant sans-serif bold Rank + giant Suit Pip side-by-side in top 20.8% strip
   const drawHeader = (flipped) => {
     ctx.save();
     if (flipped) {
@@ -304,20 +246,19 @@ function createCardFaceTexture(card, maxAnisotropy) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
-    // Large bold rank on top-left
     ctx.save();
-    const fontSize = card.rank === 10 ? 114 : 128;
-    ctx.font = `800 ${fontSize}px "Outfit", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif`;
-    ctx.translate(card.rank === 10 ? 132 : 114, 92);
-    if (card.rank === 10) {
-      ctx.scale(0.86, 1);
+    const isTen = card.rank === 10;
+    const fontSize = isTen ? 182 : 196;
+    ctx.font = `900 ${fontSize}px "Plus Jakarta Sans", "Outfit", Arial, sans-serif`;
+    ctx.translate(isTen ? 190 : 178, 118);
+    if (isTen) {
+      ctx.scale(0.80, 1);
     }
     ctx.fillText(rankStr, 0, 0);
     ctx.restore();
 
-    // Crisp medium suit pip beside rank (center-left of header) and huge suit pip top-right
-    drawSuitPip(ctx, card.suit, card.rank === 10 ? 268 : 242, 92, 74, inkColor);
-    drawSuitPip(ctx, card.suit, w - 108, 92, 110, inkColor);
+    // Giant Suit Symbol clearly next to Rank
+    drawSuitPip(ctx, card.suit, w - 182, 114, 174, inkColor);
 
     ctx.restore();
   };
@@ -325,38 +266,27 @@ function createCardFaceTexture(card, maxAnisotropy) {
   drawHeader(false);
   drawHeader(true);
 
-  // Center artwork (kept cleanly inside y = 205..870 away from header strips)
+  // Simplified, crystal-clear center symbol (no tiny cluttered pips)
   if (card.rank === 1) {
     ctx.save();
     ctx.strokeStyle = 'rgba(179, 134, 50, 0.45)';
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.arc(w * 0.5, h * 0.5, 148, 0, Math.PI * 2);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(w * 0.5, h * 0.5, 128, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(179, 134, 50, 0.22)';
+    ctx.arc(w * 0.5, h * 0.5, 210, 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
-    drawSuitPip(ctx, card.suit, w * 0.5, h * 0.5, 224, inkColor);
+    drawSuitPip(ctx, card.suit, w * 0.5, h * 0.5, 360, inkColor);
   } else if (card.rank >= 11) {
     drawCourtCardArt(ctx, w, h, card.rank, card.suit, inkColor, isRed);
   } else {
-    const pips = PIP_LAYOUTS[card.rank];
-    const padX = 128;
-    const padY = 175;
-    const innerW = w - padX * 2;
-    const innerH = h - padY * 2;
-    const pipSize = card.rank <= 5 ? 104 : 92;
-    for (const [nx, ny, inv] of pips) {
-      const px = padX + nx * innerW;
-      const py = padY + ny * innerH;
-      ctx.save();
-      ctx.translate(px, py);
-      if (inv) ctx.rotate(Math.PI);
-      drawSuitPip(ctx, card.suit, 0, 0, pipSize, inkColor);
-      ctx.restore();
-    }
+    // Clean single oversized central suit symbol for 2-10
+    ctx.save();
+    ctx.strokeStyle = isRed ? 'rgba(217, 15, 28, 0.14)' : 'rgba(9, 13, 20, 0.12)';
+    ctx.lineWidth = 4;
+    drawRoundedRectPath(ctx, w * 0.16, 260, w * 0.68, h - 520, 24);
+    ctx.stroke();
+    ctx.restore();
+    drawSuitPip(ctx, card.suit, w * 0.5, h * 0.5, 320, inkColor);
   }
 
   const tex = new THREE.CanvasTexture(canvas);
@@ -377,20 +307,20 @@ function createCardBackTexture(maxAnisotropy) {
   canvas.height = h;
   const ctx = canvas.getContext('2d');
 
-  // Crisp ivory edge so stacked face-down cards clearly separate
-  ctx.fillStyle = '#eceae3';
+  // Crisp bright edge for clear separation between stacked face-down cards
+  ctx.fillStyle = '#eff2f5';
   ctx.fillRect(0, 0, w, h);
 
-  ctx.strokeStyle = 'rgba(15, 22, 32, 0.45)';
-  ctx.lineWidth = 6;
-  drawRoundedRectPath(ctx, 3, 3, w - 6, h - 6, 44);
+  ctx.strokeStyle = 'rgba(12, 18, 28, 0.55)';
+  ctx.lineWidth = 8;
+  drawRoundedRectPath(ctx, 4, 4, w - 8, h - 8, 42);
   ctx.stroke();
 
   const m = 34;
   drawRoundedRectPath(ctx, m, m, w - m * 2, h - m * 2, 26);
   const bg = ctx.createRadialGradient(w * 0.5, h * 0.5, 60, w * 0.5, h * 0.5, h * 0.58);
   bg.addColorStop(0, '#1d3758');
-  bg.addColorStop(1, '#0e1d32');
+  bg.addColorStop(1, '#0d1b30');
   ctx.fillStyle = bg;
   ctx.fill();
 
@@ -418,7 +348,6 @@ function createCardBackTexture(maxAnisotropy) {
   drawRoundedRectPath(ctx, m + 14, m + 14, w - (m + 14) * 2, h - (m + 14) * 2, 18);
   ctx.stroke();
 
-  // Center emblem
   const cx = w * 0.5;
   const cy = h * 0.5;
   ctx.save();
@@ -465,8 +394,7 @@ function createFeltTexture(themeCfg, maxAnisotropy) {
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
-  // Calm dark high-contrast felt with soft radial shading and no distracting bright lines
-  const grad = ctx.createRadialGradient(size * 0.5, size * 0.45, size * 0.08, size * 0.5, size * 0.5, size * 0.72);
+  const grad = ctx.createRadialGradient(size * 0.5, size * 0.38, size * 0.08, size * 0.5, size * 0.5, size * 0.72);
   grad.addColorStop(0, themeCfg.center);
   grad.addColorStop(0.58, themeCfg.mid);
   grad.addColorStop(1, themeCfg.edge);
@@ -504,7 +432,7 @@ function createFeltBumpTexture() {
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = THREE.RepeatWrapping;
   tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(5, 4);
+  tex.repeat.set(5, 5);
   tex.needsUpdate = true;
   return tex;
 }
@@ -516,15 +444,15 @@ function createWoodTexture(maxAnisotropy) {
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = '#2c150c';
+  ctx.fillStyle = '#29130b';
   ctx.fillRect(0, 0, size, size);
 
   for (let y = 0; y < size; y++) {
     const wave = Math.sin(y * 0.05) * 12 + Math.sin(y * 0.19) * 4;
     const tone = Math.sin(y * 0.09 + wave * 0.05);
-    const r = Math.round(44 + tone * 12);
-    const g = Math.round(22 + tone * 6);
-    const b = Math.round(13 + tone * 4);
+    const r = Math.round(41 + tone * 11);
+    const g = Math.round(20 + tone * 6);
+    const b = Math.round(12 + tone * 4);
     ctx.fillStyle = `rgb(${r},${g},${b})`;
     ctx.fillRect(0, y, size, 1.5);
   }
@@ -578,15 +506,15 @@ function createSlotDecalTexture(kind, maxAnisotropy) {
   ctx.textBaseline = 'middle';
 
   if (kind === 'stock') {
-    ctx.font = '700 52px "Outfit", sans-serif';
+    ctx.font = '700 58px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('10×', w * 0.5, h * 0.5);
   } else if (kind === 'foundation') {
-    ctx.font = '700 62px "Outfit", sans-serif';
+    ctx.font = '700 66px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('K–A', w * 0.5, h * 0.44);
-    ctx.font = '500 32px serif';
-    ctx.fillText('♠ ♥', w * 0.5, h * 0.62);
+    ctx.font = '500 34px serif';
+    ctx.fillText('♠ ♥', w * 0.5, h * 0.64);
   } else if (kind === 'tableau') {
-    ctx.font = '600 40px "Outfit", sans-serif';
+    ctx.font = '600 42px "Plus Jakarta Sans", sans-serif';
     ctx.fillText('—', w * 0.5, h * 0.5);
   }
 
