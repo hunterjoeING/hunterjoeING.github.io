@@ -26,12 +26,23 @@ import { getBestPriceForStation } from '../sim/EnergyModel';
 import { getActiveRouteLegs, getActiveRouteOption } from '../sim/RoutePlanner';
 import { getVehicleById } from '../data/vehicles';
 import { ERoadtripBridge } from './GameBridge';
+import {
+  BoxRect,
+  CardLayoutNode,
+  computeRangeOverlayForStage,
+  getPointAlongEdge,
+  isProviderSubscribed,
+  resolveNonOverlappingCards
+} from './MapLayout';
 import { SoundFX } from './SoundFX';
 
-interface ChargerPinNode {
+interface ChargerPinNode extends CardLayoutNode {
   station: ChargerStation;
   onActiveRoute: boolean;
+  isSubscribed: boolean;
+  isFilteredVisible: boolean;
   dot: Phaser.GameObjects.Arc;
+  dotRing: Phaser.GameObjects.Arc;
   card: Phaser.GameObjects.Container;
   cardBg: Phaser.GameObjects.Rectangle;
   cardAccent: Phaser.GameObjects.Rectangle;
@@ -39,10 +50,6 @@ interface ChargerPinNode {
   titleText: Phaser.GameObjects.Text;
   priceText: Phaser.GameObjects.Text;
   noSubText: Phaser.GameObjects.Text;
-  cardW: number;
-  cardH: number;
-  worldX: number;
-  worldY: number;
 }
 
 const NET_COLORS: Record<string, number> = {
@@ -70,23 +77,40 @@ function toVec2(pts: MapPoint[]): Phaser.Math.Vector2[] {
 export class EuropeMapScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
   private worldLayer!: Phaser.GameObjects.Container;
+  private rangeOverlay!: Phaser.GameObjects.Graphics;
   private dynamicOverlay!: Phaser.GameObjects.Graphics;
   private leaderOverlay!: Phaser.GameObjects.Graphics;
   private routePillsLayer!: Phaser.GameObjects.Container;
+  private stageLabelsLayer!: Phaser.GameObjects.Container;
   private chargerLayer!: Phaser.GameObjects.Container;
 
   private pinObjects: ChargerPinNode[] = [];
-  private cityLabels: Array<{ text: Phaser.GameObjects.Text; isMajor: boolean; isActive: boolean }> = [];
-  private shieldTags: Phaser.GameObjects.Container[] = [];
+  private cityLabels: Array<{
+    text: Phaser.GameObjects.Text;
+    x: number;
+    y: number;
+    isMajor: boolean;
+    isActive: boolean;
+  }> = [];
+  private shieldTags: Array<{ cont: Phaser.GameObjects.Container; x: number; y: number; major: boolean }> = [];
   private carMarker?: Phaser.GameObjects.Image;
 
   private mapBounds = MAP_BOUNDS;
   private lastLayoutZoom = -1;
+  private lastDetailTier = -1;
   private activePointers = new Map<number, { x: number; y: number }>();
-  private dragStart?: { x: number; y: number; camX: number; camY: number };
+  private dragStart?: { x: number; y: number; scrollX: number; scrollY: number };
   private totalDragDist = 0;
   private prevPinchDist = 0;
   private isPinching = false;
+
+  // Smooth camera target interpolation
+  private targetZoom = 1;
+  private targetScrollX = 0;
+  private targetScrollY = 0;
+  private smoothCamActive = false;
+
+  private resizeHandler?: () => void;
 
   constructor() {
     super({ key: 'EuropeMapScene' });
@@ -98,20 +122,30 @@ export class EuropeMapScene extends Phaser.Scene {
     this.cityLabels = [];
     this.shieldTags = [];
     this.lastLayoutZoom = -1;
+    this.lastDetailTier = -1;
     this.activePointers.clear();
+    this.smoothCamActive = false;
   }
 
   create(): void {
-    this.input.addPointer(1); // Enable 2-finger pinch on mobile
+    if (this.input.manager.pointersTotal < 3) {
+      this.input.addPointer(1); // Enable 2-finger pinch on mobile without leaking on restarts
+    }
 
     this.worldLayer = this.add.container(0, 0);
     this.drawDetailedEuropeMap();
+
+    this.rangeOverlay = this.add.graphics();
+    this.worldLayer.add(this.rangeOverlay);
 
     this.dynamicOverlay = this.add.graphics();
     this.worldLayer.add(this.dynamicOverlay);
 
     this.routePillsLayer = this.add.container(0, 0);
     this.worldLayer.add(this.routePillsLayer);
+
+    this.stageLabelsLayer = this.add.container(0, 0);
+    this.worldLayer.add(this.stageLabelsLayer);
 
     this.drawCitiesAndLandmarks();
 
@@ -124,26 +158,57 @@ export class EuropeMapScene extends Phaser.Scene {
     this.createChargerPins();
     this.createLiveCarMarker();
 
-    this.fitCameraToRoute();
+    this.fitCameraToRoute(true);
     this.setupPanAndZoom();
     this.refreshDynamicState();
 
-    this.scale.on('resize', () => {
-      if (this.scene.isActive()) {
-        this.layoutChargerCards(true);
+    this.resizeHandler = () => {
+      if (!this.scene.isActive() || !this.cameras?.main) return;
+      this.clampCameraTargets();
+      this.layoutChargerCards(true);
+    };
+    this.scale.on('resize', this.resizeHandler);
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      if (this.resizeHandler) {
+        this.scale.off('resize', this.resizeHandler);
+        this.resizeHandler = undefined;
       }
+      this.activePointers.clear();
     });
+  }
+
+  update(_time: number, delta: number): void {
+    const cam = this.cameras.main;
+    if (!cam || !this.smoothCamActive) return;
+
+    const factor = 1 - Math.exp(-Math.min(0.05, delta / 1000) * 14);
+    const dz = this.targetZoom - cam.zoom;
+    const dx = this.targetScrollX - cam.scrollX;
+    const dy = this.targetScrollY - cam.scrollY;
+
+    if (Math.abs(dz) < 0.002 && Math.abs(dx) < 0.3 && Math.abs(dy) < 0.3) {
+      cam.setZoom(this.targetZoom);
+      cam.scrollX = this.targetScrollX;
+      cam.scrollY = this.targetScrollY;
+      this.smoothCamActive = false;
+      this.layoutChargerCards();
+      return;
+    }
+
+    cam.setZoom(cam.zoom + dz * factor);
+    cam.scrollX += dx * factor;
+    cam.scrollY += dy * factor;
+    this.layoutChargerCards();
   }
 
   private drawDetailedEuropeMap(): void {
     const g = this.add.graphics();
     this.worldLayer.add(g);
 
-    // Deep pixel ocean
     g.fillStyle(0x09192f, 1);
     g.fillRect(0, 0, this.mapBounds.w, this.mapBounds.h);
 
-    // Subtle ocean lat/lon pixel grid
     g.lineStyle(1, 0x132c4e, 0.5);
     for (let x = 0; x <= this.mapBounds.w; x += 48) {
       g.lineBetween(x, 0, x, this.mapBounds.h);
@@ -152,7 +217,6 @@ export class EuropeMapScene extends Phaser.Scene {
       g.lineBetween(0, y, this.mapBounds.w, y);
     }
 
-    // Coastal shallow-water glow around landmasses
     const allPolys = [
       MAINLAND_EUROPE_POLY,
       DENMARK_ZEALAND_POLY,
@@ -162,51 +226,32 @@ export class EuropeMapScene extends Phaser.Scene {
       SICILY_POLY,
       ...SARDINIA_CORSICA_POLYS
     ];
-
     allPolys.forEach(poly => {
       g.lineStyle(12, 0x13385f, 0.65);
       g.strokePoints(toVec2(poly), true);
     });
 
-    // Landmasses
-    g.fillStyle(0x1f3d2e, 1);
-    g.lineStyle(3, 0x457b5b, 1);
-    g.fillPoints(toVec2(MAINLAND_EUROPE_POLY), true);
-    g.strokePoints(toVec2(MAINLAND_EUROPE_POLY), true);
+    const drawPoly = (poly: MapPoint[], fill: number) => {
+      g.fillStyle(fill, 1);
+      g.lineStyle(2.5, 0x457b5b, 0.95);
+      g.fillPoints(toVec2(poly), true);
+      g.strokePoints(toVec2(poly), true);
+    };
+    drawPoly(MAINLAND_EUROPE_POLY, 0x1f3d2e);
+    drawPoly(DENMARK_ZEALAND_POLY, 0x214132);
+    drawPoly(UK_POLY, 0x244638);
+    drawPoly(IRELAND_POLY, 0x224335);
+    drawPoly(SCANDINAVIA_POLY, 0x23413d);
+    drawPoly(SICILY_POLY, 0x23402f);
+    SARDINIA_CORSICA_POLYS.forEach(p => drawPoly(p, 0x23402f));
 
-    g.fillStyle(0x214132, 1);
-    g.fillPoints(toVec2(DENMARK_ZEALAND_POLY), true);
-    g.strokePoints(toVec2(DENMARK_ZEALAND_POLY), true);
-
-    g.fillStyle(0x244638, 1);
-    g.fillPoints(toVec2(UK_POLY), true);
-    g.strokePoints(toVec2(UK_POLY), true);
-
-    g.fillStyle(0x224335, 1);
-    g.fillPoints(toVec2(IRELAND_POLY), true);
-    g.strokePoints(toVec2(IRELAND_POLY), true);
-
-    g.fillStyle(0x23413d, 1);
-    g.fillPoints(toVec2(SCANDINAVIA_POLY), true);
-    g.strokePoints(toVec2(SCANDINAVIA_POLY), true);
-
-    g.fillStyle(0x23402f, 1);
-    g.fillPoints(toVec2(SICILY_POLY), true);
-    g.strokePoints(toVec2(SICILY_POLY), true);
-    SARDINIA_CORSICA_POLYS.forEach(p => {
-      g.fillPoints(toVec2(p), true);
-      g.strokePoints(toVec2(p), true);
-    });
-
-    // Terrain shading zones: North German Plain, Alps rocky band, Po valley
     g.fillStyle(0x284d3a, 0.72);
-    g.fillEllipse(850, 665, 420, 210); // North German & Dutch plain
+    g.fillEllipse(850, 665, 420, 210);
     g.fillStyle(0x334155, 0.55);
-    g.fillEllipse(930, 1085, 410, 82); // Alpine ridge zone
+    g.fillEllipse(930, 1085, 410, 82);
 
-    // Major European Rivers (pixel channels)
     RIVERS.forEach(river => {
-      g.lineStyle(3, 0x1d6fa5, 0.78);
+      g.lineStyle(2.5, 0x1d6fa5, 0.75);
       for (let i = 0; i < river.points.length - 1; i++) {
         g.lineBetween(
           river.points[i].x,
@@ -215,25 +260,14 @@ export class EuropeMapScene extends Phaser.Scene {
           river.points[i + 1].y
         );
       }
-      const mid = river.points[Math.floor(river.points.length / 2)];
-      const rTxt = this.add.text(mid.x + 6, mid.y - 6, river.name, {
-        fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontSize: '9px',
-        fontStyle: 'italic',
-        color: '#60a5fa',
-        resolution: 3
-      });
-      rTxt.setAlpha(0.7);
-      this.worldLayer.add(rTxt);
     });
 
-    // Pixel-art Mountain Peaks & Snowcaps
     MOUNTAIN_CLUSTERS.forEach(cluster => {
       cluster.peaks.forEach(pk => {
         const s = pk.size;
-        g.fillStyle(0x475569, 0.9);
+        g.fillStyle(0x475569, 0.88);
         g.fillTriangle(pk.x, pk.y - s, pk.x - s * 0.85, pk.y + s * 0.45, pk.x + s * 0.85, pk.y + s * 0.45);
-        g.fillStyle(0x334155, 0.9);
+        g.fillStyle(0x334155, 0.88);
         g.fillTriangle(pk.x, pk.y - s, pk.x, pk.y + s * 0.45, pk.x + s * 0.85, pk.y + s * 0.45);
         if (pk.snow) {
           g.fillStyle(0xf8fafc, 0.92);
@@ -242,15 +276,13 @@ export class EuropeMapScene extends Phaser.Scene {
       });
     });
 
-    // Subtle national borders
-    g.lineStyle(1.5, 0x94a3b8, 0.32);
+    g.lineStyle(1.4, 0x94a3b8, 0.32);
     COUNTRY_BORDERS.forEach(border => {
       for (let i = 0; i < border.length - 1; i++) {
         this.drawDashedLine(g, border[i].x, border[i].y, border[i + 1].x, border[i + 1].y, 7, 5);
       }
     });
 
-    // Country labels
     COUNTRY_LABELS.forEach(cl => {
       const lbl = this.add.text(cl.x, cl.y, cl.name, {
         fontFamily: 'Outfit, sans-serif',
@@ -258,51 +290,56 @@ export class EuropeMapScene extends Phaser.Scene {
         fontStyle: 'bold',
         color: 'rgba(148, 163, 184, 0.42)',
         letterSpacing: 2,
-        resolution: 3
+        resolution: 4
       });
       lbl.setOrigin(0.5);
       this.worldLayer.add(lbl);
     });
 
-    // Realistic European Autobahn / Highway Network (dual-casing pixel roads)
+    // Base European Autobahn network
     HIGHWAY_EDGES.forEach(edge => {
-      g.lineStyle(6, 0x0f172a, 0.65);
+      g.lineStyle(5.5, 0x0f172a, 0.62);
       for (let i = 0; i < edge.waypoints.length - 1; i++) {
         g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
       }
-      g.lineStyle(3, 0x475569, 0.78);
+      g.lineStyle(2.5, 0x475569, 0.72);
       for (let i = 0; i < edge.waypoints.length - 1; i++) {
         g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
       }
     });
 
-    // Autobahn Number Shields on major edges
+    // Autobahn shields (visible even when zoomed out on major corridors!)
+    const levelEdgeIds = new Set<string>();
+    this.bridge.level.routeOptions.forEach(opt => opt.legs.forEach(l => levelEdgeIds.add(l.edgeId)));
+
     HIGHWAY_EDGES.forEach((edge, idx) => {
-      if (idx % 2 === 1 && edge.distanceKm < 120) return; // avoid shield clutter
-      const mid = edge.waypoints[Math.floor(edge.waypoints.length / 2)];
-      const shortCode = edge.highwayName.split(' ')[0].slice(0, 5);
+      const onLevel = levelEdgeIds.has(edge.id);
+      if (!onLevel && idx % 2 === 1 && edge.distanceKm < 140) return;
+
+      const mid = getPointAlongEdge(edge, 0.5);
+      const shortCode = edge.highwayName.split('/')[0].trim().slice(0, 6);
       const isEuro = shortCode.startsWith('E');
       const isFerry = edge.highwayName.includes('Fähre') || edge.highwayName.includes('Tunnel');
       const bgHex = isFerry ? 0x0284c7 : isEuro ? 0x15803d : 0x1d4ed8;
 
       const cont = this.add.container(mid.x, mid.y);
-      const rect = this.add.rectangle(0, 0, Math.max(22, shortCode.length * 6 + 8), 13, bgHex, 0.92);
-      rect.setStrokeStyle(1, 0xe2e8f0, 0.85);
+      cont.setDepth(11);
+      const rect = this.add.rectangle(0, 0, Math.max(22, shortCode.length * 6.2 + 8), 14, bgHex, 0.94);
+      rect.setStrokeStyle(1.2, 0xe2e8f0, 0.9);
       const txt = this.add
         .text(0, 0, shortCode, {
           fontFamily: 'monospace',
-          fontSize: '8.5px',
+          fontSize: '9px',
           fontStyle: 'bold',
           color: '#ffffff',
-          resolution: 3
+          resolution: 4
         })
         .setOrigin(0.5);
       cont.add([rect, txt]);
       this.worldLayer.add(cont);
-      this.shieldTags.push(cont);
+      this.shieldTags.push({ cont, x: mid.x, y: mid.y, major: onLevel });
     });
 
-    // Pixel Compass Rose & Scale Bar in bottom-left Atlantic corner
     this.drawMapLegendDecor(g);
   }
 
@@ -323,7 +360,7 @@ export class EuropeMapScene extends Phaser.Scene {
         fontSize: '12px',
         fontStyle: 'bold',
         color: '#38bdf8',
-        resolution: 3
+        resolution: 4
       })
       .setOrigin(0.5);
     this.worldLayer.add(nTxt);
@@ -333,7 +370,7 @@ export class EuropeMapScene extends Phaser.Scene {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: '10px',
         color: '#94a3b8',
-        resolution: 3
+        resolution: 4
       })
       .setOrigin(0, 0.5);
     this.worldLayer.add(scaleTxt);
@@ -362,6 +399,36 @@ export class EuropeMapScene extends Phaser.Scene {
     }
   }
 
+  private drawAnnulusRing(
+    g: Phaser.GameObjects.Graphics,
+    cx: number,
+    cy: number,
+    innerR: number,
+    outerR: number,
+    color: number,
+    alpha: number
+  ): void {
+    const steps = 64;
+    if (innerR <= 0.5) {
+      g.fillStyle(color, alpha);
+      g.fillCircle(cx, cy, outerR);
+    } else {
+      const pts: Phaser.Math.Vector2[] = [];
+      for (let i = 0; i <= steps; i++) {
+        const a = (i / steps) * Math.PI * 2;
+        pts.push(new Phaser.Math.Vector2(cx + Math.cos(a) * outerR, cy + Math.sin(a) * outerR));
+      }
+      for (let i = steps; i >= 0; i--) {
+        const a = (i / steps) * Math.PI * 2;
+        pts.push(new Phaser.Math.Vector2(cx + Math.cos(a) * innerR, cy + Math.sin(a) * innerR));
+      }
+      g.fillStyle(color, alpha);
+      g.fillPoints(pts, true);
+    }
+    g.lineStyle(1.4, color, Math.min(0.85, alpha * 3));
+    g.strokeCircle(cx, cy, outerR);
+  }
+
   private drawCitiesAndLandmarks(): void {
     const levelCityIds = new Set<string>();
     this.bridge.level.routeOptions.forEach(opt => {
@@ -374,7 +441,7 @@ export class EuropeMapScene extends Phaser.Scene {
 
     CITIES.forEach(city => {
       const isInLevel = levelCityIds.has(city.id);
-      const radius = city.isMajor ? (isInLevel ? 5.5 : 4.5) : isInLevel ? 4 : 3;
+      const radius = city.isMajor ? (isInLevel ? 5.5 : 4.2) : isInLevel ? 4 : 2.8;
       const fill = isInLevel ? 0x38bdf8 : city.isMajor ? 0xcbd5e1 : 0x64748b;
 
       const dot = this.add.circle(city.mapX, city.mapY, radius, fill);
@@ -384,30 +451,35 @@ export class EuropeMapScene extends Phaser.Scene {
 
       if (city.landmark) {
         const lm = this.add.image(city.mapX, city.mapY - 17, `landmark_${city.landmark}`);
-        lm.setScale(isInLevel ? 0.95 : 0.72);
-        lm.setAlpha(isInLevel ? 1 : 0.78);
+        lm.setScale(isInLevel ? 0.92 : 0.7);
+        lm.setAlpha(isInLevel ? 1 : 0.72);
         lm.setDepth(7);
         this.worldLayer.add(lm);
       }
 
-      const label = this.add.text(city.mapX, city.mapY + 7, city.name, {
+      const label = this.add.text(city.mapX, city.mapY + 8, city.name, {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontSize: isInLevel ? '11px' : city.isMajor ? '10px' : '9px',
+        fontSize: isInLevel ? '11.5px' : city.isMajor ? '10px' : '9px',
         fontStyle: isInLevel || city.isMajor ? 'bold' : 'normal',
         color: isInLevel ? '#f8fafc' : '#cbd5e1',
-        backgroundColor: isInLevel ? 'rgba(15, 23, 42, 0.82)' : 'rgba(15, 23, 42, 0.58)',
-        padding: { x: 4, y: 1 },
-        resolution: 3
+        backgroundColor: isInLevel ? 'rgba(15, 23, 42, 0.86)' : 'rgba(15, 23, 42, 0.56)',
+        padding: { x: 4, y: 1.5 },
+        resolution: 4
       });
       label.setOrigin(0.5, 0);
-      label.setDepth(8);
+      label.setDepth(9);
       this.worldLayer.add(label);
-      this.cityLabels.push({ text: label, isMajor: !!city.isMajor, isActive: isInLevel });
+      this.cityLabels.push({
+        text: label,
+        x: city.mapX,
+        y: city.mapY + 8,
+        isMajor: !!city.isMajor,
+        isActive: isInLevel
+      });
     });
   }
 
   private createChargerPins(): void {
-    // Include chargers on any of the 3 route options for this level
     const levelEdgeIds = new Set<string>();
     this.bridge.level.routeOptions.forEach(opt => {
       opt.legs.forEach(l => levelEdgeIds.add(l.edgeId));
@@ -416,15 +488,18 @@ export class EuropeMapScene extends Phaser.Scene {
 
     relevantChargers.forEach(station => {
       const netColor = NET_COLORS[station.network] || 0x38bdf8;
-      const dot = this.add.circle(station.mapX, station.mapY, 5.5, netColor);
-      dot.setStrokeStyle(2, 0x0f172a);
-      dot.setDepth(12);
+      const dotRing = this.add.circle(station.mapX, station.mapY, 7, 0x000000, 0);
+      dotRing.setDepth(12);
+
+      const dot = this.add.circle(station.mapX, station.mapY, 4.5, netColor);
+      dot.setStrokeStyle(1.6, 0x0f172a);
+      dot.setDepth(13);
       dot.setInteractive({ useHandCursor: true });
 
-      const cardW = 166;
+      const cardW = 164;
       const cardH = 44;
       const card = this.add.container(station.mapX, station.mapY - 26);
-      card.setDepth(15);
+      card.setDepth(16);
 
       const cardBg = this.add.rectangle(0, 0, cardW, cardH, 0x0f172a, 0.94);
       cardBg.setStrokeStyle(1.5, netColor, 0.95);
@@ -432,30 +507,30 @@ export class EuropeMapScene extends Phaser.Scene {
 
       const cardAccent = this.add.rectangle(-cardW / 2 + 2.5, 0, 5, cardH - 2, netColor, 1);
 
-      const logo = this.add.image(-cardW / 2 + 21, 0, `logo_${station.network}`);
-      logo.setDisplaySize(24, 24);
+      const logo = this.add.image(-cardW / 2 + 20, 0, `logo_${station.network}`);
+      logo.setDisplaySize(22, 22);
 
-      const titleText = this.add.text(-cardW / 2 + 38, -14, '', {
+      const titleText = this.add.text(-cardW / 2 + 36, -15, '', {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: '10px',
         fontStyle: 'bold',
         color: '#f8fafc',
-        resolution: 3
+        resolution: 4
       });
 
-      const priceText = this.add.text(-cardW / 2 + 38, -1, '', {
+      const priceText = this.add.text(-cardW / 2 + 36, -1, '', {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: '10.5px',
         fontStyle: 'bold',
         color: '#4ade80',
-        resolution: 3
+        resolution: 4
       });
 
-      const noSubText = this.add.text(-cardW / 2 + 38, 11, '', {
+      const noSubText = this.add.text(-cardW / 2 + 36, 11, '', {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: '8.5px',
         color: '#94a3b8',
-        resolution: 3
+        resolution: 4
       });
 
       card.add([cardBg, cardAccent, logo, titleText, priceText, noSubText]);
@@ -472,13 +547,17 @@ export class EuropeMapScene extends Phaser.Scene {
       dot.on('pointerup', onTap);
       cardBg.on('pointerup', onTap);
 
+      this.chargerLayer.add(dotRing);
       this.chargerLayer.add(dot);
       this.chargerLayer.add(card);
 
       this.pinObjects.push({
         station,
         onActiveRoute: false,
+        isSubscribed: false,
+        isFilteredVisible: true,
         dot,
+        dotRing,
         card,
         cardBg,
         cardAccent,
@@ -488,6 +567,8 @@ export class EuropeMapScene extends Phaser.Scene {
         noSubText,
         cardW,
         cardH,
+        pinX: station.mapX,
+        pinY: station.mapY,
         worldX: station.mapX,
         worldY: station.mapY - 26
       });
@@ -503,19 +584,39 @@ export class EuropeMapScene extends Phaser.Scene {
   }
 
   public refreshDynamicState(): void {
-    if (!this.dynamicOverlay) return;
+    if (!this.dynamicOverlay || !this.rangeOverlay) return;
     const g = this.dynamicOverlay;
+    const rg = this.rangeOverlay;
     g.clear();
+    rg.clear();
     this.routePillsLayer.removeAll(true);
+    this.stageLabelsLayer.removeAll(true);
 
     const activeRoute = getActiveRouteOption(this.bridge.level, this.bridge.plan);
     const activeLegs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
     const activeEdgeIds = new Set(activeLegs.map(l => l.edgeId));
+    const selectedLegIdx = Math.max(0, Math.min(activeLegs.length - 1, this.bridge.selectedLegIndex || 0));
+
+    // 0. Draw Transparent 4-Band Range Overlay for Currently Selected Stage
+    const rangeData = computeRangeOverlayForStage(this.bridge.level, this.bridge.plan, selectedLegIdx);
+    if (rangeData) {
+      rangeData.rings.forEach(ring => {
+        this.drawAnnulusRing(
+          rg,
+          rangeData.originX,
+          rangeData.originY,
+          ring.innerPx,
+          ring.outerPx,
+          ring.color,
+          ring.alpha
+        );
+      });
+    }
 
     // 1. Draw the 2 unselected alternative routes first (dashed distinct colors)
     this.bridge.level.routeOptions.forEach(opt => {
       if (opt.id === activeRoute.id) return;
-      g.lineStyle(4, opt.colorHex, 0.48);
+      g.lineStyle(3.5, opt.colorHex, 0.45);
       opt.legs.forEach(leg => {
         if (leg.reverse) return;
         const edge = getEdgeById(leg.edgeId);
@@ -532,12 +633,12 @@ export class EuropeMapScene extends Phaser.Scene {
         }
       });
 
-      // Place clickable pill at mid-leg of alternative route
       const midLeg = opt.legs[Math.min(1, Math.floor(opt.legs.length / 2))];
       if (midLeg) {
         const edge = getEdgeById(midLeg.edgeId);
-        const wp = edge.waypoints[Math.floor(edge.waypoints.length / 2)];
+        const wp = getPointAlongEdge(edge, 0.5);
         const pill = this.add.container(wp.x, wp.y - 16);
+        pill.setDepth(14);
         const bg = this.add.rectangle(0, 0, 118, 18, 0x0f172a, 0.88);
         bg.setStrokeStyle(1.5, opt.colorHex, 0.95);
         bg.setInteractive({ useHandCursor: true });
@@ -547,7 +648,7 @@ export class EuropeMapScene extends Phaser.Scene {
             fontSize: '9px',
             fontStyle: 'bold',
             color: '#e2e8f0',
-            resolution: 3
+            resolution: 4
           })
           .setOrigin(0.5);
         pill.add([bg, txt]);
@@ -560,21 +661,77 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
-    // 2. Draw active selected route bold with glow casing
-    activeLegs.forEach(leg => {
+    // 2. Draw active selected route + ALWAYS highlight the currently selected stage/etappe
+    activeLegs.forEach((leg, legIdx) => {
       const edge = getEdgeById(leg.edgeId);
-      if (leg.reverse) return;
-      g.lineStyle(9, activeRoute.colorHex, 0.25);
-      for (let i = 0; i < edge.waypoints.length - 1; i++) {
-        g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+      const isSelectedStage = legIdx === selectedLegIdx || (activeLegs[selectedLegIdx]?.edgeId === leg.edgeId && leg.reverse === activeLegs[selectedLegIdx]?.reverse);
+
+      if (!leg.reverse) {
+        g.lineStyle(8, activeRoute.colorHex, 0.24);
+        for (let i = 0; i < edge.waypoints.length - 1; i++) {
+          g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+        }
+        g.lineStyle(4.5, activeRoute.colorHex, 0.92);
+        for (let i = 0; i < edge.waypoints.length - 1; i++) {
+          g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+        }
       }
-      g.lineStyle(5, activeRoute.colorHex, 0.94);
-      for (let i = 0; i < edge.waypoints.length - 1; i++) {
-        g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+
+      if (legIdx === selectedLegIdx) {
+        // Prominent luminous highlight for currently selected Etappe!
+        g.lineStyle(14, 0xfacc15, 0.28);
+        for (let i = 0; i < edge.waypoints.length - 1; i++) {
+          g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+        }
+        g.lineStyle(5.5, 0xfef08a, 0.98);
+        for (let i = 0; i < edge.waypoints.length - 1; i++) {
+          g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+        }
+
+        // Direction arrow + Etappe badge at midpoint of selected stage
+        const midPt = getPointAlongEdge(edge, 0.5, !!leg.reverse);
+        const fromCity = getCityById(leg.reverse ? edge.toCityId : edge.fromCityId);
+        const toCity = getCityById(leg.reverse ? edge.fromCityId : edge.toCityId);
+
+        const stageBadge = this.add.container(midPt.x, midPt.y + 18);
+        stageBadge.setDepth(19);
+        const labelStr = `Etappe ${legIdx + 1}: ${fromCity.name} → ${toCity.name} (${edge.distanceKm} km)`;
+        const bw = Math.min(250, Math.max(130, labelStr.length * 5.6 + 16));
+        const bg = this.add.rectangle(0, 0, bw, 19, 0x0f172a, 0.94);
+        bg.setStrokeStyle(1.8, 0xfacc15, 1);
+        const txt = this.add
+          .text(0, 0, labelStr, {
+            fontFamily: 'Plus Jakarta Sans, sans-serif',
+            fontSize: '9.5px',
+            fontStyle: 'bold',
+            color: '#fef08a',
+            resolution: 4
+          })
+          .setOrigin(0.5);
+        stageBadge.add([bg, txt]);
+        this.stageLabelsLayer.add(stageBadge);
+
+        // Origin ring around stage start city
+        g.lineStyle(2.5, 0x38bdf8, 0.95);
+        g.strokeCircle(fromCity.mapX, fromCity.mapY, 10);
+      }
+
+      // Clickable invisible stage hit target at 35% & 65% of outbound leg
+      if (!leg.reverse && !isSelectedStage) {
+        const hitPt = getPointAlongEdge(edge, 0.5);
+        const hitZone = this.add.circle(hitPt.x, hitPt.y, 12, 0xfacc15, 0.01);
+        hitZone.setInteractive({ useHandCursor: true });
+        hitZone.setDepth(10);
+        hitZone.on('pointerup', () => {
+          if (this.totalDragDist > 8 || this.isPinching) return;
+          SoundFX.click();
+          this.bridge.onMapSelectLeg(legIdx);
+        });
+        this.stageLabelsLayer.add(hitZone);
       }
     });
 
-    // 3. Update Charger Pins & Crisp Info Cards
+    // 3. Update Charger Pins & Provider Filter Visuals
     const vehicle = getVehicleById(this.bridge.plan.vehicleId);
     const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
 
@@ -582,33 +739,55 @@ export class EuropeMapScene extends Phaser.Scene {
       const { station } = node;
       node.onActiveRoute = activeEdgeIds.has(station.edgeId);
       const isSelected = selectedIds.has(station.id);
+      const isSub = isProviderSubscribed(station.network, this.bridge.plan.subscriptionIds, vehicle.isTesla);
+      const isFilteredOn = this.bridge.providerFilter[station.network] !== false;
+      node.isSubscribed = isSub;
+      node.isFilteredVisible = isFilteredOn || isSelected;
+
       const tariff = getBestPriceForStation(station, this.bridge.plan.subscriptionIds, vehicle);
       const netColor = NET_COLORS[station.network] || 0x38bdf8;
+      const grayedOut = this.bridge.dimUnsubscribed && !isSub && !isSelected;
 
-      node.dot.setFillStyle(isSelected ? 0xfacc15 : netColor);
-      node.dot.setRadius(isSelected ? 7.5 : node.onActiveRoute ? 5.5 : 4);
-      node.dot.setStrokeStyle(2, isSelected ? 0xffffff : 0x0f172a);
-      node.dot.setAlpha(node.onActiveRoute ? 1 : 0.45);
+      node.dot.setVisible(node.isFilteredVisible);
+      node.dotRing.setVisible(node.isFilteredVisible && isSelected);
 
-      node.cardBg.setFillStyle(isSelected ? 0x1e293b : 0x0f172a, node.onActiveRoute ? 0.95 : 0.72);
-      node.cardBg.setStrokeStyle(isSelected ? 2 : 1.5, isSelected ? 0xfacc15 : netColor, node.onActiveRoute ? 0.95 : 0.5);
-      node.cardAccent.setFillStyle(isSelected ? 0xfacc15 : netColor, 1);
+      if (isSelected) {
+        node.dot.setFillStyle(0xfacc15);
+        node.dot.setStrokeStyle(2, 0xffffff);
+        node.dot.setAlpha(1);
+        node.dotRing.setStrokeStyle(2, 0xfacc15, 0.9);
+      } else if (grayedOut) {
+        node.dot.setFillStyle(0x64748b);
+        node.dot.setStrokeStyle(1.2, 0x0f172a);
+        node.dot.setAlpha(node.onActiveRoute ? 0.55 : 0.25);
+      } else {
+        node.dot.setFillStyle(netColor);
+        node.dot.setStrokeStyle(1.6, 0x0f172a);
+        node.dot.setAlpha(node.onActiveRoute ? 1.0 : 0.48);
+      }
+
+      node.cardBg.setFillStyle(isSelected ? 0x1e293b : 0x0f172a, grayedOut ? 0.65 : node.onActiveRoute ? 0.95 : 0.72);
+      node.cardBg.setStrokeStyle(
+        isSelected ? 2 : 1.5,
+        isSelected ? 0xfacc15 : grayedOut ? 0x475569 : netColor,
+        grayedOut ? 0.45 : node.onActiveRoute ? 0.95 : 0.5
+      );
+      node.cardAccent.setFillStyle(isSelected ? 0xfacc15 : grayedOut ? 0x64748b : netColor, 1);
+      node.logo.setAlpha(grayedOut ? 0.45 : 1);
 
       const icons = `${station.hasMcDonalds ? ' 🍔' : ''}${station.trailerFriendly ? ' 🚐' : ''}`;
       const shortNet = NET_SHORT[station.network] || station.network.toUpperCase();
       node.titleText.setText(`${isSelected ? '✓ ' : ''}${shortNet} · ${station.maxKw}kW (${station.stalls}x)${icons}`);
       node.priceText.setText(`${tariff.pricePerKwh.toFixed(2)} €/kWh`);
-      node.priceText.setColor(tariff.hasSubscriptionDiscount ? '#4ade80' : '#facc15');
+      node.priceText.setColor(grayedOut ? '#94a3b8' : tariff.hasSubscriptionDiscount ? '#4ade80' : '#facc15');
 
       if (tariff.hasSubscriptionDiscount) {
         node.noSubText.setText(`ohne Abo: ${tariff.pricePerKwhWithoutSub.toFixed(2)} €/kWh`);
-        node.noSubText.setVisible(true);
       } else {
-        node.noSubText.setText(`${station.cityHint.slice(0, 22)}`);
-        node.noSubText.setVisible(true);
+        node.noSubText.setText(grayedOut ? `${station.cityHint.slice(0, 18)} (kein Abo)` : station.cityHint.slice(0, 22));
       }
 
-      node.card.setAlpha(node.onActiveRoute ? 1 : 0.55);
+      node.card.setAlpha(grayedOut ? 0.62 : node.onActiveRoute ? 1 : 0.6);
     });
 
     this.layoutChargerCards(true);
@@ -621,60 +800,78 @@ export class EuropeMapScene extends Phaser.Scene {
         const leg = activeLegs[legIdx];
         const edge = getEdgeById(leg.edgeId);
         const rawT = Math.min(1, Math.max(0, this.bridge.runState.legProgressKm / Math.max(1, edge.distanceKm)));
-        const t = leg.reverse ? 1 - rawT : rawT;
-        const from = getCityById(edge.fromCityId);
-        const to = getCityById(edge.toCityId);
-        this.carMarker.setPosition(
-          from.mapX + (to.mapX - from.mapX) * t,
-          from.mapY + (to.mapY - from.mapY) * t
-        );
-        const angle = Phaser.Math.Angle.Between(
-          leg.reverse ? to.mapX : from.mapX,
-          leg.reverse ? to.mapY : from.mapY,
-          leg.reverse ? from.mapX : to.mapX,
-          leg.reverse ? from.mapY : to.mapY
-        );
-        this.carMarker.setRotation(angle + Math.PI / 2);
+        const pt = getPointAlongEdge(edge, rawT, !!leg.reverse);
+        this.carMarker.setPosition(pt.x, pt.y);
+        this.carMarker.setRotation(pt.angleRad + Math.PI / 2);
       } else {
-        const start = getCityById(this.bridge.level.startCityId);
-        this.carMarker.setPosition(start.mapX, start.mapY);
+        const leg = activeLegs[selectedLegIdx] || activeLegs[0];
+        const edge = getEdgeById(leg.edgeId);
+        const startCity = getCityById(leg.reverse ? edge.toCityId : edge.fromCityId);
+        this.carMarker.setPosition(startCity.mapX, startCity.mapY);
         this.carMarker.setRotation(Math.PI / 2);
       }
     }
   }
 
   /**
-   * Computes crisp, non-overlapping positions for all visible charger cards at the current camera zoom,
-   * and draws crisp leader lines back to exact highway pins.
+   * Zoom-progressive detail tiers + non-overlapping card & label placement:
+   * - Tier 0 (zoom < 0.95): Only small colored dots for chargers (zero clutter over route/stages).
+   * - Tier 1 (0.95 <= zoom < 1.55): Compact active-route charger badges (logo + kW + price).
+   * - Tier 2 (zoom >= 1.55): Full detailed charger cards + off-route chargers + detailed stage info.
    */
   public layoutChargerCards(force = false): void {
     const cam = this.cameras.main;
     if (!cam || !this.leaderOverlay) return;
 
     const zoom = cam.zoom;
-    if (!force && Math.abs(zoom - this.lastLayoutZoom) < 0.06) return;
+    const tier = zoom < 0.95 ? 0 : zoom < 1.55 ? 1 : 2;
+    if (!force && tier === this.lastDetailTier && Math.abs(zoom - this.lastLayoutZoom) < 0.04) return;
     this.lastLayoutZoom = zoom;
+    this.lastDetailTier = tier;
 
     this.leaderOverlay.clear();
 
-    // Show full detailed cards when zoomed in (>= 1.15) or for active selected stops;
-    // keep inactive route cards hidden unless zoomed in deeply (>= 1.65)
-    const showDetailedCards = zoom >= 1.12;
-    const showInactiveRouteCards = zoom >= 1.65;
+    const invScale = Phaser.Math.Clamp(1.0 / zoom, 0.22, 1.35);
+    const cardScale = Phaser.Math.Clamp(0.95 / Math.pow(zoom, 0.85), 0.24, 0.95);
+    const labelScale = Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.72), 0.28, 1.05);
 
-    // Scale cards inversely to zoom so text stays crisp & near native screen size!
-    const cardScale = Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.82), 0.28, 1.0);
-
-    // Adjust city label & shield scales for zoom crispness
-    const labelScale = Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.65), 0.35, 1.05);
+    // Update city labels visibility & crisp screen-consistent scale
+    const fixedObstacles: BoxRect[] = [];
     this.cityLabels.forEach(item => {
       item.text.setScale(labelScale);
-      const show = item.isActive || item.isMajor || zoom >= 1.15;
+      const show = item.isActive || (tier >= 1 && item.isMajor) || tier >= 2;
       item.text.setVisible(show);
+      if (show) {
+        fixedObstacles.push({
+          x: item.x,
+          y: item.y + 8 * labelScale,
+          w: Math.max(46, item.text.width * labelScale),
+          h: 16 * labelScale
+        });
+      }
     });
+
+    // Update Autobahn shields
     this.shieldTags.forEach(s => {
-      s.setScale(Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.68), 0.38, 1.0));
-      s.setVisible(zoom >= 0.85);
+      const shScale = Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.75), 0.3, 1.0);
+      s.cont.setScale(shScale);
+      const show = s.major || tier >= 1;
+      s.cont.setVisible(show);
+      if (show) {
+        fixedObstacles.push({ x: s.x, y: s.y, w: 32 * shScale, h: 16 * shScale });
+      }
+    });
+
+    // Scale stage labels and route pills cleanly
+    this.stageLabelsLayer.list.forEach(obj => {
+      if (obj instanceof Phaser.GameObjects.Container) {
+        obj.setScale(Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.78), 0.26, 1.0));
+      }
+    });
+    this.routePillsLayer.list.forEach(obj => {
+      if (obj instanceof Phaser.GameObjects.Container) {
+        obj.setScale(Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.78), 0.28, 1.0));
+      }
     });
 
     const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
@@ -682,12 +879,51 @@ export class EuropeMapScene extends Phaser.Scene {
 
     this.pinObjects.forEach(node => {
       const isSelected = selectedIds.has(node.station.id);
-      const visible =
-        (node.onActiveRoute && (showDetailedCards || isSelected)) ||
-        (!node.onActiveRoute && showInactiveRouteCards);
 
-      node.card.setVisible(visible);
-      if (visible) {
+      // Keep dots small & crisp across all zoom levels so they never cover routes
+      const dotR = isSelected ? 6.2 * invScale : node.onActiveRoute ? 4.4 * invScale : 3.2 * invScale;
+      node.dot.setRadius(Phaser.Math.Clamp(dotR, 1.8, 7.5));
+      node.dotRing.setRadius(Phaser.Math.Clamp(dotR * 1.45, 3.0, 11.0));
+
+      // Progressive card visibility:
+      // Tier 0 (zoomed out): NO cards at all -> route, stages, and Autobahn shields stay 100% clear!
+      // Tier 1 (medium zoom): Show compact cards on active route (or selected stops)
+      // Tier 2 (deep zoom): Show full detail cards for active + alternative routes
+      let showCard = false;
+      if (node.isFilteredVisible) {
+        if (tier === 1) {
+          showCard = node.onActiveRoute && (node.isSubscribed || isSelected || !this.bridge.dimUnsubscribed);
+        } else if (tier >= 2) {
+          showCard = node.onActiveRoute || isSelected || zoom >= 1.85;
+        }
+      }
+
+      if (tier === 1) {
+        // Compact card styling at medium zoom
+        node.cardH = 30;
+        node.cardBg.setSize(148, 30);
+        node.cardAccent.setSize(4, 28);
+        node.cardAccent.setPosition(-74 + 2, 0);
+        node.logo.setPosition(-74 + 17, 0).setDisplaySize(18, 18);
+        node.titleText.setPosition(-74 + 31, -11);
+        node.priceText.setPosition(-74 + 31, 1);
+        node.noSubText.setVisible(false);
+        node.cardW = 148;
+      } else {
+        // Full card styling at deep zoom
+        node.cardH = 44;
+        node.cardBg.setSize(164, 44);
+        node.cardAccent.setSize(5, 42);
+        node.cardAccent.setPosition(-82 + 2.5, 0);
+        node.logo.setPosition(-82 + 20, 0).setDisplaySize(22, 22);
+        node.titleText.setPosition(-82 + 36, -15);
+        node.priceText.setPosition(-82 + 36, -1);
+        node.noSubText.setVisible(true);
+        node.cardW = 164;
+      }
+
+      node.card.setVisible(showCard);
+      if (showCard) {
         node.card.setScale(cardScale);
         visibleNodes.push(node);
       }
@@ -695,80 +931,49 @@ export class EuropeMapScene extends Phaser.Scene {
 
     if (visibleNodes.length === 0) return;
 
-    // Initial fanned placement around pins to break collinear highway symmetry
-    const offsets = [
-      { dx: -1, dy: -1.15 },
-      { dx: 1, dy: 1.15 },
-      { dx: 1.1, dy: -1.1 },
-      { dx: -1.1, dy: 1.1 }
-    ];
-    visibleNodes.forEach((n, idx) => {
-      const off = offsets[idx % offsets.length];
-      const hw = (n.cardW * cardScale) * 0.5;
-      const hh = (n.cardH * cardScale) * 0.5;
-      n.worldX = n.station.mapX + off.dx * (hw * 0.72 + 12 * cardScale);
-      n.worldY = n.station.mapY + off.dy * (hh + 18 * cardScale);
+    // Sample points along active route so cards stay clear of highway centerlines
+    const routeDots: Array<{ x: number; y: number; r: number }> = [];
+    const activeLegs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
+    activeLegs.forEach(l => {
+      if (l.reverse) return;
+      const e = getEdgeById(l.edgeId);
+      for (let t = 0.12; t <= 0.88; t += 0.19) {
+        const pt = getPointAlongEdge(e, t);
+        routeDots.push({ x: pt.x, y: pt.y, r: 10 * cardScale });
+      }
     });
 
-    // Iterative pairwise 2D AABB repulsion for zero overlapping
-    const pad = 6 * cardScale;
-    for (let iter = 0; iter < 18; iter++) {
-      for (let i = 0; i < visibleNodes.length; i++) {
-        const a = visibleNodes[i];
-        const ahw = (a.cardW * cardScale) / 2 + pad;
-        const ahh = (a.cardH * cardScale) / 2 + pad;
+    resolveNonOverlappingCards(visibleNodes, fixedObstacles, routeDots, cardScale);
 
-        for (let j = i + 1; j < visibleNodes.length; j++) {
-          const b = visibleNodes[j];
-          const bhw = (b.cardW * cardScale) / 2 + pad;
-          const bhh = (b.cardH * cardScale) / 2 + pad;
-
-          const dx = b.worldX - a.worldX;
-          const dy = b.worldY - a.worldY;
-          const overlapX = ahw + bhw - Math.abs(dx);
-          const overlapY = ahh + bhh - Math.abs(dy);
-
-          if (overlapX > 0 && overlapY > 0) {
-            if (overlapX < overlapY) {
-              const sign = dx >= 0 ? 1 : -1;
-              const push = overlapX * 0.54;
-              a.worldX -= sign * push;
-              b.worldX += sign * push;
-            } else {
-              const sign = dy >= 0 ? 1 : -1;
-              const push = overlapY * 0.54;
-              a.worldY -= sign * push;
-              b.worldY += sign * push;
-            }
-          }
-        }
-
-        // Gentle spring pull toward pin so cards stay near their station
-        a.worldX += (a.station.mapX - a.worldX) * 0.04;
-        a.worldY += (a.station.mapY - a.worldY) * 0.04;
-      }
-    }
-
-    // Apply positions & draw crisp leader lines
     visibleNodes.forEach(n => {
       n.card.setPosition(n.worldX, n.worldY);
       const isSelected = selectedIds.has(n.station.id);
-      const lineColor = isSelected ? 0xfacc15 : NET_COLORS[n.station.network] || 0x38bdf8;
-      this.leaderOverlay.lineStyle(Math.max(1.2, 2.0 * cardScale), lineColor, n.onActiveRoute ? 0.9 : 0.45);
-      this.leaderOverlay.lineBetween(n.station.mapX, n.station.mapY, n.worldX, n.worldY);
+      const grayed = this.bridge.dimUnsubscribed && !n.isSubscribed && !isSelected;
+      const lineColor = isSelected ? 0xfacc15 : grayed ? 0x64748b : NET_COLORS[n.station.network] || 0x38bdf8;
+      this.leaderOverlay.lineStyle(Math.max(0.9, 1.6 * cardScale), lineColor, grayed ? 0.45 : n.onActiveRoute ? 0.88 : 0.45);
+      this.leaderOverlay.lineBetween(n.pinX, n.pinY, n.worldX, n.worldY);
     });
   }
 
   public zoomBy(factor: number): void {
     const cam = this.cameras.main;
     if (!cam) return;
-    const next = Phaser.Math.Clamp(cam.zoom * factor, 0.42, 4.8);
-    cam.setZoom(next);
-    this.clampCameraScroll();
-    this.layoutChargerCards();
+    if (!this.smoothCamActive) {
+      this.targetZoom = cam.zoom;
+      this.targetScrollX = cam.scrollX;
+      this.targetScrollY = cam.scrollY;
+    }
+    const centerWorld = cam.getWorldPoint(cam.width / 2, cam.height / 2);
+    const nextZoom = Phaser.Math.Clamp(this.targetZoom * factor, 0.42, 4.8);
+    this.targetZoom = nextZoom;
+    // Keep center anchored cleanly
+    this.targetScrollX = centerWorld.x - cam.width / 2;
+    this.targetScrollY = centerWorld.y - cam.height / 2;
+    this.clampCameraTargets();
+    this.smoothCamActive = true;
   }
 
-  public fitCameraToRoute(): void {
+  public fitCameraToRoute(immediate = false): void {
     const cam = this.cameras.main;
     if (!cam) return;
     const activeLegs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
@@ -785,38 +990,55 @@ export class EuropeMapScene extends Phaser.Scene {
       minY = Math.min(minY, c.mapY);
       maxY = Math.max(maxY, c.mapY);
     });
-    const padX = 115;
-    const padY = 95;
+    const padX = 120;
+    const padY = 100;
     const boxW = Math.max(260, maxX - minX + padX * 2);
     const boxH = Math.max(220, maxY - minY + padY * 2);
-    const zoom = Math.min(cam.width / boxW, cam.height / boxH);
-    cam.setZoom(Phaser.Math.Clamp(zoom, 0.48, 2.4));
-    cam.centerOn((minX + maxX) / 2, (minY + maxY) / 2);
-    this.clampCameraScroll();
-    this.layoutChargerCards(true);
+    const zoom = Phaser.Math.Clamp(Math.min(cam.width / boxW, cam.height / boxH), 0.48, 2.2);
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+
+    if (immediate) {
+      cam.setZoom(zoom);
+      cam.centerOn(cx, cy);
+      this.targetZoom = cam.zoom;
+      this.targetScrollX = cam.scrollX;
+      this.targetScrollY = cam.scrollY;
+      this.clampCameraTargets();
+      cam.scrollX = this.targetScrollX;
+      cam.scrollY = this.targetScrollY;
+      this.smoothCamActive = false;
+      this.layoutChargerCards(true);
+    } else {
+      this.targetZoom = zoom;
+      this.targetScrollX = cx - cam.width / 2;
+      this.targetScrollY = cy - cam.height / 2;
+      this.clampCameraTargets();
+      this.smoothCamActive = true;
+    }
   }
 
   public zoomFullEurope(): void {
     const cam = this.cameras.main;
     if (!cam) return;
-    const zoom = Math.min(cam.width / 1380, cam.height / 1320);
-    cam.setZoom(Phaser.Math.Clamp(zoom, 0.42, 1.4));
-    cam.centerOn(780, 710);
-    this.clampCameraScroll();
-    this.layoutChargerCards(true);
+    const zoom = Phaser.Math.Clamp(Math.min(cam.width / 1380, cam.height / 1320), 0.42, 1.4);
+    this.targetZoom = zoom;
+    this.targetScrollX = 780 - cam.width / 2;
+    this.targetScrollY = 710 - cam.height / 2;
+    this.clampCameraTargets();
+    this.smoothCamActive = true;
   }
 
-  private clampCameraScroll(): void {
-    const cam = this.cameras.main;
-    if (!cam) return;
-    cam.scrollX = Phaser.Math.Clamp(cam.scrollX, -220, this.mapBounds.w - 180);
-    cam.scrollY = Phaser.Math.Clamp(cam.scrollY, -180, this.mapBounds.h - 140);
+  private clampCameraTargets(): void {
+    this.targetScrollX = Phaser.Math.Clamp(this.targetScrollX, -220, this.mapBounds.w - 180);
+    this.targetScrollY = Phaser.Math.Clamp(this.targetScrollY, -180, this.mapBounds.h - 140);
   }
 
   private setupPanAndZoom(): void {
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       this.activePointers.set(pointer.id, { x: pointer.x, y: pointer.y });
       const cam = this.cameras.main;
+      this.smoothCamActive = false;
 
       if (this.activePointers.size >= 2) {
         this.isPinching = true;
@@ -826,7 +1048,7 @@ export class EuropeMapScene extends Phaser.Scene {
       } else {
         this.isPinching = false;
         this.totalDragDist = 0;
-        this.dragStart = { x: pointer.x, y: pointer.y, camX: cam.scrollX, camY: cam.scrollY };
+        this.dragStart = { x: pointer.x, y: pointer.y, scrollX: cam.scrollX, scrollY: cam.scrollY };
       }
     });
 
@@ -851,7 +1073,12 @@ export class EuropeMapScene extends Phaser.Scene {
           const worldAfter = cam.getWorldPoint(midX, midY);
           cam.scrollX += worldBefore.x - worldAfter.x;
           cam.scrollY += worldBefore.y - worldAfter.y;
-          this.clampCameraScroll();
+          this.targetZoom = cam.zoom;
+          this.targetScrollX = cam.scrollX;
+          this.targetScrollY = cam.scrollY;
+          this.clampCameraTargets();
+          cam.scrollX = this.targetScrollX;
+          cam.scrollY = this.targetScrollY;
           this.layoutChargerCards();
         }
         this.prevPinchDist = dist;
@@ -861,9 +1088,12 @@ export class EuropeMapScene extends Phaser.Scene {
       if (!pointer.isDown || !this.dragStart || this.isPinching) return;
       const dx = (this.dragStart.x - pointer.x) / cam.zoom;
       const dy = (this.dragStart.y - pointer.y) / cam.zoom;
-      cam.scrollX = this.dragStart.camX + dx;
-      cam.scrollY = this.dragStart.camY + dy;
-      this.clampCameraScroll();
+      this.targetZoom = cam.zoom;
+      this.targetScrollX = this.dragStart.scrollX + dx;
+      this.targetScrollY = this.dragStart.scrollY + dy;
+      this.clampCameraTargets();
+      cam.scrollX = this.targetScrollX;
+      cam.scrollY = this.targetScrollY;
     });
 
     const handleUp = (pointer: Phaser.Input.Pointer) => {
@@ -873,11 +1103,10 @@ export class EuropeMapScene extends Phaser.Scene {
         if (this.activePointers.size === 1) {
           const rem = Array.from(this.activePointers.values())[0];
           const cam = this.cameras.main;
-          this.dragStart = { x: rem.x, y: rem.y, camX: cam.scrollX, camY: cam.scrollY };
+          this.dragStart = { x: rem.x, y: rem.y, scrollX: cam.scrollX, scrollY: cam.scrollY };
         } else {
           this.dragStart = undefined;
-          // Small timeout so pointerup handlers on pins inspect isPinching cleanly
-          this.time.delayedCall(20, () => {
+          this.time.delayedCall(25, () => {
             this.isPinching = false;
           });
         }
@@ -891,15 +1120,21 @@ export class EuropeMapScene extends Phaser.Scene {
       'wheel',
       (pointer: Phaser.Input.Pointer, _objs: unknown[], _dx: number, dy: number) => {
         const cam = this.cameras.main;
+        const baseZoom = this.smoothCamActive ? this.targetZoom : cam.zoom;
         const worldBefore = cam.getWorldPoint(pointer.x, pointer.y);
-        const factor = dy > 0 ? 0.88 : 1.14;
-        const nextZoom = Phaser.Math.Clamp(cam.zoom * factor, 0.42, 4.8);
+        const factor = dy > 0 ? 0.86 : 1.16;
+        const nextZoom = Phaser.Math.Clamp(baseZoom * factor, 0.42, 4.8);
+
+        // Compute target scroll that keeps cursor worldBefore fixed at (pointer.x, pointer.y)
         cam.setZoom(nextZoom);
         const worldAfter = cam.getWorldPoint(pointer.x, pointer.y);
-        cam.scrollX += worldBefore.x - worldAfter.x;
-        cam.scrollY += worldBefore.y - worldAfter.y;
-        this.clampCameraScroll();
-        this.layoutChargerCards();
+        this.targetZoom = nextZoom;
+        this.targetScrollX = cam.scrollX + (worldBefore.x - worldAfter.x);
+        this.targetScrollY = cam.scrollY + (worldBefore.y - worldAfter.y);
+        // Restore current zoom and smoothly interpolate toward target!
+        cam.setZoom(baseZoom);
+        this.clampCameraTargets();
+        this.smoothCamActive = true;
       }
     );
   }
