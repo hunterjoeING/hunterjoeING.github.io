@@ -196,6 +196,13 @@
     { id: 'quiz_f1_strecken', title: 'Formel 1: Legendäre Strecken', icon: '🏁', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_f1_regeln', title: 'Formel 1: Regeln & Boxenstopps', icon: '📋', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_f1_teams', title: 'Formel 1: Teams & Geschichte', icon: '🏛️', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_apple', title: 'Apple – Produkte, Kult & Technikgeschichte', icon: '🍎', lowerIsBetter: false },
+    { id: 'quiz_apple_mix', title: 'Apple: Komplett-Mix', icon: '🍎', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_apple_iphone_ipad', title: 'Apple: iPhone & iPad', icon: '📱', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_apple_mac_silicon', title: 'Apple: Mac & Apple Silicon', icon: '💻', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_apple_audio_wearables', title: 'Apple: Audio, Wearables & Ökosystem', icon: '⌚', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_apple_design_history', title: 'Apple: Geschichte, Design & Kult', icon: '🏛️', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_apple_flops_curiosities', title: 'Apple: Flops, Kurioses & Insider-Wissen', icon: '💡', lowerIsBetter: false, unlisted: true },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -247,6 +254,7 @@
       if (p.includes('/games/quiz-fussball')) return 'quiz_fussball';
       if (p.includes('/games/quiz-american-football')) return 'quiz_american_football';
       if (p.includes('/games/quiz-f1')) return 'quiz_f1';
+      if (p.includes('/games/quiz-apple')) return 'quiz_apple';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
@@ -867,6 +875,7 @@
     { id: 'quiz_fussball', title: 'Fußball – Das große Quiz', icon: '⚽' },
     { id: 'quiz_american_football', title: 'American Football – Das große NFL-Quiz', icon: '🏈' },
     { id: 'quiz_f1', title: 'Formel 1 – Legenden, Technik & Königsklasse', icon: '🏎️' },
+    { id: 'quiz_apple', title: 'Apple – Produkte, Kult & Technikgeschichte', icon: '🍎' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },
