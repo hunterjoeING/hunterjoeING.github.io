@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
-import { getChargersForEdge, getEdgeById } from '../data/europeMap';
+import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
+import { getActiveRouteLegs } from '../sim/RoutePlanner';
 import { ChargerStation } from '../types';
 import { ERoadtripBridge } from './GameBridge';
 import { SoundFX } from './SoundFX';
@@ -166,7 +167,8 @@ export class AutobahnScene extends Phaser.Scene {
 
     if (this.bridge.paused) return;
 
-    const legSpec = this.bridge.level.routeLegs[run.currentLegIndex];
+    const activeLegs = getActiveRouteLegs(this.bridge.level, run.plan);
+    const legSpec = activeLegs[run.currentLegIndex];
     if (!legSpec) return;
     const edge = getEdgeById(legSpec.edgeId);
     const vehicle = getVehicleById(run.plan.vehicleId);
@@ -209,8 +211,9 @@ export class AutobahnScene extends Phaser.Scene {
       this.gantryObj.y += scrollPxPerSec * 0.85 * dtSec;
       if (this.gantryObj.y > h + 900) {
         this.gantryObj.y = -80;
+        const toCity = getCityById(legSpec.reverse ? edge.fromCityId : edge.toCityId);
         const label = this.gantryObj.list[1] as Phaser.GameObjects.Text;
-        label.setText(`${edge.highwayName}  ·  ${legSpec.reverse ? 'RICHTUNG AACHEN' : 'RICHTUNG HANNOVER'}`);
+        label.setText(`${edge.highwayName}  ·  RICHTUNG ${toCity.name.toUpperCase()}`);
       }
     }
 
@@ -377,14 +380,17 @@ export class AutobahnScene extends Phaser.Scene {
         return;
       }
 
-      // Deterministic-feeling curated dynamic event milestones so Level 1 always feels rich!
+      // Route-aware dynamic events (high-traffic routes hit jams reliably; low-traffic routes avoid them!)
       if (run.currentLegIndex === 1 && legRatio > 0.55 && !run.triggeredEventIds.includes('evt_stau_kamen')) {
         run.triggeredEventIds.push('evt_stau_kamen');
-        this.eventCooldownSec = 7;
-        this.bridge.paused = true;
-        SoundFX.alert();
-        this.bridge.onDynamicEventTrigger('evt_stau_kamen');
-        return;
+        const hitJam = edge.baseTrafficRisk >= 0.35 || (edge.baseTrafficRisk >= 0.22 && Math.random() < 0.45);
+        if (hitJam) {
+          this.eventCooldownSec = 7;
+          this.bridge.paused = true;
+          SoundFX.alert();
+          this.bridge.onDynamicEventTrigger('evt_stau_kamen');
+          return;
+        }
       }
       if (run.currentLegIndex === 2 && legRatio > 0.45 && !run.triggeredEventIds.includes('evt_accident_help')) {
         run.triggeredEventIds.push('evt_accident_help');
@@ -430,7 +436,7 @@ export class AutobahnScene extends Phaser.Scene {
           return;
         }
       }
-      if (run.currentLegIndex < this.bridge.level.routeLegs.length - 1) {
+      if (run.currentLegIndex < activeLegs.length - 1) {
         run.currentLegIndex += 1;
         run.legProgressKm = 0;
       } else {
