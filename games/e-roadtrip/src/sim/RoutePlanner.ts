@@ -1,7 +1,11 @@
 import {
   ChargerStation,
   LevelConfig,
+  LevelRouteLegSpec,
+  LiveSocPrediction,
   PlannedStop,
+  RouteOption,
+  RunState,
   TripPlan
 } from '../types';
 import { getVehicleById } from '../data/vehicles';
@@ -20,6 +24,9 @@ export interface LegForecast {
   targetSpeedKmh: number;
   speedLimitKmh: number;
   weather: string;
+  elevationGainM: number;
+  elevationLossM: number;
+  trafficRisk: number;
   consumptionKwh100: number;
   startSocPct: number;
   endSocPct: number;
@@ -29,6 +36,7 @@ export interface LegForecast {
     station: ChargerStation;
     arriveSoc: number;
     departSoc: number;
+    targetSocPct: number;
     minutes: number;
     costEur: number;
   }>;
@@ -47,27 +55,41 @@ export interface PlanForecast {
   tollsEur: number;
   estimatedTotalCostEur: number;
   minSocEncountered: number;
+  firstStopName: string;
+  firstStopArrivalSocPct: number;
+  finalArrivalSocPct: number;
+  totalElevationGainM: number;
+  totalElevationLossM: number;
+  avgTrafficRisk: number;
   avgConsumptionKwh100: number;
   legForecasts: LegForecast[];
   warnings: string[];
 }
 
-export function createDefaultPlan(level: LevelConfig, vehicleId: string): TripPlan {
+export function getActiveRouteOption(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId'>): RouteOption {
+  const id = plan?.selectedRouteId || level.defaultRouteId;
+  return level.routeOptions.find(r => r.id === id) || level.routeOptions[0];
+}
+
+export function getActiveRouteLegs(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId'>): LevelRouteLegSpec[] {
+  const opt = getActiveRouteOption(level, plan);
+  return opt ? opt.legs : level.routeLegs;
+}
+
+export function createDefaultPlan(level: LevelConfig, vehicleId: string, routeId?: string): TripPlan {
   const vehicle = getVehicleById(vehicleId);
-  const legPlans = level.routeLegs.map((leg, idx) => ({
+  const selectedRoute =
+    level.routeOptions.find(r => r.id === (routeId || level.defaultRouteId)) || level.routeOptions[0];
+  const legs = selectedRoute ? selectedRoute.legs : level.routeLegs;
+
+  const legPlans = legs.map((leg, idx) => ({
     legIndex: idx,
     targetSpeedKmh: Math.min(vehicle.maxSpeedKmh, leg.defaultTargetSpeedKmh)
   }));
 
-  // Pre-seed sensible Level 1 stops so first-time players see an editable working plan
-  const plannedStops: PlannedStop[] = [];
-  if (level.id === 'level_1_aachen_hannover') {
-    plannedStops.push(
-      { chargerId: 'chg_kamen_tesla', legIndex: 2, targetSocPct: 80 },
-      { chargerId: 'chg_hannover_enbw', legIndex: 3, targetSocPct: 78 },
-      { chargerId: 'chg_kamen_enbw', legIndex: 6, targetSocPct: 80 }
-    );
-  }
+  const plannedStops: PlannedStop[] = selectedRoute?.defaultPlannedStops
+    ? selectedRoute.defaultPlannedStops.map(s => ({ ...s }))
+    : [];
 
   const subscriptionIds = vehicle.isTesla
     ? ['tesla_suc', 'ewe_go']
@@ -75,15 +97,33 @@ export function createDefaultPlan(level: LevelConfig, vehicleId: string): TripPl
 
   return {
     vehicleId,
+    selectedRouteId: selectedRoute ? selectedRoute.id : level.defaultRouteId,
     subscriptionIds,
     legPlans,
     plannedStops
   };
 }
 
+export function switchRouteInPlan(level: LevelConfig, plan: TripPlan, routeId: string): TripPlan {
+  const vehicle = getVehicleById(plan.vehicleId);
+  const selectedRoute = level.routeOptions.find(r => r.id === routeId) || level.routeOptions[0];
+  if (!selectedRoute) return plan;
+
+  plan.selectedRouteId = selectedRoute.id;
+  plan.legPlans = selectedRoute.legs.map((leg, idx) => ({
+    legIndex: idx,
+    targetSpeedKmh: Math.min(vehicle.maxSpeedKmh, leg.defaultTargetSpeedKmh)
+  }));
+  plan.plannedStops = selectedRoute.defaultPlannedStops
+    ? selectedRoute.defaultPlannedStops.map(s => ({ ...s }))
+    : [];
+  return plan;
+}
+
 export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForecast {
   const vehicle = getVehicleById(plan.vehicleId);
-  let soc = 96; // Start at 96% at Aachen Dom / Start city
+  const legs = getActiveRouteLegs(level, plan);
+  let soc = 96; // Start at 96% at start city
   let minSoc = soc;
   let totalDist = 0;
   let totalDriveMin = 0;
@@ -91,11 +131,18 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
   let totalChargeCost = 0;
   let totalTolls = 0;
   let totalEnergyKwh = 0;
+  let totalElevGain = 0;
+  let totalElevLoss = 0;
+  let trafficWeightedSum = 0;
+
+  let firstStopName = `Ziel ${getCityById(level.destinationCityId).name}`;
+  let firstStopArrivalSocPct: number | null = null;
+
   const warnings: string[] = [];
   const legForecasts: LegForecast[] = [];
 
-  for (let i = 0; i < level.routeLegs.length; i++) {
-    const spec = level.routeLegs[i];
+  for (let i = 0; i < legs.length; i++) {
+    const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
     const lp = plan.legPlans.find(x => x.legIndex === i);
     const speed = Math.min(vehicle.maxSpeedKmh, lp ? lp.targetSpeedKmh : spec.defaultTargetSpeedKmh);
@@ -106,6 +153,9 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
 
     const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
+    totalElevGain += elevGain;
+    totalElevLoss += elevLoss;
+    trafficWeightedSum += edge.baseTrafficRisk * edge.distanceKm;
 
     const cons100 = computeConsumptionKwh100(
       vehicle,
@@ -142,11 +192,16 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       minSoc = Math.min(minSoc, soc);
 
       const arriveSoc = soc;
+      if (firstStopArrivalSocPct === null) {
+        firstStopArrivalSocPct = Math.round(arriveSoc);
+        firstStopName = item.station.name;
+      }
+
       if (arriveSoc <= 0) {
         warnings.push(`Liegenbleiber vor „${item.station.name}“ auf Etappe ${i + 1}!`);
       }
 
-      const target = Math.max(arriveSoc + 5, item.stop.targetSocPct);
+      const target = Math.min(100, Math.max(arriveSoc + 2, item.stop.targetSocPct));
       const est = estimateChargeSession(
         vehicle,
         item.station,
@@ -157,13 +212,14 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       legChargeMin += est.durationMinutes;
       totalChargeMin += est.durationMinutes;
       totalChargeCost += est.costEur;
-      soc = Math.min(100, target);
+      soc = target;
       cursorProgress = item.progress;
 
       stopSummaries.push({
         station: item.station,
         arriveSoc: Math.round(arriveSoc),
         departSoc: Math.round(soc),
+        targetSocPct: item.stop.targetSocPct,
         minutes: est.durationMinutes,
         costEur: est.costEur
       });
@@ -175,8 +231,14 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     soc -= (remKwh / vehicle.batteryKwh) * 100;
     minSoc = Math.min(minSoc, soc);
 
+    if (spec.citySegmentAtEnd === 'hannover_messe' && firstStopArrivalSocPct === null) {
+      firstStopArrivalSocPct = Math.round(soc);
+      firstStopName = toCity.name;
+    }
+
     // Effective average speed slightly lower than target due to junctions/traffic
-    const effectiveAvg = speed * 0.91;
+    const trafficPenalty = 1 - edge.baseTrafficRisk * 0.12;
+    const effectiveAvg = speed * 0.92 * trafficPenalty;
     const driveMin = Math.round((edge.distanceKm / Math.max(40, effectiveAvg)) * 60);
 
     totalDist += edge.distanceKm;
@@ -193,7 +255,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     const breakdownRisk = soc < 0 || minSoc < 0;
     if (soc < 0) {
       warnings.push(`Akku leer auf Etappe ${i + 1} (${fromCity.name} → ${toCity.name})!`);
-    } else if (soc < 8 && i === level.routeLegs.length - 1) {
+    } else if (soc < 8 && i === legs.length - 1) {
       warnings.push(`Sehr knappe Restreichweite am Ziel (${Math.round(soc)} %)!`);
     }
 
@@ -209,6 +271,9 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       targetSpeedKmh: speed,
       speedLimitKmh: edge.speedLimitKmh,
       weather,
+      elevationGainM: elevGain,
+      elevationLossM: elevLoss,
+      trafficRisk: edge.baseTrafficRisk,
       consumptionKwh100: cons100,
       startSocPct: Math.round(startSoc),
       endSocPct: Math.round(soc),
@@ -218,6 +283,10 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       policeRisk,
       breakdownRisk
     });
+  }
+
+  if (firstStopArrivalSocPct === null) {
+    firstStopArrivalSocPct = Math.round(soc);
   }
 
   const subscriptionCostEur = computeSubscriptionTripCost(plan.subscriptionIds, vehicle);
@@ -241,20 +310,159 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     tollsEur: Number(totalTolls.toFixed(2)),
     estimatedTotalCostEur: Number((totalChargeCost + subscriptionCostEur + totalTolls).toFixed(2)),
     minSocEncountered: Math.round(minSoc),
+    firstStopName,
+    firstStopArrivalSocPct,
+    finalArrivalSocPct: Math.round(soc),
+    totalElevationGainM: Math.round(totalElevGain),
+    totalElevationLossM: Math.round(totalElevLoss),
+    avgTrafficRisk: totalDist > 0 ? trafficWeightedSum / totalDist : 0,
     avgConsumptionKwh100: Number(((totalEnergyKwh / Math.max(1, totalDist)) * 100).toFixed(1)),
     legForecasts,
     warnings: Array.from(new Set(warnings))
   };
 }
 
+export function predictLiveTripSoc(
+  level: LevelConfig,
+  run: RunState,
+  opts?: {
+    overrideSpeedKmh?: number;
+    overrideSocPct?: number;
+    skipStationId?: string;
+  }
+): LiveSocPrediction {
+  const vehicle = getVehicleById(run.plan.vehicleId);
+  const legs = getActiveRouteLegs(level, run.plan);
+  let soc = opts?.overrideSocPct !== undefined ? opts.overrideSocPct : run.socPct;
+  const startLeg = Math.min(legs.length - 1, Math.max(0, run.currentLegIndex));
+
+  let distAccum = 0;
+  let liveCons100 = vehicle.baseConsumption100;
+  let nextTarget: { name: string; kind: 'charger' | 'turnaround' | 'destination'; distKm: number; socPct: number } | null = null;
+
+  for (let i = startLeg; i < legs.length; i++) {
+    const spec = legs[i];
+    const edge = getEdgeById(spec.edgeId);
+    const lp = run.plan.legPlans.find(x => x.legIndex === i);
+    const speed = Math.min(
+      vehicle.maxSpeedKmh,
+      i === startLeg && opts?.overrideSpeedKmh !== undefined
+        ? opts.overrideSpeedKmh
+        : i === startLeg
+          ? run.currentSpeedKmh || lp?.targetSpeedKmh || spec.defaultTargetSpeedKmh
+          : lp?.targetSpeedKmh || spec.defaultTargetSpeedKmh
+    );
+    const weather =
+      i === startLeg
+        ? run.activeWeather || spec.weatherOverride || edge.defaultWeather
+        : spec.weatherOverride || edge.defaultWeather;
+
+    const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
+    const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
+
+    const cons100 = computeConsumptionKwh100(
+      vehicle,
+      speed,
+      weather,
+      elevGain,
+      elevLoss,
+      edge.distanceKm,
+      level.trailerWeightKg || 0,
+      !!run.plan.behindTruckMode
+    );
+    if (i === startLeg) {
+      liveCons100 = cons100;
+    }
+
+    const startProgress01 =
+      i === startLeg ? Math.min(1, Math.max(0, run.legProgressKm / Math.max(1, edge.distanceKm))) : 0;
+
+    const stopsOnLeg = run.plan.plannedStops
+      .filter(
+        s =>
+          s.legIndex === i &&
+          !run.completedStopIds.includes(s.chargerId) &&
+          !run.skippedStopIds.includes(s.chargerId) &&
+          s.chargerId !== opts?.skipStationId
+      )
+      .map(s => {
+        const st = getChargersForEdge(edge.id).find(c => c.id === s.chargerId);
+        if (!st) return null;
+        const p = spec.reverse ? 1 - st.edgeProgress : st.edgeProgress;
+        return { stop: s, station: st, progress: p };
+      })
+      .filter((x): x is { stop: PlannedStop; station: ChargerStation; progress: number } => x !== null && x.progress > startProgress01 + 0.002)
+      .sort((a, b) => a.progress - b.progress);
+
+    let cursor = startProgress01;
+    for (const item of stopsOnLeg) {
+      const segKm = Math.max(0, (item.progress - cursor) * edge.distanceKm);
+      const segKwh = (segKm / 100) * cons100;
+      soc -= (segKwh / vehicle.batteryKwh) * 100;
+      distAccum += segKm;
+
+      if (!nextTarget) {
+        nextTarget = {
+          name: item.station.name,
+          kind: 'charger',
+          distKm: Math.max(1, Math.round(distAccum)),
+          socPct: Math.round(soc)
+        };
+      }
+
+      soc = Math.min(100, Math.max(soc, item.stop.targetSocPct));
+      cursor = item.progress;
+    }
+
+    const remKm = Math.max(0, (1 - cursor) * edge.distanceKm);
+    const remKwh = (remKm / 100) * cons100;
+    soc -= (remKwh / vehicle.batteryKwh) * 100;
+    distAccum += remKm;
+
+    if (!nextTarget && spec.citySegmentAtEnd === 'hannover_messe') {
+      const toCity = getCityById(spec.reverse ? edge.fromCityId : edge.toCityId);
+      nextTarget = {
+        name: toCity.name,
+        kind: 'turnaround',
+        distKm: Math.max(1, Math.round(distAccum)),
+        socPct: Math.round(soc)
+      };
+    }
+  }
+
+  const finalCity = getCityById(level.destinationCityId);
+  if (!nextTarget) {
+    nextTarget = {
+      name: `Ziel ${finalCity.name}`,
+      kind: 'destination',
+      distKm: Math.max(1, Math.round(distAccum)),
+      socPct: Math.round(soc)
+    };
+  }
+
+  const finalSoc = Math.round(soc);
+  return {
+    nextStopName: nextTarget.name,
+    nextStopKind: nextTarget.kind,
+    distanceToNextKm: nextTarget.distKm,
+    predictedArrivalNextSocPct: nextTarget.socPct,
+    predictedFinalSocPct: finalSoc,
+    isCriticalNext: nextTarget.socPct <= 5,
+    isCriticalFinal: finalSoc <= 5,
+    consumptionKwh100: liveCons100
+  };
+}
+
 export function findNearestAvailableCharger(
   level: LevelConfig,
+  plan: TripPlan,
   legIndex: number,
   progress01: number,
   alreadyVisitedIds: string[]
 ): { legIndex: number; station: ChargerStation } | null {
-  for (let i = legIndex; i < level.routeLegs.length; i++) {
-    const spec = level.routeLegs[i];
+  const legs = getActiveRouteLegs(level, plan);
+  for (let i = legIndex; i < legs.length; i++) {
+    const spec = legs[i];
     const candidates = getChargersForEdge(spec.edgeId)
       .filter(c => !alreadyVisitedIds.includes(c.id))
       .map(c => {
