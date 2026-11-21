@@ -1,4 +1,4 @@
-// Unified quiz bank for "american_football_packers" (75 questions)
+// Unified quiz bank for "american_football_packers" (75 questions: Green Bay Packers Historie, Kultur & Legenden)
 (function () {
   const DATA = [
   {
@@ -7,191 +7,207 @@
     "q": "Wer gründete die Green Bay Packers im August 1919 gemeinsam mit George Whitney Calhoun?",
     "a": [
       "Earl 'Curly' Lambeau",
-      "Vince Lombardi",
-      "Bart Starr",
-      "Don Hutson"
+      "Vincent 'Vince' Lombardi",
+      "Bryan 'Bart' Starr",
+      "Donald 'Don' Hutson"
     ],
-    "exp": "Curly Lambeau und Sportreporter George Whitney Calhoun gründeten das Team in der Redaktionsstube der 'Green Bay Press-Gazette'."
+    "exp": "Curly Lambeau und Sportreporter George Whitney Calhoun gründeten das Team in der Redaktionsstube der 'Green Bay Press-Gazette'.",
+    "explanation": "Curly Lambeau und Sportreporter George Whitney Calhoun gründeten das Team in der Redaktionsstube der 'Green Bay Press-Gazette'."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Woher stammt der Vereinsname 'Packers'?",
     "a": [
-      "Von der Indian Packing Company, die 500 Dollar für die ersten Trikots spendete",
-      "Von den Gepäckträgern am historischen Bahnhof von Green Bay",
-      "Vom Verpacken riesiger Eisblöcke auf den zugefrorenen Seen Wisconsins",
-      "Von einer örtlichen Kistenfabrik am Ufer des Fox River"
+      "Indian Packing Company",
+      "Acme Meat Company",
+      "Wisconsin Cheese Corp.",
+      "Midwest Lumber Mills"
     ],
-    "exp": "Lambeaus Arbeitgeber, die Fleischverpackungsfirma Indian Packing Company, stellte 500 $ für Trikots bereit – unter der Bedingung, dass das Team nach ihr benannt wird."
+    "exp": "Lambeaus Arbeitgeber, die Fleischverpackungsfirma Indian Packing Company, stellte 500 $ für Trikots bereit – unter der Bedingung, dass das Team nach ihr benannt wird.",
+    "explanation": "Lambeaus Arbeitgeber, die Fleischverpackungsfirma Indian Packing Company, stellte 500 $ für Trikots bereit – unter der Bedingung, dass das Team nach ihr benannt wird."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Was unterscheidet das Eigentümermodell der Packers von allen anderen US-Profisport-Franchises?",
     "a": [
-      "Sie gehören über 530.000 Fan-Aktionären als gemeinnützige Aktiengesellschaft",
-      "Das Team befindet sich im alleinigen Besitz der US-Bundesregierung",
-      "Jeder Spieler wird bei Vertragsunterzeichnung automatisch Miteigentümer",
-      "Das Franchise gehört zu 100 Prozent der Universität von Wisconsin"
+      "Blau und Gold",
+      "Grün und Weiß",
+      "Rot und Schwarz",
+      "Gelb und Braun"
     ],
-    "exp": "Die Packers sind das einzige Fan-eigene Franchise der US-Major-Leagues. Es gibt keinen Milliardärs-Besitzer; Aktien werfen keine Dividende ab und sind unverkäuflich."
+    "exp": "Die Packers sind das einzige Fan-eigene Franchise der US-Major-Leagues. Es gibt keinen Milliardärs-Besitzer; Aktien werfen keine Dividende ab und sind unverkäuflich.",
+    "explanation": "Die Packers sind das einzige Fan-eigene Franchise der US-Major-Leagues. Es gibt keinen Milliardärs-Besitzer; Aktien werfen keine Dividende ab und sind unverkäuflich."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Warum trägt die Stadt Green Bay (rund 107.000 Einwohner) stolz den Beinamen 'Titletown'?",
     "a": [
-      "Wegen der Rekordzahl von 13 NFL-Meisterschaften in der Clubgeschichte",
-      "Weil dort die ersten Meisterschaftspokale aus Bronze gegossen wurden",
-      "Weil kein anderes Team mehr College-Titel in Wisconsin errang",
-      "Weil dort das offizielle Büro für US-Markenrechte seinen Sitz hatte"
+      "1921",
+      "1933",
+      "1919",
+      "1925"
     ],
-    "exp": "Mit 13 NFL-Titeln (9 NFL Championships vor der Super-Bowl-Ära plus 4 Super Bowls) ist Green Bay die erfolgreichste Stadt der Football-Geschichte."
+    "exp": "Mit 13 NFL-Titeln (9 NFL Championships vor der Super-Bowl-Ära plus 4 Super Bowls) ist Green Bay die erfolgreichste Stadt der Football-Geschichte.",
+    "explanation": "Mit 13 NFL-Titeln (9 NFL Championships vor der Super-Bowl-Ära plus 4 Super Bowls) ist Green Bay die erfolgreichste Stadt der Football-Geschichte."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Was würde laut Vereinssatzung mit dem Vermögen geschehen, falls die Packers jemals aufgelöst werden sollten?",
     "a": [
-      "Der gesamte Erlös ginge an die örtliche Kriegsveteranen-Stiftung 'Sullivan-Wallen Post'",
-      "Das Vermögen würde gleichmäßig an alle Bürger der Stadt Green Bay verteilt",
-      "Das Geld fiele automatisch an die National Football League in New York",
-      "Der Betrag müsste für den Neubau einer Eishalle in Milwaukee verwendet werden"
+      "Green Bay Press-Gazette",
+      "Milwaukee Journal",
+      "Chicago Tribune",
+      "Wisconsin State Journal"
     ],
-    "exp": "Die Satzung schützt das Team vor Spekulanten: Niemand kann sich bereichern, ein Liquidationserlös flöße an die Veteranen-Organisation."
+    "exp": "Die Satzung schützt das Team vor Spekulanten: Niemand kann sich bereichern, ein Liquidationserlös flöße an die Veteranen-Organisation.",
+    "explanation": "Die Satzung schützt das Team vor Spekulanten: Niemand kann sich bereichern, ein Liquidationserlös flöße an die Veteranen-Organisation."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Wie lang ist die Warteliste für Dauerkarten im Lambeau Field mittlerweile rund?",
     "a": [
-      "Über 140.000 Fans (Wartezeit oft über 30 bis 50 Jahre)",
-      "Knapp 5.000 Fans (Wartezeit rund zwei Spielzeiten)",
-      "Es gibt überhaupt keine Warteliste für Dauerkarten",
-      "Genau 25.000 Fans (Wartezeit maximal fünf Jahre)"
+      "Über 500.000 Aktionäre",
+      "Genau 100.000 Aktionäre",
+      "Über 2 Millionen Fans",
+      "Rund 50.000 Einwohner"
     ],
-    "exp": "In Green Bay werden Neugeborene oft sofort nach der Geburt auf die Warteliste gesetzt. Jedes Spiel seit 1960 ist restlos ausverkauft."
+    "exp": "In Green Bay werden Neugeborene oft sofort nach der Geburt auf die Warteliste gesetzt. Jedes Spiel seit 1960 ist restlos ausverkauft.",
+    "explanation": "In Green Bay werden Neugeborene oft sofort nach der Geburt auf die Warteliste gesetzt. Jedes Spiel seit 1960 ist restlos ausverkauft."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Wofür steht das berühmte weiße ovale 'G' auf den Helmen der Packers laut Original-Designer Dad Braisher?",
     "a": [
-      "Es stand ursprünglich für 'Greatness' (Größe/Exzellenz)",
-      "Es stand von Beginn an ausschließlich für die Stadt 'Green Bay'",
-      "Es symbolisierte die Goldreserven des Bundesstaates Wisconsin",
-      "Es war eine Hommage an Gründer George Whitney Calhoun"
+      "Keine Dividendenausschüttung und kein gewinnorientierter Weiterverkauf",
+      "Verpflichtung zu mindestens fünf Stadionbesuchen pro NFL-Saison",
+      "Stimmrecht nur bei persönlicher Anwesenheit in Green Bay",
+      "Automatisches Vorkaufsrecht für Tickets bei jedem Super Bowl"
     ],
-    "exp": "Ausrüster Dad Braisher entwarf das Logo 1961 unter Vince Lombardi mit dem Leitgedanken 'Greatness' – heute steht es weltweit für Green Bay."
+    "exp": "Ausrüster Dad Braisher entwarf das Logo 1961 unter Vince Lombardi mit dem Leitgedanken 'Greatness' – heute steht es weltweit für Green Bay.",
+    "explanation": "Ausrüster Dad Braisher entwarf das Logo 1961 unter Vince Lombardi mit dem Leitgedanken 'Greatness' – heute steht es weltweit für Green Bay."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "In welchen Jahren gewannen die Packers ihre bisherigen vier Super-Bowl-Titel?",
     "a": [
-      "Super Bowl I (1967), II (1968), XXXI (1997) und XLV (2011)",
-      "Super Bowl III (1969), IV (1970), XX (1986) und L (2016)",
-      "Super Bowl VI (1972), XII (1978), XXII (1988) und XXXII (1998)",
-      "Super Bowl V (1971), X (1976), XXV (1991) und XLIX (2015)"
+      "13 NFL-Championships",
+      "9 NFL-Championships",
+      "15 NFL-Championships",
+      "11 NFL-Championships"
     ],
-    "exp": "Die Packers gewannen die ersten beiden Super Bowls unter Lombardi, triumphierten 1997 mit Brett Favre und holten 2011 mit Aaron Rodgers den vierten Ring."
+    "exp": "Die Packers gewannen die ersten beiden Super Bowls unter Lombardi, triumphierten 1997 mit Brett Favre und holten 2011 mit Aaron Rodgers den vierten Ring.",
+    "explanation": "Die Packers gewannen die ersten beiden Super Bowls unter Lombardi, triumphierten 1997 mit Brett Favre und holten 2011 mit Aaron Rodgers den vierten Ring."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Wie lautet der berühmteste Schlachtruf und Anfeuerungsgesang der Fans im Lambeau Field?",
     "a": [
-      "'Go Pack Go!'",
-      "'Green and Gold forever!'",
-      "'Packers rolling on!'",
-      "'Hail to the Cheese!'"
+      "Vier Super-Bowl-Titel",
+      "Sechs Super-Bowl-Titel",
+      "Drei Super-Bowl-Titel",
+      "Fünf Super-Bowl-Titel"
     ],
-    "exp": "Das eingängige 'Go Pack Go!' mit den markanten Fanfaren-Tönen ist einer der bekanntesten Fangesänge der gesamten Sportwelt."
+    "exp": "Das eingängige 'Go Pack Go!' mit den markanten Fanfaren-Tönen ist einer der bekanntesten Fangesänge der gesamten Sportwelt.",
+    "explanation": "Das eingängige 'Go Pack Go!' mit den markanten Fanfaren-Tönen ist einer der bekanntesten Fangesänge der gesamten Sportwelt."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Welches Kopfbedeckungs-Utensil machten die Fans der Packers als Markenzeichen berühmt?",
     "a": [
-      "Die dreieckigen gelben Schaumstoff-Käsehüte ('Cheeseheads')",
-      "Grüne Wollmützen mit angenähten Widderhörnern",
-      "Gelbe Schutzhelme aus den Sägewerken von Wisconsin",
-      "Traditionelle bayerische Trachtenhüte mit Gamsbart"
+      "Vince Lombardi Trophy",
+      "George Halas Trophy",
+      "Lamar Hunt Trophy",
+      "Walter Payton Trophy"
     ],
-    "exp": "Ralph Bruno erfand den 'Cheesehead' 1987 aus einer alten Schaumstoff-Couch, um den Spott von White-Sox-Fans über 'Käsefresser aus Wisconsin' mit Stolz zu tragen."
+    "exp": "Ralph Bruno erfand den 'Cheesehead' 1987 aus einer alten Schaumstoff-Couch, um den Spott von White-Sox-Fans über 'Käsefresser aus Wisconsin' mit Stolz zu tragen.",
+    "explanation": "Ralph Bruno erfand den 'Cheesehead' 1987 aus einer alten Schaumstoff-Couch, um den Spott von White-Sox-Fans über 'Käsefresser aus Wisconsin' mit Stolz zu tragen."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Welche sympathische Tradition pflegen die Packers-Profis seit den 1950ern im sommerlichen Training Camp?",
     "a": [
-      "Sie fahren auf Fahrrädern von einheimischen Kindern vom Stadion zum Trainingsplatz",
-      "Sie backen gemeinsam Kirschkuchen für die Seniorenheime der Stadt",
-      "Sie campieren gemeinsam in Zelten auf dem Rasen des Lambeau Fields",
-      "Sie rudern im Kajak über den Fox River zur morgendlichen Taktiksitzung"
+      "Sweeper / Lombardi Power Sweep",
+      "West Coast Short Pass Attack",
+      "Option Pitch Run Offense",
+      "Shotgun Spread Formation"
     ],
-    "exp": "Kinder warten mit ihren Rädern vor der Kabine: Die Stars schnappen sich die kleinen Fahrräder, die Kinder tragen die Helme und laufen nebenher."
+    "exp": "Kinder warten mit ihren Rädern vor der Kabine: Die Stars schnappen sich die kleinen Fahrräder, die Kinder tragen die Helme und laufen nebenher.",
+    "explanation": "Kinder warten mit ihren Rädern vor der Kabine: Die Stars schnappen sich die kleinen Fahrräder, die Kinder tragen die Helme und laufen nebenher."
   },
   {
     "cat": "green_bay_packers",
     "diff": "pro",
     "q": "In welchen Original-Farben spielten die Packers in ihren Anfangsjahren unter Curly Lambeau?",
     "a": [
-      "In Dunkelblau und Gold (Farben der University of Notre Dame)",
-      "In Schwarz und Weiß (analog zur Acme Packing Company)",
-      "In Rubinrot und Silber (Farben der regionalen Handelskammer)",
-      "Von Beginn an exakt im heutigen Waldgrün und Sonnengelb"
+      "Paul Hornung",
+      "Jim Taylor",
+      "Boyd Dowler",
+      "Max McGee"
     ],
-    "exp": "Lambeau hatte für Knute Rocknes Notre Dame Fighting Irish gespielt und übernahm deren blau-goldene Farbkombination. Erst 1950 kam das heutige Grün."
+    "exp": "Lambeau hatte für Knute Rocknes Notre Dame Fighting Irish gespielt und übernahm deren blau-goldene Farbkombination. Erst 1950 kam das heutige Grün.",
+    "explanation": "Lambeau hatte für Knute Rocknes Notre Dame Fighting Irish gespielt und übernahm deren blau-goldene Farbkombination. Erst 1950 kam das heutige Grün."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Welche Großstadt in Wisconsin trug von 1933 bis 1994 regelmäßig Heimspiele der Packers im County Stadium aus?",
     "a": [
-      "Milwaukee",
-      "Madison",
-      "Kenosha",
-      "Appleton"
+      "1957",
+      "1965",
+      "1950",
+      "1972"
     ],
-    "exp": "Um wirtschaftlich im größeren Markt präsent zu sein, spielten die Packers 62 Jahre lang zwei bis drei Heimspiele pro Saison in Milwaukee."
+    "exp": "Um wirtschaftlich im größeren Markt präsent zu sein, spielten die Packers 62 Jahre lang zwei bis drei Heimspiele pro Saison in Milwaukee.",
+    "explanation": "Um wirtschaftlich im größeren Markt präsent zu sein, spielten die Packers 62 Jahre lang zwei bis drei Heimspiele pro Saison in Milwaukee."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Was war der 'Lombardi Time'-Grundsatz, den Trainerlegende Vince Lombardi von allen Spielern eisern einforderte?",
     "a": [
-      "Wer nicht mindestens 15 Minuten vor dem Termin da war, galt als unentschuldigt zu spät",
-      "Alle Uhren im Trainingszentrum wurden exakt nach der Atomuhr von Greenwich gestellt",
-      "Nach 22:00 Uhr herrschte absolutes Ausgehverbot für Spieler und Assistenztrainer",
-      "Jede Trainingseinheit musste auf die Sekunde genau 90 Minuten dauern"
+      "City Stadium",
+      "Packer Bowl",
+      "Brown County Arena",
+      "Titletown Stadium"
     ],
-    "exp": "'If you are 15 minutes early, you are on time. If you are on time, you are late!' Die 'Lombardi Time' prägte die Disziplin des Erfolgsteams."
+    "exp": "'If you are 15 minutes early, you are on time. If you are on time, you are late!' Die 'Lombardi Time' prägte die Disziplin des Erfolgsteams.",
+    "explanation": "'If you are 15 minutes early, you are on time. If you are on time, you are late!' Die 'Lombardi Time' prägte die Disziplin des Erfolgsteams."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Wie viele NFL-Meisterschaften errangen die Packers vor der Einführung des Super Bowls (1929–1965)?",
     "a": [
-      "9 NFL Championships",
-      "5 NFL Championships",
-      "12 NFL Championships",
-      "3 NFL Championships"
+      "The Frozen Tundra",
+      "The Ice Box",
+      "The Green Hell",
+      "The Blizzard Bowl"
     ],
-    "exp": "Curly Lambeau gewann 6 Titel (1929, 1930, 1931, 1936, 1939, 1944), Vince Lombardi legte vor dem Super Bowl drei weitere nach (1961, 1962, 1965)."
+    "exp": "Curly Lambeau gewann 6 Titel (1929, 1930, 1931, 1936, 1939, 1944), Vince Lombardi legte vor dem Super Bowl drei weitere nach (1961, 1962, 1965).",
+    "explanation": "Curly Lambeau gewann 6 Titel (1929, 1930, 1931, 1936, 1939, 1944), Vince Lombardi legte vor dem Super Bowl drei weitere nach (1961, 1962, 1965)."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Welche kulinarische Spezialität darf bei keinem Tailgating vor einem Packers-Spiel in Wisconsin fehlen?",
     "a": [
-      "Bratwurst (in Bier und Zwiebeln pochiert und gegrillt) sowie Cheese Curds",
-      "Clam Chowder Muschelsuppe im Sauerteigbrot",
-      "Deep-Dish-Pizza nach Chicagoer Rezeptur",
+      "Bratwurst und frische Cheese Curds",
+      "Clam Chowder Suppe im Sauerteigbrot",
+      "Deep-Dish-Pizza nach Chicagoer Art",
       "Räucherlachs-Häppchen mit Frischkäse"
     ],
-    "exp": "Wisconsin ist stark deutsch geprägt: Bier, 'Beer Brats' (Bratwürste) und frittierte 'Cheese Curds' (Käsebruch) sind das Herzstück der Fankultur."
+    "exp": "Wisconsin ist stark deutsch geprägt: Bier, 'Beer Brats' (Bratwürste) und frittierte 'Cheese Curds' (Käsebruch) sind das Herzstück der Fankultur.",
+    "explanation": "Wisconsin ist stark deutsch geprägt: Bier, 'Beer Brats' (Bratwürste) und frittierte 'Cheese Curds' (Käsebruch) sind das Herzstück der Fankultur."
   },
   {
     "cat": "green_bay_packers",
@@ -203,7 +219,8 @@
       "Nummer 99",
       "Nummer 88"
     ],
-    "exp": "Hutson fing 99 Touchdowns in einer Ära, als Passspiel noch eine Seltenheit war. Seine Nummer 14 wurde 1951 als erste Packers-Nummer offiziell 'retired'."
+    "exp": "Hutson fing 99 Touchdowns in einer Ära, als Passspiel noch eine Seltenheit war. Seine Nummer 14 wurde 1951 als erste Packers-Nummer offiziell 'retired'.",
+    "explanation": "Hutson fing 99 Touchdowns in einer Ära, als Passspiel noch eine Seltenheit war. Seine Nummer 14 wurde 1951 als erste Packers-Nummer offiziell 'retired'."
   },
   {
     "cat": "green_bay_packers",
@@ -215,7 +232,8 @@
       "Detroit Lions",
       "Dallas Cowboys"
     ],
-    "exp": "Packers gegen Bears ist pure Football-Tradition. Seit 1921 lieferten sich beide Teams epische Schlachten um die Vorherrschaft im Mittleren Westen."
+    "exp": "Packers gegen Bears ist pure Football-Tradition. Seit 1921 lieferten sich beide Teams epische Schlachten um die Vorherrschaft im Mittleren Westen.",
+    "explanation": "Packers gegen Bears ist pure Football-Tradition. Seit 1921 lieferten sich beide Teams epische Schlachten um die Vorherrschaft im Mittleren Westen."
   },
   {
     "cat": "green_bay_packers",
@@ -227,7 +245,8 @@
       "'The Ice Palace'",
       "'The Glacier Basin'"
     ],
-    "exp": "NFL-Films-Legende John Facenda taufte das Stadion nach dem Ice Bowl von 1967 poetisch 'The Frozen Tundra'."
+    "exp": "NFL-Films-Legende John Facenda taufte das Stadion nach dem Ice Bowl von 1967 poetisch 'The Frozen Tundra'.",
+    "explanation": "NFL-Films-Legende John Facenda taufte das Stadion nach dem Ice Bowl von 1967 poetisch 'The Frozen Tundra'."
   },
   {
     "cat": "green_bay_packers",
@@ -239,7 +258,8 @@
       "Quarterback Brett Favre",
       "Defensive End Reggie White"
     ],
-    "exp": "White eroberte einen Fumble und passte zu Butler: Nach dem Touchdown sprang Butler vor Freude in die Endzonen-Fans – der 'Lambeau Leap' war geboren!"
+    "exp": "White eroberte einen Fumble und passte zu Butler: Nach dem Touchdown sprang Butler vor Freude in die Endzonen-Fans – der 'Lambeau Leap' war geboren!",
+    "explanation": "White eroberte einen Fumble und passte zu Butler: Nach dem Touchdown sprang Butler vor Freude in die Endzonen-Fans – der 'Lambeau Leap' war geboren!"
   },
   {
     "cat": "green_bay_packers",
@@ -251,19 +271,21 @@
       "Gefrierender Platzregen bei genau null Grad mit fingerdickem Glatteis",
       "Orkanböen von über 120 km/h, die beide Torpfosten umknickten"
     ],
-    "exp": "Der Schiedsrichter-Pfeife fror am Mund fest und riss Haut von den Lippen ab. Die neu installierte Rasenheizung versagte und verwandelte das Feld in eine Eisbahn."
+    "exp": "Der Schiedsrichter-Pfeife fror am Mund fest und riss Haut von den Lippen ab. Die neu installierte Rasenheizung versagte und verwandelte das Feld in eine Eisbahn.",
+    "explanation": "Der Schiedsrichter-Pfeife fror am Mund fest und riss Haut von den Lippen ab. Die neu installierte Rasenheizung versagte und verwandelte das Feld in eine Eisbahn."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Wie erzielte Bart Starr 13 Sekunden vor dem Ende des 'Ice Bowl' den siegbringenden Touchdown zum 21:17?",
     "a": [
-      "Mit einem Quarterback Sneak durch die Mitte hinter dem Block von Jerry Kramer",
-      "Mit einem 40-Yard-Pass in die Ecke auf Boyd Dowler",
-      "Durch einen verdeckten Handoff auf Fullback Chuck Mercein",
-      "Durch ein artistisches 45-Yard-Field-Goal mit dem gefrorenen Ball"
+      "Quarterback Sneak hinter dem Block von Kramer",
+      "Mit einem 40-Yard-Pass in die Ecke auf Dowler",
+      "Durch einen verdeckten Handoff auf Fullback Mercein",
+      "Durch ein artistisches 45-Yard-Field-Goal bei Frost"
     ],
-    "exp": "Starr sprach den Spielzug in der Auszeit mit Lombardi ab: Statt zu passen, glitt er hinter Kramers perfektem Block über die Torlinie – Packers-Sieg!"
+    "exp": "Starr sprach den Spielzug in der Auszeit mit Lombardi ab: Statt zu passen, glitt er hinter Kramers perfektem Block über die Torlinie – Packers-Sieg!",
+    "explanation": "Starr sprach den Spielzug in der Auszeit mit Lombardi ab: Statt zu passen, glitt er hinter Kramers perfektem Block über die Torlinie – Packers-Sieg!"
   },
   {
     "cat": "green_bay_packers",
@@ -275,7 +297,8 @@
       "Titletown Arena",
       "Fox River Stadium"
     ],
-    "exp": "1965, wenige Monate nach dem Tod von Gründer Curly Lambeau, benannte die Stadt das Stadion zu seinen Ehren in 'Lambeau Field' um."
+    "exp": "1965, wenige Monate nach dem Tod von Gründer Curly Lambeau, benannte die Stadt das Stadion zu seinen Ehren in 'Lambeau Field' um.",
+    "explanation": "1965, wenige Monate nach dem Tod von Gründer Curly Lambeau, benannte die Stadt das Stadion zu seinen Ehren in 'Lambeau Field' um."
   },
   {
     "cat": "green_bay_packers",
@@ -287,7 +310,8 @@
       "Es gibt auf den Unterrängen ausschließlich Stehplätze für Dauerkarteninhaber",
       "Alle Sitze verfügen über integrierte elektrische Sitzheizungen"
     ],
-    "exp": "Die Bänke bringen Nostalgie pur: Fans rücken im Winter eng zusammen und mieten sich am Eingang isolierende Schaumstoff-Rückenpolster."
+    "exp": "Die Bänke bringen Nostalgie pur: Fans rücken im Winter eng zusammen und mieten sich am Eingang isolierende Schaumstoff-Rückenpolster.",
+    "explanation": "Die Bänke bringen Nostalgie pur: Fans rücken im Winter eng zusammen und mieten sich am Eingang isolierende Schaumstoff-Rückenpolster."
   },
   {
     "cat": "green_bay_packers",
@@ -299,7 +323,8 @@
       "Reggie White und Ray Nitschke",
       "Don Hutson und Paul Hornung"
     ],
-    "exp": "Die überlebensgroßen Statuen von Gründer Curly Lambeau und Erfolgstrainer Vince Lombardi flankieren das Atrium des Stadions."
+    "exp": "Die überlebensgroßen Statuen von Gründer Curly Lambeau und Erfolgstrainer Vince Lombardi flankieren das Atrium des Stadions.",
+    "explanation": "Die überlebensgroßen Statuen von Gründer Curly Lambeau und Erfolgstrainer Vince Lombardi flankieren das Atrium des Stadions."
   },
   {
     "cat": "green_bay_packers",
@@ -311,31 +336,34 @@
       "Die 'Hail Mary' über mehr als 60 Yards Flugdistanz",
       "Den 'Flea Flicker' Doppelpass zwischen Running Back und Quarterback"
     ],
-    "exp": "Der Sweep war simpel, aber gnadenlos präzise: Die Guards Jerry Kramer und Fuzzy Thurston zogen nach außen und räumten alles für Jim Taylor und Paul Hornung ab."
+    "exp": "Der Sweep war simpel, aber gnadenlos präzise: Die Guards Jerry Kramer und Fuzzy Thurston zogen nach außen und räumten alles für Jim Taylor und Paul Hornung ab.",
+    "explanation": "Der Sweep war simpel, aber gnadenlos präzise: Die Guards Jerry Kramer und Fuzzy Thurston zogen nach außen und räumten alles für Jim Taylor und Paul Hornung ab."
   },
   {
     "cat": "green_bay_packers",
     "diff": "pro",
     "q": "Was passierte mit der unterirdischen Rasenheizung des Lambeau Fields in der Nacht vor dem Ice Bowl?",
     "a": [
-      "Das Kondenswasser fror ein und verwandelte die Feuchtigkeit im Boden in spiegelglattes Eis",
-      "Ein Stromausfall im gesamten Brown County legte die gesamte Anlage lahm",
-      "Die Heizrohre explodierten unter dem Druck heißer Dampfschwaden",
-      "Saboteure aus Dallas drehten heimlich die Hauptventile der Heizung zu"
+      "Kondenswasser fror ein und verwandelte den Boden in glattes Eis",
+      "Ein Stromausfall im gesamten County legte die Heizanlage lahm",
+      "Die Heizrohre barsten unter dem Druck heißer Dampfschwaden",
+      "Saboteure aus Dallas drehten heimlich die Hauptventile ab"
     ],
-    "exp": "Als die Plane morgens abgezogen wurde, traf die feuchte Luft auf arktische minus 25 Grad: Das Wasser gefror blitzartig zu einer Betonschicht aus Eis."
+    "exp": "Als die Plane morgens abgezogen wurde, traf die feuchte Luft auf arktische minus 25 Grad: Das Wasser gefror blitzartig zu einer Betonschicht aus Eis.",
+    "explanation": "Als die Plane morgens abgezogen wurde, traf die feuchte Luft auf arktische minus 25 Grad: Das Wasser gefror blitzartig zu einer Betonschicht aus Eis."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Welche beiden Teams standen den Packers in Super Bowl I und Super Bowl II als AFL-Gegner gegenüber?",
     "a": [
-      "Kansas City Chiefs (Super Bowl I) und Oakland Raiders (Super Bowl II)",
+      "Kansas City Chiefs und Oakland Raiders",
       "New York Jets und Miami Dolphins",
       "San Diego Chargers und Boston Patriots",
       "Buffalo Bills und Houston Oilers"
     ],
-    "exp": "Die Packers schlugen die Chiefs mit 35:10 in Los Angeles und verteidigten den Titel ein Jahr später mit 33:14 gegen die Raiders in Miami."
+    "exp": "Die Packers schlugen die Chiefs mit 35:10 in Los Angeles und verteidigten den Titel ein Jahr später mit 33:14 gegen die Raiders in Miami.",
+    "explanation": "Die Packers schlugen die Chiefs mit 35:10 in Los Angeles und verteidigten den Titel ein Jahr später mit 33:14 gegen die Raiders in Miami."
   },
   {
     "cat": "green_bay_packers",
@@ -347,7 +375,8 @@
       "Boyd Dowler",
       "Marv Fleming"
     ],
-    "exp": "McGee dachte, er würde als Ersatz nie spielen, ging aus und trank. Als Boyd Dowler sich früh verletzte, glänzte der verkatert eingewechselte McGee mit 138 Yards und 2 TDs!"
+    "exp": "McGee dachte, er würde als Ersatz nie spielen, ging aus und trank. Als Boyd Dowler sich früh verletzte, glänzte der verkatert eingewechselte McGee mit 138 Yards und 2 TDs!",
+    "explanation": "McGee dachte, er würde als Ersatz nie spielen, ging aus und trank. Als Boyd Dowler sich früh verletzte, glänzte der verkatert eingewechselte McGee mit 138 Yards und 2 TDs!"
   },
   {
     "cat": "green_bay_packers",
@@ -359,7 +388,8 @@
       "'Show me a good loser and I show you a winner.'",
       "'Pain is temporary, a Packers ring is forever.'"
     ],
-    "exp": "Obwohl das Zitat ursprünglich von UCLA-Coach Red Sanders stammte, machte Lombardi den Satz zur weltweiten Philosophie für Spitzenleistung."
+    "exp": "Obwohl das Zitat ursprünglich von UCLA-Coach Red Sanders stammte, machte Lombardi den Satz zur weltweiten Philosophie für Spitzenleistung.",
+    "explanation": "Obwohl das Zitat ursprünglich von UCLA-Coach Red Sanders stammte, machte Lombardi den Satz zur weltweiten Philosophie für Spitzenleistung."
   },
   {
     "cat": "green_bay_packers",
@@ -371,7 +401,8 @@
       "'Perfection belongs to the angels, not to mortal football players.'",
       "'Perfection is boring; give me ten disciplined fighters instead.'"
     ],
-    "exp": "'Perfektion ist unerreichbar, aber wenn wir Perfektion jagen, können wir Exzellenz einfangen.' Einer der schönsten Leitsätze der Sportgeschichte."
+    "exp": "'Perfektion ist unerreichbar, aber wenn wir Perfektion jagen, können wir Exzellenz einfangen.' Einer der schönsten Leitsätze der Sportgeschichte.",
+    "explanation": "'Perfektion ist unerreichbar, aber wenn wir Perfektion jagen, können wir Exzellenz einfangen.' Einer der schönsten Leitsätze der Sportgeschichte."
   },
   {
     "cat": "green_bay_packers",
@@ -383,19 +414,21 @@
       "Die Stadionordnung untersagt Gastspielern das Betreten der ersten Fanreihe",
       "Die Ordner erteilen dem gegnerischen Spieler sofortigen Stadionverweis"
     ],
-    "exp": "Wer als Gegner den Sprung wagt, spürt die Härte von Green Bay: Vikings- oder Bears-Spieler werden von den Fans eiskalt weggeschubst oder mit Bier geduscht."
+    "exp": "Wer als Gegner den Sprung wagt, spürt die Härte von Green Bay: Vikings- oder Bears-Spieler werden von den Fans eiskalt weggeschubst oder mit Bier geduscht.",
+    "explanation": "Wer als Gegner den Sprung wagt, spürt die Härte von Green Bay: Vikings- oder Bears-Spieler werden von den Fans eiskalt weggeschubst oder mit Bier geduscht."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Wie viele Zuschauer fasst das traditionsreiche Lambeau Field nach seinen modernen Tribünenerweiterungen?",
     "a": [
-      "Rund 81.440 Zuschauer (Platz 2 der gesamten NFL)",
+      "Rund 81.440 Zuschauer",
       "Exakt 60.000 Zuschauer",
       "Über 105.000 Zuschauer",
       "Knapp 45.000 Zuschauer"
     ],
-    "exp": "Mit 81.441 Plätzen ist das Lambeau Field nach dem MetLife Stadium das zweitgrößte Stadion der NFL – in einer Stadt mit kaum mehr Einwohnern als Plätzen!"
+    "exp": "Mit 81.441 Plätzen ist das Lambeau Field nach dem MetLife Stadium das zweitgrößte Stadion der NFL – in einer Stadt mit kaum mehr Einwohnern als Plätzen!",
+    "explanation": "Mit 81.441 Plätzen ist das Lambeau Field nach dem MetLife Stadium das zweitgrößte Stadion der NFL – in einer Stadt mit kaum mehr Einwohnern als Plätzen!"
   },
   {
     "cat": "green_bay_packers",
@@ -407,7 +440,8 @@
       "Doug Flutie",
       "Jim Harbaugh"
     ],
-    "exp": "Martin trug eine 'Todesliste' mit Spielernummern auf dem Handtuch und warf McMahon Sekunden nach dem Pass auf die Schulter – die giftigste Szene der Rivalität."
+    "exp": "Martin trug eine 'Todesliste' mit Spielernummern auf dem Handtuch und warf McMahon Sekunden nach dem Pass auf die Schulter – die giftigste Szene der Rivalität.",
+    "explanation": "Martin trug eine 'Todesliste' mit Spielernummern auf dem Handtuch und warf McMahon Sekunden nach dem Pass auf die Schulter – die giftigste Szene der Rivalität."
   },
   {
     "cat": "green_bay_packers",
@@ -419,19 +453,21 @@
       "Don Majkowski (Trikotnummer 7)",
       "Lynn Dickey (Trikotnummer 12)"
     ],
-    "exp": "Favre kam 1992 per Trade aus Atlanta. Mit seiner Gunslinger-Mentalität, drei MVPs in Serie und dem Sieg in Super Bowl XXXI wurde er zum Helden von Wisconsin."
+    "exp": "Favre kam 1992 per Trade aus Atlanta. Mit seiner Gunslinger-Mentalität, drei MVPs in Serie und dem Sieg in Super Bowl XXXI wurde er zum Helden von Wisconsin.",
+    "explanation": "Favre kam 1992 per Trade aus Atlanta. Mit seiner Gunslinger-Mentalität, drei MVPs in Serie und dem Sieg in Super Bowl XXXI wurde er zum Helden von Wisconsin."
   },
   {
     "cat": "green_bay_packers",
     "diff": "easy",
     "q": "Welchen scheinbar unbrechbaren 'Iron Man'-Rekord stellte Brett Favre in seiner Karriere auf?",
     "a": [
-      "297 aufeinanderfolgende Starts als Quarterback in der regulären Saison (321 inkl. Playoffs)",
-      "50 Spiele hintereinander ohne eine einzige Interception zu werfen",
-      "15 Saisons in Folge mit jeweils über 40 Touchdown-Pässen",
-      "100 Siege in Serie bei eisigen Temperaturen unter dem Gefrierpunkt"
+      "297 aufeinanderfolgende Starts als Quarterback",
+      "50 Spiele ohne eine einzige geworfene Interception",
+      "15 Saisons mit jeweils über 40 Touchdown-Pässen",
+      "100 Siege in Serie bei eisigen Minusgraden"
     ],
-    "exp": "Über 16 Jahre lang stand Favre jeden einzelnen Sonntag auf dem Feld – trotz gebrochener Daumen, Gehirnerschütterungen und Zerrungen. Unfassbare Härte."
+    "exp": "Über 16 Jahre lang stand Favre jeden einzelnen Sonntag auf dem Feld – trotz gebrochener Daumen, Gehirnerschütterungen und Zerrungen. Unfassbare Härte.",
+    "explanation": "Über 16 Jahre lang stand Favre jeden einzelnen Sonntag auf dem Feld – trotz gebrochener Daumen, Gehirnerschütterungen und Zerrungen. Unfassbare Härte."
   },
   {
     "cat": "green_bay_packers",
@@ -443,7 +479,8 @@
       "Jordan Love",
       "Desmond Howard"
     ],
-    "exp": "Rodgers saß drei Jahre geduldig hinter Favre auf der Bank, bevor er das Team übernahm, 4 MVPs gewann und in Super Bowl XLV gegen Pittsburgh brillierte."
+    "exp": "Rodgers saß drei Jahre geduldig hinter Favre auf der Bank, bevor er das Team übernahm, 4 MVPs gewann und in Super Bowl XLV gegen Pittsburgh brillierte.",
+    "explanation": "Rodgers saß drei Jahre geduldig hinter Favre auf der Bank, bevor er das Team übernahm, 4 MVPs gewann und in Super Bowl XLV gegen Pittsburgh brillierte."
   },
   {
     "cat": "green_bay_packers",
@@ -455,7 +492,8 @@
       "Cortez Kennedy",
       "Junior Seau"
     ],
-    "exp": "White war gläubiger Pastor. Mike Holmgren rief ihn auf dem Anrufbeantworter an: 'Reggie, hier ist Gott. Komm nach Green Bay!' White unterschrieb und holte 1997 den Titel."
+    "exp": "White war gläubiger Pastor. Mike Holmgren rief ihn auf dem Anrufbeantworter an: 'Reggie, hier ist Gott. Komm nach Green Bay!' White unterschrieb und holte 1997 den Titel.",
+    "explanation": "White war gläubiger Pastor. Mike Holmgren rief ihn auf dem Anrufbeantworter an: 'Reggie, hier ist Gott. Komm nach Green Bay!' White unterschrieb und holte 1997 den Titel."
   },
   {
     "cat": "green_bay_packers",
@@ -467,7 +505,8 @@
       "1 Sack",
       "4 Sacks"
     ],
-    "exp": "White dominierte Patriots-Quarterback Drew Bledsoe nach Belieben und besiegelte mit 3 Sacks den 35:21-Triumph der Packers."
+    "exp": "White dominierte Patriots-Quarterback Drew Bledsoe nach Belieben und besiegelte mit 3 Sacks den 35:21-Triumph der Packers.",
+    "explanation": "White dominierte Patriots-Quarterback Drew Bledsoe nach Belieben und besiegelte mit 3 Sacks den 35:21-Triumph der Packers."
   },
   {
     "cat": "green_bay_packers",
@@ -479,7 +518,8 @@
       "Reggie White",
       "Antonio Freeman"
     ],
-    "exp": "Howard erstickte Neuenglands Aufholjagd mit seinem 99-Yard-Return im Keim und ging als einziger reiner Returner in die MVP-Geschichte ein."
+    "exp": "Howard erstickte Neuenglands Aufholjagd mit seinem 99-Yard-Return im Keim und ging als einziger reiner Returner in die MVP-Geschichte ein.",
+    "explanation": "Howard erstickte Neuenglands Aufholjagd mit seinem 99-Yard-Return im Keim und ging als einziger reiner Returner in die MVP-Geschichte ein."
   },
   {
     "cat": "green_bay_packers",
@@ -491,7 +531,8 @@
       "Lee Roy Caffey",
       "Dan Currie"
     ],
-    "exp": "Nitschke war der Inbegriff des knallharten Linebackers: Brille abseits des Feldes, Bestie auf dem Rasen. Seine Nummer 66 ist in Green Bay heilig."
+    "exp": "Nitschke war der Inbegriff des knallharten Linebackers: Brille abseits des Feldes, Bestie auf dem Rasen. Seine Nummer 66 ist in Green Bay heilig.",
+    "explanation": "Nitschke war der Inbegriff des knallharten Linebackers: Brille abseits des Feldes, Bestie auf dem Rasen. Seine Nummer 66 ist in Green Bay heilig."
   },
   {
     "cat": "green_bay_packers",
@@ -503,7 +544,8 @@
       "Boyd Dowler",
       "Bart Starr"
     ],
-    "exp": "Hornung lief Touchdowns, fing Pässe und verwandelte alle Kicks. Sein Punkteschnitt pro Spiel aus der 12-Spiele-Saison 1960 ist bis heute unübertroffen."
+    "exp": "Hornung lief Touchdowns, fing Pässe und verwandelte alle Kicks. Sein Punkteschnitt pro Spiel aus der 12-Spiele-Saison 1960 ist bis heute unübertroffen.",
+    "explanation": "Hornung lief Touchdowns, fing Pässe und verwandelte alle Kicks. Sein Punkteschnitt pro Spiel aus der 12-Spiele-Saison 1960 ist bis heute unübertroffen."
   },
   {
     "cat": "green_bay_packers",
@@ -515,7 +557,8 @@
       "Johnny Unitas",
       "Joe Namath"
     ],
-    "exp": "Starr war Lombardis verlängerter Arm auf dem Feld. Mit seiner Präzision und Führungsstärke führte er Green Bay zu fünf NFL-Titeln in den 60ern."
+    "exp": "Starr war Lombardis verlängerter Arm auf dem Feld. Mit seiner Präzision und Führungsstärke führte er Green Bay zu fünf NFL-Titeln in den 60ern.",
+    "explanation": "Starr war Lombardis verlängerter Arm auf dem Feld. Mit seiner Präzision und Führungsstärke führte er Green Bay zu fünf NFL-Titeln in den 60ern."
   },
   {
     "cat": "green_bay_packers",
@@ -527,7 +570,8 @@
       "Tramon Williams",
       "Sam Shields"
     ],
-    "exp": "Woodson fand in Green Bay seine zweite Blüte, fing spektakuläre Interceptions, coachte die jungen Spieler und holte 2011 den Super-Bowl-Ring."
+    "exp": "Woodson fand in Green Bay seine zweite Blüte, fing spektakuläre Interceptions, coachte die jungen Spieler und holte 2011 den Super-Bowl-Ring.",
+    "explanation": "Woodson fand in Green Bay seine zweite Blüte, fing spektakuläre Interceptions, coachte die jungen Spieler und holte 2011 den Super-Bowl-Ring."
   },
   {
     "cat": "green_bay_packers",
@@ -539,7 +583,8 @@
       "James Lofton",
       "Davante Adams"
     ],
-    "exp": "Der als 7.-Runden-Pick gedraftete Driver überwand Armut und Obdachlosigkeit in der Jugend und wurde mit seinem strahlenden Lächeln zur Club-Ikone."
+    "exp": "Der als 7.-Runden-Pick gedraftete Driver überwand Armut und Obdachlosigkeit in der Jugend und wurde mit seinem strahlenden Lächeln zur Club-Ikone.",
+    "explanation": "Der als 7.-Runden-Pick gedraftete Driver überwand Armut und Obdachlosigkeit in der Jugend und wurde mit seinem strahlenden Lächeln zur Club-Ikone."
   },
   {
     "cat": "green_bay_packers",
@@ -551,7 +596,8 @@
       "Nelson fing alle vier Touchdown-Pässe von Rodgers im Alleingang",
       "Nelson blockte den entscheidenden Pass der Steelers an der Goalline"
     ],
-    "exp": "Rodgers und Nelson zerlegten die gefürchtete Steelers-Defense: Nelson eröffnete den Punktereigen mit einem 29-Yard-Traumfang zur 7:0-Führung."
+    "exp": "Rodgers und Nelson zerlegten die gefürchtete Steelers-Defense: Nelson eröffnete den Punktereigen mit einem 29-Yard-Traumfang zur 7:0-Führung.",
+    "explanation": "Rodgers und Nelson zerlegten die gefürchtete Steelers-Defense: Nelson eröffnete den Punktereigen mit einem 29-Yard-Traumfang zur 7:0-Führung."
   },
   {
     "cat": "green_bay_packers",
@@ -563,7 +609,8 @@
       "Antonio Freeman",
       "Bill Schroeder"
     ],
-    "exp": "Sterling Sharpe war auf dem besten Weg in die Hall of Fame (führte die NFL mehrfach bei Catches und TDs an), als ein Halswirbelschaden seine Karriere stoppte."
+    "exp": "Sterling Sharpe war auf dem besten Weg in die Hall of Fame (führte die NFL mehrfach bei Catches und TDs an), als ein Halswirbelschaden seine Karriere stoppte.",
+    "explanation": "Sterling Sharpe war auf dem besten Weg in die Hall of Fame (führte die NFL mehrfach bei Catches und TDs an), als ein Halswirbelschaden seine Karriere stoppte."
   },
   {
     "cat": "green_bay_packers",
@@ -575,7 +622,8 @@
       "Chris Jacke",
       "Chester Marcol"
     ],
-    "exp": "Von 2007 bis 2022 kickte Crosby 16 Spielzeiten lang im eisigen Lambeau Field und brach alle Punkterekorde der traditionsreichen Franchise."
+    "exp": "Von 2007 bis 2022 kickte Crosby 16 Spielzeiten lang im eisigen Lambeau Field und brach alle Punkterekorde der traditionsreichen Franchise.",
+    "explanation": "Von 2007 bis 2022 kickte Crosby 16 Spielzeiten lang im eisigen Lambeau Field und brach alle Punkterekorde der traditionsreichen Franchise."
   },
   {
     "cat": "green_bay_packers",
@@ -587,31 +635,34 @@
       "Cullen Jenkins",
       "Ryan Pickett"
     ],
-    "exp": "Raji fing den Pass von Caleb Hanie ab, tanzte mit wackelnden Hüften in die Endzone und sicherte den Packers den Einzug in Super Bowl XLV."
+    "exp": "Raji fing den Pass von Caleb Hanie ab, tanzte mit wackelnden Hüften in die Endzone und sicherte den Packers den Einzug in Super Bowl XLV.",
+    "explanation": "Raji fing den Pass von Caleb Hanie ab, tanzte mit wackelnden Hüften in die Endzone und sicherte den Packers den Einzug in Super Bowl XLV."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Welcher spektakuläre 'Miracle in Motown' Wurf von Aaron Rodgers gegen die Lions im Dezember 2015 ging in die NFL-Geschichte ein?",
     "a": [
-      "Eine 61-Yard-Hail-Mary ohne verbleibende Spielzeit nach einer Facemask-Strafe auf Richard Rodgers",
-      "Ein 90-Yard-Pass auf Randall Cobb nach einem doppelten Rückpass an der Goalline",
-      "Ein Schuss mit dem Fuß aus vollem Lauf über die gegnerische Torlatte",
-      "Ein Unterhandwurf im Hechtsprung über drei heranstürmende Linebacker"
+      "Eine 61-Yard-Hail-Mary ohne Spielzeit auf Richard Rodgers",
+      "Ein 90-Yard-Pass auf Randall Cobb nach doppeltem Rückpass",
+      "Ein Schuss mit dem Fuß aus vollem Lauf über die Torlatte",
+      "Ein Unterhandwurf im Hechtsprung über drei Linebacker"
     ],
-    "exp": "Rodgers feuerte das Ei im Ford Field fast bis unter das Hallendach: Richard Rodgers fing die 61-Yard-Bogenlampe in der Traube zum 27:23-Sieg."
+    "exp": "Rodgers feuerte das Ei im Ford Field fast bis unter das Hallendach: Richard Rodgers fing die 61-Yard-Bogenlampe in der Traube zum 27:23-Sieg.",
+    "explanation": "Rodgers feuerte das Ei im Ford Field fast bis unter das Hallendach: Richard Rodgers fing die 61-Yard-Bogenlampe in der Traube zum 27:23-Sieg."
   },
   {
     "cat": "green_bay_packers",
     "diff": "pro",
     "q": "Was passierte 1980 bei Chester Marcols berühmtem 'Glasses Touchdown' gegen die Chicago Bears?",
     "a": [
-      "Sein eigenes geblocktes Field Goal flog ihm direkt in die Arme und er lief zum Touchdown durch",
-      "Er verlor seine dicke Brille im Schlamm und kickte das Siegtor völlig blind",
-      "Er täuschte einen Schuss an und warf einen Rückpass auf den Center",
-      "Ein Fan warf eine Brille aufs Feld, die den Ball ins Tor ablenkte"
+      "Geblocktes Field Goal flog ihm in die Arme, TD-Lauf",
+      "Er verlor seine Brille im Schlamm und kickte blind das Siegtor",
+      "Er täuschte einen Schuss an und warf einen Rückpass zum Center",
+      "Ein Fan warf eine Brille aufs Feld, die den Ball ablenkte"
     ],
-    "exp": "Marcol lief zum Field Goal in der Overtime an: Der Ball prallte von der Bears-Brust direkt zurück in seine Arme – Marcol rannte mit Brille zum 12:6-Walk-Off-TD!"
+    "exp": "Marcol lief zum Field Goal in der Overtime an: Der Ball prallte von der Bears-Brust direkt zurück in seine Arme – Marcol rannte mit Brille zum 12:6-Walk-Off-TD!",
+    "explanation": "Marcol lief zum Field Goal in der Overtime an: Der Ball prallte von der Bears-Brust direkt zurück in seine Arme – Marcol rannte mit Brille zum 12:6-Walk-Off-TD!"
   },
   {
     "cat": "green_bay_packers",
@@ -623,7 +674,8 @@
       "Kurt Benkert",
       "Tim Boyle"
     ],
-    "exp": "Wie zuvor Rodgers saß auch Jordan Love drei Jahre als Erstrundenpick auf der Bank und führte die junge Packers-Offense 2023 furios in die Playoffs."
+    "exp": "Wie zuvor Rodgers saß auch Jordan Love drei Jahre als Erstrundenpick auf der Bank und führte die junge Packers-Offense 2023 furios in die Playoffs.",
+    "explanation": "Wie zuvor Rodgers saß auch Jordan Love drei Jahre als Erstrundenpick auf der Bank und führte die junge Packers-Offense 2023 furios in die Playoffs."
   },
   {
     "cat": "green_bay_packers",
@@ -635,31 +687,34 @@
       "Brian Gutekunst",
       "Tony Canadeo"
     ],
-    "exp": "Ron Wolf übernahm 1991 ein am Boden liegendes Team, fädelte den mutigen Favre-Trade ein, holte Reggie White und führte Green Bay zurück an die Weltspitze."
+    "exp": "Ron Wolf übernahm 1991 ein am Boden liegendes Team, fädelte den mutigen Favre-Trade ein, holte Reggie White und führte Green Bay zurück an die Weltspitze.",
+    "explanation": "Ron Wolf übernahm 1991 ein am Boden liegendes Team, fädelte den mutigen Favre-Trade ein, holte Reggie White und führte Green Bay zurück an die Weltspitze."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Was vollbrachte Brett Favre am 22. Dezember 2003 bei 'Monday Night Football' gegen die Raiders, nur einen Tag nach dem plötzlichen Tod seines Vaters?",
     "a": [
-      "Er spielte das Spiel seines Lebens mit 399 Yards und 4 Touchdowns in der ersten Halbzeit",
-      "Er kniete beim ersten Spielzug ab und verließ unter Tränen das Stadion",
-      "Er erzielte als Kicker alle Punkte der Packers im Alleingang",
-      "Er verzichtete erstmals nach 200 Spielen auf einen Startplatz"
+      "399 Yards und 4 Touchdowns in der ersten Halbzeit",
+      "Er kniete beim ersten Spielzug ab und verließ das Feld",
+      "Er erzielte als Kicker alle Punkte der Packers im Spiel",
+      "Er verzichtete erstmals nach 200 Spielen auf den Start"
     ],
-    "exp": "'Ich wusste, dass mein Vater gewollt hätte, dass ich spiele.' Favre verzauberte die Welt mit fehlerfreien Pässen; selbst die berüchtigten Raiders-Fans applaudierten stehend."
+    "exp": "'Ich wusste, dass mein Vater gewollt hätte, dass ich spiele.' Favre verzauberte die Welt mit fehlerfreien Pässen; selbst die berüchtigten Raiders-Fans applaudierten stehend.",
+    "explanation": "'Ich wusste, dass mein Vater gewollt hätte, dass ich spiele.' Favre verzauberte die Welt mit fehlerfreien Pässen; selbst die berüchtigten Raiders-Fans applaudierten stehend."
   },
   {
     "cat": "green_bay_packers",
     "diff": "pro",
     "q": "Welcher Packers-Offensive-Lineman hielt laut Vince Lombardi den Titel als 'der beste Spieler, den ich je trainiert habe'?",
     "a": [
-      "Forrest Gregg (Offensive Tackle)",
-      "Jerry Kramer (Guard)",
-      "Fuzzy Thurston (Guard)",
-      "Ken Bowman (Center)"
+      "Forrest Gregg",
+      "Jerry Kramer",
+      "Fuzzy Thurston",
+      "Ken Bowman"
     ],
-    "exp": "Lombardi lobte selten überschwänglich, doch über Forrest Gregg sagte er: 'Forrest Gregg is the finest player I ever coached.' Gregg spielte 188 Spiele in Serie."
+    "exp": "Lombardi lobte selten überschwänglich, doch über Forrest Gregg sagte er: 'Forrest Gregg is the finest player I ever coached.' Gregg spielte 188 Spiele in Serie.",
+    "explanation": "Lombardi lobte selten überschwänglich, doch über Forrest Gregg sagte er: 'Forrest Gregg is the finest player I ever coached.' Gregg spielte 188 Spiele in Serie."
   },
   {
     "cat": "green_bay_packers",
@@ -671,19 +726,21 @@
       "Greg Jennings",
       "James Jones"
     ],
-    "exp": "Adams' elegante Fußarbeit und unnachahmliche Releases an der Line machten ihn 2020 zum dominantesten Receiver der Liga (115 Catches, 18 TDs)."
+    "exp": "Adams' elegante Fußarbeit und unnachahmliche Releases an der Line machten ihn 2020 zum dominantesten Receiver der Liga (115 Catches, 18 TDs).",
+    "explanation": "Adams' elegante Fußarbeit und unnachahmliche Releases an der Line machten ihn 2020 zum dominantesten Receiver der Liga (115 Catches, 18 TDs)."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Welcher Packers-Defensive-Tackle feierte Mitte der 90er jeden Tackle mit dem 'Gravedigger'-Grabschaufel-Tanz?",
     "a": [
-      "Gilbert Brown (340 Pfund schwerer Fan-Liebling)",
+      "Gilbert Brown",
       "Santana Dotson",
       "Sean Jones",
       "Cullen Jenkins"
     ],
-    "exp": "Gilbert Brown stopfte Laufwege wie eine Wand und aß im lokalen Fast-Food-Laden den nach ihm benannten 'Gilbert Burger'. Sein Schaufel-Jubel war Kult."
+    "exp": "Gilbert Brown stopfte Laufwege wie eine Wand und aß im lokalen Fast-Food-Laden den nach ihm benannten 'Gilbert Burger'. Sein Schaufel-Jubel war Kult.",
+    "explanation": "Gilbert Brown stopfte Laufwege wie eine Wand und aß im lokalen Fast-Food-Laden den nach ihm benannten 'Gilbert Burger'. Sein Schaufel-Jubel war Kult."
   },
   {
     "cat": "green_bay_packers",
@@ -695,7 +752,8 @@
       "Johnny Blood (McNally)",
       "Verne Lewellen"
     ],
-    "exp": "Canadeo ergraute bereits in jungen Jahren frühzeitig. Er war 1949 der erst dritte Spieler der NFL-Historie, der 1.000 Yards in einer Saison erlief."
+    "exp": "Canadeo ergraute bereits in jungen Jahren frühzeitig. Er war 1949 der erst dritte Spieler der NFL-Historie, der 1.000 Yards in einer Saison erlief.",
+    "explanation": "Canadeo ergraute bereits in jungen Jahren frühzeitig. Er war 1949 der erst dritte Spieler der NFL-Historie, der 1.000 Yards in einer Saison erlief."
   },
   {
     "cat": "green_bay_packers",
@@ -707,7 +765,8 @@
       "Mike Sherman",
       "Ray Rhodes"
     ],
-    "exp": "LaFleur legte mit 39 Siegen in seinen ersten drei regulären Spielzeiten den besten Start eines Head Coaches in der gesamten NFL-Historie hin."
+    "exp": "LaFleur legte mit 39 Siegen in seinen ersten drei regulären Spielzeiten den besten Start eines Head Coaches in der gesamten NFL-Historie hin.",
+    "explanation": "LaFleur legte mit 39 Siegen in seinen ersten drei regulären Spielzeiten den besten Start eines Head Coaches in der gesamten NFL-Historie hin."
   },
   {
     "cat": "green_bay_packers",
@@ -719,7 +778,8 @@
       "Mississippi River",
       "Rock River"
     ],
-    "exp": "Der Fox River prägt das Stadtbild von Green Bay und war der historische Transportweg für die Holz- und Papierindustrie der Region."
+    "exp": "Der Fox River prägt das Stadtbild von Green Bay und war der historische Transportweg für die Holz- und Papierindustrie der Region.",
+    "explanation": "Der Fox River prägt das Stadtbild von Green Bay und war der historische Transportweg für die Holz- und Papierindustrie der Region."
   },
   {
     "cat": "green_bay_packers",
@@ -731,7 +791,8 @@
       "Ein Industriepark für Papierverpackungen und Milchwirtschaft",
       "Eine geschlossene Wohnsiedlung für aktive Spieler und deren Familien"
     ],
-    "exp": "Die Packers investierten in den 'Titletown District': Im Winter rodeln Fans auf dem 'Ariens Hill', im Sommer spielen Kinder auf dem Football-Kunstrasen."
+    "exp": "Die Packers investierten in den 'Titletown District': Im Winter rodeln Fans auf dem 'Ariens Hill', im Sommer spielen Kinder auf dem Football-Kunstrasen.",
+    "explanation": "Die Packers investierten in den 'Titletown District': Im Winter rodeln Fans auf dem 'Ariens Hill', im Sommer spielen Kinder auf dem Football-Kunstrasen."
   },
   {
     "cat": "green_bay_packers",
@@ -743,7 +804,8 @@
       "Ein animierter gelber Käselaib namens 'Cheddar'",
       "Die Packers haben traditionell gar kein offizielles Tier-Maskottchen"
     ],
-    "exp": "Tatsächlich verzichten die Green Bay Packers aus puristischer Tradition als eines der ganz wenigen NFL-Teams auf ein albernes Kostüm-Maskottchen!"
+    "exp": "Tatsächlich verzichten die Green Bay Packers aus puristischer Tradition als eines der ganz wenigen NFL-Teams auf ein albernes Kostüm-Maskottchen!",
+    "explanation": "Tatsächlich verzichten die Green Bay Packers aus puristischer Tradition als eines der ganz wenigen NFL-Teams auf ein albernes Kostüm-Maskottchen!"
   },
   {
     "cat": "green_bay_packers",
@@ -755,7 +817,8 @@
       "Michigan",
       "Iowa"
     ],
-    "exp": "Wisconsin ('The Dairy State') ist die Heimat der Packers. Die Verbundenheit zwischen dem ländlichen Staat und dem Team gilt als einzigartig."
+    "exp": "Wisconsin ('The Dairy State') ist die Heimat der Packers. Die Verbundenheit zwischen dem ländlichen Staat und dem Team gilt als einzigartig.",
+    "explanation": "Wisconsin ('The Dairy State') ist die Heimat der Packers. Die Verbundenheit zwischen dem ländlichen Staat und dem Team gilt als einzigartig."
   },
   {
     "cat": "green_bay_packers",
@@ -767,7 +830,8 @@
       "Alle Brücken über den Fox River werden aus Sicherheitsgründen hochgeklappt",
       "Die Bürger versammeln sich im Rathaus zum gemeinsamen Fahnenschwenken"
     ],
-    "exp": "Während des Spiels steht das öffentliche Leben komplett still. Wer nicht im Stadion ist, sitzt vor dem Fernseher oder hört das Radio von Wayne Larrivee."
+    "exp": "Während des Spiels steht das öffentliche Leben komplett still. Wer nicht im Stadion ist, sitzt vor dem Fernseher oder hört das Radio von Wayne Larrivee.",
+    "explanation": "Während des Spiels steht das öffentliche Leben komplett still. Wer nicht im Stadion ist, sitzt vor dem Fernseher oder hört das Radio von Wayne Larrivee."
   },
   {
     "cat": "green_bay_packers",
@@ -779,19 +843,21 @@
       "Mike Michalske",
       "Arnie Herber"
     ],
-    "exp": "McNally sah ein Kinoplakat des Films 'Blood and Sand' und meldete sich als 'Johnny Blood' an. Er kletterte über Hotelfassaden und feierte legendäre Partys."
+    "exp": "McNally sah ein Kinoplakat des Films 'Blood and Sand' und meldete sich als 'Johnny Blood' an. Er kletterte über Hotelfassaden und feierte legendäre Partys.",
+    "explanation": "McNally sah ein Kinoplakat des Films 'Blood and Sand' und meldete sich als 'Johnny Blood' an. Er kletterte über Hotelfassaden und feierte legendäre Partys."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Wie viele Personen umfasst der Verwaltungsrat ('Board of Directors') der Packers-Aktiengesellschaft?",
     "a": [
-      "Rund 45 Mitglieder aus der lokalen Wirtschaft und Gemeinschaft (ehrenamtlich)",
-      "Genau 3 Personen (vom Bürgermeister von Green Bay bestimmt)",
-      "12 ehemalige Super-Bowl-Champions des Vereins",
+      "Rund 45 ehrenamtliche Mitglieder aus der Region",
+      "Genau 3 vom Bürgermeister berufene Personen",
+      "12 frühere Super-Bowl-Champions des Vereins",
       "Über 1.000 ausgeloste Dauerkarteninhaber"
     ],
-    "exp": "Ein siebenköpfiges Exekutivkomitee um den Club-Präsidenten leitet das operative Geschäft, überwacht von einem ehrenamtlichen 45-köpfigen Aufsichtsrat."
+    "exp": "Ein siebenköpfiges Exekutivkomitee um den Club-Präsidenten leitet das operative Geschäft, überwacht von einem ehrenamtlichen 45-köpfigen Aufsichtsrat.",
+    "explanation": "Ein siebenköpfiges Exekutivkomitee um den Club-Präsidenten leitet das operative Geschäft, überwacht von einem ehrenamtlichen 45-köpfigen Aufsichtsrat."
   },
   {
     "cat": "green_bay_packers",
@@ -803,7 +869,8 @@
       "John F. Kennedy",
       "Dwight D. Eisenhower"
     ],
-    "exp": "Super-Bowl-Besuche im Weißen Haus wurden erst in den 1980ern unter Ronald Reagan zur festen Tradition – Lombardi und seine Sieger reisten damals nicht nach Washington."
+    "exp": "Super-Bowl-Besuche im Weißen Haus wurden erst in den 1980ern unter Ronald Reagan zur festen Tradition – Lombardi und seine Sieger reisten damals nicht nach Washington.",
+    "explanation": "Super-Bowl-Besuche im Weißen Haus wurden erst in den 1980ern unter Ronald Reagan zur festen Tradition – Lombardi und seine Sieger reisten damals nicht nach Washington."
   },
   {
     "cat": "green_bay_packers",
@@ -815,7 +882,8 @@
       "Er wurde für 5 Millionen Dollar an einen anonymen Sammler in New York versteigert",
       "Er ging als Schenkung an das Smithsonian Museum in Washington, D.C."
     ],
-    "exp": "Lombardis beiger Trenchcoat, sein Fedora-Hut und seine Hornbrille sind Herzstücke der Packers Hall of Fame im Stadionatrium."
+    "exp": "Lombardis beiger Trenchcoat, sein Fedora-Hut und seine Hornbrille sind Herzstücke der Packers Hall of Fame im Stadionatrium.",
+    "explanation": "Lombardis beiger Trenchcoat, sein Fedora-Hut und seine Hornbrille sind Herzstücke der Packers Hall of Fame im Stadionatrium."
   },
   {
     "cat": "green_bay_packers",
@@ -827,7 +895,8 @@
       "Lavvie Dilweg",
       "Cub Buck"
     ],
-    "exp": "Cal Hubbard war ein Koloss als Tackle für Green Bay und stand danach Jahrzehnte als Schiedsrichter in der MLB auf dem Platz – Doppel-Hall-of-Famer!"
+    "exp": "Cal Hubbard war ein Koloss als Tackle für Green Bay und stand danach Jahrzehnte als Schiedsrichter in der MLB auf dem Platz – Doppel-Hall-of-Famer!",
+    "explanation": "Cal Hubbard war ein Koloss als Tackle für Green Bay und stand danach Jahrzehnte als Schiedsrichter in der MLB auf dem Platz – Doppel-Hall-of-Famer!"
   },
   {
     "cat": "green_bay_packers",
@@ -835,11 +904,12 @@
     "q": "Welcher Radiosprecher prägte bei jedem Packers-Touchdown den ikonischen Spruch 'There is your dagger!'?",
     "a": [
       "Wayne Larrivee",
-      "Jim Irwin",
-      "Max McGee",
-      "Larry McCarren"
+      "Jim Irwin (WTMJ)",
+      "Max McGee (Packers)",
+      "Larry McCarren (Analyst)"
     ],
-    "exp": "Larrivees Markenzeichen auf 'Packers Radio Network': Sobald der entscheidende Spielzug gelingt, ruft er emotional: 'There is your dagger!'"
+    "exp": "Larrivees Markenzeichen auf 'Packers Radio Network': Sobald der entscheidende Spielzug gelingt, ruft er emotional: 'There is your dagger!'",
+    "explanation": "Larrivees Markenzeichen auf 'Packers Radio Network': Sobald der entscheidende Spielzug gelingt, ruft er emotional: 'There is your dagger!'"
   },
   {
     "cat": "green_bay_packers",
@@ -851,7 +921,8 @@
       "Jan Stecker",
       "Sebastian Vollmer"
     ],
-    "exp": "Björn Werner (ehemaliger Erstrundenpick der Colts) reiste mehrfach privat ins Lambeau Field und schwärmt in Podcasts von der Fankultur in Wisconsin."
+    "exp": "Björn Werner (ehemaliger Erstrundenpick der Colts) reiste mehrfach privat ins Lambeau Field und schwärmt in Podcasts von der Fankultur in Wisconsin.",
+    "explanation": "Björn Werner (ehemaliger Erstrundenpick der Colts) reiste mehrfach privat ins Lambeau Field und schwärmt in Podcasts von der Fankultur in Wisconsin."
   },
   {
     "cat": "green_bay_packers",
@@ -863,7 +934,8 @@
       "Goldene Repliken der Vince-Lombardi-Trophäe für das Wohnzimmer",
       "Jahresabonnements für die besten Golfplätze in Wisconsin"
     ],
-    "exp": "Rodgers belohnte seine Beschützer königlich: Polaris-Quads, maßgeschneiderte Koffer und Luxus-Uhren gehörten zu seinen Weihnachtsgeschenken."
+    "exp": "Rodgers belohnte seine Beschützer königlich: Polaris-Quads, maßgeschneiderte Koffer und Luxus-Uhren gehörten zu seinen Weihnachtsgeschenken.",
+    "explanation": "Rodgers belohnte seine Beschützer königlich: Polaris-Quads, maßgeschneiderte Koffer und Luxus-Uhren gehörten zu seinen Weihnachtsgeschenken."
   },
   {
     "cat": "green_bay_packers",
@@ -875,19 +947,21 @@
       "Genau eine einzige Aktie pro Person ist gesetzlich erlaubt",
       "Maximal 51 Prozent für den gewählten Präsidenten des Clubs"
     ],
-    "exp": "Um jede feindliche Übernahme durch Milliardäre im Keim zu ersticken, begrenzt die Satzung den Besitz einer Einzelperson auf unter 4 Prozent."
+    "exp": "Um jede feindliche Übernahme durch Milliardäre im Keim zu ersticken, begrenzt die Satzung den Besitz einer Einzelperson auf unter 4 Prozent.",
+    "explanation": "Um jede feindliche Übernahme durch Milliardäre im Keim zu ersticken, begrenzt die Satzung den Besitz einer Einzelperson auf unter 4 Prozent."
   },
   {
     "cat": "green_bay_packers",
     "diff": "mid",
     "q": "Welcher Leitspruch prangt über dem Kabinenausgang des Lambeau Fields, den die Spieler beim Betreten des Rasens berühren?",
     "a": [
-      "Das Schild 'Lambeau Field' mit den historischen Meisterschaftsjahren",
-      "Der Spruch 'Play like a Champion today'",
+      "Schild 'Lambeau Field' mit den Meisterschaftsjahren",
+      "Der Spruch 'Play like a Champion today' an der Wand",
       "Die Mahnung 'Defend the Frozen Tundra at all costs'",
       "Das Zitat 'Leave everything on this sacred turf'"
     ],
-    "exp": "Beim Sprint durch den Spielertunnel tippen die Profis traditionsgemäß an die gelb-grüne Ehrentafel mit dem Packers-Logo und den 13 Titeln."
+    "exp": "Beim Sprint durch den Spielertunnel tippen die Profis traditionsgemäß an die gelb-grüne Ehrentafel mit dem Packers-Logo und den 13 Titeln.",
+    "explanation": "Beim Sprint durch den Spielertunnel tippen die Profis traditionsgemäß an die gelb-grüne Ehrentafel mit dem Packers-Logo und den 13 Titeln."
   },
   {
     "cat": "green_bay_packers",
@@ -899,14 +973,10 @@
       "Ray Rhodes",
       "Dan Devine"
     ],
-    "exp": "Mike Holmgren baute mit Brett Favre und Reggie White das Siegerteam der 90er auf und beendete 1997 eine 29-jährige Titeldurststrecke in Titletown."
+    "exp": "Mike Holmgren baute mit Brett Favre und Reggie White das Siegerteam der 90er auf und beendete 1997 eine 29-jährige Titeldurststrecke in Titletown.",
+    "explanation": "Mike Holmgren baute mit Brett Favre und Reggie White das Siegerteam der 90er auf und beendete 1997 eine 29-jährige Titeldurststrecke in Titletown."
   }
 ];
-
-  DATA.forEach(q => {
-    if (!q.explanation && q.exp) q.explanation = q.exp;
-    if (!q.exp && q.explanation) q.exp = q.explanation;
-  });
 
   if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
     window.ArcadeQuizEngine.registerBank("american_football_packers", DATA);
