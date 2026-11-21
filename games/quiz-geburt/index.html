@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Bewusste Schwangerschaft &amp; sanfte Geburt Quiz · Wissen, Entspannung &amp; natürliche Begleitung</title>
+  <meta name="description" content="75 handverlesene Fragen zu mentaler Geburtsvorbereitung, Wellenatmung, Hormonen wie Oxytocin &amp; Endorphinen, Beckenbeweglichkeit, Hebammenvorsorge, Wassergeburt, Bonding &amp; Wochenbett." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-geburt/" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="Bewusste Schwangerschaft &amp; sanfte Geburt Quiz · Wissen, Entspannung &amp; Begleitung" />
+  <meta property="og:description" content="75 Fragen zu mentaler Geburtsvorbereitung, Entspannung, Hormonen, Beckenanatomie, Wassergeburt, Hebammenkunst und traditionellem Wochenbett." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/quiz-geburt/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Bewusste Schwangerschaft &amp; sanfte Geburt Quiz" />
+  <meta name="twitter:description" content="75 Fragen zu mentaler Geburtsvorbereitung, Entspannung, Hormonen, Beckenanatomie, Wassergeburt und Wochenbett." />
+  <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Quiz",
+        "name": "Bewusste Schwangerschaft & sanfte Geburt Quiz",
+        "description": "75 handverlesene Fragen zu mentaler Geburtsvorbereitung, Wellenatmung, Hormonen wie Oxytocin & Endorphinen, Beckenbeweglichkeit, Hebammenvorsorge, Wassergeburt, Bonding & Wochenbett.",
+        "url": "https://hunterjoeing.github.io/games/quiz-geburt/",
+        "inLanguage": "de",
+        "isAccessibleForFree": true,
+        "about": "Schwangerschaft, Geburt, Hebammenkunde, Entspannung & Wochenbett",
+        "educationalUse": "Selbsttest / Wissensquiz",
+        "image": "https://hunterjoeing.github.io/og-cover.png",
+        "author": {
+          "@type": "Person",
+          "name": "Johannes Rudolph"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "HunterJoe Arcade",
+            "item": "https://hunterjoeing.github.io/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Bewusste Schwangerschaft & sanfte Geburt Quiz",
+            "item": "https://hunterjoeing.github.io/games/quiz-geburt/"
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    .quiz-wrap { max-width: 860px; margin: 0 auto; padding: 18px 14px 44px; }
+    .gentle-info-note { margin: 10px 0 0; padding: 10px 14px; border-radius: 12px; background: rgba(219, 39, 119, 0.08); border: 1px solid rgba(219, 39, 119, 0.22); font-size: 13px; color: var(--text-muted); line-height: 1.48; }
+    html[data-theme="light"] .gentle-info-note { background: #fdf2f8; border-color: #fbcfe8; color: #831843; }
+    .diff-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 6px; }
+    .diff-pill { padding: 7px 13px; border-radius: 999px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-muted); font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all 0.14s; }
+    .diff-pill:hover { border-color: #f472b6; color: var(--text-main); }
+    .diff-pill.active { background: linear-gradient(135deg, #db2777, #f43f5e); border-color: #fda4af; color: #fff; box-shadow: 0 4px 16px rgba(219, 39, 119, 0.32); }
+    .quiz-time-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 8px 0 14px; font-size: 12.5px; }
+    .time-mode-pill { padding: 5px 11px; border-radius: 999px; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-muted); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.14s; }
+    .time-mode-pill.active { background: var(--bg-elevated); color: var(--text-main); border-color: #db2777; font-weight: 700; }
+    .cat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin: 16px 0; }
+    .cat-card { text-align: left; padding: 16px; border-radius: 14px; background: var(--bg-surface); border: 1px solid var(--border-subtle); cursor: pointer; transition: transform 0.16s, border-color 0.16s, box-shadow 0.16s; position: relative; overflow: hidden; }
+    .cat-card:hover { transform: translateY(-2px); border-color: #f472b6; box-shadow: 0 8px 24px rgba(219, 39, 119, 0.12); }
+    .cat-card.featured { border-color: rgba(219, 39, 119, 0.45); background: linear-gradient(145deg, var(--bg-surface), rgba(219, 39, 119, 0.06)); }
+    .cat-card.featured-amber { border-color: rgba(245, 158, 11, 0.45); background: linear-gradient(145deg, var(--bg-surface), rgba(245, 158, 11, 0.06)); }
+    .cat-icon { font-size: 26px; margin-bottom: 6px; }
+    .cat-name { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+    .cat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.4; margin-bottom: 8px; }
+    .cat-meta { font-size: 11.5px; color: var(--text-muted); opacity: 0.85; font-family: var(--font-mono); }
+    .quiz-stage { padding: 22px 20px; }
+    .quiz-meta-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+    .quiz-meta-row strong { color: var(--text-main); }
+    .quiz-speed-btn { background: transparent; border: 1px solid var(--border-subtle); border-radius: 999px; padding: 4px 10px; font-size: 12px; color: var(--text-muted); cursor: pointer; }
+    .quiz-speed-btn:hover { border-color: #db2777; color: var(--text-main); }
+    .timer-track { height: 6px; background: var(--bg-sand); border-radius: 999px; overflow: hidden; margin-bottom: 16px; }
+    .timer-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #db2777, #f43f5e); transition: width 0.1s linear, background-color 0.3s; }
+    .timer-fill.warn { background: #f59e0b; }
+    .timer-fill.crit { background: #ef4444; }
+    .badge-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .q-cat-pill { font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--bg-sand); color: var(--text-muted); border: 1px solid var(--border-hairline); }
+    .q-diff-pill { font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .q-diff-pill.easy { background: rgba(34, 197, 94, 0.15); color: #16a34a; }
+    .q-diff-pill.mid { background: rgba(234, 179, 8, 0.15); color: #ca8a04; }
+    .q-diff-pill.pro { background: rgba(219, 39, 119, 0.15); color: #db2777; }
+    .q-text { font-size: 19px; font-weight: 700; line-height: 1.38; margin: 14px 0 18px; }
+    .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 600px) {
+      .answers-grid { grid-template-columns: 1fr;
+    }
+    .ans-btn { display: flex; align-items: center; gap: 10px; text-align: left; padding: 13px 14px; border-radius: 12px; font-size: 14px; font-weight: 600; line-height: 1.38; cursor: pointer; border: 1px solid var(--border-subtle); background: var(--bg-surface); color: var(--text-main); transition: all 0.14s; }
+    .ans-btn:hover:not(:disabled) { border-color: #f472b6; background: var(--bg-elevated); transform: translateY(-1px); }
+    .ans-key { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 8px; background: var(--bg-sand); border: 1px solid var(--border-hairline); font-size: 12px; font-weight: 700; flex-shrink: 0; color: var(--text-muted); }
+    .ans-btn.correct { border-color: #10b981 !important; background: rgba(16, 185, 129, 0.15) !important; color: #065f46 !important; }
+    html[data-theme="dark"] .ans-btn.correct { background: rgba(16, 185, 129, 0.22) !important; color: #34d399 !important; }
+    .ans-btn.wrong { border-color: #ef4444 !important; background: rgba(239, 68, 68, 0.12) !important; color: #991b1b !important; }
+    html[data-theme="dark"] .ans-btn.wrong { background: rgba(239, 68, 68, 0.2) !important; color: #f87171 !important; }
+    .ans-btn.eliminated { opacity: 0.28 !important; pointer-events: none; filter: grayscale(1); }
+    .joker-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-hairline); }
+    .joker-btn { padding: 7px 12px; border-radius: 10px; border: 1px solid var(--border-subtle); background: var(--bg-surface); font-size: 12.5px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.14s; }
+    .joker-btn:hover:not(:disabled) { border-color: #f472b6; background: var(--bg-elevated); }
+    .joker-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .fact-box { margin-top: 14px; padding: 12px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; background: var(--bg-sand); border: 1px solid var(--border-hairline); }
+    .result-card { text-align: center; padding: 28px 20px; }
+    .result-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 480px; margin: 18px auto 22px; }
+    .res-box { padding: 12px 8px; }
+    .res-box b { display: block; font-size: 20px; font-family: var(--font-mono); }
+    .res-box span { font-size: 11.5px; color: var(--text-muted); }
+    .menu-board-row { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .hub-footer-links { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--border-hairline); display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap; }
+    .hub-footer-links button { background: none; border: none; color: inherit; cursor: pointer; font: inherit; text-decoration: underline; padding: 0; }
+    .hub-footer-links a { color: inherit; text-decoration: none; }
+    .hub-footer-links a:hover,
+    .hub-footer-links button:hover { color: var(--text-main); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🌸 Bewusste Schwangerschaft &amp; sanfte Geburt</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="quiz-wrap">
+    <!-- 1. Category & Difficulty Menu -->
+    <section id="screen-menu" class="glass-card" style="padding:22px;">
+      <h1 style="margin:0 0 6px; font-size:22px;">🌸 Bewusste Schwangerschaft &amp; sanfte Geburt</h1>
+      <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.5;">
+        <strong>75 handverlesene Fragen</strong> zu mentaler Geburtsvorbereitung, Tiefenentspannung und Wellenatmung, dem Hormonfeuerwerk der Geburt (Oxytocin &amp; Endorphine), Beckenbeweglichkeit, ganzheitlicher Hebammenbegleitung, Wassergeburt, Golden Hour und weltweiten Wochenbett-Traditionen. Pro Spielrunde werden per Zufall <strong>12 Fragen</strong> ohne Wiederholung gezogen.
+      </p>
+      <div class="gentle-info-note">
+        ✨ <strong>Entspannt &amp; fundiert:</strong> Nach jeder Frage wartet eine kurze, wertschätzende Erklärung mit echtem Aha-Effekt – inklusive einheitlicher, optionaler lokaler und globaler Bestenliste.
+      </div>
+
+      <div class="diff-bar" id="diff-bar">
+        <button class="diff-pill active" data-diff="all">🎯 Alle Stufen</button>
+        <button class="diff-pill" data-diff="easy">🟢 Grundlagen &amp; Urvertrauen</button>
+        <button class="diff-pill" data-diff="mid">🟡 Hebammen- &amp; Praxiswissen</button>
+        <button class="diff-pill pro" data-diff="pro">🔴 Fachdetails &amp; Physiologie (1,5× Pkt)</button>
+      </div>
+
+      <div class="quiz-time-bar" id="time-mode-bar">
+        <span style="font-size:12px;color:var(--text-muted);font-weight:700;">Tempo:</span>
+        <button type="button" class="time-mode-pill active" data-relaxed="0">⚡ Mit Zeitbonus (25–35s, sanfter Ablauf)</button>
+        <button type="button" class="time-mode-pill relaxed" data-relaxed="1">☕ Ohne Zeitlimit (ganz entspannt)</button>
+      </div>
+
+      <div id="cat-grid" class="cat-grid"></div>
+
+      <div class="menu-board-row">
+        <button type="button" class="secondary-btn" onclick="openLocalBoard()">🏆 Lokale Bestenliste</button>
+        <button type="button" class="secondary-btn" onclick="if(window.ArcadeScores)ArcadeScores.openLeaderboardModal('quiz_geburt')">🌐 Globale Bestenliste</button>
+      </div>
+
+      <div class="hub-footer-links">
+        <button type="button" onclick="openAdminModal()">🔒 Admin-Bereich &amp; Bestenlisten</button>
+        <span>·</span>
+        <a href="../../impressum.html">Impressum</a>
+        <span>·</span>
+        <a href="../../datenschutz.html">Datenschutz</a>
+      </div>
+    </section>
+
+    <!-- 2. Play Screen -->
+    <section id="screen-play" class="glass-card quiz-stage hidden">
+      <div class="quiz-meta-row">
+        <span>Frage <strong id="q-num">1</strong>/<span id="q-total">12</span></span>
+        <span>🔥 Serie: <strong id="q-streak">0</strong></span>
+        <button type="button" id="btn-timer-mode" class="quiz-speed-btn" onclick="toggleTimerModeInPlay()" title="Zwischen Zeitbonus und Entspannt umschalten">⏱ <strong id="q-sec">25</strong>s</button>
+        <span>⭐ <strong id="q-score">0</strong> Pkt</span>
+      </div>
+      <div class="timer-track"><div id="timer-fill" class="timer-fill"></div></div>
+
+      <div class="badge-row">
+        <span id="q-cat" class="q-cat-pill">Thema</span>
+        <span id="q-diff" class="q-diff-pill mid">Hebammenwissen</span>
+      </div>
+      <h2 id="q-text" class="q-text">Frage wird geladen…</h2>
+
+      <div id="answers-grid" class="answers-grid"></div>
+
+      <div id="fact-box" class="fact-box hidden">
+        <div id="fact-text" style="flex:1;"></div>
+        <button id="btn-next-q" class="primary-btn" onclick="nextQuestion()">Weiter ▶</button>
+      </div>
+
+      <div class="joker-bar">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button id="joker-50" class="joker-btn" onclick="useJoker5050()">🎯 50:50</button>
+          <button id="joker-time" class="joker-btn" onclick="useJokerTime()">⏱ +10s</button>
+          <button id="joker-skip" class="joker-btn" onclick="useJokerSkip()">⏭ Überspringen</button>
+        </div>
+        <button class="secondary-btn" style="padding:6px 12px;font-size:12px;" onclick="backToMenu()">↩ Themen</button>
+      </div>
+    </section>
+
+    <!-- 3. Result Screen -->
+    <section id="screen-result" class="glass-card result-card hidden">
+      <div style="font-size:48px; margin-bottom:8px;" id="res-emoji">🌸</div>
+      <h2 style="margin:0 0 4px; font-size:22px;" id="res-heading">Runde abgeschlossen!</h2>
+      <p style="margin:0 0 16px; color:var(--text-muted); font-size:13.5px;" id="res-sub">Bewusste Schwangerschaft &amp; sanfte Geburt</p>
+
+      <div class="result-stats">
+        <div class="res-box glass-card">
+          <b id="res-score">0</b>
+          <span>Punkte</span>
+        </div>
+        <div class="res-box glass-card">
+          <b id="res-correct">0/12</b>
+          <span>Richtig</span>
+        </div>
+        <div class="res-box glass-card">
+          <b id="res-streak">0×</b>
+          <span>Beste Serie</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        <button class="primary-btn" onclick="replayCategory()">🔄 Neue Runde starten</button>
+        <button class="secondary-btn" onclick="openLocalBoard()">🏆 Lokale Bestenliste</button>
+        <button class="secondary-btn" onclick="backToMenu()">🌸 Anderes Themengebiet</button>
+        <a href="../../index.html" class="secondary-btn" style="text-decoration:none; display:inline-flex; align-items:center;">← Dashboard</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-geburt.js"></script>
+  <script>
+    const QUIZ_ID = 'quiz_geburt';
+
+    const CATS = [
+      { id: 'mix',                 icon: '🌸', name: 'Komplett-Mix: Alle Themengebiete (75 Fragen)', cls: 'featured',       desc: 'Bunt gemischt durch alle Facetten: Mentale Vorbereitung, Hormone, Beckenbeweglichkeit, Hebammenkunst, Wassergeburt & Wochenbett.' },
+      { id: 'mental_entspannung',  icon: '🧘', name: 'Mentale Geburtsvorbereitung & Entspannung (17 Fragen)', cls: '',       desc: 'Angst-Spannungs-Schmerz-Kreislauf, Wellenatmung, Affirmationen, Visualisierungen, Entspannungsanker & die Rolle des Begleiters.' },
+      { id: 'hormone_physiologie', icon: '✨', name: 'Hormone & Physiologie der natürlichen Geburt (15 Fragen)', cls: '',    desc: 'Oxytocin, Endorphine vs. Adrenalin, Melatonin, Längs- und Ringmuskeln, Beckenweiten im Vierfüßler & Geburtsphasen.' },
+      { id: 'begleitung_vorsorge', icon: '🌿', name: 'Ganzheitliche Begleitung & Naturheilkunde (16 Fragen)', cls: '',       desc: 'Hebammenvorsorge, Doula, Akupunktur & Moxibustion, Rebozo-Tuch, Dammmassage, Himbeerblättertee, Heublumen & Louwen-Konzept.' },
+      { id: 'geburtsorte_bonding', icon: '🌊', name: 'Geburtsorte, Wassergeburt & Golden Hour (15 Fragen)', cls: '',         desc: 'Klinik, Hebammenkreißsaal & Geburtshaus, Wassergeburt & Tauchreflex, Auspulsieren der Nabelschnur, Hautkontakt & Kolostrum.' },
+      { id: 'pioniere_wochenbett', icon: '🤱', name: 'Pioniere, Traditionen & Wochenbett (12 Fragen)', cls: 'featured-amber', desc: 'Dick-Read, Leboyer & Ina May Gaskin, 40-Tage-Ruhezeit weltweit, Wochenbettküche, Lochien, M-Trageposition & Mythen.' }
+    ];
+
+    const CAT_NAMES = Object.fromEntries(CATS.map(c => [c.id, c.icon + ' ' + c.name]));
+
+    const DIFF_INFO = {
+      easy: { label: '🟢 Grundlagen & Urvertrauen', cls: 'easy', mult: 1.0 },
+      mid:  { label: '🟡 Hebammen- & Praxiswissen', cls: 'mid',  mult: 1.2 },
+      pro:  { label: '🔴 Fachdetails & Physiologie', cls: 'pro',  mult: 1.5 }
+    };
+
+    const QUESTIONS = ArcadeQuizEngine.getBank('geburt');
+
+    let selectedDiff = 'all';
+    let activeCat = 'mix';
+    let menuControls = null;
+    let deck = [];
+    let qIdx = 0;
+    let score = 0;
+    let streak = 0;
+    let bestStreak = 0;
+    let correctCount = 0;
+    let timerId = null;
+    let timeLeft = 25;
+    let questionMaxTime = 25;
+    let answered = false;
+    let jokers = { f50: true, time: true, skip: true };
+
+    function shuffle(arr) {
+      return ArcadeQuizEngine.shuffle(arr);
+    }
+
+    function openLocalBoard() {
+      if (window.ArcadeQuizBoard) {
+        window.ArcadeQuizBoard.show(QUIZ_ID, 'Bewusste Schwangerschaft & sanfte Geburt · Lokale Bestenliste');
+      }
+    }
+
+    function refreshTopBest() {
+      const b = ArcadeScores.getBest(QUIZ_ID);
+      document.getElementById('top-best').textContent = b ? b.best : 0;
+    }
+
+    function getMatchingPool(catId) {
+      return QUESTIONS.filter(q => {
+        const catOk = catId === 'mix' ? true : q.cat === catId;
+        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        return catOk && diffOk;
+      });
+    }
+
+    function renderMenu() {
+      const reqLen = menuControls ? menuControls.getLength() : 12;
+      const grid = document.getElementById('cat-grid');
+      grid.innerHTML = CATS.map(c => {
+        const pool = getMatchingPool(c.id);
+        const stats = ArcadeQuizEngine.getSeenStats(QUIZ_ID, pool);
+        const roundLen = ArcadeQuizEngine.resolveRoundCount(reqLen, stats.total, 12);
+        return `
+          <button class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')" ${stats.total === 0 ? 'disabled style="opacity:0.45;cursor:not-allowed;"' : ''}>
+            <div class="cat-icon">${c.icon}</div>
+            <div class="cat-name">${c.name}</div>
+            <div class="cat-desc">${c.desc}</div>
+            <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    document.getElementById('diff-bar').addEventListener('click', (e) => {
+      const btn = e.target.closest('.diff-pill');
+      if (!btn) return;
+      selectedDiff = btn.dataset.diff;
+      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
+      ArcadeAudio.click();
+      if (menuControls) menuControls.refresh();
+      renderMenu();
+    });
+
+    function startQuiz(catId) {
+      activeCat = catId;
+      ArcadeAudio.click();
+      const pool = getMatchingPool(catId);
+      const reqLen = menuControls ? menuControls.getLength() : 12;
+      const drawn = ArcadeQuizEngine.drawDeck(QUIZ_ID, pool, reqLen, 12);
+      deck = drawn.deck;
+      if (!deck.length) return;
+      qIdx = 0;
+      score = 0;
+      streak = 0;
+      bestStreak = 0;
+      correctCount = 0;
+      jokers = { f50: true, time: true, skip: true };
+
+      document.getElementById('screen-menu').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-play').classList.remove('hidden');
+      document.getElementById('joker-50').disabled = false;
+      document.getElementById('joker-time').disabled = false;
+      document.getElementById('joker-skip').disabled = false;
+
+      showQuestion();
+    }
+
+    function showQuestion() {
+      clearInterval(timerId);
+      timerId = null;
+      answered = false;
+
+      const item = deck[qIdx];
+      questionMaxTime = ArcadeQuizPrefs.getDurationSec(item.diff);
+      timeLeft = ArcadeQuizPrefs.isRelaxed() ? 0 : questionMaxTime;
+      const di = DIFF_INFO[item.diff] || DIFF_INFO.mid;
+      document.getElementById('q-num').textContent = qIdx + 1;
+      document.getElementById('q-total').textContent = deck.length;
+      document.getElementById('q-streak').textContent = streak;
+      document.getElementById('q-score').textContent = score;
+      document.getElementById('q-cat').textContent = CAT_NAMES[item.cat] || item.cat;
+
+      const qDiffEl = document.getElementById('q-diff');
+      qDiffEl.textContent = di.label;
+      qDiffEl.className = 'q-diff-pill ' + di.cls;
+
+      document.getElementById('q-text').textContent = item.q;
+      document.getElementById('fact-box').classList.add('hidden');
+      document.getElementById('joker-50').disabled = !jokers.f50;
+      document.getElementById('joker-skip').disabled = !jokers.skip;
+
+      const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
+      item._rendered = opts;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      const grid = document.getElementById('answers-grid');
+      grid.innerHTML = opts.map((o, i) => `
+        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
+          <span class="ans-key">${letters[i]}</span>
+          <span>${o.txt}</span>
+        </button>
+      `).join('');
+
+      updateTimerUI();
+      if (!ArcadeQuizPrefs.isRelaxed()) startBonusTimer();
+    }
+
+    function startBonusTimer() {
+      clearInterval(timerId);
+      let lastTick = performance.now();
+      timerId = setInterval(() => {
+        const now = performance.now();
+        const delta = (now - lastTick) / 1000;
+        lastTick = now;
+        timeLeft = Math.max(0, timeLeft - delta);
+        updateTimerUI();
+        if (timeLeft <= 0) {
+          clearInterval(timerId);
+          onTimeExpired();
+        }
+      }, 100);
+    }
+
+    function updateTimerUI() {
+      const secEl = document.getElementById('q-sec');
+      const fillEl = document.getElementById('timer-fill');
+      const speedBtn = document.getElementById('btn-timer-mode');
+      if (ArcadeQuizPrefs.isRelaxed()) {
+        secEl.textContent = '∞';
+        speedBtn.innerHTML = '⏱ <strong>∞</strong> (Entspannt)';
+        fillEl.style.width = '100%';
+        fillEl.className = 'timer-fill';
+        return;
+      }
+      const s = Math.ceil(timeLeft);
+      secEl.textContent = s;
+      speedBtn.innerHTML = `⏱ <strong>${s}</strong>s`;
+      const pct = Math.max(0, Math.min(100, (timeLeft / questionMaxTime) * 100));
+      fillEl.style.width = pct + '%';
+      fillEl.className = 'timer-fill' + (pct < 25 ? ' crit' : (pct < 50 ? ' warn' : ''));
+    }
+
+    function toggleTimerModeInPlay() {
+      const nowRelaxed = ArcadeQuizPrefs.toggleRelaxed();
+      if (nowRelaxed) {
+        clearInterval(timerId);
+        timerId = null;
+        timeLeft = 0;
+      } else {
+        questionMaxTime = ArcadeQuizPrefs.getDurationSec(deck[qIdx] ? deck[qIdx].diff : 'mid');
+        timeLeft = questionMaxTime;
+        if (!answered) startBonusTimer();
+      }
+      updateTimerUI();
+      ArcadeAudio.click();
+    }
+
+    function pickAnswer(idx) {
+      if (answered) return;
+      answered = true;
+      clearInterval(timerId);
+
+      const item = deck[qIdx];
+      const opt = item._rendered[idx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+        else if (i === idx) b.classList.add('wrong');
+      });
+
+      const isCorrect = !!(opt && opt.isRight);
+      const di = DIFF_INFO[item.diff] || DIFF_INFO.mid;
+
+      if (isCorrect) {
+        streak++;
+        if (streak > bestStreak) bestStreak = streak;
+        correctCount++;
+        const basePts = 100;
+        const timeBonus = ArcadeQuizPrefs.isRelaxed() ? 0 : Math.round((timeLeft / questionMaxTime) * 50);
+        const streakBonus = Math.min(50, (streak - 1) * 10);
+        const roundPts = Math.round((basePts + timeBonus + streakBonus) * di.mult);
+        score += roundPts;
+        document.getElementById('q-score').textContent = score;
+        document.getElementById('q-streak').textContent = streak;
+        ArcadeAudio.correct();
+      } else {
+        streak = 0;
+        document.getElementById('q-streak').textContent = 0;
+        ArcadeAudio.wrong();
+      }
+
+      ArcadeQuizEngine.markSeen(QUIZ_ID, item);
+
+      const factEl = document.getElementById('fact-text');
+      const prefix = isCorrect ? '✅ <strong>Richtig!</strong> ' : '❌ <strong>Leider nicht ganz.</strong> ';
+      factEl.innerHTML = prefix + (item.explanation || item.exp || '');
+      document.getElementById('fact-box').classList.remove('hidden');
+
+      const nextBtn = document.getElementById('btn-next-q');
+      nextBtn.focus();
+    }
+
+    function onTimeExpired() {
+      if (answered) return;
+      answered = true;
+      streak = 0;
+      document.getElementById('q-streak').textContent = 0;
+      ArcadeAudio.wrong();
+      const item = deck[qIdx];
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (item._rendered[i].isRight) b.classList.add('correct');
+      });
+      ArcadeQuizEngine.markSeen(QUIZ_ID, item);
+      const factEl = document.getElementById('fact-text');
+      factEl.innerHTML = '⏱ <strong>Zeit abgelaufen!</strong> ' + (item.explanation || item.exp || '');
+      document.getElementById('fact-box').classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      qIdx++;
+      if (qIdx >= deck.length) finishQuiz();
+      else showQuestion();
+    }
+
+    function useJoker5050() {
+      if (!jokers.f50 || answered) return;
+      jokers.f50 = false;
+      document.getElementById('joker-50').disabled = true;
+      ArcadeAudio.pop();
+      const item = deck[qIdx];
+      const wrongIndices = shuffle(item._rendered.map((o, i) => (o.isRight ? -1 : i)).filter(i => i >= 0)).slice(0, 2);
+      const buttons = document.querySelectorAll('#answers-grid .ans-btn');
+      wrongIndices.forEach(i => buttons[i] && buttons[i].classList.add('eliminated'));
+    }
+
+    function useJokerTime() {
+      if (!jokers.time || answered || ArcadeQuizPrefs.isRelaxed()) return;
+      jokers.time = false;
+      timeLeft = Math.min(questionMaxTime + 10, timeLeft + 10);
+      updateTimerUI();
+      startBonusTimer();
+      ArcadeAudio.pop();
+    }
+
+    function useJokerSkip() {
+      if (!jokers.skip || answered) return;
+      jokers.skip = false;
+      document.getElementById('joker-skip').disabled = true;
+      clearInterval(timerId);
+      answered = true;
+      ArcadeQuizEngine.markSeen(QUIZ_ID, deck[qIdx]);
+      ArcadeAudio.click();
+      nextQuestion();
+    }
+
+    function finishQuiz() {
+      clearInterval(timerId);
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.remove('hidden');
+
+      const diffTag = DIFF_INFO[selectedDiff] ? DIFF_INFO[selectedDiff].label.replace(/^.\s/, '') : 'Alle';
+      const scoreRes = ArcadeQuizEngine.submitNormalizedScore(QUIZ_ID, score, correctCount, deck.length, {
+        cat: activeCat,
+        diff: selectedDiff
+      });
+      const isNewRecord = scoreRes.isNewRecord;
+      refreshTopBest();
+
+      document.getElementById('res-score').textContent = score;
+      document.getElementById('res-correct').textContent = `${correctCount}/${deck.length}`;
+      document.getElementById('res-streak').textContent = `${bestStreak}×`;
+      document.getElementById('res-emoji').textContent = correctCount >= Math.ceil(deck.length * 0.8) ? '🏆' : (correctCount >= Math.ceil(deck.length * 0.5) ? '🌸' : '🌿');
+      document.getElementById('res-heading').textContent = isNewRecord ? 'Neuer Geburtswissen-Rekord!' : 'Runde abgeschlossen!';
+      const normNote = scoreRes.normalized ? ` · Bestenliste (20er-Norm): ${scoreRes.recordedScore} Pkt` : '';
+      document.getElementById('res-sub').textContent = `${CAT_NAMES[activeCat]} · Stufe: ${diffTag}${normNote}`;
+      if (correctCount >= Math.ceil(deck.length * 0.5)) ArcadeAudio.win(); else ArcadeAudio.click();
+    }
+
+    function replayCategory() {
+      startQuiz(activeCat);
+    }
+
+    function backToMenu() {
+      clearInterval(timerId);
+      ArcadeAudio.click();
+      document.getElementById('screen-play').classList.add('hidden');
+      document.getElementById('screen-result').classList.add('hidden');
+      document.getElementById('screen-menu').classList.remove('hidden');
+      if (menuControls) menuControls.refresh();
+      renderMenu();
+    }
+
+    function openAdminModal() {
+      const pin = '2408';
+      const enteredPin = window.prompt('Admin-PIN zur Bestenlisten-Verwaltung:');
+      if (enteredPin !== pin && !(window.ArcadeAuth && typeof window.ArcadeAuth.isAdmin === 'function' && window.ArcadeAuth.isAdmin())) {
+        if (enteredPin !== null) alert('Falsche PIN.');
+        return;
+      }
+      if (window.ArcadeQuizBoard) {
+        const board = window.ArcadeQuizBoard;
+        const count = board.get(QUIZ_ID).length;
+        const m = board.modal(
+          '<h3 style="margin:0 0 10px;">🔒 Admin: Bewusste Schwangerschaft & sanfte Geburt</h3>' +
+          '<p style="margin:0 0 12px;opacity:.8;font-size:13.5px;">Lokale Bestenliste verwalten (' + count + ' Einträge vorhanden).</p>' +
+          '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">' +
+          '<button type="button" id="adm-view-board" style="' + board.btnPrimary + '">🏆 Bestenliste öffnen</button>' +
+          '<button type="button" id="adm-reset-board" style="' + board.btnCss + '">🗑 Bestenliste zurücksetzen</button>' +
+          '</div><div style="text-align:right;"><button type="button" id="adm-close-btn" style="' + board.btnCss + '">Schließen</button></div>'
+        );
+        m.querySelector('#adm-close-btn').onclick = () => board.closeModal(m);
+        m.querySelector('#adm-view-board').onclick = () => { board.closeModal(m); openLocalBoard(); };
+        m.querySelector('#adm-reset-board').onclick = () => {
+          if (confirm('Bestenliste für dieses Quiz wirklich komplett zurücksetzen?')) {
+            board.reset(QUIZ_ID);
+            alert('Bestenliste wurde zurückgesetzt.');
+            board.closeModal(m);
+            refreshTopBest();
+          }
+        };
+      }
+    }
+
+    if (/[?&]admin=1(&|$)/.test(location.search)) {
+      setTimeout(openAdminModal, 300);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const ae = document.activeElement;
+      if ((e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) ||
+          (ae && (ae.tagName === 'INPUT' || ae.tagName === 'TEXTAREA' || ae.tagName === 'SELECT')) ||
+          document.querySelector('.arcade-modal-backdrop, .qb-backdrop, #abm-drawer.open')) {
+        return;
+      }
+      if (document.getElementById('screen-play').classList.contains('hidden')) return;
+      if (!answered && ['1', '2', '3', '4'].includes(e.key)) {
+        const idx = parseInt(e.key, 10) - 1;
+        const btn = document.querySelector(`#answers-grid .ans-btn[data-idx="${idx}"]`);
+        if (btn && !btn.classList.contains('eliminated')) pickAnswer(idx);
+      } else if (answered && (e.key === 'Enter' || e.key === ' ')) {
+        e.preventDefault();
+        nextQuestion();
+      }
+    });
+
+    ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+    menuControls = ArcadeQuizEngine.initMenuControls({
+      quizId: QUIZ_ID,
+      getPool: () => getMatchingPool('mix'),
+      onUpdate: () => renderMenu(),
+      lengths: [12],
+      defaultLen: 12,
+      showAllLabel: '12 Fragen'
+    });
+    refreshTopBest();
+    renderMenu();
+  </script>
+</body>
+</html>
