@@ -469,20 +469,21 @@ export class ZBScene {
     this.flashLight.position.set(playerWX, 2.3, Z_NEAR - 0.3);
     this.flashLight.target.position.set(playerWX * 0.72, 0.3, -15);
 
-    // 3. Squad Marines (up to 24 visible)
+    // 3. Squad Marines (up to 24 visible, arranged in a narrow, deep 3-column tactical formation)
     const visCount = Math.min(24, state.squad);
     const firingGlow = state.running && state.shootTimer > (1 / Math.max(1, state.fireRate)) * 0.65;
+    const cols = 3;
     for (let s = 0; s < 24; s++) {
       const vis = this.models.marines[s];
       if (s >= visCount) {
         vis.root.visible = false;
         continue;
       }
-      const row = Math.floor(s / 6);
-      const colIdx = s % 6;
-      const rowSize = Math.min(6, visCount - row * 6);
-      const uOff = (colIdx - (rowSize - 1) * 0.5) * 0.095;
-      vis.root.position.set(toWorldX(state.playerU + uOff), 0, toWorldZ(0.02 + row * 0.028));
+      const row = Math.floor(s / cols);
+      const colIdx = s % cols;
+      const rowSize = Math.min(cols, visCount - row * cols);
+      const uOff = (colIdx - (rowSize - 1) * 0.5) * 0.086;
+      vis.root.position.set(toWorldX(state.playerU + uOff), 0, toWorldZ(0.01 + row * 0.030));
       vis.root.visible = true;
       updateMarineVisual(vis, s, nowSec, state.spreadLevel, state.dmgMult, firingGlow, leanAngle);
     }
@@ -490,9 +491,9 @@ export class ZBScene {
     // 4. Forcefield Shield Dome
     if (state.shield > 0 && state.squad > 0) {
       this.shieldGroup.visible = true;
-      const spreadScale = 1 + Math.min(0.9, Math.max(0, visCount - 1) * 0.08);
-      this.shieldGroup.position.set(playerWX, 0.65, Z_NEAR - 0.55);
-      this.shieldGroup.scale.set(spreadScale, 0.85, 0.95);
+      const spreadScale = 1 + Math.min(0.45, Math.max(0, visCount - 1) * 0.04);
+      this.shieldGroup.position.set(playerWX, 0.65, Z_NEAR - 0.85);
+      this.shieldGroup.scale.set(spreadScale, 0.85, 1.35);
       this.shieldWire.rotation.y = nowSec * 0.8;
     } else {
       this.shieldGroup.visible = false;
