@@ -1,4 +1,4 @@
-// Unified quiz bank for "ai" (75 questions: Künstliche Intelligenz)
+// Auto-generated unified quiz bank for "ai" (75 questions)
 (function () {
   const DATA = [
   {
@@ -6,10 +6,10 @@
     "diff": "easy",
     "q": "Welcher berühmte englische Mathematiker stellte 1950 die Frage „Können Maschinen denken?“ und schlug das „Imitation Game“ vor?",
     "a": [
-      "Dartmouth Conference (1956)",
-      "Turing Symposium in Bletchley Park",
-      "MIT Cybernetics Workshop in Boston",
-      "Stanford AI Invitational Meeting"
+      "Alan Turing (mit dem berühmten Turing-Test)",
+      "John von Neumann (Architektur von Rechnern)",
+      "Claude Shannon (Vater der Informationstheorie)",
+      "Norbert Wiener (Begründer der Kybernetik)"
     ],
     "explanation": "Alan Turing veröffentlichte den Test 1950 in Mind unter dem Titel Computing Machinery and Intelligence.",
     "exp": "Alan Turing veröffentlichte den Test 1950 in Mind unter dem Titel Computing Machinery and Intelligence."
@@ -19,10 +19,10 @@
     "diff": "easy",
     "q": "Auf welcher legendären US-Sommerkonferenz im Jahr 1956 wurde der Begriff „Artificial Intelligence“ offiziell geprägt?",
     "a": [
-      "Alan Turing",
-      "John von Neumann",
-      "Claude Shannon",
-      "Norbert Wiener"
+      "Dartmouth College Workshop (organisiert von John McCarthy)",
+      "Macy-Konferenzen für Kybernetik und Systemtheorie",
+      "Sommerkolloquium des Massachusetts Institute of Technology",
+      "Stanford Symposium on Artificial Cybernetics"
     ],
     "explanation": "John McCarthy wählte den Begriff bewusst, um sich von Norbert Wieners damals dominierender Kybernetik abzugrenzen.",
     "exp": "John McCarthy wählte den Begriff bewusst, um sich von Norbert Wieners damals dominierender Kybernetik abzugrenzen."
@@ -32,10 +32,10 @@
     "diff": "easy",
     "q": "Was war die überraschende Reaktion vieler Nutzer auf Joseph Weizenbaums 1966 entwickeltes Chatbot-Programm ELIZA?",
     "a": [
-      "Garry Kasparow",
-      "Anatoli Karpow",
-      "Magnus Carlsen",
-      "Wladimir Kramnik"
+      "Sie schütteten dem primitiven Skript tiefste private Geheimnisse aus",
+      "Sie verklagten das Universitätsrechenzentrum wegen unerlaubter Lauschangriffe",
+      "Sie hielten das Programm für eine geheime Spionagesoftware des US-Militärs",
+      "Sie weigerten sich strikt, Worte in englischer Sprache in das Terminal einzutippen"
     ],
     "explanation": "Weizenbaum war entsetzt über den nach dem Programm benannten ELIZA-Effekt – selbst seine Sekretärin bat ihn beim Chatten den Raum zu verlassen.",
     "exp": "Weizenbaum war entsetzt über den nach dem Programm benannten ELIZA-Effekt – selbst seine Sekretärin bat ihn beim Chatten den Raum zu verlassen."
@@ -45,10 +45,10 @@
     "diff": "easy",
     "q": "Welcher historische Schach-Triumph gelang IBMs Supercomputer Deep Blue im Mai 1997?",
     "a": [
-      "Deep Blue",
-      "Stockfish",
-      "AlphaZero",
-      "Fritz 8"
+      "Er schlug den amtierenden Weltmeister Garri Kasparow unter Turnierbedingungen",
+      "Er gewann eine Million Dollar gegen Großmeister Anatoli Karpow in Moskau",
+      "Er berechnete erstmals in der Geschichte das vollständige Endspiel aller 32 Figuren",
+      "Er spielte simultan gegen fünfzig internationale Großmeister ohne einen Verlust"
     ],
     "explanation": "Deep Blue nutzte noch keine modernen neuronalen Netze, sondern ultraschnelle Brute-Force-Hardware zur Bewertung von 200 Millionen Zügen pro Sekunde.",
     "exp": "Deep Blue nutzte noch keine modernen neuronalen Netze, sondern ultraschnelle Brute-Force-Hardware zur Bewertung von 200 Millionen Zügen pro Sekunde."
@@ -58,10 +58,10 @@
     "diff": "mid",
     "q": "Was löste den ersten berüchtigten „KI-Winter“ Mitte der 1970er Jahre primär aus?",
     "a": [
-      "Go",
-      "Schach",
-      "Shogi",
-      "Backgammon"
+      "Unerfüllbare Versprechen und vernichtende staatliche Förderberichte",
+      "Der Zusammenbruch der weltweiten Silizium- und Halbleiterproduktion",
+      "Ein striktes weltweites Moratorium der Vereinten Nationen gegen Rechnerforschung",
+      "Der plötzliche Tod der führenden KI-Pioniere Marvin Minsky und John McCarthy"
     ],
     "explanation": "Pioniere hatten versprochen, innerhalb von zehn Jahren Maschinen mit menschlichem Geist zu bauen – das Scheitern führte zum Förderstopp.",
     "exp": "Pioniere hatten versprochen, innerhalb von zehn Jahren Maschinen mit menschlichem Geist zu bauen – das Scheitern führte zum Förderstopp."
@@ -71,10 +71,10 @@
     "diff": "mid",
     "q": "Welcher berühmte mathematische Beweis von Minsky und Papert bremste die neuronale Netzforschung 1969 um über ein Jahrzehnt aus?",
     "a": [
-      "AlphaGo",
-      "MuZero",
-      "Leela Chess Zero",
-      "Deep Thought"
+      "Einlagige Perzeptrons können nicht einmal das logische XOR-Problem lösen",
+      "Computerchips können aus physikalischen Gründen niemals mehr als zwei Kerne besitzen",
+      "Neuronale Netze verbrauchen mehr elektrischen Strom als eine durchschnittliche Großstadt",
+      "Die mathematische Wahrscheinlichkeit von Rechenfehlern steigt exponentiell mit Schichten"
     ],
     "explanation": "Erst mit mehrlagigen Netzen und Backpropagation konnte das XOR-Problem gelöst werden – die Erkenntnis setzte sich aber erst in den 1980ern durch.",
     "exp": "Erst mit mehrlagigen Netzen und Backpropagation konnte das XOR-Problem gelöst werden – die Erkenntnis setzte sich aber erst in den 1980ern durch."
@@ -84,10 +84,10 @@
     "diff": "mid",
     "q": "Welche Tochter von Lord Byron gilt als erste Programmiererin und erkannte schon 1843 die Grenzen mechanischer Intelligenz?",
     "a": [
-      "Frank Rosenblatt",
-      "Marvin Minsky",
-      "Geoffrey Hinton",
-      "Arthur Samuel"
+      "Ada Lovelace (Pionierin der Analytical Engine)",
+      "Grace Hopper (Erfinderin des ersten Compilers)",
+      "Hedy Lamarr (Erfinderin des Frequenzsprungverfahrens)",
+      "Margaret Hamilton (Leiterin der Apollo-Software)"
     ],
     "explanation": "Lovelace stellte fest, dass die Analytical Engine nichts von sich aus erschaffen kann, sondern nur ausführt, was wir ihr befehlen („Lady Lovelace’s Objection“).",
     "exp": "Lovelace stellte fest, dass die Analytical Engine nichts von sich aus erschaffen kann, sondern nur ausführt, was wir ihr befehlen („Lady Lovelace’s Objection“)."
@@ -97,10 +97,10 @@
     "diff": "mid",
     "q": "Welcher spektakuläre Durchbruch markierte 2012 den Beginn des modernen Deep-Learning-Booms in der Bilderkennung?",
     "a": [
-      "XOR-Problem",
-      "AND-Problem",
-      "OR-Problem",
-      "NOT-Problem"
+      "Der Erdrutschsieg von AlexNet beim ImageNet-Wettbewerb mittels GPU-Training",
+      "Die Vorstellung des ersten kommerziellen Sprachassistenten auf Smartphones",
+      "Die Entwicklung des ersten selbstfahrenden Robotaxis durch die Firma Google",
+      "Der Beweis der Quantenüberlegenheit durch supraleitende Prozessoren im Labor"
     ],
     "explanation": "Alex Krizhevsky und Geoffrey Hinton halbierten die Fehlerquote klassischer Bildverarbeitung durch den cleveren Einsatz von zwei Nvidia-Gamer-GPUs.",
     "exp": "Alex Krizhevsky und Geoffrey Hinton halbierten die Fehlerquote klassischer Bildverarbeitung durch den cleveren Einsatz von zwei Nvidia-Gamer-GPUs."
@@ -110,10 +110,10 @@
     "diff": "mid",
     "q": "Mit welchem legendären Zug 37 verblüffte DeepMinds AlphaGo 2016 den weltbesten Go-Spieler Lee Sedol?",
     "a": [
-      "Perceptrons von Minsky und Papert",
-      "Computing Machinery and Intelligence",
-      "The Mathematical Theory of Communication",
-      "Cybernetics or Control and Communication"
+      "Ein Zug in Zeile 5, den kein menschlicher Meister je in Jahrtausenden erwogen hätte",
+      "Ein mutiges Damenopfer im Eröffnungszug zur psychologischen Verwirrung des Gegners",
+      "Das sofortige Aufgeben der Partie nach nur zehn gespielten Zügen aus Respekt",
+      "Ein regelwidriger Doppelzug, den die Schiedsrichter erst nach Spielende bemerkten"
     ],
     "explanation": "Kommentatoren hielten Zug 37 zunächst für einen fatalen Softwarefehler – er erwies sich als genialer, raumgreifender Schlüsselzug zum Sieg.",
     "exp": "Kommentatoren hielten Zug 37 zunächst für einen fatalen Softwarefehler – er erwies sich als genialer, raumgreifender Schlüsselzug zum Sieg."
@@ -123,10 +123,10 @@
     "diff": "pro",
     "q": "Welche drei KI-Pioniere erhielten 2018 gemeinsam den renommierten Turing Award für fundamentale Deep-Learning-Konzepte?",
     "a": [
-      "Backpropagation",
-      "Monte-Carlo-Baumsuche",
-      "Simulated Annealing",
-      "Genetischer Algorithmus"
+      "Geoffrey Hinton, Yann LeCun und Yoshua Bengio",
+      "Andrew Ng, Sebastian Thrun und Peter Norvig",
+      "Demis Hassabis, Ilya Sutskever und Sam Altman",
+      "John Hopfield, Terry Sejnowski und David Rumelhart"
     ],
     "explanation": "Das Trio hielt über Jahrzehnte gegen alle Trends der akademischen Welt an künstlichen neuronalen Netzen fest.",
     "exp": "Das Trio hielt über Jahrzehnte gegen alle Trends der akademischen Welt an künstlichen neuronalen Netzen fest."
@@ -136,10 +136,10 @@
     "diff": "pro",
     "q": "Was war das Ziel des japanischen „Fifth Generation Computer Systems“-Projekts in den 1980er Jahren, das Milliarden verschlang?",
     "a": [
-      "Geoffrey Hinton, Yann LeCun und Yoshua Bengio",
-      "Andrew Ng, Fei-Fei Li und Sebastian Thrun",
-      "Demis Hassabis, Shane Legg und Mustafa Suleyman",
-      "Sam Altman, Greg Brockman und Ilya Sutskever"
+      "Parallele Hardware-Rechner für massive logische Programmierung in Prolog",
+      "Die Konstruktion von humanoiden Robotern zur Pflege alter Menschen in Heimen",
+      "Ein weltweites satellitengestütztes Netzwerk zur automatischen Sprachübersetzung",
+      "Quantencomputer auf Basis von Supraleitern für atomare Simulationen"
     ],
     "explanation": "Japan setzte voll auf symbolische KI und logische Inferenz – während die Welt bald darauf billige Unix-Workstations und relationale Datenbanken bevorzugte.",
     "exp": "Japan setzte voll auf symbolische KI und logische Inferenz – während die Welt bald darauf billige Unix-Workstations und relationale Datenbanken bevorzugte."
@@ -149,10 +149,10 @@
     "diff": "pro",
     "q": "Welches System von Jürgen Schmidhuber und Sepp Hochreiter löste 1997 das Problem verschwindender Gradienten in Rekurrenz-Netzen?",
     "a": [
-      "AlexNet",
-      "VGG-16",
-      "ResNet-50",
-      "InceptionV3"
+      "Long Short-Term Memory (LSTM-Architektur)",
+      "Convolutional Neural Network (CNN-Filter)",
+      "Transformer Attention Network (Multi-Head)",
+      "Radial Basis Function Network (RBF-Kerne)"
     ],
     "explanation": "LSTMs dominierten zwei Jahrzehnte lang die Spracherkennung und maschinelle Übersetzung, bevor Transformer die Bildfläche betraten.",
     "exp": "LSTMs dominierten zwei Jahrzehnte lang die Spracherkennung und maschinelle Übersetzung, bevor Transformer die Bildfläche betraten."
@@ -162,10 +162,10 @@
     "diff": "pro",
     "q": "Welcher berühmte Philosoph formulierte 1980 das Gedankenexperiment des „Chinesischen Zimmers“ gegen starke KI?",
     "a": [
-      "ImageNet Challenge",
-      "Kaggle Grandmaster Tournament",
-      "RoboCup World Soccer Cup",
-      "DARPA Urban Driving Challenge"
+      "John Searle (im Aufsatz Minds, Brains, and Programs)",
+      "Thomas Nagel (mit der Frage What Is It Like to Be a Bat?)",
+      "Daniel Dennett (mit Consciousness Explained)",
+      "Hilary Putnam (mit dem Gehirn im Tank Experiment)"
     ],
     "explanation": "Searle argumentierte, dass reines syntaktisches Manipulieren von Symbolen nach Regeln niemals echtes semantisches Verstehen erzeugt.",
     "exp": "Searle argumentierte, dass reines syntaktisches Manipulieren von Symbolen nach Regeln niemals echtes semantisches Verstehen erzeugt."
@@ -175,10 +175,10 @@
     "diff": "easy",
     "q": "In welchem Jahr gewann IBMs Supercomputer Watson in der US-Quizshow Jeopardy! gegen die legendären Rekord-Champions?",
     "a": [
-      "GPUs (Grafikprozessoren)",
-      "FPGAs (Programmierbare Logik)",
-      "Quantenprozessoren mit Supraleitern",
-      "Analoge Röhrenrechner"
+      "Im Jahr 2011 (gegen Ken Jennings und Brad Rutter)",
+      "Im Jahr 1997 (kurz nach dem Sieg von Deep Blue)",
+      "Im Jahr 2004 (im Rahmen einer Super-Bowl-Show)",
+      "Im Jahr 2016 (unmittelbar vor dem Durchbruch von AlphaGo)"
     ],
     "explanation": "Watson verarbeitete natürliche Sprache, Wortspiele und Doppeldeutigkeiten in Echtzeit und besiegte Ken Jennings und Brad Rutter.",
     "exp": "Watson verarbeitete natürliche Sprache, Wortspiele und Doppeldeutigkeiten in Echtzeit und besiegte Ken Jennings und Brad Rutter."
@@ -188,10 +188,10 @@
     "diff": "mid",
     "q": "Wie nannte Frank Rosenblatt seine 1957 am Cornell Aeronautical Laboratory vorgestellte lernfähige Maschine?",
     "a": [
-      "Attention Is All You Need (2017)",
-      "Deep Residual Learning for Image Recognition",
-      "Generative Adversarial Nets",
-      "Mastering the Game of Go without Human Knowledge"
+      "Mark I Perceptron (am Cornell Aeronautical Lab)",
+      "ENIAC Thinking Engine (an der University of Pennsylvania)",
+      "Cybernetic Brain Core (am Massachusetts Institute of Technology)",
+      "Analytical Neural Unit (in den Bell Laboratories)"
     ],
     "explanation": "Die New York Times titelte damals euphorisch, die Navy habe den Keim einer Maschine geschaffen, die laufen, sprechen, sehen und sich selbst reproduzieren könne.",
     "exp": "Die New York Times titelte damals euphorisch, die Navy habe den Keim einer Maschine geschaffen, die laufen, sprechen, sehen und sich selbst reproduzieren könne."
@@ -201,10 +201,10 @@
     "diff": "mid",
     "q": "Welches historische Brettspiel meisterte DeepMinds AlphaZero 2017 ohne jegliches menschliches Vorwissen in nur 24 Stunden?",
     "a": [
-      "Self-Attention-Mechanismus",
-      "Rekurrente LSTM-Rückkopplungsschleifen",
-      "Faltungsschichten mit Max-Pooling",
-      "Lineare Hauptkomponentenanalyse"
+      "Schach, Shogi und Go gleichzeitig durch reines Selbstspiel ohne Daten",
+      "Poker, Bridge und Skat mit unvollständiger Spielinformation im Turnier",
+      "Starcraft II, Dota 2 und Counter-Strike auf professionellem E-Sport-Niveau",
+      "Monopoly, Risiko und Siedler von Catan mit Verhandlungsstrategien"
     ],
     "explanation": "AlphaZero kannte nur die Grundregeln und brachte sich alle Taktiken durch Millionen Partien gegen sich selbst bei.",
     "exp": "AlphaZero kannte nur die Grundregeln und brachte sich alle Taktiken durch Millionen Partien gegen sich selbst bei."
@@ -214,10 +214,10 @@
     "diff": "pro",
     "q": "Warum scheiterten die hochgelobten „Expertensysteme“ der 1980er Jahre wie XCON und MYCIN letztlich in der industriellen Praxis?",
     "a": [
-      "BERT",
-      "ELMo",
-      "Word2Vec",
-      "GloVe"
+      "Das handgeschriebene Regelwerk wurde ab zehntausenden Regeln unkontrollierbar",
+      "Die damaligen Festplatten konnten die riesigen Textmengen nicht mehr speichern",
+      "Gewerkschaften erwirkten gerichtliche Verbote gegen automatisierte Experten",
+      "Die Systeme verlangten zur Ausführung extrem teure Röhrencomputer mit Wasserkühlung"
     ],
     "explanation": "Das sogenannte „Wissensakquisitions-Dilemma“ (Knowledge Bottleneck) machte Pflege und Wartung riesiger Wenn-Dann-Kataloge unbezahlbar teuer.",
     "exp": "Das sogenannte „Wissensakquisitions-Dilemma“ (Knowledge Bottleneck) machte Pflege und Wartung riesiger Wenn-Dann-Kataloge unbezahlbar teuer."
@@ -253,10 +253,10 @@
     "diff": "easy",
     "q": "Was passiert im Kern, wenn ein künstliches neuronales Netz „trainiert“ wird?",
     "a": [
-      "OpenAI",
-      "Google DeepMind",
-      "Anthropic",
-      "Meta AI"
+      "Mathematische Verbindungsgewichte werden schrittweise angepasst, um Fehler zu minimieren",
+      "Neue künstliche Neuronen werden durch chemische Prozesse auf dem Chip hinzugefügt",
+      "Die Taktfrequenz der Grafikprozessoren wird dynamisch an die Datenmenge angepasst",
+      "Der Programmierer tippt von Hand neue if-else-Abfragen in den eigentlichen Quellcode ein"
     ],
     "explanation": "Lernen in neuronalen Netzen bedeutet reine Numerik: Die Multiplikationsfaktoren (Gewichte) wandern entlang des Gradienten in Richtung minimalen Fehlers.",
     "exp": "Lernen in neuronalen Netzen bedeutet reine Numerik: Die Multiplikationsfaktoren (Gewichte) wandern entlang des Gradienten in Richtung minimalen Fehlers."
@@ -266,10 +266,10 @@
     "diff": "easy",
     "q": "Was beschreibt der Begriff „Overfitting“ bei einem Machine-Learning-Modell?",
     "a": [
-      "Dario Amodei und Daniela Amodei",
-      "Ilya Sutskever und Sam Altman",
-      "Yann LeCun und Jerome Pesenti",
-      "Arthur Mensch und Guillaume Lample"
+      "Das Modell lernt Trainingsdaten samt Rauschen auswendig und versagt bei neuen Daten",
+      "Der Prozessor überhitzt bei zu vielen Trainingsschichten und schaltet sich ab",
+      "Das Netzwerk vergisst alte Trainingsinhalte sofort beim Laden neuer Datensätze",
+      "Die berechneten Ausgabewerte überschreiten die maximale Obergrenze des Fließkommaformats"
     ],
     "explanation": "Ein überangepasstes Modell schneidet auf den Trainingsdaten mit 100 % ab, liefert auf neuen Testdaten aber völlig unbrauchbare Ergebnisse.",
     "exp": "Ein überangepasstes Modell schneidet auf den Trainingsdaten mit 100 % ab, liefert auf neuen Testdaten aber völlig unbrauchbare Ergebnisse."
@@ -279,10 +279,10 @@
     "diff": "easy",
     "q": "Warum benötigen tiefe neuronale Netze sogenannte „Aktivierungsfunktionen“ wie ReLU oder Sigmoid?",
     "a": [
-      "Claude",
-      "Gemini",
-      "Llama",
-      "Mistral"
+      "Um Nichtlinearität einzubringen – sonst wäre das Netz nur eine lineare Abbildung",
+      "Um den elektrischen Stromverbrauch der Grafikkarten im Rechenzentrum zu senken",
+      "Damit das neuronale Netzwerk erkennt, in welcher natürlichen Sprache der Text vorliegt",
+      "Um mathematische Divisionen durch den Wert Null im Algorithmus zu verhindern"
     ],
     "explanation": "Mehrere lineare Schichten hintereinander lassen sich immer zu einer einzigen linearen Schicht zusammenfassen. Erst Nichtlinearität erlaubt komplexe Funktionsapproximationen.",
     "exp": "Mehrere lineare Schichten hintereinander lassen sich immer zu einer einzigen linearen Schicht zusammenfassen. Erst Nichtlinearität erlaubt komplexe Funktionsapproximationen."
@@ -292,10 +292,10 @@
     "diff": "mid",
     "q": "Wie funktioniert die beliebte Aktivierungsfunktion ReLU (Rectified Linear Unit) für einen Eingabewert x?",
     "a": [
-      "Mistral AI",
-      "Aleph Alpha AI",
-      "Cohere Platform",
-      "DeepL Technology"
+      "Sie gibt bei negativen Werten 0 aus und bei positiven Werten exakt x zurück",
+      "Sie berechnet die eulersche Zahl e hoch x und normiert das Ergebnis zwischen 0 und 1",
+      "Sie kehrt das Vorzeichen von x um und multipliziert den Wert mit der Kreiszahl Pi",
+      "Sie rundet jede beliebige Dezimalzahl auf die nächste ganze Zweierpotenz auf"
     ],
     "explanation": "f(x) = max(0, x) ist extrem rechengünstig und vermeidet bei positiven Werten das gefürchtete Verschwinden des Gradienten.",
     "exp": "f(x) = max(0, x) ist extrem rechengünstig und vermeidet bei positiven Werten das gefürchtete Verschwinden des Gradienten."
@@ -305,10 +305,10 @@
     "diff": "mid",
     "q": "Welche mathematische Rechenmethode bildet das Rückgrat des Trainings fast aller modernen neuronalen Netze?",
     "a": [
-      "Transformer-Architektur",
-      "Rekurrentes neuronales Netz (RNN)",
-      "Support Vector Machine (SVM)",
-      "Konvolutionelles neuronales Netz (CNN)"
+      "Backpropagation mittels mehrdimensionaler Kettenregel der Differentialrechnung",
+      "Die Berechnung von Laplace-Transformationen auf komplexen Vektorräumen",
+      "Die iterative Nullstellenbestimmung nach dem klassischen Newton-Verfahren",
+      "Die zufällige stochastische Permutation sämtlicher Gewichte nach dem Monte-Carlo-Prinzip"
     ],
     "explanation": "Backpropagation berechnet rückwärts von der Ausgabe zu den Eingaben, wie stark jedes einzelne Gewicht zum Gesamtfehler beigetragen hat.",
     "exp": "Backpropagation berechnet rückwärts von der Ausgabe zu den Eingaben, wie stark jedes einzelne Gewicht zum Gesamtfehler beigetragen hat."
@@ -318,10 +318,10 @@
     "diff": "mid",
     "q": "Was bewirkt die bewährte Regularisierungsmethode „Dropout“ während des Trainings neuronaler Netze?",
     "a": [
-      "Generative Pre-trained Transformer",
-      "General Purpose Token Translator",
-      "Global Predictive Text Transceiver",
-      "Graph Powered Tensor Transformer"
+      "Zufällig ausgewählte Neuronen werden pro Trainingsdurchlauf temporär deaktiviert",
+      "Das Modell wirft unvollständige Datensätze vor dem eigentlichen Training weg",
+      "Der Prozessor drosselt seine Taktfrequenz bei drohender thermischer Überlastung",
+      "Fehlerhafte Gewichtsupdates werden von einem internen Kontrollalgorithmus getilgt"
     ],
     "explanation": "Dropout verhindert, dass Neuronen sich aufeinander verlassen (Co-Adaptation), und zwingt das Netz, robustere, redundante Merkmale zu lernen.",
     "exp": "Dropout verhindert, dass Neuronen sich aufeinander verlassen (Co-Adaptation), und zwingt das Netz, robustere, redundante Merkmale zu lernen."
@@ -331,10 +331,10 @@
     "diff": "mid",
     "q": "Warum sind Faltungsnetze (Convolutional Neural Networks, CNNs) so unschlagbar effizient bei Bilddaten?",
     "a": [
-      "Vorhersage des nächsten Tokens",
-      "Rückwärtsanalyse grammatikalischer Syntaxbäume",
-      "Berechnung von Satzlängen in Millisekunden",
-      "Extraktion von SQL-Datenbanktabellen"
+      "Sie teilen sich Gewichte über Filterkerne und erkennen Merkmale ortsunabhängig",
+      "Sie wandeln Pixel vor der Verarbeitung in frequenzmodulierte Audiosignale um",
+      "Sie besitzen separate Schichten für jede Grundfarbe des optischen Spektrums",
+      "Sie arbeiten ohne mathematische Multiplikationen rein auf Bitebene im Speicher"
     ],
     "explanation": "Ein CNN nutzt dieselbe Kanten- oder Ecken-Filtermaske über das gesamte Bild, was die Anzahl freier Parameter drastisch reduziert.",
     "exp": "Ein CNN nutzt dieselbe Kanten- oder Ecken-Filtermaske über das gesamte Bild, was die Anzahl freier Parameter drastisch reduziert."
@@ -344,10 +344,10 @@
     "diff": "pro",
     "q": "Welche wegweisende Neuerung führten Residual Networks (ResNets) 2015 ein, um Netze mit über 100 Schichten trainieren zu können?",
     "a": [
-      "Reinforcement Learning from Human Feedback",
-      "Recursive Learning from Heuristic Functions",
-      "Residual Layers for High Frequency Data",
-      "Randomized Loss from Hidden Features"
+      "Skip-Connections (Abkürzungen), die Eingaben unverändert an Schichten vorbeileiten",
+      "Der vollständige Verzicht auf Aktivierungsfunktionen in allen Zwischenschichten",
+      "Die Verdopplung der Batch-Größe nach jedem zehnten Trainingsschritt im Netz",
+      "Das dynamische Vertauschen von Eingabe- und Ausgabeschichten während des Trainings"
     ],
     "explanation": "Dank Skip-Connections lernt jede Schicht nur die Restfunktion (Residual) f(x) = H(x) - x, wodurch Gradienten ungehindert durch hunderte Schichten fließen.",
     "exp": "Dank Skip-Connections lernt jede Schicht nur die Restfunktion (Residual) f(x) = H(x) - x, wodurch Gradienten ungehindert durch hunderte Schichten fließen."
@@ -357,10 +357,10 @@
     "diff": "pro",
     "q": "Was geschieht beim gefürchteten Phänomen des „Exploding Gradient“ beim Deep-Learning-Training?",
     "a": [
-      "Temperatur",
-      "Top-k Schwellenwert",
-      "Lernrate (Learning Rate)",
-      "Batch Size"
+      "Fehlergradienten wachsen exponentiell an und Gewichte nehmen den Wert NaN an",
+      "Die Grafikkarte fängt durch Überlastung des Grafikspeichers Feuer im Gehäuse",
+      "Das Modell generiert plötzlich ausschließlich unleserliche Sonderzeichen",
+      "Die Verlustfunktion oszilliert unkontrolliert zwischen positiven und negativen Werten"
     ],
     "explanation": "Besonders bei tiefen Rekurrenznetzen können wiederholte Multiplikationen mit Werten über 1 explodieren – Abhilfe schafft „Gradient Clipping“.",
     "exp": "Besonders bei tiefen Rekurrenznetzen können wiederholte Multiplikationen mit Werten über 1 explodieren – Abhilfe schafft „Gradient Clipping“."
@@ -370,10 +370,10 @@
     "diff": "pro",
     "q": "Welcher Optimierer kombiniert die Vorteile von Trägheit (Momentum) und adaptiver Lernraten-Skalierung (RMSProp)?",
     "a": [
-      "Sehr deterministische, vorhersehbare Antworten",
-      "Extrem kreative und chaotische Halluzinationen",
-      "Antworten in zufälligen Fremdsprachen",
-      "Vollständiges Verweigern jeglicher Textausgabe"
+      "Adam (Adaptive Moment Estimation kombiniert Momentum und RMSProp)",
+      "Stochastic Gradient Descent mit fester und unendlicher Lernrate",
+      "L-BFGS (Quasi-Newton-Verfahren für riesige Sprachmodelle)",
+      "Adagrad (mit monoton abnehmender Schrittweite pro Parameter)"
     ],
     "explanation": "Adam berechnet Schätzungen der ersten und zweiten Momente der Gradienten und ist seit 2014 der De-facto-Standard in vielen Deep-Learning-Pipelines.",
     "exp": "Adam berechnet Schätzungen der ersten und zweiten Momente der Gradienten und ist seit 2014 der De-facto-Standard in vielen Deep-Learning-Pipelines."
@@ -383,10 +383,10 @@
     "diff": "easy",
     "q": "Was versteht man unter einer „Loss-Funktion“ (Verlustfunktion) beim maschinellen Lernen?",
     "a": [
-      "Halluzination",
-      "Katastrophales Vergessen",
-      "Explodierender Gradient",
-      "Mode Collapse"
+      "Eine Formel, die den Abstand zwischen Vorhersage und echtem Ziel quantifiziert",
+      "Die prozentuale Abnahme der Speicherkapazität bei fortlaufendem Training",
+      "Die finanzielle Summe aller Stromkosten für einen kompletten Modell-Trainingslauf",
+      "Die Wahrscheinlichkeit, dass ein Neuron während des Rechnens ausfällt"
     ],
     "explanation": "Das Ziel jedes Trainings ist es, den Wert dieser Verlustfunktion (z. B. Cross-Entropy oder Mean Squared Error) systematisch gegen Null zu drücken.",
     "exp": "Das Ziel jedes Trainings ist es, den Wert dieser Verlustfunktion (z. B. Cross-Entropy oder Mean Squared Error) systematisch gegen Null zu drücken."
@@ -422,10 +422,10 @@
     "diff": "pro",
     "q": "Was unterscheidet Batch-Normalisierung (BatchNorm) von Schicht-Normalisierung (LayerNorm)?",
     "a": [
-      "ResNet-Architektur",
-      "DenseNet-Netzwerk",
-      "MobileNet-Variante",
-      "EfficientNet-Modell"
+      "BatchNorm normiert über Proben im Batch; LayerNorm über Merkmale einer Probe",
+      "BatchNorm funktioniert nur bei Textdaten; LayerNorm ausschließlich bei Bildern",
+      "LayerNorm verdoppelt die Rechenzeit; BatchNorm benötigt keinerlei Rechenaufwand",
+      "BatchNorm ist patentiert; LayerNorm ist eine freie Open-Source-Alternative"
     ],
     "explanation": "Da Transformer oft variable Sequenzlängen und kleine Batch-Größen verarbeiten, ist LayerNorm bei modernen Sprachmodellen der Standard.",
     "exp": "Da Transformer oft variable Sequenzlängen und kleine Batch-Größen verarbeiten, ist LayerNorm bei modernen Sprachmodellen der Standard."
@@ -435,10 +435,10 @@
     "diff": "easy",
     "q": "Was bedeutet der Begriff „Epoche“ beim Training eines Machine-Learning-Modells?",
     "a": [
-      "Vanishing-Gradient-Problem",
-      "Overfitting auf Trainingsdaten",
-      "Exploding-Loss-Divergenz",
-      "Underfitting bei großen Batches"
+      "Ein kompletter Trainingsdurchlauf durch den gesamten Trainingsdatensatz",
+      "Die Zeitspanne von zehn Minuten kontinuierlicher GPU-Rechenzeit im Cluster",
+      "Die Anzahl der Schichten zwischen Eingabevektor und Ausgabewahrscheinlichkeit",
+      "Die Epoche bezeichnet die historische Ära, in der der Datensatz erstellt wurde"
     ],
     "explanation": "Wird ein Datensatz zehnmal vollständig vom Algorithmus durchgearbeitet, hat das Modell zehn Epochen trainiert.",
     "exp": "Wird ein Datensatz zehnmal vollständig vom Algorithmus durchgearbeitet, hat das Modell zehn Epochen trainiert."
@@ -448,10 +448,10 @@
     "diff": "mid",
     "q": "Was ist die Kernidee hinter Generative Adversarial Networks (GANs), die 2014 von Ian Goodfellow erfunden wurden?",
     "a": [
-      "Convolutional Neural Networks (CNNs)",
-      "Recurrent Neural Networks (RNNs)",
-      "Transformer Encoder-Decoder",
-      "Multi-Layer Perceptrons (MLPs)"
+      "Ein Generator fälscht Daten und ein Diskriminator entlarvt sie im Wettstreit",
+      "Zwei Agenten spielen gegeneinander Schach, um neue Züge zu erfinden",
+      "Ein Sprachmodell übersetzt Texte hin und zurück, um Grammatikfehler zu tilgen",
+      "Ein neuronales Netz komprimiert Bilder, während ein zweites sie dekomprimiert"
     ],
     "explanation": "Durch das Minimax-Spiel treiben sich Generator und Diskriminator gegenseitig zu immer fotorealistischeren Ergebnissen an.",
     "exp": "Durch das Minimax-Spiel treiben sich Generator und Diskriminator gegenseitig zu immer fotorealistischeren Ergebnissen an."
@@ -461,10 +461,10 @@
     "diff": "pro",
     "q": "Was beschreibt das universelle Approximationstheorem (Cybenko, 1989 / Hornik, 1991)?",
     "a": [
-      "Generative Adversarial Networks (GANs)",
-      "Variational Autoencoders (VAEs)",
-      "Restricted Boltzmann Machines (RBMs)",
-      "Self-Organizing Maps (SOMs)"
+      "Ein vorwärtsgerichtetes Netz mit nur einer Schicht kann jede Funktion annähern",
+      "Neuronale Netze können menschliches Bewusstsein mathematisch exakt nachbilden",
+      "Jedes Optimierungsproblem lässt sich in polynomieller Rechenzeit lösen",
+      "Die Anzahl der Gewichte muss immer größer sein als die Anzahl der Trainingsbeispiele"
     ],
     "explanation": "Das Theorem beweist das prinzipielle Potenzial neuronaler Netze, macht jedoch keine Aussage darüber, wie viele Neuronen nötig sind oder wie man sie effizient trainiert.",
     "exp": "Das Theorem beweist das prinzipielle Potenzial neuronaler Netze, macht jedoch keine Aussage darüber, wie viele Neuronen nötig sind oder wie man sie effizient trainiert."
@@ -474,10 +474,10 @@
     "diff": "easy",
     "q": "Was bezeichnet man beim maschinellen Lernen als „Lernrate“ (Learning Rate)?",
     "a": [
-      "Generator und Diskriminator",
-      "Encoder und Decoder Einheiten",
-      "Actor und Critic Netzwerke",
-      "Policy und Value Funktionen"
+      "Die Schrittweite, mit der die Gewichte entlang des Gradienten angepasst werden",
+      "Die Anzahl an neuen Wörtern, die ein Modell pro Sekunde dazulernen kann",
+      "Die Geschwindigkeit, mit der Daten von der Festplatte in den Arbeitsspeicher laden",
+      "Der Prozentsatz der korrekten Antworten im Vergleich zur Gesamtzahl aller Tests"
     ],
     "explanation": "Ist die Lernrate zu groß, springt das Modell über das Minimum hinaus; ist sie zu klein, dauert das Training ewig oder bleibt in schlechten Plateaus hängen.",
     "exp": "Ist die Lernrate zu groß, springt das Modell über das Minimum hinaus; ist sie zu klein, dauert das Training ewig oder bleibt in schlechten Plateaus hängen."
@@ -487,10 +487,10 @@
     "diff": "mid",
     "q": "Warum erlebten Rekurrente Neuronale Netze (RNNs) bei langen Textsequenzen oft dramatische Leistungseinbrüche?",
     "a": [
-      "AlphaFold von Google DeepMind",
-      "ESMFold von Meta AI",
-      "RosettaFold der University of Washington",
-      "FoldX von EMBL Heidelberg"
+      "Frühe Informationen verblassen im Flaschenhals (Vanish-Gradient-Problem)",
+      "Die Speicherbandbreite der Grafikkarten reichte für lange Sätze nicht aus",
+      "Wörter am Satzende überschrieben ältere Tokens im Ausgabepuffer des Chips",
+      "Die englische Grammatik ließ sich mathematisch nicht in Vektoren übersetzen"
     ],
     "explanation": "Über hunderte Zeitschritte zerfließt das mathematische Signal früher Wörter – dieses Problem lösten erst Aufmerksamkeitsmechanismen (Attention).",
     "exp": "Über hunderte Zeitschritte zerfließt das mathematische Signal früher Wörter – dieses Problem lösten erst Aufmerksamkeitsmechanismen (Attention)."
@@ -500,10 +500,10 @@
     "diff": "easy",
     "q": "Unter welchem legendären Titel veröffentlichte Google Brain im Jahr 2017 die Transformer-Architektur?",
     "a": [
-      "Protein-3D-Strukturvorhersage",
-      "Kernfusions-Reaktionssteuerung",
-      "Exoplaneten-Spektralanalyse",
-      "Wettervorhersage über 30 Tage"
+      "Attention Is All You Need (Vaswani et al., Google Brain 2017)",
+      "Deep Residual Learning for Image Recognition (He et al.)",
+      "Generative Adversarial Nets (Goodfellow et al.)",
+      "Language Models are Few-Shot Learners (Brown et al.)"
     ],
     "explanation": "Das achtköpfige Autorenteam um Vaswani revolutionierte mit dem Paper die gesamte natürliche Sprachverarbeitung und KI-Landschaft.",
     "exp": "Das achtköpfige Autorenteam um Vaswani revolutionierte mit dem Paper die gesamte natürliche Sprachverarbeitung und KI-Landschaft."
@@ -978,10 +978,14 @@
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("ai", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["ai"] = DATA;
+    window.ARCADE_QUIZ_BANKS['ai'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('ai', DATA);
+    }
   }
 })();

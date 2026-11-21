@@ -39,9 +39,9 @@
       q: 'Mit welcher legendären Prozessorfamilie jagte Intel ab 2000 den Gigahertz-Rekord mit einer ultralangen Pipeline von bis zu 31 Stufen, bis enorme Hitzeentwicklung den Kurs stoppte?',
       a: [
         'Intel Pentium 4 („Northwood“ / NetBurst)',
-        'Intel Pentium III („Tualatin“)',
-        'AMD Athlon XP („Thoroughbred“)',
-        'Intel Itanium 2 („McKinley“)'
+        'Intel Pentium III („Tualatin“ / P6-Architektur)',
+        'AMD Athlon XP („Thoroughbred“ / K7-Architektur)',
+        'Intel Itanium 2 („McKinley“ / IA-64-Plattform)'
       ],
       explanation: 'Ursprünglich plante Intel diese NetBurst-Architektur für sagenhafte 10 Gigahertz. Bei knapp 4 GHz rannte der Chip jedoch in eine derart massive Abwärmemauer, dass Intel die Taktjagd abblasen und komplett auf sparsame Mehrkerner umschwenken musste.',
       exp: 'Ursprünglich plante Intel diese NetBurst-Architektur für sagenhafte 10 Gigahertz. Bei knapp 4 GHz rannte der Chip jedoch in eine derart massive Abwärmemauer, dass Intel die Taktjagd abblasen und komplett auf sparsame Mehrkerner umschwenken musste.',
@@ -99,9 +99,9 @@
       q: 'Welcher hocheffiziente Notebook-Prozessor aus Intels israelischem Haifa-Entwicklungszentrum begründete die Centrino-Revolution und rettete Intel später aus der NetBurst-Sackgasse?',
       a: [
         'Intel Pentium M („Banias“ / „Dothan“)',
-        'Intel Celeron M („Shelton“)',
+        'Intel Celeron M („Shelton“ / P6)',
         'AMD Mobile Sempron („Georgetown“)',
-        'Transmeta Crusoe (TM5800)'
+        'Transmeta Crusoe (TM5800 / VLIW)'
       ],
       explanation: 'Ein Pentium M mit nur 1,7 GHz deklassierte damals selbst stromhungrige 3-GHz-Desktop-Rechner spielend. Enthusiasten bauten den kühlen Mobilchip per Asus-Adapter sogar heimlich in ihre High-End-Gaming-PCs ein!',
       exp: 'Ein Pentium M mit nur 1,7 GHz deklassierte damals selbst stromhungrige 3-GHz-Desktop-Rechner spielend. Enthusiasten bauten den kühlen Mobilchip per Asus-Adapter sogar heimlich in ihre High-End-Gaming-PCs ein!',

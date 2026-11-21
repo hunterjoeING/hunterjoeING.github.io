@@ -1,4 +1,4 @@
-// Unified quiz bank for "airliners" (75 questions: Zivile Passagierflugzeuge)
+// Auto-generated unified quiz bank for "airliners" (75 questions)
 (function () {
   const DATA = [
   {
@@ -6,10 +6,10 @@
     "diff": "easy",
     "q": "Warum erhielt die legendäre Boeing 747 („Jumbo Jet“) Ende der 1960er Jahre ihren charakteristischen Buckel?",
     "a": [
-      "Airbus A380-800",
-      "Boeing 747-8 Intercontinental",
-      "Airbus A340-600 Long Range",
-      "Boeing 777-300ER Flagship"
+      "Damit man die Flugzeugnase nach oben klappen und Fracht durchladen kann",
+      "Um ein luxuriöses Cocktail-Casino auf dem Oberdeck für Prominente einzurichten",
+      "Weil die damaligen Radarantennen im oberen Rumpfbereich montiert werden mussten",
+      "Um den Piloten eine bessere Sicht beim Einparken am Flughafen-Gate zu ermöglichen"
     ],
     "explanation": "Boeing glaubte, dass Überschallflieger die 747 bald ablösen würden, und konstruierte sie von vornherein als zukunftssicheres Frachtflugzeug mit Bugklappe.",
     "exp": "Boeing glaubte, dass Überschallflieger die 747 bald ablösen würden, und konstruierte sie von vornherein als zukunftssicheres Frachtflugzeug mit Bugklappe."
@@ -19,10 +19,10 @@
     "diff": "easy",
     "q": "Welcher Größenvergleich verdeutlicht die gigantischen Dimensionen des GE90-Triebwerks der Boeing 777?",
     "a": [
-      "Airbus A300 (A300B2)",
-      "Airbus A310 Extended Range",
-      "Airbus A320 Single-Aisle",
-      "Airbus A330-200 Twinjet"
+      "Der Triebwerksdurchmesser ist fast so groß wie der Rumpf einer Boeing 737",
+      "Das Triebwerk wiegt mehr als die gesamte leere Tragfläche einer Cessna 172",
+      "Der erzeugte Schub entspricht der Leistung von zehn Formel-1-Rennwagen zusammen",
+      "Die Titanschaufeln drehen sich mit der doppelten Schallgeschwindigkeit im Einlauf"
     ],
     "explanation": "Mit einem Bläserdurchmesser von 3,25 Metern erreicht die Gondel des GE90-115B etwa den Rumpfdurchmesser (3,76 m) einer kompletten Boeing 737.",
     "exp": "Mit einem Bläserdurchmesser von 3,25 Metern erreicht die Gondel des GE90-115B etwa den Rumpfdurchmesser (3,76 m) einer kompletten Boeing 737."
@@ -32,10 +32,10 @@
     "diff": "easy",
     "q": "Aus welchem Hauptgrund wurde die Produktion des Airbus A380 nach nur 251 gebauten Exemplaren eingestellt?",
     "a": [
-      "Boeing 747-100",
-      "Boeing 707-320",
-      "Boeing 727-200",
-      "Boeing 737-200"
+      "Airlines setzten vermehrt auf sparsame Zweistrahler für Punkt-zu-Punkt-Flüge",
+      "Der Rumpf war zu schwer für die Startbahnen moderner internationaler Flughäfen",
+      "Triebwerkshersteller durften keine vierstrahligen Antriebe mehr nach Europa liefern",
+      "Internationale Lärmschutzgesetze verboten Landungen von Doppeldeck-Jets ab 2020"
     ],
     "explanation": "Statt Passagiere über Mega-Hubs mit dem A380 zu bündeln, fliegen moderne Twins wie A350 und Boeing 787 Passagiere heute nonstop und viel flexibler ans Ziel.",
     "exp": "Statt Passagiere über Mega-Hubs mit dem A380 zu bündeln, fliegen moderne Twins wie A350 und Boeing 787 Passagiere heute nonstop und viel flexibler ans Ziel."
@@ -45,10 +45,10 @@
     "diff": "mid",
     "q": "Warum besitzt die Tragfläche des Airbus A380 eine für das reale Flugzeug eigentlich überdimensionierte Fläche?",
     "a": [
-      "Queen of the Skies",
-      "Flying Fortress Legend",
-      "Silver Bullet Airliner",
-      "Spruce Goose Classic"
+      "Die Tragfläche war von Beginn an für eine noch größere A380-900-Version ausgelegt",
+      "Airbus musste riesige Wassertanks für Notwasserungen im Flügel unterbringen",
+      "Die Ingenieure berechneten den Auftrieb für den Transport von Space Shuttles",
+      "Das Pariser Luftfahrtabkommen schrieb eine Mindestspannweite von 80 Metern vor"
     ],
     "explanation": "Airbus plante fest mit einer gestreckten Version für über 650 Passagiere – der Flügel wurde dafür gebaut, die Version kam jedoch nie.",
     "exp": "Airbus plante fest mit einer gestreckten Version für über 650 Passagiere – der Flügel wurde dafür gebaut, die Version kam jedoch nie."
@@ -58,10 +58,10 @@
     "diff": "mid",
     "q": "Was unterscheidet die Passagierkabine der Boeing 787 Dreamliner und des Airbus A350 spürbar von älteren Jets?",
     "a": [
-      "Singapore Airlines",
-      "Emirates Airline",
-      "Lufthansa Passage",
-      "Air France KLM"
+      "Ein spürbar höherer Kabinendruck und höhere Luftfeuchtigkeit dank CFK-Rumpf",
+      "Größere Sitze mit integrierter Fußbodenheizung in allen Buchungsklassen",
+      "Vollständig schallisolierte Schlafkabinen im vorderen Frachtraum des Flugzeugs",
+      "Dimmbare LED-Scheinwerfer, die das Nordlicht an der Kabinendecke imitieren"
     ],
     "explanation": "Da Kohlefaserverbundwerkstoffe (CFK) nicht rosten, kann die Kabinenhöhe auf angenehme ~1.800 m statt ~2.400 m simuliert und feuchtere Luft genutzt werden.",
     "exp": "Da Kohlefaserverbundwerkstoffe (CFK) nicht rosten, kann die Kabinenhöhe auf angenehme ~1.800 m statt ~2.400 m simuliert und feuchtere Luft genutzt werden."
@@ -71,10 +71,10 @@
     "diff": "mid",
     "q": "Welche kuriose Besonderheit besaß der Dreistrahler Lockheed L-1011 TriStar in der Bordküche?",
     "a": [
-      "Airbus A340 und Boeing 777",
-      "Airbus A330 und Boeing 767",
-      "Boeing 757 und Tupolew Tu-204",
-      "McDonnell Douglas DC-10 und MD-11"
+      "Eine Unterflur-Kombüse im Frachtraum mit zwei elektrischen Speisenaufzügen",
+      "Ein echtes Schwimmbecken für Passagiere der ersten Klasse im Heckbereich",
+      "Eine offene Bar auf dem Oberdeck mit direktem Blick auf das dritte Triebwerk",
+      "Einen separaten Kinosaal mit 50 bequemen Plätzen hinter dem Cockpit"
     ],
     "explanation": "Die L-1011 war technisch extrem fortschrittlich – die Flugbegleiter fuhren mit Speisewagen im eigenen Lift zwischen Unterdeck und Kabine hin und her.",
     "exp": "Die L-1011 war technisch extrem fortschrittlich – die Flugbegleiter fuhren mit Speisewagen im eigenen Lift zwischen Unterdeck und Kabine hin und her."
@@ -84,10 +84,10 @@
     "diff": "pro",
     "q": "Warum entschied sich Airbus beim A340 ursprünglich für vier relativ kleine Triebwerke statt zwei großer?",
     "a": [
-      "Rumpf und Tragflächen aus kohlenstofffaserverstärktem Kunststoff (CFK)",
-      "Ein komplett aus massivem Titan geschmiedeter Hauptpassagierrumpf",
-      "Tragflächen aus einer ultraleichten Lithium-Beryllium-Legierung",
-      "Ein Passagierdeck mit Fenstern aus unzerbrechlichem Panzerglas"
+      "Um ohne ETOPS-Auflagen beliebig weit über Ozeane und Polarrouten fliegen zu können",
+      "Weil es damals weltweit keine Triebwerke mit mehr als 200 kN Schubkraft gab",
+      "Um bei Triebwerksausfall mit nur zwei Motoren sicher durchstarten zu können",
+      "Weil vier kleine Triebwerke im Ankauf günstiger waren als zwei Großtriebwerke"
     ],
     "explanation": "Vor der Liberalisierung der ETOPS-Regeln durften zweistrahlige Jets maximal 120 Minuten vom nächsten Ausweichflughafen entfernt sein – Vierstrahler waren frei.",
     "exp": "Vor der Liberalisierung der ETOPS-Regeln durften zweistrahlige Jets maximal 120 Minuten vom nächsten Ausweichflughafen entfernt sein – Vierstrahler waren frei."
@@ -97,10 +97,10 @@
     "diff": "pro",
     "q": "Was war ein berüchtigtes aerodynamisches Merkmal der McDonnell Douglas MD-11 im Vergleich zur DC-10?",
     "a": [
-      "Boeing 777X (777-9)",
-      "Airbus A350-1000",
-      "Boeing 787-10",
-      "Airbus A330-900neo"
+      "Ein um 30 Prozent verkleinertes Höhenleitwerk, das sie sensibler im Anflug machte",
+      "Ein fest montierter Heckanker zum Abbremsen auf extrem kurzen Landebahnen",
+      "Zusätzliche Klappen an den Flügelwurzeln, die bei Seitenwind ausfuhren",
+      "Eine nach unten geneigte Flugzeugnase für bessere Sicht bei der Landung"
     ],
     "explanation": "Um Kerosin zu sparen, verkleinerte Douglas das Leitwerk und glich die geringere Stabilität durch ein automatisches LSAS-Computersystem aus.",
     "exp": "Um Kerosin zu sparen, verkleinerte Douglas das Leitwerk und glich die geringere Stabilität durch ein automatisches LSAS-Computersystem aus."
@@ -110,10 +110,10 @@
     "diff": "easy",
     "q": "Welcher Spitzname bürgerte sich weltweit für die Boeing 747 in der Popkultur ein?",
     "a": [
-      "Airbus A350 XWB",
-      "Boeing 777-200LR",
-      "Airbus A340-500",
-      "Boeing 787-9 Dreamliner"
+      "Queen of the Skies",
+      "Lord of the Air",
+      "Flying Fortress",
+      "Sky King 747"
     ],
     "explanation": "Über fünf Jahrzehnte lang war die 747 das unangefochtene Flaggschiff der weltweiten Zivilluftfahrt und prägte das Jet-Zeitalter.",
     "exp": "Über fünf Jahrzehnte lang war die 747 das unangefochtene Flaggschiff der weltweiten Zivilluftfahrt und prägte das Jet-Zeitalter."
@@ -123,10 +123,10 @@
     "diff": "mid",
     "q": "Welche Innovation besitzen die Flügelenden der neuen Boeing 777X, um auf Standard-Flughäfen parken zu können?",
     "a": [
-      "General Electric GE9X",
-      "Rolls-Royce Trent 1000",
-      "Pratt & Whitney PW4000",
-      "Engine Alliance GP7200"
+      "Klappbare Tragflächenspitzen (Folding Wingtips) für Standard-Parkpositionen",
+      "Solarzellen auf der Flügeloberseite zur Notstromversorgung der Bordelektronik",
+      "Ausfahrbare Bremsklappen aus Titan zur Abwehr von gefährlichen Vogelschlägen",
+      "Integrierte Kameras zur automatischen Überwachung des toten Winkels am Boden"
     ],
     "explanation": "Mit 72 Metern Spannweite im Flug benötigt die 777X für normale Gate-Kategorien (Code E) eingeklappte Spitzen (dann 65 Meter Spannweite).",
     "exp": "Mit 72 Metern Spannweite im Flug benötigt die 777X für normale Gate-Kategorien (Code E) eingeklappte Spitzen (dann 65 Meter Spannweite)."
@@ -136,10 +136,10 @@
     "diff": "pro",
     "q": "Wie viele Räder besitzt das Hauptfahrwerk des Airbus A380 insgesamt, um das enorme Gewicht auf der Piste zu verteilen?",
     "a": [
-      "Airbus A340-600",
-      "Boeing 747-8I",
-      "Airbus A350-1000",
-      "Boeing 777-300ER"
+      "20 Hauptfahrwerksräder (aufgeteilt auf vier separate Fahrwerksbeine)",
+      "16 Hauptfahrwerksräder (wie bei der klassischen Boeing 747-400)",
+      "24 Hauptfahrwerksräder (in sechs parallelen Tandem-Paaren montiert)",
+      "12 Hauptfahrwerksräder (mit extrem breiten Niederdruck-Reifen)"
     ],
     "explanation": "Zusammen mit den zwei Bugrädern rollt der A380 auf insgesamt 22 Rädern, damit Landebahnen und Rollwege nicht unter dem Gewicht einbrechen.",
     "exp": "Zusammen mit den zwei Bugrädern rollt der A380 auf insgesamt 22 Rädern, damit Landebahnen und Rollwege nicht unter dem Gewicht einbrechen."
@@ -149,10 +149,10 @@
     "diff": "easy",
     "q": "Welche Airline betreibt mit Abstand die weltweit größte Flotte von Airbus A380-Großraumflugzeugen?",
     "a": [
-      "De Havilland DH.106 Comet",
-      "Sud Aviation Caravelle",
-      "Boeing 707 Stratoliner",
-      "Tupolew Tu-104 Camel"
+      "Emirates (mit über 110 Flugzeugen)",
+      "Singapore Airlines (Erstkunde)",
+      "Lufthansa (auf Asienrouten)",
+      "British Airways (am Drehkreuz Heathrow)"
     ],
     "explanation": "Emirates bestellte insgesamt über 120 Exemplare des Mega-Liners und baute sein gesamtes globales Drehkreuz in Dubai um das Flugzeug herum auf.",
     "exp": "Emirates bestellte insgesamt über 120 Exemplare des Mega-Liners und baute sein gesamtes globales Drehkreuz in Dubai um das Flugzeug herum auf."
@@ -162,10 +162,10 @@
     "diff": "mid",
     "q": "Was war die Besonderheit der Fenster in der Boeing 787 Dreamliner bei ihrer Markteinführung?",
     "a": [
-      "Rechteckige Fenster führten zu Metallermüdung durch Druckwechsel",
-      "Die Triebwerke erstickten bei Reiseflughöhe an Sauerstoffmangel",
-      "Der Treibstoff entzündete sich durch elektrostatische Reibung",
-      "Die Holz-Sandwichbauweise hielt feuchter Tropenluft nicht stand"
+      "Elektrochrome Dimmung auf Knopfdruck statt mechanischer Kunststoff-Rollos",
+      "Verdreifachte Scheibendicke aus Panzerglas zum Schutz vor Weltraumtrümmern",
+      "Eingebaute Mini-Bildschirme in jedem Fenster zur Anzeige von Flugdaten",
+      "Goldbedampfte Gläser zur vollständigen Reflexion von kosmischer Strahlung"
     ],
     "explanation": "Die Fenster lassen sich stufenlos per elektrischer Spannung abdunkeln und sind rund 65 Prozent größer als bei herkömmlichen Passagierjets.",
     "exp": "Die Fenster lassen sich stufenlos per elektrischer Spannung abdunkeln und sind rund 65 Prozent größer als bei herkömmlichen Passagierjets."
@@ -175,10 +175,10 @@
     "diff": "pro",
     "q": "Welches ungewöhnliche Trimmsystem nutzt der Airbus A340 und A330 zur Senkung des Treibstoffverbrauchs?",
     "a": [
-      "Sitzanordnung im Rumpf: Zwei Mittelgänge statt nur einem Gang",
-      "Mindestens drei Turbinen an Tragflächen oder am Flugzeugheck",
-      "Zwei durchgehende Passagierdecks über die gesamte Rumpflänge",
-      "Die Fähigkeit zu Nonstop-Flügen über mehr als zwölftausend Kilometer"
+      "Einen Trimmtank im Höhenleitwerk, der Kerosin zur Schwerpunktsoptimierung pumpt",
+      "Bleigewichte im Rumpfboden, die auf Schienen vor- und zurückrollen können",
+      "Einen Wassertank in der Nase, der beim Reiseflug nach hinten entleert wird",
+      "Automatisch schwenkbare Triebwerksgondeln zur Anpassung des Schubvektors"
     ],
     "explanation": "Durch Umpumpen von Treibstoff ins Leitwerk wandert der Schwerpunkt nach hinten – das verringert den Abtrieb am Höhenruder und spart bis zu 1,5 % Kerosin.",
     "exp": "Durch Umpumpen von Treibstoff ins Leitwerk wandert der Schwerpunkt nach hinten – das verringert den Abtrieb am Höhenruder und spart bis zu 1,5 % Kerosin."
@@ -188,10 +188,10 @@
     "diff": "easy",
     "q": "Welches Flugzeug hält den Rekord für den derzeit längsten regulären Nonstop-Linienflug der Welt (Singapur–New York)?",
     "a": [
-      "McDonnell Douglas MD-11 Dreistrahler",
-      "Lockheed L-1011 TriStar Großraumjet",
-      "Airbus A340-300 Vierstrahlflugzeug",
-      "Boeing 747-400 Langstrecken-Jumbo"
+      "Airbus A350-900ULR",
+      "Boeing 777-200LR",
+      "Boeing 787-9 Dreamliner",
+      "Airbus A340-500"
     ],
     "explanation": "Singapore Airlines bedient die rund 15.300 km lange Strecke in knapp 19 Stunden Flugzeit mit einer speziell konfigurierten A350-Ultra-Long-Range.",
     "exp": "Singapore Airlines bedient die rund 15.300 km lange Strecke in knapp 19 Stunden Flugzeit mit einer speziell konfigurierten A350-Ultra-Long-Range."
@@ -201,10 +201,10 @@
     "diff": "mid",
     "q": "Warum besitzen viele Boeing 747-Frachter eine zusätzliche Seitentür hinter dem Flügel?",
     "a": [
-      "1970er Jahre (1970)",
-      "1960er Jahre (1964)",
-      "1980er Jahre (1982)",
-      "1950er Jahre (1958)"
+      "Um besonders lange oder sperrige Industriegüter auf das Hauptdeck zu laden",
+      "Als Notausstieg für das Personal bei Überseekoordinierungs-Einsätzen",
+      "Um Frachtpaletten während des Fluges im Notfall über dem Meer abzuwerfen",
+      "Zur besseren Belüftung der Kabine beim Transport von lebenden Zootieren"
     ],
     "explanation": "Während Standardfracht durch die Nase passt, können extrem hohe Frachtstücke nur durch das riesige seitliche Hauptdecktor verladen werden.",
     "exp": "Während Standardfracht durch die Nase passt, können extrem hohe Frachtstücke nur durch das riesige seitliche Hauptdecktor verladen werden."
@@ -214,10 +214,10 @@
     "diff": "pro",
     "q": "Welches Triebwerkslayout machte die russische Iljuschin Il-62 in den 1960er Jahren so unverwechselbar?",
     "a": [
-      "Airbus A320",
-      "Boeing 737-300",
-      "McDonnell Douglas MD-80",
-      "Boeing 757-200"
+      "Vier Triebwerke paarweise am hinteren Rumpf montiert wie bei der Vickers VC10",
+      "Drei Triebwerke im Heck und ein einzelnes Hilfstriebwerk unter der rechten Tragfläche",
+      "Zwei riesige Propellerturbinen auf den Tragflächen und zwei Strahltriebwerke am Heck",
+      "Triebwerke, die vollständig innerhalb der Tragflächenwurzeln eingebettet waren"
     ],
     "explanation": "Durch die Hecktriebwerke blieben die Tragflächen aerodynamisch absolut sauber – am Boden benötigte die Il-62 jedoch eine ausfahrbare Stütze gegen Heckkippen.",
     "exp": "Durch die Hecktriebwerke blieben die Tragflächen aerodynamisch absolut sauber – am Boden benötigte die Il-62 jedoch eine ausfahrbare Stütze gegen Heckkippen."
@@ -227,10 +227,10 @@
     "diff": "easy",
     "q": "Was bedeutet der Begriff „Widebody“ bei einem Verkehrsflugzeug im Unterschied zu einem „Narrowbody“?",
     "a": [
-      "Boeing 737",
-      "Airbus A320",
-      "Bombardier CRJ",
-      "Douglas DC-9"
+      "Der Rumpf ist breit genug für mindestens zwei parallele Durchgangsgänge",
+      "Das Flugzeug besitzt grundsätzlich mehr als vier separate Fluggasttüren",
+      "Das Flugzeug erreicht eine maximale Reichweite von über 10.000 Kilometern",
+      "Der Jet besitzt mindestens drei voneinander getrennte Triebwerksaufhängungen"
     ],
     "explanation": "Widebodies (wie A330, A350, 777) haben zwei Gänge (Twin-Aisle), während Narrowbodies (wie A320, 737) nur einen einzigen Mittelgang besitzen.",
     "exp": "Widebodies (wie A330, A350, 777) haben zwei Gänge (Twin-Aisle), während Narrowbodies (wie A320, 737) nur einen einzigen Mittelgang besitzen."
@@ -240,10 +240,10 @@
     "diff": "mid",
     "q": "Wie viele Passagiere durfte der Airbus A380 in einer theoretischen reinen All-Economy-Bestuhlung maximal befördern?",
     "a": [
-      "Fly-by-Wire mit Sidestick-Steuerung",
-      "Head-Up-Display für beide Piloten",
-      "HUD-gestützte Infrarot-Nachtsicht",
-      "Analoge Uhren-Instrumentierung"
+      "Bis zu 853 Passagiere",
+      "Exakt 650 Passagiere",
+      "Maximal 990 Passagiere",
+      "Rund 720 Passagiere"
     ],
     "explanation": "Zugelassen war der A380 für maximal 853 Passagiere – in der Praxis bestuhlten die meisten Airlines ihn mit 450 bis 520 Plätzen in 3 oder 4 Klassen.",
     "exp": "Zugelassen war der A380 für maximal 853 Passagiere – in der Praxis bestuhlten die meisten Airlines ihn mit 450 bis 520 Plätzen in 3 oder 4 Klassen."
@@ -253,10 +253,10 @@
     "diff": "easy",
     "q": "Welches Flugzeugmodell ist das meistverkaufte und meistgebaute zivile Strahlverkehrsflugzeug der Geschichte?",
     "a": [
-      "Airbus A320neo",
-      "Boeing 737 MAX 8",
-      "Airbus A220-300",
-      "Embraer E195-E2"
+      "Boeing 737 (dicht gefolgt von der Airbus-A320-Familie)",
+      "Airbus A320 (mit deutlichem Abstand vor allen anderen)",
+      "Boeing 747 Jumbo Jet (der Pionier der Großraumjets)",
+      "McDonnell Douglas DC-9 (der Kurzstreckenklassiker)"
     ],
     "explanation": "Die 737 fliegt seit 1967 und überschritt als erster Jet die Marke von 10.000 gebauten Exemplaren – die A320-Familie holte in den letzten Jahren rasant auf.",
     "exp": "Die 737 fliegt seit 1967 und überschritt als erster Jet die Marke von 10.000 gebauten Exemplaren – die A320-Familie holte in den letzten Jahren rasant auf."
@@ -266,10 +266,10 @@
     "diff": "easy",
     "q": "Warum sind die Triebwerksgondeln der klassischen Boeing 737 unten auffällig abgeflacht?",
     "a": [
-      "CFM International LEAP",
-      "Pratt & Whitney JT8D",
-      "Rolls-Royce RB211",
-      "General Electric CF6"
+      "Weil das Flugzeug so tief liegt, dass runde Gondeln die Piste berühren würden",
+      "Um den Luftstrom gezielt unter die Tragfläche statt darüber zu leiten",
+      "Aus patentrechtlichen Gründen gegenüber den runden Triebwerken von Airbus",
+      "Damit Mechaniker bei Wartungsarbeiten ohne Leitern an die Aggregate herankommen"
     ],
     "explanation": "Die 737 wurde in den 1960ern für Treppen-freies Einsteigen tief gebaut; als modernere Turbofans kamen, mussten Nebenaggregate seitlich platziert werden.",
     "exp": "Die 737 wurde in den 1960ern für Treppen-freies Einsteigen tief gebaut; als modernere Turbofans kamen, mussten Nebenaggregate seitlich platziert werden."
@@ -279,10 +279,10 @@
     "diff": "easy",
     "q": "Welche bahnbrechende Steuerungstechnologie führte der Airbus A320 im Jahr 1988 erstmals in der Zivilluftfahrt ein?",
     "a": [
-      "Bombardier CSeries",
-      "Fokker 130 NextGen",
-      "Embraer E-Jets E2",
-      "BAe Regional Jetliner"
+      "Digitale Fly-by-Wire-Steuerung mit Sidesticks statt mechanischem Steuerhorn",
+      "Ein vollintegriertes Head-up-Display für beide Piloten als Standardausstattung",
+      "Ein automatisches Kollisionswarnsystem mit Sprachausgabe im Cockpit",
+      "Elektrische Bremsen aus Carbon statt hydraulischer Stahlbremsscheiben"
     ],
     "explanation": "Der A320 ersetzte schwere Stahlseile durch Computer, die Pilotenbefehle elektronisch prüfen und gefährliche Flugzustände (Flight Envelope Protection) verhindern.",
     "exp": "Der A320 ersetzte schwere Stahlseile durch Computer, die Pilotenbefehle elektronisch prüfen und gefährliche Flugzustände (Flight Envelope Protection) verhindern."
@@ -292,10 +292,10 @@
     "diff": "mid",
     "q": "Unter welchem ursprünglichen Namen wurde der heutige Airbus A220 entwickelt, bevor Airbus das Programm übernahm?",
     "a": [
-      "Lufthansa",
-      "Pan American World Airways",
-      "United Airlines",
-      "British Airways"
+      "Bombardier CSeries (CS100 / CS300)",
+      "Embraer E-Jets E2 (E190 / E195)",
+      "Fokker 100 Next Generation",
+      "Dornier 728 Regionaljet"
     ],
     "explanation": "Bombardier verhob sich finanziell an der hochmodernen Neuentwicklung; Airbus kaufte 2018 die Mehrheit für einen symbolischen Dollar und benannte sie in A220 um.",
     "exp": "Bombardier verhob sich finanziell an der hochmodernen Neuentwicklung; Airbus kaufte 2018 die Mehrheit für einen symbolischen Dollar und benannte sie in A220 um."
@@ -857,7 +857,7 @@
       "Weil grelles Licht bei den Piloten im Cockpit über die Cockpittür Reflexionen erzeugt"
     ],
     "explanation": "Die Anpassung des menschlichen Auges an Dunkelheit dauert bis zu 20 Minuten – im Ernstfall müssen Passagiere Notausgänge draußen sofort sehen können.",
-    "exp": "Damit sich die Augen der Passagiere an die Dunkelheit gewöhnen, falls eine Notevakuierung nötig wird"
+    "exp": "Die Anpassung des menschlichen Auges an Dunkelheit dauert bis zu 20 Minuten – im Ernstfall müssen Passagiere Notausgänge draußen sofort sehen können."
   },
   {
     "cat": "technik_betrieb",
@@ -870,7 +870,7 @@
       "Der Treibstoff wird über Fallschirme in standardisierten Fässern auf unbewohntem Gebiet abgeworfen"
     ],
     "explanation": "Ein vollgetanktes Langstreckenflugzeug wiegt beim Start oft 50–100 Tonnen mehr als das Fahrwerk bei einer sicheren Landung aushalten könnte.",
-    "exp": "Kerosin wird durch Düsen an den Flügelspitzen abgelassen, um das maximale Landegewicht vor der Landung zu unterschreiten"
+    "exp": "Ein vollgetanktes Langstreckenflugzeug wiegt beim Start oft 50–100 Tonnen mehr als das Fahrwerk bei einer sicheren Landung aushalten könnte."
   },
   {
     "cat": "technik_betrieb",
@@ -883,7 +883,7 @@
       "Aus kleinen flüssigen Sauerstoff-Patronen unter jedem einzelnen Passagiersitz"
     ],
     "explanation": "Das Ziehen an der Maske löst mechanisch einen Schlagbolzen aus – die chemische Reaktion liefert für 12 bis 15 Minuten Sauerstoff, bis das Flugzeug auf 3.000 m gesunken ist.",
-    "exp": "Aus festen chemischen Natriumchlorat-Kerzen (Sauerstoff-Generatoren), die durch eine Zündschnur brennen"
+    "exp": "Das Ziehen an der Maske löst mechanisch einen Schlagbolzen aus – die chemische Reaktion liefert für 12 bis 15 Minuten Sauerstoff, bis das Flugzeug auf 3.000 m gesunken ist."
   },
   {
     "cat": "technik_betrieb",
@@ -896,7 +896,7 @@
       "Geschwindigkeit, bei der die Flugbegleiter alle Service-Wagen verriegelt haben müssen"
     ],
     "explanation": "Fällt bei V1 ein Triebwerk aus, startet der Pilot trotzdem mit dem verbleibenden Motor und fliegt eine Platzrunde zur sicheren Landung.",
-    "exp": "Nach Erreichen von V1 muss der Start fortgesetzt werden – ein Abbruch auf der verbleibenden Piste ist nicht mehr sicher möglich"
+    "exp": "Fällt bei V1 ein Triebwerk aus, startet der Pilot trotzdem mit dem verbleibenden Motor und fliegt eine Platzrunde zur sicheren Landung."
   },
   {
     "cat": "technik_betrieb",
@@ -909,7 +909,7 @@
       "Um das Triebwerk optisch an die aerodynamische Rumpfform des Flugzeugs anzupassen"
     ],
     "explanation": "Die Blattspitzen moderner Bläser durchbrechen im Reiseflug die Schallmauer – die geschwungene 3D-Aerodynamik verhindert drastische Wirkungsgradverluste.",
-    "exp": "Um Überschall-Stoßwellen an den schnell rotierenden Blattspitzen abzumildern und Vibrationen zu minimieren"
+    "exp": "Die Blattspitzen moderner Bläser durchbrechen im Reiseflug die Schallmauer – die geschwungene 3D-Aerodynamik verhindert drastische Wirkungsgradverluste."
   },
   {
     "cat": "technik_betrieb",
@@ -922,7 +922,7 @@
       "Den exakten Füllstand der Kerosintanks des landenden Flugzeugs über Laserabtastung"
     ],
     "explanation": "Vier weiße Lichter bedeuten „zu hoch“, vier rote Lichter bedeuten „zu tief („red on red, you are dead“) – zwei weiße und zwei rote zeigen den Idealpfad.",
-    "exp": "Ob sich das Flugzeug im perfekten 3-Grad-Gleitpfad befindet (idealerweise zwei rote und zwei weiße Lichter)"
+    "exp": "Vier weiße Lichter bedeuten „zu hoch“, vier rote Lichter bedeuten „zu tief („red on red, you are dead“) – zwei weiße und zwei rote zeigen den Idealpfad."
   },
   {
     "cat": "technik_betrieb",
@@ -935,7 +935,7 @@
       "Die Treibstoffeinspritzung wird gedrosselt und die Zündung zündet in umgekehrter Zündfolge"
     ],
     "explanation": "Turbinen können nicht rückwärts laufen – Kaskadenklappen im Mantelstrom leiten die gewaltige Luftmasse einfach nach vorne ab, um das Flugzeug abzubremsen.",
-    "exp": "Klappen lenken den Nebenstrom der Triebwerke mechanisch nach schräg vorne um"
+    "exp": "Turbinen können nicht rückwärts laufen – Kaskadenklappen im Mantelstrom leiten die gewaltige Luftmasse einfach nach vorne ab, um das Flugzeug abzubremsen."
   },
   {
     "cat": "technik_betrieb",
@@ -948,7 +948,7 @@
       "Das Verbot von Steigflügen mit mehr als 3.000 Fuß pro Minute in Flughafennähe"
     ],
     "explanation": "Dank hochpräziser digitaler Höhenmesser können Verkehrsflugzeuge seit den späten 1990ern sicher mit nur 300 Metern (1.000 Fuß) Höhenabstand übereinander fliegen.",
-    "exp": "Die Halbierung des vertikalen Höhenabstands von 2.000 auf 1.000 Fuß für doppelte Luftraumkapazität"
+    "exp": "Dank hochpräziser digitaler Höhenmesser können Verkehrsflugzeuge seit den späten 1990ern sicher mit nur 300 Metern (1.000 Fuß) Höhenabstand übereinander fliegen."
   },
   {
     "cat": "technik_betrieb",
@@ -961,7 +961,7 @@
       "Er ist in der Signalfarbe Neongrün gehalten mit rot blinkenden Warn-LEDs"
     ],
     "explanation": "Trotz des Namens „Black Box“ ist das Gehäuse leuchtend orange, damit Bergungskräfte ihn im Wrack oder am Meeresgrund schnell entdecken können.",
-    "exp": "Er ist auffällig leuchtend orange lackiert und mit reflektierenden Streifen versehen"
+    "exp": "Trotz des Namens „Black Box“ ist das Gehäuse leuchtend orange, damit Bergungskräfte ihn im Wrack oder am Meeresgrund schnell entdecken können."
   },
   {
     "cat": "technik_betrieb",
@@ -974,14 +974,18 @@
       "Als Sollbruchstelle für die Feuerwehr bei Rettungsarbeiten von außen"
     ],
     "explanation": "Das „Breather Hole“ sorgt dafür, dass die tragende äußere Scheibe den vollen Kabinendruck hält, während die innere Schirmscheibe vor Berührung schützt.",
-    "exp": "Zum Druckausgleich zwischen den Scheiben und zur Verhinderung von Beschlag und Eisbildung"
+    "exp": "Das „Breather Hole“ sorgt dafür, dass die tragende äußere Scheibe den vollen Kabinendruck hält, während die innere Schirmscheibe vor Berührung schützt."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("airliners", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["airliners"] = DATA;
+    window.ARCADE_QUIZ_BANKS['airliners'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('airliners', DATA);
+    }
   }
 })();
