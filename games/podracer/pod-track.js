@@ -220,7 +220,7 @@ export class CanyonTrack {
         const b = a + 1;
         const d = (i + 1) * cols + c;
         const e = d + 1;
-        fIdx.push(a, d, b, b, d, e);
+        fIdx.push(a, b, d, b, e, d);
       }
     }
 
