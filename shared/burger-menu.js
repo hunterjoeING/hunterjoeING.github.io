@@ -48,6 +48,7 @@
     { id: 'quiz_md11', icon: '🛫', title: 'McDonnell Douglas MD-11', meta: '75 Fr.', path: 'games/quiz-md11/index.html' },
     { id: 'quiz_naildesign', icon: '💅', title: 'Nageldesign (Finger & Fuß)', meta: '75 Fr.', path: 'games/quiz-naildesign/index.html' },
     { id: 'quiz_torten', icon: '🎂', title: 'Torten & Patisserie', meta: '75 Fr.', path: 'games/quiz-torten/index.html' },
+    { id: 'quiz_geburt', icon: '🌸', title: 'Schwangerschaft & Geburt', meta: '75 Fr.', path: 'games/quiz-geburt/index.html' },
     { id: 'quiz_fussball', icon: '⚽', title: 'Fußball – Das große Quiz', meta: '375 Fr.', path: 'games/quiz-fussball/index.html' },
     { id: 'quiz_ai', icon: '🤖', title: 'KI: Entstehung & Technik', meta: '75 Fr.', path: 'games/quiz-ai/index.html' },
     { id: 'quiz_movies', icon: '🎬', title: 'Kino & Filme (o. RomComs)', meta: '75 Fr.', path: 'games/quiz-movies/index.html' },
