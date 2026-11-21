@@ -78,6 +78,13 @@ const GAMES_META = {
   quiz_f1_strecken: { title: 'Formel 1: Legendäre Strecken', lowerIsBetter: false },
   quiz_f1_regeln: { title: 'Formel 1: Regeln & Boxenstopps', lowerIsBetter: false },
   quiz_f1_teams: { title: 'Formel 1: Teams & Geschichte', lowerIsBetter: false },
+  quiz_apple: { title: 'Apple – Produkte, Kult & Technikgeschichte', lowerIsBetter: false },
+  quiz_apple_mix: { title: 'Apple: Komplett-Mix', lowerIsBetter: false },
+  quiz_apple_iphone_ipad: { title: 'Apple: iPhone & iPad', lowerIsBetter: false },
+  quiz_apple_mac_silicon: { title: 'Apple: Mac & Apple Silicon', lowerIsBetter: false },
+  quiz_apple_audio_wearables: { title: 'Apple: Audio, Wearables & Ökosystem', lowerIsBetter: false },
+  quiz_apple_design_history: { title: 'Apple: Geschichte, Design & Kult', lowerIsBetter: false },
+  quiz_apple_flops_curiosities: { title: 'Apple: Flops, Kurioses & Insider-Wissen', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
 
