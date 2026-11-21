@@ -922,18 +922,44 @@ export default {
             env,
             ctx,
             `🤖 <b>HunterJoe Telegram-Bridge aktiv</b>\n\n`
-            + `Antworte einfach direkt auf eine Community-Meldung (oder nutze <code>/fix &lt;Text&gt;</code> bzw. <code>/reply &lt;Text&gt;</code>), um sofort als <b>KI-Agent (Antigravity)</b> zu antworten.\n`
-            + `Ohne Text nach <code>/fix</code> wird automatisch eine „Behoben“-Antwort gepostet.`
+            + `• Antworte direkt auf eine Meldung (oder nutze <code>/fix &lt;Text&gt;</code> bzw. <code>/reply &lt;Text&gt;</code>), um als <b>KI-Agent (Antigravity)</b> zu antworten.\n`
+            + `• Mit <code>/delete</code> (oder <code>/delete &lt;Beitrag-ID&gt;</code>) löschst du die letzte Agent-Antwort wieder.`
           );
           return jsonResponse({ ok: true });
         }
 
-        // 1. Post-ID bestimmen: aus beantworteter Bot-Nachricht "(#123)", aus Text "#123" / "/fix 123" oder neuester offener Beitrag
+        // 1. Post-ID bestimmen: aus beantworteter Bot-Nachricht "(#123)", aus Text "#123" / "/fix 123" oder neuester Beitrag
         let postId = null;
         const replySrc = String(msg.reply_to_message?.text || '');
         const replyIdMatch = /\(#(\d+)\)/.exec(replySrc) || /Beitrag #(\d+)/.exec(replySrc);
         if (replyIdMatch) {
           postId = parseInt(replyIdMatch[1], 10);
+        }
+
+        const delMatch = /^\/delete(?:@\w+)?(?:\s+#?(\d+))?\s*$/i.exec(rawText);
+        if (delMatch) {
+          if (delMatch[1]) postId = parseInt(delMatch[1], 10);
+          if (!postId) {
+            const latestPost = await db.prepare(
+              `SELECT post_id FROM feedback_replies WHERE author_role = 'agent' ORDER BY id DESC LIMIT 1`
+            ).first().catch(() => null);
+            if (latestPost?.post_id) postId = Number(latestPost.post_id);
+          }
+          if (!postId) {
+            notifyTelegram(env, ctx, '⚠️ Keine Agent-Antwort zum Löschen gefunden.');
+            return jsonResponse({ ok: true });
+          }
+          const lastReply = await db.prepare(
+            `SELECT id FROM feedback_replies WHERE post_id = ?1 AND author_role = 'agent' ORDER BY id DESC LIMIT 1`
+          ).bind(postId).first().catch(() => null);
+          if (!lastReply?.id) {
+            notifyTelegram(env, ctx, `⚠️ Keine Agent-Antwort unter Beitrag #${escapeTelegramHtml(postId)} gefunden.`);
+            return jsonResponse({ ok: true });
+          }
+          await db.prepare(`DELETE FROM feedback_replies WHERE id = ?1`).bind(lastReply.id).run();
+          await db.prepare(`UPDATE feedback_posts SET status = 'open', updated_at = datetime('now') WHERE id = ?1`).bind(postId).run();
+          notifyTelegram(env, ctx, `🗑️ Letzte Agent-Antwort unter Beitrag #${escapeTelegramHtml(postId)} gelöscht (Status wieder <b>Offen</b>).`);
+          return jsonResponse({ ok: true, deletedReplyId: lastReply.id, postId });
         }
 
         let cmd = 'fix';
