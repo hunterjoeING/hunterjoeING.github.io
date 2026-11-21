@@ -132,8 +132,7 @@ html.arcade-theme-snap *::after {
    STICKY EDITORIAL TOPBAR
    ============================================================================ */
 .arcade-topbar {
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 500;
   display: flex;
   align-items: center;
