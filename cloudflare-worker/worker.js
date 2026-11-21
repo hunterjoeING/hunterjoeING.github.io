@@ -57,6 +57,13 @@ const GAMES_META = {
   quiz_md11: { title: 'McDonnell Douglas MD-11 Quiz', lowerIsBetter: false },
   quiz_naildesign: { title: 'Nageldesign Quiz · Finger- & Fußnägel', lowerIsBetter: false },
   quiz_torten: { title: 'Torten Quiz · Klassiker & Patisserie', lowerIsBetter: false },
+  quiz_fussball: { title: 'Fußball – Das große Quiz', lowerIsBetter: false },
+  quiz_fussball_mix: { title: 'Fußball: Alles gemischt', lowerIsBetter: false },
+  quiz_fussball_buli: { title: 'Fußball: Bundesliga & DFB-Pokal', lowerIsBetter: false },
+  quiz_fussball_wmem: { title: 'Fußball: WM, EM & Nationalelf', lowerIsBetter: false },
+  quiz_fussball_intl: { title: 'Fußball: Champions League & Weltfußball', lowerIsBetter: false },
+  quiz_fussball_rules: { title: 'Fußball: Regeln, Taktik & Kurioses', lowerIsBetter: false },
+  quiz_fussball_werder: { title: 'Fußball: SV Werder Bremen Spezial', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
 
