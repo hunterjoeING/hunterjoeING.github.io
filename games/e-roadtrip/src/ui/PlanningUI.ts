@@ -1,20 +1,36 @@
-import { LevelConfig, TripPlan, VehicleSpec } from '../types';
+import { CampaignSave, LevelConfig, RouteOption, TripPlan, VehicleSpec } from '../types';
 import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { SUBSCRIPTIONS } from '../data/subscriptions';
 import { CHARGERS, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
-import { evaluateTripPlan, PlanForecast } from '../sim/RoutePlanner';
+import {
+  evaluateTripPlan,
+  getActiveRouteLegs,
+  getActiveRouteOption,
+  PlanForecast
+} from '../sim/RoutePlanner';
 import { getBestPriceForStation } from '../sim/EnergyModel';
-import { CampaignSave } from '../types';
 import { SoundFX } from '../phaser/SoundFX';
 
 export interface PlanningCallbacks {
   onPlanChanged: () => void;
+  onSelectRoute: (routeId: string) => void;
   onStartTrip: () => void;
   onSelectLevel: (levelId: string) => void;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
   onZoomRoute: () => void;
   onZoomEurope: () => void;
 }
+
+const NET_LABEL: Record<string, string> = {
+  tesla: 'Tesla SuC',
+  enbw: 'EnBW',
+  ewego: 'EWE Go',
+  electra: 'Electra+',
+  ionity: 'IONITY',
+  ac_village: 'AC Dorf'
+};
 
 function renderChargingCurveSvg(v: VehicleSpec): string {
   const w = 150;
@@ -37,6 +53,31 @@ function renderChargingCurveSvg(v: VehicleSpec): string {
   `;
 }
 
+function summarizeRouteStats(opt: RouteOption): {
+  distKm: number;
+  elevGainM: number;
+  chargerCount: number;
+  networksLabel: string;
+} {
+  let distKm = 0;
+  let elevGainM = 0;
+  const edgeIds = new Set<string>();
+  opt.legs.forEach(l => {
+    const e = getEdgeById(l.edgeId);
+    distKm += e.distanceKm;
+    elevGainM += l.reverse ? e.elevationLossM : e.elevationGainM;
+    edgeIds.add(l.edgeId);
+  });
+  const stations = CHARGERS.filter(c => edgeIds.has(c.edgeId));
+  const nets = Array.from(new Set(stations.map(s => NET_LABEL[s.network] || s.network)));
+  return {
+    distKm: Math.round(distKm),
+    elevGainM: Math.round(elevGainM),
+    chargerCount: stations.length,
+    networksLabel: nets.length > 0 ? nets.join(', ') : 'Keine DC-Parks'
+  };
+}
+
 export class PlanningUI {
   private root: HTMLElement;
   private activeTab: 'car' | 'subs' | 'route' = 'car';
@@ -50,6 +91,7 @@ export class PlanningUI {
   render(level: LevelConfig, plan: TripPlan, save: CampaignSave): void {
     const forecast = evaluateTripPlan(level, plan);
     const selectedVehicle = getVehicleById(plan.vehicleId);
+    const activeRoute = getActiveRouteOption(level, plan);
     const budgetLeft = save.cashEur - (save.ownedVehicleId === selectedVehicle.id ? 0 : selectedVehicle.priceEur);
 
     this.root.innerHTML = `
@@ -70,22 +112,25 @@ export class PlanningUI {
           ${level.specialRulesSummary.map(r => `<span class="rule-chip">${r}</span>`).join('')}
         </div>
         <div class="map-zoom-bar">
-          <button type="button" class="er-mini-btn" id="btn-zoom-route">🎯 Route zentrieren</button>
-          <button type="button" class="er-mini-btn" id="btn-zoom-europe">🌍 Ganz Europa</button>
-          <span class="map-hint">Klicke ⚡-Pins auf der Karte zum Hinzufügen/Entfernen</span>
+          <button type="button" class="er-mini-btn" id="btn-zoom-in" title="Hineinzoomen">➕ Zoom+</button>
+          <button type="button" class="er-mini-btn" id="btn-zoom-out" title="Herauszoomen">➖ Zoom-</button>
+          <button type="button" class="er-mini-btn" id="btn-zoom-route">🎯 Route</button>
+          <button type="button" class="er-mini-btn" id="btn-zoom-europe">🌍 Europa</button>
+          <span class="map-hint">Zoomen für Lader-Logos &amp; Abo-Preise · Drag/Pinch</span>
         </div>
       </div>
 
       ${this.renderForecastBanner(level, forecast, budgetLeft)}
+      ${this.renderRouteComparisonBar(level, activeRoute)}
 
       <div class="plan-tabs" role="tablist">
         <button type="button" class="plan-tab ${this.activeTab === 'car' ? 'active' : ''}" data-ptab="car">🚗 1. Fahrzeug</button>
         <button type="button" class="plan-tab ${this.activeTab === 'subs' ? 'active' : ''}" data-ptab="subs">💳 2. Lade-Abos</button>
-        <button type="button" class="plan-tab ${this.activeTab === 'route' ? 'active' : ''}" data-ptab="route">🗺️ 3. Etappen &amp; Stopps</button>
+        <button type="button" class="plan-tab ${this.activeTab === 'route' ? 'active' : ''}" data-ptab="route">🗺️ 3. Etappen &amp; Lader</button>
       </div>
 
       <div class="plan-tab-body">
-        ${this.activeTab === 'car' ? this.renderVehiclesTab(level, plan, save) : ''}
+        ${this.activeTab === 'car' ? this.renderVehiclesTab(plan, save) : ''}
         ${this.activeTab === 'subs' ? this.renderSubsTab(plan, selectedVehicle) : ''}
         ${this.activeTab === 'route' ? this.renderRouteTab(level, plan, forecast) : ''}
       </div>
@@ -94,9 +139,9 @@ export class PlanningUI {
         ${
           level.playable
             ? `<button type="button" id="btn-start-trip" class="er-primary-btn ${forecast.valid ? '' : 'warn'}" ${budgetLeft < 0 ? 'disabled' : ''}>
-                ${budgetLeft < 0 ? '❌ Budget reicht nicht für dieses Fahrzeug' : forecast.valid ? '🚀 Roadtrip am Aachener Dom starten!' : '⚠️ Trotz Reichweiten-Warnung starten'}
+                ${budgetLeft < 0 ? '❌ Budget reicht nicht für dieses Fahrzeug' : forecast.valid ? `🚀 Roadtrip starten (${activeRoute.shortLabel})!` : '⚠️ Trotz Reichweiten-Warnung starten'}
                </button>`
-            : `<div class="er-locked-notice">Dieses kuratierte Szenario ist bereits datengetrieben vorbereitet (Gewichte, Regeln, Events). Level 1 ist sofort komplett spielbar!</div>`
+            : `<div class="er-locked-notice">Dieses kuratierte Szenario ist bereits datengetrieben inkl. 3 Routen-Alternativen vorbereitet. Level 1 ist sofort komplett spielbar!</div>`
         }
       </div>
     `;
@@ -107,23 +152,70 @@ export class PlanningUI {
   private renderForecastBanner(level: LevelConfig, f: PlanForecast, budgetLeft: number): string {
     const hrs = Math.floor(f.totalMinutes / 60);
     const mins = f.totalMinutes % 60;
+    const nextCrit = f.firstStopArrivalSocPct <= 5 ? 'danger' : f.firstStopArrivalSocPct < 15 ? 'warn' : 'ok';
+    const finalCrit = f.finalArrivalSocPct <= 5 ? 'danger' : f.finalArrivalSocPct < 15 ? 'warn' : 'ok';
+
     return `
       <div class="forecast-strip">
         <div class="fc-metric"><span>Distanz</span><strong>${f.totalDistanceKm} km</strong></div>
         <div class="fc-metric"><span>Dauer (Ziel ${Math.floor(level.targetArrivalMinutes / 60)}h${String(level.targetArrivalMinutes % 60).padStart(2, '0')})</span><strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong></div>
         <div class="fc-metric"><span>Strom + Abos</span><strong>${f.estimatedTotalCostEur.toFixed(2)} €</strong></div>
-        <div class="fc-metric ${f.minSocEncountered < 5 ? 'danger' : ''}"><span>Min. SoC</span><strong>${f.minSocEncountered}%</strong></div>
-        <div class="fc-metric"><span>Restbudget</span><strong>${budgetLeft.toLocaleString('de-DE')} €</strong></div>
+        <div class="fc-metric ${nextCrit}" title="Prognostizierter Akkustand bei Ankunft am nächsten geplanten Ziel">
+          <span>Ankunft: ${f.firstStopName.slice(0, 14)}</span>
+          <strong>${f.firstStopArrivalSocPct}% SoC</strong>
+        </div>
+        <div class="fc-metric ${finalCrit}" title="Prognostizierter Akkustand am finalen Ziel">
+          <span>Ziel-SoC / Budget</span>
+          <strong>${f.finalArrivalSocPct}% · ${Math.round(budgetLeft / 1000)}k€</strong>
+        </div>
       </div>
       ${
         f.warnings.length > 0
           ? `<div class="forecast-warnings">${f.warnings.map(w => `<div>⚠️ ${w}</div>`).join('')}</div>`
-          : `<div class="forecast-ok">✅ Planung stabil · Alle Ladepunkte erreichbar (${f.avgConsumptionKwh100} kWh/100km Schnitt)</div>`
+          : `<div class="forecast-ok">✅ Planung stabil · Min. SoC ${f.minSocEncountered}% · Schnitt ${f.avgConsumptionKwh100} kWh/100km</div>`
       }
     `;
   }
 
-  private renderVehiclesTab(level: LevelConfig, plan: TripPlan, save: CampaignSave): string {
+  private renderRouteComparisonBar(level: LevelConfig, activeRoute: RouteOption): string {
+    return `
+      <div class="route-compare-wrap">
+        <div class="rc-header">
+          <strong>🛣️ 3 Routen-Alternativen vergleichen</strong>
+          <span>Aktiv: ${activeRoute.shortLabel}</span>
+        </div>
+        <div class="route-compare-grid">
+          ${level.routeOptions
+            .map(opt => {
+              const isSelected = opt.id === activeRoute.id;
+              const stats = summarizeRouteStats(opt);
+              const colorCss = '#' + opt.colorHex.toString(16).padStart(6, '0');
+              const trafficCls =
+                opt.trafficRisk === 'Hoch' ? 'high' : opt.trafficRisk === 'Mittel' ? 'med' : 'low';
+              return `
+                <button type="button" class="route-opt-card ${isSelected ? 'selected' : ''}" data-route-id="${opt.id}" style="--rc-color:${colorCss}">
+                  <div class="roc-top">
+                    <span class="roc-dot" style="background:${colorCss}"></span>
+                    <strong>${opt.shortLabel}</strong>
+                    <span class="roc-km">${stats.distKm} km</span>
+                  </div>
+                  <div class="roc-hwy">${opt.highwaySummary}</div>
+                  <div class="roc-badges">
+                    <span class="roc-pill traffic-${trafficCls}">🚦 Stau: ${opt.trafficRisk}</span>
+                    <span class="roc-pill">⛰️ ${opt.elevationProfile} (+${stats.elevGainM}m)</span>
+                    <span class="roc-pill">⚡ ${opt.chargingDensity} (${stats.chargerCount})</span>
+                  </div>
+                  <div class="roc-nets">${stats.networksLabel}</div>
+                </button>
+              `;
+            })
+            .join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  private renderVehiclesTab(plan: TripPlan, save: CampaignSave): string {
     return `
       <div class="vehicle-grid">
         ${VEHICLES.map(v => {
@@ -188,26 +280,34 @@ export class PlanningUI {
 
   private renderRouteTab(level: LevelConfig, plan: TripPlan, forecast: PlanForecast): string {
     const vehicle = getVehicleById(plan.vehicleId);
-    const activeEdgeIds = new Set(level.routeLegs.map(l => l.edgeId));
+    const activeRoute = getActiveRouteOption(level, plan);
+    const activeLegs = getActiveRouteLegs(level, plan);
+    const activeEdgeIds = new Set(activeLegs.map(l => l.edgeId));
     const availableChargers = CHARGERS.filter(c => activeEdgeIds.has(c.edgeId));
 
     return `
+      <div class="route-active-summary">
+        <strong>${activeRoute.name}</strong>
+        <p>${activeRoute.description}</p>
+      </div>
+
       <div class="route-legs-list">
-        ${forecast.legForecasts.map(lf => {
-          const speedVal = lf.targetSpeedKmh;
-          const riskBadge =
-            lf.policeRisk > 0.45
-              ? '<span class="risk-pill high">📸 Blitzer-Risiko!</span>'
-              : lf.policeRisk > 0.25
-                ? '<span class="risk-pill med">⚠️ Erhöhtes Risiko</span>'
-                : '<span class="risk-pill low">🟢 Sicher</span>';
-          const edge = getEdgeById(level.routeLegs[lf.legIndex].edgeId);
-          return `
+        ${forecast.legForecasts
+          .map(lf => {
+            const speedVal = lf.targetSpeedKmh;
+            const riskBadge =
+              lf.policeRisk > 0.45
+                ? '<span class="risk-pill high">📸 Blitzer-Risiko!</span>'
+                : lf.policeRisk > 0.25
+                  ? '<span class="risk-pill med">⚠️ Erhöhtes Risiko</span>'
+                  : '<span class="risk-pill low">🟢 Sicher</span>';
+            const trafficPct = Math.round(lf.trafficRisk * 100);
+            return `
             <div class="leg-card">
               <div class="leg-top">
                 <div>
                   <strong>Etappe ${lf.legIndex + 1}: ${lf.label}</strong>
-                  <span class="leg-meta">${lf.highwayName} · ${lf.distanceKm} km · ⛰️ +${edge.elevationGainM}/-${edge.elevationLossM}m · ${lf.weather}</span>
+                  <span class="leg-meta">${lf.highwayName} · ${lf.distanceKm} km · ⛰️ +${lf.elevationGainM}/-${lf.elevationLossM}m · 🚦 Stau ${trafficPct}% · ${lf.weather}</span>
                 </div>
                 <div class="leg-soc ${lf.endSocPct < 10 ? 'danger' : ''}">
                   ${lf.startSocPct}% → <strong>${lf.endSocPct}%</strong>
@@ -215,7 +315,7 @@ export class PlanningUI {
               </div>
               <div class="leg-controls">
                 <label>Zieltempo: <strong>${speedVal} km/h</strong> (${lf.consumptionKwh100} kWh/100km)</label>
-                <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="95" max="${vehicle.maxSpeedKmh}" step="5" value="${speedVal}" />
+                <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="70" max="${vehicle.maxSpeedKmh}" step="5" value="${speedVal}" />
                 ${riskBadge}
               </div>
               ${
@@ -225,7 +325,13 @@ export class PlanningUI {
                         .map(
                           ss => `
                           <div class="planned-stop-pill">
-                            <span>⚡ ${ss.station.name} (${ss.arriveSoc}% → ${ss.departSoc}%, ~${ss.minutes} Min, ${ss.costEur.toFixed(2)} €)</span>
+                            <div class="psp-info">
+                              <span>⚡ <b>${ss.station.name}</b> · Ankunft <strong class="${ss.arriveSoc <= 8 ? 'text-danger' : ''}">${ss.arriveSoc}%</strong> → Abfahrt <strong>${ss.departSoc}%</strong> (~${ss.minutes} Min · ${ss.costEur.toFixed(2)} €)</span>
+                              <label class="psp-soc-ctl">
+                                Ladeziel ${ss.targetSocPct}%
+                                <input type="range" class="stop-target-slider" data-chg-id="${ss.station.id}" data-leg-idx="${lf.legIndex}" min="50" max="100" step="5" value="${ss.targetSocPct}" />
+                              </label>
+                            </div>
                             <button type="button" class="stop-rm-btn" data-rm-stop="${ss.station.id}" data-rm-leg="${lf.legIndex}" title="Stopp entfernen">✕</button>
                           </div>`
                         )
@@ -235,34 +341,53 @@ export class PlanningUI {
               }
             </div>
           `;
-        }).join('')}
+          })
+          .join('')}
       </div>
 
       <div class="charger-directory">
-        <h4>⚡ Verfügbare Ladeparks auf der Strecke (zum Hinzufügen klicken)</h4>
+        <h4>⚡ Ladeparks auf „${activeRoute.shortLabel}“ (${availableChargers.length} Standorte)</h4>
         <div class="charger-cards">
-          ${availableChargers.map(st => {
-            const tariff = getBestPriceForStation(st, plan.subscriptionIds, vehicle);
-            const activeStops = plan.plannedStops.filter(s => s.chargerId === st.id);
-            return `
+          ${availableChargers
+            .map(st => {
+              const tariff = getBestPriceForStation(st, plan.subscriptionIds, vehicle);
+              const activeStops = plan.plannedStops.filter(s => s.chargerId === st.id);
+              const hasOut = activeLegs.some(l => l.edgeId === st.edgeId && !l.reverse);
+              const hasRet = activeLegs.some(l => l.edgeId === st.edgeId && !!l.reverse);
+              return `
               <div class="chg-card ${activeStops.length > 0 ? 'selected' : ''}">
                 <div class="chg-top">
-                  <strong>${st.name}</strong>
+                  <strong>[${NET_LABEL[st.network] || st.network}] ${st.name}</strong>
                   <span class="chg-kw">${st.maxKw} kW · ${st.stalls} Stalls</span>
                 </div>
                 <div class="chg-meta">
-                  ${st.cityHint} · <b>${tariff.pricePerKwh.toFixed(2)} €/kWh</b> (${tariff.usedSubscriptionName})
-                  · Auslastung ${Math.round(st.occupancyRisk * 100)}% · Defekt ${Math.round(st.defectRisk * 100)}%
+                  ${st.cityHint} ·
+                  <b class="${tariff.hasSubscriptionDiscount ? 'price-sub-ok' : ''}">${tariff.pricePerKwh.toFixed(2)} €/kWh</b>
+                  ${
+                    tariff.hasSubscriptionDiscount
+                      ? `<span class="price-nosub">(ohne Abo: <s>${tariff.pricePerKwhWithoutSub.toFixed(2)} €</s>)</span>`
+                      : `(${tariff.usedSubscriptionName})`
+                  }
+                  · Auslastung ${Math.round(st.occupancyRisk * 100)}%
                   ${st.hasMcDonalds ? '· 🍔 McDonald’s' : ''}
                   ${st.trailerFriendly ? '· 🚐 Durchfahrt' : ''}
                 </div>
                 <div class="chg-actions">
-                  <button type="button" class="er-mini-btn add-stop-btn" data-chg-id="${st.id}" data-dir="out">+ Hinweg einplanen</button>
-                  <button type="button" class="er-mini-btn add-stop-btn" data-chg-id="${st.id}" data-dir="ret">+ Rückweg einplanen</button>
+                  ${
+                    hasOut
+                      ? `<button type="button" class="er-mini-btn add-stop-btn" data-chg-id="${st.id}" data-dir="out">${hasRet ? '+ Hinweg' : '+ Stopp einplanen'}</button>`
+                      : ''
+                  }
+                  ${
+                    hasRet
+                      ? `<button type="button" class="er-mini-btn add-stop-btn" data-chg-id="${st.id}" data-dir="ret">+ Rückweg</button>`
+                      : ''
+                  }
                 </div>
               </div>
             `;
-          }).join('')}
+            })
+            .join('')}
         </div>
       </div>
     `;
@@ -274,6 +399,14 @@ export class PlanningUI {
       this.cb.onSelectLevel((e.target as HTMLSelectElement).value);
     });
 
+    this.root.querySelector('#btn-zoom-in')?.addEventListener('click', () => {
+      SoundFX.click();
+      this.cb.onZoomIn();
+    });
+    this.root.querySelector('#btn-zoom-out')?.addEventListener('click', () => {
+      SoundFX.click();
+      this.cb.onZoomOut();
+    });
     this.root.querySelector('#btn-zoom-route')?.addEventListener('click', () => {
       SoundFX.click();
       this.cb.onZoomRoute();
@@ -281,6 +414,15 @@ export class PlanningUI {
     this.root.querySelector('#btn-zoom-europe')?.addEventListener('click', () => {
       SoundFX.click();
       this.cb.onZoomEurope();
+    });
+
+    this.root.querySelectorAll('.route-opt-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const routeId = (card as HTMLElement).dataset.routeId;
+        if (!routeId || routeId === plan.selectedRouteId) return;
+        SoundFX.click();
+        this.cb.onSelectRoute(routeId);
+      });
     });
 
     this.root.querySelectorAll('.plan-tab').forEach(btn => {
@@ -332,6 +474,19 @@ export class PlanningUI {
       });
     });
 
+    this.root.querySelectorAll('.stop-target-slider').forEach(slider => {
+      slider.addEventListener('input', () => {
+        const chgId = (slider as HTMLElement).dataset.chgId;
+        const legIdx = Number((slider as HTMLElement).dataset.legIdx);
+        const val = Number((slider as HTMLInputElement).value);
+        const stop = plan.plannedStops.find(s => s.chargerId === chgId && s.legIndex === legIdx);
+        if (stop) {
+          stop.targetSocPct = val;
+          this.cb.onPlanChanged();
+        }
+      });
+    });
+
     this.root.querySelectorAll('.stop-rm-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const chgId = (btn as HTMLElement).dataset.rmStop;
@@ -351,7 +506,8 @@ export class PlanningUI {
         if (!chgId) return;
         const st = CHARGERS.find(c => c.id === chgId);
         if (!st) return;
-        const targetLeg = level.routeLegs.findIndex(
+        const activeLegs = getActiveRouteLegs(level, plan);
+        const targetLeg = activeLegs.findIndex(
           l => l.edgeId === st.edgeId && (dir === 'ret' ? !!l.reverse : !l.reverse)
         );
         if (targetLeg < 0) return;
