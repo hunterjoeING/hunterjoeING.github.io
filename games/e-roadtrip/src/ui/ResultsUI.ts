@@ -157,21 +157,26 @@ export class ResultsUI {
             ${LEVELS.map(l => {
               const unlocked = l.order <= save.unlockedLevelOrder;
               return `
-                <div class="nl-chip ${unlocked ? 'unlocked' : 'locked'}">
+                <button type="button" class="nl-chip ${unlocked ? 'unlocked clickable' : 'locked'}" data-nl-id="${l.id}" ${unlocked ? '' : 'disabled'}>
                   <strong>${l.title}</strong>
-                  <span>${l.playable ? '✅ Voll spielbar' : unlocked ? '🔓 Struktur freigeschaltet' : '🔒 Erst Level ' + (l.order - 1) + ' meistern'}</span>
-                </div>
+                  <span>${l.playable ? '✅ Voll spielbar (Planung öffnen)' : unlocked ? '🔓 Struktur freigeschaltet (Vorschau)' : '🔒 Erst Level ' + (l.order - 1) + ' meistern'}</span>
+                </button>
               `;
             }).join('')}
           </div>
         </div>
       </div>
     `;
+    this.root.scrollTop = 0;
+
+    const nextPlayable =
+      LEVELS.find(l => l.order > level.order && l.playable && l.order <= save.unlockedLevelOrder) ||
+      level;
 
     this.root.querySelector('#btn-keep-car')?.addEventListener('click', () => {
       SoundFX.click();
       this.hide();
-      this.cb.onKeepCarAndReplay(level.id);
+      this.cb.onKeepCarAndReplay(nextPlayable.id);
     });
 
     this.root.querySelectorAll('[data-buy-car]').forEach(btn => {
@@ -180,7 +185,17 @@ export class ResultsUI {
         if (!carId) return;
         SoundFX.click();
         this.hide();
-        this.cb.onSellAndBuyCar(carId, level.id);
+        this.cb.onSellAndBuyCar(carId, nextPlayable.id);
+      });
+    });
+
+    this.root.querySelectorAll('[data-nl-id]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lid = (btn as HTMLElement).dataset.nlId;
+        if (!lid) return;
+        SoundFX.click();
+        this.hide();
+        this.cb.onKeepCarAndReplay(lid);
       });
     });
   }
