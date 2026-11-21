@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Politik &amp; Ökonomie Quiz · Freiheitliches Denken</title>
-  <meta name="description" content="84 Fragen zu Politik &amp; Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) &amp; Wirtschaftsgeschichte." />
+  <meta name="description" content="75 Fragen zu Politik &amp; Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) &amp; Wirtschaftsgeschichte." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-politics/" />
@@ -15,14 +15,14 @@
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
   <meta property="og:title" content="Politik &amp; Ökonomie Quiz · Freiheitliches Denken" />
-  <meta property="og:description" content="84 Fragen zu Politik &amp; Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) &amp; Wirtschaftsgeschichte." />
+  <meta property="og:description" content="75 Fragen zu Politik &amp; Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) &amp; Wirtschaftsgeschichte." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/quiz-politics/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Politik &amp; Ökonomie Quiz · Freiheitliches Denken" />
-  <meta name="twitter:description" content="84 Fragen zu Politik &amp; Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) &amp; Wirtschaftsgeschichte." />
+  <meta name="twitter:description" content="75 Fragen zu Politik &amp; Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) &amp; Wirtschaftsgeschichte." />
   <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
   {
@@ -31,7 +31,7 @@
       {
         "@type": "Quiz",
         "name": "Politik & Ökonomie: Freiheitliches Denken Quiz",
-        "description": "84 Fragen zu Politik & Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) & Wirtschaftsgeschichte.",
+        "description": "75 Fragen zu Politik & Ökonomie in 3 Stufen: Ideen der Österreichischen Schule (Mises, Hayek, Bastiat, Cantillon), Roland Baader („Geldsozialismus“) & Wirtschaftsgeschichte.",
         "url": "https://hunterjoeing.github.io/games/quiz-politics/",
         "inLanguage": "de",
         "isAccessibleForFree": true,
@@ -322,7 +322,7 @@
     <section id="screen-menu" class="glass-card" style="padding: 20px;">
       <h1 style="margin:0 0 6px; font-size: 22.5px;">Politik &amp; Ökonomie: Freiheitliches Denken</h1>
       <p style="margin:0; color: var(--text-muted); font-size: 14px; line-height:1.45;">
-        84 quellengestützte Fragen zur Ideengeschichte und Argumenten rund um <strong>Roland Baader</strong>, die <strong>Österreichische Schule</strong>
+        75 quellengestützte Fragen zur Ideengeschichte und Argumenten rund um <strong>Roland Baader</strong>, die <strong>Österreichische Schule</strong>
         (Mises, Hayek) und klassischen Liberalismus (Bastiat) – samt Einordnung wirtschaftspolitischer Gegenpositionen (Standard: 20 Fragen pro Runde).
       </p>
 
@@ -409,7 +409,7 @@
       pro:  { label: '🟣 Baader/Mises-Profi', cls: 'pro', mult: 1.5 }
     };
 
-    // Unified question bank (84 questions, index 0 of a[] is always correct)
+    // Unified question bank (75 questions, index 0 of a[] is always correct)
     const QUESTIONS = ArcadeQuizEngine.getBank('politics');
 
     let selectedDiff = 'all';
@@ -735,7 +735,7 @@
       onUpdate: () => renderMenu(),
       lengths: [10, 20, 30, 'all'],
       defaultLen: 20,
-      showAllLabel: 'Alle'
+      showAllLabel: 'Alle (75)'
     });
     refreshTopBest();
     renderMenu();
