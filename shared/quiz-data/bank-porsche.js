@@ -12,7 +12,7 @@
       "Vaihingen"
     ],
     "explanation": "Stuttgart-Zuffenhausen ist die legendäre Geburtsstätte und das Stammwerk des 911 sowie das Zentrum der Marke Porsche.",
-    "exp": "Zuffenhausen"
+    "exp": "Stuttgart-Zuffenhausen ist die legendäre Geburtsstätte und das Stammwerk des 911 sowie das Zentrum der Marke Porsche."
   },
   {
     "cat": "porsche_allgemein",
@@ -25,7 +25,7 @@
       "Porsche 904 Carrera GTS"
     ],
     "explanation": "Der Mittelmotor-Roadster 356 Nr. 1 erhielt am 8. Juni 1948 im österreichischen Gmünd seine offizielle Betriebserlaubnis.",
-    "exp": "Porsche 356 Nr. 1 Roadster"
+    "exp": "Der Mittelmotor-Roadster 356 Nr. 1 erhielt am 8. Juni 1948 im österreichischen Gmünd seine offizielle Betriebserlaubnis."
   },
   {
     "cat": "porsche_allgemein",
@@ -38,7 +38,7 @@
       "Wegen Platzmangels für Kabelstränge hinter dem Tacho"
     ],
     "explanation": "Beim Le-Mans-Start sprinteten Fahrer zu den Autos. Links zünden und rechts schalten sparte wertvolle Zehntelsekunden beim Losfahren.",
-    "exp": "Für den Le-Mans-Start zum schnellen Starten und Schalten"
+    "exp": "Beim Le-Mans-Start sprinteten Fahrer zu den Autos. Links zünden und rechts schalten sparte wertvolle Zehntelsekunden beim Losfahren."
   },
   {
     "cat": "porsche_allgemein",
@@ -51,7 +51,7 @@
       "Porsche 1001"
     ],
     "explanation": "Peugeot beanspruchte das Namensrecht auf dreistellige Zahlen mit einer Null in der Mitte, worauf Porsche die Null kurzerhand durch eine Eins ersetzte.",
-    "exp": "Porsche 901"
+    "exp": "Peugeot beanspruchte das Namensrecht auf dreistellige Zahlen mit einer Null in der Mitte, worauf Porsche die Null kurzerhand durch eine Eins ersetzte."
   },
   {
     "cat": "porsche_allgemein",
@@ -64,202 +64,202 @@
       "Ein Vierzylinder-Wankelmotor"
     ],
     "explanation": "Flach bauend, mit tiefem Schwerpunkt und gegenüberliegenden Kolbenpaaren: Der Boxermotor ist die unverrückbare Seele des Neunelfers.",
-    "exp": "Der Sechszylinder-Boxermotor"
+    "exp": "Flach bauend, mit tiefem Schwerpunkt und gegenüberliegenden Kolbenpaaren: Der Boxermotor ist die unverrückbare Seele des Neunelfers."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "easy",
     "q": "Welches Tier ziert das Wappen im Zentrum des goldenen Porsche-Markenemblems?",
     "a": [
-      "Stuttgarter Rössle und Landesfarben Württembergs",
-      "Der Greif von Baden und badische Flaggenstreifen",
-      "Der bayerische Löwe und Rautenmuster in Gold",
-      "Ein preußischer Adler auf silbernem Schild"
+      "Ein aufsteigendes schwarzes Ross (das Stuttgarter Rössle)",
+      "Ein gekrönter goldener Greif aus dem badischen Landeswappen",
+      "Ein doppelköpfiger Reichsadler mit ausgebreiteten Schwingen",
+      "Ein springender Panther als altes Zuffenhausener Stadtsymbol"
     ],
     "explanation": "Das Porsche-Wappen kombiniert das Stuttgarter Stadtwappen (schwarzes Rössle) mit dem württembergischen Landeswappen (Hirschstangen).",
-    "exp": "Stuttgarter Rössle und Landesfarben Württembergs"
+    "exp": "Das Porsche-Wappen kombiniert das Stuttgarter Stadtwappen (schwarzes Rössle) mit dem württembergischen Landeswappen (Hirschstangen)."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "easy",
     "q": "Welcher ikonische Heckspoiler prägte 1972 den legendären Porsche 911 Carrera RS 2.7?",
     "a": [
-      "Porsche 911 Turbo (Typ 930)",
-      "Porsche 911 Carrera RS 2.7",
-      "Porsche 928 S V8-Modell",
-      "Porsche 959 Biturbo Rallye"
+      "Der Entenbürzel (Ducktail auf der Motorhaube)",
+      "Der Walflossenspoiler (Whale Tail des Turbo)",
+      "Der Teekannenspoiler (Tea Tray der Rennmodelle)",
+      "Die Doppelbügel-Flügelkonstruktion der GT-Serie"
     ],
     "explanation": "Der erste aerodynamische Bürzel-Spoiler an einem Serienwagen senkte den Auftrieb an der Hinterachse dramatisch und wurde zum Kultdesign.",
-    "exp": "Porsche 911 Turbo (Typ 930)"
+    "exp": "Der erste aerodynamische Bürzel-Spoiler an einem Serienwagen senkte den Auftrieb an der Hinterachse dramatisch und wurde zum Kultdesign."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "easy",
     "q": "Wie viele Gesamtsiege feierte Porsche beim legendären 24-Stunden-Rennen von Le Mans bis heute?",
     "a": [
-      "Entenbürzel",
-      "Walfischflosse",
-      "Schwanenhals",
-      "Bügelbrett"
+      "19 Gesamtsiege (Porsche ist der unangefochtene Rekordsieger)",
+      "12 Gesamtsiege (hinter Audi mit dreizehn Erfolgen)",
+      "16 Gesamtsiege (gleichauf mit Ferrari an der Spitze)",
+      "24 Gesamtsiege (in jeder Rennklasse mindestens einmal)"
     ],
     "explanation": "Vom 917 über den 936, 956, 962, GT1 bis zum 919 Hybrid: Kein Hersteller der Welt gewann Le Mans so oft wie die Zuffenhausener.",
-    "exp": "Entenbürzel"
+    "exp": "Vom 917 über den 936, 956, 962, GT1 bis zum 919 Hybrid: Kein Hersteller der Welt gewann Le Mans so oft wie die Zuffenhausener."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Was war das Besondere am Schalthebelknauf des Supersportwagens Porsche Carrera GT (2003)?",
     "a": [
-      "Um US-Sicherheitsvorschriften für offene Autos zu erfüllen",
-      "Weil feste Blechdächer in Europa verboten werden sollten",
-      "Um Platz für eine größere Rücksitzbank im Innenraum zu schaffen",
-      "Aus optischen Gründen für ein aerodynamisches Fastback"
+      "Er bestand aus Schichtholz (Birke/Esche) als Hommage an den 917",
+      "Er war aus purem poliertem Titan mit eingraviertem Firmensiegel gefertigt",
+      "Er bestand aus unzerbrechlichem Carbon mit integriertem Startknopf",
+      "Er war mit feinstem handschuhweichem Hirschleder aus Zuffenhausen bezogen"
     ],
     "explanation": "Schichtholz leitet keine Wärme, ist federleicht und erinnerte die Piloten direkt an das Holzrädchen des 917 aus den 1970er-Jahren.",
-    "exp": "Um US-Sicherheitsvorschriften für offene Autos zu erfüllen"
+    "exp": "Schichtholz leitet keine Wärme, ist federleicht und erinnerte die Piloten direkt an das Holzrädchen des 917 aus den 1970er-Jahren."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Welcher Ursprung liegt dem 5,7-Liter-V10-Saugmotor des legendären Carrera GT zugrunde?",
     "a": [
-      "Porsche 911 (Typ 996)",
-      "Porsche 911 (Typ 993)",
-      "Porsche 911 (Typ 964)",
-      "Porsche 911 (Typ 997)"
+      "Er war ursprünglich für die Formel 1 und einen Le-Mans-Prototyp entwickelt worden",
+      "Er stammte aus dem militärischen Bootsmotorenprogramm der Bundeswehr",
+      "Er entstand durch Zusammenfügen von zwei Vierzylinder-Reihenmotoren des VW Golf",
+      "Er wurde von Yamaha exklusiv für japanische Super GT Meisterschaften entworfen"
     ],
     "explanation": "Nachdem Porsches F1- und LMP2000-Pläne gestoppt wurden, pflanzte Entwicklungschef Roland Kussmaul das V10-Triebwerk in den Carrera GT.",
-    "exp": "Porsche 911 (Typ 996)"
+    "exp": "Nachdem Porsches F1- und LMP2000-Pläne gestoppt wurden, pflanzte Entwicklungschef Roland Kussmaul das V10-Triebwerk in den Carrera GT."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Welche bahnbrechende Technologie führte der Porsche 959 im Jahr 1986 in der Welt der Supersportwagen ein?",
     "a": [
-      "Porsche 959",
-      "Porsche 911 Turbo S",
-      "Porsche Carrera GT",
-      "Porsche 918 Spyder"
+      "Elektronisch geregelter Allradantrieb, Biturbo-Register und Höhenverstellung",
+      "Das erste vollautomatische Achtgang-Doppelkupplungsgetriebe der Welt",
+      "Eine Monocoque-Zelle aus reinem kohlenstofffaserverstärktem Kunststoff",
+      "Ein Hybridantrieb mit Bremsenergierückgewinnung an beiden Achsen"
     ],
     "explanation": "Der 959 war seiner Zeit um Jahrzehnte voraus: Mit Kevlar-Karosserie und Hightech-Allrad PSK deklassierte er damals die gesamte Konkurrenz.",
-    "exp": "Porsche 959"
+    "exp": "Der 959 war seiner Zeit um Jahrzehnte voraus: Mit Kevlar-Karosserie und Hightech-Allrad PSK deklassierte er damals die gesamte Konkurrenz."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Was war der Grund für den Wechsel von Luft- auf Wasserkühlung beim Porsche 911 mit der Baureihe 996 (1997)?",
     "a": [
-      "Porsche Cayenne",
-      "Porsche Macan",
-      "Porsche Panamera",
-      "Porsche Taycan"
+      "Strikte Abgas- und Lärmvorschriften sowie Vierventiltechnik für mehr Leistung",
+      "Weil luftgekühlte Zylinderköpfe bei schnellen Autobahnfahrten rissen",
+      "Weil Kunden in den USA massenhaft über zu schwache Heizungen klagten",
+      "Weil die europäische Union Luftkühlung für PKW-Neuzulassungen verbot"
     ],
     "explanation": "Luftgekühlte Zylinderköpfe ließen sich mit vier Ventilen thermisch nicht mehr beherrschen; erst Wasserkühlung ermöglichte Euro-Abgasnormen.",
-    "exp": "Porsche Cayenne"
+    "exp": "Luftgekühlte Zylinderköpfe ließen sich mit vier Ventilen thermisch nicht mehr beherrschen; erst Wasserkühlung ermöglichte Euro-Abgasnormen."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Welches berühmte Langstreckenrennen auf Sizilien inspirierte Porsche zum Namen des Modells 'Targa'?",
     "a": [
-      "V10-Saugmotor aus dem Rennsport",
-      "Biturbo-V8 aus dem Motorsport",
-      "Boxermotor mit Doppelturbo",
-      "Zwölfzylinder-W-Saugmotor"
+      "Die Targa Florio (das legendäre sizilianische Straßenrennen)",
+      "Die Carrera Panamericana (das Marathonrennen in Mexiko)",
+      "Die Mille Miglia (der italienische 1.000-Meilen-Klassiker)",
+      "Das 24-Stunden-Rennen auf der Nordschleife des Nürburgrings"
     ],
     "explanation": "Porsche feierte bei der kurvenreichen Targa Florio durch die sizilianischen Berge elf Gesamtsiege und widmete dem Rennen den Targa-Überrollbügel.",
-    "exp": "V10-Saugmotor aus dem Rennsport"
+    "exp": "Porsche feierte bei der kurvenreichen Targa Florio durch die sizilianischen Berge elf Gesamtsiege und widmete dem Rennen den Targa-Überrollbügel."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Welcher Hollywood-Star und Rennfahrer machte den Porsche 917 im Spielfilm 'Le Mans' (1971) unsterblich?",
     "a": [
-      "Porsche 911 (Typ 993)",
-      "Porsche 911 (Typ 964)",
-      "Porsche 911 G-Modell",
-      "Porsche 356 C 2000 GS"
+      "Steve McQueen (in seiner Paraderolle als Michael Delaney)",
+      "Paul Newman (der selbst in Le Mans aufs Podium fuhr)",
+      "James Dean (der den Porsche 550 Spyder berühmt machte)",
+      "Clint Eastwood (als passionierter Sportwagensammler)"
     ],
     "explanation": "McQueen fuhr den 917 im himmelblauen Gulf-Design bei echten Renntempi an der Sarthe und schuf ein filmisches Denkmal.",
-    "exp": "Porsche 911 (Typ 993)"
+    "exp": "McQueen fuhr den 917 im himmelblauen Gulf-Design bei echten Renntempi an der Sarthe und schuf ein filmisches Denkmal."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Welche Konstruktion zeichnete den 1976 vorgestellten Porsche 924 und 928 als 'Transaxle'-Modelle aus?",
     "a": [
-      "Spiegeleier-Scheinwerfer",
-      "Käfer-Augen-Scheinwerfer",
-      "Froschaugen-Leuchten",
-      "Tropfen-Frontscheinwerfer"
+      "Motor vorn unter der Haube, Getriebe an der Hinterachse mit Zentralwelle",
+      "Zwei Motoren an beiden Achsen ohne mechanische Wellenverbindung",
+      "Mittelmotor hinter den Sitzen mit Getriebe direkt am Vorderachsdifferential",
+      "Heckmotor mit Kraftübertragung rein über hydraulische Druckleitungen"
     ],
     "explanation": "Die Transaxle-Bauweise garantierte eine nahezu perfekte Gewichtsverteilung von 50:50 zwischen Vorder- und Hinterachse für stabiles Kurvenfahren.",
-    "exp": "Spiegeleier-Scheinwerfer"
+    "exp": "Die Transaxle-Bauweise garantierte eine nahezu perfekte Gewichtsverteilung von 50:50 zwischen Vorder- und Hinterachse für stabiles Kurvenfahren."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "In welchem österreichischen Bergstädtchen produzierte Porsche in der Nachkriegszeit seine ersten Autos in einem alten Sägewerk?",
     "a": [
-      "Porsche 918 Spyder",
-      "McLaren P1 Hybrid",
-      "Ferrari LaFerrari",
-      "BMW i8 Coupé"
+      "Gmünd in Kärnten (in den Werkstätten eines alten Sägewerks)",
+      "Zell am See (auf dem Schüttgut der Familie Porsche)",
+      "Salzburg (in den Werkshallen der örtlichen Verkehrsbetriebe)",
+      "Graz (in Kooperation mit den Steyr-Daimler-Puch Werken)"
     ],
     "explanation": "Von 1944 bis 1950 baute Porsche in Gmünd unter abenteuerlichen Bedingungen rund 50 handgedengelte Aluminium-Coupés und Cabriolets des 356.",
-    "exp": "Porsche 918 Spyder"
+    "exp": "Von 1944 bis 1950 baute Porsche in Gmünd unter abenteuerlichen Bedingungen rund 50 handgedengelte Aluminium-Coupés und Cabriolets des 356."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "mid",
     "q": "Mit welchem ersten SUV-Modell gelang Porsche ab 2002 der historische wirtschaftliche Befreiungsschlag?",
     "a": [
-      "Im österreichischen Gmünd",
-      "Im schweizerischen Zürich",
-      "Im französischen Molsheim",
-      "Im bayerischen Ingolstadt"
+      "Porsche Cayenne (gemeinsam mit Volkswagen entwickelt)",
+      "Porsche Macan (auf Basis des kleineren Audi Q5)",
+      "Porsche Panamera (als viertürige Sportlimousine)",
+      "Porsche Taycan (als erster rein elektrischer Sportler)"
     ],
     "explanation": "Der Cayenne spaltete anfangs die Gemüter der Sportwagenfans, wurde aber zum Mega-Erfolg und finanzierte die Weiterentwicklung der Elfer-Ikone.",
-    "exp": "Im österreichischen Gmünd"
+    "exp": "Der Cayenne spaltete anfangs die Gemüter der Sportwagenfans, wurde aber zum Mega-Erfolg und finanzierte die Weiterentwicklung der Elfer-Ikone."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "pro",
     "q": "Aus welchem Werkstoff bestand der ultraleichte Gitterrohrrahmen des Le-Mans-Siegerwagens Porsche 917 von 1970?",
     "a": [
-      "Porsche 917",
-      "Porsche 908",
-      "Porsche 906 Carrera 6",
-      "Porsche 910 Bergspyder"
+      "Aus dünnwandigen Aluminium- bzw. Magnesium-Rohren unter Schutzgas",
+      "Aus geschmiedeten Chrom-Molybdän-Stahlrohren für höchste Festigkeit",
+      "Aus einer tragenden Wabenstruktur aus Titan und Luftfahrt-Kevlar",
+      "Aus genieteten Duraluminium-Platten wie im Flugzeugbau der 1960er"
     ],
     "explanation": "Der Rahmen wog kaum mehr als 42 Kilogramm. Bei Rennwagen wurde er mit Druckluft befüllt; ein Druckabfall warnte den Piloten vor Rahmenrissen.",
-    "exp": "Porsche 917"
+    "exp": "Der Rahmen wog kaum mehr als 42 Kilogramm. Bei Rennwagen wurde er mit Druckluft befüllt; ein Druckabfall warnte den Piloten vor Rahmenrissen."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "pro",
     "q": "Welche kuriose Rennwagenlackierung trug der Porsche 917/20 in Le Mans 1971, entworfen von Designer Anatole Lapine?",
     "a": [
-      "Porsche 917/20 'Rosa Sau'",
-      "Porsche 935 'Moby Dick'",
-      "Porsche 911 'Baby'",
-      "Porsche 956 'Rothmans'"
+      "Die 'Sau' (Pink Pig) mit rosa Grundfarbe und Metzger-Schnittlinien",
+      "Der 'Jäger' mit grüner Jagdlackierung und aufgemaltem Hirschgeweih",
+      "Das 'Zebra' mit schwarz-weißen Reflexionsstreifen zur Lichttarnung",
+      "Der 'Pfeil' in grellem Neongelb mit Zielflaggenmustern auf dem Dach"
     ],
     "explanation": "Weil der breite Wagen unförmig wie ein Schwein wirkte, beschriftete Lapine die Karosserieteile humorvoll mit Kotelett, Schinken und Rüssel.",
-    "exp": "Porsche 917/20 'Rosa Sau'"
+    "exp": "Weil der breite Wagen unförmig wie ein Schwein wirkte, beschriftete Lapine die Karosserieteile humorvoll mit Kotelett, Schinken und Rüssel."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "pro",
     "q": "Welche revolutionäre Hinterachskinematik führte der Porsche 928 im Jahr 1977 zur Stabilisierung bei Lastwechseln ein?",
     "a": [
-      "19 Gesamtsiege",
-      "12 Gesamtsiege",
-      "16 Gesamtsiege",
-      "24 Gesamtsiege"
+      "Die Weissach-Achse (mit elastokinematischer Vorspurkorrektur beim Bremsen)",
+      "Die De-Dion-Achse mit starrer Achsbrücke und entkoppeltem Differential",
+      "Eine McPherson-Vielgelenkachse mit variabler Luftfederungs-Kinematik",
+      "Eine hydraulisch gelenkte Allrad-Hinterachse mit Zahnstangenantrieb"
     ],
     "explanation": "Die Weissach-Achse lenkte das kurvenäußere Hinterrad beim Gaswegnehmen leicht nach innen ein und verhinderte plötzliches Übersteuern.",
-    "exp": "19 Gesamtsiege"
+    "exp": "Die Weissach-Achse lenkte das kurvenäußere Hinterrad beim Gaswegnehmen leicht nach innen ein und verhinderte plötzliches Übersteuern."
   },
   {
     "cat": "porsche_allgemein",
@@ -272,7 +272,7 @@
       "6:30,50 Minuten"
     ],
     "explanation": "Frei von allen WEC-Reglement-Fesseln, mit extremer Aerodynamik und über 1.160 PS pulverisierte der 919 Evo Stefan Bellofs 35 Jahre alten Rekord.",
-    "exp": "5:19,55 Minuten"
+    "exp": "Frei von allen WEC-Reglement-Fesseln, mit extremer Aerodynamik und über 1.160 PS pulverisierte der 919 Evo Stefan Bellofs 35 Jahre alten Rekord."
   },
   {
     "cat": "porsche_allgemein",
@@ -285,7 +285,7 @@
       "Der Scheibenwischer konnte nur ebene Glasflächen reinigen"
     ],
     "explanation": "Zwei flache Glasscheiben mit Mittelsteg waren in der Nachkriegszeit dramatisch billiger und stabiler zu fertigen als gewölbtes Glas.",
-    "exp": "Gebogenes Verbundglas in einem Stück war damals unbezahlbar"
+    "exp": "Zwei flache Glasscheiben mit Mittelsteg waren in der Nachkriegszeit dramatisch billiger und stabiler zu fertigen als gewölbtes Glas."
   },
   {
     "cat": "porsche_allgemein",
@@ -298,7 +298,7 @@
       "Helmuth Bott"
     ],
     "explanation": "Piëch riskierte als junger Entwicklungschef Porsches finanzielle Existenz, um mit 25 gebauten 917-Rennwagen den Le-Mans-Gesamtsieg zu erzwingen.",
-    "exp": "Ferdinand Piëch"
+    "exp": "Piëch riskierte als junger Entwicklungschef Porsches finanzielle Existenz, um mit 25 gebauten 917-Rennwagen den Le-Mans-Gesamtsieg zu erzwingen."
   },
   {
     "cat": "porsche_allgemein",
@@ -311,7 +311,7 @@
       "Er drohte dem Aufsichtsrat mit seinem sofortigen Rücktritt"
     ],
     "explanation": "Der Vorstand wollte den 911 zugunsten des 928 sterben lassen. Schutz zog den Strich an der Wandtafel ins Unendliche – der Elfer lebte weiter.",
-    "exp": "Er verlängerte die 911-Linie mit Filzstift an der Wand"
+    "exp": "Der Vorstand wollte den 911 zugunsten des 928 sterben lassen. Schutz zog den Strich an der Wandtafel ins Unendliche – der Elfer lebte weiter."
   },
   {
     "cat": "porsche_allgemein",
@@ -324,7 +324,7 @@
       "Hydraulischer Stößelantrieb im Kurbelgehäuse"
     ],
     "explanation": "Der 'Fuhrmann-Motor' (Typ 547) war extrem komplex einzustellen (Dauer: mehrere Tage), aber drehzahlfest und der Schrecken der Konkurrenz.",
-    "exp": "Königswellen-Motor mit vier Nockenwellen"
+    "exp": "Der 'Fuhrmann-Motor' (Typ 547) war extrem komplex einzustellen (Dauer: mehrere Tage), aber drehzahlfest und der Schrecken der Konkurrenz."
   },
   {
     "cat": "porsche_allgemein",
@@ -337,7 +337,7 @@
       "Tour de France Auto"
     ],
     "explanation": "Hans Herrmann errang 1954 auf dem Porsche 550 Spyder Klassensiege bei der berüchtigten Panamericana-Fernfahrt quer durch Mexiko.",
-    "exp": "Carrera Panamericana"
+    "exp": "Hans Herrmann errang 1954 auf dem Porsche 550 Spyder Klassensiege bei der berüchtigten Panamericana-Fernfahrt quer durch Mexiko."
   },
   {
     "cat": "porsche_allgemein",
@@ -350,7 +350,7 @@
       "Eine selbsttragende Zinkblechkarosserie mit Heckflügel"
     ],
     "explanation": "Der GT1 '98 war der erste Porsche-Rennwagen mit reinem Kohlefaser-Monocoque und holte 1998 einen triumphalen Doppelsieg in Le Mans.",
-    "exp": "Reines Kohlefaser-Monocoque mit flacher Front und Diffusor"
+    "exp": "Der GT1 '98 war der erste Porsche-Rennwagen mit reinem Kohlefaser-Monocoque und holte 1998 einen triumphalen Doppelsieg in Le Mans."
   },
   {
     "cat": "porsche_allgemein",
@@ -363,7 +363,7 @@
       "Er wurde ausschließlich mit synthetischem E-Fuel betankt"
     ],
     "explanation": "Der 953 (oft 911 4x4 genannt) testete den Allradantrieb für den späteren 959 und bewies Neunelfer-Robustheit im tiefsten Dünensand.",
-    "exp": "Erster allradgetriebener 911 meisterte die Rallye Dakar"
+    "exp": "Der 953 (oft 911 4x4 genannt) testete den Allradantrieb für den späteren 959 und bewies Neunelfer-Robustheit im tiefsten Dünensand."
   },
   {
     "cat": "porsche_allgemein",
@@ -376,7 +376,7 @@
       "Designleiter Michael Mauer"
     ],
     "explanation": "Ferdinand Porsches Enkel F. A. 'Butzi' Porsche schuf die zeitlose Silhouette mit fließender Dachlinie, die bis heute jede 911-Generation prägt.",
-    "exp": "Ferdinand Alexander Porsche"
+    "exp": "Ferdinand Porsches Enkel F. A. 'Butzi' Porsche schuf die zeitlose Silhouette mit fließender Dachlinie, die bis heute jede 911-Generation prägt."
   },
   {
     "cat": "porsche_allgemein",
@@ -389,20 +389,20 @@
       "Das Team startete aus der letzten Reihe und gewann das Rennen"
     ],
     "explanation": "Auf den Plätzen 1 bis 8 landeten ausschließlich Porsche 956. Das Plakat zeigte humorvoll die Ergebnisliste mit dem Hinweis auf Platz 9.",
-    "exp": "Porsche belegte die ersten acht Plätze im Gesamtklassement"
+    "exp": "Auf den Plätzen 1 bis 8 landeten ausschließlich Porsche 956. Das Plakat zeigte humorvoll die Ergebnisliste mit dem Hinweis auf Platz 9."
   },
   {
     "cat": "porsche_allgemein",
     "diff": "pro",
     "q": "Was zeichnet das Porsche Doppelkupplungsgetriebe (PDK) historisch aus, bevor es 2008 in die 911-Serie einzog?",
     "a": [
-      "Erprobung in den 1980ern im Rennwagen für unterbrechungsfreies Schalten",
-      "Es war das erste stufenlose CVT-Getriebe in einem Supersportwagen",
-      "Es wurde speziell für den Einsatz im Winterbetrieb entwickelt",
-      "Es arbeitet rein hydraulisch ohne jede elektronische Steuerung"
+      "Erprobung in den 1980er-Jahren im 956/962-Rennwagen ohne Zugkraftverlust",
+      "Entwicklung für den Porsche 959 zur Bewältigung der Wüstenrallye Paris-Dakar",
+      "Gemeinschaftsprojekt mit Audi für die Rallye-Weltmeisterschaft der Gruppe B",
+      "Erfindung von Ferdinand Porsche für die ersten Elektrofahrzeuge von 1900"
     ],
     "explanation": "Bereits 1984 testeten Derek Bell und Jacky Ickx das PDK im Rennbetrieb; erst moderne Rechner machten es sanft genug für die Straße.",
-    "exp": "Erprobung in den 1980ern im Rennwagen für unterbrechungsfreies Schalten"
+    "exp": "Bereits 1984 testeten Derek Bell und Jacky Ickx das PDK im Rennbetrieb; erst moderne Rechner machten es sanft genug für die Straße."
   },
   {
     "cat": "porsche_allgemein",
@@ -415,7 +415,7 @@
       "Er verbrauchte weniger als zehn Liter Benzin auf der Rennstrecke"
     ],
     "explanation": "Marc Lieb steuerte den 887 PS starken Plug-in-Hybrid-Sportwagen in sensationellen 6:57 Minuten durch die 'Grüne Hölle'.",
-    "exp": "Er unterbot als Serienauto die Sieben-Minuten-Marke (6:57 min)"
+    "exp": "Marc Lieb steuerte den 887 PS starken Plug-in-Hybrid-Sportwagen in sensationellen 6:57 Minuten durch die 'Grüne Hölle'."
   },
   {
     "cat": "porsche_allgemein",
@@ -428,7 +428,7 @@
       "Valentin Schäffer"
     ],
     "explanation": "Hans Mezger konstruierte das luftgekühlte Kurbelgehäuse, das später als wassergekühlter Mezger-Block den 911 GT3 und GT2 unzerstörbar machte.",
-    "exp": "Hans Mezger"
+    "exp": "Hans Mezger konstruierte das luftgekühlte Kurbelgehäuse, das später als wassergekühlter Mezger-Block den 911 GT3 und GT2 unzerstörbar machte."
   },
   {
     "cat": "porsche_allgemein",
@@ -441,7 +441,7 @@
       "Letzter Neunelfer mit luftgekühltem Sechszylinder-Aggregat"
     ],
     "explanation": "Mit Kurbelwelle aus dem RSR-Rennwagen, 500 PS bei 8.250 U/min und limitiert auf 600 Exemplare gilt der 4.0 als heiliger Gral moderner Saugmotor-Elfer.",
-    "exp": "Größte Ausbaustufe des klassischen Mezger-Motors mit 500 PS"
+    "exp": "Mit Kurbelwelle aus dem RSR-Rennwagen, 500 PS bei 8.250 U/min und limitiert auf 600 Exemplare gilt der 4.0 als heiliger Gral moderner Saugmotor-Elfer."
   },
   {
     "cat": "porsche_allgemein",
@@ -454,7 +454,7 @@
       "Scheinwerfergläser aus kratzfestem Quarz"
     ],
     "explanation": "Ein Magnesiumdach spart wertvolle Kilos am höchsten Punkt des Autos und senkt dadurch den physikalischen Schwerpunkt für maximale Kurvengeschwindigkeit.",
-    "exp": "Ein Dach aus ultraleichtem Magnesium"
+    "exp": "Ein Magnesiumdach spart wertvolle Kilos am höchsten Punkt des Autos und senkt dadurch den physikalischen Schwerpunkt für maximale Kurvengeschwindigkeit."
   },
   {
     "cat": "porsche_allgemein",
@@ -467,7 +467,7 @@
       "Ein Rundenzeitmesser mit GPS-Verbindung zur Boxengasse"
     ],
     "explanation": "Bremse treten, Vollgas geben, Bremse lösen: Die Elektronik regelt Drehzahl und Kupplungsschlupf für die physikalisch schnellste Katapult-Beschleunigung.",
-    "exp": "Geregeltes Beschleunigen aus dem Stand mit optimalem Schlupf"
+    "exp": "Bremse treten, Vollgas geben, Bremse lösen: Die Elektronik regelt Drehzahl und Kupplungsschlupf für die physikalisch schnellste Katapult-Beschleunigung."
   },
   {
     "cat": "porsche_allgemein",
@@ -480,7 +480,7 @@
       "Das Sperren des Hinterachsdifferenzials bei Nässe"
     ],
     "explanation": "Sensoren erfassen Karosseriebewegungen; PASM schaltet in Millisekunden zwischen komfortablem Gleiten und straffem Rennstreckenmodus um.",
-    "exp": "Kontinuierliche Regelung der Dämpferkraft für jedes Rad"
+    "exp": "Sensoren erfassen Karosseriebewegungen; PASM schaltet in Millisekunden zwischen komfortablem Gleiten und straffem Rennstreckenmodus um."
   },
   {
     "cat": "porsche_allgemein",
@@ -493,7 +493,7 @@
       "Weil der Wagen im Regen besonders viel Gischt aufwirbelte"
     ],
     "explanation": "Norbert Singers aerodynamische Weiterentwicklung (Typ 935/78) mit 845 PS erinnerte mit seiner mächtigen weißen Flunderform an den weißen Wal aus Melvilles Roman.",
-    "exp": "Wegen gewaltiger Karosserieverbreiterung und langem Heck"
+    "exp": "Norbert Singers aerodynamische Weiterentwicklung (Typ 935/78) mit 845 PS erinnerte mit seiner mächtigen weißen Flunderform an den weißen Wal aus Melvilles Roman."
   },
   {
     "cat": "porsche_taycan",
@@ -506,7 +506,7 @@
       "Volt Carrera"
     ],
     "explanation": "Die Studie 'Mission E' begeisterte mit 800-Volt-Technik, Selbstmördertüren und dem Versprechen echter Porsche-Fahrdynamik unter Strom.",
-    "exp": "Mission E"
+    "exp": "Die Studie 'Mission E' begeisterte mit 800-Volt-Technik, Selbstmördertüren und dem Versprechen echter Porsche-Fahrdynamik unter Strom."
   },
   {
     "cat": "porsche_taycan",
@@ -519,7 +519,7 @@
       "48-Volt-Mildhybridtechnik"
     ],
     "explanation": "800 Volt halbieren bei gleicher Ladeleistung den Stromfluss. Das spart dicke Kupferkabel im Auto und ermöglicht Ladeleistungen von bis zu 320 kW.",
-    "exp": "800-Volt-Systemspannung"
+    "exp": "800 Volt halbieren bei gleicher Ladeleistung den Stromfluss. Das spart dicke Kupferkabel im Auto und ermöglicht Ladeleistungen von bis zu 320 kW."
   },
   {
     "cat": "porsche_taycan",
@@ -532,7 +532,7 @@
       "Ein Direktantrieb ohne jede Zahnraduntersetzung"
     ],
     "explanation": "Gang 1 sorgt für maximale Beschleunigung aus dem Stand; Gang 2 senkt die Drehzahl bei hohem Tempo und steigert Effizienz und Top-Speed.",
-    "exp": "Zwei-Gang-Schaltgetriebe an der Hinterachse"
+    "exp": "Gang 1 sorgt für maximale Beschleunigung aus dem Stand; Gang 2 senkt die Drehzahl bei hohem Tempo und steigert Effizienz und Top-Speed."
   },
   {
     "cat": "porsche_taycan",
@@ -545,7 +545,7 @@
       "Als Hommage an das erste Elektro-Patent von Porsche"
     ],
     "explanation": "'Turbo' steht bei Porsche seit 1974 für Spitzenleistung und Exklusivität, weshalb der Begriff auch in der E-Ära als Markenikone bleibt.",
-    "exp": "Traditionelle Nomenklatur für stärkste Leistungsstufen"
+    "exp": "'Turbo' steht bei Porsche seit 1974 für Spitzenleistung und Exklusivität, weshalb der Begriff auch in der E-Ära als Markenikone bleibt."
   },
   {
     "cat": "porsche_taycan",
@@ -558,7 +558,7 @@
       "Taycan Safari"
     ],
     "explanation": "Der Cross Turismo bietet mehr Kopffreiheit im Fond, eine große Heckklappe und ein Schotter-Fahrprogramm für unbefestigte Wege.",
-    "exp": "Taycan Cross Turismo"
+    "exp": "Der Cross Turismo bietet mehr Kopffreiheit im Fond, eine große Heckklappe und ein Schotter-Fahrprogramm für unbefestigte Wege."
   },
   {
     "cat": "porsche_taycan",
@@ -571,7 +571,7 @@
       "Im Motorenwerk Neckarsulm"
     ],
     "explanation": "Porsche investierte hunderte Millionen Euro in Zuffenhausen und baute fahrerlose Transportsysteme (FTS) im laufenden Altbetrieb auf.",
-    "exp": "In Stuttgart-Zuffenhausen"
+    "exp": "Porsche investierte hunderte Millionen Euro in Zuffenhausen und baute fahrerlose Transportsysteme (FTS) im laufenden Altbetrieb auf."
   },
   {
     "cat": "porsche_taycan",
@@ -584,7 +584,7 @@
       "Gummierte Schutzleisten an den Einstiegen"
     ],
     "explanation": "Weil der Akku im Boden normalerweise Platz raubt, sparte Porsche Batteriezellen im Fondfußraum aus. So sitzt man tief wie im 911.",
-    "exp": "Aussparungen im Akku für tiefere Fondfußräume"
+    "exp": "Weil der Akku im Boden normalerweise Platz raubt, sparte Porsche Batteriezellen im Fondfußraum aus. So sitzt man tief wie im 911."
   },
   {
     "cat": "porsche_taycan",
@@ -597,7 +597,7 @@
       "Bis zu 600 Kilowatt"
     ],
     "explanation": "Von anfangs 265–290 kW steigerte Porsche die Brems-Energierückgewinnung beim Modelljahr 2024 auf atemberaubende 400 kW.",
-    "exp": "Bis zu 400 Kilowatt"
+    "exp": "Von anfangs 265–290 kW steigerte Porsche die Brems-Energierückgewinnung beim Modelljahr 2024 auf atemberaubende 400 kW."
   },
   {
     "cat": "porsche_taycan",
@@ -610,7 +610,7 @@
       "Supraleitende Keramikdrähte im Vakuumverguss"
     ],
     "explanation": "Rechteckige Kupferstäbe füllen den Statorraum viel dichter aus (Kupferfüllfaktor bis 70 %) und leiten Wärme deutlich besser ab.",
-    "exp": "Hairpin-Wicklung mit rechteckigen Kupferstäben"
+    "exp": "Rechteckige Kupferstäbe füllen den Statorraum viel dichter aus (Kupferfüllfaktor bis 70 %) und leiten Wärme deutlich besser ab."
   },
   {
     "cat": "porsche_taycan",
@@ -623,7 +623,7 @@
       "Bis zu 450 kW"
     ],
     "explanation": "Dank verbesserter Zellchemie lädt der Taycan mit bis zu 320 kW und füllt den Akku von 10 auf 80 Prozent in nur 18 Minuten.",
-    "exp": "Bis zu 320 kW"
+    "exp": "Dank verbesserter Zellchemie lädt der Taycan mit bis zu 320 kW und füllt den Akku von 10 auf 80 Prozent in nur 18 Minuten."
   },
   {
     "cat": "porsche_taycan",
@@ -636,7 +636,7 @@
       "Um den Verschleiß der Reifen an der Antriebsachse zu mindern"
     ],
     "explanation": "Porsche-Philosophie: Der Fahrer soll segeln können. Das Bremspedal verzögert harmonisch: erst voll elektrisch, erst bei Notbremsung mit Scheibe.",
-    "exp": "Ermöglicht sportliches Segeln und Bremsen über das Pedal"
+    "exp": "Porsche-Philosophie: Der Fahrer soll segeln können. Das Bremspedal verzögert harmonisch: erst voll elektrisch, erst bei Notbremsung mit Scheibe."
   },
   {
     "cat": "porsche_taycan",
@@ -649,7 +649,7 @@
       "Taycan Avantgarde Kombi"
     ],
     "explanation": "Der Sport Turismo verzichtet auf die Radlaufleisten und Höherlegung des Cross Turismo und bietet puristische Sportwagenoptik mit Nutzwert.",
-    "exp": "Taycan Sport Turismo"
+    "exp": "Der Sport Turismo verzichtet auf die Radlaufleisten und Höherlegung des Cross Turismo und bietet puristische Sportwagenoptik mit Nutzwert."
   },
   {
     "cat": "porsche_taycan",
@@ -662,7 +662,7 @@
       "Knapp 1.350 PS (992 kW)"
     ],
     "explanation": "Der Turbo GT pulverisiert die 1.000-PS-Schallmauer: Mit 1.108 PS im Overboost beschleunigt er in nur 2,2 Sekunden auf 100 km/h.",
-    "exp": "Bis zu 1.108 PS (815 kW)"
+    "exp": "Der Turbo GT pulverisiert die 1.000-PS-Schallmauer: Mit 1.108 PS im Overboost beschleunigt er in nur 2,2 Sekunden auf 100 km/h."
   },
   {
     "cat": "porsche_taycan",
@@ -675,7 +675,7 @@
       "Ein Rollo-System mit wärmereflektierenden Silberfäden"
     ],
     "explanation": "Elektrische Spannung richtet Flüssigkristalle aus. Per Fingertipp wechselt das Glas blitzschnell von transparent zu blickdicht matt.",
-    "exp": "Sunshine-Control-Glasdach mit flüssigkristalliner Folie"
+    "exp": "Elektrische Spannung richtet Flüssigkristalle aus. Per Fingertipp wechselt das Glas blitzschnell von transparent zu blickdicht matt."
   },
   {
     "cat": "porsche_taycan",
@@ -688,7 +688,7 @@
       "Active Body Control"
     ],
     "explanation": "Active Ride gleicht Wank- und Nickbewegungen komplett aus: Der Wagen neigt sich in Kurven wie ein Motorrad und bleibt beim Bremsen völlig waagerecht.",
-    "exp": "Porsche Active Ride"
+    "exp": "Active Ride gleicht Wank- und Nickbewegungen komplett aus: Der Wagen neigt sich in Kurven wie ein Motorrad und bleibt beim Bremsen völlig waagerecht."
   },
   {
     "cat": "porsche_taycan",
@@ -701,7 +701,7 @@
       "Klassisches Silizium mit Aluminiumleitern"
     ],
     "explanation": "SiC-Halbleiter schalten höhere Ströme mit minimalen Schaltverlusten und ermöglichen die gewaltigen 1.108 PS des Turbo GT.",
-    "exp": "Siliziumkarbid (SiC) mit bis zu 900 Ampere"
+    "exp": "SiC-Halbleiter schalten höhere Ströme mit minimalen Schaltverlusten und ermöglichen die gewaltigen 1.108 PS des Turbo GT."
   },
   {
     "cat": "porsche_taycan",
@@ -714,7 +714,7 @@
       "7:42,30 Minuten auf der Nordschleife"
     ],
     "explanation": "Mit 7:07,55 Minuten distanzierte der Turbo GT das Tesla Model S Plaid um 18 Sekunden und kam bis auf zwei Sekunden an das Hypercar Rimac Nevera heran.",
-    "exp": "7:07,55 Minuten auf der Nordschleife"
+    "exp": "Mit 7:07,55 Minuten distanzierte der Turbo GT das Tesla Model S Plaid um 18 Sekunden und kam bis auf zwei Sekunden an das Hypercar Rimac Nevera heran."
   },
   {
     "cat": "porsche_taycan",
@@ -727,7 +727,7 @@
       "Einbau eines Stahlkäfigs und eines Nottanks im Kofferraum"
     ],
     "explanation": "Der Turbo GT mit Weissach-Paket wird zum kompromisslosen Zweisitzer: Carbon-Schalen, Leichtbau-Kofferraum und aerodynamischer Festflügel.",
-    "exp": "Entfall der Rückbank, Leichtbaufenster und Carbon-Ablage"
+    "exp": "Der Turbo GT mit Weissach-Paket wird zum kompromisslosen Zweisitzer: Carbon-Schalen, Leichtbau-Kofferraum und aerodynamischer Festflügel."
   },
   {
     "cat": "porsche_taycan",
@@ -740,7 +740,7 @@
       "Das Anblasen des Heckdiffusors mit heißer Kühlluft"
     ],
     "explanation": "Wie im Formel-E-Rennwagen Porsche 99X Electric liefert der Attack Mode auf Knopfdruck 10 Sekunden lang brutale Zusatz-Boost-Power.",
-    "exp": "Bis zu 120 kW Extra-Leistung per Lenkradpaddel"
+    "exp": "Wie im Formel-E-Rennwagen Porsche 99X Electric liefert der Attack Mode auf Knopfdruck 10 Sekunden lang brutale Zusatz-Boost-Power."
   },
   {
     "cat": "porsche_taycan",
@@ -753,7 +753,7 @@
       "MSB-Plattform"
     ],
     "explanation": "Die J1-Plattform wurde exklusiv von Porsche für extrem flache, sportliche Limousinen mit tiefer Sitzposition entwickelt und von Audi übernommen.",
-    "exp": "J1-Plattform"
+    "exp": "Die J1-Plattform wurde exklusiv von Porsche für extrem flache, sportliche Limousinen mit tiefer Sitzposition entwickelt und von Audi übernommen."
   },
   {
     "cat": "porsche_taycan",
@@ -766,7 +766,7 @@
       "Große Lüftungsklappen auf der vorderen Kofferraumhaube"
     ],
     "explanation": "Permanenterregte Synchronmotoren und das intelligente Kühlnetzwerk verhindern 'Thermal Throttling' – Reproduzierbarkeit ist Porsches Markenkern.",
-    "exp": "Thermomanagement mit drei getrennten Kühlkreisläufen"
+    "exp": "Permanenterregte Synchronmotoren und das intelligente Kühlnetzwerk verhindern 'Thermal Throttling' – Reproduzierbarkeit ist Porsches Markenkern."
   },
   {
     "cat": "porsche_taycan",
@@ -779,7 +779,7 @@
       "Das Absprengen der Motorhaube zum Schutz von Fußgängern"
     ],
     "explanation": "Lösen die Airbags aus, trennt die Pyro-Sicherung den Akku physisch ab, damit Rettungskräfte gefahrlos am Fahrzeug arbeiten können.",
-    "exp": "Sprengladungen trennen Hochvoltakku allpolig vom Netz"
+    "exp": "Lösen die Airbags aus, trennt die Pyro-Sicherung den Akku physisch ab, damit Rettungskräfte gefahrlos am Fahrzeug arbeiten können."
   },
   {
     "cat": "porsche_taycan",
@@ -792,7 +792,7 @@
       "cW 0,31"
     ],
     "explanation": "Mit cW 0,22, aktiven Kühlluftklappen und komplett verkleidetem Unterboden gleitet der Taycan windschnittig durch den Gegenwind.",
-    "exp": "cW 0,22"
+    "exp": "Mit cW 0,22, aktiven Kühlluftklappen und komplett verkleidetem Unterboden gleitet der Taycan windschnittig durch den Gegenwind."
   },
   {
     "cat": "porsche_taycan",
@@ -805,7 +805,7 @@
       "Der längste Sprung über eine künstliche Rampe im Gebäude"
     ],
     "explanation": "Auf poliertem Betonboden beschleunigte Keen in der Halle auf 165,1 km/h und bremste haarscharf vor der massiven Hallenwand zum Stillstand.",
-    "exp": "Schnellstes in geschlossenen Hallen gefahrenes Auto (165 km/h)"
+    "exp": "Auf poliertem Betonboden beschleunigte Keen in der Halle auf 165,1 km/h und bremste haarscharf vor der massiven Hallenwand zum Stillstand."
   },
   {
     "cat": "porsche_taycan",
@@ -818,20 +818,20 @@
       "Ein Pfeifton zur Warnung von Wildtieren auf Landstraßen"
     ],
     "explanation": "Porsche sampelte keine falschen Auspuffgeräusche, sondern nahm die realen Töne des Elektroantriebs auf dem Prüfstand auf und veredelte sie futuristisch.",
-    "exp": "Akustisch veredelter Klang der E-Motoren und Inverter"
+    "exp": "Porsche sampelte keine falschen Auspuffgeräusche, sondern nahm die realen Töne des Elektroantriebs auf dem Prüfstand auf und veredelte sie futuristisch."
   },
   {
     "cat": "porsche_taycan",
     "diff": "pro",
     "q": "Welche Gesamtkapazität (Brutto) fasst die neue 'Performance-Batterie Plus' im überarbeiteten Taycan (Modelljahr 2024)?",
     "a": [
-      "105 kWh brutto (rund 97 kWh netto)",
-      "85 kWh brutto (rund 75 kWh netto)",
-      "120 kWh brutto (rund 110 kWh netto)",
-      "93 kWh brutto (rund 83 kWh netto)"
+      "105 Kilowattstunden (kWh) brutto (rund 97 kWh nutzbare Nettokapazität)",
+      "85 Kilowattstunden (kWh) brutto (rund 79 kWh nutzbare Nettokapazität)",
+      "120 Kilowattstunden (kWh) brutto (rund 112 kWh nutzbare Nettokapazität)",
+      "93 Kilowattstunden (kWh) brutto (rund 83 kWh nutzbare Nettokapazität)"
     ],
     "explanation": "Porsche vergrößerte den Akku von 93,4 kWh auf 105 kWh brutto bei gleichzeitig geringerem Zellgewicht und höherer Energiedichte.",
-    "exp": "105 kWh brutto (rund 97 kWh netto)"
+    "exp": "Porsche vergrößerte den Akku von 93,4 kWh auf 105 kWh brutto bei gleichzeitig geringerem Zellgewicht und höherer Energiedichte."
   },
   {
     "cat": "porsche_taycan",
@@ -844,7 +844,7 @@
       "Um das Drehmoment an den Vorderrädern zu verdoppeln"
     ],
     "explanation": "Im Range-Modus wird der hintere Motor entkoppelt. Der hocheffiziente vordere Motor übernimmt das Gleiten mit minimalem Energieverbrauch.",
-    "exp": "Der Heckmotor dreht dank Freilauf stromlos mit"
+    "exp": "Im Range-Modus wird der hintere Motor entkoppelt. Der hocheffiziente vordere Motor übernimmt das Gleiten mit minimalem Energieverbrauch."
   },
   {
     "cat": "porsche_taycan",
@@ -857,7 +857,7 @@
       "Das Lenkrad fährt komplett in das Armaturenbrett ein"
     ],
     "explanation": "Öffnet man die Tür, pumpt das Active-Ride-Fahrwerk die Karosserie blitzartig um 5,5 cm nach oben – Sportwagentiefe beim Fahren, Komfort beim Einsteigen.",
-    "exp": "Fahrzeug hebt sich um bis zu 55 mm für bequemen Einstieg an"
+    "exp": "Öffnet man die Tür, pumpt das Active-Ride-Fahrwerk die Karosserie blitzartig um 5,5 cm nach oben – Sportwagentiefe beim Fahren, Komfort beim Einsteigen."
   },
   {
     "cat": "porsche_taycan",
@@ -870,7 +870,7 @@
       "Öffnen durch Drücken auf das vordere Porsche-Wappen"
     ],
     "explanation": "Ein Wisch mit dem Finger unterhalb der Finne genügt: Die Klappe gleitet elegant ins Wageninnere und schließt bei Kälte selbst mit Eisbrecherfunktion.",
-    "exp": "Berührungsloses Öffnen über Gestensensor an der Finne"
+    "exp": "Ein Wisch mit dem Finger unterhalb der Finne genügt: Die Klappe gleitet elegant ins Wageninnere und schließt bei Kälte selbst mit Eisbrecherfunktion."
   },
   {
     "cat": "porsche_taycan",
@@ -883,7 +883,7 @@
       "Sechs kleine Displays an den Lüftungsdüsen"
     ],
     "explanation": "Vom gebogenen 16,8-Zoll-Instrumenten-Display über den 10,9-Zoll-Infotainment-Screen bis zum separaten Passenger-Display bietet der Taycan eine digitale Glaslandschaft.",
-    "exp": "Bis zu vier Bildschirme im Cockpit"
+    "exp": "Vom gebogenen 16,8-Zoll-Instrumenten-Display über den 10,9-Zoll-Infotainment-Screen bis zum separaten Passenger-Display bietet der Taycan eine digitale Glaslandschaft."
   },
   {
     "cat": "porsche_taycan",
@@ -896,7 +896,7 @@
       "Der längste Drift mit Anhänger auf trockenem Asphalt"
     ],
     "explanation": "Porsche-Instrukteur Dennis Retera driftete mit einem heckgetriebenen Taycan 55 Minuten lang quer über den bewässerten Kreisbogen.",
-    "exp": "Längster Dauerslalom-Drift über 42,171 Kilometer"
+    "exp": "Porsche-Instrukteur Dennis Retera driftete mit einem heckgetriebenen Taycan 55 Minuten lang quer über den bewässerten Kreisbogen."
   },
   {
     "cat": "porsche_taycan",
@@ -909,7 +909,7 @@
       "Speist Strom aus der Batterie ins Hausnetz zurück"
     ],
     "explanation": "Während viele E-Autos nur mit 11 kW AC laden, verdoppelt der 22-kW-Lader die Ladegeschwindigkeit an privaten oder öffentlichen Drehstrom-Stationen.",
-    "exp": "Halbiert Ladezeit an 22-kW-Wallbox auf fünf Stunden"
+    "exp": "Während viele E-Autos nur mit 11 kW AC laden, verdoppelt der 22-kW-Lader die Ladegeschwindigkeit an privaten oder öffentlichen Drehstrom-Stationen."
   },
   {
     "cat": "porsche_taycan",
@@ -922,7 +922,7 @@
       "Drücken die Frontpartie bei Topspeed auf den Asphalt"
     ],
     "explanation": "Die Lufteinlässe wirken wie ein unsichtbarer Luftvorhang über den vorderen Felgen und senken Verwirbelungen und Luftwiderstand spürbar.",
-    "exp": "Leiten Fahrtwind durch Öffnungen an Vorderrädern vorbei"
+    "exp": "Die Lufteinlässe wirken wie ein unsichtbarer Luftvorhang über den vorderen Felgen und senken Verwirbelungen und Luftwiderstand spürbar."
   },
   {
     "cat": "porsche_taycan",
@@ -935,7 +935,7 @@
       "Fiberglas-Verbundwerkstoffe mit Holzverstärkungen"
     ],
     "explanation": "Die Außenhaut besteht fast vollständig aus Aluminium; warmumgeformte Stähle in den B-Säulen garantieren maximale Crashsicherheit für den Akkukasten.",
-    "exp": "Aluminium, hochfester Stahl und Tiefzieh-Gussknoten"
+    "exp": "Die Außenhaut besteht fast vollständig aus Aluminium; warmumgeformte Stähle in den B-Säulen garantieren maximale Crashsicherheit für den Akkukasten."
   },
   {
     "cat": "porsche_taycan",
@@ -948,7 +948,7 @@
       "Verzögerung erfolgt ausschließlich über die vorderen Bremsen"
     ],
     "explanation": "Brake Blending in Perfektion: Der Fahrer spürt nicht, ob der E-Motor oder die Sechskolben-Zange zupackt – das Pedalgefühl bleibt stets exakt wie im GT3.",
-    "exp": "Konstanter Druckpunkt durch Verblenden von Rekuperation"
+    "exp": "Brake Blending in Perfektion: Der Fahrer spürt nicht, ob der E-Motor oder die Sechskolben-Zange zupackt – das Pedalgefühl bleibt stets exakt wie im GT3."
   },
   {
     "cat": "porsche_taycan",
@@ -961,7 +961,7 @@
       "Ausschließlich virtuelle Simulationen auf Großrechnern"
     ],
     "explanation": "Extremkälte am Polarkreis, glühende Wüstenhitze am Persischen Golf und 24-Stunden-Dauertests in Nardò stellten Zuverlässigkeit sicher.",
-    "exp": "Über 6 Millionen Testkilometer in 30 Ländern"
+    "exp": "Extremkälte am Polarkreis, glühende Wüstenhitze am Persischen Golf und 24-Stunden-Dauertests in Nardò stellten Zuverlässigkeit sicher."
   },
   {
     "cat": "porsche_taycan",
@@ -974,14 +974,18 @@
       "Erster Platz beim Zuverlässigkeitsindex für Kleinwagen"
     ],
     "explanation": "Eine internationale Jury von Automobiljournalisten kürte den Taycan zum besten Luxus- und gleichzeitig besten Performance-Auto der Welt.",
-    "exp": "Doppelsieg als World Luxury Car und Performance Car"
+    "exp": "Eine internationale Jury von Automobiljournalisten kürte den Taycan zum besten Luxus- und gleichzeitig besten Performance-Auto der Welt."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("porsche", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["porsche"] = DATA;
+    window.ARCADE_QUIZ_BANKS['porsche'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('porsche', DATA);
+    }
   }
 })();
