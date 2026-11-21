@@ -183,7 +183,7 @@ export class ZBScene {
       const sx = side * (BRIDGE_HALF_W + 0.92);
 
       const bar = new THREE.Mesh(barrierGeo, barrierMat);
-      bar.position.set(-side * 0.46, 0.49, 0);
+      bar.position.set(side * (BRIDGE_HALF_W + 0.42), 0.49, 0);
       bar.castShadow = true;
       bar.receiveShadow = true;
       slotGrp.add(bar);
