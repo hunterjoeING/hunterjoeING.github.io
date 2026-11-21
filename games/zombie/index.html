@@ -193,50 +193,6 @@
       touch-action: none;
     }
 
-    /* Responsive Touch Virtual Steering Stick */
-    .zb-stick-wrap {
-      display: none;
-      position: absolute;
-      left: 50%;
-      bottom: 14px;
-      transform: translateX(-50%);
-      width: 156px;
-      height: 46px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.48);
-      border: 1px solid rgba(125, 211, 252, 0.42);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      align-items: center;
-      justify-content: center;
-      z-index: 12;
-      touch-action: none;
-    }
-    @media (pointer: coarse), (max-width: 760px) {
-      .zb-stick-wrap {
-        display: flex;
-      }
-    }
-    .zb-stick-track {
-      position: absolute;
-      inset: 50% 18px auto;
-      height: 2px;
-      transform: translateY(-50%);
-      background: rgba(148, 163, 184, 0.4);
-      border-radius: 2px;
-      pointer-events: none;
-    }
-    .zb-stick-knob {
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      border: 2px solid #e0f2fe;
-      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.55);
-      pointer-events: none;
-      will-change: transform;
-    }
-
     .overlay-card {
       position: absolute;
       inset: 0;
@@ -317,11 +273,6 @@
     <div class="stage-wrap" id="stage">
       <canvas id="zCanvas"></canvas>
 
-      <div id="zb-stick-wrap" class="zb-stick-wrap" aria-label="Virtueller Steuer-Stick">
-        <div class="zb-stick-track"></div>
-        <div id="zb-stick-knob" class="zb-stick-knob"></div>
-      </div>
-
       <div id="overlay" class="overlay-card">
         <div class="modal-inner">
           <div style="font-size:40px; margin-bottom:6px;" id="ov-emoji">🧟🔫</div>
@@ -329,7 +280,7 @@
           <p id="ov-desc">
             Dein Trupp schießt automatisch nach vorn! Steuere <strong>links &amp; rechts</strong> über die 3D-Brücke, lade schießbare Energietore mit Dauerfeuer hoch und weiche gepanzerten <strong>🔒-Fallen</strong> &amp; schnellen Flanken-Horden aus!<br><br>
             <strong>Steuerung:</strong><br>
-            Finger / Maus ziehen, Touch-Stick <b>oder</b> <b>← / → / A / D</b>
+            Finger / Maus direkt ziehen <b>oder</b> <b>← / → / A / D</b>
           </p>
           <button id="ov-btn" class="primary-btn" onclick="startGame()">🔥 Welle starten!</button>
         </div>
