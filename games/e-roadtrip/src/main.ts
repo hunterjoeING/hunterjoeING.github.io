@@ -11,10 +11,17 @@ import {
 } from './types';
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
-import { CHARGERS, getCityById, getEdgeById } from './data/europeMap';
+import { CHARGERS, getEdgeById } from './data/europeMap';
 import { getEventById, getWifeDialogueById } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
-import { createDefaultPlan, evaluateTripPlan, findNearestAvailableCharger } from './sim/RoutePlanner';
+import {
+  createDefaultPlan,
+  evaluateTripPlan,
+  findNearestAvailableCharger,
+  getActiveRouteLegs,
+  predictLiveTripSoc,
+  switchRouteInPlan
+} from './sim/RoutePlanner';
 import { evaluateRun } from './sim/ScoringEngine';
 import { getResaleValue, loadCampaignSave, resetCampaignSave, saveCampaignState } from './sim/SaveState';
 import { BootScene } from './phaser/BootScene';
@@ -81,6 +88,10 @@ class ERoadtripController {
         this.toggleChargerInPlan(station);
       },
 
+      onMapSelectRoute: (routeId: string) => {
+        this.selectRoute(routeId);
+      },
+
       onAutobahnHudTick: (run: RunState) => {
         this.drivingHUD.update(this.level, run, this.bridge.timeScale);
       },
@@ -119,6 +130,9 @@ class ERoadtripController {
         this.syncMapScene();
         this.renderPlanning();
       },
+      onSelectRoute: (routeId: string) => {
+        this.selectRoute(routeId);
+      },
       onStartTrip: () => this.startTrip(),
       onSelectLevel: (levelId: string) => {
         this.level = getLevelById(levelId);
@@ -128,6 +142,14 @@ class ERoadtripController {
         this.bridge.plan = this.plan;
         this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
         this.renderPlanning();
+      },
+      onZoomIn: () => {
+        const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+        s?.zoomBy(1.25);
+      },
+      onZoomOut: () => {
+        const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+        s?.zoomBy(0.8);
       },
       onZoomRoute: () => {
         const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
@@ -217,6 +239,27 @@ class ERoadtripController {
       this.resultsUI.hide();
       this.returnToPlanning(this.level.id);
     });
+
+    document.getElementById('map-btn-zoom-in')?.addEventListener('click', () => {
+      SoundFX.click();
+      const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+      s?.zoomBy(1.28);
+    });
+    document.getElementById('map-btn-zoom-out')?.addEventListener('click', () => {
+      SoundFX.click();
+      const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+      s?.zoomBy(0.78);
+    });
+    document.getElementById('map-btn-fit')?.addEventListener('click', () => {
+      SoundFX.click();
+      const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+      s?.fitCameraToRoute();
+    });
+    document.getElementById('map-btn-europe')?.addEventListener('click', () => {
+      SoundFX.click();
+      const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+      s?.zoomFullEurope();
+    });
   }
 
   private bootPhaser(): void {
@@ -228,7 +271,7 @@ class ERoadtripController {
       height: parent.clientHeight || 520,
       backgroundColor: '#0c1e38',
       pixelArt: true,
-      roundPixels: true,
+      roundPixels: false,
       physics: {
         default: 'arcade',
         arcade: {
@@ -258,17 +301,34 @@ class ERoadtripController {
     }
   }
 
-  private toggleChargerInPlan(station: ChargerStation): void {
-    const legIdx = this.level.routeLegs.findIndex(l => l.edgeId === station.edgeId);
-    if (legIdx < 0) return;
+  private selectRoute(routeId: string): void {
+    switchRouteInPlan(this.level, this.plan, routeId);
+    this.bridge.plan = this.plan;
+    this.syncMapScene();
+    const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+    mapScene?.fitCameraToRoute();
+    this.renderPlanning();
+  }
 
-    const existingOut = this.plan.plannedStops.findIndex(
-      s => s.chargerId === station.id && s.legIndex === legIdx
+  private toggleChargerInPlan(station: ChargerStation): void {
+    const activeLegs = getActiveRouteLegs(this.level, this.plan);
+    const matchingLegs = activeLegs
+      .map((l, idx) => ({ l, idx }))
+      .filter(x => x.l.edgeId === station.edgeId);
+    if (matchingLegs.length === 0) return;
+
+    // Prefer toggling existing stop first, otherwise add on outbound leg
+    const existingStop = this.plan.plannedStops.findIndex(
+      s => s.chargerId === station.id && matchingLegs.some(m => m.idx === s.legIndex)
     );
-    if (existingOut >= 0) {
-      this.plan.plannedStops.splice(existingOut, 1);
+    if (existingStop >= 0) {
+      this.plan.plannedStops.splice(existingStop, 1);
     } else {
-      this.plan.plannedStops.push({ chargerId: station.id, legIndex: legIdx, targetSocPct: 80 });
+      this.plan.plannedStops.push({
+        chargerId: station.id,
+        legIndex: matchingLegs[0].idx,
+        targetSocPct: 80
+      });
     }
     this.renderPlanning();
   }
@@ -404,7 +464,7 @@ class ERoadtripController {
         const arriveSoc = run.socPct;
         this.bridge.paused = true;
 
-        this.eventModal.showChargingSession(station, run, targetSoc, (addedKwh, mins, cost, newSoc) => {
+        this.eventModal.showChargingSession(station, this.level, run, targetSoc, (addedKwh, mins, cost, newSoc) => {
           run.completedStopIds.push(station.id);
           run.socPct = newSoc;
           run.elapsedMinutes += mins;
@@ -512,10 +572,12 @@ class ERoadtripController {
     }
 
     if (choice.insertNearestCharger) {
-      const leg = this.level.routeLegs[run.currentLegIndex];
+      const legs = getActiveRouteLegs(this.level, run.plan);
+      const leg = legs[run.currentLegIndex];
       const edge = getEdgeById(leg.edgeId);
       const nearest = findNearestAvailableCharger(
         this.level,
+        run.plan,
         run.currentLegIndex,
         run.legProgressKm / edge.distanceKm,
         run.completedStopIds
@@ -582,10 +644,12 @@ class ERoadtripController {
       run,
       action => {
         if (action === 'insert_stop') {
-          const leg = this.level.routeLegs[run.currentLegIndex];
+          const legs = getActiveRouteLegs(this.level, run.plan);
+          const leg = legs[run.currentLegIndex];
           const edge = getEdgeById(leg.edgeId);
           const nearest = findNearestAvailableCharger(
             this.level,
+            run.plan,
             run.currentLegIndex,
             run.legProgressKm / edge.distanceKm,
             run.completedStopIds
@@ -678,10 +742,12 @@ class ERoadtripController {
   private forceEarlierChargeStop(): void {
     const run = this.bridge.runState;
     if (!run) return;
-    const leg = this.level.routeLegs[run.currentLegIndex];
+    const legs = getActiveRouteLegs(this.level, run.plan);
+    const leg = legs[run.currentLegIndex];
     const edge = getEdgeById(leg.edgeId);
     const nearest = findNearestAvailableCharger(
       this.level,
+      run.plan,
       run.currentLegIndex,
       run.legProgressKm / edge.distanceKm,
       run.completedStopIds
@@ -713,15 +779,19 @@ class ERoadtripController {
     const run = this.bridge.runState;
     if (!run) return;
     this.bridge.paused = true;
+    const legs = getActiveRouteLegs(this.level, run.plan);
     const forecast = evaluateTripPlan(this.level, run.plan);
+    const livePred = predictLiveTripSoc(this.level, run);
     const upcoming = run.plan.plannedStops
       .filter(s => s.legIndex >= run.currentLegIndex && !run.completedStopIds.includes(s.chargerId))
       .map(s => CHARGERS.find(c => c.id === s.chargerId)?.name || s.chargerId);
 
     const html = `
-      <p><b>Aktuelle Etappe:</b> ${run.currentLegIndex + 1} / ${this.level.routeLegs.length} · <b>Akku:</b> ${Math.round(run.socPct)}%</p>
+      <p><b>Aktuelle Etappe:</b> ${run.currentLegIndex + 1} / ${legs.length} · <b>Akku:</b> ${Math.round(run.socPct)}%</p>
+      <p><b>🎯 Prognose nächstes Ziel (${livePred.nextStopName}, ${livePred.distanceToNextKm} km):</b> <strong>${livePred.predictedArrivalNextSocPct}% SoC</strong></p>
+      <p><b>🏁 Prognose Endziel:</b> <strong>${livePred.predictedFinalSocPct}% SoC</strong></p>
       <p><b>Geplante verbleibende Ladestopps:</b> ${upcoming.length > 0 ? upcoming.join(', ') : 'Keine mehr bis zum Ziel'}</p>
-      <p><b>Prognose Restverbrauch:</b> ~${forecast.avgConsumptionKwh100} kWh/100km</p>
+      <p><b>Prognose Schnittverbrauch:</b> ~${forecast.avgConsumptionKwh100} kWh/100km</p>
     `;
     this.eventModal.showMapPeek(html, () => {
       this.bridge.paused = false;
