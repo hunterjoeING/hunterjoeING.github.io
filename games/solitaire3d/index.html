@@ -117,42 +117,33 @@
       touch-action: none;
     }
 
-    /* Slim Dark-Glassmorphism HUD */
+    /* Dedicated Non-Overlapping Dark-Glass HUD Bar */
     .sol3d-hud-wrap {
-      position: absolute;
-      top: 6px;
-      left: 50%;
-      transform: translateX(-50%);
+      position: relative;
       z-index: 25;
-      width: min(980px, calc(100% - 16px));
+      width: 100%;
+      padding: 5px 10px 4px;
+      background: #07140f;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      pointer-events: none;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     .sol3d-hud {
-      pointer-events: auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 5px 8px;
-      width: 100%;
-      padding: 5px 10px;
-      border-radius: 13px;
-      background: rgba(10, 18, 15, 0.80);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.44);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      width: min(1140px, 100%);
+      padding: 4px 10px;
+      border-radius: 11px;
+      background: rgba(16, 28, 22, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       color: #f3f5f2;
       font-family: var(--font-ui);
       font-size: 12px;
-    }
-
-    html[data-theme="light"] .sol3d-hud {
-      background: rgba(14, 24, 20, 0.84);
     }
 
     .hud-stats {
@@ -240,9 +231,11 @@
 
     /* Settings & New Game Popover */
     .sol3d-popover {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      z-index: 29;
       pointer-events: auto;
-      align-self: flex-end;
-      margin-top: 8px;
       width: min(300px, calc(100vw - 24px));
       padding: 14px;
       border-radius: 15px;
@@ -404,16 +397,15 @@
 
     @media (max-width: 720px) {
       .sol3d-hud-wrap {
-        top: 5px;
-        width: calc(100% - 10px);
+        padding: 4px 6px;
       }
       .sol3d-hud {
-        padding: 5px 7px;
+        padding: 4px 6px;
         gap: 4px;
-        border-radius: 11px;
+        border-radius: 9px;
       }
       .hud-pill {
-        padding: 2px 7px;
+        padding: 2px 6px;
         font-size: 10.5px;
       }
       .hud-btn {
@@ -438,28 +430,29 @@
     </div>
   </header>
 
+  <div class="sol3d-hud-wrap">
+    <div class="sol3d-hud">
+      <div class="hud-stats">
+        <span class="hud-pill">⏱ <strong id="hud-time">00:00</strong></span>
+        <span class="hud-pill">👣 <strong id="hud-moves">0</strong></span>
+        <span class="hud-pill">⭐ <strong id="hud-score">500</strong></span>
+        <span class="hud-pill" title="Abgeräumte Sequenzen (K–A)">👑 <strong id="hud-seq">0/8</strong></span>
+      </div>
+
+      <div class="hud-controls">
+        <button type="button" id="btn-undo" class="hud-btn" title="Letzten Zug rückgängig (Strg+Z)">↩️ Zurück</button>
+        <button type="button" id="btn-hint" class="hud-btn" title="Sinnvollen Zug anzeigen (H)">💡 Tipp</button>
+        <button type="button" id="btn-deal" class="hud-btn" title="10 Karten aus dem Stock austeilen (D / Leertaste)">🃏 Geben <span class="draw-badge" id="hud-deal-badge">5</span></button>
+        <button type="button" id="btn-cam" class="hud-btn" title="Kamerawinkel wechseln">📐 3D</button>
+        <button type="button" id="btn-menu" class="hud-btn" title="Neues Spiel &amp; Regeln">⚙️ Spiel</button>
+      </div>
+    </div>
+  </div>
+
   <main class="sol3d-viewport" id="sol3d-stage">
     <canvas id="sol3d-canvas" aria-label="3D Spider Solitär Spieltisch"></canvas>
 
-    <div class="sol3d-hud-wrap">
-      <div class="sol3d-hud">
-        <div class="hud-stats">
-          <span class="hud-pill">⏱ <strong id="hud-time">00:00</strong></span>
-          <span class="hud-pill">👣 <strong id="hud-moves">0</strong></span>
-          <span class="hud-pill">⭐ <strong id="hud-score">500</strong></span>
-          <span class="hud-pill" title="Abgeräumte Sequenzen (K–A)">👑 <strong id="hud-seq">0/8</strong></span>
-        </div>
-
-        <div class="hud-controls">
-          <button type="button" id="btn-undo" class="hud-btn" title="Letzten Zug rückgängig (Strg+Z)">↩️ Zurück</button>
-          <button type="button" id="btn-hint" class="hud-btn" title="Sinnvollen Zug anzeigen (H)">💡 Tipp</button>
-          <button type="button" id="btn-deal" class="hud-btn" title="10 Karten aus dem Stock austeilen (D / Leertaste)">🃏 Geben <span class="draw-badge" id="hud-deal-badge">5</span></button>
-          <button type="button" id="btn-cam" class="hud-btn" title="Kamerawinkel wechseln">📐 3D</button>
-          <button type="button" id="btn-menu" class="hud-btn" title="Neues Spiel &amp; Regeln">⚙️ Spiel</button>
-        </div>
-      </div>
-
-      <div id="sol3d-popover" class="sol3d-popover hidden" role="dialog" aria-label="Spiel-Menü">
+    <div id="sol3d-popover" class="sol3d-popover hidden" role="dialog" aria-label="Spiel-Menü">
         <div>
           <div class="pop-section-label">Partie</div>
           <div class="pop-btn-col">
@@ -478,7 +471,6 @@
             <li>Vollständige K–A-Folgen einer Farbe werden automatisch abgeräumt (8× zum Sieg).</li>
           </ul>
         </div>
-      </div>
     </div>
 
     <div id="sol3d-toast" class="sol3d-toast hidden" role="status" aria-live="polite"></div>
