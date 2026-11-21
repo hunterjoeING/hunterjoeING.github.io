@@ -28,6 +28,7 @@ export class AutobahnScene extends Phaser.Scene {
   private gantryObj?: Phaser.GameObjects.Container;
   private hudTickAccum = 0;
   private eventCooldownSec = 4;
+  private resizeHandler?: (gameSize: Phaser.Structs.Size) => void;
 
   constructor() {
     super({ key: 'AutobahnScene' });
@@ -95,7 +96,8 @@ export class AutobahnScene extends Phaser.Scene {
 
     this.createGantrySign(w);
 
-    this.scale.on('resize', (gameSize: Phaser.Structs.Size) => {
+    this.resizeHandler = (gameSize: Phaser.Structs.Size) => {
+      if (!this.scene.isActive()) return;
       this.computeLaneGeometry(gameSize.width);
       this.drawRoadBackdrop(gameSize.width, gameSize.height);
       if (this.nightOverlay) {
@@ -104,6 +106,14 @@ export class AutobahnScene extends Phaser.Scene {
       }
       if (this.playerCar) {
         this.playerCar.y = gameSize.height * 0.72;
+      }
+    };
+    this.scale.on('resize', this.resizeHandler);
+
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      if (this.resizeHandler) {
+        this.scale.off('resize', this.resizeHandler);
+        this.resizeHandler = undefined;
       }
     });
   }
