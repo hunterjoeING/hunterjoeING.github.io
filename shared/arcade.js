@@ -173,6 +173,7 @@
     { id: 'quiz_bitcoin', title: 'Bitcoin Mega-Quiz', icon: '₿', lowerIsBetter: false },
     { id: 'quiz_porsche', title: 'Porsche & Taycan Quiz', icon: '🏎️', lowerIsBetter: false },
     { id: 'quiz_md11', title: 'McDonnell Douglas MD-11 Quiz', icon: '🛫', lowerIsBetter: false },
+    { id: 'quiz_naildesign', title: 'Nageldesign Quiz · Finger- & Fußnägel', icon: '💅', lowerIsBetter: false },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -219,6 +220,7 @@
       if (p.includes('/games/quiz-bitcoin')) return 'quiz_bitcoin';
       if (p.includes('/games/quiz-porsche')) return 'quiz_porsche';
       if (p.includes('/games/quiz-md11')) return 'quiz_md11';
+      if (p.includes('/games/quiz-naildesign')) return 'quiz_naildesign';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
@@ -834,6 +836,7 @@
     { id: 'quiz_bitcoin', title: 'Bitcoin Mega-Quiz', icon: '₿' },
     { id: 'quiz_porsche', title: 'Porsche & Taycan Quiz', icon: '🏎️' },
     { id: 'quiz_md11', title: 'McDonnell Douglas MD-11 Quiz', icon: '🛫' },
+    { id: 'quiz_naildesign', title: 'Nageldesign Quiz · Finger- & Fußnägel', icon: '💅' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },
