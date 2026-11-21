@@ -44,6 +44,7 @@
     { id: 'quiz_napoli72h', icon: '🍕', title: 'Napoli72H Pizza-Quiz (Aachen)', meta: '75 Fr.', path: 'games/quiz-napoli72h/index.html', unlisted: true },
     { id: 'quiz_porsche', icon: '🏎️', title: 'Porsche & Taycan Quiz', meta: '75 Fr.', path: 'games/quiz-porsche/index.html' },
     { id: 'quiz_md11', icon: '🛫', title: 'McDonnell Douglas MD-11', meta: '75 Fr.', path: 'games/quiz-md11/index.html' },
+    { id: 'quiz_naildesign', icon: '💅', title: 'Nageldesign (Finger & Fuß)', meta: '75 Fr.', path: 'games/quiz-naildesign/index.html' },
     { id: 'quiz_ai', icon: '🤖', title: 'KI: Entstehung & Technik', meta: '75 Fr.', path: 'games/quiz-ai/index.html' },
     { id: 'quiz_movies', icon: '🎬', title: 'Kino & Filme (o. RomComs)', meta: '75 Fr.', path: 'games/quiz-movies/index.html' },
     { id: 'quiz_egypt', icon: '🏺', title: 'Ägyptische Geschichte', meta: '75 Fr.', path: 'games/quiz-egypt/index.html' },
@@ -217,7 +218,7 @@
     const groups = [
       { label: '🎮 Games (10)', items: GAMES_NAV },
       { label: '🌟 Flagship-Quizzes & Mega-Mix (5)', items: QUIZZES_1000_NAV },
-      { label: '🧠 Themen-Quizzes (10)', items: QUIZZES_THEMEN_NAV },
+      { label: '🧠 Themen-Quizzes (11)', items: QUIZZES_THEMEN_NAV },
       { label: '📷 Foto- & Exkursions-Quizzes (5)', items: QUIZZES_FOTO_NAV }
     ];
     if (isAdmin) {
