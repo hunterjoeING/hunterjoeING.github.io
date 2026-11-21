@@ -309,7 +309,7 @@ function fireVolley() {
     : (spreadLevel === 2 ? [-0.85, 0, 0.85] : [-1.55, -0.78, 0, 0.78, 1.55]);
   const volleyMult = spreadLevel === 1 ? 1.0 : (spreadLevel === 2 ? 1.35 : 1.70);
   const pelletDmg = (dmgPerBullet * volleyMult) / spreadAngles.length;
-  const span = Math.min(0.32, (streams - 1) * 0.055);
+  const span = Math.min(0.18, (streams - 1) * 0.038);
   for (let i = 0; i < streams; i++) {
     const uOff = streams === 1 ? 0 : -span + (2 * span * i) / (streams - 1);
     for (const du of spreadAngles) {
