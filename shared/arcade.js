@@ -147,6 +147,7 @@
   const NAME_KEY = 'arcade_player_name';
 
   const GAME_CATALOG = [
+    { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️', lowerIsBetter: false },
     { id: 'eroadtrip', title: 'E-Roadtrip', icon: '⚡', lowerIsBetter: false },
     { id: 'minesweeper', title: '3D Minesweeper – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online)', icon: '💣', lowerIsBetter: true },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊', lowerIsBetter: true },
@@ -189,6 +190,7 @@
   function detectGameId() {
     try {
       const p = (window.location.pathname || '').toLowerCase();
+      if (p.includes('/games/podracer')) return 'podracer';
       if (p.includes('/games/e-roadtrip')) return 'eroadtrip';
       if (p.includes('/games/2048')) return 'p2048';
       if (p.includes('/games/roadster')) return 'roadster';
@@ -813,6 +815,7 @@
   const FEEDBACK_TARGETS = [
     { id: 'all', title: '✨ Alle Module & Allgemein', icon: '🌐' },
     { id: 'general', title: 'Allgemein / Ganze Website', icon: '🏠' },
+    { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️' },
     { id: 'eroadtrip', title: 'E-Roadtrip (Aachen–Hannover)', icon: '⚡' },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊' },
     { id: 'minesweeper', title: 'Minesweeper 3D – Tech Demo KI-Agent', icon: '💣' },
