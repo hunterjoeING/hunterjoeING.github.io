@@ -19,6 +19,7 @@
   }
 
   const GAMES_NAV = [
+    { id: 'podracer', icon: '🏎️', title: 'Canyon Podracer 3D', meta: 'Three.js', path: 'games/podracer/index.html' },
     { id: 'eroadtrip', icon: '⚡', title: 'E-Roadtrip', meta: 'Phaser 3', path: 'games/e-roadtrip/index.html' },
     { id: 'minesweeper', icon: '💣', title: '3D Minesweeper', meta: 'Tech Demo', path: 'games/minesweeper/index.html' },
     { id: 'minesweeper_3d_prompt_test', icon: '🧊', title: 'Minesweeper 3D Prompt', meta: '3×3–5×5', path: 'games/minesweeper-3d-prompt-test/index.html' },
