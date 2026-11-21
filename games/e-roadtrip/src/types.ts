@@ -69,16 +69,37 @@ export type LandmarkKind =
   | 'ferry'
   | 'nordkapp'
   | 'highlands'
-  | 'colosseum';
+  | 'colosseum'
+  | 'frankfurt_skyline'
+  | 'hamburger_michel'
+  | 'munich_frauenkirche'
+  | 'atomium'
+  | 'windmills_nl'
+  | 'big_ben';
+
+export type CountryCode =
+  | 'DE'
+  | 'NL'
+  | 'BE'
+  | 'FR'
+  | 'CH'
+  | 'AT'
+  | 'IT'
+  | 'DK'
+  | 'NO'
+  | 'SE'
+  | 'LU'
+  | 'UK';
 
 export interface CityNode {
   id: string;
   name: string;
-  country: 'DE' | 'NL' | 'BE' | 'FR' | 'CH' | 'AT' | 'IT' | 'DK' | 'NO' | 'UK';
-  mapX: number; // 0..1000 normalized stylized Europe map coords
-  mapY: number; // 0..760
+  country: CountryCode;
+  mapX: number; // 0..1800 normalized Europe pixel map coords
+  mapY: number; // 0..1420
   landmark?: LandmarkKind;
   isMajor?: boolean;
+  isJunction?: boolean;
   hasLocalSegment?: boolean;
 }
 
@@ -208,6 +229,24 @@ export type CityDrivePreset =
   | 'aachen_finish'
   | 'ferry_denmark';
 
+export type ElevationProfileKind = 'Flachland' | 'Hügelig' | 'Bergig / Pässe';
+export type TrafficRiskKind = 'Niedrig' | 'Mittel' | 'Hoch';
+export type ChargingDensityKind = 'Sehr dicht' | 'Ausgewogen' | 'Dünn / Anspruchsvoll';
+
+export interface RouteOption {
+  id: string;
+  name: string;
+  shortLabel: string;
+  highwaySummary: string;
+  description: string;
+  elevationProfile: ElevationProfileKind;
+  trafficRisk: TrafficRiskKind;
+  chargingDensity: ChargingDensityKind;
+  colorHex: number;
+  legs: LevelRouteLegSpec[];
+  defaultPlannedStops?: PlannedStop[];
+}
+
 export interface LevelConfig {
   id: string;
   order: number;
@@ -222,6 +261,8 @@ export interface LevelConfig {
   targetArrivalMinutes: number; // total trip target duration in minutes
   startCityId: string;
   destinationCityId: string;
+  defaultRouteId: string;
+  routeOptions: RouteOption[];
   routeLegs: LevelRouteLegSpec[];
   passengers: PassengerGroup;
   scoringWeights: ScoringWeights;
@@ -250,11 +291,23 @@ export interface LegPlan {
 
 export interface TripPlan {
   vehicleId: string;
+  selectedRouteId: string;
   subscriptionIds: string[];
   legPlans: LegPlan[];
   plannedStops: PlannedStop[];
   nightDrivingMode?: boolean;
   behindTruckMode?: boolean;
+}
+
+export interface LiveSocPrediction {
+  nextStopName: string;
+  nextStopKind: 'charger' | 'turnaround' | 'destination';
+  distanceToNextKm: number;
+  predictedArrivalNextSocPct: number;
+  predictedFinalSocPct: number;
+  isCriticalNext: boolean;
+  isCriticalFinal: boolean;
+  consumptionKwh100: number;
 }
 
 export interface IncidentLogEntry {
