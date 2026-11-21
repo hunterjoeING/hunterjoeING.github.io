@@ -134,6 +134,32 @@ jobs:
             fi
           done
 
+      - name: Register Telegram Webhook
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        run: |
+          if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
+            node -e '
+            (async () => {
+              const token = process.env.TELEGRAM_BOT_TOKEN;
+              const url = `https://api.telegram.org/bot${token}/setWebhook`;
+              const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  url: "https://hunterjoe-scores.hunterjoeing.workers.dev/api/telegram/webhook",
+                  allowed_updates: ["message", "edited_message"]
+                })
+              });
+              const data = await res.json().catch(() => ({}));
+              console.log("Telegram setWebhook:", res.status, JSON.stringify(data));
+              if (!res.ok || !data.ok) {
+                throw new Error("Failed to register Telegram webhook");
+              }
+            })();
+            '
+          fi
+
       - name: Verify Live Worker Health
         run: |
           sleep 5
