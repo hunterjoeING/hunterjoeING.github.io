@@ -56,6 +56,7 @@ const GAMES_META = {
   quiz_porsche: { title: 'Porsche & Taycan Quiz', lowerIsBetter: false },
   quiz_md11: { title: 'McDonnell Douglas MD-11 Quiz', lowerIsBetter: false },
   quiz_naildesign: { title: 'Nageldesign Quiz · Finger- & Fußnägel', lowerIsBetter: false },
+  quiz_torten: { title: 'Torten Quiz · Klassiker & Patisserie', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
 
