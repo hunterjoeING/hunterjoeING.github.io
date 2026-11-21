@@ -1,5 +1,5 @@
 // Three.js 3D Tabletop Scene for 4-Suit Spider Solitaire (104 cards, 10 columns, 5-deal stock, 8 completed slots)
-// Steep close-up camera framing, dynamic vertical stacking, matte anti-glare cards, tight hitboxes & 8-slot victory waterfall.
+// Width-based auto-fit (94-96% viewport width), top-pinned framing, user zoom control, dynamic stacking, and matte Jumbo cards.
 
 import * as THREE from 'three';
 import { createSolitaireAssets, TABLE_THEME } from './sol3d-textures.js';
@@ -10,14 +10,14 @@ export const CARD_THICK = 0.013;
 export const CARD_CORNER = 0.060;
 
 const NUM_CARDS = 104;
-const COL_STEP = 1.06;
-const TOP_ROW_Z = -2.90;
-const TOP_SCALE = 0.74;
-const TABLEAU_Z = -1.50;
-const TABLE_CENTER_Z = -0.10;
-const TABLE_W = 10.96;
-const TABLE_D = 7.40;
-const DRAG_LIFT_Y = 0.52;
+const COL_STEP = 1.03;
+const TOP_ROW_Z = -2.85;
+const TOP_SCALE = 0.60;
+const TABLEAU_Z = -1.56;
+const TABLE_CENTER_Z = 2.05;
+const TABLE_W = 10.68;
+const TABLE_D = 11.40;
+const DRAG_LIFT_Y = 0.50;
 
 function colX(col) {
   return (col - 4.5) * COL_STEP;
@@ -33,7 +33,7 @@ function easeInOutCubic(t) {
 
 function seededJitter(cardId, salt) {
   const n = Math.sin((cardId + 1) * 12.9898 + (salt + 1) * 78.233) * 43758.5453;
-  return ((n - Math.floor(n)) * 2 - 1) * (0.55 * Math.PI / 180); // subtle ±0.55°
+  return ((n - Math.floor(n)) * 2 - 1) * (0.45 * Math.PI / 180);
 }
 
 function createRoundedCardGeometry(w, h, depth, r) {
@@ -61,9 +61,9 @@ function createRoundedCardGeometry(w, h, depth, r) {
   const normAttr = raw.attributes.normal;
   const count = posAttr.count;
 
-  const g0 = []; // front (+Z)
-  const g1 = []; // back (-Z)
-  const g2 = []; // edges
+  const g0 = [];
+  const g1 = [];
+  const g2 = [];
 
   for (let i = 0; i < count; i += 3) {
     const nz = (normAttr.getZ(i) + normAttr.getZ(i + 1) + normAttr.getZ(i + 2)) / 3;
@@ -173,18 +173,19 @@ export class SolitaireScene {
     this.canvas = canvas;
     this.containerEl = containerEl;
     this.cameraPreset = '3d'; // '3d' (steep playable) or 'top' (near-orthographic)
+    this.userZoom = 1.0;
 
     this.scene = new THREE.Scene();
     this.scene.background = new THREE.Color(TABLE_THEME.bgHex);
 
-    // Narrower FOV (34 deg) reduces perspective distortion across all 10 columns
-    this.camera = new THREE.PerspectiveCamera(34, 16 / 10, 0.5, 90);
-    this.camCurPos = new THREE.Vector3(0, 10.8, 2.8);
-    this.camTargetPos = new THREE.Vector3(0, 10.8, 2.8);
-    this.camCurLook = new THREE.Vector3(0, 0, -0.10);
-    this.camTargetLook = new THREE.Vector3(0, 0, -0.10);
+    // Narrow 32 deg FOV minimizes perspective distortion across all 10 columns
+    this.camera = new THREE.PerspectiveCamera(32, 16 / 10, 0.5, 90);
+    this.camCurPos = new THREE.Vector3(0, 11, 2.4);
+    this.camTargetPos = new THREE.Vector3(0, 11, 2.4);
+    this.camCurLook = new THREE.Vector3(0, 0, 0);
+    this.camTargetLook = new THREE.Vector3(0, 0, 0);
     this.camInitialized = false;
-    this.maxBottomCenterZ = 2.60;
+    this.maxBottomCenterZ = 2.40;
 
     this.renderer = new THREE.WebGLRenderer({
       canvas,
@@ -205,10 +206,10 @@ export class SolitaireScene {
     this.warnGlowTex = createGlowTexture('rgba(255, 115, 95, 0.95)');
     this.sparkTex = createSparkTexture();
 
-    this.cardVisuals = []; // 104 objects
-    this.hitMeshes = [];   // 104 card meshes
+    this.cardVisuals = [];
+    this.hitMeshes = [];
     this.slotHitMeshes = [];
-    this.targetGlows = {}; // key -> glow state
+    this.targetGlows = {};
     this.warnColumns = null;
 
     this.dragState = null;
@@ -234,24 +235,23 @@ export class SolitaireScene {
   }
 
   _buildLighting() {
-    // Diffused, even tabletop lighting with no specular hotspots
-    const hemi = new THREE.HemisphereLight(0xfffdf8, 0x16281f, 0.92);
+    const hemi = new THREE.HemisphereLight(0xfffdf8, 0x16281f, 0.94);
     this.scene.add(hemi);
 
     const ambient = new THREE.AmbientLight(0xffffff, 0.24);
     this.scene.add(ambient);
 
-    const dir = new THREE.DirectionalLight(0xfffaf0, 0.44);
-    dir.position.set(1.8, 13.5, 3.6);
-    dir.target.position.set(0, 0, TABLE_CENTER_Z);
+    const dir = new THREE.DirectionalLight(0xfffaf0, 0.42);
+    dir.position.set(1.6, 14.0, 3.2);
+    dir.target.position.set(0, 0, 0.2);
     dir.castShadow = true;
     dir.shadow.mapSize.set(2048, 2048);
     dir.shadow.camera.left = -6.2;
     dir.shadow.camera.right = 6.2;
-    dir.shadow.camera.top = 5.0;
-    dir.shadow.camera.bottom = -5.0;
+    dir.shadow.camera.top = 7.0;
+    dir.shadow.camera.bottom = -5.5;
     dir.shadow.camera.near = 4;
-    dir.shadow.camera.far = 24;
+    dir.shadow.camera.far = 26;
     dir.shadow.bias = -0.0004;
     dir.shadow.normalBias = 0.012;
     this.scene.add(dir);
@@ -275,15 +275,14 @@ export class SolitaireScene {
     feltMesh.receiveShadow = true;
     tableGroup.add(feltMesh);
 
-    // Slim dark walnut wood border
     const woodMat = new THREE.MeshStandardMaterial({
       map: this.assets.woodTex,
-      roughness: 0.62,
-      metalness: 0.03
+      roughness: 0.65,
+      metalness: 0.02
     });
 
-    const railW = 0.26;
-    const railH = 0.20;
+    const railW = 0.24;
+    const railH = 0.18;
     const outerW = TABLE_W + railW * 2;
     const outerD = TABLE_D + railW * 2;
     const innerW = TABLE_W;
@@ -292,7 +291,7 @@ export class SolitaireScene {
     const frameShape = new THREE.Shape();
     const ox = outerW * 0.5;
     const oy = outerD * 0.5;
-    const cr = 0.28;
+    const cr = 0.26;
     frameShape.moveTo(-ox + cr, -oy);
     frameShape.lineTo(ox - cr, -oy);
     frameShape.quadraticCurveTo(ox, -oy, ox, -oy + cr);
@@ -329,7 +328,7 @@ export class SolitaireScene {
     });
     const frameMesh = new THREE.Mesh(frameGeo, woodMat);
     frameMesh.rotation.x = -Math.PI / 2;
-    frameMesh.position.set(0, -0.13, TABLE_CENTER_Z);
+    frameMesh.position.set(0, -0.12, TABLE_CENTER_Z);
     frameMesh.castShadow = true;
     frameMesh.receiveShadow = true;
     tableGroup.add(frameMesh);
@@ -339,10 +338,10 @@ export class SolitaireScene {
 
   _buildSlots() {
     const topSlotGeo = new THREE.PlaneGeometry(CARD_W * TOP_SCALE * 1.02, CARD_H * TOP_SCALE * 1.02);
-    const topHitGeo = new THREE.PlaneGeometry(CARD_W * 1.55, CARD_H * TOP_SCALE * 1.28);
+    const topHitGeo = new THREE.PlaneGeometry(CARD_W * 1.55, CARD_H * TOP_SCALE * 1.32);
     const tabSlotGeo = new THREE.PlaneGeometry(CARD_W * 1.01, CARD_H * 1.01);
-    const tabHitGeo = new THREE.PlaneGeometry(CARD_W * 1.05, CARD_H * 1.25);
-    const glowGeo = new THREE.PlaneGeometry(CARD_W * 1.16, CARD_H * 1.16);
+    const tabHitGeo = new THREE.PlaneGeometry(CARD_W * 1.03, CARD_H * 1.25);
+    const glowGeo = new THREE.PlaneGeometry(CARD_W * 1.14, CARD_H * 1.14);
     const topGlowGeo = new THREE.PlaneGeometry(CARD_W * TOP_SCALE * 1.22, CARD_H * TOP_SCALE * 1.22);
 
     const createSlot = (key, x, z, tex, meta, isTopRow = false) => {
@@ -350,7 +349,7 @@ export class SolitaireScene {
         map: tex,
         transparent: true,
         depthWrite: false,
-        opacity: 0.85
+        opacity: 0.86
       });
       const decal = new THREE.Mesh(isTopRow ? topSlotGeo : tabSlotGeo, mat);
       decal.rotation.x = -Math.PI / 2;
@@ -379,10 +378,8 @@ export class SolitaireScene {
       this.targetGlows[key] = { mesh: glowMesh, baseZ: z, active: false, hovered: false };
     };
 
-    // Stock on top-left (spanning col 0..1 visually via 5 fanned piles)
     createSlot('stock', colX(0), TOP_ROW_Z, this.assets.slotTextures.stock, { type: 'stock', idx: 0 }, true);
 
-    // 8 Completed sequence slots on top-right (cols 2..9)
     for (let f = 0; f < 8; f++) {
       createSlot(`foundation_${f}`, colX(2 + f), TOP_ROW_Z, this.assets.slotTextures.foundation, {
         type: 'foundation',
@@ -390,7 +387,6 @@ export class SolitaireScene {
       }, true);
     }
 
-    // 10 Tableau columns
     for (let c = 0; c < 10; c++) {
       createSlot(`tableau_${c}`, colX(c), TABLEAU_Z, this.assets.slotTextures.tableau, {
         type: 'tableau',
@@ -400,7 +396,6 @@ export class SolitaireScene {
   }
 
   _buildCardPool() {
-    // Matte materials (high roughness, 0 metalness) prevent light reflections from washing out values
     const backMat = new THREE.MeshStandardMaterial({
       map: this.assets.backTex,
       roughness: 0.90,
@@ -408,7 +403,7 @@ export class SolitaireScene {
     });
 
     const edgeMat = new THREE.MeshStandardMaterial({
-      color: 0xbdb5a6,
+      color: 0xb0a89a,
       roughness: 0.88,
       metalness: 0.0
     });
@@ -464,12 +459,12 @@ export class SolitaireScene {
       roughness: 0.90,
       metalness: 0.0
     });
-    const edgeMat = new THREE.MeshStandardMaterial({ color: 0xbdb5a6, roughness: 0.88 });
+    const edgeMat = new THREE.MeshStandardMaterial({ color: 0xb0a89a, roughness: 0.88 });
 
     for (let i = 0; i < 28; i++) {
       const frontMat = new THREE.MeshStandardMaterial({
         map: this.assets.faceTextures[0],
-        roughness: 0.92,
+        roughness: 0.94,
         metalness: 0.0
       });
       const mesh = new THREE.Mesh(this.cardGeo, [frontMat, backMat, edgeMat]);
@@ -525,34 +520,47 @@ export class SolitaireScene {
     this._updateCameraTargets(false);
   }
 
+  setZoom(zoom) {
+    this.userZoom = THREE.MathUtils.clamp(Number(zoom) || 1.0, 0.85, 1.20);
+    this._updateCameraTargets(false);
+    return this.userZoom;
+  }
+
+  getZoom() {
+    return this.userZoom;
+  }
+
   _updateCameraTargets(snap = false) {
     const w = this.containerEl.clientWidth || window.innerWidth;
     const h = this.containerEl.clientHeight || window.innerHeight;
     const aspect = Math.max(0.42, w / Math.max(1, h));
 
     const isTop = this.cameraPreset === 'top';
-    const pitchDeg = isTop ? 85 : (aspect < 0.9 ? 76 : 74);
+    const pitchDeg = isTop ? 86 : (aspect < 0.9 ? 79 : 77);
     const pitch = THREE.MathUtils.degToRad(pitchDeg);
     const vFovRad = THREE.MathUtils.degToRad(this.camera.fov);
     const tanV = Math.tan(vFovRad * 0.5);
     const tanH = tanV * aspect;
 
-    // Frame all 10 columns nearly edge-to-edge (minimal side margins)
-    const needW = aspect < 1.0 ? 10.74 : 10.90;
-    // Active playfield depth from top of Stock/Foundations (-3.42) to bottom of Tableau (+3.25)
-    const needD = 6.82;
+    // Width-based auto-fit: 10 columns (10.27 wide) occupy ~95% of viewport width (~2.5% side margins)
+    const totalColsW = 9 * COL_STEP + CARD_W;
+    const needW = totalColsW / 0.952;
+    const minNeedD = 5.30;
 
     const distH = (needW * 0.5) / tanH;
-    const distV = ((needD * Math.sin(pitch)) * 0.5) / tanV;
-    const dist = Math.max(distH, distV) * 1.01;
+    const distMinV = ((minNeedD * Math.sin(pitch)) * 0.5) / tanV;
+    const baseDist = Math.max(distH, distMinV);
+    const dist = baseDist / this.userZoom;
 
-    // On portrait / taller screens we get extra vertical room so columns can expand further down before compressing
-    const visibleWorldH = (2 * dist * tanV) / Math.sin(pitch);
-    const extraVert = Math.max(0, visibleWorldH - needD);
-    this.maxBottomCenterZ = Math.min(3.55, 2.55 + extraVert * 0.36);
+    // Pin the top row tightly below the HUD bar so zero vertical space is wasted at the top
+    const visibleWorldD = (2 * dist * tanV) / Math.sin(pitch);
+    const topEdgeWorldZ = TOP_ROW_Z - (CARD_H * TOP_SCALE) * 0.5 - 0.12;
+    const lookZ = topEdgeWorldZ + visibleWorldD * 0.5;
+    const bottomEdgeWorldZ = topEdgeWorldZ + visibleWorldD;
 
-    const portraitBiasZ = aspect < 0.85 ? Math.min(1.8, extraVert * 0.16) : 0;
-    const lookZ = -0.09 + portraitBiasZ;
+    // Dynamic max bottom card center fits all the way down to the bottom of the screen
+    this.maxBottomCenterZ = Math.min(5.8, Math.max(1.2, bottomEdgeWorldZ - CARD_H * 0.5 - 0.12));
+
     this.camTargetLook.set(0, 0, lookZ);
     this.camTargetPos.set(
       0,
@@ -572,6 +580,7 @@ export class SolitaireScene {
   resize() {
     const w = this.containerEl.clientWidth || window.innerWidth;
     const h = this.containerEl.clientHeight || window.innerHeight;
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     this.camera.aspect = w / Math.max(1, h);
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h, false);
@@ -586,14 +595,14 @@ export class SolitaireScene {
       else fdCount++;
     }
 
-    const availSpan = Math.max(3.2, this.maxBottomCenterZ - TABLEAU_Z);
-    let fdStep = 0.11;
-    let fuStep = 0.35;
+    const availSpan = Math.max(2.6, this.maxBottomCenterZ - TABLEAU_Z);
+    let fdStep = 0.10;
+    let fuStep = 0.36;
 
     if (fdCount * fdStep + fuCount * fuStep > availSpan) {
-      fdStep = 0.07;
-      const remaining = Math.max(0.8, availSpan - fdCount * fdStep);
-      fuStep = fuCount > 0 ? Math.max(0.165, Math.min(0.35, remaining / fuCount)) : 0.35;
+      fdStep = 0.065;
+      const remaining = Math.max(0.75, availSpan - fdCount * fdStep);
+      fuStep = fuCount > 0 ? Math.max(0.16, Math.min(0.36, remaining / fuCount)) : 0.36;
     }
 
     return { fdStep, fuStep };
@@ -604,22 +613,21 @@ export class SolitaireScene {
 
     // Stock: 5 deals of 10 cards fanned horizontally across col 0..1
     const sLen = engine.stock.length;
-    const totalBatches = Math.ceil(sLen / 10);
     for (let i = 0; i < sLen; i++) {
       const cid = engine.stock[i];
-      const batchIdx = Math.floor(i / 10); // 0 = deepest (dealt last), 4 = top (dealt first)
+      const batchIdx = Math.floor(i / 10);
       const inBatch = i % 10;
-      const xOffset = -0.14 + batchIdx * 0.15;
+      const xOffset = -0.16 + batchIdx * 0.14;
       targets.set(cid, {
-        pos: new THREE.Vector3(colX(0) + xOffset, 0.014 + batchIdx * 0.025 + inBatch * 0.0025, TOP_ROW_Z),
+        pos: new THREE.Vector3(colX(0) + xOffset, 0.014 + batchIdx * 0.024 + inBatch * 0.0022, TOP_ROW_Z),
         faceUp: false,
         scale: TOP_SCALE,
-        yaw: seededJitter(cid, 1) * 0.4,
+        yaw: seededJitter(cid, 1) * 0.35,
         pile: { type: 'stock', idx: 0, cardIdx: i }
       });
     }
 
-    // 8 Completed Sequence Foundations (top-right slots over cols 2..9)
+    // 8 Completed Sequence Foundations (cols 2..9)
     for (let f = 0; f < 8; f++) {
       const pile = engine.foundations[f];
       for (let i = 0; i < pile.length; i++) {
@@ -628,7 +636,7 @@ export class SolitaireScene {
           pos: new THREE.Vector3(colX(2 + f), 0.014 + i * (CARD_THICK * 0.55), TOP_ROW_Z),
           faceUp: true,
           scale: TOP_SCALE,
-          yaw: seededJitter(cid, 3 + f) * 0.35,
+          yaw: seededJitter(cid, 3 + f) * 0.3,
           pile: { type: 'foundation', idx: f, cardIdx: i }
         });
       }
@@ -656,14 +664,13 @@ export class SolitaireScene {
     return targets;
   }
 
-  syncState(engine, { dealAnimate = false, staggerMs = 18, instant = false, clearedSequences = null } = {}) {
+  syncState(engine, { dealAnimate = false, staggerMs = 16, instant = false, clearedSequences = null } = {}) {
     const targets = this.computePileSlotPositions(engine);
     const clearedDelayMap = new Map();
 
     if (clearedSequences && clearedSequences.length > 0) {
       for (const seq of clearedSequences) {
         seq.cards.forEach((cid, idx) => {
-          // Peel from top card down (or reversed) so they arc smoothly into the foundation slot
           clearedDelayMap.set(cid, idx * 24);
         });
       }
@@ -697,7 +704,7 @@ export class SolitaireScene {
       const scaleChanged = Math.abs(vis.targetScale - t.scale) > 0.005;
 
       if (dealAnimate) {
-        vis.curPos.set(colX(0) + 0.46, 0.25, TOP_ROW_Z);
+        vis.curPos.set(colX(0) + 0.42, 0.25, TOP_ROW_Z);
         vis.curFlip = Math.PI;
         vis.curYaw = 0;
         vis.curScale = TOP_SCALE;
@@ -705,7 +712,7 @@ export class SolitaireScene {
 
         if (t.pile.type === 'tableau') {
           const delay = (t.pile.cardIdx * 10 + t.pile.idx) * staggerMs;
-          this.animateCardTo(id, t.pos, targetFlip, t.yaw, t.scale, 360, delay, 0.58);
+          this.animateCardTo(id, t.pos, targetFlip, t.yaw, t.scale, 340, delay, 0.56);
         } else {
           vis.curPos.copy(t.pos);
           vis.targetPos.copy(t.pos);
@@ -724,15 +731,14 @@ export class SolitaireScene {
           ? 340
           : Math.max(190, Math.min(360, 175 + dist * 28));
         const arc = clearedDelayMap.has(id)
-          ? 0.72
-          : Math.max(flipChanged ? 0.36 : 0.12, Math.min(0.75, dist * 0.14));
+          ? 0.70
+          : Math.max(flipChanged ? 0.34 : 0.12, Math.min(0.72, dist * 0.14));
         this.animateCardTo(id, t.pos, targetFlip, t.yaw, t.scale, dur, delay, arc);
       } else {
         vis.targetYaw = t.yaw;
       }
     }
 
-    // Update target glow anchors to top card of each tableau column
     for (let c = 0; c < 10; c++) {
       const col = engine.tableau[c];
       const glow = this.targetGlows[`tableau_${c}`];
@@ -836,9 +842,8 @@ export class SolitaireScene {
       const targetZ = glow ? glow.baseZ : TABLEAU_Z;
       const dx = Math.abs(point.x - colX(c));
       const dz = Math.max(0, Math.abs(point.z - targetZ) - 0.72);
-      // Tight horizontal capture window tailored for 10 columns (COL_STEP = 1.06)
-      if (dx < 0.78 && point.z > TABLEAU_Z - 1.1) {
-        const score = Math.hypot(dx * 1.4, dz * 0.55);
+      if (dx < 0.74 && point.z > TABLEAU_Z - 1.05) {
+        const score = Math.hypot(dx * 1.45, dz * 0.55);
         if (score < bestScore) {
           bestScore = score;
           best = { type: 'tableau', idx: c, key: `tableau_${c}` };
@@ -952,14 +957,12 @@ export class SolitaireScene {
   }
 
   update(dt, nowMs) {
-    // 1. Smooth camera transitions
     const camAlpha = 1 - Math.exp(-9.0 * dt);
     this.camCurPos.lerp(this.camTargetPos, camAlpha);
     this.camCurLook.lerp(this.camTargetLook, camAlpha);
     this.camera.position.copy(this.camCurPos);
     this.camera.lookAt(this.camCurLook);
 
-    // 2. Active card Bezier & Flip animations
     const draggedIds = new Set(this.dragState ? this.dragState.items.map((i) => i.id) : []);
 
     for (const [id, anim] of this.animations.entries()) {
@@ -994,7 +997,6 @@ export class SolitaireScene {
       }
     }
 
-    // 3. Dragged stack inertia & lift
     if (this.dragState) {
       const ds = this.dragState;
       const dx = ds.planePoint.x - ds.prevX;
@@ -1022,7 +1024,6 @@ export class SolitaireScene {
       }
     }
 
-    // 4. Target glow, empty column warning, & hint pulses
     const pulse = 0.55 + 0.45 * Math.sin(nowMs * 0.007);
     let hintSrcId = null;
     let hintTargetKey = null;
@@ -1075,7 +1076,6 @@ export class SolitaireScene {
       }
     }
 
-    // 5. Victory 3D Card Waterfall & Golden Sparks
     if (this.waterfallActive) {
       this.waterfallSpawnTimer -= dt;
       if (this.waterfallSpawnTimer <= 0) {
