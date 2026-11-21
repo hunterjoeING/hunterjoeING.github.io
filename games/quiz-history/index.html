@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Geschichte &amp; Weltereignisse Quiz · HunterJoe Arcade</title>
-  <meta name="description" content="108 historische Quiz-Fragen über Epochen &amp; Weltereignisse in 3 Stufen: von Antike &amp; Mittelalter über Industrialisierung &amp; 1848 bis Währungsreform 1948 &amp; Mauerfall." />
+  <meta name="description" content="75 historische Quiz-Fragen über Epochen &amp; Weltereignisse in 3 Stufen: von Antike &amp; Mittelalter über Industrialisierung &amp; 1848 bis Währungsreform 1948 &amp; Mauerfall." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/quiz-history/" />
@@ -15,14 +15,14 @@
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
   <meta property="og:title" content="Geschichte &amp; Weltereignisse Quiz · HunterJoe Arcade" />
-  <meta property="og:description" content="108 historische Quiz-Fragen über Epochen &amp; Weltereignisse in 3 Stufen: von Antike &amp; Mittelalter über Industrialisierung &amp; 1848 bis Währungsreform 1948 &amp; Mauerfall." />
+  <meta property="og:description" content="75 historische Quiz-Fragen über Epochen &amp; Weltereignisse in 3 Stufen: von Antike &amp; Mittelalter über Industrialisierung &amp; 1848 bis Währungsreform 1948 &amp; Mauerfall." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/quiz-history/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Geschichte &amp; Weltereignisse Quiz · HunterJoe Arcade" />
-  <meta name="twitter:description" content="108 historische Quiz-Fragen über Epochen &amp; Weltereignisse in 3 Stufen: von Antike &amp; Mittelalter über Industrialisierung &amp; 1848 bis Währungsreform 1948 &amp; Mauerfall." />
+  <meta name="twitter:description" content="75 historische Quiz-Fragen über Epochen &amp; Weltereignisse in 3 Stufen: von Antike &amp; Mittelalter über Industrialisierung &amp; 1848 bis Währungsreform 1948 &amp; Mauerfall." />
   <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
   {
@@ -31,7 +31,7 @@
       {
         "@type": "Quiz",
         "name": "Geschichte & Weltereignisse Quiz",
-        "description": "108 historische Quiz-Fragen über Epochen & Weltereignisse in 3 Stufen: von Antike & Mittelalter über Industrialisierung & 1848 bis Währungsreform 1948 & Mauerfall.",
+        "description": "75 historische Quiz-Fragen über Epochen & Weltereignisse in 3 Stufen: von Antike & Mittelalter über Industrialisierung & 1848 bis Währungsreform 1948 & Mauerfall.",
         "url": "https://hunterjoeing.github.io/games/quiz-history/",
         "inLanguage": "de",
         "isAccessibleForFree": true,
@@ -361,7 +361,7 @@
     <section id="screen-menu" class="glass-card" style="padding:20px;">
       <h1 style="margin:0 0 6px; font-size:22px;">Epochen-Quiz: Welt- &amp; Zeitgeschichte</h1>
       <p style="margin:0; color:var(--text-muted); font-size:13.5px; line-height:1.45;">
-        108 historische Meilensteine von der Antike bis zur Deutschen Einheit. Wähle zuerst deinen Anspruch und dann deine Epoche (Standard: 20 Fragen pro Runde, Tasten <code>1–4</code> möglich · Anti-Wiederholungs-Pool).
+        75 historische Meilensteine von der Antike bis zur Deutschen Einheit. Wähle zuerst deinen Anspruch und dann deine Epoche (Standard: 20 Fragen pro Runde, Tasten <code>1–4</code> möglich · Anti-Wiederholungs-Pool).
       </p>
 
       <div class="diff-bar" id="diff-bar">
@@ -453,7 +453,7 @@
       pro:  { label: '🔴 Historiker', cls: 'pro',  mult: 1.5 }
     };
 
-    // Unified question bank (108 questions, index 0 of a[] is always correct)
+    // Unified question bank (75 questions, index 0 of a[] is always correct)
     const QUESTIONS = ArcadeQuizEngine.getBank('history');
 
     let selectedDiff = 'all';
@@ -779,7 +779,7 @@
       onUpdate: () => renderMenu(),
       lengths: [10, 20, 30, 'all'],
       defaultLen: 20,
-      showAllLabel: 'Alle'
+      showAllLabel: 'Alle (75)'
     });
     refreshTopBest();
     renderMenu();
