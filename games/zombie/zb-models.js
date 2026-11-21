@@ -63,22 +63,22 @@ export function getSharedAssets() {
     muzzleOrange: new THREE.MeshBasicMaterial({ color: 0xfb923c, transparent: true, opacity: 0.92, toneMapped: false }),
     muzzlePink: new THREE.MeshBasicMaterial({ color: 0xf472b6, transparent: true, opacity: 0.95, toneMapped: false }),
 
-    // Zombie PBR materials
-    zSkinNormal: stdMat(0x4ade80, 0.12, 0.68, { noTex: true }),
-    zCoatNormal: stdMat(0x1e293b, 0.25, 0.72, { noTex: true }),
-    zEyeRed: emissiveMat(0xfca5a5, 0xef4444, 2.1),
+    // Zombie PBR materials (organic mottled skin & tattered cloth)
+    zSkinNormal: stdMat(0x65a30d, 0.08, 0.68, { map: tex.zombieSkin }),
+    zCoatNormal: stdMat(0x334155, 0.14, 0.78, { map: tex.zombieCloth }),
+    zEyeRed: emissiveMat(0xfca5a5, 0xef4444, 2.2),
 
-    zSkinFast: stdMat(0x22d3ee, 0.18, 0.55, { noTex: true, emissive: 0x083344, emissiveIntensity: 0.35 }),
-    zCoatFast: stdMat(0x164e63, 0.30, 0.58, { noTex: true }),
-    zEyeCyan: emissiveMat(0xa5f3fc, 0x22d3ee, 2.2),
+    zSkinFast: stdMat(0x06b6d4, 0.14, 0.55, { map: tex.zombieSkin, emissive: 0x083344, emissiveIntensity: 0.38 }),
+    zCoatFast: stdMat(0x155e75, 0.22, 0.64, { map: tex.zombieCloth }),
+    zEyeCyan: emissiveMat(0xa5f3fc, 0x22d3ee, 2.3),
 
-    zSkinBrute: stdMat(0xa855f7, 0.18, 0.60, { noTex: true }),
-    zCoatBrute: stdMat(0x3b0764, 0.38, 0.54),
+    zSkinBrute: stdMat(0x9333ea, 0.14, 0.62, { map: tex.zombieSkin }),
+    zCoatBrute: stdMat(0x3b0764, 0.30, 0.58, { map: tex.zombieCloth }),
     zArmorSteel: stdMat(0x64748b, 0.72, 0.34),
     zHazardGold: stdMat(0xfacc15, 0.45, 0.36, { noTex: true }),
 
-    zSkinBoss: stdMat(0xe11d48, 0.22, 0.54, { noTex: true }),
-    zCoatBoss: stdMat(0x450a0a, 0.42, 0.48),
+    zSkinBoss: stdMat(0xe11d48, 0.18, 0.56, { map: tex.zombieSkin }),
+    zCoatBoss: stdMat(0x450a0a, 0.34, 0.52, { map: tex.zombieCloth }),
     zBossHorn: stdMat(0xfef3c7, 0.30, 0.42, { noTex: true }),
     zBossGold: stdMat(0xfbbf24, 0.80, 0.25),
     zBossCore: emissiveMat(0xfef08a, 0xf97316, 2.3),
@@ -122,19 +122,21 @@ export function createMarineModel() {
   const { g, m } = getSharedAssets();
   const root = new THREE.Group();
 
-  // Legs (pivoted at hip y = 0.42)
+  // Legs (pivoted at hip y = 0.42) with rounded limbs & knee guards
   const legL = new THREE.Group();
   legL.position.set(-0.12, 0.42, 0);
   legL.add(
-    part(g.box, m.marineDark, 0.14, 0.34, 0.14, 0, -0.17, 0),
-    part(g.box, m.marineSlate, 0.16, 0.11, 0.21, 0, -0.36, -0.02)
+    part(g.cyl, m.marineDark, 0.075, 0.34, 0.075, 0, -0.17, 0),
+    part(g.sphere, m.marineArmor, 0.082, 0.065, 0.082, 0, -0.17, -0.02),
+    part(g.box, m.marineSlate, 0.16, 0.11, 0.22, 0, -0.36, -0.02)
   );
 
   const legR = new THREE.Group();
   legR.position.set(0.12, 0.42, 0);
   legR.add(
-    part(g.box, m.marineDark, 0.14, 0.34, 0.14, 0, -0.17, 0),
-    part(g.box, m.marineSlate, 0.16, 0.11, 0.21, 0, -0.36, -0.02)
+    part(g.cyl, m.marineDark, 0.075, 0.34, 0.075, 0, -0.17, 0),
+    part(g.sphere, m.marineArmor, 0.082, 0.065, 0.082, 0, -0.17, -0.02),
+    part(g.box, m.marineSlate, 0.16, 0.11, 0.22, 0, -0.36, -0.02)
   );
   root.add(legL, legR);
 
@@ -143,21 +145,24 @@ export function createMarineModel() {
   body.position.set(0, 0.44, 0);
   root.add(body);
 
-  // Torso, belt, backpack & glowing cells
+  // Torso, chest rig, belt, backpack + antenna & glowing cells
   body.add(
-    part(g.box, m.marineArmor, 0.42, 0.44, 0.26, 0, 0.24, 0),
+    part(g.box, m.marineArmor, 0.42, 0.44, 0.25, 0, 0.24, 0),
+    part(g.box, m.marineSlate, 0.34, 0.24, 0.28, 0, 0.28, -0.02),
     part(g.box, m.marineDark, 0.44, 0.08, 0.28, 0, 0.04, 0),
     part(g.box, m.zBossGold, 0.08, 0.07, 0.29, 0, 0.04, 0),
     part(g.box, m.marineSlate, 0.34, 0.34, 0.16, 0, 0.25, 0.19),
+    part(g.cyl, m.weaponChrome, 0.012, 0.24, 0.012, -0.13, 0.50, 0.22, -0.1, 0, 0),
     part(g.box, m.marinePackCell, 0.05, 0.19, 0.04, -0.09, 0.26, 0.28, 0, 0, 0, false),
     part(g.box, m.marinePackCell, 0.05, 0.19, 0.04, 0.09, 0.26, 0.28, 0, 0, 0, false),
     // Pauldrons
-    part(g.sphere, m.marineArmor, 0.13, 0.12, 0.13, -0.25, 0.39, 0),
-    part(g.sphere, m.marineArmor, 0.13, 0.12, 0.13, 0.25, 0.39, 0),
-    // Left support arm
-    part(g.box, m.marineArmor, 0.11, 0.28, 0.11, -0.24, 0.22, -0.09, 0.85, 0, -0.22),
-    // Helmet + crest + glowing visor (facing -Z forward down the bridge)
+    part(g.sphere, m.marineArmor, 0.14, 0.13, 0.14, -0.25, 0.39, 0),
+    part(g.sphere, m.marineArmor, 0.14, 0.13, 0.14, 0.25, 0.39, 0),
+    // Left support arm (rounded)
+    part(g.cyl, m.marineArmor, 0.058, 0.28, 0.058, -0.24, 0.22, -0.09, 0.85, 0, -0.22),
+    // Helmet + rim + crest + glowing visor (facing -Z forward down the bridge)
     part(g.sphere, m.marineHelm, 0.20, 0.21, 0.21, 0, 0.62, 0),
+    part(g.box, m.marineSlate, 0.25, 0.04, 0.22, 0, 0.69, -0.04),
     part(g.box, m.marineArmor, 0.07, 0.07, 0.24, 0, 0.78, 0.02),
     part(g.box, m.marineVisor, 0.24, 0.08, 0.12, 0, 0.63, -0.15, 0, 0, 0, false)
   );
@@ -167,9 +172,11 @@ export function createMarineModel() {
   gunGroup.position.set(0.21, 0.25, -0.12);
   body.add(gunGroup);
 
-  const gunChassis = part(g.box, m.weaponSteel, 0.12, 0.15, 0.48, 0, 0, -0.16);
-  const gunBarrel = part(g.cyl, m.weaponChrome, 0.036, 0.32, 0.036, 0, 0.02, -0.44, Math.PI * 0.5, 0, 0);
+  const gunChassis = part(g.box, m.weaponSteel, 0.12, 0.15, 0.50, 0, 0, -0.16);
+  const gunScope = part(g.cyl, m.marineDark, 0.028, 0.16, 0.028, 0, 0.11, -0.14, Math.PI * 0.5, 0, 0);
+  const gunBarrel = part(g.cyl, m.weaponChrome, 0.036, 0.34, 0.036, 0, 0.02, -0.45, Math.PI * 0.5, 0, 0);
   const gunCore = part(g.box, m.coreCyan, 0.06, 0.05, 0.30, 0, 0.07, -0.18, 0, 0, 0, false);
+  gunGroup.add(gunScope);
 
   // Tier 2 upgrade: Twin side scatter barrels
   const spreadTwinL = part(g.cyl, m.weaponChrome, 0.028, 0.26, 0.028, -0.075, 0.01, -0.38, Math.PI * 0.5, 0, 0);
@@ -268,20 +275,21 @@ export function createZombieModel(kind) {
   // Legs (facing +Z toward player squad!)
   const legL = new THREE.Group();
   legL.position.set(-0.14, 0.46, 0);
-  const legLMesh = part(g.box, coatMat, 0.15, 0.42, 0.15, 0, -0.21, 0);
+  const legLMesh = part(g.cyl, coatMat, 0.078, 0.42, 0.078, 0, -0.21, 0);
   const bootLMesh = part(g.box, m.marineDark, 0.17, 0.10, 0.22, 0, -0.41, 0.03);
   legL.add(legLMesh, bootLMesh);
 
   const legR = new THREE.Group();
   legR.position.set(0.14, 0.46, 0);
-  const legRMesh = part(g.box, coatMat, 0.15, 0.42, 0.15, 0, -0.21, 0);
+  const legRMesh = part(g.cyl, coatMat, 0.078, 0.42, 0.078, 0, -0.21, 0);
   const bootRMesh = part(g.box, m.marineDark, 0.17, 0.10, 0.22, 0, -0.41, 0.03);
   legR.add(legRMesh, bootRMesh);
   modelRoot.add(legL, legR);
 
-  // Torso
+  // Torso (slightly hunched forward for zombie silhouette)
   const body = new THREE.Group();
   body.position.set(0, 0.48, 0);
+  body.rotation.x = isFast ? 0.16 : 0.08;
   modelRoot.add(body);
 
   const torsoW = isBrute || isBoss ? 0.54 : (isFast ? 0.36 : 0.44);
@@ -309,26 +317,31 @@ export function createZombieModel(kind) {
   // Reaching clawed arms (+Z toward player)
   const armL = new THREE.Group();
   armL.position.set(-torsoW * 0.62, 0.44, 0.04);
-  const armLMesh = part(g.box, skinMat, 0.12, 0.42, 0.12, 0, -0.05, 0.22, -Math.PI * 0.42, 0, 0);
-  armL.add(armLMesh);
+  const armLMesh = part(g.cyl, skinMat, 0.062, 0.42, 0.062, 0, -0.05, 0.22, -Math.PI * 0.42, 0, 0);
+  const clawL = part(g.cone, m.zTeeth, 0.045, 0.10, 0.045, 0, -0.08, 0.44, Math.PI * 0.5, 0, 0);
+  armL.add(armLMesh, clawL);
 
   const armR = new THREE.Group();
   armR.position.set(torsoW * 0.62, 0.44, 0.04);
-  const armRMesh = part(g.box, skinMat, 0.12, 0.42, 0.12, 0, -0.05, 0.22, -Math.PI * 0.42, 0, 0);
-  armR.add(armRMesh);
+  const armRMesh = part(g.cyl, skinMat, 0.062, 0.42, 0.062, 0, -0.05, 0.22, -Math.PI * 0.42, 0, 0);
+  const clawR = part(g.cone, m.zTeeth, 0.045, 0.10, 0.045, 0, -0.08, 0.44, Math.PI * 0.5, 0, 0);
+  armR.add(armRMesh, clawR);
   body.add(armL, armR);
 
-  // Head + Jaw + Glowing Eyes
+  // Head + Brow + Jaw + Fangs + Glowing Eyes
   const headGroup = new THREE.Group();
   headGroup.position.set(0, 0.68, isFast ? 0.08 : 0.02);
   body.add(headGroup);
 
   const cranium = part(g.sphere, skinMat, 0.22, 0.23, 0.22, 0, 0, 0);
-  const jaw = part(g.box, skinMat, 0.24, 0.16, 0.20, 0, -0.12, 0.05);
-  const mouth = part(g.box, m.zMouth, 0.16, 0.06, 0.04, 0, -0.10, 0.15, 0, 0, 0, false);
+  const brow = part(g.box, skinMat, 0.26, 0.055, 0.10, 0, 0.07, 0.16);
+  const jaw = part(g.box, skinMat, 0.22, 0.15, 0.19, 0, -0.12, 0.05);
+  const mouth = part(g.box, m.zMouth, 0.16, 0.065, 0.04, 0, -0.10, 0.15, 0, 0, 0, false);
+  const fangL = part(g.cone, m.zTeeth, 0.022, 0.055, 0.022, -0.05, -0.08, 0.16, Math.PI, 0, 0, false);
+  const fangR = part(g.cone, m.zTeeth, 0.022, 0.055, 0.022, 0.05, -0.08, 0.16, Math.PI, 0, 0, false);
   const eyeL = part(g.sphere, eyeMat, 0.042, 0.036, 0.035, -0.08, 0.03, 0.19, 0, 0, 0, false);
   const eyeR = part(g.sphere, eyeMat, 0.042, 0.036, 0.035, 0.08, 0.03, 0.19, 0, 0, 0, false);
-  headGroup.add(cranium, jaw, mouth, eyeL, eyeR);
+  headGroup.add(cranium, brow, jaw, mouth, fangL, fangR, eyeL, eyeR);
 
   if (isBoss) {
     headGroup.add(
