@@ -32,26 +32,26 @@
   ];
 
   const QUIZZES_1000_NAV = [
-    { id: 'quiz_waldgarten', icon: '🌿', title: 'Waldgarten (Heideblick)', meta: '1.000 Fr.', path: 'games/quiz-waldgarten/index.html', unlisted: true },
-    { id: 'quiz_mil_air', icon: '🛩️', title: 'Militärflugzeuge', meta: '1.000 Fr.', path: 'games/quiz-military-aircraft/index.html' },
-    { id: 'quiz_airliners', icon: '✈️', title: 'Passagierflugzeuge', meta: '1.000 Fr.', path: 'games/quiz-airliners/index.html' },
-    { id: 'quiz_etfs', icon: '📈', title: 'Passives Investieren & ETFs', meta: '1.000 Fr.', path: 'games/quiz-etfs/index.html' },
-    { id: 'quiz_bitcoin', icon: '₿', title: 'Bitcoin Mega-Quiz', meta: '1.000 Fr.', path: 'games/quiz-bitcoin/index.html' },
-    { id: 'quiz', icon: '❓', title: 'Quiz Arena: Klassik & Mega', meta: '1.156 Mega', path: 'games/quiz/index.html' }
+    { id: 'quiz_waldgarten', icon: '🌿', title: 'Waldgarten (Heideblick)', meta: '75 Fr.', path: 'games/quiz-waldgarten/index.html', unlisted: true },
+    { id: 'quiz_mil_air', icon: '🛩️', title: 'Militärflugzeuge', meta: '75 Fr.', path: 'games/quiz-military-aircraft/index.html' },
+    { id: 'quiz_airliners', icon: '✈️', title: 'Passagierflugzeuge', meta: '75 Fr.', path: 'games/quiz-airliners/index.html' },
+    { id: 'quiz_etfs', icon: '📈', title: 'Passives Investieren & ETFs', meta: '75 Fr.', path: 'games/quiz-etfs/index.html' },
+    { id: 'quiz_bitcoin', icon: '₿', title: 'Bitcoin Mega-Quiz', meta: '75 Fr.', path: 'games/quiz-bitcoin/index.html' },
+    { id: 'quiz', icon: '❓', title: 'Quiz Arena: Klassik & Mega', meta: '675 Mega', path: 'games/quiz/index.html' }
   ];
 
   const QUIZZES_THEMEN_NAV = [
-    { id: 'quiz_napoli72h', icon: '🍕', title: 'Napoli72H Pizza-Quiz (Aachen)', meta: '160 Fr.', path: 'games/quiz-napoli72h/index.html', unlisted: true },
-    { id: 'quiz_porsche', icon: '🏎️', title: 'Porsche & Taycan Quiz', meta: '200 Fr.', path: 'games/quiz-porsche/index.html' },
-    { id: 'quiz_md11', icon: '🛫', title: 'McDonnell Douglas MD-11', meta: '100 Fr.', path: 'games/quiz-md11/index.html' },
-    { id: 'quiz_ai', icon: '🤖', title: 'KI: Entstehung & Technik', meta: '108 Fr.', path: 'games/quiz-ai/index.html' },
-    { id: 'quiz_movies', icon: '🎬', title: 'Kino & Filme (o. RomComs)', meta: '108 Fr.', path: 'games/quiz-movies/index.html' },
-    { id: 'quiz_egypt', icon: '🏺', title: 'Ägyptische Geschichte', meta: '108 Fr.', path: 'games/quiz-egypt/index.html' },
-    { id: 'quiz_diving', icon: '🤿', title: 'Tauchen & Scuba Diving', meta: '108 Fr.', path: 'games/quiz-diving/index.html' },
-    { id: 'quiz_emob', icon: '⚡', title: 'E-Mobilität & Tesla', meta: '108 Fr.', path: 'games/quiz-emobility/index.html' },
-    { id: 'quiz_hist', icon: '🏛️', title: 'Geschichte & Weltereignisse', meta: '108 Fr.', path: 'games/quiz-history/index.html' },
-    { id: 'quiz_china', icon: '🏯', title: 'Neuere Chinesische Gesch.', meta: '100 Fr.', path: 'games/quiz-china/index.html' },
-    { id: 'quiz_pol', icon: '⚖️', title: 'Politik & Ökonomie', meta: '84 Fr.', path: 'games/quiz-politics/index.html' }
+    { id: 'quiz_napoli72h', icon: '🍕', title: 'Napoli72H Pizza-Quiz (Aachen)', meta: '75 Fr.', path: 'games/quiz-napoli72h/index.html', unlisted: true },
+    { id: 'quiz_porsche', icon: '🏎️', title: 'Porsche & Taycan Quiz', meta: '75 Fr.', path: 'games/quiz-porsche/index.html' },
+    { id: 'quiz_md11', icon: '🛫', title: 'McDonnell Douglas MD-11', meta: '75 Fr.', path: 'games/quiz-md11/index.html' },
+    { id: 'quiz_ai', icon: '🤖', title: 'KI: Entstehung & Technik', meta: '75 Fr.', path: 'games/quiz-ai/index.html' },
+    { id: 'quiz_movies', icon: '🎬', title: 'Kino & Filme (o. RomComs)', meta: '75 Fr.', path: 'games/quiz-movies/index.html' },
+    { id: 'quiz_egypt', icon: '🏺', title: 'Ägyptische Geschichte', meta: '75 Fr.', path: 'games/quiz-egypt/index.html' },
+    { id: 'quiz_diving', icon: '🤿', title: 'Tauchen & Scuba Diving', meta: '75 Fr.', path: 'games/quiz-diving/index.html' },
+    { id: 'quiz_emob', icon: '⚡', title: 'E-Mobilität & Tesla', meta: '75 Fr.', path: 'games/quiz-emobility/index.html' },
+    { id: 'quiz_hist', icon: '🏛️', title: 'Geschichte & Weltereignisse', meta: '75 Fr.', path: 'games/quiz-history/index.html' },
+    { id: 'quiz_china', icon: '🏯', title: 'Neuere Chinesische Gesch.', meta: '75 Fr.', path: 'games/quiz-china/index.html' },
+    { id: 'quiz_pol', icon: '⚖️', title: 'Politik & Ökonomie', meta: '75 Fr.', path: 'games/quiz-politics/index.html' }
   ];
 
   const QUIZZES_FOTO_NAV = [
@@ -215,8 +215,8 @@
     const q = drawerState.filter.trim().toLowerCase();
     const isAdmin = !!(window.ArcadeAuth && ((typeof window.ArcadeAuth.isAdmin === 'function' && window.ArcadeAuth.isAdmin()) || (window.ArcadeAuth.getUser && window.ArcadeAuth.getUser()?.role === 'admin')));
     const groups = [
-      { label: '🎮 Games (7)', items: GAMES_NAV },
-      { label: '🌟 1.000+ Fragen-Quizzes (5)', items: QUIZZES_1000_NAV },
+      { label: '🎮 Games (10)', items: GAMES_NAV },
+      { label: '🌟 Flagship-Quizzes & Mega-Mix (5)', items: QUIZZES_1000_NAV },
       { label: '🧠 Themen-Quizzes (10)', items: QUIZZES_THEMEN_NAV },
       { label: '📷 Foto- & Exkursions-Quizzes (5)', items: QUIZZES_FOTO_NAV }
     ];
@@ -322,7 +322,7 @@
       <div class="abm-head">
         <div class="abm-brand">
           <strong>🕹️ HunterJoe Arcade</strong>
-          <span>7 Games · 20 Quiz-Welten (5.552 Pool)</span>
+          <span>10 Games · 20 Quiz-Welten (1.371 Pool)</span>
         </div>
         <button type="button" class="abm-close" id="abm-btn-close" aria-label="Menü schließen">✕</button>
       </div>
