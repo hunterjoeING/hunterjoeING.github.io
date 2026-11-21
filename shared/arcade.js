@@ -182,6 +182,13 @@
     { id: 'quiz_fussball_intl', title: 'Fußball: Champions League & Weltfußball', icon: '⭐', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_fussball_rules', title: 'Fußball: Regeln, Taktik & Kurioses', icon: '📜', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_fussball_werder', title: 'Fußball: SV Werder Bremen Spezial', icon: '💚', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_american_football', title: 'American Football – Das große NFL-Quiz', icon: '🏈', lowerIsBetter: false },
+    { id: 'quiz_af_mix', title: 'American Football: Alles gemischt', icon: '🏈', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_af_rules', title: 'American Football: Regeln, Positionen & Taktik', icon: '📋', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_af_superbowl', title: 'American Football: Super Bowl & NFL-Geschichte', icon: '🏆', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_af_teams', title: 'American Football: Teams, Stadien & Fankultur', icon: '🏟️', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_af_legends', title: 'American Football: Legenden, Draft & Rekorde', icon: '⭐', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_af_packers', title: 'American Football: Green Bay Packers Special', icon: '🧀', lowerIsBetter: false, unlisted: true },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -231,6 +238,7 @@
       if (p.includes('/games/quiz-naildesign')) return 'quiz_naildesign';
       if (p.includes('/games/quiz-torten')) return 'quiz_torten';
       if (p.includes('/games/quiz-fussball')) return 'quiz_fussball';
+      if (p.includes('/games/quiz-american-football')) return 'quiz_american_football';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
@@ -849,6 +857,7 @@
     { id: 'quiz_naildesign', title: 'Nageldesign Quiz · Finger- & Fußnägel', icon: '💅' },
     { id: 'quiz_torten', title: 'Torten Quiz · Klassiker & Patisserie', icon: '🎂' },
     { id: 'quiz_fussball', title: 'Fußball – Das große Quiz', icon: '⚽' },
+    { id: 'quiz_american_football', title: 'American Football – Das große NFL-Quiz', icon: '🏈' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },
