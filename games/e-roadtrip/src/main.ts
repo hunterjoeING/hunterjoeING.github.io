@@ -1,10 +1,14 @@
 import * as Phaser from 'phaser';
 import {
   CampaignSave,
+  ChargerNetwork,
   ChargerStation,
   CityDrivePreset,
+  CollisionInfo,
   EventChoice,
   LevelConfig,
+  PoliceViolationKind,
+  ProviderFilterMap,
   RunState,
   TripPlan,
   WifeDialogueChoice
@@ -28,10 +32,10 @@ import { BootScene } from './phaser/BootScene';
 import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
-import { ERoadtripBridge } from './phaser/GameBridge';
+import { ERoadtripBridge, TouchInput, resetTouchInput } from './phaser/GameBridge';
 import { PlanningUI } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
-import { EventModal } from './ui/EventModal';
+import { ChargingCompletePayload, EventModal } from './ui/EventModal';
 import { ResultsUI } from './ui/ResultsUI';
 import { SoundFX } from './phaser/SoundFX';
 
@@ -40,6 +44,17 @@ function formatClock(level: LevelConfig, elapsedMin: number): string {
   const hh = String(Math.floor(total / 60) % 24).padStart(2, '0');
   const mm = String(total % 60).padStart(2, '0');
   return `${hh}:${mm}`;
+}
+
+function createDefaultProviderFilter(): ProviderFilterMap {
+  return {
+    tesla: true,
+    enbw: true,
+    ewego: true,
+    electra: true,
+    ionity: true,
+    ac_village: true
+  };
 }
 
 class ERoadtripController {
@@ -75,9 +90,12 @@ class ERoadtripController {
       level: this.level,
       plan: this.plan,
       runState: null,
+      selectedLegIndex: 0,
+      providerFilter: createDefaultProviderFilter(),
+      dimUnsubscribed: true,
       timeScale: 5,
       paused: false,
-      touch: { left: false, right: false, up: false, down: false, brake: false, hornPressed: false },
+      touch: TouchInput,
       isLightTheme: () => document.documentElement.getAttribute('data-theme') !== 'dark',
 
       onBootReady: () => {
@@ -90,6 +108,10 @@ class ERoadtripController {
 
       onMapSelectRoute: (routeId: string) => {
         this.selectRoute(routeId);
+      },
+
+      onMapSelectLeg: (legIndex: number) => {
+        this.selectLeg(legIndex);
       },
 
       onAutobahnHudTick: (run: RunState) => {
@@ -116,8 +138,12 @@ class ERoadtripController {
         this.handleWifeDialogue(dialogueId);
       },
 
-      onCollisionEvent: (kind) => {
-        this.handleCollision(kind);
+      onCollisionEvent: (info: CollisionInfo) => {
+        this.handleCollision(info);
+      },
+
+      onPoliceViolation: (kind: PoliceViolationKind) => {
+        this.handlePoliceViolation(kind);
       },
 
       onBatteryDepleted: () => {
@@ -133,15 +159,27 @@ class ERoadtripController {
       onSelectRoute: (routeId: string) => {
         this.selectRoute(routeId);
       },
+      onSelectLeg: (legIndex: number) => {
+        this.selectLeg(legIndex);
+      },
+      onToggleProviderFilter: (network: ChargerNetwork) => {
+        this.bridge.providerFilter[network] = !this.bridge.providerFilter[network];
+        this.syncMapScene();
+        this.renderPlanning();
+      },
+      onToggleDimUnsubscribed: () => {
+        this.bridge.dimUnsubscribed = !this.bridge.dimUnsubscribed;
+        this.syncMapScene();
+        this.renderPlanning();
+      },
+      onResetProviderFilter: () => {
+        this.bridge.providerFilter = createDefaultProviderFilter();
+        this.syncMapScene();
+        this.renderPlanning();
+      },
       onStartTrip: () => this.startTrip(),
       onSelectLevel: (levelId: string) => {
-        this.level = getLevelById(levelId);
-        this.bridge.level = this.level;
-        const carId = this.save.ownedVehicleId || 'mg4_standard';
-        this.plan = createDefaultPlan(this.level, carId);
-        this.bridge.plan = this.plan;
-        this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
-        this.renderPlanning();
+        this.returnToPlanning(levelId);
       },
       onZoomIn: () => {
         const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
@@ -222,19 +260,19 @@ class ERoadtripController {
   }
 
   private bindTopbarButtons(): void {
-    document.getElementById('btn-toggle-touch')?.addEventListener('click', () => {
-      SoundFX.click();
-      const on = this.drivingHUD.toggleTouchOverlay();
-      const btn = document.getElementById('btn-toggle-touch');
-      if (btn) btn.textContent = on ? '🎮 Touch: AN' : '🎮 Touch: AUS';
-    });
+    const touchBtn = document.getElementById('btn-toggle-touch');
+    if (touchBtn) {
+      touchBtn.textContent = this.drivingHUD.isTouchVisible() ? '🎮 Touch: AN' : '🎮 Touch: AUS';
+      touchBtn.addEventListener('click', () => {
+        SoundFX.click();
+        const on = this.drivingHUD.toggleTouchOverlay();
+        touchBtn.textContent = on ? '🎮 Touch: AN' : '🎮 Touch: AUS';
+      });
+    }
 
     document.getElementById('btn-reset-campaign')?.addEventListener('click', () => {
       SoundFX.click();
       this.save = resetCampaignSave();
-      this.plan = createDefaultPlan(this.level, 'mg4_standard');
-      this.bridge.plan = this.plan;
-      this.bridge.runState = null;
       this.eventModal.close();
       this.resultsUI.hide();
       this.returnToPlanning(this.level.id);
@@ -270,7 +308,8 @@ class ERoadtripController {
       width: parent.clientWidth || 720,
       height: parent.clientHeight || 520,
       backgroundColor: '#0c1e38',
-      pixelArt: true,
+      pixelArt: false,
+      antialias: true,
       roundPixels: false,
       physics: {
         default: 'arcade',
@@ -291,7 +330,14 @@ class ERoadtripController {
   }
 
   private renderPlanning(): void {
-    this.planningUI.render(this.level, this.plan, this.save);
+    this.planningUI.render(
+      this.level,
+      this.plan,
+      this.save,
+      this.bridge.selectedLegIndex,
+      this.bridge.providerFilter,
+      this.bridge.dimUnsubscribed
+    );
   }
 
   private syncMapScene(): void {
@@ -304,9 +350,18 @@ class ERoadtripController {
   private selectRoute(routeId: string): void {
     switchRouteInPlan(this.level, this.plan, routeId);
     this.bridge.plan = this.plan;
+    this.bridge.selectedLegIndex = 0;
     this.syncMapScene();
     const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
     mapScene?.fitCameraToRoute();
+    this.renderPlanning();
+  }
+
+  private selectLeg(legIndex: number): void {
+    const activeLegs = getActiveRouteLegs(this.level, this.plan);
+    const clamped = Math.max(0, Math.min(activeLegs.length - 1, legIndex));
+    this.bridge.selectedLegIndex = clamped;
+    this.syncMapScene();
     this.renderPlanning();
   }
 
@@ -317,19 +372,21 @@ class ERoadtripController {
       .filter(x => x.l.edgeId === station.edgeId);
     if (matchingLegs.length === 0) return;
 
-    // Prefer toggling existing stop first, otherwise add on outbound leg
     const existingStop = this.plan.plannedStops.findIndex(
       s => s.chargerId === station.id && matchingLegs.some(m => m.idx === s.legIndex)
     );
     if (existingStop >= 0) {
       this.plan.plannedStops.splice(existingStop, 1);
     } else {
+      const preferred =
+        matchingLegs.find(m => m.idx === this.bridge.selectedLegIndex) || matchingLegs[0];
       this.plan.plannedStops.push({
         chargerId: station.id,
-        legIndex: matchingLegs[0].idx,
+        legIndex: preferred.idx,
         targetSocPct: 80
       });
     }
+    this.syncMapScene();
     this.renderPlanning();
   }
 
@@ -350,6 +407,7 @@ class ERoadtripController {
 
     this.bridge.plan = clonedPlan;
     this.bridge.paused = false;
+    resetTouchInput();
     this.bridge.runState = {
       levelId: this.level.id,
       plan: clonedPlan,
@@ -380,15 +438,19 @@ class ERoadtripController {
       isNight: false
     };
 
-    // Hide planner drawer during driving
     this.stageWrapEl.classList.add('driving-active');
     this.plannerEl.classList.add('hidden');
+    window.requestAnimationFrame(() => this.game.scale.refresh());
     this.enterCitySegment('aachen_start');
   }
 
   private stopAllGameplayScenes(): void {
     ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene'].forEach(k => {
-      if (this.game.scene.isActive(k)) {
+      const sc = this.game.scene.getScene(k);
+      if (
+        sc &&
+        (sc.scene.isActive() || sc.scene.isPaused() || sc.scene.isSleeping() || sc.scene.isVisible())
+      ) {
         this.game.scene.stop(k);
       }
     });
@@ -396,11 +458,12 @@ class ERoadtripController {
 
   private enterCitySegment(preset: CityDrivePreset, chargerId?: string): void {
     this.stopAllGameplayScenes();
+    resetTouchInput();
     this.bridge.paused = false;
     this.drivingHUD.setMode('city');
     const titleMap: Record<CityDrivePreset, string> = {
       aachen_start: 'Aachen Innenstadt → A4 Auffahrt',
-      charger_park: `Ladepark Einfahrt`,
+      charger_park: `Ladepark Einfahrt (Rückwärts einparken!)`,
       hannover_messe: 'Hannover Messe → E-Parkplatz',
       aachen_finish: 'Aachen Ausfahrt → Ziel-Parkplatz',
       ferry_denmark: 'Hirtshals Fährhafen'
@@ -424,6 +487,7 @@ class ERoadtripController {
 
   private enterAutobahn(): void {
     this.stopAllGameplayScenes();
+    resetTouchInput();
     this.bridge.paused = false;
     this.drivingHUD.setMode('autobahn');
     if (this.bridge.runState) {
@@ -463,40 +527,51 @@ class ERoadtripController {
         const targetSoc = stopPlan ? stopPlan.targetSocPct : 80;
         const arriveSoc = run.socPct;
         this.bridge.paused = true;
+        this.drivingHUD.clearTouchStates();
 
-        this.eventModal.showChargingSession(station, this.level, run, targetSoc, (addedKwh, mins, cost, newSoc) => {
-          run.completedStopIds.push(station.id);
-          run.socPct = newSoc;
-          run.elapsedMinutes += mins;
-          run.chargingCostEur += cost;
-          run.bladderNeed = Math.max(0, run.bladderNeed - 55);
+        this.eventModal.showChargingSession(
+          station,
+          this.level,
+          run,
+          targetSoc,
+          (payload: ChargingCompletePayload) => {
+            run.completedStopIds.push(station.id);
+            run.socPct = payload.newSoc;
+            run.elapsedMinutes += payload.minutesSpent;
+            run.chargingCostEur += payload.chargingCostEur;
+            run.tollsAndFinesEur += payload.breakCostEur;
+            if (payload.resetBladder) {
+              run.bladderNeed = 0;
+            } else {
+              run.bladderNeed = Math.max(0, run.bladderNeed - 35);
+            }
 
-          // Reward charging in sweet spot (10% - 75%)
-          if (arriveSoc <= 24 && newSoc <= 82) {
-            run.chargingEfficiencyBonus += 6;
+            if (arriveSoc <= 24 && payload.newSoc <= 82) {
+              run.chargingEfficiencyBonus += 6;
+            }
+            const mcdRelief = station.hasMcDonalds && run.plan.subscriptionIds.includes('ewe_go') ? -12 : -4;
+            run.stress = Phaser.Math.Clamp(run.stress + mcdRelief + payload.stressDelta, 0, 100);
+            run.peakStress = Math.max(run.peakStress, run.stress);
+
+            const breakNote =
+              payload.takenBreaks.length > 0 ? ` · Pausen: ${payload.takenBreaks.join(', ')}` : '';
+            run.incidentLog.push({
+              timeStr: formatClock(this.level, run.elapsedMinutes),
+              title: `Laden: ${station.name}`,
+              detail: `+${payload.addedKwh.toFixed(1)} kWh (${Math.round(arriveSoc)}% → ${payload.newSoc}%) in ${payload.minutesSpent} Min · ${payload.chargingCostEur.toFixed(2)} €${breakNote}`,
+              impact: 'positive'
+            });
+            this.enterAutobahn();
           }
-          if (station.hasMcDonalds && run.plan.subscriptionIds.includes('ewe_go')) {
-            run.stress = Math.max(0, run.stress - 12);
-          } else {
-            run.stress = Math.max(0, run.stress - 4);
-          }
-
-          run.incidentLog.push({
-            timeStr: formatClock(this.level, run.elapsedMinutes),
-            title: `Laden: ${station.name}`,
-            detail: `+${addedKwh.toFixed(1)} kWh (${Math.round(arriveSoc)}% → ${newSoc}%) in ${mins} Min · ${cost.toFixed(2)} €`,
-            impact: 'positive'
-          });
-          this.enterAutobahn();
-        });
+        );
       };
 
-      // Check station defect/occupancy risk!
       if (!run.triggeredEventIds.includes(`def_${station.id}`) && Math.random() < station.defectRisk + station.occupancyRisk * 0.35) {
         run.triggeredEventIds.push(`def_${station.id}`);
         const evt = getEventById('evt_charger_defect');
         if (evt) {
           this.bridge.paused = true;
+          this.drivingHUD.clearTouchStates();
           this.eventModal.showDynamicEvent(
             evt,
             choice => {
@@ -523,7 +598,7 @@ class ERoadtripController {
     }
 
     if (preset === 'hannover_messe') {
-      run.elapsedMinutes += 28; // Turnaround / Messe-Termin
+      run.elapsedMinutes += 28;
       run.bladderNeed = 0;
       run.stress = Math.max(0, run.stress - 8);
       run.incidentLog.push({
@@ -534,6 +609,7 @@ class ERoadtripController {
       });
 
       this.bridge.paused = true;
+      this.drivingHUD.clearTouchStates();
       this.eventModal.showMapPeek(
         `
         <p><strong>🎉 Etappenziel Hannover Messe erreicht!</strong></p>
@@ -621,6 +697,7 @@ class ERoadtripController {
       this.bridge.paused = false;
       return;
     }
+    this.drivingHUD.clearTouchStates();
     this.eventModal.showDynamicEvent(
       evt,
       choice => this.applyEventChoice(evt.title, choice),
@@ -638,6 +715,7 @@ class ERoadtripController {
       return;
     }
 
+    this.drivingHUD.clearTouchStates();
     this.eventModal.showWifeStressDialogue(
       dlg,
       this.level,
@@ -692,26 +770,56 @@ class ERoadtripController {
     );
   }
 
-  private handleCollision(kind: 'car' | 'pedestrian' | 'cyclist' | 'obstacle'): void {
+  private handleCollision(info: CollisionInfo): void {
     const run = this.bridge.runState;
     if (!run) {
       this.bridge.paused = false;
       return;
     }
-    this.eventModal.showCollisionDialogue(kind, (cost, mins, stressDelta, summary) => {
-      run.tollsAndFinesEur += cost;
-      run.elapsedMinutes += mins;
-      run.stress = Math.min(100, run.stress + stressDelta);
-      run.peakStress = Math.max(run.peakStress, run.stress);
-      run.decisionScoreAccum -= 6;
-      run.incidentLog.push({
-        timeStr: formatClock(this.level, run.elapsedMinutes),
-        title: 'Stadtverkehr-Zwischenfall',
-        detail: summary,
-        impact: 'negative'
-      });
+    this.drivingHUD.clearTouchStates();
+    this.eventModal.showCollisionDialogue(
+      info,
+      (cost, mins, stressDelta, decisionPts, punishCollision, summary) => {
+        run.tollsAndFinesEur += cost;
+        run.elapsedMinutes += mins;
+        run.stress = Math.min(100, run.stress + stressDelta);
+        run.peakStress = Math.max(run.peakStress, run.stress);
+        run.decisionScoreAccum += decisionPts;
+        run.incidentLog.push({
+          timeStr: formatClock(this.level, run.elapsedMinutes),
+          title: punishCollision ? 'Stadtverkehr-Zwischenfall (Eigenverschulden)' : 'Unverschuldeter Kontakt',
+          detail: summary,
+          impact: punishCollision ? 'negative' : 'neutral'
+        });
+        this.bridge.paused = false;
+      }
+    );
+  }
+
+  private handlePoliceViolation(kind: PoliceViolationKind): void {
+    const run = this.bridge.runState;
+    if (!run) {
       this.bridge.paused = false;
-    });
+      return;
+    }
+    this.drivingHUD.clearTouchStates();
+    this.eventModal.showPoliceViolationDialogue(
+      kind,
+      (cost, mins, stressDelta, decisionPts, summary) => {
+        run.tollsAndFinesEur += cost;
+        run.elapsedMinutes += mins;
+        run.stress = Math.min(100, run.stress + stressDelta);
+        run.peakStress = Math.max(run.peakStress, run.stress);
+        run.decisionScoreAccum += decisionPts;
+        run.incidentLog.push({
+          timeStr: formatClock(this.level, run.elapsedMinutes),
+          title: kind === 'red_light' ? 'Polizei: Rote Ampel' : 'Polizei: Zebrastreifen',
+          detail: summary,
+          impact: 'negative'
+        });
+        this.bridge.paused = false;
+      }
+    );
   }
 
   private handleBatteryDepleted(): void {
@@ -729,6 +837,7 @@ class ERoadtripController {
       impact: 'negative'
     });
 
+    this.drivingHUD.clearTouchStates();
     this.eventModal.showMapPeek(
       `<p><strong>🪫 Batterie leer (0 %)!</strong></p>
        <p>Der mobile Pannenservice hat dich auf <b>28 % SoC</b> nachgeladen (+45 Min Zeitverlust, 145 € Gebühr). Plane am besten sofort einen Schnelllader ein!</p>`,
@@ -779,6 +888,7 @@ class ERoadtripController {
     const run = this.bridge.runState;
     if (!run) return;
     this.bridge.paused = true;
+    this.drivingHUD.clearTouchStates();
     const legs = getActiveRouteLegs(this.level, run.plan);
     const forecast = evaluateTripPlan(this.level, run.plan);
     const livePred = predictLiveTripSoc(this.level, run);
@@ -801,8 +911,10 @@ class ERoadtripController {
   private finishLevel(cleanArrival: boolean): void {
     const run = this.bridge.runState;
     if (!run) return;
-    this.stopAllGameplayScenes();
+    this.eventModal.close();
     this.drivingHUD.setMode('hidden');
+    resetTouchInput();
+    this.stopAllGameplayScenes();
 
     const result = evaluateRun(this.level, run, cleanArrival);
     this.save.cashEur += result.prizeMoneyEur;
@@ -825,16 +937,25 @@ class ERoadtripController {
     this.bridge.level = this.level;
     this.bridge.runState = null;
     this.bridge.paused = false;
+    this.bridge.selectedLegIndex = 0;
+    resetTouchInput();
+
     const carId = this.save.ownedVehicleId || 'mg4_standard';
     this.plan = createDefaultPlan(this.level, carId);
     this.bridge.plan = this.plan;
 
+    this.eventModal.close();
+    this.resultsUI.hide();
     this.drivingHUD.setMode('hidden');
     this.stageWrapEl.classList.remove('driving-active');
     this.plannerEl.classList.remove('hidden');
+
     this.stopAllGameplayScenes();
     this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
     this.renderPlanning();
+    window.requestAnimationFrame(() => {
+      this.game.scale.refresh();
+    });
   }
 }
 
