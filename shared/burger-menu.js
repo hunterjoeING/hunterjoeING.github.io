@@ -46,6 +46,7 @@
     { id: 'quiz_md11', icon: '🛫', title: 'McDonnell Douglas MD-11', meta: '75 Fr.', path: 'games/quiz-md11/index.html' },
     { id: 'quiz_naildesign', icon: '💅', title: 'Nageldesign (Finger & Fuß)', meta: '75 Fr.', path: 'games/quiz-naildesign/index.html' },
     { id: 'quiz_torten', icon: '🎂', title: 'Torten & Patisserie', meta: '75 Fr.', path: 'games/quiz-torten/index.html' },
+    { id: 'quiz_fussball', icon: '⚽', title: 'Fußball – Das große Quiz', meta: '375 Fr.', path: 'games/quiz-fussball/index.html' },
     { id: 'quiz_ai', icon: '🤖', title: 'KI: Entstehung & Technik', meta: '75 Fr.', path: 'games/quiz-ai/index.html' },
     { id: 'quiz_movies', icon: '🎬', title: 'Kino & Filme (o. RomComs)', meta: '75 Fr.', path: 'games/quiz-movies/index.html' },
     { id: 'quiz_egypt', icon: '🏺', title: 'Ägyptische Geschichte', meta: '75 Fr.', path: 'games/quiz-egypt/index.html' },
@@ -219,7 +220,7 @@
     const groups = [
       { label: '🎮 Games (10)', items: GAMES_NAV },
       { label: '🌟 Flagship-Quizzes & Mega-Mix (5)', items: QUIZZES_1000_NAV },
-      { label: '🧠 Themen-Quizzes (11)', items: QUIZZES_THEMEN_NAV },
+      { label: '🧠 Themen-Quizzes (12)', items: QUIZZES_THEMEN_NAV },
       { label: '📷 Foto- & Exkursions-Quizzes (5)', items: QUIZZES_FOTO_NAV }
     ];
     if (isAdmin) {
