@@ -1,4 +1,4 @@
-// Pure Klondike Solitaire rules engine (1- or 3-card draw, seeded deals, unlimited undo, hints, auto-complete)
+// Pure 4-Suit Spider Solitaire rules engine (2 decks = 104 cards, 10 columns, 5x10 stock, 8 completed slots, seeded deals, unlimited undo, smart hints)
 
 export const SUITS = [
   { key: 'spades', sym: '♠', name: 'Pik', color: 'black' },
@@ -20,42 +20,41 @@ function mulberry32(seed) {
   };
 }
 
-export class KlondikeEngine {
+export class SpiderEngine {
   constructor() {
-    this.drawMode = 1;
     this.seed = 1;
     this.cards = [];
     this.stock = [];
-    this.waste = [];
-    this.foundations = [[], [], [], []];
-    this.tableau = [[], [], [], [], [], [], []];
-    this.score = 0;
+    this.foundations = Array.from({ length: 8 }, () => []);
+    this.tableau = Array.from({ length: 10 }, () => []);
+    this.score = 500;
     this.moves = 0;
-    this.stockCycles = 0;
-    this.foundationStreak = 0;
     this.won = false;
     this.history = [];
   }
 
-  newGame({ drawMode = this.drawMode, seed = null } = {}) {
-    this.drawMode = drawMode === 3 ? 3 : 1;
+  newGame({ seed = null } = {}) {
     this.seed = seed !== null ? (seed >>> 0) : ((Math.random() * 0xffffffff) >>> 0);
 
-    // Create 52 cards (id 0..51)
+    // Create 2 complete decks = 104 cards (id 0..103)
     this.cards = [];
     let id = 0;
-    for (let s = 0; s < 4; s++) {
-      for (let r = 1; r <= 13; r++) {
-        this.cards.push({
-          id: id++,
-          suitIdx: s,
-          suit: SUITS[s].key,
-          sym: SUITS[s].sym,
-          color: SUITS[s].color,
-          rank: r,
-          rankLabel: RANK_LABELS[r],
-          faceUp: false
-        });
+    for (let copy = 0; copy < 2; copy++) {
+      for (let s = 0; s < 4; s++) {
+        for (let r = 1; r <= 13; r++) {
+          this.cards.push({
+            id: id++,
+            copy,
+            faceIndex: s * 13 + (r - 1),
+            suitIdx: s,
+            suit: SUITS[s].key,
+            sym: SUITS[s].sym,
+            color: SUITS[s].color,
+            rank: r,
+            rankLabel: RANK_LABELS[r],
+            faceUp: false
+          });
+        }
       }
     }
 
@@ -68,29 +67,29 @@ export class KlondikeEngine {
     }
 
     this.stock = [];
-    this.waste = [];
-    this.foundations = [[], [], [], []];
-    this.tableau = [[], [], [], [], [], [], []];
+    this.foundations = Array.from({ length: 8 }, () => []);
+    this.tableau = Array.from({ length: 10 }, () => []);
 
+    // Columns 0..3 get 6 cards, columns 4..9 get 5 cards (54 total); only top card is faceUp
     let cursor = 0;
-    for (let col = 0; col < 7; col++) {
-      for (let row = 0; row <= col; row++) {
+    for (let col = 0; col < 10; col++) {
+      const count = col < 4 ? 6 : 5;
+      for (let row = 0; row < count; row++) {
         const cid = deck[cursor++];
-        this.cards[cid].faceUp = row === col;
+        this.cards[cid].faceUp = row === count - 1;
         this.tableau[col].push(cid);
       }
     }
 
+    // Remaining 50 cards go into Stock (5 deals of 10 cards)
     while (cursor < deck.length) {
       const cid = deck[cursor++];
       this.cards[cid].faceUp = false;
       this.stock.push(cid);
     }
 
-    this.score = 0;
+    this.score = 500;
     this.moves = 0;
-    this.stockCycles = 0;
-    this.foundationStreak = 0;
     this.won = false;
     this.history = [];
   }
@@ -98,21 +97,17 @@ export class KlondikeEngine {
   _snapshot() {
     return {
       stock: this.stock.slice(),
-      waste: this.waste.slice(),
       foundations: this.foundations.map((f) => f.slice()),
       tableau: this.tableau.map((t) => t.slice()),
       faceUps: this.cards.map((c) => c.faceUp),
       score: this.score,
       moves: this.moves,
-      stockCycles: this.stockCycles,
-      foundationStreak: this.foundationStreak,
       won: this.won
     };
   }
 
   _restore(snap) {
     this.stock = snap.stock.slice();
-    this.waste = snap.waste.slice();
     this.foundations = snap.foundations.map((f) => f.slice());
     this.tableau = snap.tableau.map((t) => t.slice());
     for (let i = 0; i < this.cards.length; i++) {
@@ -120,8 +115,6 @@ export class KlondikeEngine {
     }
     this.score = snap.score;
     this.moves = snap.moves;
-    this.stockCycles = snap.stockCycles;
-    this.foundationStreak = snap.foundationStreak;
     this.won = snap.won;
   }
 
@@ -140,92 +133,65 @@ export class KlondikeEngine {
     return this.cards[cardId];
   }
 
-  canMoveToFoundation(cardId, fIdx) {
-    const card = this.cards[cardId];
-    const pile = this.foundations[fIdx];
-    if (!card || !pile) return false;
-    if (pile.length === 0) return card.rank === 1;
-    const top = this.cards[pile[pile.length - 1]];
-    return top.suitIdx === card.suitIdx && card.rank === top.rank + 1;
+  getStockDealsRemaining() {
+    return Math.ceil(this.stock.length / 10);
+  }
+
+  getCompletedCount() {
+    let count = 0;
+    for (let i = 0; i < this.foundations.length; i++) {
+      if (this.foundations[i].length === 13) count++;
+    }
+    return count;
   }
 
   canMoveToTableau(cardId, colIdx) {
     const card = this.cards[cardId];
     const pile = this.tableau[colIdx];
     if (!card || !pile) return false;
-    if (pile.length === 0) return card.rank === 13;
+    // Empty column accepts any single card or valid same-suit sequence
+    if (pile.length === 0) return true;
     const top = this.cards[pile[pile.length - 1]];
     if (!top.faceUp) return false;
-    return top.color !== card.color && card.rank === top.rank - 1;
+    // Any suit/color allowed as long as rank is 1 lower than target top card
+    return card.rank === top.rank - 1;
   }
 
   getMovableStack(pileType, pileIdx, cardIdx) {
-    if (this.won) return { valid: false, cards: [] };
-
-    if (pileType === 'waste') {
-      if (this.waste.length === 0) return { valid: false, cards: [] };
-      const topIdx = this.waste.length - 1;
-      if (cardIdx !== undefined && cardIdx !== topIdx) return { valid: false, cards: [] };
-      return {
-        valid: true,
-        cards: [this.waste[topIdx]],
-        source: { type: 'waste', idx: 0, startIndex: topIdx }
-      };
+    if (this.won || pileType !== 'tableau') {
+      return { valid: false, cards: [] };
     }
 
-    if (pileType === 'foundation') {
-      const f = this.foundations[pileIdx];
-      if (!f || f.length === 0) return { valid: false, cards: [] };
-      const topIdx = f.length - 1;
-      if (cardIdx !== undefined && cardIdx !== topIdx) return { valid: false, cards: [] };
-      return {
-        valid: true,
-        cards: [f[topIdx]],
-        source: { type: 'foundation', idx: pileIdx, startIndex: topIdx }
-      };
-    }
+    const col = this.tableau[pileIdx];
+    if (!col || col.length === 0) return { valid: false, cards: [] };
 
-    if (pileType === 'tableau') {
-      const col = this.tableau[pileIdx];
-      if (!col || col.length === 0) return { valid: false, cards: [] };
-      const idx = cardIdx !== undefined ? cardIdx : col.length - 1;
-      if (idx < 0 || idx >= col.length) return { valid: false, cards: [] };
-      if (!this.cards[col[idx]].faceUp) return { valid: false, cards: [] };
+    const idx = cardIdx !== undefined ? cardIdx : col.length - 1;
+    if (idx < 0 || idx >= col.length) return { valid: false, cards: [] };
+    if (!this.cards[col[idx]].faceUp) return { valid: false, cards: [] };
 
-      // Verify valid descending alternating sequence from idx to end
-      for (let i = idx; i < col.length - 1; i++) {
-        const cur = this.cards[col[i]];
-        const nxt = this.cards[col[i + 1]];
-        if (!nxt.faceUp || cur.color === nxt.color || cur.rank !== nxt.rank + 1) {
-          return { valid: false, cards: [] };
-        }
+    // Multi-card moves require a gapless descending sequence of the SAME SUIT
+    for (let i = idx; i < col.length - 1; i++) {
+      const cur = this.cards[col[i]];
+      const nxt = this.cards[col[i + 1]];
+      if (!nxt.faceUp || cur.suitIdx !== nxt.suitIdx || cur.rank !== nxt.rank + 1) {
+        return { valid: false, cards: [], blockedReason: 'mixed_or_gap' };
       }
-      return {
-        valid: true,
-        cards: col.slice(idx),
-        source: { type: 'tableau', idx: pileIdx, startIndex: idx }
-      };
     }
 
-    return { valid: false, cards: [] };
+    return {
+      valid: true,
+      cards: col.slice(idx),
+      source: { type: 'tableau', idx: pileIdx, startIndex: idx }
+    };
   }
 
   getValidDestinations(cards, source) {
-    const out = { foundations: [], tableau: [] };
+    const out = { tableau: [] };
     if (!cards || cards.length === 0) return out;
     const leadId = cards[0];
 
-    if (cards.length === 1) {
-      for (let f = 0; f < 4; f++) {
-        if (source.type === 'foundation' && source.idx === f) continue;
-        if (this.canMoveToFoundation(leadId, f)) {
-          out.foundations.push(f);
-        }
-      }
-    }
-
-    for (let c = 0; c < 7; c++) {
-      if (source.type === 'tableau' && source.idx === c) continue;
+    for (let c = 0; c < 10; c++) {
+      if (source && source.type === 'tableau' && source.idx === c) continue;
       if (this.canMoveToTableau(leadId, c)) {
         out.tableau.push(c);
       }
@@ -233,159 +199,174 @@ export class KlondikeEngine {
     return out;
   }
 
-  executeMove(cards, source, target) {
-    if (!cards || cards.length === 0) return { ok: false };
-    const leadId = cards[0];
+  _clearSequenceFromColumn(colIdx) {
+    const col = this.tableau[colIdx];
+    if (!col || col.length < 13) return null;
 
-    // Validate destination
-    if (target.type === 'foundation') {
-      if (cards.length !== 1) return { ok: false };
-      if (source.type === 'foundation' && source.idx === target.idx) return { ok: false };
-      if (!this.canMoveToFoundation(leadId, target.idx)) return { ok: false };
-    } else if (target.type === 'tableau') {
-      if (source.type === 'tableau' && source.idx === target.idx) return { ok: false };
-      if (!this.canMoveToTableau(leadId, target.idx)) return { ok: false };
-    } else {
+    const start = col.length - 13;
+    const firstCard = this.cards[col[start]];
+    if (!firstCard.faceUp || firstCard.rank !== 13) return null;
+
+    const targetSuit = firstCard.suitIdx;
+    for (let offset = 0; offset < 13; offset++) {
+      const card = this.cards[col[start + offset]];
+      if (!card.faceUp || card.suitIdx !== targetSuit || card.rank !== 13 - offset) {
+        return null;
+      }
+    }
+
+    const fIdx = this.foundations.findIndex((f) => f.length === 0);
+    if (fIdx === -1) return null;
+
+    // Remove K..A from tableau and stack A->K into foundation slot so K sits proudly on top
+    const seq = col.splice(start, 13);
+    const stackedForFoundation = seq.slice().reverse();
+    this.foundations[fIdx] = stackedForFoundation;
+
+    let flippedCardId = null;
+    if (col.length > 0) {
+      const exposedId = col[col.length - 1];
+      if (!this.cards[exposedId].faceUp) {
+        this.cards[exposedId].faceUp = true;
+        flippedCardId = exposedId;
+      }
+    }
+
+    return {
+      foundationIdx: fIdx,
+      fromCol: colIdx,
+      suitIdx: targetSuit,
+      cards: stackedForFoundation,
+      flippedCardId
+    };
+  }
+
+  executeMove(cards, source, target) {
+    if (this.won || !cards || cards.length === 0) return { ok: false };
+    if (!source || source.type !== 'tableau' || !target || target.type !== 'tableau') {
       return { ok: false };
     }
+    if (source.idx === target.idx) return { ok: false };
+
+    const checkStack = this.getMovableStack('tableau', source.idx, source.startIndex);
+    if (!checkStack.valid || checkStack.cards.length !== cards.length) {
+      return { ok: false };
+    }
+    const leadId = cards[0];
+    if (!this.canMoveToTableau(leadId, target.idx)) return { ok: false };
 
     this.history.push(this._snapshot());
 
-    // Remove from source
-    if (source.type === 'waste') {
-      this.waste.pop();
-    } else if (source.type === 'foundation') {
-      this.foundations[source.idx].pop();
-    } else if (source.type === 'tableau') {
-      this.tableau[source.idx].splice(source.startIndex, cards.length);
+    // Move stack
+    this.tableau[source.idx].splice(source.startIndex, cards.length);
+    for (const cid of cards) {
+      this.tableau[target.idx].push(cid);
     }
 
-    // Add to target
-    let toFoundation = false;
-    if (target.type === 'foundation') {
-      this.foundations[target.idx].push(leadId);
-      toFoundation = true;
-    } else {
-      for (const cid of cards) {
-        this.tableau[target.idx].push(cid);
-      }
-    }
-
-    // Reveal newly exposed tableau card if needed
+    // Reveal newly exposed card on source column if face-down
     let flippedCardId = null;
-    if (source.type === 'tableau') {
-      const srcCol = this.tableau[source.idx];
-      if (srcCol.length > 0) {
-        const exposedId = srcCol[srcCol.length - 1];
-        if (!this.cards[exposedId].faceUp) {
-          this.cards[exposedId].faceUp = true;
-          flippedCardId = exposedId;
-        }
+    const srcCol = this.tableau[source.idx];
+    if (srcCol.length > 0) {
+      const exposedId = srcCol[srcCol.length - 1];
+      if (!this.cards[exposedId].faceUp) {
+        this.cards[exposedId].faceUp = true;
+        flippedCardId = exposedId;
       }
     }
 
-    // Update score & streak
-    if (toFoundation) {
-      this.foundationStreak += 1;
-      if (source.type !== 'foundation') {
-        this.score += 10;
-      }
-    } else {
-      this.foundationStreak = 0;
-      if (source.type === 'waste' && target.type === 'tableau') {
-        this.score += 5;
-      } else if (source.type === 'foundation' && target.type === 'tableau') {
-        this.score = Math.max(0, this.score - 15);
-      }
-    }
-    if (flippedCardId !== null) {
-      this.score += 5;
+    // Check if target column now ends in a complete K..A same-suit run
+    const clearedSequences = [];
+    const cleared = this._clearSequenceFromColumn(target.idx);
+    if (cleared) {
+      clearedSequences.push(cleared);
     }
 
     this.moves += 1;
+    this.score = Math.max(0, this.score - 1 + clearedSequences.length * 100);
     this.won = this.checkWon();
 
     return {
       ok: true,
       flippedCardId,
-      toFoundation,
-      foundationStreak: this.foundationStreak,
+      clearedSequences,
       won: this.won
     };
   }
 
-  drawFromStock() {
-    if (this.won) return { ok: false };
-    if (this.stock.length === 0 && this.waste.length === 0) {
-      return { ok: false, empty: true };
+  canDealFromStock() {
+    if (this.won) return { ok: false, reason: 'won' };
+    if (this.stock.length === 0) return { ok: false, reason: 'empty' };
+
+    const emptyCols = [];
+    for (let c = 0; c < 10; c++) {
+      if (this.tableau[c].length === 0) emptyCols.push(c);
     }
+    if (emptyCols.length > 0) {
+      return { ok: false, reason: 'empty_column', emptyCols };
+    }
+    return { ok: true };
+  }
+
+  drawFromStock() {
+    const check = this.canDealFromStock();
+    if (!check.ok) return check;
 
     this.history.push(this._snapshot());
-    this.foundationStreak = 0;
 
-    if (this.stock.length === 0) {
-      // Recycle waste back to stock face-down
-      const recycledIds = [];
-      while (this.waste.length > 0) {
-        const cid = this.waste.pop();
-        this.cards[cid].faceUp = false;
-        this.stock.push(cid);
-        recycledIds.push(cid);
-      }
-      this.stockCycles += 1;
-      if (this.drawMode === 1 && this.stockCycles >= 1) {
-        this.score = Math.max(0, this.score - 20);
-      } else if (this.drawMode === 3 && this.stockCycles > 3) {
-        this.score = Math.max(0, this.score - 20);
-      }
-      this.moves += 1;
-      return { ok: true, recycled: true, cardIds: recycledIds };
-    }
-
-    const count = Math.min(this.drawMode, this.stock.length);
-    const drawnIds = [];
-    for (let i = 0; i < count; i++) {
+    const dealtCards = [];
+    const count = Math.min(10, this.stock.length);
+    for (let c = 0; c < count; c++) {
       const cid = this.stock.pop();
       this.cards[cid].faceUp = true;
-      this.waste.push(cid);
-      drawnIds.push(cid);
+      this.tableau[c].push(cid);
+      dealtCards.push({ cardId: cid, colIdx: c });
     }
+
+    // Dealing can finish a K..A sequence on any column
+    const clearedSequences = [];
+    for (let c = 0; c < 10; c++) {
+      const cleared = this._clearSequenceFromColumn(c);
+      if (cleared) clearedSequences.push(cleared);
+    }
+
     this.moves += 1;
-    return { ok: true, recycled: false, cardIds: drawnIds };
+    this.score = Math.max(0, this.score - 1 + clearedSequences.length * 100);
+    this.won = this.checkWon();
+
+    return {
+      ok: true,
+      dealtCards,
+      clearedSequences,
+      won: this.won
+    };
   }
 
   findSmartTarget(pileType, pileIdx, cardIdx) {
     const stack = this.getMovableStack(pileType, pileIdx, cardIdx);
     if (!stack.valid) return null;
-    const dest = this.getValidDestinations(stack.cards, stack.source);
 
-    // Prefer Foundation for single top cards (unless already on foundation)
-    if (dest.foundations.length > 0 && stack.source.type !== 'foundation') {
-      return {
-        stack,
-        target: { type: 'foundation', idx: dest.foundations[0] }
-      };
+    const lead = this.cards[stack.cards[0]];
+    const dest = this.getValidDestinations(stack.cards, stack.source);
+    if (dest.tableau.length === 0) return null;
+
+    // 1. Prefer same-suit non-empty column
+    const sameSuitCols = dest.tableau.filter((c) => {
+      const col = this.tableau[c];
+      return col.length > 0 && this.cards[col[col.length - 1]].suitIdx === lead.suitIdx;
+    });
+    if (sameSuitCols.length > 0) {
+      return { stack, target: { type: 'tableau', idx: sameSuitCols[0] } };
     }
 
-    // Otherwise prefer non-empty Tableau targets, or empty Tableau only if King isn't already at row 0
-    if (dest.tableau.length > 0) {
-      const nonEmpty = dest.tableau.filter((c) => this.tableau[c].length > 0);
-      if (nonEmpty.length > 0) {
-        return {
-          stack,
-          target: { type: 'tableau', idx: nonEmpty[0] }
-        };
-      }
-      const isRootKing =
-        stack.source.type === 'tableau' &&
-        stack.source.startIndex === 0 &&
-        this.cards[stack.cards[0]].rank === 13;
-      if (!isRootKing) {
-        return {
-          stack,
-          target: { type: 'tableau', idx: dest.tableau[0] }
-        };
-      }
+    // 2. Otherwise any non-empty column of rank + 1
+    const otherCols = dest.tableau.filter((c) => this.tableau[c].length > 0);
+    if (otherCols.length > 0) {
+      return { stack, target: { type: 'tableau', idx: otherCols[0] } };
+    }
+
+    // 3. Empty column (skip pointless move of a stack already sitting at row 0)
+    if (stack.source.startIndex > 0) {
+      return { stack, target: { type: 'tableau', idx: dest.tableau[0] } };
     }
 
     return null;
@@ -394,210 +375,81 @@ export class KlondikeEngine {
   findHint() {
     if (this.won) return null;
 
-    // 1. Ace or 2 directly to Foundation
-    for (let c = 0; c < 7; c++) {
+    const candidates = [];
+
+    for (let c = 0; c < 10; c++) {
       const col = this.tableau[c];
       if (col.length === 0) continue;
-      const topId = col[col.length - 1];
-      if (this.cards[topId].rank <= 2) {
-        for (let f = 0; f < 4; f++) {
-          if (this.canMoveToFoundation(topId, f)) {
-            return {
-              action: 'move',
-              cards: [topId],
-              source: { type: 'tableau', idx: c, startIndex: col.length - 1 },
-              target: { type: 'foundation', idx: f }
-            };
-          }
-        }
-      }
-    }
-    if (this.waste.length > 0) {
-      const wId = this.waste[this.waste.length - 1];
-      if (this.cards[wId].rank <= 2) {
-        for (let f = 0; f < 4; f++) {
-          if (this.canMoveToFoundation(wId, f)) {
-            return {
-              action: 'move',
-              cards: [wId],
-              source: { type: 'waste', idx: 0, startIndex: this.waste.length - 1 },
-              target: { type: 'foundation', idx: f }
-            };
-          }
-        }
-      }
-    }
 
-    // 2. Tableau move that uncovers a face-down card or moves a complete column (only useful if non-King or freeing space for a King)
-    for (let c = 0; c < 7; c++) {
-      const col = this.tableau[c];
-      const firstFaceUp = col.findIndex((id) => this.cards[id].faceUp);
-      if (firstFaceUp === -1) continue;
-      const cards = col.slice(firstFaceUp);
-      const leadId = cards[0];
-      const lead = this.cards[leadId];
-      const uncoversFaceDown = firstFaceUp > 0;
-      const isRootKing = firstFaceUp === 0 && lead.rank === 13;
+      // Find the deepest face-up index that starts a valid same-suit run to the end
+      let runStart = col.length - 1;
+      while (runStart > 0) {
+        const cur = this.cards[col[runStart - 1]];
+        const nxt = this.cards[col[runStart]];
+        if (!cur.faceUp || cur.suitIdx !== nxt.suitIdx || cur.rank !== nxt.rank + 1) break;
+        runStart--;
+      }
 
-      for (let dst = 0; dst < 7; dst++) {
-        if (dst === c) continue;
-        if (!this.canMoveToTableau(leadId, dst)) continue;
-        const dstEmpty = this.tableau[dst].length === 0;
-        if (isRootKing && dstEmpty) continue;
-        if (uncoversFaceDown || !dstEmpty) {
-          // Only suggest moving whole face-up run to non-empty target if it exposes a face-down card or frees column for an available King
-          if (!uncoversFaceDown && firstFaceUp === 0) {
-            const hasWaitingKing =
-              (this.waste.length > 0 && this.cards[this.waste[this.waste.length - 1]].rank === 13) ||
-              this.tableau.some((other, oi) => {
-                if (oi === c) return false;
-                const fu = other.findIndex((id) => this.cards[id].faceUp);
-                return fu > 0 && this.cards[other[fu]].rank === 13;
-              });
-            if (!hasWaitingKing) continue;
-          }
-          return {
+      const stack = this.getMovableStack('tableau', c, runStart);
+      if (!stack.valid) continue;
+
+      const lead = this.cards[stack.cards[0]];
+      const uncoversFaceDown = runStart > 0 && !this.cards[col[runStart - 1]].faceUp;
+      const breaksDifferentSuitJunction =
+        runStart > 0 && this.cards[col[runStart - 1]].faceUp &&
+        (this.cards[col[runStart - 1]].suitIdx !== lead.suitIdx ||
+         this.cards[col[runStart - 1]].rank !== lead.rank + 1);
+      const freesColumn = runStart === 0;
+
+      const dests = this.getValidDestinations(stack.cards, stack.source);
+      for (const dst of dests.tableau) {
+        const dstCol = this.tableau[dst];
+        const dstEmpty = dstCol.length === 0;
+
+        // Never suggest moving a root stack to an empty column
+        if (dstEmpty && freesColumn) continue;
+
+        const sameSuitTarget = !dstEmpty && this.cards[dstCol[dstCol.length - 1]].suitIdx === lead.suitIdx;
+
+        // Avoid uselessly moving a card between two identical non-same-suit ranks without exposing anything
+        if (!sameSuitTarget && !uncoversFaceDown && !breaksDifferentSuitJunction && !dstEmpty) {
+          continue;
+        }
+        // Avoid breaking an already ordered junction onto an empty column unless it reveals a face-down card or unlocks a same-suit merge
+        if (dstEmpty && !uncoversFaceDown && !breaksDifferentSuitJunction) {
+          continue;
+        }
+
+        let priority = 0;
+        if (sameSuitTarget) priority += 100;
+        if (uncoversFaceDown) priority += 60;
+        if (breaksDifferentSuitJunction && !dstEmpty) priority += 30;
+        if (freesColumn && sameSuitTarget) priority += 25;
+        if (!dstEmpty) priority += 10;
+
+        candidates.push({
+          priority,
+          hint: {
             action: 'move',
-            cards,
-            source: { type: 'tableau', idx: c, startIndex: firstFaceUp },
+            cards: stack.cards,
+            source: stack.source,
             target: { type: 'tableau', idx: dst }
-          };
-        }
+          }
+        });
       }
     }
 
-    // 3. Any card to Foundation (Tableau top or Waste top)
-    for (let c = 0; c < 7; c++) {
-      const col = this.tableau[c];
-      if (col.length === 0) continue;
-      const topId = col[col.length - 1];
-      for (let f = 0; f < 4; f++) {
-        if (this.canMoveToFoundation(topId, f)) {
-          return {
-            action: 'move',
-            cards: [topId],
-            source: { type: 'tableau', idx: c, startIndex: col.length - 1 },
-            target: { type: 'foundation', idx: f }
-          };
-        }
-      }
-    }
-    if (this.waste.length > 0) {
-      const wId = this.waste[this.waste.length - 1];
-      for (let f = 0; f < 4; f++) {
-        if (this.canMoveToFoundation(wId, f)) {
-          return {
-            action: 'move',
-            cards: [wId],
-            source: { type: 'waste', idx: 0, startIndex: this.waste.length - 1 },
-            target: { type: 'foundation', idx: f }
-          };
-        }
-      }
-
-      // 4. Waste to Tableau
-      for (let dst = 0; dst < 7; dst++) {
-        if (this.canMoveToTableau(wId, dst)) {
-          return {
-            action: 'move',
-            cards: [wId],
-            source: { type: 'waste', idx: 0, startIndex: this.waste.length - 1 },
-            target: { type: 'tableau', idx: dst }
-          };
-        }
-      }
+    if (candidates.length > 0) {
+      candidates.sort((a, b) => b.priority - a.priority);
+      return candidates[0].hint;
     }
 
-    // 5. Draw from Stock / Recycle Waste
-    if (this.stock.length > 0 || this.waste.length > 0) {
+    const stockCheck = this.canDealFromStock();
+    if (stockCheck.ok) {
       return { action: 'draw' };
     }
 
     return null;
-  }
-
-  areAllTableauFaceUp() {
-    for (let c = 0; c < 7; c++) {
-      const col = this.tableau[c];
-      for (let r = 0; r < col.length; r++) {
-        if (!this.cards[col[r]].faceUp) return false;
-      }
-    }
-    return true;
-  }
-
-  canAutoComplete() {
-    if (this.won) return false;
-    const totalFound = this.foundations.reduce((sum, f) => sum + f.length, 0);
-    if (totalFound >= 52) return false;
-    if (!this.areAllTableauFaceUp()) return false;
-    return this.drawMode === 1 || (this.stock.length === 0 && this.waste.length === 0);
-  }
-
-  stepAutoComplete() {
-    if (!this.canAutoComplete()) return { done: true };
-
-    // Always prefer lowest-rank eligible top card to Foundation so we never block needed moves
-    let best = null;
-    for (let c = 0; c < 7; c++) {
-      const col = this.tableau[c];
-      if (col.length === 0) continue;
-      const cid = col[col.length - 1];
-      const card = this.cards[cid];
-      for (let f = 0; f < 4; f++) {
-        if (this.canMoveToFoundation(cid, f)) {
-          if (!best || card.rank < best.rank) {
-            best = {
-              rank: card.rank,
-              cards: [cid],
-              source: { type: 'tableau', idx: c, startIndex: col.length - 1 },
-              target: { type: 'foundation', idx: f }
-            };
-          }
-          break;
-        }
-      }
-    }
-
-    if (this.waste.length > 0) {
-      const cid = this.waste[this.waste.length - 1];
-      const card = this.cards[cid];
-      for (let f = 0; f < 4; f++) {
-        if (this.canMoveToFoundation(cid, f)) {
-          if (!best || card.rank < best.rank) {
-            best = {
-              rank: card.rank,
-              cards: [cid],
-              source: { type: 'waste', idx: 0, startIndex: this.waste.length - 1 },
-              target: { type: 'foundation', idx: f }
-            };
-          }
-          break;
-        }
-      }
-    }
-
-    if (best) {
-      const res = this.executeMove(best.cards, best.source, best.target);
-      return {
-        done: false,
-        kind: 'move',
-        cardId: best.cards[0],
-        source: best.source,
-        target: best.target,
-        res
-      };
-    }
-
-    // In drawMode === 1, cycle through stock/waste to surface remaining foundation cards
-    if (this.drawMode === 1 && (this.stock.length > 0 || this.waste.length > 0)) {
-      const drawRes = this.drawFromStock();
-      if (drawRes.ok) {
-        return { done: false, kind: 'draw', drawRes };
-      }
-    }
-
-    return { done: true };
   }
 
   checkWon() {
