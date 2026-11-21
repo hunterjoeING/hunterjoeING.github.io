@@ -566,12 +566,111 @@ function drawMiscTextures(scene: Phaser.Scene): void {
     }
   }
 
+  // Confetti
   if (!scene.textures.exists('confetti_px')) {
     const tex = scene.textures.createCanvas('confetti_px', 6, 6);
     if (tex) {
       const ctx = tex.getContext();
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, 6, 6);
+      tex.refresh();
+    }
+  }
+
+  // Pixel Driver Character (exits car to plug in charging cable)
+  if (!scene.textures.exists('ped_driver')) {
+    const tex = scene.textures.createCanvas('ped_driver', 18, 18);
+    if (tex) {
+      const ctx = tex.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(5, 6, 9, 9);
+      // Jacket (bright blue/cyan)
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(4, 6, 10, 7);
+      // Arms
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(3, 7, 2, 5);
+      ctx.fillRect(13, 7, 2, 5);
+      // Head
+      ctx.fillStyle = '#fde68a';
+      ctx.fillRect(6, 4, 6, 5);
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(6, 3, 6, 2);
+      tex.refresh();
+    }
+  }
+
+  // Streetlamp pole + lamp head
+  if (!scene.textures.exists('streetlamp')) {
+    const tex = scene.textures.createCanvas('streetlamp', 16, 16);
+    if (tex) {
+      const ctx = tex.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = '#475569';
+      ctx.fillRect(7, 6, 2, 9);
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(5, 3, 6, 4);
+      ctx.fillStyle = '#fef08a';
+      ctx.fillRect(6, 4, 4, 2);
+      tex.refresh();
+    }
+  }
+
+  // Wheel stop bumper for head-in charging bays
+  if (!scene.textures.exists('wheel_stop')) {
+    const tex = scene.textures.createCanvas('wheel_stop', 28, 6);
+    if (tex) {
+      const ctx = tex.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, 28, 6);
+      ctx.fillStyle = '#facc15';
+      ctx.fillRect(2, 1, 6, 4);
+      ctx.fillRect(11, 1, 6, 4);
+      ctx.fillRect(20, 1, 6, 4);
+      tex.refresh();
+    }
+  }
+
+  // Park fountain
+  if (!scene.textures.exists('park_fountain')) {
+    const tex = scene.textures.createCanvas('park_fountain', 48, 48);
+    if (tex) {
+      const ctx = tex.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = 'rgba(0,0,0,0.28)';
+      ctx.fillRect(6, 6, 38, 38);
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(4, 4, 40, 40);
+      ctx.fillStyle = '#0284c7';
+      ctx.fillRect(8, 8, 32, 32);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(14, 14, 20, 20);
+      ctx.fillStyle = '#e0f2fe';
+      ctx.fillRect(21, 21, 6, 6);
+      tex.refresh();
+    }
+  }
+
+  // Bistro / Coffee Shop Kiosk
+  if (!scene.textures.exists('bistro_kiosk')) {
+    const tex = scene.textures.createCanvas('bistro_kiosk', 64, 44);
+    if (tex) {
+      const ctx = tex.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(4, 4, 58, 38);
+      ctx.fillStyle = '#78350f';
+      ctx.fillRect(2, 2, 58, 36);
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(5, 5, 52, 30);
+      ctx.fillStyle = '#fef3c7';
+      ctx.fillRect(10, 10, 42, 6);
+      ctx.fillStyle = '#f97316';
+      ctx.fillRect(12, 20, 14, 10);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fillRect(32, 20, 18, 10);
       tex.refresh();
     }
   }
@@ -621,4 +720,38 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   ).forEach(lm => drawLandmarkTexture(scene, lm));
 
   drawMiscTextures(scene);
+
+  // Preserve crisp nearest-neighbor filtering on pixel-art sprites even when global antialias is on
+  const nearestKeys = [
+    ...VEHICLES.map(v => `car_${v.id}`),
+    'npc_sedan_blue',
+    'npc_compact_green',
+    'npc_van_white',
+    'npc_police',
+    'npc_truck',
+    'cyclist_0',
+    'cyclist_1',
+    'ped_adult_0',
+    'ped_adult_1',
+    'ped_child',
+    'ped_driver',
+    'streetlamp',
+    'wheel_stop',
+    'park_fountain',
+    'bistro_kiosk',
+    'tlight_red',
+    'tlight_amber',
+    'tlight_green',
+    'cone',
+    'pixel_tree',
+    'mcd_kiosk',
+    'rain_drop',
+    'confetti_px'
+  ];
+  nearestKeys.forEach(k => {
+    const tex = scene.textures.get(k);
+    if (tex && tex.key !== '__MISSING') {
+      tex.setFilter(Phaser.Textures.FilterMode.NEAREST);
+    }
+  });
 }
