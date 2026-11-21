@@ -1,14 +1,10 @@
-// Main controller for 3D Klondike Solitaire: HUD, Pointer/Touch Drag & Drop, Auto-Complete & Arcade Integration
+// Main controller for 3D Spider Solitaire (4 Suits): HUD, Pointer/Touch Drag & Drop, Toast Hints & Arcade Integration
 
-import { KlondikeEngine } from './sol3d-logic.js';
+import { SpiderEngine, SUITS } from './sol3d-logic.js';
 import { SolitaireScene } from './sol3d-scene.js';
 import { SolitaireAudio } from './sol3d-audio.js';
-import { GardenTipsWidget } from './sol3d-garden.js';
-import { FELT_THEMES } from './sol3d-textures.js';
 
-const PREF_FELT_KEY = 'sol3d_felt_theme';
 const PREF_CAM_KEY = 'sol3d_cam_preset';
-const PREF_DRAW_KEY = 'sol3d_draw_mode';
 
 function formatTime(sec) {
   const s = Math.max(0, Math.floor(sec));
@@ -38,20 +34,19 @@ function initSolitaire3D() {
   const elTime = document.getElementById('hud-time');
   const elMoves = document.getElementById('hud-moves');
   const elScore = document.getElementById('hud-score');
-  const elDrawBadge = document.getElementById('hud-draw-badge');
+  const elSeq = document.getElementById('hud-seq');
+  const elToast = document.getElementById('sol3d-toast');
 
   const btnUndo = document.getElementById('btn-undo');
   const btnHint = document.getElementById('btn-hint');
-  const btnAuto = document.getElementById('btn-auto');
+  const btnDeal = document.getElementById('btn-deal');
+  const elDealBadge = document.getElementById('hud-deal-badge');
   const btnCam = document.getElementById('btn-cam');
   const btnMenu = document.getElementById('btn-menu');
   const menuPopover = document.getElementById('sol3d-popover');
 
   const btnNewRandom = document.getElementById('menu-new-random');
   const btnRepeatDeal = document.getElementById('menu-repeat-deal');
-  const btnDraw1 = document.getElementById('menu-draw-1');
-  const btnDraw3 = document.getElementById('menu-draw-3');
-  const feltSwatches = document.querySelectorAll('[data-felt-theme]');
 
   const winOverlay = document.getElementById('sol3d-win');
   const winStatsEl = document.getElementById('win-stats');
@@ -59,49 +54,35 @@ function initSolitaire3D() {
   const btnWinRepeat = document.getElementById('btn-win-repeat');
   const btnWinDismiss = document.getElementById('btn-win-dismiss');
 
-  const engine = new KlondikeEngine();
+  const engine = new SpiderEngine();
   const scene = new SolitaireScene(canvas, stageEl);
   const audio = new SolitaireAudio();
 
-  const garden = new GardenTipsWidget({
-    cardEl: document.getElementById('garden-card'),
-    seasonEl: document.getElementById('garden-season'),
-    textEl: document.getElementById('garden-text'),
-    nextBtnEl: document.getElementById('btn-garden-next'),
-    toggleBtnEl: document.getElementById('btn-garden-toggle')
-  });
-
-  // Restore user preferences
-  const savedFelt = FELT_THEMES[loadPref(PREF_FELT_KEY, 'smaragd')] ? loadPref(PREF_FELT_KEY, 'smaragd') : 'smaragd';
   const savedCam = loadPref(PREF_CAM_KEY, '3d') === 'top' ? 'top' : '3d';
-  const savedDraw = loadPref(PREF_DRAW_KEY, '1') === '3' ? 3 : 1;
-
-  scene.setFeltTheme(savedFelt);
   scene.setCameraPreset(savedCam);
 
   let elapsedSec = 0;
   let timerStarted = false;
   let timerInterval = null;
-  let autoCompleting = false;
-  let autoTimer = null;
   let runId = null;
+  let toastTimer = null;
 
   let pointerSession = null;
-  let pendingStockClick = false;
+  let pendingStockClick = null;
+
+  function showToast(msg, durationMs = 2600) {
+    if (!elToast) return;
+    elToast.textContent = msg;
+    elToast.classList.remove('hidden');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => {
+      elToast.classList.add('hidden');
+    }, durationMs);
+  }
 
   function syncMenuUI() {
-    if (elDrawBadge) {
-      elDrawBadge.textContent = `${engine.drawMode}er`;
-    }
-    if (btnDraw1 && btnDraw3) {
-      btnDraw1.classList.toggle('active', engine.drawMode === 1);
-      btnDraw3.classList.toggle('active', engine.drawMode === 3);
-    }
-    feltSwatches.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.feltTheme === scene.feltTheme);
-    });
     if (btnCam) {
-      btnCam.textContent = scene.cameraPreset === 'top' ? '📐 Steil' : '📐 Tisch-3D';
+      btnCam.textContent = scene.cameraPreset === 'top' ? '📐 Steil' : '📐 3D';
       btnCam.classList.toggle('active', scene.cameraPreset === 'top');
     }
   }
@@ -110,11 +91,18 @@ function initSolitaire3D() {
     elTime.textContent = formatTime(elapsedSec);
     elMoves.textContent = String(engine.moves);
     elScore.textContent = String(engine.score);
-    btnUndo.disabled = !engine.canUndo() || autoCompleting;
-    btnHint.disabled = engine.won || autoCompleting;
-
-    const showAuto = !autoCompleting && engine.canAutoComplete();
-    btnAuto.classList.toggle('hidden', !showAuto);
+    if (elSeq) {
+      elSeq.textContent = `${engine.getCompletedCount()}/8`;
+    }
+    const dealsLeft = engine.getStockDealsRemaining();
+    if (elDealBadge) {
+      elDealBadge.textContent = String(dealsLeft);
+    }
+    if (btnDeal) {
+      btnDeal.disabled = engine.won || dealsLeft === 0;
+    }
+    btnUndo.disabled = !engine.canUndo();
+    btnHint.disabled = engine.won;
   }
 
   function startTimerIfNeeded() {
@@ -134,35 +122,32 @@ function initSolitaire3D() {
     timerInterval = null;
   }
 
-  function startNewGame({ seed = null, drawMode = engine.drawMode } = {}) {
-    clearTimeout(autoTimer);
-    autoCompleting = false;
+  function startNewGame({ seed = null } = {}) {
     stopTimer();
     elapsedSec = 0;
     timerStarted = false;
     pointerSession = null;
-    pendingStockClick = false;
+    pendingStockClick = null;
 
     scene.stopWaterfall();
     winOverlay.classList.add('hidden');
+    if (elToast) elToast.classList.add('hidden');
 
-    engine.newGame({ drawMode, seed });
+    engine.newGame({ seed });
     runId = window.ArcadeScores ? window.ArcadeScores.newRunId('solitaire3d') : null;
 
-    scene.syncState(engine, { dealAnimate: true, staggerMs: 24 });
+    scene.syncState(engine, { dealAnimate: true, staggerMs: 14 });
     syncMenuUI();
     syncHud();
 
-    // Subtle soft deal audio cascade if audio already unlocked
     for (let i = 0; i < 6; i++) {
-      setTimeout(() => audio.cardSnap(), i * 70);
+      setTimeout(() => audio.cardSnap(), i * 65);
     }
   }
 
   function handleWin() {
     stopTimer();
-    autoCompleting = false;
-    const timeBonus = Math.max(100, Math.round(60000 / Math.max(25, elapsedSec)));
+    const timeBonus = Math.max(100, Math.round(60000 / Math.max(30, elapsedSec)));
     const finalScore = engine.score + timeBonus;
     engine.score = finalScore;
     syncHud();
@@ -185,50 +170,71 @@ function initSolitaire3D() {
         finalScore,
         `${finalScore} Pkt · ${timeStr}`,
         false,
-        { runId, meta: { time: elapsedSec, moves: engine.moves, drawMode: engine.drawMode } }
+        { runId, meta: { time: elapsedSec, moves: engine.moves, mode: 'spider-4-suits' } }
       );
+    }
+  }
+
+  function notifyClearedSequences(clearedSequences) {
+    if (!clearedSequences || clearedSequences.length === 0) return;
+    const completed = engine.getCompletedCount();
+    const suitInfo = SUITS[clearedSequences[0].suitIdx];
+    const suitLabel = suitInfo ? `${suitInfo.sym} ${suitInfo.name}` : '';
+    setTimeout(() => audio.foundationChime(Math.max(0, completed - 1)), 120);
+    if (!engine.won) {
+      showToast(`✨ ${suitLabel}-Sequenz (K–A) abgeräumt! (${completed}/8)`, 2800);
     }
   }
 
   function afterMove(moveRes) {
     startTimerIfNeeded();
-    if (moveRes.toFoundation) {
-      audio.foundationChime(Math.max(0, moveRes.foundationStreak - 1));
-    } else {
-      audio.feltSlide();
-    }
+    audio.feltSlide();
     if (moveRes.flippedCardId !== null) {
-      setTimeout(() => audio.cardSnap(), 85);
+      setTimeout(() => audio.cardSnap(), 80);
     }
-    scene.syncState(engine);
+    scene.syncState(engine, { clearedSequences: moveRes.clearedSequences });
     syncHud();
 
+    if (moveRes.clearedSequences && moveRes.clearedSequences.length > 0) {
+      notifyClearedSequences(moveRes.clearedSequences);
+    }
+
     if (moveRes.won) {
-      handleWin();
+      setTimeout(() => handleWin(), 420);
     }
   }
 
   function handleDrawStock() {
-    if (autoCompleting || engine.won) return;
+    if (engine.won) return;
     const res = engine.drawFromStock();
     if (!res.ok) {
       audio.invalid();
+      if (res.reason === 'empty_column') {
+        scene.flashEmptyColumns(res.emptyCols);
+        showToast('Stock austeilen nicht möglich: Bitte zuerst alle leeren Spalten belegen.', 3000);
+      } else if (res.reason === 'empty') {
+        showToast('Der Nachziehstapel ist bereits aufgebraucht.', 2200);
+      }
       return;
     }
+
     startTimerIfNeeded();
-    if (res.recycled) {
-      audio.feltSlide();
-    } else {
-      res.cardIds.forEach((_, idx) => {
-        setTimeout(() => audio.cardSnap(), idx * 65);
-      });
-    }
-    scene.syncState(engine);
+    res.dealtCards.forEach((_, idx) => {
+      setTimeout(() => audio.cardSnap(), idx * 32);
+    });
+    scene.syncState(engine, { clearedSequences: res.clearedSequences });
     syncHud();
+
+    if (res.clearedSequences && res.clearedSequences.length > 0) {
+      notifyClearedSequences(res.clearedSequences);
+    }
+    if (res.won) {
+      setTimeout(() => handleWin(), 450);
+    }
   }
 
   function handleUndo() {
-    if (!engine.canUndo() || autoCompleting) return;
+    if (!engine.canUndo()) return;
     const res = engine.undo();
     if (!res.ok) return;
     audio.cardSnap();
@@ -237,45 +243,15 @@ function initSolitaire3D() {
   }
 
   function handleHint() {
-    if (engine.won || autoCompleting) return;
+    if (engine.won) return;
     const hint = engine.findHint();
     if (!hint) {
       audio.invalid();
+      showToast('Kein offensichtlicher Zug gefunden – prüfe leere Spalten oder nutze Zurück.', 2600);
       return;
     }
     audio.hint();
     scene.triggerHintPulse(hint);
-  }
-
-  function startAutoComplete() {
-    if (autoCompleting || !engine.canAutoComplete()) return;
-    autoCompleting = true;
-    startTimerIfNeeded();
-    syncHud();
-
-    const tick = () => {
-      if (!autoCompleting || engine.won) return;
-      const step = engine.stepAutoComplete();
-      if (step.done) {
-        autoCompleting = false;
-        syncHud();
-        return;
-      }
-      if (step.kind === 'move') {
-        audio.foundationChime(Math.max(0, step.res.foundationStreak - 1));
-      } else {
-        audio.cardSnap();
-      }
-      scene.syncState(engine);
-      syncHud();
-
-      if (engine.won) {
-        handleWin();
-        return;
-      }
-      autoTimer = setTimeout(tick, 95);
-    };
-    tick();
   }
 
   // Pointer & Touch Drag-and-Drop + Click Smart-Move
@@ -284,10 +260,10 @@ function initSolitaire3D() {
     if (!menuPopover.classList.contains('hidden')) {
       menuPopover.classList.add('hidden');
     }
-    if (autoCompleting || engine.won) return;
+    if (engine.won) return;
     if (e.button !== undefined && e.button !== 0 && e.pointerType === 'mouse') return;
 
-    pendingStockClick = false;
+    pendingStockClick = null;
     pointerSession = null;
 
     const { hits } = scene.raycastFromClient(e.clientX, e.clientY, scene.hitMeshes);
@@ -297,7 +273,11 @@ function initSolitaire3D() {
       if (!pile) return;
 
       if (pile.type === 'stock') {
-        pendingStockClick = true;
+        pendingStockClick = { pointerId: e.pointerId, x: e.clientX, y: e.clientY };
+        return;
+      }
+
+      if (pile.type === 'foundation') {
         return;
       }
 
@@ -318,21 +298,27 @@ function initSolitaire3D() {
         } catch (_) {}
         return;
       }
+
+      if (stack.blockedReason === 'mixed_or_gap') {
+        audio.invalid();
+        showToast('Nur lückenlos absteigende Folgen derselben Farbe können zusammen verschoben werden.', 2500);
+        return;
+      }
     }
 
-    // Check empty stock slot click for recycling waste
+    // Check stock slot click (e.g. when empty or slightly beside top card)
     const slotRes = scene.raycastFromClient(e.clientX, e.clientY, scene.slotHitMeshes);
     if (slotRes.hits.length > 0) {
       const meta = slotRes.hits[0].object.userData.slotMeta;
       if (meta && meta.type === 'stock') {
-        pendingStockClick = true;
+        pendingStockClick = { pointerId: e.pointerId, x: e.clientX, y: e.clientY };
       }
     }
   });
 
   canvas.addEventListener('pointermove', (e) => {
     if (!pointerSession) {
-      if (e.pointerType === 'mouse' && !engine.won && !autoCompleting) {
+      if (e.pointerType === 'mouse' && !engine.won) {
         const { hits } = scene.raycastFromClient(e.clientX, e.clientY, scene.hitMeshes);
         let grab = false;
         if (hits.length > 0) {
@@ -349,7 +335,7 @@ function initSolitaire3D() {
 
     const dx = e.clientX - pointerSession.startX;
     const dy = e.clientY - pointerSession.startY;
-    if (!pointerSession.dragging && Math.hypot(dx, dy) >= 7) {
+    if (!pointerSession.dragging && Math.hypot(dx, dy) >= 6) {
       const pt = scene.raycastDragPlane(e.clientX, e.clientY);
       if (!pt) return;
       pointerSession.dragging = true;
@@ -367,16 +353,19 @@ function initSolitaire3D() {
       const pt = scene.raycastDragPlane(e.clientX, e.clientY);
       if (!pt) return;
       scene.updateDragPoint(pt);
-      const best = scene.getBestDropTarget(pt, pointerSession.validDests, engine);
+      const best = scene.getBestDropTarget(pt, pointerSession.validDests);
       pointerSession.lastTarget = best;
       scene.setValidDropTargets(pointerSession.validDests, best ? best.key : null);
     }
   });
 
   function finishPointer(e) {
-    if (pendingStockClick) {
-      pendingStockClick = false;
-      handleDrawStock();
+    if (pendingStockClick && e.pointerId === pendingStockClick.pointerId) {
+      const dist = Math.hypot(e.clientX - pendingStockClick.x, e.clientY - pendingStockClick.y);
+      pendingStockClick = null;
+      if (dist < 18) {
+        handleDrawStock();
+      }
       return;
     }
     if (!pointerSession || e.pointerId !== pointerSession.pointerId) return;
@@ -389,7 +378,7 @@ function initSolitaire3D() {
 
     if (sess.dragging) {
       const pt = scene.raycastDragPlane(e.clientX, e.clientY);
-      const target = pt ? scene.getBestDropTarget(pt, sess.validDests, engine) : sess.lastTarget;
+      const target = pt ? scene.getBestDropTarget(pt, sess.validDests) : sess.lastTarget;
       scene.endDrag();
 
       if (target) {
@@ -430,10 +419,12 @@ function initSolitaire3D() {
     handleHint();
   });
 
-  btnAuto.addEventListener('click', () => {
-    audio.unlock();
-    startAutoComplete();
-  });
+  if (btnDeal) {
+    btnDeal.addEventListener('click', () => {
+      audio.unlock();
+      handleDrawStock();
+    });
+  }
 
   btnCam.addEventListener('click', () => {
     audio.unlock();
@@ -469,30 +460,6 @@ function initSolitaire3D() {
     startNewGame({ seed: engine.seed });
   });
 
-  btnDraw1.addEventListener('click', () => {
-    menuPopover.classList.add('hidden');
-    if (engine.drawMode === 1) return;
-    savePref(PREF_DRAW_KEY, '1');
-    startNewGame({ drawMode: 1 });
-  });
-
-  btnDraw3.addEventListener('click', () => {
-    menuPopover.classList.add('hidden');
-    if (engine.drawMode === 3) return;
-    savePref(PREF_DRAW_KEY, '3');
-    startNewGame({ drawMode: 3 });
-  });
-
-  feltSwatches.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const themeId = btn.dataset.feltTheme;
-      scene.setFeltTheme(themeId);
-      savePref(PREF_FELT_KEY, themeId);
-      syncMenuUI();
-      if (window.ArcadeAudio) window.ArcadeAudio.click();
-    });
-  });
-
   btnWinNew.addEventListener('click', () => startNewGame({ seed: null }));
   btnWinRepeat.addEventListener('click', () => startNewGame({ seed: engine.seed }));
   btnWinDismiss.addEventListener('click', () => winOverlay.classList.add('hidden'));
@@ -509,6 +476,9 @@ function initSolitaire3D() {
       handleUndo();
     } else if (e.key.toLowerCase() === 'h') {
       handleHint();
+    } else if (e.key.toLowerCase() === 'd' || e.key === ' ') {
+      e.preventDefault();
+      handleDrawStock();
     } else if (e.key === 'Escape') {
       menuPopover.classList.add('hidden');
     }
@@ -519,8 +489,7 @@ function initSolitaire3D() {
     new ResizeObserver(() => scene.resize()).observe(stageEl);
   }
 
-  // Start initial game & animation loop
-  startNewGame({ drawMode: savedDraw });
+  startNewGame();
 
   let lastTime = performance.now();
   function frame(now) {
