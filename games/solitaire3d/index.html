@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>3D Solitär (Klondike) · HunterJoe Arcade</title>
-  <meta name="description" content="Grafisch hochwertiges, ruhiges 3D-Solitär (Klondike) mit Three.js: prozedurale High-DPI-Karten, edler Filz- &amp; Walnuss-Spieltisch, 1-/3-Karten-Zug, Tipps, Undo, Sieges-Wasserfall &amp; saisonale Gartenmomente." />
+  <title>3D Spider Solitär (4 Farben) · HunterJoe Arcade</title>
+  <meta name="description" content="Klassisches 3D Spider Solitär mit 4 Farben (104 Karten) in Three.js: scharfe High-DPI-Karten, ruhiger dunkler Filztisch, dynamisches Stapel-Layout, Undo, Tipps &amp; 8-Slot-Sieges-Wasserfall." />
   <meta name="robots" content="index, follow" />
-  <meta name="theme-color" content="#0b1f17" />
+  <meta name="theme-color" content="#07140f" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/solitaire3d/" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
   <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
-  <meta property="og:title" content="3D Solitär (Klondike) · HunterJoe Arcade" />
-  <meta property="og:description" content="Ruhiges, liebevoll poliertes 3D-Klondike-Solitär mit Three.js: Smaragd-, Abendblau- &amp; Weinrot-Spieltisch, 52 prozedurale High-DPI-Karten, sanfte Sounds &amp; Gartentipps." />
+  <meta property="og:title" content="3D Spider Solitär (4 Farben) · HunterJoe Arcade" />
+  <meta property="og:description" content="3D Spider Solitär (4 Farben, 104 Karten) mit Three.js: kontraststarke High-DPI-Karten, 10 Spalten, 5×10 Stock, automatisches K–A-Abräumen &amp; 3D-Wasserfall." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/solitaire3d/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="3D Solitär (Klondike) · HunterJoe Arcade" />
-  <meta name="twitter:description" content="Ruhiges 3D-Solitär im Browser mit Three.js, High-DPI-Karten, 3D-Wasserfall &amp; entspannenden Gartentipps." />
+  <meta name="twitter:title" content="3D Spider Solitär (4 Farben) · HunterJoe Arcade" />
+  <meta name="twitter:description" content="3D Spider Solitär (4 Farben, 104 Karten) direkt im Browser mit Three.js." />
   <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
   {
@@ -33,8 +33,8 @@
     "@graph": [
       {
         "@type": "VideoGame",
-        "name": "3D Solitär (Klondike)",
-        "description": "Grafisch hochwertiges, ruhiges 3D-Klondike-Solitär mit Three.js: prozedurale High-DPI-Karten, Walnuss-Spieltisch mit 3 Filz-Themes, 1-/3-Karten-Zug, Tipps, Undo & Sieges-Wasserfall.",
+        "name": "3D Spider Solitär (4 Farben)",
+        "description": "Klassisches 3D Spider Solitär mit 4 Farben (104 Karten) und Three.js: High-DPI-Karten, dunkler Filz- & Walnuss-Spieltisch, Tipps, Undo & Sieges-Wasserfall.",
         "url": "https://hunterjoeing.github.io/games/solitaire3d/",
         "inLanguage": "de",
         "isAccessibleForFree": true,
@@ -60,7 +60,7 @@
           {
             "@type": "ListItem",
             "position": 2,
-            "name": "3D Solitär (Klondike)",
+            "name": "3D Spider Solitär (4 Farben)",
             "item": "https://hunterjoeing.github.io/games/solitaire3d/"
           }
         ]
@@ -106,7 +106,7 @@
       min-height: 0;
       width: 100%;
       overflow: hidden;
-      background: #091611;
+      background: #07140f;
       touch-action: none;
     }
 
@@ -117,14 +117,14 @@
       touch-action: none;
     }
 
-    /* Minimal Dark-Glassmorphism HUD */
+    /* Slim Dark-Glassmorphism HUD */
     .sol3d-hud-wrap {
       position: absolute;
-      top: 10px;
+      top: 6px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 25;
-      width: min(960px, calc(100% - 20px));
+      width: min(980px, calc(100% - 16px));
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -137,47 +137,47 @@
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 6px 10px;
+      gap: 5px 8px;
       width: 100%;
-      padding: 7px 12px;
-      border-radius: 15px;
-      background: rgba(12, 20, 17, 0.76);
-      border: 1px solid rgba(226, 198, 132, 0.22);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: #f5efe3;
+      padding: 5px 10px;
+      border-radius: 13px;
+      background: rgba(10, 18, 15, 0.80);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.44);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #f3f5f2;
       font-family: var(--font-ui);
-      font-size: 12.5px;
+      font-size: 12px;
     }
 
     html[data-theme="light"] .sol3d-hud {
-      background: rgba(18, 28, 24, 0.80);
+      background: rgba(14, 24, 20, 0.84);
     }
 
     .hud-stats {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       flex-wrap: wrap;
     }
 
     .hud-pill {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
+      gap: 4px;
+      padding: 3px 9px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.07);
       border: 1px solid rgba(255, 255, 255, 0.10);
       font-variant-numeric: tabular-nums;
-      color: #d6cfc0;
-      font-size: 12px;
+      color: #cfd6cf;
+      font-size: 11.5px;
       font-weight: 500;
     }
 
     .hud-pill strong {
-      color: #fff9ed;
+      color: #ffffff;
       font-weight: 700;
     }
 
@@ -191,17 +191,17 @@
     .hud-btn {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      padding: 6px 11px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
+      gap: 4px;
+      padding: 5px 10px;
+      border-radius: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       background: rgba(255, 255, 255, 0.08);
-      color: #f7f1e5;
+      color: #f5f7f4;
       font-family: var(--font-ui);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.15s ease, opacity 0.18s ease;
       white-space: nowrap;
     }
 
@@ -217,29 +217,25 @@
     }
 
     .hud-btn.active {
-      background: rgba(212, 175, 95, 0.25);
+      background: rgba(212, 175, 95, 0.26);
       border-color: rgba(229, 196, 122, 0.68);
       color: #ffeab8;
     }
 
     .hud-btn.auto-btn {
-      background: linear-gradient(135deg, rgba(212, 175, 95, 0.88), rgba(176, 134, 58, 0.92));
-      border-color: rgba(255, 232, 178, 0.75);
+      background: linear-gradient(135deg, rgba(212, 175, 95, 0.90), rgba(176, 134, 58, 0.94));
+      border-color: rgba(255, 232, 178, 0.78);
       color: #161108;
       box-shadow: 0 4px 16px rgba(212, 175, 95, 0.35);
-    }
-
-    .hud-btn.hidden {
-      display: none !important;
     }
 
     .draw-badge {
       padding: 1px 6px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.15);
       font-size: 10.5px;
       font-weight: 700;
-      color: #f7e4b6;
+      color: #ffe9b3;
     }
 
     /* Settings & New Game Popover */
@@ -250,12 +246,12 @@
       width: min(300px, calc(100vw - 24px));
       padding: 14px;
       border-radius: 15px;
-      background: rgba(14, 22, 19, 0.92);
-      border: 1px solid rgba(226, 198, 132, 0.28);
-      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.58);
+      background: rgba(12, 20, 17, 0.94);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, 0.60);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
-      color: #f5efe3;
+      color: #f3f5f2;
       display: flex;
       flex-direction: column;
       gap: 11px;
@@ -270,7 +266,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      color: #c7bfa8;
+      color: #aeb8b0;
       margin-bottom: 5px;
     }
 
@@ -280,18 +276,13 @@
       gap: 6px;
     }
 
-    .pop-btn-row {
-      display: flex;
-      gap: 6px;
-    }
-
     .pop-btn {
-      flex: 1;
+      width: 100%;
       padding: 8px 10px;
       border-radius: 10px;
       border: 1px solid rgba(255, 255, 255, 0.14);
       background: rgba(255, 255, 255, 0.07);
-      color: #f7f1e5;
+      color: #f7f8f6;
       font-family: var(--font-ui);
       font-size: 12.5px;
       font-weight: 600;
@@ -301,134 +292,62 @@
     }
 
     .pop-btn:hover {
-      background: rgba(222, 194, 128, 0.2);
+      background: rgba(222, 194, 128, 0.20);
       border-color: rgba(222, 194, 128, 0.55);
     }
 
-    .pop-btn.active {
-      background: rgba(212, 175, 95, 0.28);
-      border-color: rgba(229, 196, 122, 0.72);
-      color: #ffeab8;
-    }
-
-    .felt-swatches {
-      display: flex;
-      gap: 6px;
-    }
-
-    .felt-swatch {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 7px 8px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.06);
-      color: #f4eee1;
-      font-size: 11.5px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.18s ease;
-    }
-
-    .felt-swatch.active {
-      border-color: #e6c67e;
-      background: rgba(222, 194, 128, 0.2);
-    }
-
-    .swatch-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      border: 1px solid rgba(255, 255, 255, 0.45);
-      flex-shrink: 0;
-    }
-
-    /* Calming Garden Tips & Moments Card (Bottom-Left) */
-    .garden-card {
-      position: absolute;
-      left: max(14px, env(safe-area-inset-left, 0px));
-      bottom: max(14px, env(safe-area-inset-bottom, 0px));
-      z-index: 20;
-      width: min(355px, calc(100vw - 28px));
-      padding: 12px 15px;
-      border-radius: 15px;
-      background: rgba(12, 22, 18, 0.80);
-      border: 1px solid rgba(186, 206, 168, 0.24);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      color: #f3ede1;
-      transition: opacity 0.35s ease, transform 0.35s ease;
-    }
-
-    .garden-card.hidden-garden {
-      opacity: 0;
-      transform: translateY(10px);
-      pointer-events: none;
-    }
-
-    .garden-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .garden-season {
-      font-size: 11.5px;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      color: #bfd8aa;
-      transition: opacity 0.42s ease;
-    }
-
-    .garden-next-btn {
-      padding: 3px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(191, 216, 170, 0.28);
-      background: rgba(255, 255, 255, 0.06);
-      color: #d8e5cc;
-      font-family: var(--font-ui);
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease;
-    }
-
-    .garden-next-btn:hover {
-      background: rgba(191, 216, 170, 0.18);
-      border-color: rgba(191, 216, 170, 0.55);
-    }
-
-    .garden-text {
+    .pop-rules {
       margin: 0;
-      font-size: 13.5px;
-      line-height: 1.54;
-      color: #f5efe3;
-      min-height: 3.1em;
-      transition: opacity 0.42s ease;
+      padding-left: 16px;
+      font-size: 11.5px;
+      line-height: 1.48;
+      color: #cdd4ce;
     }
 
-    .garden-season.fading,
-    .garden-text.fading {
+    .pop-rules li + li {
+      margin-top: 3px;
+    }
+
+    /* Non-intrusive Toast Notification */
+    .sol3d-toast {
+      position: absolute;
+      left: 50%;
+      bottom: max(14px, env(safe-area-inset-bottom, 12px));
+      transform: translateX(-50%);
+      z-index: 28;
+      max-width: min(520px, calc(100vw - 24px));
+      padding: 9px 16px;
+      border-radius: 999px;
+      background: rgba(12, 20, 17, 0.90);
+      border: 1px solid rgba(255, 224, 148, 0.40);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.48);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #fff7e2;
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      font-weight: 600;
+      text-align: center;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .sol3d-toast.hidden {
       opacity: 0;
+      transform: translateX(-50%) translateY(8px);
     }
 
-    /* Compact Victory Banner (leaves tabletop & 3D waterfall visible) */
+    /* Compact Victory Banner */
     .sol3d-win {
       position: absolute;
-      top: 72px;
+      top: 64px;
       left: 50%;
       transform: translateX(-50%);
       z-index: 30;
       width: min(410px, calc(100% - 24px));
       padding: 20px 22px;
       border-radius: 18px;
-      background: rgba(13, 22, 18, 0.88);
+      background: rgba(12, 20, 17, 0.92);
       border: 1px solid rgba(229, 196, 122, 0.45);
       box-shadow: 0 22px 54px rgba(0, 0, 0, 0.62);
       backdrop-filter: blur(14px);
@@ -485,34 +404,21 @@
 
     @media (max-width: 720px) {
       .sol3d-hud-wrap {
-        top: 6px;
-        width: calc(100% - 12px);
+        top: 5px;
+        width: calc(100% - 10px);
       }
       .sol3d-hud {
-        padding: 6px 8px;
-        gap: 5px;
-        border-radius: 12px;
+        padding: 5px 7px;
+        gap: 4px;
+        border-radius: 11px;
       }
       .hud-pill {
-        padding: 3px 8px;
-        font-size: 11px;
+        padding: 2px 7px;
+        font-size: 10.5px;
       }
       .hud-btn {
-        padding: 5px 8px;
-        font-size: 11.5px;
-      }
-      .garden-card {
-        left: 8px;
-        right: 8px;
-        bottom: max(8px, env(safe-area-inset-bottom, 0px));
-        width: auto;
-        padding: 9px 12px;
-        border-radius: 12px;
-      }
-      .garden-text {
-        font-size: 12.5px;
-        line-height: 1.44;
-        min-height: 0;
+        padding: 4px 7px;
+        font-size: 11px;
       }
       .win-stats {
         grid-template-columns: repeat(2, 1fr);
@@ -524,7 +430,7 @@
   <header class="arcade-topbar">
     <div class="topbar-left">
       <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
-      <div class="topbar-title">🃏 3D Solitär · Klondike</div>
+      <div class="topbar-title">🕷️ 3D Spider Solitär · 4 Farben</div>
     </div>
     <div class="topbar-right">
       <span class="pill-stat">🏆 <span id="top-best">0</span></span>
@@ -533,27 +439,27 @@
   </header>
 
   <main class="sol3d-viewport" id="sol3d-stage">
-    <canvas id="sol3d-canvas" aria-label="3D Solitär Spieltisch"></canvas>
+    <canvas id="sol3d-canvas" aria-label="3D Spider Solitär Spieltisch"></canvas>
 
     <div class="sol3d-hud-wrap">
       <div class="sol3d-hud">
         <div class="hud-stats">
           <span class="hud-pill">⏱ <strong id="hud-time">00:00</strong></span>
           <span class="hud-pill">👣 <strong id="hud-moves">0</strong></span>
-          <span class="hud-pill">⭐ <strong id="hud-score">0</strong></span>
+          <span class="hud-pill">⭐ <strong id="hud-score">500</strong></span>
+          <span class="hud-pill" title="Abgeräumte Sequenzen (K–A)">👑 <strong id="hud-seq">0/8</strong></span>
         </div>
 
         <div class="hud-controls">
           <button type="button" id="btn-undo" class="hud-btn" title="Letzten Zug rückgängig (Strg+Z)">↩️ Zurück</button>
           <button type="button" id="btn-hint" class="hud-btn" title="Sinnvollen Zug anzeigen (H)">💡 Tipp</button>
-          <button type="button" id="btn-auto" class="hud-btn auto-btn hidden" title="Alle übrigen Karten auf die Foundations legen">✨ Auto-Abschließen</button>
-          <button type="button" id="btn-cam" class="hud-btn" title="Kamerawinkel wechseln">📐 Tisch-3D</button>
-          <button type="button" id="btn-garden-toggle" class="hud-btn" title="Gartentipp-Kachel ein-/ausblenden">🌱 Gartentipp</button>
-          <button type="button" id="btn-menu" class="hud-btn" title="Neues Spiel, Ziehmodus &amp; Tischfarbe">⚙️ Spiel <span class="draw-badge" id="hud-draw-badge">1er</span></button>
+          <button type="button" id="btn-deal" class="hud-btn" title="10 Karten aus dem Stock austeilen (D / Leertaste)">🃏 Geben <span class="draw-badge" id="hud-deal-badge">5</span></button>
+          <button type="button" id="btn-cam" class="hud-btn" title="Kamerawinkel wechseln">📐 3D</button>
+          <button type="button" id="btn-menu" class="hud-btn" title="Neues Spiel &amp; Regeln">⚙️ Spiel</button>
         </div>
       </div>
 
-      <div id="sol3d-popover" class="sol3d-popover hidden" role="dialog" aria-label="Spiel-Einstellungen">
+      <div id="sol3d-popover" class="sol3d-popover hidden" role="dialog" aria-label="Spiel-Menü">
         <div>
           <div class="pop-section-label">Partie</div>
           <div class="pop-btn-col">
@@ -562,39 +468,23 @@
           </div>
         </div>
         <div>
-          <div class="pop-section-label">Karten ziehen</div>
-          <div class="pop-btn-row">
-            <button type="button" id="menu-draw-1" class="pop-btn active">1 Karte</button>
-            <button type="button" id="menu-draw-3" class="pop-btn">3 Karten</button>
-          </div>
-        </div>
-        <div>
-          <div class="pop-section-label">Spieltisch-Filz</div>
-          <div class="felt-swatches">
-            <button type="button" class="felt-swatch active" data-felt-theme="smaragd">
-              <span class="swatch-dot" style="background:#195a41;"></span> Smaragd
-            </button>
-            <button type="button" class="felt-swatch" data-felt-theme="abendblau">
-              <span class="swatch-dot" style="background:#1b3d63;"></span> Blau
-            </button>
-            <button type="button" class="felt-swatch" data-felt-theme="weinrot">
-              <span class="swatch-dot" style="background:#611e2f;"></span> Weinrot
-            </button>
-          </div>
+          <div class="pop-section-label">Spider Solitär · 4 Farben</div>
+          <ul class="pop-rules">
+            <li>2 Decks (104 Karten) auf 10 Spalten.</li>
+            <li>Ablegen auf den nächsthöheren Wert (egal welche Farbe).</li>
+            <li>Mehrere Karten nur als lückenlose, gleichfarbige Folge (z. B. ♥9–8–7) verschieben.</li>
+            <li>Leere Spalten akzeptieren jede Einzelkarte oder gleichfarbige Folge.</li>
+            <li>Stock gibt 10 Karten aus (nur wenn keine Spalte leer ist).</li>
+            <li>Vollständige K–A-Folgen einer Farbe werden automatisch abgeräumt (8× zum Sieg).</li>
+          </ul>
         </div>
       </div>
     </div>
 
-    <aside id="garden-card" class="garden-card" aria-live="polite">
-      <div class="garden-head">
-        <span id="garden-season" class="garden-season">🍂 Herbst im Garten</span>
-        <button type="button" id="btn-garden-next" class="garden-next-btn" title="Nächsten Gartenmoment anzeigen">→ Nächster</button>
-      </div>
-      <p id="garden-text" class="garden-text"></p>
-    </aside>
+    <div id="sol3d-toast" class="sol3d-toast hidden" role="status" aria-live="polite"></div>
 
     <div id="sol3d-win" class="sol3d-win hidden" role="dialog" aria-label="Spiel gewonnen">
-      <h2 class="win-title">🏆 Wunderschön gelöst!</h2>
+      <h2 class="win-title">🏆 Alle 8 Sequenzen gelöst!</h2>
       <div id="win-stats" class="win-stats"></div>
       <div class="win-actions">
         <button type="button" id="btn-win-new" class="hud-btn auto-btn">🃏 Neues Spiel</button>
