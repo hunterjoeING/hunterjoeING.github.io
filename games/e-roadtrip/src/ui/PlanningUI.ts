@@ -1,4 +1,12 @@
-import { CampaignSave, LevelConfig, RouteOption, TripPlan, VehicleSpec } from '../types';
+import {
+  CampaignSave,
+  ChargerNetwork,
+  LevelConfig,
+  ProviderFilterMap,
+  RouteOption,
+  TripPlan,
+  VehicleSpec
+} from '../types';
 import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { SUBSCRIPTIONS } from '../data/subscriptions';
 import { CHARGERS, getEdgeById } from '../data/europeMap';
@@ -10,11 +18,16 @@ import {
   PlanForecast
 } from '../sim/RoutePlanner';
 import { getBestPriceForStation } from '../sim/EnergyModel';
+import { isProviderSubscribed } from '../phaser/MapLayout';
 import { SoundFX } from '../phaser/SoundFX';
 
 export interface PlanningCallbacks {
   onPlanChanged: () => void;
   onSelectRoute: (routeId: string) => void;
+  onSelectLeg: (legIndex: number) => void;
+  onToggleProviderFilter: (network: ChargerNetwork) => void;
+  onToggleDimUnsubscribed: () => void;
+  onResetProviderFilter: () => void;
   onStartTrip: () => void;
   onSelectLevel: (levelId: string) => void;
   onZoomIn: () => void;
@@ -30,6 +43,15 @@ const NET_LABEL: Record<string, string> = {
   electra: 'Electra+',
   ionity: 'IONITY',
   ac_village: 'AC Dorf'
+};
+
+const NET_HEX: Record<ChargerNetwork, string> = {
+  tesla: '#ef4444',
+  enbw: '#f97316',
+  ewego: '#22c55e',
+  electra: '#a855f7',
+  ionity: '#ec4899',
+  ac_village: '#14b8a6'
 };
 
 function renderChargingCurveSvg(v: VehicleSpec): string {
@@ -80,19 +102,33 @@ function summarizeRouteStats(opt: RouteOption): {
 
 export class PlanningUI {
   private root: HTMLElement;
+  private filterBarEl: HTMLElement | null;
   private activeTab: 'car' | 'subs' | 'route' = 'car';
   private cb: PlanningCallbacks;
 
-  constructor(root: HTMLElement, cb: PlanningCallbacks) {
+  constructor(root: HTMLElement, cb: PlanningCallbacks, filterBarEl?: HTMLElement | null) {
     this.root = root;
     this.cb = cb;
+    this.filterBarEl = filterBarEl || document.getElementById('er-map-filter-bar');
   }
 
-  render(level: LevelConfig, plan: TripPlan, save: CampaignSave): void {
+  render(
+    level: LevelConfig,
+    plan: TripPlan,
+    save: CampaignSave,
+    selectedLegIndex = 0,
+    providerFilter?: ProviderFilterMap,
+    dimUnsubscribed = true
+  ): void {
     const forecast = evaluateTripPlan(level, plan);
     const selectedVehicle = getVehicleById(plan.vehicleId);
     const activeRoute = getActiveRouteOption(level, plan);
     const budgetLeft = save.cashEur - (save.ownedVehicleId === selectedVehicle.id ? 0 : selectedVehicle.priceEur);
+    const clampedLegIdx = Math.max(0, Math.min(forecast.legForecasts.length - 1, selectedLegIndex));
+
+    if (this.filterBarEl && providerFilter) {
+      this.renderMapFilterBar(plan, selectedVehicle, providerFilter, dimUnsubscribed);
+    }
 
     this.root.innerHTML = `
       <div class="plan-header-card">
@@ -116,12 +152,27 @@ export class PlanningUI {
           <button type="button" class="er-mini-btn" id="btn-zoom-out" title="Herauszoomen">➖ Zoom-</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-route">🎯 Route</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-europe">🌍 Europa</button>
-          <span class="map-hint">Zoomen für Lader-Logos &amp; Abo-Preise · Drag/Pinch</span>
+          <span class="map-hint">Zoomen für Details · Etappe wählen für Reichweiten-Overlay</span>
         </div>
       </div>
 
       ${this.renderForecastBanner(level, forecast, budgetLeft)}
       ${this.renderRouteComparisonBar(level, activeRoute)}
+
+      <div class="stage-quick-bar" aria-label="Aktive Etappe wählen">
+        <span class="sqb-label">📍 Etappe:</span>
+        <div class="sqb-pills">
+          ${forecast.legForecasts
+            .map(
+              lf => `
+            <button type="button" class="sqb-pill ${lf.legIndex === clampedLegIdx ? 'active' : ''}" data-select-leg="${lf.legIndex}" title="${lf.label} (${lf.distanceKm} km)">
+              E${lf.legIndex + 1}
+            </button>`
+            )
+            .join('')}
+        </div>
+        <span class="sqb-active-name">${forecast.legForecasts[clampedLegIdx]?.label || ''}</span>
+      </div>
 
       <div class="plan-tabs" role="tablist">
         <button type="button" class="plan-tab ${this.activeTab === 'car' ? 'active' : ''}" data-ptab="car">🚗 1. Fahrzeug</button>
@@ -132,7 +183,7 @@ export class PlanningUI {
       <div class="plan-tab-body">
         ${this.activeTab === 'car' ? this.renderVehiclesTab(plan, save) : ''}
         ${this.activeTab === 'subs' ? this.renderSubsTab(plan, selectedVehicle) : ''}
-        ${this.activeTab === 'route' ? this.renderRouteTab(level, plan, forecast) : ''}
+        ${this.activeTab === 'route' ? this.renderRouteTab(level, plan, forecast, clampedLegIdx) : ''}
       </div>
 
       <div class="plan-footer-cta">
@@ -146,7 +197,56 @@ export class PlanningUI {
       </div>
     `;
 
-    this.bindEvents(level, plan, save);
+    this.bindEvents(level, plan, save, clampedLegIdx, providerFilter, dimUnsubscribed);
+  }
+
+  private renderMapFilterBar(
+    plan: TripPlan,
+    car: VehicleSpec,
+    filter: ProviderFilterMap,
+    dimUnsubscribed: boolean
+  ): void {
+    if (!this.filterBarEl) return;
+    const networks: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
+    this.filterBarEl.innerHTML = `
+      <div class="mfb-row">
+        <button type="button" class="mfb-mode-btn ${dimUnsubscribed ? 'active' : ''}" id="btn-toggle-dim-unsub" title="Nicht-abonnierte Anbieter ausgrauen">
+          ${dimUnsubscribed ? '⭐ Abos klar' : '🌐 Alle klar'}
+        </button>
+        ${networks
+          .map(net => {
+            const on = filter[net] !== false;
+            const sub = isProviderSubscribed(net, plan.subscriptionIds, car.isTesla);
+            return `
+              <button type="button" class="mfb-chip ${on ? 'on' : 'off'} ${sub ? 'sub' : 'nosub'}" data-filter-net="${net}" title="${NET_LABEL[net]}${sub ? ' (Abo aktiv)' : ' (kein Abo)'}">
+                <span class="mfb-dot" style="background:${on ? NET_HEX[net] : '#475569'}"></span>
+                <span>${NET_LABEL[net]}</span>
+              </button>
+            `;
+          })
+          .join('')}
+      </div>
+      <div class="mfb-legend">
+        <span>Reichweite:</span>
+        <span class="lg-dot g">25–15%</span>
+        <span class="lg-dot y">15–10%</span>
+        <span class="lg-dot o">10–5%</span>
+        <span class="lg-dot r">5–0%</span>
+      </div>
+    `;
+
+    this.filterBarEl.querySelector('#btn-toggle-dim-unsub')?.addEventListener('click', () => {
+      SoundFX.click();
+      this.cb.onToggleDimUnsubscribed();
+    });
+    this.filterBarEl.querySelectorAll('[data-filter-net]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const net = (btn as HTMLElement).dataset.filterNet as ChargerNetwork | undefined;
+        if (!net) return;
+        SoundFX.click();
+        this.cb.onToggleProviderFilter(net);
+      });
+    });
   }
 
   private renderForecastBanner(level: LevelConfig, f: PlanForecast, budgetLeft: number): string {
@@ -278,7 +378,12 @@ export class PlanningUI {
     `;
   }
 
-  private renderRouteTab(level: LevelConfig, plan: TripPlan, forecast: PlanForecast): string {
+  private renderRouteTab(
+    level: LevelConfig,
+    plan: TripPlan,
+    forecast: PlanForecast,
+    selectedLegIndex: number
+  ): string {
     const vehicle = getVehicleById(plan.vehicleId);
     const activeRoute = getActiveRouteOption(level, plan);
     const activeLegs = getActiveRouteLegs(level, plan);
@@ -294,6 +399,7 @@ export class PlanningUI {
       <div class="route-legs-list">
         ${forecast.legForecasts
           .map(lf => {
+            const isSelectedLeg = lf.legIndex === selectedLegIndex;
             const speedVal = lf.targetSpeedKmh;
             const riskBadge =
               lf.policeRisk > 0.45
@@ -303,10 +409,10 @@ export class PlanningUI {
                   : '<span class="risk-pill low">🟢 Sicher</span>';
             const trafficPct = Math.round(lf.trafficRisk * 100);
             return `
-            <div class="leg-card">
+            <div class="leg-card ${isSelectedLeg ? 'active-stage' : ''}" data-leg-card="${lf.legIndex}">
               <div class="leg-top">
                 <div>
-                  <strong>Etappe ${lf.legIndex + 1}: ${lf.label}</strong>
+                  <strong>${isSelectedLeg ? '📍 ' : ''}Etappe ${lf.legIndex + 1}: ${lf.label}</strong>
                   <span class="leg-meta">${lf.highwayName} · ${lf.distanceKm} km · ⛰️ +${lf.elevationGainM}/-${lf.elevationLossM}m · 🚦 Stau ${trafficPct}% · ${lf.weather}</span>
                 </div>
                 <div class="leg-soc ${lf.endSocPct < 10 ? 'danger' : ''}">
@@ -393,7 +499,14 @@ export class PlanningUI {
     `;
   }
 
-  private bindEvents(level: LevelConfig, plan: TripPlan, save: CampaignSave): void {
+  private bindEvents(
+    level: LevelConfig,
+    plan: TripPlan,
+    save: CampaignSave,
+    selectedLegIndex: number,
+    providerFilter?: ProviderFilterMap,
+    dimUnsubscribed = true
+  ): void {
     this.root.querySelector('#er-level-select')?.addEventListener('change', e => {
       SoundFX.click();
       this.cb.onSelectLevel((e.target as HTMLSelectElement).value);
@@ -425,11 +538,30 @@ export class PlanningUI {
       });
     });
 
+    this.root.querySelectorAll('[data-select-leg]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number((btn as HTMLElement).dataset.selectLeg);
+        SoundFX.click();
+        this.cb.onSelectLeg(idx);
+      });
+    });
+
+    this.root.querySelectorAll('[data-leg-card]').forEach(card => {
+      card.addEventListener('click', e => {
+        const target = e.target as HTMLElement;
+        if (target.closest('input, button, label')) return;
+        const idx = Number((card as HTMLElement).dataset.legCard);
+        if (idx === selectedLegIndex) return;
+        SoundFX.click();
+        this.cb.onSelectLeg(idx);
+      });
+    });
+
     this.root.querySelectorAll('.plan-tab').forEach(btn => {
       btn.addEventListener('click', () => {
         SoundFX.click();
         this.activeTab = (btn as HTMLElement).dataset.ptab as 'car' | 'subs' | 'route';
-        this.render(level, plan, save);
+        this.render(level, plan, save, selectedLegIndex, providerFilter, dimUnsubscribed);
       });
     });
 
