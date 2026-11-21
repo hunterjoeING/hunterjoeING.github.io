@@ -175,6 +175,13 @@
     { id: 'quiz_md11', title: 'McDonnell Douglas MD-11 Quiz', icon: '🛫', lowerIsBetter: false },
     { id: 'quiz_naildesign', title: 'Nageldesign Quiz · Finger- & Fußnägel', icon: '💅', lowerIsBetter: false },
     { id: 'quiz_torten', title: 'Torten Quiz · Klassiker & Patisserie', icon: '🎂', lowerIsBetter: false },
+    { id: 'quiz_fussball', title: 'Fußball – Das große Quiz', icon: '⚽', lowerIsBetter: false },
+    { id: 'quiz_fussball_mix', title: 'Fußball: Alles gemischt', icon: '⚽', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_fussball_buli', title: 'Fußball: Bundesliga & DFB-Pokal', icon: '🏆', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_fussball_wmem', title: 'Fußball: WM, EM & Nationalelf', icon: '🌍', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_fussball_intl', title: 'Fußball: Champions League & Weltfußball', icon: '⭐', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_fussball_rules', title: 'Fußball: Regeln, Taktik & Kurioses', icon: '📜', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_fussball_werder', title: 'Fußball: SV Werder Bremen Spezial', icon: '💚', lowerIsBetter: false, unlisted: true },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -223,6 +230,7 @@
       if (p.includes('/games/quiz-md11')) return 'quiz_md11';
       if (p.includes('/games/quiz-naildesign')) return 'quiz_naildesign';
       if (p.includes('/games/quiz-torten')) return 'quiz_torten';
+      if (p.includes('/games/quiz-fussball')) return 'quiz_fussball';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
@@ -840,6 +848,7 @@
     { id: 'quiz_md11', title: 'McDonnell Douglas MD-11 Quiz', icon: '🛫' },
     { id: 'quiz_naildesign', title: 'Nageldesign Quiz · Finger- & Fußnägel', icon: '💅' },
     { id: 'quiz_torten', title: 'Torten Quiz · Klassiker & Patisserie', icon: '🎂' },
+    { id: 'quiz_fussball', title: 'Fußball – Das große Quiz', icon: '⚽' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },
