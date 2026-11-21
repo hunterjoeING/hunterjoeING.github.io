@@ -57,6 +57,7 @@ const GAMES_META = {
   quiz_md11: { title: 'McDonnell Douglas MD-11 Quiz', lowerIsBetter: false },
   quiz_naildesign: { title: 'Nageldesign Quiz · Finger- & Fußnägel', lowerIsBetter: false },
   quiz_torten: { title: 'Torten Quiz · Klassiker & Patisserie', lowerIsBetter: false },
+  quiz_geburt: { title: 'Bewusste Schwangerschaft & sanfte Geburt', lowerIsBetter: false },
   quiz_fussball: { title: 'Fußball – Das große Quiz', lowerIsBetter: false },
   quiz_fussball_mix: { title: 'Fußball: Alles gemischt', lowerIsBetter: false },
   quiz_fussball_buli: { title: 'Fußball: Bundesliga & DFB-Pokal', lowerIsBetter: false },
