@@ -863,7 +863,7 @@
           href: './games/podracer/index.html',
           cat: 'action',
           catLabel: '3D Action &amp; Racing',
-          badge: 'Three.js · UnrealBloom · Neu',
+          badge: '',
           featured: true,
           cta: 'Canyon starten →',
           title: 'Canyon Podracer 3D',
@@ -885,7 +885,7 @@
           href: './games/e-roadtrip/index.html',
           cat: 'strategy',
           catLabel: 'Planung & GTA-2 Fahrt',
-          badge: 'Phaser 3 · Pixel-Art · Neu',
+          badge: '',
           featured: true,
           cta: 'Roadtrip starten →',
           title: 'E-Roadtrip: Pixel Europe',
@@ -905,7 +905,7 @@
           href: './games/solitaire3d/index.html',
           cat: 'strategy',
           catLabel: '3D Tabletop · Karten',
-          badge: 'Three.js · 4 Farben · 104 Karten',
+          badge: '4 Farben · 104 Karten',
           featured: true,
           cta: 'Am Tisch spielen →',
           title: '3D Spider Solitär (4 Farben)',
@@ -1727,7 +1727,7 @@
             <div class="game-icon-box">${g.icon}</div>
             <div class="card-badges">
               <span class="badge-cat">${g.catLabel}</span>
-              <span class="badge-new">${g.badge}</span>
+              ${g.badge ? `<span class="badge-new">${g.badge}</span>` : ''}
             </div>
           </div>
           <h3 class="card-title">${g.title}</h3>
