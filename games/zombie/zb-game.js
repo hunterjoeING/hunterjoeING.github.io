@@ -367,7 +367,13 @@ function step(dt) {
   if (keys.left) targetU -= moveSpd * dt;
   if (keys.right) targetU += moveSpd * dt;
   targetU = Math.max(-0.82, Math.min(0.82, targetU));
-  playerU += (targetU - playerU) * Math.min(1, dt * 18);
+
+  // Smooth, damped lateral motion (prevents instant teleporting across the bridge)
+  const maxLateralSpeed = 1.85;
+  const diffU = targetU - playerU;
+  const desiredStep = diffU * (1 - Math.exp(-9.0 * dt));
+  const maxStep = maxLateralSpeed * dt;
+  playerU += Math.max(-maxStep, Math.min(maxStep, desiredStep));
 
   // Wave progression
   const newWave = 1 + Math.floor(elapsed / 12);
@@ -583,20 +589,24 @@ function loop(now) {
   requestAnimationFrame(loop);
 }
 
-// Pointer Drag directly on stage maps horizontally to bridge coordinate
-function pointerToU(clientX) {
+// Relative pointer drag on stage steers smoothly without teleporting on tap
+let dragStartX = 0;
+let dragStartU = 0;
+
+function updateDragU(clientX) {
   const r = stage.getBoundingClientRect();
-  const rel = ((clientX - r.left) / r.width) * 2 - 1;
-  targetU = Math.max(-0.82, Math.min(0.82, rel * 1.15));
+  const deltaRel = (clientX - dragStartX) / Math.max(1, r.width);
+  targetU = Math.max(-0.82, Math.min(0.82, dragStartU + deltaRel * 2.1));
 }
 
 stage.addEventListener('pointerdown', (e) => {
   if (!running || e.target.closest('.zb-cam-btn, #overlay')) return;
   pointerActive = true;
-  pointerToU(e.clientX);
+  dragStartX = e.clientX;
+  dragStartU = targetU;
 });
 stage.addEventListener('pointermove', (e) => {
-  if (pointerActive && running) pointerToU(e.clientX);
+  if (pointerActive && running) updateDragU(e.clientX);
 });
 window.addEventListener('pointerup', () => { pointerActive = false; });
 window.addEventListener('pointercancel', () => { pointerActive = false; });
