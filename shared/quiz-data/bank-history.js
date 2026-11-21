@@ -12,7 +12,7 @@
       "Er sprang bei Nacht ins Meer und schwamm nach Rhodos"
     ],
     "explanation": "Cäsar hielt nach seiner Freilassung Wort: Er kaperte eine Flotte, nahm alle Piraten gefangen und ließ sie wie versprochen kreuzigen.",
-    "exp": "Er forderte mehr Lösegeld und drohte mit ihrer Kreuzigung"
+    "exp": "Cäsar hielt nach seiner Freilassung Wort: Er kaperte eine Flotte, nahm alle Piraten gefangen und ließ sie wie versprochen kreuzigen."
   },
   {
     "cat": "antike",
@@ -25,7 +25,7 @@
       "Das Edikt von Nantes"
     ],
     "explanation": "Die Magna Carta legte den bis heute gültigen Rechtsgrundsatz fest: Niemand – nicht einmal der König – steht über dem Gesetz.",
-    "exp": "Magna Carta Libertatum"
+    "exp": "Die Magna Carta legte den bis heute gültigen Rechtsgrundsatz fest: Niemand – nicht einmal der König – steht über dem Gesetz."
   },
   {
     "cat": "antike",
@@ -38,7 +38,7 @@
       "Burgwachen fingen sie mit gepolsterten Wagen auf"
     ],
     "explanation": "Die katholische Seite sprach von der Rettung durch die Jungfrau Maria, die Protestanten verwiesen trocken auf den stinkenden Pferdemist – der Dreißigjährige Krieg begann.",
-    "exp": "Sie landeten auf einem Misthaufen im Burggraben"
+    "exp": "Die katholische Seite sprach von der Rettung durch die Jungfrau Maria, die Protestanten verwiesen trocken auf den stinkenden Pferdemist – der Dreißigjährige Krieg begann."
   },
   {
     "cat": "antike",
@@ -51,7 +51,7 @@
       "König Chlodwig I."
     ],
     "explanation": "Mit der Krönung Karls knüpfte das Frankenreich an die antike römische Kaiserwürde an – die Wiege des Heiligen Römischen Reiches.",
-    "exp": "Karl der Große"
+    "exp": "Mit der Krönung Karls knüpfte das Frankenreich an die antike römische Kaiserwürde an – die Wiege des Heiligen Römischen Reiches."
   },
   {
     "cat": "antike",
@@ -64,254 +64,254 @@
       "Gewaltige Katapulte mit schweren Felsbrocken"
     ],
     "explanation": "Der Fall Konstantinopels nach über 1.000 Jahren byzantinischer Geschichte gilt vielen Historikern als das offizielle Ende des europäischen Mittelalters.",
-    "exp": "Eine gewaltige Bronzekanone für schwere Granitkugeln"
+    "exp": "Der Fall Konstantinopels nach über 1.000 Jahren byzantinischer Geschichte gilt vielen Historikern als das offizielle Ende des europäischen Mittelalters."
   },
   {
     "cat": "antike",
     "diff": "pro",
     "q": "Welches Gesetzbuch des Kaisers Justinian I. (Corpus Iuris Civilis, 6. Jh.) bildet das Fundament fast aller modernen europäischen Rechtssysteme?",
     "a": [
-      "Hannibal Barkas",
-      "Hasdrubal Barkas",
-      "Hamilkar Barkas",
-      "Mago Barkas"
+      "Das Corpus Iuris Civilis (Codex Justinianus)",
+      "Die Lex Salica der fränkischen Merowinger-Könige",
+      "Das Zwölftafelgesetz der frühen römischen Republik",
+      "Der Sachsenspiegel des Rechtsgelehrten Eike von Repgow"
     ],
     "explanation": "Das römische Zivilrecht wurde im 12. Jahrhundert an der Universität Bologna wiederentdeckt und prägt das deutsche BGB bis zum heutigen Tag.",
-    "exp": "Hannibal Barkas"
+    "exp": "Das römische Zivilrecht wurde im 12. Jahrhundert an der Universität Bologna wiederentdeckt und prägt das deutsche BGB bis zum heutigen Tag."
   },
   {
     "cat": "antike",
     "diff": "easy",
     "q": "Welche Seuche tötete zwischen 1347 und 1351 rund ein Drittel der gesamten europäischen Bevölkerung?",
     "a": [
-      "Die Schlacht im Teutoburger Wald",
-      "Die Schlacht bei Cannae",
-      "Die Schlacht von Alesia",
-      "Die Schlacht am Trasimenischen See"
+      "Der Schwarze Tod (Beulen- und Lungenpest)",
+      "Die Spanische Grippe (Influenzapandemie)",
+      "Die Antoninische Pest (Pockenausbruch)",
+      "Die Justinianische Pest (Frühphase im Orient)"
     ],
     "explanation": "Wegen des extremen Arbeitskräftemangels nach der Pest konnten Bauern erstmals höhere Löhne fordern – das System der Leibeigenschaft zerbrach.",
-    "exp": "Die Schlacht im Teutoburger Wald"
+    "exp": "Wegen des extremen Arbeitskräftemangels nach der Pest konnten Bauern erstmals höhere Löhne fordern – das System der Leibeigenschaft zerbrach."
   },
   {
     "cat": "antike",
     "diff": "mid",
     "q": "Was regelte die „Goldene Bulle“ von 1356 für mehr als 400 Jahre im Heiligen Römischen Reich?",
     "a": [
-      "Der Ausbruch des Vulkans Vesuv",
-      "Ein verheerendes Seebeben im Golf von Neapel",
-      "Ein plötzlicher Tsunami nach einem Meteoriteneinschlag",
-      "Ein Großbrand durch brennende Öltransporter im Hafen"
+      "Die verbindliche Wahl des Königs durch ein Kollegium von sieben Kurfürsten",
+      "Die vollständige Abtretung aller kaiserlichen Rechte an den Papst in Rom",
+      "Die Einführung einer einheitlichen Goldwährung im gesamten Heiligen Römischen Reich",
+      "Die Gründung der ersten gemeinsamen stehenden Reichsarmee gegen äußere Feinde"
     ],
     "explanation": "Kaiser Karl IV. schuf damit das erste „Grundgesetz“ des Reiches und verhinderte Doppelwahlen und Thronstreitigkeiten.",
-    "exp": "Der Ausbruch des Vulkans Vesuv"
+    "exp": "Kaiser Karl IV. schuf damit das erste „Grundgesetz“ des Reiches und verhinderte Doppelwahlen und Thronstreitigkeiten."
   },
   {
     "cat": "antike",
     "diff": "pro",
     "q": "Welche geheime Brandwaffe der byzantinischen Marine brannte sogar auf der Wasseroberfläche und rettete Konstantinopel vor arabischen Belagerungen?",
     "a": [
-      "95 Thesen gegen den Ablasshandel an der Schlosskirche",
-      "Die Übersetzung der gesamten Bibel ins Hochdeutsche",
-      "Eine Brandrede gegen den Papst auf dem Reichstag zu Worms",
-      "Die Gründung des ersten evangelischen Kirchenparlaments"
+      "Das Griechische Feuer (Hygron Pyr)",
+      "Das persische Erdöl-Gemisch Naphtha",
+      "Das chinesische Schwarzpulver-Geschoss",
+      "Das venezianische Phosphor-Brandmittel"
     ],
     "explanation": "Die genaue chemische Rezeptur (vermutlich Erdöl, Schwefel, Salpeter und gebrannter Kalk) war ein streng gehütetes Staatsgeheimnis und ging verloren.",
-    "exp": "95 Thesen gegen den Ablasshandel an der Schlosskirche"
+    "exp": "Die genaue chemische Rezeptur (vermutlich Erdöl, Schwefel, Salpeter und gebrannter Kalk) war ein streng gehütetes Staatsgeheimnis und ging verloren."
   },
   {
     "cat": "antike",
     "diff": "easy",
     "q": "Welcher karthagische Feldherr zog 218 v. Chr. mit Kriegselefanten über die schneebedeckten Alpen gegen Rom?",
     "a": [
-      "Sie erfanden die erste Keilschrift der Menschheit",
-      "Sie bauten die ersten seetüchtigen Holzschiffe",
-      "Sie entdeckten die Verhüttung von meteorerzem Eisen",
-      "Sie führten das erste Papiergeld der Antike ein"
+      "Hannibal Barkas (Feldherr Karthagos)",
+      "Scipio Africanus (römischer Konsul)",
+      "Hasdrubal Barkas (Verteidiger Spaniens)",
+      "Hamilkar Barkas (Gründer von Barcino)"
     ],
     "explanation": "In der Schlacht von Cannae (216 v. Chr.) vernichtete Hannibal ein römisches Heer von 80.000 Mann durch die klassische doppelte Umfassung.",
-    "exp": "Sie erfanden die erste Keilschrift der Menschheit"
+    "exp": "In der Schlacht von Cannae (216 v. Chr.) vernichtete Hannibal ein römisches Heer von 80.000 Mann durch die klassische doppelte Umfassung."
   },
   {
     "cat": "antike",
     "diff": "mid",
     "q": "Was geschah an den Iden des März (15. März 44 v. Chr.) im Theater des Pompejus in Rom?",
     "a": [
-      "Die Schlacht bei Marathon",
-      "Die Schlacht bei den Thermopylen",
-      "Die Schlacht von Salamis",
-      "Die Schlacht von Plataiai"
+      "Julius Cäsar wurde von Senatoren um Brutus und Cassius mit 23 Stichen ermordet",
+      "Marcus Antonius rief das erste Triumvirat mit Octavian und Lepidus aus",
+      "Spartacus führte den großen Gladiatorenaufstand gegen die römischen Legionen an",
+      "Cicero hielt seine berühmten Anklagereden gegen den Verschwörer Catilina"
     ],
     "explanation": "Die Verschwörer wollten die Römische Republik retten – lösten durch Cäsars Tod jedoch einen Bürgerkrieg aus, der das Römische Kaiserreich besiegelte.",
-    "exp": "Die Schlacht bei Marathon"
+    "exp": "Die Verschwörer wollten die Römische Republik retten – lösten durch Cäsars Tod jedoch einen Bürgerkrieg aus, der das Römische Kaiserreich besiegelte."
   },
   {
     "cat": "antike",
     "diff": "pro",
     "q": "Was war der „Gang nach Canossa“ von König Heinrich IV. im Januar 1077?",
     "a": [
-      "Peloponnesischer Krieg",
-      "Erster Punischer Krieg",
-      "Makedonischer Krieg",
-      "Perserkrieg"
+      "Ein Bußgang im Büßergewand zur Burg von Papst Gregor VII. zur Bannlösung",
+      "Ein Kreuzzug zur Rückeroberung der heiligen Stätten in Palästina",
+      "Eine feierliche Krönungsreise nach Rom zur Erlangung der Kaiserkrone",
+      "Ein militärischer Feldzug zur Unterwerfung der lombardischen Städtebünde"
     ],
     "explanation": "Im sogenannten Investiturstreit ging es um die fundamentale Machtfrage: Darf der Kaiser Bischöfe einsetzen oder allein der Papst?",
-    "exp": "Peloponnesischer Krieg"
+    "exp": "Im sogenannten Investiturstreit ging es um die fundamentale Machtfrage: Darf der Kaiser Bischöfe einsetzen oder allein der Papst?"
   },
   {
     "cat": "antike",
     "diff": "easy",
     "q": "Welcher römische Kaiser erhob das Christentum 313 n. Chr. im Mailänder Edikt zur erlaubten Religion und verlegte die Hauptstadt nach Byzanz?",
     "a": [
-      "Auge um Auge, Zahn um Zahn",
-      "Im Zweifel stets für den Angeklagten",
-      "Gleiches Recht für freie Bürger und Sklaven",
-      "Das Eigentum ist unantastbar und heilig"
+      "Konstantin der Große",
+      "Diokletian (Reformkaiser)",
+      "Marcus Aurelius (Philosoph)",
+      "Trajan (Optimus Princeps)"
     ],
     "explanation": "Auf dem Sterbebett ließ sich Konstantin taufen – das Römische Reich wandelte sich in der Folgezeit zu einem christlichen Imperium.",
-    "exp": "Auge um Auge, Zahn um Zahn"
+    "exp": "Auf dem Sterbebett ließ sich Konstantin taufen – das Römische Reich wandelte sich in der Folgezeit zu einem christlichen Imperium."
   },
   {
     "cat": "antike",
     "diff": "mid",
     "q": "Was war der berüchtigte „Vierte Kreuzzug“ im Jahr 1204, der das christliche Abendland bis heute beschämt?",
     "a": [
-      "Marcus Tullius Cicero",
-      "Gaius Julius Cäsar",
-      "Marcus Antonius",
-      "Lucius Sergius Catilina"
+      "Die Kreuzfahrer plünderten die reiche christliche Metropole Konstantinopel",
+      "Das christliche Heer eroberte Jerusalem und tötete alle Einwohner grausam",
+      "Die Flotte sank in einem verheerenden Herbststurm vor der Küste Kretas",
+      "Die Ritter wurden vom Sultan Saladins in der Wüste von Hattin geschlagen"
     ],
     "explanation": "Gelenkt vom venezianischen Dogen Enrico Dandolo raubten die Kreuzritter die unermesslichen Kunstschätze und Reliquien der orthodoxen Christen.",
-    "exp": "Marcus Tullius Cicero"
+    "exp": "Gelenkt vom venezianischen Dogen Enrico Dandolo raubten die Kreuzritter die unermesslichen Kunstschätze und Reliquien der orthodoxen Christen."
   },
   {
     "cat": "antike",
     "diff": "pro",
     "q": "Wer war Dschingis Khan und wie schafften seine mongolischen Reiterkrieger im 13. Jahrhundert das größte Landreich der Geschichte?",
     "a": [
-      "Ein Großbrand vernichtete weite Teile der Stadt Rom",
-      "Der Senat wurde von meuternden Prätorianern gestürmt",
-      "Germanische Stämme überquerten erstmals den Rhein",
-      "Die Stadt wurde von einer schweren Seuche heimgesucht"
+      "Berittene Bogenschützen, Disziplin, psychologische Härte und das Örtöö-Postsystem",
+      "Massive Belagerungstürme und riesige hölzerne Katapulte nach persischer Bauart",
+      "Eine unüberwindbare schwere Kavallerie mit Vollpanzerung aus schwedischem Eisen",
+      "Gepanzerte Kriegswagen, die von dressierten Kampfhunden gezogen wurden"
     ],
     "explanation": "Das Mongolische Reich reichte von Ungarn und Polen bis nach Korea und zum Chinesischen Meer – die Pax Mongolica belebte die Seidenstraße.",
-    "exp": "Ein Großbrand vernichtete weite Teile der Stadt Rom"
+    "exp": "Das Mongolische Reich reichte von Ungarn und Polen bis nach Korea und zum Chinesischen Meer – die Pax Mongolica belebte die Seidenstraße."
   },
   {
     "cat": "antike",
     "diff": "easy",
     "q": "In welchem Jahr besiegte Wilhelm der Eroberer in der Schlacht bei Hastings den angelsächsischen König Harold und eroberte England?",
     "a": [
-      "Konstantin der Große",
-      "Kaiser Diokletian",
-      "Kaiser Theodosius I.",
-      "Kaiser Marcus Trajan"
+      "Im Jahr 1066 (Schlacht bei Hastings)",
+      "Im Jahr 1215 (Unterzeichnung Magna Carta)",
+      "Im Jahr 1337 (Beginn des Hundertjährigen Krieges)",
+      "Im Jahr 1415 (Schlacht von Azincourt)"
     ],
     "explanation": "Der berühmte Teppich von Bayeux schildert die Invasion der Normannen bildhaft auf einer Länge von fast 70 Metern.",
-    "exp": "Konstantin der Große"
+    "exp": "Der berühmte Teppich von Bayeux schildert die Invasion der Normannen bildhaft auf einer Länge von fast 70 Metern."
   },
   {
     "cat": "antike",
     "diff": "mid",
     "q": "Welcher babylonische König ließ um 1750 v. Chr. eine der ältesten erhaltenen Gesetzessammlungen in eine schwarze Basaltstele meißeln?",
     "a": [
-      "Spartacus",
-      "Gladiator Crixus",
-      "Gladiator Oenomaus",
-      "Gladiator Castus"
+      "Hammurapi von Babylon („Auge um Auge, Zahn um Zahn“)",
+      "Nebukadnezar II. (Erbauer der Hängenden Gärten)",
+      "Sargon von Akkad (Gründer des ersten Großreichs)",
+      "Gilgamesch (legendärer sumerischer König von Uruk)"
     ],
     "explanation": "Der Codex Hammurapi regelte Eigentum, Ehe, Löhne und Strafmaße und ist heute im Pariser Louvre ausgestellt.",
-    "exp": "Spartacus"
+    "exp": "Der Codex Hammurapi regelte Eigentum, Ehe, Löhne und Strafmaße und ist heute im Pariser Louvre ausgestellt."
   },
   {
     "cat": "antike",
     "diff": "pro",
     "q": "Was war der sogenannte „Scherbengericht“ (Ostrakismos) im antiken Athen?",
     "a": [
-      "Kaiser Augustus",
-      "Julius Cäsar",
-      "Kaiser Tiberius",
-      "Marcus Antonius"
+      "Bürger ritzten Politikernamen in Scherben; der Meistgewählte wurde 10 Jahre verbannt",
+      "Straftäter mussten als Strafe tausend antike Amphoren auf dem Marktplatz zerschlagen",
+      "Priester lasen aus den Bruchkanten von zerbrochenem Tongeschirr die Zukunft des Staates",
+      "Kaufleute stimmten über neue Zölle durch den Einwurf von Tonscherben in Urnen ab"
     ],
     "explanation": "Das Scherbengericht sollte verhindern, dass ein einzelner Demagoge oder Politiker zu mächtig wird und eine Tyrannis errichtet.",
-    "exp": "Kaiser Augustus"
+    "exp": "Das Scherbengericht sollte verhindern, dass ein einzelner Demagoge oder Politiker zu mächtig wird und eine Tyrannis errichtet."
   },
   {
     "cat": "antike",
     "diff": "easy",
     "q": "Wer überquerte 49 v. Chr. den Grenzfluss Rubikon mit den Worten „Alea iacta est“ (Die Würfel sind gefallen)?",
     "a": [
-      "Aufruf von Papst Urban II. zum Ersten Kreuzzug",
-      "Die Spaltung zwischen Ost- und Westkirche in Rom",
-      "Die Krönung des ersten Königs von Jerusalem",
-      "Der Beginn der Reconquista auf der iberischen Halbinsel"
+      "Julius Cäsar („Alea iacta est“)",
+      "Alexander der Große (am Granikos)",
+      "Pompejus Magnus (im Bürgerkrieg)",
+      "Kaiser Augustus (nach Actium)"
     ],
     "explanation": "Mit dem Überschreiten des Flusses mit bewaffneten Truppen brach Cäsar das römische Gesetz und entfachte den Bürgerkrieg gegen den Senat.",
-    "exp": "Aufruf von Papst Urban II. zum Ersten Kreuzzug"
+    "exp": "Mit dem Überschreiten des Flusses mit bewaffneten Truppen brach Cäsar das römische Gesetz und entfachte den Bürgerkrieg gegen den Senat."
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
     "q": "Was schlug Martin Luther am 31. Oktober 1517 der Überlieferung nach an die Tür der Schlosskirche zu Wittenberg?",
     "a": [
-      "Der Schwarze Tod",
-      "Die Cholera-Pandemie",
-      "Die Pocken-Epidemie",
-      "Das Fleckfieber"
+      "Seine 95 Thesen gegen den päpstlichen Ablasshandel",
+      "Die deutsche Übersetzung des Neuen Testaments aus dem Griechischen",
+      "Den Bannstrahl der päpstlichen Bulle Exsurge Domine",
+      "Seinen berühmten Katechismus für den Schulunterricht der Jugend"
     ],
     "explanation": "Luther prangerte an, dass die Kirche Sündenvergebung gegen Geld verkaufte („Sobald das Geld im Kasten klingt, die Seele in den Himmel springt“).",
-    "exp": "Der Schwarze Tod"
+    "exp": "Luther prangerte an, dass die Kirche Sündenvergebung gegen Geld verkaufte („Sobald das Geld im Kasten klingt, die Seele in den Himmel springt“)."
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
     "q": "Was war der historische Protest der „Boston Tea Party“ im Dezember 1773?",
     "a": [
-      "Saladin eroberte Jerusalem für die Muslime zurück",
-      "Richard Löwenherz schloss Frieden mit den Kreuzfahrern",
-      "Konstantinopel fiel an die Truppen der Seldschuken",
-      "Die Mamluken zerstörten die letzte Festung Akkon"
+      "Kolonisten warfen britische Teekisten aus Protest gegen Steuern ins Meer",
+      "Bürger verbrannten britisches Papiergeld vor dem Rathaus von Boston",
+      "Kaufleute boykottierten die Einfuhr von karibischem Zuckerrohrmelasse",
+      "Siedler verweigerten die Einquartierung von königlichen Rotröcken in Häusern"
     ],
     "explanation": "Die Parole „No taxation without representation“ wurde zum Schlachtruf des Amerikanischen Unabhängigkeitskrieges.",
-    "exp": "Saladin eroberte Jerusalem für die Muslime zurück"
+    "exp": "Die Parole „No taxation without representation“ wurde zum Schlachtruf des Amerikanischen Unabhängigkeitskrieges."
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
     "q": "Wie viele Gefangene befreiten die Pariser Aufständischen am 14. Juli 1789 beim berühmten Sturm auf die Bastille tatsächlich?",
     "a": [
-      "Schlacht von Hastings",
-      "Schlacht von Agincourt",
-      "Schlacht von Bannockburn",
-      "Schlacht von Crécy"
+      "Exakt nur sieben Gefangene (vier Urkundenfälscher, zwei Kranke und ein Adeliger)",
+      "Über achthundert politische Häftlinge und ermutigte Aufständische des Dritten Standes",
+      "Rund dreihundert unschuldig verurteilte Revolutionäre aus den Pariser Vorstädten",
+      "Genau fünfzig zum Tode verurteilte Anführer des großen Bauernaufstandes"
     ],
     "explanation": "Den Bürgern ging es primär um die 250 Fässer Schießpulver im Keller – dennoch wurde der Tag zum ewigen Symbol des Falls des Ancien Régime.",
-    "exp": "Schlacht von Hastings"
+    "exp": "Den Bürgern ging es primär um die 250 Fässer Schießpulver im Keller – dennoch wurde der Tag zum ewigen Symbol des Falls des Ancien Régime."
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
     "q": "Was tat Napoleon Bonaparte am 2. Dezember 1804 in der Kathedrale Notre-Dame de Paris bei seiner Kaiserkrönung?",
     "a": [
-      "Hundertjähriger Krieg",
-      "Rosenkriege",
-      "Dreißigjähriger Krieg",
-      "Spanischer Erbfolgekrieg"
+      "Er nahm Papst Pius VII. die Krone aus der Hand und krönte sich selbst",
+      "Er kniete vor dem Kardinal nieder und schwor die Treue zur Verfassung",
+      "Er warf die goldene Krone zu Boden, um seine republikanische Gesinnung zu zeigen",
+      "Er ernannte seinen Sohn am Altar zum ewigen Herrscher des Römischen Reiches"
     ],
     "explanation": "Napoleon demonstrierte damit unmissverständlich: Er verdankte seine Macht allein seinen eigenen Taten und keinem Vertreter Gottes auf Erden.",
-    "exp": "Hundertjähriger Krieg"
+    "exp": "Napoleon demonstrierte damit unmissverständlich: Er verdankte seine Macht allein seinen eigenen Taten und keinem Vertreter Gottes auf Erden."
   },
   {
     "cat": "neuzeit",
     "diff": "mid",
     "q": "Welches fundamentale Staatsprinzip formulierte der französische Philosoph Montesquieu 1748 in „Vom Geist der Gesetze“?",
     "a": [
-      "Jeanne d’Arc",
-      "Eleonore von Aquitanien",
-      "Katharina von Siena",
-      "Margarete von Anjou"
+      "Die Gewaltenteilung in Gesetzgebung, Ausführung und Rechtsprechung",
+      "Das uneingeschränkte Gottesgnadentum der europäischen Monarchen",
+      "Die direkte Herrschaft des Volkes ohne repräsentatives Parlament",
+      "Das Verbot von stehenden Armeen zugunsten regionaler Milizen"
     ],
     "explanation": "Um Tyrannei zu verhindern, muss Macht durch Macht gebremst werden – das Grundprinzip jeder modernen Demokratie.",
-    "exp": "Jeanne d’Arc"
+    "exp": "Um Tyrannei zu verhindern, muss Macht durch Macht gebremst werden – das Grundprinzip jeder modernen Demokratie."
   },
   {
     "cat": "neuzeit",
@@ -324,7 +324,7 @@
       "Bildung eines gemeinsamen Heeres in Europa"
     ],
     "explanation": "Der Vertrag beendete den verheerenden Dreißigjährigen Krieg und schuf die sogenannte „Westfälische Ordnung“ der Nationalstaaten.",
-    "exp": "Das Prinzip staatlicher Souveränität der Länder"
+    "exp": "Der Vertrag beendete den verheerenden Dreißigjährigen Krieg und schuf die sogenannte „Westfälische Ordnung“ der Nationalstaaten."
   },
   {
     "cat": "neuzeit",
@@ -337,7 +337,7 @@
       "John Adams"
     ],
     "explanation": "Am 4. Juli 1776 verabschiedete der Kontinentalkongress in Philadelphia die Loslösung der 13 Kolonien von der britischen Krone.",
-    "exp": "Thomas Jefferson"
+    "exp": "Am 4. Juli 1776 verabschiedete der Kontinentalkongress in Philadelphia die Loslösung der 13 Kolonien von der britischen Krone."
   },
   {
     "cat": "neuzeit",
@@ -350,7 +350,7 @@
       "Verbot von Scheidungen und Frauenrechten"
     ],
     "explanation": "Napoleon bezeichnete den Code Civil auf St. Helena als sein wahres Denkmal: „Meine 40 Siege werden durch Waterloo ausgelöscht, aber mein Gesetzbuch lebt ewig.“",
-    "exp": "Gleichheit vor dem Gesetz und Schutz des Eigentums"
+    "exp": "Napoleon bezeichnete den Code Civil auf St. Helena als sein wahres Denkmal: „Meine 40 Siege werden durch Waterloo ausgelöscht, aber mein Gesetzbuch lebt ewig.“"
   },
   {
     "cat": "neuzeit",
@@ -363,20 +363,20 @@
       "Die Ausrufung einer gesamteuropäischen Republik"
     ],
     "explanation": "„Der Kongress tanzt, aber er geht nicht weiter“ – dennoch sicherte das Metternich’sche System fast vier Jahrzehnte lang den europäischen Frieden.",
-    "exp": "Restauration und europäisches Mächtegleichgewicht"
+    "exp": "„Der Kongress tanzt, aber er geht nicht weiter“ – dennoch sicherte das Metternich’sche System fast vier Jahrzehnte lang den europäischen Frieden."
   },
   {
     "cat": "neuzeit",
     "diff": "easy",
     "q": "Welcher englische König brach mit dem Papst in Rom und gründete die Anglikanische Kirche, weil Rom seine Scheidung verweigerte?",
     "a": [
-      "Heinrich VIII.",
-      "Heinrich VII.",
-      "Jakob I.",
-      "Karl I."
+      "König Heinrich VIII.",
+      "König Heinrich VII.",
+      "König Jakob I. Stuart",
+      "König Karl I. Stuart"
     ],
     "explanation": "Heinrich VIII. heiratete insgesamt sechs Frauen (zwei ließ er köpfen, zwei ließ er scheiden, eine starb im Kindbett, eine überlebte ihn).",
-    "exp": "Heinrich VIII."
+    "exp": "Heinrich VIII. heiratete insgesamt sechs Frauen (zwei ließ er köpfen, zwei ließ er scheiden, eine starb im Kindbett, eine überlebte ihn)."
   },
   {
     "cat": "neuzeit",
@@ -389,20 +389,20 @@
       "Die Deportation von Bauern in französische Überseegebiete"
     ],
     "explanation": "Am Ende fraß die Revolution ihre eigenen Kinder: Robespierre selbst wurde nach einem Parlamentsputsch auf der Guillotine enthauptet.",
-    "exp": "Systematische Hinrichtungen mit der Guillotine"
+    "exp": "Am Ende fraß die Revolution ihre eigenen Kinder: Robespierre selbst wurde nach einem Parlamentsputsch auf der Guillotine enthauptet."
   },
   {
     "cat": "neuzeit",
     "diff": "pro",
     "q": "Was war das Edikt von Nantes, das der französische König Heinrich IV. im Jahr 1598 erließ?",
     "a": [
-      "Religiöse Toleranz für Calvinisten in Frankreich",
-      "Das Verbot aller protestantischen Gottesdienste",
-      "Die Einführung der Inquisition im gesamten Königreich",
-      "Die Enteignung des katholischen Kirchenvermögens"
+      "Es gewährte calvinistischen Protestanten (Hugenotten) religiöse Toleranz",
+      "Es befahl die sofortige Vertreibung aller Andersgläubigen aus Frankreich",
+      "Es trennte den französischen Staat offiziell von der römisch-katholischen Kirche",
+      "Es ernannte den Erzbischof von Paris zum obersten weltlichen Richter"
     ],
     "explanation": "Heinrich IV. beendete damit die blutigen Hugenottenkriege – Ludwig XIV. widerrief das Edikt 1685, woraufhin 200.000 Hugenotten u. a. nach Preußen flohen.",
-    "exp": "Religiöse Toleranz für Calvinisten in Frankreich"
+    "exp": "Heinrich IV. beendete damit die blutigen Hugenottenkriege – Ludwig XIV. widerrief das Edikt 1685, woraufhin 200.000 Hugenotten u. a. nach Preußen flohen."
   },
   {
     "cat": "neuzeit",
@@ -415,7 +415,7 @@
       "Fernão de Magalhães"
     ],
     "explanation": "Kolumbus glaubte bis zu seinem Tod felsenfest, den westlichen Seeweg nach Ostasien (Indien) entdeckt zu haben – daher nannte er die Ureinwohner „Indianer“.",
-    "exp": "Christoph Kolumbus"
+    "exp": "Kolumbus glaubte bis zu seinem Tod felsenfest, den westlichen Seeweg nach Ostasien (Indien) entdeckt zu haben – daher nannte er die Ureinwohner „Indianer“."
   },
   {
     "cat": "neuzeit",
@@ -428,7 +428,7 @@
       "Die Kartierung der gesamten antarktischen Küste"
     ],
     "explanation": "Magellan selbst fiel auf den Philippinen im Kampf mit Einheimischen – Elcano brachte das einzige überlebende Schiff „Victoria“ sicher nach Spanien zurück.",
-    "exp": "Die erste historisch dokumentierte Weltumsegelung"
+    "exp": "Magellan selbst fiel auf den Philippinen im Kampf mit Einheimischen – Elcano brachte das einzige überlebende Schiff „Victoria“ sicher nach Spanien zurück."
   },
   {
     "cat": "neuzeit",
@@ -441,7 +441,7 @@
       "Die gemeinsame Ausbeutung der afrikanischen Goldminen"
     ],
     "explanation": "Weil der Meridian weiter westlich lag als gedacht, ragte die Ostspitze Südamerikas in die portugiesische Hemisphäre – deshalb spricht man in Brasilien Portugiesisch!",
-    "exp": "Aufteilung der überseeischen Welt zwischen Spanien und Portugal"
+    "exp": "Weil der Meridian weiter westlich lag als gedacht, ragte die Ostspitze Südamerikas in die portugiesische Hemisphäre – deshalb spricht man in Brasilien Portugiesisch!"
   },
   {
     "cat": "neuzeit",
@@ -454,7 +454,7 @@
       "Ludwig XIII."
     ],
     "explanation": "Versailles war ein goldener Käfig: Der Hochadel wurde an den Hof gezwungen und mit Etikette und Festen beschäftigt, statt Rebellionen anzuzetteln.",
-    "exp": "Ludwig XIV."
+    "exp": "Versailles war ein goldener Käfig: Der Hochadel wurde an den Hof gezwungen und mit Etikette und Festen beschäftigt, statt Rebellionen anzuzetteln."
   },
   {
     "cat": "neuzeit",
@@ -467,7 +467,7 @@
       "Die Errichtung einer puritanischen Militärdiktatur"
     ],
     "explanation": "Mit der „Bill of Rights“ von 1689 verlor die englische Krone ihre absolute Macht endgültig an das gewählte Parlament.",
-    "exp": "Unblutiger Thronwechsel zur parlamentarischen Monarchie"
+    "exp": "Mit der „Bill of Rights“ von 1689 verlor die englische Krone ihre absolute Macht endgültig an das gewählte Parlament."
   },
   {
     "cat": "neuzeit",
@@ -480,7 +480,7 @@
       "Vasco Núñez de Balboa"
     ],
     "explanation": "Cortés nutzte den Hass unterjochter Völker (wie der Tlaxcalteken) auf die Azteken und die verheerenden Pockenepidemien geschickt für seinen Sieg aus.",
-    "exp": "Hernán Cortés"
+    "exp": "Cortés nutzte den Hass unterjochter Völker (wie der Tlaxcalteken) auf die Azteken und die verheerenden Pockenepidemien geschickt für seinen Sieg aus."
   },
   {
     "cat": "neuzeit",
@@ -493,7 +493,7 @@
       "Schlacht von Trafalgar"
     ],
     "explanation": "Nach seiner Rückkehr von Elba endete Napoleons Herrschaft der Hundert Tage bei Waterloo – er wurde auf die einsame Atlantikinsel St. Helena verbannt.",
-    "exp": "Schlacht bei Waterloo"
+    "exp": "Nach seiner Rückkehr von Elba endete Napoleons Herrschaft der Hundert Tage bei Waterloo – er wurde auf die einsame Atlantikinsel St. Helena verbannt."
   },
   {
     "cat": "industrie",
@@ -506,7 +506,7 @@
       "George Stephenson"
     ],
     "explanation": "Watts separater Kondensator senkte den Kohleverbrauch um 75 % – die Dampfmaschine wurde vom reinen Grubenentwässerer zum universellen Fabrikantrieb.",
-    "exp": "James Watt"
+    "exp": "Watts separater Kondensator senkte den Kohleverbrauch um 75 % – die Dampfmaschine wurde vom reinen Grubenentwässerer zum universellen Fabrikantrieb."
   },
   {
     "cat": "industrie",
@@ -519,7 +519,7 @@
       "Ein Geschwindigkeitsrekord mit einem Elektrofahrzeug"
     ],
     "explanation": "Bertha kaufte Treibstoff (Ligroin) in Apotheken, reinigte verstopfte Benzinleitungen mit ihrer Hutnadel und bewies die Alltagstauglichkeit der Erfindung ihres Mannes.",
-    "exp": "Erste Langstreckenfahrt im Automobil nach Pforzheim"
+    "exp": "Bertha kaufte Treibstoff (Ligroin) in Apotheken, reinigte verstopfte Benzinleitungen mit ihrer Hutnadel und bewies die Alltagstauglichkeit der Erfindung ihres Mannes."
   },
   {
     "cat": "industrie",
@@ -532,7 +532,7 @@
       "Gewaltige Waldbrände in Nordamerika und Russland"
     ],
     "explanation": "Weil Pferde verhungerten, erfand Karl Drais die Laufmaschine (Draisine/Fahrrad) – und am Genfer See schrieb die frierende Mary Shelley „Frankenstein“.",
-    "exp": "Katastrophaler Ausbruch des Vulkans Tambora"
+    "exp": "Weil Pferde verhungerten, erfand Karl Drais die Laufmaschine (Draisine/Fahrrad) – und am Genfer See schrieb die frierende Mary Shelley „Frankenstein“."
   },
   {
     "cat": "industrie",
@@ -545,7 +545,7 @@
       "Freileitungen gegen unterirdische Erdkabelverlegung"
     ],
     "explanation": "Edison versuchte Teslas Wechselstrom als tödlich darzustellen (und erfand den elektrischen Stuhl) – doch Wechselstrom gewann dank verlustarmer Fernübertragung.",
-    "exp": "Gleichstrom gegen Wechselstrom für das Stromnetz"
+    "exp": "Edison versuchte Teslas Wechselstrom als tödlich darzustellen (und erfand den elektrischen Stuhl) – doch Wechselstrom gewann dank verlustarmer Fernübertragung."
   },
   {
     "cat": "industrie",
@@ -558,7 +558,7 @@
       "Ausgleich für Kürzungen der Fabriklöhne"
     ],
     "explanation": "Krankenversicherung (1883), Unfallversicherung (1884) und Rentenversicherung (1889) schufen das Fundament des modernen Sozialstaates.",
-    "exp": "Entkräftung der sozialdemokratischen Bewegung"
+    "exp": "Krankenversicherung (1883), Unfallversicherung (1884) und Rentenversicherung (1889) schufen das Fundament des modernen Sozialstaates."
   },
   {
     "cat": "industrie",
@@ -571,7 +571,7 @@
       "Die Gründung des ersten deutschen Gewerkschaftsbundes"
     ],
     "explanation": "Die Paulskirchenverfassung scheiterte, als Friedrich Wilhelm IV. von Preußen die ihm angetragene deutsche Kaiserkrone als „Reif aus Dreck und Letten“ ablehnte.",
-    "exp": "Erste frei gewählte deutsche Nationalversammlung"
+    "exp": "Die Paulskirchenverfassung scheiterte, als Friedrich Wilhelm IV. von Preußen die ihm angetragene deutsche Kaiserkrone als „Reif aus Dreck und Letten“ ablehnte."
   },
   {
     "cat": "industrie",
@@ -584,7 +584,7 @@
       "Ein gemeinsames Postsystem aller deutschen Teilstaaten"
     ],
     "explanation": "Lange vor der politischen Einheit von 1871 wuchsen die deutschen Staaten durch Eisenbahnen und zollfreien Handel wirtschaftlich untrennbar zusammen.",
-    "exp": "Abschaffung von Binnenzöllen für einen einheitlichen Markt"
+    "exp": "Lange vor der politischen Einheit von 1871 wuchsen die deutschen Staaten durch Eisenbahnen und zollfreien Handel wirtschaftlich untrennbar zusammen."
   },
   {
     "cat": "industrie",
@@ -597,7 +597,7 @@
       "München und Augsburg"
     ],
     "explanation": "Die Fahrt dauerte 9 Minuten – Ärzte warnten damals ernsthaft davor, dass Passagiere durch die „rasende Geschwindigkeit“ von 30 km/h Hirnschäden erleiden könnten.",
-    "exp": "Nürnberg und Fürth"
+    "exp": "Die Fahrt dauerte 9 Minuten – Ärzte warnten damals ernsthaft davor, dass Passagiere durch die „rasende Geschwindigkeit“ von 30 km/h Hirnschäden erleiden könnten."
   },
   {
     "cat": "industrie",
@@ -610,7 +610,7 @@
       "Eine theologische Streitschrift gegen die Staatskirche"
     ],
     "explanation": "Das Manifest endete mit dem weltberühmten Aufruf: „Proletarier aller Länder, vereinigt euch!“",
-    "exp": "These von der Geschichte als Abfolge von Klassenkämpfen"
+    "exp": "Das Manifest endete mit dem weltberühmten Aufruf: „Proletarier aller Länder, vereinigt euch!“"
   },
   {
     "cat": "industrie",
@@ -623,7 +623,7 @@
       "Der Siemens-Martin-Ofen"
     ],
     "explanation": "Erst Bessemer-Stahl machte den weltweiten Bau von Eisenbahnschienen, Panzerkreuzern und Wolkenkratzern wirtschaftlich bezahlbar.",
-    "exp": "Die Bessemer-Birne"
+    "exp": "Erst Bessemer-Stahl machte den weltweiten Bau von Eisenbahnschienen, Panzerkreuzern und Wolkenkratzern wirtschaftlich bezahlbar."
   },
   {
     "cat": "industrie",
@@ -636,7 +636,7 @@
       "Im Schloss Sanssouci bei Potsdam"
     ],
     "explanation": "König Wilhelm I. von Preußen wurde im Palast des besiegten französischen Königs zum Deutschen Kaiser ausgerufen – eine schwere Demütigung für Frankreich.",
-    "exp": "Im Spiegelsaal von Versailles"
+    "exp": "König Wilhelm I. von Preußen wurde im Palast des besiegten französischen Königs zum Deutschen Kaiser ausgerufen – eine schwere Demütigung für Frankreich."
   },
   {
     "cat": "industrie",
@@ -649,7 +649,7 @@
       "Ein verheerendes Erdbeben zerstörte alle Hafenstädte"
     ],
     "explanation": "Über eine Million Iren verhungerten, während britische Großgrundbesitzer Getreide und Rinder weiterhin ungehindert nach England exportierten.",
-    "exp": "Die Kartoffelfäule vernichtete die Hauptnahrung"
+    "exp": "Über eine Million Iren verhungerten, während britische Großgrundbesitzer Getreide und Rinder weiterhin ungehindert nach England exportierten."
   },
   {
     "cat": "industrie",
@@ -662,7 +662,7 @@
       "Die Regelung von Schifffahrtsabgaben auf dem Nil"
     ],
     "explanation": "Ohne Beteiligung eines einzigen afrikanischen Vertreters wurden willkürliche Grenzen gezogen, die ethnische Konflikte bis heute anheizen.",
-    "exp": "Aufteilung des afrikanischen Kontinents unter Großmächten"
+    "exp": "Ohne Beteiligung eines einzigen afrikanischen Vertreters wurden willkürliche Grenzen gezogen, die ethnische Konflikte bis heute anheizen."
   },
   {
     "cat": "industrie",
@@ -675,7 +675,7 @@
       "Alexander Lodygin"
     ],
     "explanation": "Edison hielt über 1.000 Patente und gründete mit der Edison General Electric Company den Vorläufer des heutigen GE-Konzerns.",
-    "exp": "Thomas Alva Edison"
+    "exp": "Edison hielt über 1.000 Patente und gründete mit der Edison General Electric Company den Vorläufer des heutigen GE-Konzerns."
   },
   {
     "cat": "industrie",
@@ -688,7 +688,7 @@
       "Ein militärisches Hilfsabkommen mit Großbritannien"
     ],
     "explanation": "Mit der Proklamation wurde der Krieg zum moralischen Kreuzzug gegen die Sklaverei – europäische Mächte konnten den Süden nicht mehr diplomatisch anerkennen.",
-    "exp": "Die Emanzipations-Proklamation für Sklaven der Südstaaten"
+    "exp": "Mit der Proklamation wurde der Krieg zum moralischen Kreuzzug gegen die Sklaverei – europäische Mächte konnten den Süden nicht mehr diplomatisch anerkennen."
   },
   {
     "cat": "industrie",
@@ -701,7 +701,7 @@
       "Eine Kampagne gegen den Konsum von ausländischem Alkohol"
     ],
     "explanation": "Bismarck fürchtete die Loyalität der Katholiken zum Papst in Rom („Ultramontanismus“) – die Einführung der staatlichen Zivilehe (1875) blieb dauerhaft bestehen.",
-    "exp": "Konflikt mit der katholischen Kirche und Zentrumspartei"
+    "exp": "Bismarck fürchtete die Loyalität der Katholiken zum Papst in Rom („Ultramontanismus“) – die Einführung der staatlichen Zivilehe (1875) blieb dauerhaft bestehen."
   },
   {
     "cat": "industrie",
@@ -714,7 +714,7 @@
       "Die Basilika Sacré-Cœur"
     ],
     "explanation": "Pariser Künstler protestierten wütend gegen das „nutzlose und monströse Eisengerüst“ – heute ist der Eiffelturm das berühmteste Wahrzeichen Frankreichs.",
-    "exp": "Der Eiffelturm"
+    "exp": "Pariser Künstler protestierten wütend gegen das „nutzlose und monströse Eisengerüst“ – heute ist der Eiffelturm das berühmteste Wahrzeichen Frankreichs."
   },
   {
     "cat": "industrie",
@@ -727,7 +727,7 @@
       "Tüftler Antonio Meucci"
     ],
     "explanation": "Bells erste übertragene Worte an seinen Assistenten Thomas Watson lauteten: „Mr. Watson, come here, I want to see you.“",
-    "exp": "Alexander Graham Bell"
+    "exp": "Bells erste übertragene Worte an seinen Assistenten Thomas Watson lauteten: „Mr. Watson, come here, I want to see you.“"
   },
   {
     "cat": "industrie",
@@ -740,7 +740,7 @@
       "Ein Handelskrieg um den zollfreien Export von Seide"
     ],
     "explanation": "Kaiser Wilhelm II. hielt bei der Verabschiedung der deutschen Truppen seine berüchtigte „Hunnenrede“ („Pardon wird nicht gegeben, Gefangene werden nicht gemacht“).",
-    "exp": "Aufstand gegen den Kolonialismus der Großmächte"
+    "exp": "Kaiser Wilhelm II. hielt bei der Verabschiedung der deutschen Truppen seine berüchtigte „Hunnenrede“ („Pardon wird nicht gegeben, Gefangene werden nicht gemacht“)."
   },
   {
     "cat": "modern",
@@ -753,7 +753,7 @@
       "Ein Waffenstillstand zur Bergung versunkener Transportschiffe"
     ],
     "explanation": "Dieser bewegende Moment der Menschlichkeit mitten im mörderischen Stellungskrieg wurde von den Heeresleitungen danach unter Androhung der Todesstrafe verboten.",
-    "exp": "Soldaten legten Waffen nieder und feierten gemeinsam"
+    "exp": "Dieser bewegende Moment der Menschlichkeit mitten im mörderischen Stellungskrieg wurde von den Heeresleitungen danach unter Androhung der Todesstrafe verboten."
   },
   {
     "cat": "modern",
@@ -766,7 +766,7 @@
       "Der Handel im Inland funktionierte nur noch im Tausch gegen Kohle"
     ],
     "explanation": "Erst die Einführung der Rentenmark (gedeckt durch Grundschulden auf Industrie und Boden) stoppte den finanziellen Wahnsinn schlagartig.",
-    "exp": "Geldscheine wurden mit Schubkarren transportiert"
+    "exp": "Erst die Einführung der Rentenmark (gedeckt durch Grundschulden auf Industrie und Boden) stoppte den finanziellen Wahnsinn schlagartig."
   },
   {
     "cat": "modern",
@@ -779,7 +779,7 @@
       "Durch Verhandlungen über die Abtretung von Randgebieten"
     ],
     "explanation": "Pilot Gail Halvorsen warf vor der Landung Schokolade an Mini-Fallschirmen für die Berliner Kinder ab – die Berliner schlossen die Westalliierten ins Herz.",
-    "exp": "Durch die Berliner Luftbrücke mit Rosinenbombern"
+    "exp": "Pilot Gail Halvorsen warf vor der Landung Schokolade an Mini-Fallschirmen für die Berliner Kinder ab – die Berliner schlossen die Westalliierten ins Herz."
   },
   {
     "cat": "modern",
@@ -792,7 +792,7 @@
       "Fritz Schäffer"
     ],
     "explanation": "Mit der Währungsreform von 1948 (Einführung der D-Mark) und dem Slogan „Wohlstand für alle“ füllten sich die Schaufenster über Nacht.",
-    "exp": "Ludwig Erhard"
+    "exp": "Mit der Währungsreform von 1948 (Einführung der D-Mark) und dem Slogan „Wohlstand für alle“ füllten sich die Schaufenster über Nacht."
   },
   {
     "cat": "modern",
@@ -805,7 +805,7 @@
       "Ein friedlicher Kirchenzug für Reisefreiheit in den Westen"
     ],
     "explanation": "In der Bundesrepublik wurde der 17. Juni bis zur Wiedervereinigung 1990 als bundesweiter Feiertag („Tag der deutschen Einheit“) begangen.",
-    "exp": "Protest gegen Arbeitsnormen, blutig von Panzern niedergeschlagen"
+    "exp": "In der Bundesrepublik wurde der 17. Juni bis zur Wiedervereinigung 1990 als bundesweiter Feiertag („Tag der deutschen Einheit“) begangen."
   },
   {
     "cat": "modern",
@@ -818,7 +818,7 @@
       "Alexander Belenko"
     ],
     "explanation": "Das U-Boot wurde von US-Zerstörern mit Übungs-Wasserbomben eingekreist. Zwei Offiziere wollten feuern – nur Archipows Veto verhinderte den Atomkrieg.",
-    "exp": "Wassili Archipow"
+    "exp": "Das U-Boot wurde von US-Zerstörern mit Übungs-Wasserbomben eingekreist. Zwei Offiziere wollten feuern – nur Archipows Veto verhinderte den Atomkrieg."
   },
   {
     "cat": "modern",
@@ -831,7 +831,7 @@
       "24. Juni 1948"
     ],
     "explanation": "Noch zwei Monate zuvor hatte Ulbricht auf einer Pressekonferenz gelogen: „Niemand hat die Absicht, eine Mauer zu errichten!“",
-    "exp": "13. August 1961"
+    "exp": "Noch zwei Monate zuvor hatte Ulbricht auf einer Pressekonferenz gelogen: „Niemand hat die Absicht, eine Mauer zu errichten!“"
   },
   {
     "cat": "modern",
@@ -844,7 +844,7 @@
       "Die Abschaffung von Grenzkontrollen im Schengener Raum"
     ],
     "explanation": "Krieg zwischen Frankreich und Deutschland sollte „nicht nur undenkbar, sondern materiell unmöglich“ werden – ein epochaler Friedensplan.",
-    "exp": "Montanunion als Keimzelle europäischer Integration"
+    "exp": "Krieg zwischen Frankreich und Deutschland sollte „nicht nur undenkbar, sondern materiell unmöglich“ werden – ein epochaler Friedensplan."
   },
   {
     "cat": "modern",
@@ -857,7 +857,7 @@
       "Die offizielle Übergabe von geraubten Kunstschätzen"
     ],
     "explanation": "Brandt schrieb später: „Am Abgrund der deutschen Geschichte und unter der Last der Millionen Ermordeten tat ich, was Menschen tun, wenn die Worte versagen.“",
-    "exp": "Kniefall vor dem Denkmal des Warschauer Ghetto-Aufstandes"
+    "exp": "Brandt schrieb später: „Am Abgrund der deutschen Geschichte und unter der Last der Millionen Ermordeten tat ich, was Menschen tun, wenn die Worte versagen.“"
   },
   {
     "cat": "modern",
@@ -870,7 +870,7 @@
       "Nikita Chruschtschow"
     ],
     "explanation": "Gorbatschow verweigerte den Einsatz von sowjetischen Panzern gegen die Freiheitsbewegungen in Osteuropa und erhielt 1990 den Friedensnobelpreis.",
-    "exp": "Michail Gorbatschow"
+    "exp": "Gorbatschow verweigerte den Einsatz von sowjetischen Panzern gegen die Freiheitsbewegungen in Osteuropa und erhielt 1990 den Friedensnobelpreis."
   },
   {
     "cat": "modern",
@@ -883,7 +883,7 @@
       "Festlegung gemeinsamer Steuersätze in allen Staaten"
     ],
     "explanation": "Die Europäische Wirtschaftsgemeinschaft (EWG) wandelte sich in die Europäische Union mit gemeinsamer Außen- und Sicherheitspolitik.",
-    "exp": "Gründung der Europäischen Union und Beschluss zum Euro"
+    "exp": "Die Europäische Wirtschaftsgemeinschaft (EWG) wandelte sich in die Europäische Union mit gemeinsamer Außen- und Sicherheitspolitik."
   },
   {
     "cat": "modern",
@@ -896,7 +896,7 @@
       "Die dauerhafte Zahlung von Reparationen an die Siegermächte"
     ],
     "explanation": "Verhandelt von BRD und DDR mit den USA, UdSSR, Großbritannien und Frankreich machte der Vertrag den Weg frei für die Wiedervereinigung am 3. Oktober 1990.",
-    "exp": "Vollständige Souveränität für das vereinte Deutschland"
+    "exp": "Verhandelt von BRD und DDR mit den USA, UdSSR, Großbritannien und Frankreich machte der Vertrag den Weg frei für die Wiedervereinigung am 3. Oktober 1990."
   },
   {
     "cat": "modern",
@@ -909,7 +909,7 @@
       "Senator John F. Kennedy"
     ],
     "explanation": "King träumte von einem Amerika, in dem seine Kinder „nicht nach der Hautfarbe, sondern nach dem Charakter beurteilt werden“.",
-    "exp": "Martin Luther King Jr."
+    "exp": "King träumte von einem Amerika, in dem seine Kinder „nicht nach der Hautfarbe, sondern nach dem Charakter beurteilt werden“."
   },
   {
     "cat": "modern",
@@ -922,7 +922,7 @@
       "Eine Bildungsinitiative für den Austausch von Wissenschaftlern"
     ],
     "explanation": "Benannt nach US-Außenminister George C. Marshall legte der Plan den Grundstein für das westeuropäische Wirtschaftswachstum der 1950er Jahre.",
-    "exp": "Hilfsprogramm zum Wiederaufbau des kriegszerstörten Westeuropas"
+    "exp": "Benannt nach US-Außenminister George C. Marshall legte der Plan den Grundstein für das westeuropäische Wirtschaftswachstum der 1950er Jahre."
   },
   {
     "cat": "modern",
@@ -935,7 +935,7 @@
       "Ein Streik der Druckereimitarbeiter gegen schlechte Bezahlung"
     ],
     "explanation": "Massive Bürgerproteste gegen den autoritären Eingriff zwangen Strauß zum Rücktritt – die Affäre gilt als Reifeprüfung der jungen westdeutschen Demokratie.",
-    "exp": "Polizeirazzia gegen Redaktion wegen Berichten über Landesverteidigung"
+    "exp": "Massive Bürgerproteste gegen den autoritären Eingriff zwangen Strauß zum Rücktritt – die Affäre gilt als Reifeprüfung der jungen westdeutschen Demokratie."
   },
   {
     "cat": "modern",
@@ -948,7 +948,7 @@
       "Oliver Tambo"
     ],
     "explanation": "Mandela führte Südafrika auf dem friedlichen Weg aus der Apartheid und erhielt 1993 gemeinsam mit Frederik de Klerk den Friedensnobelpreis.",
-    "exp": "Nelson Mandela"
+    "exp": "Mandela führte Südafrika auf dem friedlichen Weg aus der Apartheid und erhielt 1993 gemeinsam mit Frederik de Klerk den Friedensnobelpreis."
   },
   {
     "cat": "modern",
@@ -961,7 +961,7 @@
       "3. Oktober 2000"
     ],
     "explanation": "Als Buchgeld existierte der Euro schon seit 1999 – ab 2002 hielten die Bürger erstmals Münzen und Scheine in den Händen.",
-    "exp": "1. Januar 2002"
+    "exp": "Als Buchgeld existierte der Euro schon seit 1999 – ab 2002 hielten die Bürger erstmals Münzen und Scheine in den Händen."
   },
   {
     "cat": "modern",
@@ -974,14 +974,18 @@
       "Die Gründung der Fußball-Bundesliga im Berner Rathaus"
     ],
     "explanation": "Herbert Zimmermanns Radio-Kommentar („Aus dem Hintergrund müsste Rahn schießen ... Rahn schießt ... Tor! Tor! Tor!“) wurde zum Mythos des deutschen Neuanfangs.",
-    "exp": "Sensationssieg im WM-Finale gegen die favorisierten Ungarn"
+    "exp": "Herbert Zimmermanns Radio-Kommentar („Aus dem Hintergrund müsste Rahn schießen ... Rahn schießt ... Tor! Tor! Tor!“) wurde zum Mythos des deutschen Neuanfangs."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("history", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["history"] = DATA;
+    window.ARCADE_QUIZ_BANKS['history'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('history', DATA);
+    }
   }
 })();

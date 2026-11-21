@@ -12,7 +12,7 @@
       "Ein Tippfehler in der Anleitung des ersten Großrechners"
     ],
     "explanation": "Pionierin Grace Hopper klebte die tote Motte mit Klebestreifen ins Logbuch: First actual case of bug being found.",
-    "exp": "Eine echte Motte verfing sich in einem Relais des Rechners"
+    "exp": "Pionierin Grace Hopper klebte die tote Motte mit Klebestreifen ins Logbuch: First actual case of bug being found."
   },
   {
     "cat": "tech",
@@ -25,7 +25,7 @@
       "Nur 16 Bytes Speicher"
     ],
     "explanation": "Jedes moderne USB-Ladekabel oder Grußkarten-Soundchip hat heute millionenfach mehr Rechenleistung als der Mondlande-Computer.",
-    "exp": "Rund 4 Kilobyte RAM"
+    "exp": "Jedes moderne USB-Ladekabel oder Grußkarten-Soundchip hat heute millionenfach mehr Rechenleistung als der Mondlande-Computer."
   },
   {
     "cat": "tech",
@@ -38,7 +38,7 @@
       "Sie erleichterte Telegrafisten das Übersetzen von Morsecodes"
     ],
     "explanation": "Christopher Sholes platzierte Buchstabenpaare wie T-H oder S-T weit auseinander, um mechanische Klemmer zu verhindern – und das Layout überlebte bis ins Smartphone-Zeitalter.",
-    "exp": "Sie sollte Typenhebel bei Schreibmaschinen am Verhaken hindern"
+    "exp": "Christopher Sholes platzierte Buchstabenpaare wie T-H oder S-T weit auseinander, um mechanische Klemmer zu verhindern – und das Layout überlebte bis ins Smartphone-Zeitalter."
   },
   {
     "cat": "tech",
@@ -51,7 +51,7 @@
       "Global Pathway Scanner Network"
     ],
     "explanation": "GPS wurde ursprünglich vom US-Militär entwickelt und nutzt mindestens vier Satellitensignale zur zentimetergenauen Triangulation im Raum.",
-    "exp": "Global Positioning System"
+    "exp": "GPS wurde ursprünglich vom US-Militär entwickelt und nutzt mindestens vier Satellitensignale zur zentimetergenauen Triangulation im Raum."
   },
   {
     "cat": "tech",
@@ -64,202 +64,202 @@
       "Ein Lehrbuch über C++ bei Amazon"
     ],
     "explanation": "Phil Brandenberger aus Philadelphia kaufte die CD für 12,48 Dollar inklusive Versand – die erste verschlüsselte Online-Transaktion der Welt.",
-    "exp": "Eine Musik-CD von Sting über NetMarket"
+    "exp": "Phil Brandenberger aus Philadelphia kaufte die CD für 12,48 Dollar inklusive Versand – die erste verschlüsselte Online-Transaktion der Welt."
   },
   {
     "cat": "tech",
     "diff": "pro",
     "q": "Welches physikalische Phänomen der Relativitätstheorie von Einstein müssen GPS-Satelliten permanent korrigieren?",
     "a": [
-      "Tim Berners-Lee",
-      "Vinton Cerf",
-      "Marc Andreessen",
-      "James Gosling"
+      "Uhren im Orbit gehen durch geringere Schwerkraft täglich 38 Mikrosekunden schneller",
+      "Die Lichtgeschwindigkeit nimmt im Vakuum des Weltalls um fünf Prozentpunkte zu",
+      "Satelliten verlieren durch Sonnenwinde pro Monat drei Sekunden an absoluter Atomzeit",
+      "Die Erddrehung verlangsamt die Funkübertragung der Funksignale bei Vollmond"
     ],
     "explanation": "Ohne Einsteins Zeitdilatation (Spezielle Relativität: -7 µs, Allgemeine Relativität: +45 µs) würde das GPS-System jeden Tag um über 11 Kilometer daneben liegen!",
-    "exp": "Tim Berners-Lee"
+    "exp": "Ohne Einsteins Zeitdilatation (Spezielle Relativität: -7 µs, Allgemeine Relativität: +45 µs) würde das GPS-System jeden Tag um über 11 Kilometer daneben liegen!"
   },
   {
     "cat": "tech",
     "diff": "easy",
     "q": "Was bedeutet der Begriff „Open Source“ bei Computerprogrammen?",
     "a": [
-      "In einem Buch aufgeschriebene Kochrezepte",
-      "Schachpartien gegen bekannte Großmeister",
-      "Einträge aus dem Telefonbuch von New York",
-      "Wetterdaten der Londoner Wetterstation"
+      "Der Quellcode ist öffentlich einsehbar, modifizierbar und frei weiterverbreitbar",
+      "Die Software darf ausschließlich auf Linux-Betriebssystemen installiert werden",
+      "Das Programm wird von Universitäten für Studenten kostenlos bereitgestellt",
+      "Der Entwickler haftet persönlich für alle Schäden durch Softwarefehler im Code"
     ],
     "explanation": "Linux, Python, Chromium oder WordPress sind Open Source – das Rückgrat des modernen Internets basiert auf frei geteiltem Code.",
-    "exp": "In einem Buch aufgeschriebene Kochrezepte"
+    "exp": "Linux, Python, Chromium oder WordPress sind Open Source – das Rückgrat des modernen Internets basiert auf frei geteiltem Code."
   },
   {
     "cat": "tech",
     "diff": "mid",
     "q": "Warum wurde das erste YouTube-Video der Welt im April 2005 berühmt?",
     "a": [
-      "Spam",
-      "Bacon",
-      "Ham",
-      "Beef"
+      "Mitgründer Jawed Karim stand vor den Elefanten im Zoo von San Diego",
+      "Ein Haustier-Video einer Katze, die auf einem Staubsaugerroboter balancierte",
+      "Ein Musikvideo einer US-amerikanischen Rockband in schlechter Pixelauflösung",
+      "Ein Software-Tutorial zur Programmierung von einfachen HTML-Webseiten"
     ],
     "explanation": "Das 19-sekündige Video zeigt Jawed Karim, wie er trocken bemerkt, dass die Elefanten wirklich sehr lange Rüssel haben.",
-    "exp": "Spam"
+    "exp": "Das 19-sekündige Video zeigt Jawed Karim, wie er trocken bemerkt, dass die Elefanten wirklich sehr lange Rüssel haben."
   },
   {
     "cat": "tech",
     "diff": "pro",
     "q": "Welches revolutionäre Speichermedium entwickelte IBM 1956 mit dem Modell 305 RAMAC?",
     "a": [
-      "Über eine halbe Million Zeilen Code",
-      "Rund zweitausend Zeilen Quelltext",
-      "Genau fünfzigtausend Befehlszeilen",
-      "Knapp zehntausend Codezeilen"
+      "Die allererste Festplatte der Welt mit 5 Megabyte Speicherplatz auf 50 Scheiben",
+      "Der erste wiederbeschreibbare USB-Stick mit NAND-Flash-Speicherchips",
+      "Die erste magnetische Kompaktkassette für mobile Tonaufnahmen im Studio",
+      "Das erste optische Laser-Laufwerk zum Lesen von zweiseitigen Bildplatten"
     ],
     "explanation": "Die Festplatte wog über eine Tonne und musste mit einem Gabelstapler transportiert werden – die Miete betrug damals 3.200 Dollar pro Monat.",
-    "exp": "Über eine halbe Million Zeilen Code"
+    "exp": "Die Festplatte wog über eine Tonne und musste mit einem Gabelstapler transportiert werden – die Miete betrug damals 3.200 Dollar pro Monat."
   },
   {
     "cat": "tech",
     "diff": "easy",
     "q": "Was erfand der britische Forscher Tim Berners-Lee 1989 am Kernforschungszentrum CERN in Genf?",
     "a": [
-      "Wegen blauer Dioden im Display-Rahmen",
-      "Weil Blau als beruhigende Farbe galt",
-      "Aus optischen Gründen für Schwarzweiß-Modi",
-      "Wegen eines Druckfehlers im ersten Handbuch"
+      "Das World Wide Web (WWW samt HTML-Format, HTTP-Protokoll und Webbrowser)",
+      "Die Programmiersprache C++ für wissenschaftliche Großrechneranlagen",
+      "Das Betriebssystem Linux auf Basis des freien Unix-Kernel-Quellcodes",
+      "Die E-Mail-Kommunikation mit dem @-Symbol im militärischen ARPANET"
     ],
     "explanation": "Berners-Lee wollte ursprünglich nur den weltweiten Austausch von Forschungsberichten unter Teilchenphysikern erleichtern.",
-    "exp": "Wegen blauer Dioden im Display-Rahmen"
+    "exp": "Berners-Lee wollte ursprünglich nur den weltweiten Austausch von Forschungsberichten unter Teilchenphysikern erleichtern."
   },
   {
     "cat": "tech",
     "diff": "mid",
     "q": "Was war der berüchtigte „Millennium-Bug“ (Y2K-Bug) zum Jahreswechsel 1999 auf 2000?",
     "a": [
-      "Säugetiere besitzen exakt sieben Halswirbel",
-      "Giraffen haben doppelt so viele Wirbel",
-      "Mäuse besitzen lediglich drei Halswirbel",
-      "Der Mensch hat neun Halswirbel im Nacken"
+      "Software speicherte Jahre nur zweistellig; man fürchtete Abstürze bei Sprung auf 00",
+      "Ein Computervirus, der am Neujahrsmorgen sämtliche Festplatten formatieren sollte",
+      "Die Überlastung des Telefonnetzes durch weltweite Glückwünsche per SMS",
+      "Ein Hardwarefehler in Intel-Prozessoren, der falsche Gleitkommazahlen berechnete"
     ],
     "explanation": "Dank weltweiter monatelanger Reparaturarbeiten von Programmierern verlief die Silvesternacht weitgehend ohne die befürchteten Großkatastrophen.",
-    "exp": "Säugetiere besitzen exakt sieben Halswirbel"
+    "exp": "Dank weltweiter monatelanger Reparaturarbeiten von Programmierern verlief die Silvesternacht weitgehend ohne die befürchteten Großkatastrophen."
   },
   {
     "cat": "tech",
     "diff": "pro",
     "q": "Welche kuriose Methode wählte die US-Firma Cloudflare, um unvorhersehbare echte Zufallszahlen für Internet-Verschlüsselung zu erzeugen?",
     "a": [
-      "Aus abgestorbenen roten Blutkörperchen",
-      "Aus unverdauten Resten von Pflanzenfasern",
-      "Aus getrockneten Pigmenten der Nahrung",
-      "Aus bakteriellen Zersetzungsprodukten von Fett"
+      "Eine Wand aus 100 leuchtenden Lavalampen, die von Kameras gefilmt wird",
+      "Ein Geigerzähler, der den radioaktiven Zerfall von antikem Granit misst",
+      "Ein Mikrofon, das das unregelmäßige Rauschen des Pazifischen Ozeans aufzeichnet",
+      "Ein Würfelroboter, der im Minutentakt sechsseitige Casinowürfel wirft"
     ],
     "explanation": "Das chaotische Aufsteigen und Mischen der Wachsblasen in den Lavalampen liefert unknackbare kryptografische Entropie für Millionen Websites.",
-    "exp": "Aus abgestorbenen roten Blutkörperchen"
+    "exp": "Das chaotische Aufsteigen und Mischen der Wachsblasen in den Lavalampen liefert unknackbare kryptografische Entropie für Millionen Websites."
   },
   {
     "cat": "tech",
     "diff": "easy",
     "q": "Wer stellte im Januar 2007 auf der Macworld-Messe das erste iPhone mit kapazitivem Multi-Touchscreen vor?",
     "a": [
-      "Drei Herzen",
-      "Zwei Herzen",
-      "Vier Herzen",
-      "Ein Herz"
+      "Steve Jobs (auf der Macworld)",
+      "Bill Gates (auf der CES Las Vegas)",
+      "Steve Ballmer (in New York)",
+      "Jony Ive (in Cupertino)"
     ],
     "explanation": "Jobs kündigte es legendär als drei Geräte an: „Ein Breitbild-iPod, ein revolutionäres Telefon und ein Internet-Kommunikator – es ist ein einziges Gerät!“",
-    "exp": "Drei Herzen"
+    "exp": "Jobs kündigte es legendär als drei Geräte an: „Ein Breitbild-iPod, ein revolutionäres Telefon und ein Internet-Kommunikator – es ist ein einziges Gerät!“"
   },
   {
     "cat": "nature",
     "diff": "easy",
     "q": "Welches australische Beuteltier ist das einzige bekannte Lebewesen der Erde, das würfelförmigen Kot ausscheidet?",
     "a": [
-      "Es besteht aus Hämocyanin mit Kupferatomen",
-      "Es enthält gelöste blaue Salze aus Meerwasser",
-      "Es reflektiert das UV-Licht der Tiefsee",
-      "Es transportiert Kobalt statt Eisen"
+      "Der Wombat (australisches Beuteltier)",
+      "Das Schnabeltier (Monotremata)",
+      "Der Koalabär (Eukalyptusfresser)",
+      "Der Tasmanische Teufel (Raubbeutler)"
     ],
     "explanation": "Durch ungleichmäßige Dehnung der Darmwand entstehen eckige Würfel – so rollt der Kot nicht von Felsen herunter, wo Wombats ihr Revier markieren.",
-    "exp": "Es besteht aus Hämocyanin mit Kupferatomen"
+    "exp": "Durch ungleichmäßige Dehnung der Darmwand entstehen eckige Würfel – so rollt der Kot nicht von Felsen herunter, wo Wombats ihr Revier markieren."
   },
   {
     "cat": "nature",
     "diff": "easy",
     "q": "Wie viele Herzen besitzt ein Tintenfisch (Krake/Oktopus) und welche Farbe hat sein Blut?",
     "a": [
-      "Sie können nicht rückwärts laufen oder springen",
-      "Sie trinken niemals flüssiges Wasser im Leben",
-      "Sie schlafen ausschließlich im aufrechten Stehen",
-      "Sie besitzen keine knöchernen Rippenbögen"
+      "Drei Herzen und blaues Blut (auf Basis von kupferhaltigem Hämocyanin)",
+      "Zwei Herzen und grünes Blut (auf Basis von konzentriertem Chlorophyll)",
+      "Vier Herzen und farbloses Blut (ohne jegliche metallische Sauerstoffträger)",
+      "Ein riesiges Herz und tiefschwarzes Blut mit Tintentropfen zur Tarnung"
     ],
     "explanation": "Zwei Herzen pumpen Blut durch die Kiemen, das dritte versorgt den Körper. Kupfer transportiert Sauerstoff in kaltem Tiefseewasser viel effizienter als Eisen.",
-    "exp": "Sie können nicht rückwärts laufen oder springen"
+    "exp": "Zwei Herzen pumpen Blut durch die Kiemen, das dritte versorgt den Körper. Kupfer transportiert Sauerstoff in kaltem Tiefseewasser viel effizienter als Eisen."
   },
   {
     "cat": "nature",
     "diff": "easy",
     "q": "Warum verdirbt reiner Bienenhonig selbst über Jahrtausende hinweg praktisch niemals?",
     "a": [
-      "Sie kühlt das Blut im Schnabel effektiv ab",
-      "Sie dient dem Knacken harter Paranüsse",
-      "Sie lockt Weibchen durch Leuchtfarben an",
-      "Sie schreckt Raubvögel im Geäst optisch ab"
+      "Wegen des extrem niedrigen Wassergehalts und des leicht sauren pH-Werts",
+      "Weil Bienen natürliche Konservierungsstoffe aus Erdölharzen beimengen",
+      "Weil die Wabenstruktur aus Bienenwachs eine sterile Vakuumkammer bildet",
+      "Weil der hohe Fruktosegehalt sämtliche bekannten Viren sofort auflöst"
     ],
     "explanation": "Archäologen fanden in altägyptischen Pharaonengräbern über 3.000 Jahre alten Honig – er war noch immer vollkommen genießbar!",
-    "exp": "Sie kühlt das Blut im Schnabel effektiv ab"
+    "exp": "Archäologen fanden in altägyptischen Pharaonengräbern über 3.000 Jahre alten Honig – er war noch immer vollkommen genießbar!"
   },
   {
     "cat": "nature",
     "diff": "mid",
     "q": "Was ist das größte und schwerste lebende Tier, das jemals auf unserem Planeten existiert hat?",
     "a": [
-      "Weil ihr Honigmagen im Körper voll ist",
-      "Weil Rauch ihre Flügel chemisch verklebt",
-      "Weil sie Rauch für ein Gewitter halten",
-      "Weil Rauch ihre Orientierungssinne ausschaltet"
+      "Der Blauwal (bis zu 30 Meter lang und über 180 Tonnen schwer)",
+      "Der Megalodon (ausgestorbener Urzeithai der warmen Ozeane)",
+      "Der Argentinosaurus (riesiger langhalsiger Sauropoden-Dinosaurier)",
+      "Der Pottwal (tiefseetauchender Zahnwal mit riesigem Kopf)"
     ],
     "explanation": "Allein die Zunge eines ausgewachsenen Blauwals wiegt so viel wie ein ganzer Elefant, und sein Herz hat die Größe eines VW Käfers.",
-    "exp": "Weil ihr Honigmagen im Körper voll ist"
+    "exp": "Allein die Zunge eines ausgewachsenen Blauwals wiegt so viel wie ein ganzer Elefant, und sein Herz hat die Größe eines VW Käfers."
   },
   {
     "cat": "nature",
     "diff": "mid",
     "q": "Warum leuchtet das Fleisch von Flamingos rosa, obwohl sie mit grauem Gefieder geboren werden?",
     "a": [
-      "Kolibris",
-      "Eisvögel",
-      "Mauersegler",
-      "Schwalben"
+      "Durch Carotinoide in ihrer Nahrung wie Algen und winzige Krebstiere",
+      "Durch die permanente Reflexion des roten Wüstensands im Salzwasser",
+      "Durch ein rötliches Sekret, das sie zur Federpflege aus Drüsen absondern",
+      "Durch eine seltene Genmutation, die weiße Farbpigmente im Gefieder blockiert"
     ],
     "explanation": "Bekommen Flamingos im Zoo kein Futter mit Carotinoiden, verblassen ihre Federn nach der Mauser zu schmutzigem Weiß.",
-    "exp": "Kolibris"
+    "exp": "Bekommen Flamingos im Zoo kein Futter mit Carotinoiden, verblassen ihre Federn nach der Mauser zu schmutzigem Weiß."
   },
   {
     "cat": "nature",
     "diff": "pro",
     "q": "Was ist die Qualle „Turritopsis dohrnii“, die Biologen weltweit in Staunen versetzt?",
     "a": [
-      "Auf den Fußsohlen",
-      "Am Nasenspiegel",
-      "An den Ohrmuscheln",
-      "Entlang der Flanken"
+      "Sie kann ihren Lebenszyklus bei Stress zurück ins Polypen-Stadium versetzen",
+      "Sie ernährt sich rein von Sonnenlicht über körpereigene Chloroplasten",
+      "Sie besitzt ein zentrales Gehirn, das komplizierte Labyrinthe lösen kann",
+      "Sie erzeugt helles Laserlicht zur gezielten Betäubung von Beutefischen"
     ],
     "explanation": "Durch zelluläre Transdifferenzierung verjüngt sich die Qualle beliebig oft – sie stirbt nur durch Fressfeinde oder Krankheiten.",
-    "exp": "Auf den Fußsohlen"
+    "exp": "Durch zelluläre Transdifferenzierung verjüngt sich die Qualle beliebig oft – sie stirbt nur durch Fressfeinde oder Krankheiten."
   },
   {
     "cat": "nature",
     "diff": "easy",
     "q": "Welcher Vogel ist das schnellste Lebewesen der Erde und erreicht im Sturzflug über 320 km/h?",
     "a": [
-      "Bärtierchen",
-      "Silberfischchen",
-      "Fadenwürmer",
-      "Kakerlaken"
+      "Der Wanderfalke (im Sturzflug)",
+      "Der Gepard (im Jagdsprint)",
+      "Der Fächerfisch (im Ozean)",
+      "Die Bremsfliege (im Tiefflug)"
     ],
     "explanation": "Bei der Jagd auf Tauben legt der Wanderfalke die Flügel eng an und schlägt im Sturzflug mit atemberaubender Wucht zu.",
-    "exp": "Bärtierchen"
+    "exp": "Bei der Jagd auf Tauben legt der Wanderfalke die Flügel eng an und schlägt im Sturzflug mit atemberaubender Wucht zu."
   },
   {
     "cat": "nature",
@@ -272,7 +272,7 @@
       "Sie imitieren giftige Baumschlangen"
     ],
     "explanation": "Faultiere sind ein wandelnder Mini-Wald: Die Algen dienen als Tarnung und werden von den Tieren sogar als Zusatznahrung vom Fell geleckt.",
-    "exp": "Algen im Fell tarnen sie grün vor Feinden"
+    "exp": "Faultiere sind ein wandelnder Mini-Wald: Die Algen dienen als Tarnung und werden von den Tieren sogar als Zusatznahrung vom Fell geleckt."
   },
   {
     "cat": "nature",
@@ -285,7 +285,7 @@
       "Eine Seegraswiese im Mittelmeer vor Ibiza"
     ],
     "explanation": "Der sogenannte „Humongous Fungus“ ist vermutlich über 2.400 Jahre alt und wiegt geschätzt hunderte Tonnen.",
-    "exp": "Ein riesiger Hallimasch-Pilz in Oregon"
+    "exp": "Der sogenannte „Humongous Fungus“ ist vermutlich über 2.400 Jahre alt und wiegt geschätzt hunderte Tonnen."
   },
   {
     "cat": "nature",
@@ -298,7 +298,7 @@
       "Es signalisiert Verwandtschaft im Familienverband"
     ],
     "explanation": "Experimente zeigten: Fliegen können auf gestreiften Flächen die Landung kaum koordinieren – sie prallen ab oder fliegen weiter.",
-    "exp": "Es verwirrt Facettenaugen von Bremsen und Fliegen"
+    "exp": "Experimente zeigten: Fliegen können auf gestreiften Flächen die Landung kaum koordinieren – sie prallen ab oder fliegen weiter."
   },
   {
     "cat": "nature",
@@ -311,7 +311,7 @@
       "Der Flusspferdbulle"
     ],
     "explanation": "Mit dieser Wucht zerbeißt ein großes Leistenkrokodil Schildkrötenpanzer und Büffelknochen mühelos wie Zwieback.",
-    "exp": "Das Leistenkrokodil"
+    "exp": "Mit dieser Wucht zerbeißt ein großes Leistenkrokodil Schildkrötenpanzer und Büffelknochen mühelos wie Zwieback."
   },
   {
     "cat": "nature",
@@ -324,7 +324,7 @@
       "Es ernährt sich rein von giftigen Wasserpflanzen"
     ],
     "explanation": "Als die ersten Exemplare 1799 nach London geschickt wurden, hielten Naturforscher das Tier für einen geschickten Betrug aus Entenschnabel und Biberkörper.",
-    "exp": "Es legt Eier und schwitzt Milch über Drüsen aus"
+    "exp": "Als die ersten Exemplare 1799 nach London geschickt wurden, hielten Naturforscher das Tier für einen geschickten Betrug aus Entenschnabel und Biberkörper."
   },
   {
     "cat": "nature",
@@ -337,7 +337,7 @@
       "Die Rossameise"
     ],
     "explanation": "Schwedische Forscher wiesen nach: Setzt man den Käfern winzige Papphütchen auf, die den Nachthimmel verdecken, irren sie hilflos im Kreis umher.",
-    "exp": "Der Mistkäfer"
+    "exp": "Schwedische Forscher wiesen nach: Setzt man den Käfern winzige Papphütchen auf, die den Nachthimmel verdecken, irren sie hilflos im Kreis umher."
   },
   {
     "cat": "geo",
@@ -350,7 +350,7 @@
       "Elko"
     ],
     "explanation": "Weil sich die kalifornische Küste stark nach Osten krümmt, liegt Reno (119° 49′ W) spürbar westlicher als LA (118° 14′ W) – eine verblüffende Karten-Täuschung!",
-    "exp": "Reno"
+    "exp": "Weil sich die kalifornische Küste stark nach Osten krümmt, liegt Reno (119° 49′ W) spürbar westlicher als LA (118° 14′ W) – eine verblüffende Karten-Täuschung!"
   },
   {
     "cat": "geo",
@@ -363,20 +363,20 @@
       "7 Zeitzonen"
     ],
     "explanation": "Wenn die Menschen in Wladiwostok zu Abend essen, frühstücken die Bewohner in Moskau gerade – Russland ist das flächengrößte Land der Erde.",
-    "exp": "11 Zeitzonen"
+    "exp": "Wenn die Menschen in Wladiwostok zu Abend essen, frühstücken die Bewohner in Moskau gerade – Russland ist das flächengrößte Land der Erde."
   },
   {
     "cat": "geo",
     "diff": "mid",
     "q": "Was ist der sogenannte „Point Nemo“ im südlichen Pazifischen Ozean?",
     "a": [
-      "Der abgelegenste Ort der Weltmeere im Pazifik",
-      "Die tiefste bekannte Stelle im Marianengraben",
-      "Ein unterseeischer Vulkan nahe Neuseeland",
-      "Eine verlassene Wetterstation in der Antarktis"
+      "Der unzugänglichste Ozeanpol: Nächste Menschen sind Astronauten der ISS",
+      "Der tiefste bekannte Graben im Marianengraben im westlichen Pazifik",
+      "Ein schwimmender Kontinent aus Plastikmüll zwischen Kalifornien und Hawaii",
+      "Die Stelle, an der Christoph Kolumbus erstmals den amerikanischen Kontinent sah"
     ],
     "explanation": "Point Nemo liegt fast 2.700 km von jedem festen Land entfernt – Raumfahrtagenturen nutzen die Region gezielt als kontrollierten Friedhof für ausgediente Raumstationen.",
-    "exp": "Der abgelegenste Ort der Weltmeere im Pazifik"
+    "exp": "Point Nemo liegt fast 2.700 km von jedem festen Land entfernt – Raumfahrtagenturen nutzen die Region gezielt als kontrollierten Friedhof für ausgediente Raumstationen."
   },
   {
     "cat": "geo",
@@ -389,7 +389,7 @@
       "San Marino mit dem Wappen der drei Burgen"
     ],
     "explanation": "Die beiden roten Wimpel Nepals symbolisieren die Spitzen des Himalaya sowie die beiden großen Religionen Hinduismus und Buddhismus.",
-    "exp": "Nepal mit zwei übereinanderliegenden Wimpeln"
+    "exp": "Die beiden roten Wimpel Nepals symbolisieren die Spitzen des Himalaya sowie die beiden großen Religionen Hinduismus und Buddhismus."
   },
   {
     "cat": "geo",
@@ -402,7 +402,7 @@
       "Republik San Marino"
     ],
     "explanation": "Um von Liechtenstein an einen Meeresstrand zu gelangen, muss man mindestens zwei Staatsgrenzen überqueren.",
-    "exp": "Liechtenstein"
+    "exp": "Um von Liechtenstein an einen Meeresstrand zu gelangen, muss man mindestens zwei Staatsgrenzen überqueren."
   },
   {
     "cat": "geo",
@@ -415,7 +415,7 @@
       "Sein Kraterrand wurde künstlich aufgeschüttet"
     ],
     "explanation": "Über dem Meeresspiegel ist der Everest (8.848 m) höher als der Chimborazo (6.263 m) – gemessen vom Erdmittelpunkt aus gewinnt der Chimborazo mit 6.384 km!",
-    "exp": "Die Erdabplattung wölbt den Äquator weiter nach außen"
+    "exp": "Über dem Meeresspiegel ist der Everest (8.848 m) höher als der Chimborazo (6.263 m) – gemessen vom Erdmittelpunkt aus gewinnt der Chimborazo mit 6.384 km!"
   },
   {
     "cat": "geo",
@@ -428,7 +428,7 @@
       "Der Albertsee"
     ],
     "explanation": "Mit über 1.470 Metern Tiefe beherbergt der Tanganjikasee hunderte Buntbarsch-Arten, die es nirgendwo sonst auf der Welt gibt.",
-    "exp": "Der Tanganjikasee"
+    "exp": "Mit über 1.470 Metern Tiefe beherbergt der Tanganjikasee hunderte Buntbarsch-Arten, die es nirgendwo sonst auf der Welt gibt."
   },
   {
     "cat": "geo",
@@ -441,7 +441,7 @@
       "Kanada"
     ],
     "explanation": "Schweden führt die Weltrangliste mit rund 267.570 Inseln an – die allermeisten sind unbewohnte Schären.",
-    "exp": "Schweden"
+    "exp": "Schweden führt die Weltrangliste mit rund 267.570 Inseln an – die allermeisten sind unbewohnte Schären."
   },
   {
     "cat": "geo",
@@ -454,7 +454,7 @@
       "Sie wird wöchentlich durch Schiedsrichter neu verlost"
     ],
     "explanation": "Seit dem Pyrenäenfrieden von 1659 regieren Spanien und Frankreich die winzige Flussinsel im Grenzfluss Bidasoa im friedlichen Halbjahres-Wechsel.",
-    "exp": "Sie wechselt alle sechs Monate die Staatszugehörigkeit"
+    "exp": "Seit dem Pyrenäenfrieden von 1659 regieren Spanien und Frankreich die winzige Flussinsel im Grenzfluss Bidasoa im friedlichen Halbjahres-Wechsel."
   },
   {
     "cat": "geo",
@@ -467,7 +467,7 @@
       "Jakutsk an der Lena"
     ],
     "explanation": "In Oimjakon friert Tinte im Kugelschreiber sofort ein und Autos müssen im Winter im Freien Tag und Nacht durchlaufen, damit das Motoröl nicht erstarrt.",
-    "exp": "Oimjakon in Sibirien"
+    "exp": "In Oimjakon friert Tinte im Kugelschreiber sofort ein und Autos müssen im Winter im Freien Tag und Nacht durchlaufen, damit das Motoröl nicht erstarrt."
   },
   {
     "cat": "geo",
@@ -480,20 +480,20 @@
       "Beirut im Libanon"
     ],
     "explanation": "Der Bosporus trennt den europäischen vom asiatischen Teil Istanbuls – drei Hängebrücken und zwei Tunnel verbinden die Kontinente.",
-    "exp": "Istanbul"
+    "exp": "Der Bosporus trennt den europäischen vom asiatischen Teil Istanbuls – drei Hängebrücken und zwei Tunnel verbinden die Kontinente."
   },
   {
     "cat": "geo",
     "diff": "pro",
     "q": "Was ist das Territorium Bir Tawil zwischen Ägypten und dem Sudan?",
     "a": [
-      "Ein herrenloses Gebiet ohne staatlichen Anspruch",
-      "Eine militärische Sperrzone unter UN-Aufsicht",
-      "Ein internationaler Freihandelshafen am Roten Meer",
-      "Ein Naturschutzgebiet für seltene Wüstengazellen"
+      "Ein herrenloses Gebiet (Terra Nullius), das kein Staat beansprucht",
+      "Eine umstrittene Enklave mit den reichsten Diamantenvorkommen Afrikas",
+      "Ein geschütztes Biosphärenreservat für vom Aussterben bedrohte Wüstentiere",
+      "Ein unterirdischer Salzsee, der als Trinkwasserreserve für Kairo dient"
     ],
     "explanation": "Weil beide Länder auf unterschiedlichen Grenzverträgen beharren, will keines Bir Tawil haben, da man sonst das viel wertvollere Hala’ib-Dreieck am Meer aufgeben müsste.",
-    "exp": "Ein herrenloses Gebiet ohne staatlichen Anspruch"
+    "exp": "Weil beide Länder auf unterschiedlichen Grenzverträgen beharren, will keines Bir Tawil haben, da man sonst das viel wertvollere Hala’ib-Dreieck am Meer aufgeben müsste."
   },
   {
     "cat": "geo",
@@ -506,7 +506,7 @@
       "Der Kongo in Zentralafrika"
     ],
     "explanation": "Der Amazonas stößt rund 200.000 Kubikmeter Wasser pro Sekunde in den Atlantik – das Süßwasser reicht über 150 km weit ins offene Meer hinein.",
-    "exp": "Der Amazonas in Südamerika"
+    "exp": "Der Amazonas stößt rund 200.000 Kubikmeter Wasser pro Sekunde in den Atlantik – das Süßwasser reicht über 150 km weit ins offene Meer hinein."
   },
   {
     "cat": "science",
@@ -519,7 +519,7 @@
       "Sie rotiert schneller um sich selbst als Jupiter"
     ],
     "explanation": "Die Venus dreht sich extrem langsam und rückwärts (retrograd): Eine Umdrehung dauert 243 Erdentage, ein Sonnenumlauf nur 225 Erdentage!",
-    "exp": "Ein Tag dauert länger als ein ganzes Venus-Jahr"
+    "exp": "Die Venus dreht sich extrem langsam und rückwärts (retrograd): Eine Umdrehung dauert 243 Erdentage, ein Sonnenumlauf nur 225 Erdentage!"
   },
   {
     "cat": "science",
@@ -532,7 +532,7 @@
       "Durch fluoreszierende Farbpigmente im Fruchtfleisch"
     ],
     "explanation": "In der Physik gibt es scherzhaft die „Bananen-Äquivalentdosis“ (BED) – für den Menschen ist der Verzehr völlig harmlos und gesund.",
-    "exp": "Durch den natürlichen Gehalt am Isotop Kalium-40"
+    "exp": "In der Physik gibt es scherzhaft die „Bananen-Äquivalentdosis“ (BED) – für den Menschen ist der Verzehr völlig harmlos und gesund."
   },
   {
     "cat": "science",
@@ -545,7 +545,7 @@
       "Salzwasser verdunstet langsamer als Süßwasser"
     ],
     "explanation": "Der tansanische Schüler Erasto Mpemba bemerkte 1963 beim Eismachen, dass heiße Eismischung vor der kalten gefror – Physiker erforschen die Ursachen bis heute.",
-    "exp": "Heißes Wasser kann unter Umständen schneller gefrieren"
+    "exp": "Der tansanische Schüler Erasto Mpemba bemerkte 1963 beim Eismachen, dass heiße Eismischung vor der kalten gefror – Physiker erforschen die Ursachen bis heute."
   },
   {
     "cat": "science",
@@ -558,7 +558,7 @@
       "Ihre Temperatur sinkt schlagartig auf den Nullpunkt"
     ],
     "explanation": "Man müsste unendlich viel Energie aufwenden, um ein Objekt mit Ruhemasse auf Lichtgeschwindigkeit zu beschleunigen – das verbietet Einsteins Relativität.",
-    "exp": "Ihre relativistische Masse wächst gegen unendlich"
+    "exp": "Man müsste unendlich viel Energie aufwenden, um ein Objekt mit Ruhemasse auf Lichtgeschwindigkeit zu beschleunigen – das verbietet Einsteins Relativität."
   },
   {
     "cat": "science",
@@ -571,7 +571,7 @@
       "Kohlenstoff"
     ],
     "explanation": "Zusammen mit Helium macht Wasserstoff fast die gesamte normale Materie im Kosmos aus – alle schwereren Elemente entstanden erst in Sternen.",
-    "exp": "Wasserstoff"
+    "exp": "Zusammen mit Helium macht Wasserstoff fast die gesamte normale Materie im Kosmos aus – alle schwereren Elemente entstanden erst in Sternen."
   },
   {
     "cat": "science",
@@ -584,20 +584,20 @@
       "Das Magnetfeld der Erde reflektiert bevorzugt blaue Photonen"
     ],
     "explanation": "Steht die Sonne tief, ist der Weg durch die Atmosphäre lang: Das blaue Licht wird komplett weggestreut, nur das rote Licht dringt direkt zu unserem Auge durch.",
-    "exp": "Kurzwelliges blaues Licht wird an Molekülen stärker gestreut"
+    "exp": "Steht die Sonne tief, ist der Weg durch die Atmosphäre lang: Das blaue Licht wird komplett weggestreut, nur das rote Licht dringt direkt zu unserem Auge durch."
   },
   {
     "cat": "science",
     "diff": "pro",
     "q": "Was entdeckte Wilhelm Conrad Röntgen 1895 zufällig bei Experimenten mit Kathodenstrahlen?",
     "a": [
-      "X-Strahlen, die Gewebe durchdringen und Knochen abbilden",
-      "Die kosmische Höhenstrahlung im Hochgebirge",
-      "Die Radioaktivität von Uranerzen im Pechblende-Gestein",
-      "Die Infrarotstrahlung heißer Glühfäden im Vakuum"
+      "X-Strahlen, die Papier durchdrangen und Handknochen auf Fluoreszenzplatten zeigten",
+      "Die Radioaktivität von Pechblende bei Dunkelheit auf Fotoplatten im Labor",
+      "Die Existenz von Elektronen als Elementarteilchen mit negativer Ladung",
+      "Die kosmische Hintergrundstrahlung des Urknalls mit einem Radioteleskop"
     ],
     "explanation": "Für diese Entdeckung erhielt Röntgen 1901 den allerersten Nobelpreis für Physik der Geschichte – er verzichtete bewusst auf ein Patent.",
-    "exp": "X-Strahlen, die Gewebe durchdringen und Knochen abbilden"
+    "exp": "Für diese Entdeckung erhielt Röntgen 1901 den allerersten Nobelpreis für Physik der Geschichte – er verzichtete bewusst auf ein Patent."
   },
   {
     "cat": "science",
@@ -610,7 +610,7 @@
       "Null Grad Celsius als Schmelzpunkt von reinem Eis"
     ],
     "explanation": "Da Temperatur die kinetische Energie von Atomen misst, ist am absoluten Nullpunkt keine Bewegung mehr da – weniger als Null Bewegung ist physikalisch unmöglich.",
-    "exp": "Minus 273,15 °C als Stillstand aller Teilchenbewegung"
+    "exp": "Da Temperatur die kinetische Energie von Atomen misst, ist am absoluten Nullpunkt keine Bewegung mehr da – weniger als Null Bewegung ist physikalisch unmöglich."
   },
   {
     "cat": "science",
@@ -623,7 +623,7 @@
       "Ein Kätzchen teleportiert sich durch geschlossene Wände"
     ],
     "explanation": "Erwin Schrödinger wollte damit die Absurdität der Kopenhagener Deutung demonstrieren, wonach mikroskopische Überlagerungszustände auf Makroobjekte übergreifen.",
-    "exp": "Eine Katze ist nach Quantengesetzen zugleich tot und lebendig"
+    "exp": "Erwin Schrödinger wollte damit die Absurdität der Kopenhagener Deutung demonstrieren, wonach mikroskopische Überlagerungszustände auf Makroobjekte übergreifen."
   },
   {
     "cat": "science",
@@ -636,7 +636,7 @@
       "Graviton"
     ],
     "explanation": "Peter Higgs und François Englert erhielten dafür 2013 den Nobelpreis – das Teilchen vervollständigte das Standardmodell der Teilchenphysik.",
-    "exp": "Higgs-Boson"
+    "exp": "Peter Higgs und François Englert erhielten dafür 2013 den Nobelpreis – das Teilchen vervollständigte das Standardmodell der Teilchenphysik."
   },
   {
     "cat": "science",
@@ -649,7 +649,7 @@
       "Weil das Vakuum des Raums die Astronauten nach oben saugt"
     ],
     "explanation": "Die ISS fällt permanent in Richtung Erde, fliegt aber mit 28.000 km/h so schnell vorwärts, dass die Erdoberfläche unter ihr im selben Bogen wegkurvt.",
-    "exp": "Weil sich die Station im permanenten freien Fall befindet"
+    "exp": "Die ISS fällt permanent in Richtung Erde, fliegt aber mit 28.000 km/h so schnell vorwärts, dass die Erdoberfläche unter ihr im selben Bogen wegkurvt."
   },
   {
     "cat": "science",
@@ -662,7 +662,7 @@
       "Die Streustrahlung von Sonnenwinden im interstellaren Gas"
     ],
     "explanation": "Penzias und Wilson entdeckten das Signal 1964 zufällig – sie dachten zuerst, Taubenkot in ihrer Radioantenne sei für das permanente Rauschen verantwortlich.",
-    "exp": "Das Nachglühen des Urknalls aus der Frühzeit des Universums"
+    "exp": "Penzias und Wilson entdeckten das Signal 1964 zufällig – sie dachten zuerst, Taubenkot in ihrer Radioantenne sei für das permanente Rauschen verantwortlich."
   },
   {
     "cat": "history",
@@ -675,7 +675,7 @@
       "Universität Cambridge"
     ],
     "explanation": "Als die Azteken ihre Hauptstadt Tenochtitlán im See von Texcoco gründeten, unterrichteten Gelehrte in Oxford bereits seit über 200 Jahren Studenten.",
-    "exp": "Universität Oxford"
+    "exp": "Als die Azteken ihre Hauptstadt Tenochtitlán im See von Texcoco gründeten, unterrichteten Gelehrte in Oxford bereits seit über 200 Jahren Studenten."
   },
   {
     "cat": "history",
@@ -688,7 +688,7 @@
       "Konami als Verleiher von Jukeboxen in Osaka"
     ],
     "explanation": "Fusajiro Yamauchi gründete das Unternehmen in Kyoto – erst in den 1970er Jahren stieg Nintendo vom Kartenspielhersteller in die Elektronik ein.",
-    "exp": "Nintendo als Hersteller traditioneller Hanafuda-Spielkarten"
+    "exp": "Fusajiro Yamauchi gründete das Unternehmen in Kyoto – erst in den 1970er Jahren stieg Nintendo vom Kartenspielhersteller in die Elektronik ein."
   },
   {
     "cat": "history",
@@ -701,7 +701,7 @@
       "Domitian"
     ],
     "explanation": "Historiker streiten, ob Caligula geisteskrank war oder damit den römischen Senat verhöhnen wollte: „Mein Pferd taugt mehr zum Politiker als ihr alle!“",
-    "exp": "Caligula"
+    "exp": "Historiker streiten, ob Caligula geisteskrank war oder damit den römischen Senat verhöhnen wollte: „Mein Pferd taugt mehr zum Politiker als ihr alle!“"
   },
   {
     "cat": "history",
@@ -714,7 +714,7 @@
       "Der Krieg um Sansibar zwischen Frankreich und Oman"
     ],
     "explanation": "Nachdem der Sultan ein britisches Ultimatum ignorierte, eröffneten fünf Kriegsschiffe das Feuer auf den Palast – nach 38 Minuten hisste Sansibar die weiße Flagge.",
-    "exp": "Britisch-Sansibarischer Krieg von rund 40 Minuten Dauer"
+    "exp": "Nachdem der Sultan ein britisches Ultimatum ignorierte, eröffneten fünf Kriegsschiffe das Feuer auf den Palast – nach 38 Minuten hisste Sansibar die weiße Flagge."
   },
   {
     "cat": "history",
@@ -727,7 +727,7 @@
       "Emus überquerten die Wüste und eroberten Farmen"
     ],
     "explanation": "Die Vögel zerstreuten sich blitzschnell in kleine Gruppen. Nach zehntausenden Schuss Munition kapitulierten die Truppen vor der Cleverness der Emus.",
-    "exp": "Australische Soldaten scheiterten an wendigen Vögeln"
+    "exp": "Die Vögel zerstreuten sich blitzschnell in kleine Gruppen. Nach zehntausenden Schuss Munition kapitulierten die Truppen vor der Cleverness der Emus."
   },
   {
     "cat": "history",
@@ -740,7 +740,7 @@
       "Der Newport-Turm im US-Bundesstaat Rhode Island"
     ],
     "explanation": "Archäologen fanden dort Schmieden, Bootsschuppen und typisch skandinavische Bronzenadeln aus dem 11. Jahrhundert.",
-    "exp": "L’Anse aux Meadows auf Neufundland"
+    "exp": "Archäologen fanden dort Schmieden, Bootsschuppen und typisch skandinavische Bronzenadeln aus dem 11. Jahrhundert."
   },
   {
     "cat": "history",
@@ -753,7 +753,7 @@
       "Die Mobilmachung des russischen Zarenreichs an der Grenze"
     ],
     "explanation": "Durch ein starres Bündnissystem eskalierte die Julikrise innerhalb von vier Wochen zum weltweiten Flächenbrand.",
-    "exp": "Attentat von Sarajevo auf Erzherzog Franz Ferdinand"
+    "exp": "Durch ein starres Bündnissystem eskalierte die Julikrise innerhalb von vier Wochen zum weltweiten Flächenbrand."
   },
   {
     "cat": "history",
@@ -766,7 +766,7 @@
       "Ein Zuchteber fraß wichtige Geheimdokumente der Botschaft"
     ],
     "explanation": "Monatelang standen sich Truppen feindlich gegenüber – das einzige Opfer des gesamten „Krieges“ blieb das unglückselige Schwein.",
-    "exp": "Ein getötetes Schwein löste Truppenaufmärsche an Grenzen aus"
+    "exp": "Monatelang standen sich Truppen feindlich gegenüber – das einzige Opfer des gesamten „Krieges“ blieb das unglückselige Schwein."
   },
   {
     "cat": "history",
@@ -779,7 +779,7 @@
       "Johannes Fust aus Mainz"
     ],
     "explanation": "Gutenbergs Erfindung gilt vielen Historikern als das wichtigste Ereignis des zweiten Jahrtausends – sie ermöglichte Reformation und Aufklärung.",
-    "exp": "Johannes Gutenberg"
+    "exp": "Gutenbergs Erfindung gilt vielen Historikern als das wichtigste Ereignis des zweiten Jahrtausends – sie ermöglichte Reformation und Aufklärung."
   },
   {
     "cat": "history",
@@ -792,7 +792,7 @@
       "Ein Triumph der Technik und der menschlichen Forschung"
     ],
     "explanation": "Rund 600 Millionen Menschen – damals ein Fünftel der gesamten Weltbevölkerung – verfolgten die Live-Übertragung an den Fernsehschirmen.",
-    "exp": "Ein kleiner Schritt für einen Menschen, ein großer Sprung"
+    "exp": "Rund 600 Millionen Menschen – damals ein Fünftel der gesamten Weltbevölkerung – verfolgten die Live-Übertragung an den Fernsehschirmen."
   },
   {
     "cat": "history",
@@ -805,7 +805,7 @@
       "Louis Appia"
     ],
     "explanation": "Schockiert über 40.000 unversorgte Verwundete organisierte Dunant spontan Hilfe mit Dorfbewohnern unter dem Ruf „Tutti fratelli“ (Wir alle sind Brüder).",
-    "exp": "Henry Dunant"
+    "exp": "Schockiert über 40.000 unversorgte Verwundete organisierte Dunant spontan Hilfe mit Dorfbewohnern unter dem Ruf „Tutti fratelli“ (Wir alle sind Brüder)."
   },
   {
     "cat": "history",
@@ -818,7 +818,7 @@
       "1. Juli 1991"
     ],
     "explanation": "Nach Günter Schabowskis legendärem Zettel-Versprecher („Das tritt nach meiner Kenntnis ... ist das sofort, unverzüglich“) strömten Zehntausende an die Grenzübergänge.",
-    "exp": "9. November 1989"
+    "exp": "Nach Günter Schabowskis legendärem Zettel-Versprecher („Das tritt nach meiner Kenntnis ... ist das sofort, unverzüglich“) strömten Zehntausende an die Grenzübergänge."
   },
   {
     "cat": "culture",
@@ -831,20 +831,20 @@
       "Frankenstein erweckte eine Mumie aus ägyptischen Gräbern"
     ],
     "explanation": "Das Monster selbst hat im Roman gar keinen Namen – es nennt sich selbst nur eine Kreatur, ein Dämon oder das Geschöpf.",
-    "exp": "Frankenstein ist der Arzt und nicht das geschaffene Monster"
+    "exp": "Das Monster selbst hat im Roman gar keinen Namen – es nennt sich selbst nur eine Kreatur, ein Dämon oder das Geschöpf."
   },
   {
     "cat": "culture",
     "diff": "easy",
     "q": "Welches beliebte französische Frühstücksgebäck stammt historisch eigentlich aus Wien (Österreich)?",
     "a": [
-      "Das Wiener Hörnchen",
-      "Das Mailänder Gebäck",
-      "Der Pariser Kringel",
-      "Das Zürcher Kipferl"
+      "Das Croissant (Hörnchen)",
+      "Das knusprige Baguette",
+      "Das feine Macaron-Gebäck",
+      "Das süße Brioche-Brötchen"
     ],
     "explanation": "Wiener Bäcker erfanden das Kipferl in Form des osmanischen Halbmonds, um den Sieg über die Türkenbelagerung 1683 zu feiern; Marie-Antoinette brachte es nach Paris.",
-    "exp": "Das Wiener Hörnchen"
+    "exp": "Wiener Bäcker erfanden das Kipferl in Form des osmanischen Halbmonds, um den Sieg über die Türkenbelagerung 1683 zu feiern; Marie-Antoinette brachte es nach Paris."
   },
   {
     "cat": "culture",
@@ -857,7 +857,7 @@
       "Pädagogisches Spiel zur Vermittlung von Zinseszinsen"
     ],
     "explanation": "Das Spiel hatte ursprünglich zwei Regelsätze: einen kooperativen (alle gewinnen) und einen monopolistischen – der Spielekonzern Parker Brothers vermarktete nur den gierigen.",
-    "exp": "Warnung vor der zerstörerischen Gier von Monopolen"
+    "exp": "Das Spiel hatte ursprünglich zwei Regelsätze: einen kooperativen (alle gewinnen) und einen monopolistischen – der Spielekonzern Parker Brothers vermarktete nur den gierigen."
   },
   {
     "cat": "culture",
@@ -870,7 +870,7 @@
       "Felsgrottenmadonna"
     ],
     "explanation": "Der italienische Handwerker Vincenzo Peruggia versteckte das Bild einfach unter seinem Kittel – der spektakuläre Diebstahl machte das Porträt erst zum Weltstar.",
-    "exp": "Mona Lisa"
+    "exp": "Der italienische Handwerker Vincenzo Peruggia versteckte das Bild einfach unter seinem Kittel – der spektakuläre Diebstahl machte das Porträt erst zum Weltstar."
   },
   {
     "cat": "culture",
@@ -883,7 +883,7 @@
       "Dreieckige Pizzastücke passen nur in rechteckige Dosen"
     ],
     "explanation": "Runde Schachteln müssten aus zwei separaten Teilen gepresst werden – die quadratische Faltbox ist produktionstechnisch und logistisch unschlagbar billig.",
-    "exp": "Quadratische Kartons lassen sich ohne Verschnitt falten"
+    "exp": "Runde Schachteln müssten aus zwei separaten Teilen gepresst werden – die quadratische Faltbox ist produktionstechnisch und logistisch unschlagbar billig."
   },
   {
     "cat": "culture",
@@ -896,7 +896,7 @@
       "7′45″"
     ],
     "explanation": "Der Pianist schließt den Klavierdeckel und sitzt regungslos da – das eigentliche Kunstwerk sind die zufälligen Umgebungsgeräusche (Husten, Rascheln, Atem) des Publikums.",
-    "exp": "4′33″"
+    "exp": "Der Pianist schließt den Klavierdeckel und sitzt regungslos da – das eigentliche Kunstwerk sind die zufälligen Umgebungsgeräusche (Husten, Rascheln, Atem) des Publikums."
   },
   {
     "cat": "culture",
@@ -909,7 +909,7 @@
       "John Milton"
     ],
     "explanation": "Shakespeare prägte die moderne englische Sprache wie kein zweiter – unzählige Alltagsredewendungen stammen direkt aus Hamlet, Macbeth oder Romeo und Julia.",
-    "exp": "William Shakespeare"
+    "exp": "Shakespeare prägte die moderne englische Sprache wie kein zweiter – unzählige Alltagsredewendungen stammen direkt aus Hamlet, Macbeth oder Romeo und Julia."
   },
   {
     "cat": "culture",
@@ -922,7 +922,7 @@
       "Ehrerbietung an den heidnischen Gott des Weinstocks"
     ],
     "explanation": "Der Blick in die Augen diente als Vertrauensbeweis, während das Überschwappen vor Giftmorden bei Gastmählern schützte.",
-    "exp": "Brauch gegen Vergiftungen durch Überschwappen des Weins"
+    "exp": "Der Blick in die Augen diente als Vertrauensbeweis, während das Überschwappen vor Giftmorden bei Gastmählern schützte."
   },
   {
     "cat": "culture",
@@ -935,7 +935,7 @@
       "Es war eine Werbeaktion für neue feuerfeste Gummistiefel"
     ],
     "explanation": "Damals gab es in ganz Frankreich nur rund 3.000 Autos – der kostenlose Ratgeber mit Restaurant-Tipps sollte den Autotourismus und damit Reifenverkäufe ankurbeln.",
-    "exp": "Autofahrer sollten zu Reisen animiert werden (Reifenverschleiß)"
+    "exp": "Damals gab es in ganz Frankreich nur rund 3.000 Autos – der kostenlose Ratgeber mit Restaurant-Tipps sollte den Autotourismus und damit Reifenverkäufe ankurbeln."
   },
   {
     "cat": "culture",
@@ -948,7 +948,7 @@
       "Tiefschwarzer Mantel mit roter Pelzkapuze"
     ],
     "explanation": "Coca-Cola erfand den roten Mantel zwar nicht komplett neu, prägte durch Haddon Sundbloms Werbekampagnen ab 1931 aber das weltweite Image des pausbäckigen Rotmantel-Mannes.",
-    "exp": "Bischofs-Purpur, Dunkelblau, Braun oder Moosgrün"
+    "exp": "Coca-Cola erfand den roten Mantel zwar nicht komplett neu, prägte durch Haddon Sundbloms Werbekampagnen ab 1931 aber das weltweite Image des pausbäckigen Rotmantel-Mannes."
   },
   {
     "cat": "culture",
@@ -961,7 +961,7 @@
       "Bacchus"
     ],
     "explanation": "Der Marmorblock („Il Gigante“) lag 40 Jahre lang im Regen, weil andere Künstler ihn ruiniert hatten – Michelangelo formte daraus die berühmteste Skulptur der Renaissance.",
-    "exp": "David"
+    "exp": "Der Marmorblock („Il Gigante“) lag 40 Jahre lang im Regen, weil andere Künstler ihn ruiniert hatten – Michelangelo formte daraus die berühmteste Skulptur der Renaissance."
   },
   {
     "cat": "culture",
@@ -974,14 +974,18 @@
       "Das Orchester sollte vor Zugluft im Theater geschützt sein"
     ],
     "explanation": "Der Frack war die vornehmste Abendgarderobe des 19. Jahrhunderts – im Orchestergraben verschmilzt er zu einem einheitlichen, eleganten Klangkörper.",
-    "exp": "Der Frack sollte die Musiker optisch neutralisieren"
+    "exp": "Der Frack war die vornehmste Abendgarderobe des 19. Jahrhunderts – im Orchestergraben verschmilzt er zu einem einheitlichen, eleganten Klangkörper."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("general", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["general"] = DATA;
+    window.ARCADE_QUIZ_BANKS['general'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('general', DATA);
+    }
   }
 })();

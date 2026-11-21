@@ -12,7 +12,7 @@
       "Rob Zemeckis"
     ],
     "explanation": "Industrial Light & Magic (ILM) kreierte die bahnbrechenden digitalen Dinos, während Stan Winstons Team riesige lebensgroße Robotersaurier baute.",
-    "exp": "Steven Spielberg"
+    "exp": "Industrial Light & Magic (ILM) kreierte die bahnbrechenden digitalen Dinos, während Stan Winstons Team riesige lebensgroße Robotersaurier baute."
   },
   {
     "cat": "action_scifi",
@@ -25,7 +25,7 @@
       "Gelb"
     ],
     "explanation": "Morpheus bot Neo die Wahl: Die blaue Pille führt zurück in die Illusion, die rote Pille enthüllt die Wahrheit über die Maschinenwelt.",
-    "exp": "Rot"
+    "exp": "Morpheus bot Neo die Wahl: Die blaue Pille führt zurück in die Illusion, die rote Pille enthüllt die Wahrheit über die Maschinenwelt."
   },
   {
     "cat": "action_scifi",
@@ -38,7 +38,7 @@
       "Ennio Morricone"
     ],
     "explanation": "Hans Zimmer revolutionierte die moderne Filmmusik durch mächtige Synthesizer-Klangwände, tickende Rhythmen und dramatische Orchesterwellen.",
-    "exp": "Hans Zimmer"
+    "exp": "Hans Zimmer revolutionierte die moderne Filmmusik durch mächtige Synthesizer-Klangwände, tickende Rhythmen und dramatische Orchesterwellen."
   },
   {
     "cat": "action_scifi",
@@ -51,7 +51,7 @@
       "Aus dem Leerlauf defekter Kühlschrankkompressoren"
     ],
     "explanation": "Burtt mischte das tiefe Summen zweier Filmprojektoren mit dem hochfrequenten Pfeifen eines alten Fernsehers, an dem er ein Mikrofon vorbeischwenkte.",
-    "exp": "Aus dem Summen alter Projektoren und TV-Bildröhren"
+    "exp": "Burtt mischte das tiefe Summen zweier Filmprojektoren mit dem hochfrequenten Pfeifen eines alten Fernsehers, an dem er ein Mikrofon vorbeischwenkte."
   },
   {
     "cat": "action_scifi",
@@ -64,176 +64,176 @@
       "Last Action Hero im Kino"
     ],
     "explanation": "James Cameron und ILM schufen den Quecksilber-Killer T-1000, der selbst durch Gitterstäbe fließen und seine Gestalt beliebig verändern konnte.",
-    "exp": "Terminator 2: Tag der Abrechnung"
+    "exp": "James Cameron und ILM schufen den Quecksilber-Killer T-1000, der selbst durch Gitterstäbe fließen und seine Gestalt beliebig verändern konnte."
   },
   {
     "cat": "action_scifi",
     "diff": "mid",
     "q": "Warum verzichtete Christopher Nolan bei den monumentalen Aufnahmen von 'Oppenheimer' (2023) komplett auf CGI-Effekte?",
     "a": [
-      "Bullet Time",
-      "Time Freeze",
-      "Warp Speed",
-      "Hyper Zoom"
+      "Er wollte den Bombentest mit realen Explosionen, Magnesium und Spezialbrennstoffen filmen",
+      "Das Filmstudio verweigerte das Budget für teure digitale Computereffekte",
+      "Er drehte den gesamten Film auf historischem 16mm-Schwarzweißmaterial ab",
+      "Die Schauspielergewerkschaft verbot digitale Animationen in historischen Biopics"
     ],
     "explanation": "Nolan ließ für die Trinity-Explosion ein Gemisch aus Flugbenzin, Diesel, Magnesium und Phosphor am Boden zünden, um greifbare Lichteffekte einzufangen.",
-    "exp": "Bullet Time"
+    "exp": "Nolan ließ für die Trinity-Explosion ein Gemisch aus Flugbenzin, Diesel, Magnesium und Phosphor am Boden zünden, um greifbare Lichteffekte einzufangen."
   },
   {
     "cat": "action_scifi",
     "diff": "mid",
     "q": "Welche ikonische Requisite aus 'Mad Max: Fury Road' (2015) funktionierte tatsächlich in echt während der Wüstenfahrt?",
     "a": [
-      "Avatar: Aufbruch nach Pandora",
-      "Titanic: Schicksal auf dem Ozean",
-      "Star Wars: Das Erwachen der Macht",
-      "Avengers: Endgame im Kino"
+      "Die E-Gitarre des 'Doof Warrior', die auf Knopfdruck meterhohe Flammen spuckte",
+      "Der gigantische V8-Motorblock des 'War Rig', der aus purem Titan gegossen war",
+      "Das mechanische Lenkrad von Immortan Joe mit integrierter Giftgas-Ampulle",
+      "Die Armbrust von Furiosa mit lasergesteuerter Zieloptik für die Wüstenjagd"
     ],
     "explanation": "Musiker iOTA spielte auf einer 60 Kilo schweren Doppelhals-Gitarre, deren Flammenwerfer per Whammy-Bar-Hebel echtes Gas abfeuerte.",
-    "exp": "Avatar: Aufbruch nach Pandora"
+    "exp": "Musiker iOTA spielte auf einer 60 Kilo schweren Doppelhals-Gitarre, deren Flammenwerfer per Whammy-Bar-Hebel echtes Gas abfeuerte."
   },
   {
     "cat": "action_scifi",
     "diff": "mid",
     "q": "Mit welcher bahnbrechenden Kameratechnik filmte Wachowskis Team die legendäre 'Bullet Time' in 'Matrix'?",
     "a": [
-      "Stanley Kubrick",
-      "Arthur C. Clarke",
-      "George Lucas",
-      "Andrei Tarkowski"
+      "Mit einem kreisförmigen Ring aus 120 Standbildkameras im Millisekundentakt",
+      "Mit einer extrem schnellen Hochgeschwindigkeits-Schienenkamera aus Japan",
+      "Rein digital durch nachträgliche 3D-Modellierung der Schauspieler am Computer",
+      "Mit rotierenden Spiegelprismen vor einer einzigen analogen 35mm-Kamera"
     ],
     "explanation": "Über 120 Fotoapparate fotografierten Neo aus allen Blickwinkeln gleichzeitig. Zusammengesetzt ergab das eine flüssige 360-Grad-Kameradrehung in gefrorener Zeit.",
-    "exp": "Stanley Kubrick"
+    "exp": "Über 120 Fotoapparate fotografierten Neo aus allen Blickwinkeln gleichzeitig. Zusammengesetzt ergab das eine flüssige 360-Grad-Kameradrehung in gefrorener Zeit."
   },
   {
     "cat": "action_scifi",
     "diff": "mid",
     "q": "Welches ungewöhnliche Requisit diente Ridley Scott in 'Alien' (1979) zur Konstruktion der schleimigen Xenomorph-Eier?",
     "a": [
-      "H. R. Giger",
-      "Stan Winston",
-      "Moebius",
-      "Carlo Rambaldi"
+      "Tierische Innereien, Rinderherzen und Kuhmägen aus einem Londoner Schlachthof",
+      "Aufgeblasene Luftballons, die mit flüssigem Gummi und Kleister überzogen wurden",
+      "Große getrocknete Straußeneier, die mit grünem Schleim gefüllt wurden",
+      "Ausgehöhlte Kürbisse mit Scharnieren und Gummibändern zum Aufklappen"
     ],
     "explanation": "Für das unheimliche Pulsieren im Inneren der Eier bewegte Scott echte Kalbsherzen und Tiereingeweide unter einer Schicht Kunstschleim.",
-    "exp": "H. R. Giger"
+    "exp": "Für das unheimliche Pulsieren im Inneren der Eier bewegte Scott echte Kalbsherzen und Tiereingeweide unter einer Schicht Kunstschleim."
   },
   {
     "cat": "action_scifi",
     "diff": "mid",
     "q": "Welche reale wissenschaftliche Entdeckung inspirierte Christopher Nolan und Physiker Kip Thorne bei der Darstellung des Schwarzen Lochs 'Gargantua' in 'Interstellar'?",
     "a": [
-      "Aus Schlägen einer nassen Lederschnittweste auf Rindfleisch",
-      "Aus dem Klatschen von nassen Handtüchern auf Steinplatten",
-      "Aus dem Zerplatzen von wassergefüllten Schweinsblasen",
-      "Aus Schlägen mit Holzknüppeln auf gefrorenes Rinderhack"
+      "Die gravitative Lichtkrümmung und Verzerrung durch Einsteins Relativitätstheorie",
+      "Die Entdeckung von dunkler Energie durch das Hubble-Weltraumteleskop",
+      "Die Radioblitze aus fernen Galaxien, die vom James-Webb-Teleskop empfangen wurden",
+      "Die kosmische Hintergrundstrahlung des Urknalls mit fluktuierenden Temperaturen"
     ],
     "explanation": "Thornes physikalische Gleichungen wurden von CGI-Rechnern gerendert. Das berechnete Bild sagte das reale Teleskop-Foto von M87 von 2019 verblüffend exakt voraus.",
-    "exp": "Aus Schlägen einer nassen Lederschnittweste auf Rindfleisch"
+    "exp": "Thornes physikalische Gleichungen wurden von CGI-Rechnern gerendert. Das berechnete Bild sagte das reale Teleskop-Foto von M87 von 2019 verblüffend exakt voraus."
   },
   {
     "cat": "action_scifi",
     "diff": "mid",
     "q": "Wie drehte Christopher Nolan die berühmte Schwerelosigkeits-Flur-Kampfszene in 'Inception' (2010)?",
     "a": [
-      "Inception: Traum im Traum",
-      "Interstellar im All",
-      "Tenet im Zeitlauf",
-      "Memento der Erinnerung"
+      "In einem 30 Meter langen rotierenden Tunnel, der Schauspieler um 360 Grad drehte",
+      "Unter Wasser in einem riesigen Salzwassertank mit transparenten Wänden",
+      "In einem echten Parabelflug-Flugzeug der NASA bei wiederholter Schwerelosigkeit",
+      "Durch hängende Schauspieler an unsichtbaren Seilzügen vor einer Greenscreen-Wand"
     ],
     "explanation": "Der Flur war eine gigantische rotierende Trommel. Joseph Gordon-Levitt trainierte wochenlang, um im drehenden Raum akrobatisch zu kämpfen.",
-    "exp": "Inception: Traum im Traum"
+    "exp": "Der Flur war eine gigantische rotierende Trommel. Joseph Gordon-Levitt trainierte wochenlang, um im drehenden Raum akrobatisch zu kämpfen."
   },
   {
     "cat": "action_scifi",
     "diff": "mid",
     "q": "Aus welchem Grund leuchtet das Blut des außerirdischen Jägers in 'Predator' (1987) neongrün?",
     "a": [
-      "Andy Serkis",
-      "Doug Jones",
-      "Peter Mayhew",
-      "Bill Nighy"
+      "Die Crew mischte die Flüssigkeit aus Knicklichtern mit Gleitmittel",
+      "Es handelte sich um phosphoreszierenden Wackelpudding mit Waldmeistergeschmack",
+      "Man verwendete echte radioaktive Farbstoffe mit extrem schwacher Strahlung",
+      "Es war gewöhnliche Acrylfarbe, die mit UV-Licht-Scheinwerfern bestrahlt wurde"
     ],
     "explanation": "Um das Leuchten im finsteren Dschungel ohne CGI sichtbar zu machen, knackten die Requisiteure Leuchtstäbe (Glowsticks) und rührten K-Y-Jelly unter.",
-    "exp": "Andy Serkis"
+    "exp": "Um das Leuchten im finsteren Dschungel ohne CGI sichtbar zu machen, knackten die Requisiteure Leuchtstäbe (Glowsticks) und rührten K-Y-Jelly unter."
   },
   {
     "cat": "action_scifi",
     "diff": "pro",
     "q": "Warum explodierte der Todesstern in George Lucas' 'Star Wars' (1977) mit einer markanten Schockwellen-Ringscheibe bei der Special Edition 1997?",
     "a": [
-      "Er montierte IMAX-Kameras direkt an echten Kampfjets",
-      "Er nutzte ausschließlich digitale Jets aus dem Computer",
-      "Er ließ Schauspieler in Flugsimulatoren filmen",
-      "Er verwendete verkleinerte ferngesteuerte Jet-Modelle"
+      "Als Hommage an die 'Praxis-Schockwelle' aus 'Star Trek VI' von 1991",
+      "Weil George Lucas eine echte Explosion im Weltraum physikalisch exakt abbilden wollte",
+      "Weil die alten Filmnegative an dieser Stelle einen kreisrunden Brandschaden aufwiesen",
+      "Um einen Bildfehler im Hintergrund durch ein neues Raumschiffmodell zu verdecken"
     ],
     "explanation": "Die sogenannte Praxis-Welle aus Star Trek VI gefiel Lucas so sehr, dass er seine eigenen Supernova-Explosionen digital mit demselben Ring nachrüstete.",
-    "exp": "Er montierte IMAX-Kameras direkt an echten Kampfjets"
+    "exp": "Die sogenannte Praxis-Welle aus Star Trek VI gefiel Lucas so sehr, dass er seine eigenen Supernova-Explosionen digital mit demselben Ring nachrüstete."
   },
   {
     "cat": "action_scifi",
     "diff": "pro",
     "q": "Was diente in James Camerons 'Aliens' (1986) als Geräusch für den Abzug der berüchtigten M41A-Pulsladungsgewehre?",
     "a": [
-      "Rostige Nieten eines Frachters und Reiben an Schienen",
-      "Das Verbiegen von schweren Stahlträgern im Windkanal",
-      "Das Zersägen von Eisenbahnwaggons mit Acetylenbrennern",
-      "Das Schaben von Eisenketten auf rauen Betonböden"
+      "Eine Thompson-Maschinenpistole kombiniert mit einem Schrotflintenschuss",
+      "Ein alter Nadeldrucker, der mit hoher Geschwindigkeit Testseiten ausdruckte",
+      "Das metallische Zuschlagen von massiven Tresortüren in einer Londoner Bank",
+      "Ein elektrischer Tacker, der in Zeitlupe verlangsamt und verzerrt abgespielt wurde"
     ],
     "explanation": "Die Sounddesigner schichteten das rhythmische Rattern einer Tommy Gun mit dem wuchtigen Bass einer Remington-Pumpgun übereinander.",
-    "exp": "Rostige Nieten eines Frachters und Reiben an Schienen"
+    "exp": "Die Sounddesigner schichteten das rhythmische Rattern einer Tommy Gun mit dem wuchtigen Bass einer Remington-Pumpgun übereinander."
   },
   {
     "cat": "action_scifi",
     "diff": "pro",
     "q": "Wie erzeugte Stanley Kubrick 1968 in '2001: Odyssee im Weltraum' die fließenden kosmischen Schlitzscan-Farben beim Flug durch das Sternentor?",
     "a": [
-      "Dass der gesamte Film in einer echten Vorwärtsfahrt gedreht wurde",
-      "Dass sämtliche Autos rein computergenerierte Effekte waren",
-      "Dass nur nachts bei künstlichem Flutlicht gefilmt wurde",
-      "Dass Schauspieler sämtliche Stunts ohne Sicherungsseile machten"
+      "Douglas Trumbull bewegte eine Langzeitkamera vor einem beleuchteten Schlitz (Slit-Scan)",
+      "Kubrick warf bunte Ölfarben auf rotierende Schallplatten und filmte von oben",
+      "Das Filmteam zündete bengalisches Feuerwerk in einem dunklen Tunnel vor Spiegeln",
+      "Man filmte mikroskopische Aufnahmen von chemischen Reaktionen in Petrischalen"
     ],
     "explanation": "Die Slit-Scan-Maschine belichtete jedes Einzelbild über Minuten hinweg mit bewegten Grafiken und erzeugte den psychedelischen Hyperraum-Tunnel.",
-    "exp": "Dass der gesamte Film in einer echten Vorwärtsfahrt gedreht wurde"
+    "exp": "Die Slit-Scan-Maschine belichtete jedes Einzelbild über Minuten hinweg mit bewegten Grafiken und erzeugte den psychedelischen Hyperraum-Tunnel."
   },
   {
     "cat": "action_scifi",
     "diff": "pro",
     "q": "Welches reale Flugzeugwrack ließ Christopher Nolan für eine Actionszene in 'Tenet' (2020) tatsächlich in ein Gebäude krachen?",
     "a": [
-      "Er baute ein riesiges hydraulisch kippbares Schiffswrack",
-      "Er ließ ein echtes Passagierschiff im Meer versenken",
-      "Er filmte ausschließlich in einem kleinen Studioaquarium",
-      "Er nutzte rein digitale Effekte ohne physische Kulissen"
+      "Eine ausgemusterte Boeing 747 auf dem Wüstenflughafen von Victorville",
+      "Ein echtes russisches Antonov-Transportflugzeug auf einem Militärflugplatz",
+      "Einen Airbus A380 Prototypen, der vom Hersteller zur Verschrottung freigegeben war",
+      "Eine Douglas DC-3 aus dem Zweiten Weltkrieg mit funktionierenden Propellern"
     ],
     "explanation": "Nolan stellte fest, dass der Kauf und das reale Crashen einer alten 747 billiger und realistischer waren als teure CGI-Modelle im Computer.",
-    "exp": "Er baute ein riesiges hydraulisch kippbares Schiffswrack"
+    "exp": "Nolan stellte fest, dass der Kauf und das reale Crashen einer alten 747 billiger und realistischer waren als teure CGI-Modelle im Computer."
   },
   {
     "cat": "action_scifi",
     "diff": "pro",
     "q": "Woraus bestand der Sound der gigantischen Sandwürmer ('Shai-Hulud') in Denis Villeneuves 'Dune' (2021)?",
     "a": [
-      "Blade Runner",
-      "Total Recall",
-      "Das fünfte Element",
-      "Minority Report"
+      "Aus Hydrofon-Aufnahmen von vibrierendem Wüstensand und trockenem Gebälk",
+      "Aus dem verlangsamten Brüllen von Löwen und Elefanten im Zoo von San Diego",
+      "Aus dem Reiben von zwei riesigen Mühlsteinen in einer alten Wassermühle",
+      "Aus dem Aufprall von schweren Bowlingkugeln auf dicken Schaumstoffmatratzen"
     ],
     "explanation": "Sounddesigner Mark Mangini vergrub Spezialmikrofone im Sand der Mojave-Wüste und nahm das dumpfe Reiben tektonischer Sandbewegungen auf.",
-    "exp": "Blade Runner"
+    "exp": "Sounddesigner Mark Mangini vergrub Spezialmikrofone im Sand der Mojave-Wüste und nahm das dumpfe Reiben tektonischer Sandbewegungen auf."
   },
   {
     "cat": "action_scifi",
     "diff": "pro",
     "q": "Welches Design-Detail an Deckard's Pistole in Ridley Scotts 'Blade Runner' (1982) verblüfft Waffen- und Filmexperten bis heute?",
     "a": [
-      "Christopher Nolan",
-      "Denis Villeneuve",
-      "David Fincher",
-      "Darren Aronofsky"
+      "Zusammengebaut aus Teilen eines Steyr-Gewehrs und eines Charter-Arms-Revolvers",
+      "Gegossen aus dem massiven Stahlrohr einer echten Flugabwehrkanone des Militärs",
+      "Konstruiert aus dem modifizierten Gehäuse einer antiken Polaroid-Sofortbildkamera",
+      "Kombiniert aus einem deutschen Mauser-Karabiner und einer japanischen Leuchtpistole"
     ],
     "explanation": "Der legendäre 'PKD-Blaster' besaß zwei Abzüge und ein doppeltes Schloss, kombiniert aus einem echten Gewehr und einem Revolverrumpf.",
-    "exp": "Christopher Nolan"
+    "exp": "Der legendäre 'PKD-Blaster' besaß zwei Abzüge und ein doppeltes Schloss, kombiniert aus einem echten Gewehr und einem Revolverrumpf."
   },
   {
     "cat": "action_scifi",
@@ -246,7 +246,7 @@
       "Die Software stürzte bei der Berechnung von Schaum ständig ab"
     ],
     "explanation": "ILM musste für den flüssigen Tentakel völlig neue Algorithmen schreiben; die Szene ebnete den Weg für den T-1000 in Terminator 2.",
-    "exp": "Lichtbrechung und Kaustik waren rechnerisch Neuland"
+    "exp": "ILM musste für den flüssigen Tentakel völlig neue Algorithmen schreiben; die Szene ebnete den Weg für den T-1000 in Terminator 2."
   },
   {
     "cat": "thriller_horror",
@@ -259,7 +259,7 @@
       "Das Fenster zum Hof"
     ],
     "explanation": "Bernard Herrmanns kreischende Streichinstrumente machten den Duschmord an Marion Crane zu einer der berühmtesten Szenen aller Zeiten.",
-    "exp": "Psycho: Das Duschmotiv"
+    "exp": "Bernard Herrmanns kreischende Streichinstrumente machten den Duschmord an Marion Crane zu einer der berühmtesten Szenen aller Zeiten."
   },
   {
     "cat": "thriller_horror",
@@ -272,7 +272,7 @@
       "Offizierin Ellen Ripley"
     ],
     "explanation": "Jodie Foster und Anthony Hopkins lieferten sich ein nervenzerreißendes Psychoduell; der Film gewann alle fünf Haupt-Oscars (Big Five).",
-    "exp": "Clarice Starling"
+    "exp": "Jodie Foster und Anthony Hopkins lieferten sich ein nervenzerreißendes Psychoduell; der Film gewann alle fünf Haupt-Oscars (Big Five)."
   },
   {
     "cat": "thriller_horror",
@@ -285,7 +285,7 @@
       "Hasta la vista, Baby"
     ],
     "explanation": "Nicholson improvisierte die Begrüßungsfloskel aus Johnny Carsons US-Late-Night-Show, während er die Tür mit einer echten Axt zertrümmerte.",
-    "exp": "Hier ist Jacky!"
+    "exp": "Nicholson improvisierte die Begrüßungsfloskel aus Johnny Carsons US-Late-Night-Show, während er die Tür mit einer echten Axt zertrümmerte."
   },
   {
     "cat": "thriller_horror",
@@ -298,7 +298,7 @@
       "Ein Bündel mit gefälschten Dollarscheinen"
     ],
     "explanation": "Serienmörder John Doe vollendet damit die Todsünde des Zorns, indem er Mills (Brad Pitt) provoziert, ihn aus Rache zu erschießen.",
-    "exp": "Der Kopf von Detektiv Mills Ehefrau Tracy"
+    "exp": "Serienmörder John Doe vollendet damit die Todsünde des Zorns, indem er Mills (Brad Pitt) provoziert, ihn aus Rache zu erschießen."
   },
   {
     "cat": "thriller_horror",
@@ -311,7 +311,7 @@
       "Leatherface"
     ],
     "explanation": "Die weiße Maske von Michael Myers war in Wirklichkeit eine billige Zwei-Dollar-Gummi-Maske von Captain Kirk (William Shatner) aus Star Trek.",
-    "exp": "Michael Myers"
+    "exp": "Die weiße Maske von Michael Myers war in Wirklichkeit eine billige Zwei-Dollar-Gummi-Maske von Captain Kirk (William Shatner) aus Star Trek."
   },
   {
     "cat": "thriller_horror",
@@ -324,7 +324,7 @@
       "Zuckersirup mit Rote-Bete-Saft"
     ],
     "explanation": "Schokoladensirup hatte auf damaligem Schwarzweiß-Filmmaterial genau die richtige Dichte, Viskosität und dunkle Tönung für Blut.",
-    "exp": "Bosco-Schokoladensirup"
+    "exp": "Schokoladensirup hatte auf damaligem Schwarzweiß-Filmmaterial genau die richtige Dichte, Viskosität und dunkle Tönung für Blut."
   },
   {
     "cat": "thriller_horror",
@@ -337,7 +337,7 @@
       "Man nutzte Trockeneisnebel aus versteckten Bodendüsen"
     ],
     "explanation": "Es war am Set so eisig kalt, dass sich morgens eine dünne Eisschicht auf den Möbeln bildete – der Atem der Schauspieler war absolut echt.",
-    "exp": "Das Set wurde mit Kühlanlagen unter null Grad gekühlt"
+    "exp": "Es war am Set so eisig kalt, dass sich morgens eine dünne Eisschicht auf den Möbeln bildete – der Atem der Schauspieler war absolut echt."
   },
   {
     "cat": "thriller_horror",
@@ -350,7 +350,7 @@
       "Der Regisseur untersagte ihm das Blinzeln per Vertrag"
     ],
     "explanation": "Hopkins studierte Videoaufnahmen von Mördern wie Charles Manson und übernahm deren starren Blick ohne Wimpernschlag für die Kamera.",
-    "exp": "Er wollte Lecters starre Wachsamkeit unterstreichen"
+    "exp": "Hopkins studierte Videoaufnahmen von Mördern wie Charles Manson und übernahm deren starren Blick ohne Wimpernschlag für die Kamera."
   },
   {
     "cat": "thriller_horror",
@@ -363,20 +363,20 @@
       "Es wurde komplett ohne Beteiligung von Regisseuren gedreht"
     ],
     "explanation": "Mit minimalem Budget (rund 60.000 Dollar) gedreht, suggerierte eine Fake-Website, dass die Studenten im Wald tatsächlich verschwunden seien.",
-    "exp": "Es begründete den weltweiten Hype um das Found-Footage-Genre"
+    "exp": "Mit minimalem Budget (rund 60.000 Dollar) gedreht, suggerierte eine Fake-Website, dass die Studenten im Wald tatsächlich verschwunden seien."
   },
   {
     "cat": "thriller_horror",
     "diff": "mid",
     "q": "Welches Geräusch diente Sound-Designer Ben Burtt in 'Alien' und vielen Thrillern als Vorlage für fleischige Stiche und Messerangriffe?",
     "a": [
-      "Messerstiche in Melonen und frische Kohlköpfe",
-      "Das Zerreißen von dicken nassen Lederstiefeln",
-      "Das Zerdrücken von Tomaten mit einem Holzlöffel",
-      "Schläge mit einer Bratpfanne auf frisches Schweinefleisch"
+      "Das Hineinstechen eines Messers in eine reife Honigmelone oder einen Kohlkopf",
+      "Das Zerreißen von dicken Lederjacken mit einer rostigen Gartenschere",
+      "Das Schlagen mit einem nassen Handtuch auf ein rohes Rindersteak im Studio",
+      "Das Knacken von trockenen Walnüssen unter den Absätzen von schweren Stiefeln"
     ],
     "explanation": "Melonen, rohe Steaks und knackige Kohlköpfe gehören im Tonstudio zu den beliebtesten Requisiten für schmatzende Einstiche.",
-    "exp": "Messerstiche in Melonen und frische Kohlköpfe"
+    "exp": "Melonen, rohe Steaks und knackige Kohlköpfe gehören im Tonstudio zu den beliebtesten Requisiten für schmatzende Einstiche."
   },
   {
     "cat": "thriller_horror",
@@ -389,7 +389,7 @@
       "Die gesamte Handlung war der Traum eines Koma-Patienten"
     ],
     "explanation": "Malcolm wurde zu Filmbeginn erschossen; nur der kleine Junge ('Ich sehe tote Menschen') konnte ihn die ganze Zeit über sehen und hören.",
-    "exp": "Kinderpsychologe Dr. Malcolm Crowe ist selbst ein Geist"
+    "exp": "Malcolm wurde zu Filmbeginn erschossen; nur der kleine Junge ('Ich sehe tote Menschen') konnte ihn die ganze Zeit über sehen und hören."
   },
   {
     "cat": "thriller_horror",
@@ -402,7 +402,7 @@
       "Kult-Regisseur Tobe Hooper"
     ],
     "explanation": "In der Monroeville Mall in Pennsylvania verbarrikadieren sich die Überlebenden zwischen Boutiquen, während Zombies instinktiv zum Konsumtempel pilgern.",
-    "exp": "George A. Romero"
+    "exp": "In der Monroeville Mall in Pennsylvania verbarrikadieren sich die Überlebenden zwischen Boutiquen, während Zombies instinktiv zum Konsumtempel pilgern."
   },
   {
     "cat": "thriller_horror",
@@ -415,7 +415,7 @@
       "Der Reiß-Schwenk"
     ],
     "explanation": "Beim Dolly-Zoom bleibt das Hauptmotiv gleich groß, während der Hintergrund optisch dramatisch in die Tiefe stürzt oder heranrückt.",
-    "exp": "Der Dolly-Zoom"
+    "exp": "Beim Dolly-Zoom bleibt das Hauptmotiv gleich groß, während der Hintergrund optisch dramatisch in die Tiefe stürzt oder heranrückt."
   },
   {
     "cat": "thriller_horror",
@@ -428,7 +428,7 @@
       "Sie wurde auf einem Pariser Flohmarkt zufällig entdeckt"
     ],
     "explanation": "Wan und Co-Autor Leigh Whannell hatten kaum Budget; Wan formte Billys Gesicht eigenhändig aus Modelliermasse und Küchenpapier.",
-    "exp": "James Wan bastelte die Puppe selbst aus Pappmaché"
+    "exp": "Wan und Co-Autor Leigh Whannell hatten kaum Budget; Wan formte Billys Gesicht eigenhändig aus Modelliermasse und Küchenpapier."
   },
   {
     "cat": "thriller_horror",
@@ -441,7 +441,7 @@
       "Er drehte ausschließlich mit Handkameras ohne Stative"
     ],
     "explanation": "Finchers legendäre Detailbesessenheit trieb Jake Gyllenhaal und Mark Ruffalo an ihre psychischen Grenzen – schuf aber ein hyperpräzises Zeitdokument.",
-    "exp": "Er verlangte bis zu 70 bis 90 Takes pro Szene"
+    "exp": "Finchers legendäre Detailbesessenheit trieb Jake Gyllenhaal und Mark Ruffalo an ihre psychischen Grenzen – schuf aber ein hyperpräzises Zeitdokument."
   },
   {
     "cat": "thriller_horror",
@@ -454,7 +454,7 @@
       "Sie war mit kleinen Mikrofonen zur Tonaufnahme bestückt"
     ],
     "explanation": "Tobe Hooper gab Leatherface drei Persönlichkeiten, die sich in Kleidung und Menschenhaut-Maske je nach häuslicher Situation unterschieden.",
-    "exp": "Darsteller Gunnar Hansen trug drei verschiedene Masken"
+    "exp": "Tobe Hooper gab Leatherface drei Persönlichkeiten, die sich in Kleidung und Menschenhaut-Maske je nach häuslicher Situation unterschieden."
   },
   {
     "cat": "thriller_horror",
@@ -467,7 +467,7 @@
       "Die Filmrollen wurden durch feuchte Meeresluft unbrauchbar"
     ],
     "explanation": "Weil Bruce nie funktionierte, musste Spielberg den Hai mit Musik und Bojen andeuten – und erfand damit unfreiwillig den perfekten Suspense.",
-    "exp": "Der mechanische Hai versagte im aggressiven Salzwasser ständig"
+    "exp": "Weil Bruce nie funktionierte, musste Spielberg den Hai mit Musik und Bojen andeuten – und erfand damit unfreiwillig den perfekten Suspense."
   },
   {
     "cat": "thriller_horror",
@@ -480,7 +480,7 @@
       "Den verfremdeten Herzschlag eines neugeborenen Lammes"
     ],
     "explanation": "Der 28-Hz-Infraschall ist kaum hörbar, löst aber im menschlichen Innenohr spürbare Beklemmung, Angstgefühle und körperliche Übelkeit aus.",
-    "exp": "Einen Infraschall-Ton von 28 Hertz in den ersten Szenen"
+    "exp": "Der 28-Hz-Infraschall ist kaum hörbar, löst aber im menschlichen Innenohr spürbare Beklemmung, Angstgefühle und körperliche Übelkeit aus."
   },
   {
     "cat": "thriller_horror",
@@ -493,7 +493,7 @@
       "Dr. Mabuse der große Spieler"
     ],
     "explanation": "Murnau änderte Namen (Graf Orlok statt Dracula), verlor jedoch den Urheberrechtsprozess gegen Stokers Witwe – fast alle Kopien sollten vernichtet werden.",
-    "exp": "Nosferatu: Eine Symphonie des Grauens"
+    "exp": "Murnau änderte Namen (Graf Orlok statt Dracula), verlor jedoch den Urheberrechtsprozess gegen Stokers Witwe – fast alle Kopien sollten vernichtet werden."
   },
   {
     "cat": "drama_anim",
@@ -506,7 +506,7 @@
       "Monsters, Inc."
     ],
     "explanation": "Unter der Regie von John Lasseter bewies Pixar, dass ein kompletter 81-minütiger Spielfilm aus dem Computer die Herzen von Millionen rühren kann.",
-    "exp": "Toy Story"
+    "exp": "Unter der Regie von John Lasseter bewies Pixar, dass ein kompletter 81-minütiger Spielfilm aus dem Computer die Herzen von Millionen rühren kann."
   },
   {
     "cat": "drama_anim",
@@ -519,7 +519,7 @@
       "Stand by Me: Das Geheimnis"
     ],
     "explanation": "Frank Darabonts Geschichte um Andy Dufresne (Tim Robbins) und Red (Morgan Freeman) floppte anfangs im Kino, wurde aber auf Video zum Kult.",
-    "exp": "Die Verurteilten"
+    "exp": "Frank Darabonts Geschichte um Andy Dufresne (Tim Robbins) und Red (Morgan Freeman) floppte anfangs im Kino, wurde aber auf Video zum Kult."
   },
   {
     "cat": "drama_anim",
@@ -532,7 +532,7 @@
       "Kyoto Animation"
     ],
     "explanation": "Miyazakis handgezeichnete Meisterwerke gewannen Weltruhm und 2003 den Oscar für den besten animierten Spielfilm.",
-    "exp": "Studio Ghibli"
+    "exp": "Miyazakis handgezeichnete Meisterwerke gewannen Weltruhm und 2003 den Oscar für den besten animierten Spielfilm."
   },
   {
     "cat": "drama_anim",
@@ -545,7 +545,7 @@
       "Scarface von De Palma"
     ],
     "explanation": "Marlon Brando und Al Pacino schrieben mit Zitaten wie 'Ich mache ihm ein Angebot, das er nicht ablehnen kann' Filmgeschichte.",
-    "exp": "Der Pate von Coppola"
+    "exp": "Marlon Brando und Al Pacino schrieben mit Zitaten wie 'Ich mache ihm ein Angebot, das er nicht ablehnen kann' Filmgeschichte."
   },
   {
     "cat": "drama_anim",
@@ -558,7 +558,7 @@
       "Pocahontas in Virginia"
     ],
     "explanation": "Mit der Musik von Elton John und Hans Zimmer wurde der Film zum erfolgreichsten traditionell gezeichneten Animationsfilm der Geschichte.",
-    "exp": "Der König der Löwen"
+    "exp": "Mit der Musik von Elton John und Hans Zimmer wurde der Film zum erfolgreichsten traditionell gezeichneten Animationsfilm der Geschichte."
   },
   {
     "cat": "drama_anim",
@@ -571,7 +571,7 @@
       "Er brachte eine echte Katze mit in das Büro des Produzenten"
     ],
     "explanation": "Paramount-Chef Robert Evans verlangte ein Demotape. Brando schwärzte seine Haare mit Schuhcreme und stopfte Watte in die Wangen – die Rolle war seine.",
-    "exp": "Er stopfte sich Papiertaschentücher in die Wangen"
+    "exp": "Paramount-Chef Robert Evans verlangte ein Demotape. Brando schwärzte seine Haare mit Schuhcreme und stopfte Watte in die Wangen – die Rolle war seine."
   },
   {
     "cat": "drama_anim",
@@ -584,7 +584,7 @@
       "Knapp 25.000 Polaroid-Bilder zur Kontrolle"
     ],
     "explanation": "Für eine einzige Minute Film benötigte das Team unter Regisseur Henry Selick oft eine ganze Arbeitswoche akribischer Puppenfeinarbeit.",
-    "exp": "Über 100.000 einzelne Fotoaufnahmen"
+    "exp": "Für eine einzige Minute Film benötigte das Team unter Regisseur Henry Selick oft eine ganze Arbeitswoche akribischer Puppenfeinarbeit."
   },
   {
     "cat": "drama_anim",
@@ -597,7 +597,7 @@
       "Die Nürnberger Prozesse gegen die Hauptkriegsverbrecher"
     ],
     "explanation": "Spielberg verzichtete auf sein Regiehonorar ('Blutgeld') und schuf ein erschütterndes Mahnmal, in dem nur der rote Mantel eines Mädchens Farbe trug.",
-    "exp": "Rettung von über 1.100 Zwangsarbeitern durch Schindler"
+    "exp": "Spielberg verzichtete auf sein Regiehonorar ('Blutgeld') und schuf ein erschütterndes Mahnmal, in dem nur der rote Mantel eines Mädchens Farbe trug."
   },
   {
     "cat": "drama_anim",
@@ -610,7 +610,7 @@
       "Das synchronisierte Kauen von festen Nahrungsmitteln"
     ],
     "explanation": "Pixar entwickelte dafür die Spezialsoftware 'Fiz-T', die jedes einzelne Haar von Sulleys blauem Pelz auf Wind und Bewegung reagieren ließ.",
-    "exp": "Simulation von über 2,3 Millionen Fellhaaren"
+    "exp": "Pixar entwickelte dafür die Spezialsoftware 'Fiz-T', die jedes einzelne Haar von Sulleys blauem Pelz auf Wind und Bewegung reagieren ließ."
   },
   {
     "cat": "drama_anim",
@@ -623,7 +623,7 @@
       "The Host"
     ],
     "explanation": "Bong Joon-hos bitterböse Gesellschaftssatire über soziale Ungleichheit triumphierte sensationell bei den 92. Academy Awards.",
-    "exp": "Parasite"
+    "exp": "Bong Joon-hos bitterböse Gesellschaftssatire über soziale Ungleichheit triumphierte sensationell bei den 92. Academy Awards."
   },
   {
     "cat": "drama_anim",
@@ -636,7 +636,7 @@
       "Kollege Joe Pesci"
     ],
     "explanation": "Im Drehbuch von Paul Schrader stand lediglich: 'Travis betrachtet sich im Spiegel.' De Niro erfand den gesamten Monolog spontan am Set.",
-    "exp": "Robert De Niro"
+    "exp": "Im Drehbuch von Paul Schrader stand lediglich: 'Travis betrachtet sich im Spiegel.' De Niro erfand den gesamten Monolog spontan am Set."
   },
   {
     "cat": "drama_anim",
@@ -649,7 +649,7 @@
       "Illumination Entertainment"
     ],
     "explanation": "Der Film kombinierte 3D-CGI mit handgezeichneten Linien, Rasterpunkten und animierte Miles Morales anfangs absichtlich nur auf 12 Bildern/s (on twos).",
-    "exp": "Sony Pictures Animation"
+    "exp": "Der Film kombinierte 3D-CGI mit handgezeichneten Linien, Rasterpunkten und animierte Miles Morales anfangs absichtlich nur auf 12 Bildern/s (on twos)."
   },
   {
     "cat": "drama_anim",
@@ -662,7 +662,7 @@
       "Sie war die persönliche Lieblingsfrucht des Regisseurs"
     ],
     "explanation": "Ob Don Vito vor dem Attentat Orangen kauft oder vor seinem Tod im Garten eine Orangenschale im Mund trägt: Die Frucht ist der Bote des Todes.",
-    "exp": "Sie kündigt einen nahenden Tod oder Anschlag an"
+    "exp": "Ob Don Vito vor dem Attentat Orangen kauft oder vor seinem Tod im Garten eine Orangenschale im Mund trägt: Die Frucht ist der Bote des Todes."
   },
   {
     "cat": "drama_anim",
@@ -675,7 +675,7 @@
       "Er zeichnete nur die Hintergründe der Landschaftsszenen"
     ],
     "explanation": "Miyazaki ist berüchtigt dafür, fast jedes Key-Frame seiner Animatoren mit feinsten Strichen nachzubessern, um perfekte Mimik zu garantieren.",
-    "exp": "Zehntausende Schlüsselbilder mit dem Pinsel überarbeitet"
+    "exp": "Miyazaki ist berüchtigt dafür, fast jedes Key-Frame seiner Animatoren mit feinsten Strichen nachzubessern, um perfekte Mimik zu garantieren."
   },
   {
     "cat": "drama_anim",
@@ -688,7 +688,7 @@
       "Noah Baumbach"
     ],
     "explanation": "Linklater traf sich von 2002 bis 2013 jedes Jahr für wenige Drehtage mit Ellar Coltrane und Ethan Hawke, um das echte Altern einzufangen.",
-    "exp": "Richard Linklater"
+    "exp": "Linklater traf sich von 2002 bis 2013 jedes Jahr für wenige Drehtage mit Ellar Coltrane und Ethan Hawke, um das echte Altern einzufangen."
   },
   {
     "cat": "drama_anim",
@@ -701,7 +701,7 @@
       "Die Cel-Schicht-Technik"
     ],
     "explanation": "Mehrere Glasschichten mit gemalten Vordergründen, Figuren und Hintergründen wurden übereinandergelegt und in unterschiedlichem Tempo bewegt.",
-    "exp": "Die Multiplan-Kamera"
+    "exp": "Mehrere Glasschichten mit gemalten Vordergründen, Figuren und Hintergründen wurden übereinandergelegt und in unterschiedlichem Tempo bewegt."
   },
   {
     "cat": "drama_anim",
@@ -714,7 +714,7 @@
       "Farbkontraste bestimmen die Länge einzelner Einstellungen"
     ],
     "explanation": "Murchs 'Rule of Six' besagt: Stimmt das emotionale Gefühl im Schnittmoment, verzeiht der Zuschauer jeden noch so groben Anschlussfehler im Raum.",
-    "exp": "Emotion wiegt schwerer als Raumgeometrie und Bildrhythmus"
+    "exp": "Murchs 'Rule of Six' besagt: Stimmt das emotionale Gefühl im Schnittmoment, verzeiht der Zuschauer jeden noch so groben Anschlussfehler im Raum."
   },
   {
     "cat": "drama_anim",
@@ -727,7 +727,7 @@
       "Ein Tropensturm überflutete das Archiv mit den Tonbändern"
     ],
     "explanation": "Das Erdbeben im Januar 1994 legte das Hauptgebäude lahm; die Animatoren bauten provisorische Zeichentische in ihren Garagen und Wohnzimmern auf.",
-    "exp": "Das Northridge-Erdbeben zerstörte Teile der Studios"
+    "exp": "Das Erdbeben im Januar 1994 legte das Hauptgebäude lahm; die Animatoren bauten provisorische Zeichentische in ihren Garagen und Wohnzimmern auf."
   },
   {
     "cat": "drama_anim",
@@ -740,7 +740,7 @@
       "Mit 3D-Kameras in den unterirdischen Kellern inszeniert"
     ],
     "explanation": "Kameramann Tilman Büttner trug eine Steadicam samt digitaler Festplatte anderthalb Stunden am Stück an über 2.000 Schauspielern vorbei.",
-    "exp": "In einer einzigen 96-Minuten-Plansequenz gedreht"
+    "exp": "Kameramann Tilman Büttner trug eine Steadicam samt digitaler Festplatte anderthalb Stunden am Stück an über 2.000 Schauspielern vorbei."
   },
   {
     "cat": "craft_history",
@@ -753,7 +753,7 @@
       "48 Bilder pro Sekunde"
     ],
     "explanation": "24 fps erwiesen sich in den späten 1920ern als idealer Kompromiss zwischen flüssiger Bewegung, Tonqualität auf der Lichtspur und teurem Filmverbrauch.",
-    "exp": "24 Bilder pro Sekunde"
+    "exp": "24 fps erwiesen sich in den späten 1920ern als idealer Kompromiss zwischen flüssiger Bewegung, Tonqualität auf der Lichtspur und teurem Filmverbrauch."
   },
   {
     "cat": "craft_history",
@@ -766,7 +766,7 @@
       "Als rechtlicher Eigentumsnachweis der Filmproduktionsfirma"
     ],
     "explanation": "Das Zusammenschlagen des Holzschenkels erzeugt einen scharfen Knall auf der Tonspur und ein exakt sichtbares Schließ-Frame auf dem Film zur Synchronisation.",
-    "exp": "Zur optischen und akustischen Bild-Ton-Synchronisation"
+    "exp": "Das Zusammenschlagen des Holzschenkels erzeugt einen scharfen Knall auf der Tonspur und ein exakt sichtbares Schließ-Frame auf dem Film zur Synchronisation."
   },
   {
     "cat": "craft_history",
@@ -779,7 +779,7 @@
       "Eine improvisierte Dialogzeile, die zum geflügelten Wort wird"
     ],
     "explanation": "Ob geheime Dokumente, Geldkoffer oder Zauberringe: Der MacGuffin motiviert die Figuren, ist inhaltlich aber oft austauschbar.",
-    "exp": "Ein Objekt, das die Handlung treibt, für Zuschauer nebensächlich ist"
+    "exp": "Ob geheime Dokumente, Geldkoffer oder Zauberringe: Der MacGuffin motiviert die Figuren, ist inhaltlich aber oft austauschbar."
   },
   {
     "cat": "craft_history",
@@ -792,7 +792,7 @@
       "Barrandov Studios"
     ],
     "explanation": "In den legendären Cinecittà-Studios entstanden Meilensteine wie 'Ben Hur', 'La Dolce Vita' und unzählige Spaghetti-Western.",
-    "exp": "Cinecittà"
+    "exp": "In den legendären Cinecittà-Studios entstanden Meilensteine wie 'Ben Hur', 'La Dolce Vita' und unzählige Spaghetti-Western."
   },
   {
     "cat": "craft_history",
@@ -805,7 +805,7 @@
       "Aus Kostengründen zur Einsparung teurer Scheinwerfer"
     ],
     "explanation": "Die Linsen wurden ursprünglich für das Apollo-Mondprogramm der NASA gebaut. Kubrick ließ Spezialkameras umbauen, um bei Kerzenschein zu filmen.",
-    "exp": "Um Innenaufnahmen bei echtem flackerndem Kerzenlicht zu drehen"
+    "exp": "Die Linsen wurden ursprünglich für das Apollo-Mondprogramm der NASA gebaut. Kubrick ließ Spezialkameras umbauen, um bei Kerzenschein zu filmen."
   },
   {
     "cat": "craft_history",
@@ -818,7 +818,7 @@
       "Vittorio Storaro"
     ],
     "explanation": "Brown balancierte die Kamera über ein gefedertes Parallelogramm-Armsystem am Körper des Operateurs und revolutionierte Verfolgungsaufnahmen.",
-    "exp": "Garrett Brown"
+    "exp": "Brown balancierte die Kamera über ein gefedertes Parallelogramm-Armsystem am Körper des Operateurs und revolutionierte Verfolgungsaufnahmen."
   },
   {
     "cat": "craft_history",
@@ -831,7 +831,7 @@
       "Scheinwerfer dürfen nur im 180-Grad-Winkel zur Linse strahlen"
     ],
     "explanation": "Wird die Handlungsachse übersprungen, schauen plötzlich beide Gesprächspartner in dieselbe Richtung statt zueinander, was den Zuschauer verwirrt.",
-    "exp": "Kamera darf die Achse zwischen Personen nicht überspringen"
+    "exp": "Wird die Handlungsachse übersprungen, schauen plötzlich beide Gesprächspartner in dieselbe Richtung statt zueinander, was den Zuschauer verwirrt."
   },
   {
     "cat": "craft_history",
@@ -844,7 +844,7 @@
       "Das Howie-Kreischen"
     ],
     "explanation": "Ursprünglich aus dem Western 'Distant Drums' stammend, bauten Tonmeister wie Ben Burtt den Schrei in Star Wars, Indiana Jones und Herr der Ringe ein.",
-    "exp": "Der berühmte Wilhelmsschrei"
+    "exp": "Ursprünglich aus dem Western 'Distant Drums' stammend, bauten Tonmeister wie Ben Burtt den Schrei in Star Wars, Indiana Jones und Herr der Ringe ein."
   },
   {
     "cat": "craft_history",
@@ -857,7 +857,7 @@
       "Sie lassen Gesichter schlanker und jünger erscheinen"
     ],
     "explanation": "Anamorphe Linsen bündeln ein extrem breites Sichtfeld auf Standard-35mm-Film. Die charakteristischen horizontalen Flares prägen den echten Hollywood-Look.",
-    "exp": "Sie stauchen das Breitbild und erzeugen ovales Bokeh"
+    "exp": "Anamorphe Linsen bündeln ein extrem breites Sichtfeld auf Standard-35mm-Film. Die charakteristischen horizontalen Flares prägen den echten Hollywood-Look."
   },
   {
     "cat": "craft_history",
@@ -870,7 +870,7 @@
       "DEFA Filmstudios"
     ],
     "explanation": "In Babelsberg drehten Fritz Lang ('Metropolis') und Josef von Sternberg ('Der blaue Engel'); heute entstehen dort internationale Megaproduktionen.",
-    "exp": "Studio Babelsberg"
+    "exp": "In Babelsberg drehten Fritz Lang ('Metropolis') und Josef von Sternberg ('Der blaue Engel'); heute entstehen dort internationale Megaproduktionen."
   },
   {
     "cat": "craft_history",
@@ -883,7 +883,7 @@
       "Ruhige Klaviermusik beruhigt den Herzschlag der Kinobesucher"
     ],
     "explanation": "Lew Kuleschow bewies: Erst die Montage zweier aufeinanderfolgender Bilder erzeugt die eigentliche Bedeutung und Emotion im Kopf des Betrachters.",
-    "exp": "Zuschauer projizieren Emotionen in ausdruckslose Gesichter"
+    "exp": "Lew Kuleschow bewies: Erst die Montage zweier aufeinanderfolgender Bilder erzeugt die eigentliche Bedeutung und Emotion im Kopf des Betrachters."
   },
   {
     "cat": "craft_history",
@@ -896,7 +896,7 @@
       "Filmte Szenen ausschließlich aus der Froschperspektive von unten"
     ],
     "explanation": "Deep Focus erlaubte es den Schauspielern, sich frei im Raum zu bewegen, ohne dass der Fokus nachgeführt werden musste, was enorme Szenentiefe schuf.",
-    "exp": "Hielt Vordergrund und Hintergrund gleichzeitig gestochen scharf"
+    "exp": "Deep Focus erlaubte es den Schauspielern, sich frei im Raum zu bewegen, ohne dass der Fokus nachgeführt werden musste, was enorme Szenentiefe schuf."
   },
   {
     "cat": "craft_history",
@@ -909,7 +909,7 @@
       "Jedes Bild wurde von Hand mit Lupen koloriert"
     ],
     "explanation": "Die gigantische Technicolor-Kamera wog hunderte Kilo. Die drei Farbmatrizen wurden im Dye-Transfer-Verfahren mit Farbstoffen auf den Positivfilm geprägt.",
-    "exp": "Prisma belichtete drei Schwarzweiß-Streifen für RGB"
+    "exp": "Die gigantische Technicolor-Kamera wog hunderte Kilo. Die drei Farbmatrizen wurden im Dye-Transfer-Verfahren mit Farbstoffen auf den Positivfilm geprägt."
   },
   {
     "cat": "craft_history",
@@ -922,7 +922,7 @@
       "Verpflichtender Einsatz von computergenerierten Spezialeffekten"
     ],
     "explanation": "Das 'Keuschheitsgelübde' von Dogma 95 sollte das Kino von teuren Hollywood-Effekten und Illusionen reinigen und auf das pure Schauspiel zurückwerfen.",
-    "exp": "Originalschauplätze, Handkamera, Naturton und kein Genrefilm"
+    "exp": "Das 'Keuschheitsgelübde' von Dogma 95 sollte das Kino von teuren Hollywood-Effekten und Illusionen reinigen und auf das pure Schauspiel zurückwerfen."
   },
   {
     "cat": "craft_history",
@@ -935,7 +935,7 @@
       "Kamera fuhr synchron an riesigen Fototapeten vorbei"
     ],
     "explanation": "Das Schüfftan-Verfahren sparte gewaltige Baukosten: Riesige futuristische Wolkenkratzer existierten nur als tischgroße Modelle im Spiegel.",
-    "exp": "Spiegel spiegelte Miniaturen passgenau in die Kamera"
+    "exp": "Das Schüfftan-Verfahren sparte gewaltige Baukosten: Riesige futuristische Wolkenkratzer existierten nur als tischgroße Modelle im Spiegel."
   },
   {
     "cat": "craft_history",
@@ -948,7 +948,7 @@
       "Verwendung von Weitwinkellinsen bei Nahaufnahmen"
     ],
     "explanation": "Der Begriff leitet sich von 'Deutsch' (Expressionismus der Weimarer Republik) ab. Die schiefe Horizontlinie signalisiert, dass die Welt aus den Fugen ist.",
-    "exp": "Kippen der Kamera zur Signalisierung von Verwirrung"
+    "exp": "Der Begriff leitet sich von 'Deutsch' (Expressionismus der Weimarer Republik) ab. Die schiefe Horizontlinie signalisiert, dass die Welt aus den Fugen ist."
   },
   {
     "cat": "craft_history",
@@ -961,7 +961,7 @@
       "Filmmusik lenkt von unlogischen Wendungen im Drehbuch ab"
     ],
     "explanation": "Murch baute für Coppolas Kriegsepos ein revolutionäres 5.1-Surround-Klanggewebe auf, in dem Hubschraubergeräusche mit Insektensummen verschmolzen.",
-    "exp": "Atmosphäre wird unbewusst über vielschichtige Audio-Ebenen erlebt"
+    "exp": "Murch baute für Coppolas Kriegsepos ein revolutionäres 5.1-Surround-Klanggewebe auf, in dem Hubschraubergeräusche mit Insektensummen verschmolzen."
   },
   {
     "cat": "craft_history",
@@ -974,14 +974,18 @@
       "Darsteller blieben stehen, während Kulissenwände verschoben wurden"
     ],
     "explanation": "Scorsese durfte wegen fehlender Drehgenehmigung nicht durch den Haupteingang. Die Plansequenz durch die Küche wurde zum Inbegriff von Coolness und Luxus.",
-    "exp": "Steadicam folgte dem Paar ohne Schnitt durch Hinterküchen zum Tisch"
+    "exp": "Scorsese durfte wegen fehlender Drehgenehmigung nicht durch den Haupteingang. Die Plansequenz durch die Küche wurde zum Inbegriff von Coolness und Luxus."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("movies", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["movies"] = DATA;
+    window.ARCADE_QUIZ_BANKS['movies'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('movies', DATA);
+    }
   }
 })();
