@@ -268,6 +268,90 @@ function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void
   tex.refresh();
 }
 
+function drawNetworkLogoTexture(scene: Phaser.Scene, net: ChargerNetwork): void {
+  const key = `logo_${net}`;
+  if (scene.textures.exists(key)) return;
+  const tex = scene.textures.createCanvas(key, 28, 28);
+  if (!tex) return;
+  const ctx = tex.getContext();
+  ctx.imageSmoothingEnabled = false;
+
+  // Crisp rounded-pixel badge frame
+  const bgMap: Record<ChargerNetwork, string> = {
+    tesla: '#dc2626',
+    enbw: '#1d4ed8',
+    ewego: '#15803d',
+    electra: '#6d28d9',
+    ionity: '#0f172a',
+    ac_village: '#0f766e'
+  };
+
+  ctx.fillStyle = '#0f172a';
+  ctx.fillRect(1, 1, 26, 26);
+  ctx.fillStyle = bgMap[net];
+  ctx.fillRect(2, 2, 24, 24);
+  ctx.fillStyle = 'rgba(255,255,255,0.16)';
+  ctx.fillRect(2, 2, 24, 3);
+
+  if (net === 'tesla') {
+    // Crisp white Tesla "T" emblem
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 6, 16, 2);
+    ctx.fillRect(8, 9, 12, 2);
+    ctx.fillRect(12, 10, 4, 12);
+    ctx.fillRect(13, 21, 2, 2);
+  } else if (net === 'enbw') {
+    // Blue badge with orange/yellow lightning + E bar
+    ctx.fillStyle = '#f97316';
+    ctx.fillRect(4, 19, 20, 4);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(7, 6, 4, 11);
+    ctx.fillRect(7, 6, 10, 2);
+    ctx.fillRect(7, 10, 8, 2);
+    ctx.fillRect(7, 15, 10, 2);
+    ctx.fillStyle = '#facc15';
+    ctx.fillRect(19, 6, 3, 5);
+    ctx.fillRect(17, 10, 4, 3);
+    ctx.fillRect(18, 13, 3, 4);
+  } else if (net === 'ewego') {
+    // Green badge with bright yellow plug / EWE bars
+    ctx.fillStyle = '#facc15';
+    ctx.fillRect(6, 7, 16, 3);
+    ctx.fillRect(6, 12, 12, 3);
+    ctx.fillRect(6, 17, 16, 3);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(20, 11, 3, 6);
+  } else if (net === 'electra') {
+    // Purple badge with neon cyan stylized bolt/E
+    ctx.fillStyle = '#22d3ee';
+    ctx.fillRect(13, 5, 6, 3);
+    ctx.fillRect(10, 8, 6, 3);
+    ctx.fillRect(8, 11, 11, 3);
+    ctx.fillRect(12, 14, 6, 3);
+    ctx.fillRect(10, 17, 5, 5);
+  } else if (net === 'ionity') {
+    // Dark navy badge with magenta/cyan IONITY ring
+    ctx.fillStyle = '#ec4899';
+    ctx.fillRect(8, 5, 12, 3);
+    ctx.fillRect(8, 20, 12, 3);
+    ctx.fillRect(5, 8, 3, 12);
+    ctx.fillRect(20, 8, 3, 12);
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(12, 10, 4, 8);
+  } else {
+    // AC Village: white AC plug & green "AC" indicator
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(9, 6, 3, 5);
+    ctx.fillRect(16, 6, 3, 5);
+    ctx.fillRect(7, 11, 14, 7);
+    ctx.fillRect(12, 18, 4, 5);
+    ctx.fillStyle = '#4ade80';
+    ctx.fillRect(10, 13, 8, 3);
+  }
+
+  tex.refresh();
+}
+
 function drawLandmarkTexture(scene: Phaser.Scene, kind: LandmarkKind): void {
   const key = `landmark_${kind}`;
   if (scene.textures.exists(key)) return;
@@ -277,7 +361,6 @@ function drawLandmarkTexture(scene: Phaser.Scene, kind: LandmarkKind): void {
   ctx.imageSmoothingEnabled = false;
 
   if (kind === 'aachen_dom') {
-    // Octagon + tall Gothic choir + spire
     ctx.fillStyle = '#94a3b8';
     ctx.fillRect(6, 18, 20, 11);
     ctx.fillStyle = '#cbd5e1';
@@ -287,7 +370,6 @@ function drawLandmarkTexture(scene: Phaser.Scene, kind: LandmarkKind): void {
     ctx.fillStyle = '#facc15';
     ctx.fillRect(15, 1, 2, 2);
   } else if (kind === 'koeln_dom') {
-    // Twin spires!
     ctx.fillStyle = '#64748b';
     ctx.fillRect(6, 16, 20, 13);
     ctx.fillStyle = '#94a3b8';
@@ -297,7 +379,6 @@ function drawLandmarkTexture(scene: Phaser.Scene, kind: LandmarkKind): void {
     ctx.fillRect(10, 2, 1, 4);
     ctx.fillRect(21, 2, 1, 4);
   } else if (kind === 'hermesturm') {
-    // Hannover Messe tower
     ctx.fillStyle = '#e2e8f0';
     ctx.fillRect(14, 4, 4, 25);
     ctx.fillStyle = '#2563eb';
@@ -344,6 +425,52 @@ function drawLandmarkTexture(scene: Phaser.Scene, kind: LandmarkKind): void {
     ctx.fillRect(8, 17, 4, 6);
     ctx.fillRect(14, 17, 4, 6);
     ctx.fillRect(20, 17, 4, 6);
+  } else if (kind === 'frankfurt_skyline') {
+    ctx.fillStyle = '#475569';
+    ctx.fillRect(5, 14, 6, 15);
+    ctx.fillStyle = '#60a5fa';
+    ctx.fillRect(12, 5, 7, 24);
+    ctx.fillStyle = '#cbd5e1';
+    ctx.fillRect(15, 2, 1, 3);
+    ctx.fillStyle = '#64748b';
+    ctx.fillRect(20, 11, 7, 18);
+  } else if (kind === 'hamburger_michel') {
+    ctx.fillStyle = '#b45309';
+    ctx.fillRect(10, 16, 12, 13);
+    ctx.fillStyle = '#14b8a6';
+    ctx.fillRect(12, 7, 8, 9);
+    ctx.fillRect(15, 3, 2, 4);
+  } else if (kind === 'munich_frauenkirche') {
+    ctx.fillStyle = '#dc2626';
+    ctx.fillRect(7, 15, 18, 14);
+    ctx.fillStyle = '#15803d';
+    ctx.fillRect(9, 8, 4, 7);
+    ctx.fillRect(19, 8, 4, 7);
+    ctx.fillStyle = '#22c55e';
+    ctx.fillRect(10, 6, 2, 2);
+    ctx.fillRect(20, 6, 2, 2);
+  } else if (kind === 'atomium') {
+    ctx.fillStyle = '#94a3b8';
+    ctx.fillRect(14, 5, 4, 22);
+    ctx.fillRect(7, 14, 18, 3);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillRect(13, 4, 6, 5);
+    ctx.fillRect(6, 13, 5, 5);
+    ctx.fillRect(21, 13, 5, 5);
+    ctx.fillRect(13, 22, 6, 5);
+  } else if (kind === 'windmills_nl') {
+    ctx.fillStyle = '#92400e';
+    ctx.fillRect(12, 14, 8, 15);
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(15, 4, 2, 16);
+    ctx.fillRect(8, 11, 16, 2);
+  } else if (kind === 'big_ben') {
+    ctx.fillStyle = '#d97706';
+    ctx.fillRect(12, 7, 8, 22);
+    ctx.fillStyle = '#fef08a';
+    ctx.fillRect(13, 10, 6, 5);
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(14, 2, 4, 5);
   } else {
     // highlands castle
     ctx.fillStyle = '#64748b';
@@ -469,6 +596,7 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
 
   (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'] as ChargerNetwork[]).forEach(net => {
     drawChargerStallTexture(scene, net);
+    drawNetworkLogoTexture(scene, net);
   });
 
   (
@@ -482,7 +610,13 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
       'ferry',
       'nordkapp',
       'highlands',
-      'colosseum'
+      'colosseum',
+      'frankfurt_skyline',
+      'hamburger_michel',
+      'munich_frauenkirche',
+      'atomium',
+      'windmills_nl',
+      'big_ben'
     ] as LandmarkKind[]
   ).forEach(lm => drawLandmarkTexture(scene, lm));
 
