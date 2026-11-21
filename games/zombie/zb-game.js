@@ -309,7 +309,7 @@ function fireVolley() {
     : (spreadLevel === 2 ? [-0.85, 0, 0.85] : [-1.55, -0.78, 0, 0.78, 1.55]);
   const volleyMult = spreadLevel === 1 ? 1.0 : (spreadLevel === 2 ? 1.35 : 1.70);
   const pelletDmg = (dmgPerBullet * volleyMult) / spreadAngles.length;
-  const span = Math.min(0.18, (streams - 1) * 0.038);
+  const span = Math.min(0.24, (streams - 1) * 0.044);
   for (let i = 0; i < streams; i++) {
     const uOff = streams === 1 ? 0 : -span + (2 * span * i) / (streams - 1);
     for (const du of spreadAngles) {
@@ -366,7 +366,7 @@ function step(dt) {
   const moveSpd = 1.45;
   if (keys.left) targetU -= moveSpd * dt;
   if (keys.right) targetU += moveSpd * dt;
-  targetU = Math.max(-0.82, Math.min(0.82, targetU));
+  targetU = Math.max(-0.78, Math.min(0.78, targetU));
 
   // Smooth, damped lateral motion (prevents instant teleporting across the bridge)
   const maxLateralSpeed = 1.85;
@@ -596,7 +596,7 @@ let dragStartU = 0;
 function updateDragU(clientX) {
   const r = stage.getBoundingClientRect();
   const deltaRel = (clientX - dragStartX) / Math.max(1, r.width);
-  targetU = Math.max(-0.82, Math.min(0.82, dragStartU + deltaRel * 2.1));
+  targetU = Math.max(-0.78, Math.min(0.78, dragStartU + deltaRel * 2.1));
 }
 
 stage.addEventListener('pointerdown', (e) => {
