@@ -229,6 +229,89 @@
       color: #ffe9b3;
     }
 
+    .hud-zoom-group {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 9px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255, 255, 255, 0.06);
+      overflow: hidden;
+    }
+
+    .hud-zoom-btn {
+      border: 0;
+      background: transparent;
+      color: #f5f7f4;
+      font-family: var(--font-ui);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 8px;
+      cursor: pointer;
+      line-height: 1.1;
+      transition: background 0.15s ease;
+    }
+
+    .hud-zoom-btn:hover:not(:disabled) {
+      background: rgba(222, 194, 128, 0.22);
+    }
+
+    .hud-zoom-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+
+    .hud-zoom-val {
+      font-size: 11px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: #dce3dd;
+      padding: 0 4px;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .hud-btn.fs-btn {
+      background: rgba(34, 139, 98, 0.28);
+      border-color: rgba(102, 224, 173, 0.42);
+      color: #dcffef;
+    }
+
+    .hud-btn.fs-btn:hover:not(:disabled) {
+      background: rgba(34, 139, 98, 0.44);
+      border-color: rgba(102, 224, 173, 0.72);
+    }
+
+    /* Fullscreen Mode: hide outer site header & maximize 3D tabletop */
+    body.sol3d-is-fs,
+    body.sol3d-pseudo-fs {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      max-height: 100dvh;
+      z-index: 9999;
+      background: #06130e;
+    }
+
+    body.sol3d-is-fs .arcade-topbar,
+    body.sol3d-pseudo-fs .arcade-topbar {
+      display: none !important;
+    }
+
+    body.sol3d-is-fs .sol3d-hud-wrap,
+    body.sol3d-pseudo-fs .sol3d-hud-wrap {
+      padding: 2px 6px;
+    }
+
+    body.sol3d-is-fs .sol3d-hud,
+    body.sol3d-pseudo-fs .sol3d-hud {
+      width: 100%;
+      padding: 3px 8px;
+      border-radius: 8px;
+      gap: 4px 6px;
+    }
+
     /* Settings & New Game Popover */
     .sol3d-popover {
       position: absolute;
@@ -443,7 +526,13 @@
         <button type="button" id="btn-undo" class="hud-btn" title="Letzten Zug rückgängig (Strg+Z)">↩️ Zurück</button>
         <button type="button" id="btn-hint" class="hud-btn" title="Sinnvollen Zug anzeigen (H)">💡 Tipp</button>
         <button type="button" id="btn-deal" class="hud-btn" title="10 Karten aus dem Stock austeilen (D / Leertaste)">🃏 Geben <span class="draw-badge" id="hud-deal-badge">5</span></button>
+        <div class="hud-zoom-group" title="Kamera-Zoom anpassen (+ / -)">
+          <button type="button" id="btn-zoom-out" class="hud-zoom-btn" aria-label="Herauszoomen">−</button>
+          <span id="hud-zoom-val" class="hud-zoom-val">100%</span>
+          <button type="button" id="btn-zoom-in" class="hud-zoom-btn" aria-label="Heranzoomen">+</button>
+        </div>
         <button type="button" id="btn-cam" class="hud-btn" title="Kamerawinkel wechseln">📐 3D</button>
+        <button type="button" id="btn-fullscreen" class="hud-btn fs-btn" title="Vollbild ein/aus (F)">⛶ Vollbild</button>
         <button type="button" id="btn-menu" class="hud-btn" title="Neues Spiel &amp; Regeln">⚙️ Spiel</button>
       </div>
     </div>
