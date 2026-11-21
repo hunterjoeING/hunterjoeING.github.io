@@ -9,7 +9,7 @@ import {
 } from '../types';
 import { getVehicleById } from '../data/vehicles';
 import { estimateChargeSession, getChargingPowerKw } from '../sim/EnergyModel';
-import { findNearestAvailableCharger } from '../sim/RoutePlanner';
+import { findNearestAvailableCharger, predictLiveTripSoc } from '../sim/RoutePlanner';
 import { SoundFX } from '../phaser/SoundFX';
 
 export class EventModal {
@@ -98,6 +98,7 @@ export class EventModal {
     let routeFeedback = '';
     const nearest = findNearestAvailableCharger(
       level,
+      run.plan,
       run.currentLegIndex,
       0.2,
       [...run.completedStopIds, ...run.plan.plannedStops.map(s => s.chargerId)]
@@ -105,6 +106,7 @@ export class EventModal {
 
     const render = () => {
       const stressColor = run.stress > 65 ? '#ef4444' : run.stress > 40 ? '#f59e0b' : '#22c55e';
+      const pred = predictLiveTripSoc(level, run);
       this.modalEl.classList.remove('hidden');
       this.modalEl.innerHTML = `
         <div class="er-modal-card wife-card">
@@ -125,7 +127,7 @@ export class EventModal {
           <div class="wife-map-eval">
             <div class="wme-head">
               <strong>🗺️ Alternativen live prüfen (während des Gesprächs)</strong>
-              <span>Aktuell: ${Math.round(run.socPct)}% SoC · ${run.currentSpeedKmh} km/h</span>
+              <span>Aktuell: ${Math.round(run.socPct)}% SoC · Ankunft ${pred.nextStopName}: <b>${pred.predictedArrivalNextSocPct}%</b> · ${run.currentSpeedKmh} km/h</span>
             </div>
             <div class="wme-actions">
               ${
@@ -252,17 +254,19 @@ export class EventModal {
 
   public showChargingSession(
     station: ChargerStation,
+    level: LevelConfig,
     run: RunState,
     targetSocPct: number,
     onComplete: (addedKwh: number, minutesSpent: number, costEur: number, newSoc: number) => void
   ): void {
     const vehicle = getVehicleById(run.plan.vehicleId);
     const startSoc = Math.max(2, Math.round(run.socPct));
+    let activeTarget = Math.min(100, Math.max(startSoc + 10, targetSocPct));
     const est = estimateChargeSession(
       vehicle,
       station,
       startSoc,
-      Math.max(startSoc + 10, targetSocPct),
+      activeTarget,
       run.plan.subscriptionIds
     );
 
@@ -274,9 +278,48 @@ export class EventModal {
 
     SoundFX.plugIn();
 
+    const startTicker = () => {
+      if (this.chargeTimer !== null) return;
+      this.chargeTimer = window.setInterval(() => {
+        if (currentSoc >= activeTarget) {
+          finished = true;
+          SoundFX.chargeDone();
+          if (this.chargeTimer !== null) {
+            window.clearInterval(this.chargeTimer);
+            this.chargeTimer = null;
+          }
+          renderCharge();
+          return;
+        }
+
+        const stepSoc = 2.5;
+        const nextSoc = Math.min(activeTarget, currentSoc + stepSoc);
+        const dSoc = nextSoc - currentSoc;
+        const midSoc = (currentSoc + nextSoc) / 2;
+        const kw = getChargingPowerKw(vehicle, station, midSoc);
+        const kwhStep = (vehicle.batteryKwh * dSoc) / 100;
+        const billedKwh = kwhStep * 1.04;
+        addedKwh += billedKwh;
+        costEur += billedKwh * est.tariff.pricePerKwh;
+        elapsedMin += (kwhStep / kw) * 60;
+        currentSoc = nextSoc;
+        renderCharge();
+      }, 170);
+    };
+
     const renderCharge = () => {
       const kwNow = Math.round(getChargingPowerKw(vehicle, station, currentSoc));
       const pctProgress = Math.min(100, Math.round(currentSoc));
+      const livePred = predictLiveTripSoc(level, run, {
+        overrideSocPct: currentSoc,
+        skipStationId: station.id
+      });
+      const predClass =
+        livePred.predictedArrivalNextSocPct <= 5
+          ? 'danger'
+          : livePred.predictedArrivalNextSocPct < 15
+            ? 'warn'
+            : 'ok';
 
       // Build charging curve SVG with active live marker
       const w = 260;
@@ -306,7 +349,19 @@ export class EventModal {
 
           <div class="charge-soc-bar-wrap">
             <div class="charge-soc-bar" style="width:${pctProgress}%"></div>
-            <span class="charge-soc-label">${pctProgress}% SoC (Ziel ${targetSocPct}%)</span>
+            <span class="charge-soc-label">${pctProgress}% SoC (Ziel ${activeTarget}%)</span>
+          </div>
+
+          <div class="charge-arrival-pred ${predClass}">
+            <div>
+              <span class="cap-kicker">🎯 Prognose bei Abstecken jetzt (${pctProgress}% SoC):</span>
+              <strong>Ankunft ${livePred.nextStopName} (${livePred.distanceToNextKm} km): ${livePred.predictedArrivalNextSocPct}% SoC</strong>
+            </div>
+            ${
+              livePred.nextStopKind !== 'destination'
+                ? `<div class="cap-final">🏁 Ziel-Prognose: <strong>${livePred.predictedFinalSocPct}%</strong></div>`
+                : ''
+            }
           </div>
 
           <div class="charge-curve-box">
@@ -321,7 +376,11 @@ export class EventModal {
           <div class="charge-stats-grid">
             <div><span>Geladen</span><strong>+${addedKwh.toFixed(1)} kWh</strong></div>
             <div><span>Ladezeit</span><strong>${Math.round(elapsedMin)} Min</strong></div>
-            <div><span>Tarif</span><strong>${est.tariff.pricePerKwh.toFixed(2)} €/kWh</strong></div>
+            <div>
+              <span>Tarif</span>
+              <strong>${est.tariff.pricePerKwh.toFixed(2)} €/kWh</strong>
+              ${est.tariff.hasSubscriptionDiscount ? `<small style="opacity:0.7;text-decoration:line-through">${est.tariff.pricePerKwhWithoutSub.toFixed(2)} €</small>` : ''}
+            </div>
             <div><span>Kosten</span><strong>${costEur.toFixed(2)} €</strong></div>
           </div>
 
@@ -331,11 +390,26 @@ export class EventModal {
               : `<div class="charge-tarif-note">Abgerechnet über: <b>${est.tariff.usedSubscriptionName}</b></div>`
           }
 
-          <button type="button" class="er-primary-btn" id="btn-unplug">
-            ${finished ? '🔌 Ladevorgang komplett – Weiterfahren!' : '🔌 Jetzt abstecken & weiterfahren'}
-          </button>
+          <div class="charge-btn-row">
+            ${
+              activeTarget < 100
+                ? `<button type="button" class="er-mini-btn" id="btn-charge-more">+10 % Ziel (${Math.min(100, activeTarget + 10)}%)</button>`
+                : ''
+            }
+            <button type="button" class="er-primary-btn" id="btn-unplug">
+              ${finished ? '🔌 Ladevorgang komplett – Weiterfahren!' : '🔌 Jetzt abstecken & weiterfahren'}
+            </button>
+          </div>
         </div>
       `;
+
+      this.modalEl.querySelector('#btn-charge-more')?.addEventListener('click', () => {
+        SoundFX.click();
+        activeTarget = Math.min(100, activeTarget + 10);
+        finished = false;
+        renderCharge();
+        startTicker();
+      });
 
       this.modalEl.querySelector('#btn-unplug')?.addEventListener('click', () => {
         SoundFX.click();
@@ -345,32 +419,7 @@ export class EventModal {
     };
 
     renderCharge();
-
-    this.chargeTimer = window.setInterval(() => {
-      if (currentSoc >= targetSocPct) {
-        finished = true;
-        SoundFX.chargeDone();
-        if (this.chargeTimer !== null) {
-          window.clearInterval(this.chargeTimer);
-          this.chargeTimer = null;
-        }
-        renderCharge();
-        return;
-      }
-
-      const stepSoc = 2.5;
-      const nextSoc = Math.min(targetSocPct, currentSoc + stepSoc);
-      const dSoc = nextSoc - currentSoc;
-      const midSoc = (currentSoc + nextSoc) / 2;
-      const kw = getChargingPowerKw(vehicle, station, midSoc);
-      const kwhStep = (vehicle.batteryKwh * dSoc) / 100;
-      const billedKwh = kwhStep * 1.04;
-      addedKwh += billedKwh;
-      costEur += billedKwh * est.tariff.pricePerKwh;
-      elapsedMin += (kwhStep / kw) * 60;
-      currentSoc = nextSoc;
-      renderCharge();
-    }, 170);
+    startTicker();
   }
 
   public showMapPeek(summaryHtml: string, onClose: () => void): void {
