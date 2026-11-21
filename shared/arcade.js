@@ -189,6 +189,13 @@
     { id: 'quiz_af_teams', title: 'American Football: Teams, Stadien & Fankultur', icon: '🏟️', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_af_legends', title: 'American Football: Legenden, Draft & Rekorde', icon: '⭐', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_af_packers', title: 'American Football: Green Bay Packers Special', icon: '🧀', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_f1', title: 'Formel 1 – Legenden, Technik & Königsklasse', icon: '🏎️', lowerIsBetter: false },
+    { id: 'quiz_f1_mix', title: 'Formel 1: Komplett-Mix', icon: '🏎️', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_f1_legenden', title: 'Formel 1: Weltmeister & Rivalitäten', icon: '👑', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_f1_technik', title: 'Formel 1: Technik & Aerodynamik', icon: '⚙️', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_f1_strecken', title: 'Formel 1: Legendäre Strecken', icon: '🏁', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_f1_regeln', title: 'Formel 1: Regeln & Boxenstopps', icon: '📋', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_f1_teams', title: 'Formel 1: Teams & Geschichte', icon: '🏛️', lowerIsBetter: false, unlisted: true },
     { id: 'quiz', title: 'Quiz Arena: Klassik', icon: '❓', lowerIsBetter: false }
   ];
 
@@ -239,6 +246,7 @@
       if (p.includes('/games/quiz-torten')) return 'quiz_torten';
       if (p.includes('/games/quiz-fussball')) return 'quiz_fussball';
       if (p.includes('/games/quiz-american-football')) return 'quiz_american_football';
+      if (p.includes('/games/quiz-f1')) return 'quiz_f1';
       if (p.includes('/games/quiz')) return 'quiz';
       if (p.includes('/games/minesweeper-3d-prompt-test')) return 'minesweeper_3d_prompt_test';
       if (p.includes('/games/minesweeper')) return 'minesweeper';
@@ -858,6 +866,7 @@
     { id: 'quiz_torten', title: 'Torten Quiz · Klassiker & Patisserie', icon: '🎂' },
     { id: 'quiz_fussball', title: 'Fußball – Das große Quiz', icon: '⚽' },
     { id: 'quiz_american_football', title: 'American Football – Das große NFL-Quiz', icon: '🏈' },
+    { id: 'quiz_f1', title: 'Formel 1 – Legenden, Technik & Königsklasse', icon: '🏎️' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
     { id: 'quiz_egypt', title: 'Ägyptische Geschichte Quiz', icon: '🏺' },
     { id: 'quiz_diving', title: 'Tauchen & Scuba Diving Quiz', icon: '🤿' },
