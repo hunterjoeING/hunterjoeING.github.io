@@ -43,7 +43,6 @@ let floaters = [];
 
 const keys = { left: false, right: false };
 let pointerActive = false;
-let stickAxis = 0; // -1 .. +1 from touch virtual stick
 
 function spawnBurst(u, z, color, count = 8, spread = 0.08, big = false) {
   fx.push({
@@ -79,7 +78,6 @@ function startGame() {
   keys.left = false;
   keys.right = false;
   pointerActive = false;
-  stickAxis = 0;
   running = true;
   gameOver = false;
   playerU = 0;
@@ -368,7 +366,6 @@ function step(dt) {
   const moveSpd = 1.45;
   if (keys.left) targetU -= moveSpd * dt;
   if (keys.right) targetU += moveSpd * dt;
-  if (Math.abs(stickAxis) > 0.04) targetU += stickAxis * moveSpd * 1.12 * dt;
   targetU = Math.max(-0.82, Math.min(0.82, targetU));
   playerU += (targetU - playerU) * Math.min(1, dt * 18);
 
@@ -594,7 +591,7 @@ function pointerToU(clientX) {
 }
 
 stage.addEventListener('pointerdown', (e) => {
-  if (!running || e.target.closest('#zb-stick-wrap, .zb-cam-btn, #overlay')) return;
+  if (!running || e.target.closest('.zb-cam-btn, #overlay')) return;
   pointerActive = true;
   pointerToU(e.clientX);
 });
@@ -603,39 +600,6 @@ stage.addEventListener('pointermove', (e) => {
 });
 window.addEventListener('pointerup', () => { pointerActive = false; });
 window.addEventListener('pointercancel', () => { pointerActive = false; });
-
-// Responsive Touch Virtual Steering Stick
-const stickWrap = document.getElementById('zb-stick-wrap');
-const stickKnob = document.getElementById('zb-stick-knob');
-if (stickWrap && stickKnob) {
-  let stickPtrId = null;
-  const updateStick = (clientX) => {
-    const r = stickWrap.getBoundingClientRect();
-    const maxR = Math.max(24, (r.width - 36) * 0.5);
-    const dx = Math.max(-maxR, Math.min(maxR, clientX - (r.left + r.width * 0.5)));
-    stickAxis = dx / maxR;
-    stickKnob.style.transform = `translate3d(${dx.toFixed(1)}px, 0, 0)`;
-  };
-  const resetStick = () => {
-    stickPtrId = null;
-    stickAxis = 0;
-    stickKnob.style.transform = 'translate3d(0, 0, 0)';
-  };
-  stickWrap.addEventListener('pointerdown', (e) => {
-    if (!running) return;
-    e.stopPropagation();
-    stickPtrId = e.pointerId;
-    if (stickWrap.setPointerCapture) stickWrap.setPointerCapture(e.pointerId);
-    updateStick(e.clientX);
-  });
-  stickWrap.addEventListener('pointermove', (e) => {
-    if (stickPtrId === e.pointerId && running) updateStick(e.clientX);
-  });
-  stickWrap.addEventListener('pointerup', (e) => {
-    if (stickPtrId === e.pointerId) resetStick();
-  });
-  stickWrap.addEventListener('pointercancel', resetStick);
-}
 
 window.addEventListener('keydown', (e) => {
   const ae = document.activeElement;
@@ -655,8 +619,6 @@ window.addEventListener('blur', () => {
   keys.left = false;
   keys.right = false;
   pointerActive = false;
-  stickAxis = 0;
-  if (stickKnob) stickKnob.style.transform = 'translate3d(0, 0, 0)';
 });
 
 window.addEventListener('resize', () => zbScene.resize());
