@@ -1,4 +1,4 @@
-// Unified quiz bank for "politics" (75 questions: Politik & Ökonomie)
+// Auto-generated unified quiz bank for "politics" (75 questions)
 (function () {
   const DATA = [
   {
@@ -7,12 +7,12 @@
     "q": "Was schafft laut Roland Baader und der klassischen Schule nachhaltig gesellschaftlichen Wohlstand?",
     "a": [
       "Ersparnisse, Innovation und produktive Kapitalbildung im Wettbewerb",
-      "Stetig steigende staatliche Umverteilung und höhere Steuerquoten",
-      "Das ungebremste Drucken von ungedecktem Fiat-Papiergeld durch Zentralbanken",
-      "Umfassende staatliche Preisfestlegungen für alle Konsumgüter"
+      "Stetig steigende staatliche Umverteilung und hohe Steuerquoten",
+      "Das ungebremste Drucken von ungedecktem Papiergeld durch Notenbanken",
+      "Umfassende staatliche Preisfestlegungen für wichtige Konsumgüter"
     ],
     "explanation": "Nach Baader entsteht Wohlstand durch Sparen, Investitionen in Werkzeuge und Wertschöpfung am freien Markt – nicht durch staatliche Geldschöpfung.",
-    "exp": "Nach Baader entsteht Wohlstand durch Sparen, Investitionen in Werkzeuge und Wertschöpfung am freien Markt – nicht durch staatliche Geldschöpfung."
+    "exp": "Ersparnisse, Innovation und produktive Kapitalbildung im Wettbewerb"
   },
   {
     "cat": "baader",
@@ -25,7 +25,7 @@
       "Staatskollektivismus"
     ],
     "explanation": "In 'Geldsozialismus' kritisierte Baader das staatliche Geldmonopol als Kernursache für inflationäre Zyklen und die Entwertung der Ersparnisse.",
-    "exp": "In 'Geldsozialismus' kritisierte Baader das staatliche Geldmonopol als Kernursache für inflationäre Zyklen und die Entwertung der Ersparnisse."
+    "exp": "Geldsozialismus"
   },
   {
     "cat": "baader",
@@ -33,12 +33,12 @@
     "q": "Welcher weltberühmte Wirtschaftsnobelpreisträger und Freiburger Ökonom war der akademische Lehrer von Roland Baader?",
     "a": [
       "Friedrich August von Hayek",
-      "John Maynard Keynes",
-      "Paul Samuelson",
-      "Milton Friedman"
+      "John Maynard Keynes aus Cambridge",
+      "Paul Anthony Samuelson",
+      "Milton Charles Friedman"
     ],
     "explanation": "Baader studierte Volkswirtschaftslehre an der Universität Freiburg als direkter akademischer Schüler von F. A. von Hayek.",
-    "exp": "Baader studierte Volkswirtschaftslehre an der Universität Freiburg als direkter akademischer Schüler von F. A. von Hayek."
+    "exp": "Friedrich August von Hayek"
   },
   {
     "cat": "baader",
@@ -47,11 +47,11 @@
     "a": [
       "Den Irrglauben, dass der Staat Wohlstand aus dem Nichts verschenken könne",
       "Die Annahme, dass private Versicherungen jede Lebenskrise lösen können",
-      "Die Vorstellung, dass Sparguthaben automatisch von Zinsen leben",
-      "Die Idee, dass Maschinen die menschliche Arbeit komplett ersetzen"
+      "Die Vorstellung, dass Sparguthaben automatisch von Zinsen leben können",
+      "Die Idee, dass Maschinen die menschliche Arbeit vollständig ersetzen"
     ],
     "explanation": "Der Staat kann den Bürgern nur das geben, was er ihnen zuvor durch Steuern, Abgaben oder Inflation entzogen hat.",
-    "exp": "Der Staat kann den Bürgern nur das geben, was er ihnen zuvor durch Steuern, Abgaben oder Inflation entzogen hat."
+    "exp": "Den Irrglauben, dass der Staat Wohlstand aus dem Nichts verschenken könne"
   },
   {
     "cat": "baader",
@@ -59,929 +59,929 @@
     "q": "Welches fundamentale Recht sah Roland Baader als das unverzichtbare Fundament aller bürgerlichen Freiheiten an?",
     "a": [
       "Das uneingeschränkte Recht auf Privateigentum",
-      "Das Recht auf staatliche Mindestpreise",
-      "Das Vorrecht auf subventionierte Wohnungen",
-      "Das Privileg auf gebührenfreie Universitäten"
+      "Das Recht auf staatlich garantierte Mindestpreise",
+      "Das Vorrecht auf subventionierte Mietwohnungen",
+      "Das Privileg auf gebührenfreie Staatsuniversitäten"
     ],
     "explanation": "Ohne geschütztes Privateigentum an den eigenen Arbeitsmitteln und Erträgen verliert der Einzelne seine wirtschaftliche und persönliche Unabhängigkeit.",
-    "exp": "Ohne geschütztes Privateigentum an den eigenen Arbeitsmitteln und Erträgen verliert der Einzelne seine wirtschaftliche und persönliche Unabhängigkeit."
+    "exp": "Das uneingeschränkte Recht auf Privateigentum"
   },
   {
     "cat": "baader",
     "diff": "easy",
     "q": "Wie bezeichnete Roland Baader in seinem Buch 'Kreide für den Wolf' die Rhetorik moderner Umverteilungspolitik?",
     "a": [
-      "Als moralisch getarnte Ausweitung staatlicher Macht auf Kosten der Bürger",
-      "Als wissenschaftlich bewiesenes Naturgesetz für ewigen Frieden",
-      "Als unvermeidliche Konsequenz des weltweiten Goldstandards",
-      "Als reine Satire ohne jeden Einfluss auf reale Gesetze"
+      "Als getarnte Enteignung und schleichende Vermögenssteuer",
+      "Als notwendiges Instrument zur Steigerung der Kaufkraft",
+      "Als wirksames Mittel zur dauerhaften Schuldentilgung",
+      "Als gerechte Maßnahme zur Umverteilung von Reichtum"
     ],
     "explanation": "Mit Anleihen an das Märchen vom Wolf warnt Baader davor, dass wohlklingende Versprechen von Gerechtigkeit oft zur Entrechtung führen.",
-    "exp": "Mit Anleihen an das Märchen vom Wolf warnt Baader davor, dass wohlklingende Versprechen von Gerechtigkeit oft zur Entrechtung führen."
+    "exp": "Als getarnte Enteignung und schleichende Vermögenssteuer"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "Warum führt eine permanente Papiergeldvermehrung laut Baader unausweichlich zu einer 'schleichenden Enteignung'?",
     "a": [
-      "Weil zusätzliches Geld ohne Güterzuwachs die Kaufkraft jeder existierenden Währungseinheit mindert",
-      "Weil Banknoten nach fünf Jahren automatisch ihre gesetzliche Gültigkeit verlieren",
-      "Weil die Bürger ihr Geld aus Angst vor Entwertung im Ausland verbrennen",
-      "Weil der Staat jede neu gedruckte Banknote mit einer Sondersteuer belegt"
+      "Ludwig von Mises",
+      "Karl Marx",
+      "John Kenneth Galbraith",
+      "Thomas Piketty"
     ],
     "explanation": "Inflation wirkt wie eine verdeckte Steuer: Sparer verlieren unbemerkt Kaufkraft, während Erstempfänger des neuen Geldes profitieren.",
-    "exp": "Inflation wirkt wie eine verdeckte Steuer: Sparer verlieren unbemerkt Kaufkraft, während Erstempfänger des neuen Geldes profitieren."
+    "exp": "Ludwig von Mises"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "Was kritisierte Baader an der modernen Staatsverschuldung aus ethischer und generationenübergreifender Sicht?",
     "a": [
-      "Sie verlagert heutige Konsumausgaben als Zins- und Steuerlasten auf künftige Generationen",
-      "Sie zwingt Banken dazu, ausschließlich ausländische Goldbarren zu lagern",
-      "Sie senkt die Gehälter von Politikern und Beamten auf gesetzliche Minima",
-      "Sie verbietet privaten Unternehmen die Aufnahme von Krediten im Inland"
+      "Weil zentrale Planer das dezentrale Wissen unmöglich bündeln können",
+      "Weil es an leistungsfähigen Großrechnern für die Planung fehlte",
+      "Weil die Arbeiterklasse zu wenig ökonomisch geschult war",
+      "Weil die Rohstoffvorkommen in sozialistischen Ländern zu gering waren"
     ],
     "explanation": "Schuldenfinanzierte Staatsausgaben werden von Generationen konsumiert, die noch gar nicht geboren sind, aber die Schuldenlast tilgen müssen.",
-    "exp": "Schuldenfinanzierte Staatsausgaben werden von Generationen konsumiert, die noch gar nicht geboren sind, aber die Schuldenlast tilgen müssen."
+    "exp": "Weil zentrale Planer das dezentrale Wissen unmöglich bündeln können"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "Welche Haltung vertrat Roland Baader gegenüber zentral gesteuerten Mindestlöhnen?",
     "a": [
-      "Er sah darin ein Einstiegshindernis für Geringqualifizierte und eine Ursache für Arbeitslosigkeit",
-      "Er forderte deren monatliche Verdoppelung durch ein Bundesarbeitsamt",
-      "Er hielt sie für die beste Methode zur Bekämpfung von Inflation",
-      "Er empfahl Mindestlöhne ausschließlich für Staatsbedienstete"
+      "Der Weg zur Knechtschaft",
+      "Das Kapital im 21. Jahrhundert",
+      "Die allgemeine Theorie der Beschäftigung",
+      "Wohlstand für alle Bürger"
     ],
     "explanation": "Liegt der staatliche Mindestlohn über der Produktivität eines Bewerbers, wird die Stelle nicht geschaffen – der Betroffene bleibt arbeitslos.",
-    "exp": "Liegt der staatliche Mindestlohn über der Produktivität eines Bewerbers, wird die Stelle nicht geschaffen – der Betroffene bleibt arbeitslos."
+    "exp": "Der Weg zur Knechtschaft"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "In welchem seiner Werke setzte sich Baader intensiv mit den philosophischen Irrtümern des Kollektivismus auseinander?",
     "a": [
-      "Totgedacht – Warum der Geist des Sozialismus weiterlebt",
-      "Der Weg zur Vollbeschäftigung",
-      "Kaufkraft für alle Zeiten",
-      "Das staatliche Paradies"
+      "Als Entdeckungsverfahren für neues Wissen und Lösungen",
+      "Als schädlichen Krieg aller gegen alle um knappe Ressourcen",
+      "Als Ursache für Marktversagen und Monopolbildungen",
+      "Als Übergangsphase zu einer staatlich gelenkten Planwirtschaft"
     ],
     "explanation": "In 'Totgedacht' analysiert Baader, warum staatsgläubige Denkmuster trotz des Scheiterns der Planwirtschaften in den Köpfen weiterwirken.",
-    "exp": "In 'Totgedacht' analysiert Baader, warum staatsgläubige Denkmuster trotz des Scheiterns der Planwirtschaften in den Köpfen weiterwirken."
+    "exp": "Als Entdeckungsverfahren für neues Wissen und Lösungen"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "Was meinte Baader mit dem Aphorismus 'Freiheit stirbt immer zentimeterweise'?",
     "a": [
-      "Dass Freiheitsverluste schleichend durch immer neue bürokratische Regulierungen erfolgen",
-      "Dass Grundgesetze alle 100 Jahre um wenige Zentimeter gekürzt werden",
-      "Dass Grenzpfähle zwischen Nationen jedes Jahr verschoben werden",
-      "Dass Gefängniszellen im Lauf der Zeit schrittweise verkleinert werden"
+      "Künstlich niedrige Notenbankzinsen erzeugen Fehlinvestitionen",
+      "Ungleichheit bei Einkommen und Vermögen dämpft den Massenkonsum",
+      "Mangelnde staatliche Regulierung der Finanzmärkte führt zu Krisen",
+      "Übermäßige Sparquoten der Privathaushalte schwächen die Nachfrage"
     ],
     "explanation": "Kaum jemand würde einer plötzlichen Diktatur zustimmen; doch schrittweise Verbote und Überwachungsgesetze gewöhnen die Bürger an Unfreiheit.",
-    "exp": "Kaum jemand würde einer plötzlichen Diktatur zustimmen; doch schrittweise Verbote und Überwachungsgesetze gewöhnen die Bürger an Unfreiheit."
+    "exp": "Künstlich niedrige Notenbankzinsen erzeugen Fehlinvestitionen"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "Welche Gefahr sah Roland Baader in der stetig wachsenden Staatsquote in westlichen Demokratien?",
     "a": [
-      "Dass der Staat zum dominierenden Wirtschaftsakteur wird und Eigenverantwortung erstickt",
-      "Dass Unternehmen vor lauter Gewinnen keine neuen Mitarbeiter finden",
-      "Dass private Ersparnisse unbegrenzt in physisches Gold fließen",
-      "Dass die Universitäten alle wirtschaftswissenschaftlichen Fakultäten schließen"
+      "Die subjektive Wertlehre",
+      "Die marxistische Arbeitswertlehre",
+      "Die neoklassische Gleichgewichtstheorie",
+      "Die mercantilistische Außenhandelstheorie"
     ],
     "explanation": "Übersteigt die Staatsquote 50 Prozent, entscheidet nicht mehr der Markt über die Verwendung der Ressourcen, sondern die politische Bürokratie.",
-    "exp": "Übersteigt die Staatsquote 50 Prozent, entscheidet nicht mehr der Markt über die Verwendung der Ressourcen, sondern die politische Bürokratie."
+    "exp": "Die subjektive Wertlehre"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "Wie beurteilte Roland Baader das Konzept eines staatlichen 'Bedingungslosen Grundeinkommens'?",
     "a": [
-      "Als finanzpolitische Utopie, die die Leistungsbereitschaft lähmt und totale Staatsabhängigkeit schafft",
-      "Als genialen Rettungsanker für den Erhalt der freien Marktwirtschaft",
-      "Als notwendige Maßnahme zur Abschaffung aller privaten Betriebe",
-      "Als Erfindung der Österreichischen Schule zur Begrenzung von Inflation"
+      "Carl Menger",
+      "Adam Smith",
+      "David Ricardo",
+      "Wilhelm Röpke"
     ],
     "explanation": "Ein Grundeinkommen entkoppelt Einkommen von Leistung und macht die Bürger zu Bittstellern, die auf das Wohlwollen der Politik angewiesen sind.",
-    "exp": "Ein Grundeinkommen entkoppelt Einkommen von Leistung und macht die Bürger zu Bittstellern, die auf das Wohlwollen der Politik angewiesen sind."
+    "exp": "Carl Menger"
   },
   {
     "cat": "baader",
     "diff": "mid",
     "q": "Welche Institution betrachtete Roland Baader als das mächtigste Werkzeug moderner Staaten zur Umverteilung?",
     "a": [
-      "Die Zentralbanken mit ihrem unbeschränkten Privileg zur Geldschöpfung",
-      "Die Handwerkskammern mit ihren Meisterprüfungen",
-      "Die privaten Notariate für Grundstückskäufe",
-      "Die städtischen Bauämter bei Bebauungsplänen"
+      "Dass Güter ihren Wert durch den Nutzen der letzten Einheit erhalten",
+      "Dass Preise ausschließlich durch die aufgewendete Arbeitszeit entstehen",
+      "Dass der Staat den Mindestnutzen von Konsumgütern gesetzlich festlegt",
+      "Dass der Wert von Waren mit steigender Produktionsmenge stetig zunimmt"
     ],
     "explanation": "Zentralbanken ermöglichen es Staaten, Ausgaben über die Notenpresse zu finanzieren, ohne die Wähler direkt mit Steuererhöhungen zu konfrontieren.",
-    "exp": "Zentralbanken ermöglichen es Staaten, Ausgaben über die Notenpresse zu finanzieren, ohne die Wähler direkt mit Steuererhöhungen zu konfrontieren."
+    "exp": "Dass Güter ihren Wert durch den Nutzen der letzten Einheit erhalten"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Was meinte Baader mit dem Begriff 'Fauler Zauber' in Bezug auf die keynesianische Konjunkturpolitik?",
     "a": [
-      "Die Illusion, dass schuldenfinanzierter Staatskonsum echtes, nachhaltiges Wachstum erzeugen könne",
-      "Die betrügerische Manipulation von Firmenbilanzen durch private Wirtschaftsprüfer",
-      "Das Verstecken von Bargeldbeständen vor dem Finanzamt in Offshore-Konten",
-      "Den Glauben an mathematische Horoskope bei Börsenspekulationen"
+      "Dass ein Gut mit zunehmender Menge immer geringer geschätzt wird",
+      "Dass Preise bei steigender Nachfrage zwangsläufig ins Unendliche wachsen",
+      "Dass staatliche Monopole den Konsumentennutzen maximieren",
+      "Dass Unternehmen ihre Produktion bis zur völligen Sättigung ausweiten"
     ],
     "explanation": "Staatliche Konjunkturpakete lenken Kapital in unrentable Prestige- und Scheinprojekte, statt produktive Investitionen zu ermöglichen.",
-    "exp": "Staatliche Konjunkturpakete lenken Kapital in unrentable Prestige- und Scheinprojekte, statt produktive Investitionen zu ermöglichen."
+    "exp": "Dass ein Gut mit zunehmender Menge immer geringer geschätzt wird"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Warum bezeichnete Roland Baader das Papiergeldsystem als 'moralisch korrumpierend' für die Gesellschaft?",
     "a": [
-      "Weil es Spekulation und Schuldenmachen belohnt, während ehrliches Sparen und Fleiß bestraft werden",
-      "Weil Papiergeld aus giftigen chemischen Fasern hergestellt wird",
-      "Weil dadurch alle Kirchen und Wohltätigkeitsvereine pleitegehen",
-      "Weil Geldscheine leichter gefälscht werden können als Goldmünzen"
+      "Erklärung des Zinses durch den Mehrwert gegenwärtiger gegenüber künftigen Gütern",
+      "Forderung nach einem gesetzlichen Zinsverbot zum dauerhaften Schutz der Schuldner",
+      "Nachweis, dass Zinsen ein rein willkürliches Produkt der Banken sind",
+      "Behauptung, dass Zinsen nur in kapitalistischen Staaten existieren"
     ],
     "explanation": "In einer inflationären Welt gewinnt der verschuldete Zocker, während der vorsorgende Bürger, der spart und Werte aufbaut, real verarmt.",
-    "exp": "In einer inflationären Welt gewinnt der verschuldete Zocker, während der vorsorgende Bürger, der spart und Werte aufbaut, real verarmt."
+    "exp": "Erklärung des Zinses durch den Mehrwert gegenwärtiger gegenüber künftigen Gütern"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Welches Buch widmete Roland Baader der Kritik an staatlichen Erziehungs- und Schulmonopolen?",
     "a": [
-      "Fauler Zauber – Schein und Wirklichkeit des Sozialstaates",
-      "Freiheit für die Kinder",
-      "Die Schulverschwörung",
-      "Das Buch der Zensur"
+      "Fauler Zauber",
+      "Das Gespenst des Kommunismus im 21. Jahrhundert",
+      "Die Grenzen des Wachstums in einer endlichen Welt",
+      "Der Mythos vom freien Markt und seinen Gefahren"
     ],
     "explanation": "Baader kritisierte das staatliche Schulmonopol als Instrument zur Heranziehung staatsfrommer und steuerwilliger Untertanen.",
-    "exp": "Baader kritisierte das staatliche Schulmonopol als Instrument zur Heranziehung staatsfrommer und steuerwilliger Untertanen."
+    "exp": "Fauler Zauber"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Welcher historische Denker der schottischen Aufklärung beeinflusste Baaders Menschenbild neben Mises am stärksten?",
     "a": [
-      "Adam Smith (mit der Theorie der unsichtbaren Hand)",
-      "Jean-Jacques Rousseau",
-      "Thomas Hobbes",
-      "Karl Marx"
+      "Adam Smith",
+      "David Hume",
+      "John Locke",
+      "Thomas Hobbes"
     ],
     "explanation": "Smiths Einsicht, dass das freie Streben des Einzelnen zum Wohle aller führt, bildete das Fundament von Baaders Gesellschaftsphilosophie.",
-    "exp": "Smiths Einsicht, dass das freie Streben des Einzelnen zum Wohle aller führt, bildete das Fundament von Baaders Gesellschaftsphilosophie."
+    "exp": "Adam Smith"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Was verstand Baader unter dem Begriff 'Die Schlafwandler-Demokratie'?",
     "a": [
-      "Die schleichende Umwandlung der Freiheit in einen Betreuungsstaat bei passiver Hinnahme durch die Wähler",
-      "Ein Wahlsystem, bei dem die Bürger nachts im Schlaf per Computer abstimmen",
-      "Eine Regierungsform, in der Politiker keine Gehaltszahlungen erhalten",
-      "Ein Parlament, das ausschließlich bei Neumond tagt"
+      "Spontane Marktinnovation der Händler zur Senkung von Tauschkosten",
+      "Die Erfindung des Geldes durch weise Könige und staatliche Gesetzgeber",
+      "Die Einführung von Zwangspapiergeld zur Finanzierung von Kriegen",
+      "Die Festlegung von Tauschwerten durch religiöse Priesterkasten"
     ],
     "explanation": "Bürger wiegen sich in Scheinsicherheit, während Bürokratie und Staatsgewalt Tag für Tag ihre Handlungsspielräume verengen.",
-    "exp": "Bürger wiegen sich in Scheinsicherheit, während Bürokratie und Staatsgewalt Tag für Tag ihre Handlungsspielräume verengen."
+    "exp": "Spontane Marktinnovation der Händler zur Senkung von Tauschkosten"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Warum sah Baader in der Währungsunion des Euro eine Fehlkonstruktion von Beginn an?",
     "a": [
-      "Weil eine einheitliche Notenbank unterschiedliche Wirtschaftskulturen zur Haftungsgemeinschaft und Inflationsunion zwingt",
-      "Weil der Euro im internationalen Zahlungsverkehr keine US-Dollar wechseln durfte",
-      "Weil Goldbarren laut Euro-Vertrag nicht mehr privat besessen werden durften",
-      "Weil der Euro ausschließlich als Buchgeld ohne Bargeld geplant war"
+      "Entnationalisierung des Geldes",
+      "Währungsreform und Golddeckung",
+      "Die Zukunft des Zentralbankwesens",
+      "Geldpolitik im 20. Jahrhundert"
     ],
     "explanation": "Ohne nationale Wechselkurse als Ventil führt die Einheitswährung zu permanenter Umverteilung von stabilitätsorientierten zu defizitären Staaten.",
-    "exp": "Ohne nationale Wechselkurse als Ventil führt die Einheitswährung zu permanenter Umverteilung von stabilitätsorientierten zu defizitären Staaten."
+    "exp": "Entnationalisierung des Geldes"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Welche Rolle spielen freie Marktpreise laut Baader für die Koordination von Millionen Menschen?",
     "a": [
-      "Preise sind unersetzliche Signale über Knappheiten, die kein Zentralplaner jemals kennen oder ersetzen kann",
-      "Preise dienen lediglich dazu, Gewinne für internationale Großkonzerne zu maximieren",
-      "Preise sollten alle drei Monate von einer Expertenkommission neu festgelegt werden",
-      "Preise entstehen rein zufällig durch Stimmungen an den Terminbörsen"
+      "Ohne freie Marktpreise fehlt jede rationale ökonomische Kalkulation",
+      "Weil die Parteifunktionäre nicht über mathematische Diplome verfügten",
+      "Weil private Sparguthaben in Fremdwährungen gehalten wurden",
+      "Weil der Außenhandel mit westlichen Staaten boykottiert wurde"
     ],
     "explanation": "Preise bündeln das dezentrale Wissen von Millionen Konsumenten und Produzenten und lenken Ressourcen dorthin, wo sie am dringendsten gebraucht werden.",
-    "exp": "Preise bündeln das dezentrale Wissen von Millionen Konsumenten und Produzenten und lenken Ressourcen dorthin, wo sie am dringendsten gebraucht werden."
+    "exp": "Ohne freie Marktpreise fehlt jede rationale ökonomische Kalkulation"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Wie stand Roland Baader zu den sogenannten 'Rettungsschirmen' (ESM, EFSF) während der europäischen Staatsschuldenkrise?",
     "a": [
-      "Er lehnte sie radikal als Rechtsbruch und Belohnung für unsolide Haushaltspolitik (Moral Hazard) ab",
-      "Er forderte ihre Verzehnfachung und die Ausgabe unbegrenzter Eurobonds",
-      "Er empfahl die Verstaatlichung aller europäischen Sparkassen durch den ESM",
-      "Er sah darin ein vorbildliches Modell für private Versicherungsvereine"
+      "Der Zins spiegelt die Zeitpräferenz zwischen Gegenwart und Zukunft",
+      "Der Zins ist eine willkürliche Profitmarge privater Kreditinstitute",
+      "Der Zins wird ausschließlich durch die Notenbank politisch festgelegt",
+      "Der Zins dient der staatlichen Abschöpfung von Spekulationsgewinnen"
     ],
     "explanation": "Wer Risiken vergesellschaftet und Gläubiger vor Verlusten rettet, setzt fatale Anreize zu noch mehr Schulden und Fehlinvestitionen.",
-    "exp": "Wer Risiken vergesellschaftet und Gläubiger vor Verlusten rettet, setzt fatale Anreize zu noch mehr Schulden und Fehlinvestitionen."
+    "exp": "Der Zins spiegelt die Zeitpräferenz zwischen Gegenwart und Zukunft"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Welche Bedeutung maß Roland Baader dem Föderalismus und der Kleinstaaterei für die Bürgerfreiheit bei?",
     "a": [
-      "Kleinstaaten stehen im Steuer- und Rechtswettbewerb, was staatliche Tyrannei und Übergriffe wirksam zügelt",
-      "Kleinstaaten führen laut Baader unausweichlich zu weltweiter Hungersnot",
-      "Er forderte stattdessen eine mächtige Weltregierung mit einheitlicher Weltsteuer",
-      "Kleinstaaten sollten sich laut Baader sofort einem atomaren Großreich anschließen"
+      "Die verallgemeinernde Logik des menschlichen Handelns",
+      "Eine psychologische Analyse von Massenpaniken an Börsen",
+      "Die mathematische Modellierung von Wirtschaftszyklen",
+      "Eine soziologische Studie über Klassengegensätze"
     ],
     "explanation": "Wenn Bürger und Unternehmen leicht in den Nachbarkanton oder Nachbarstaat abwandern können, muss sich der Herrscher mäßigen.",
-    "exp": "Wenn Bürger und Unternehmen leicht in den Nachbarkanton oder Nachbarstaat abwandern können, muss sich der Herrscher mäßigen."
+    "exp": "Die verallgemeinernde Logik des menschlichen Handelns"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Was war Baaders Kernargument gegen progressive Einkommensteuertarife?",
     "a": [
-      "Sie bestrafen Fleiß und Leistungsbereitschaft und verletzen das Prinzip der Gleichheit vor dem Gesetz",
-      "Sie führen dazu, dass Reiche überhaupt keine Steuern mehr bezahlen",
-      "Sie machen mathematische Taschenrechner in Finanzämtern überflüssig",
-      "Sie wurden ursprünglich im alten Ägypten zur Finanzierung von Pyramiden erfunden"
+      "Das Buch der Tränen",
+      "Die letzte Bastion",
+      "Am Abgrund des Leviathan",
+      "Der finale Crash"
     ],
     "explanation": "Ein progressiver Steuertarif bedeutet: Je mehr ein Bürger leistet, desto höher ist der Prozentsatz, den der Staat ihm wegnimmt.",
-    "exp": "Ein progressiver Steuertarif bedeutet: Je mehr ein Bürger leistet, desto höher ist der Prozentsatz, den der Staat ihm wegnimmt."
+    "exp": "Das Buch der Tränen"
   },
   {
     "cat": "baader",
     "diff": "pro",
     "q": "Welche Prognose stellte Roland Baader vor seinem Tod im Jahr 2012 über die Zukunft des westlichen Finanzsystems auf?",
     "a": [
-      "Einen unausweichlichen Crash des ungedeckten Papiergeldes mit nachfolgender Währungsreform oder Hyperinflation",
-      "Eine jahrhundertelange Periode stabiler Null-Inflation dank digitaler Banküberweisungen",
-      "Die weltweite Rückkehr zu Goldmünzen als alleinigem gesetzlichen Zahlungsmittel bis 2015",
-      "Die vollständige Auflösung aller Zentralbanken durch einstimmigen UN-Beschluss"
+      "Murray Rothbard",
+      "Milton Friedman",
+      "Robert Nozick",
+      "Ayn Rand"
     ],
     "explanation": "Baader sah die globale Überschuldung als mathematisch unlösbar an und rechnete mit der Zerstörung des Geldes durch immer gigantischere Notenbankinterventionen.",
-    "exp": "Baader sah die globale Überschuldung als mathematisch unlösbar an und rechnete mit der Zerstörung des Geldes durch immer gigantischere Notenbankinterventionen."
+    "exp": "Murray Rothbard"
   },
   {
     "cat": "austrian",
     "diff": "easy",
     "q": "Wer gilt mit seinem Werk 'Grundsätze der Volkswirtschaftslehre' von 1871 als Begründer der Österreichischen Schule?",
     "a": [
-      "Carl Menger",
-      "Ludwig von Mises",
-      "Friedrich von Wieser",
-      "Eugen von Böhm-Bawerk"
+      "Für eine neue Freiheit",
+      "Kapitalismus und Freiheit",
+      "Anarchie, Staat und Utopie",
+      "Der Wohlstand der Nationen"
     ],
     "explanation": "Carl Menger begründete 1871 die Schule mit der Grenznutzentheorie und der subjektiven Wertlehre als Antwort auf Karl Marx.",
-    "exp": "Carl Menger begründete 1871 die Schule mit der Grenznutzentheorie und der subjektiven Wertlehre als Antwort auf Karl Marx."
+    "exp": "Für eine neue Freiheit"
   },
   {
     "cat": "austrian",
     "diff": "easy",
     "q": "Was besagt die 'Subjektive Wertlehre' der Österreichischen Schule über den Wert eines Gutes?",
     "a": [
-      "Der Wert entsteht nicht aus den Arbeitsstunden, sondern aus der persönlichen Wertschätzung des Konsumenten",
-      "Der Wert wird vom Ministerium für Wirtschaft nach festen Tabellen berechnet",
-      "Der Wert entspricht exakt dem Gewicht der verarbeiteten Rohstoffe",
-      "Der Wert ist eine objektive Eigenschaft, die dem Gut physikalisch innewohnt"
+      "Preise signalisieren dezentrale Knappheiten und individuelle Wünsche",
+      "Preise werden von Kartellbehörden zum Schutz der Verbraucher festgelegt",
+      "Preise spiegeln die historischen Herstellungskosten der Fabriken wider",
+      "Preise dienen vor allem der Berechnung der staatlichen Umsatzsteuer"
     ],
     "explanation": "Ein Glas Wasser in der Wüste ist extrem wertvoll, am überfluteten Flussufer fast wertlos – der Wert existiert nur im Kopf des Betrachters.",
-    "exp": "Ein Glas Wasser in der Wüste ist extrem wertvoll, am überfluteten Flussufer fast wertlos – der Wert existiert nur im Kopf des Betrachters."
+    "exp": "Preise signalisieren dezentrale Knappheiten und individuelle Wünsche"
   },
   {
     "cat": "austrian",
     "diff": "easy",
     "q": "Welches bahnbrechende Werk von Ludwig von Mises aus dem Jahr 1949 gilt als das Hauptwerk der Praxeologie?",
     "a": [
-      "Human Action (Nationalökonomie – Theorie des Handelns und Wirtschaftens)",
-      "Das Kapital",
-      "The General Theory of Employment",
-      "Der Wohlstand der Nationen"
+      "Human Action (Nationalökonomie)",
+      "Das Kapital (Kritik der politischen Ökonomie)",
+      "Allgemeine Theorie der Beschäftigung",
+      "Die Grenzen des Staates"
     ],
     "explanation": "Mises leitet darin die gesamte Ökonomie logisch-deduktiv aus dem Axiom ab, dass Menschen bewusst handeln, um Unbehagen zu lindern.",
-    "exp": "Mises leitet darin die gesamte Ökonomie logisch-deduktiv aus dem Axiom ab, dass Menschen bewusst handeln, um Unbehagen zu lindern."
+    "exp": "Human Action (Nationalökonomie)"
   },
   {
     "cat": "austrian",
     "diff": "easy",
     "q": "Welcher Ökonom der Österreichischen Schule erhielt 1974 den Nobelpreis für Wirtschaftswissenschaften?",
     "a": [
-      "Friedrich August von Hayek",
-      "Ludwig von Mises",
-      "Carl Menger",
-      "Murray Rothbard"
+      "Hans-Hermann Hoppe",
+      "Roland Baader",
+      "Thorsten Polleit",
+      "Jörg Guido Hülsmann"
     ],
     "explanation": "Hayek wurde 1974 für seine Pionierarbeiten zur Geldtheorie, Konjunkturzyklen und Interdependenz von Wirtschaft und Gesellschaft geehrt.",
-    "exp": "Hayek wurde 1974 für seine Pionierarbeiten zur Geldtheorie, Konjunkturzyklen und Interdependenz von Wirtschaft und Gesellschaft geehrt."
+    "exp": "Hans-Hermann Hoppe"
   },
   {
     "cat": "austrian",
     "diff": "easy",
     "q": "Welches berühmte Buch schrieb F. A. von Hayek 1944 als Warnung vor totalitären Tendenzen westlicher Demokratien?",
     "a": [
-      "Der Weg zur Knechtschaft (The Road to Serfdom)",
-      "Das Manifest der Freiheit",
-      "Die offene Gesellschaft",
-      "Grenzen des Wachstums"
+      "Monopole entstehen meist durch staatliche Privilegien und Zölle",
+      "Weil Konzerne die Konkurrenz durch Preissenkungen dauerhaft ausschalten",
+      "Weil Verbraucher prinzipiell immer das billigste Produkt kaufen müssen",
+      "Weil die Werbeindustrie den freien Willen der Bürger komplett ausschaltet"
     ],
     "explanation": "Hayek argumentierte, dass auch demokratischer Sozialismus schrittweise in Tyrannei mündet, weil Planwirtschaft Zwangsmittel erfordert.",
-    "exp": "Hayek argumentierte, dass auch demokratischer Sozialismus schrittweise in Tyrannei mündet, weil Planwirtschaft Zwangsmittel erfordert."
+    "exp": "Monopole entstehen meist durch staatliche Privilegien und Zölle"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Was bewies Ludwig von Mises 1920 in seinem Aufsatz über die 'Wirtschaftsrechnung im Sozialismus'?",
     "a": [
-      "Dass eine Planwirtschaft ohne Privateigentum an Produktionsgütern keine Marktpreise und daher keine rationale Kalkulation kennt",
-      "Dass sozialistische Fabriken automatisch doppelt so viele Schuhe herstellen",
-      "Dass Computerprogramme die Marktpreise in Echtzeit perfekt erraten können",
-      "Dass Kolchosen im Winter ertragreicher sind als private Bauernhöfe"
+      "Wirtschaft ist zu komplex für zentrale Steuerung (Anmaßung von Wissen)",
+      "Dass die Mathematik alle ökonomischen Vorgänge fehlerfrei berechnen kann",
+      "Dass Politiker die besten Entscheidungen für die Gesellschaft treffen",
+      "Dass Märkte ohne staatliche Lenkung zwangsläufig ins Chaos stürzen"
     ],
     "explanation": "Ohne Marktpreise weiß ein Planer nicht, ob Beton oder Holz die sparsamste Lösung ist. Das System versinkt im chaotischen Blindflug.",
-    "exp": "Ohne Marktpreise weiß ein Planer nicht, ob Beton oder Holz die sparsamste Lösung ist. Das System versinkt im chaotischen Blindflug."
+    "exp": "Wirtschaft ist zu komplex für zentrale Steuerung (Anmaßung von Wissen)"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Was versteht F. A. von Hayek unter dem 'Preissystem als dezentraler Kommunikationsmechanismus'?",
     "a": [
-      "Preise fassen verstreutes Wissen über weltweite Knappheiten blitzschnell zusammen, ohne dass eine Zentrale nötig ist",
-      "Preise werden verschlüsselt per Funk an ausgewählte Regierungsstellen übertragen",
-      "Preise dienen der geheimen Abstimmung über politische Gesetze",
-      "Preise zwingen alle Bürger dazu, dieselben Güter zu konsumieren"
+      "Ein sich ausweitender Staat erstickt zunehmend bürgerliche Freiheiten",
+      "Dass Demokratien automatisch zu Wohlstand und Frieden führen",
+      "Dass Steuern die wirtschaftliche Leistungsfähigkeit dauerhaft fördern",
+      "Dass Parlamente die Ausgaben des Staates stets wirksam begrenzen"
     ],
     "explanation": "Steigt der Zinnpreis, schränken Millionen Menschen den Verbrauch ein, ohne den Grund (z. B. Mineneinsturz in Bolivien) kennen zu müssen.",
-    "exp": "Steigt der Zinnpreis, schränken Millionen Menschen den Verbrauch ein, ohne den Grund (z. B. Mineneinsturz in Bolivien) kennen zu müssen."
+    "exp": "Ein sich ausweitender Staat erstickt zunehmend bürgerliche Freiheiten"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Wie erklärt die 'Österreichische Konjunkturtheorie' das Entstehen von Boom-and-Bust-Zyklen (Wirtschaftskrisen)?",
     "a": [
-      "Künstlich zu niedrige Zinsen der Zentralbank täuschen Investoren vor, es gäbe mehr reale Ersparnisse, als tatsächlich existieren",
-      "Krisen entstehen allein durch die böse Absicht privater Spekulanten an den Ölmärkten",
-      "Zu hohe Steuern auf Luxusautos bringen das gesamte weltweite Bankensystem zum Einsturz",
-      "Konsumenten hören plötzlich auf zu essen und lösen damit Überproduktion aus"
+      "Die Idee, dass Recht und Sprache organisch gewachsen sind statt vom Staat dekretiert",
+      "Die Ansicht, dass Gesellschaften von einer intellektuellen Elite geplant werden müssen",
+      "Die Forderung nach einer weltweiten gemeinsamen Zentralregierung",
+      "Die Ablehnung jeglicher technologischer Neuerungen in der Wirtschaft"
     ],
     "explanation": "Der künstlich billige Kredit führt zu Fehlinvestitionen (Malinvestments). Steigen die Zinsen später, platzt die Blase schmerzhaft.",
-    "exp": "Der künstlich billige Kredit führt zu Fehlinvestitionen (Malinvestments). Steigen die Zinsen später, platzt die Blase schmerzhaft."
+    "exp": "Die Idee, dass Recht und Sprache organisch gewachsen sind statt vom Staat dekretiert"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Was besagt Böhm-Bawerks 'Theorie der Zeitpräferenz' über den Zins?",
     "a": [
-      "Menschen schätzen gegenwärtige Güter höher ein als dieselben Güter in der fernen Zukunft; der Zins ist der Preis für diese Zeitdifferenz",
-      "Der Zins ist ein Diebstahl der Banken an arbeitenden Menschen",
-      "Zinsen entstehen nur, wenn der Staat mehr als 50 Prozent Schulden hat",
-      "Der Zins wird von den Jahreszeiten und der Erdrotation bestimmt"
+      "Durch freiwillige Kooperation zum gegenseitigen Vorteil am Markt",
+      "Durch staatliche Zwangsumverteilung von Vermögenden zu Bedürftigen",
+      "Durch die Einführung von Mindestlöhnen und Preiskontrollen",
+      "Durch das Ausweiten der staatlichen Beschäftigungsprogramme"
     ],
     "explanation": "Ein Apfel heute ist jedem lieber als ein Apfel in zehn Jahren. Wer auf heutigen Konsum verzichtet, verlangt dafür eine Prämie: den Zins.",
-    "exp": "Ein Apfel heute ist jedem lieber als ein Apfel in zehn Jahren. Wer auf heutigen Konsum verzichtet, verlangt dafür eine Prämie: den Zins."
+    "exp": "Durch freiwillige Kooperation zum gegenseitigen Vorteil am Markt"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Wie entstand Geld laut Carl Mengers historischer Aufsatzstudie 'Über den Ursprung des Geldes' (1892)?",
     "a": [
-      "Spontan und evolutionär aus dem Tauschhandel, weil Menschen das absatzfähigste Gut (wie Gold oder Silber) bevorzugten",
-      "Durch ein Dekret eines altbabylonischen Königs, der Münzen erfand",
-      "Durch einen Beschluss der ersten demokratischen Parlamente in Athen",
-      "Als Erfindung von Piraten zur gerechten Beuteaufteilung auf Schiffen"
+      "Kreide für den Wolf",
+      "Der zähe Leviathan",
+      "Sklaven im Wohlfahrtsstaat",
+      "Das Gift des Kollektivismus"
     ],
     "explanation": "Niemand 'erfand' das Geld mit einem Gesetz. Kaufleute tauschten schwer verkäufliche Waren gegen haltbare, teilbare und begehrte Metalle ein.",
-    "exp": "Niemand 'erfand' das Geld mit einem Gesetz. Kaufleute tauschten schwer verkäufliche Waren gegen haltbare, teilbare und begehrte Metalle ein."
+    "exp": "Kreide für den Wolf"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Was meinte F. A. von Hayek mit dem Ausdruck 'Die Anmaßung von Wissen' (The Pretence of Knowledge)?",
     "a": [
-      "Den fatalen Glauben von Politikern, komplexe Gesellschaften wie eine Maschine zentral steuern zu können",
-      "Das Lernen von Fremdsprachen ohne grammatikalische Regeln",
-      "Das Verfassen von wissenschaftlichen Büchern ohne Quellenangaben",
-      "Den Verzicht auf Schulpflicht in modernen Industriestaaten"
+      "Individuelle Freiheitsrechte und Begrenzung von Regierungsgewalt",
+      "Maximale Machtkonzentration beim staatlichen Souverän",
+      "Die Abschaffung des Privateigentums zugunsten der Allgemeinheit",
+      "Die staatliche Lenkung von Industrie und Landwirtschaft"
     ],
     "explanation": "Gesellschaftliches Wissen ist auf Millionen Köpfe verteilt. Ein Planer, der glaubt, Preise oder Produktion lenken zu können, leidet an Selbstüberschätzung.",
-    "exp": "Gesellschaftliches Wissen ist auf Millionen Köpfe verteilt. Ein Planer, der glaubt, Preise oder Produktion lenken zu können, leidet an Selbstüberschätzung."
+    "exp": "Individuelle Freiheitsrechte und Begrenzung von Regierungsgewalt"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Welchen radikalen geldpolitischen Vorschlag unterbreitete Hayek 1976 in seinem Buch 'Entnationalisierung des Geldes'?",
     "a": [
-      "Die Abschaffung des staatlichen Notenbankmonopols und die Einführung freien Währungswettbewerbs privater Banken",
-      "Die Einführung einer einheitlichen Weltwährung unter Führung des Internationalen Währungsfonds",
-      "Das Verbot jeglichen Bargelds zugunsten von staatlichen Zählkarten",
-      "Die Koppelung aller Weltwährungen an den Weizenpreis in Chicago"
+      "Dass Individuen vor dem Gesetz gleich sind, aber unterschiedliche Talente und Wünsche haben",
+      "Dass alle Bürger im Staat über ein absolut identisches Monatseinkommen verfügen",
+      "Dass der Staat jedem Bürger denselben Beruf zuweisen sollte",
+      "Dass Bildungschancen durch Einheitslehrpläne garantiert werden"
     ],
     "explanation": "Wenn Bürger frei wählen können, mit welchem Geld sie bezahlen, setzen sich die stabilsten Währungen durch – und Staaten können kein Geld mehr entwerten.",
-    "exp": "Wenn Bürger frei wählen können, mit welchem Geld sie bezahlen, setzen sich die stabilsten Währungen durch – und Staaten können kein Geld mehr entwerten."
+    "exp": "Dass Individuen vor dem Gesetz gleich sind, aber unterschiedliche Talente und Wünsche haben"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Was bezeichnet der Begriff 'Praxeologie' bei Ludwig von Mises?",
     "a": [
-      "Die Deduktion allgemeingültiger Gesetze aus dem unumstößlichen Axiom menschlichen Handelns",
-      "Das praktische Erlernen eines Handwerksbetriebs in der Werkstatt",
-      "Eine medizinische Therapie zur Behandlung von Arbeitsunlust",
-      "Ein mathematisches Rechenverfahren zur Vorhersage von Lottozahlen"
+      "Ludwig Erhard",
+      "Konrad Adenauer",
+      "Kurt Schumacher",
+      "Karl Schiller"
     ],
     "explanation": "Mises betonte: Menschen handeln zielgerichtet und wählen Mittel zur Zweckerreichung. Daraus lassen sich logisch alle ökonomischen Gesetze ableiten.",
-    "exp": "Mises betonte: Menschen handeln zielgerichtet und wählen Mittel zur Zweckerreichung. Daraus lassen sich logisch alle ökonomischen Gesetze ableiten."
+    "exp": "Ludwig Erhard"
   },
   {
     "cat": "austrian",
     "diff": "mid",
     "q": "Was versteht die Österreichische Schule unter dem 'Opportunitätskosten'-Prinzip?",
     "a": [
-      "Die Kosten einer Entscheidung entsprechen dem Wert der besten entgangenen Handlungsalternative",
-      "Die Kosten für Zeitungsanzeigen bei der Bewerbung auf freie Stellen",
-      "Die Steuern, die beim Grenzübertritt mit Waren anfallen",
-      "Die Gebühren, die Banken für das Wechseln von Fremdwährungen verlangen"
+      "Wohlstand für alle",
+      "Geld und Kredit",
+      "Freiheit und Ordnung",
+      "Die soziale Marktwirtschaft"
     ],
     "explanation": "Wer zwei Stunden ins Kino geht, bezahlt nicht nur das Ticket, sondern verzichtet auf die Zeit, die er für Arbeit oder Erholung hätte nutzen können.",
-    "exp": "Wer zwei Stunden ins Kino geht, bezahlt nicht nur das Ticket, sondern verzichtet auf die Zeit, die er für Arbeit oder Erholung hätte nutzen können."
+    "exp": "Wohlstand für alle"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Welcher berühmte 'Methodenstreit' tobte in den 1880er-Jahren zwischen Carl Menger und Gustav von Schmoller?",
     "a": [
-      "Der Streit zwischen der theoretisch-deduktiven Methode Mengers und der empirisch-historischen Schule Schmollers",
-      "Ein Duell mit Degen um das Rektorat der Universität Wien",
-      "Ein Streit über die Frage, ob Deutschland der Goldwährung beitreten soll",
-      "Eine Debatte über die Einführung von Papiergeld in Preußen"
+      "Eugen von Böhm-Bawerk",
+      "Alfred Marshall aus Cambridge",
+      "Leon Walras",
+      "Vilfredo Pareto"
     ],
     "explanation": "Menger verteidigte exakte ökonomische Gesetze gegen Schmollers Historismus, der behauptete, es gäbe nur wandelbare historische Fakten ohne Gesetzmäßigkeit.",
-    "exp": "Menger verteidigte exakte ökonomische Gesetze gegen Schmollers Historismus, der behauptete, es gäbe nur wandelbare historische Fakten ohne Gesetzmäßigkeit."
+    "exp": "Eugen von Böhm-Bawerk"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Was besagt das 'Menger'sche Güterordnungskonzept' über Güter erster und höherer Ordnung?",
     "a": [
-      "Konsumgüter sind 1. Ordnung; Produktionsgüter wie Mehl (2. Ordnung) oder Getreide (3. Ordnung) leiten ihren Wert vom Konsumgut ab",
-      "Güter erster Ordnung sind Luxusautos, Güter dritter Ordnung sind Kartoffeln",
-      "Güter erster Ordnung dürfen nur von Königen und Adeligen konsumiert werden",
-      "Güter höherer Ordnung sind Waren, die mehr als 1.000 Kilometer transportiert wurden"
+      "Steuern werden ohne freiwillige Gegenleistung per Zwang erhoben",
+      "Dass Steuern immer zweckgebunden für Infrastruktur eingesetzt werden",
+      "Dass Steuern von allen Bürgern in gleicher Höhe bezahlt werden",
+      "Dass Steuern die Sparquote der Bevölkerung systematisch erhöhen"
     ],
     "explanation": "Der Wert von Maschinen und Rohstoffen entsteht nur, weil Menschen das fertige Brot am Ende kaufen wollen – Zurechnungstheorie (Imputation).",
-    "exp": "Der Wert von Maschinen und Rohstoffen entsteht nur, weil Menschen das fertige Brot am Ende kaufen wollen – Zurechnungstheorie (Imputation)."
+    "exp": "Steuern werden ohne freiwillige Gegenleistung per Zwang erhoben"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Was kennzeichnet den US-Ökonomen Murray Rothbard innerhalb der Denktradition der Österreichischen Schule?",
     "a": [
-      "Er entwickelte die Schule zum radikalen Anarchokapitalismus weiter und forderte die Privatisierung aller Staatsfunktionen",
-      "Er empfahl die Verstaatlichung aller amerikanischen Ölquellen durch das Militär",
-      "Er erfand den modernen Wohlfahrtsstaat für US-Präsident Roosevelt",
-      "Er plädierte für die vollständige Abschaffung des privaten Goldbesitzes"
+      "Weil eine Schutzzollpolitik heimische Verbraucher durch höhere Preise belastet",
+      "Schutzzölle verdoppeln das Exportvolumen heimischer Fertigwaren ins Ausland",
+      "Weil Zölle die Steuereinnahmen des Staates auf null reduzieren",
+      "Weil Importgüter von minderer Qualität auf den Markt drängen"
     ],
     "explanation": "In Werken wie 'For a New Liberty' zeigte Rothbard, dass selbst Gerichte, Polizei und Straßen privat und vertraglich organisiert werden können.",
-    "exp": "In Werken wie 'For a New Liberty' zeigte Rothbard, dass selbst Gerichte, Polizei und Straßen privat und vertraglich organisiert werden können."
+    "exp": "Weil eine Schutzzollpolitik heimische Verbraucher durch höhere Preise belastet"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Warum lehnen Ökonomen der Österreichischen Schule mathematische Gleichgewichtsmodelle (wie DSGE) meist ab?",
     "a": [
-      "Weil die echte Wirtschaft ein permanenter dynamischer Prozess des Wandels ist und nie im statischen Gleichgewicht verharrt",
-      "Weil österreichische Ökonomen keine Grundrechenarten beherrschen",
-      "Weil Computer laut Gesetz keine wirtschaftlichen Daten berechnen dürfen",
-      "Weil mathematische Modelle ausschließlich im Sozialismus angewendet werden"
+      "Wirtschaft ist ein ständiger dynamischer Prozess steten Wandels",
+      "Weil es an Rechenkapazitäten zur Lösung komplexer Matrizen fehlt",
+      "Weil mathematische Modelle von Gewerkschaften abgelehnt werden",
+      "Weil statistische Ämter unvollständige Daten liefern"
     ],
     "explanation": "Ein Gleichgewichtszustand würde bedeuten, dass niemand mehr handelt, weil alle Wünsche erfüllt sind. Reale Märkte leben vom Wandel und Unternehmertum.",
-    "exp": "Ein Gleichgewichtszustand würde bedeuten, dass niemand mehr handelt, weil alle Wünsche erfüllt sind. Reale Märkte leben vom Wandel und Unternehmertum."
+    "exp": "Wirtschaft ist ein ständiger dynamischer Prozess steten Wandels"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Welche entscheidende Rolle spielt der 'Unternehmer' (Entrepreneur) bei Israel Kirzner?",
     "a": [
-      "Er besitzt Wachsamkeit (Alertness) für unentdeckte Marktchancen und bringt Angebot und Nachfrage ins Lot",
-      "Er beutet systematisch die Arbeiterklasse aus, um Dividenden zu kassieren",
-      "Er führt lediglich die Befehle des staatlichen Wirtschaftsministeriums aus",
-      "Er ist ein reiner Verwalter von fremdem Bankguthaben ohne jedes Eigenrisiko"
+      "Wachsamkeit für unentdeckte Marktchancen zur Koordinierung von Angebot und Nachfrage",
+      "Die akribische Umsetzung sämtlicher staatlicher Auflagen im Betriebsalltag",
+      "Das Eintreiben von Forderungen für Banken und Gläubiger",
+      "Die Überwachung der Arbeitsleistung der Angestellten"
     ],
     "explanation": "Der Unternehmer sieht Preisunterschiede oder ungedeckte Kundenbedürfnisse vor allen anderen und schließt diese Lücken mutig und innovativ.",
-    "exp": "Der Unternehmer sieht Preisunterschiede oder ungedeckte Kundenbedürfnisse vor allen anderen und schließt diese Lücken mutig und innovativ."
+    "exp": "Wachsamkeit für unentdeckte Marktchancen zur Koordinierung von Angebot und Nachfrage"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Was meinte Ludwig von Mises mit dem Theorem der 'Interventionsspirale'?",
     "a": [
-      "Jeder staatliche Eingriff erzeugt unerwünschte Nebenwirkungen, die als Vorwand für noch tiefere Eingriffe dienen – bis zum Sozialismus",
-      "Dass Fallschirme bei staatlichen Flugzeugtests in Spiralbahnen zu Boden gleiten",
-      "Dass Zinsen im freien Markt automatisch bis ins Unendliche ansteigen",
-      "Dass Währungskurse sich wie eine Spirale um den Goldpreis winden"
+      "Jeder staatliche Eingriff erzeugt Probleme, die zu noch mehr Eingriffen führen",
+      "Der Staat zieht sich nach erfolgreicher Krisenbewältigung unverzüglich zurück",
+      "Regulierungen senken die Bürokratiekosten in der Privatwirtschaft",
+      "Subventionen kurbeln den Wettbewerb auf den Inlandsmärkten an"
     ],
     "explanation": "Setzt der Staat einen Mietendeckel, sinkt das Wohnungsangebot. Statt den Deckel abzuschaffen, enteignet der Staat Wohnungen – eine Kaskade des Zwangs.",
-    "exp": "Setzt der Staat einen Mietendeckel, sinkt das Wohnungsangebot. Statt den Deckel abzuschaffen, enteignet der Staat Wohnungen – eine Kaskade des Zwangs."
+    "exp": "Jeder staatliche Eingriff erzeugt Probleme, die zu noch mehr Eingriffen führen"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Was unterscheidet 'echte Ersparnis' von künstlicher 'Kreditschöpfung aus dem Nichts' (Fiduciary Media)?",
     "a": [
-      "Echte Ersparnis basiert auf realem Konsumverzicht; reine Geldschöpfung erzeugt Kaufkraft ohne vorherige Güterproduktion",
-      "Echte Ersparnis darf nur in barer Münze unter der Matratze gelagert werden",
-      "Kreditschöpfung ist laut Gesetz in allen Staaten der Welt unter Todesstrafe verboten",
-      "Echte Ersparnis verliert bei Deflation automatisch ihren realen Gegenwert"
+      "Echte Ersparnis beruht auf Konsumverzicht, Kreditschöpfung erzeugt Kaufkraft ohne Güter",
+      "Echte Ersparnis wird nur in Goldbarren angelegt, Kredite in Fremdwährungen",
+      "Reine Geldschöpfung ist stets an die Menge der vorhandenen Arbeitskräfte gekoppelt",
+      "Ersparnisse unterliegen der Inflation, Buchgeldkredite bleiben wertstabil"
     ],
     "explanation": "Nur wenn jemand auf Konsum verzichtet, stehen Steine, Stahl und Arbeitszeit für neue Fabriken bereit. Kredite aus Luft verzerren diese Realität.",
-    "exp": "Nur wenn jemand auf Konsum verzichtet, stehen Steine, Stahl und Arbeitszeit für neue Fabriken bereit. Kredite aus Luft verzerren diese Realität."
+    "exp": "Echte Ersparnis beruht auf Konsumverzicht, Kreditschöpfung erzeugt Kaufkraft ohne Güter"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Welche Rolle spielte Eugen von Böhm-Bawerk neben seiner wissenschaftlichen Arbeit in der realen Politik Österreich-Ungarns?",
     "a": [
-      "Er war dreimal kaiserlicher Finanzminister und setzte den stabilen Goldstandard der Krone durch",
-      "Er war Feldmarschall der k.u.k. Armee im Ersten Weltkrieg",
-      "Er gründete die erste sozialistische Gewerkschaft in Wien",
-      "Er amtierte als Botschafter Österreichs im zaristischen Russland"
+      "Finanzminister der Monarchie und Architekt des Kronen-Goldstandards",
+      "Präsident der Nationalbank mit Verbot von privatem Goldbesitz",
+      "Außenminister der k.u.k. Monarchie zur Aushandlung von Freihandelsabkommen",
+      "Justizminister zur Reform des österreichischen Unternehmensrechts"
     ],
     "explanation": "Als Finanzminister verteidigte Böhm-Bawerk mit eisener Disziplin den Staatshaushalt gegen Verschwendung und sicherte die Goldwährung.",
-    "exp": "Als Finanzminister verteidigte Böhm-Bawerk mit eisener Disziplin den Staatshaushalt gegen Verschwendung und sicherte die Goldwährung."
+    "exp": "Finanzminister der Monarchie und Architekt des Kronen-Goldstandards"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Welcher Schüler von Mises und Hayek emigrierte in die USA und gründete die renommierte 'Foundation for Economic Education' (FEE)?",
     "a": [
-      "Leonard Read (Autor des Klassikers 'I, Pencil')",
-      "Milton Friedman",
-      "Ayn Rand",
-      "Henry Hazlitt"
+      "Leonard Read",
+      "Henry Hazlitt",
+      "Frank Chodorov",
+      "Garet Garrett"
     ],
     "explanation": "Read zeigte in 'I, Pencil' meisterhaft, dass kein einzelner Mensch auf der Welt allein einen einfachen Bleistift herstellen kann.",
-    "exp": "Read zeigte in 'I, Pencil' meisterhaft, dass kein einzelner Mensch auf der Welt allein einen einfachen Bleistift herstellen kann."
+    "exp": "Leonard Read"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Was versteht die Österreichische Schule unter dem Begriff 'Regressive Erwartungen' bei einer heraufziehenden Hyperinflation?",
     "a": [
-      "Das Phänomen der 'Flucht in die Sachwerte' (Crack-up-Boom), bei dem niemand mehr Geld halten will und die Preise explodieren",
-      "Die Rückkehr der Bürger zum Tausch von getrocknetem Fisch gegen Muscheln",
-      "Die gesetzliche Verpflichtung der Bürger, ihre Ersparnisse zu vernichten",
-      "Das Einfrieren aller Konten durch den Internationalen Währungsfonds"
+      "Die Flucht in Sachwerte bei drohendem Vertrauensverlust in das Papiergeld",
+      "Das Horten von Banknoten unter der Matratze aus Angst vor Enteignung",
+      "Der plötzliche Einbruch der Rohstoffpreise an internationalen Warenbörsen",
+      "Die Erhöhung der Zinsen durch die Notenbank zur Stützung der Währung"
     ],
     "explanation": "Erkennen die Bürger, dass die Notenpresse nie mehr stoppen wird, kaufen sie panisch beliebige Waren – das Papiergeld kollabiert schlagartig.",
-    "exp": "Erkennen die Bürger, dass die Notenpresse nie mehr stoppen wird, kaufen sie panisch beliebige Waren – das Papiergeld kollabiert schlagartig."
+    "exp": "Die Flucht in Sachwerte bei drohendem Vertrauensverlust in das Papiergeld"
   },
   {
     "cat": "austrian",
     "diff": "pro",
     "q": "Warum betrachten Austrians das Konzept des Bruttoinlandsprodukts (BIP) als irreführenden Maßstab für Wohlstand?",
     "a": [
-      "Weil das BIP Staatsausgaben und zerstörerische Reparaturen als Wohlstandsgewinn zählt und Zwischenstufen der Produktion ausblendet",
-      "Weil das BIP ausschließlich in Goldunzen gemessen werden darf",
-      "Weil das BIP die Arbeitsleistung von Frauen doppelt bewertet",
-      "Weil das BIP die Einwohnerzahl von Großstädten unterschlägt"
+      "Es zählt Staatsausgaben als Wohlstand und blendet Zwischenstufen der Produktion aus",
+      "Es wird von internationalen Großbanken gezielt zur Kursmanipulation eingesetzt",
+      "Es erfasst ausschließlich landwirtschaftliche Güter und Bergbau",
+      "Es ignoriert den grenzüberschreitenden Export von Industrieerzeugnissen"
     ],
     "explanation": "Zerstört ein Sturm tausend Dächer, steigt das BIP durch die Reparaturen. Der reale Wohlstand der Menschen ist jedoch gesunken.",
-    "exp": "Zerstört ein Sturm tausend Dächer, steigt das BIP durch die Reparaturen. Der reale Wohlstand der Menschen ist jedoch gesunken."
+    "exp": "Es zählt Staatsausgaben als Wohlstand und blendet Zwischenstufen der Produktion aus"
   },
   {
     "cat": "debatte",
     "diff": "easy",
     "q": "Was beschreibt der berühmte 'Cantillon-Effekt' bei der Schöpfung neuen Geldes?",
     "a": [
-      "Das neue Geld erreicht nicht alle Bürger gleichzeitig, sondern bereichert die Erstempfänger auf Kosten der Letztempfänger",
-      "Dass Geldscheine bei feuchtem Wetter schneller reißen als bei Trockenheit",
-      "Dass Zinssätze automatisch sinken, wenn der Goldpreis weltweit steigt",
-      "Dass arme Länder schneller wachsen als hochentwickelte Volkswirtschaften"
+      "Neues Geld begünstigt Erstempfänger auf Kosten späterer Empfänger",
+      "Geldschöpfung führt sofort zu gleichmäßigen Preissteigerungen für alle Bürger",
+      "Die Zinsen sinken durch Geldmengenausweitung dauerhaft auf null Prozent",
+      "Kleine Sparer profitieren stärker von Inflation als Großinvestoren"
     ],
     "explanation": "Richard Cantillon entdeckte: Wer das neue Geld zuerst erhält (Staat, Großbanken), kauft zu alten Preisen; bei der Masse kommt es erst an, wenn alles teurer ist.",
-    "exp": "Richard Cantillon entdeckte: Wer das neue Geld zuerst erhält (Staat, Großbanken), kauft zu alten Preisen; bei der Masse kommt es erst an, wenn alles teurer ist."
+    "exp": "Neues Geld begünstigt Erstempfänger auf Kosten späterer Empfänger"
   },
   {
     "cat": "debatte",
     "diff": "easy",
     "q": "Welche populäre ökonomische Parabel verfasste Frédéric Bastiat mit der Geschichte vom 'zerbrochenen Fenster'?",
     "a": [
-      "Dass Zerstörung keinen Wohlstand schafft, weil das Geld für die Reparatur an anderer Stelle für echten Fortschritt fehlt",
-      "Dass Glaser die wichtigsten Steuerzahler einer Nation sind",
-      "Dass man Fenster im Winter stets geschlossen halten muss",
-      "Dass Steuern die Wirtschaft durch zersplitterte Gläser ankurbeln"
+      "Zerstörung schafft keinen Wohlstand, da Mittel für Investitionen fehlen",
+      "Reparaturen kurbeln die Wirtschaft dauerhaft an und mehren das Vermögen",
+      "Glasereien sind die wichtigsten Triebfedern für wirtschaftlichen Aufschwung",
+      "Naturkatastrophen sind für Volkswirtschaften stets ein Netto-Gewinn"
     ],
     "explanation": "Man sieht den verdienenden Glaser (What is Seen), übersieht aber den Schneider, bei dem der Bäcker sonst einen Anzug gekauft hätte (What is Not Seen).",
-    "exp": "Man sieht den verdienenden Glaser (What is Seen), übersieht aber den Schneider, bei dem der Bäcker sonst einen Anzug gekauft hätte (What is Not Seen)."
+    "exp": "Zerstörung schafft keinen Wohlstand, da Mittel für Investitionen fehlen"
   },
   {
     "cat": "debatte",
     "diff": "easy",
     "q": "Welchen Begriff prägte Joseph Schumpeter für die ständige Erneuerung der Wirtschaft durch unternehmerische Innovation?",
     "a": [
-      "Schöpferische Zerstörung (Creative Destruction)",
-      "Planmäßige Verelendung",
-      "Zirkuläre Stagnation",
-      "Statische Marktanpassung"
+      "Schöpferische Zerstörung",
+      "Permanente Disruption",
+      "Dynamische Evolution",
+      "Dialektischer Fortschritt"
     ],
     "explanation": "Alte Industrien (wie die Kutsche oder die Schreibmaschine) müssen weichen, damit Kapital und Arbeit für überlegene Neuerungen frei werden.",
-    "exp": "Alte Industrien (wie die Kutsche oder die Schreibmaschine) müssen weichen, damit Kapital und Arbeit für überlegene Neuerungen frei werden."
+    "exp": "Schöpferische Zerstörung"
   },
   {
     "cat": "debatte",
     "diff": "easy",
     "q": "Was besagt das berühmte Zitat von Nobelpreisträger Milton Friedman über die Ursache von Inflation?",
     "a": [
-      "'Inflation ist immer und überall ein monetäres Phänomen'",
-      "'Inflation entsteht durch die Gier von Supermarktbesitzern'",
-      "'Inflation ist ein unabwendbares Schicksal der Natur'",
-      "'Inflation wird durch hohe Löhne im Handwerk erzeugt'"
+      "Der Wettbewerb als Entdeckungsverfahren",
+      "Die Logik des kollektiven Handelns",
+      "Die Theorie der wirtschaftlichen Entwicklung",
+      "Preise und Produktion"
     ],
     "explanation": "Preise können auf breiter Front nur dann dauerhaft steigen, wenn die Geldmenge schneller wächst als die Menge der produzierten Güter.",
-    "exp": "Preise können auf breiter Front nur dann dauerhaft steigen, wenn die Geldmenge schneller wächst als die Menge der produzierten Güter."
+    "exp": "Der Wettbewerb als Entdeckungsverfahren"
   },
   {
     "cat": "debatte",
     "diff": "easy",
     "q": "Was versteht man in der Umweltökonomie unter der 'Tragik der Allmende' (Tragedy of the Commons)?",
     "a": [
-      "Frei zugängliche Gemeinschaftsgüter ohne klare Eigentumsrechte werden rücksichtslos übernutzt und zerstört",
-      "Dass Bauern auf privaten Feldern weniger ernten als auf Gemeindewiesen",
-      "Dass landwirtschaftliche Produkte keinen Marktpreis erzielen können",
-      "Dass Wälder nur wachsen, wenn der Staat ihren Zuschnitt bestimmt"
+      "Frei zugängliche Gemeinschaftsgüter ohne Eigentumsrechte werden übernutzt",
+      "Frei zugängliche Güter ohne Eigentumsrechte werden rücksichtslos übernutzt",
+      "Bauerngemeinschaften einigen sich nie über die Nutzung von Weideflächen",
+      "Wälder dürfen grundsätzlich nicht in Privatbesitz übergehen"
     ],
     "explanation": "Was allen gehört, gehört niemandem und wird von allen geplündert (z. B. Überfischung der Weltmeere); klares Eigentum schafft Anreiz zur Pflege.",
-    "exp": "Was allen gehört, gehört niemandem und wird von allen geplündert (z. B. Überfischung der Weltmeere); klares Eigentum schafft Anreiz zur Pflege."
+    "exp": "Frei zugängliche Gemeinschaftsgüter ohne Eigentumsrechte werden übernutzt"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Was besagt das berühmte 'Coase-Theorem' (nach Ronald Coase) über externe Effekte und Konflikte?",
     "a": [
-      "Bei klar definierten Eigentumsrechten und geringen Transaktionskosten verhandeln Betroffene die effizienteste Lösung freiwillig",
-      "Der Staat muss jeden Nachbarschaftsstreit durch ein eigenes Ministerium regeln",
-      "Konflikte können niemals ohne staatliche Enteignung beigelegt werden",
-      "Eigentum verschärft Umweltprobleme in jedem denkbaren Fall"
+      "Bei klaren Eigentumsrechten verhandeln Parteien externe Effekte effizient selbst",
+      "Der Staat muss jeden Nachbarschaftskonflikt durch Gesetze regeln",
+      "Umweltschäden lassen sich nur durch drastische Strafsteuern verhindern",
+      "Große Unternehmen gewinnen Gerichtsverfahren gegen Bürger prinzipiell immer"
     ],
     "explanation": "Ob Fischer oder Fabrikbesitzer: Wissen beide Parteien, wem das Recht gehört, verhandeln sie über Entschädigungen zur besten ökonomischen Lösung.",
-    "exp": "Ob Fischer oder Fabrikbesitzer: Wissen beide Parteien, wem das Recht gehört, verhandeln sie über Entschädigungen zur besten ökonomischen Lösung."
+    "exp": "Bei klaren Eigentumsrechten verhandeln Parteien externe Effekte effizient selbst"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Welche fundamentale Erkenntnis begründete die 'Public Choice Theory' (Neue Politische Ökonomie) von James M. Buchanan?",
     "a": [
-      "Politiker und Beamte handeln wie normale Menschen nach Eigeninteresse (Machterhalt, Budgetausweitung) und nicht als selbstlose Diener des Gemeinwohls",
-      "Beamte treffen stets unparteiische Entscheidungen zum reinen Wohle des Bürgers",
-      "Demokratische Wahlen garantieren automatisch den sparsamsten Umgang mit Steuergeld",
-      "Staatsbetriebe wirtschaften produktiver als private Konkurrenten"
+      "Politiker und Beamte handeln nach Eigeninteresse und nicht uneigennützig",
+      "Bürokraten optimieren stets das Wohlergehen der schwächsten Bürger",
+      "Staatsdiener verzichten freiwillig auf die Ausweitung ihrer Budgets",
+      "Gesetze spiegeln immer den objektiven Willen der Bevölkerungsmehrheit wider"
     ],
     "explanation": "Public Choice entzauberte den Mythos vom wohlwollenden Staat: Politiker tauschen Steuergeschenke gegen Wählerstimmen ein.",
-    "exp": "Public Choice entzauberte den Mythos vom wohlwollenden Staat: Politiker tauschen Steuergeschenke gegen Wählerstimmen ein."
+    "exp": "Politiker und Beamte handeln nach Eigeninteresse und nicht uneigennützig"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Was meinte Thomas Sowell mit seiner berühmten Feststellung über 'Lösungen' in der Ökonomie?",
     "a": [
-      "'Es gibt keine Lösungen, es gibt nur Zielkonflikte (Trade-offs)'",
-      "'Jedes Problem lässt sich mit ausreichend Subventionen lösen'",
-      "'Der Staat hat für jede Krise die perfekte wissenschaftliche Antwort'",
-      "'Geld löst alle moralischen Konflikte einer Zivilisation'"
+      "Henry Hazlitt",
+      "Thomas Sowell",
+      "Walter Williams",
+      "Murray Rothbard"
     ],
     "explanation": "Jede politische Maßnahme verursacht Kosten und Nachteile an anderer Stelle. Wer Perfektion verspricht, ignoriert die Realität der Knappheit.",
-    "exp": "Jede politische Maßnahme verursacht Kosten und Nachteile an anderer Stelle. Wer Perfektion verspricht, ignoriert die Realität der Knappheit."
+    "exp": "Henry Hazlitt"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Was beschreibt die 'Laffer-Kurve' im Bereich der Steuerpolitik?",
     "a": [
-      "Dass Steuereinnahmen ab einem bestimmten Steuersatz sinken, weil Leistungsträger ausweichen oder weniger arbeiten",
-      "Dass eine Steuerquote von 100 Prozent den maximalen Staatsreichtum garantiert",
-      "Dass Unternehmen bei steigenden Steuern automatisch mehr investieren",
-      "Dass Steuererhöhungen die Lebensfreude der Bürger messbar vergrößern"
+      "Zu hohe Steuersätze senken die Einnahmen, weil Leistungsträger ausweichen",
+      "Steuersenkungen führen in jedem Fall zu einem dauerhaften Staatsbankrott",
+      "Eine Steuerquote von null Prozent maximiert die Einnahmen des Staates",
+      "Unternehmen zahlen unabhängig von der Steuerhöhe stets denselben Betrag"
     ],
     "explanation": "Bei 0 % Steuern nimmt der Staat nichts ein; bei 100 % arbeitet niemand mehr legal. Dazwischen liegt ein Scheitelpunkt, ab dem höhere Sätze schaden.",
-    "exp": "Bei 0 % Steuern nimmt der Staat nichts ein; bei 100 % arbeitet niemand mehr legal. Dazwischen liegt ein Scheitelpunkt, ab dem höhere Sätze schaden."
+    "exp": "Zu hohe Steuersätze senken die Einnahmen, weil Leistungsträger ausweichen"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Was versteht man unter dem Begriff 'Moral Hazard' (moralisches Risiko) in der Finanzökonomie?",
     "a": [
-      "Das leichtsinnige Eingehen hoher Risiken, weil man weiß, dass eventuelle Verluste von Dritten (z. B. dem Staat) getragen werden",
-      "Die Angst vor Bestrafung bei Steuerhinterziehung",
-      "Das Verbot von Krediten an unseriöse Privatpersonen",
-      "Die moralische Verpflichtung von Millionären zu spenden"
+      "Leichtsinniges Eingehen von Risiken, weil Dritte eventuelle Verluste tragen",
+      "Die Weigerung von Versicherungen, Schäden bei Fahrlässigkeit zu regulieren",
+      "Das moralische Pflichtgefühl wohlhabender Bürger zur Wohltätigkeit",
+      "Die Gefahr von Zahlungsausfällen bei extrem hohen Leitzinsen"
     ],
     "explanation": "Wenn Großbanken wissen, dass sie 'too big to fail' sind und der Staat sie rettet, zocken sie hemmungslos – Gewinne privat, Verluste verstaatlicht.",
-    "exp": "Wenn Großbanken wissen, dass sie 'too big to fail' sind und der Staat sie rettet, zocken sie hemmungslos – Gewinne privat, Verluste verstaatlicht."
+    "exp": "Leichtsinniges Eingehen von Risiken, weil Dritte eventuelle Verluste tragen"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Was bewies die Wirtschaftsnobelpreisträgerin Elinor Ostrom in ihren Studien zu Gemeinschaftsgütern?",
     "a": [
-      "Lokale Gemeinschaften können Allmende-Ressourcen durch selbstorganisierte, informelle Regeln oft erstaunlich nachhaltig bewirtschaften",
-      "Nur strikte Verstaatlichung kann Wälder vor Abholzung retten",
-      "Die Tragik der Allmende ist ein unlösbares Schicksal ohne Ausnahme",
-      "Privates Eigentum an Fischteichen ist biologisch schädlich"
+      "Lokale Gemeinschaften bewirtschaften Allmenden oft nachhaltig durch eigene Regeln",
+      "Nur zentralstaatliche Behörden können Umweltkatastrophen wirksam verhindern",
+      "Gemeinschaftseigentum führt ausnahmslos zum Zusammenbruch der Ökosysteme",
+      "Wasserrechte müssen weltweit privatisiert und an Konzerne verkauft werden"
     ],
     "explanation": "Ostrom zeigte weltweit, dass Schweizer Almbauern oder spanische Bewässerungsvereine ohne staatliche Zwangseingriffe seit Jahrhunderten kooperieren.",
-    "exp": "Ostrom zeigte weltweit, dass Schweizer Almbauern oder spanische Bewässerungsvereine ohne staatliche Zwangseingriffe seit Jahrhunderten kooperieren."
+    "exp": "Lokale Gemeinschaften bewirtschaften Allmenden oft nachhaltig durch eigene Regeln"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Was beschreibt das Phänomen des 'Rent-Seeking' (Pfründensichern) in der Politikwissenschaft?",
     "a": [
-      "Der Versuch von Interessengruppen, durch Lobbyarbeit staatliche Privilegien, Zölle oder Subventionen auf Kosten anderer zu erlangen",
-      "Die Suche von Rentnern nach bezahlbarem Wohnraum in Städten",
-      "Das Eröffnen von Mietwagenfirmen an internationalen Flughäfen",
-      "Das Anlegen von Ersparnissen in sicheren Bundesanleihen"
+      "Versuch von Interessengruppen, staatliche Privilegien oder Hilfen zu erlangen",
+      "Die Vermietung von Wohnraum zu überhöhten Preisen an Studenten",
+      "Die Anlage von Kapital in festverzinslichen Staatsanleihen",
+      "Die Spekulation auf steigende Bodenpreise in Großstädten"
     ],
     "explanation": "Statt bessere Produkte am Markt zu bauen, investieren Konzerne Millionen in Lobbyisten, um Konkurrenten durch Gesetze auszuschalten.",
-    "exp": "Statt bessere Produkte am Markt zu bauen, investieren Konzerne Millionen in Lobbyisten, um Konkurrenten durch Gesetze auszuschalten."
+    "exp": "Versuch von Interessengruppen, staatliche Privilegien oder Hilfen zu erlangen"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Warum führen staatliche Mietpreisbremsen laut breitem ökonomischem Konsens zu Wohnungsknappheit?",
     "a": [
-      "Sie machen Neubau und Sanierung unrentabel, verringern das Angebot und zementieren bestehende Mietverhältnisse",
-      "Sie zwingen Mieter dazu, jedes Jahr in eine andere Stadt umzuziehen",
-      "Sie lassen die Baukosten für Ziegelsteine über Nacht explodieren",
-      "Sie verbieten den Bau von mehrstöckigen Wohnhäusern"
+      "Sie machen Neubau unrentabel, mindern das Angebot und zementieren Bestände",
+      "Sie senken die Baukosten für neue Wohnungen sprunghaft ab",
+      "Sie führen zu einem dramatischen Leerstand von bezahlbarem Wohnraum",
+      "Sie begünstigen wohlhabende Mieter bei der Suche nach Luxusvillen"
     ],
     "explanation": "Schon der schwedische Ökonom Assar Lindbeck spottete: Mietkontrolle ist neben Bombardierung der effektivste Weg, eine Stadt zu zerstören.",
-    "exp": "Schon der schwedische Ökonom Assar Lindbeck spottete: Mietkontrolle ist neben Bombardierung der effektivste Weg, eine Stadt zu zerstören."
+    "exp": "Sie machen Neubau unrentabel, mindern das Angebot und zementieren Bestände"
   },
   {
     "cat": "debatte",
     "diff": "mid",
     "q": "Was meinte Adam Smith mit der Metapher der 'unsichtbaren Hand' des Marktes?",
     "a": [
-      "Dass Individuen durch die Verfolgung ihres eigenen Nutzens unbeabsichtigt das Wohl der gesamten Gesellschaft fördern",
-      "Dass ein geheimer Staatsbeamter alle Preise heimlich manipuliert",
-      "Dass der Markt von unsichtbaren Wesen gesteuert wird",
-      "Dass Diebstahl im Dunkeln für die Volkswirtschaft nützlich ist"
+      "Dass Eigennutz am Markt unbeabsichtigt das Wohl der Gesellschaft fördert",
+      "Dass der Staat die Märkte im Verborgenen regulieren und lenken sollte",
+      "Dass Monopole die Preise nach Belieben zum Wohle der Kunden senken",
+      "Dass Spekulanten die Kurse an Börsen geheim manipulieren"
     ],
     "explanation": "Um Geld zu verdienen, muss der Unternehmer seinen Kunden nützliche Dinge anbieten. Das Eigeninteresse wird so zum Motor des Allgemeinwohls.",
-    "exp": "Um Geld zu verdienen, muss der Unternehmer seinen Kunden nützliche Dinge anbieten. Das Eigeninteresse wird so zum Motor des Allgemeinwohls."
+    "exp": "Dass Eigennutz am Markt unbeabsichtigt das Wohl der Gesellschaft fördert"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was formuliert das 'Gresham'sche Gesetz' über das Verhältnis von gutem und schlechtem Geld?",
     "a": [
-      "'Schlechtes (unterbewertetes) Geld verdrängt das gute Geld aus dem Umlauf, wenn ein fester Wechselkurs erzwungen wird'",
-      "Dass neue Münzen immer schneller rosten als alte Barren",
-      "Dass Goldmünzen bei Deflation ihren Nennwert verdoppeln",
-      "Dass Banknoten nur in ungeraden Jahreszahlen gedruckt werden dürfen"
+      "Schlechtes Geld verdrängt gutes Geld, wenn Wechselkurse fixiert werden",
+      "Schlechtes Geld verdrängt gutes Geld bei gesetzlich fixierten Wechselkursen",
+      "Gutes Geld wird von den Bürgern bevorzugt im Alltag ausgegeben",
+      "Papierwährungen behalten ihren Wert gegenüber Edelmetallen dauerhaft"
     ],
     "explanation": "Schreibt der Staat vor, dass abgenutzte Münzen denselben Wert haben wie vollwertige Goldmünzen, horten Bürger das Gold und zahlen mit dem Schrott.",
-    "exp": "Schreibt der Staat vor, dass abgenutzte Münzen denselben Wert haben wie vollwertige Goldmünzen, horten Bürger das Gold und zahlen mit dem Schrott."
+    "exp": "Schlechtes Geld verdrängt gutes Geld, wenn Wechselkurse fixiert werden"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was unterscheidet den 'Ordoliberalismus' der Freiburger Schule (Walter Eucken) vom reinen Laissez-faire-Kapitalismus?",
     "a": [
-      "Der Staat soll als starker Schiedsrichter eine feste Rahmenordnung gegen Kartelle setzen, sich aber aus dem Wirtschaftsprozess heraushalten",
-      "Der Staat soll sämtliche Fabriken selbst verwalten und leiten",
-      "Der Staat soll alle Preise und Gehälter wöchentlich festlegen",
-      "Der Staat soll private Banken verbieten und Kredite zuteilen"
+      "Der Staat setzt feste Rahmenregeln gegen Kartelle, lenkt aber nicht den Markt",
+      "Der Staat übernimmt Schlüsselindustrien wie Bahn und Energie komplett",
+      "Es gibt überhaupt keine Gesetze oder Gerichte für Wirtschaftsfragen",
+      "Preise und Löhne werden jährlich von einer Regierungskommission diktiert"
     ],
     "explanation": "Eucken forderte 'Ordnungspolitik statt Prozesspolitik': Der Staat baut die Straßen und setzt Spielregeln, spielt aber nicht selbst mit.",
-    "exp": "Eucken forderte 'Ordnungspolitik statt Prozesspolitik': Der Staat baut die Straßen und setzt Spielregeln, spielt aber nicht selbst mit."
+    "exp": "Der Staat setzt feste Rahmenregeln gegen Kartelle, lenkt aber nicht den Markt"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was beschreibt die 'Hypothese effizienter Märkte' (EMH) von Eugene Fama?",
     "a": [
-      "Aktienkurse spiegeln zu jedem Zeitpunkt alle öffentlich verfügbaren Informationen wider; Überrenditen sind auf Dauer reiner Zufall",
-      "Dass man mit Computercharts die Zukunft der Börse sicher vorhersagen kann",
-      "Dass staatliche Planer Aktienkurse besser berechnen als Privatanleger",
-      "Dass Börsen nur im Sommer effizient arbeiten"
+      "Aktienkurse spiegeln jederzeit alle öffentlich bekannten Informationen wider",
+      "Chartanalysen garantieren langfristig überdurchschnittliche Gewinne",
+      "Märkte sind irrational und bewegen sich völlig losgelöst von Unternehmenswerten",
+      "Insiderhandel ist an modernen Börsenplätzen technisch unmöglich"
     ],
     "explanation": "Weil Millionen Händler blitzschnell auf News reagieren, ist jede neue Information sofort eingepreist. Den Markt dauerhaft zu schlagen, gelingt kaum.",
-    "exp": "Weil Millionen Händler blitzschnell auf News reagieren, ist jede neue Information sofort eingepreist. Den Markt dauerhaft zu schlagen, gelingt kaum."
+    "exp": "Aktienkurse spiegeln jederzeit alle öffentlich bekannten Informationen wider"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was ist das Kernargument von Mancur Olsons 'Logik des kollektiven Handelns' über den Einfluss von Minderheiten?",
     "a": [
-      "Kleine, gut organisierte Interessengruppen setzen ihre Sonderinteressen leicht gegen eine unorganisierte, träge Mehrheit durch",
-      "Große Gruppen mit Millionen Mitgliedern sind politisch immer am schlagkräftigsten",
-      "Demokratische Mehrheiten lassen sich niemals von Lobbyisten überstimmen",
-      "Kollektives Handeln ist nur in Gesellschaften mit Einparteiensystem möglich"
+      "Kleine, gut organisierte Gruppen setzen Sonderinteressen gegen Mehrheiten durch",
+      "Große Massenbewegungen dominieren immer die politische Gesetzgebung",
+      "Minderheiten werden in parlamentarischen Demokratien stets benachteiligt",
+      "Lobbygruppen vertreten ausschließlich die Interessen der Allgemeinheit"
     ],
     "explanation": "Jeder Bürger verliert durch eine Agrarsubvention nur wenige Euro, weshalb er nicht protestiert; die wenigen Profiteure kämpfen jedoch erbittert dafür.",
-    "exp": "Jeder Bürger verliert durch eine Agrarsubvention nur wenige Euro, weshalb er nicht protestiert; die wenigen Profiteure kämpfen jedoch erbittert dafür."
+    "exp": "Kleine, gut organisierte Gruppen setzen Sonderinteressen gegen Mehrheiten durch"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was beschreibt das 'Lucas-Kritik'-Argument von Nobelpreisträger Robert Lucas über staatliche Konjunkturmodelle?",
     "a": [
-      "Historische Daten versagen als Prognose, weil Menschen ihr Verhalten rational an neue politische Maßnahmen anpassen",
-      "Dass Wirtschaftswissenschaftler keine Computer zur Berechnung nutzen dürfen",
-      "Dass die Wirtschaftspolitik ausschließlich von Philosophen geleitet werden muss",
-      "Dass Arbeitslosigkeit ein rein optischer Messfehler der Statistik ist"
+      "Menschen passen ihr Verhalten rational an geänderte politische Maßnahmen an",
+      "Konjunkturprognosen sind dank Computermodellen zu 100 Prozent zuverlässig",
+      "Die Geldpolitik hat keinerlei Einfluss auf die reale Wirtschaftsleistung",
+      "Konsumenten reagieren völlig unvorhersehbar auf Steueränderungen"
     ],
     "explanation": "Versucht die Notenbank, durch Inflation Jobs zu schaffen, durchschauen die Bürger den Trick und fordern sofort höhere Löhne – die Illusion verpufft.",
-    "exp": "Versucht die Notenbank, durch Inflation Jobs zu schaffen, durchschauen die Bürger den Trick und fordern sofort höhere Löhne – die Illusion verpufft."
+    "exp": "Menschen passen ihr Verhalten rational an geänderte politische Maßnahmen an"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was meinte der Philosoph Robert Nozick mit seinem berühmten Gedankenexperiment zum Basketballstar 'Wilt Chamberlain'?",
     "a": [
-      "Dass freiwillige Transaktionen zwischen Bürgern jede vorgegebene staatliche Gleichverteilung von Einkommen sofort wieder aufheben",
-      "Dass Profisportler keine Steuern auf ihre Einnahmen zahlen sollten",
-      "Dass Basketball im Sozialismus zur Pflichtsportart werden muss",
-      "Dass Talente ausschließlich dem Staat und dem Kollektiv gehören"
+      "Freiwillige Transaktionen heben vorgegebene staatliche Gleichverteilung auf",
+      "Sportler sollten maximal den Mindestlohn für ihre Spiele erhalten",
+      "Basketballvereine müssen verstaatlicht werden, um Tickets billig zu halten",
+      "Ungleichheit bei Eintrittspreisen führt zur Verarmung der Sportfans"
     ],
     "explanation": "Zahlen Millionen Fans freiwillig 25 Cent, um Chamberlain spielen zu sehen, wird er reich. Um Gleichheit wiederherzustellen, müsste der Staat Freiheit verbieten.",
-    "exp": "Zahlen Millionen Fans freiwillig 25 Cent, um Chamberlain spielen zu sehen, wird er reich. Um Gleichheit wiederherzustellen, müsste der Staat Freiheit verbieten."
+    "exp": "Freiwillige Transaktionen heben vorgegebene staatliche Gleichverteilung auf"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was beschreibt das Phänomen der 'Zombiefirmen' in einer langanhaltenden Niedrigzinsphase?",
     "a": [
-      "Unrentable Unternehmen, deren operative Gewinne nicht einmal die Kreditzinsen decken, überleben künstlich durch extrem billiges Geld",
-      "Betriebe, die Roboter und künstliche Intelligenz statt lebender Menschen beschäftigen",
-      "Banken, die ausschließlich an Wochenenden für Überweisungen öffnen",
-      "Unternehmen, die ihre Steuern in Form von Lebensmitteln bezahlen"
+      "Unrentable Firmen überleben künstlich durch extrem billiges Geld und Kredite",
+      "Unternehmen, die ausschließlich nachts automatisierte Software betreiben",
+      "Konzerne, die nach einer Insolvenz unter neuem Namen weitergeführt werden",
+      "Firmen mit mehr als fünfzig Prozent staatlicher Kapitalbeteiligung"
     ],
     "explanation": "Niedrigstzinsen verhindern gesunde Marktbereinigungen. Zombiefirmen binden Kapital und Arbeitskräfte, die in produktiven Betrieben fehlen.",
-    "exp": "Niedrigstzinsen verhindern gesunde Marktbereinigungen. Zombiefirmen binden Kapital und Arbeitskräfte, die in produktiven Betrieben fehlen."
+    "exp": "Unrentable Firmen überleben künstlich durch extrem billiges Geld und Kredite"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was versteht man unter dem Begriff 'Regulatory Capture' (Kaperung der Aufsichtsbehörden)?",
     "a": [
-      "Wenn regulierte Großkonzerne die staatliche Aufsichtsbehörde so dominieren, dass sie Regulierungen zur Abwehr neuer Konkurrenten nutzen",
-      "Das Verhaften von korrupten Bankmanagern durch Bundespolizisten",
-      "Das Beschlagnahmen von Piratenschiffen durch die Küstenwache",
-      "Das Verbot von Lobbyisten in Parlamentsgebäuden"
+      "Großkonzerne dominieren Aufsichtsbehörden, um Konkurrenten fernzuhalten",
+      "Polizeikräfte übernehmen die Verwaltung von insolventen Großbanken",
+      "Ministerien beschlagnahmen Firmenarchive zur Steuerprüfung",
+      "Unternehmen werden von feindlichen Gewerkschaften übernommen"
     ],
     "explanation": "Strenge Auflagen treffen Start-ups viel härter als etablierte Riesen. Konzerne nutzen Bürokratie als Burggraben gegen lästige Wettbewerber.",
-    "exp": "Strenge Auflagen treffen Start-ups viel härter als etablierte Riesen. Konzerne nutzen Bürokratie als Burggraben gegen lästige Wettbewerber."
+    "exp": "Großkonzerne dominieren Aufsichtsbehörden, um Konkurrenten fernzuhalten"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was bezeichnet die 'Tragik der Allmende' im digitalen Raum bei Urheberrechts- und Open-Source-Debatten?",
     "a": [
-      "Die unentgeltliche Nutzung offener digitaler Bibliotheken durch Großkonzerne ohne angemessenen Beitrag zur Instandhaltung",
-      "Das Löschen von Benutzerkonten bei sozialen Netzwerken ohne Vorwarnung",
-      "Das Verbot von Programmiersprachen durch Regierungsbeschlüsse",
-      "Die Überlastung von Glasfaserkabeln durch zu viele E-Mails"
+      "Nutzung offener Software-Bibliotheken durch Konzerne ohne eigene Beiträge",
+      "Die Überlastung von Servern durch zu viele gleichzeitige Downloads",
+      "Der Diebstahl von Quellcode durch konkurrierende Softwareentwickler",
+      "Das Verbot von kostenloser Open-Source-Software durch Regierungen"
     ],
     "explanation": "Wenn Tausende Firmen auf unbezahlte Open-Source-Entwickler bauen, ohne sie zu unterstützen, drohen kritische Sicherheitslücken und Systemausfälle.",
-    "exp": "Wenn Tausende Firmen auf unbezahlte Open-Source-Entwickler bauen, ohne sie zu unterstützen, drohen kritische Sicherheitslücken und Systemausfälle."
+    "exp": "Nutzung offener Software-Bibliotheken durch Konzerne ohne eigene Beiträge"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Welche Kritik formulierte Friedrich von Wieser am Konzept des Grenznutzens, obwohl er den Begriff selbst prägte?",
     "a": [
-      "Dass Marktpreise die Zahlungsfähigkeit widerspiegeln und nicht zwingend den existenziellen Nutzen für mittellose Menschen",
-      "Dass Grenznutzen bei Lebensmitteln physikalisch nicht messbar sei",
-      "Dass die Grenznutzentheorie nur für den Tauschhandel mit Vieh gilt",
-      "Dass Geld überhaupt keinen Grenznutzen besitzen könne"
+      "Preise spiegeln Zahlungsfähigkeit wider, nicht existenziellen Bedarf",
+      "Der Grenznutzen lässt sich mathematisch auf zehn Nachkommastellen bestimmen",
+      "Luxusgüter besitzen für alle Menschen den identischen Grenznutzen",
+      "Wasser ist wertvoller als Diamanten, weshalb es teurer sein müsste"
     ],
     "explanation": "Ein reicher Mann zahlt für eine Delikatesse viel Geld, während ein Armer für Brot wenig zahlen kann – der Markt misst Tauschwert, nicht ethische Dringlichkeit.",
-    "exp": "Ein reicher Mann zahlt für eine Delikatesse viel Geld, während ein Armer für Brot wenig zahlen kann – der Markt misst Tauschwert, nicht ethische Dringlichkeit."
+    "exp": "Preise spiegeln Zahlungsfähigkeit wider, nicht existenziellen Bedarf"
   },
   {
     "cat": "debatte",
     "diff": "pro",
     "q": "Was besagt die 'Bastiat'sche Kerzenmacher-Petition' (Satire von 1845) über Protektionismus und Freihandel?",
     "a": [
-      "Kerzenmacher fordern die Verdunkelung der Sonne, um ihre heimische Lampenindustrie vor unlauterem Gratis-Lichtwettbewerb zu schützen",
-      "Dass Kerzen aus Bienenwachs steuerlich gefördert werden müssen",
-      "Dass elektrische Glühbirnen sofort verboten werden sollten",
-      "Dass Kirchen bei Nachtgottesdiensten keine Kerzen mehr anzünden dürfen"
+      "Kerzenmacher fordern die Verdunkelung der Sonne gegen Gratis-Lichtkonkurrenz",
+      "Bergleute verlangen ein Verbot von elektrischem Licht in Fabrikhallen",
+      "Handwerker bitten um staatliche Zuschüsse für teures Bienenwachs",
+      "Kaufleute protestieren gegen den Import von billigem Walratöl aus Übersee"
     ],
     "explanation": "Bastiats geniale Satire zeigte: Schutzzölle gegen billige Importe sind genauso absurd, als würde man Fenster vernageln, um die Sonne fernzuhalten.",
-    "exp": "Bastiats geniale Satire zeigte: Schutzzölle gegen billige Importe sind genauso absurd, als würde man Fenster vernageln, um die Sonne fernzuhalten."
+    "exp": "Kerzenmacher fordern die Verdunkelung der Sonne gegen Gratis-Lichtkonkurrenz"
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
-    window.ArcadeQuizEngine.registerBank('politics', DATA);
+  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
+    window.ArcadeQuizEngine.registerBank("politics", DATA);
   } else {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS['politics'] = DATA;
+    window.ARCADE_QUIZ_BANKS["politics"] = DATA;
   }
 })();
