@@ -138,9 +138,22 @@ function refreshTopBest() {
   if (el) el.textContent = b ? b.best : 0;
 }
 
+let wpCumDist = [0];
+
+function getEnemyPathProgress(en) {
+  const wpIdx = Math.max(1, Math.min(waypoints.length - 1, en.wp || 1));
+  const targetWp = waypoints[wpIdx];
+  if (!targetWp) return en.progress || 0;
+  return (wpCumDist[wpIdx] || 0) - Math.hypot(targetWp.x - en.x, targetWp.y - en.y);
+}
+
 function buildPathSet(idx) {
   const pts = MAPS[idx] || MAPS[0];
   waypoints = pts.map(([c, r]) => ({ x: c + 0.5, y: r + 0.5 }));
+  wpCumDist = [0];
+  for (let i = 1; i < waypoints.length; i++) {
+    wpCumDist[i] = wpCumDist[i - 1] + Math.hypot(waypoints[i].x - waypoints[i - 1].x, waypoints[i].y - waypoints[i - 1].y);
+  }
   pathCells.clear();
   for (let i = 0; i < pts.length - 1; i++) {
     let [c0, r0] = pts[i];
@@ -607,7 +620,7 @@ function buildTowerAt(col, row) {
     x: col + 0.5, y: row + 0.5,
     def, lvl: 1, spent: def.cost,
     dmg: def.dmg, range: def.range, rate: def.rate, slow: def.slow || 0,
-    targetMode: def.id === 'rail' ? 'strong' : 'first',
+    targetMode: 'first',
     kills: 0, recoil: 0, cd: 0, angle: 0
   };
   towers.push(newTw);
@@ -921,24 +934,49 @@ function stepTD(rawDt) {
     if (tw.cd > 0) return;
 
     let best = null;
+    let bestProg = -Infinity;
+    let bestUnslowed = null;
+    let bestUnslowedProg = -Infinity;
     const mode = tw.targetMode || 'first';
+    const isFrost = tw.def.id === 'frost';
+
     enemies.forEach(en => {
       if (Math.hypot(en.x - tw.x, en.y - tw.y) <= tw.range) {
+        const prog = getEnemyPathProgress(en);
+        if (isFrost && mode === 'first' && en.slowTimer <= 0 && !en.frostImmune && en.thawTimer <= 0) {
+          if (!bestUnslowed || prog > bestUnslowedProg) {
+            bestUnslowed = en;
+            bestUnslowedProg = prog;
+          }
+        }
         if (!best) {
           best = en;
+          bestProg = prog;
           return;
         }
         if (mode === 'strong') {
           const effBest = best.hp + best.shield;
           const effEn = en.hp + en.shield;
-          if (effEn > effBest || (effEn === effBest && en.progress > best.progress)) best = en;
+          if (effEn > effBest || (effEn === effBest && prog > bestProg)) {
+            best = en;
+            bestProg = prog;
+          }
         } else if (mode === 'fast') {
-          if (en.speed > best.speed || (en.speed === best.speed && en.progress > best.progress)) best = en;
+          if (en.speed > best.speed || (en.speed === best.speed && prog > bestProg)) {
+            best = en;
+            bestProg = prog;
+          }
         } else {
-          if (en.progress > best.progress) best = en;
+          if (prog > bestProg) {
+            best = en;
+            bestProg = prog;
+          }
         }
       }
     });
+    if (isFrost && mode === 'first' && bestUnslowed) {
+      best = bestUnslowed;
+    }
     if (!best) return;
     tw.angle = Math.atan2(best.y - tw.y, best.x - tw.x);
     tw.cd = 1 / (tw.rate * rateMult);
