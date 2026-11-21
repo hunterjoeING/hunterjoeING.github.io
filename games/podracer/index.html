@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Canyon Podracer 3D · HunterJoe Arcade</title>
+  <meta name="description" content="Rasantes 3D-Podracer-Rennspiel mit Three.js: Doppelturbinen, knisternde Energie-Blitze, kurvenreiche Wüsten-Canyon-Strecke, Boost-Pads, Steinbögen, UnrealBloom &amp; Bestenliste." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/podracer/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="Canyon Podracer 3D · HunterJoe Arcade" />
+  <meta property="og:description" content="Steuere deinen 3D-Podracer mit Hochgeschwindigkeits-Turbinen, Energie-Blitzen und Boost-Pads durch den Wüsten-Canyon." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/podracer/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Canyon Podracer 3D · HunterJoe Arcade" />
+  <meta name="twitter:description" content="Rasantes 3D-Podracer-Rennspiel mit Three.js direkt im Browser." />
+  <meta name="twitter:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "VideoGame",
+        "name": "Canyon Podracer 3D",
+        "description": "Rasantes 3D-Podracer-Rennspiel mit Three.js durch eine kurvenreiche Wüsten-Canyon-Strecke mit Boost-Pads, Steinbögen und lokalem & globalem Leaderboard.",
+        "url": "https://hunterjoeing.github.io/games/podracer/",
+        "inLanguage": "de",
+        "isAccessibleForFree": true,
+        "applicationCategory": "Game",
+        "operatingSystem": "Any (Webbrowser)",
+        "gamePlatform": "Web Browser",
+        "genre": "Racing / 3D Action",
+        "image": "https://hunterjoeing.github.io/og-cover.png",
+        "author": {
+          "@type": "Person",
+          "name": "Johannes Rudolph"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "HunterJoe Arcade", "item": "https://hunterjoeing.github.io/" },
+          { "@type": "ListItem", "position": 2, "name": "Canyon Podracer 3D", "item": "https://hunterjoeing.github.io/games/podracer/" }
+        ]
+      }
+    ]
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+      "EffectComposer": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/EffectComposer.js",
+      "RenderPass": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/RenderPass.js",
+      "UnrealBloomPass": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/UnrealBloomPass.js",
+      "OutputPass": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/postprocessing/OutputPass.js"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100dvh;
+      max-height: 100dvh;
+      overflow: hidden;
+      background: var(--bg-deep);
+    }
+    .arcade-topbar {
+      flex: 0 0 auto;
+    }
+    .pod-shell {
+      flex: 1 1 0;
+      min-height: 0;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: editorialFadeIn 0.45s var(--ease-boutique) both;
+    }
+
+    /* Warm Editorial Boutique Telemetry Strip */
+    .pod-hud {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px 12px;
+      padding: 9px 14px;
+      border-radius: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-soft);
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+    }
+    .pod-metrics {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px 10px;
+    }
+    .pod-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-sand);
+      border: 1px solid var(--border-hairline);
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .pod-pill strong {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+    .pod-bar-wrap {
+      width: 66px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.14);
+      overflow: hidden;
+    }
+    html[data-theme="dark"] .pod-bar-wrap {
+      background: rgba(255, 255, 255, 0.14);
+    }
+    .pod-bar {
+      height: 100%;
+      width: 100%;
+      border-radius: 999px;
+      transition: width 0.12s linear;
+    }
+    .pod-bar.shield {
+      background: linear-gradient(90deg, #16a34a, #22c55e);
+    }
+    .pod-bar.shield.low {
+      background: linear-gradient(90deg, #dc2626, #f59e0b);
+    }
+    .pod-bar.boost {
+      background: linear-gradient(90deg, #0284c7, #38bdf8);
+    }
+
+    /* 3D Stage */
+    .pod-stage {
+      position: relative;
+      flex: 1 1 0;
+      min-height: 220px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-soft);
+      background: #ebbd8d;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    html[data-theme="dark"] .pod-stage {
+      background: #24131c;
+    }
+    canvas#pod-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+    }
+
+    /* Lap / Event Toast */
+    .pod-lap-toast {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-hover);
+      color: var(--text-main);
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s var(--ease-boutique);
+      z-index: 14;
+      white-space: nowrap;
+    }
+    .pod-lap-toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Responsive Mobile Touch Controls */
+    .pod-touch-controls {
+      display: none;
+      position: absolute;
+      inset: auto 14px 14px;
+      justify-content: space-between;
+      align-items: flex-end;
+      pointer-events: none;
+      z-index: 15;
+    }
+    @media (pointer: coarse), (max-width: 820px) {
+      .pod-touch-controls {
+        display: flex;
+      }
+    }
+    .touch-steer-pair {
+      display: flex;
+      gap: 12px;
+      pointer-events: auto;
+    }
+    .touch-btn {
+      pointer-events: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: rgba(15, 23, 42, 0.52);
+      color: #f8fafc;
+      font-family: var(--font-ui);
+      font-size: 24px;
+      font-weight: 700;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.34);
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform 0.08s ease, background 0.1s ease;
+    }
+    .touch-btn span {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+    .touch-btn.active {
+      transform: scale(0.93);
+      background: rgba(37, 99, 235, 0.82);
+      border-color: #93c5fd;
+    }
+    .touch-btn.boost-btn {
+      width: 86px;
+      height: 78px;
+      background: rgba(217, 119, 6, 0.62);
+      border-color: rgba(253, 224, 71, 0.55);
+    }
+    .touch-btn.boost-btn.active {
+      background: rgba(245, 158, 11, 0.92);
+      border-color: #fef08a;
+    }
+
+    /* Warm Editorial Boutique Start / Game-Over Overlay */
+    .pod-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 22;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(246, 248, 252, 0.52);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      overflow-y: auto;
+    }
+    html[data-theme="dark"] .pod-overlay {
+      background: rgba(11, 17, 32, 0.66);
+    }
+    .pod-overlay.hidden {
+      display: none !important;
+    }
+    .pod-modal {
+      width: min(490px, 100%);
+      max-height: 100%;
+      overflow-y: auto;
+      padding: 24px 26px;
+      border-radius: 18px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      box-shadow: var(--shadow-hover);
+      color: var(--text-main);
+      text-align: center;
+      animation: editorialFadeIn 0.28s var(--ease-boutique);
+    }
+    .pod-modal h2 {
+      margin: 4px 0 8px;
+      font-family: var(--font-serif);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .pod-modal-sub {
+      margin: 0 0 14px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+    .ov-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .ov-stats.hidden { display: none; }
+    .ov-stat {
+      padding: 10px 8px;
+      border-radius: 12px;
+      background: var(--bg-sand);
+      border: 1px solid var(--border-hairline);
+    }
+    .ov-stat span {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .ov-stat strong {
+      font-family: var(--font-serif);
+      font-size: 17px;
+      color: var(--accent-primary);
+    }
+
+    .ov-name-box {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .ov-name-box.hidden { display: none; }
+    .ov-name-input {
+      flex: 1;
+      min-width: 0;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-sand);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      font-size: 13.5px;
+      outline: none;
+    }
+    .ov-name-input:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .pod-board-box {
+      margin-bottom: 16px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--bg-sand);
+      border: 1px solid var(--border-hairline);
+      text-align: left;
+    }
+    .pod-board-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 0 0 8px;
+    }
+    .pod-board-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      font-variant-numeric: tabular-nums;
+    }
+    .pod-board-table td {
+      padding: 4px 4px;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+    .pod-board-table tr:last-child td {
+      border-bottom: none;
+    }
+    .pod-board-table tr.is-current td {
+      color: var(--accent-primary);
+      font-weight: 700;
+    }
+    .board-empty {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 8px 0 !important;
+    }
+
+    .pod-controls-hint {
+      margin-top: 12px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .hint-foot {
+      flex: 0 0 auto;
+      text-align: center;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+    @media (max-width: 640px) {
+      .pod-shell { padding: 6px 8px calc(8px + env(safe-area-inset-bottom, 0px)); }
+      .pod-hud { padding: 7px 10px; gap: 6px; }
+      .pod-pill { padding: 3px 8px; font-size: 11px; }
+      .pod-bar-wrap { width: 46px; }
+      .pod-modal { padding: 18px 16px; }
+      .hint-foot { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">🏎️ Canyon Podracer 3D</div>
+    </div>
+    <div class="topbar-right">
+      <span class="pill-stat">🏆 <span id="top-best">0</span></span>
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <div class="pod-shell">
+    <div class="pod-hud">
+      <div class="pod-metrics">
+        <span class="pod-pill">⚡ <strong id="hud-speed">440</strong> km/h</span>
+        <span class="pod-pill">🏁 Runde <strong id="hud-lap">1</strong></span>
+        <span class="pod-pill">✨ Combo <strong id="hud-combo">1×</strong></span>
+        <span class="pod-pill">
+          🛡️ Schild
+          <span class="pod-bar-wrap" aria-hidden="true"><span id="hud-shield-bar" class="pod-bar shield"></span></span>
+          <strong id="hud-shield-val">100%</strong>
+        </span>
+        <span class="pod-pill">
+          🔥 Boost
+          <span class="pod-bar-wrap" aria-hidden="true"><span id="hud-boost-bar" class="pod-bar boost"></span></span>
+          <strong id="hud-boost-val">100%</strong>
+        </span>
+        <span class="pod-pill">⭐ Punkte <strong id="hud-score">0</strong></span>
+      </div>
+      <button id="btn-pod-restart" type="button" class="secondary-btn" style="padding:6px 12px;font-size:12px;">🔄 Neustart</button>
+    </div>
+
+    <div class="pod-stage" id="pod-stage">
+      <canvas id="pod-canvas"></canvas>
+      <div id="pod-lap-toast" class="pod-lap-toast">🏁 RUNDE 1!</div>
+
+      <div class="pod-touch-controls" aria-label="Touch-Steuerung">
+        <div class="touch-steer-pair">
+          <button type="button" id="touch-left" class="touch-btn" aria-label="Nach links lenken">◀<span>Links</span></button>
+          <button type="button" id="touch-right" class="touch-btn" aria-label="Nach rechts lenken">▶<span>Rechts</span></button>
+        </div>
+        <button type="button" id="touch-boost" class="touch-btn boost-btn" aria-label="Boost aktivieren">🔥<span>Boost</span></button>
+      </div>
+
+      <div id="pod-overlay" class="pod-overlay">
+        <div class="pod-modal">
+          <div id="ov-icon" style="font-size:38px;">🏎️🏜️</div>
+          <h2 id="ov-title">Canyon Podracer 3D</h2>
+          <p id="ov-subtitle" class="pod-modal-sub">
+            Jage mit deinen Zwillings-Turbinen durch den kurvenreichen Wüsten-Canyon! Weiche Felsbrocken aus, sammle Energie-Kristalle für Schild &amp; Boost und triff die Boden-Boost-Pads.
+          </p>
+
+          <div id="ov-stats" class="ov-stats hidden"></div>
+
+          <div id="ov-name-box" class="ov-name-box hidden">
+            <input id="ov-name-input" class="ov-name-input" type="text" maxlength="20" placeholder="Optional: Pilotenname für Bestenliste…" />
+            <button id="ov-name-save" type="button" class="secondary-btn" style="padding:8px 14px;font-size:13px;">💾 Eintragen</button>
+          </div>
+
+          <div class="pod-board-box">
+            <div class="pod-board-title">🏆 Lokale Canyon-Bestenliste</div>
+            <table class="pod-board-table">
+              <tbody id="ov-board-body"></tbody>
+            </table>
+          </div>
+
+          <button id="ov-start-btn" type="button" class="primary-btn" style="width:100%;">🚀 Rennen starten</button>
+          <div class="pod-controls-hint">
+            <strong>Tastatur:</strong> <code>A</code> / <code>D</code> oder <code>←</code> / <code>→</code> zum Lenken · <code>W</code> / <code>Leertaste</code> für Boost · <code>R</code> Neustart
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hint-foot">
+      Steuerung: <b>A / D</b> oder <b>← / →</b> lenken · <b>W / Leertaste</b> Boost · Energie-Kristalle laden Boost &amp; Schild auf!
+    </div>
+  </div>
+
+  <script src="../../shared/arcade.js"></script>
+  <script type="module" src="./pod-game.js"></script>
+</body>
+</html>
