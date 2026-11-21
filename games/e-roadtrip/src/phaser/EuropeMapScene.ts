@@ -102,6 +102,7 @@ export class EuropeMapScene extends Phaser.Scene {
   private dragStart?: { x: number; y: number; scrollX: number; scrollY: number };
   private totalDragDist = 0;
   private prevPinchDist = 0;
+  private prevPinchMid?: { x: number; y: number };
   private isPinching = false;
 
   // Smooth camera target interpolation
@@ -1034,9 +1035,80 @@ export class EuropeMapScene extends Phaser.Scene {
     this.targetScrollY = Phaser.Math.Clamp(this.targetScrollY, -180, this.mapBounds.h - 140);
   }
 
+  private getPointerCanvasPoint(pointer: Phaser.Input.Pointer): { x: number; y: number } {
+    const canvas = this.game?.canvas;
+    const cam = this.cameras?.main;
+    if (!canvas || !cam) return { x: pointer.x, y: pointer.y };
+
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return { x: pointer.x, y: pointer.y };
+
+    let clientX: number | undefined;
+    let clientY: number | undefined;
+    const ev = pointer.event as PointerEvent | MouseEvent | TouchEvent | undefined;
+    if (ev) {
+      if ('touches' in ev && ev.changedTouches) {
+        const touchId = (pointer as unknown as { identifier?: number }).identifier;
+        for (let i = 0; i < ev.changedTouches.length; i++) {
+          const t = ev.changedTouches[i];
+          if (touchId === undefined || t.identifier === touchId) {
+            clientX = t.clientX;
+            clientY = t.clientY;
+            break;
+          }
+        }
+      } else if ('clientX' in ev && typeof ev.clientX === 'number') {
+        clientX = ev.clientX;
+        clientY = ev.clientY;
+      }
+    }
+
+    if (clientX === undefined || clientY === undefined) {
+      return { x: pointer.x, y: pointer.y };
+    }
+
+    return {
+      x: ((clientX - rect.left) / rect.width) * cam.width,
+      y: ((clientY - rect.top) / rect.height) * cam.height
+    };
+  }
+
+  private screenToWorld(
+    sx: number,
+    sy: number,
+    cam: Phaser.Cameras.Scene2D.Camera,
+    zoom: number,
+    scrollX: number,
+    scrollY: number
+  ): { x: number; y: number } {
+    const cx = cam.width * 0.5;
+    const cy = cam.height * 0.5;
+    return {
+      x: scrollX + cx + (sx - cx) / zoom,
+      y: scrollY + cy + (sy - cy) / zoom
+    };
+  }
+
+  private scrollForAnchor(
+    wx: number,
+    wy: number,
+    sx: number,
+    sy: number,
+    cam: Phaser.Cameras.Scene2D.Camera,
+    zoom: number
+  ): { scrollX: number; scrollY: number } {
+    const cx = cam.width * 0.5;
+    const cy = cam.height * 0.5;
+    return {
+      scrollX: wx - cx - (sx - cx) / zoom,
+      scrollY: wy - cy - (sy - cy) / zoom
+    };
+  }
+
   private setupPanAndZoom(): void {
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      this.activePointers.set(pointer.id, { x: pointer.x, y: pointer.y });
+      const pt = this.getPointerCanvasPoint(pointer);
+      this.activePointers.set(pointer.id, pt);
       const cam = this.cameras.main;
       this.smoothCamActive = false;
 
@@ -1044,50 +1116,66 @@ export class EuropeMapScene extends Phaser.Scene {
         this.isPinching = true;
         this.dragStart = undefined;
         const pts = Array.from(this.activePointers.values());
+        this.prevPinchMid = {
+          x: (pts[0].x + pts[1].x) * 0.5,
+          y: (pts[0].y + pts[1].y) * 0.5
+        };
         this.prevPinchDist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
       } else {
         this.isPinching = false;
         this.totalDragDist = 0;
-        this.dragStart = { x: pointer.x, y: pointer.y, scrollX: cam.scrollX, scrollY: cam.scrollY };
+        this.prevPinchDist = 0;
+        this.prevPinchMid = undefined;
+        this.dragStart = { x: pt.x, y: pt.y, scrollX: cam.scrollX, scrollY: cam.scrollY };
       }
     });
 
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       if (!this.activePointers.has(pointer.id)) return;
       const prev = this.activePointers.get(pointer.id)!;
-      const stepDist = Math.hypot(pointer.x - prev.x, pointer.y - prev.y);
+      const pt = this.getPointerCanvasPoint(pointer);
+      const stepDist = Math.hypot(pt.x - prev.x, pt.y - prev.y);
       this.totalDragDist += stepDist;
-      this.activePointers.set(pointer.id, { x: pointer.x, y: pointer.y });
+      this.activePointers.set(pointer.id, pt);
 
       const cam = this.cameras.main;
       if (this.activePointers.size >= 2) {
         const pts = Array.from(this.activePointers.values());
+        const midX = (pts[0].x + pts[1].x) * 0.5;
+        const midY = (pts[0].y + pts[1].y) * 0.5;
         const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
-        if (this.prevPinchDist > 8 && dist > 8) {
-          const midX = (pts[0].x + pts[1].x) / 2;
-          const midY = (pts[0].y + pts[1].y) / 2;
-          const worldBefore = cam.getWorldPoint(midX, midY);
+
+        if (this.prevPinchDist > 8 && dist > 8 && this.prevPinchMid) {
+          const oldZoom = cam.zoom;
+          const anchorWorld = this.screenToWorld(
+            this.prevPinchMid.x,
+            this.prevPinchMid.y,
+            cam,
+            oldZoom,
+            cam.scrollX,
+            cam.scrollY
+          );
           const ratio = dist / this.prevPinchDist;
-          const nextZoom = Phaser.Math.Clamp(cam.zoom * ratio, 0.42, 4.8);
+          const nextZoom = Phaser.Math.Clamp(oldZoom * ratio, 0.42, 4.8);
+          const nextScroll = this.scrollForAnchor(anchorWorld.x, anchorWorld.y, midX, midY, cam, nextZoom);
+
           cam.setZoom(nextZoom);
-          const worldAfter = cam.getWorldPoint(midX, midY);
-          cam.scrollX += worldBefore.x - worldAfter.x;
-          cam.scrollY += worldBefore.y - worldAfter.y;
-          this.targetZoom = cam.zoom;
-          this.targetScrollX = cam.scrollX;
-          this.targetScrollY = cam.scrollY;
+          this.targetZoom = nextZoom;
+          this.targetScrollX = nextScroll.scrollX;
+          this.targetScrollY = nextScroll.scrollY;
           this.clampCameraTargets();
           cam.scrollX = this.targetScrollX;
           cam.scrollY = this.targetScrollY;
           this.layoutChargerCards();
         }
+        this.prevPinchMid = { x: midX, y: midY };
         this.prevPinchDist = dist;
         return;
       }
 
       if (!pointer.isDown || !this.dragStart || this.isPinching) return;
-      const dx = (this.dragStart.x - pointer.x) / cam.zoom;
-      const dy = (this.dragStart.y - pointer.y) / cam.zoom;
+      const dx = (this.dragStart.x - pt.x) / cam.zoom;
+      const dy = (this.dragStart.y - pt.y) / cam.zoom;
       this.targetZoom = cam.zoom;
       this.targetScrollX = this.dragStart.scrollX + dx;
       this.targetScrollY = this.dragStart.scrollY + dy;
@@ -1100,14 +1188,19 @@ export class EuropeMapScene extends Phaser.Scene {
       this.activePointers.delete(pointer.id);
       if (this.activePointers.size < 2) {
         this.prevPinchDist = 0;
+        this.prevPinchMid = undefined;
         if (this.activePointers.size === 1) {
           const rem = Array.from(this.activePointers.values())[0];
           const cam = this.cameras.main;
           this.dragStart = { x: rem.x, y: rem.y, scrollX: cam.scrollX, scrollY: cam.scrollY };
+          this.totalDragDist = Math.max(this.totalDragDist, 16);
+          this.isPinching = false;
         } else {
           this.dragStart = undefined;
           this.time.delayedCall(25, () => {
-            this.isPinching = false;
+            if (this.activePointers.size === 0) {
+              this.isPinching = false;
+            }
           });
         }
       }
@@ -1115,24 +1208,24 @@ export class EuropeMapScene extends Phaser.Scene {
 
     this.input.on('pointerup', handleUp);
     this.input.on('pointerupoutside', handleUp);
+    this.input.on('pointercancel', handleUp);
 
     this.input.on(
       'wheel',
       (pointer: Phaser.Input.Pointer, _objs: unknown[], _dx: number, dy: number) => {
         const cam = this.cameras.main;
+        const pt = this.getPointerCanvasPoint(pointer);
         const baseZoom = this.smoothCamActive ? this.targetZoom : cam.zoom;
-        const worldBefore = cam.getWorldPoint(pointer.x, pointer.y);
+        const baseScrollX = this.smoothCamActive ? this.targetScrollX : cam.scrollX;
+        const baseScrollY = this.smoothCamActive ? this.targetScrollY : cam.scrollY;
+        const anchorWorld = this.screenToWorld(pt.x, pt.y, cam, baseZoom, baseScrollX, baseScrollY);
         const factor = dy > 0 ? 0.86 : 1.16;
         const nextZoom = Phaser.Math.Clamp(baseZoom * factor, 0.42, 4.8);
+        const nextScroll = this.scrollForAnchor(anchorWorld.x, anchorWorld.y, pt.x, pt.y, cam, nextZoom);
 
-        // Compute target scroll that keeps cursor worldBefore fixed at (pointer.x, pointer.y)
-        cam.setZoom(nextZoom);
-        const worldAfter = cam.getWorldPoint(pointer.x, pointer.y);
         this.targetZoom = nextZoom;
-        this.targetScrollX = cam.scrollX + (worldBefore.x - worldAfter.x);
-        this.targetScrollY = cam.scrollY + (worldBefore.y - worldAfter.y);
-        // Restore current zoom and smoothly interpolate toward target!
-        cam.setZoom(baseZoom);
+        this.targetScrollX = nextScroll.scrollX;
+        this.targetScrollY = nextScroll.scrollY;
         this.clampCameraTargets();
         this.smoothCamActive = true;
       }
