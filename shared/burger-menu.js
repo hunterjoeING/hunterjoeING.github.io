@@ -213,16 +213,30 @@
 
   function renderSections() {
     const q = drawerState.filter.trim().toLowerCase();
+    const isAdmin = !!(window.ArcadeAuth && ((typeof window.ArcadeAuth.isAdmin === 'function' && window.ArcadeAuth.isAdmin()) || (window.ArcadeAuth.getUser && window.ArcadeAuth.getUser()?.role === 'admin')));
     const groups = [
       { label: '🎮 Games (7)', items: GAMES_NAV },
       { label: '🌟 1.000+ Fragen-Quizzes (5)', items: QUIZZES_1000_NAV },
       { label: '🧠 Themen-Quizzes (10)', items: QUIZZES_THEMEN_NAV },
       { label: '📷 Foto- & Exkursions-Quizzes (5)', items: QUIZZES_FOTO_NAV }
     ];
+    if (isAdmin) {
+      const hiddenItems = [
+        ...QUIZZES_1000_NAV.filter(it => it.unlisted),
+        ...QUIZZES_THEMEN_NAV.filter(it => it.unlisted)
+      ];
+      if (hiddenItems.length > 0) {
+        groups.push({
+          label: `🔒 Versteckte Quizze (${hiddenItems.length})`,
+          items: hiddenItems,
+          allowUnlisted: true
+        });
+      }
+    }
     let html = '';
     let matches = 0;
     for (const grp of groups) {
-      const visible = grp.items.filter(it => !it.unlisted);
+      const visible = grp.allowUnlisted ? grp.items : grp.items.filter(it => !it.unlisted);
       const filtered = q
         ? visible.filter(it => (it.title + ' ' + it.meta).toLowerCase().includes(q))
         : visible;
@@ -378,6 +392,13 @@
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && drawerState.open) setDrawerOpen(false);
+    });
+    window.addEventListener('arcade:auth-changed', () => {
+      refreshDrawerDynamicParts();
+      if (drawerState.elDrawer) {
+        const navBox = drawerState.elDrawer.querySelector('#abm-nav-groups');
+        if (navBox) navBox.innerHTML = renderSections();
+      }
     });
   }
 

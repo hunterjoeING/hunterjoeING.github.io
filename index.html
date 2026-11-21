@@ -1429,6 +1429,76 @@
         }
       ];
 
+      const HIDDEN_QUIZZES = [
+        {
+          id: 'quiz_waldgarten',
+          href: './games/quiz-waldgarten/index.html',
+          catLabel: 'Natur &amp; Historie · Heideblick',
+          badge: '1.000 Fragen · 3 Stufen · QR-Spezial',
+          featured: true,
+          hidden: true,
+          unlisted: true,
+          cta: 'Quiz starten →',
+          title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)',
+          desc: '1.000 Fragen zu heimischen Vögeln, Kranichzug, Rothirschbrunft, Wölfen, Kiefernwald, Pilzen, Waldgarten-Gärtnern &amp; der Geschichte von Schwarzenburg (Heideblick).',
+          accent: '#10b981',
+          glow: 'rgba(16, 185, 129, 0.30)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <path d="M20 5C13.5 5 8 10.5 8 18C8 23.5 12.5 28 18 30.5V35H22V30.5C27.5 28 32 23.5 32 18C32 10.5 26.5 5 20 5Z" fill="#064e3b" stroke="#34d399" stroke-width="1.6"/>
+            <path d="M20 12V28M15 18L20 23M25 18L20 23" stroke="#a7f3d0" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="20" cy="11" r="2" fill="#fbbf24"/>
+          </svg>`
+        },
+        {
+          id: 'quiz_napoli72h',
+          href: './games/quiz-napoli72h/index.html',
+          catLabel: 'Pizza-Handwerk &amp; Kulinarik · Aachen',
+          badge: '160 Fragen · 3 Stufen · B2B-Partner',
+          featured: true,
+          hidden: true,
+          unlisted: true,
+          cta: 'Quiz starten →',
+          title: 'Napoli72H Pizza-Quiz (Aachen)',
+          desc: '160 Fragen rund um authentische neapolitanische Pizza, 72h-Teigfermentation, San-Marzano-Tomaten, 485°C-Kuppelöfen &amp; das Frankenberger Viertel.',
+          accent: '#ea580c',
+          glow: 'rgba(234, 88, 12, 0.30)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <path d="M20 6L34 32C34 32 27.5 35 20 35C12.5 35 6 32 6 32L20 6Z" fill="#7c2d12" stroke="#f97316" stroke-width="1.8" stroke-linejoin="round"/>
+            <circle cx="20" cy="18" r="2.8" fill="#ef4444"/>
+            <circle cx="15" cy="25" r="2.4" fill="#ef4444"/>
+            <circle cx="24" cy="26" r="2.2" fill="#ef4444"/>
+            <circle cx="19" cy="29" r="1.6" fill="#22c55e"/>
+            <circle cx="22.5" cy="21.5" r="1.4" fill="#fef08a"/>
+          </svg>`
+        }
+      ];
+
+      function isCurrentUserAdmin() {
+        try {
+          if (window.ArcadeAuth && typeof window.ArcadeAuth.isAdmin === 'function') {
+            return window.ArcadeAuth.isAdmin();
+          }
+          const u = window.ArcadeAuth && window.ArcadeAuth.getUser ? window.ArcadeAuth.getUser() : null;
+          return !!(u && u.role === 'admin');
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function getActiveHiddenQuizzes() {
+        const list = [...HIDDEN_QUIZZES];
+        QUIZZES.forEach(q => {
+          if ((q.hidden || q.unlisted) && !list.some(x => x.id === q.id)) {
+            list.push(q);
+          }
+        });
+        return list;
+      }
+
+      function getActivePublicQuizzes() {
+        return QUIZZES.filter(q => !q.hidden && !q.unlisted);
+      }
+
       const elMute = document.getElementById('btn-mute');
       const elGamesGrid = document.getElementById('games-grid');
       const elQuizzesGrid = document.getElementById('quizzes-grid');
@@ -1552,7 +1622,56 @@
         gList.forEach(g => elGamesGrid.appendChild(buildCard(g)));
 
         elQuizzesGrid.innerHTML = '';
-        QUIZZES.forEach(q => elQuizzesGrid.appendChild(buildCard(q)));
+        getActivePublicQuizzes().forEach(q => elQuizzesGrid.appendChild(buildCard(q)));
+
+        renderHiddenQuizzesCategory();
+      }
+
+      function renderHiddenQuizzesCategory() {
+        const isAdmin = isCurrentUserAdmin();
+        const hiddenList = getActiveHiddenQuizzes();
+        const existingSec = document.getElementById('sec-hidden-quizzes');
+
+        // Strikte Sichtbarkeitsregel für Nicht-Admins:
+        // Für Gäste, ausgeloggte und normale Nutzer oder falls 0 versteckte Quizze existieren,
+        // darf diese Kategorie NICHT gerendert werden (kein Überschriften-Element, kein leerer Container, keine versteckten Quiz-Karten im DOM).
+        if (!isAdmin || hiddenList.length === 0) {
+          if (existingSec) {
+            existingSec.remove();
+          }
+          return;
+        }
+
+        let sec = existingSec;
+        if (!sec) {
+          sec = document.createElement('section');
+          sec.className = 'section-block';
+          sec.id = 'sec-hidden-quizzes';
+          sec.innerHTML = `
+            <div class="section-head">
+              <h2 style="display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                🔒 Versteckte Quizze
+                <span class="fb-role-badge admin" style="vertical-align:middle;font-size:11.5px;padding:3px 8px;">👑 Admin</span>
+                <span class="section-count quiz" id="sec-hidden-quiz-count"></span>
+              </h2>
+            </div>
+            <div class="games-grid" id="hidden-quizzes-grid"></div>
+          `;
+          elSecQuizzes.insertAdjacentElement('afterend', sec);
+        }
+
+        const countEl = sec.querySelector('#sec-hidden-quiz-count');
+        if (countEl) {
+          countEl.textContent = `${hiddenList.length} ${hiddenList.length === 1 ? 'verstecktes Quiz' : 'versteckte Quizze'}`;
+        }
+
+        const gridEl = sec.querySelector('#hidden-quizzes-grid');
+        if (gridEl) {
+          gridEl.innerHTML = '';
+          hiddenList.forEach(q => gridEl.appendChild(buildCard(q)));
+        }
+
+        sec.classList.toggle('hidden', currentDomain === 'games' || currentDomain === 'feedback');
       }
 
       document.getElementById('domain-tabs').addEventListener('click', (e) => {
@@ -1955,6 +2074,16 @@
         renderHub();
         if (hubFbBoardEl && typeof hubFbBoardEl._arcadeRefreshBoard === 'function') {
           hubFbBoardEl._arcadeRefreshBoard();
+        }
+      });
+      window.addEventListener('arcade:auth-changed', () => {
+        updateHeaderStats();
+        renderHub();
+      });
+      window.addEventListener('storage', (e) => {
+        if (!e.key || e.key === 'arcade_auth_user_v1' || e.key === 'arcade_scores_v1') {
+          updateHeaderStats();
+          renderHub();
         }
       });
 

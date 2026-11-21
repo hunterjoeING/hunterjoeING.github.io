@@ -1034,6 +1034,10 @@
     getUser: () => readAuthUser(),
     getToken: () => readAuthToken(),
     isLoggedIn: () => !!(readAuthUser() && readAuthToken()),
+    isAdmin: () => {
+      const u = readAuthUser();
+      return !!(u && u.role === 'admin');
+    },
     isAdminOrAgent: () => {
       const u = readAuthUser();
       return !!(u && (u.role === 'admin' || u.role === 'agent'));
