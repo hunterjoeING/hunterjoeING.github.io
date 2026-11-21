@@ -214,6 +214,39 @@
       margin-top: 1px;
     }
 
+    /* In-Board Gold & Status Overlay Pill */
+    .td-board-hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      pointer-events: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--border-hairline);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 6px 18px -6px rgba(15, 23, 42, 0.18);
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+    html[data-theme="dark"] .td-board-hud {
+      background: rgba(11, 17, 32, 0.84);
+      box-shadow: 0 8px 22px -6px rgba(0, 0, 0, 0.55);
+    }
+    .td-board-hud .bh-gold { color: #b45309; font-weight: 800; }
+    .td-board-hud .bh-lives { color: #b91c1c; font-weight: 700; }
+    html[data-theme="dark"] .td-board-hud .bh-gold { color: #fbbf24; }
+    html[data-theme="dark"] .td-board-hud .bh-lives { color: #fb7185; }
+    .td-board-hud .bh-sep { opacity: 0.35; }
+
     /* 3D Camera Controls Pill Bar */
     .td-cam-bar {
       position: absolute;
@@ -491,9 +524,34 @@
       .inspector-box { order: -1; }
     }
     @media (max-width: 600px) {
-      .td-board-wrap { aspect-ratio: 4 / 3; min-height: 270px; }
+      .td-shell { padding: 8px 10px 20px; gap: 8px; }
+      .td-hud { padding: 8px 10px; gap: 7px; border-radius: 14px; }
+      .td-stats {
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        gap: 5px;
+      }
+      .td-stats::-webkit-scrollbar { display: none; }
+      .td-stat-pill { padding: 4px 8px; font-size: 11.5px; white-space: nowrap; flex-shrink: 0; }
+      .td-actions {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 5px;
+      }
+      .td-actions #btn-wave { grid-column: span 2; justify-content: center; padding: 7px 10px !important; font-size: 12px !important; }
+      .td-actions #btn-overdrive { justify-content: center; padding: 7px 8px; font-size: 11.5px; }
+      .td-actions select.map-sel { grid-column: span 1; width: 100%; min-width: 0; padding: 6px 6px; font-size: 11.5px; }
+      .td-actions #btn-speed,
+      .td-actions #btn-autowave,
+      .td-actions .btn-reset-td { width: 100%; justify-content: center; padding: 6px 6px !important; font-size: 11.5px !important; }
+      .td-board-wrap { aspect-ratio: 4 / 3; min-height: 260px; }
+      .td-board-hud { top: 8px; left: 8px; padding: 4px 9px; font-size: 11.5px; gap: 6px; }
       .td-cam-hint { display: none; }
-      .tower-shop { grid-template-columns: 1fr 1fr; }
+      .tower-shop { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+      .tower-btn { padding: 8px 9px; font-size: 12px; }
     }
   </style>
 </head>
@@ -527,13 +585,21 @@
         <button id="btn-autowave" class="secondary-btn" style="padding:5px 10px;font-size:12px;" onclick="toggleAutoWave()" title="Nächste Welle automatisch sofort nach Wellenende starten">🔁 Auto</button>
         <button id="btn-overdrive" class="btn-overdrive" onclick="triggerOverdrive()" title="Alle Türme 4,5 Sek. lang auf +65% Feuerrate &amp; +20% Schaden überladen!">⚡ Overdrive</button>
         <button id="btn-wave" class="primary-btn" style="padding:6px 12px;font-size:12.5px;" onclick="sendNextWave()">▶ Welle 1 starten</button>
-        <button class="secondary-btn" style="padding:5px 10px;font-size:12px;" onclick="resetTD()">🔄 Neu</button>
+        <button class="secondary-btn btn-reset-td" style="padding:5px 10px;font-size:12px;" onclick="resetTD()">🔄 Neu</button>
       </div>
     </div>
 
     <div class="td-layout">
       <div class="td-board-wrap" id="tdStage">
         <canvas id="tdCanvas"></canvas>
+
+        <div id="tdBoardHud" class="td-board-hud" aria-label="Spielfeld-Status">
+          <span>💰 <strong class="bh-gold" id="board-gold">165</strong></span>
+          <span class="bh-sep">·</span>
+          <span>❤️ <strong class="bh-lives" id="board-lives">20</strong></span>
+          <span class="bh-sep">·</span>
+          <span>🌊 <strong id="board-wave">0</strong></span>
+        </div>
 
         <div id="tdWaveBanner" class="td-wave-banner hidden" aria-live="polite">
           <div class="wb-title" id="wb-title"></div>
