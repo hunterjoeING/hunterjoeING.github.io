@@ -264,38 +264,67 @@ class PodracerGame {
 
     window.addEventListener('blur', () => {
       this.keys.clear();
-      this.touchState.left = false;
-      this.touchState.right = false;
-      this.touchState.boost = false;
+      this.touchBoost = false;
+      this.pointerActive = false;
+      this.steerPointerId = null;
     });
 
-    // Multi-touch responsive buttons (Left / Right / Boost)
-    const bindHoldBtn = (el, key) => {
-      if (!el) return;
-      const activeIds = new Set();
-      const sync = () => {
-        this.touchState[key] = activeIds.size > 0;
-        el.classList.toggle('active', activeIds.size > 0);
-      };
-      el.addEventListener('pointerdown', (e) => {
-        e.preventDefault();
-        this.audio.unlock();
-        activeIds.add(e.pointerId);
-        try { el.setPointerCapture(e.pointerId); } catch (_) {}
-        sync();
-      });
-      const release = (e) => {
-        activeIds.delete(e.pointerId);
-        sync();
-      };
-      el.addEventListener('pointerup', release);
-      el.addEventListener('pointercancel', release);
-      el.addEventListener('lostpointercapture', release);
+    // Pointer Drag directly on stage maps horizontally to track coordinate (like Zombie Shooter)
+    const maxSteerU = TRACK_HALF_WIDTH - 1.5;
+    const pointerToU = (clientX) => {
+      const r = this.stageEl.getBoundingClientRect();
+      const rel = ((clientX - r.left) / Math.max(1, r.width)) * 2 - 1;
+      this.pointerTargetU = clamp(rel * maxSteerU * 1.15, -maxSteerU, maxSteerU);
     };
 
-    bindHoldBtn(document.getElementById('touch-left'), 'left');
-    bindHoldBtn(document.getElementById('touch-right'), 'right');
-    bindHoldBtn(document.getElementById('touch-boost'), 'boost');
+    this.stageEl.addEventListener('pointerdown', (e) => {
+      if (this.mode !== 'playing') return;
+      if (e.target.closest('#touch-boost, #pod-overlay')) return;
+      this.audio.unlock();
+      this.pointerActive = true;
+      this.steerPointerId = e.pointerId;
+      pointerToU(e.clientX);
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!this.pointerActive || this.mode !== 'playing') return;
+      if (this.steerPointerId !== null && e.pointerId !== this.steerPointerId) return;
+      pointerToU(e.clientX);
+    });
+
+    const releaseSteer = (e) => {
+      if (this.steerPointerId === null || e.pointerId === this.steerPointerId) {
+        this.pointerActive = false;
+        this.steerPointerId = null;
+      }
+    };
+    window.addEventListener('pointerup', releaseSteer);
+    window.addEventListener('pointercancel', releaseSteer);
+
+    // Multi-touch responsive Boost button on left edge
+    const boostEl = document.getElementById('touch-boost');
+    if (boostEl) {
+      const activeBoostIds = new Set();
+      const syncBoost = () => {
+        this.touchBoost = activeBoostIds.size > 0;
+        boostEl.classList.toggle('active', this.touchBoost);
+      };
+      boostEl.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        this.audio.unlock();
+        activeBoostIds.add(e.pointerId);
+        try { boostEl.setPointerCapture(e.pointerId); } catch (_) {}
+        syncBoost();
+      });
+      const releaseBoost = (e) => {
+        activeBoostIds.delete(e.pointerId);
+        syncBoost();
+      };
+      boostEl.addEventListener('pointerup', releaseBoost);
+      boostEl.addEventListener('pointercancel', releaseBoost);
+      boostEl.addEventListener('lostpointercapture', releaseBoost);
+    }
 
     if (this.elStartBtn) {
       this.elStartBtn.addEventListener('click', () => this.startGame());
@@ -318,21 +347,30 @@ class PodracerGame {
   }
 
   _stepPlaying(dt) {
-    const leftHeld = this.keys.has('ArrowLeft') || this.keys.has('KeyA') || this.touchState.left;
-    const rightHeld = this.keys.has('ArrowRight') || this.keys.has('KeyD') || this.touchState.right;
+    const leftHeld = this.keys.has('ArrowLeft') || this.keys.has('KeyA');
+    const rightHeld = this.keys.has('ArrowRight') || this.keys.has('KeyD');
     const boostHeld =
       this.keys.has('Space') ||
       this.keys.has('KeyW') ||
       this.keys.has('ArrowUp') ||
-      this.touchState.boost;
+      this.touchBoost;
 
-    const targetSteer = (rightHeld ? 1 : 0) - (leftHeld ? 1 : 0);
+    let targetSteer = (rightHeld ? 1 : 0) - (leftHeld ? 1 : 0);
+
+    if (this.pointerActive && targetSteer === 0) {
+      const diffU = this.pointerTargetU - this.u;
+      const desiredVel = clamp(diffU * 9.5, -24, 24);
+      this.lateralVel += (desiredVel - this.lateralVel) * Math.min(1, dt * 14);
+      this.u += this.lateralVel * dt;
+      targetSteer = clamp(diffU * 0.35, -1, 1);
+    } else {
+      // Keyboard lateral acceleration & damping
+      this.lateralVel += targetSteer * 82 * dt;
+      this.lateralVel -= this.lateralVel * Math.min(1, 5.1 * dt);
+      this.u += this.lateralVel * dt;
+    }
+
     this.steerInput += (targetSteer - this.steerInput) * Math.min(1, dt * 13);
-
-    // Lateral acceleration & damping
-    this.lateralVel += targetSteer * 82 * dt;
-    this.lateralVel -= this.lateralVel * Math.min(1, 5.1 * dt);
-    this.u += this.lateralVel * dt;
 
     // Canyon wall collision & bounce
     const maxU = TRACK_HALF_WIDTH - 1.35;

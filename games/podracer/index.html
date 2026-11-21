@@ -218,13 +218,12 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* Responsive Mobile Touch Controls */
+    /* Responsive Mobile Touch Boost (Left Edge) + Stage Drag Steering */
     .pod-touch-controls {
       display: none;
       position: absolute;
-      inset: auto 14px 14px;
-      justify-content: space-between;
-      align-items: flex-end;
+      left: 14px;
+      bottom: 14px;
       pointer-events: none;
       z-index: 15;
     }
@@ -232,11 +231,6 @@
       .pod-touch-controls {
         display: flex;
       }
-    }
-    .touch-steer-pair {
-      display: flex;
-      gap: 12px;
-      pointer-events: auto;
     }
     .touch-btn {
       pointer-events: auto;
@@ -475,11 +469,7 @@
       <canvas id="pod-canvas"></canvas>
       <div id="pod-lap-toast" class="pod-lap-toast">🏁 RUNDE 1!</div>
 
-      <div class="pod-touch-controls" aria-label="Touch-Steuerung">
-        <div class="touch-steer-pair">
-          <button type="button" id="touch-left" class="touch-btn" aria-label="Nach links lenken">◀<span>Links</span></button>
-          <button type="button" id="touch-right" class="touch-btn" aria-label="Nach rechts lenken">▶<span>Rechts</span></button>
-        </div>
+      <div class="pod-touch-controls" aria-label="Touch-Boost">
         <button type="button" id="touch-boost" class="touch-btn boost-btn" aria-label="Boost aktivieren">🔥<span>Boost</span></button>
       </div>
 
@@ -507,14 +497,14 @@
 
           <button id="ov-start-btn" type="button" class="primary-btn" style="width:100%;">🚀 Rennen starten</button>
           <div class="pod-controls-hint">
-            <strong>Tastatur:</strong> <code>A</code> / <code>D</code> oder <code>←</code> / <code>→</code> zum Lenken · <code>W</code> / <code>Leertaste</code> für Boost · <code>R</code> Neustart
+            <strong>Steuerung:</strong> Finger / Maus links &amp; rechts ziehen oder <code>A</code>/<code>D</code> · <code>←</code>/<code>→</code> · <code>W</code>/<code>Leertaste</code> (oder Boost-Button links)
           </div>
         </div>
       </div>
     </div>
 
     <div class="hint-foot">
-      Steuerung: <b>A / D</b> oder <b>← / →</b> lenken · <b>W / Leertaste</b> Boost · Energie-Kristalle laden Boost &amp; Schild auf!
+      Steuerung: Maus / Finger nach links &amp; rechts ziehen oder <b>A / D / ← / →</b> · <b>W / Leertaste</b> Boost
     </div>
   </div>
 
