@@ -68,9 +68,33 @@ export function getChargingPowerKw(
 
 export interface TariffQuote {
   pricePerKwh: number;
+  pricePerKwhWithoutSub: number;
+  hasSubscriptionDiscount: boolean;
   usedSubscriptionName: string;
   usedSubId: string;
   hasMcDonaldsBonus: boolean;
+}
+
+function computeBestWithout(
+  station: ChargerStation,
+  subscriptionIds: string[],
+  vehicle: VehicleSpec,
+  excludeSubId: string
+): number {
+  const activeSubs: SubscriptionSpec[] = subscriptionIds
+    .filter(id => id !== excludeSubId && id !== 'adhoc')
+    .map(getSubscriptionById);
+
+  let best = station.baseAdhocEurPerKwh;
+  if (station.network === 'tesla' && vehicle.isTesla && excludeSubId !== 'tesla_suc') {
+    best = Math.min(best, 0.39);
+  }
+  for (const sub of activeSubs) {
+    const isOwn = sub.provider === station.network;
+    const candidate = isOwn ? sub.pricePerKwhOwn : sub.pricePerKwhRoaming;
+    if (candidate < best) best = candidate;
+  }
+  return Number(best.toFixed(2));
 }
 
 export function getBestPriceForStation(
@@ -85,8 +109,11 @@ export function getBestPriceForStation(
 
   // Tesla drivers automatically unlock native Tesla Supercharger pricing!
   if (station.network === 'tesla' && vehicle.isTesla) {
+    const withoutSub = computeBestWithout(station, subscriptionIds, vehicle, 'tesla_suc');
     return {
       pricePerKwh: 0.39,
+      pricePerKwhWithoutSub: withoutSub,
+      hasSubscriptionDiscount: withoutSub > 0.395,
       usedSubscriptionName: 'Tesla Fahrzeug-Tarif (inklusive)',
       usedSubId: 'tesla_suc',
       hasMcDonaldsBonus: !!station.hasMcDonalds
@@ -104,8 +131,16 @@ export function getBestPriceForStation(
     }
   }
 
+  const roundedBest = Number(bestPrice.toFixed(2));
+  const priceWithoutSub =
+    bestId === 'adhoc'
+      ? Number(station.baseAdhocEurPerKwh.toFixed(2))
+      : computeBestWithout(station, subscriptionIds, vehicle, bestId);
+
   return {
-    pricePerKwh: Number(bestPrice.toFixed(2)),
+    pricePerKwh: roundedBest,
+    pricePerKwhWithoutSub: priceWithoutSub,
+    hasSubscriptionDiscount: priceWithoutSub > roundedBest + 0.005,
     usedSubscriptionName: bestName,
     usedSubId: bestId,
     hasMcDonaldsBonus: !!station.hasMcDonalds && (bestId === 'ewe_go' || station.network === 'ewego')
