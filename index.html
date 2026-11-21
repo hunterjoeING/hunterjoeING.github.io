@@ -53,10 +53,11 @@
         "inLanguage": "de",
         "mainEntity": {
           "@type": "ItemList",
-          "numberOfItems": 28,
+          "numberOfItems": 29,
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "E-Roadtrip", "url": "https://hunterjoeing.github.io/games/e-roadtrip/" },
-            { "@type": "ListItem", "position": 2, "name": "Minesweeper 3D – Tech Demo KI-Agent", "url": "https://hunterjoeing.github.io/games/minesweeper/" },
+            { "@type": "ListItem", "position": 2, "name": "3D Solitär (Klondike)", "url": "https://hunterjoeing.github.io/games/solitaire3d/" },
+            { "@type": "ListItem", "position": 3, "name": "Minesweeper 3D – Tech Demo KI-Agent", "url": "https://hunterjoeing.github.io/games/minesweeper/" },
             { "@type": "ListItem", "position": 3, "name": "Minesweeper 3D Prompt Version", "url": "https://hunterjoeing.github.io/games/minesweeper-3d-prompt-test/" },
             { "@type": "ListItem", "position": 4, "name": "Hyper-Roadster Lander", "url": "https://hunterjoeing.github.io/games/roadster/" },
             { "@type": "ListItem", "position": 5, "name": "Zombie Horde: Gate Runner", "url": "https://hunterjoeing.github.io/games/zombie/" },
@@ -800,17 +801,17 @@
     </section>
 
     <div class="domain-tabs" id="domain-tabs" role="tablist" aria-label="Hauptbereiche">
-      <button class="domain-tab active" data-domain="all" id="tab-all">✨ Alles (28)</button>
-      <button class="domain-tab" data-domain="games" id="tab-games">🎮 Games (8)</button>
+      <button class="domain-tab active" data-domain="all" id="tab-all">✨ Alles (29)</button>
+      <button class="domain-tab" data-domain="games" id="tab-games">🎮 Games (9)</button>
       <button class="domain-tab quiz-tab" data-domain="quizzes" id="tab-quizzes">🧠 Quiz-Welten (20)</button>
       <button class="domain-tab" data-domain="feedback">💬 Wünsche &amp; Bug-Melder</button>
     </div>
 
     <section class="section-block" id="sec-games">
       <div class="section-head">
-        <h2>🎮 Games <span class="section-count">8 Spiele</span></h2>
+        <h2>🎮 Games <span class="section-count">9 Spiele</span></h2>
         <nav class="filter-row" id="filter-row" aria-label="Spiele filtern">
-          <button class="filter-pill active" data-cat="all">Alle Games (8)</button>
+          <button class="filter-pill active" data-cat="all">Alle Games (9)</button>
           <button class="filter-pill" data-cat="logic">3D &amp; Logik</button>
           <button class="filter-pill" data-cat="action">Action &amp; Arcade</button>
           <button class="filter-pill" data-cat="strategy">Strategie &amp; Karten</button>
@@ -869,6 +870,25 @@
             <circle cx="13" cy="28" r="3.4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/>
             <circle cx="27" cy="28" r="3.4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/>
             <polygon points="22,6 18,12 21,12 19,17 24,10 21,10" fill="#facc15"/>
+          </svg>`
+        },
+        {
+          id: 'solitaire3d',
+          href: './games/solitaire3d/index.html',
+          cat: 'strategy',
+          catLabel: '3D Tabletop · Karten',
+          badge: 'Three.js · Walnuss & Filz · Neu',
+          featured: true,
+          cta: 'Am Tisch spielen →',
+          title: '3D Solitär (Klondike)',
+          desc: 'Ruhiges, warm ausgeleuchtetes 3D-Klondike auf edlem Smaragd-, Blau- oder Weinrot-Filz mit Walnussrahmen: prozedurale High-DPI-Karten, sanfte 3D-Animationen, Auto-Abschließen, Wasserfall &amp; saisonale Gartenmomente.',
+          accent: '#10b981',
+          glow: 'rgba(16, 185, 129, 0.28)',
+          icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
+            <rect x="5" y="7" width="30" height="26" rx="5" fill="#114230" stroke="#c59f52" stroke-width="1.8"/>
+            <rect x="10" y="11" width="14" height="19" rx="2.8" fill="#fcfaf4" stroke="#d4af64" stroke-width="1.2" transform="rotate(-8 17 20)"/>
+            <rect x="16" y="10" width="14" height="19" rx="2.8" fill="#ffffff" stroke="#e2d5b5" stroke-width="1.2" transform="rotate(6 23 19)"/>
+            <text x="23" y="24" text-anchor="middle" fill="#b91c1c" font-size="12" font-weight="900">♥</text>
           </svg>`
         },
         {
