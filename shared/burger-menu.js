@@ -26,7 +26,7 @@
     { id: 'roadster', icon: '🚀', title: 'Hyper-Roadster Lander', meta: 'Arcade', path: 'games/roadster/index.html' },
     { id: 'zombie', icon: '🧟', title: 'Zombie Horde: Gate Runner', meta: 'Action', path: 'games/zombie/index.html' },
     { id: 'tower', icon: '🛸', title: 'Bastion Tower Defense', meta: 'Taktik', path: 'games/tower/index.html' },
-    { id: 'solitaire3d', icon: '🃏', title: '3D Solitär', meta: 'Three.js', path: 'games/solitaire3d/index.html' },
+    { id: 'solitaire3d', icon: '🕷️', title: '3D Spider Solitär', meta: '4 Farben', path: 'games/solitaire3d/index.html' },
     { id: 'solitaire', icon: '🃏', title: 'Klondike Solitaire', meta: 'Karten', path: 'games/solitaire/index.html' },
     { id: 'p2048', icon: '🔷', title: '2048 Prism', meta: 'Logik', path: 'games/2048/index.html' }
   ];
