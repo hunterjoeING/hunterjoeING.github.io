@@ -12,7 +12,7 @@
       "Der Graureiher"
     ],
     "explanation": "Das Luckauer Becken und der Borcheltsbusch in Heideblick gehören zu den bedeutendsten Kranichrastplätzen Brandenburgs vor dem Weiterflug nach Süden.",
-    "exp": "Der Kranich"
+    "exp": "Das Luckauer Becken und der Borcheltsbusch in Heideblick gehören zu den bedeutendsten Kranichrastplätzen Brandenburgs vor dem Weiterflug nach Süden."
   },
   {
     "cat": "voegel",
@@ -25,7 +25,7 @@
       "Die Wasseramsel"
     ],
     "explanation": "Der wärmeliebende Wiedehopf ruft im Frühling weithin hörbar 'hup-up-up' und stellt bei Erregung seine Federhaube fächerförmig auf.",
-    "exp": "Der Wiedehopf"
+    "exp": "Der wärmeliebende Wiedehopf ruft im Frühling weithin hörbar 'hup-up-up' und stellt bei Erregung seine Federhaube fächerförmig auf."
   },
   {
     "cat": "voegel",
@@ -38,7 +38,7 @@
       "Der Mittelspecht"
     ],
     "explanation": "Der krähengroße Schwarzspecht hämmert markante ovale Höhlen in alte Stämme, die später von Hohltauben, Fledermäusen und Mardern bewohnt werden.",
-    "exp": "Der Schwarzspecht"
+    "exp": "Der krähengroße Schwarzspecht hämmert markante ovale Höhlen in alte Stämme, die später von Hohltauben, Fledermäusen und Mardern bewohnt werden."
   },
   {
     "cat": "voegel",
@@ -51,7 +51,7 @@
       "Weil die Federn im trockenen Moos über Nacht sonst verkleben würden"
     ],
     "explanation": "Raubtiere können sich im Wasser nicht lautlos anschleichen; das Wasserplätschern weckt die schlafenden Kraniche rechtzeitig zur Flucht.",
-    "exp": "Schutz vor Raubtieren, da Anschleichen im Wasser Plätschern erzeugt"
+    "exp": "Raubtiere können sich im Wasser nicht lautlos anschleichen; das Wasserplätschern weckt die schlafenden Kraniche rechtzeitig zur Flucht."
   },
   {
     "cat": "voegel",
@@ -64,7 +64,7 @@
       "Der Erlenzeisig"
     ],
     "explanation": "Der Pirol (auch 'Goldamsel' genannt) flötet wie eine exotische Flöte ('dü-dl-dio'), bleibt aber wegen seines Verstecks im Kronendach fast unsichtbar.",
-    "exp": "Der Pirol"
+    "exp": "Der Pirol (auch 'Goldamsel' genannt) flötet wie eine exotische Flöte ('dü-dl-dio'), bleibt aber wegen seines Verstecks im Kronendach fast unsichtbar."
   },
   {
     "cat": "voegel",
@@ -77,46 +77,46 @@
       "Der Wendehals"
     ],
     "explanation": "Der perfekt wie Kiefernrinde getarnte Ziegenmelker brütet am Boden sandiger Heiden und schnurrt minutenlang wie ein leiser Zweitaktmotor.",
-    "exp": "Der Ziegenmelker"
+    "exp": "Der perfekt wie Kiefernrinde getarnte Ziegenmelker brütet am Boden sandiger Heiden und schnurrt minutenlang wie ein leiser Zweitaktmotor."
   },
   {
     "cat": "voegel",
     "diff": "mid",
     "q": "Welcher größte Greifvogel Mitteleuropas brütet mit über zwei Metern Flügelspannweite in den ruhigen Altholzinseln der Niederlausitz?",
     "a": [
-      "Er spießt Beutetiere als Vorrat auf Dornen und Stacheldraht auf",
-      "Er baut neun getrennte Schlafnester zur Verwirrung von Feinden",
-      "Er erbeutet pro Jagdtag genau neun Insekten und kleine Mäuse",
-      "Er legt stets neun dunkel gesprenkelte Eier in sein Nest"
+      "Der Seeadler (Haliaeetus albicilla)",
+      "Der Steinadler (Aquila chrysaetos)",
+      "Der Mäusebussard (Buteo buteo)",
+      "Der Wanderfalke (Falco peregrinus)"
     ],
     "explanation": "Mit seinem breiten Brettflügeln und dem weißen Stoß kreist der Seeadler über den nahen Teichen und Tagebauseen auf Fisch- und Wasservogeljagd.",
-    "exp": "Er spießt Beutetiere als Vorrat auf Dornen und Stacheldraht auf"
+    "exp": "Mit seinem breiten Brettflügeln und dem weißen Stoß kreist der Seeadler über den nahen Teichen und Tagebauseen auf Fisch- und Wasservogeljagd."
   },
   {
     "cat": "voegel",
     "diff": "mid",
     "q": "Welcher kleine Singvogel spießt Beutetiere wie Käfer, Mäuse und Eidechsen als Vorrat auf Dornen von Schlehen- und Weißdornbüschen auf?",
     "a": [
-      "Der Seeadler",
-      "Der Wanderfalke",
-      "Der Mäusebussard",
-      "Der Rotmilan"
+      "Der Neuntöter (Lanius collurio)",
+      "Der Raubwürger (Lanius excubitor)",
+      "Der Kleiber (Sitta europaea)",
+      "Der Schwarzstirnwürger (Lanius minor)"
     ],
     "explanation": "Der Neuntöter nutzt Dornen als natürliche Vorratskammer und Haltewerkzeug, da seine Fänge zu schwach sind, um zähe Beute festzuhalten.",
-    "exp": "Der Seeadler"
+    "exp": "Der Neuntöter nutzt Dornen als natürliche Vorratskammer und Haltewerkzeug, da seine Fänge zu schwach sind, um zähe Beute festzuhalten."
   },
   {
     "cat": "voegel",
     "diff": "mid",
     "q": "Woran erkennt man den Rotmilan am Himmel über den Feldern von Heideblick auf den ersten Blick?",
     "a": [
-      "Die Bekassine",
-      "Der Brachvogel",
-      "Der Kiebitz",
-      "Die Uferschnepfe"
+      "Am tief gegabelten, rostrot leuchtenden Gabelschwanz",
+      "An den schneeweißen Flügelunterseiten im Gleitflug",
+      "Am auffällig keilförmigen Schwanz und breiten Schwingen",
+      "An den rein schwarzen Handschwingen und rundem Schwanz"
     ],
     "explanation": "Deutschland trägt für den 'Gabelweihe' genannten Rotmilan weltweite Verantwortung, da über die Hälfte des weltweiten Bestands hier brütet.",
-    "exp": "Die Bekassine"
+    "exp": "Deutschland trägt für den 'Gabelweihe' genannten Rotmilan weltweite Verantwortung, da über die Hälfte des weltweiten Bestands hier brütet."
   },
   {
     "cat": "voegel",
@@ -129,7 +129,7 @@
       "Der Tannenhäher"
     ],
     "explanation": "Als emsiger Waldgärtner vergräbt ein einziger Eichelhäher tausende Eicheln; die vergessenen Nüsse keimen und verjüngen den Mischwald.",
-    "exp": "Der Eichelhäher"
+    "exp": "Als emsiger Waldgärtner vergräbt ein einziger Eichelhäher tausende Eicheln; die vergessenen Nüsse keimen und verjüngen den Mischwald."
   },
   {
     "cat": "voegel",
@@ -142,20 +142,20 @@
       "Der Steinkauz"
     ],
     "explanation": "Mit nur 16 cm Körpergröße ist der Sperlingskauz dämmerungsaktiv und legt in Baumhöhlen Depotlager aus Kleinvögeln und Wühlmäusen an.",
-    "exp": "Der Sperlingskauz"
+    "exp": "Mit nur 16 cm Körpergröße ist der Sperlingskauz dämmerungsaktiv und legt in Baumhöhlen Depotlager aus Kleinvögeln und Wühlmäusen an."
   },
   {
     "cat": "voegel",
     "diff": "mid",
     "q": "Welcher Greifvogel ernährt sich fast ausschließlich von Fischen und taucht an den Lausitzer Teichen mit den Krallen voran ins Wasser?",
     "a": [
-      "Sie bieten Nachmietern wie Hohltauben, Fledermäusen und Mardern Quartier",
-      "Sie führen zum sofortigen Absterben der befallenen Kiefernstämme",
-      "Sie füllen sich im Winter mit Harz zur natürlichen Baumversiegelung",
-      "Sie werden von Vögeln im Folgejahr grundsätzlich komplett gemieden"
+      "Der Fischadler (Pandion haliaetus)",
+      "Der Seeadler (Haliaeetus albicilla)",
+      "Die Rohrweihe (Circus aeruginosus)",
+      "Der Schwarzmilan (Milvus migrans)"
     ],
     "explanation": "Dank wendbarer Außenzehe und rauer Schuppen an den Krallen greift der Fischadler selbst glitschige Beute sicher im Sturzflug.",
-    "exp": "Sie bieten Nachmietern wie Hohltauben, Fledermäusen und Mardern Quartier"
+    "exp": "Dank wendbarer Außenzehe und rauer Schuppen an den Krallen greift der Fischadler selbst glitschige Beute sicher im Sturzflug."
   },
   {
     "cat": "voegel",
@@ -168,20 +168,20 @@
       "Er trommelt mit den Flügeln ein warnendes Signal auf die Baumrinde"
     ],
     "explanation": "Als Verwandter der Spechte imitiert der Wendehals eine zischende Schlange in der dunklen Nisthöhle, um Nesträuber in die Flucht zu schlagen.",
-    "exp": "Er dreht den Kopf schlangenartig um 180 Grad und zischt furchterregend"
+    "exp": "Als Verwandter der Spechte imitiert der Wendehals eine zischende Schlange in der dunklen Nisthöhle, um Nesträuber in die Flucht zu schlagen."
   },
   {
     "cat": "voegel",
     "diff": "pro",
     "q": "Warum galt der Ziegenmelker im früheren ländlichen Volksglauben der Lausitz fälschlicherweise als schädlicher Stallräuber?",
     "a": [
-      "Gekreuzte Schnabelspitzen zum Aufhebeln von Nadelholzzapfen",
-      "Ein löffelartig verbreiterter Unterschnabel zum Schöpfen von Wasser",
-      "Ein federloser roter Kehlsack zur Speicherung von Pflanzensamen",
-      "Ein hohler oberer Schnabeldorn zum Aufspüren von Insektenlarven"
+      "Weil man glaubte, er sauge nachts das Euter von Ziegen aus",
+      "Weil sein schnurrender Nachtgesang als Vorbote von Seuchen galt",
+      "Weil er angeblich junge Hühnerküken aus den Ställen stahl",
+      "Weil man ihm nachsagte, reife Getreideähren auf Feldern zu vergiften"
     ],
     "explanation": "Sein riesiger Schnabelspalt verleitete Bauern zu dem Mythos; tatsächlich fing der Vogel nur Bremsen und Mücken rund um das Vieh.",
-    "exp": "Gekreuzte Schnabelspitzen zum Aufhebeln von Nadelholzzapfen"
+    "exp": "Sein riesiger Schnabelspalt verleitete Bauern zu dem Mythos; tatsächlich fing der Vogel nur Bremsen und Mücken rund um das Vieh."
   },
   {
     "cat": "voegel",
@@ -194,7 +194,7 @@
       "Der Wiesenpieper"
     ],
     "explanation": "Ihr jodeln-weicher Gesang ('lülü-lülü') im spiralförmigen Singflug ist der akustische Frühlingsbote sandiger Heide- und Waldlichtungen.",
-    "exp": "Die Heidelerche"
+    "exp": "Ihr jodeln-weicher Gesang ('lülü-lülü') im spiralförmigen Singflug ist der akustische Frühlingsbote sandiger Heide- und Waldlichtungen."
   },
   {
     "cat": "voegel",
@@ -207,7 +207,7 @@
       "Er transportiert Fleischstücke als Futter für den Wolfsnachwuchs"
     ],
     "explanation": "Kolkraben fliegen laut rufend vor Wölfen her, um sie zu toten Tieren zu führen – der Wolf bricht die Decke auf, der Rabe frisst mit.",
-    "exp": "Er meldet Kadaver an Wölfe und profitiert von deren Rissresten"
+    "exp": "Kolkraben fliegen laut rufend vor Wölfen her, um sie zu toten Tieren zu führen – der Wolf bricht die Decke auf, der Rabe frisst mit."
   },
   {
     "cat": "voegel",
@@ -220,7 +220,7 @@
       "Rüttelflug über offenen Sanddünen nach Art des Turmfalken"
     ],
     "explanation": "Der wendige Baumfalke verzehrt gefangene Libellen oft direkt im schnellen Segelflug mit seinen Fängen aus der Luft.",
-    "exp": "Rasanter Jagdflug im freien Luftraum auf Großlibellen und Schwalben"
+    "exp": "Der wendige Baumfalke verzehrt gefangene Libellen oft direkt im schnellen Segelflug mit seinen Fängen aus der Luft."
   },
   {
     "cat": "voegel",
@@ -233,7 +233,7 @@
       "Stundenlanges lautloses Verharren auf einem Bein im Schilf"
     ],
     "explanation": "Beim Kranich-Duett ruft das Männchen den Grundton, worauf das Weibchen exakt zweisilbig antwortet – ein Symbol ewiger Treue.",
-    "exp": "Synchrone Doppelrufe mit gestreckten Hälsen und Schwingen"
+    "exp": "Beim Kranich-Duett ruft das Männchen den Grundton, worauf das Weibchen exakt zweisilbig antwortet – ein Symbol ewiger Treue."
   },
   {
     "cat": "voegel",
@@ -241,12 +241,12 @@
     "q": "Welcher wärmeliebende Steppenvogel brütet in sandigen Steilwänden alter Kiesgruben in der Niederlausitz in bunten Röhrenkolonien?",
     "a": [
       "Der Bienenfresser",
-      "Der Wiedehopf",
-      "Der Eisvogel",
-      "Die Blauracke"
+      "Der bunte Wiedehopf",
+      "Der schillernde Eisvogel",
+      "Die seltene Blauracke"
     ],
     "explanation": "Mit exotisch buntem Gefieder gräbt der Bienenfresser bis zu zwei Meter tiefe Röhren in Sandwände und fängt Wespen und Hummeln in der Luft.",
-    "exp": "Der Bienenfresser"
+    "exp": "Mit exotisch buntem Gefieder gräbt der Bienenfresser bis zu zwei Meter tiefe Röhren in Sandwände und fängt Wespen und Hummeln in der Luft."
   },
   {
     "cat": "wildtiere",
@@ -259,7 +259,7 @@
       "Das Heulen der Wolfswelpen"
     ],
     "explanation": "In den Altholzbeständen liefern sich Platzhirsche lautstarke Rufduelle um das Kahlwildrudel, die kilometerweit durch die Nacht schallen.",
-    "exp": "Die Rothirschbrunft"
+    "exp": "In den Altholzbeständen liefern sich Platzhirsche lautstarke Rufduelle um das Kahlwildrudel, die kilometerweit durch die Nacht schallen."
   },
   {
     "cat": "wildtiere",
@@ -272,7 +272,7 @@
       "Der Goldschakal"
     ],
     "explanation": "Aus Polen eingewandert, gründeten Wölfe auf Truppenübungsplätzen der Lausitz die ersten festen Rudel Deutschlands seit ihrer Ausrottung.",
-    "exp": "Der Wolf"
+    "exp": "Aus Polen eingewandert, gründeten Wölfe auf Truppenübungsplätzen der Lausitz die ersten festen Rudel Deutschlands seit ihrer Ausrottung."
   },
   {
     "cat": "wildtiere",
@@ -285,7 +285,7 @@
       "Das Reh ernährt sich rein carnivor von Mäusen und kleinen Vögeln"
     ],
     "explanation": "Ein verbreiteter Irrtum: Das Reh (Capreolus capreolus) wiegt rund 20 kg, die weibliche Hirschkuh des Rothirsches hingegen über 100 kg.",
-    "exp": "Das Reh ist eine eigenständige kleine Hirschart, nicht das Kalb des Hirsches"
+    "exp": "Ein verbreiteter Irrtum: Das Reh (Capreolus capreolus) wiegt rund 20 kg, die weibliche Hirschkuh des Rothirsches hingegen über 100 kg."
   },
   {
     "cat": "wildtiere",
@@ -298,7 +298,7 @@
       "Malbaum"
     ],
     "explanation": "In der Suhle kühlen sich Wildschweine im Sommer ab; die getrocknete Lehmschicht schützt ihre Haut vor Stechmücken und Zecken.",
-    "exp": "Suhle"
+    "exp": "In der Suhle kühlen sich Wildschweine im Sommer ab; die getrocknete Lehmschicht schützt ihre Haut vor Stechmücken und Zecken."
   },
   {
     "cat": "wildtiere",
@@ -311,7 +311,7 @@
       "Der Gartenschläfer"
     ],
     "explanation": "Eichhörnchen bauen kugelförmige Nester (Kobel) aus Reisig und Moos in den Kronen und vergessen oft ihre vergrabenen Zapfenvorräte.",
-    "exp": "Das Eichhörnchen"
+    "exp": "Eichhörnchen bauen kugelförmige Nester (Kobel) aus Reisig und Moos in den Kronen und vergessen oft ihre vergrabenen Zapfenvorräte."
   },
   {
     "cat": "wildtiere",
@@ -324,7 +324,7 @@
       "Flüchtiger Kreuzgalopp"
     ],
     "explanation": "Beim Schnüren hinterlässt der Wolf eine schnurgerade Perlenkette von Pfotenabdrücken im märkischen Sand, was viel Energie spart.",
-    "exp": "Schnüren im Trab"
+    "exp": "Beim Schnüren hinterlässt der Wolf eine schnurgerade Perlenkette von Pfotenabdrücken im märkischen Sand, was viel Energie spart."
   },
   {
     "cat": "wildtiere",
@@ -337,7 +337,7 @@
       "Aus mineralisiertem Chitin"
     ],
     "explanation": "Das Geweih ist reiner Knochen. Binnen nur rund 140 Tagen wächst unter schützendem Bast ein bis zu 10 kg schweres Gebilde heran.",
-    "exp": "Aus echter Knochensubstanz"
+    "exp": "Das Geweih ist reiner Knochen. Binnen nur rund 140 Tagen wächst unter schützendem Bast ein bis zu 10 kg schweres Gebilde heran."
   },
   {
     "cat": "wildtiere",
@@ -350,7 +350,7 @@
       "Längere Tasthaare und ein deutlich buschigerer Schwanz"
     ],
     "explanation": "Der scheue Baummarder meidet Siedlungen und klettert geschickt im Kronendach, während der weißkehlig geprägte Steinmarder gern Motorräume heimsucht.",
-    "exp": "Gelblicher abgerundeter Kehlfleck und behaarte Pfotensohlen"
+    "exp": "Der scheue Baummarder meidet Siedlungen und klettert geschickt im Kronendach, während der weißkehlig geprägte Steinmarder gern Motorräume heimsucht."
   },
   {
     "cat": "wildtiere",
@@ -363,7 +363,7 @@
       "Der Fischotter"
     ],
     "explanation": "Der 'Meister Grimbart' legt im sandigen Boden tiefe Röhrensysteme an, die oft Jahrzehnte von Dachsfamilien und Füchsen gemeinsam genutzt werden.",
-    "exp": "Der Dachs"
+    "exp": "Der 'Meister Grimbart' legt im sandigen Boden tiefe Röhrensysteme an, die oft Jahrzehnte von Dachsfamilien und Füchsen gemeinsam genutzt werden."
   },
   {
     "cat": "wildtiere",
@@ -376,7 +376,7 @@
       "Mit Harz verklebte Erdklumpen in den unteren Astgabelungen"
     ],
     "explanation": "Die harzigen Malbäume (oft Kiefern) befreien die Keiler und Bachen von lästigen Parasiten; die Borsten zeugen von ihrer Anwesenheit.",
-    "exp": "Schlammkrusten und Borsten an Rinden durch Scheuern am Stamm"
+    "exp": "Die harzigen Malbäume (oft Kiefern) befreien die Keiler und Bachen von lästigen Parasiten; die Borsten zeugen von ihrer Anwesenheit."
   },
   {
     "cat": "wildtiere",
@@ -389,7 +389,7 @@
       "Ein dumpfes Knurren zur Einschüchterung von Rivalen"
     ],
     "explanation": "Fühlt sich ein Reh gestört, stößt es ein dunkles, bellendes 'Böh' aus, das andere Rehe warnt und oft wie ein Hundekläffen klingt.",
-    "exp": "Ein lauter heiserer Belllaut bei Gefahr oder Beunruhigung"
+    "exp": "Fühlt sich ein Reh gestört, stößt es ein dunkles, bellendes 'Böh' aus, das andere Rehe warnt und oft wie ein Hundekläffen klingt."
   },
   {
     "cat": "wildtiere",
@@ -397,12 +397,12 @@
     "q": "Welches wassergebundene Nagetier gestaltet Fließgewässer und Gräben im Luckauer Becken aktiv mit Dämmen und Burgen?",
     "a": [
       "Der Europäische Biber",
-      "Die Nutria",
-      "Die Bisamratte",
-      "Der Fischotter"
+      "Die invasive Nutria",
+      "Die kleine Bisamratte",
+      "Der wendige Fischotter"
     ],
     "explanation": "Der Biber staut Gräben auf, schafft wertvolle Feuchtbiotope für Amphibien und Libellen und fällt weiche Weiden und Pappeln am Ufer.",
-    "exp": "Der Europäische Biber"
+    "exp": "Der Biber staut Gräben auf, schafft wertvolle Feuchtbiotope für Amphibien und Libellen und fällt weiche Weiden und Pappeln am Ufer."
   },
   {
     "cat": "wildtiere",
@@ -415,7 +415,7 @@
       "Toxische Gase aus dem Verdauungstrakt zur Abwehr"
     ],
     "explanation": "Als eines der wenigen giftigen Säugetiere Europas lähmt die Wasserspitzmaus selbst Beute, die deutlich größer ist als sie selbst.",
-    "exp": "Lähmendes Nervengift im Speichel zur Betäubung von Beute"
+    "exp": "Als eines der wenigen giftigen Säugetiere Europas lähmt die Wasserspitzmaus selbst Beute, die deutlich größer ist als sie selbst."
   },
   {
     "cat": "wildtiere",
@@ -428,7 +428,7 @@
       "Nutzung des Erdmagnetfelds über Eisenpartikel im Schnauzenbereich"
     ],
     "explanation": "Die Mopsfledermaus jagt mit 'Flüster-Echolot'. Dadurch bemerken hochspezialisierte Eulenfalter die herannahende Jägerin nicht rechtzeitig.",
-    "exp": "Extrem leise Ultraschallrufe, die Falter kaum wahrnehmen"
+    "exp": "Die Mopsfledermaus jagt mit 'Flüster-Echolot'. Dadurch bemerken hochspezialisierte Eulenfalter die herannahende Jägerin nicht rechtzeitig."
   },
   {
     "cat": "wildtiere",
@@ -441,7 +441,7 @@
       "Abgeworfene Geweihteile, die im Waldboden eingetreten werden"
     ],
     "explanation": "Der Platzhirsch suhlt sich in einer Brunftkuhle aus Schlamm und Urin; der moschusartige Duft signalisiert Rivalen und Hirschkühen Dominanz.",
-    "exp": "Dunkel gefärbter Bereich am Bauch durch Einsauen mit Urin"
+    "exp": "Der Platzhirsch suhlt sich in einer Brunftkuhle aus Schlamm und Urin; der moschusartige Duft signalisiert Rivalen und Hirschkühen Dominanz."
   },
   {
     "cat": "wildtiere",
@@ -454,7 +454,7 @@
       "Sie verpuppt sich wie eine Insektenlarve bis zu den ersten Frühlingstagen"
     ],
     "explanation": "Der kleine Bilch rollt sich zur festen Kugel zusammen und wacht erst im warmen April wieder auf, wenn die Knospen sprießen.",
-    "exp": "Sie senkt die Körpertemperatur auf fast null Grad und hält Winterschlaf"
+    "exp": "Der kleine Bilch rollt sich zur festen Kugel zusammen und wacht erst im warmen April wieder auf, wenn die Knospen sprießen."
   },
   {
     "cat": "wildtiere",
@@ -467,7 +467,7 @@
       "Die Trittsiegel sind absolut kreisrund geformt ohne jede Längsstreckung"
     ],
     "explanation": "Wolfsspuren sind langgestreckt und oval; zwischen den Mittel- und Außenballen lässt sich oft eine Schnur oder ein Streichholz durchziehen.",
-    "exp": "Mittlere Zehenballen stehen eng vorn, Querlinie berührt Außenballen kaum"
+    "exp": "Wolfsspuren sind langgestreckt und oval; zwischen den Mittel- und Außenballen lässt sich oft eine Schnur oder ein Streichholz durchziehen."
   },
   {
     "cat": "wildtiere",
@@ -480,7 +480,7 @@
       "Die Smaragdeidechse"
     ],
     "explanation": "Männchen leuchten zur Paarungszeit smaragdgrün an den Flanken; die Eier werden im lockeren, sonnenwarmen Sandboden ausgebrütet.",
-    "exp": "Die Zauneidechse"
+    "exp": "Männchen leuchten zur Paarungszeit smaragdgrün an den Flanken; die Eier werden im lockeren, sonnenwarmen Sandboden ausgebrütet."
   },
   {
     "cat": "wildtiere",
@@ -493,7 +493,7 @@
       "Entfernen von winterlichem Schnee von der Moosdecke"
     ],
     "explanation": "Junge Lärchen, Birken und Kiefern werden mit Vorliebe 'gefegt', wobei Duftdrüsen an der Stirn gleichzeitig das Revier markieren.",
-    "exp": "Abreiben der abgestorbenen Bastschicht vom Gehörn an Zweigen"
+    "exp": "Junge Lärchen, Birken und Kiefern werden mit Vorliebe 'gefegt', wobei Duftdrüsen an der Stirn gleichzeitig das Revier markieren."
   },
   {
     "cat": "wald_natur",
@@ -506,7 +506,7 @@
       "Die Weißtanne"
     ],
     "explanation": "Mit ihren tiefen Pfahlwurzeln trotzt die Waldkiefer den nährstoffarmen, sandigen Böden und den trockenen Sommern Brandenburgs ideal.",
-    "exp": "Die Waldkiefer"
+    "exp": "Mit ihren tiefen Pfahlwurzeln trotzt die Waldkiefer den nährstoffarmen, sandigen Böden und den trockenen Sommern Brandenburgs ideal."
   },
   {
     "cat": "wald_natur",
@@ -514,12 +514,12 @@
     "q": "In welchem großen brandenburgischen Großschutzgebiet liegt das Dorf Schwarzenburg?",
     "a": [
       "Im Naturpark Niederlausitzer Landrücken",
-      "Im Naturpark Schlaubetal",
-      "Im Biosphärenreservat Spreewald",
-      "Im Naturpark Dahme-Heideseen"
+      "Im Naturpark Schlaubetal in Brandenburg",
+      "Im UNESCO-Biosphärenreservat Spreewald",
+      "Im Naturpark Dahme-Heideseen im Norden"
     ],
     "explanation": "Der Naturpark Niederlausitzer Landrücken bewahrt historische Buchen- und Eichenmischwälder, Heiden und wiedervernässte Moorgebiete.",
-    "exp": "Im Naturpark Niederlausitzer Landrücken"
+    "exp": "Der Naturpark Niederlausitzer Landrücken bewahrt historische Buchen- und Eichenmischwälder, Heiden und wiedervernässte Moorgebiete."
   },
   {
     "cat": "wald_natur",
@@ -532,7 +532,7 @@
       "Der Körnchenröhrling"
     ],
     "explanation": "Die 'Marone' geht Mykorrhiza-Symbiosen mit Kiefern ein und ist der verlässlichste und schmackhafteste Speisepilz der märkischen Heide.",
-    "exp": "Der Maronenröhrling"
+    "exp": "Die 'Marone' geht Mykorrhiza-Symbiosen mit Kiefern ein und ist der verlässlichste und schmackhafteste Speisepilz der märkischen Heide."
   },
   {
     "cat": "wald_natur",
@@ -545,7 +545,7 @@
       "Der Zunderschwamm"
     ],
     "explanation": "Die Krause Glucke kann mehrere Kilo schwer werden, schmeckt herrlich nussig in Butter und liebt die sandigen Kiefernwurzeln der Niederlausitz.",
-    "exp": "Die Krause Glucke"
+    "exp": "Die Krause Glucke kann mehrere Kilo schwer werden, schmeckt herrlich nussig in Butter und liebt die sandigen Kiefernwurzeln der Niederlausitz."
   },
   {
     "cat": "wald_natur",
@@ -558,7 +558,7 @@
       "Ein unberührtes Wildnisgebiet ohne jede menschliche Nutzung oder Pflege"
     ],
     "explanation": "Waldgärten nutzen sieben vertikale Ebenen (von der Baumkrone bis zur Wurzelknolle), sparen Dünger und Wasser und liefern reiche Ernten.",
-    "exp": "Mehrschichtiges Pflanzsystem aus Bäumen, Sträuchern und Kräutern"
+    "exp": "Waldgärten nutzen sieben vertikale Ebenen (von der Baumkrone bis zur Wurzelknolle), sparen Dünger und Wasser und liefern reiche Ernten."
   },
   {
     "cat": "wald_natur",
@@ -571,7 +571,7 @@
       "Gekennzeichnet durch subalpine Schneemengen in den Wintermonaten"
     ],
     "explanation": "Sandböden und kontinentaler Sommerwind führen zu geringen Niederschlägen (oft unter 550 mm im Jahr), was angepasste Mischwälder erfordert.",
-    "exp": "Sehr sonnenreich und niederschlagsarm mit trockenem Kontinentalklima"
+    "exp": "Sandböden und kontinentaler Sommerwind führen zu geringen Niederschlägen (oft unter 550 mm im Jahr), was angepasste Mischwälder erfordert."
   },
   {
     "cat": "wald_natur",
@@ -584,7 +584,7 @@
       "Ein alter Küstendünenzug aus der Epoche des mitteleuropäischen Urmeeres"
     ],
     "explanation": "Vor über 150.000 Jahren schoben gewaltige Gletscher der Saale-Vereisung Geröll und Sand auf und formten die Höhenzüge südlich von Luckau.",
-    "exp": "Endmoräne der Saale-Kaltzeit mit aufgeschobenen Sandmassen"
+    "exp": "Vor über 150.000 Jahren schoben gewaltige Gletscher der Saale-Vereisung Geröll und Sand auf und formten die Höhenzüge südlich von Luckau."
   },
   {
     "cat": "wald_natur",
@@ -597,7 +597,7 @@
       "Die Zitter-Pappel"
     ],
     "explanation": "Der weiße Farbstoff Betulin reflektiert Sonnenlicht und schützt die Rinde vor Rissen durch Temperaturschwankungen im Winter.",
-    "exp": "Die Hänge-Birke"
+    "exp": "Der weiße Farbstoff Betulin reflektiert Sonnenlicht und schützt die Rinde vor Rissen durch Temperaturschwankungen im Winter."
   },
   {
     "cat": "wald_natur",
@@ -610,7 +610,7 @@
       "Das Heide-Nelkchen"
     ],
     "explanation": "Die Besenheide liebt saure Sandböden und bietet im August und September unzähligen Wildbienen und Hummeln späten Nektar.",
-    "exp": "Die Besenheide"
+    "exp": "Die Besenheide liebt saure Sandböden und bietet im August und September unzähligen Wildbienen und Hummeln späten Nektar."
   },
   {
     "cat": "wald_natur",
@@ -623,7 +623,7 @@
       "Mischwälder ziehen weniger Wildtiere an, was Forstzäune überflüssig macht"
     ],
     "explanation": "Tiefwurzelnde Eichen bringen Nährstoffe nach oben; ihr Laub kühlt den Boden und schützt den Wald vor dem Austrocknen und Feuer.",
-    "exp": "Laubbäume fördern Humusaufbau, senken Waldbrandgefahr und speichern Wasser"
+    "exp": "Tiefwurzelnde Eichen bringen Nährstoffe nach oben; ihr Laub kühlt den Boden und schützt den Wald vor dem Austrocknen und Feuer."
   },
   {
     "cat": "wald_natur",
@@ -636,7 +636,7 @@
       "Der Gemeine Wacholder"
     ],
     "explanation": "Drosseln und Seidenschwänze fressen die weißen, klebrigen Beeren und pflanzen die Samen durch das Wetzen des Schnabels an Ästen ein.",
-    "exp": "Die Kiefernmistel"
+    "exp": "Drosseln und Seidenschwänze fressen die weißen, klebrigen Beeren und pflanzen die Samen durch das Wetzen des Schnabels an Ästen ein."
   },
   {
     "cat": "wald_natur",
@@ -649,7 +649,7 @@
       "Die Rauschbeere"
     ],
     "explanation": "Der dichte Heidelbeerteppich auf saurem Waldboden liefert ab Juli süß-aromatische Beeren voller wertvoller Anthozyane.",
-    "exp": "Die Heidelbeere"
+    "exp": "Der dichte Heidelbeerteppich auf saurem Waldboden liefert ab Juli süß-aromatische Beeren voller wertvoller Anthozyane."
   },
   {
     "cat": "wald_natur",
@@ -662,7 +662,7 @@
       "Verkohlte Rindenschicht nach kontrollierten forstlichen Bodenfeuern"
     ],
     "explanation": "Während der Stamm unten dicke, graue Borke bildet, schuppt die Rinde in den Wipfeln dünn und leuchtet bei Sonnenuntergang spektakulär kupferrot.",
-    "exp": "Fuchsrote Schuppenrinde im oberen Stamm, die im Licht kupfern glänzt"
+    "exp": "Während der Stamm unten dicke, graue Borke bildet, schuppt die Rinde in den Wipfeln dünn und leuchtet bei Sonnenuntergang spektakulär kupferrot."
   },
   {
     "cat": "wald_natur",
@@ -675,7 +675,7 @@
       "Wird im Wald belassen, um den Sandboden vor Sonnenstrahlen abzuschirmen"
     ],
     "explanation": "Morschholz saugt Regenwasser wie ein riesiger Badeschwamm auf und gibt Feuchtigkeit in Dürreperioden langsam an die Umgebung ab.",
-    "exp": "Wasserspeicher mit Schwammeffekt und Biotop für Insekten und Pilze"
+    "exp": "Morschholz saugt Regenwasser wie ein riesiger Badeschwamm auf und gibt Feuchtigkeit in Dürreperioden langsam an die Umgebung ab."
   },
   {
     "cat": "wald_natur",
@@ -688,7 +688,7 @@
       "Der Eichenzipfelfalter"
     ],
     "explanation": "Mit seinen riesigen Fühlern ist der geschützte Heldbock auf alte, absterbende Stieleichen mit dickem Stammumfang angewiesen.",
-    "exp": "Der Heldbock"
+    "exp": "Mit seinen riesigen Fühlern ist der geschützte Heldbock auf alte, absterbende Stieleichen mit dickem Stammumfang angewiesen."
   },
   {
     "cat": "wald_natur",
@@ -701,7 +701,7 @@
       "Mittelalterliche Waldbrände verbrannten alle Humusschichten dauerhaft"
     ],
     "explanation": "Eiszeitliche Sander bestehen aus reinem Quarzsand ohne bindige Tonminerale, weshalb Nährstoffe rasch ins Grundwasser ausgewaschen werden.",
-    "exp": "Schmelzwasser der Eiszeit wuschen Tone und Kalke aus, Quarz blieb zurück"
+    "exp": "Eiszeitliche Sander bestehen aus reinem Quarzsand ohne bindige Tonminerale, weshalb Nährstoffe rasch ins Grundwasser ausgewaschen werden."
   },
   {
     "cat": "wald_natur",
@@ -714,7 +714,7 @@
       "Der Semmelstoppelpilz"
     ],
     "explanation": "Der Pfifferling (in der Lausitz gern 'Rehling' genannt) lebt in Symbiose mit Kiefern und Fichten und schmeckt fein pfeffrig-aromatisch.",
-    "exp": "Der Echte Pfifferling"
+    "exp": "Der Pfifferling (in der Lausitz gern 'Rehling' genannt) lebt in Symbiose mit Kiefern und Fichten und schmeckt fein pfeffrig-aromatisch."
   },
   {
     "cat": "wald_natur",
@@ -727,7 +727,7 @@
       "Verhindern das Eindringen von Regenwasser in die tieferen Bodenschichten"
     ],
     "explanation": "Ein engmaschiges unterirdisches Pilzgeflecht ('Wood Wide Web') versorgt Bäume bei Trockenheit und verbindet den Wald zu einer Gemeinschaft.",
-    "exp": "Liefern dem Baum Wasser und Mineralien im Tausch gegen pflanzlichen Zucker"
+    "exp": "Ein engmaschiges unterirdisches Pilzgeflecht ('Wood Wide Web') versorgt Bäume bei Trockenheit und verbindet den Wald zu einer Gemeinschaft."
   },
   {
     "cat": "wald_natur",
@@ -740,7 +740,7 @@
       "Das Maiglöckchen"
     ],
     "explanation": "Das geschützte Leberblümchen blüht oft schon im März vor dem Laubaustrieb der Bäume und nutzt das ungefilterte Licht am Waldboden.",
-    "exp": "Das Leberblümchen"
+    "exp": "Das geschützte Leberblümchen blüht oft schon im März vor dem Laubaustrieb der Bäume und nutzt das ungefilterte Licht am Waldboden."
   },
   {
     "cat": "geschichte",
@@ -753,7 +753,7 @@
       "Gemeinde Märkische Heide"
     ],
     "explanation": "Die Großgemeinde Heideblick vereint über 14 historische Ortsteile am Südrand des Landkreises Dahme-Spreewald.",
-    "exp": "Gemeinde Heideblick"
+    "exp": "Die Großgemeinde Heideblick vereint über 14 historische Ortsteile am Südrand des Landkreises Dahme-Spreewald."
   },
   {
     "cat": "geschichte",
@@ -766,7 +766,7 @@
       "Das Jagdschloss Rochau"
     ],
     "explanation": "Die 1909 erbaute Einklassenschule zeigt originale Schulbänke, Schiefertafeln und Lehrmittel aus über 60 Jahren Schulgeschichte.",
-    "exp": "Das Schulmuseum Schwarzenburg"
+    "exp": "Die 1909 erbaute Einklassenschule zeigt originale Schulbänke, Schiefertafeln und Lehrmittel aus über 60 Jahren Schulgeschichte."
   },
   {
     "cat": "geschichte",
@@ -779,7 +779,7 @@
       "Zentrales Jugendgästehaus für Wandergruppen und Schulklassen der Region"
     ],
     "explanation": "Brautpaare können sich im historischen Klassenzimmer vor der alten Schiefertafel unter dem Beisein von Familie und Freunden das Ja-Wort geben.",
-    "exp": "Historischer Trauort des Standesamtes Heideblick für standesamtliche Hochzeiten"
+    "exp": "Brautpaare können sich im historischen Klassenzimmer vor der alten Schiefertafel unter dem Beisein von Familie und Freunden das Ja-Wort geben."
   },
   {
     "cat": "geschichte",
@@ -792,7 +792,7 @@
       "Über 1.200 Einwohner"
     ],
     "explanation": "Mit rund 166 Einwohnern bietet Schwarzenburg dörfliche Ruhe, engen Zusammenhalt und eine intakte Naturverbundenheit.",
-    "exp": "Rund 160 bis 170 Einwohner"
+    "exp": "Mit rund 166 Einwohnern bietet Schwarzenburg dörfliche Ruhe, engen Zusammenhalt und eine intakte Naturverbundenheit."
   },
   {
     "cat": "geschichte",
@@ -805,7 +805,7 @@
       "Als kurfürstliche Glashütte an der Rochauer Grenze"
     ],
     "explanation": "Schafzucht auf mageren Heideflächen prägte die Anfänge: Aus der alten Schäferei am Schwarzen Berg entstand später die Kolonie Schwarzenburg.",
-    "exp": "Als wüste schwarze Schäfferey am schwartzen Berge"
+    "exp": "Schafzucht auf mageren Heideflächen prägte die Anfänge: Aus der alten Schäferei am Schwarzen Berg entstand später die Kolonie Schwarzenburg."
   },
   {
     "cat": "geschichte",
@@ -818,7 +818,7 @@
       "In der großen Scheune des Schulzen"
     ],
     "explanation": "Preußische Behörden richteten 1830 in der umgebauten Blechlöffelfabrik einen Klassenraum und eine Wohnung für den Dorfschullehrer ein.",
-    "exp": "In einer ehemaligen Blechlöffelfabrik"
+    "exp": "Preußische Behörden richteten 1830 in der umgebauten Blechlöffelfabrik einen Klassenraum und eine Wohnung für den Dorfschullehrer ein."
   },
   {
     "cat": "geschichte",
@@ -831,7 +831,7 @@
       "König Friedrich der Große"
     ],
     "explanation": "Friedrich Wilhelm III. förderte das Volksschulwesen auf dem Lande und genehmigte die Schulgründung für die damals wachsende Gemeinde.",
-    "exp": "König Friedrich Wilhelm III."
+    "exp": "Friedrich Wilhelm III. förderte das Volksschulwesen auf dem Lande und genehmigte die Schulgründung für die damals wachsende Gemeinde."
   },
   {
     "cat": "geschichte",
@@ -844,7 +844,7 @@
       "Im Jahr 1960"
     ],
     "explanation": "Erst 1972 schloss die traditionsreiche Dorfschule; danach fuhren die Kinder mit dem Bus in die Zentralschule nach Walddrehna.",
-    "exp": "Im Jahr 1972"
+    "exp": "Erst 1972 schloss die traditionsreiche Dorfschule; danach fuhren die Kinder mit dem Bus in die Zentralschule nach Walddrehna."
   },
   {
     "cat": "geschichte",
@@ -857,7 +857,7 @@
       "Friedrich August Krüger"
     ],
     "explanation": "Lehrer Österitz unterrichtete die Kinder jahrzehntelang und bewahrte alte Fibeln, Schulbänke, Griffelkästen und Anschauungstafeln für die Nachwelt.",
-    "exp": "Helmuth Österitz"
+    "exp": "Lehrer Österitz unterrichtete die Kinder jahrzehntelang und bewahrte alte Fibeln, Schulbänke, Griffelkästen und Anschauungstafeln für die Nachwelt."
   },
   {
     "cat": "geschichte",
@@ -870,7 +870,7 @@
       "Zum Amt Jüterbog"
     ],
     "explanation": "Als kursächsisches Vorwerk gehörte Schwarzenburg zum traditionsreichen Amt Schlieben, bevor das Gebiet nach den Napoleonischen Kriegen preußisch wurde.",
-    "exp": "Zum Amt Schlieben"
+    "exp": "Als kursächsisches Vorwerk gehörte Schwarzenburg zum traditionsreichen Amt Schlieben, bevor das Gebiet nach den Napoleonischen Kriegen preußisch wurde."
   },
   {
     "cat": "geschichte",
@@ -883,7 +883,7 @@
       "Der Flämingwald"
     ],
     "explanation": "Die ausgedehnte Rochauer Heide war jahrhundertelang kurfürstliches Jagdrevier und ein wichtiges Holz- und Pechgewinnungsgebiet.",
-    "exp": "Die Rochauer Heide"
+    "exp": "Die ausgedehnte Rochauer Heide war jahrhundertelang kurfürstliches Jagdrevier und ein wichtiges Holz- und Pechgewinnungsgebiet."
   },
   {
     "cat": "geschichte",
@@ -896,7 +896,7 @@
       "Zur Dorfkirche Langengrassau"
     ],
     "explanation": "Da Schwarzenburg keine eigene Kirche besaß, wanderten die Dorfbewohner über den Kirchweg ins malerische Nachbardorf Proßmarke zum Gottesdienst.",
-    "exp": "Zur Kirchengemeinde Proßmarke"
+    "exp": "Da Schwarzenburg keine eigene Kirche besaß, wanderten die Dorfbewohner über den Kirchweg ins malerische Nachbardorf Proßmarke zum Gottesdienst."
   },
   {
     "cat": "geschichte",
@@ -909,7 +909,7 @@
       "Zur Erinnerung an die ersten Köhler und ihre tiefschwarzen Gesichter"
     ],
     "explanation": "Der Name leitete sich vom bewaldeten 'Schwarzen Berg' und der alten Schäferei ab; der Volksmund spintisierte scherzhaft von schwarzen Schafen.",
-    "exp": "Bezug auf schwarze Schafe der alten Schäferei, für die gebürgt wurde"
+    "exp": "Der Name leitete sich vom bewaldeten 'Schwarzen Berg' und der alten Schäferei ab; der Volksmund spintisierte scherzhaft von schwarzen Schafen."
   },
   {
     "cat": "geschichte",
@@ -922,7 +922,7 @@
       "Der Bahnhof Golßen"
     ],
     "explanation": "Die Eröffnung der Strecke Berlin-Dresden brachte den Dörfern Anschluss an die weite Welt; Holz und landwirtschaftliche Produkte fuhren per Dampfzug nach Berlin.",
-    "exp": "Der Bahnhof Walddrehna"
+    "exp": "Die Eröffnung der Strecke Berlin-Dresden brachte den Dörfern Anschluss an die weite Welt; Holz und landwirtschaftliche Produkte fuhren per Dampfzug nach Berlin."
   },
   {
     "cat": "geschichte",
@@ -935,7 +935,7 @@
       "Das Trocknen von Heidelbeeren auf heißen Sandsteinen für den Winter"
     ],
     "explanation": "Pechkratzer schlugen Kerben in Kiefernstämme; das gewonnene Harz wurde in Erdmeilern zu wertvollem Schiffspech und Wagenschmiere verkocht.",
-    "exp": "Verschwelen von harzreichem Kiefernholz zur Gewinnung von Wagenschmiere und Pech"
+    "exp": "Pechkratzer schlugen Kerben in Kiefernstämme; das gewonnene Harz wurde in Erdmeilern zu wertvollem Schiffspech und Wagenschmiere verkocht."
   },
   {
     "cat": "geschichte",
@@ -948,7 +948,7 @@
       "Der Bergbau sächsischer Erzknappen im späten Mittelalter"
     ],
     "explanation": "Ortsnamen mit '-ow', '-itz' oder '-na' zeugen von der friedlichen slawischen Landnahme ab dem 6. Jahrhundert in der Niederlausitz.",
-    "exp": "Die Besiedlung durch die westslawischen Sorben und Wenden im frühen Mittelalter"
+    "exp": "Ortsnamen mit '-ow', '-itz' oder '-na' zeugen von der friedlichen slawischen Landnahme ab dem 6. Jahrhundert in der Niederlausitz."
   },
   {
     "cat": "geschichte",
@@ -961,7 +961,7 @@
       "Die Landesgrenze trennte das Dorf Schwarzenburg für Jahrzehnte in zwei Hälften"
     ],
     "explanation": "Weil Sachsen treu an der Seite Napoleons gekämpft hatte, musste es 1815 fast die Hälfte seines Staatsgebietes an die preußische Krone abtreten.",
-    "exp": "Das sächsische Territorium fiel an Preußen und kam zur Provinz Brandenburg"
+    "exp": "Weil Sachsen treu an der Seite Napoleons gekämpft hatte, musste es 1815 fast die Hälfte seines Staatsgebietes an die preußische Krone abtreten."
   },
   {
     "cat": "geschichte",
@@ -974,14 +974,18 @@
       "Der Abbau von hochwertigem Schiefer zur Dacheindeckung"
     ],
     "explanation": "In den feuchten Niedermooren des Borcheltsbuschs stachen die Bauern Torf als günstigen Hausbrand; schwere Pferde zogen Kiefernstämme aus dem Forst.",
-    "exp": "Torfstechen in nassen Waldbrüchen und Holzrücken mit Kaltblutpferden"
+    "exp": "In den feuchten Niedermooren des Borcheltsbuschs stachen die Bauern Torf als günstigen Hausbrand; schwere Pferde zogen Kiefernstämme aus dem Forst."
   }
 ];
 
-  if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === "function") {
-    window.ArcadeQuizEngine.registerBank("waldgarten", DATA);
-  } else {
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DATA;
+  }
+  if (typeof window !== 'undefined') {
     window.ARCADE_QUIZ_BANKS = window.ARCADE_QUIZ_BANKS || {};
-    window.ARCADE_QUIZ_BANKS["waldgarten"] = DATA;
+    window.ARCADE_QUIZ_BANKS['waldgarten'] = DATA;
+    if (window.ArcadeQuizEngine && typeof window.ArcadeQuizEngine.registerBank === 'function') {
+      window.ArcadeQuizEngine.registerBank('waldgarten', DATA);
+    }
   }
 })();
