@@ -36,23 +36,23 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 │   ├── arcade.css                   # Globales Design-System, Dark/Light-Theme, Nav, Modals, Feedback-UI
 │   ├── arcade.js                    # Globale Services (ArcadeAudio, ArcadeTheme, ArcadeScores, ArcadeAuth, ArcadeFeedback)
 │   ├── burger-menu.js               # Modulares Top-Right Burger-Menü (☰) + Slide-Over-Drawer (Dark/Light)
-│   ├── quiz-engine.js               # Zentrale Quiz-Logik (Seen-Tracking, 1.000+-Fragen-Generator, Rundenlänge, Timer/Entspannt)
+│   ├── quiz-engine.js               # Zentrale Quiz-Logik (Seen-Tracking, Rundenlänge, Timer/Entspannt)
 │   ├── quiz-board.js                # Einheitliche lokale Quiz-Bestenliste (localStorage, optionale Namenseingabe)
 │   ├── hidden-admin.js              # PIN-Admin (Konstante ADMIN_PIN) für versteckte Quizzes (Waldgarten, Napoli72H)
 │   └── quiz-data/                   # Reine Quiz-Fragendatenbanken (strikt getrennt von der UI-Logik)
-│       ├── bank-waldgarten.js       # 1.000 Fragen: Natur, Vögel, Wildtiere & Geschichte Schwarzenburg (Heideblick)
-│       ├── bank-military-aircraft.js # 1.000 Fragen: Militärflugzeuge (Jets, Historie, Bomber/AWACS, Technik)
-│       ├── bank-airliners.js        # 1.000 Fragen: Passagierflugzeuge (Widebody, Narrowbody, Klassiker, Technik)
-│       ├── bank-etfs.js             # 1.000 Fragen: Passives Investieren, ETFs & deutsches Steuerrecht
-│       ├── bank-ai.js               # Fragenpool: Künstliche Intelligenz (108)
-│       ├── bank-movies.js           # Fragenpool: Kino & Filme ohne RomComs (108)
-│       ├── bank-egypt.js            # Fragenpool: Ägyptische Geschichte (108)
-│       ├── bank-diving.js           # Fragenpool: Tauchen & Scuba Diving (108)
-│       ├── bank-emobility.js        # Fragenpool: E-Mobilität & Tesla (108)
-│       ├── bank-history.js          # Fragenpool: Weltgeschichte (108)
-│       ├── bank-china.js            # Fragenpool: Neuere Chinesische Geschichte (100)
-│       ├── bank-politics.js         # Fragenpool: Politik & Ökonomie (84)
-│       ├── bank-general.js          # Fragenpool: Quiz-Arena Klassik (324)
+│       ├── bank-waldgarten.js       # 75 Fragen: Natur, Vögel, Wildtiere & Geschichte Schwarzenburg (Heideblick)
+│       ├── bank-military-aircraft.js # 75 Fragen: Militärflugzeuge (Jets, Historie, Bomber/AWACS, Technik)
+│       ├── bank-airliners.js        # 75 Fragen: Passagierflugzeuge (Widebody, Narrowbody, Klassiker, Technik)
+│       ├── bank-etfs.js             # 75 Fragen: Passives Investieren, ETFs & deutsches Steuerrecht
+│       ├── bank-ai.js               # Fragenpool: Künstliche Intelligenz (75)
+│       ├── bank-movies.js           # Fragenpool: Kino & Filme ohne RomComs (75)
+│       ├── bank-egypt.js            # Fragenpool: Ägyptische Geschichte (75)
+│       ├── bank-diving.js           # Fragenpool: Tauchen & Scuba Diving (75)
+│       ├── bank-emobility.js        # Fragenpool: E-Mobilität & Tesla (75)
+│       ├── bank-history.js          # Fragenpool: Weltgeschichte (75)
+│       ├── bank-china.js            # Fragenpool: Neuere Chinesische Geschichte (75)
+│       ├── bank-politics.js         # Fragenpool: Politik & Ökonomie (75)
+│       ├── bank-general.js          # Fragenpool: Quiz-Arena Klassik (75)
 │       └── bank-{cpus,gpus,phones,pilze-aachen,swiss-trains}.js # Ausgelagerte Foto-Quiz-Daten (96)
 ├── games/
 │   ├── minesweeper/                 # 3D Minesweeper – Tech Demo KI-Agent
@@ -64,9 +64,9 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 │   ├── 2048/                        # 2048 Prism
 │   ├── quiz/                        # Quiz Arena: Klassik & Mega-Mix
 │   ├── quiz-waldgarten/             # Waldgarten Quiz (Schwarzenburg/Heideblick) + druckfertiges QR-PDF
-│   ├── quiz-military-aircraft/      # Militärflugzeuge Quiz (1.000 Fragen)
-│   ├── quiz-airliners/              # Passagierflugzeuge Quiz (1.000 Fragen)
-│   ├── quiz-etfs/                   # Passives Investieren & ETFs Quiz (1.000 Fragen)
+│   ├── quiz-military-aircraft/      # Militärflugzeuge Quiz (75 Fragen)
+│   ├── quiz-airliners/              # Passagierflugzeuge Quiz (75 Fragen)
+│   ├── quiz-etfs/                   # Passives Investieren & ETFs Quiz (75 Fragen)
 │   └── quiz-*/                      # Weitere Themen- & Foto-Quizzes
 └── cloudflare-worker/
     ├── worker.js                    # Cloudflare Worker API (Highscores, Auth, Turnstile CAPTCHA, Feedback & KI-Antworten)
