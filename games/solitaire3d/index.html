@@ -301,15 +301,43 @@
 
     body.sol3d-is-fs .sol3d-hud-wrap,
     body.sol3d-pseudo-fs .sol3d-hud-wrap {
-      padding: 2px 6px;
+      padding: max(4px, env(safe-area-inset-top, 4px)) max(8px, env(safe-area-inset-right, 8px)) 4px max(8px, env(safe-area-inset-left, 8px));
     }
 
     body.sol3d-is-fs .sol3d-hud,
     body.sol3d-pseudo-fs .sol3d-hud {
       width: 100%;
-      padding: 3px 8px;
-      border-radius: 8px;
-      gap: 4px 6px;
+      padding: 4px 10px;
+      border-radius: 10px;
+      gap: 5px 8px;
+    }
+
+    /* Requirement 3: Enlarge and make "Zurück" (Undo) button prominently accessible & reliably reactive in Fullscreen */
+    #btn-undo {
+      touch-action: manipulation;
+    }
+
+    #btn-undo * {
+      pointer-events: none;
+    }
+
+    #btn-undo:active {
+      transform: scale(0.93) translateY(1px);
+      background: rgba(229, 196, 122, 0.35) !important;
+      border-color: #ffd67a !important;
+    }
+
+    body.sol3d-is-fs #btn-undo,
+    body.sol3d-pseudo-fs #btn-undo {
+      min-height: 52px;
+      min-width: 92px;
+      padding: 8px 16px;
+      font-size: 15px;
+      font-weight: 800;
+      border: 2px solid rgba(229, 196, 122, 0.80);
+      background: rgba(26, 44, 34, 0.96);
+      color: #fff9e6;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45), 0 0 10px rgba(229, 196, 122, 0.22);
     }
 
     /* Settings & New Game Popover */
@@ -319,7 +347,7 @@
       right: 12px;
       z-index: 29;
       pointer-events: auto;
-      width: min(300px, calc(100vw - 24px));
+      width: min(320px, calc(100vw - 24px));
       padding: 14px;
       border-radius: 15px;
       background: rgba(12, 20, 17, 0.94);
@@ -331,6 +359,117 @@
       display: flex;
       flex-direction: column;
       gap: 11px;
+    }
+
+    .pop-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2px;
+    }
+
+    .pop-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffeab8;
+    }
+
+    .pop-close-btn {
+      border: 0;
+      background: transparent;
+      color: #aeb8b0;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: color 0.15s ease, background 0.15s ease;
+    }
+
+    .pop-close-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.10);
+    }
+
+    .surface-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .surface-chip {
+      padding: 7px 4px;
+      font-size: 11.5px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(255, 255, 255, 0.06);
+      color: #e5ece6;
+      cursor: pointer;
+      text-align: center;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      transition: all 0.16s ease;
+    }
+
+    .surface-chip:hover {
+      background: rgba(222, 194, 128, 0.18);
+      border-color: rgba(222, 194, 128, 0.45);
+    }
+
+    .surface-chip.active {
+      background: rgba(212, 175, 95, 0.28);
+      border-color: rgba(229, 196, 122, 0.75);
+      color: #ffeab8;
+      box-shadow: 0 0 8px rgba(229, 196, 122, 0.25);
+    }
+
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .color-swatch {
+      width: 100%;
+      height: 34px;
+      border-radius: 9px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      cursor: pointer;
+      position: relative;
+      outline: none;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.25), 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .color-swatch:hover {
+      transform: scale(1.08);
+      border-color: #ffffff;
+    }
+
+    .color-swatch.active {
+      border-color: #ffffff;
+      box-shadow: 0 0 0 2.5px rgba(229, 196, 122, 0.85), 0 4px 12px rgba(0, 0, 0, 0.5);
+      transform: scale(1.06);
+    }
+
+    .custom-color-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.10);
+      font-size: 12px;
+      color: #cfd6cf;
+    }
+
+    .custom-color-row input[type="color"] {
+      width: 44px;
+      height: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 6px;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
     }
 
     .sol3d-popover.hidden {
@@ -525,6 +664,7 @@
       <div class="hud-controls">
         <button type="button" id="btn-undo" class="hud-btn" title="Letzten Zug rückgängig (Strg+Z)">↩️ Zurück</button>
         <button type="button" id="btn-hint" class="hud-btn" title="Sinnvollen Zug anzeigen (H)">💡 Tipp</button>
+        <button type="button" id="btn-target-help" class="hud-btn" title="Zielkarten-Hilfe bei langem Drücken">🎯 Hilfe aktivieren</button>
         <button type="button" id="btn-deal" class="hud-btn" title="10 Karten aus dem Stock austeilen (D / Leertaste)">🃏 Geben <span class="draw-badge" id="hud-deal-badge">5</span></button>
         <div class="hud-zoom-group" title="Kamera-Zoom anpassen (+ / -)">
           <button type="button" id="btn-zoom-out" class="hud-zoom-btn" aria-label="Herauszoomen">−</button>
@@ -532,6 +672,7 @@
           <button type="button" id="btn-zoom-in" class="hud-zoom-btn" aria-label="Heranzoomen">+</button>
         </div>
         <button type="button" id="btn-cam" class="hud-btn" title="Kamerawinkel wechseln">📐 3D</button>
+        <button type="button" id="btn-table-theme" class="hud-btn" title="Tisch-Design &amp; Farbe anpassen">🎨 Tisch</button>
         <button type="button" id="btn-fullscreen" class="hud-btn fs-btn" title="Vollbild ein/aus (F)">⛶ Vollbild</button>
         <button type="button" id="btn-menu" class="hud-btn" title="Neues Spiel &amp; Regeln">⚙️ Spiel</button>
       </div>
@@ -540,6 +681,41 @@
 
   <main class="sol3d-viewport" id="sol3d-stage">
     <canvas id="sol3d-canvas" aria-label="3D Spider Solitär Spieltisch"></canvas>
+
+    <div id="sol3d-table-popover" class="sol3d-popover hidden" role="dialog" aria-label="Tisch-Design &amp; Farben">
+      <div class="pop-header-row">
+        <span class="pop-title">🎨 Tisch-Design</span>
+        <button type="button" id="btn-close-table-pop" class="pop-close-btn" aria-label="Schließen">✕</button>
+      </div>
+
+      <div>
+        <div class="pop-section-label">Oberfläche</div>
+        <div class="surface-grid" id="surface-chips">
+          <button type="button" class="surface-chip active" data-surface="filz">Filz</button>
+          <button type="button" class="surface-chip" data-surface="holz">Holz</button>
+          <button type="button" class="surface-chip" data-surface="leder">Leder</button>
+          <button type="button" class="surface-chip" data-surface="matt">Matt</button>
+        </div>
+      </div>
+
+      <div>
+        <div class="pop-section-label">Farbe &amp; Helligkeit</div>
+        <div class="swatch-grid" id="color-swatches">
+          <button type="button" class="color-swatch" data-color="#227b4e" style="background-color: #227b4e;" title="Helles Poker-Grün" aria-label="Helles Poker-Grün"></button>
+          <button type="button" class="color-swatch active" data-color="#134d34" style="background-color: #134d34;" title="Klassisches Kasino-Grün" aria-label="Klassisches Kasino-Grün"></button>
+          <button type="button" class="color-swatch" data-color="#739982" style="background-color: #739982;" title="Salbei-Grün" aria-label="Salbei-Grün"></button>
+          <button type="button" class="color-swatch" data-color="#c49f68" style="background-color: #c49f68;" title="Helles Naturholz / Eiche" aria-label="Helles Naturholz / Eiche"></button>
+          <button type="button" class="color-swatch" data-color="#ded3be" style="background-color: #ded3be;" title="Warmes Sand / Creme" aria-label="Warmes Sand / Creme"></button>
+          <button type="button" class="color-swatch" data-color="#abb4ba" style="background-color: #abb4ba;" title="Helles Steingrau" aria-label="Helles Steingrau"></button>
+          <button type="button" class="color-swatch" data-color="#6889a5" style="background-color: #6889a5;" title="Helles Rauchblau" aria-label="Helles Rauchblau"></button>
+          <button type="button" class="color-swatch" data-color="#20262c" style="background-color: #20262c;" title="Dunkles Anthrazit" aria-label="Dunkles Anthrazit"></button>
+        </div>
+        <div class="custom-color-row">
+          <label for="table-custom-color">Eigene Farbe:</label>
+          <input type="color" id="table-custom-color" value="#134d34" title="Eigene Farbe wählen" />
+        </div>
+      </div>
+    </div>
 
     <div id="sol3d-popover" class="sol3d-popover hidden" role="dialog" aria-label="Spiel-Menü">
         <div>
