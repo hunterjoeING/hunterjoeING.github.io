@@ -74,7 +74,7 @@ export const LEVELS: LevelConfig[] = [
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_haltern_ewego', legIndex: 1, targetSocPct: 80 },
-          { chargerId: 'chg_osnabrueck_electra', legIndex: 3, targetSocPct: 85 },
+          { chargerId: 'chg_garbsen_enbw', legIndex: 3, targetSocPct: 85 },
           { chargerId: 'chg_muenster_tesla', legIndex: 5, targetSocPct: 80 },
           { chargerId: 'chg_moenchengladbach_tesla', legIndex: 7, targetSocPct: 65 }
         ]
@@ -101,9 +101,9 @@ export const LEVELS: LevelConfig[] = [
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_olpe_enbw', legIndex: 1, targetSocPct: 82 },
-          { chargerId: 'chg_goettingen_ionity', legIndex: 3, targetSocPct: 82 },
-          { chargerId: 'chg_kassel_ewego', legIndex: 5, targetSocPct: 85 },
-          { chargerId: 'chg_olpe_enbw', legIndex: 6, targetSocPct: 75 }
+          { chargerId: 'chg_kassel_ewego', legIndex: 2, targetSocPct: 85 },
+          { chargerId: 'chg_goettingen_ionity', legIndex: 4, targetSocPct: 85 },
+          { chargerId: 'chg_diemelstadt_ionity', legIndex: 5, targetSocPct: 82 }
         ]
       }
     ],
