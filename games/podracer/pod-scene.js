@@ -30,11 +30,11 @@ export class PodScene {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.06;
+    this.renderer.toneMappingExposure = 1.16;
 
     this.composer = new EffectComposer(this.renderer);
     this.renderPass = new RenderPass(this.scene, this.camera);
-    this.bloomPass = new UnrealBloomPass(new THREE.Vector2(800, 600), 0.34, 0.42, 0.82);
+    this.bloomPass = new UnrealBloomPass(new THREE.Vector2(800, 600), 0.18, 0.36, 0.88);
     this.outputPass = new OutputPass();
     this.composer.addPass(this.renderPass);
     this.composer.addPass(this.bloomPass);
@@ -75,11 +75,11 @@ export class PodScene {
   }
 
   _setupLights() {
-    this.hemiLight = new THREE.HemisphereLight(0xffe7c2, 0xb45309, 0.92);
+    this.hemiLight = new THREE.HemisphereLight(0xfff3dc, 0xd97706, 1.38);
     this.scene.add(this.hemiLight);
 
     // Warm golden desert sun following the Podracer for crisp shadows
-    this.sunLight = new THREE.DirectionalLight(0xffe4b5, 2.25);
+    this.sunLight = new THREE.DirectionalLight(0xffe8c2, 2.85);
     const isMobile = (window.innerWidth || 900) < 768;
     const smSize = isMobile ? 1024 : 1536;
     this.sunLight.castShadow = true;
@@ -94,12 +94,12 @@ export class PodScene {
     this.sunLight.shadow.normalBias = 0.035;
     this.scene.add(this.sunLight, this.sunLight.target);
 
-    this.rimLight = new THREE.DirectionalLight(0xfb923c, 0.72);
+    this.rimLight = new THREE.DirectionalLight(0xfdba74, 0.95);
     this.rimLight.position.set(-40, 25, -40);
     this.scene.add(this.rimLight);
 
-    // Twin warm-cyan underglow light on the Podracer
-    this.podGlow = new THREE.PointLight(0x38bdf8, 2.8, 12);
+    // Subtle cyan underglow light on the Podracer
+    this.podGlow = new THREE.PointLight(0x38bdf8, 1.1, 10);
     this.scene.add(this.podGlow);
   }
 
@@ -134,12 +134,12 @@ export class PodScene {
   }
 
   _updateSpeedLines(dt, speedRatio, boostLevel) {
-    const intensity = Math.max(0, Math.min(1, (speedRatio - 0.35) * 0.9 + boostLevel * 0.65));
-    this.speedLineMat.opacity = intensity * 0.55;
+    const intensity = Math.max(0, Math.min(1, (speedRatio - 0.45) * 0.75 + boostLevel * 0.5));
+    this.speedLineMat.opacity = intensity * 0.30;
     if (intensity <= 0.02) return;
 
-    const streakLen = 1.6 + speedRatio * 2.4 + boostLevel * 3.8;
-    const rate = 1.0 + speedRatio * 1.4 + boostLevel * 1.9;
+    const streakLen = 1.4 + speedRatio * 1.9 + boostLevel * 2.8;
+    const rate = 0.9 + speedRatio * 1.2 + boostLevel * 1.5;
 
     for (let i = 0; i < SPEED_LINE_COUNT; i++) {
       const d = this.speedLineData[i];
@@ -160,33 +160,33 @@ export class PodScene {
 
   applyTheme(isLight) {
     if (isLight) {
-      // Sunlit golden desert canyon afternoon
-      const skyHex = 0xebbd8d;
+      // Bright sunlit golden desert canyon
+      const skyHex = 0xf5d6ae;
       this.scene.background = new THREE.Color(skyHex);
-      this.scene.fog = new THREE.FogExp2(skyHex, 0.0046);
-      this.hemiLight.color.setHex(0xfff1d6);
-      this.hemiLight.groundColor.setHex(0xb45309);
-      this.hemiLight.intensity = 0.98;
-      this.sunLight.color.setHex(0xffe5b8);
-      this.sunLight.intensity = 2.35;
-      this.rimLight.color.setHex(0xf97316);
-      this.rimLight.intensity = 0.65;
-      this.bloomPass.strength = 0.32;
-      this.renderer.toneMappingExposure = 1.06;
+      this.scene.fog = new THREE.FogExp2(skyHex, 0.0028);
+      this.hemiLight.color.setHex(0xfff6e5);
+      this.hemiLight.groundColor.setHex(0xd97706);
+      this.hemiLight.intensity = 1.42;
+      this.sunLight.color.setHex(0xffeacc);
+      this.sunLight.intensity = 2.85;
+      this.rimLight.color.setHex(0xfdba74);
+      this.rimLight.intensity = 0.92;
+      this.bloomPass.strength = 0.16;
+      this.renderer.toneMappingExposure = 1.18;
     } else {
-      // Dramatic copper-twilight desert canyon dusk
-      const duskHex = 0x24131c;
+      // Brighter warm copper-twilight desert canyon
+      const duskHex = 0x3b2534;
       this.scene.background = new THREE.Color(duskHex);
-      this.scene.fog = new THREE.FogExp2(duskHex, 0.0052);
-      this.hemiLight.color.setHex(0x93c5fd);
-      this.hemiLight.groundColor.setHex(0x7c2d12);
-      this.hemiLight.intensity = 0.72;
-      this.sunLight.color.setHex(0xfdba74);
-      this.sunLight.intensity = 1.75;
-      this.rimLight.color.setHex(0x38bdf8);
-      this.rimLight.intensity = 0.85;
-      this.bloomPass.strength = 0.40;
-      this.renderer.toneMappingExposure = 1.10;
+      this.scene.fog = new THREE.FogExp2(duskHex, 0.0034);
+      this.hemiLight.color.setHex(0xc7dfff);
+      this.hemiLight.groundColor.setHex(0xb45309);
+      this.hemiLight.intensity = 1.18;
+      this.sunLight.color.setHex(0xfed7aa);
+      this.sunLight.intensity = 2.40;
+      this.rimLight.color.setHex(0x7dd3fc);
+      this.rimLight.intensity = 1.02;
+      this.bloomPass.strength = 0.22;
+      this.renderer.toneMappingExposure = 1.16;
     }
   }
 
@@ -242,9 +242,9 @@ export class PodScene {
     this.craft.root.quaternion.copy(this._podQuat);
     this.craft.updateVisuals(dt, this.timeSec, state);
 
-    // Update dynamic underglow & sun shadow frustum around Podracer
+    // Update subtle underglow & sun shadow frustum around Podracer
     this.podGlow.position.copy(this._podPos).addScaledVector(this._frameA.up, 1.2);
-    this.podGlow.intensity = 2.2 + boostLevel * 3.0;
+    this.podGlow.intensity = 0.85 + boostLevel * 0.95;
 
     this.sunLight.position.set(
       this._podPos.x + 28,
@@ -258,7 +258,7 @@ export class PodScene {
     if (isPlaying) {
       this.track.sampleAt(s, this._frameA);
       for (let side = -1; side <= 1; side += 2) {
-        if (Math.random() < (0.55 + boostLevel * 0.45)) {
+        if (Math.random() < (0.45 + boostLevel * 0.35)) {
           this._exhaustWorld
             .copy(this._podPos)
             .addScaledVector(this._frameA.right, side * 1.42)
@@ -266,17 +266,17 @@ export class PodScene {
             .addScaledVector(this._frameA.tangent, -0.55);
 
           this.particles.spawn(
-            this._exhaustWorld.x + (Math.random() - 0.5) * 0.25,
-            this._exhaustWorld.y + (Math.random() - 0.5) * 0.25,
-            this._exhaustWorld.z + (Math.random() - 0.5) * 0.25,
-            -this._frameA.tangent.x * 8 + (Math.random() - 0.5) * 2.5,
-            (Math.random() - 0.3) * 2.2,
-            -this._frameA.tangent.z * 8 + (Math.random() - 0.5) * 2.5,
-            boostLevel > 0.4 ? 1.35 : 0.85,
-            0.22 + Math.random() * 0.14,
-            boostLevel > 0.4 ? 1.8 : 0.55,
-            boostLevel > 0.4 ? 1.4 : 1.5,
-            2.4
+            this._exhaustWorld.x + (Math.random() - 0.5) * 0.22,
+            this._exhaustWorld.y + (Math.random() - 0.5) * 0.22,
+            this._exhaustWorld.z + (Math.random() - 0.5) * 0.22,
+            -this._frameA.tangent.x * 7 + (Math.random() - 0.5) * 2.0,
+            (Math.random() - 0.3) * 1.8,
+            -this._frameA.tangent.z * 7 + (Math.random() - 0.5) * 2.0,
+            boostLevel > 0.4 ? 0.95 : 0.65,
+            0.20 + Math.random() * 0.12,
+            boostLevel > 0.4 ? 0.85 : 0.40,
+            boostLevel > 0.4 ? 0.82 : 0.78,
+            1.0
           );
         }
       }
@@ -285,13 +285,13 @@ export class PodScene {
     this.particles.update(dt);
     this.track.animateEntities(this.timeSec, boostLevel);
 
-    // Chase Camera in track coordinates (prevents canyon wall clipping)
-    const camBack = 9.2 + boostLevel * 1.4;
-    const camHeight = 3.85 - boostLevel * 0.35;
+    // Higher, farther-back, calmer Chase Camera in track coordinates
+    const camBack = 14.0 + boostLevel * 1.1;
+    const camHeight = 6.25 + boostLevel * 0.15;
     this.track.sampleAt(s - camBack, this._frameA);
-    this.track.sampleAt(s + 14.0, this._frameB);
+    this.track.sampleAt(s + 18.0, this._frameB);
 
-    const camU = u * 0.72 + steerInput * -0.45;
+    const camU = u * 0.76 + steerInput * -0.22;
     this._camPos
       .copy(this._frameA.pos)
       .addScaledVector(this._frameA.right, camU)
@@ -299,32 +299,32 @@ export class PodScene {
 
     this._camTarget
       .copy(this._frameB.pos)
-      .addScaledVector(this._frameB.right, u * 0.42)
-      .addScaledVector(this._frameB.up, 1.45);
+      .addScaledVector(this._frameB.right, u * 0.48)
+      .addScaledVector(this._frameB.up, 1.15);
 
     if (!this._camInitialized) {
       this._smoothCamPos.copy(this._camPos);
       this._smoothLookAt.copy(this._camTarget);
       this._camInitialized = true;
     } else {
-      const posAlpha = Math.min(1, dt * 11.5);
-      const lookAlpha = Math.min(1, dt * 14.0);
+      const posAlpha = Math.min(1, dt * 8.2);
+      const lookAlpha = Math.min(1, dt * 10.5);
       this._smoothCamPos.lerp(this._camPos, posAlpha);
       this._smoothLookAt.lerp(this._camTarget, lookAlpha);
     }
 
-    // Apply boost micro-shake & collision jolt
-    const totalShake = shakeAmount + boostLevel * 0.085;
+    // Gentle, calmer boost micro-shake & collision jolt
+    const totalShake = shakeAmount * 0.42 + boostLevel * 0.018;
     this.camera.position.copy(this._smoothCamPos);
     if (totalShake > 0.002) {
       this.camera.position.x += (Math.random() - 0.5) * totalShake;
-      this.camera.position.y += (Math.random() - 0.5) * totalShake * 0.8;
+      this.camera.position.y += (Math.random() - 0.5) * totalShake * 0.7;
     }
     this.camera.lookAt(this._smoothLookAt);
 
-    // Dynamic FOV widening with speed & boost
-    const targetFov = 58 + Math.min(1.5, speedRatio) * 14 + boostLevel * 10;
-    this.camera.fov += (targetFov - this.camera.fov) * Math.min(1, dt * 7.5);
+    // Gentle FOV widening with speed & boost
+    const targetFov = 56 + Math.min(1.4, speedRatio) * 8.5 + boostLevel * 5.0;
+    this.camera.fov += (targetFov - this.camera.fov) * Math.min(1, dt * 5.5);
     this.camera.updateProjectionMatrix();
 
     this._updateSpeedLines(dt, speedRatio, boostLevel);
