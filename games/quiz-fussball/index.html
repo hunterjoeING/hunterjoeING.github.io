@@ -570,6 +570,7 @@
   <script src="../../shared/burger-menu.js"></script>
   <script src="../../shared/quiz-engine.js"></script>
   <script src="../../shared/quiz-board.js"></script>
+  <script src="../../shared/quiz-subcategories.js"></script>
   <script src="../../shared/quiz-data/bank-fussball-bundesliga.js"></script>
   <script src="../../shared/quiz-data/bank-fussball-wm-em.js"></script>
   <script src="../../shared/quiz-data/bank-fussball-international.js"></script>
@@ -663,23 +664,11 @@
       return ArcadeQuizEngine.shuffle(arr);
     }
 
-    function getBankPool(catId) {
-      if (catId === 'mix') {
-        const p1 = ArcadeQuizEngine.getBank('fussball_bundesliga');
-        const p2 = ArcadeQuizEngine.getBank('fussball_wm_em');
-        const p3 = ArcadeQuizEngine.getBank('fussball_international');
-        const p4 = ArcadeQuizEngine.getBank('fussball_regeln');
-        return [...p1, ...p2, ...p3, ...p4];
-      }
-      const c = CAT_BY_ID[catId];
-      return c ? ArcadeQuizEngine.getBank(c.bankTopic) : [];
-    }
-
     function getMatchingPool(catId) {
-      const full = getBankPool(catId);
-      return full.filter(q => {
-        if (selectedDiff === 'all') return true;
-        return q.diff === selectedDiff;
+      return ArcadeQuizSubcategories.resolvePool(catId, {
+        catMap: CAT_BY_ID,
+        mixBankTopics: ['fussball_bundesliga', 'fussball_wm_em', 'fussball_international', 'fussball_regeln'],
+        selectedDiff
       });
     }
 
@@ -690,36 +679,26 @@
       document.getElementById('top-best').textContent = bestVal;
     }
 
-    function renderCard(c) {
-      const pool = getMatchingPool(c.id);
-      const stats = ArcadeQuizEngine.getSeenStats(c.boardId, pool);
-      const roundLen = ArcadeQuizEngine.resolveRoundCount(12, stats.total, 12);
-      return `
-        <div class="cat-card ${c.cls || ''}" onclick="startQuiz('${c.id}')">
-          <div class="cat-header">
-            <span class="cat-icon">${c.icon}</span>
-            <button type="button" class="cat-board-btn" onclick="event.stopPropagation(); openCategoryBoard('${c.boardId}', '${c.name}')" title="Bestenliste für ${c.name} ansehen">🏆 Bestenliste</button>
-          </div>
-          <div class="cat-name">${c.name}</div>
-          <div class="cat-desc">${c.desc}</div>
-          <div class="cat-meta">${stats.total} Fragen (${stats.unseen} neu) · Runde: ${roundLen}</div>
-        </div>
-      `;
-    }
-
     function renderMenu() {
-      document.getElementById('cat-grid-general').innerHTML = CATS_GENERAL.map(renderCard).join('');
-      document.getElementById('cat-grid-special').innerHTML = CATS_SPECIAL.map(renderCard).join('');
+      ArcadeQuizSubcategories.renderGrid(document.getElementById('cat-grid-general'), CATS_GENERAL, {
+        getMatchingPool,
+        onSelect: startQuiz,
+        onBoard: openCategoryBoard
+      });
+      ArcadeQuizSubcategories.renderGrid(document.getElementById('cat-grid-special'), CATS_SPECIAL, {
+        getMatchingPool,
+        onSelect: startQuiz,
+        onBoard: openCategoryBoard
+      });
       refreshTopBest();
     }
 
-    document.getElementById('diff-bar').addEventListener('click', (e) => {
-      const btn = e.target.closest('.diff-pill');
-      if (!btn) return;
-      selectedDiff = btn.dataset.diff;
-      document.querySelectorAll('#diff-bar .diff-pill').forEach(p => p.classList.toggle('active', p === btn));
-      ArcadeAudio.click();
-      renderMenu();
+    ArcadeQuizSubcategories.bindDiffBar(document.getElementById('diff-bar'), {
+      initialDiff: selectedDiff,
+      onChange: (diff) => {
+        selectedDiff = diff;
+        renderMenu();
+      }
     });
 
     function openCategoryBoard(boardId, title) {
@@ -979,48 +958,12 @@
     }
 
     function openAdminModal() {
-      const pin = window.prompt('Admin-PIN zur Bestenlisten-Verwaltung:');
-      if (pin === null) return;
-      if (pin !== '2408' && !(window.ArcadeAuth && window.ArcadeAuth.isAdmin())) {
-        alert('Falsche PIN.');
-        return;
-      }
-      const board = window.ArcadeQuizBoard;
-      if (!board) { alert('Bestenlisten-Modul nicht verfügbar.'); return; }
-      const rows = ALL_CATS.map(c => {
-        const count = board.get(c.boardId).length;
-        return `
-          <div style="border:1px solid var(--border-subtle,rgba(15,23,42,.14));border-radius:12px;padding:10px;margin-bottom:10px;">
-            <div style="font-weight:800;margin-bottom:6px;">${c.icon} ${c.name} <span style="opacity:.6;font-size:12px;">(${count} Einträge)</span></div>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <button type="button" data-act="show" data-bid="${c.boardId}" data-title="${c.name}" style="${board.btnCss}">🏆 Anzeigen</button>
-              <button type="button" data-act="reset" data-bid="${c.boardId}" data-title="${c.name}" style="${board.btnCss}color:#ef4444;">🗑 Zurücksetzen</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      const m = board.modal(`
-        <h3 style="margin:0 0 12px;">🔒 Fußball-Quiz Admin</h3>
-        <p style="margin:0 0 12px;font-size:13px;opacity:.75;">Verwalte die 6 einzelnen Bestenlisten der Fußball-Unterkategorien.</p>
-        ${rows}
-        <div style="text-align:right;margin-top:14px;"><button type="button" class="adm-close" style="${board.btnCss}">Schließen</button></div>
-      `);
-
-      m.querySelector('.adm-close').onclick = () => board.closeModal(m);
-      m.addEventListener('click', (e) => {
-        if (e.target === m) return board.closeModal(m);
-        const btn = e.target.closest('button[data-act]');
-        if (!btn) return;
-        const bid = btn.dataset.bid;
-        const title = btn.dataset.title;
-        if (btn.dataset.act === 'show') {
-          board.show(bid, title);
-        } else if (confirm(`Bestenliste für "${title}" wirklich löschen?`)) {
-          board.reset(bid);
-          board.closeModal(m);
-          openAdminModal();
-        }
+      ArcadeQuizSubcategories.openAdminModal({
+        title: 'Fußball-Quiz Admin',
+        subtitle: 'Verwalte die 6 einzelnen Bestenlisten der Fußball-Unterkategorien.',
+        categories: ALL_CATS,
+        pin: '2408',
+        onReset: () => renderMenu()
       });
     }
 
