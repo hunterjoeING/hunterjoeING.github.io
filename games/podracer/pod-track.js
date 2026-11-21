@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { getPodTextures } from './pod-textures.js';
 
 export const TRACK_HALF_WIDTH = 12.2;
-const WALL_START_U = 13.4;
+const WALL_START_U = 14.2;
 const SAMPLE_COUNT = 720;
 const MESH_SEGMENTS = 440;
 const MAX_BOULDERS = 68;
@@ -108,35 +108,36 @@ export class CanyonTrack {
 
   _buildMaterials() {
     this.sandAlbedo = this.tex.sandAlbedo.clone();
-    this.sandAlbedo.repeat.set(3, 180);
+    this.sandAlbedo.repeat.set(4, 260);
     this.sandAlbedo.needsUpdate = true;
 
     this.sandBump = this.tex.sandBump.clone();
-    this.sandBump.repeat.set(3, 180);
+    this.sandBump.repeat.set(4, 260);
     this.sandBump.needsUpdate = true;
 
     this.sandMat = new THREE.MeshStandardMaterial({
       map: this.sandAlbedo,
       bumpMap: this.sandBump,
-      bumpScale: 0.16,
-      roughness: 0.92,
+      bumpScale: 0.36,
+      roughness: 0.90,
       metalness: 0.04
     });
 
     this.rockAlbedo = this.tex.rockAlbedo.clone();
-    this.rockAlbedo.repeat.set(48, 2);
+    this.rockAlbedo.repeat.set(140, 4);
     this.rockAlbedo.needsUpdate = true;
 
     this.rockBump = this.tex.rockBump.clone();
-    this.rockBump.repeat.set(48, 2);
+    this.rockBump.repeat.set(140, 4);
     this.rockBump.needsUpdate = true;
 
     this.rockMat = new THREE.MeshStandardMaterial({
       map: this.rockAlbedo,
       bumpMap: this.rockBump,
-      bumpScale: 0.42,
-      roughness: 0.88,
-      metalness: 0.06
+      bumpScale: 0.72,
+      roughness: 0.86,
+      metalness: 0.06,
+      side: THREE.DoubleSide
     });
 
     this.boulderMat = new THREE.MeshStandardMaterial({
@@ -258,14 +259,15 @@ export class CanyonTrack {
         this.sampleAt(s, f);
 
         const wallJitter =
-          Math.sin(ang * 23 + side) * 1.45 +
-          Math.cos(ang * 47 - side * 2) * 0.75;
+          1.4 +
+          Math.sin(ang * 23 + side) * 1.15 +
+          Math.cos(ang * 47 - side * 2) * 0.65;
         const heightBoost = Math.sin(ang * 13 + side * 1.5) * 4.5;
 
         for (let c = 0; c < cCols; c++) {
           const vi = i * cCols + c;
           const prof = cliffProfile[c];
-          const uDist = side * (WALL_START_U + prof.u + wallJitter * (c > 0 ? 1 : 0.4));
+          const uDist = side * (WALL_START_U + prof.u + Math.max(0, wallJitter) * (c > 0 ? 1 : 0.35));
           const yH = prof.y + (c >= 3 ? heightBoost : 0);
 
           cPos[vi * 3] = f.pos.x + f.right.x * uDist + f.up.x * yH;
@@ -297,7 +299,7 @@ export class CanyonTrack {
       cliffGeo.computeVertexNormals();
 
       const cliffMesh = new THREE.Mesh(cliffGeo, this.rockMat);
-      cliffMesh.castShadow = true;
+      cliffMesh.castShadow = false;
       cliffMesh.receiveShadow = true;
       this.group.add(cliffMesh);
     });
