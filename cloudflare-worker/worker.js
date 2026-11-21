@@ -31,7 +31,7 @@ const GAMES_META = {
   roadster: { title: 'Roadster Lander', lowerIsBetter: false },
   zombie: { title: 'Zombie Swarm', lowerIsBetter: false },
   tower: { title: 'Orbital Tower Defense', lowerIsBetter: false },
-  solitaire3d: { title: '3D Solitär (Klondike)', lowerIsBetter: false },
+  solitaire3d: { title: '3D Spider Solitär (4 Farben)', lowerIsBetter: false },
   solitaire: { title: 'Klondike Solitaire', lowerIsBetter: false },
   p2048: { title: '2048 Prism', lowerIsBetter: false },
   quiz_emob: { title: 'E-Mobilität & Tesla Quiz', lowerIsBetter: false },
