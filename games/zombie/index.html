@@ -233,8 +233,16 @@
       color: var(--text-muted);
     }
     @media (max-width: 640px) {
-      .hud-strip { padding: 8px 10px; gap: 6px; }
-      .zb-pill { padding: 3px 8px; font-size: 11px; }
+      .arcade-topbar { padding: 6px 10px; gap: 6px; }
+      .topbar-title { font-size: 13.5px; }
+      .back-hub-btn { padding: 5px 9px; font-size: 11.5px; }
+      .zombie-shell { padding: 4px 8px calc(6px + env(safe-area-inset-bottom, 0px)); gap: 6px; }
+      .hud-strip { padding: 6px 8px; gap: 5px; border-radius: 12px; }
+      .hud-group { gap: 4px; }
+      .zb-pill { padding: 2px 7px; font-size: 11px; gap: 3px; }
+      .zb-squad-bar-wrap { width: 28px; height: 5px; }
+      .hud-actions { gap: 4px; }
+      .hud-actions button { padding: 4px 8px !important; font-size: 11px !important; }
       .hint-foot { display: none; }
     }
   </style>
