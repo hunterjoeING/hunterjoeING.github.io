@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Herr Tutto Eilendorf · Internes Admin-Quiz</title>
+  <meta name="description" content="Nicht-öffentliches Admin-Quiz rund um Herr Tutto (Aachen-Eilendorf): Geschichte, Speisekarte, Spezialitäten &amp; Lokalkolorit." />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <script>(function(){try{var t=localStorage.getItem('arcade_theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <style>
+    /* =========================================================================
+       Herr Tutto (Eilendorf) Corporate Identity (Screenshots herrtutto-eilendorf.de)
+       Matte Slate Hero (#1E2122) · Crisp White Editorial (#FFFFFF) · Espresso Ink (#111111)
+       ========================================================================= */
+    :root {
+      --ht-slate: #1e2122;
+      --ht-slate-deep: #131516;
+      --ht-paper: #ffffff;
+      --ht-cream: #f7f6f3;
+      --ht-ink: #111111;
+      --ht-body: #242424;
+      --ht-muted: #666666;
+      --ht-border: rgba(17, 17, 17, 0.20);
+      --ht-border-strong: #111111;
+      --ht-basil: #3e6b38;
+      --ht-basil-bg: #eef5ec;
+      --ht-tomato: #b83b2a;
+      --ht-tomato-bg: #fdf0ee;
+      --ht-gold: #b88d3a;
+      --ht-font-sans: 'Montserrat', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --ht-font-disp: 'Barlow Condensed', 'Oswald', 'Arial Narrow', sans-serif;
+    }
+
+    html[data-theme="dark"] {
+      --ht-paper: #17191a;
+      --ht-cream: #202325;
+      --ht-ink: #f5f5f3;
+      --ht-body: #e5e5e2;
+      --ht-muted: #a8aba8;
+      --ht-border: rgba(255, 255, 255, 0.22);
+      --ht-border-strong: #f5f5f3;
+      --ht-basil: #66a35d;
+      --ht-basil-bg: rgba(62, 107, 56, 0.22);
+      --ht-tomato: #e06b5b;
+      --ht-tomato-bg: rgba(184, 59, 42, 0.22);
+    }
+
+    html, body {
+      background: var(--ht-cream) !important;
+      background-image: none !important;
+      color: var(--ht-body) !important;
+      font-family: var(--ht-font-sans) !important;
+    }
+
+    .arcade-topbar {
+      background: rgba(255, 255, 255, 0.96) !important;
+      border-bottom: 1.5px solid var(--ht-ink) !important;
+      box-shadow: none !important;
+    }
+    html[data-theme="dark"] .arcade-topbar {
+      background: rgba(23, 25, 26, 0.96) !important;
+    }
+    .topbar-title {
+      font-family: var(--ht-font-disp) !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.10em !important;
+      text-transform: uppercase;
+      color: var(--ht-ink) !important;
+    }
+    .back-hub-btn, .icon-btn, .pill-stat, .arcade-feedback-btn, .abm-trigger {
+      border-radius: 0 !important;
+      border: 1.5px solid var(--ht-border-strong) !important;
+      background: var(--ht-paper) !important;
+      color: var(--ht-ink) !important;
+      box-shadow: none !important;
+    }
+    .back-hub-btn:hover, .icon-btn:hover, .arcade-feedback-btn:hover, .abm-trigger:hover {
+      background: var(--ht-ink) !important;
+      color: var(--ht-paper) !important;
+    }
+
+    .ht-wrap {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 18px 14px 56px;
+    }
+
+    /* Admin-Hinweis-Banner */
+    .ht-admin-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 9px 14px;
+      margin-bottom: 14px;
+      background: var(--ht-paper);
+      border: 1.5px solid var(--ht-border-strong);
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ht-ink);
+    }
+    .ht-admin-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .ht-admin-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: var(--ht-gold);
+      display: inline-block;
+    }
+    .ht-lock-btn {
+      padding: 5px 10px;
+      border: 1px solid var(--ht-border);
+      background: transparent;
+      color: var(--ht-muted);
+      font-family: var(--ht-font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+    .ht-lock-btn:hover {
+      border-color: var(--ht-ink);
+      color: var(--ht-ink);
+    }
+
+    /* Herr Tutto Hero Header (Screenshot 2) */
+    .ht-hero {
+      position: relative;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.06) 0%, transparent 56%),
+        radial-gradient(circle at 20% 75%, rgba(62, 107, 56, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 82% 24%, rgba(184, 59, 42, 0.14) 0%, transparent 40%),
+        linear-gradient(180deg, var(--ht-slate) 0%, var(--ht-slate-deep) 100%);
+      color: #ffffff;
+      padding: 30px 22px 34px;
+      border: 1.5px solid var(--ht-border-strong);
+      border-bottom: none;
+      overflow: hidden;
+    }
+    .ht-hero-deco {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.13;
+    }
+    .ht-hero-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 18px;
+    }
+    .ht-logo-svg {
+      width: 148px;
+      height: auto;
+      display: block;
+      color: #ffffff;
+    }
+    .ht-hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .ht-hero-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 18px;
+      border: 1.5px solid rgba(255, 255, 255, 0.90);
+      background: rgba(0, 0, 0, 0.22);
+      color: #ffffff;
+      font-family: var(--ht-font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.14s ease;
+    }
+    .ht-hero-btn:hover {
+      background: #ffffff;
+      color: #111111;
+      transform: translateY(-1px);
+    }
+    .ht-hero-columns {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-top: 4px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .ht-hero-col {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.28em;
+      line-height: 2.05;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.92);
+    }
+    .ht-hero-col.left { text-align: left; }
+    .ht-hero-col.right { text-align: right; }
+
+    /* Editorial White Stage (Screenshot 1) */
+    .ht-stage {
+      background: var(--ht-paper);
+      border: 1.5px solid var(--ht-border-strong);
+      padding: 32px 26px 30px;
+      position: relative;
+      animation: htFadeUp 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes htFadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ht-emblem-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1.5px solid #111111;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.10);
+      color: #111111;
+      margin: 0 auto 14px;
+    }
+
+    .ht-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ht-muted);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .ht-title {
+      font-family: var(--ht-font-disp);
+      font-size: clamp(26px, 4.5vw, 34px);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ht-ink);
+      text-align: center;
+      margin: 0 0 18px;
+      line-height: 1.12;
+    }
+    .ht-story {
+      max-width: 560px;
+      margin: 0 auto 22px;
+      text-align: center;
+      font-size: 15.5px;
+      font-weight: 300;
+      line-height: 1.78;
+      color: var(--ht-body);
+    }
+    .ht-story p { margin: 0 0 14px; }
+    .ht-story em { font-style: italic; font-weight: 400; }
+
+    .ht-meta-strip {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-bottom: 24px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ht-muted);
+    }
+
+    /* Sharp Signature Herr Tutto Buttons (Screenshot 1) */
+    .ht-btn-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+    .ht-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 15px 22px;
+      border-radius: 0;
+      border: 2px solid var(--ht-border-strong);
+      background: var(--ht-paper);
+      color: var(--ht-ink);
+      font-family: var(--ht-font-sans);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
+    }
+    .ht-btn:hover:not(:disabled) {
+      background: var(--ht-ink);
+      color: var(--ht-paper);
+      transform: translateY(-1px);
+    }
+    .ht-btn.primary {
+      background: var(--ht-ink);
+      color: var(--ht-paper);
+    }
+    .ht-btn.primary:hover:not(:disabled) {
+      background: transparent;
+      color: var(--ht-ink);
+    }
+    .ht-btn.subtle {
+      border-width: 1.5px;
+      border-color: var(--ht-border);
+      font-size: 12px;
+      padding: 12px 18px;
+      font-weight: 600;
+    }
+
+    /* Question View */
+    .ht-q-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: var(--ht-muted);
+    }
+    .ht-q-head strong { color: var(--ht-ink); }
+    .ht-progress-track {
+      width: 100%;
+      height: 4px;
+      background: rgba(128, 128, 128, 0.22);
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+    .ht-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--ht-ink);
+      transition: width 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .ht-cat-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border: 1px solid var(--ht-border);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ht-muted);
+      margin-bottom: 12px;
+    }
+    .ht-q-text {
+      font-size: clamp(18px, 2.8vw, 22px);
+      font-weight: 600;
+      line-height: 1.42;
+      color: var(--ht-ink);
+      margin: 0 0 22px;
+    }
+
+    .ht-answers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .ht-answers { grid-template-columns: 1fr; }
+      .ht-stage { padding: 24px 16px 24px; }
+    }
+    .ht-ans-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      padding: 15px 15px;
+      border-radius: 0;
+      border: 1.5px solid var(--ht-border);
+      background: var(--ht-paper);
+      color: var(--ht-ink);
+      font-family: var(--ht-font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.38;
+      cursor: pointer;
+      transition: border-color 0.16s ease, background 0.16s ease, transform 0.12s ease;
+    }
+    .ht-ans-card:hover:not(:disabled) {
+      border-color: var(--ht-border-strong);
+      background: var(--ht-cream);
+      transform: translateY(-1px);
+    }
+    .ht-ans-key {
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+      border: 1px solid var(--ht-border-strong);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .ht-ans-card.correct {
+      border-color: var(--ht-basil);
+      background: var(--ht-basil-bg);
+      color: var(--ht-ink);
+    }
+    .ht-ans-card.correct .ht-ans-key {
+      background: var(--ht-basil);
+      border-color: var(--ht-basil);
+      color: #ffffff;
+    }
+    .ht-ans-card.wrong {
+      border-color: var(--ht-tomato);
+      background: var(--ht-tomato-bg);
+      color: var(--ht-ink);
+    }
+    .ht-ans-card.wrong .ht-ans-key {
+      background: var(--ht-tomato);
+      border-color: var(--ht-tomato);
+      color: #ffffff;
+    }
+    .ht-ans-card:disabled { cursor: default; }
+
+    .ht-feedback-box {
+      margin-top: 20px;
+      padding: 16px 18px;
+      border-left: 3px solid var(--ht-ink);
+      background: var(--ht-cream);
+      animation: htFadeUp 0.22s ease;
+    }
+    .ht-feedback-box.is-right { border-left-color: var(--ht-basil); }
+    .ht-feedback-box.is-wrong { border-left-color: var(--ht-tomato); }
+    .ht-feedback-label {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: var(--ht-ink);
+    }
+    .ht-feedback-text {
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.62;
+      color: var(--ht-body);
+      margin: 0 0 14px;
+    }
+
+    /* Result Screen */
+    .ht-result-score {
+      font-family: var(--ht-font-disp);
+      font-size: 46px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--ht-ink);
+      text-align: center;
+      margin: 4px 0 6px;
+    }
+    .ht-result-badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border: 1.5px solid var(--ht-border-strong);
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ht-ink);
+      margin-bottom: 10px;
+    }
+    .ht-reward-box {
+      max-width: 520px;
+      margin: 22px auto 24px;
+      padding: 16px 18px;
+      border: 1.5px dashed var(--ht-border-strong);
+      background: var(--ht-cream);
+      text-align: center;
+    }
+    .ht-reward-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--ht-muted);
+      margin-bottom: 6px;
+    }
+    .ht-reward-code {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 5px 12px;
+      border: 1px solid var(--ht-border-strong);
+      background: var(--ht-paper);
+      font-family: var(--font-mono, monospace);
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: 0.10em;
+      color: var(--ht-ink);
+    }
+
+    /* Admin Login Gate */
+    .ht-gate-card {
+      max-width: 520px;
+      margin: 28px auto;
+      background: var(--ht-paper);
+      border: 2px solid var(--ht-border-strong);
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .ht-pin-form {
+      display: flex;
+      gap: 10px;
+      margin: 18px 0 12px;
+    }
+    @media (max-width: 480px) {
+      .ht-pin-form { flex-direction: column; }
+    }
+    .ht-pin-input {
+      flex: 1;
+      padding: 13px 14px;
+      border-radius: 0;
+      border: 1.5px solid var(--ht-border-strong);
+      background: var(--ht-paper);
+      color: var(--ht-ink);
+      font-family: var(--ht-font-sans);
+      font-size: 15px;
+      letter-spacing: 0.22em;
+      text-align: center;
+      outline: none;
+    }
+    .ht-pin-error {
+      min-height: 20px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ht-tomato);
+      margin-bottom: 12px;
+    }
+
+    /* Floating HT Hat Emblem (Screenshot 1 & 2 bottom-left) */
+    .ht-floating-hat {
+      position: fixed;
+      left: 16px;
+      bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      z-index: 40;
+      width: 50px;
+      height: 50px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1.5px solid #111111;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #111111;
+      text-decoration: none;
+      transition: transform 0.16s ease;
+    }
+    .ht-floating-hat:hover { transform: scale(1.06); }
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
+      <div class="topbar-title">HERR TUTTO · EILENDORF</div>
+    </div>
+    <div class="topbar-right">
+      <button id="btn-mute" class="icon-btn" onclick="ArcadeAudio.toggleMute(this)" title="Ton AN/AUS">🔊</button>
+    </div>
+  </header>
+
+  <main class="ht-wrap">
+    <!-- 0. Admin-Login-Gate (nur sichtbar, falls kein Admin-Status vorliegt) -->
+    <section id="ht-admin-gate" class="ht-gate-card hidden" aria-label="Admin-Zugang">
+      <div class="ht-emblem-badge" aria-hidden="true">
+        <svg width="30" height="22" viewBox="0 0 64 44" fill="currentColor">
+          <path d="M18,24 L24,6 Q32,10 40,6 L46,24 Z"/>
+          <ellipse cx="32" cy="27" rx="28" ry="5.5"/>
+          <text x="32" y="20" text-anchor="middle" fill="#ffffff" font-family="Barlow Condensed, sans-serif" font-size="11" font-weight="700" letter-spacing="1">HT</text>
+        </svg>
+      </div>
+      <div class="ht-eyebrow">NICHT ÖFFENTLICH · ADMIN-BEREICH</div>
+      <h1 class="ht-title" style="font-size:26px;margin-bottom:10px;">Geschütztes Restaurant-Quiz</h1>
+      <p style="font-size:13.5px;line-height:1.65;color:var(--ht-muted);margin:0 0 14px;">
+        Dieses interaktive Quiz für <strong>Herr Tutto (Eilendorf)</strong> befindet sich im versteckten Modus und ist ausschließlich für eingeloggte Admins zugänglich.
+      </p>
+
+      <form id="ht-pin-form" class="ht-pin-form" autocomplete="off">
+        <input id="ht-pin-input" class="ht-pin-input" type="password" inputmode="numeric" maxlength="12" placeholder="ADMIN-PIN" aria-label="Admin-PIN" />
+        <button type="submit" class="ht-btn primary" style="width:auto;min-width:155px;">Freischalten</button>
+      </form>
+      <div id="ht-pin-error" class="ht-pin-error"></div>
+
+      <div class="ht-btn-stack" style="max-width:100%;">
+        <button type="button" id="ht-btn-account-login" class="ht-btn subtle">👑 Mit Admin-Account anmelden</button>
+        <a href="../../index.html" class="ht-btn subtle">← Zurück zur Startseite</a>
+      </div>
+    </section>
+
+    <!-- 1. Geschützter Quiz-Bereich (erst nach Admin-Verifikation sichtbar) -->
+    <div id="ht-quiz-shell" class="hidden">
+      <div class="ht-admin-banner" role="status">
+        <span class="ht-admin-pill">
+          <span class="ht-admin-dot" aria-hidden="true"></span>
+          <span>🔒 Admin-Modus – Verstecktes Quiz (nicht öffentlich)</span>
+        </span>
+        <button type="button" id="ht-btn-lock" class="ht-lock-btn">Sitzung sperren</button>
+      </div>
+
+      <!-- Authentischer Dark-Slate-Hero nach Vorbild herrtutto-eilendorf.de -->
+      <section class="ht-hero" aria-label="Herr Tutto Eilendorf">
+        <svg class="ht-hero-deco" viewBox="0 0 800 320" fill="none" stroke="#ffffff" stroke-width="1.3" aria-hidden="true">
+          <circle cx="110" cy="66" r="18"/>
+          <path d="M104 49c3-7 9-9 13-3M110 48c-4-6-10-6-12-1"/>
+          <circle cx="675" cy="82" r="15"/>
+          <path d="M620 215l88-42-22 86-66-44z"/>
+          <circle cx="662" cy="212" r="6"/>
+          <circle cx="680" cy="222" r="5"/>
+          <path d="M92 224c28-24 62-18 82 8-28 20-60 16-82-8z"/>
+          <path d="M92 224c26 0 54 2 82 8"/>
+        </svg>
+
+        <div class="ht-hero-inner">
+          <!-- Vektor-Wortmarke "HERR tutto" im Stil der Website -->
+          <svg class="ht-logo-svg" viewBox="0 0 210 112" fill="currentColor" role="img" aria-label="Herr Tutto Logo">
+            <text x="105" y="34" text-anchor="middle" font-family="Barlow Condensed, Oswald, sans-serif" font-size="34" font-weight="600" letter-spacing="3">HERR</text>
+            <text x="105" y="84" text-anchor="middle" font-family="Brush Script MT, Segoe Script, cursive" font-size="58" font-weight="700" font-style="italic">tutto</text>
+            <path d="M52 96 Q105 91 158 95" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+          </svg>
+
+          <div class="ht-hero-cta-row">
+            <a href="https://herrtutto-eilendorf.de/" target="_blank" rel="noopener noreferrer" class="ht-hero-btn">Zur Website</a>
+            <button type="button" id="ht-hero-start" class="ht-hero-btn">Quiz starten</button>
+          </div>
+
+          <div class="ht-hero-columns">
+            <div class="ht-hero-col left">ITALIAN<br>KITCHEN<br>EILENDORF</div>
+            <div class="ht-hero-col right">PIZZA<br>PASTA<br>VEGAN</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Screen A: Startscreen -->
+      <section id="screen-start" class="ht-stage">
+        <div style="text-align:center;">
+          <div class="ht-emblem-badge" aria-hidden="true">
+            <svg width="30" height="22" viewBox="0 0 64 44" fill="currentColor">
+              <path d="M18,24 L24,6 Q32,10 40,6 L46,24 Z"/>
+              <ellipse cx="32" cy="27" rx="28" ry="5.5"/>
+              <text x="32" y="20" text-anchor="middle" fill="#ffffff" font-family="Barlow Condensed, sans-serif" font-size="11" font-weight="700" letter-spacing="1">HT</text>
+            </svg>
+          </div>
+        </div>
+        <div id="ht-start-eyebrow" class="ht-eyebrow"></div>
+        <h1 id="ht-start-title" class="ht-title"></h1>
+        <div id="ht-start-story" class="ht-story"></div>
+        <div id="ht-start-meta" class="ht-meta-strip"></div>
+
+        <div class="ht-btn-stack">
+          <button type="button" id="ht-btn-start" class="ht-btn primary">Quiz starten</button>
+          <button type="button" id="ht-btn-board" class="ht-btn subtle">Bestenliste ansehen</button>
+        </div>
+      </section>
+
+      <!-- Screen B: Fragen-Ansicht -->
+      <section id="screen-play" class="ht-stage hidden" aria-live="polite">
+        <div class="ht-q-head">
+          <span>Frage <strong id="ht-q-idx">1</strong> von <strong id="ht-q-total">7</strong></span>
+          <span>Treffer: <strong id="ht-q-correct">0</strong></span>
+        </div>
+        <div class="ht-progress-track">
+          <div id="ht-progress-fill" class="ht-progress-fill"></div>
+        </div>
+
+        <div id="ht-q-cat" class="ht-cat-tag"></div>
+        <h2 id="ht-q-text" class="ht-q-text"></h2>
+
+        <div id="ht-answers" class="ht-answers"></div>
+
+        <div id="ht-feedback" class="ht-feedback-box hidden">
+          <div id="ht-feedback-label" class="ht-feedback-label"></div>
+          <p id="ht-feedback-text" class="ht-feedback-text"></p>
+          <button type="button" id="ht-btn-next" class="ht-btn primary" style="max-width:260px;">Weiter</button>
+        </div>
+      </section>
+
+      <!-- Screen C: Ergebnis-Screen -->
+      <section id="screen-result" class="ht-stage hidden">
+        <div style="text-align:center;">
+          <div class="ht-emblem-badge" aria-hidden="true">
+            <svg width="30" height="22" viewBox="0 0 64 44" fill="currentColor">
+              <path d="M18,24 L24,6 Q32,10 40,6 L46,24 Z"/>
+              <ellipse cx="32" cy="27" rx="28" ry="5.5"/>
+              <text x="32" y="20" text-anchor="middle" fill="#ffffff" font-family="Barlow Condensed, sans-serif" font-size="11" font-weight="700" letter-spacing="1">HT</text>
+            </svg>
+          </div>
+          <div id="ht-res-badge" class="ht-result-badge"></div>
+        </div>
+
+        <div id="ht-res-score" class="ht-result-score">0 / 7</div>
+        <h2 id="ht-res-title" class="ht-title" style="margin-top:4px;"></h2>
+        <div id="ht-res-msg" class="ht-story" style="margin-bottom:18px;"></div>
+
+        <div id="ht-reward-box" class="ht-reward-box hidden">
+          <div id="ht-reward-tag" class="ht-reward-tag"></div>
+          <div id="ht-reward-headline" style="font-weight:700;font-size:14.5px;color:var(--ht-ink);margin-bottom:4px;"></div>
+          <div id="ht-reward-text" style="font-size:13px;line-height:1.55;color:var(--ht-muted);"></div>
+          <div id="ht-reward-code" class="ht-reward-code"></div>
+        </div>
+
+        <div class="ht-btn-stack">
+          <button type="button" id="ht-btn-replay" class="ht-btn primary">Nochmal spielen</button>
+          <button type="button" id="ht-btn-home" class="ht-btn">Zurück zum Start</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <a href="https://herrtutto-eilendorf.de/" target="_blank" rel="noopener noreferrer" class="ht-floating-hat" title="Herr Tutto Eilendorf Website" aria-label="Herr Tutto Eilendorf Website">
+    <svg width="28" height="20" viewBox="0 0 64 44" fill="currentColor" aria-hidden="true">
+      <path d="M18,24 L24,6 Q32,10 40,6 L46,24 Z"/>
+      <ellipse cx="32" cy="27" rx="28" ry="5.5"/>
+      <text x="32" y="20" text-anchor="middle" fill="#ffffff" font-family="Barlow Condensed, sans-serif" font-size="11" font-weight="700" letter-spacing="1">HT</text>
+    </svg>
+  </a>
+
+  <script src="../../shared/arcade.js"></script>
+  <script src="../../shared/quiz-engine.js"></script>
+  <script src="../../shared/quiz-data/bank-herr-tutto.js"></script>
+  <script src="../../shared/burger-menu.js"></script>
+  <script>
+    (function () {
+      const ADMIN_PIN = '2408';
+      const SESSION_KEY = 'ht_admin_unlocked_v1';
+      const LETTERS = ['A', 'B', 'C', 'D'];
+      const CFG = window.HERR_TUTTO_QUIZ_CONFIG || {};
+      const QUIZ_ID = CFG.quizId || 'quiz_herr_tutto';
+      const BANK_ID = CFG.bankId || 'herr_tutto';
+
+      let deck = [];
+      let qIdx = 0;
+      let correctCount = 0;
+      let answered = false;
+      let failedPins = 0;
+      let initialized = false;
+
+      const elGate = document.getElementById('ht-admin-gate');
+      const elShell = document.getElementById('ht-quiz-shell');
+      const elPinForm = document.getElementById('ht-pin-form');
+      const elPinInput = document.getElementById('ht-pin-input');
+      const elPinError = document.getElementById('ht-pin-error');
+
+      const screens = {
+        start: document.getElementById('screen-start'),
+        play: document.getElementById('screen-play'),
+        result: document.getElementById('screen-result')
+      };
+
+      function isAccountAdmin() {
+        try {
+          if (window.ArcadeAuth && typeof window.ArcadeAuth.isAdmin === 'function') {
+            return window.ArcadeAuth.isAdmin();
+          }
+          const u = window.ArcadeAuth && window.ArcadeAuth.getUser ? window.ArcadeAuth.getUser() : null;
+          return !!(u && u.role === 'admin');
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function isPinUnlocked() {
+        try { return sessionStorage.getItem(SESSION_KEY) === '1'; } catch (e) { return false; }
+      }
+
+      function isAuthorized() {
+        return isAccountAdmin() || isPinUnlocked();
+      }
+
+      function showScreen(name) {
+        Object.keys(screens).forEach(k => {
+          screens[k].classList.toggle('hidden', k !== name);
+        });
+      }
+
+      function populateStartScreen() {
+        const s = CFG.startScreen || {};
+        const pool = ArcadeQuizEngine.getBank(BANK_ID);
+        document.getElementById('ht-start-eyebrow').textContent = s.eyebrow || 'ITALIAN KITCHEN · EILENDORF';
+        document.getElementById('ht-start-title').textContent = s.headline || 'Herr Tutto Quiz';
+        document.getElementById('ht-start-story').innerHTML = (s.storyParagraphs || []).map(p => `<p>${p}</p>`).join('');
+        document.getElementById('ht-start-meta').innerHTML =
+          `<span>${pool.length} Fragen</span><span>·</span><span>4 Antworten</span><span>·</span><span>Ohne Zeitdruck</span>`;
+        document.getElementById('ht-btn-start').textContent = s.startButtonLabel || 'Quiz starten';
+      }
+
+      function unlockAndBoot() {
+        elGate.classList.add('hidden');
+        elShell.classList.remove('hidden');
+        if (!initialized) {
+          initialized = true;
+          populateStartScreen();
+        }
+        showScreen('start');
+      }
+
+      function lockGate(msg) {
+        elShell.classList.add('hidden');
+        elGate.classList.remove('hidden');
+        elPinError.textContent = msg || '';
+        elPinInput.value = '';
+      }
+
+      function startQuiz() {
+        if (!isAuthorized()) return lockGate('Bitte als Admin anmelden.');
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        const pool = ArcadeQuizEngine.getBank(BANK_ID);
+        deck = ArcadeQuizEngine.shuffle(pool);
+        qIdx = 0;
+        correctCount = 0;
+        showScreen('play');
+        renderQuestion();
+      }
+
+      function renderQuestion() {
+        answered = false;
+        const item = deck[qIdx];
+        if (!item) return finishQuiz();
+
+        const total = deck.length;
+        const pct = Math.round(((qIdx + 1) / total) * 100);
+        document.getElementById('ht-q-idx').textContent = qIdx + 1;
+        document.getElementById('ht-q-total').textContent = total;
+        document.getElementById('ht-q-correct').textContent = correctCount;
+        document.getElementById('ht-progress-fill').style.width = `${pct}%`;
+        document.getElementById('ht-q-cat').textContent = item.cat || 'Herr Tutto';
+        document.getElementById('ht-q-text').textContent = item.q;
+
+        const fb = document.getElementById('ht-feedback');
+        fb.classList.add('hidden');
+        fb.classList.remove('is-right', 'is-wrong');
+
+        const correctIdx = Number.isInteger(item.correct) ? item.correct : 0;
+        const options = ArcadeQuizEngine.shuffle(
+          (item.a || []).map((text, idx) => ({ text, isRight: idx === correctIdx }))
+        );
+        item._rendered = options;
+
+        const grid = document.getElementById('ht-answers');
+        grid.innerHTML = '';
+        options.forEach((opt, i) => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'ht-ans-card';
+          btn.innerHTML = `<span class="ht-ans-key">${LETTERS[i]}</span><span></span>`;
+          btn.lastElementChild.textContent = opt.text;
+          btn.addEventListener('click', () => selectAnswer(i));
+          grid.appendChild(btn);
+        });
+      }
+
+      function selectAnswer(chosenIdx) {
+        if (answered) return;
+        answered = true;
+        const item = deck[qIdx];
+        const chosen = item._rendered[chosenIdx];
+        const buttons = document.querySelectorAll('#ht-answers .ht-ans-card');
+
+        buttons.forEach((b, i) => {
+          b.disabled = true;
+          if (item._rendered[i].isRight) b.classList.add('correct');
+        });
+
+        const fb = document.getElementById('ht-feedback');
+        const fbLabel = document.getElementById('ht-feedback-label');
+        if (chosen && chosen.isRight) {
+          correctCount++;
+          if (window.ArcadeAudio) ArcadeAudio.perkGood();
+          fb.classList.add('is-right');
+          fbLabel.textContent = '✓ Richtig – Perfetto!';
+        } else {
+          buttons[chosenIdx].classList.add('wrong');
+          if (window.ArcadeAudio) ArcadeAudio.perkBad();
+          fb.classList.add('is-wrong');
+          fbLabel.textContent = '✕ Nicht ganz – gut zu wissen:';
+        }
+
+        document.getElementById('ht-q-correct').textContent = correctCount;
+        document.getElementById('ht-feedback-text').textContent = item.explanation || item.exp || '';
+        document.getElementById('ht-btn-next').textContent = qIdx + 1 >= deck.length ? 'Auswertung ansehen →' : 'Weiter →';
+        fb.classList.remove('hidden');
+      }
+
+      function nextQuestion() {
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        qIdx++;
+        if (qIdx >= deck.length) finishQuiz();
+        else renderQuestion();
+      }
+
+      function finishQuiz() {
+        showScreen('result');
+        const total = deck.length || 7;
+        const tiers = Array.isArray(CFG.resultTiers) ? CFG.resultTiers : [];
+        const tier = tiers.find(t => correctCount >= (t.minCorrect || 0)) || {
+          title: 'Genießer',
+          badge: 'Herr Tutto Quiz',
+          message: 'Danke fürs Mitspielen!'
+        };
+
+        document.getElementById('ht-res-score').textContent = `${correctCount} / ${total}`;
+        document.getElementById('ht-res-badge').textContent = tier.badge || '';
+        document.getElementById('ht-res-title').textContent = tier.title || '';
+        document.getElementById('ht-res-msg').innerHTML = `<p>${tier.message || ''}</p>`;
+
+        const rp = CFG.rewardPlaceholder;
+        const rBox = document.getElementById('ht-reward-box');
+        if (rp && rp.enabled) {
+          document.getElementById('ht-reward-tag').textContent = rp.label || '';
+          document.getElementById('ht-reward-headline').textContent = rp.headline || '';
+          document.getElementById('ht-reward-text').textContent = rp.text || '';
+          document.getElementById('ht-reward-code').textContent = rp.code || '';
+          rBox.classList.remove('hidden');
+        } else {
+          rBox.classList.add('hidden');
+        }
+
+        try {
+          if (window.ArcadeQuizEngine && typeof ArcadeQuizEngine.submitNormalizedScore === 'function') {
+            ArcadeQuizEngine.submitNormalizedScore(QUIZ_ID, correctCount * 100, correctCount, total, { hidden: true });
+          }
+        } catch (e) {}
+      }
+
+      elPinForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const val = (elPinInput.value || '').trim();
+        if (val === ADMIN_PIN) {
+          failedPins = 0;
+          try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (err) {}
+          if (window.ArcadeAudio) ArcadeAudio.perkGood();
+          unlockAndBoot();
+        } else {
+          failedPins++;
+          if (window.ArcadeAudio) ArcadeAudio.perkBad();
+          if (failedPins >= 3) {
+            window.location.replace('../../index.html');
+            return;
+          }
+          elPinError.textContent = `Ungültige Admin-PIN (${failedPins}/3).`;
+          elPinInput.select();
+        }
+      });
+
+      document.getElementById('ht-btn-account-login').addEventListener('click', () => {
+        if (window.ArcadeAuth && typeof window.ArcadeAuth.openAuthModal === 'function') {
+          window.ArcadeAuth.openAuthModal(() => {
+            if (isAccountAdmin()) {
+              unlockAndBoot();
+            } else {
+              lockGate('Dieser Account besitzt keine Admin-Rechte. Weiterleitung möglich über „Zurück zur Startseite“.');
+            }
+          });
+        }
+      });
+
+      document.getElementById('ht-btn-lock').addEventListener('click', () => {
+        try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+        if (isAccountAdmin()) {
+          window.location.replace('../../index.html');
+        } else {
+          lockGate('Admin-Sitzung gesperrt.');
+        }
+      });
+
+      document.getElementById('ht-hero-start').addEventListener('click', startQuiz);
+      document.getElementById('ht-btn-start').addEventListener('click', startQuiz);
+      document.getElementById('ht-btn-next').addEventListener('click', nextQuestion);
+      document.getElementById('ht-btn-replay').addEventListener('click', startQuiz);
+      document.getElementById('ht-btn-home').addEventListener('click', () => {
+        if (window.ArcadeAudio) ArcadeAudio.click();
+        showScreen('start');
+      });
+      document.getElementById('ht-btn-board').addEventListener('click', () => {
+        if (window.ArcadeScores) ArcadeScores.openLeaderboardModal(QUIZ_ID);
+      });
+
+      window.addEventListener('arcade:auth-changed', () => {
+        if (isAuthorized()) unlockAndBoot();
+        else lockGate('');
+      });
+
+      if (isAuthorized()) {
+        unlockAndBoot();
+      } else {
+        lockGate('');
+      }
+    })();
+  </script>
+</body>
+</html>
