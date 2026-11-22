@@ -189,6 +189,14 @@ export function createMarineModel() {
   const megaShroud = part(g.box, m.coreOrange, 0.17, 0.06, 0.24, 0, 0.09, -0.32, 0, 0, 0, false);
   megaShroud.visible = false;
 
+  // Rail-Durchschlag upgrade: extended dorsal accelerator rail
+  const railBar = part(g.box, m.coreMagenta, 0.055, 0.055, 0.48, 0, 0.11, -0.36, 0, 0, 0, false);
+  railBar.visible = false;
+
+  // Explosiv-Munition upgrade: underslung heavy plasma pod
+  const explosivePod = part(g.cyl, m.zHazardGold, 0.068, 0.24, 0.068, 0, -0.09, -0.26, Math.PI * 0.5, 0, 0);
+  explosivePod.visible = false;
+
   // Muzzle flash star (pre-built, zero alloc)
   const muzzleFlash = new THREE.Group();
   muzzleFlash.position.set(0, 0.02, -0.62);
@@ -198,7 +206,7 @@ export function createMarineModel() {
   muzzleFlash.add(flashCone, flashCrossA, flashCrossB);
   muzzleFlash.visible = false;
 
-  gunGroup.add(gunChassis, gunBarrel, gunCore, spreadTwinL, spreadTwinR, megaShroud, muzzleFlash);
+  gunGroup.add(gunChassis, gunBarrel, gunCore, spreadTwinL, spreadTwinR, megaShroud, railBar, explosivePod, muzzleFlash);
 
   return {
     root,
@@ -210,6 +218,8 @@ export function createMarineModel() {
     spreadTwinL,
     spreadTwinR,
     megaShroud,
+    railBar,
+    explosivePod,
     muzzleFlash,
     flashCone,
     flashCrossA,
@@ -217,7 +227,7 @@ export function createMarineModel() {
   };
 }
 
-export function updateMarineVisual(vis, idx, nowSec, spreadLevel, dmgMult, firingGlow, leanAngle) {
+export function updateMarineVisual(vis, idx, nowSec, spreadLevel, dmgMult, firingGlow, leanAngle, pierceLevel = 0, explosiveLevel = 0) {
   const { m } = getSharedAssets();
   const stride = Math.sin(nowSec * 12 + idx * 1.3);
   vis.legL.rotation.x = stride * 0.52;
@@ -230,11 +240,17 @@ export function updateMarineVisual(vis, idx, nowSec, spreadLevel, dmgMult, firin
   vis.spreadTwinL.visible = spreadLevel >= 2;
   vis.spreadTwinR.visible = spreadLevel >= 2;
   vis.megaShroud.visible = spreadLevel >= 3;
+  vis.railBar.visible = pierceLevel > 0;
+  vis.explosivePod.visible = explosiveLevel > 0;
 
-  const coreMat = dmgMult >= 2.0 ? m.coreMagenta : (spreadLevel >= 2 ? m.coreOrange : m.coreCyan);
+  const coreMat = (pierceLevel > 0 || dmgMult >= 2.0)
+    ? m.coreMagenta
+    : (spreadLevel >= 2 || explosiveLevel > 0 ? m.coreOrange : m.coreCyan);
   if (vis.gunCore.material !== coreMat) vis.gunCore.material = coreMat;
 
-  const flashMat = dmgMult >= 2.0 ? m.muzzlePink : (spreadLevel >= 2 ? m.muzzleOrange : m.muzzleYellow);
+  const flashMat = (pierceLevel > 0 || dmgMult >= 2.0)
+    ? m.muzzlePink
+    : (spreadLevel >= 2 || explosiveLevel > 0 ? m.muzzleOrange : m.muzzleYellow);
   const showFlash = firingGlow && ((idx + Math.floor(nowSec * 28)) % 2 === 0);
   vis.gunGroup.position.z = -0.12 + (firingGlow ? 0.065 : 0);
   vis.muzzleFlash.visible = showFlash;
@@ -473,7 +489,7 @@ export class ZBModelPools {
   constructor(parentGroup) {
     this.parent = parentGroup;
     this.marines = [];
-    for (let i = 0; i < 24; i++) {
+    for (let i = 0; i < 30; i++) {
       const m = createMarineModel();
       m.root.visible = false;
       parentGroup.add(m.root);
