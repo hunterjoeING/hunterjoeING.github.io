@@ -52,8 +52,8 @@ export class ZBScene {
     this.composer.addPass(this.outputPass);
 
     this.camX = 0;
-    this.camY = 11.8;
-    this.camZ = 14.8;
+    this.camY = 8.4;
+    this.camZ = 18.2;
     this.prevPlayerU = 0;
 
     this.envGroup = new THREE.Group();
@@ -110,8 +110,8 @@ export class ZBScene {
 
   _buildBridgeArena() {
     const tex = getZBTextures();
-    const deckLen = 54;
-    const deckMidZ = Z_NEAR - Z_SPAN * 0.5 - 2.0; // centered along bridge
+    const deckLen = 72;
+    const deckMidZ = Z_NEAR - Z_SPAN * 0.5 + 2.0; // extends cleanly under foreground camera
 
     // Main roadway asphalt deck
     this.deckMat = new THREE.MeshStandardMaterial({
@@ -452,9 +452,9 @@ export class ZBScene {
     const leanAngle = Math.max(-1.2, Math.min(1.2, (state.playerU - this.prevPlayerU) / Math.max(0.008, dt) * 0.15));
     this.prevPlayerU = state.playerU;
 
-    const targetCamX = playerWX * 0.28;
-    const targetCamY = this.tacticalCam ? 17.8 : 11.8;
-    const targetCamZ = this.tacticalCam ? 13.6 : 14.8;
+    const targetCamX = playerWX * 0.24;
+    const targetCamY = this.tacticalCam ? 14.8 : 8.4;
+    const targetCamZ = this.tacticalCam ? 16.4 : 18.2;
     const damp = Math.min(1, dt * 6.5);
     this.camX += (targetCamX - this.camX) * damp;
     this.camY += (targetCamY - this.camY) * damp;
@@ -465,17 +465,17 @@ export class ZBScene {
     const sy = shake ? (Math.random() - 0.5) * shake : 0;
 
     this.camera.position.set(this.camX + sx, this.camY + sy, this.camZ);
-    this.camera.lookAt(playerWX * 0.18, 0.75, this.tacticalCam ? -3.2 : -4.2);
+    this.camera.lookAt(playerWX * 0.16, 0.85, this.tacticalCam ? -2.2 : -1.2);
 
     // Tactical Flashlight tracks squad
     this.flashLight.position.set(playerWX, 2.3, Z_NEAR - 0.3);
     this.flashLight.target.position.set(playerWX * 0.72, 0.3, -15);
 
-    // 3. Squad Marines (up to 24 visible, arranged in a 4-column tactical formation)
-    const visCount = Math.min(24, state.squad);
+    // 3. Squad Marines (up to 30 visible, arranged in a 5-column tactical formation)
+    const visCount = Math.min(30, state.squad);
     const firingGlow = state.running && state.shootTimer > (1 / Math.max(1, state.fireRate)) * 0.65;
-    const cols = 4;
-    for (let s = 0; s < 24; s++) {
+    const cols = 5;
+    for (let s = 0; s < 30; s++) {
       const vis = this.models.marines[s];
       if (s >= visCount) {
         vis.root.visible = false;
@@ -484,19 +484,20 @@ export class ZBScene {
       const row = Math.floor(s / cols);
       const colIdx = s % cols;
       const rowSize = Math.min(cols, visCount - row * cols);
-      const uOff = (colIdx - (rowSize - 1) * 0.5) * 0.086;
-      vis.root.position.set(toWorldX(state.playerU + uOff), 0, toWorldZ(0.01 + row * 0.030));
+      const uOff = (colIdx - (rowSize - 1) * 0.5) * 0.082;
+      vis.root.position.set(toWorldX(state.playerU + uOff), 0, toWorldZ(0.01 + row * 0.028));
       vis.root.visible = true;
-      updateMarineVisual(vis, s, nowSec, state.spreadLevel, state.dmgMult, firingGlow, leanAngle);
+      updateMarineVisual(vis, s, nowSec, state.spreadLevel, state.dmgMult, firingGlow, leanAngle, state.pierceLevel || 0, state.explosiveLevel || 0);
     }
 
-    // 4. Forcefield Shield Dome
-    if (state.shield > 0 && state.squad > 0) {
+    // 4. Forcefield Shield Dome (brightens during shieldGrace invulnerability)
+    if ((state.shield > 0 || (state.shieldGrace || 0) > 0) && state.squad > 0) {
       this.shieldGroup.visible = true;
-      const spreadScale = 1 + Math.min(0.60, Math.max(0, visCount - 1) * 0.055);
-      this.shieldGroup.position.set(playerWX, 0.65, Z_NEAR - 0.75);
-      this.shieldGroup.scale.set(spreadScale, 0.85, 1.20);
-      this.shieldWire.rotation.y = nowSec * 0.8;
+      const spreadScale = 1 + Math.min(0.65, Math.max(0, visCount - 1) * 0.052);
+      const pulse = (state.shieldGrace || 0) > 0 ? 1.12 + 0.08 * Math.sin(nowSec * 24) : 1.0;
+      this.shieldGroup.position.set(playerWX, 0.68, Z_NEAR - 0.75);
+      this.shieldGroup.scale.set(spreadScale * pulse, 0.90 * pulse, 1.25 * pulse);
+      this.shieldWire.rotation.y = nowSec * ((state.shieldGrace || 0) > 0 ? 2.6 : 0.8);
     } else {
       this.shieldGroup.visible = false;
     }
