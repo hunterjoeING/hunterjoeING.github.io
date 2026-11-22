@@ -190,6 +190,12 @@
     { id: 'quiz_af_teams', title: 'American Football: Teams, Stadien & Fankultur', icon: '🏟️', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_af_legends', title: 'American Football: Legenden, Draft & Rekorde', icon: '⭐', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_af_packers', title: 'American Football: Green Bay Packers Special', icon: '🧀', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_golf', title: 'Golf – Das große Quiz', icon: '⛳', lowerIsBetter: false },
+    { id: 'quiz_golf_mix', title: 'Golf: Alles gemischt', icon: '⛳', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_golf_regeln', title: 'Golf: Regeln, Etikette & Scoring', icon: '📋', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_golf_profis', title: 'Golf: Majors, Tour & Legenden', icon: '🏆', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_golf_technik', title: 'Golf: Technik, Equipment & Taktik', icon: '🏌️', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_golf_plaetze', title: 'Golf: Legendäre Plätze & Kurioses', icon: '🌍', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_f1', title: 'Formel 1 – Legenden, Technik & Königsklasse', icon: '🏎️', lowerIsBetter: false },
     { id: 'quiz_f1_mix', title: 'Formel 1: Komplett-Mix', icon: '🏎️', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_f1_legenden', title: 'Formel 1: Weltmeister & Rivalitäten', icon: '👑', lowerIsBetter: false, unlisted: true },
@@ -255,6 +261,7 @@
       if (p.includes('/games/quiz-geburt')) return 'quiz_geburt';
       if (p.includes('/games/quiz-fussball')) return 'quiz_fussball';
       if (p.includes('/games/quiz-american-football')) return 'quiz_american_football';
+      if (p.includes('/games/quiz-golf')) return 'quiz_golf';
       if (p.includes('/games/quiz-f1')) return 'quiz_f1';
       if (p.includes('/games/quiz-apple')) return 'quiz_apple';
       if (p.includes('/games/quiz')) return 'quiz';
@@ -877,6 +884,7 @@
     { id: 'quiz_geburt', title: 'Bewusste Schwangerschaft & sanfte Geburt', icon: '🌸' },
     { id: 'quiz_fussball', title: 'Fußball – Das große Quiz', icon: '⚽' },
     { id: 'quiz_american_football', title: 'American Football – Das große NFL-Quiz', icon: '🏈' },
+    { id: 'quiz_golf', title: 'Golf – Das große Quiz', icon: '⛳' },
     { id: 'quiz_f1', title: 'Formel 1 – Legenden, Technik & Königsklasse', icon: '🏎️' },
     { id: 'quiz_apple', title: 'Apple – Produkte, Kult & Technikgeschichte', icon: '🍎' },
     { id: 'quiz_movies', title: 'Kino & Filme Quiz (o. RomComs)', icon: '🎬' },
