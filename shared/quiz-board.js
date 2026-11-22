@@ -59,43 +59,29 @@
 
     show: (id, title) => {
       const m = modal('<h3 style="margin:0 0 10px;">🏆 ' + esc(title || 'Bestenliste') + '</h3>' + boardHtml(id) +
-        '<div style="margin-top:14px;text-align:right;"><button type="button" class="qb-close" style="' + btnCss + '">Schließen</button></div>');
+        '<div style="margin-top:16px;display:flex;justify-content:flex-end;gap:8px;"><button type="button" class="qb-close" style="' + btnPrimary + 'min-width:130px;">Schließen</button></div>');
       m.querySelector('.qb-close').onclick = () => closeModal(m);
       m.addEventListener('click', e => { if (e.target === m) closeModal(m); });
     },
 
-    // Speichert den Lauf sofort (Name "Anonym") und bietet danach optionale Namenseingabe an.
+    // Speichert den Lauf still im LocalStorage (nur auf Anfrage per Bestenliste-Button sichtbar).
     submit: (id, run) => {
       if (!id || !run || !(run.score >= 0)) return;
+      let saved = '';
+      try {
+        saved = localStorage.getItem(NAME_KEY) || localStorage.getItem('arcade_player_name') || '';
+      } catch (e) {}
       const entry = {
-        name: 'Anonym', score: Math.round(run.score), correct: run.correct | 0, total: run.total | 0,
-        seconds: Math.max(1, run.seconds | 0), ts: Date.now()
+        name: (saved && saved.trim().slice(0, 20)) || 'Anonym',
+        score: Math.round(run.score),
+        correct: run.correct | 0,
+        total: run.total | 0,
+        seconds: Math.max(1, run.seconds | 0),
+        ts: Date.now()
       };
       const list = read(id);
       list.push(entry);
       write(id, sortList(list).slice(0, MAX_ENTRIES));
-
-      let saved = '';
-      try { saved = localStorage.getItem(NAME_KEY) || ''; } catch (e) {}
-      const m = modal('<h3 style="margin:0 0 6px;">Runde beendet: ' + entry.score + ' Pkt</h3>' +
-        '<p style="margin:0 0 12px;opacity:.75;font-size:14px;">' + entry.correct + '/' + entry.total + ' richtig · ' + fmtTime(entry.seconds) + ' · optional: Namen für die Bestenliste eintragen.</p>' +
-        '<input class="qb-name" type="text" maxlength="20" placeholder="Dein Name (optional)" value="' + esc(saved) + '" style="width:100%;box-sizing:border-box;padding:10px;border-radius:10px;border:1px solid var(--border-subtle,#ccc);background:var(--bg-elevated,#fff);color:inherit;font:inherit;margin-bottom:12px;">' +
-        '<div style="display:flex;gap:8px;justify-content:flex-end;"><button type="button" class="qb-skip" style="' + btnCss + '">Überspringen</button><button type="button" class="qb-save" style="' + btnPrimary + '">Speichern</button></div>');
-      const input = m.querySelector('.qb-name');
-      setTimeout(() => { try { input.focus(); } catch (e) {} }, 50);
-      const finish = (name) => {
-        if (name) {
-          const cur = read(id);
-          const hit = cur.find(e => e.ts === entry.ts);
-          if (hit) { hit.name = name; write(id, cur); }
-          try { localStorage.setItem(NAME_KEY, name); } catch (e) {}
-        }
-        closeModal(m);
-        api.show(id, 'Bestenliste');
-      };
-      m.querySelector('.qb-skip').onclick = () => finish('');
-      m.querySelector('.qb-save').onclick = () => finish(input.value.trim().slice(0, 20));
-      input.addEventListener('keydown', e => { if (e.key === 'Enter') finish(input.value.trim().slice(0, 20)); e.stopPropagation(); });
     }
   };
   window.ArcadeQuizBoard = api;
