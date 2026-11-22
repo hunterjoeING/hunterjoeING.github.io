@@ -8,10 +8,10 @@ const canvas = document.getElementById('zCanvas');
 const stage = document.getElementById('stage');
 const zbScene = new ZBScene(canvas, stage);
 
-const MAX_SQUAD = 30;
+const MAX_SQUAD = 50;
 const MAX_RATE = 10.5;
 const MAX_DMG = 3.5;
-const MAX_SHIELD = 2;
+const MAX_SHIELD = 3;
 
 let running = false;
 let gameOver = false;
@@ -20,8 +20,12 @@ let targetU = 0;
 let squad = 1;
 let fireRate = 4.5; // shots/sec per shooter
 let spreadLevel = 1; // 1 = standard, 2 = 3-way spread, 3 = 5-way mega-spread
+let pierceLevel = 0; // 0 = off, 1..2 = railgun pierce targets
+let explosiveLevel = 0; // 0 = off, 1..2 = plasma splash radius
 let dmgMult = 1.0;
 let shield = 0;
+let shieldGrace = 0;
+let nextZombieId = 1;
 let score = 0;
 let kills = 0;
 let wave = 1;
@@ -85,8 +89,11 @@ function startGame() {
   squad = 1;
   fireRate = 4.5;
   spreadLevel = 1;
+  pierceLevel = 0;
+  explosiveLevel = 0;
   dmgMult = 1.0;
   shield = 0;
+  shieldGrace = 0;
   score = 0;
   kills = 0;
   wave = 1;
@@ -123,6 +130,7 @@ function spawnZombiePack(count) {
       ? -0.78 + (1.56 * i) / Math.max(1, count - 1)
       : (Math.random() < 0.6 ? sideBias + (Math.random() - 0.5) * 0.65 : (Math.random() - 0.5) * 1.72);
     zombies.push({
+      id: nextZombieId++,
       u: Math.max(-0.88, Math.min(0.88, uPos)),
       z: 0.95 + Math.random() * 0.13,
       speed: (fast ? 0.245 : (brute ? 0.115 : 0.165)) * speedScale,
@@ -147,6 +155,7 @@ function spawnBoss() {
   const playerEstDps = squad * dmgMult * fireRate;
   const hp = Math.max(55 + wave * 42, playerEstDps * (3.6 + Math.min(2.2, wave * 0.22)));
   zombies.push({
+    id: nextZombieId++,
     u: (Math.random() - 0.5) * 0.7,
     z: 1.0,
     speed: 0.095 + Math.min(0.055, wave * 0.0055),
@@ -165,11 +174,13 @@ function makeRandomGatePair() {
   const weaponTypes = [
     { op: 'rate', val: 0.25, label: '⚡ +25% Kadenz' },
     { op: 'spread', val: 1, label: '🔥 Streuschuss' },
+    { op: 'pierce', val: 1, label: '⚡ Rail-Durchschlag' },
+    { op: 'explosive', val: 1, label: '🚀 Explosiv-Plasma' },
     { op: 'dmg', val: 0.30, label: '💥 +30% Schaden' },
-    { op: 'shield', val: 1, label: '🛡️ +1 Schild' }
+    { op: 'shield', val: 1, label: '🛡️ +1 EMP-Schild' }
   ];
-  const stepCost = Math.round((2.4 + (wave - 1) * 1.55 + Math.sqrt(squad) * 1.25) * 10) / 10;
-  const maxBoost = Math.min(8, 4 + Math.floor(wave * 0.6));
+  const stepCost = Math.round((2.0 + (wave - 1) * 1.45 + Math.sqrt(squad) * 1.05) * 10) / 10;
+  const maxBoost = Math.min(20, 8 + wave * 2);
 
   const makeShootableGate = (side) => {
     const startNeg = wave >= 2 ? -(2 + Math.floor(Math.random() * Math.min(5, 2 + wave * 0.5))) : -(1 + Math.floor(Math.random() * 2));
@@ -213,7 +224,7 @@ function makeRandomGatePair() {
   };
 
   const makePerkOrMultGate = (side) => {
-    if (wave >= 2 && squad <= 12 && Math.random() < 0.20) {
+    if (wave >= 2 && squad <= 18 && Math.random() < 0.22) {
       return {
         side,
         uMin: side < 0 ? -0.94 : 0.05,
@@ -227,6 +238,8 @@ function makeRandomGatePair() {
     }
     const available = weaponTypes.filter(w =>
       !(w.op === 'spread' && spreadLevel >= 3) &&
+      !(w.op === 'pierce' && pierceLevel >= 2) &&
+      !(w.op === 'explosive' && explosiveLevel >= 2) &&
       !(w.op === 'rate' && fireRate >= MAX_RATE) &&
       !(w.op === 'dmg' && dmgMult >= MAX_DMG) &&
       !(w.op === 'shield' && shield >= MAX_SHIELD)
@@ -251,7 +264,7 @@ function makeRandomGatePair() {
   const leftGate = makeShootableGate(leftSide ? -1 : 1);
   const rightGate = Math.random() < hazardChance
     ? makeHazardGate(leftSide ? 1 : -1)
-    : (Math.random() < 0.58 ? makePerkOrMultGate(leftSide ? 1 : -1) : makeShootableGate(leftSide ? 1 : -1));
+    : (Math.random() < 0.62 ? makePerkOrMultGate(leftSide ? 1 : -1) : makeShootableGate(leftSide ? 1 : -1));
   gates.push(leftGate, rightGate);
 }
 
@@ -264,7 +277,7 @@ function applyGate(g) {
     msg = (g.val >= 0 ? `+${g.val}` : `${g.val}`) + ' Schützen';
     squad = Math.min(MAX_SQUAD, next);
   } else if (g.kind === 'mult') {
-    const bonus = Math.min(10, squad * (g.val - 1));
+    const bonus = Math.min(18, squad * (g.val - 1));
     squad = Math.min(MAX_SQUAD, squad + bonus);
     msg = `+${bonus} Trupp (×${g.val})!`;
   } else if (g.kind === 'div') {
@@ -282,12 +295,19 @@ function applyGate(g) {
   } else if (g.kind === 'spread') {
     spreadLevel = Math.min(3, spreadLevel + 1);
     msg = spreadLevel === 2 ? '🔥 3× Streuschuss!' : '🔥 5× Mega-Streu!';
+  } else if (g.kind === 'pierce') {
+    pierceLevel = Math.min(2, pierceLevel + 1);
+    msg = pierceLevel === 1 ? '⚡ Rail-Durchschlag!' : '⚡ 2× Rail-Laser!';
+  } else if (g.kind === 'explosive') {
+    explosiveLevel = Math.min(2, explosiveLevel + 1);
+    msg = explosiveLevel === 1 ? '🚀 Explosiv-Plasma!' : '🚀 Mega-Explosiv!';
   } else if (g.kind === 'dmg') {
     dmgMult = Math.min(MAX_DMG, dmgMult + g.val);
     msg = '💥 Stärkere Munition!';
   } else if (g.kind === 'shield') {
     shield = Math.min(MAX_SHIELD, shield + 1);
-    msg = '🛡️ Schild aktiv!';
+    shieldGrace = Math.max(shieldGrace, 0.35);
+    msg = '🛡️ EMP-Schild bereit!';
   }
 
   if (squad <= 0) {
@@ -302,14 +322,15 @@ function applyGate(g) {
 }
 
 function fireVolley() {
-  const streams = Math.min(7, squad);
+  const streams = Math.min(8, squad);
   const dmgPerBullet = (1.0 * dmgMult) * (squad / streams);
+  // Real, wide 3D fan angles across the bridge width
   const spreadAngles = spreadLevel === 1
     ? [0]
-    : (spreadLevel === 2 ? [-0.85, 0, 0.85] : [-1.55, -0.78, 0, 0.78, 1.55]);
-  const volleyMult = spreadLevel === 1 ? 1.0 : (spreadLevel === 2 ? 1.35 : 1.70);
+    : (spreadLevel === 2 ? [-2.35, 0, 2.35] : [-4.2, -2.1, 0, 2.1, 4.2]);
+  const volleyMult = spreadLevel === 1 ? 1.0 : (spreadLevel === 2 ? 1.65 : 2.25);
   const pelletDmg = (dmgPerBullet * volleyMult) / spreadAngles.length;
-  const span = Math.min(0.24, (streams - 1) * 0.044);
+  const span = Math.min(0.26, (streams - 1) * 0.042);
   for (let i = 0; i < streams; i++) {
     const uOff = streams === 1 ? 0 : -span + (2 * span * i) / (streams - 1);
     for (const du of spreadAngles) {
@@ -319,7 +340,10 @@ function fireVolley() {
         du,
         dz: 1.45,
         dmg: pelletDmg,
-        isSpread: du !== 0
+        isSpread: du !== 0,
+        pierceLeft: pierceLevel,
+        explosive: explosiveLevel,
+        hitIds: pierceLevel > 0 ? [] : null
       });
     }
   }
@@ -339,6 +363,8 @@ function triggerGameOver(reason) {
   document.getElementById('ov-title').textContent = isNew ? 'Neuer Zombie-Rekord!' : 'Überrannt!';
   document.getElementById('ov-desc').innerHTML = `${reason}<br><br>Welle: <strong>${wave}</strong> · Erledigte Zombies: <strong>${kills}</strong> · Punkte: <strong>${score}</strong>`;
   document.getElementById('ov-btn').textContent = '🔄 Nochmal kämpfen!';
+  const boardBtn = document.getElementById('ov-board-btn');
+  if (boardBtn) boardBtn.classList.remove('hidden');
   document.getElementById('overlay').classList.remove('hidden');
 }
 
@@ -346,7 +372,12 @@ function updateHUD() {
   document.getElementById('hud-squad').textContent = squad;
   document.getElementById('hud-wave').textContent = wave;
   document.getElementById('hud-rate').textContent = (fireRate / 4.5).toFixed(1) + '×';
-  document.getElementById('hud-weapon').textContent = spreadLevel === 3 ? '5× Streu' : (spreadLevel === 2 ? '3× Streu' : 'Standard');
+  const parts = [];
+  if (spreadLevel >= 3) parts.push('5× Streu');
+  else if (spreadLevel === 2) parts.push('3× Streu');
+  if (pierceLevel > 0) parts.push(pierceLevel >= 2 ? '2× Rail' : 'Rail');
+  if (explosiveLevel > 0) parts.push(explosiveLevel >= 2 ? 'Mega-Expl' : 'Explosiv');
+  document.getElementById('hud-weapon').textContent = parts.length ? parts.join(' + ') : 'Karabiner';
   document.getElementById('hud-shield').textContent = shield;
   document.getElementById('hud-score').textContent = score;
   const bar = document.getElementById('hud-squad-bar');
@@ -361,6 +392,7 @@ function step(dt) {
   elapsed += dt;
   roadScroll = (roadScroll + dt * 1.35) % 1000;
   sfxShotCd -= dt;
+  shieldGrace = Math.max(0, shieldGrace - dt);
   shakeAmt = Math.max(0, shakeAmt - dt * 30);
 
   const moveSpd = 1.45;
@@ -488,20 +520,40 @@ function step(dt) {
     for (let zi = zombies.length - 1; zi >= 0; zi--) {
       const zm = zombies[zi];
       if (zm.hp <= 0) continue;
+      if (b.hitIds && b.hitIds.includes(zm.id)) continue;
       if (Math.abs(b.z - zm.z) < 0.055 && Math.abs(b.u - zm.u) < zm.radius + 0.04) {
         zm.hp -= b.dmg;
         zm.hitFlash = 0.08;
-        consumed = true;
         const bloodCol = zm.kind === 'fast' ? '#22d3ee' : (zm.kind === 'brute' ? '#c084fc' : '#4ade80');
-        spawnBurst(b.u, zm.z, bloodCol, 4, 0.06, false);
-        break;
+        spawnBurst(b.u, zm.z, b.explosive ? '#fb923c' : bloodCol, b.explosive ? 6 : 4, b.explosive ? 0.12 : 0.06, false);
+
+        if (b.explosive > 0) {
+          const splashR = b.explosive >= 2 ? 0.34 : 0.24;
+          const splashDmg = b.dmg * (b.explosive >= 2 ? 0.72 : 0.48);
+          for (let sj = zombies.length - 1; sj >= 0; sj--) {
+            const z2 = zombies[sj];
+            if (z2 === zm || z2.hp <= 0) continue;
+            if (Math.hypot(z2.u - zm.u, (z2.z - zm.z) * 1.8) < splashR) {
+              z2.hp -= splashDmg;
+              z2.hitFlash = 0.08;
+            }
+          }
+        }
+
+        if (b.pierceLeft > 0) {
+          b.pierceLeft--;
+          if (b.hitIds) b.hitIds.push(zm.id);
+        } else {
+          consumed = true;
+          break;
+        }
       }
     }
     if (consumed) bullets.splice(i, 1);
   }
 
   // Process dead or breaching Zombies
-  const visCols = Math.min(6, squad);
+  const visCols = Math.min(5, squad);
   const squadHalfW = 0.22 + Math.max(0, visCols - 1) * 0.036;
   for (let i = zombies.length - 1; i >= 0; i--) {
     const zm = zombies[i];
@@ -533,12 +585,28 @@ function step(dt) {
     zm.hitFlash = Math.max(0, zm.hitFlash - dt);
     if (zm.z <= 0.045) {
       if (Math.abs(zm.u - playerU) < squadHalfW + zm.radius) {
+        if (shieldGrace > 0) {
+          spawnBurst(zm.u, 0.05, '#38bdf8', 5, 0.08, false);
+          zombies.splice(i, 1);
+          continue;
+        }
         if (shield > 0) {
           shield--;
+          shieldGrace = 0.90;
           ZBAudio.shieldBlock();
-          shakeAmt = Math.max(shakeAmt, 7);
-          spawnBurst(playerU, 0.05, '#38bdf8', 10, 0.12, true);
-          floaters.push({ u: playerU, z: 0.08, text: '🛡️ Schild abgefangen!', color: '#38bdf8', life: 0.9 });
+          shakeAmt = Math.max(shakeAmt, 8);
+          spawnBurst(playerU, 0.06, '#38bdf8', 18, 0.24, true);
+          floaters.push({ u: playerU, z: 0.09, text: '🛡️ EMP-SCHILD!', color: '#38bdf8', life: 1.0 });
+          // EMP blast clears or heavily damages nearby front-line zombies
+          const empDmg = 18 + wave * 8;
+          for (let zi = zombies.length - 1; zi >= 0; zi--) {
+            if (zi === i) continue;
+            const zNear = zombies[zi];
+            if (zNear.z < 0.24 && Math.abs(zNear.u - playerU) < 0.78) {
+              zNear.hp -= empDmg;
+              zNear.hitFlash = 0.15;
+            }
+          }
         } else {
           const loss = zm.kind === 'boss' ? Math.max(4, Math.ceil(squad * 0.55)) : (zm.kind === 'brute' ? 2 : 1);
           squad -= loss;
@@ -582,7 +650,7 @@ function loop(now) {
   last = now;
   step(dt);
   zbScene.syncAndRender(dt, {
-    running, playerU, squad, fireRate, spreadLevel, dmgMult, shield,
+    running, playerU, squad, fireRate, spreadLevel, pierceLevel, explosiveLevel, dmgMult, shield, shieldGrace,
     roadScroll, shootTimer, shakeAmt,
     bullets, zombies, gates, barrels, fx, floaters
   });
