@@ -52,8 +52,8 @@ export class ZBScene {
     this.composer.addPass(this.outputPass);
 
     this.camX = 0;
-    this.camY = 13.6;
-    this.camZ = 16.8;
+    this.camY = 11.8;
+    this.camZ = 14.8;
     this.prevPlayerU = 0;
 
     this.envGroup = new THREE.Group();
@@ -349,7 +349,7 @@ export class ZBScene {
   applyTheme(isLight) {
     if (isLight) {
       this.scene.background = new THREE.Color(0xcfe4f7);
-      this.scene.fog = new THREE.FogExp2(0xcfe4f7, 0.0155);
+      this.scene.fog = new THREE.FogExp2(0xcfe4f7, 0.0075);
       this.hemiLight.color.setHex(0xffffff);
       this.hemiLight.groundColor.setHex(0x64748b);
       this.hemiLight.intensity = 1.05;
@@ -371,7 +371,7 @@ export class ZBScene {
       this.bloomPass.threshold = 0.88;
     } else {
       this.scene.background = new THREE.Color(0x070b1a);
-      this.scene.fog = new THREE.FogExp2(0x0d091f, 0.0185);
+      this.scene.fog = new THREE.FogExp2(0x0d091f, 0.0115);
       this.hemiLight.color.setHex(0x7dd3fc);
       this.hemiLight.groundColor.setHex(0x090d16);
       this.hemiLight.intensity = 0.72;
@@ -409,7 +409,9 @@ export class ZBScene {
     this.composer.setPixelRatio(dpr);
     this.composer.setSize(w, h);
     this.bloomPass.setSize(w, h);
-    this.camera.aspect = w / h;
+    const aspect = w / h;
+    this.camera.aspect = aspect;
+    this.camera.fov = aspect < 1.0 ? Math.min(60, 44 / Math.pow(aspect, 0.42)) : 44;
     this.camera.updateProjectionMatrix();
   }
 
@@ -451,8 +453,8 @@ export class ZBScene {
     this.prevPlayerU = state.playerU;
 
     const targetCamX = playerWX * 0.28;
-    const targetCamY = this.tacticalCam ? 20.0 : 13.6;
-    const targetCamZ = this.tacticalCam ? 15.2 : 16.8;
+    const targetCamY = this.tacticalCam ? 17.8 : 11.8;
+    const targetCamZ = this.tacticalCam ? 13.6 : 14.8;
     const damp = Math.min(1, dt * 6.5);
     this.camX += (targetCamX - this.camX) * damp;
     this.camY += (targetCamY - this.camY) * damp;
@@ -463,7 +465,7 @@ export class ZBScene {
     const sy = shake ? (Math.random() - 0.5) * shake : 0;
 
     this.camera.position.set(this.camX + sx, this.camY + sy, this.camZ);
-    this.camera.lookAt(playerWX * 0.18, 0.75, this.tacticalCam ? -3.0 : -4.2);
+    this.camera.lookAt(playerWX * 0.18, 0.75, this.tacticalCam ? -3.2 : -4.2);
 
     // Tactical Flashlight tracks squad
     this.flashLight.position.set(playerWX, 2.3, Z_NEAR - 0.3);
