@@ -172,6 +172,7 @@
     { id: 'quiz_china', title: 'Neuere Chinesische Geschichte', icon: '🏯', lowerIsBetter: false },
     { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_napoli72h', title: 'Napoli72H Pizza-Quiz · Aachen', icon: '🍕', lowerIsBetter: false, unlisted: true },
+    { id: 'quiz_herr_tutto', title: 'Herr Tutto Quiz · Eilendorf', icon: '🎩', lowerIsBetter: false, unlisted: true },
     { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz', icon: '🛩️', lowerIsBetter: false },
     { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz', icon: '✈️', lowerIsBetter: false },
     { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz', icon: '📈', lowerIsBetter: false },
@@ -255,6 +256,7 @@
       if (p.includes('/games/quiz-swiss-trains')) return 'quiz_swiss_trains';
       if (p.includes('/games/quiz-waldgarten')) return 'quiz_waldgarten';
       if (p.includes('/games/quiz-napoli72h')) return 'quiz_napoli72h';
+      if (p.includes('/games/quiz-herr-tutto')) return 'quiz_herr_tutto';
       if (p.includes('/games/quiz-military-aircraft')) return 'quiz_mil_air';
       if (p.includes('/games/quiz-airliners')) return 'quiz_airliners';
       if (p.includes('/games/quiz-etfs')) return 'quiz_etfs';
@@ -911,6 +913,7 @@
     { id: 'quiz_ai', title: 'KI: Entstehung & Funktionsweise Quiz', icon: '🤖' },
     { id: 'quiz_waldgarten', title: 'Waldgarten Quiz · Schwarzenburg (Heideblick)', icon: '🌿', unlisted: true },
     { id: 'quiz_napoli72h', title: 'Napoli72H Pizza-Quiz · Aachen (Test-Demo)', icon: '🍕', unlisted: true },
+    { id: 'quiz_herr_tutto', title: 'Herr Tutto Quiz · Eilendorf', icon: '🎩', unlisted: true },
     { id: 'quiz_mil_air', title: 'Militärflugzeuge Quiz', icon: '🛩️' },
     { id: 'quiz_airliners', title: 'Passagierflugzeuge Quiz', icon: '✈️' },
     { id: 'quiz_etfs', title: 'Passives Investieren & ETFs Quiz', icon: '📈' },
