@@ -121,6 +121,7 @@ function part(geo, mat, sx, sy, sz, px = 0, py = 0, pz = 0, rx = 0, ry = 0, rz =
 export function createMarineModel() {
   const { g, m } = getSharedAssets();
   const root = new THREE.Group();
+  root.scale.setScalar(1.38);
 
   // Legs (pivoted at hip y = 0.42) with rounded limbs & knee guards
   const legL = new THREE.Group();
@@ -259,7 +260,7 @@ export function createZombieModel(kind) {
   const skinMat = isBoss ? m.zSkinBoss : (isBrute ? m.zSkinBrute : (isFast ? m.zSkinFast : m.zSkinNormal));
   const coatMat = isBoss ? m.zCoatBoss : (isBrute ? m.zCoatBrute : (isFast ? m.zCoatFast : m.zCoatNormal));
   const eyeMat = isBoss ? m.zEyeGold : (isFast ? m.zEyeCyan : m.zEyeRed);
-  const scale = isBoss ? 2.15 : (isBrute ? 1.42 : (isFast ? 0.98 : 1.08));
+  const scale = isBoss ? 2.35 : (isBrute ? 1.62 : (isFast ? 1.15 : 1.26));
 
   const modelRoot = new THREE.Group();
   modelRoot.scale.setScalar(scale);
