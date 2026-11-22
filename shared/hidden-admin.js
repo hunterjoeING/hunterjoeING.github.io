@@ -5,7 +5,8 @@
   const ADMIN_PIN = '2408'; // <- hier leicht änderbar
   const HIDDEN_QUIZZES = [
     { id: 'quiz_waldgarten', icon: '🌿', title: 'Waldgarten (Heideblick)', path: 'games/quiz-waldgarten/index.html' },
-    { id: 'quiz_napoli72h', icon: '🍕', title: 'Napoli72H Pizza-Quiz', path: 'games/quiz-napoli72h/index.html' }
+    { id: 'quiz_napoli72h', icon: '🍕', title: 'Napoli72H Pizza-Quiz', path: 'games/quiz-napoli72h/index.html' },
+    { id: 'quiz_herr_tutto', icon: '🎩', title: 'Herr Tutto Quiz (Eilendorf)', path: 'games/quiz-herr-tutto/index.html' }
   ];
 
   function B() { return window.ArcadeQuizBoard; }
