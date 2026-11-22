@@ -172,23 +172,25 @@ export class ZBEffectsPool {
       this.tmpQuat.setFromUnitVectors(this.upVec, this.tmpDir);
 
       // Trail bolt shifted slightly behind tip
-      this.tmpPos.set(wx - this.tmpDir.x * 0.48, 0.86, wz - this.tmpDir.z * 0.48);
-      this.tmpScale.set(b.isSpread ? 1.15 : 1.0, 1.0, b.isSpread ? 1.15 : 1.0);
+      this.tmpPos.set(wx - this.tmpDir.x * 0.48, 0.88, wz - this.tmpDir.z * 0.48);
+      const thick = b.explosive ? 1.38 : (b.isSpread ? 1.22 : 1.0);
+      const lenScale = b.pierceLeft > 0 ? 1.45 : 1.0;
+      this.tmpScale.set(thick, lenScale, thick);
       this.tmpMat4.compose(this.tmpPos, this.tmpQuat, this.tmpScale);
       this.boltMesh.setMatrixAt(i, this.tmpMat4);
 
-      const boltHex = b.isSpread
-        ? (dmgMult >= 2 ? 0xfb7185 : 0xfb923c)
-        : (dmgMult >= 2 ? 0xf472b6 : 0x38bdf8);
+      const boltHex = b.explosive
+        ? 0xf59e0b
+        : (b.pierceLeft > 0 ? 0xe879f9 : (b.isSpread ? (dmgMult >= 2 ? 0xfb7185 : 0xfb923c) : (dmgMult >= 2 ? 0xf472b6 : 0x38bdf8)));
       this.tmpColor.setHex(boltHex);
       this.boltMesh.setColorAt(i, this.tmpColor);
 
       // Glowing tip
-      this.tmpPos.set(wx, 0.86, wz);
-      this.tmpScale.setScalar(1.0);
+      this.tmpPos.set(wx, 0.88, wz);
+      this.tmpScale.setScalar(b.explosive ? 1.25 : 1.0);
       this.tmpMat4.compose(this.tmpPos, this.tmpQuat, this.tmpScale);
       this.tipMesh.setMatrixAt(i, this.tmpMat4);
-      this.tmpColor.setHex(b.isSpread ? 0xfef08a : 0xffffff);
+      this.tmpColor.setHex(b.explosive ? 0xfef08a : (b.pierceLeft > 0 ? 0xf5d0fe : (b.isSpread ? 0xfef08a : 0xffffff)));
       this.tipMesh.setColorAt(i, this.tmpColor);
     }
     this.boltMesh.count = bCount;
