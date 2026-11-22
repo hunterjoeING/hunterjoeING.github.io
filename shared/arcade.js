@@ -125,6 +125,11 @@
       setTimeout(() => tone(783.99, 0.12, 'triangle', 0.13), 65);
     },
     perkBad: () => tone(210, 0.18, 'sawtooth', 0.12, 95),
+    correct: () => {
+      tone(523.25, 0.08, 'triangle', 0.12);
+      setTimeout(() => tone(783.99, 0.12, 'triangle', 0.13), 65);
+    },
+    wrong: () => tone(210, 0.18, 'sawtooth', 0.12, 95),
     explosion: () => {
       noiseBurst(0.24, 340, 0.18, 'lowpass');
       tone(115, 0.22, 'sawtooth', 0.15, 36);
