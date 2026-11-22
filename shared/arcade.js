@@ -556,6 +556,14 @@
         : '';
       const isSub = /\/games\/[^/]+/.test((window.location.pathname || '').toLowerCase());
       const legalBase = isSub ? '../../' : './';
+      const retryFn = isSub && (
+        (typeof window.startGame === 'function' && window.startGame) ||
+        (typeof window.resetTD === 'function' && (() => window.resetTD())) ||
+        (typeof window.replayCategory === 'function' && window.replayCategory) ||
+        (typeof window.newGame === 'function' && window.newGame) ||
+        (typeof window.restartGame === 'function' && window.restartGame) ||
+        null
+      );
       root.innerHTML = `
         <div class="arcade-modal-card">
           <div class="arcade-modal-head">
@@ -568,6 +576,10 @@
           ${tabsHtml}
           <div class="arcade-modal-sub" id="arcade-board-sub"></div>
           <div class="arcade-modal-body" id="arcade-board-body"></div>
+          <div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:12px 24px;border-top:1px solid var(--border-hairline);background:var(--bg-surface);">
+            ${retryFn ? '<button type="button" class="secondary-btn" id="arcade-modal-retry-btn">🔄 Nochmal spielen</button>' : ''}
+            <button type="button" class="primary-btn" id="arcade-modal-close-btn">✕ Schließen</button>
+          </div>
           <div class="arcade-modal-foot">
             <a href="${legalBase}impressum.html">Impressum</a>
             <span aria-hidden="true">·</span>
@@ -578,8 +590,21 @@
       document.body.appendChild(root);
       const bodyEl = document.getElementById('arcade-board-body');
       const subEl = document.getElementById('arcade-board-sub');
-      const close = () => removeModal();
+      const onEsc = (e) => { if (e.key === 'Escape') close(); };
+      const close = () => {
+        window.removeEventListener('keydown', onEsc);
+        removeModal();
+      };
+      window.addEventListener('keydown', onEsc);
       document.getElementById('arcade-modal-close').addEventListener('click', close);
+      document.getElementById('arcade-modal-close-btn').addEventListener('click', close);
+      const retryBtn = document.getElementById('arcade-modal-retry-btn');
+      if (retryBtn && retryFn) {
+        retryBtn.addEventListener('click', () => {
+          close();
+          retryFn();
+        });
+      }
       document.getElementById('arcade-board-refresh').addEventListener('click', () => renderBoardContent(bodyEl, subEl, activeId, 25));
       root.addEventListener('click', e => { if (e.target === root) close(); });
       if (showTabs) {
@@ -753,7 +778,7 @@
           updateSummaryEntry(gameId, res.best, res.plays, res.entries);
           emitScoresUpdated();
 
-          if (!opts.silent) {
+          if (!opts.silent && (res.isGlobalRecord || isPersonalBetter)) {
             const rankText = res.isGlobalRecord
               ? '🏆 GLOBALER WELTREKORD #1!'
               : `🌍 Platz #${res.rank} weltweit`;
@@ -764,6 +789,7 @@
               <span>${rankText} als <strong>${escapeHtml(playerName)}</strong></span>
               ${nameCta}
               <button type="button" class="arcade-toast-btn" id="toast-open-board">Bestenliste</button>
+              <button type="button" class="arcade-toast-btn" id="toast-close" title="Schließen">✕</button>
             `);
             const btnName = document.getElementById('toast-set-name');
             if (btnName) {
@@ -772,6 +798,13 @@
             const btnBoard = document.getElementById('toast-open-board');
             if (btnBoard) {
               btnBoard.addEventListener('click', () => window.ArcadeScores.openLeaderboardModal(gameId));
+            }
+            const btnClose = document.getElementById('toast-close');
+            if (btnClose) {
+              btnClose.addEventListener('click', () => {
+                const el = document.getElementById('arcade-global-toast');
+                if (el) el.remove();
+              });
             }
           }
         })
