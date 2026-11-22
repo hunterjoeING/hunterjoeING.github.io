@@ -998,7 +998,8 @@
         const mat = new THREE.SpriteMaterial({
           map: texture,
           transparent: true,
-          depthTest: true
+          depthTest: true,
+          depthWrite: false
         });
         spriteMaterialCache.set(key, mat);
         return mat;
@@ -1099,7 +1100,8 @@
         const mat = new THREE.SpriteMaterial({
           map: texture,
           transparent: true,
-          depthTest: true
+          depthTest: true,
+          depthWrite: false
         });
         spriteMaterialCache.set(key, mat);
         return mat;
@@ -1747,6 +1749,8 @@
           if (hitCell.flagged) {
             hoveredPrevWireMat = hoveredCell.wireframe.material;
             hoveredCell.wireframe.material = lineMatGhostHover;
+          } else if (hitCell.revealed && hitCell.sprite) {
+            hitCell.sprite.scale.set(0.92, 0.92, 0.92);
           } else {
             hoveredPrevMeshMat = hoveredCell.mesh.material;
             hoveredCell.mesh.material = matHover;
@@ -1772,6 +1776,9 @@
           }
           if (hoveredPrevWireMat !== null) {
             hoveredCell.wireframe.material = hoveredPrevWireMat;
+          }
+          if (hoveredCell.revealed && !hoveredCell.isMine && hoveredCell.sprite) {
+            hoveredCell.sprite.scale.set(0.76, 0.76, 0.76);
           }
         }
         hoveredCell = null;
