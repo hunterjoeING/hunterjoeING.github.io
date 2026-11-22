@@ -268,7 +268,7 @@
         </span>
         <span class="zb-pill">🌊 Welle: <strong id="hud-wave">1</strong></span>
         <span class="zb-pill">⚡ Kadenz: <strong id="hud-rate">1.0×</strong></span>
-        <span class="zb-pill">🔥 Waffe: <strong id="hud-weapon">Standard</strong></span>
+        <span class="zb-pill">🔥 Waffe: <strong id="hud-weapon">Karabiner</strong></span>
         <span class="zb-pill">🛡️ Schild: <strong id="hud-shield">0</strong></span>
         <span class="zb-pill">⭐ Punkte: <strong id="hud-score">0</strong></span>
       </div>
@@ -290,7 +290,10 @@
             <strong>Steuerung:</strong><br>
             Finger / Maus direkt ziehen <b>oder</b> <b>← / → / A / D</b>
           </p>
-          <button id="ov-btn" class="primary-btn" onclick="startGame()">🔥 Welle starten!</button>
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <button id="ov-btn" class="primary-btn" onclick="startGame()">🔥 Welle starten!</button>
+            <button id="ov-board-btn" type="button" class="secondary-btn hidden" onclick="if(window.ArcadeScores)ArcadeScores.openLeaderboardModal('zombie')">🏆 Bestenliste</button>
+          </div>
         </div>
       </div>
     </div>
