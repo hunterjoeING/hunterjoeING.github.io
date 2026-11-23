@@ -15,7 +15,13 @@ export class BootScene extends Phaser.Scene {
 
   create(): void {
     generateAllPixelTextures(this);
+    const preview =
+      typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('erpreview');
     this.bridge.onBootReady();
+    if (preview) {
+      this.scene.stop();
+      return;
+    }
     this.scene.start('EuropeMapScene', { bridge: this.bridge });
   }
 }

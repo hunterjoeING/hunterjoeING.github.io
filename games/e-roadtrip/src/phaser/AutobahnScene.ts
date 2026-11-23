@@ -3,311 +3,612 @@ import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap'
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
 import { defaultLegSpeedKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
-import { ChargerStation } from '../types';
+import { ChargerStation, WeatherKind } from '../types';
+import {
+  HighwayCar,
+  baseSpeed,
+  laneIsClear,
+  leadVehicle,
+  preferredPlayerLane,
+  rosterForRisk,
+  stepHighwayTraffic,
+  textureForKind
+} from './AutobahnTraffic';
 import { ERoadtripBridge } from './GameBridge';
+import { hashString } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
 
-interface AutobahnNpc {
+interface WorkZone {
+  startKm: number;
+  endKm: number;
+  limit: 60 | 80;
+}
+
+interface LampPost {
   sprite: Phaser.GameObjects.Image;
-  lane: number;
-  speedRel: number;
+  glow?: Phaser.GameObjects.Image;
+  side: -1 | 1;
+  along: number;
+}
+
+function workZoneFor(edgeId: string, distanceKm: number, force: boolean): WorkZone | null {
+  if (!force && distanceKm < 45) return null;
+  const h = hashString(edgeId);
+  if (!force && h % 2 === 1) return null;
+  const limit: 60 | 80 = h % 3 === 0 ? 60 : 80;
+  const span = limit === 60 ? 5.5 : 7.5;
+  const start = force ? Math.min(12, distanceKm * 0.22) : (0.28 + (h % 4) * 0.07) * distanceKm;
+  const end = Math.min(distanceKm - 4, start + span);
+  if (end - start < 3) return null;
+  return { startKm: start, endKm: end, limit };
 }
 
 export class AutobahnScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
+  private previewWeather?: WeatherKind;
+  private previewRisk?: number;
+  private forceWorkZone = false;
+
   private playerCar!: Phaser.GameObjects.Image;
-  private headlightGfx!: Phaser.GameObjects.Graphics;
+  private playerReflection?: Phaser.GameObjects.Image;
+  private playerHeadlight?: Phaser.GameObjects.Image;
+  private playerTaillight?: Phaser.GameObjects.Image;
+  private playerBlinkL?: Phaser.GameObjects.Image;
+  private playerBlinkR?: Phaser.GameObjects.Image;
   private nightOverlay!: Phaser.GameObjects.Rectangle;
   private roadGfx!: Phaser.GameObjects.Graphics;
-  private dashOffset = 0;
-  private targetLaneX = 0;
-  private lanesX: number[] = [];
-  private npcs: AutobahnNpc[] = [];
+  private roadPhase = 0;
+  private laneSpacing = 72;
+  private playerLane = 1;
+  private laneCooldown = 0;
+  private npcs: HighwayCar[] = [];
   private trees: Phaser.GameObjects.Image[] = [];
+  private lamps: LampPost[] = [];
+  private shimmers: Phaser.GameObjects.Image[] = [];
   private rainDrops: Phaser.GameObjects.Image[] = [];
+  private splashes: Phaser.GameObjects.Image[] = [];
+  private beacons: Phaser.GameObjects.Image[] = [];
+  private baken: Phaser.GameObjects.Image[] = [];
+  private signBoard?: Phaser.GameObjects.Container;
   private gantryObj?: Phaser.GameObjects.Container;
   private hudTickAccum = 0;
   private eventCooldownSec = 4;
+  private builtLeg = -1;
+  private trafficRisk = 0.2;
+  private isMobilePerf = false;
   private resizeHandler?: (gameSize: Phaser.Structs.Size) => void;
 
   constructor() {
     super({ key: 'AutobahnScene' });
   }
 
-  init(data: { bridge: ERoadtripBridge }): void {
+  init(data: {
+    bridge: ERoadtripBridge;
+    previewWeather?: WeatherKind;
+    previewRisk?: number;
+    forceWorkZone?: boolean;
+  }): void {
     this.bridge = data.bridge;
+    this.previewWeather = data.previewWeather;
+    this.previewRisk = data.previewRisk;
+    this.forceWorkZone = !!data.forceWorkZone;
+    this.npcs = [];
+    this.trees = [];
+    this.lamps = [];
+    this.shimmers = [];
+    this.rainDrops = [];
+    this.splashes = [];
+    this.beacons = [];
+    this.baken = [];
+    this.builtLeg = -1;
+    this.playerLane = 1;
+    this.laneCooldown = 0;
+    this.roadPhase = 40;
+    this.hudTickAccum = 0;
+    this.eventCooldownSec = 4;
   }
 
   create(): void {
     const w = this.scale.width;
     const h = this.scale.height;
+    this.isMobilePerf =
+      w < 640 || (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0 && w < 900);
+    this.layout(w);
+    this.roadGfx = this.add.graphics().setDepth(0);
+    this.drawRoad(w, h, false);
 
-    this.roadGfx = this.add.graphics();
-    this.computeLaneGeometry(w);
-    this.drawRoadBackdrop(w, h);
-
-    // Side trees scrolling past
-    this.trees = [];
-    for (let i = 0; i < 18; i++) {
-      const sideLeft = i % 2 === 0;
-      const tx = sideLeft
-        ? Phaser.Math.Between(18, Math.max(24, this.lanesX[0] - 68))
-        : Phaser.Math.Between(Math.min(w - 24, this.lanesX[2] + 68), w - 18);
-      const tree = this.add.image(tx, Phaser.Math.Between(0, h), 'pixel_tree');
-      tree.setScale(Phaser.Math.FloatBetween(0.9, 1.35));
-      tree.setDepth(2);
+    const treeCount = this.isMobilePerf ? 8 : 14;
+    for (let i = 0; i < treeCount; i++) {
+      const tree = this.add.image(0, (i / treeCount) * h, 'pixel_tree').setDepth(2);
+      tree.setData('side', i % 2 === 0 ? -1 : 1);
+      tree.setData('along', (i * 137) % (h + 40));
+      tree.setScale(this.isMobilePerf ? 0.85 : 1);
       this.trees.push(tree);
     }
 
-    // NPC traffic
-    this.npcs = [];
-    const npcKeys = ['npc_truck', 'npc_sedan_blue', 'npc_van_white', 'npc_compact_green', 'npc_police'];
-    for (let i = 0; i < 7; i++) {
-      const lane = i % 3;
-      const texKey = lane === 2 ? 'npc_truck' : npcKeys[i % npcKeys.length];
-      const sprite = this.add.image(this.lanesX[lane], Phaser.Math.Between(-100, h), texKey);
-      sprite.setScale(0.92);
-      sprite.setDepth(5);
-      this.npcs.push({
-        sprite,
-        lane,
-        speedRel: lane === 2 ? 0.42 : lane === 1 ? 0.72 : 0.9
-      });
+    const lampCount = this.isMobilePerf ? 8 : 14;
+    for (let i = 0; i < lampCount; i++) {
+      const sprite = this.add.image(0, 0, 'streetlamp').setDepth(6);
+      const glow = this.isMobilePerf && i % 2 === 1
+        ? undefined
+        : this.add
+            .image(0, 0, 'light_glow_soft')
+            .setTint(0xfbbf24)
+            .setBlendMode(Phaser.BlendModes.ADD)
+            .setScale(this.isMobilePerf ? 0.7 : 1.05)
+            .setDepth(13)
+            .setAlpha(0);
+      this.lamps.push({ sprite, glow, side: i % 2 === 0 ? -1 : 1, along: (i * 180) % (h + 60) });
     }
 
-    // Player car
-    this.targetLaneX = this.lanesX[1];
-    this.playerCar = this.add.image(this.targetLaneX, h * 0.72, `car_${this.bridge.plan.vehicleId}`);
-    this.playerCar.setDepth(10);
-
-    // Headlights (visible at dusk/night/rain)
-    this.headlightGfx = this.add.graphics().setDepth(9);
-
-    // Night / weather ambient overlay
-    this.nightOverlay = this.add.rectangle(w / 2, h / 2, w, h, 0x020617, 0).setDepth(14);
-
-    // Rain particles
-    this.rainDrops = [];
-    for (let i = 0; i < 45; i++) {
-      const d = this.add.image(Phaser.Math.Between(0, w), Phaser.Math.Between(0, h), 'rain_drop');
-      d.setDepth(16).setAlpha(0);
-      this.rainDrops.push(d);
+    const shimmerCount = this.isMobilePerf ? 2 : 6;
+    for (let i = 0; i < shimmerCount; i++) {
+      this.shimmers.push(
+        this.add
+          .image(0, (i / shimmerCount) * h, 'wet_shimmer')
+          .setBlendMode(Phaser.BlendModes.ADD)
+          .setDepth(2)
+          .setAlpha(0)
+          .setTint(0x93c5fd)
+      );
     }
 
-    this.createGantrySign(w);
+    this.playerLane = 1;
+    this.playerCar = this.add.image(w / 2, h * 0.72, `car_${this.bridge.plan.vehicleId}`).setDepth(10);
+    this.playerReflection = this.add
+      .image(this.playerCar.x, this.playerCar.y + 8, this.playerCar.texture.key)
+      .setTint(0x93c5fd)
+      .setScale(0.96, -0.7)
+      .setDepth(3)
+      .setAlpha(0);
+    this.playerHeadlight = this.add
+      .image(this.playerCar.x, this.playerCar.y, 'headlight_cone')
+      .setOrigin(0.5, 0.95)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(13.2)
+      .setAlpha(0);
+    this.playerTaillight = this.add
+      .image(this.playerCar.x, this.playerCar.y, 'light_glow_soft')
+      .setTint(0xef4444)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setScale(0.45)
+      .setDepth(13.1)
+      .setAlpha(0);
+    this.playerBlinkL = this.add.image(0, 0, 'blink_lamp').setDepth(13.4).setAlpha(0);
+    this.playerBlinkR = this.add.image(0, 0, 'blink_lamp').setDepth(13.4).setAlpha(0);
+
+    this.nightOverlay = this.add.rectangle(w / 2, h / 2, w, h, 0x020617, 0).setDepth(12);
+
+    const rainCount = this.isMobilePerf ? 16 : 46;
+    for (let i = 0; i < rainCount; i++) {
+      this.rainDrops.push(
+        this.add.image(Phaser.Math.Between(0, w), Phaser.Math.Between(0, h), 'rain_streak').setDepth(16).setAlpha(0)
+      );
+    }
+    const splashCount = this.isMobilePerf ? 0 : 8;
+    for (let i = 0; i < splashCount; i++) {
+      this.splashes.push(this.add.image(0, 0, 'rain_splash').setDepth(4).setAlpha(0));
+    }
+    for (let i = 0; i < (this.isMobilePerf ? 5 : 8); i++) {
+      this.beacons.push(this.add.image(0, 0, 'beacon_lamp').setDepth(8).setVisible(false));
+      this.baken.push(this.add.image(0, 0, 'baustelle_bake').setDepth(7).setVisible(false));
+    }
+
+    this.createGantry(w);
+    this.createWorkSign(w);
+
+    const isWebGL = this.game.renderer.type === Phaser.WEBGL;
+    if (isWebGL && !this.isMobilePerf && this.cameras.main.postFX) {
+      try {
+        this.cameras.main.postFX.addBloom(0xffffff, 1, 1, 1.08, 0.28, 2);
+      } catch {
+        // Canvas2D and some GPUs have no PostFX pipeline.
+      }
+    }
 
     this.resizeHandler = (gameSize: Phaser.Structs.Size) => {
       if (!this.scene.isActive()) return;
-      this.computeLaneGeometry(gameSize.width);
-      this.drawRoadBackdrop(gameSize.width, gameSize.height);
-      if (this.nightOverlay) {
-        this.nightOverlay.setPosition(gameSize.width / 2, gameSize.height / 2);
-        this.nightOverlay.setSize(gameSize.width, gameSize.height);
-      }
-      if (this.playerCar) {
-        this.playerCar.y = gameSize.height * 0.72;
-      }
+      this.layout(gameSize.width);
+      this.nightOverlay.setPosition(gameSize.width / 2, gameSize.height / 2);
+      this.nightOverlay.setSize(gameSize.width, gameSize.height);
+      if (this.playerCar) this.playerCar.y = gameSize.height * 0.72;
     };
     this.scale.on('resize', this.resizeHandler);
-
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      if (this.resizeHandler) {
-        this.scale.off('resize', this.resizeHandler);
-        this.resizeHandler = undefined;
+      if (this.resizeHandler) this.scale.off('resize', this.resizeHandler);
+      this.resizeHandler = undefined;
+      if (this.cameras?.main?.postFX) {
+        try {
+          this.cameras.main.postFX.clear();
+        } catch {
+          // ignore
+        }
       }
     });
   }
 
-  private computeLaneGeometry(w: number): void {
-    const cx = w / 2;
-    const laneSpacing = Math.min(58, Math.max(42, w * 0.08));
-    this.lanesX = [cx - laneSpacing, cx, cx + laneSpacing];
+  private layout(w: number): void {
+    this.laneSpacing = Math.min(78, Math.max(62, w * 0.072));
   }
 
-  private drawRoadBackdrop(w: number, h: number): void {
+  private curveAt(y: number): number {
+    const amp = Math.min(58, this.scale.width * 0.062);
+    return Math.sin((y - this.roadPhase) / 560) * amp + Math.sin((y - this.roadPhase) / 1240 + 0.8) * amp * 0.4;
+  }
+
+  private laneCenter(lane: number, y: number, rightOpen: boolean): number {
+    const mid = this.scale.width / 2 + this.curveAt(y);
+    const s = this.laneSpacing;
+    if (!rightOpen) {
+      const left = mid - s * 0.28;
+      return lane <= 0 ? left - s * 0.05 : left + s;
+    }
+    return mid + (lane - 1) * s;
+  }
+
+  private laneCenterF(pos: number, y: number, rightOpen: boolean): number {
+    const maxLane = rightOpen ? 2 : 1;
+    const clamped = Phaser.Math.Clamp(pos, 0, maxLane);
+    const a = Math.floor(clamped);
+    const b = Math.min(maxLane, Math.ceil(clamped));
+    const t = clamped - a;
+    return this.laneCenter(a, y, rightOpen) + (this.laneCenter(b, y, rightOpen) - this.laneCenter(a, y, rightOpen)) * t;
+  }
+
+  private tangent(y: number): number {
+    const dx = this.curveAt(y - 28) - this.curveAt(y + 28);
+    return Math.atan2(dx, -56);
+  }
+
+  private drawRoad(w: number, h: number, work: boolean): void {
     const g = this.roadGfx;
     g.clear();
-    // Green countryside grass
-    g.fillStyle(0x1f4529, 1);
+    g.fillStyle(0x14532d, 1);
     g.fillRect(0, 0, w, h);
 
-    const roadHalfW = (this.lanesX[2] - this.lanesX[0]) * 0.85 + 36;
-    const cx = w / 2;
+    const step = this.isMobilePerf ? 28 : 16;
+    const left: Array<{ x: number; y: number }> = [];
+    const right: Array<{ x: number; y: number }> = [];
+    const shoulderL: Array<{ x: number; y: number }> = [];
+    const shoulderR: Array<{ x: number; y: number }> = [];
+    const half = work ? this.laneSpacing * 1.2 + 18 : this.laneSpacing * 1.55 + 26;
+    for (let y = -20; y <= h + 20; y += step) {
+      const mid = w / 2 + this.curveAt(y);
+      const dx = this.curveAt(y + 8) - this.curveAt(y - 8);
+      const len = Math.hypot(dx, 16) || 1;
+      const nx = 16 / len;
+      const ny = -dx / len;
+      left.push({ x: mid - nx * half, y: y - ny * half });
+      right.push({ x: mid + nx * half, y: y + ny * half });
+      shoulderL.push({ x: mid - nx * (half + 16), y: y - ny * (half + 16) });
+      shoulderR.push({ x: mid + nx * (half + 16), y: y + ny * (half + 16) });
+    }
+    g.fillStyle(0x334155, 1);
+    g.fillPoints(shoulderL.concat(shoulderR.slice().reverse()), true);
+    g.fillStyle(work ? 0x0b1220 : 0x172033, 1);
+    g.fillPoints(left.concat(right.slice().reverse()), true);
 
-    // Gravel shoulders
-    g.fillStyle(0x475569, 1);
-    g.fillRect(cx - roadHalfW - 14, 0, roadHalfW * 2 + 28, h);
+    g.lineStyle(3, 0xf8fafc, 0.88);
+    g.beginPath();
+    g.moveTo(left[0].x + 6, left[0].y);
+    left.forEach(p => g.lineTo(p.x + 6, p.y));
+    g.strokePath();
+    g.beginPath();
+    g.moveTo(right[0].x - 6, right[0].y);
+    right.forEach(p => g.lineTo(p.x - 6, p.y));
+    g.strokePath();
 
-    // Asphalt Autobahn
-    g.fillStyle(0x1e293b, 1);
-    g.fillRect(cx - roadHalfW, 0, roadHalfW * 2, h);
+    if (work) {
+      g.lineStyle(4, 0xfacc15, 0.9);
+      g.beginPath();
+      g.moveTo(right[0].x - 14, right[0].y);
+      right.forEach(p => g.lineTo(p.x - 14, p.y));
+      g.strokePath();
+    }
 
-    // Guardrails
-    g.fillStyle(0xcbd5e1, 1);
-    g.fillRect(cx - roadHalfW - 4, 0, 4, h);
-    g.fillRect(cx + roadHalfW, 0, 4, h);
-
-    // White edge lines
-    g.fillStyle(0xf8fafc, 0.9);
-    g.fillRect(cx - roadHalfW + 8, 0, 3, h);
-    g.fillRect(cx + roadHalfW - 11, 0, 3, h);
+    g.fillStyle(0xf8fafc, 0.88);
+    const dash = 52;
+    const phase = this.roadPhase % dash;
+    for (let y = -dash + phase; y < h + dash; y += dash) {
+      const gaps = work ? [0] : [0, 1];
+      for (const gap of gaps) {
+        const x = (this.laneCenter(gap, y, !work) + this.laneCenter(gap + 1, y, !work)) / 2;
+        g.fillRect(x - 1.5, y, 3, 24);
+      }
+    }
   }
 
-  private createGantrySign(w: number): void {
-    const cont = this.add.container(w / 2, -60).setDepth(13);
-    const bar = this.add.rectangle(0, 0, 260, 24, 0x1d4ed8).setStrokeStyle(2, 0xf8fafc);
+  private createGantry(w: number): void {
+    const cont = this.add.container(w / 2, -80).setDepth(17);
+    const bar = this.add.rectangle(0, 0, 280, 26, 0x1d4ed8).setStrokeStyle(2, 0xf8fafc);
     const txt = this.add
-      .text(0, 0, 'A2  HANNOVER  ·  RICHTGESCHW. 130', {
-        fontFamily: 'monospace',
-        fontSize: '10px',
-        color: '#ffffff'
-      })
+      .text(0, 0, 'AUTOBAHN', { fontFamily: 'monospace', fontSize: '11px', color: '#ffffff' })
       .setOrigin(0.5);
     cont.add([bar, txt]);
     this.gantryObj = cont;
   }
 
-  update(_time: number, delta: number): void {
-    const run = this.bridge.runState;
-    if (!run) return;
+  private createWorkSign(w: number): void {
+    const cont = this.add.container(w / 2, 78).setDepth(17).setVisible(false);
+    const plate = this.add.rectangle(0, 0, 168, 46, 0x111827).setStrokeStyle(3, 0xfacc15);
+    const disc = this.add.circle(52, 0, 16, 0xffffff).setStrokeStyle(4, 0xdc2626);
+    const limit = this.add
+      .text(52, 0, '80', { fontFamily: 'sans-serif', fontSize: '14px', fontStyle: 'bold', color: '#111827' })
+      .setOrigin(0.5);
+    const label = this.add
+      .text(-28, 0, 'BAUSTELLE', { fontFamily: 'monospace', fontSize: '11px', color: '#fef08a' })
+      .setOrigin(0.5);
+    cont.add([plate, label, disc, limit]);
+    cont.setData('limit', limit);
+    this.signBoard = cont;
+  }
 
-    const dtSec = Math.min(0.05, delta / 1000);
-    const w = this.scale.width;
+  private rebuildTraffic(risk: number): void {
+    for (const car of this.npcs) {
+      car.sprite.destroy();
+      car.reflection?.destroy();
+      car.headlight?.destroy();
+      car.taillight?.destroy();
+      car.blinkL?.destroy();
+      car.blinkR?.destroy();
+    }
+    this.npcs = [];
     const h = this.scale.height;
+    const kinds = rosterForRisk(risk, this.isMobilePerf);
+    kinds.forEach((kind, i) => {
+      const home = kind === 'truck' ? (risk >= 0.36 && i % 4 === 0 ? 1 : 2) : kind === 'fast' ? 0 : 1;
+      const sprite = this.add.image(0, -80 + (i * (h + 160)) / kinds.length, textureForKind(kind, i)).setDepth(8);
+      if (kind === 'truck') sprite.setScale(0.9);
+      const reflection = this.isMobilePerf
+        ? undefined
+        : this.add.image(0, 0, sprite.texture.key).setTint(0x93c5fd).setScale(0.9, -0.62).setAlpha(0).setDepth(3);
+      const headlight = this.add
+        .image(0, 0, 'headlight_cone')
+        .setOrigin(0.5, 0.95)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setScale(0.72, 0.7)
+        .setDepth(13)
+        .setAlpha(0);
+      const taillight = this.add
+        .image(0, 0, 'light_glow_soft')
+        .setTint(0xef4444)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setScale(0.32)
+        .setDepth(13)
+        .setAlpha(0);
+      const blinkL = this.add.image(0, 0, 'blink_lamp').setDepth(13.3).setAlpha(0);
+      const blinkR = this.add.image(0, 0, 'blink_lamp').setDepth(13.3).setAlpha(0);
+      const desired = baseSpeed(kind);
+      this.npcs.push({
+        sprite,
+        reflection,
+        headlight,
+        taillight,
+        blinkL,
+        blinkR,
+        lanePos: home,
+        targetLane: home,
+        pendingLane: null,
+        kind,
+        speedKmh: desired,
+        baseDesired: desired,
+        blinkDir: 0,
+        blinkHold: 0,
+        reckless: kind === 'fast' && i % 3 === 0,
+        cooldown: i * 0.4,
+        pullTimer: 1.5 + (i % 4),
+        burstTimer: 1 + (i % 5) * 0.4,
+        braking: false
+      });
+    });
+  }
 
+  update(time: number, delta: number): void {
+    const run = this.bridge.runState;
+    if (!run || !this.playerCar) return;
+    const dtSec = Math.min(0.05, delta / 1000);
     if (this.bridge.paused) return;
 
+    const w = this.scale.width;
+    const h = this.scale.height;
     const activeLegs = getActiveRouteLegs(this.bridge.level, run.plan);
     const legSpec = activeLegs[run.currentLegIndex];
     if (!legSpec) return;
     const edge = getEdgeById(legSpec.edgeId);
     const vehicle = getVehicleById(run.plan.vehicleId);
     const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
-    const targetSpeed = Math.min(
-      vehicle.maxSpeedKmh,
-      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh)
-    );
-    run.currentSpeedKmh = targetSpeed;
+    const chosen = Math.min(vehicle.maxSpeedKmh, lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh));
 
-    // Weather & day/night calculation
-    const weather = legSpec.weatherOverride || edge.defaultWeather;
+    const weather = this.previewWeather || legSpec.weatherOverride || edge.defaultWeather;
     run.activeWeather = weather;
     const clockHour = (this.bridge.level.departureTimeHour + run.elapsedMinutes / 60) % 24;
     run.isNight = !!legSpec.isNightLeg || clockHour >= 19.2 || clockHour < 6.0;
 
-    // Visual road scroll
-    const scrollPxPerSec = (targetSpeed / 120) * 320 * (this.bridge.timeScale >= 15 ? 1.55 : this.bridge.timeScale >= 5 ? 1.25 : 1);
-    this.dashOffset = (this.dashOffset + scrollPxPerSec * dtSec) % 48;
-
-    this.drawRoadBackdrop(w, h);
-    // Dashed lane dividers
-    this.roadGfx.fillStyle(0xf8fafc, 0.85);
-    const sep1 = (this.lanesX[0] + this.lanesX[1]) / 2;
-    const sep2 = (this.lanesX[1] + this.lanesX[2]) / 2;
-    for (let y = -48 + this.dashOffset; y < h; y += 48) {
-      this.roadGfx.fillRect(sep1 - 1.5, y, 3, 24);
-      this.roadGfx.fillRect(sep2 - 1.5, y, 3, 24);
+    if (this.builtLeg !== run.currentLegIndex) {
+      this.builtLeg = run.currentLegIndex;
+      this.trafficRisk = this.previewRisk ?? edge.baseTrafficRisk;
+      this.rebuildTraffic(this.trafficRisk);
     }
 
-    // Update trees
-    for (const t of this.trees) {
-      t.y += scrollPxPerSec * dtSec;
-      if (t.y > h + 30) t.y = -30;
+    const zone = workZoneFor(edge.id, edge.distanceKm, this.forceWorkZone);
+    const inWork = !!zone && run.legProgressKm >= zone.startKm && run.legProgressKm <= zone.endKm;
+    const capped = inWork && zone ? Math.min(chosen, zone.limit) : chosen;
+    run.currentSpeedKmh = capped;
+    run.speedCapKmh = inWork && zone ? zone.limit : undefined;
+    const rightOpen = !inWork;
+
+    const scrollBoost = this.bridge.timeScale >= 15 ? 1.35 : this.bridge.timeScale >= 5 ? 1.15 : 1;
+    const scrollPxPerSec = (capped / 120) * 280 * scrollBoost;
+    this.roadPhase += scrollPxPerSec * dtSec;
+    this.drawRoad(w, h, inWork);
+
+    for (const tree of this.trees) {
+      const along = Number(tree.getData('along')) + scrollPxPerSec * dtSec;
+      const y = ((along % (h + 50)) + (h + 50)) % (h + 50) - 20;
+      tree.setData('along', along);
+      const side = Number(tree.getData('side')) as -1 | 1;
+      const edgeX = this.laneCenter(side < 0 ? 0 : rightOpen ? 2 : 1, y, rightOpen);
+      tree.setPosition(edgeX + side * (this.laneSpacing * 1.9 + 24), y);
     }
 
-    // Update overhead gantry occasionally
+    const wet = weather === 'rain' || weather === 'storm';
+    const showLights = run.isNight || wet || clockHour >= 17.5 || clockHour < 7;
+    for (const lamp of this.lamps) {
+      lamp.along = (lamp.along + scrollPxPerSec * dtSec) % (h + 80);
+      const y = lamp.along - 20;
+      const edgeX = this.laneCenter(lamp.side < 0 ? 0 : rightOpen ? 2 : 1, y, rightOpen);
+      const x = edgeX + lamp.side * (this.laneSpacing * 1.55 + 8);
+      lamp.sprite.setPosition(x, y);
+      lamp.glow?.setPosition(x, y + 8);
+      lamp.glow?.setAlpha(showLights ? (run.isNight ? 0.55 : 0.32) : 0.12);
+    }
+
     if (this.gantryObj) {
-      this.gantryObj.x = w / 2;
-      this.gantryObj.y += scrollPxPerSec * 0.85 * dtSec;
-      if (this.gantryObj.y > h + 900) {
-        this.gantryObj.y = -80;
+      const gy = this.gantryObj.y + scrollPxPerSec * 0.9 * dtSec;
+      this.gantryObj.y = gy > h + 200 ? -90 : gy;
+      this.gantryObj.x = w / 2 + this.curveAt(this.gantryObj.y);
+      if (gy > h + 200) {
         const toCity = getCityById(legSpec.reverse ? edge.fromCityId : edge.toCityId);
         const label = this.gantryObj.list[1] as Phaser.GameObjects.Text;
-        label.setText(`${edge.highwayName}  ·  RICHTUNG ${toCity.name.toUpperCase()}`);
+        label.setText(`${edge.highwayName}  ·  ${toCity.name.toUpperCase()}`);
       }
     }
 
-    // Update NPCs and autopilot lane avoidance
-    let blockedAhead = false;
-    for (const npc of this.npcs) {
-      npc.sprite.x = this.lanesX[npc.lane];
-      const rel = scrollPxPerSec * (1 - npc.speedRel);
-      npc.sprite.y += rel * dtSec;
-      if (npc.sprite.y > h + 110) {
-        npc.sprite.y = -120;
-      }
-      if (
-        Math.abs(npc.sprite.x - this.playerCar.x) < 28 &&
-        npc.sprite.y < this.playerCar.y &&
-        this.playerCar.y - npc.sprite.y < 145
-      ) {
-        blockedAhead = true;
+    stepHighwayTraffic(this.npcs, dtSec, capped, scrollPxPerSec, h, this.trafficRisk, rightOpen);
+
+    const playerY = h * 0.72;
+    this.laneCooldown = Math.max(0, this.laneCooldown - dtSec);
+    const centered = Math.abs(this.playerCar.x - this.laneCenter(this.playerLane, playerY, rightOpen)) < 10;
+    if (centered && this.laneCooldown <= 0) {
+      const desiredLane = preferredPlayerLane(chosen, rightOpen);
+      const lead = leadVehicle(this.npcs, this.playerLane, playerY, 160);
+      const blocked = !!lead && lead.speedKmh < chosen - 8;
+      let next = this.playerLane;
+      if (!rightOpen) next = Math.min(next, 1);
+      if (blocked && next > 0 && laneIsClear(this.npcs, next - 1, playerY)) next -= 1;
+      else if (!blocked && next < desiredLane && laneIsClear(this.npcs, next + 1, playerY)) next += 1;
+      else if (!blocked && next > desiredLane && laneIsClear(this.npcs, next - 1, playerY)) next -= 1;
+      if (!rightOpen) next = Phaser.Math.Clamp(next, 0, 1);
+      if (next !== this.playerLane) {
+        this.playerLane = next;
+        this.laneCooldown = 1.05;
       }
     }
+    const playerTargetX = this.laneCenter(this.playerLane, playerY, rightOpen);
+    this.playerCar.x = Phaser.Math.Linear(this.playerCar.x, playerTargetX, 0.14);
+    this.playerCar.y = playerY;
+    const playerRot = this.tangent(playerY);
+    this.playerCar.setRotation(playerRot);
+    const blinkSide = playerTargetX - this.playerCar.x;
+    const blinkOn = Math.abs(blinkSide) > 8 && Math.sin(time * 0.02) > 0;
+    this.placeBlink(this.playerBlinkL, this.playerCar.x, playerY, playerRot, -1, blinkOn && blinkSide < 0);
+    this.placeBlink(this.playerBlinkR, this.playerCar.x, playerY, playerRot, 1, blinkOn && blinkSide > 0);
 
-    if (blockedAhead) {
-      this.targetLaneX = this.playerCar.x < this.lanesX[1] + 10 ? this.lanesX[0] : this.lanesX[1];
-    } else if (targetSpeed > 135) {
-      this.targetLaneX = this.lanesX[0]; // Fast left lane!
-    } else {
-      this.targetLaneX = this.lanesX[1];
+    const flash = Math.sin(time * 0.016) > 0;
+    for (const car of this.npcs) {
+      const y = car.sprite.y;
+      const x = this.laneCenterF(car.lanePos, y, rightOpen);
+      const rot = this.tangent(y);
+      car.sprite.setPosition(x, y);
+      car.sprite.setRotation(rot);
+      const fx = Math.sin(rot);
+      const fy = -Math.cos(rot);
+      car.reflection?.setPosition(x + 3, y + 10).setRotation(rot).setAlpha(wet ? 0.22 : 0);
+      car.headlight?.setPosition(x + fx * 18, y + fy * 18).setRotation(rot).setAlpha(showLights ? 0.55 : 0);
+      const braking = car.braking || car.speedKmh < car.baseDesired - 25;
+      car.taillight?.setPosition(x - fx * 20, y - fy * 20).setAlpha(braking ? 0.75 : showLights ? 0.4 : 0.2);
+      const showL = car.blinkDir < 0 && (car.reckless ? false : flash || car.blinkHold > 0);
+      const showR = car.blinkDir > 0 && (car.reckless ? false : flash || car.blinkHold > 0);
+      if (car.blinkL) this.placeBlink(car.blinkL, x, y, rot, -1, showL && !car.reckless);
+      if (car.blinkR) this.placeBlink(car.blinkR, x, y, rot, 1, showR && !car.reckless);
     }
-    this.playerCar.x = Phaser.Math.Linear(this.playerCar.x, this.targetLaneX, 0.08);
 
-    // Day/night tint & headlights
     let darkness = 0;
-    if (clockHour >= 18.0 && clockHour < 20.0) darkness = ((clockHour - 18.0) / 2.0) * 0.56;
-    else if (clockHour >= 20.0 || clockHour < 5.5) darkness = 0.56;
-    else if (weather === 'rain') darkness = 0.16;
-
+    if (clockHour >= 18 && clockHour < 20) darkness = ((clockHour - 18) / 2) * 0.5;
+    else if (clockHour >= 20 || clockHour < 5.5) darkness = 0.55;
+    else if (wet) darkness = 0.2;
     this.nightOverlay.setAlpha(darkness);
-    this.headlightGfx.clear();
-    if (darkness > 0.14) {
-      this.headlightGfx.fillStyle(0xfef08a, 0.22);
-      this.headlightGfx.fillTriangle(
-        this.playerCar.x - 9,
-        this.playerCar.y - 22,
-        this.playerCar.x - 42,
-        this.playerCar.y - 170,
-        this.playerCar.x + 2,
-        this.playerCar.y - 170
-      );
-      this.headlightGfx.fillTriangle(
-        this.playerCar.x + 9,
-        this.playerCar.y - 22,
-        this.playerCar.x - 2,
-        this.playerCar.y - 170,
-        this.playerCar.x + 42,
-        this.playerCar.y - 170
-      );
+    if (this.playerReflection) {
+      this.playerReflection.setPosition(this.playerCar.x + 3, playerY + 10);
+      this.playerReflection.setRotation(playerRot);
+      this.playerReflection.setAlpha(wet ? 0.26 : 0);
+    }
+    if (this.playerHeadlight) {
+      const fx = Math.sin(playerRot);
+      const fy = -Math.cos(playerRot);
+      this.playerHeadlight.setPosition(this.playerCar.x + fx * 20, playerY + fy * 20);
+      this.playerHeadlight.setRotation(playerRot);
+      this.playerHeadlight.setAlpha(showLights ? 0.7 : 0);
+    }
+    if (this.playerTaillight) {
+      const fx = Math.sin(playerRot);
+      const fy = -Math.cos(playerRot);
+      this.playerTaillight.setPosition(this.playerCar.x - fx * 18, playerY - fy * 18);
+      this.playerTaillight.setAlpha(inWork ? 0.7 : 0.35);
     }
 
-    // Rain particles
-    const isRain = weather === 'rain' || weather === 'storm';
-    for (const d of this.rainDrops) {
-      if (!isRain) {
-        d.setAlpha(0);
-      } else {
-        d.setAlpha(0.75);
-        d.y += 560 * dtSec;
-        d.x -= 90 * dtSec;
-        if (d.y > h + 10) d.y = -10;
-        if (d.x < -10) d.x = w + 10;
+    for (let i = 0; i < this.shimmers.length; i++) {
+      const s = this.shimmers[i];
+      s.y += scrollPxPerSec * dtSec;
+      if (s.y > h + 20) s.y = -20;
+      s.x = w / 2 + this.curveAt(s.y);
+      s.setAlpha(wet ? 0.22 : 0.05);
+    }
+
+    for (const drop of this.rainDrops) {
+      if (!wet) {
+        drop.setAlpha(0);
+        continue;
+      }
+      drop.setAlpha(0.72);
+      drop.y += (520 + capped) * dtSec;
+      drop.x -= 80 * dtSec;
+      if (drop.y > h + 12) {
+        drop.y = -12;
+        drop.x = Phaser.Math.Between(0, w);
+      }
+      if (drop.x < -12) drop.x = w + 8;
+    }
+    for (let i = 0; i < this.splashes.length; i++) {
+      const sp = this.splashes[i];
+      if (!wet) {
+        sp.setAlpha(0);
+        continue;
+      }
+      const prog = ((time * 0.001 + i * 0.17) % 0.5) / 0.5;
+      sp.setPosition(Phaser.Math.Between(40, w - 40), ((i * 90 + this.roadPhase) % h));
+      sp.setScale(0.4 + prog);
+      sp.setAlpha((1 - prog) * 0.35);
+    }
+
+    const showWork = !!zone && run.legProgressKm >= zone.startKm - 1.2 && run.legProgressKm <= zone.endKm + 0.3;
+    if (this.signBoard) {
+      this.signBoard.setVisible(showWork);
+      if (showWork && zone) {
+        this.signBoard.x = w / 2 + this.curveAt(78);
+        const limitText = this.signBoard.getData('limit') as Phaser.GameObjects.Text;
+        limitText.setText(String(zone.limit));
       }
     }
+    for (let i = 0; i < this.beacons.length; i++) {
+      const y = (this.roadPhase * 0.55 + i * 130) % (h + 40) - 20;
+      const edgeX = this.laneCenter(rightOpen ? 2 : 1, y, rightOpen);
+      this.beacons[i].setVisible(showWork);
+      this.beacons[i].setPosition(edgeX + this.laneSpacing * 0.72, y);
+      this.beacons[i].setAlpha(showWork && Math.sin(time * 0.02 + i) > 0 ? 1 : 0.25);
+      this.baken[i].setVisible(showWork);
+      this.baken[i].setPosition(edgeX + this.laneSpacing * 0.95, y + 18);
+    }
 
-    // === Simulation Physics Step ===
-    // 1x = ~2.2 sim minutes per real second, 5x = ~11 min/s, 15x = ~32 min/s
-    const simMinPerRealSec = this.bridge.timeScale === 15 ? 28 : this.bridge.timeScale === 5 ? 11 : 2.8;
+    const simMinPerRealSec = inWork ? 0.85 : this.bridge.timeScale === 15 ? 28 : this.bridge.timeScale === 5 ? 11 : 2.8;
     const simMinutes = simMinPerRealSec * dtSec;
-    const effectiveSpeed = targetSpeed * 0.92;
+    const effectiveSpeed = capped * 0.92;
     const deltaKm = (effectiveSpeed / 60) * simMinutes;
-
     const elevGain = legSpec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = legSpec.reverse ? edge.elevationGainM : edge.elevationLossM;
     const cons100 = computeConsumptionKwh100(
       vehicle,
-      targetSpeed,
+      capped,
       weather,
       elevGain,
       elevLoss,
@@ -315,22 +616,19 @@ export class AutobahnScene extends Phaser.Scene {
       this.bridge.level.trailerWeightKg || 0,
       !!run.plan.behindTruckMode
     );
-
     const kwhBurned = (deltaKm / 100) * cons100;
-    const socDelta = (kwhBurned / vehicle.batteryKwh) * 100;
-
     run.legProgressKm += deltaKm;
     run.distanceDrivenKm += deltaKm;
     run.energyUsedKwh += kwhBurned;
-    run.socPct = Math.max(0, run.socPct - socDelta);
+    run.socPct = Math.max(0, run.socPct - (kwhBurned / vehicle.batteryKwh) * 100);
     run.elapsedMinutes += simMinutes;
     run.bladderNeed = Math.min(100, run.bladderNeed + simMinutes * 0.35);
 
-    // Stress evolves with high speed, bad weather, low SoC, and high bladder need
     const comfortDamping = 1 - (vehicle.comfortRating - 5) * 0.04;
     let stressDeltaPerMin = 0.02;
-    if (targetSpeed > 145) stressDeltaPerMin += 0.14;
+    if (chosen > 145) stressDeltaPerMin += 0.14;
     if (weather === 'rain' || weather === 'snow') stressDeltaPerMin += 0.06;
+    if (inWork) stressDeltaPerMin += 0.05;
     if (run.socPct < 15) stressDeltaPerMin += 0.28;
     if (run.bladderNeed > 75) stressDeltaPerMin += 0.12;
     run.stress = Phaser.Math.Clamp(
@@ -340,7 +638,6 @@ export class AutobahnScene extends Phaser.Scene {
     );
     run.peakStress = Math.max(run.peakStress, run.stress);
 
-    // Check battery depletion
     if (run.socPct <= 0.15) {
       this.bridge.paused = true;
       SoundFX.alert();
@@ -348,7 +645,6 @@ export class AutobahnScene extends Phaser.Scene {
       return;
     }
 
-    // Check planned charger stop along this leg
     const legRatio = Math.min(1, run.legProgressKm / edge.distanceKm);
     const pendingStop = run.plan.plannedStops
       .filter(s => s.legIndex === run.currentLegIndex && !run.completedStopIds.includes(s.chargerId) && !run.skippedStopIds.includes(s.chargerId))
@@ -358,7 +654,7 @@ export class AutobahnScene extends Phaser.Scene {
         const p = legSpec.reverse ? 1 - st.edgeProgress : st.edgeProgress;
         return { stop: s, station: st, p };
       })
-      .filter((x): x is { stop: typeof run.plan.plannedStops[number]; station: ChargerStation; p: number } => x !== null)
+      .filter((x): x is { stop: (typeof run.plan.plannedStops)[number]; station: ChargerStation; p: number } => x !== null)
       .sort((a, b) => a.p - b.p)[0];
 
     if (pendingStop && legRatio >= pendingStop.p) {
@@ -368,10 +664,8 @@ export class AutobahnScene extends Phaser.Scene {
       return;
     }
 
-    // Check dynamic events & Wife Stress Dialogues
     this.eventCooldownSec -= dtSec;
     if (this.eventCooldownSec <= 0) {
-      // Trigger Wife Stress Dialogue when stress rises OR SoC gets tight on return
       if (
         this.bridge.level.passengers.hasWife &&
         !run.wifeDialogueTriggered &&
@@ -382,15 +676,9 @@ export class AutobahnScene extends Phaser.Scene {
         this.eventCooldownSec = 8;
         this.bridge.paused = true;
         SoundFX.alert();
-        const dlgId =
-          run.socPct < 24
-            ? 'dlg_diesel_remark'
-            : this.bridge.level.wifeDialogueIds[0];
-        this.bridge.onWifeDialogueTrigger(dlgId);
+        this.bridge.onWifeDialogueTrigger(run.socPct < 24 ? 'dlg_diesel_remark' : this.bridge.level.wifeDialogueIds[0]);
         return;
       }
-
-      // Route-aware dynamic events (high-traffic routes hit jams reliably; low-traffic routes avoid them!)
       if (run.currentLegIndex === 1 && legRatio > 0.55 && !run.triggeredEventIds.includes('evt_stau_kamen')) {
         run.triggeredEventIds.push('evt_stau_kamen');
         const hitJam = edge.baseTrafficRisk >= 0.35 || (edge.baseTrafficRisk >= 0.22 && Math.random() < 0.45);
@@ -426,7 +714,7 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_wc_coffee');
         return;
       }
-      if (targetSpeed > 138 && !run.triggeredEventIds.includes('evt_speed_trap')) {
+      if (chosen > 138 && !run.triggeredEventIds.includes('evt_speed_trap')) {
         run.triggeredEventIds.push('evt_speed_trap');
         this.eventCooldownSec = 7;
         this.bridge.paused = true;
@@ -436,15 +724,12 @@ export class AutobahnScene extends Phaser.Scene {
       }
     }
 
-    // Check leg completion
     if (run.legProgressKm >= edge.distanceKm) {
-      if (legSpec.citySegmentAtEnd) {
+      const preset = legSpec.citySegmentAtEnd;
+      if (preset === 'hannover_messe' || preset === 'aachen_finish' || preset === 'koeln_ring') {
         this.bridge.paused = true;
-        const preset = legSpec.citySegmentAtEnd;
-        if (preset === 'hannover_messe' || preset === 'aachen_finish') {
-          this.bridge.onTriggerCitySegment(preset);
-          return;
-        }
+        this.bridge.onTriggerCitySegment(preset);
+        return;
       }
       if (run.currentLegIndex < activeLegs.length - 1) {
         run.currentLegIndex += 1;
@@ -456,11 +741,27 @@ export class AutobahnScene extends Phaser.Scene {
       }
     }
 
-    // Periodic HUD refresh
     this.hudTickAccum += dtSec;
     if (this.hudTickAccum >= 0.12) {
       this.hudTickAccum = 0;
       this.bridge.onAutobahnHudTick(run);
     }
+  }
+
+  private placeBlink(
+    img: Phaser.GameObjects.Image | undefined,
+    x: number,
+    y: number,
+    rot: number,
+    side: -1 | 1,
+    on: boolean
+  ): void {
+    if (!img) return;
+    const rx = Math.cos(rot);
+    const ry = Math.sin(rot);
+    const fx = Math.sin(rot);
+    const fy = -Math.cos(rot);
+    img.setPosition(x + rx * side * 14 + fx * 8, y + ry * side * 14 + fy * 8);
+    img.setAlpha(on ? 0.95 : 0);
   }
 }

@@ -19,6 +19,7 @@ export class DrivingHUD {
   private cb: DrivingHUDCallbacks;
   private mode: 'hidden' | 'autobahn' | 'city' = 'hidden';
   private forceTouchVisible = false;
+  private shellKey = '';
 
   constructor(hudEl: HTMLElement, touchEl: HTMLElement, cb: DrivingHUDCallbacks) {
     this.hudEl = hudEl;
@@ -34,7 +35,34 @@ export class DrivingHUD {
       this.forceTouchVisible = false;
     }
     this.renderTouchControls();
+    this.hudEl.addEventListener('pointerdown', ev => this.onHudPointer(ev));
     window.addEventListener('blur', () => this.clearTouchStates());
+  }
+
+  private onHudPointer(ev: Event): void {
+    const target = ev.target as HTMLElement | null;
+    const btn = target?.closest('button');
+    if (!btn || !this.hudEl.contains(btn)) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    const spd = btn.getAttribute('data-spd');
+    const scale = btn.getAttribute('data-scale');
+    if (spd) {
+      SoundFX.click();
+      this.cb.onSpeedChange(Number(spd));
+    } else if (scale) {
+      SoundFX.click();
+      this.cb.onTimeScaleChange(Number(scale));
+    } else if (btn.id === 'btn-force-stop') {
+      SoundFX.click();
+      this.cb.onForceEarlierStop();
+    } else if (btn.id === 'btn-wc-stop') {
+      SoundFX.click();
+      this.cb.onUnplannedToiletStop();
+    } else if (btn.id === 'btn-peek-map') {
+      SoundFX.click();
+      this.cb.onToggleMapPreview();
+    }
   }
 
   public isTouchVisible(): boolean {
@@ -100,91 +128,102 @@ export class DrivingHUD {
       run.activeWeather === 'rain' ? '🌧️ Regen' : run.activeWeather === 'snow' ? '❄️ Schnee' : run.isNight ? '🌙 Nacht' : '☀️ Klar';
 
     const totalCost = (run.chargingCostEur + run.subscriptionCostEur + run.tollsAndFinesEur).toFixed(2);
-
-    this.hudEl.innerHTML = `
-      <div class="dhud-row">
-        <div class="dhud-pill soc ${socRound < 15 ? 'low' : ''}">
-          🔋 <strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)
-        </div>
-        <div class="dhud-pill soc-pred ${nextSocClass}">
-          🎯 <span>${pred.nextStopName} (${pred.distanceToNextKm} km):</span>
-          <strong>Ankunft ${pred.predictedArrivalNextSocPct}%</strong>
-          ${pred.nextStopKind !== 'destination' ? ` · 🏁 Ziel: <strong>${pred.predictedFinalSocPct}%</strong>` : ''}
-        </div>
-        <div class="dhud-pill">
-          🛣️ ${citySubtitle || `${from.name} → ${to.name} (${Math.round(run.legProgressKm)}/${edge.distanceKm} km)`}
-        </div>
-        <div class="dhud-pill">🕒 ${hh}:${mm} · ${weatherBadge}</div>
-        <div class="dhud-pill ${run.stress > 60 ? 'warn' : ''}">
-          ${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}%
-        </div>
-        <div class="dhud-pill">💶 ${totalCost} €</div>
-      </div>
-
-      ${
+    const speeds = [100, 120, 130, 150, 175].filter(s => s <= vehicle.maxSpeedKmh + 5);
+    const shellKey = `${this.mode}|${speeds.join(',')}`;
+    if (this.shellKey !== shellKey) {
+      this.shellKey = shellKey;
+      const speedButtons = speeds
+        .map(s => {
+          const value = Math.min(vehicle.maxSpeedKmh, s);
+          return `<button type="button" class="dhud-btn" data-spd="${value}">${value}</button>`;
+        })
+        .join('');
+      this.hudEl.innerHTML =
         this.mode === 'autobahn'
           ? `
-        <div class="dhud-controls">
-          <div class="dhud-group">
-            <span>Tempo (${run.currentSpeedKmh} km/h):</span>
-            ${[100, 120, 130, 150, 175]
-              .filter(s => s <= vehicle.maxSpeedKmh + 5)
-              .map(
-                s =>
-                  `<button type="button" class="dhud-btn ${Math.abs(run.currentSpeedKmh - s) < 4 ? 'active' : ''}" data-spd="${Math.min(vehicle.maxSpeedKmh, s)}">${Math.min(vehicle.maxSpeedKmh, s)}</button>`
-              )
-              .join('')}
-          </div>
-          <div class="dhud-group">
-            <span>Zeitraffer:</span>
-            ${[1, 5, 15]
-              .map(
-                sc =>
-                  `<button type="button" class="dhud-btn ${timeScale === sc ? 'active' : ''}" data-scale="${sc}">${sc}×</button>`
-              )
-              .join('')}
-          </div>
-          <div class="dhud-group">
-            <button type="button" class="dhud-action" id="btn-force-stop">⚡ Früher laden</button>
-            <button type="button" class="dhud-action" id="btn-wc-stop">🚻 WC-Stopp (+8m)</button>
-            <button type="button" class="dhud-action" id="btn-peek-map">🗺️ Karte</button>
-          </div>
-        </div>`
+      <div class="dhud-row">
+        <div class="dhud-pill soc" data-pill="soc">🔋 <span data-field="soc"></span></div>
+        <div class="dhud-pill soc-pred" data-pill="pred">🎯 <span data-field="pred"></span></div>
+        <div class="dhud-pill">🛣️ <span data-field="route"></span></div>
+        <div class="dhud-pill">🕒 <span data-field="clock"></span></div>
+        <div class="dhud-pill" data-pill="stress"><span data-field="stress"></span></div>
+        <div class="dhud-pill">💶 <span data-field="cost"></span></div>
+      </div>
+      <div class="dhud-controls">
+        <div class="dhud-group">
+          <span>Tempo (<span data-field="tempo"></span>):</span>
+          ${speedButtons}
+        </div>
+        <div class="dhud-group">
+          <span>Zeitraffer:</span>
+          <button type="button" class="dhud-btn" data-scale="1">1×</button>
+          <button type="button" class="dhud-btn" data-scale="5">5×</button>
+          <button type="button" class="dhud-btn" data-scale="15">15×</button>
+        </div>
+        <div class="dhud-group">
+          <button type="button" class="dhud-action" id="btn-force-stop">⚡ Früher laden</button>
+          <button type="button" class="dhud-action" id="btn-wc-stop">🚻 WC-Stopp (+8m)</button>
+          <button type="button" class="dhud-action" id="btn-peek-map">🗺️ Karte</button>
+        </div>
+      </div>`
           : `
-        <div class="dhud-controls">
-          <div class="dhud-city-hint">
-            🎮 GTA-2 Stadt-Segment: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
-          </div>
-        </div>`
-      }
-    `;
-
-    if (this.mode === 'autobahn') {
-      this.hudEl.querySelectorAll('[data-spd]').forEach(b => {
-        b.addEventListener('click', () => {
-          SoundFX.click();
-          this.cb.onSpeedChange(Number((b as HTMLElement).dataset.spd));
-        });
-      });
-      this.hudEl.querySelectorAll('[data-scale]').forEach(b => {
-        b.addEventListener('click', () => {
-          SoundFX.click();
-          this.cb.onTimeScaleChange(Number((b as HTMLElement).dataset.scale));
-        });
-      });
-      this.hudEl.querySelector('#btn-force-stop')?.addEventListener('click', () => {
-        SoundFX.click();
-        this.cb.onForceEarlierStop();
-      });
-      this.hudEl.querySelector('#btn-wc-stop')?.addEventListener('click', () => {
-        SoundFX.click();
-        this.cb.onUnplannedToiletStop();
-      });
-      this.hudEl.querySelector('#btn-peek-map')?.addEventListener('click', () => {
-        SoundFX.click();
-        this.cb.onToggleMapPreview();
-      });
+      <div class="dhud-row">
+        <div class="dhud-pill soc" data-pill="soc">🔋 <span data-field="soc"></span></div>
+        <div class="dhud-pill soc-pred" data-pill="pred">🎯 <span data-field="pred"></span></div>
+        <div class="dhud-pill">🛣️ <span data-field="route"></span></div>
+        <div class="dhud-pill">🕒 <span data-field="clock"></span></div>
+        <div class="dhud-pill" data-pill="stress"><span data-field="stress"></span></div>
+        <div class="dhud-pill">💶 <span data-field="cost"></span></div>
+      </div>
+      <div class="dhud-controls">
+        <div class="dhud-city-hint">
+          🎮 GTA-2 Stadt-Segment: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
+        </div>
+      </div>`;
     }
+
+    const chosen =
+      run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? run.currentSpeedKmh;
+    const capNote = run.speedCapKmh ? ` · Baustelle ${run.speedCapKmh}` : '';
+    this.setHtml('soc', `<strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)`);
+    this.setHtml(
+      'pred',
+      `<span>${pred.nextStopName} (${pred.distanceToNextKm} km):</span> <strong>Ankunft ${pred.predictedArrivalNextSocPct}%</strong>${
+        pred.nextStopKind !== 'destination' ? ` · 🏁 Ziel: <strong>${pred.predictedFinalSocPct}%</strong>` : ''
+      }`
+    );
+    this.setText(
+      'route',
+      citySubtitle || `${from.name} → ${to.name} (${Math.round(run.legProgressKm)}/${edge.distanceKm} km)`
+    );
+    this.setText('clock', `${hh}:${mm} · ${weatherBadge}`);
+    this.setHtml(
+      'stress',
+      `${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}%`
+    );
+    this.setText('cost', `${totalCost} €`);
+    this.setText('tempo', `${Math.round(run.currentSpeedKmh)} km/h${capNote}`);
+    this.hudEl.querySelector('[data-pill="soc"]')?.classList.toggle('low', socRound < 15);
+    this.hudEl.querySelector('[data-pill="stress"]')?.classList.toggle('warn', run.stress > 60);
+    const predPill = this.hudEl.querySelector('[data-pill="pred"]');
+    predPill?.classList.remove('low', 'warn', 'ok');
+    predPill?.classList.add(nextSocClass);
+    this.hudEl.querySelectorAll<HTMLButtonElement>('[data-spd]').forEach(btn => {
+      btn.classList.toggle('active', Math.abs(chosen - Number(btn.dataset.spd)) < 4);
+    });
+    this.hudEl.querySelectorAll<HTMLButtonElement>('[data-scale]').forEach(btn => {
+      btn.classList.toggle('active', timeScale === Number(btn.dataset.scale));
+    });
+  }
+
+  private setText(field: string, text: string): void {
+    const el = this.hudEl.querySelector(`[data-field="${field}"]`);
+    if (el && el.textContent !== text) el.textContent = text;
+  }
+
+  private setHtml(field: string, html: string): void {
+    const el = this.hudEl.querySelector(`[data-field="${field}"]`);
+    if (el && el.innerHTML !== html) el.innerHTML = html;
   }
 
   private renderTouchControls(): void {

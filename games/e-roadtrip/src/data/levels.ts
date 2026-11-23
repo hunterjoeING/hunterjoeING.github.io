@@ -36,7 +36,7 @@ export const LEVELS: LevelConfig[] = [
         chargingDensity: 'Sehr dicht',
         colorHex: 0x3b82f6,
         legs: [
-          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
           { edgeId: 'edge_koeln_kamen', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_kamen_bielefeld', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_bielefeld_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -90,7 +90,7 @@ export const LEVELS: LevelConfig[] = [
         chargingDensity: 'Ausgewogen',
         colorHex: 0xf59e0b,
         legs: [
-          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
           { edgeId: 'edge_koeln_olpe', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_olpe_kassel', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_kassel_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -109,7 +109,7 @@ export const LEVELS: LevelConfig[] = [
       }
     ],
     routeLegs: [
-      { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
+      { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
       { edgeId: 'edge_koeln_kamen', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
       { edgeId: 'edge_kamen_bielefeld', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false },
       { edgeId: 'edge_bielefeld_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },

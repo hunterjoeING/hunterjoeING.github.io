@@ -15,10 +15,23 @@
 | E-Roadtrip Planung, Reichweitenband, GTA-2-Sequenz & `AGENTS.md` Regel 9 | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-range-gta2-e223` (PR #2 im Fork) | 🔄 PR im Fork offen |
 | E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` ([PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) im Fork, gegen `main`) | 🔄 PR im Fork offen |
+| E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` (PR im Fork gegen `main`) | 🔄 PR im Fork offen |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Paket D: Orte, Partikel, Autobahn, HUD)
+- **Erledigt:**
+  - Feature-Branch `cursor/eroadtrip-package-d-79e6` von `cursor/eroadtrip-planning-overview-e994` (Pakete A–C).
+  - Städte und Autohöfe kommen aus `PlaceStyles.ts` / `PlacePainter.ts`: Aachen (Dom), Köln (`koeln_ring` am Ende der Hinfahrt Aachen–Köln), Hannover (Rathaus, Hermesturm, Messe). Autohöfe sind kleiner, mit LKW, PKW, Tankstelle, Imbiss und LKW-Wäsche; ländlich mit Feldern und Windrädern, stadtnah mit Skyline. Ladesäulen stehen am Tankstellenrand und in einer Rückwärts-Bucht.
+  - Gras behält dreckige Reifenspuren und wirbelt Gras auf. Bei echtem Regen/Schnee eine geschwindigkeitsabhängige Gischt. Gaswegnehmen rekuperiert linear mit 640 px/s².
+  - Autobahn: Kurven, Licht, Regen, Reflexionen (auf Mobile reduziert), Verkehr nach `baseTrafficRisk`, Blinker, Spurmitte passend zum gewählten Tempo, gelegentliche Baustelle 60/80.
+  - HUD-Buttons: Ursache war `innerHTML` alle 0,12 s. Stabile DOM-Hülle plus `pointerdown`, größere Trefferfläche.
+  - `Architecture.md` (Abschnitte 2, 3.2, 8, Changelog) und `HANDOFF.md` aktualisiert. `npm run typecheck` und `npm run build`.
+- **Offen / Nächste Schritte:**
+  - PR im Fork `mic4rd/hunterjoeING.github.io` gegen `main` (enthält auch die noch offenen Pakete A–C).
+  - Level 2–7 bleiben `playable: false`.
 
 ### 2026-11-23 – Michael / Cursor Cloud Agent (Ladestations-Filter auf der Planungskarte)
 - **Erledigt:**

@@ -227,7 +227,8 @@ export type CityDrivePreset =
   | 'charger_park'
   | 'hannover_messe'
   | 'aachen_finish'
-  | 'ferry_denmark';
+  | 'ferry_denmark'
+  | 'koeln_ring';
 
 export type ElevationProfileKind = 'Flachland' | 'Hügelig' | 'Bergig / Pässe';
 export type TrafficRiskKind = 'Niedrig' | 'Mittel' | 'Hoch';
@@ -347,6 +348,8 @@ export interface RunState {
   incidentLog: IncidentLogEntry[];
   activeWeather: WeatherKind;
   currentSpeedKmh: number;
+  /** Temporary limit (Baustelle). Chosen cruise stays on the leg plan. */
+  speedCapKmh?: number;
   isNight: boolean;
   /** Used to avoid repeating same-leg charger stop */
   activeCityChargerId?: string;

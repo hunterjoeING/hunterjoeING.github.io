@@ -11,11 +11,12 @@ import {
   ProviderFilterMap,
   RunState,
   TripPlan,
+  WeatherKind,
   WifeDialogueChoice
 } from './types';
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
-import { CHARGERS, getEdgeById } from './data/europeMap';
+import { CHARGERS, getChargerById, getEdgeById } from './data/europeMap';
 import { getEventById, getWifeDialogueById } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import {
@@ -101,6 +102,7 @@ class ERoadtripController {
 
       onBootReady: () => {
         this.renderPlanning();
+        this.maybeStartPreview();
       },
 
       onMapSelectCharger: (station: ChargerStation) => {
@@ -472,7 +474,7 @@ class ERoadtripController {
     });
   }
 
-  private enterCitySegment(preset: CityDrivePreset, chargerId?: string): void {
+  private enterCitySegment(preset: CityDrivePreset, chargerId?: string, previewFx = false): void {
     this.stopAllGameplayScenes();
     resetTouchInput();
     this.bridge.paused = false;
@@ -482,7 +484,8 @@ class ERoadtripController {
       charger_park: `Ladepark Einfahrt (Rückwärts einparken!)`,
       hannover_messe: 'Hannover Messe → E-Parkplatz',
       aachen_finish: 'Aachen Ausfahrt → Ziel-Parkplatz',
-      ferry_denmark: 'Hirtshals Fährhafen'
+      ferry_denmark: 'Hirtshals Fährhafen',
+      koeln_ring: 'Köln-Ring → A1'
     };
     if (this.bridge.runState) {
       this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale, titleMap[preset]);
@@ -490,7 +493,8 @@ class ERoadtripController {
     this.game.scene.start('CityDriveScene', {
       bridge: this.bridge,
       preset,
-      chargerId
+      chargerId,
+      previewFx
     });
   }
 
@@ -501,7 +505,11 @@ class ERoadtripController {
     this.enterCitySegment('charger_park', station.id);
   }
 
-  private enterAutobahn(): void {
+  private enterAutobahn(preview?: {
+    previewWeather?: WeatherKind;
+    previewRisk?: number;
+    forceWorkZone?: boolean;
+  }): void {
     this.stopAllGameplayScenes();
     resetTouchInput();
     this.bridge.paused = false;
@@ -509,7 +517,7 @@ class ERoadtripController {
     if (this.bridge.runState) {
       this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale);
     }
-    this.game.scene.start('AutobahnScene', { bridge: this.bridge });
+    this.game.scene.start('AutobahnScene', { bridge: this.bridge, ...(preview || {}) });
   }
 
   private handleCitySegmentComplete(preset: CityDrivePreset, cleanArrival: boolean): void {
@@ -641,8 +649,86 @@ class ERoadtripController {
       return;
     }
 
+    if (preset === 'koeln_ring') {
+      run.elapsedMinutes += 6;
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: 'Köln-Ring → A1',
+        detail: cleanArrival ? 'Am Dom vorbei auf die A1.' : 'Mit Zwischenfall weiter Richtung Kamen.',
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      run.currentLegIndex += 1;
+      run.legProgressKm = 0;
+      this.enterAutobahn();
+      return;
+    }
+
+    if (preset === 'ferry_denmark') {
+      this.finishLevel(cleanArrival);
+      return;
+    }
+
     if (preset === 'aachen_finish') {
       this.finishLevel(cleanArrival);
+    }
+  }
+
+  private maybeStartPreview(): void {
+    const kind = new URLSearchParams(window.location.search).get('erpreview');
+    if (!kind) return;
+    const clonedPlan: TripPlan = JSON.parse(JSON.stringify(this.plan));
+    this.bridge.plan = clonedPlan;
+    this.bridge.paused = false;
+    this.bridge.timeScale = 1;
+    resetTouchInput();
+    this.bridge.runState = {
+      levelId: this.level.id,
+      plan: clonedPlan,
+      currentLegIndex: 0,
+      legProgressKm: kind === 'autobahn' ? 13.2 : 0,
+      socPct: 96,
+      elapsedMinutes: 0,
+      stress: this.level.passengers.initialStress,
+      peakStress: this.level.passengers.initialStress,
+      bladderNeed: 10,
+      energyUsedKwh: 0,
+      distanceDrivenKm: 0,
+      chargingCostEur: 0,
+      subscriptionCostEur: 0,
+      tollsAndFinesEur: 0,
+      decisionScoreAccum: 0,
+      replanCount: 0,
+      goodReplanCount: 0,
+      chargingEfficiencyBonus: 0,
+      collisionsCount: 0,
+      completedStopIds: [],
+      skippedStopIds: [],
+      triggeredEventIds: [],
+      wifeDialogueTriggered: false,
+      incidentLog: [],
+      activeWeather: kind === 'tracks' || kind === 'autobahn' ? 'rain' : 'clear',
+      currentSpeedKmh: clonedPlan.legPlans[0]?.targetSpeedKmh || 130,
+      isNight: false
+    };
+    this.stageWrapEl.classList.add('driving-active');
+    this.plannerEl.classList.add('hidden');
+    window.requestAnimationFrame(() => this.game.scale.refresh());
+
+    if (kind === 'aachen') this.enterCitySegment('aachen_start');
+    else if (kind === 'koeln') this.enterCitySegment('koeln_ring');
+    else if (kind === 'hannover') this.enterCitySegment('hannover_messe');
+    else if (kind === 'autohof-rural' || kind === 'tracks') {
+      const station = getChargerById('chg_aachener_land_ionity');
+      if (!station || !this.bridge.runState) return;
+      this.bridge.runState.activeCityChargerId = station.id;
+      this.enterCitySegment('charger_park', station.id, kind === 'tracks');
+    } else if (kind === 'autohof-urban') {
+      const station = getChargerById('chg_frechen_ewego');
+      if (!station || !this.bridge.runState) return;
+      this.bridge.runState.activeCityChargerId = station.id;
+      this.enterCitySegment('charger_park', station.id);
+    } else if (kind === 'autobahn') {
+      this.enterAutobahn({ previewWeather: 'rain', previewRisk: 0.55, forceWorkZone: true });
     }
   }
 

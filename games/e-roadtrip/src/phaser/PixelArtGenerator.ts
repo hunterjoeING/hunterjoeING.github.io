@@ -787,6 +787,82 @@ function drawMiscTextures(scene: Phaser.Scene): void {
       tex.refresh();
     }
   }
+
+  paintSoftSpot(scene, 'grass_clod', 8, 8, ctx => {
+    ctx.fillStyle = '#4d7c0f';
+    ctx.fillRect(1, 2, 5, 4);
+    ctx.fillStyle = '#365314';
+    ctx.fillRect(2, 1, 3, 2);
+    ctx.fillStyle = '#a16207';
+    ctx.fillRect(3, 5, 3, 2);
+  });
+  paintSoftSpot(scene, 'spray_puff', 32, 32, ctx => {
+    const g = ctx.createRadialGradient(16, 16, 2, 16, 16, 15);
+    g.addColorStop(0, 'rgba(224,242,254,0.9)');
+    g.addColorStop(1, 'rgba(186,230,253,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(16, 16, 15, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  paintSoftSpot(scene, 'turbine_blades', 64, 64, ctx => {
+    ctx.translate(32, 32);
+    ctx.fillStyle = '#e2e8f0';
+    for (let i = 0; i < 3; i++) {
+      ctx.rotate((Math.PI * 2) / 3);
+      ctx.fillRect(-3, -2, 6, 28);
+    }
+    ctx.fillStyle = '#334155';
+    ctx.beginPath();
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  paintSoftSpot(scene, 'blink_lamp', 12, 12, ctx => {
+    const g = ctx.createRadialGradient(6, 6, 1, 6, 6, 6);
+    g.addColorStop(0, 'rgba(251,191,36,0.95)');
+    g.addColorStop(1, 'rgba(251,191,36,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 12, 12);
+  });
+  paintSoftSpot(scene, 'beacon_lamp', 14, 14, ctx => {
+    const g = ctx.createRadialGradient(7, 7, 1, 7, 7, 7);
+    g.addColorStop(0, 'rgba(250,204,21,1)');
+    g.addColorStop(0.45, 'rgba(249,115,22,0.8)');
+    g.addColorStop(1, 'rgba(249,115,22,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 14, 14);
+  });
+  paintSoftSpot(scene, 'baustelle_bake', 12, 22, ctx => {
+    ctx.fillStyle = '#f97316';
+    ctx.fillRect(1, 0, 10, 22);
+    ctx.fillStyle = '#f8fafc';
+    ctx.beginPath();
+    ctx.moveTo(1, 6);
+    ctx.lineTo(11, 0);
+    ctx.lineTo(11, 6);
+    ctx.lineTo(1, 12);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(1, 16);
+    ctx.lineTo(11, 10);
+    ctx.lineTo(11, 16);
+    ctx.lineTo(1, 22);
+    ctx.fill();
+  });
+}
+
+function paintSoftSpot(
+  scene: Phaser.Scene,
+  key: string,
+  w: number,
+  h: number,
+  draw: (ctx: CanvasRenderingContext2D) => void
+): void {
+  if (scene.textures.exists(key)) return;
+  const tex = scene.textures.createCanvas(key, w, h);
+  if (!tex) return;
+  draw(tex.getContext());
+  tex.refresh();
 }
 
 export function generateAllPixelTextures(scene: Phaser.Scene): void {
@@ -798,6 +874,8 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   drawTopDownCarTexture(scene, 'npc_compact_green', 'hatchback', 0x16a34a, 0xf8fafc);
   drawTopDownCarTexture(scene, 'npc_van_white', 'touring', 0xf1f5f9, 0x475569, { isVan: true });
   drawTopDownCarTexture(scene, 'npc_police', 'sedan_aero', 0xe2e8f0, 0x1d4ed8, { isPolice: true });
+  drawTopDownCarTexture(scene, 'npc_fast_red', 'sport', 0xdc2626, 0x111827);
+  drawTopDownCarTexture(scene, 'npc_fast_black', 'sedan_aero', 0x111827, 0xef4444);
   drawTruckTexture(scene);
 
   drawCyclistTexture(scene, 'cyclist_0', '#ef4444');
@@ -841,7 +919,12 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
     'npc_compact_green',
     'npc_van_white',
     'npc_police',
+    'npc_fast_red',
+    'npc_fast_black',
     'npc_truck',
+    'grass_clod',
+    'turbine_blades',
+    'baustelle_bake',
     'cyclist_0',
     'cyclist_1',
     'ped_adult_0',
