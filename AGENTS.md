@@ -28,6 +28,7 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 8. **Mobile-First & Android/iOS-Stabilität:**
    * Fixierte Hintergrund-Canvas-Elemente (`#cosmos-canvas` und `.cosmos-vignette`) müssen `height: 100lvh` (`left: 0; bottom: 0` auf Android/Desktop bzw. `top: 0; bottom: auto` per `@supports (-webkit-touch-callout: none)` auf iOS) nutzen, `transform-origin` am `#hub-shell` auf den sichtbaren Viewport begrenzen (`min(35lvh, 300px)`) und bei Touch-Scroll (`e.pointerType !== 'mouse'`) oder beim Ein-/Ausblenden der mobilen Adressleiste keinerlei Kamera- oder Layout-Sprünge auslösen.
    * Alle Seiten müssen sowohl den **Dark Mode** als auch den **Light Mode** (`html[data-theme="light"]` via `ArcadeTheme`) sauber unterstützen.
+9. **Architektur-Doku:** Vor Änderungen an einem Spiel die jeweilige games/<slug>/Architecture.md (Quizzes: shared/QUIZ_ARCHITECTURE.md) lesen. Bei Änderungen an Struktur, Steuerung, Simulationsregeln oder Designentscheidungen die betroffenen Abschnitte und den Changelog im selben PR aktualisieren.
 
 ---
 
