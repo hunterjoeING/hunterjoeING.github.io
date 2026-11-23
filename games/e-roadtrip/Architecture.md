@@ -21,6 +21,8 @@ npm run typecheck   # tsc --noEmit
 npm run build       # esbuild src/main.ts --bundle --format=iife --global-name=ERoadtripApp --outfile=dist/e-roadtrip.js --sourcemap=inline
 ```
 > **Bundle & Merge Policy:** GitHub Pages serves `dist/e-roadtrip.js` directly, so rebuilt bundles must be committed alongside `src/` changes. **Never resolve merge conflicts inside `dist/e-roadtrip.js` manually** — after merging `src/` changes, simply re-run `npm run build` and commit the freshly generated bundle.
+>
+> **CI rebuild:** A push to `main` that changes `games/e-roadtrip/src/**`, `package.json`, `package-lock.json`, or `tsconfig.json` runs [`.github/workflows/rebuild-e-roadtrip.yml`](../../.github/workflows/rebuild-e-roadtrip.yml) (`npm ci`, typecheck, build) and commits `dist/e-roadtrip.js` back to `main` only when the bytes changed. The workflow does not watch `dist/`, and the commit uses the default `GITHUB_TOKEN`, so that push does not start another run. The root `.gitattributes` marks the bundle `-diff linguist-generated merge=binary`: GitHub collapses the diff, and a merge keeps our side without inserting conflict markers. Finish a conflict by rebuilding, not by editing the file.
 
 ---
 
@@ -159,7 +161,7 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
 ## 8. Known Limitations & Open Points
 
 - **Levels 2–7:** Currently gated with `playable: false` in `src/data/levels.ts`; city presets (`CityDrivePreset`) and level-specific events/balancing still need end-to-end playtesting before unlocking.
-- **Automated bundle builds:** `dist/e-roadtrip.js` is currently built manually and committed; long-term, a GitHub Action could build `dist/` on merge to avoid PR diffs on the 1.4 MB bundle.
+- **Automated bundle builds:** On `main`, `.github/workflows/rebuild-e-roadtrip.yml` rebuilds `dist/e-roadtrip.js` when `src/` or the package files change and commits it only if the output differs. If the bundle conflicts, run `npm run build` — do not edit the file. The diff stays collapsed via `.gitattributes` (`linguist-generated`).
 - **Automated tests:** There is currently no unit test suite for `src/sim/` (`EnergyModel`, `RoutePlanner`, `ScoringEngine`) — only `npm run typecheck` (`tsc --noEmit`).
 - **Known gameplay / UX polish:** *(Add concrete bug reports or balancing notes from playtests here.)*
 
@@ -169,4 +171,5 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
 
 - **2026-11-23:** Initial `Architecture.md` created for cross-tool AI handoff.
 - **2026-11-23:** Added `devDependencies` to `package.json`, fixed `tsconfig.json` `typeRoots` to use local `./node_modules`, added root `.gitignore`, updated `AGENTS.md` Rule 4 for feature-branch/PR collaboration, and documented design decisions ("Why") and open points.
+- **2026-11-23:** CI rebuild of `dist/e-roadtrip.js` on `main` (`.github/workflows/rebuild-e-roadtrip.yml`) and a `.gitattributes` entry so the generated bundle is collapsed in diffs and not hand-merged.
 
