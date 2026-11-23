@@ -11,11 +11,16 @@
 | Bereich | Verantwortlich / Agent | Branch / PR / Issue | Status |
 | :--- | :--- | :--- | :--- |
 | Repo-Setup, Lizenz, `AGENTS.md`, `Architecture.md` | Joe / Antigravity | `main` (`3f40555`) | ✅ Abgeschlossen |
-| E-Roadtrip Aufräum-PR / nächste Verbesserungen | Michael (`mic4rd`) / Cloud Agent | *(noch kein offener PR/Branch)* | ⏳ Bereit |
+| E-Roadtrip Bundle-Rebuild | Michael (`mic4rd`) / Cursor Cloud Agent | `mic4rd:cursor/eroadtrip-reproducible-build-459e` (PR wird upstream geöffnet) | ⏳ PR offen, Review Joe |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-23 – Michael / Cursor Cloud Agent
+- **Erledigt:** CI-Action, die `dist/e-roadtrip.js` auf `main` neu baut; `.gitattributes` für das generierte Bundle; `esbuild.mjs`, damit Phaser extern bleibt (`window.Phaser` aus `dist/phaser.min.js`); Notizen in `games/e-roadtrip/Architecture.md`. Fork-`main` auf `e665276` nachgezogen.
+- **Status:** PR offen, wartet auf Joes Review. Der PR wird upstream von `mic4rd:cursor/eroadtrip-reproducible-build-459e` geöffnet. Auf dem Fork liegt vorerst https://github.com/mic4rd/hunterjoeING.github.io/pull/1
+- **Offen:** Keine weiteren Code-Änderungen in dieser Session. Level 2–7 bleiben `playable: false`.
 
 ### 2026-11-23 – Joe / Antigravity
 - **Erledigt:**
