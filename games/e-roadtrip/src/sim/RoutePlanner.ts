@@ -1,5 +1,6 @@
 import {
   ChargerStation,
+  HighwayEdge,
   LevelConfig,
   LevelRouteLegSpec,
   LiveSocPrediction,
@@ -66,51 +67,103 @@ export interface PlanForecast {
   warnings: string[];
 }
 
+/** German Autobahn advisory speed when an edge has no posted limit (`speedLimitKmh === 0`). */
+export const ADVISORY_SPEED_KMH = 130;
+
+/** Preset cruise speed: the posted limit, or Richtgeschwindigkeit 130 when the edge is unlimited. */
+export function defaultLegSpeedKmh(edge: Pick<HighwayEdge, 'speedLimitKmh'>, vehicleMaxSpeedKmh: number): number {
+  const limit = edge.speedLimitKmh > 0 ? edge.speedLimitKmh : ADVISORY_SPEED_KMH;
+  return Math.min(vehicleMaxSpeedKmh, limit);
+}
+
 export function getActiveRouteOption(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId'>): RouteOption {
   const id = plan?.selectedRouteId || level.defaultRouteId;
   return level.routeOptions.find(r => r.id === id) || level.routeOptions[0];
 }
 
-export function getActiveRouteLegs(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId'>): LevelRouteLegSpec[] {
-  const opt = getActiveRouteOption(level, plan);
-  return opt ? opt.legs : level.routeLegs;
+export function levelHasReturnRoutes(level: LevelConfig): boolean {
+  return level.routeOptions.some(opt => opt.legs.some(leg => !!leg.reverse));
+}
+
+/** Forward legs of a corridor. One-way routes keep their full leg list. */
+export function routeOutboundLegs(opt: RouteOption): LevelRouteLegSpec[] {
+  const forward = opt.legs.filter(leg => !leg.reverse);
+  return forward.length > 0 ? forward : opt.legs.slice();
+}
+
+export function routeReturnLegs(opt: RouteOption): LevelRouteLegSpec[] {
+  return opt.legs.filter(leg => !!leg.reverse);
+}
+
+export function getReturnRouteOption(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId' | 'returnRouteId'>): RouteOption {
+  const fallback = plan?.selectedRouteId || level.defaultRouteId;
+  const id = plan?.returnRouteId || fallback;
+  return level.routeOptions.find(r => r.id === id) || getActiveRouteOption(level, plan);
+}
+
+/**
+ * Composed trip: outbound legs of the chosen Hinweg plus return legs of the chosen Rückweg.
+ * Levels without a return stay one-way.
+ */
+export function getActiveRouteLegs(
+  level: LevelConfig,
+  plan?: Pick<TripPlan, 'selectedRouteId' | 'returnRouteId'>
+): LevelRouteLegSpec[] {
+  const outbound = getActiveRouteOption(level, plan);
+  if (!levelHasReturnRoutes(level)) {
+    return outbound ? outbound.legs : level.routeLegs;
+  }
+  const inbound = getReturnRouteOption(level, plan);
+  return [...routeOutboundLegs(outbound), ...routeReturnLegs(inbound)];
+}
+
+function rebuildLegPlans(level: LevelConfig, plan: TripPlan): TripPlan {
+  const vehicle = getVehicleById(plan.vehicleId);
+  const legs = getActiveRouteLegs(level, plan);
+  plan.legPlans = legs.map((leg, idx) => ({
+    legIndex: idx,
+    targetSpeedKmh: defaultLegSpeedKmh(getEdgeById(leg.edgeId), vehicle.maxSpeedKmh)
+  }));
+  plan.plannedStops = [];
+  return plan;
 }
 
 export function createDefaultPlan(level: LevelConfig, vehicleId: string, routeId?: string): TripPlan {
-  const vehicle = getVehicleById(vehicleId);
   const selectedRoute =
     level.routeOptions.find(r => r.id === (routeId || level.defaultRouteId)) || level.routeOptions[0];
-  const legs = selectedRoute ? selectedRoute.legs : level.routeLegs;
+  const selectedRouteId = selectedRoute ? selectedRoute.id : level.defaultRouteId;
 
-  const legPlans = legs.map((leg, idx) => ({
-    legIndex: idx,
-    targetSpeedKmh: Math.min(vehicle.maxSpeedKmh, leg.defaultTargetSpeedKmh)
-  }));
-
-  const plannedStops: PlannedStop[] = [];
-  const subscriptionIds: string[] = [];
-
-  return {
+  const plan: TripPlan = {
     vehicleId,
-    selectedRouteId: selectedRoute ? selectedRoute.id : level.defaultRouteId,
-    subscriptionIds,
-    legPlans,
-    plannedStops
+    selectedRouteId,
+    returnRouteId: levelHasReturnRoutes(level) ? selectedRouteId : '',
+    subscriptionIds: [],
+    legPlans: [],
+    plannedStops: []
   };
+  return rebuildLegPlans(level, plan);
 }
 
 export function switchRouteInPlan(level: LevelConfig, plan: TripPlan, routeId: string): TripPlan {
-  const vehicle = getVehicleById(plan.vehicleId);
   const selectedRoute = level.routeOptions.find(r => r.id === routeId) || level.routeOptions[0];
   if (!selectedRoute) return plan;
 
   plan.selectedRouteId = selectedRoute.id;
-  plan.legPlans = selectedRoute.legs.map((leg, idx) => ({
-    legIndex: idx,
-    targetSpeedKmh: Math.min(vehicle.maxSpeedKmh, leg.defaultTargetSpeedKmh)
-  }));
-  plan.plannedStops = [];
-  return plan;
+  if (levelHasReturnRoutes(level)) {
+    const returnStillValid = level.routeOptions.some(r => r.id === plan.returnRouteId);
+    if (!plan.returnRouteId || !returnStillValid) plan.returnRouteId = selectedRoute.id;
+  } else {
+    plan.returnRouteId = '';
+  }
+  return rebuildLegPlans(level, plan);
+}
+
+export function switchReturnRouteInPlan(level: LevelConfig, plan: TripPlan, routeId: string): TripPlan {
+  if (!levelHasReturnRoutes(level)) return plan;
+  const selectedRoute = level.routeOptions.find(r => r.id === routeId) || level.routeOptions[0];
+  if (!selectedRoute) return plan;
+  plan.returnRouteId = selectedRoute.id;
+  return rebuildLegPlans(level, plan);
 }
 
 export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForecast {
@@ -138,7 +191,10 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
     const lp = plan.legPlans.find(x => x.legIndex === i);
-    const speed = Math.min(vehicle.maxSpeedKmh, lp ? lp.targetSpeedKmh : spec.defaultTargetSpeedKmh);
+    const speed = Math.min(
+      vehicle.maxSpeedKmh,
+      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh)
+    );
     const weather = spec.weatherOverride || edge.defaultWeather;
 
     const fromCity = getCityById(spec.reverse ? edge.toCityId : edge.fromCityId);
@@ -337,13 +393,14 @@ export function predictLiveTripSoc(
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
     const lp = run.plan.legPlans.find(x => x.legIndex === i);
+    const preset = lp?.targetSpeedKmh || defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh);
     const speed = Math.min(
       vehicle.maxSpeedKmh,
       i === startLeg && opts?.overrideSpeedKmh !== undefined
         ? opts.overrideSpeedKmh
         : i === startLeg
-          ? run.currentSpeedKmh || lp?.targetSpeedKmh || spec.defaultTargetSpeedKmh
-          : lp?.targetSpeedKmh || spec.defaultTargetSpeedKmh
+          ? run.currentSpeedKmh || preset
+          : preset
     );
     const weather =
       i === startLeg

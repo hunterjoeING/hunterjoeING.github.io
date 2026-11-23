@@ -291,7 +291,10 @@ export interface LegPlan {
 
 export interface TripPlan {
   vehicleId: string;
+  /** Outbound corridor. */
   selectedRouteId: string;
+  /** Return corridor. Empty when the level has no return legs. Independent of the outbound choice. */
+  returnRouteId: string;
   subscriptionIds: string[];
   legPlans: LegPlan[];
   plannedStops: PlannedStop[];

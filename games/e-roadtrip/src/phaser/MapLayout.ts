@@ -2,7 +2,7 @@ import { ChargerNetwork, ChargerStation, HighwayEdge, LevelConfig, PlannedStop, 
 import { getChargersForEdge, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { getActiveRouteLegs } from '../sim/RoutePlanner';
+import { defaultLegSpeedKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
 
 export interface BoxRect {
   x: number;
@@ -141,7 +141,8 @@ export function computeRouteSocBandSegments(
   level: LevelConfig,
   plan: TripPlan,
   upperSocPct = 20,
-  lowerSocPct = 0
+  lowerSocPct = 0,
+  onlyLegIndex?: number
 ): RouteSocBandSegment[] {
   const legs = getActiveRouteLegs(level, plan);
   if (legs.length === 0) return [];
@@ -156,14 +157,15 @@ export function computeRouteSocBandSegments(
     reverse: boolean,
     p0: number,
     p1: number,
-    cons100: number
+    cons100: number,
+    record: boolean
   ): void => {
     const segKm = Math.max(0, (p1 - p0) * edge.distanceKm);
     const segKwh = (segKm / 100) * cons100;
     const socDrop = (segKwh / vehicle.batteryKwh) * 100;
     const nextSoc = soc - socDrop;
 
-    if (socDrop > 0.001 && soc > lowerSocPct && nextSoc < upperSocPct) {
+    if (record && socDrop > 0.001 && soc > lowerSocPct && nextSoc < upperSocPct) {
       const bandStartSoc = Math.min(soc, upperSocPct);
       const bandEndSoc = Math.max(nextSoc, lowerSocPct);
       const frac0 = (soc - bandStartSoc) / socDrop;
@@ -203,7 +205,12 @@ export function computeRouteSocBandSegments(
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
     const lp = plan.legPlans.find(x => x.legIndex === i);
-    const speed = Math.min(vehicle.maxSpeedKmh, lp ? lp.targetSpeedKmh : spec.defaultTargetSpeedKmh);
+    const speed = Math.min(
+      vehicle.maxSpeedKmh,
+      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh)
+    );
+    const record = onlyLegIndex === undefined || i === onlyLegIndex;
+    if (onlyLegIndex !== undefined) activeBand = null;
     const weather = spec.weatherOverride || edge.defaultWeather;
     const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
@@ -232,7 +239,7 @@ export function computeRouteSocBandSegments(
 
     let cursorProgress = 0;
     for (const item of stopsOnLeg) {
-      appendSubSegment(edge, !!spec.reverse, cursorProgress, item.progress, cons100);
+      appendSubSegment(edge, !!spec.reverse, cursorProgress, item.progress, cons100, record);
       if (soc <= lowerSocPct) break;
       activeBand = null;
       soc = Math.min(100, Math.max(soc + 2, item.stop.targetSocPct));
@@ -240,7 +247,7 @@ export function computeRouteSocBandSegments(
     }
 
     if (soc > lowerSocPct) {
-      appendSubSegment(edge, !!spec.reverse, cursorProgress, 1, cons100);
+      appendSubSegment(edge, !!spec.reverse, cursorProgress, 1, cons100, record);
     }
   }
 

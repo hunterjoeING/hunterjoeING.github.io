@@ -24,7 +24,8 @@ export interface ERoadtripBridge {
   runState: RunState | null;
   selectedLegIndex: number;
   providerFilter: ProviderFilterMap;
-  dimUnsubscribed: boolean;
+  /** When true, the selected stage shows coloured/grey provider icons and a hover detail card. */
+  showChargerStations: boolean;
   timeScale: number; // 1 | 5 | 15
   paused: boolean;
   touch: TouchInputState;

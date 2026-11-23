@@ -44,14 +44,14 @@ games/e-roadtrip/
     ├── types.ts                # All TypeScript domain models & state interfaces
     ├── data/                   # Static game data (no simulation logic)
     │   ├── vehicles.ts         # 9 EVs (MG4, Model S 2015, ID.3, Model 3/Y, XPeng G6, EV6, ID.7, Taycan)
-    │   ├── subscriptions.ts    # 8 charging tariffs/subscriptions (Ad-hoc, Tesla, EnBW M/L, EWE Go, Electra, Ionity, AC)
+    │   ├── subscriptions.ts    # 8 charging tariffs; Ad-hoc always on; roaming is a fixed €/kWh per provider
     │   ├── europeGeography.ts  # Coastlines, country borders & geographic polygons for EuropeMapScene
     │   ├── europeMap.ts        # CityNode[], HighwayEdge[], ChargerStation[] graph (normalized 1800×1420 coords)
     │   ├── levels.ts           # 7 campaign levels (Level 1 playable: true; Levels 2–7 defined with playable: false)
     │   └── events.ts           # Dynamic road/family/police/charger events + WifeDialogueDef[]
     ├── sim/                    # Pure simulation & persistence (framework-agnostic)
     │   ├── EnergyModel.ts      # Consumption physics, charging curve interpolation, tariff pricing
-    │   ├── RoutePlanner.ts     # TripPlan creation, full-trip forecast, live SoC prediction, nearest charger search
+    │   ├── RoutePlanner.ts     # TripPlan, separate outbound/return corridors, forecast, live SoC, nearest charger
     │   ├── ScoringEngine.ts    # 0..1000 weighted evaluation (time, cost, stress, efficiency, decisions)
     │   └── SaveState.ts        # Campaign persistence in localStorage ('eroadtrip_campaign_v1')
     ├── phaser/                 # Phaser 3 scenes & procedural pixel art
@@ -60,13 +60,13 @@ games/e-roadtrip/
     │   ├── PixelArtGenerator.ts# Runtime canvas/pixel-art sprite, landmark & additive light/rain texture generation
     │   ├── EuropePixelMap.ts   # Baked 900×710 pixel-art Europe canvas (coastlines, relief, forests, lakes, dark/light)
     │   ├── MapLayout.ts        # Map projection, zoom/bounds & route geometry helpers
-    │   ├── EuropeMapScene.ts   # Interactive planning map (pan/zoom, route selection, charger pins, provider filter, live theming)
+    │   ├── EuropeMapScene.ts   # Planning map: pan/zoom, Hin/Rück corridors, provider icons, one hover/tap detail card, SoC band on the active leg
     │   ├── AutobahnScene.ts    # Highway autopilot/cruise simulation, weather, traffic, events, charger approach
     │   ├── CityDriveScene.ts   # Top-down GTA-2 style manual driving (start, charger park, destination, ferry)
     │   ├── CityTraffic.ts      # AI cars, pedestrians, cyclists & traffic light logic for CityDriveScene
     │   └── SoundFX.ts          # Procedural WebAudio SFX (respects ArcadeAudio mute state)
     └── ui/                     # DOM UI components (vanilla TS, no framework)
-        ├── PlanningUI.ts       # Sidebar: level selector, vehicle garage, route options, tariffs, stop list, forecast
+        ├── PlanningUI.ts       # Sidebar: garage, separate Hin/Rück routes, tariffs, per-leg speed signs, stage charger list
         ├── DrivingHUD.ts       # In-drive HUD: SoC, speed slider, time scale (1x/5x/15x), stress, bladder, touch pad
         ├── BreakPixelAnim.ts   # Pixel-art mini-animations during charging/break activities
         ├── EventModal.ts       # Modals: live charging curve, dynamic events, wife dialogues, map peek, breakdowns
@@ -94,9 +94,11 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
    - Calls `bridge.onBootReady()` $\rightarrow$ `PlanningUI` renders.
 2. **Planning Phase (`EuropeMapScene` + `EuropePixelMap` + `PlanningUI`)**:
    - `EuropePixelMap.ts` bakes a `900×710` pixel-art Europe texture (scaled `2×` to `1800×1420` with `NEAREST` filtering) per theme (`europe_map_pixel_dark` / `europe_map_pixel_light`) featuring detailed coastlines & islands, bathymetry halos, layered relief shading (brown $\rightarrow$ grey $\rightarrow$ white snow for Alps/Pyrenees/Skanden; lighter relief for low mountain ranges), large forests/national parks with deterministic green pixel trees, rivers/lakes, dashed country borders, and urban pixel city footprints. `EuropeMapScene` observes `<html data-theme>` via `MutationObserver` to switch palettes live while keeping routes, chargers, and the SoC band aligned.
-   - At level start (and on route switch), **no** charging subscriptions and **no** charging stops are preselected (`subscriptionIds: []`, `plannedStops: []`); the player chooses vehicle, route (`RouteOption`), subscriptions (`SubscriptionSpec[]`), leg target speeds, and charging stops (`PlannedStop[]` via map pins or sidebar).
-   - `RoutePlanner.evaluateTripPlan()` computes live feasibility, predicted arrival SoCs, and cost/time estimates.
-   - `MapLayout.computeRouteSocBandSegments()` projects the stretches along the active route where predicted SoC drops from `20 %` to `0 %`, rendered in `EuropeMapScene` as a soft-edged, semi-transparent light-blue band along the selected route (no radial range ring).
+   - At level start (and on route switch), **no** paid charging subscriptions and **no** charging stops are preselected (`subscriptionIds: []`, `plannedStops: []`). Ad-hoc charging stays available: its checkbox is always checked, disabled, and visually greyed. The player chooses vehicle, **outbound and return corridors independently** (`TripPlan.selectedRouteId` + `returnRouteId`; `getActiveRouteLegs()` concatenates the forward legs of the Hinweg with the reverse legs of the Rückweg), subscriptions, per-leg cruise speeds, and charging stops.
+   - Each leg’s preset cruise speed is the edge’s posted limit (`HighwayEdge.speedLimitKmh`), or Richtgeschwindigkeit **130 km/h** when the edge is unlimited (`defaultLegSpeedKmh`). The stage list shows that limit as a circular sign (red ring = posted limit, blue ring = advisory 130). The speed slider updates in place on `input` and only re-renders the forecast on `change`, so mouse and touch can drag it to any integer km/h.
+   - `RoutePlanner.evaluateTripPlan()` walks the composed Hin- and Rückweg: SoC, charging stops, time, and cost cover both directions.
+   - `MapLayout.computeRouteSocBandSegments(..., onlyLegIndex)` still simulates SoC from the start, but emits the soft-edged light-blue 20 %→0 % band **only for the active stage**.
+   - Charger markers are provider logos. The map toggle “Ladestationen anzeigen / ausblenden” replaces the old “Alle klar / Abos klar” switch. While showing, stations on the selected stage are coloured when their provider filter is on and grey when it is off; every other station is at most a small logo. While hiding, every station is only that logo. Exactly one detail card is open, on hover (desktop) or tap (touch), and only for a station on the selected stage. Clicking the card toggles that stop on the route. The sidebar charger list lists only the selected stage: subscribed networks at full strength, roaming/ad-hoc stations slightly greyed with a red price.
 3. **Trip Execution (`AutobahnScene` $\leftrightarrow$ `CityDriveScene` $\leftrightarrow$ `EventModal`)**:
    - Starting a trip creates `RunState` and launches either `CityDriveScene` (if leg 0 has `citySegmentAtStart`) or `AutobahnScene`.
    - **`AutobahnScene`**: Simulates leg-by-leg highway travel at `timeScale` (`1x | 5x | 15x`). Updates `socPct`, `elapsedMinutes`, `stress`, `bladderNeed`, weather, dynamic events, wife dialogues, and approaches planned `ChargerStation`s.
@@ -118,7 +120,10 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
 - **`getChargingPowerKw(vehicle, station, socPct)`**:
   - Piecewise-linear interpolation along `vehicle.chargingCurve`, capped by `station.maxKw`.
 - **`getBestPriceForStation(station, subscriptionIds, vehicle)`**:
-  - Automatically applies native Tesla Supercharger pricing (`0.39 €/kWh`) when `vehicle.isTesla && station.network === 'tesla'`. Otherwise picks the lowest rate among active subscriptions (`pricePerKwhOwn` vs. `pricePerKwhRoaming`) and `station.baseAdhocEurPerKwh`.
+  - Ad-hoc (`station.baseAdhocEurPerKwh`) is always a candidate, even when `subscriptionIds` is empty.
+  - Own-network price comes from the active subscription’s `pricePerKwhOwn`.
+  - Roaming is **not** tier-dependent. `PROVIDER_ROAMING_EUR_PER_KWH` in `subscriptions.ts` is one fixed €/kWh per provider (EnBW M and EnBW L share `0.79`). HPC roaming sits in about **0.69–0.89 €/kWh** (AC Dorf `0.69`, EWE Go `0.75`, Tesla/EnBW `0.79`, Electra `0.84`, IONITY `0.89`).
+  - Tesla vehicles still get native Supercharger pricing (`0.39 €/kWh`) on `network === 'tesla'`.
 
 ### 4.2 Scoring (`ScoringEngine.ts`)
 - Produces `totalScore` in `100..1000` from weighted sub-scores (`0..100` each):
@@ -179,4 +184,5 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
 - **2026-11-23:** CI rebuild of `dist/e-roadtrip.js` on `main` (`.github/workflows/rebuild-e-roadtrip.yml`), `.gitattributes` so the generated bundle is not hand-merged, and `esbuild.mjs` so `npm run build` keeps Phaser as the `dist/phaser.min.js` global instead of inlining it.
 - **2026-11-23:** Removed preselected charging subscriptions and stops at level start/route switch; replaced the radial 4-colour range ring with a soft-edged light-blue 20 %→0 % SoC band strictly along the selected route (`MapLayout.computeRouteSocBandSegments` + `EuropeMapScene.drawSoftRouteBand`); upgraded GTA-2 `CityDriveScene` with sidewalk-walking pedestrians that only occasionally cross zebra crossings and a real A4 motorway on-ramp passable at speed without stopping.
 - **2026-11-23:** Visual overhaul (no gameplay/simulation changes): upgraded `CityDriveScene` to a GTA-2 neo-noir look using additive light sprites (streetlamps, dual headlight cones, brake/taillights, neon signs, traffic lights, police siren), faked wet-road reflections (mirrored vehicle sprites & animated specular shimmers), camera-local rain streaks/splashes with mobile-friendly counts, and optional WebGL desktop Bloom PostFX with graceful Canvas2D/mobile fallback; replaced the vector Europe map with a baked `900×710` (`2× NEAREST`) pixel-art map (`EuropePixelMap.ts` + `europeGeography.ts`) with detailed coastlines/borders, layered mountain relief (brown $\rightarrow$ grey $\rightarrow$ snow for Alps/Pyrenees/Skanden; lighter low ranges), forest/national-park pixel trees, urban city footprints, and live Dark/Light mode support.
+- **2026-11-23:** Planning package C. Map detail cards only for the selected stage, and only one at a time (hover on desktop, tap on touch); a click on the card adds the stop. Provider-filter toggle replaced by “Ladestationen anzeigen / ausblenden” (coloured vs grey logos on the active stage when shown; logos only when hidden). Ad-hoc is always checked and cannot be cleared. Roaming is a fixed per-provider rate in the 0.69–0.89 €/kWh HPC band (EnBW M = EnBW L). Hinweg and Rückweg are chosen separately and both feed the stage list, stops, SoC, and cost. The 20–0 % SoC band is drawn only on the active leg. Each leg shows its speed limit as a sign and starts at that limit (130 km/h advisory when unlimited). Leg speed sliders drag freely (the forecast re-renders on release, not on every input tick). The charger directory lists only the marked stage, with roaming rows greyed and priced in red.
 

@@ -14,10 +14,24 @@
 | E-Roadtrip Bundle-Rebuild (`esbuild.mjs`, CI, `.gitattributes`) | Michael (`mic4rd`) / Cursor Cloud Agent | PR #2 (`f42c39f`) | ✅ Gemerged |
 | E-Roadtrip Planung, Reichweitenband, GTA-2-Sequenz & `AGENTS.md` Regel 9 | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-range-gta2-e223` (PR #2 im Fork) | 🔄 PR im Fork offen |
 | E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
+| E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` (baut auf dem Visuals-Branch auf) | 🔄 PR im Fork offen |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Paket C: Planung, Laden, Tempo)
+- **Erledigt:**
+  - Feature-Branch `cursor/eroadtrip-planning-overview-e994` von `cursor/eroadtrip-visuals-gta2-map-210f` (Paket A + B) abgezweigt.
+  - Karte: Detailkasten nur für einen Ladepunkt der gewählten Etappe (Hover Desktop / Tap Touch); Klick auf den Kasten plant den Stopp. Andere Ladepunkte höchstens als kleines Anbietersymbol. Toggle „Ladestationen anzeigen / ausblenden“ ersetzt „Alle klar / Abos klar“ (farbig vs. grau nach Anbieterfilter, im Aus-Zustand nur Logos).
+  - Ad-hoc ist immer angehakt, das Kästchen ist ausgegraut und nicht abwählbar. Roaming ist ein fester Anbieterpreis (0,69–0,89 €/kWh, EnBW M = EnBW L = 0,79).
+  - Hin- und Rückweg sind getrennt wählbar; Etappenliste, Ladestopps, SoC und Kosten rechnen beide Richtungen. Das hellblaue 20–0-%-Band liegt nur auf der aktiven Etappe.
+  - Tempolimit als Schild in der Etappenliste; Voreinstellung = Limit bzw. Richtgeschwindigkeit 130. Tempo-Slider lassen sich mit Maus und Touch frei ziehen (Forecast erst beim Loslassen).
+  - Ladestationsliste nur für die markierte Etappe; Abo normal, Roaming leicht ausgegraut mit rotem Preis.
+  - `games/e-roadtrip/Architecture.md` (Abschnitte 2, 3.2, 4.1, Changelog) und `HANDOFF.md` aktualisiert, `npm run typecheck` und `npm run build` ausgeführt, Headless-Chrome-Smoke-Test ohne Konsolenfehler.
+- **Offen / Nächste Schritte:**
+  - PR im Fork gegen `main` (enthält auch die noch offenen Pakete A und B, weil der Branch darauf aufsetzt).
+  - Level 2–7 stehen weiterhin auf `playable: false`.
 
 ### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Visuals: GTA-2 & Pixel-Art-Europakarte)
 - **Erledigt:**

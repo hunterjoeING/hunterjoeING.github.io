@@ -4,7 +4,7 @@ import {
   VehicleSpec,
   WeatherKind
 } from '../types';
-import { getSubscriptionById } from '../data/subscriptions';
+import { getSubscriptionById, roamingPriceForProvider } from '../data/subscriptions';
 
 export function computeConsumptionKwh100(
   vehicle: VehicleSpec,
@@ -75,6 +75,11 @@ export interface TariffQuote {
   hasMcDonaldsBonus: boolean;
 }
 
+/** Roaming €/kWh is fixed per provider and ignores the tariff tier (EnBW M = EnBW L). */
+function roamingRate(sub: SubscriptionSpec): number {
+  return roamingPriceForProvider(sub.provider) ?? sub.pricePerKwhRoaming;
+}
+
 function computeBestWithout(
   station: ChargerStation,
   subscriptionIds: string[],
@@ -91,7 +96,7 @@ function computeBestWithout(
   }
   for (const sub of activeSubs) {
     const isOwn = sub.provider === station.network;
-    const candidate = isOwn ? sub.pricePerKwhOwn : sub.pricePerKwhRoaming;
+    const candidate = isOwn ? sub.pricePerKwhOwn : roamingRate(sub);
     if (candidate < best) best = candidate;
   }
   return Number(best.toFixed(2));
@@ -123,7 +128,7 @@ export function getBestPriceForStation(
   for (const sub of activeSubs) {
     if (sub.id === 'adhoc') continue;
     const isOwn = sub.provider === station.network;
-    const candidatePrice = isOwn ? sub.pricePerKwhOwn : sub.pricePerKwhRoaming;
+    const candidatePrice = isOwn ? sub.pricePerKwhOwn : roamingRate(sub);
     if (candidatePrice < bestPrice) {
       bestPrice = candidatePrice;
       bestName = sub.name;

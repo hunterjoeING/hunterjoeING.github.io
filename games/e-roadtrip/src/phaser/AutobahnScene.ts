@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { getActiveRouteLegs } from '../sim/RoutePlanner';
+import { defaultLegSpeedKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
 import { ChargerStation } from '../types';
 import { ERoadtripBridge } from './GameBridge';
 import { SoundFX } from './SoundFX';
@@ -185,7 +185,7 @@ export class AutobahnScene extends Phaser.Scene {
     const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
     const targetSpeed = Math.min(
       vehicle.maxSpeedKmh,
-      lp ? lp.targetSpeedKmh : legSpec.defaultTargetSpeedKmh
+      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh)
     );
     run.currentSpeedKmh = targetSpeed;
 

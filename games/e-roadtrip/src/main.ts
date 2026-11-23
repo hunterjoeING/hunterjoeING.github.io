@@ -24,6 +24,7 @@ import {
   findNearestAvailableCharger,
   getActiveRouteLegs,
   predictLiveTripSoc,
+  switchReturnRouteInPlan,
   switchRouteInPlan
 } from './sim/RoutePlanner';
 import { evaluateRun } from './sim/ScoringEngine';
@@ -92,7 +93,7 @@ class ERoadtripController {
       runState: null,
       selectedLegIndex: 0,
       providerFilter: createDefaultProviderFilter(),
-      dimUnsubscribed: true,
+      showChargerStations: true,
       timeScale: 5,
       paused: false,
       touch: TouchInput,
@@ -159,6 +160,9 @@ class ERoadtripController {
       onSelectRoute: (routeId: string) => {
         this.selectRoute(routeId);
       },
+      onSelectReturnRoute: (routeId: string) => {
+        this.selectReturnRoute(routeId);
+      },
       onSelectLeg: (legIndex: number) => {
         this.selectLeg(legIndex);
       },
@@ -167,8 +171,8 @@ class ERoadtripController {
         this.syncMapScene();
         this.renderPlanning();
       },
-      onToggleDimUnsubscribed: () => {
-        this.bridge.dimUnsubscribed = !this.bridge.dimUnsubscribed;
+      onToggleShowChargers: () => {
+        this.bridge.showChargerStations = !this.bridge.showChargerStations;
         this.syncMapScene();
         this.renderPlanning();
       },
@@ -336,7 +340,7 @@ class ERoadtripController {
       this.save,
       this.bridge.selectedLegIndex,
       this.bridge.providerFilter,
-      this.bridge.dimUnsubscribed
+      this.bridge.showChargerStations
     );
   }
 
@@ -351,6 +355,18 @@ class ERoadtripController {
     switchRouteInPlan(this.level, this.plan, routeId);
     this.bridge.plan = this.plan;
     this.bridge.selectedLegIndex = 0;
+    this.syncMapScene();
+    const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+    mapScene?.fitCameraToRoute();
+    this.renderPlanning();
+  }
+
+  private selectReturnRoute(routeId: string): void {
+    switchReturnRouteInPlan(this.level, this.plan, routeId);
+    this.bridge.plan = this.plan;
+    const legs = getActiveRouteLegs(this.level, this.plan);
+    const firstReturn = legs.findIndex(leg => !!leg.reverse);
+    this.bridge.selectedLegIndex = firstReturn >= 0 ? firstReturn : 0;
     this.syncMapScene();
     const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
     mapScene?.fitCameraToRoute();

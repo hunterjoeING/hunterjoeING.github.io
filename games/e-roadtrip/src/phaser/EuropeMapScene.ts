@@ -17,7 +17,12 @@ import {
 } from './EuropePixelMap';
 import { ChargerStation } from '../types';
 import { getBestPriceForStation } from '../sim/EnergyModel';
-import { getActiveRouteLegs, getActiveRouteOption } from '../sim/RoutePlanner';
+import {
+  getActiveRouteLegs,
+  getActiveRouteOption,
+  getReturnRouteOption,
+  routeOutboundLegs
+} from '../sim/RoutePlanner';
 import { getVehicleById } from '../data/vehicles';
 import { ERoadtripBridge } from './GameBridge';
 import {
@@ -41,9 +46,13 @@ interface ChargerPinNode extends CardLayoutNode {
   cardBg: Phaser.GameObjects.Rectangle;
   cardAccent: Phaser.GameObjects.Rectangle;
   logo: Phaser.GameObjects.Image;
+  icon: Phaser.GameObjects.Image;
   titleText: Phaser.GameObjects.Text;
   priceText: Phaser.GameObjects.Text;
   noSubText: Phaser.GameObjects.Text;
+  onSelectedStage: boolean;
+  compactIcon: boolean;
+  grayIcon: boolean;
 }
 
 const NET_COLORS: Record<string, number> = {
@@ -113,6 +122,8 @@ export class EuropeMapScene extends Phaser.Scene {
   private targetScrollX = 0;
   private targetScrollY = 0;
   private smoothCamActive = false;
+  private openCardStationId: string | null = null;
+  private cardCloseTimer?: Phaser.Time.TimerEvent;
 
   private resizeHandler?: () => void;
 
@@ -578,7 +589,12 @@ export class EuropeMapScene extends Phaser.Scene {
       const dot = this.add.circle(station.mapX, station.mapY, 4.5, netColor);
       dot.setStrokeStyle(1.6, 0x0f172a);
       dot.setDepth(13);
-      dot.setInteractive({ useHandCursor: true });
+
+      const icon = this.add.image(station.mapX, station.mapY, `logo_${station.network}`);
+      icon.setDisplaySize(16, 16);
+      icon.setDepth(14);
+      icon.setInteractive(new Phaser.Geom.Circle(14, 14, 20), Phaser.Geom.Circle.Contains);
+      icon.input!.cursor = 'pointer';
 
       const cardW = 164;
       const cardH = 44;
@@ -619,20 +635,48 @@ export class EuropeMapScene extends Phaser.Scene {
 
       card.add([cardBg, cardAccent, logo, titleText, priceText, noSubText]);
 
-      const onTap = () => {
+      const onIconPointerUp = (pointer: Phaser.Input.Pointer) => {
         if (this.totalDragDist > 8 || this.isPinching) return;
+        if (!this.canShowDetailCard(station)) return;
+        if (pointer.wasTouch) {
+          this.openCardStationId = this.openCardStationId === station.id ? null : station.id;
+          this.layoutChargerCards(true);
+          return;
+        }
+        this.revealChargerCard(station.id);
+      };
+      const onIconOver = (pointer: Phaser.Input.Pointer) => {
+        if (pointer.wasTouch || !this.canShowDetailCard(station)) return;
+        this.revealChargerCard(station.id);
+      };
+      const onIconOut = (pointer: Phaser.Input.Pointer) => {
+        if (pointer.wasTouch) return;
+        this.scheduleHideChargerCard(station.id);
+      };
+
+      icon.on('pointerup', onIconPointerUp);
+      icon.on('pointerover', onIconOver);
+      icon.on('pointerout', onIconOut);
+
+      cardBg.on('pointerup', () => {
+        if (this.totalDragDist > 8 || this.isPinching || !card.visible) return;
         const activeEdgeIds = new Set(getActiveRouteLegs(this.bridge.level, this.bridge.plan).map(l => l.edgeId));
         if (!activeEdgeIds.has(station.edgeId)) return;
         SoundFX.click();
         this.bridge.onMapSelectCharger(station);
         this.refreshDynamicState();
-      };
-
-      dot.on('pointerup', onTap);
-      cardBg.on('pointerup', onTap);
+      });
+      cardBg.on('pointerover', () => {
+        this.cardCloseTimer?.remove(false);
+      });
+      cardBg.on('pointerout', (pointer: Phaser.Input.Pointer) => {
+        if (pointer.wasTouch) return;
+        this.scheduleHideChargerCard(station.id);
+      });
 
       this.chargerLayer.add(dotRing);
       this.chargerLayer.add(dot);
+      this.chargerLayer.add(icon);
       this.chargerLayer.add(card);
 
       this.pinObjects.push({
@@ -646,6 +690,7 @@ export class EuropeMapScene extends Phaser.Scene {
         cardBg,
         cardAccent,
         logo,
+        icon,
         titleText,
         priceText,
         noSubText,
@@ -654,8 +699,39 @@ export class EuropeMapScene extends Phaser.Scene {
         pinX: station.mapX,
         pinY: station.mapY,
         worldX: station.mapX,
-        worldY: station.mapY - 26
+        worldY: station.mapY - 26,
+        onSelectedStage: false,
+        compactIcon: true,
+        grayIcon: false
       });
+    });
+  }
+
+  private canShowDetailCard(station: ChargerStation): boolean {
+    if (!this.bridge.showChargerStations) return false;
+    const legs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
+    if (legs.length === 0) return false;
+    const idx = Math.max(0, Math.min(legs.length - 1, this.bridge.selectedLegIndex || 0));
+    return legs[idx].edgeId === station.edgeId;
+  }
+
+  private revealChargerCard(stationId: string): void {
+    this.cardCloseTimer?.remove(false);
+    if (this.openCardStationId === stationId) {
+      this.layoutChargerCards(true);
+      return;
+    }
+    this.openCardStationId = stationId;
+    this.layoutChargerCards(true);
+  }
+
+  private scheduleHideChargerCard(stationId: string): void {
+    this.cardCloseTimer?.remove(false);
+    this.cardCloseTimer = this.time.delayedCall(420, () => {
+      if (this.openCardStationId === stationId) {
+        this.openCardStationId = null;
+        this.layoutChargerCards(true);
+      }
     });
   }
 
@@ -681,15 +757,23 @@ export class EuropeMapScene extends Phaser.Scene {
     const activeEdgeIds = new Set(activeLegs.map(l => l.edgeId));
     const selectedLegIdx = Math.max(0, Math.min(activeLegs.length - 1, this.bridge.selectedLegIndex || 0));
 
-    // 0. Draw soft-edged light-blue 20% -> 0% SoC range band along the selected route
-    const socBands = computeRouteSocBandSegments(this.bridge.level, this.bridge.plan, 20, 0);
+    // 0. Light-blue 20% -> 0% SoC band only along the active stage
+    const socBands = computeRouteSocBandSegments(
+      this.bridge.level,
+      this.bridge.plan,
+      20,
+      0,
+      selectedLegIdx
+    );
     socBands.forEach(band => {
       this.drawSoftRouteBand(rg, band.points);
     });
 
-    // 1. Draw the 2 unselected alternative routes first (dashed distinct colors)
+    // 1. Draw corridors that are neither the chosen Hinweg nor the chosen Rückweg
+    const returnRoute = getReturnRouteOption(this.bridge.level, this.bridge.plan);
+    const outboundEdgeIds = new Set(routeOutboundLegs(activeRoute).map(l => l.edgeId));
     this.bridge.level.routeOptions.forEach(opt => {
-      if (opt.id === activeRoute.id) return;
+      if (opt.id === activeRoute.id || opt.id === returnRoute.id) return;
       g.lineStyle(3.5, opt.colorHex, 0.45);
       opt.legs.forEach(leg => {
         if (leg.reverse) return;
@@ -739,13 +823,16 @@ export class EuropeMapScene extends Phaser.Scene {
     activeLegs.forEach((leg, legIdx) => {
       const edge = getEdgeById(leg.edgeId);
       const isSelectedStage = legIdx === selectedLegIdx || (activeLegs[selectedLegIdx]?.edgeId === leg.edgeId && leg.reverse === activeLegs[selectedLegIdx]?.reverse);
+      const isReturnLeg = !!leg.reverse;
+      const corridorColor = isReturnLeg ? returnRoute.colorHex : activeRoute.colorHex;
+      const sharesOutbound = isReturnLeg && outboundEdgeIds.has(leg.edgeId);
 
-      if (!leg.reverse) {
-        g.lineStyle(8, activeRoute.colorHex, 0.24);
+      if (!sharesOutbound) {
+        g.lineStyle(8, corridorColor, isReturnLeg ? 0.2 : 0.24);
         for (let i = 0; i < edge.waypoints.length - 1; i++) {
           g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
         }
-        g.lineStyle(4.5, activeRoute.colorHex, 0.92);
+        g.lineStyle(isReturnLeg ? 3.6 : 4.5, corridorColor, isReturnLeg ? 0.84 : 0.92);
         for (let i = 0; i < edge.waypoints.length - 1; i++) {
           g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
         }
@@ -790,9 +877,9 @@ export class EuropeMapScene extends Phaser.Scene {
         g.strokeCircle(fromCity.mapX, fromCity.mapY, 10);
       }
 
-      // Clickable invisible stage hit target at 35% & 65% of outbound leg
-      if (!leg.reverse && !isSelectedStage) {
-        const hitPt = getPointAlongEdge(edge, 0.5);
+      // Clickable stage target. Shared Hin/Rück edges keep the outbound target only.
+      if (!isSelectedStage && !sharesOutbound) {
+        const hitPt = getPointAlongEdge(edge, 0.5, !!leg.reverse);
         const hitZone = this.add.circle(hitPt.x, hitPt.y, 12, 0xfacc15, 0.01);
         hitZone.setInteractive({ useHandCursor: true });
         hitZone.setDepth(10);
@@ -805,64 +892,97 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
-    // 3. Update Charger Pins & Provider Filter Visuals
+    // 3. Update charger provider icons. Detail cards are hover/tap only (see layoutChargerCards).
     const vehicle = getVehicleById(this.bridge.plan.vehicleId);
-    const hasAnySub = this.bridge.plan.subscriptionIds.length > 0 || !!vehicle.isTesla;
     const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
+    const selectedLeg = activeLegs[selectedLegIdx];
+    const showStations = this.bridge.showChargerStations;
 
     this.pinObjects.forEach(node => {
       const { station } = node;
       node.onActiveRoute = activeEdgeIds.has(station.edgeId);
+      node.onSelectedStage = !!selectedLeg && selectedLeg.edgeId === station.edgeId;
       const isSelected = selectedIds.has(station.id);
       const isSub = isProviderSubscribed(station.network, this.bridge.plan.subscriptionIds, vehicle.isTesla);
       const isFilteredOn = this.bridge.providerFilter[station.network] !== false;
       node.isSubscribed = isSub;
-      node.isFilteredVisible = isFilteredOn || isSelected;
 
       const tariff = getBestPriceForStation(station, this.bridge.plan.subscriptionIds, vehicle);
       const netColor = NET_COLORS[station.network] || 0x38bdf8;
-      const grayedOut = this.bridge.dimUnsubscribed && hasAnySub && !isSub && !isSelected;
 
-      node.dot.setVisible(node.isFilteredVisible);
-      node.dotRing.setVisible(node.isFilteredVisible && isSelected);
+      let visible = false;
+      if (showStations) {
+        if (node.onSelectedStage) {
+          visible = true;
+          node.compactIcon = false;
+          node.grayIcon = !isFilteredOn && !isSelected;
+        } else if (node.onActiveRoute || isSelected) {
+          visible = true;
+          node.compactIcon = true;
+          node.grayIcon = false;
+        } else {
+          visible = false;
+          node.compactIcon = true;
+          node.grayIcon = false;
+        }
+      } else {
+        visible = true;
+        node.compactIcon = true;
+        node.grayIcon = false;
+      }
+      node.isFilteredVisible = visible;
+
+      if (this.openCardStationId === station.id && (!showStations || !node.onSelectedStage)) {
+        this.openCardStationId = null;
+      }
+
+      node.icon.setVisible(visible);
+      node.dot.setVisible(visible && !node.compactIcon);
+      node.dotRing.setVisible(visible && isSelected);
+      if (node.icon.input) node.icon.input.enabled = visible;
 
       if (isSelected) {
         node.dot.setFillStyle(0xfacc15);
         node.dot.setStrokeStyle(2, 0xffffff);
         node.dot.setAlpha(1);
         node.dotRing.setStrokeStyle(2, 0xfacc15, 0.9);
-      } else if (grayedOut) {
+        node.icon.clearTint();
+        node.icon.setAlpha(1);
+      } else if (node.grayIcon) {
         node.dot.setFillStyle(0x64748b);
-        node.dot.setStrokeStyle(1.2, 0x0f172a);
-        node.dot.setAlpha(node.onActiveRoute ? 0.55 : 0.25);
+        node.dot.setStrokeStyle(1.2, 0x334155);
+        node.dot.setAlpha(0.85);
+        node.icon.setTint(0xb6c2d2);
+        node.icon.setAlpha(0.78);
       } else {
         node.dot.setFillStyle(netColor);
         node.dot.setStrokeStyle(1.6, 0x0f172a);
-        node.dot.setAlpha(node.onActiveRoute ? 1.0 : 0.48);
+        node.dot.setAlpha(1);
+        node.icon.clearTint();
+        node.icon.setAlpha(node.compactIcon ? 0.92 : 1);
       }
 
-      node.cardBg.setFillStyle(isSelected ? 0x1e293b : 0x0f172a, grayedOut ? 0.65 : node.onActiveRoute ? 0.95 : 0.72);
-      node.cardBg.setStrokeStyle(
-        isSelected ? 2 : 1.5,
-        isSelected ? 0xfacc15 : grayedOut ? 0x475569 : netColor,
-        grayedOut ? 0.45 : node.onActiveRoute ? 0.95 : 0.5
-      );
-      node.cardAccent.setFillStyle(isSelected ? 0xfacc15 : grayedOut ? 0x64748b : netColor, 1);
-      node.logo.setAlpha(grayedOut ? 0.45 : 1);
+      const priceIsRoaming = !isSub;
+      node.cardBg.setFillStyle(isSelected ? 0x1e293b : 0x0f172a, 0.96);
+      node.cardBg.setStrokeStyle(isSelected ? 2 : 1.5, isSelected ? 0xfacc15 : priceIsRoaming ? 0xf87171 : netColor, 0.95);
+      node.cardAccent.setFillStyle(isSelected ? 0xfacc15 : priceIsRoaming ? 0xf87171 : netColor, 1);
+      node.logo.setAlpha(1);
 
       const icons = `${station.hasMcDonalds ? ' 🍔' : ''}${station.trailerFriendly ? ' 🚐' : ''}`;
       const shortNet = NET_SHORT[station.network] || station.network.toUpperCase();
       node.titleText.setText(`${isSelected ? '✓ ' : ''}${shortNet} · ${station.maxKw}kW (${station.stalls}x)${icons}`);
       node.priceText.setText(`${tariff.pricePerKwh.toFixed(2)} €/kWh`);
-      node.priceText.setColor(grayedOut ? '#94a3b8' : tariff.hasSubscriptionDiscount ? '#4ade80' : '#facc15');
+      node.priceText.setColor(priceIsRoaming ? '#f87171' : tariff.hasSubscriptionDiscount ? '#4ade80' : '#facc15');
 
-      if (tariff.hasSubscriptionDiscount) {
+      if (tariff.hasSubscriptionDiscount && isSub) {
         node.noSubText.setText(`ohne Abo: ${tariff.pricePerKwhWithoutSub.toFixed(2)} €/kWh`);
+      } else if (priceIsRoaming) {
+        node.noSubText.setText('Roaming / Ad-hoc');
       } else {
-        node.noSubText.setText(grayedOut ? `${station.cityHint.slice(0, 18)} (kein Abo)` : station.cityHint.slice(0, 22));
+        node.noSubText.setText(station.cityHint.slice(0, 22));
       }
 
-      node.card.setAlpha(grayedOut ? 0.62 : node.onActiveRoute ? 1 : 0.6);
+      node.card.setAlpha(1);
     });
 
     this.layoutChargerCards(true);
@@ -889,10 +1009,8 @@ export class EuropeMapScene extends Phaser.Scene {
   }
 
   /**
-   * Zoom-progressive detail tiers + non-overlapping card & label placement:
-   * - Tier 0 (zoom < 0.95): Only small colored dots for chargers (zero clutter over route/stages).
-   * - Tier 1 (0.95 <= zoom < 1.55): Compact active-route charger badges (logo + kW + price).
-   * - Tier 2 (zoom >= 1.55): Full detailed charger cards + off-route chargers + detailed stage info.
+   * Provider icons stay on the map. Exactly one detail card is shown, and only for a
+   * charger on the selected stage while "Ladestationen anzeigen" is on (hover or tap).
    */
   public layoutChargerCards(force = false): void {
     const cam = this.cameras.main;
@@ -949,60 +1067,43 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
-    const vehicle = getVehicleById(this.bridge.plan.vehicleId);
-    const hasAnySub = this.bridge.plan.subscriptionIds.length > 0 || !!vehicle.isTesla;
     const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
     const visibleNodes: ChargerPinNode[] = [];
 
     this.pinObjects.forEach(node => {
       const isSelected = selectedIds.has(node.station.id);
+      const iconPx = (node.compactIcon ? 12 : isSelected ? 20 : 18) * Math.min(1, invScale * 1.15);
+      const iconSize = Phaser.Math.Clamp(iconPx, 9, 22);
+      node.icon.setDisplaySize(iconSize, iconSize);
+      node.icon.setPosition(node.pinX, node.pinY);
 
-      // Keep dots small & crisp across all zoom levels so they never cover routes
-      const dotR = isSelected ? 6.2 * invScale : node.onActiveRoute ? 4.4 * invScale : 3.2 * invScale;
-      node.dot.setRadius(Phaser.Math.Clamp(dotR, 1.8, 7.5));
-      node.dotRing.setRadius(Phaser.Math.Clamp(dotR * 1.45, 3.0, 11.0));
+      const dotR = (node.compactIcon ? 0 : isSelected ? 11 : 10) * Math.min(1, invScale);
+      node.dot.setRadius(Phaser.Math.Clamp(dotR, 7, 13));
+      node.dotRing.setRadius(Phaser.Math.Clamp(iconSize * 0.72, 8, 16));
 
-      // Progressive card visibility:
-      // Tier 0 (zoomed out): NO cards at all -> route, stages, and Autobahn shields stay 100% clear!
-      // Tier 1 (medium zoom): Show compact cards on active route (or selected stops)
-      // Tier 2 (deep zoom): Show full detail cards for active + alternative routes
-      let showCard = false;
-      if (node.isFilteredVisible) {
-        if (tier === 1) {
-          showCard = node.onActiveRoute && (node.isSubscribed || isSelected || !this.bridge.dimUnsubscribed || !hasAnySub);
-        } else if (tier >= 2) {
-          showCard = node.onActiveRoute || isSelected || zoom >= 1.85;
-        }
-      }
+      node.cardH = 44;
+      node.cardBg.setSize(164, 44);
+      node.cardAccent.setSize(5, 42);
+      node.cardAccent.setPosition(-82 + 2.5, 0);
+      node.logo.setPosition(-82 + 20, 0).setDisplaySize(22, 22);
+      node.titleText.setPosition(-82 + 36, -15);
+      node.priceText.setPosition(-82 + 36, -1);
+      node.noSubText.setVisible(true).setPosition(-82 + 36, 11);
+      node.cardW = 164;
 
-      if (tier === 1) {
-        // Compact card styling at medium zoom
-        node.cardH = 30;
-        node.cardBg.setSize(148, 30);
-        node.cardAccent.setSize(4, 28);
-        node.cardAccent.setPosition(-74 + 2, 0);
-        node.logo.setPosition(-74 + 17, 0).setDisplaySize(18, 18);
-        node.titleText.setPosition(-74 + 31, -11);
-        node.priceText.setPosition(-74 + 31, 1);
-        node.noSubText.setVisible(false);
-        node.cardW = 148;
-      } else {
-        // Full card styling at deep zoom
-        node.cardH = 44;
-        node.cardBg.setSize(164, 44);
-        node.cardAccent.setSize(5, 42);
-        node.cardAccent.setPosition(-82 + 2.5, 0);
-        node.logo.setPosition(-82 + 20, 0).setDisplaySize(22, 22);
-        node.titleText.setPosition(-82 + 36, -15);
-        node.priceText.setPosition(-82 + 36, -1);
-        node.noSubText.setVisible(true);
-        node.cardW = 164;
-      }
+      const showCard =
+        this.bridge.showChargerStations &&
+        node.onSelectedStage &&
+        node.isFilteredVisible &&
+        this.openCardStationId === node.station.id;
 
       node.card.setVisible(showCard);
       if (showCard) {
         node.card.setScale(cardScale);
+        node.cardBg.setInteractive({ useHandCursor: true });
         visibleNodes.push(node);
+      } else if (node.cardBg.input) {
+        node.cardBg.input.enabled = false;
       }
     });
 
@@ -1025,9 +1126,8 @@ export class EuropeMapScene extends Phaser.Scene {
     visibleNodes.forEach(n => {
       n.card.setPosition(n.worldX, n.worldY);
       const isSelected = selectedIds.has(n.station.id);
-      const grayed = this.bridge.dimUnsubscribed && hasAnySub && !n.isSubscribed && !isSelected;
-      const lineColor = isSelected ? 0xfacc15 : grayed ? 0x64748b : NET_COLORS[n.station.network] || 0x38bdf8;
-      this.leaderOverlay.lineStyle(Math.max(0.9, 1.6 * cardScale), lineColor, grayed ? 0.45 : n.onActiveRoute ? 0.88 : 0.45);
+      const lineColor = isSelected ? 0xfacc15 : n.grayIcon ? 0x64748b : NET_COLORS[n.station.network] || 0x38bdf8;
+      this.leaderOverlay.lineStyle(Math.max(0.9, 1.6 * cardScale), lineColor, 0.9);
       this.leaderOverlay.lineBetween(n.pinX, n.pinY, n.worldX, n.worldY);
     });
   }
