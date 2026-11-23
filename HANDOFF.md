@@ -15,7 +15,7 @@
 | E-Roadtrip Planung, Reichweitenband, GTA-2-Sequenz & `AGENTS.md` Regel 9 | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-range-gta2-e223` (PR #2 im Fork) | 🔄 PR im Fork offen |
 | E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` ([PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) im Fork, gegen `main`) | 🔄 PR im Fork offen |
-| E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` (PR im Fork gegen `main`) | 🔄 PR im Fork offen |
+| E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` ([PR #5](https://github.com/mic4rd/hunterjoeING.github.io/pull/5) im Fork, gegen `main`) | 🔄 PR im Fork offen |
 
 ---
 
@@ -30,7 +30,7 @@
   - HUD-Buttons: Ursache war `innerHTML` alle 0,12 s. Stabile DOM-Hülle plus `pointerdown`, größere Trefferfläche.
   - `Architecture.md` (Abschnitte 2, 3.2, 8, Changelog) und `HANDOFF.md` aktualisiert. `npm run typecheck` und `npm run build`.
 - **Offen / Nächste Schritte:**
-  - PR im Fork `mic4rd/hunterjoeING.github.io` gegen `main` (enthält auch die noch offenen Pakete A–C).
+  - [PR #5](https://github.com/mic4rd/hunterjoeING.github.io/pull/5) im Fork gegen `main` (enthält auch die noch offenen Pakete A–C).
   - Level 2–7 bleiben `playable: false`.
 
 ### 2026-11-23 – Michael / Cursor Cloud Agent (Ladestations-Filter auf der Planungskarte)
