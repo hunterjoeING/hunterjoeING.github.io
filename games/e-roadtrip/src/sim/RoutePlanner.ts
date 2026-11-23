@@ -87,13 +87,8 @@ export function createDefaultPlan(level: LevelConfig, vehicleId: string, routeId
     targetSpeedKmh: Math.min(vehicle.maxSpeedKmh, leg.defaultTargetSpeedKmh)
   }));
 
-  const plannedStops: PlannedStop[] = selectedRoute?.defaultPlannedStops
-    ? selectedRoute.defaultPlannedStops.map(s => ({ ...s }))
-    : [];
-
-  const subscriptionIds = vehicle.isTesla
-    ? ['tesla_suc', 'ewe_go']
-    : ['enbw_m', 'ewe_go'];
+  const plannedStops: PlannedStop[] = [];
+  const subscriptionIds: string[] = [];
 
   return {
     vehicleId,
@@ -114,9 +109,7 @@ export function switchRouteInPlan(level: LevelConfig, plan: TripPlan, routeId: s
     legIndex: idx,
     targetSpeedKmh: Math.min(vehicle.maxSpeedKmh, leg.defaultTargetSpeedKmh)
   }));
-  plan.plannedStops = selectedRoute.defaultPlannedStops
-    ? selectedRoute.defaultPlannedStops.map(s => ({ ...s }))
-    : [];
+  plan.plannedStops = [];
   return plan;
 }
 

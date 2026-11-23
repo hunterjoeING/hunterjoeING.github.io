@@ -92,12 +92,13 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
    - Generates all pixel-art textures via `PixelArtGenerator` and starts `EuropeMapScene`.
    - Calls `bridge.onBootReady()` $\rightarrow$ `PlanningUI` renders.
 2. **Planning Phase (`EuropeMapScene` + `PlanningUI`)**:
-   - Player chooses Level, Vehicle (buy/sell with `CampaignSave.cashEur`), Route (`RouteOption`), Subscriptions (`SubscriptionSpec[]`), Leg target speeds, and Charging Stops (`PlannedStop[]` via map pins or sidebar).
+   - At level start (and on route switch), **no** charging subscriptions and **no** charging stops are preselected (`subscriptionIds: []`, `plannedStops: []`); the player chooses vehicle, route (`RouteOption`), subscriptions (`SubscriptionSpec[]`), leg target speeds, and charging stops (`PlannedStop[]` via map pins or sidebar).
    - `RoutePlanner.evaluateTripPlan()` computes live feasibility, predicted arrival SoCs, and cost/time estimates.
+   - `MapLayout.computeRouteSocBandSegments()` projects the stretches along the active route where predicted SoC drops from `20 %` to `0 %`, rendered in `EuropeMapScene` as a soft-edged, semi-transparent light-blue band along the selected route (no radial range ring).
 3. **Trip Execution (`AutobahnScene` $\leftrightarrow$ `CityDriveScene` $\leftrightarrow$ `EventModal`)**:
    - Starting a trip creates `RunState` and launches either `CityDriveScene` (if leg 0 has `citySegmentAtStart`) or `AutobahnScene`.
    - **`AutobahnScene`**: Simulates leg-by-leg highway travel at `timeScale` (`1x | 5x | 15x`). Updates `socPct`, `elapsedMinutes`, `stress`, `bladderNeed`, weather, dynamic events, wife dialogues, and approaches planned `ChargerStation`s.
-   - **`CityDriveScene`**: Top-down GTA-2 style manual driving (`WASD`/Arrows or `TouchscreenWidget`) for `CityDrivePreset` (`aachen_start`, `charger_park`, `hannover_messe`, `aachen_finish`, `ferry_denmark`). Enforces traffic lights (`red_light`), crosswalks (`zebra_crossing`), and collisions (`CityTraffic`).
+   - **`CityDriveScene`**: Top-down GTA-2 style manual driving (`WASD`/Arrows or `TouchscreenWidget`) for `CityDrivePreset` (`aachen_start`, `charger_park`, `hannover_messe`, `aachen_finish`, `ferry_denmark`). Enforces traffic lights (`red_light`), crosswalks (`zebra_crossing` only while a pedestrian is actively crossing), and collisions (`CityTraffic`). Pedestrians stroll along sidewalks throughout the city and only occasionally cross a zebra crossing when clear (with cooldowns so crossings are never permanently blocked). In `aachen_start`, the A4 motorway on-ramp extends east from Top Ave and is passable at speed without stopping.
    - **`EventModal`**: Pauses simulation (`bridge.paused = true`) for interactive charging (real-time simulated charging curve + break activities like `eat`, `toilet`, `dog`, `children`, `shopping`), dynamic events, wife dialogues, or live map peek.
 4. **Completion (`ScoringEngine` + `ResultsUI`)**:
    - `finishLevel(cleanArrival)` runs `evaluateRun()`, awards `prizeMoneyEur`, unlocks `level.order + 1`, persists `CampaignSave` to `localStorage`, and renders `ResultsUI`.
@@ -174,4 +175,5 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
 - **2026-11-23:** Initial `Architecture.md` created for cross-tool AI handoff.
 - **2026-11-23:** Added `devDependencies` to `package.json`, fixed `tsconfig.json` `typeRoots` to use local `./node_modules`, added root `.gitignore`, updated `AGENTS.md` Rule 4 for feature-branch/PR collaboration, and documented design decisions ("Why") and open points.
 - **2026-11-23:** CI rebuild of `dist/e-roadtrip.js` on `main` (`.github/workflows/rebuild-e-roadtrip.yml`), `.gitattributes` so the generated bundle is not hand-merged, and `esbuild.mjs` so `npm run build` keeps Phaser as the `dist/phaser.min.js` global instead of inlining it.
+- **2026-11-23:** Removed preselected charging subscriptions and stops at level start/route switch; replaced the radial 4-colour range ring with a soft-edged light-blue 20 %→0 % SoC band strictly along the selected route (`MapLayout.computeRouteSocBandSegments` + `EuropeMapScene.drawSoftRouteBand`); upgraded GTA-2 `CityDriveScene` with sidewalk-walking pedestrians that only occasionally cross zebra crossings and a real A4 motorway on-ramp passable at speed without stopping.
 

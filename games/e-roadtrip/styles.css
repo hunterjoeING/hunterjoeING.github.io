@@ -1335,10 +1335,13 @@ body {
   border-radius: 2px;
   display: inline-block;
 }
-.lg-dot.g::before { background: #22c55e; }
-.lg-dot.y::before { background: #eab308; }
-.lg-dot.o::before { background: #f97316; }
-.lg-dot.r::before { background: #ef4444; }
+.lg-dot.b::before {
+  width: 14px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(125, 211, 252, 0.85);
+  box-shadow: 0 0 6px rgba(56, 189, 248, 0.8);
+}
 
 /* Stage Quick Bar & Active Stage Highlight */
 .stage-quick-bar {

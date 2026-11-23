@@ -29,7 +29,7 @@ import { ERoadtripBridge } from './GameBridge';
 import {
   BoxRect,
   CardLayoutNode,
-  computeRangeOverlayForStage,
+  computeRouteSocBandSegments,
   getPointAlongEdge,
   isProviderSubscribed,
   resolveNonOverlappingCards
@@ -400,34 +400,100 @@ export class EuropeMapScene extends Phaser.Scene {
     }
   }
 
-  private drawAnnulusRing(
+  private drawSoftRouteBand(
     g: Phaser.GameObjects.Graphics,
-    cx: number,
-    cy: number,
-    innerR: number,
-    outerR: number,
-    color: number,
-    alpha: number
+    rawPts: Array<{ x: number; y: number }>
   ): void {
-    const steps = 64;
-    if (innerR <= 0.5) {
-      g.fillStyle(color, alpha);
-      g.fillCircle(cx, cy, outerR);
-    } else {
-      const pts: Phaser.Math.Vector2[] = [];
-      for (let i = 0; i <= steps; i++) {
-        const a = (i / steps) * Math.PI * 2;
-        pts.push(new Phaser.Math.Vector2(cx + Math.cos(a) * outerR, cy + Math.sin(a) * outerR));
+    const pts: Array<{ x: number; y: number }> = [];
+    for (const p of rawPts) {
+      if (pts.length === 0 || Math.hypot(p.x - pts[pts.length - 1].x, p.y - pts[pts.length - 1].y) >= 0.5) {
+        pts.push(p);
       }
-      for (let i = steps; i >= 0; i--) {
-        const a = (i / steps) * Math.PI * 2;
-        pts.push(new Phaser.Math.Vector2(cx + Math.cos(a) * innerR, cy + Math.sin(a) * innerR));
-      }
-      g.fillStyle(color, alpha);
-      g.fillPoints(pts, true);
     }
-    g.lineStyle(1.4, color, Math.min(0.85, alpha * 3));
-    g.strokeCircle(cx, cy, outerR);
+    if (pts.length < 2) return;
+
+    const segNormals: Array<{ x: number; y: number }> = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const dx = pts[i + 1].x - pts[i].x;
+      const dy = pts[i + 1].y - pts[i].y;
+      const len = Math.max(0.001, Math.hypot(dx, dy));
+      segNormals.push({ x: -dy / len, y: dx / len });
+    }
+
+    const vertNormals: Array<{ x: number; y: number }> = [];
+    for (let i = 0; i < pts.length; i++) {
+      if (i === 0) {
+        vertNormals.push(segNormals[0]);
+      } else if (i === pts.length - 1) {
+        vertNormals.push(segNormals[segNormals.length - 1]);
+      } else {
+        const n1 = segNormals[i - 1];
+        const n2 = segNormals[i];
+        let nx = n1.x + n2.x;
+        let ny = n1.y + n2.y;
+        const nLen = Math.hypot(nx, ny);
+        if (nLen < 0.001) {
+          vertNormals.push(n2);
+        } else {
+          nx /= nLen;
+          ny /= nLen;
+          const dot = Math.max(0.55, nx * n2.x + ny * n2.y);
+          const miter = Math.min(1.6, 1 / dot);
+          vertNormals.push({ x: nx * miter, y: ny * miter });
+        }
+      }
+    }
+
+    const startDirAngle = Math.atan2(pts[0].y - pts[1].y, pts[0].x - pts[1].x);
+    const endDirAngle = Math.atan2(
+      pts[pts.length - 1].y - pts[pts.length - 2].y,
+      pts[pts.length - 1].x - pts[pts.length - 2].x
+    );
+    const capSteps = 6;
+
+    const layers = [
+      { hw: 28, color: 0x7dd3fc, alpha: 0.045 },
+      { hw: 22, color: 0x7dd3fc, alpha: 0.06 },
+      { hw: 17, color: 0x7dd3fc, alpha: 0.085 },
+      { hw: 13, color: 0x38bdf8, alpha: 0.11 },
+      { hw: 9.5, color: 0x7dd3fc, alpha: 0.13 },
+      { hw: 6, color: 0xbae6fd, alpha: 0.15 }
+    ];
+
+    layers.forEach(layer => {
+      const poly: Phaser.Math.Vector2[] = [];
+      for (let i = 0; i < pts.length; i++) {
+        poly.push(
+          new Phaser.Math.Vector2(
+            pts[i].x + vertNormals[i].x * layer.hw,
+            pts[i].y + vertNormals[i].y * layer.hw
+          )
+        );
+      }
+      const endPt = pts[pts.length - 1];
+      for (let s = 1; s < capSteps; s++) {
+        const a = endDirAngle + Math.PI / 2 - (s / capSteps) * Math.PI;
+        poly.push(new Phaser.Math.Vector2(endPt.x + Math.cos(a) * layer.hw, endPt.y + Math.sin(a) * layer.hw));
+      }
+      for (let i = pts.length - 1; i >= 0; i--) {
+        poly.push(
+          new Phaser.Math.Vector2(
+            pts[i].x - vertNormals[i].x * layer.hw,
+            pts[i].y - vertNormals[i].y * layer.hw
+          )
+        );
+      }
+      const startPt = pts[0];
+      for (let s = 1; s < capSteps; s++) {
+        const a = startDirAngle + Math.PI / 2 - (s / capSteps) * Math.PI;
+        poly.push(
+          new Phaser.Math.Vector2(startPt.x + Math.cos(a) * layer.hw, startPt.y + Math.sin(a) * layer.hw)
+        );
+      }
+
+      g.fillStyle(layer.color, layer.alpha);
+      g.fillPoints(poly, true);
+    });
   }
 
   private drawCitiesAndLandmarks(): void {
@@ -598,21 +664,11 @@ export class EuropeMapScene extends Phaser.Scene {
     const activeEdgeIds = new Set(activeLegs.map(l => l.edgeId));
     const selectedLegIdx = Math.max(0, Math.min(activeLegs.length - 1, this.bridge.selectedLegIndex || 0));
 
-    // 0. Draw Transparent 4-Band Range Overlay for Currently Selected Stage
-    const rangeData = computeRangeOverlayForStage(this.bridge.level, this.bridge.plan, selectedLegIdx);
-    if (rangeData) {
-      rangeData.rings.forEach(ring => {
-        this.drawAnnulusRing(
-          rg,
-          rangeData.originX,
-          rangeData.originY,
-          ring.innerPx,
-          ring.outerPx,
-          ring.color,
-          ring.alpha
-        );
-      });
-    }
+    // 0. Draw soft-edged light-blue 20% -> 0% SoC range band along the selected route
+    const socBands = computeRouteSocBandSegments(this.bridge.level, this.bridge.plan, 20, 0);
+    socBands.forEach(band => {
+      this.drawSoftRouteBand(rg, band.points);
+    });
 
     // 1. Draw the 2 unselected alternative routes first (dashed distinct colors)
     this.bridge.level.routeOptions.forEach(opt => {
@@ -734,6 +790,7 @@ export class EuropeMapScene extends Phaser.Scene {
 
     // 3. Update Charger Pins & Provider Filter Visuals
     const vehicle = getVehicleById(this.bridge.plan.vehicleId);
+    const hasAnySub = this.bridge.plan.subscriptionIds.length > 0 || !!vehicle.isTesla;
     const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
 
     this.pinObjects.forEach(node => {
@@ -747,7 +804,7 @@ export class EuropeMapScene extends Phaser.Scene {
 
       const tariff = getBestPriceForStation(station, this.bridge.plan.subscriptionIds, vehicle);
       const netColor = NET_COLORS[station.network] || 0x38bdf8;
-      const grayedOut = this.bridge.dimUnsubscribed && !isSub && !isSelected;
+      const grayedOut = this.bridge.dimUnsubscribed && hasAnySub && !isSub && !isSelected;
 
       node.dot.setVisible(node.isFilteredVisible);
       node.dotRing.setVisible(node.isFilteredVisible && isSelected);
@@ -875,6 +932,8 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
+    const vehicle = getVehicleById(this.bridge.plan.vehicleId);
+    const hasAnySub = this.bridge.plan.subscriptionIds.length > 0 || !!vehicle.isTesla;
     const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
     const visibleNodes: ChargerPinNode[] = [];
 
@@ -893,7 +952,7 @@ export class EuropeMapScene extends Phaser.Scene {
       let showCard = false;
       if (node.isFilteredVisible) {
         if (tier === 1) {
-          showCard = node.onActiveRoute && (node.isSubscribed || isSelected || !this.bridge.dimUnsubscribed);
+          showCard = node.onActiveRoute && (node.isSubscribed || isSelected || !this.bridge.dimUnsubscribed || !hasAnySub);
         } else if (tier >= 2) {
           showCard = node.onActiveRoute || isSelected || zoom >= 1.85;
         }
@@ -949,7 +1008,7 @@ export class EuropeMapScene extends Phaser.Scene {
     visibleNodes.forEach(n => {
       n.card.setPosition(n.worldX, n.worldY);
       const isSelected = selectedIds.has(n.station.id);
-      const grayed = this.bridge.dimUnsubscribed && !n.isSubscribed && !isSelected;
+      const grayed = this.bridge.dimUnsubscribed && hasAnySub && !n.isSubscribed && !isSelected;
       const lineColor = isSelected ? 0xfacc15 : grayed ? 0x64748b : NET_COLORS[n.station.network] || 0x38bdf8;
       this.leaderOverlay.lineStyle(Math.max(0.9, 1.6 * cardScale), lineColor, grayed ? 0.45 : n.onActiveRoute ? 0.88 : 0.45);
       this.leaderOverlay.lineBetween(n.pinX, n.pinY, n.worldX, n.worldY);

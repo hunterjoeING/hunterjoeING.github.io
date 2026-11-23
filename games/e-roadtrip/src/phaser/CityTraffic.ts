@@ -12,13 +12,24 @@ export interface TrafficCarAgent {
   isCyclist?: boolean;
 }
 
+export interface PedestrianZebraLink {
+  zebraId: string;
+  sideA: { x: number; y: number };
+  sideB: { x: number; y: number };
+  sidewalkPathA: Array<{ x: number; y: number }>;
+  sidewalkPathB: Array<{ x: number; y: number }>;
+  onSideA: boolean;
+  crossCooldownSec: number;
+}
+
 export interface PedestrianAgent {
   sprite: Phaser.Physics.Arcade.Image;
-  a: { x: number; y: number };
-  b: { x: number; y: number };
-  toB: boolean;
+  waypoints: Array<{ x: number; y: number }>;
+  wpIndex: number;
   speed: number;
   isCrossing: boolean;
+  crossTarget?: { x: number; y: number };
+  zebraLink?: PedestrianZebraLink;
 }
 
 export interface SignalIntersection {
@@ -144,14 +155,15 @@ export function shouldNpcYield(
     }
   }
 
-  // 2. Yield to pedestrians near or on zebra crosswalks ahead
+  // 2. Yield to pedestrians actively crossing a zebra crosswalk ahead
   for (const zb of zebras) {
     const probeInZebra = Phaser.Geom.Rectangle.Contains(zb.box, probeX, probeY);
     const currentlyInZebra = Phaser.Geom.Rectangle.Contains(zb.box, npc.sprite.x, npc.sprite.y);
     if (!currentlyInZebra && probeInZebra) {
       for (const ped of pedestrians) {
+        if (!ped.isCrossing) continue;
         const d = Phaser.Math.Distance.Between(ped.sprite.x, ped.sprite.y, zb.box.centerX, zb.box.centerY);
-        if (d < 78) return true;
+        if (d < 84) return true;
       }
     }
   }
@@ -202,7 +214,7 @@ export function detectPlayerTrafficViolation(
     }
   }
 
-  // Check zebra crossing violation (driving across zebra while pedestrian is waiting/crossing close by)
+  // Check zebra crossing violation (driving across zebra while a pedestrian is actively crossing)
   for (const zb of zebras) {
     const inside = Phaser.Geom.Rectangle.Contains(zb.box, px, py);
     const wasInside = wasInZebras.has(zb.id);
@@ -211,7 +223,9 @@ export function detectPlayerTrafficViolation(
 
     if (inside && !wasInside && movingFast) {
       const pedNear = pedestrians.some(
-        p => Phaser.Math.Distance.Between(p.sprite.x, p.sprite.y, zb.box.centerX, zb.box.centerY) < 72
+        p =>
+          p.isCrossing &&
+          Phaser.Math.Distance.Between(p.sprite.x, p.sprite.y, zb.box.centerX, zb.box.centerY) < 80
       );
       if (pedNear) {
         return 'zebra_crossing';

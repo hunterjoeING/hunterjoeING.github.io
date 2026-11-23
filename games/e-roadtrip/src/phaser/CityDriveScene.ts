@@ -45,8 +45,8 @@ export class CityDriveScene extends Phaser.Scene {
   private obstacles!: Phaser.Physics.Arcade.StaticGroup;
 
   private targetZone!: Phaser.Geom.Rectangle;
-  private targetGlow!: Phaser.GameObjects.Rectangle;
-  private targetLabel!: Phaser.GameObjects.Text;
+  private targetGlow?: Phaser.GameObjects.Rectangle;
+  private targetLabel?: Phaser.GameObjects.Text;
   private reverseHintText!: Phaser.GameObjects.Text;
   private navArrow!: Phaser.GameObjects.Triangle;
   private distText!: Phaser.GameObjects.Text;
@@ -171,6 +171,51 @@ export class CityDriveScene extends Phaser.Scene {
     g.fillRect(1300, 795, 160, 90); // Entry to SE Charging Park from Mid Ave
     g.fillRect(1440, 555, 160, 115); // Entry to NE Hannover Messe park from Mid Ave
     g.fillRect(320, 800, 130, 140); // Entry to SW Aachen Finish park from Mid Ave
+
+    // Real A4 motorway on-ramp extending east from Top Ave (passable at full speed)
+    g.fillStyle(0x1e293b, 1);
+    g.fillRect(1860, 158, 180, 108);
+    // Hard shoulder strips & steel guardrails along the ramp edges
+    g.fillStyle(0x334155, 1);
+    g.fillRect(1900, 158, 140, 7);
+    g.fillRect(1900, 259, 140, 7);
+    g.fillStyle(0x94a3b8, 1);
+    g.fillRect(1900, 153, 140, 4);
+    g.fillRect(1900, 267, 140, 4);
+    g.fillStyle(0xe2e8f0, 0.95);
+    for (let rx = 1910; rx <= 2030; rx += 20) {
+      g.fillRect(rx, 152, 4, 6);
+      g.fillRect(rx, 266, 4, 6);
+    }
+    // Solid white ramp edge lines & dashed acceleration lane divider
+    g.fillStyle(0xf8fafc, 0.9);
+    g.fillRect(1896, 166, 144, 2.5);
+    g.fillRect(1896, 256, 144, 2.5);
+    for (let rx = 1906; rx < 2032; rx += 26) {
+      g.fillRect(rx, 210, 14, 2.5);
+    }
+    // Painted road chevrons/arrows pointing onto the A4
+    [1868, 1932, 1994].forEach(ax => {
+      g.fillStyle(0xf8fafc, 0.82);
+      g.fillRect(ax - 12, 231, 14, 4);
+      g.fillTriangle(ax + 10, 233, ax + 1, 226, ax + 1, 240);
+      g.fillRect(ax - 12, 187, 14, 4);
+      g.fillTriangle(ax + 10, 189, ax + 1, 182, ax + 1, 196);
+    });
+    // Roadside blue German Autobahn gantry sign north of the ramp (off-road)
+    g.fillStyle(0x1d4ed8, 1);
+    g.fillRect(1904, 114, 124, 30);
+    g.lineStyle(2, 0xf8fafc, 0.95);
+    g.strokeRect(1906, 116, 120, 26);
+    this.add
+      .text(1966, 129, 'A4 AUTOBAHN →', {
+        fontFamily: 'Plus Jakarta Sans, sans-serif',
+        fontSize: '10.5px',
+        fontStyle: 'bold',
+        color: '#ffffff'
+      })
+      .setOrigin(0.5)
+      .setDepth(5);
 
     // Dedicated terracotta bike lanes
     g.fillStyle(0x7c2d12, 0.72);
@@ -311,8 +356,8 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Target Zone per preset
     if (this.preset === 'aachen_start') {
-      this.targetZone = new Phaser.Geom.Rectangle(1775, 155, 110, 96);
-      this.drawZoneMarker('A4 AUTOBAHN\nAUFFAHRT →', 0x2563eb);
+      // Real on-ramp lane east of Top Ave — passable at speed, no stop box!
+      this.targetZone = new Phaser.Geom.Rectangle(1895, 158, 145, 108);
     } else if (this.preset === 'charger_park') {
       // Bay #3 (x: 1326..1370, y: 898..966) - requires REVERSE parking!
       this.targetZone = new Phaser.Geom.Rectangle(1326, 898, 44, 68);
@@ -394,7 +439,7 @@ export class CityDriveScene extends Phaser.Scene {
     const treeSpots = [
       [90, 95], [90, 420], [90, 760], [90, 1120], [90, 1390],
       [540, 95], [840, 95], [1340, 95], [1640, 95],
-      [1955, 220], [1955, 620], [1955, 1020], [1955, 1360],
+      [1955, 360], [1955, 620], [1955, 1020], [1955, 1360],
       [540, 1390], [1440, 1390], [820, 540]
     ];
     treeSpots.forEach(([tx, ty]) => {
@@ -526,16 +571,156 @@ export class CityDriveScene extends Phaser.Scene {
       });
     });
 
-    const pedConfigs: Array<{ tex: string; a: { x: number; y: number }; b: { x: number; y: number }; speed: number }> = [
-      { tex: 'ped_adult_0', a: { x: 896, y: 122 }, b: { x: 896, y: 298 }, speed: 34 },
-      { tex: 'ped_child', a: { x: 906, y: 125 }, b: { x: 906, y: 295 }, speed: 38 },
-      { tex: 'ped_adult_1', a: { x: 125, y: 1108 }, b: { x: 295, y: 1108 }, speed: 32 },
-      { tex: 'ped_adult_0', a: { x: 1156, y: 642 }, b: { x: 1156, y: 816 }, speed: 34 }
+    // Pure sidewalk strollers distributed across all city sidewalks (never block crosswalks)
+    const sidewalkPedConfigs: Array<{
+      tex: string;
+      wps: Array<{ x: number; y: number }>;
+      startIdx?: number;
+      speed: number;
+    }> = [
+      // NW block inner sidewalk loop
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 300, y: 294 }, { x: 944, y: 294 }, { x: 944, y: 642 }, { x: 300, y: 642 }],
+        speed: 32
+      },
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 944, y: 642 }, { x: 300, y: 642 }, { x: 300, y: 294 }, { x: 944, y: 294 }],
+        speed: 29
+      },
+      // SW block sidewalks (avoiding SW finish driveway at x=320..450, y=800..940)
+      {
+        tex: 'ped_child',
+        wps: [{ x: 470, y: 814 }, { x: 944, y: 814 }, { x: 944, y: 1162 }, { x: 470, y: 1162 }],
+        speed: 34
+      },
+      // Top Ave outer north sidewalk (west & east)
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 140, y: 118 }, { x: 760, y: 118 }],
+        speed: 30
+      },
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 1140, y: 118 }, { x: 1740, y: 118 }],
+        speed: 31
+      },
+      // West St outer west sidewalk (north stretch)
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 122, y: 180 }, { x: 122, y: 880 }],
+        speed: 28
+      },
+      // Bottom Ave outer south sidewalk (west & east)
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 180, y: 1344 }, { x: 890, y: 1344 }],
+        speed: 31
+      },
+      {
+        tex: 'ped_child',
+        wps: [{ x: 1160, y: 1344 }, { x: 1900, y: 1344 }],
+        speed: 35
+      },
+      // East Ring outer east sidewalk (south of A4 on-ramp)
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 1918, y: 390 }, { x: 1918, y: 1290 }],
+        speed: 30
+      },
+      // NE & SE block sidewalks along East Ring
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 1116, y: 294 }, { x: 1742, y: 294 }, { x: 1742, y: 625 }, { x: 1742, y: 294 }],
+        speed: 30
+      },
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 1742, y: 820 }, { x: 1742, y: 1162 }, { x: 1130, y: 1162 }, { x: 1742, y: 1162 }],
+        speed: 29
+      }
     ];
-    pedConfigs.forEach(pc => {
-      const sp = this.physics.add.image(pc.a.x, pc.a.y, pc.tex).setDepth(8);
+
+    sidewalkPedConfigs.forEach(pc => {
+      const start = pc.wps[pc.startIdx || 0];
+      const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
       sp.setImmovable(true);
-      this.pedestrians.push({ sprite: sp, a: pc.a, b: pc.b, toB: true, speed: pc.speed, isCrossing: true });
+      this.pedestrians.push({
+        sprite: sp,
+        waypoints: pc.wps,
+        wpIndex: ((pc.startIdx || 0) + 1) % pc.wps.length,
+        speed: pc.speed,
+        isCrossing: false
+      });
+    });
+
+    // Sidewalk pedestrians who occasionally cross a zebra crossing when passing by (never linger/block)
+    const zebraPedConfigs: Array<{
+      tex: string;
+      startPos: { x: number; y: number };
+      speed: number;
+      zebraId: string;
+      sideA: { x: number; y: number };
+      sideB: { x: number; y: number };
+      sidewalkPathA: Array<{ x: number; y: number }>;
+      sidewalkPathB: Array<{ x: number; y: number }>;
+      initialCooldown: number;
+    }> = [
+      {
+        tex: 'ped_adult_0',
+        startPos: { x: 640, y: 122 },
+        speed: 33,
+        zebraId: 'zebra_1',
+        sideA: { x: 898, y: 122 },
+        sideB: { x: 898, y: 294 },
+        sidewalkPathA: [{ x: 520, y: 122 }, { x: 938, y: 122 }],
+        sidewalkPathB: [{ x: 938, y: 294 }, { x: 520, y: 294 }],
+        initialCooldown: 6
+      },
+      {
+        tex: 'ped_adult_1',
+        startPos: { x: 122, y: 920 },
+        speed: 32,
+        zebraId: 'zebra_2',
+        sideA: { x: 122, y: 1108 },
+        sideB: { x: 294, y: 1108 },
+        sidewalkPathA: [{ x: 122, y: 860 }, { x: 122, y: 1320 }],
+        sidewalkPathB: [{ x: 294, y: 1160 }, { x: 294, y: 950 }],
+        initialCooldown: 9
+      },
+      {
+        tex: 'ped_child',
+        startPos: { x: 1360, y: 642 },
+        speed: 34,
+        zebraId: 'zebra_3',
+        sideA: { x: 1158, y: 642 },
+        sideB: { x: 1158, y: 814 },
+        sidewalkPathA: [{ x: 1116, y: 642 }, { x: 1410, y: 642 }],
+        sidewalkPathB: [{ x: 1275, y: 814 }, { x: 1116, y: 814 }],
+        initialCooldown: 11
+      }
+    ];
+
+    zebraPedConfigs.forEach(zc => {
+      const sp = this.physics.add.image(zc.startPos.x, zc.startPos.y, zc.tex).setDepth(8);
+      sp.setImmovable(true);
+      this.pedestrians.push({
+        sprite: sp,
+        waypoints: zc.sidewalkPathA,
+        wpIndex: 1,
+        speed: zc.speed,
+        isCrossing: false,
+        zebraLink: {
+          zebraId: zc.zebraId,
+          sideA: zc.sideA,
+          sideB: zc.sideB,
+          sidewalkPathA: zc.sidewalkPathA,
+          sidewalkPathB: zc.sidewalkPathB,
+          onSideA: true,
+          crossCooldownSec: zc.initialCooldown
+        }
+      });
     });
   }
 
@@ -910,12 +1095,88 @@ export class CityDriveScene extends Phaser.Scene {
       }
     }
 
-    // Move Pedestrians cleanly across crosswalks (wait at curb if a car is already in the crosswalk)
+    // Move Pedestrians along sidewalks; occasionally cross a zebra crossing if road is clear
     for (const pd of this.pedestrians) {
-      const dest = pd.toB ? pd.b : pd.a;
+      const link = pd.zebraLink;
+      if (link && link.crossCooldownSec > 0) {
+        link.crossCooldownSec = Math.max(0, link.crossCooldownSec - dt);
+      }
+
+      if (pd.isCrossing && pd.crossTarget) {
+        const dist = Phaser.Math.Distance.Between(
+          pd.sprite.x,
+          pd.sprite.y,
+          pd.crossTarget.x,
+          pd.crossTarget.y
+        );
+        if (dist < 7) {
+          pd.isCrossing = false;
+          pd.crossTarget = undefined;
+          if (link) {
+            link.onSideA = !link.onSideA;
+            const nextPath = link.onSideA ? link.sidewalkPathA : link.sidewalkPathB;
+            pd.waypoints = nextPath;
+            // Pick the sidewalk waypoint furthest from the crosswalk so the pedestrian walks away
+            let bestIdx = 0;
+            let bestDist = -1;
+            nextPath.forEach((wp, idx) => {
+              const d = Phaser.Math.Distance.Between(pd.sprite.x, pd.sprite.y, wp.x, wp.y);
+              if (d > bestDist) {
+                bestDist = d;
+                bestIdx = idx;
+              }
+            });
+            pd.wpIndex = bestIdx;
+            link.crossCooldownSec = Phaser.Math.FloatBetween(11, 18);
+          }
+        } else {
+          const ang = Phaser.Math.Angle.Between(
+            pd.sprite.x,
+            pd.sprite.y,
+            pd.crossTarget.x,
+            pd.crossTarget.y
+          );
+          const crossSpd = pd.speed * 1.15;
+          pd.sprite.setVelocity(Math.cos(ang) * crossSpd, Math.sin(ang) * crossSpd);
+          continue;
+        }
+      }
+
+      if (link && link.crossCooldownSec <= 0) {
+        const entryPt = link.onSideA ? link.sideA : link.sideB;
+        const distToEntry = Phaser.Math.Distance.Between(pd.sprite.x, pd.sprite.y, entryPt.x, entryPt.y);
+        if (distToEntry < 14) {
+          const zb = this.zebras.find(z => z.id === link.zebraId);
+          const zebraBlockedByVehicle =
+            !!zb &&
+            (Phaser.Geom.Rectangle.Contains(zb.box, this.player.x, this.player.y) ||
+              this.trafficCars.some(tc => Phaser.Geom.Rectangle.Contains(zb.box, tc.sprite.x, tc.sprite.y)));
+
+          if (!zebraBlockedByVehicle && Math.random() < 0.42) {
+            pd.isCrossing = true;
+            pd.crossTarget = link.onSideA ? link.sideB : link.sideA;
+            const ang = Phaser.Math.Angle.Between(
+              pd.sprite.x,
+              pd.sprite.y,
+              pd.crossTarget.x,
+              pd.crossTarget.y
+            );
+            const crossSpd = pd.speed * 1.15;
+            pd.sprite.setVelocity(Math.cos(ang) * crossSpd, Math.sin(ang) * crossSpd);
+            continue;
+          } else {
+            link.crossCooldownSec = 4.5;
+          }
+        }
+      }
+
+      const dest = pd.waypoints[pd.wpIndex];
       const dist = Phaser.Math.Distance.Between(pd.sprite.x, pd.sprite.y, dest.x, dest.y);
-      if (dist < 8) pd.toB = !pd.toB;
-      const ang = Phaser.Math.Angle.Between(pd.sprite.x, pd.sprite.y, dest.x, dest.y);
+      if (dist < 8) {
+        pd.wpIndex = (pd.wpIndex + 1) % pd.waypoints.length;
+      }
+      const nextDest = pd.waypoints[pd.wpIndex];
+      const ang = Phaser.Math.Angle.Between(pd.sprite.x, pd.sprite.y, nextDest.x, nextDest.y);
       pd.sprite.setVelocity(Math.cos(ang) * pd.speed, Math.sin(ang) * pd.speed);
     }
 
@@ -952,7 +1213,16 @@ export class CityDriveScene extends Phaser.Scene {
       this.reverseHintText.setVisible(false);
     }
 
-    if (inZone && Math.abs(this.carSpeed) < 30 && orientationOk) {
+    if (this.preset === 'aachen_start') {
+      if (inZone) {
+        this.completed = true;
+        this.reverseHintText.setVisible(false);
+        this.distText.setText('🛣️ Auffahrt A4 – Gute Fahrt!');
+        this.bridge.onCitySegmentComplete(this.preset, this.cleanRun);
+      } else {
+        this.distText.setText(`Zur A4 Auffahrt · ${Math.max(0, Math.round(distToTarget / 6))} m`);
+      }
+    } else if (inZone && Math.abs(this.carSpeed) < 30 && orientationOk) {
       this.dwellInTargetSec += dt;
       this.distText.setText(`✓ Perfekt! Halten… (${Math.min(100, Math.round((this.dwellInTargetSec / 0.6) * 100))}%)`);
       if (this.dwellInTargetSec >= 0.6) {
@@ -970,13 +1240,11 @@ export class CityDriveScene extends Phaser.Scene {
     } else {
       this.dwellInTargetSec = 0;
       const goalHint =
-        this.preset === 'aachen_start'
-          ? 'Zur A4 Auffahrt'
-          : this.preset === 'charger_park'
-            ? 'Rückwärts in Ladebucht einparken'
-            : this.preset === 'hannover_messe'
-              ? 'Zum Messe-Parkplatz'
-              : 'Ins Ziel einparken';
+        this.preset === 'charger_park'
+          ? 'Rückwärts in Ladebucht einparken'
+          : this.preset === 'hannover_messe'
+            ? 'Zum Messe-Parkplatz'
+            : 'Ins Ziel einparken';
       this.distText.setText(`${goalHint} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
     }
   }

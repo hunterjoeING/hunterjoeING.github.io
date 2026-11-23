@@ -152,7 +152,7 @@ export class PlanningUI {
           <button type="button" class="er-mini-btn" id="btn-zoom-out" title="Herauszoomen">➖ Zoom-</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-route">🎯 Route</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-europe">🌍 Europa</button>
-          <span class="map-hint">Zoomen für Details · Etappe wählen für Reichweiten-Overlay</span>
+          <span class="map-hint">Zoomen für Details · Hellblaues Band zeigt 20–0 % SoC auf der Route</span>
         </div>
       </div>
 
@@ -228,10 +228,7 @@ export class PlanningUI {
       </div>
       <div class="mfb-legend">
         <span>Reichweite:</span>
-        <span class="lg-dot g">25–15%</span>
-        <span class="lg-dot y">15–10%</span>
-        <span class="lg-dot o">10–5%</span>
-        <span class="lg-dot r">5–0%</span>
+        <span class="lg-dot b">20–0 % SoC entlang Route</span>
       </div>
     `;
 
