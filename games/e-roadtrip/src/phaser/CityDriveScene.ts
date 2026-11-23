@@ -34,7 +34,8 @@ export class CityDriveScene extends Phaser.Scene {
     interId: string;
     axis: 'ew' | 'ns';
     sprite: Phaser.GameObjects.Image;
-    halo: Phaser.GameObjects.Arc;
+    halo: Phaser.GameObjects.Image;
+    shimmer: Phaser.GameObjects.Image;
   }> = [];
   private zebras: ZebraCrosswalk[] = [];
   private wasInInter = new Set<string>();
@@ -51,14 +52,45 @@ export class CityDriveScene extends Phaser.Scene {
   private navArrow!: Phaser.GameObjects.Triangle;
   private distText!: Phaser.GameObjects.Text;
 
-  private headlightGfx!: Phaser.GameObjects.Graphics;
-  private lampLightGfx!: Phaser.GameObjects.Graphics;
   private cableGfx!: Phaser.GameObjects.Graphics;
   private nightOverlay!: Phaser.GameObjects.Rectangle;
   private fogOverlay!: Phaser.GameObjects.Rectangle;
   private lightningOverlay!: Phaser.GameObjects.Rectangle;
   private weatherParticles: Phaser.GameObjects.Image[] = [];
+  private rainSplashes: Array<{ sprite: Phaser.GameObjects.Image; age: number; maxAge: number }> = [];
   private streetlamps: Array<{ x: number; y: number }> = [];
+  private lampVisuals: Array<{
+    outer: Phaser.GameObjects.Image;
+    core: Phaser.GameObjects.Image;
+    shimmer: Phaser.GameObjects.Image;
+    phase: number;
+  }> = [];
+  private neonSigns: Array<{
+    x: number;
+    y: number;
+    roadX: number;
+    roadY: number;
+    color: number;
+    phase: number;
+    flicker?: boolean;
+  }> = [];
+  private neonVisuals: Array<{
+    halo: Phaser.GameObjects.Image;
+    shimmer: Phaser.GameObjects.Image;
+    phase: number;
+    flicker?: boolean;
+  }> = [];
+  private playerReflection?: Phaser.GameObjects.Image;
+  private playerHeadlight?: Phaser.GameObjects.Image;
+  private playerTaillight?: Phaser.GameObjects.Image;
+  private npcVisuals: Array<{
+    agent: TrafficCarAgent;
+    reflection: Phaser.GameObjects.Image;
+    headlight?: Phaser.GameObjects.Image;
+    taillight?: Phaser.GameObjects.Image;
+    sirenGlow?: Phaser.GameObjects.Image;
+  }> = [];
+  private isMobilePerf = false;
 
   private dwellInTargetSec = 0;
   private collisionCooldownSec = 0;
@@ -90,13 +122,25 @@ export class CityDriveScene extends Phaser.Scene {
     this.intersections = [];
     this.zebras = [];
     this.streetlamps = [];
+    this.lampVisuals = [];
+    this.neonSigns = [];
+    this.neonVisuals = [];
+    this.npcVisuals = [];
     this.weatherParticles = [];
+    this.rainSplashes = [];
+    this.playerReflection = undefined;
+    this.playerHeadlight = undefined;
+    this.playerTaillight = undefined;
     this.wasInInter.clear();
     this.wasInZebra.clear();
     this.activeTimers = [];
   }
 
   create(): void {
+    this.isMobilePerf =
+      this.scale.width < 640 ||
+      (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0);
+
     this.physics.world.setBounds(0, 0, this.worldW, this.worldH);
     this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);
 
@@ -109,6 +153,16 @@ export class CityDriveScene extends Phaser.Scene {
 
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
     this.cameras.main.setZoom(this.scale.width < 640 ? 0.86 : 1.05);
+
+    // Optional subtle Bloom PostFX on WebGL desktop; degrades gracefully on Canvas2D / mobile
+    const isWebGL = this.game.renderer.type === Phaser.WEBGL;
+    if (isWebGL && !this.isMobilePerf && this.cameras.main.postFX) {
+      try {
+        this.cameras.main.postFX.addBloom(0xffffff, 1, 1, 1.12, 0.32, 2);
+      } catch {
+        // Ignore if WebGL pipeline does not support PostFX on this GPU
+      }
+    }
 
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.wasd = {
@@ -134,6 +188,13 @@ export class CityDriveScene extends Phaser.Scene {
         this.scale.off('resize', this.resizeHandler);
         this.resizeHandler = undefined;
       }
+      if (this.cameras?.main?.postFX) {
+        try {
+          this.cameras.main.postFX.clear();
+        } catch {
+          // Safe cleanup
+        }
+      }
       this.activeTimers.forEach(t => t.remove(false));
       this.activeTimers = [];
       this.tweens.killAll();
@@ -144,22 +205,24 @@ export class CityDriveScene extends Phaser.Scene {
     const g = this.add.graphics();
 
     // Base urban grass
-    g.fillStyle(0x1e472d, 1);
+    g.fillStyle(0x163826, 1);
     g.fillRect(0, 0, this.worldW, this.worldH);
 
-    // City block paved sidewalk apron
-    g.fillStyle(0x64748b, 1);
+    // City block paved sidewalk apron + crisp GTA2 concrete curb trim
+    g.fillStyle(0x475569, 1);
     g.fillRect(60, 60, this.worldW - 120, this.worldH - 120);
+    g.lineStyle(2, 0x94a3b8, 0.35);
+    g.strokeRect(61, 61, this.worldW - 122, this.worldH - 122);
 
     // Park / courtyard green zones
-    g.fillStyle(0x255939, 1);
+    g.fillStyle(0x1e4a32, 1);
     g.fillRect(305, 305, 625, 325); // NW block
     g.fillRect(305, 825, 625, 325); // SW block
     g.fillRect(1130, 305, 600, 325); // NE block
     g.fillRect(1130, 825, 600, 325); // SE block
 
-    // Main GTA-2 style Avenues (140px wide)
-    g.fillStyle(0x1e293b, 1);
+    // Main GTA-2 style Avenues (140px wide) — dark wet tarmac base
+    g.fillStyle(0x131c2b, 1);
     g.fillRect(140, 140, 1760, 140); // Top Ave (y=140..280)
     g.fillRect(140, 660, 1760, 140); // Mid Ave (y=660..800)
     g.fillRect(140, 1180, 1760, 140); // Bottom Ave (y=1180..1320)
@@ -167,7 +230,44 @@ export class CityDriveScene extends Phaser.Scene {
     g.fillRect(960, 140, 140, 1180); // Center Blvd (x=960..1100)
     g.fillRect(1760, 140, 140, 1180); // East Ring (x=1760..1900)
 
+    // Subtle dark wet-asphalt tire wear tracks & rainwater puddles along avenues
+    g.fillStyle(0x0b1220, 0.52);
+    g.fillRect(140, 172, 1760, 18);
+    g.fillRect(140, 232, 1760, 18);
+    g.fillRect(140, 692, 1760, 18);
+    g.fillRect(140, 752, 1760, 18);
+    g.fillRect(140, 1212, 1760, 18);
+    g.fillRect(140, 1272, 1760, 18);
+    g.fillRect(172, 140, 18, 1180);
+    g.fillRect(232, 140, 18, 1180);
+    g.fillRect(992, 140, 18, 1180);
+    g.fillRect(1052, 140, 18, 1180);
+    g.fillRect(1792, 140, 18, 1180);
+    g.fillRect(1852, 140, 18, 1180);
+
+    // Glossy wet-road puddle patches
+    const puddles: Array<[number, number, number, number]> = [
+      [210, 930, 56, 26], [208, 720, 62, 28], [212, 410, 48, 24],
+      [420, 215, 78, 26], [710, 238, 66, 22], [1320, 225, 82, 28], [1640, 195, 70, 24],
+      [510, 742, 74, 26], [820, 718, 64, 24], [1290, 748, 84, 28], [1580, 710, 72, 24],
+      [480, 1245, 70, 24], [1420, 1255, 80, 28], [1030, 460, 52, 30], [1830, 520, 54, 28]
+    ];
+    puddles.forEach(([px, py, pw, ph]) => {
+      g.fillStyle(0x1e3a5f, 0.24);
+      g.fillEllipse(px, py, pw, ph);
+      g.lineStyle(1, 0x38bdf8, 0.14);
+      g.strokeEllipse(px, py, pw - 4, ph - 3);
+    });
+
+    // Curb lines bordering avenues
+    g.lineStyle(2, 0x64748b, 0.55);
+    g.strokeRect(280, 280, 680, 380);
+    g.strokeRect(280, 800, 680, 380);
+    g.strokeRect(1100, 280, 660, 380);
+    g.strokeRect(1100, 800, 660, 380);
+
     // Driveway openings into blocks (Messe, Finish, Charging Park)
+    g.fillStyle(0x131c2b, 1);
     g.fillRect(1300, 795, 160, 90); // Entry to SE Charging Park from Mid Ave
     g.fillRect(1440, 555, 160, 115); // Entry to NE Hannover Messe park from Mid Ave
     g.fillRect(320, 800, 130, 140); // Entry to SW Aachen Finish park from Mid Ave
@@ -280,25 +380,132 @@ export class CityDriveScene extends Phaser.Scene {
     g.fillStyle(0x9a3412, 0.55);
     g.fillRect(148, 520, 52, 95);
 
-    // Buildings (detailed GTA-2 rooftops with AC vents & shadows)
-    const drawBuilding = (x: number, y: number, w: number, h: number, roof: number, trim: number) => {
-      g.fillStyle(0x020617, 0.48);
-      g.fillRect(x + 10, y + 10, w, h);
+    // Buildings (detailed GTA-2 2.5D rooftops with parapets, lit window strips, AC vents & shadows)
+    const drawBuilding = (
+      x: number,
+      y: number,
+      w: number,
+      h: number,
+      roof: number,
+      trim: number,
+      neon?: { label: string; color: number; side: 'north' | 'south' | 'west' | 'east'; flicker?: boolean }
+    ) => {
+      // Deep GTA-2 directional shadow
+      g.fillStyle(0x020617, 0.58);
+      g.fillRect(x + 14, y + 14, w, h);
+      // Outer concrete parapet & inner roof deck
       g.fillStyle(trim, 1);
       g.fillRect(x, y, w, h);
+      g.fillStyle(0x0f172a, 0.45);
+      g.fillRect(x + 5, y + 5, w - 10, h - 10);
       g.fillStyle(roof, 1);
       g.fillRect(x + 8, y + 8, w - 16, h - 16);
-      // Rooftop HVAC & skylight details
-      g.fillStyle(0x1e293b, 0.65);
-      g.fillRect(x + 18, y + 18, 28, 20);
-      g.fillStyle(0x38bdf8, 0.35);
-      g.fillRect(x + w - 54, y + 18, 34, 24);
+      // Rooftop HVAC, vent louvers & lit skylight details
+      g.fillStyle(0x1e293b, 0.8);
+      g.fillRect(x + 18, y + 18, 30, 22);
+      g.fillStyle(0x475569, 0.85);
+      g.fillRect(x + 21, y + 21, 24, 4);
+      g.fillRect(x + 21, y + 28, 24, 4);
+      g.fillStyle(0x38bdf8, 0.42);
+      g.fillRect(x + w - 56, y + 18, 36, 24);
+      g.lineStyle(1, 0x94a3b8, 0.35);
+      g.strokeRect(x + w - 56, y + 18, 36, 24);
+      // Warm lit window strips along building edges
+      g.fillStyle(0xfef08a, 0.42);
+      for (let wx = x + 16; wx < x + w - 24; wx += 22) {
+        g.fillRect(wx, y + h - 4, 12, 3);
+        g.fillRect(wx, y + 1, 12, 3);
+      }
+
+      if (neon) {
+        let nx = x + w / 2;
+        let ny = y + h + 2;
+        let rx = nx;
+        let ry = ny + 44;
+        if (neon.side === 'north') {
+          ny = y - 2;
+          ry = ny - 44;
+        } else if (neon.side === 'west') {
+          nx = x - 2;
+          ny = y + h / 2;
+          rx = nx - 52;
+          ry = ny;
+        } else if (neon.side === 'east') {
+          nx = x + w + 2;
+          ny = y + h / 2;
+          rx = nx + 52;
+          ry = ny;
+        }
+        const cssHex = '#' + neon.color.toString(16).padStart(6, '0');
+        const plateW = Math.max(46, neon.label.length * 7 + 12);
+        const plate = this.add.rectangle(nx, ny, plateW, 15, 0x090d16, 0.94).setDepth(11);
+        plate.setStrokeStyle(1.8, neon.color, 0.95);
+        this.add
+          .text(nx, ny, neon.label, {
+            fontFamily: 'monospace',
+            fontSize: '9.5px',
+            fontStyle: 'bold',
+            color: cssHex
+          })
+          .setOrigin(0.5)
+          .setDepth(11.5);
+        this.neonSigns.push({
+          x: nx,
+          y: ny,
+          roadX: rx,
+          roadY: ry,
+          color: neon.color,
+          phase: this.neonSigns.length * 1.4,
+          flicker: neon.flicker
+        });
+      }
     };
-    drawBuilding(335, 330, 195, 130, 0x334155, 0x475569);
-    drawBuilding(575, 330, 210, 125, 0x475569, 0x64748b);
-    drawBuilding(335, 495, 220, 115, 0x1e3a8a, 0x3b82f6);
-    drawBuilding(665, 865, 215, 145, 0x3f3f46, 0x71717a);
-    drawBuilding(1165, 330, 145, 145, 0x334155, 0x64748b);
+    drawBuilding(335, 330, 195, 130, 0x263447, 0x475569, { label: 'HOTEL', color: 0xf43f5e, side: 'north' });
+    drawBuilding(575, 330, 210, 125, 0x334155, 0x64748b, { label: 'ARCADE', color: 0x22d3ee, side: 'north', flicker: true });
+    drawBuilding(335, 495, 220, 115, 0x1e3a8a, 0x3b82f6, { label: '24H DINER', color: 0xf59e0b, side: 'south' });
+    drawBuilding(665, 865, 215, 145, 0x31343e, 0x64748b, { label: 'CLUB NEON', color: 0xa855f7, side: 'north', flicker: true });
+    drawBuilding(1165, 330, 145, 145, 0x293548, 0x64748b, { label: 'MESSE', color: 0x38bdf8, side: 'north' });
+
+    // Extra roadside neon signs along West St near player start
+    const extraNeons: Array<{ label: string; x: number; y: number; roadX: number; roadY: number; color: number; flicker?: boolean }> = [
+      { label: 'CAFE', x: 112, y: 920, roadX: 185, roadY: 920, color: 0x22d3ee },
+      { label: 'EV-HUB', x: 304, y: 865, roadX: 242, roadY: 865, color: 0xf43f5e, flicker: true },
+      { label: 'MOTEL', x: 112, y: 690, roadX: 185, roadY: 690, color: 0xf59e0b }
+    ];
+    extraNeons.forEach((en, idx) => {
+      this.neonSigns.push({
+        x: en.x,
+        y: en.y,
+        roadX: en.roadX,
+        roadY: en.roadY,
+        color: en.color,
+        phase: 2.1 + idx * 1.1,
+        flicker: en.flicker
+      });
+      const cssHex = '#' + en.color.toString(16).padStart(6, '0');
+      const w = Math.max(44, en.label.length * 7 + 12);
+      const plate = this.add.rectangle(en.x, en.y, w, 15, 0x090d16, 0.94).setDepth(11);
+      plate.setStrokeStyle(1.8, en.color, 0.95);
+      this.add
+        .text(en.x, en.y, en.label, {
+          fontFamily: 'monospace',
+          fontSize: '9.5px',
+          fontStyle: 'bold',
+          color: cssHex
+        })
+        .setOrigin(0.5)
+        .setDepth(11.5);
+    });
+
+    // Charging park canopy neon accent
+    this.neonSigns.push({
+      x: 1380,
+      y: 855,
+      roadX: 1380,
+      roadY: 930,
+      color: 0x10b981,
+      phase: 0.7
+    });
 
     // Park fountain in NW courtyard
     this.add.image(720, 540, 'park_fountain').setScale(1.4).setDepth(3);
@@ -456,11 +663,12 @@ export class CityDriveScene extends Phaser.Scene {
       c.refreshBody();
     });
 
-    // Streetlamps along avenues (glow warmly at dusk/night!)
+    // Streetlamps along avenues (glow warmly at dusk/night & reflect on wet asphalt!)
     this.streetlamps = [
       { x: 320, y: 132 }, { x: 640, y: 132 }, { x: 1260, y: 132 }, { x: 1620, y: 132 },
       { x: 320, y: 652 }, { x: 640, y: 652 }, { x: 1260, y: 652 }, { x: 1620, y: 652 },
       { x: 320, y: 1172 }, { x: 760, y: 1172 }, { x: 1340, y: 1172 }, { x: 1680, y: 1172 },
+      { x: 132, y: 420 }, { x: 132, y: 960 }, { x: 288, y: 960 },
       { x: 1350, y: 855 }, { x: 1520, y: 855 }
     ];
     this.streetlamps.forEach(lp => {
@@ -488,9 +696,22 @@ export class CityDriveScene extends Phaser.Scene {
     ];
 
     const addLightVisual = (interId: string, axis: 'ew' | 'ns', x: number, y: number) => {
-      const halo = this.add.circle(x, y, 16, 0x22c55e, 0.22).setDepth(14);
-      const sprite = this.add.image(x, y, 'tlight_green').setDepth(15);
-      this.signalVisuals.push({ interId, axis, sprite, halo });
+      const shimmer = this.add
+        .image(x, y + 22, 'wet_shimmer')
+        .setTint(0x22c55e)
+        .setScale(0.52, 0.55)
+        .setAlpha(0.28)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(2.5);
+      const halo = this.add
+        .image(x, y, 'light_glow_soft')
+        .setTint(0x22c55e)
+        .setScale(0.42)
+        .setAlpha(0.55)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14.6);
+      const sprite = this.add.image(x, y, 'tlight_green').setDepth(14.5);
+      this.signalVisuals.push({ interId, axis, sprite, halo, shimmer });
     };
 
     // Inter 1 lights
@@ -829,13 +1050,12 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private setupLightingAndWeather(): void {
-    this.lampLightGfx = this.add.graphics().setDepth(11);
-    this.headlightGfx = this.add.graphics().setDepth(12);
     this.cableGfx = this.add.graphics().setDepth(13);
 
+    // Ambient GTA-2 twilight/night overlay BELOW additive light sprites so lights cut through darkness
     this.nightOverlay = this.add
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0x020617, 0)
-      .setDepth(14);
+      .setDepth(12);
     this.fogOverlay = this.add
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0xcbd5e1, 0)
       .setDepth(15);
@@ -843,13 +1063,137 @@ export class CityDriveScene extends Phaser.Scene {
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0xe0f2fe, 0)
       .setDepth(17);
 
+    // Additive sodium-vapor streetlamp pools + wet-road specular shimmer reflections
+    this.lampVisuals = this.streetlamps.map((lp, idx) => {
+      const shimmer = this.add
+        .image(lp.x, lp.y + 34, 'wet_shimmer')
+        .setTint(0xfbbf24)
+        .setScale(0.85, 0.9)
+        .setAlpha(0)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(2.5);
+      const outer = this.add
+        .image(lp.x, lp.y + 10, 'light_glow_soft')
+        .setTint(0xffb74d)
+        .setScale(1.38)
+        .setAlpha(0)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14);
+      const core = this.add
+        .image(lp.x, lp.y + 4, 'light_glow_soft')
+        .setTint(0xfef08a)
+        .setScale(0.46)
+        .setAlpha(0)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14.1);
+      return { outer, core, shimmer, phase: idx * 0.9 };
+    });
+
+    // Additive neon sign glows + colored wet-asphalt reflection smears
+    this.neonVisuals = this.neonSigns.map(ns => {
+      const halo = this.add
+        .image(ns.x, ns.y, 'light_glow_soft')
+        .setTint(ns.color)
+        .setScale(1.15)
+        .setAlpha(0.55)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14);
+      const isHorizontalRoad = Math.abs(ns.roadY - ns.y) >= Math.abs(ns.roadX - ns.x);
+      const shimmer = this.add
+        .image(ns.roadX, ns.roadY, 'wet_shimmer')
+        .setTint(ns.color)
+        .setScale(isHorizontalRoad ? 1.15 : 0.9, isHorizontalRoad ? 0.85 : 1.05)
+        .setRotation(isHorizontalRoad ? 0 : Math.PI / 2)
+        .setAlpha(0.32)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(2.5);
+      return { halo, shimmer, phase: ns.phase, flicker: ns.flicker };
+    });
+
+    // Player car mirrored wet-road reflection + additive headlight cone + taillight glow
+    this.playerReflection = this.add
+      .image(this.player.x, this.player.y + 8, `car_${this.bridge.plan.vehicleId}`)
+      .setTint(0x93c5fd)
+      .setScale(0.96, -0.78)
+      .setAlpha(0.2)
+      .setDepth(2.4);
+    this.playerHeadlight = this.add
+      .image(this.player.x, this.player.y, 'headlight_cone')
+      .setOrigin(0.5, 0.95)
+      .setScale(1.22, 1.18)
+      .setAlpha(0.68)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(13.2);
+    this.playerTaillight = this.add
+      .image(this.player.x, this.player.y, 'light_glow_soft')
+      .setTint(0xef4444)
+      .setScale(0.52)
+      .setAlpha(0.42)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(13.1);
+
+    // NPC mirrored wet-road reflections + additive headlights / taillights / police siren lightbar
+    this.npcVisuals = this.trafficCars.map(agent => {
+      const reflection = this.add
+        .image(agent.sprite.x, agent.sprite.y + 7, agent.sprite.texture.key)
+        .setTint(0x93c5fd)
+        .setScale(0.94, -0.74)
+        .setAlpha(0.18)
+        .setDepth(2.4);
+      let headlight: Phaser.GameObjects.Image | undefined;
+      let taillight: Phaser.GameObjects.Image | undefined;
+      let sirenGlow: Phaser.GameObjects.Image | undefined;
+      if (!agent.isCyclist) {
+        headlight = this.add
+          .image(agent.sprite.x, agent.sprite.y, 'headlight_cone')
+          .setOrigin(0.5, 0.95)
+          .setScale(0.86, 0.82)
+          .setAlpha(0.52)
+          .setBlendMode(Phaser.BlendModes.ADD)
+          .setDepth(13.1);
+        taillight = this.add
+          .image(agent.sprite.x, agent.sprite.y, 'light_glow_soft')
+          .setTint(0xef4444)
+          .setScale(0.42)
+          .setAlpha(0.32)
+          .setBlendMode(Phaser.BlendModes.ADD)
+          .setDepth(13);
+      }
+      if (agent.isPolice) {
+        sirenGlow = this.add
+          .image(agent.sprite.x, agent.sprite.y, 'light_glow_soft')
+          .setTint(0x38bdf8)
+          .setScale(0.75)
+          .setAlpha(0.55)
+          .setBlendMode(Phaser.BlendModes.ADD)
+          .setDepth(14.6);
+      }
+      return { agent, reflection, headlight, taillight, sirenGlow };
+    });
+
+    // Camera-local rain streaks & wet-asphalt splash rings (mobile-aware counts)
+    const streakCount = this.isMobilePerf ? 28 : 74;
     this.weatherParticles = [];
-    for (let i = 0; i < 65; i++) {
+    for (let i = 0; i < streakCount; i++) {
       const d = this.add
-        .image(Phaser.Math.Between(0, this.worldW), Phaser.Math.Between(0, this.worldH), 'rain_drop')
+        .image(Phaser.Math.Between(0, this.worldW), Phaser.Math.Between(0, this.worldH), 'rain_streak')
         .setDepth(16)
         .setAlpha(0);
       this.weatherParticles.push(d);
+    }
+
+    const splashCount = this.isMobilePerf ? 8 : 18;
+    this.rainSplashes = [];
+    for (let i = 0; i < splashCount; i++) {
+      const sp = this.add
+        .image(this.player.x, this.player.y, 'rain_splash')
+        .setDepth(2.6)
+        .setAlpha(0);
+      this.rainSplashes.push({
+        sprite: sp,
+        age: Phaser.Math.FloatBetween(0, 0.45),
+        maxAge: Phaser.Math.FloatBetween(0.28, 0.5)
+      });
     }
   }
 
@@ -887,8 +1231,35 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private updateLightingVisuals(dt: number, profile: CityLightingProfile): void {
-    this.nightOverlay.setFillStyle(profile.ambientColor, profile.ambientAlpha);
-    this.fogOverlay.setAlpha(profile.isFog ? 0.22 + Math.sin(this.trafficTimer * 0.8) * 0.05 : 0);
+    const t = this.trafficTimer;
+    // GTA-2 urban neo-noir twilight mood floor so additive lights, neon & wet reflections pop
+    const visualAmbientAlpha = profile.isNight
+      ? Math.max(0.56, profile.ambientAlpha)
+      : profile.isDuskOrDawn
+        ? Math.max(0.32, profile.ambientAlpha + 0.14)
+        : profile.isRain || profile.isStorm
+          ? Math.max(0.34, profile.ambientAlpha + 0.14)
+          : Math.max(0.24, profile.ambientAlpha);
+    const visualAmbientColor =
+      profile.isNight || profile.isRain || profile.isStorm
+        ? 0x040b1a
+        : profile.isDuskOrDawn
+          ? 0x0f172a
+          : profile.ambientAlpha > 0
+            ? profile.ambientColor
+            : 0x0b1528;
+
+    this.nightOverlay.setFillStyle(visualAmbientColor, visualAmbientAlpha);
+    this.fogOverlay.setAlpha(profile.isFog ? 0.22 + Math.sin(t * 0.8) * 0.05 : 0);
+
+    // Wetness drives wet-asphalt reflections & shimmer (strongest in rain/storm, damp neo-noir sheen otherwise)
+    const wetness = profile.isStorm
+      ? 1.0
+      : profile.isRain
+        ? 0.92
+        : profile.isSnow
+          ? 0.25
+          : 0.68;
 
     // Storm lightning flash
     if (profile.isStorm) {
@@ -902,65 +1273,152 @@ export class CityDriveScene extends Phaser.Scene {
       this.lightningOverlay.setAlpha(0);
     }
 
-    // Streetlamp pools
-    this.lampLightGfx.clear();
-    if (profile.streetlampsOn) {
-      this.streetlamps.forEach(lp => {
-        this.lampLightGfx.fillStyle(0xfef08a, profile.lampGlowAlpha * 0.45);
-        this.lampLightGfx.fillCircle(lp.x, lp.y + 8, 52);
-        this.lampLightGfx.fillStyle(0xfde047, profile.lampGlowAlpha);
-        this.lampLightGfx.fillCircle(lp.x, lp.y + 8, 22);
-      });
+    // Streetlamp additive pools & wet-asphalt specular shimmer
+    const lampStrength = profile.isNight
+      ? 0.95
+      : profile.streetlampsOn || profile.isDuskOrDawn || profile.isRain
+        ? 0.72
+        : 0.48;
+    for (const lv of this.lampVisuals) {
+      const shimmerPulse = 0.86 + Math.sin(t * 3.1 + lv.phase) * 0.14;
+      lv.outer.setAlpha(0.34 * lampStrength);
+      lv.core.setAlpha(0.62 * lampStrength);
+      lv.shimmer.setAlpha(0.36 * lampStrength * wetness * shimmerPulse);
+      lv.shimmer.setScale(0.84 + Math.sin(t * 2.4 + lv.phase) * 0.06, 0.92);
     }
 
-    // Dual headlights for player & NPC cars
-    this.headlightGfx.clear();
-    if (profile.headlightsOn) {
-      const drawBeams = (x: number, y: number, rot: number, reach: number, spread: number) => {
-        const fx = Math.sin(rot);
-        const fy = -Math.cos(rot);
-        const px = -fy;
-        const py = fx;
-        const tipX = x + fx * 20;
-        const tipY = y + fy * 20;
-        this.headlightGfx.fillStyle(0xfef08a, profile.headlightAlpha);
-        this.headlightGfx.fillTriangle(
-          tipX,
-          tipY,
-          tipX + fx * reach + px * spread,
-          tipY + fy * reach + py * spread,
-          tipX + fx * reach - px * spread,
-          tipY + fy * reach - py * spread
-        );
-      };
+    // Neon signs additive halos & wet-road color smears
+    const neonBoost = profile.isNight ? 1.0 : 0.82;
+    for (const nv of this.neonVisuals) {
+      const flickerDip =
+        nv.flicker && Math.sin(t * 17 + nv.phase) > 0.92 && Math.sin(t * 5.3 + nv.phase) > 0.3
+          ? 0.45
+          : 1.0;
+      const pulse = (0.88 + Math.sin(t * 2.6 + nv.phase) * 0.12) * flickerDip;
+      nv.halo.setAlpha(0.46 * neonBoost * pulse);
+      nv.shimmer.setAlpha(0.42 * neonBoost * wetness * pulse);
+    }
 
-      drawBeams(this.player.x, this.player.y, this.player.rotation, 165, 62);
-      for (const tc of this.trafficCars) {
-        if (tc.isCyclist) continue;
-        drawBeams(tc.sprite.x, tc.sprite.y, tc.sprite.rotation, 110, 40);
+    // Player car mirrored wet-road reflection, additive headlight cone & brake/taillight glow
+    const showHeadlights = profile.headlightsOn || profile.isNight || profile.isDuskOrDawn || wetness >= 0.6;
+    const beamAlpha = profile.isNight ? 0.78 : profile.isDuskOrDawn || profile.isRain ? 0.62 : 0.46;
+    const pFx = Math.sin(this.player.rotation);
+    const pFy = -Math.cos(this.player.rotation);
+
+    if (this.playerReflection) {
+      this.playerReflection.setPosition(this.player.x + 5, this.player.y + 10);
+      this.playerReflection.setRotation(this.player.rotation);
+      this.playerReflection.setAlpha(0.24 * wetness);
+    }
+    if (this.playerHeadlight) {
+      this.playerHeadlight.setPosition(this.player.x + pFx * 20, this.player.y + pFy * 20);
+      this.playerHeadlight.setRotation(this.player.rotation);
+      this.playerHeadlight.setAlpha(showHeadlights ? beamAlpha : 0);
+    }
+    if (this.playerTaillight) {
+      const braking = this.wasd?.SPACE?.isDown || this.bridge.touch.brake || this.carSpeed < -5;
+      this.playerTaillight.setPosition(this.player.x - pFx * 22, this.player.y - pFy * 22);
+      this.playerTaillight.setScale(braking ? 0.68 : 0.48);
+      this.playerTaillight.setAlpha(braking ? 0.75 : 0.42);
+    }
+
+    // NPC mirrored wet-road reflections, additive headlights, taillights & police siren lightbar
+    const sirenRed = Math.floor(t * 7.5) % 2 === 0;
+    for (const nv of this.npcVisuals) {
+      const sp = nv.agent.sprite;
+      const fx = Math.sin(sp.rotation);
+      const fy = -Math.cos(sp.rotation);
+      nv.reflection.setPosition(sp.x + 4, sp.y + 8);
+      nv.reflection.setRotation(sp.rotation);
+      nv.reflection.setAlpha(0.2 * wetness);
+
+      if (nv.headlight) {
+        nv.headlight.setPosition(sp.x + fx * 19, sp.y + fy * 19);
+        nv.headlight.setRotation(sp.rotation);
+        nv.headlight.setAlpha(showHeadlights ? beamAlpha * 0.72 : 0);
+      }
+      if (nv.taillight) {
+        const stopped = nv.agent.currentSpeed < 5;
+        nv.taillight.setPosition(sp.x - fx * 20, sp.y - fy * 20);
+        nv.taillight.setScale(stopped ? 0.52 : 0.36);
+        nv.taillight.setAlpha(stopped ? 0.65 : 0.34);
+      }
+      if (nv.sirenGlow) {
+        nv.sirenGlow.setPosition(sp.x, sp.y);
+        nv.sirenGlow.setTint(sirenRed ? 0xef4444 : 0x38bdf8);
+        nv.sirenGlow.setAlpha(0.62);
       }
     }
 
-    // Rain / Snow particle fall
-    for (const p of this.weatherParticles) {
-      if (profile.isRain) {
-        p.setAlpha(0.72);
+    // Rain / atmospheric GTA-2 drizzle / Snow particle fall (wrapped inside active camera view for density + mobile perf)
+    const camView = this.cameras.main.worldView;
+    const minX = camView.x - 40;
+    const maxX = camView.right + 40;
+    const minY = camView.y - 40;
+    const maxY = camView.bottom + 40;
+    const spanW = Math.max(200, maxX - minX);
+    const spanH = Math.max(200, maxY - minY);
+
+    const isHeavyRain = profile.isRain || profile.isStorm;
+    const isLightDrizzle = !isHeavyRain && !profile.isSnow && !profile.isFog;
+
+    for (let i = 0; i < this.weatherParticles.length; i++) {
+      const p = this.weatherParticles[i];
+      if (isHeavyRain || isLightDrizzle) {
+        const active = isHeavyRain || i % 2 === 0;
+        if (!active) {
+          p.setAlpha(0);
+          continue;
+        }
+        if (p.texture.key !== 'rain_streak') p.setTexture('rain_streak');
+        p.setAlpha(isHeavyRain ? (profile.isStorm ? 0.85 : 0.72) : 0.38);
         p.setTint(0xbae6fd);
-        p.setScale(1, 1);
-        p.y += 480 * dt;
-        p.x -= 90 * dt;
+        p.setScale(isHeavyRain ? 1.05 : 0.85, isHeavyRain ? 1.15 : 0.85);
+        p.y += (isHeavyRain ? 560 : 410) * dt;
+        p.x -= (isHeavyRain ? 120 : 82) * dt;
       } else if (profile.isSnow) {
+        if (p.texture.key !== 'rain_drop') p.setTexture('rain_drop');
         p.setAlpha(0.8);
         p.setTint(0xffffff);
         p.setScale(1.8, 0.45);
         p.y += 140 * dt;
-        p.x += Math.sin(this.trafficTimer * 2 + p.y * 0.03) * 35 * dt;
+        p.x += Math.sin(t * 2 + p.y * 0.03) * 35 * dt;
       } else {
         p.setAlpha(0);
+        continue;
       }
-      if (p.y > this.worldH) p.y = 0;
-      if (p.x < 0) p.x = this.worldW;
-      if (p.x > this.worldW) p.x = 0;
+
+      if (p.y > maxY || p.y < minY - 60) {
+        p.y = minY + Phaser.Math.FloatBetween(0, 24);
+        p.x = minX + Phaser.Math.FloatBetween(0, spanW);
+      }
+      if (p.x < minX) p.x += spanW;
+      if (p.x > maxX) p.x -= spanW;
+    }
+
+    // Wet-asphalt rain splash ripples
+    for (let i = 0; i < this.rainSplashes.length; i++) {
+      const sp = this.rainSplashes[i];
+      if (!isHeavyRain && !isLightDrizzle) {
+        sp.sprite.setAlpha(0);
+        continue;
+      }
+      if (isLightDrizzle && i % 2 === 1) {
+        sp.sprite.setAlpha(0);
+        continue;
+      }
+      sp.age += dt;
+      if (sp.age >= sp.maxAge) {
+        sp.age = 0;
+        sp.maxAge = Phaser.Math.FloatBetween(0.24, 0.46);
+        sp.sprite.setPosition(
+          minX + Phaser.Math.FloatBetween(20, Math.max(40, spanW - 20)),
+          minY + Phaser.Math.FloatBetween(20, Math.max(40, spanH - 20))
+        );
+      }
+      const prog = sp.age / sp.maxAge;
+      sp.sprite.setScale(0.45 + prog * 0.95);
+      sp.sprite.setAlpha((1 - prog) * (isHeavyRain ? 0.42 : 0.24));
     }
   }
 
@@ -997,8 +1455,10 @@ export class CityDriveScene extends Phaser.Scene {
       const inter = this.intersections.find(x => x.id === sv.interId);
       if (!inter) return;
       const phase = sv.axis === 'ew' ? inter.ewPhase : inter.nsPhase;
+      const col = phase === 'green' ? 0x22c55e : phase === 'amber' ? 0xfacc15 : 0xef4444;
       sv.sprite.setTexture(`tlight_${phase}`);
-      sv.halo.setFillStyle(phase === 'green' ? 0x22c55e : phase === 'amber' ? 0xfacc15 : 0xef4444, 0.25);
+      sv.halo.setTint(col);
+      sv.shimmer.setTint(col);
     });
 
     const profile = computeCityLightingProfile(

@@ -674,6 +674,119 @@ function drawMiscTextures(scene: Phaser.Scene): void {
       tex.refresh();
     }
   }
+
+  // GTA2 additive soft radial glow sprite (tinted per light source)
+  if (!scene.textures.exists('light_glow_soft')) {
+    const tex = scene.textures.createCanvas('light_glow_soft', 128, 128);
+    if (tex) {
+      const ctx = tex.getContext();
+      const grad = ctx.createRadialGradient(64, 64, 2, 64, 64, 64);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      grad.addColorStop(0.22, 'rgba(255, 255, 255, 0.72)');
+      grad.addColorStop(0.55, 'rgba(255, 255, 255, 0.22)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 128);
+      tex.refresh();
+    }
+  }
+
+  // GTA2 additive dual-headlight volumetric beam cone (pointing UP / North)
+  if (!scene.textures.exists('headlight_cone')) {
+    const tex = scene.textures.createCanvas('headlight_cone', 96, 176);
+    if (tex) {
+      const ctx = tex.getContext();
+      const drawBeam = (ox: number) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(ox - 3, 170);
+        ctx.lineTo(ox + 3, 170);
+        ctx.lineTo(ox + 30, 8);
+        ctx.lineTo(ox - 30, 8);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(ox, 172, ox, 6);
+        grad.addColorStop(0, 'rgba(255, 252, 224, 0.92)');
+        grad.addColorStop(0.32, 'rgba(254, 240, 138, 0.45)');
+        grad.addColorStop(0.75, 'rgba(254, 249, 195, 0.14)');
+        grad.addColorStop(1, 'rgba(254, 249, 195, 0)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.restore();
+      };
+      drawBeam(38);
+      drawBeam(58);
+      // Soft merged outer halo
+      const halo = ctx.createRadialGradient(48, 152, 4, 48, 108, 66);
+      halo.addColorStop(0, 'rgba(255, 253, 232, 0.38)');
+      halo.addColorStop(0.55, 'rgba(254, 240, 138, 0.12)');
+      halo.addColorStop(1, 'rgba(254, 240, 138, 0)');
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, 0, 96, 176);
+      tex.refresh();
+    }
+  }
+
+  // Wet-asphalt elongated specular shimmer reflection
+  if (!scene.textures.exists('wet_shimmer')) {
+    const tex = scene.textures.createCanvas('wet_shimmer', 48, 96);
+    if (tex) {
+      const ctx = tex.getContext();
+      const grad = ctx.createRadialGradient(24, 48, 2, 24, 48, 46);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      grad.addColorStop(0.4, 'rgba(255, 255, 255, 0.35)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.save();
+      ctx.translate(24, 48);
+      ctx.scale(0.55, 1);
+      ctx.beginPath();
+      ctx.arc(0, 0, 46, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      // Subtle wet ripple horizontal streaks
+      ctx.globalCompositeOperation = 'destination-out';
+      for (let y = 6; y < 92; y += 5) {
+        ctx.fillStyle = 'rgba(0,0,0,0.42)';
+        ctx.fillRect(0, y, 48, 2);
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      tex.refresh();
+    }
+  }
+
+  // Crisp angled rain streak for GTA2 wet streets
+  if (!scene.textures.exists('rain_streak')) {
+    const tex = scene.textures.createCanvas('rain_streak', 6, 26);
+    if (tex) {
+      const ctx = tex.getContext();
+      const grad = ctx.createLinearGradient(5, 0, 1, 26);
+      grad.addColorStop(0, 'rgba(186, 230, 253, 0)');
+      grad.addColorStop(0.55, 'rgba(186, 230, 253, 0.55)');
+      grad.addColorStop(1, 'rgba(224, 242, 254, 0.95)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(5, 0);
+      ctx.lineTo(1, 26);
+      ctx.stroke();
+      tex.refresh();
+    }
+  }
+
+  // Wet-asphalt rain splash ripple
+  if (!scene.textures.exists('rain_splash')) {
+    const tex = scene.textures.createCanvas('rain_splash', 14, 14);
+    if (tex) {
+      const ctx = tex.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.85)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(7, 7, 5, 0, Math.PI * 2);
+      ctx.stroke();
+      tex.refresh();
+    }
+  }
 }
 
 export function generateAllPixelTextures(scene: Phaser.Scene): void {

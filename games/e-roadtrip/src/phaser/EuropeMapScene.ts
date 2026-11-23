@@ -7,20 +7,14 @@ import {
   getEdgeById
 } from '../data/europeMap';
 import {
-  COUNTRY_BORDERS,
   COUNTRY_LABELS,
-  DENMARK_ZEALAND_POLY,
-  IRELAND_POLY,
-  MAINLAND_EUROPE_POLY,
-  MAP_BOUNDS,
-  MOUNTAIN_CLUSTERS,
-  MapPoint,
-  RIVERS,
-  SARDINIA_CORSICA_POLYS,
-  SCANDINAVIA_POLY,
-  SICILY_POLY,
-  UK_POLY
+  MAP_BOUNDS
 } from '../data/europeGeography';
+import {
+  PIXEL_MAP_SCALE,
+  ensureEuropePixelMapTexture,
+  getMapThemePalette
+} from './EuropePixelMap';
 import { ChargerStation } from '../types';
 import { getBestPriceForStation } from '../sim/EnergyModel';
 import { getActiveRouteLegs, getActiveRouteOption } from '../sim/RoutePlanner';
@@ -70,13 +64,22 @@ const NET_SHORT: Record<string, string> = {
   ac_village: 'AC Dorf'
 };
 
-function toVec2(pts: MapPoint[]): Phaser.Math.Vector2[] {
-  return pts.map(p => new Phaser.Math.Vector2(p.x, p.y));
-}
-
 export class EuropeMapScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
   private worldLayer!: Phaser.GameObjects.Container;
+  private baseMapImage!: Phaser.GameObjects.Image;
+  private baseNetworkGfx!: Phaser.GameObjects.Graphics;
+  private countryLabelTexts: Phaser.GameObjects.Text[] = [];
+  private legendTexts: Phaser.GameObjects.Text[] = [];
+  private cityDotVisuals: Array<{
+    dot: Phaser.GameObjects.Arc;
+    outerRing?: Phaser.GameObjects.Arc;
+    isMajor: boolean;
+    isActive: boolean;
+  }> = [];
+  private currentIsLight = false;
+  private themeObserver?: MutationObserver;
+
   private rangeOverlay!: Phaser.GameObjects.Graphics;
   private dynamicOverlay!: Phaser.GameObjects.Graphics;
   private leaderOverlay!: Phaser.GameObjects.Graphics;
@@ -121,17 +124,24 @@ export class EuropeMapScene extends Phaser.Scene {
     this.bridge = data.bridge;
     this.pinObjects = [];
     this.cityLabels = [];
+    this.cityDotVisuals = [];
+    this.countryLabelTexts = [];
+    this.legendTexts = [];
     this.shieldTags = [];
     this.lastLayoutZoom = -1;
     this.lastDetailTier = -1;
     this.activePointers.clear();
     this.smoothCamActive = false;
+    this.currentIsLight = this.bridge.isLightTheme();
   }
 
   create(): void {
     if (this.input.manager.pointersTotal < 3) {
       this.input.addPointer(1); // Enable 2-finger pinch on mobile without leaking on restarts
     }
+
+    this.currentIsLight = this.bridge.isLightTheme();
+    this.cameras.main.setBackgroundColor(getMapThemePalette(this.currentIsLight).bgHex);
 
     this.worldLayer = this.add.container(0, 0);
     this.drawDetailedEuropeMap();
@@ -163,6 +173,22 @@ export class EuropeMapScene extends Phaser.Scene {
     this.setupPanAndZoom();
     this.refreshDynamicState();
 
+    // Observe light/dark theme toggles on <html data-theme="...">
+    if (typeof MutationObserver !== 'undefined') {
+      this.themeObserver = new MutationObserver(() => {
+        if (!this.scene.isActive()) return;
+        const nextIsLight = this.bridge.isLightTheme();
+        if (nextIsLight !== this.currentIsLight) {
+          this.currentIsLight = nextIsLight;
+          this.applyTheme();
+        }
+      });
+      this.themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+      });
+    }
+
     this.resizeHandler = () => {
       if (!this.scene.isActive() || !this.cameras?.main) return;
       this.clampCameraTargets();
@@ -174,6 +200,10 @@ export class EuropeMapScene extends Phaser.Scene {
       if (this.resizeHandler) {
         this.scale.off('resize', this.resizeHandler);
         this.resizeHandler = undefined;
+      }
+      if (this.themeObserver) {
+        this.themeObserver.disconnect();
+        this.themeObserver = undefined;
       }
       this.activePointers.clear();
     });
@@ -204,109 +234,27 @@ export class EuropeMapScene extends Phaser.Scene {
   }
 
   private drawDetailedEuropeMap(): void {
-    const g = this.add.graphics();
-    this.worldLayer.add(g);
+    const pal = getMapThemePalette(this.currentIsLight);
+    const mapKey = ensureEuropePixelMapTexture(this, this.currentIsLight);
 
-    g.fillStyle(0x09192f, 1);
-    g.fillRect(0, 0, this.mapBounds.w, this.mapBounds.h);
+    this.baseMapImage = this.add.image(0, 0, mapKey).setOrigin(0, 0).setScale(PIXEL_MAP_SCALE);
+    this.worldLayer.add(this.baseMapImage);
 
-    g.lineStyle(1, 0x132c4e, 0.5);
-    for (let x = 0; x <= this.mapBounds.w; x += 48) {
-      g.lineBetween(x, 0, x, this.mapBounds.h);
-    }
-    for (let y = 0; y <= this.mapBounds.h; y += 48) {
-      g.lineBetween(0, y, this.mapBounds.w, y);
-    }
-
-    const allPolys = [
-      MAINLAND_EUROPE_POLY,
-      DENMARK_ZEALAND_POLY,
-      UK_POLY,
-      IRELAND_POLY,
-      SCANDINAVIA_POLY,
-      SICILY_POLY,
-      ...SARDINIA_CORSICA_POLYS
-    ];
-    allPolys.forEach(poly => {
-      g.lineStyle(12, 0x13385f, 0.65);
-      g.strokePoints(toVec2(poly), true);
-    });
-
-    const drawPoly = (poly: MapPoint[], fill: number) => {
-      g.fillStyle(fill, 1);
-      g.lineStyle(2.5, 0x457b5b, 0.95);
-      g.fillPoints(toVec2(poly), true);
-      g.strokePoints(toVec2(poly), true);
-    };
-    drawPoly(MAINLAND_EUROPE_POLY, 0x1f3d2e);
-    drawPoly(DENMARK_ZEALAND_POLY, 0x214132);
-    drawPoly(UK_POLY, 0x244638);
-    drawPoly(IRELAND_POLY, 0x224335);
-    drawPoly(SCANDINAVIA_POLY, 0x23413d);
-    drawPoly(SICILY_POLY, 0x23402f);
-    SARDINIA_CORSICA_POLYS.forEach(p => drawPoly(p, 0x23402f));
-
-    g.fillStyle(0x284d3a, 0.72);
-    g.fillEllipse(850, 665, 420, 210);
-    g.fillStyle(0x334155, 0.55);
-    g.fillEllipse(930, 1085, 410, 82);
-
-    RIVERS.forEach(river => {
-      g.lineStyle(2.5, 0x1d6fa5, 0.75);
-      for (let i = 0; i < river.points.length - 1; i++) {
-        g.lineBetween(
-          river.points[i].x,
-          river.points[i].y,
-          river.points[i + 1].x,
-          river.points[i + 1].y
-        );
-      }
-    });
-
-    MOUNTAIN_CLUSTERS.forEach(cluster => {
-      cluster.peaks.forEach(pk => {
-        const s = pk.size;
-        g.fillStyle(0x475569, 0.88);
-        g.fillTriangle(pk.x, pk.y - s, pk.x - s * 0.85, pk.y + s * 0.45, pk.x + s * 0.85, pk.y + s * 0.45);
-        g.fillStyle(0x334155, 0.88);
-        g.fillTriangle(pk.x, pk.y - s, pk.x, pk.y + s * 0.45, pk.x + s * 0.85, pk.y + s * 0.45);
-        if (pk.snow) {
-          g.fillStyle(0xf8fafc, 0.92);
-          g.fillTriangle(pk.x, pk.y - s, pk.x - s * 0.36, pk.y - s * 0.25, pk.x + s * 0.36, pk.y - s * 0.25);
-        }
-      });
-    });
-
-    g.lineStyle(1.4, 0x94a3b8, 0.32);
-    COUNTRY_BORDERS.forEach(border => {
-      for (let i = 0; i < border.length - 1; i++) {
-        this.drawDashedLine(g, border[i].x, border[i].y, border[i + 1].x, border[i + 1].y, 7, 5);
-      }
-    });
+    this.baseNetworkGfx = this.add.graphics();
+    this.worldLayer.add(this.baseNetworkGfx);
 
     COUNTRY_LABELS.forEach(cl => {
       const lbl = this.add.text(cl.x, cl.y, cl.name, {
         fontFamily: 'Outfit, sans-serif',
         fontSize: '12px',
         fontStyle: 'bold',
-        color: 'rgba(148, 163, 184, 0.42)',
+        color: pal.countryLabelColor,
         letterSpacing: 2,
         resolution: 4
       });
       lbl.setOrigin(0.5);
       this.worldLayer.add(lbl);
-    });
-
-    // Base European Autobahn network
-    HIGHWAY_EDGES.forEach(edge => {
-      g.lineStyle(5.5, 0x0f172a, 0.62);
-      for (let i = 0; i < edge.waypoints.length - 1; i++) {
-        g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
-      }
-      g.lineStyle(2.5, 0x475569, 0.72);
-      for (let i = 0; i < edge.waypoints.length - 1; i++) {
-        g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
-      }
+      this.countryLabelTexts.push(lbl);
     });
 
     // Autobahn shields (visible even when zoomed out on major corridors!)
@@ -341,40 +289,100 @@ export class EuropeMapScene extends Phaser.Scene {
       this.shieldTags.push({ cont, x: mid.x, y: mid.y, major: onLevel });
     });
 
-    this.drawMapLegendDecor(g);
-  }
-
-  private drawMapLegendDecor(g: Phaser.GameObjects.Graphics): void {
     const cx = 135;
     const cy = 1280;
-    g.lineStyle(2, 0x38bdf8, 0.55);
-    g.strokeCircle(cx, cy, 26);
-    g.fillStyle(0x0f172a, 0.75);
-    g.fillCircle(cx, cy, 25);
-    g.fillStyle(0x38bdf8, 0.9);
-    g.fillTriangle(cx, cy - 22, cx - 5, cy, cx + 5, cy);
-    g.fillStyle(0x94a3b8, 0.65);
-    g.fillTriangle(cx, cy + 22, cx - 5, cy, cx + 5, cy);
     const nTxt = this.add
       .text(cx, cy - 34, 'N', {
         fontFamily: 'Outfit, sans-serif',
         fontSize: '12px',
         fontStyle: 'bold',
-        color: '#38bdf8',
+        color: this.currentIsLight ? '#0284c7' : '#38bdf8',
         resolution: 4
       })
       .setOrigin(0.5);
     this.worldLayer.add(nTxt);
+    this.legendTexts.push(nTxt);
 
     const scaleTxt = this.add
       .text(cx + 55, cy + 8, 'EUROPA E-AUTO NETZ\nZoom: Mausrad / Pinch', {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: '10px',
-        color: '#94a3b8',
+        color: pal.legendTextColor,
         resolution: 4
       })
       .setOrigin(0, 0.5);
     this.worldLayer.add(scaleTxt);
+    this.legendTexts.push(scaleTxt);
+
+    this.drawBaseNetworkAndLegend();
+  }
+
+  private drawBaseNetworkAndLegend(): void {
+    if (!this.baseNetworkGfx) return;
+    const g = this.baseNetworkGfx;
+    const pal = getMapThemePalette(this.currentIsLight);
+    g.clear();
+
+    // Base European Autobahn network
+    HIGHWAY_EDGES.forEach(edge => {
+      g.lineStyle(5.5, pal.highwayCasingHex, pal.highwayCasingAlpha);
+      for (let i = 0; i < edge.waypoints.length - 1; i++) {
+        g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+      }
+      g.lineStyle(2.5, pal.highwayFillHex, pal.highwayFillAlpha);
+      for (let i = 0; i < edge.waypoints.length - 1; i++) {
+        g.lineBetween(edge.waypoints[i].x, edge.waypoints[i].y, edge.waypoints[i + 1].x, edge.waypoints[i + 1].y);
+      }
+    });
+
+    this.drawMapLegendDecor(g);
+  }
+
+  private drawMapLegendDecor(g: Phaser.GameObjects.Graphics): void {
+    const pal = getMapThemePalette(this.currentIsLight);
+    const cx = 135;
+    const cy = 1280;
+    const accent = this.currentIsLight ? 0x0284c7 : 0x38bdf8;
+    g.lineStyle(2, accent, 0.6);
+    g.strokeCircle(cx, cy, 26);
+    g.fillStyle(pal.legendBgHex, 0.82);
+    g.fillCircle(cx, cy, 25);
+    g.fillStyle(accent, 0.95);
+    g.fillTriangle(cx, cy - 22, cx - 5, cy, cx + 5, cy);
+    g.fillStyle(0x94a3b8, 0.65);
+    g.fillTriangle(cx, cy + 22, cx - 5, cy, cx + 5, cy);
+  }
+
+  public applyTheme(): void {
+    const pal = getMapThemePalette(this.currentIsLight);
+    if (this.cameras?.main) {
+      this.cameras.main.setBackgroundColor(pal.bgHex);
+    }
+    if (this.baseMapImage) {
+      const mapKey = ensureEuropePixelMapTexture(this, this.currentIsLight);
+      this.baseMapImage.setTexture(mapKey);
+    }
+    this.drawBaseNetworkAndLegend();
+
+    this.countryLabelTexts.forEach(lbl => lbl.setColor(pal.countryLabelColor));
+    if (this.legendTexts[0]) this.legendTexts[0].setColor(this.currentIsLight ? '#0284c7' : '#38bdf8');
+    if (this.legendTexts[1]) this.legendTexts[1].setColor(pal.legendTextColor);
+
+    this.cityDotVisuals.forEach(cd => {
+      const fill = cd.isActive ? (this.currentIsLight ? 0x0284c7 : 0x38bdf8) : cd.isMajor ? pal.cityMajorFillHex : pal.cityMinorFillHex;
+      cd.dot.setFillStyle(fill);
+      cd.dot.setStrokeStyle(1.5, pal.cityDotStrokeHex);
+      if (cd.outerRing) {
+        cd.outerRing.setStrokeStyle(1.2, cd.isActive ? (this.currentIsLight ? 0x0284c7 : 0x38bdf8) : pal.cityMajorFillHex, 0.65);
+      }
+    });
+
+    this.cityLabels.forEach(item => {
+      item.text.setColor(item.isActive ? pal.cityLabelActiveColor : pal.cityLabelMutedColor);
+      item.text.setBackgroundColor(item.isActive ? pal.cityLabelActiveBg : pal.cityLabelMutedBg);
+    });
+
+    this.refreshDynamicState();
   }
 
   private drawDashedLine(
@@ -451,14 +459,7 @@ export class EuropeMapScene extends Phaser.Scene {
     );
     const capSteps = 6;
 
-    const layers = [
-      { hw: 28, color: 0x7dd3fc, alpha: 0.045 },
-      { hw: 22, color: 0x7dd3fc, alpha: 0.06 },
-      { hw: 17, color: 0x7dd3fc, alpha: 0.085 },
-      { hw: 13, color: 0x38bdf8, alpha: 0.11 },
-      { hw: 9.5, color: 0x7dd3fc, alpha: 0.13 },
-      { hw: 6, color: 0xbae6fd, alpha: 0.15 }
-    ];
+    const layers = getMapThemePalette(this.currentIsLight).socBandLayers;
 
     layers.forEach(layer => {
       const poly: Phaser.Math.Vector2[] = [];
@@ -497,6 +498,7 @@ export class EuropeMapScene extends Phaser.Scene {
   }
 
   private drawCitiesAndLandmarks(): void {
+    const pal = getMapThemePalette(this.currentIsLight);
     const levelCityIds = new Set<string>();
     this.bridge.level.routeOptions.forEach(opt => {
       opt.legs.forEach(l => {
@@ -508,18 +510,33 @@ export class EuropeMapScene extends Phaser.Scene {
 
     CITIES.forEach(city => {
       const isInLevel = levelCityIds.has(city.id);
-      const radius = city.isMajor ? (isInLevel ? 5.5 : 4.2) : isInLevel ? 4 : 2.8;
-      const fill = isInLevel ? 0x38bdf8 : city.isMajor ? 0xcbd5e1 : 0x64748b;
+      const radius = city.isMajor ? (isInLevel ? 5.2 : 4.0) : isInLevel ? 3.8 : 2.6;
+      const activeCol = this.currentIsLight ? 0x0284c7 : 0x38bdf8;
+      const fill = isInLevel ? activeCol : city.isMajor ? pal.cityMajorFillHex : pal.cityMinorFillHex;
+
+      let outerRing: Phaser.GameObjects.Arc | undefined;
+      if (city.isMajor) {
+        outerRing = this.add.circle(city.mapX, city.mapY, radius + 3.2, 0x000000, 0);
+        outerRing.setStrokeStyle(1.2, isInLevel ? activeCol : pal.cityMajorFillHex, 0.65);
+        outerRing.setDepth(5.8);
+        this.worldLayer.add(outerRing);
+      }
 
       const dot = this.add.circle(city.mapX, city.mapY, radius, fill);
-      dot.setStrokeStyle(1.5, 0x0f172a);
+      dot.setStrokeStyle(1.5, pal.cityDotStrokeHex);
       dot.setDepth(6);
       this.worldLayer.add(dot);
+      this.cityDotVisuals.push({
+        dot,
+        outerRing,
+        isMajor: !!city.isMajor,
+        isActive: isInLevel
+      });
 
       if (city.landmark) {
         const lm = this.add.image(city.mapX, city.mapY - 17, `landmark_${city.landmark}`);
-        lm.setScale(isInLevel ? 0.92 : 0.7);
-        lm.setAlpha(isInLevel ? 1 : 0.72);
+        lm.setScale(isInLevel ? 0.94 : 0.74);
+        lm.setAlpha(isInLevel ? 1 : 0.78);
         lm.setDepth(7);
         this.worldLayer.add(lm);
       }
@@ -528,8 +545,8 @@ export class EuropeMapScene extends Phaser.Scene {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: isInLevel ? '11.5px' : city.isMajor ? '10px' : '9px',
         fontStyle: isInLevel || city.isMajor ? 'bold' : 'normal',
-        color: isInLevel ? '#f8fafc' : '#cbd5e1',
-        backgroundColor: isInLevel ? 'rgba(15, 23, 42, 0.86)' : 'rgba(15, 23, 42, 0.56)',
+        color: isInLevel ? pal.cityLabelActiveColor : pal.cityLabelMutedColor,
+        backgroundColor: isInLevel ? pal.cityLabelActiveBg : pal.cityLabelMutedBg,
         padding: { x: 4, y: 1.5 },
         resolution: 4
       });
