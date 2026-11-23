@@ -1,0 +1,4 @@
+# Generated IIFE. GitHub hides the diff; merges keep our side and
+# conflict without inserting markers into the minified file.
+# Resolve by rebuilding (games/e-roadtrip: npm run build), never by hand.
+games/e-roadtrip/dist/e-roadtrip.js -diff linguist-generated merge=binary

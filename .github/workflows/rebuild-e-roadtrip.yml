@@ -1,0 +1,56 @@
+name: Rebuild e-Roadtrip bundle
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'games/e-roadtrip/src/**'
+      - 'games/e-roadtrip/package.json'
+      - 'games/e-roadtrip/package-lock.json'
+      - 'games/e-roadtrip/tsconfig.json'
+      - 'games/e-roadtrip/esbuild.mjs'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rebuild-e-roadtrip-main
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    name: Typecheck and rebuild dist/e-roadtrip.js
+    runs-on: ubuntu-latest
+    # Pushes made with the default GITHUB_TOKEN do not start a new workflow run.
+    # Skip anyway if that changes, so a bot commit of dist/ cannot loop.
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: games/e-roadtrip/package-lock.json
+
+      - name: Install, typecheck, and build
+        working-directory: games/e-roadtrip
+        run: |
+          npm ci
+          npm run typecheck
+          npm run build
+
+      - name: Commit rebuilt bundle when it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- games/e-roadtrip/dist/e-roadtrip.js
+          if git diff --cached --quiet; then
+            echo "dist/e-roadtrip.js unchanged; nothing to commit."
+          else
+            git commit -m "chore(e-roadtrip): rebuild dist/e-roadtrip.js"
+            git push
+          fi
