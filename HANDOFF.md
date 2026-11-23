@@ -14,7 +14,7 @@
 | E-Roadtrip Bundle-Rebuild (`esbuild.mjs`, CI, `.gitattributes`) | Michael (`mic4rd`) / Cursor Cloud Agent | PR #2 (`f42c39f`) | ✅ Gemerged |
 | E-Roadtrip Planung, Reichweitenband, GTA-2-Sequenz & `AGENTS.md` Regel 9 | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-range-gta2-e223` (PR #2 im Fork) | 🔄 PR im Fork offen |
 | E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
-| E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` (baut auf dem Visuals-Branch auf) | 🔄 PR im Fork offen |
+| E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` ([PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) im Fork, gegen `main`) | 🔄 PR im Fork offen |
 
 ---
 
@@ -30,7 +30,7 @@
   - Ladestationsliste nur für die markierte Etappe; Abo normal, Roaming leicht ausgegraut mit rotem Preis.
   - `games/e-roadtrip/Architecture.md` (Abschnitte 2, 3.2, 4.1, Changelog) und `HANDOFF.md` aktualisiert, `npm run typecheck` und `npm run build` ausgeführt, Headless-Chrome-Smoke-Test ohne Konsolenfehler.
 - **Offen / Nächste Schritte:**
-  - PR im Fork gegen `main` (enthält auch die noch offenen Pakete A und B, weil der Branch darauf aufsetzt).
+  - [PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) im Fork gegen `main` ist offen (enthält auch die noch offenen Pakete A und B, weil der Branch darauf aufsetzt).
   - Level 2–7 stehen weiterhin auf `playable: false`.
 
 ### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Visuals: GTA-2 & Pixel-Art-Europakarte)
