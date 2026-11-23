@@ -12,11 +12,22 @@
 | :--- | :--- | :--- | :--- |
 | Repo-Setup, Lizenz, `AGENTS.md`, `Architecture.md` | Joe / Antigravity | `main` (`3f40555`) | ✅ Abgeschlossen |
 | E-Roadtrip Bundle-Rebuild (`esbuild.mjs`, CI, `.gitattributes`) | Michael (`mic4rd`) / Cursor Cloud Agent | PR #2 (`f42c39f`) | ✅ Gemerged |
-| E-Roadtrip Planung, Reichweitenband, GTA-2-Sequenz & `AGENTS.md` Regel 9 | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-range-gta2-e223` | 🔄 PR im Fork offen |
+| E-Roadtrip Planung, Reichweitenband, GTA-2-Sequenz & `AGENTS.md` Regel 9 | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-range-gta2-e223` (PR #2 im Fork) | 🔄 PR im Fork offen |
+| E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Visuals: GTA-2 & Pixel-Art-Europakarte)
+- **Erledigt:**
+  - Auf Basis von `cursor/eroadtrip-planning-range-gta2-e223` (PR #2) den Feature-Branch `cursor/eroadtrip-visuals-gta2-map-210f` angelegt (reine Visuals, keine Gameplay-/Simulationsänderungen).
+  - **GTA-2-Sequenz (`CityDriveScene.ts`, `PixelArtGenerator.ts`):** Additive Licht-Sprites (`BlendModes.ADD`) für Straßenlaternen, zweistrahlige Scheinwerferkegel, Rück-/Bremslichter, Ampeln, Polizei-Blaulicht sowie beleuchtete Neon-Schilder (`HOTEL`, `ARCADE`, `24H DINER`, `CLUB NEON`, `MESSE`, `CAFE`, `EV-HUB`, `MOTEL`); Nass-Asphalt-Reflexionen (gespiegelte halbtransparente Fahrzeug-Sprites + animierte Licht-Shimmer); kamera-lokale Regenstreifen & Pfützen-Spritzer (mobil-optimierte Partikelzahl); dezentes WebGL-Bloom-PostFX auf Desktop mit sauberem Fallback für Canvas2D/Mobile.
+  - **Planungskarte (`EuropePixelMap.ts`, `europeGeography.ts`, `EuropeMapScene.ts`):** Einfache Vektor-Karte durch eine gebackene `900×710` (`2× NEAREST`) Pixel-Art-Europakarte ersetzt — genauere Küstenlinien, Inseln, Flüsse/Seen und Ländergrenzen, gestuftes Relief (braun → grau → weißer Schnee für Alpen/Pyrenäen/Skanden; dezenter für Mittelgebirge), große Wälder/Nationalparks mit grünen Pixel-Bäumen, detailliertere Städte (urbane Pixel-Cluster + Doppelring-Marker), Live-Dark/Light-Mode via `MutationObserver` bei voller Ausrichtung von Routen, Ladern und SoC-Band.
+  - `games/e-roadtrip/Architecture.md` (Struktur, Abschnitt 3.2 & Changelog) sowie `HANDOFF.md` aktualisiert, `npm ci && npm run typecheck && npm run build` ausgeführt, `dist/e-roadtrip.js` neu gebaut und per Headless-Chrome-Smoke-Test (WebGL & Canvas2D, 0 Konsolenfehler) + Screenshots beider Szenen verifiziert.
+- **Offen / Nächste Schritte:**
+  - PR im Fork gegen `main` (baut auf PR #2 / `cursor/eroadtrip-planning-range-gta2-e223` auf) wartet auf Review/Merge.
+  - Level 2–7 stehen weiterhin auf `playable: false`.
 
 ### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Planung, Reichweitenband & GTA-2)
 - **Erledigt:**
