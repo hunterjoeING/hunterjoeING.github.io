@@ -21,7 +21,11 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 6. **Gezielte, chirurgische Edits statt Komplett-Überschreibungen:**
    * Nutze gezielte Zeilen-Ersetzungen anstatt große Dateien komplett neu zu schreiben.
    * Prüfe nach jeder JS-Änderung die Syntax mit `node --check <datei.js>`.
-5. **Mobile-First & Android/iOS-Stabilität:**
+7. **Agent-Koordination (`HANDOFF.md`, Issues & PR-Kommentare):**
+   * **Vor jeder Session:** `HANDOFF.md` lesen sowie offene GitHub Issues (`gh issue list`) und Pull Requests (`gh pr list`) prüfen, um Doppelarbeit zu vermeiden.
+   * **Aufgaben & Rückfragen:** Aufgaben, Bugs und „Wer macht was“ über **GitHub Issues** koordinieren; Code-Rückfragen und Reviews direkt als **Pull-Request-Kommentare** schreiben.
+   * **Nach jeder Session:** `HANDOFF.md` kurz aktualisieren (was wurde gemacht, welcher Branch/PR, was ist offen).
+8. **Mobile-First & Android/iOS-Stabilität:**
    * Fixierte Hintergrund-Canvas-Elemente (`#cosmos-canvas` und `.cosmos-vignette`) müssen `height: 100lvh` (`left: 0; bottom: 0` auf Android/Desktop bzw. `top: 0; bottom: auto` per `@supports (-webkit-touch-callout: none)` auf iOS) nutzen, `transform-origin` am `#hub-shell` auf den sichtbaren Viewport begrenzen (`min(35lvh, 300px)`) und bei Touch-Scroll (`e.pointerType !== 'mouse'`) oder beim Ein-/Ausblenden der mobilen Adressleiste keinerlei Kamera- oder Layout-Sprünge auslösen.
    * Alle Seiten müssen sowohl den **Dark Mode** als auch den **Light Mode** (`html[data-theme="light"]` via `ArcadeTheme`) sauber unterstützen.
 
