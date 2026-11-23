@@ -11,11 +11,15 @@
 | Bereich | Verantwortlich / Agent | Branch / PR / Issue | Status |
 | :--- | :--- | :--- | :--- |
 | Repo-Setup, Lizenz, `AGENTS.md`, `Architecture.md` | Joe / Antigravity | `main` (`3f40555`) | ✅ Abgeschlossen |
-| E-Roadtrip Bundle-Rebuild | Michael (`mic4rd`) / Cursor Cloud Agent | `mic4rd:cursor/eroadtrip-reproducible-build-459e` (PR wird upstream geöffnet) | ⏳ PR offen, Review Joe |
+| E-Roadtrip Bundle-Rebuild (`esbuild.mjs`, CI, `.gitattributes`) | Michael (`mic4rd`) / Cursor Cloud Agent | PR #2 (`f42c39f`) | ✅ Gemerged |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-23 – Joe / Antigravity (Review & Merge PR #2)
+- **Erledigt:** PR #2 (`mic4rd:cursor/eroadtrip-reproducible-build-459e`) reviewed, mit Hinweis zum GitHub-Pages-Trigger (`GITHUB_TOKEN`) kommentiert, approved und in `main` (`f42c39f`) gemerged.
+- **Offen / Nächste Schritte:** Bereit für die nächsten Feature-Issues / PRs (z. B. E-Roadtrip Gameplay/Level-Verbesserungen).
 
 ### 2026-11-23 – Michael / Cursor Cloud Agent
 - **Erledigt:** CI-Action, die `dist/e-roadtrip.js` auf `main` neu baut; `.gitattributes` für das generierte Bundle; `esbuild.mjs`, damit Phaser extern bleibt (`window.Phaser` aus `dist/phaser.min.js`); Notizen in `games/e-roadtrip/Architecture.md`. Fork-`main` auf `e665276` nachgezogen.
