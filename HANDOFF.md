@@ -12,10 +12,23 @@
 | :--- | :--- | :--- | :--- |
 | Repo-Setup, Lizenz, `AGENTS.md`, `Architecture.md` | Joe / Antigravity | `main` (`3f40555`) | ✅ Abgeschlossen |
 | E-Roadtrip Bundle-Rebuild (`esbuild.mjs`, CI, `.gitattributes`) | Michael (`mic4rd`) / Cursor Cloud Agent | PR #2 (`f42c39f`) | ✅ Gemerged |
+| E-Roadtrip Planung, Reichweitenband, GTA-2-Sequenz & `AGENTS.md` Regel 9 | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-range-gta2-e223` | 🔄 PR im Fork offen |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Planung, Reichweitenband & GTA-2)
+- **Erledigt:**
+  - Fork-`main` mit Upstream `hunterjoeING/hunterjoeING.github.io` (`138a2c3`) synchronisiert.
+  - `AGENTS.md` Abschnitt 1 um Regel 9 (`Architecture.md`-Pflicht & Changelog-Aktualisierung) als eigenen Commit ergänzt.
+  - E-Roadtrip Level-Start & Routenwechsel: keine Lade-Abos und keine Ladestopps mehr vorausgewählt (Spieler entscheidet alles selbst); bei 0 Abos bleiben Lader auf der Karte ungedimmt sichtbar.
+  - Mehrfarbigen Reichweiten-Ring entfernt und durch ein hellblaues, halbtransparentes Band mit weichen Kanten ausschließlich entlang der gewählten Route für den Prognose-Bereich ~20 % → 0 % SoC ersetzt (`MapLayout.ts`, `EuropeMapScene.ts`, Legende in `PlanningUI.ts` / `styles.css`).
+  - GTA-2-Sequenz (`CityDriveScene.ts`, `CityTraffic.ts`): Fußgänger laufen überall auf Gehwegen und überqueren Zebrastreifen nur noch gelegentlich mit Cooldown (blockieren nie dauerhaft); A4-Autobahnauffahrt in `aachen_start` als echte, mit Tempo durchfahrbare Auffahrt ohne blaues Stoppfeld umgesetzt.
+  - `games/e-roadtrip/Architecture.md` (Abschnitt 3.2 & Changelog) aktualisiert, `npm run typecheck && npm run build` ausgeführt und `dist/e-roadtrip.js` neu gebaut sowie per Headless-Chrome-Smoke-Test verifiziert.
+- **Offen / Nächste Schritte:**
+  - Fork-PR auf `mic4rd/hunterjoeING.github.io` liegt bereit; Michael öffnet den Upstream-PR gegen `hunterjoeING/hunterjoeING.github.io`.
+  - Level 2–7 stehen weiterhin auf `playable: false`.
 
 ### 2026-11-23 – Joe / Antigravity (Review & Merge PR #2)
 - **Erledigt:** PR #2 (`mic4rd:cursor/eroadtrip-reproducible-build-459e`) reviewed, mit Hinweis zum GitHub-Pages-Trigger (`GITHUB_TOKEN`) kommentiert, approved und in `main` (`f42c39f`) gemerged.
