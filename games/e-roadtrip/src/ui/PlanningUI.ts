@@ -166,7 +166,7 @@ export class PlanningUI {
           <button type="button" class="er-mini-btn" id="btn-zoom-out" title="Herauszoomen">➖ Zoom-</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-route">🎯 Route</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-europe">🌍 Europa</button>
-          <span class="map-hint">Detailkasten per Hover oder Tipp · Hellblaues Band: 20–0 % SoC der aktiven Etappe</span>
+          <span class="map-hint">Hover/Tipp öffnet einen Kasten · Anbieterfilter pinnt Kacheln der Etappe · Band: 20–0 % SoC</span>
         </div>
       </div>
 
@@ -224,8 +224,8 @@ export class PlanningUI {
     const networks: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
     this.filterBarEl.innerHTML = `
       <div class="mfb-row">
-        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" title="Anzeigen: farbige oder graue Anbietersymbole der Etappe plus Detailkasten. Ausblenden: überall nur das Anbietersymbol.">
-          ${showChargerStations ? '🔌 Ladestationen anzeigen' : '🔌 Ladestationen ausblenden'}
+        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" title="Einblenden: Symbole auf Hin- und Rückweg, farbig mit Abo und grau bei Ad-hoc. Aktive Anbieterchips zeigen zusätzlich die Detailkacheln der aktuellen Etappe. Ausblenden: keine Symbole, außer die angehakten Anbieter auf der aktuellen Etappe.">
+          ${showChargerStations ? '🔌 Ladestationen einblenden' : '🔌 Ladestationen ausblenden'}
         </button>
         ${networks
           .map(net => {

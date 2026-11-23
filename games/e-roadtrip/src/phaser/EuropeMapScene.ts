@@ -708,11 +708,8 @@ export class EuropeMapScene extends Phaser.Scene {
   }
 
   private canShowDetailCard(station: ChargerStation): boolean {
-    if (!this.bridge.showChargerStations) return false;
-    const legs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
-    if (legs.length === 0) return false;
-    const idx = Math.max(0, Math.min(legs.length - 1, this.bridge.selectedLegIndex || 0));
-    return legs[idx].edgeId === station.edgeId;
+    const node = this.pinObjects.find(p => p.station.id === station.id);
+    return !!node && node.isFilteredVisible;
   }
 
   private revealChargerCard(stationId: string): void {
@@ -892,7 +889,9 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
-    // 3. Update charger provider icons. Detail cards are hover/tap only (see layoutChargerCards).
+    // 3. Charger icons. Colour follows the subscription, not the provider chip.
+    //    Ausblenden: nothing, unless a chip is on — then only that provider on the active stage.
+    //    Einblenden: every charger on the chosen Hin- and Rückweg. Chips add detail tiles (layoutChargerCards).
     const vehicle = getVehicleById(this.bridge.plan.vehicleId);
     const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
     const selectedLeg = activeLegs[selectedLegIdx];
@@ -910,29 +909,14 @@ export class EuropeMapScene extends Phaser.Scene {
       const tariff = getBestPriceForStation(station, this.bridge.plan.subscriptionIds, vehicle);
       const netColor = NET_COLORS[station.network] || 0x38bdf8;
 
-      let visible = false;
-      if (showStations) {
-        if (node.onSelectedStage) {
-          visible = true;
-          node.compactIcon = false;
-          node.grayIcon = !isFilteredOn && !isSelected;
-        } else if (node.onActiveRoute || isSelected) {
-          visible = true;
-          node.compactIcon = true;
-          node.grayIcon = false;
-        } else {
-          visible = false;
-          node.compactIcon = true;
-          node.grayIcon = false;
-        }
-      } else {
-        visible = true;
-        node.compactIcon = true;
-        node.grayIcon = false;
-      }
+      const visible = showStations
+        ? node.onActiveRoute || isSelected
+        : node.onSelectedStage && isFilteredOn;
+      node.compactIcon = !node.onSelectedStage;
+      node.grayIcon = !isSub;
       node.isFilteredVisible = visible;
 
-      if (this.openCardStationId === station.id && (!showStations || !node.onSelectedStage)) {
+      if (this.openCardStationId === station.id && !visible) {
         this.openCardStationId = null;
       }
 
@@ -941,26 +925,20 @@ export class EuropeMapScene extends Phaser.Scene {
       node.dotRing.setVisible(visible && isSelected);
       if (node.icon.input) node.icon.input.enabled = visible;
 
-      if (isSelected) {
-        node.dot.setFillStyle(0xfacc15);
-        node.dot.setStrokeStyle(2, 0xffffff);
-        node.dot.setAlpha(1);
-        node.dotRing.setStrokeStyle(2, 0xfacc15, 0.9);
-        node.icon.clearTint();
-        node.icon.setAlpha(1);
-      } else if (node.grayIcon) {
-        node.dot.setFillStyle(0x64748b);
-        node.dot.setStrokeStyle(1.2, 0x334155);
-        node.dot.setAlpha(0.85);
+      if (node.grayIcon) {
+        node.dot.setFillStyle(isSelected ? 0xfacc15 : 0x64748b);
+        node.dot.setStrokeStyle(isSelected ? 2 : 1.2, isSelected ? 0xffffff : 0x334155);
+        node.dot.setAlpha(isSelected ? 1 : 0.85);
         node.icon.setTint(0xb6c2d2);
         node.icon.setAlpha(0.78);
       } else {
-        node.dot.setFillStyle(netColor);
-        node.dot.setStrokeStyle(1.6, 0x0f172a);
+        node.dot.setFillStyle(isSelected ? 0xfacc15 : netColor);
+        node.dot.setStrokeStyle(isSelected ? 2 : 1.6, isSelected ? 0xffffff : 0x0f172a);
         node.dot.setAlpha(1);
         node.icon.clearTint();
         node.icon.setAlpha(node.compactIcon ? 0.92 : 1);
       }
+      if (isSelected) node.dotRing.setStrokeStyle(2, 0xfacc15, 0.9);
 
       const priceIsRoaming = !isSub;
       node.cardBg.setFillStyle(isSelected ? 0x1e293b : 0x0f172a, 0.96);
@@ -1009,8 +987,8 @@ export class EuropeMapScene extends Phaser.Scene {
   }
 
   /**
-   * Provider icons stay on the map. Exactly one detail card is shown, and only for a
-   * charger on the selected stage while "Ladestationen anzeigen" is on (hover or tap).
+   * Einblenden plus an active provider chip pins that provider's detail tiles on the
+   * selected stage. Hover or tap on any visible icon opens that one extra card.
    */
   public layoutChargerCards(force = false): void {
     const cam = this.cameras.main;
@@ -1091,11 +1069,13 @@ export class EuropeMapScene extends Phaser.Scene {
       node.noSubText.setVisible(true).setPosition(-82 + 36, 11);
       node.cardW = 164;
 
-      const showCard =
+      const filterOn = this.bridge.providerFilter[node.station.network] !== false;
+      const pinnedTile =
         this.bridge.showChargerStations &&
         node.onSelectedStage &&
         node.isFilteredVisible &&
-        this.openCardStationId === node.station.id;
+        filterOn;
+      const showCard = node.isFilteredVisible && (pinnedTile || this.openCardStationId === node.station.id);
 
       node.card.setVisible(showCard);
       if (showCard) {
@@ -1113,10 +1093,9 @@ export class EuropeMapScene extends Phaser.Scene {
     const routeDots: Array<{ x: number; y: number; r: number }> = [];
     const activeLegs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
     activeLegs.forEach(l => {
-      if (l.reverse) return;
       const e = getEdgeById(l.edgeId);
       for (let t = 0.12; t <= 0.88; t += 0.19) {
-        const pt = getPointAlongEdge(e, t);
+        const pt = getPointAlongEdge(e, t, !!l.reverse);
         routeDots.push({ x: pt.x, y: pt.y, r: 10 * cardScale });
       }
     });

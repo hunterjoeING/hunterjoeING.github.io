@@ -20,6 +20,17 @@
 
 ## 2. Session-Log (Neueste Einträge oben)
 
+### 2026-11-23 – Michael / Cursor Cloud Agent (Ladestations-Filter auf der Planungskarte)
+- **Erledigt:**
+  - Auf `cursor/eroadtrip-planning-overview-e994` (PR #4) die Kartenfilterlogik korrigiert.
+  - **Ausblenden:** keine Symbole und keine Kacheln. Ein angehakter Anbieterchip zeigt nur dessen Symbole auf der aktuellen Etappe (farbig mit Abo, grau bei Ad-hoc/Roaming), ohne angepinnte Kacheln.
+  - **Einblenden:** Symbole aller Ladepunkte auf Hin- und Rückweg (Farbe nach Abo). Angehakte Anbieterchips pinnen zusätzlich die Detailkacheln dieses Anbieters auf der aktuellen Etappe; nahe Kacheln werden auseinandergelegt.
+  - Hover/Tap auf ein sichtbares Symbol öffnet weiterhin genau diesen Kasten; Klick auf den Kasten plant den Stopp und markiert ihn.
+  - `Architecture.md` (Abschnitt 3.2 und Changelog) und `HANDOFF.md` angepasst, Bundle neu gebaut, Smoke-Test für beide Toggle-Zustände mit und ohne Anbieterfilter.
+- **Offen / Nächste Schritte:**
+  - [PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) bleibt offen.
+  - Level 2–7 stehen weiterhin auf `playable: false`.
+
 ### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Paket C: Planung, Laden, Tempo)
 - **Erledigt:**
   - Feature-Branch `cursor/eroadtrip-planning-overview-e994` von `cursor/eroadtrip-visuals-gta2-map-210f` (Paket A + B) abgezweigt.

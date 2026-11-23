@@ -262,25 +262,29 @@ export function resolveNonOverlappingCards(
 ): void {
   if (nodes.length === 0) return;
 
-  const fanOffsets = [
-    { dx: -1.0, dy: -1.18 },
-    { dx: 1.05, dy: 1.18 },
-    { dx: 1.15, dy: -1.1 },
-    { dx: -1.12, dy: 1.12 },
-    { dx: 0.0, dy: -1.45 },
-    { dx: 0.0, dy: 1.45 }
-  ];
-
-  nodes.forEach((n, idx) => {
-    const off = fanOffsets[idx % fanOffsets.length];
-    const hw = n.cardW * cardScale * 0.5;
-    const hh = n.cardH * cardScale * 0.5;
-    n.worldX = n.pinX + off.dx * (hw * 0.78 + 16 * cardScale);
-    n.worldY = n.pinY + off.dy * (hh + 20 * cardScale);
+  // Nearby pins (A4 rest stops sit a few pixels apart) start in a stack on
+  // alternating sides so the repulsion pass only has to polish the gaps.
+  const sorted = [...nodes].sort((a, b) => a.pinX - b.pinX || a.pinY - b.pinY);
+  const clusters: CardLayoutNode[][] = [];
+  sorted.forEach(n => {
+    const last = clusters[clusters.length - 1];
+    const head = last?.[last.length - 1];
+    if (head && Math.hypot(head.pinX - n.pinX, head.pinY - n.pinY) < 56) last.push(n);
+    else clusters.push([n]);
+  });
+  clusters.forEach(cluster => {
+    cluster.forEach((n, i) => {
+      const hw = n.cardW * cardScale * 0.5;
+      const hh = n.cardH * cardScale * 0.5;
+      const side = i % 2 === 0 ? -1 : 1;
+      const row = Math.floor(i / 2);
+      n.worldX = n.pinX + side * (hw * 0.72 + 20 * cardScale);
+      n.worldY = n.pinY + side * (hh + 16 * cardScale) * (row + 0.35);
+    });
   });
 
-  const pad = 6 * cardScale;
-  for (let iter = 0; iter < 24; iter++) {
+  const pad = 8 * cardScale;
+  for (let iter = 0; iter < 36; iter++) {
     // 1. Repel cards from each other
     for (let i = 0; i < nodes.length; i++) {
       const a = nodes[i];
@@ -342,9 +346,9 @@ export function resolveNonOverlappingCards(
         }
       }
 
-      // 4. Gentle spring pull toward pin
-      a.worldX += (a.pinX - a.worldX) * 0.035;
-      a.worldY += (a.pinY - a.worldY) * 0.035;
+      // 4. Gentle spring pull toward the pin, weak enough that a stack stays apart
+      a.worldX += (a.pinX - a.worldX) * 0.018;
+      a.worldY += (a.pinY - a.worldY) * 0.018;
     }
   }
 }
