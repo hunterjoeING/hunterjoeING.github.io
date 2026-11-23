@@ -6,5 +6,10 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "esbuild src/main.ts --bundle --format=iife --global-name=ERoadtripApp --outfile=dist/e-roadtrip.js --sourcemap=inline"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "phaser": "^3.88.2",
+    "typescript": "^5.7.2"
   }
 }

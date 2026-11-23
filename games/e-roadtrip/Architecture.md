@@ -16,10 +16,11 @@
 ### Build & Typecheck Commands
 From `games/e-roadtrip/` (see `package.json` & `tsconfig.json`):
 ```bash
+npm install         # installs esbuild, phaser, typescript into local node_modules (gitignored)
 npm run typecheck   # tsc --noEmit
 npm run build       # esbuild src/main.ts --bundle --format=iife --global-name=ERoadtripApp --outfile=dist/e-roadtrip.js --sourcemap=inline
 ```
-> **Note on `tsconfig.json`:** `typeRoots` currently points to `/tmp/eroadtrip-build/node_modules` and `/tmp/eroadtrip-build/node_modules/phaser/types` (there is no committed `node_modules/` in the repo). Ensure `phaser`, `typescript`, and `esbuild` are installed in your build environment (or update `typeRoots` locally without committing unwanted paths) before running `typecheck` / `build`. Always commit the rebuilt `dist/e-roadtrip.js` alongside `src/` changes because GitHub Pages serves `dist/` directly.
+> **Bundle & Merge Policy:** GitHub Pages serves `dist/e-roadtrip.js` directly, so rebuilt bundles must be committed alongside `src/` changes. **Never resolve merge conflicts inside `dist/e-roadtrip.js` manually** — after merging `src/` changes, simply re-run `npm run build` and commit the freshly generated bundle.
 
 ---
 
@@ -145,6 +146,27 @@ Phaser scenes **never** manipulate DOM UI directly. Instead, they read state fro
 
 ---
 
-## 7. Changelog (For Future Agents & Collaborators)
+## 7. Design Decisions ("Why")
+
+- **Pre-bundled IIFE in `dist/` (`esbuild` + `phaser.min.js`):** The host repository is a pure static GitHub Pages site without a server-side build pipeline. Pre-bundling `src/main.ts` as an IIFE keeps `games/e-roadtrip/index.html` zero-config in production while still allowing strict TypeScript development.
+- **`ERoadtripBridge` decoupling (`src/phaser/GameBridge.ts`):** Phaser scenes (`EuropeMapScene`, `AutobahnScene`, `CityDriveScene`) communicate exclusively via `ERoadtripBridge` callbacks rather than touching DOM elements. This keeps simulation/UI state in `ERoadtripController` + `PlanningUI` / `DrivingHUD` / `EventModal` and makes both sides independently testable and replaceable.
+- **Procedural pixel art (`PixelArtGenerator.ts`) & inline geography (`europeGeography.ts`):** All sprites, vehicles, and European landmarks are generated at boot on HTML5 canvases rather than loaded from external PNGs. This eliminates asset-loading latency, broken relative paths, and licensing issues.
+- **Framework-agnostic `src/sim/`:** `EnergyModel`, `RoutePlanner`, `ScoringEngine`, and `SaveState` have zero Phaser or DOM dependencies so forecasts in `PlanningUI` and live ticks in `AutobahnScene` share the exact same physics/tariff math.
+- **Staged campaign (`playable: false` on Levels 2–7):** Levels 2–7 are pre-scaffolded in `src/data/levels.ts` with route options, passenger profiles, and scoring weights so future iterations can focus on level-specific balancing, city presets, and events without redesigning `types.ts`.
+
+---
+
+## 8. Known Limitations & Open Points
+
+- **Levels 2–7:** Currently gated with `playable: false` in `src/data/levels.ts`; city presets (`CityDrivePreset`) and level-specific events/balancing still need end-to-end playtesting before unlocking.
+- **Automated bundle builds:** `dist/e-roadtrip.js` is currently built manually and committed; long-term, a GitHub Action could build `dist/` on merge to avoid PR diffs on the 1.4 MB bundle.
+- **Automated tests:** There is currently no unit test suite for `src/sim/` (`EnergyModel`, `RoutePlanner`, `ScoringEngine`) — only `npm run typecheck` (`tsc --noEmit`).
+- **Known gameplay / UX polish:** *(Add concrete bug reports or balancing notes from playtests here.)*
+
+---
+
+## 9. Changelog (For Future Agents & Collaborators)
 
 - **2026-11-23:** Initial `Architecture.md` created for cross-tool AI handoff.
+- **2026-11-23:** Added `devDependencies` to `package.json`, fixed `tsconfig.json` `typeRoots` to use local `./node_modules`, added root `.gitignore`, updated `AGENTS.md` Rule 4 for feature-branch/PR collaboration, and documented design decisions ("Why") and open points.
+
