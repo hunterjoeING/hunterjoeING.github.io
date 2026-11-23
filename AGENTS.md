@@ -57,7 +57,7 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 │       ├── bank-politics.js         # Fragenpool: Politik & Ökonomie (75)
 │       ├── bank-general.js          # Fragenpool: Quiz-Arena Klassik (75)
 │       └── bank-{cpus,gpus,phones,pilze-aachen,swiss-trains}.js # Ausgelagerte Foto-Quiz-Daten (96)
-├── games/
+├── games/                           # Jedes eigenständige Spiel besitzt eine eigene Architecture.md; Quizzes -> shared/QUIZ_ARCHITECTURE.md
 │   ├── minesweeper/                 # 3D Minesweeper – Tech Demo KI-Agent
 │   ├── minesweeper-3d-prompt-test/  # Minesweeper 3D Prompt-Vergleichsversion
 │   ├── roadster/                    # Hyper-Roadster Lander
