@@ -9,6 +9,7 @@ on:
       - 'games/e-roadtrip/package.json'
       - 'games/e-roadtrip/package-lock.json'
       - 'games/e-roadtrip/tsconfig.json'
+      - 'games/e-roadtrip/esbuild.mjs'
 
 permissions:
   contents: write
