@@ -27,7 +27,7 @@
   - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
   - Spieler und KI halten auf der Autobahn einen festen Abstand. Das gesetzte Tempo ist nur die Obergrenze; bei einem langsameren Fahrzeug davor wird gebremst und die nächste freie Spur zum Überholen genutzt. Kilometer, Verbrauch und Abrechnung nutzen die tatsächlich gefahrene Geschwindigkeit. Die Prognose liegt wegen `baseTrafficRisk` darunter (`congestedCruiseKmh`).
   - Schilder je Etappe: Level 1 mischt Ende aller Streckenverbote, 130, 120 und 100 (roter Ring). Der blaue Ring ist weg. Frankreich bleibt bei 130 und 110 bei Regen. Die Stau-Umleitung über die Landstraße ist 70 km/h bis zum Etappenende. Das Schild begrenzt Slider, HUD-Tasten und das Autobahn-Tempo.
-  - Zieltempo nur noch in 5-km/h-Schritten, mit Maus und Touch, in der Planung und auf der Autobahn. Werte rasten auf ein Vielfaches von 5 ein und bleiben unter dem Schild.
+  - Zieltempo nur noch in 5-km/h-Schritten, mit Maus und Touch. Der Slider geht immer bis zur V-max des Autos. Das Schild (auch 70 auf der Landstraße, 110 bei Regen, 130 bei unbeschränkt) setzt nur den Startwert der Etappe. Liegt das Soll über dem Schild, wird der Wert rot. Gefahren wird nach Verkehr und V-max.
 - **Offen / Nächste Schritte:**
   - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
   - Level 3–7 bleiben `playable: false`.

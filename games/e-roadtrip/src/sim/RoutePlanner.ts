@@ -75,7 +75,7 @@ export const ADVISORY_SPEED_KMH = 130;
 /** Set speed moves in 5 km/h steps in every view. */
 export const SPEED_STEP_KMH = 5;
 
-/** Nearest 5 km/h step that is not above the section cap. */
+/** Nearest 5 km/h step that is not above the car's top speed. */
 export function snapSpeedKmh(kmh: number, maxKmh: number, minKmh = 40): number {
   const high = Math.floor(Math.max(0, maxKmh) / SPEED_STEP_KMH) * SPEED_STEP_KMH;
   const cap = high >= SPEED_STEP_KMH ? high : SPEED_STEP_KMH;
@@ -96,9 +96,21 @@ export function frenchRainCapKmh(
 }
 
 /**
- * Highest speed the player may select on this section.
- * `speedLimitKmh === 0` is unrestricted (vehicle max). A country-road detour replaces the sign.
+ * Numeric sign for warnings and the AI. `0` means unrestricted (no red-ring limit).
+ * Rain and a country-road detour replace the posted number. This is not the slider maximum.
  */
+export function activeSignKmh(
+  edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
+  weather?: string,
+  countryLimitKmh?: number
+): number {
+  if (countryLimitKmh && countryLimitKmh > 0) return countryLimitKmh;
+  const rainCap = frenchRainCapKmh(edge, weather);
+  if (rainCap) return rainCap;
+  return edge.speedLimitKmh > 0 ? edge.speedLimitKmh : 0;
+}
+
+/** Legal sign, or the car's top speed where the road is unrestricted. Used for AI traffic, not the slider. */
 export function sectionMaxSpeedKmh(
   edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
   vehicleMaxSpeedKmh: number,
@@ -125,13 +137,13 @@ export function defaultLegSpeedKmh(
   return snapSpeedKmh(capped, capped);
 }
 
-/** Hard cap from the sign. Unrestricted sections keep the chosen speed. */
+/** Chosen cruise, not reduced by the sign. Traffic and the car's top speed apply elsewhere. */
 export function drivenSpeedKmh(
-  edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
-  weather: string | undefined,
+  _edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
+  _weather: string | undefined,
   chosenKmh: number
 ): number {
-  return Math.min(chosenKmh, sectionMaxSpeedKmh(edge, chosenKmh, weather));
+  return chosenKmh;
 }
 
 /** Cruise after traffic. The set speed is only the ceiling; congestion pulls the average down. */
@@ -261,13 +273,12 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     const edge = getEdgeById(spec.edgeId);
     const lp = plan.legPlans.find(x => x.legIndex === i);
     const weather = spec.weatherOverride || edge.defaultWeather;
-    const sectionMax = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather);
     const chosenSpeed = snapSpeedKmh(
       lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather),
-      sectionMax
+      vehicle.maxSpeedKmh
     );
     if (lp && lp.targetSpeedKmh !== chosenSpeed) lp.targetSpeedKmh = chosenSpeed;
-    const speed = drivenSpeedKmh(edge, weather, chosenSpeed);
+    const speed = chosenSpeed;
     const cruise = congestedCruiseKmh(speed, edge.baseTrafficRisk);
     const signLimit = frenchRainCapKmh(edge, weather) ?? edge.speedLimitKmh;
 
@@ -473,16 +484,15 @@ export function predictLiveTripSoc(
       i === startLeg
         ? run.activeWeather || spec.weatherOverride || edge.defaultWeather
         : spec.weatherOverride || edge.defaultWeather;
-    const sectionMax = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather);
     const preset = snapSpeedKmh(
       lp?.targetSpeedKmh || defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather),
-      sectionMax
+      vehicle.maxSpeedKmh
     );
     const chosenSpeed =
       i === startLeg && opts?.overrideSpeedKmh !== undefined
-        ? snapSpeedKmh(opts.overrideSpeedKmh, sectionMax)
+        ? snapSpeedKmh(opts.overrideSpeedKmh, vehicle.maxSpeedKmh)
         : i === startLeg && run.currentSpeedKmh > 0
-          ? Math.min(sectionMax, run.currentSpeedKmh)
+          ? Math.min(vehicle.maxSpeedKmh, run.currentSpeedKmh)
           : preset;
     const capped = drivenSpeedKmh(edge, weather, chosenSpeed);
     const speed =

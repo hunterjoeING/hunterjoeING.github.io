@@ -1,7 +1,7 @@
 import { LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
-import { getActiveRouteLegs, predictLiveTripSoc, sectionMaxSpeedKmh, snapSpeedKmh } from '../sim/RoutePlanner';
+import { activeSignKmh, getActiveRouteLegs, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
 import { speedSignHtml } from './speedSign';
 import {
   TouchControlKey,
@@ -145,28 +145,22 @@ export class DrivingHUD {
       run.tollsAndFinesEur +
       (run.lodgingCostEur || 0)
     ).toFixed(2);
-    const sectionMax = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, run.activeWeather, run.countryLimitKmh);
-    const workMax = run.speedCapLabel === 'Baustelle' && run.speedCapKmh ? Math.min(sectionMax, run.speedCapKmh) : sectionMax;
-    let signLimit = edge.speedLimitKmh;
-    if ((run.activeWeather === 'rain' || run.activeWeather === 'storm') && edge.speedLimitRainKmh) {
-      signLimit = edge.speedLimitRainKmh;
-    }
-    if (run.countryLimitKmh) signLimit = run.countryLimitKmh;
+    const sliderMax = vehicle.maxSpeedKmh;
+    const selectableMax = snapSpeedKmh(sliderMax, sliderMax);
+    let signLimit = activeSignKmh(edge, run.activeWeather, run.countryLimitKmh);
     if (run.speedCapLabel === 'Baustelle' && run.speedCapKmh) signLimit = run.speedCapKmh;
-    const selectableMax = snapSpeedKmh(sectionMax, sectionMax);
     const catalog = [70, 80, 100, 110, 120, 130, 150, 175];
-    let speeds = catalog.filter(s => s <= selectableMax + 0.01 && s <= vehicle.maxSpeedKmh + 0.01);
+    let speeds = catalog.filter(s => s <= selectableMax + 0.01);
     if (speeds.length === 0 || speeds[speeds.length - 1] < selectableMax - 0.5) {
       speeds = [...speeds, selectableMax].filter((value, index, all) => all.indexOf(value) === index);
     }
-    const shellKey = `${this.mode}|${speeds.join(',')}|${Math.round(workMax)}|${signLimit}`;
+    const shellKey = `${this.mode}|${speeds.join(',')}|${sliderMax}|${signLimit}`;
     if (this.shellKey !== shellKey) {
       this.shellKey = shellKey;
       const speedButtons = speeds
         .map(s => {
-          const value = snapSpeedKmh(Math.min(sectionMax, s), selectableMax);
-          const locked = value > workMax + 0.5 ? ' disabled' : '';
-          return `<button type="button" class="dhud-btn" data-spd="${value}"${locked}>${value}</button>`;
+          const value = s;
+          return `<button type="button" class="dhud-btn" data-spd="${value}">${value}</button>`;
         })
         .join('');
       this.hudEl.innerHTML =
@@ -184,7 +178,7 @@ export class DrivingHUD {
         <div class="dhud-group">
           ${speedSignHtml(signLimit)}
           <span>Tempo (<span data-field="tempo"></span>):</span>
-          <input type="range" class="dhud-speed-slider" min="40" max="${selectableMax}" step="5" value="${selectableMax}" aria-label="Zieltempo" />
+          <input type="range" class="dhud-speed-slider" min="40" max="${sliderMax}" step="5" value="${selectableMax}" aria-label="Zieltempo" />
           ${speedButtons}
         </div>
         <div class="dhud-group">
@@ -216,12 +210,16 @@ export class DrivingHUD {
     }
 
     const chosen = snapSpeedKmh(
-      run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? run.currentSpeedKmh,
-      selectableMax
+      run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? selectableMax,
+      sliderMax
     );
+    const overSign = signLimit > 0 && chosen > signLimit;
     const speedSlider = this.hudEl.querySelector('.dhud-speed-slider') as HTMLInputElement | null;
-    if (speedSlider && document.activeElement !== speedSlider && speedSlider.value !== String(chosen)) {
-      speedSlider.value = String(chosen);
+    if (speedSlider) {
+      speedSlider.classList.toggle('over-limit', overSign);
+      if (document.activeElement !== speedSlider && speedSlider.value !== String(chosen)) {
+        speedSlider.value = String(chosen);
+      }
     }
     const capNote = run.speedCapKmh ? ` · ${run.speedCapLabel || 'Limit'} ${run.speedCapKmh}` : '';
     this.setHtml('soc', `<strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)`);
@@ -248,7 +246,9 @@ export class DrivingHUD {
     predPill?.classList.remove('low', 'warn', 'ok');
     predPill?.classList.add(nextSocClass);
     this.hudEl.querySelectorAll<HTMLButtonElement>('[data-spd]').forEach(btn => {
-      btn.classList.toggle('active', Math.abs(chosen - Number(btn.dataset.spd)) < 4);
+      const active = Math.abs(chosen - Number(btn.dataset.spd)) < 4;
+      btn.classList.toggle('active', active);
+      btn.classList.toggle('over-limit', active && overSign);
     });
     this.hudEl.querySelectorAll<HTMLButtonElement>('[data-scale]').forEach(btn => {
       btn.classList.toggle('active', timeScale === Number(btn.dataset.scale));

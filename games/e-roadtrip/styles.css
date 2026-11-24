@@ -489,6 +489,17 @@ body {
   background: repeating-linear-gradient(-32deg, #111827 0 3px, #ffffff 3px 8px);
   color: transparent;
 }
+.speed-over-limit {
+  color: #dc2626;
+}
+.leg-speed-slider.over-limit,
+.dhud-speed-slider.over-limit {
+  accent-color: #dc2626;
+}
+.dhud-btn.active.over-limit {
+  background: #b91c1c;
+  border-color: #fecaca;
+}
 .leg-meta {
   display: block;
   font-size: 11px;

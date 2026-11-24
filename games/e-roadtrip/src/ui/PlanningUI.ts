@@ -18,7 +18,7 @@ import {
   getReturnRouteOption,
   levelHasReturnRoutes,
   PlanForecast,
-  sectionMaxSpeedKmh,
+  activeSignKmh,
   snapSpeedKmh
 } from '../sim/RoutePlanner';
 import { speedSignHtml } from './speedSign';
@@ -481,10 +481,7 @@ export class PlanningUI {
             }
             const isSelectedLeg = lf.legIndex === selectedLegIndex;
             const edgeForLeg = spec ? getEdgeById(spec.edgeId) : undefined;
-            const rawMax = edgeForLeg
-              ? sectionMaxSpeedKmh(edgeForLeg, vehicle.maxSpeedKmh, lf.weather)
-              : vehicle.maxSpeedKmh;
-            const sliderMax = snapSpeedKmh(rawMax, rawMax);
+            const sliderMax = vehicle.maxSpeedKmh;
             const sliderMin = Math.min(40, sliderMax);
             const speedVal = snapSpeedKmh(lf.targetSpeedKmh, sliderMax, sliderMin);
             const riskBadge =
@@ -497,8 +494,10 @@ export class PlanningUI {
             const rainCap = edgeForLeg?.speedLimitRainKmh;
             const posted = edgeForLeg && edgeForLeg.speedLimitKmh > 0 ? edgeForLeg.speedLimitKmh : 0;
             const rainActive = lf.weather === 'rain' || lf.weather === 'storm';
+            const signKmh = edgeForLeg ? activeSignKmh(edgeForLeg, lf.weather) : 0;
+            const overLimit = signKmh > 0 && speedVal > signKmh;
             const rainNote = rainCap
-              ? `<div class="leg-rain-cap">🌧️ Frankreich: ${posted} km/h, bei Regen ${rainCap} km/h.${rainActive ? ' Diese Etappe ist Regen, das Tempo wird darauf begrenzt.' : ''}</div>`
+              ? `<div class="leg-rain-cap">🌧️ Frankreich: ${posted || 130} km/h, bei Regen ${rainCap} km/h.${rainActive ? ` Diese Etappe ist Regen, das Tempo startet bei ${rainCap}.` : ''}</div>`
               : '';
             const overnightNote = spec?.overnightAtEnd
               ? `<div class="leg-overnight">🏨 Hier endet der Fahrtag. Ereignis mit drei Möglichkeiten: sehr gutes Hotel (AC über Nacht, Spa und Buffet, teuer, Stress sinkt stark), Budgethotel (stressneutral, günstig, kein Laden) oder kostenlos im Auto an der Aire (Stress steigt, 10&nbsp;% Einbruch).</div>`
@@ -517,8 +516,8 @@ export class PlanningUI {
                 </div>
               </div>
               <div class="leg-controls">
-                <label>Zieltempo: <strong data-speed-readout="${lf.legIndex}">${speedVal} km/h</strong> · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
-                <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="${sliderMin}" max="${sliderMax}" step="5" value="${speedVal}" />
+                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
+                <input type="range" class="leg-speed-slider${overLimit ? ' over-limit' : ''}" data-leg="${lf.legIndex}" data-sign="${signKmh}" min="${sliderMin}" max="${sliderMax}" step="5" value="${speedVal}"${overLimit ? ' title="über dem Temposchild"' : ''} />
                 ${riskBadge}
               </div>
               ${rainNote}
@@ -710,11 +709,18 @@ export class PlanningUI {
         const legIndex = Number((slider as HTMLElement).dataset.leg);
         const val = snapSpeedKmh(Number(input.value), Number(input.max), Number(input.min));
         if (input.value !== String(val)) input.value = String(val);
+        const sign = Number(input.dataset.sign || 0);
+        const over = sign > 0 && val > sign;
+        input.classList.toggle('over-limit', over);
+        input.title = over ? 'über dem Temposchild' : '';
         const existing = plan.legPlans.find(l => l.legIndex === legIndex);
         if (existing) existing.targetSpeedKmh = val;
         else plan.legPlans.push({ legIndex, targetSpeedKmh: val });
         const readout = this.root.querySelector(`[data-speed-readout="${legIndex}"]`);
-        if (readout) readout.textContent = `${val} km/h`;
+        if (readout) {
+          readout.textContent = `${val} km/h`;
+          readout.classList.toggle('speed-over-limit', over);
+        }
       };
       slider.addEventListener('input', applySpeed);
       slider.addEventListener('change', () => {

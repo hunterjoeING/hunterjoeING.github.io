@@ -25,7 +25,6 @@ import {
   findNearestAvailableCharger,
   getActiveRouteLegs,
   predictLiveTripSoc,
-  sectionMaxSpeedKmh,
   snapSpeedKmh,
   switchReturnRouteInPlan,
   switchRouteInPlan
@@ -221,13 +220,9 @@ class ERoadtripController {
         const run = this.bridge.runState;
         if (!run) return;
         const legs = getActiveRouteLegs(this.level, run.plan);
-        const spec = legs[run.currentLegIndex];
-        if (!spec) return;
-        const edge = getEdgeById(spec.edgeId);
+        if (!legs[run.currentLegIndex]) return;
         const vehicle = getVehicleById(run.plan.vehicleId);
-        const weather = spec.weatherOverride || run.activeWeather || edge.defaultWeather;
-        const max = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh);
-        const next = snapSpeedKmh(spd, max);
+        const next = snapSpeedKmh(spd, vehicle.maxSpeedKmh);
         const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
         if (lp) lp.targetSpeedKmh = next;
         else run.plan.legPlans.push({ legIndex: run.currentLegIndex, targetSpeedKmh: next });
@@ -836,13 +831,8 @@ class ERoadtripController {
 
     if (choice.id === 'detour_country') run.countryLimitKmh = 70;
     if (choice.adjustSpeedKmh || choice.id === 'detour_country') {
-      const legs = getActiveRouteLegs(this.level, run.plan);
-      const spec = legs[run.currentLegIndex];
-      const edge = spec ? getEdgeById(spec.edgeId) : undefined;
       const vehicle = getVehicleById(run.plan.vehicleId);
-      const weather = spec?.weatherOverride || run.activeWeather || edge?.defaultWeather;
-      let speed = choice.adjustSpeedKmh || 70;
-      if (edge) speed = snapSpeedKmh(speed, sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh));
+      const speed = snapSpeedKmh(choice.adjustSpeedKmh || 70, vehicle.maxSpeedKmh);
       const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
       if (lp) lp.targetSpeedKmh = speed;
       run.currentSpeedKmh = speed;
@@ -989,14 +979,8 @@ class ERoadtripController {
           return 'Kein weiterer Ladepark vor dem Ziel nötig.';
         } else {
           const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
-          const legsNow = getActiveRouteLegs(this.level, run.plan);
-          const specNow = legsNow[run.currentLegIndex];
-          const edgeNow = specNow ? getEdgeById(specNow.edgeId) : undefined;
           const vehicleNow = getVehicleById(run.plan.vehicleId);
-          const weatherNow = specNow?.weatherOverride || run.activeWeather || edgeNow?.defaultWeather;
-          const eco = edgeNow
-            ? snapSpeedKmh(115, sectionMaxSpeedKmh(edgeNow, vehicleNow.maxSpeedKmh, weatherNow, run.countryLimitKmh))
-            : 115;
+          const eco = snapSpeedKmh(115, vehicleNow.maxSpeedKmh);
           if (lp) lp.targetSpeedKmh = eco;
           run.currentSpeedKmh = eco;
           run.replanCount += 1;

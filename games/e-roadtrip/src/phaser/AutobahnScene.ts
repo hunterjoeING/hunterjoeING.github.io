@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { defaultLegSpeedKmh, drivenSpeedKmh, frenchRainCapKmh, getActiveRouteLegs, sectionMaxSpeedKmh, snapSpeedKmh } from '../sim/RoutePlanner';
+import { defaultLegSpeedKmh, getActiveRouteLegs, sectionMaxSpeedKmh, snapSpeedKmh } from '../sim/RoutePlanner';
 import { ChargerStation, WeatherKind } from '../types';
 import {
   HighwayCar,
@@ -462,26 +462,16 @@ export class AutobahnScene extends Phaser.Scene {
 
     const zone = workZoneFor(edge.id, edge.distanceKm, this.forceWorkZone);
     const inWork = !!zone && run.legProgressKm >= zone.startKm && run.legProgressKm <= zone.endKm;
-    const rainCap = frenchRainCapKmh(edge, weather);
     const signMax = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh);
     const setSpeed = snapSpeedKmh(
       lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather),
-      signMax
+      vehicle.maxSpeedKmh
     );
     if (lp && lp.targetSpeedKmh !== setSpeed) lp.targetSpeedKmh = setSpeed;
-    let driveMax = drivenSpeedKmh(edge, weather, setSpeed);
-    if (run.countryLimitKmh) driveMax = Math.min(driveMax, run.countryLimitKmh);
+    let driveMax = Math.min(vehicle.maxSpeedKmh, setSpeed);
     let capValue: number | undefined;
     let capLabel: string | undefined;
-    if (rainCap) {
-      capValue = rainCap;
-      capLabel = 'Regen';
-    }
-    if (run.countryLimitKmh) {
-      capValue = run.countryLimitKmh;
-      capLabel = 'Landstraße';
-    }
-    if (inWork && zone && (!capValue || zone.limit < capValue)) {
+    if (inWork && zone) {
       capValue = zone.limit;
       capLabel = 'Baustelle';
       driveMax = Math.min(driveMax, zone.limit);
