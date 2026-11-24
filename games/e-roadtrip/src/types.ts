@@ -22,6 +22,8 @@ export interface VehicleSpec {
   weatherSensitivity: number;
   /** Charging curve sorted ascending by SoC */
   chargingCurve: ChargingCurvePoint[];
+  /** On-board AC charger in kW. DC stalls ignore this; AC power is min(stall, this). */
+  acMaxKw: number;
   maxSpeedKmh: number;
   towingCapacityKg: number;
   comfortRating: number; // 1..10
@@ -31,6 +33,10 @@ export interface VehicleSpec {
   primaryColor: number;
   accentColor: number;
   isTesla?: boolean;
+  /** Model S lifetime free Supercharging. Other Teslas keep the included subscription tariff. */
+  superchargerFree?: boolean;
+  /** 800 V packs are power-limited on 400 V Tesla stalls. */
+  packVoltage?: 400 | 800;
   winterTiresIncluded?: boolean;
   unlockLevel: number;
   tagline: string;
@@ -42,7 +48,12 @@ export type ChargerNetwork =
   | 'ewego'
   | 'electra'
   | 'ionity'
-  | 'ac_village';
+  | 'ac_village'
+  | 'fastned'
+  | 'totalenergies'
+  | 'ac_dorfladen'
+  | 'atlante'
+  | 'vianeo';
 
 export interface SubscriptionSpec {
   id: string;
@@ -111,7 +122,9 @@ export interface HighwayEdge {
   toCityId: string;
   highwayName: string; // e.g. "A4 / A1 / A2"
   distanceKm: number;
-  speedLimitKmh: number; // 0 = German Autobahn unlimited (Richtgeschwindigkeit 130)
+  speedLimitKmh: number; // 0 = unrestricted (end-of-limit sign). A positive value is the red-ring maximum.
+  /** French autoroute rain/storm cap (110). Absent on German edges. */
+  speedLimitRainKmh?: number;
   elevationGainM: number;
   elevationLossM: number;
   baseTrafficRisk: number; // 0..1
@@ -143,6 +156,8 @@ export interface ChargerStation {
   hasRestroom?: boolean;
   trailerFriendly?: boolean; // Drive-through bays without uncoupling
   isAcOnly?: boolean;
+  /** Charged during a fixed city stay (Hannover Messe), not as a motorway pull-in. */
+  fairStay?: boolean;
 }
 
 export interface ScoringWeights {
@@ -177,7 +192,22 @@ export interface EventChoice {
   /** Optional: change target speed on current leg */
   adjustSpeedKmh?: number;
   /** Optional: trigger fine risk roll */
-  fineRisk?: { probability: number; amountEur: number; label: string };
+  fineRisk?: {
+    probability: number;
+    amountEur: number;
+    label: string;
+    timeDeltaMin?: number;
+    stressDelta?: number;
+  };
+  /** Flat lodging bill (hotel). Separate from charging and fines. */
+  lodgingDeltaEur?: number;
+  /** Cash loss that is not a kWh charge (theft, deductible). */
+  fineDeltaEur?: number;
+  /** Absolute SoC after the choice, e.g. overnight AC to a high morning value. */
+  setSocPct?: number;
+  /** Optional second event. Rolled after the player continues. */
+  followUpEventId?: string;
+  followUpChance?: number;
 }
 
 export interface GameEventDef {
@@ -220,6 +250,10 @@ export interface LevelRouteLegSpec {
   /** Local city drive segment mode at start or end of leg */
   citySegmentAtStart?: CityDrivePreset;
   citySegmentAtEnd?: CityDrivePreset;
+  /** Family overnight at the end of this leg. The player picks the stay on arrival. */
+  overnightAtEnd?: boolean;
+  /** Outbound destination reached (turnaround before the return legs). */
+  destinationAtEnd?: boolean;
 }
 
 export type CityDrivePreset =
@@ -227,7 +261,8 @@ export type CityDrivePreset =
   | 'charger_park'
   | 'hannover_messe'
   | 'aachen_finish'
-  | 'ferry_denmark';
+  | 'ferry_denmark'
+  | 'koeln_ring';
 
 export type ElevationProfileKind = 'Flachland' | 'Hügelig' | 'Bergig / Pässe';
 export type TrafficRiskKind = 'Niedrig' | 'Mittel' | 'Hoch';
@@ -270,6 +305,8 @@ export interface LevelConfig {
   trailerWeightKg?: number;
   requiresWinterTires?: boolean;
   ferryDeadlineMinutes?: number;
+  /** €/km baseline for the cost score. Level 1 keeps the default 0.082. */
+  costBenchmarkEurPerKm?: number;
   specialRulesSummary: string[];
   briefingText: string;
   eventPoolIds: string[];
@@ -291,7 +328,10 @@ export interface LegPlan {
 
 export interface TripPlan {
   vehicleId: string;
+  /** Outbound corridor. */
   selectedRouteId: string;
+  /** Return corridor. Empty when the level has no return legs. Independent of the outbound choice. */
+  returnRouteId: string;
   subscriptionIds: string[];
   legPlans: LegPlan[];
   plannedStops: PlannedStop[];
@@ -327,11 +367,16 @@ export interface RunState {
   stress: number; // 0..100
   peakStress: number;
   bladderNeed: number; // 0..100
+  hungerNeed: number; // 0..100
   energyUsedKwh: number;
   distanceDrivenKm: number;
   chargingCostEur: number;
   subscriptionCostEur: number;
   tollsAndFinesEur: number;
+  /** Hotels and other stays. 0 when the night was free. */
+  lodgingCostEur: number;
+  /** Shown on the trip summary after the overnight choice. */
+  overnightNote?: string;
   decisionScoreAccum: number;
   replanCount: number;
   goodReplanCount: number;
@@ -344,6 +389,20 @@ export interface RunState {
   incidentLog: IncidentLogEntry[];
   activeWeather: WeatherKind;
   currentSpeedKmh: number;
+  /** Landstraße detour. Replaces the section sign until the leg ends. */
+  countryLimitKmh?: number;
+  /** Filled when a speed trap flashes, so the fine matches that moment. */
+  speedTrap?: { country: string; signKmh: number; actualKmh: number };
+  /** Temporary limit (Baustelle or French rain). Chosen cruise stays on the leg plan. */
+  speedCapKmh?: number;
+  /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */
+  speedCapLabel?: string;
+  /** Transient: a car sits in the left lane just ahead and the cruise is not reached. */
+  tailgateReady?: boolean;
+  /** Transient: HUD asked the motorway scene to flash and pressure the car ahead. */
+  tailgatePulse?: boolean;
+  /** Set when the tailgate roll produces a fine, consumed by the event modal. */
+  tailgateCase?: { country: string; amountEur: number };
   isNight: boolean;
   /** Used to avoid repeating same-leg charger stop */
   activeCityChargerId?: string;

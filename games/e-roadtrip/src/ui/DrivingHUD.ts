@@ -1,9 +1,87 @@
 import { LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
-import { getActiveRouteLegs, predictLiveTripSoc } from '../sim/RoutePlanner';
-import { TouchInput, resetTouchInput } from '../phaser/GameBridge';
+import { activeSignKmh, getActiveRouteLegs, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
+import { speedSignHtml } from './speedSign';
+import {
+  TouchControlKey,
+  isTouchKeyHeld,
+  pressTouchPointer,
+  releaseAllTouchPointers,
+  releaseTouchPointer
+} from '../phaser/GameBridge';
 import { SoundFX } from '../phaser/SoundFX';
+
+function pointAlong(pts: Array<{ x: number; y: number }>, t: number): { x: number; y: number } {
+  if (pts.length === 0) return { x: 0, y: 0 };
+  const lengths: number[] = [];
+  let total = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const len = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+    lengths.push(len);
+    total += len;
+  }
+  let remain = Math.max(0, Math.min(1, t)) * total;
+  for (let i = 1; i < pts.length; i++) {
+    const len = lengths[i - 1];
+    if (remain <= len || i === pts.length - 1) {
+      const u = len > 0 ? Math.max(0, Math.min(1, remain / len)) : 0;
+      return {
+        x: pts[i - 1].x + (pts[i].x - pts[i - 1].x) * u,
+        y: pts[i - 1].y + (pts[i].y - pts[i - 1].y) * u
+      };
+    }
+    remain -= len;
+  }
+  return pts[pts.length - 1];
+}
+
+function renderStageComputer(
+  fromName: string,
+  toName: string,
+  highway: string,
+  progress: number,
+  waypoints: Array<{ x: number; y: number }>,
+  from: { mapX: number; mapY: number },
+  to: { mapX: number; mapY: number },
+  reverse: boolean,
+  hh: string,
+  mm: string,
+  weather: string
+): string {
+  const raw = [{ x: from.mapX, y: from.mapY }, ...waypoints, { x: to.mapX, y: to.mapY }];
+  const pts = reverse ? raw.slice().reverse() : raw;
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  pts.forEach(p => {
+    minX = Math.min(minX, p.x);
+    minY = Math.min(minY, p.y);
+    maxX = Math.max(maxX, p.x);
+    maxY = Math.max(maxY, p.y);
+  });
+  const w = 210;
+  const h = 96;
+  const pad = 10;
+  const sx = Math.max(1, maxX - minX);
+  const sy = Math.max(1, maxY - minY);
+  const scale = Math.min((w - pad * 2) / sx, (h - pad * 2) / sy);
+  const ox = (w - sx * scale) / 2;
+  const oy = (h - sy * scale) / 2;
+  const mapped = pts.map(p => ({ x: ox + (p.x - minX) * scale, y: oy + (p.y - minY) * scale }));
+  const d = mapped.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  const dot = pointAlong(mapped, progress);
+  return `
+    <div class="trip-kicker">Bordcomputer · ${hh}:${mm} · ${weather}</div>
+    <strong>${fromName} → ${toName}</strong>
+    <div class="trip-road">${highway} · ${Math.round(progress * 100)} %</div>
+    <svg viewBox="0 0 ${w} ${h}" class="stage-map" aria-hidden="true">
+      <path d="${d}" fill="none" stroke="rgba(148,163,184,0.85)" stroke-width="4" stroke-linecap="round" />
+      <circle cx="${dot.x.toFixed(1)}" cy="${dot.y.toFixed(1)}" r="5.5" fill="#38bdf8" stroke="#f8fafc" stroke-width="2" />
+    </svg>
+  `;
+}
 
 export interface DrivingHUDCallbacks {
   onSpeedChange: (speedKmh: number) => void;
@@ -11,6 +89,7 @@ export interface DrivingHUDCallbacks {
   onForceEarlierStop: () => void;
   onUnplannedToiletStop: () => void;
   onToggleMapPreview: () => void;
+  onTailgate: () => void;
 }
 
 export class DrivingHUD {
@@ -19,6 +98,7 @@ export class DrivingHUD {
   private cb: DrivingHUDCallbacks;
   private mode: 'hidden' | 'autobahn' | 'city' = 'hidden';
   private forceTouchVisible = false;
+  private shellKey = '';
 
   constructor(hudEl: HTMLElement, touchEl: HTMLElement, cb: DrivingHUDCallbacks) {
     this.hudEl = hudEl;
@@ -34,7 +114,44 @@ export class DrivingHUD {
       this.forceTouchVisible = false;
     }
     this.renderTouchControls();
-    window.addEventListener('blur', () => this.clearTouchStates());
+    this.hudEl.addEventListener('pointerdown', ev => this.onHudPointer(ev));
+    this.hudEl.addEventListener('input', ev => {
+      const target = ev.target as HTMLInputElement | null;
+      if (!target || !target.classList.contains('dhud-speed-slider')) return;
+      const snapped = snapSpeedKmh(Number(target.value), Number(target.max), Number(target.min));
+      if (target.value !== String(snapped)) target.value = String(snapped);
+      this.cb.onSpeedChange(snapped);
+    });
+  }
+
+  private onHudPointer(ev: Event): void {
+    const target = ev.target as HTMLElement | null;
+    const btn = target?.closest('button');
+    if (!btn || !this.hudEl.contains(btn)) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    if (btn.hasAttribute('disabled')) return;
+    const spd = btn.getAttribute('data-spd');
+    const scale = btn.getAttribute('data-scale');
+    if (spd) {
+      SoundFX.click();
+      this.cb.onSpeedChange(Number(spd));
+    } else if (scale) {
+      SoundFX.click();
+      this.cb.onTimeScaleChange(Number(scale));
+    } else if (btn.id === 'btn-force-stop') {
+      SoundFX.click();
+      this.cb.onForceEarlierStop();
+    } else if (btn.id === 'btn-wc-stop') {
+      SoundFX.click();
+      this.cb.onUnplannedToiletStop();
+    } else if (btn.id === 'btn-peek-map') {
+      SoundFX.click();
+      this.cb.onToggleMapPreview();
+    } else if (btn.id === 'btn-tailgate') {
+      SoundFX.click();
+      this.cb.onTailgate();
+    }
   }
 
   public isTouchVisible(): boolean {
@@ -42,10 +159,8 @@ export class DrivingHUD {
   }
 
   public clearTouchStates(): void {
-    resetTouchInput();
-    this.touchEl.querySelectorAll('.touch-pad.pressed').forEach(el => {
-      el.classList.remove('pressed');
-    });
+    releaseAllTouchPointers();
+    this.paintTouchPads();
   }
 
   public setMode(mode: 'hidden' | 'autobahn' | 'city'): void {
@@ -99,157 +214,234 @@ export class DrivingHUD {
     const weatherBadge =
       run.activeWeather === 'rain' ? '🌧️ Regen' : run.activeWeather === 'snow' ? '❄️ Schnee' : run.isNight ? '🌙 Nacht' : '☀️ Klar';
 
-    const totalCost = (run.chargingCostEur + run.subscriptionCostEur + run.tollsAndFinesEur).toFixed(2);
-
-    this.hudEl.innerHTML = `
-      <div class="dhud-row">
-        <div class="dhud-pill soc ${socRound < 15 ? 'low' : ''}">
-          🔋 <strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)
-        </div>
-        <div class="dhud-pill soc-pred ${nextSocClass}">
-          🎯 <span>${pred.nextStopName} (${pred.distanceToNextKm} km):</span>
-          <strong>Ankunft ${pred.predictedArrivalNextSocPct}%</strong>
-          ${pred.nextStopKind !== 'destination' ? ` · 🏁 Ziel: <strong>${pred.predictedFinalSocPct}%</strong>` : ''}
-        </div>
-        <div class="dhud-pill">
-          🛣️ ${citySubtitle || `${from.name} → ${to.name} (${Math.round(run.legProgressKm)}/${edge.distanceKm} km)`}
-        </div>
-        <div class="dhud-pill">🕒 ${hh}:${mm} · ${weatherBadge}</div>
-        <div class="dhud-pill ${run.stress > 60 ? 'warn' : ''}">
-          ${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}%
-        </div>
-        <div class="dhud-pill">💶 ${totalCost} €</div>
-      </div>
-
-      ${
+    const totalCost = (
+      run.chargingCostEur +
+      run.subscriptionCostEur +
+      run.tollsAndFinesEur +
+      (run.lodgingCostEur || 0)
+    ).toFixed(2);
+    const sliderMax = vehicle.maxSpeedKmh;
+    const selectableMax = snapSpeedKmh(sliderMax, sliderMax);
+    let signLimit = activeSignKmh(edge, run.activeWeather, run.countryLimitKmh);
+    if (run.speedCapLabel === 'Baustelle' && run.speedCapKmh) signLimit = run.speedCapKmh;
+    const catalog = [70, 80, 100, 110, 120, 130, 150, 175];
+    let speeds = catalog.filter(s => s <= selectableMax + 0.01);
+    if (speeds.length === 0 || speeds[speeds.length - 1] < selectableMax - 0.5) {
+      speeds = [...speeds, selectableMax].filter((value, index, all) => all.indexOf(value) === index);
+    }
+    const shellKey = `${this.mode}|${speeds.join(',')}|${sliderMax}|${signLimit}`;
+    if (this.shellKey !== shellKey) {
+      this.shellKey = shellKey;
+      const speedButtons = speeds
+        .map(s => {
+          const value = s;
+          return `<button type="button" class="dhud-btn" data-spd="${value}">${value}</button>`;
+        })
+        .join('');
+      this.hudEl.innerHTML =
         this.mode === 'autobahn'
           ? `
-        <div class="dhud-controls">
-          <div class="dhud-group">
-            <span>Tempo (${run.currentSpeedKmh} km/h):</span>
-            ${[100, 120, 130, 150, 175]
-              .filter(s => s <= vehicle.maxSpeedKmh + 5)
-              .map(
-                s =>
-                  `<button type="button" class="dhud-btn ${Math.abs(run.currentSpeedKmh - s) < 4 ? 'active' : ''}" data-spd="${Math.min(vehicle.maxSpeedKmh, s)}">${Math.min(vehicle.maxSpeedKmh, s)}</button>`
-              )
-              .join('')}
-          </div>
-          <div class="dhud-group">
-            <span>Zeitraffer:</span>
-            ${[1, 5, 15]
-              .map(
-                sc =>
-                  `<button type="button" class="dhud-btn ${timeScale === sc ? 'active' : ''}" data-scale="${sc}">${sc}×</button>`
-              )
-              .join('')}
-          </div>
-          <div class="dhud-group">
-            <button type="button" class="dhud-action" id="btn-force-stop">⚡ Früher laden</button>
-            <button type="button" class="dhud-action" id="btn-wc-stop">🚻 WC-Stopp (+8m)</button>
-            <button type="button" class="dhud-action" id="btn-peek-map">🗺️ Karte</button>
-          </div>
-        </div>`
+      <div class="dhud-row">
+        <div class="dhud-pill soc" data-pill="soc">🔋 <span data-field="soc"></span></div>
+        <div class="dhud-pill soc-pred" data-pill="pred">🎯 <span data-field="pred"></span></div>
+        <div class="dhud-pill">🛣️ <span data-field="route"></span></div>
+        <div class="dhud-pill">🕒 <span data-field="clock"></span></div>
+        <div class="dhud-pill" data-pill="stress"><span data-field="stress"></span></div>
+        <div class="dhud-pill">💶 <span data-field="cost"></span></div>
+      </div>
+      <div class="dhud-controls">
+        <div class="dhud-group">
+          ${speedSignHtml(signLimit)}
+          <span>Tempo (<span data-field="tempo"></span>):</span>
+          <input type="range" class="dhud-speed-slider" min="40" max="${sliderMax}" step="5" value="${selectableMax}" aria-label="Zieltempo" />
+          ${speedButtons}
+        </div>
+        <div class="dhud-group">
+          <span>Zeitraffer:</span>
+          <button type="button" class="dhud-btn" data-scale="1">1×</button>
+          <button type="button" class="dhud-btn" data-scale="5">5×</button>
+          <button type="button" class="dhud-btn" data-scale="15">15×</button>
+        </div>
+        <div class="dhud-group">
+          <button type="button" class="dhud-action" id="btn-force-stop">⚡ Früher laden</button>
+          <button type="button" class="dhud-action" id="btn-wc-stop">🚻 WC-Stopp (+8m)</button>
+          <button type="button" class="dhud-action" id="btn-peek-map">🗺️ Karte</button>
+          <button type="button" class="dhud-action tailgate-btn hidden" id="btn-tailgate">Dicht auffahren, Blinker links und Lichthupe</button>
+        </div>
+      </div>
+      <aside id="er-trip-computer" class="er-trip-computer" aria-label="Bordcomputer"></aside>`
           : `
-        <div class="dhud-controls">
-          <div class="dhud-city-hint">
-            🎮 GTA-2 Stadt-Segment: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
-          </div>
-        </div>`
-      }
-    `;
+      <div class="dhud-row">
+        <div class="dhud-pill soc" data-pill="soc">🔋 <span data-field="soc"></span></div>
+        <div class="dhud-pill soc-pred" data-pill="pred">🎯 <span data-field="pred"></span></div>
+        <div class="dhud-pill">🛣️ <span data-field="route"></span></div>
+        <div class="dhud-pill">🕒 <span data-field="clock"></span></div>
+        <div class="dhud-pill" data-pill="stress"><span data-field="stress"></span></div>
+        <div class="dhud-pill">💶 <span data-field="cost"></span></div>
+      </div>
+      <div class="dhud-controls">
+        <div class="dhud-city-hint">
+          🎮 GTA-2 Stadt-Segment: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
+        </div>
+      </div>`;
+    }
 
-    if (this.mode === 'autobahn') {
-      this.hudEl.querySelectorAll('[data-spd]').forEach(b => {
-        b.addEventListener('click', () => {
-          SoundFX.click();
-          this.cb.onSpeedChange(Number((b as HTMLElement).dataset.spd));
-        });
-      });
-      this.hudEl.querySelectorAll('[data-scale]').forEach(b => {
-        b.addEventListener('click', () => {
-          SoundFX.click();
-          this.cb.onTimeScaleChange(Number((b as HTMLElement).dataset.scale));
-        });
-      });
-      this.hudEl.querySelector('#btn-force-stop')?.addEventListener('click', () => {
-        SoundFX.click();
-        this.cb.onForceEarlierStop();
-      });
-      this.hudEl.querySelector('#btn-wc-stop')?.addEventListener('click', () => {
-        SoundFX.click();
-        this.cb.onUnplannedToiletStop();
-      });
-      this.hudEl.querySelector('#btn-peek-map')?.addEventListener('click', () => {
-        SoundFX.click();
-        this.cb.onToggleMapPreview();
-      });
+    const chosen = snapSpeedKmh(
+      run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? selectableMax,
+      sliderMax
+    );
+    const overSign = signLimit > 0 && chosen > signLimit;
+    const speedSlider = this.hudEl.querySelector('.dhud-speed-slider') as HTMLInputElement | null;
+    if (speedSlider) {
+      speedSlider.classList.toggle('over-limit', overSign);
+      if (document.activeElement !== speedSlider && speedSlider.value !== String(chosen)) {
+        speedSlider.value = String(chosen);
+      }
+    }
+    const capNote = run.speedCapKmh ? ` · ${run.speedCapLabel || 'Limit'} ${run.speedCapKmh}` : '';
+    this.setHtml('soc', `<strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)`);
+    this.setHtml(
+      'pred',
+      `<span>${pred.nextStopName} (${pred.distanceToNextKm} km):</span> <strong>Ankunft ${pred.predictedArrivalNextSocPct}%</strong>${
+        pred.nextStopKind !== 'destination' ? ` · 🏁 Ziel: <strong>${pred.predictedFinalSocPct}%</strong>` : ''
+      }`
+    );
+    this.setText(
+      'route',
+      citySubtitle || `${from.name} → ${to.name} (${Math.round(run.legProgressKm)}/${edge.distanceKm} km)`
+    );
+    this.setText('clock', `${hh}:${mm} · ${weatherBadge}`);
+    this.setHtml(
+      'stress',
+      `${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}%`
+    );
+    this.setText('cost', `${totalCost} €`);
+    this.setText('tempo', `${Math.round(run.currentSpeedKmh)} km/h${capNote}`);
+    this.hudEl.querySelector('[data-pill="soc"]')?.classList.toggle('low', socRound < 15);
+    this.hudEl.querySelector('[data-pill="stress"]')?.classList.toggle('warn', run.stress > 60);
+    const predPill = this.hudEl.querySelector('[data-pill="pred"]');
+    predPill?.classList.remove('low', 'warn', 'ok');
+    predPill?.classList.add(nextSocClass);
+    this.hudEl.querySelectorAll<HTMLButtonElement>('[data-spd]').forEach(btn => {
+      const active = Math.abs(chosen - Number(btn.dataset.spd)) < 4;
+      btn.classList.toggle('active', active);
+      btn.classList.toggle('over-limit', active && overSign);
+    });
+    this.hudEl.querySelectorAll<HTMLButtonElement>('[data-scale]').forEach(btn => {
+      btn.classList.toggle('active', timeScale === Number(btn.dataset.scale));
+    });
+    this.hudEl.querySelector('#btn-tailgate')?.classList.toggle('hidden', !run.tailgateReady);
+    const computer = this.hudEl.querySelector('#er-trip-computer');
+    if (computer && this.mode === 'autobahn') {
+      const progress = Math.max(0, Math.min(1, run.legProgressKm / Math.max(1, edge.distanceKm)));
+      computer.innerHTML = renderStageComputer(from.name, to.name, edge.highwayName, progress, edge.waypoints, from, to, !!leg.reverse, hh, mm, weatherBadge);
     }
   }
 
+  private setText(field: string, text: string): void {
+    const el = this.hudEl.querySelector(`[data-field="${field}"]`);
+    if (el && el.textContent !== text) el.textContent = text;
+  }
+
+  private setHtml(field: string, html: string): void {
+    const el = this.hudEl.querySelector(`[data-field="${field}"]`);
+    if (el && el.innerHTML !== html) el.innerHTML = html;
+  }
+
   private renderTouchControls(): void {
+    if (this.touchEl.dataset.bound === '1') return;
+    this.touchEl.dataset.bound = '1';
     this.touchEl.innerHTML = `
       <div class="touch-left">
-        <button type="button" class="touch-pad" data-t="left" aria-label="Links lenken">◀</button>
-        <button type="button" class="touch-pad" data-t="right" aria-label="Rechts lenken">▶</button>
+        <button type="button" class="touch-pad" data-t="left" draggable="false" aria-label="Links lenken">◀</button>
+        <button type="button" class="touch-pad" data-t="right" draggable="false" aria-label="Rechts lenken">▶</button>
       </div>
       <div class="touch-right">
-        <button type="button" class="touch-pad horn" data-t="horn" aria-label="Hupen">📯</button>
-        <button type="button" class="touch-pad stop" data-t="brake" aria-label="Handbremse">🛑</button>
-        <button type="button" class="touch-pad brake" data-t="down" aria-label="Rückwärts">▼</button>
-        <button type="button" class="touch-pad gas" data-t="up" aria-label="Gas geben">▲</button>
+        <button type="button" class="touch-pad horn" data-t="horn" draggable="false" aria-label="Hupen">📯</button>
+        <button type="button" class="touch-pad stop" data-t="brake" draggable="false" aria-label="Handbremse">🛑</button>
+        <button type="button" class="touch-pad brake" data-t="down" draggable="false" aria-label="Rückwärts">▼</button>
+        <button type="button" class="touch-pad gas" data-t="up" draggable="false" aria-label="Gas geben">▲</button>
       </div>
     `;
 
-    const bindHold = (btn: Element, key: 'left' | 'right' | 'up' | 'down' | 'brake') => {
-      const activeIds = new Set<number>();
-      const sync = () => {
-        const down = activeIds.size > 0;
-        TouchInput[key] = down;
-        btn.classList.toggle('pressed', down);
-      };
-
-      btn.addEventListener('pointerdown', ev => {
-        const e = ev as PointerEvent;
-        e.preventDefault();
-        e.stopPropagation();
-        activeIds.add(e.pointerId);
-        try {
-          (btn as HTMLElement).setPointerCapture(e.pointerId);
-        } catch (_) {}
-        sync();
-      });
-
-      const release = (ev: Event) => {
-        const e = ev as PointerEvent;
-        if (typeof e.pointerId === 'number') {
-          activeIds.delete(e.pointerId);
-        } else {
-          activeIds.clear();
-        }
-        sync();
-      };
-
-      btn.addEventListener('pointerup', release);
-      btn.addEventListener('pointercancel', release);
-      btn.addEventListener('lostpointercapture', release);
-      btn.addEventListener('contextmenu', e => e.preventDefault());
-    };
-
-    (['left', 'right', 'up', 'down', 'brake'] as const).forEach(k => {
-      const el = this.touchEl.querySelector(`[data-t="${k}"]`);
-      if (el) bindHold(el, k);
+    const root = this.touchEl;
+    root.addEventListener('pointerdown', ev => this.onTouchPointerDown(ev as PointerEvent), { capture: true, passive: false });
+    root.addEventListener('pointerleave', ev => this.onTouchPointerLeave(ev as PointerEvent), { capture: true });
+    root.addEventListener('lostpointercapture', ev => this.onTouchPointerGone(ev as PointerEvent), { capture: true });
+    root.addEventListener('contextmenu', ev => {
+      ev.preventDefault();
+      this.clearTouchStates();
     });
+    root.addEventListener('selectstart', ev => ev.preventDefault());
+    root.addEventListener('dragstart', ev => ev.preventDefault());
+    root.addEventListener('touchstart', ev => ev.preventDefault(), { passive: false });
 
-    const hornBtn = this.touchEl.querySelector('[data-t="horn"]');
-    hornBtn?.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      TouchInput.hornPressed = true;
-      hornBtn.classList.add('pressed');
+    const gone = (ev: Event) => this.onTouchPointerGone(ev as PointerEvent);
+    window.addEventListener('pointerup', gone, true);
+    window.addEventListener('pointercancel', gone, true);
+    window.addEventListener('blur', () => this.clearTouchStates());
+    window.addEventListener('touchend', ev => this.onTouchContactEnd(ev), true);
+    window.addEventListener('touchcancel', ev => this.onTouchContactEnd(ev), true);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') this.clearTouchStates();
     });
-    const releaseHorn = () => hornBtn?.classList.remove('pressed');
-    hornBtn?.addEventListener('pointerup', releaseHorn);
-    hornBtn?.addEventListener('pointercancel', releaseHorn);
+  }
+
+  private padFromEvent(ev: Event): HTMLElement | null {
+    const target = ev.target as HTMLElement | null;
+    const btn = target?.closest?.('[data-t]') as HTMLElement | null;
+    if (!btn || !this.touchEl.contains(btn)) return null;
+    return btn;
+  }
+
+  private onTouchPointerDown(ev: PointerEvent): void {
+    const btn = this.padFromEvent(ev);
+    if (!btn) return;
+    const key = btn.dataset.t as TouchControlKey | undefined;
+    if (!key) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    try {
+      btn.setPointerCapture(ev.pointerId);
+    } catch (_) {}
+    pressTouchPointer(ev.pointerId, key);
+    this.paintTouchPads();
+  }
+
+  private onTouchPointerLeave(ev: PointerEvent): void {
+    const btn = this.padFromEvent(ev);
+    if (!btn) return;
+    if (typeof btn.hasPointerCapture === 'function' && btn.hasPointerCapture(ev.pointerId)) return;
+    releaseTouchPointer(ev.pointerId);
+    this.paintTouchPads();
+  }
+
+  private onTouchPointerGone(ev: PointerEvent): void {
+    if (typeof ev.pointerId !== 'number') {
+      this.clearTouchStates();
+      return;
+    }
+    releaseTouchPointer(ev.pointerId);
+    const btn = this.padFromEvent(ev);
+    if (btn && typeof btn.releasePointerCapture === 'function' && btn.hasPointerCapture?.(ev.pointerId)) {
+      try {
+        btn.releasePointerCapture(ev.pointerId);
+      } catch (_) {}
+    }
+    this.paintTouchPads();
+  }
+
+  private onTouchContactEnd(ev: TouchEvent): void {
+    for (const touch of Array.from(ev.changedTouches)) {
+      releaseTouchPointer(touch.identifier);
+    }
+    this.paintTouchPads();
+  }
+
+  private paintTouchPads(): void {
+    this.touchEl.querySelectorAll<HTMLElement>('[data-t]').forEach(btn => {
+      const key = btn.dataset.t as TouchControlKey | undefined;
+      btn.classList.toggle('pressed', !!key && isTouchKeyHeld(key));
+    });
   }
 }

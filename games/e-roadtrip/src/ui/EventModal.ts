@@ -24,6 +24,7 @@ export interface ChargingCompletePayload {
   breakCostEur: number;
   newSoc: number;
   stressDelta: number;
+  hungerDelta: number;
   resetBladder: boolean;
   takenBreaks: string[];
 }
@@ -104,6 +105,51 @@ export class EventModal {
           });
         }
       });
+    });
+  }
+
+  public showMesseVisit(onConfirm: (choice: { charge: boolean; eat: boolean }) => string, onResume: () => void): void {
+    this.modalEl.classList.remove('hidden');
+    this.modalEl.innerHTML = `
+      <div class="er-modal-card">
+        <div class="er-modal-head">
+          <span class="er-modal-icon">🏛️</span>
+          <div>
+            <div class="er-modal-kicker">Hannover Messe · etwa 4 Stunden</div>
+            <h3>Messebesuch</h3>
+          </div>
+        </div>
+        <p class="er-modal-body">Der Termin dauert etwa 4 Stunden. Die Toilette ist automatisch dabei. AC-Laden am Parkplatz ist freiwillig: 6 Punkte, 22 kW, und nur etwa jeder zweite ist frei.</p>
+        <label class="messe-opt"><input type="checkbox" id="messe-charge" /> <span><strong>AC am Messeparkplatz</strong><br />6 Ladepunkte, 50 % Chance, dass einer frei ist.</span></label>
+        <label class="messe-opt"><input type="checkbox" id="messe-eat" /> <span><strong>In der Messe essen</strong><br />−50 €, Hunger sinkt deutlich.</span></label>
+        <div id="messe-actions" class="er-modal-choices">
+          <button type="button" class="er-primary-btn" id="messe-go">Vier Stunden bleiben</button>
+        </div>
+        <div id="messe-outcome" class="hidden"></div>
+      </div>
+    `;
+    this.modalEl.querySelector('#messe-go')?.addEventListener('click', () => {
+      SoundFX.click();
+      const charge = !!(this.modalEl.querySelector('#messe-charge') as HTMLInputElement | null)?.checked;
+      const eat = !!(this.modalEl.querySelector('#messe-eat') as HTMLInputElement | null)?.checked;
+      const report = onConfirm({ charge, eat });
+      const actions = this.modalEl.querySelector('#messe-actions');
+      const opts = this.modalEl.querySelectorAll('.messe-opt');
+      actions?.classList.add('hidden');
+      opts.forEach(el => el.classList.add('hidden'));
+      const out = this.modalEl.querySelector('#messe-outcome');
+      if (out) {
+        out.classList.remove('hidden');
+        out.innerHTML = `
+          <div class="messe-report">${report}</div>
+          <button type="button" class="er-primary-btn" id="messe-next">Weiterfahren →</button>
+        `;
+        out.querySelector('#messe-next')?.addEventListener('click', () => {
+          SoundFX.click();
+          this.close();
+          onResume();
+        });
+      }
     });
   }
 
@@ -488,7 +534,7 @@ export class EventModal {
   ): void {
     const vehicle = getVehicleById(run.plan.vehicleId);
     const startSoc = Math.max(2, Math.round(run.socPct));
-    let activeTarget = Math.min(100, Math.max(startSoc + 10, targetSocPct));
+    let activeTarget = Math.min(100, Math.max(startSoc, targetSocPct));
     const est = estimateChargeSession(
       vehicle,
       station,
@@ -504,7 +550,11 @@ export class EventModal {
     let breakMinutes = 0;
     let breakCostEur = 0;
     let breakStressDelta = 0;
+    let hungerDelta = 0;
     let resetBladder = false;
+    let shownBladder = run.bladderNeed;
+    let shownHunger = run.hungerNeed || 0;
+    let shownStress = run.stress;
     let finished = false;
     let breakBusy = false;
     const usedBreaks = new Set<BreakActivityKind>();
@@ -545,7 +595,7 @@ export class EventModal {
 
       const meta: Record<
         BreakActivityKind,
-        { label: string; mins: number; cost: number; stress: number; bladder: boolean; caption: string }
+        { label: string; mins: number; cost: number; stress: number; bladder: boolean; hunger: number; caption: string }
       > = {
         eat: {
           label: '🍔 Etwas gegessen (+20 Min)',
@@ -553,7 +603,8 @@ export class EventModal {
           cost: 0,
           stress: -10,
           bladder: false,
-          caption: '🍔 Pause im Bistro: Du holst dir eine warme Mahlzeit & Kaffee (+20 Min, -10 Stress)…'
+          hunger: -60,
+          caption: ''
         },
         toilet: {
           label: '🚻 Toilettenpause (+5 Min)',
@@ -561,7 +612,8 @@ export class EventModal {
           cost: 0,
           stress: -6,
           bladder: true,
-          caption: '🚻 Kurzer Gang zur Toilette (+5 Min, Harndrang 0 %, -6 Stress)…'
+          hunger: 0,
+          caption: ''
         },
         dog: {
           label: '🐕 Mit Hund Gassi gegangen (+8 Min)',
@@ -569,7 +621,8 @@ export class EventModal {
           cost: 0,
           stress: -14,
           bladder: false,
-          caption: '🐕 Gassirunde im Grünen: Der Hund tobt sich aus (+8 Min, -14 Hunde-Stress)…'
+          hunger: 0,
+          caption: ''
         },
         children: {
           label: '🛝 Kinder auf Spielplatz (+10 Min)',
@@ -577,7 +630,8 @@ export class EventModal {
           cost: 0,
           stress: -16,
           bladder: false,
-          caption: '🛝 Spielplatz-Stopp: Die Kinder rutschen & schaukeln (+10 Min, -16 Kinder-Stress)…'
+          hunger: 0,
+          caption: ''
         },
         shopping: {
           label: '🛍️ Frau war shoppen (+10 Min, -50 €)',
@@ -585,16 +639,28 @@ export class EventModal {
           cost: 50,
           stress: -18,
           bladder: false,
-          caption: '🛍️ Shopping-Ausflug: Deine Frau stöbert in der Boutique (+10 Min, -50 €, -18 Stress)…'
+          hunger: 0,
+          caption: ''
         }
       };
 
       const cfg = meta[kind];
+      const beforeBladder = Math.round(shownBladder);
+      const beforeHunger = Math.round(shownHunger);
+      const beforeStress = Math.round(shownStress);
       breakMinutes += cfg.mins;
       breakCostEur += cfg.cost;
       breakStressDelta += cfg.stress;
-      if (cfg.bladder) resetBladder = true;
+      hungerDelta += cfg.hunger;
+      if (cfg.bladder) {
+        resetBladder = true;
+        shownBladder = 0;
+      }
+      shownHunger = Math.max(0, Math.min(100, shownHunger + cfg.hunger));
+      shownStress = Math.max(0, Math.min(100, shownStress + cfg.stress));
+      cfg.caption = `${cfg.label}: Toilette ${beforeBladder}→${Math.round(shownBladder)} %, Hunger ${beforeHunger}→${Math.round(shownHunger)} %, Stress ${beforeStress}→${Math.round(shownStress)} %.`;
       takenBreakLabels.push(cfg.label);
+      renderChargeNumbers();
 
       breakStageBox.classList.remove('hidden');
       breakCaption.textContent = cfg.caption;
@@ -679,6 +745,7 @@ export class EventModal {
           breakCostEur,
           newSoc: Math.round(currentSoc),
           stressDelta: breakStressDelta,
+          hungerDelta,
           resetBladder,
           takenBreaks: takenBreakLabels
         });
@@ -714,14 +781,38 @@ export class EventModal {
 
       vtsMount.innerHTML = renderVehicleTouchscreenHtml(level, run, currentSoc, station.id);
 
+      const clockTotal = Math.round(level.departureTimeHour * 60 + run.elapsedMinutes + chargeMinutes + breakMinutes);
+      const clockH = String(Math.floor(clockTotal / 60) % 24).padStart(2, '0');
+      const clockM = String(clockTotal % 60).padStart(2, '0');
+      const weatherLabel =
+        run.activeWeather === 'rain'
+          ? '🌧️ Regen'
+          : run.activeWeather === 'snow'
+            ? '❄️ Schnee'
+            : run.activeWeather === 'storm'
+              ? '⛈️ Gewitter'
+              : run.isNight
+                ? '🌙 Nacht'
+                : '☀️ Klar';
+      const meter = (label: string, value: number, tone: string) =>
+        `<div class="need-meter ${tone}"><span>${label}</span><strong>${Math.round(value)}%</strong><i style="width:${Math.max(0, Math.min(100, value))}%"></i></div>`;
+
       dynTop.innerHTML = `
         <div class="er-modal-head">
           <span class="er-modal-icon">⚡</span>
           <div>
-            <div class="er-modal-kicker">Schnellladen aktiv · ${station.network.toUpperCase()}</div>
+            <div class="er-modal-kicker">${station.isAcOnly || station.maxKw <= 43 ? 'AC-Laden' : 'Schnellladen aktiv'} · ${station.network.toUpperCase()}</div>
             <h3>${station.name}</h3>
           </div>
-          <span class="charge-kw-pill">${kwNow} kW</span>
+          <div class="charge-when">
+            <span class="charge-kw-pill">${kwNow} kW</span>
+            <span class="charge-clock">${clockH}:${clockM} · ${weatherLabel}</span>
+          </div>
+        </div>
+        <div class="need-meters">
+          ${meter('🚻 Toilettendrang', shownBladder, 'bladder')}
+          ${meter('🍽️ Hunger', shownHunger, 'hunger')}
+          ${meter('😤 Stress', shownStress, 'stress')}
         </div>
 
         <div class="charge-soc-bar-wrap">

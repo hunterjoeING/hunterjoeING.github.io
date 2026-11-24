@@ -10,15 +10,30 @@ export interface TrafficCarAgent {
   obeysLights: boolean;
   isPolice?: boolean;
   isCyclist?: boolean;
+  /** Waypoint index where the car parks and waits (Autohof bay). */
+  holdWp?: number;
+  holdSec?: number;
+  holdLeft?: number;
+}
+
+export interface PedestrianZebraLink {
+  zebraId: string;
+  sideA: { x: number; y: number };
+  sideB: { x: number; y: number };
+  sidewalkPathA: Array<{ x: number; y: number }>;
+  sidewalkPathB: Array<{ x: number; y: number }>;
+  onSideA: boolean;
+  crossCooldownSec: number;
 }
 
 export interface PedestrianAgent {
   sprite: Phaser.Physics.Arcade.Image;
-  a: { x: number; y: number };
-  b: { x: number; y: number };
-  toB: boolean;
+  waypoints: Array<{ x: number; y: number }>;
+  wpIndex: number;
   speed: number;
   isCrossing: boolean;
+  crossTarget?: { x: number; y: number };
+  zebraLink?: PedestrianZebraLink;
 }
 
 export interface SignalIntersection {
@@ -123,12 +138,15 @@ export function shouldNpcYield(
   pedestrians: PedestrianAgent[],
   intersections: SignalIntersection[],
   zebras: ZebraCrosswalk[],
-  moveAngle: number
+  moveAngle: number,
+  player?: { x: number; y: number }
 ): boolean {
-  if (!npc.obeysLights) return false;
   const fx = Math.cos(moveAngle);
   const fy = Math.sin(moveAngle);
   const horizontal = Math.abs(fx) >= Math.abs(fy);
+  if (!npc.obeysLights) {
+    return vehicleAhead(npc, allNpcs, player, fx, fy);
+  }
 
   // Look ahead 48..88 px
   const probeX = npc.sprite.x + fx * 66;
@@ -144,30 +162,43 @@ export function shouldNpcYield(
     }
   }
 
-  // 2. Yield to pedestrians near or on zebra crosswalks ahead
+  // 2. Yield to pedestrians actively crossing a zebra crosswalk ahead
   for (const zb of zebras) {
     const probeInZebra = Phaser.Geom.Rectangle.Contains(zb.box, probeX, probeY);
     const currentlyInZebra = Phaser.Geom.Rectangle.Contains(zb.box, npc.sprite.x, npc.sprite.y);
     if (!currentlyInZebra && probeInZebra) {
       for (const ped of pedestrians) {
+        if (!ped.isCrossing) continue;
         const d = Phaser.Math.Distance.Between(ped.sprite.x, ped.sprite.y, zb.box.centerX, zb.box.centerY);
-        if (d < 78) return true;
+        if (d < 84) return true;
       }
     }
   }
 
-  // 3. Maintain safe spacing behind any NPC vehicle ahead in same direction
+  return vehicleAhead(npc, allNpcs, player, fx, fy);
+}
+
+function vehicleAhead(
+  npc: TrafficCarAgent,
+  allNpcs: TrafficCarAgent[],
+  player: { x: number; y: number } | undefined,
+  fx: number,
+  fy: number
+): boolean {
+  const blocked = (ox: number, oy: number) => {
+    const dx = ox - npc.sprite.x;
+    const dy = oy - npc.sprite.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 26) return true;
+    const along = dx * fx + dy * fy;
+    const lateral = Math.abs(dx * fy - dy * fx);
+    return along > 16 && along < 112 && lateral < 28;
+  };
   for (const other of allNpcs) {
     if (other === npc) continue;
-    const dx = other.sprite.x - npc.sprite.x;
-    const dy = other.sprite.y - npc.sprite.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist > 4 && dist < 82) {
-      const dot = (dx / dist) * fx + (dy / dist) * fy;
-      if (dot > 0.78) return true;
-    }
+    if (blocked(other.sprite.x, other.sprite.y)) return true;
   }
-
+  if (player && blocked(player.x, player.y)) return true;
   return false;
 }
 
@@ -202,7 +233,7 @@ export function detectPlayerTrafficViolation(
     }
   }
 
-  // Check zebra crossing violation (driving across zebra while pedestrian is waiting/crossing close by)
+  // Check zebra crossing violation (driving across zebra while a pedestrian is actively crossing)
   for (const zb of zebras) {
     const inside = Phaser.Geom.Rectangle.Contains(zb.box, px, py);
     const wasInside = wasInZebras.has(zb.id);
@@ -211,7 +242,9 @@ export function detectPlayerTrafficViolation(
 
     if (inside && !wasInside && movingFast) {
       const pedNear = pedestrians.some(
-        p => Phaser.Math.Distance.Between(p.sprite.x, p.sprite.y, zb.box.centerX, zb.box.centerY) < 72
+        p =>
+          p.isCrossing &&
+          Phaser.Math.Distance.Between(p.sprite.x, p.sprite.y, zb.box.centerX, zb.box.centerY) < 80
       );
       if (pedNear) {
         return 'zebra_crossing';

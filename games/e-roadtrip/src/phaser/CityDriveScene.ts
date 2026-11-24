@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
 import { getChargerById } from '../data/europeMap';
-import { ERoadtripBridge } from './GameBridge';
+import { ERoadtripBridge, ensureTouchHoldsMatchPointers } from './GameBridge';
 import {
   CityLightingProfile,
   PedestrianAgent,
@@ -14,6 +14,8 @@ import {
   shouldNpcYield
 } from './CityTraffic';
 import { SoundFX } from './SoundFX';
+import { paintDrivingPlace, PlacePaint } from './PlacePainter';
+import { isGrassSurface, SurfaceFx } from './SurfaceFx';
 
 export class CityDriveScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
@@ -34,7 +36,8 @@ export class CityDriveScene extends Phaser.Scene {
     interId: string;
     axis: 'ew' | 'ns';
     sprite: Phaser.GameObjects.Image;
-    halo: Phaser.GameObjects.Arc;
+    halo: Phaser.GameObjects.Image;
+    shimmer: Phaser.GameObjects.Image;
   }> = [];
   private zebras: ZebraCrosswalk[] = [];
   private wasInInter = new Set<string>();
@@ -45,20 +48,60 @@ export class CityDriveScene extends Phaser.Scene {
   private obstacles!: Phaser.Physics.Arcade.StaticGroup;
 
   private targetZone!: Phaser.Geom.Rectangle;
-  private targetGlow!: Phaser.GameObjects.Rectangle;
-  private targetLabel!: Phaser.GameObjects.Text;
+  private targetGlow?: Phaser.GameObjects.Rectangle;
+  private targetLabel?: Phaser.GameObjects.Text;
   private reverseHintText!: Phaser.GameObjects.Text;
   private navArrow!: Phaser.GameObjects.Triangle;
   private distText!: Phaser.GameObjects.Text;
 
-  private headlightGfx!: Phaser.GameObjects.Graphics;
-  private lampLightGfx!: Phaser.GameObjects.Graphics;
   private cableGfx!: Phaser.GameObjects.Graphics;
   private nightOverlay!: Phaser.GameObjects.Rectangle;
   private fogOverlay!: Phaser.GameObjects.Rectangle;
   private lightningOverlay!: Phaser.GameObjects.Rectangle;
   private weatherParticles: Phaser.GameObjects.Image[] = [];
+  private rainSplashes: Array<{ sprite: Phaser.GameObjects.Image; age: number; maxAge: number }> = [];
   private streetlamps: Array<{ x: number; y: number }> = [];
+  private lampVisuals: Array<{
+    outer: Phaser.GameObjects.Image;
+    core: Phaser.GameObjects.Image;
+    shimmer: Phaser.GameObjects.Image;
+    phase: number;
+  }> = [];
+  private neonSigns: Array<{
+    x: number;
+    y: number;
+    roadX: number;
+    roadY: number;
+    color: number;
+    phase: number;
+    flicker?: boolean;
+  }> = [];
+  private neonVisuals: Array<{
+    halo: Phaser.GameObjects.Image;
+    shimmer: Phaser.GameObjects.Image;
+    phase: number;
+    flicker?: boolean;
+  }> = [];
+  private playerReflection?: Phaser.GameObjects.Image;
+  private playerHeadlight?: Phaser.GameObjects.Image;
+  private playerTaillight?: Phaser.GameObjects.Image;
+  private npcVisuals: Array<{
+    agent: TrafficCarAgent;
+    reflection: Phaser.GameObjects.Image;
+    headlight?: Phaser.GameObjects.Image;
+    taillight?: Phaser.GameObjects.Image;
+    sirenGlow?: Phaser.GameObjects.Image;
+  }> = [];
+  private isMobilePerf = false;
+  private place!: PlacePaint;
+  private surface!: SurfaceFx;
+  private passThrough = false;
+  private pillar?: { x: number; y: number };
+  private spinners: Phaser.GameObjects.Image[] = [];
+  private roadWet = false;
+  private previewFx = false;
+  private previewDriveSec = 0;
+  private previewLock = false;
 
   private dwellInTargetSec = 0;
   private collisionCooldownSec = 0;
@@ -74,10 +117,16 @@ export class CityDriveScene extends Phaser.Scene {
     super({ key: 'CityDriveScene' });
   }
 
-  init(data: { bridge: ERoadtripBridge; preset: CityDrivePreset; chargerId?: string }): void {
+  init(data: { bridge: ERoadtripBridge; preset: CityDrivePreset; chargerId?: string; previewFx?: boolean }): void {
     this.bridge = data.bridge;
     this.preset = data.preset;
     this.station = data.chargerId ? getChargerById(data.chargerId) : undefined;
+    this.previewFx = !!data.previewFx;
+    this.previewDriveSec = 0;
+    this.roadWet = false;
+    this.passThrough = false;
+    this.pillar = undefined;
+    this.spinners = [];
     this.carSpeed = 0;
     this.dwellInTargetSec = 0;
     this.collisionCooldownSec = 0;
@@ -90,17 +139,59 @@ export class CityDriveScene extends Phaser.Scene {
     this.intersections = [];
     this.zebras = [];
     this.streetlamps = [];
+    this.lampVisuals = [];
+    this.neonSigns = [];
+    this.neonVisuals = [];
+    this.npcVisuals = [];
     this.weatherParticles = [];
+    this.rainSplashes = [];
+    this.playerReflection = undefined;
+    this.playerHeadlight = undefined;
+    this.playerTaillight = undefined;
     this.wasInInter.clear();
     this.wasInZebra.clear();
     this.activeTimers = [];
   }
 
   create(): void {
+    const w0 = this.scale.width;
+    this.isMobilePerf =
+      w0 < 640 ||
+      (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0 && w0 < 900);
+
+    this.place = paintDrivingPlace(this, {
+      preset: this.preset,
+      station: this.station,
+      mobile: this.isMobilePerf
+    });
+    this.worldW = this.place.worldW;
+    this.worldH = this.place.worldH;
+    this.zebras = this.place.zebras;
+    this.neonSigns = this.place.neons;
+    this.passThrough = this.place.passThrough;
+    this.pillar = this.place.pillar;
+    this.spinners = this.place.spinners;
+    this.surface = new SurfaceFx(this, this.isMobilePerf);
+    this.previewDriveSec = this.previewFx ? 3.4 : 0;
+    if (new URLSearchParams(window.location.search).has('erpreview')) {
+      const debugWindow = window as Window & {
+        __erCity?: () => { speed: number; x: number; y: number };
+      };
+      debugWindow.__erCity = () => ({
+        speed: this.carSpeed,
+        x: this.player?.x || 0,
+        y: this.player?.y || 0
+      });
+    }
+    this.targetZone = this.place.targetZone;
+
     this.physics.world.setBounds(0, 0, this.worldW, this.worldH);
     this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);
+    this.cameras.main.setBackgroundColor(this.place.autohof ? 0x14532d : 0x10281c);
 
-    this.drawCityWorld();
+    if (this.place.zoneLabel && this.place.zoneColor !== undefined) {
+      this.drawZoneMarker(this.place.zoneLabel, this.place.zoneColor);
+    }
     this.spawnEnvironmentAndProps();
     this.spawnTrafficAndPedestrians();
     this.spawnPlayer();
@@ -108,7 +199,32 @@ export class CityDriveScene extends Phaser.Scene {
     this.setupNavIndicator();
 
     this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
-    this.cameras.main.setZoom(this.scale.width < 640 ? 0.86 : 1.05);
+    this.cameras.main.setZoom(this.zoomFor(this.scale.width));
+    if (!this.previewFx && new URLSearchParams(window.location.search).get('erpreview')) {
+      const frame = this.time.delayedCall(120, () => {
+        if (!this.scene.isActive() || !this.cameras?.main) return;
+        this.previewLock = true;
+        this.cameras.main.stopFollow();
+        if (this.place.autohof) {
+          this.cameras.main.centerOn(this.worldW * 0.55, this.worldH * 0.5);
+          this.cameras.main.setZoom(this.scale.width < 900 ? 0.7 : 0.84);
+        } else {
+          this.cameras.main.centerOn(this.worldW * 0.46, this.worldH * 0.46);
+          this.cameras.main.setZoom(this.scale.width < 900 ? 0.46 : 0.56);
+        }
+      });
+      this.activeTimers.push(frame);
+    }
+
+    // Optional subtle Bloom PostFX on WebGL desktop; degrades gracefully on Canvas2D / mobile
+    const isWebGL = this.game.renderer.type === Phaser.WEBGL;
+    if (isWebGL && !this.isMobilePerf && this.cameras.main.postFX) {
+      try {
+        this.cameras.main.postFX.addBloom(0xffffff, 1, 1, 1.12, 0.32, 2);
+      } catch {
+        // Ignore if WebGL pipeline does not support PostFX on this GPU
+      }
+    }
 
     this.cursors = this.input.keyboard!.createCursorKeys();
     this.wasd = {
@@ -121,8 +237,8 @@ export class CityDriveScene extends Phaser.Scene {
     };
 
     this.resizeHandler = (size: Phaser.Structs.Size) => {
-      if (!this.scene.isActive() || !this.cameras?.main) return;
-      this.cameras.main.setZoom(size.width < 640 ? 0.86 : 1.05);
+      if (!this.scene.isActive() || !this.cameras?.main || this.previewLock) return;
+      this.cameras.main.setZoom(this.zoomFor(size.width));
       if (this.nightOverlay && this.nightOverlay.scene) {
         this.nightOverlay.setSize(this.worldW, this.worldH);
       }
@@ -134,210 +250,23 @@ export class CityDriveScene extends Phaser.Scene {
         this.scale.off('resize', this.resizeHandler);
         this.resizeHandler = undefined;
       }
+      if (this.cameras?.main?.postFX) {
+        try {
+          this.cameras.main.postFX.clear();
+        } catch {
+          // Safe cleanup
+        }
+      }
       this.activeTimers.forEach(t => t.remove(false));
       this.activeTimers = [];
       this.tweens.killAll();
     });
   }
 
-  private drawCityWorld(): void {
-    const g = this.add.graphics();
 
-    // Base urban grass
-    g.fillStyle(0x1e472d, 1);
-    g.fillRect(0, 0, this.worldW, this.worldH);
-
-    // City block paved sidewalk apron
-    g.fillStyle(0x64748b, 1);
-    g.fillRect(60, 60, this.worldW - 120, this.worldH - 120);
-
-    // Park / courtyard green zones
-    g.fillStyle(0x255939, 1);
-    g.fillRect(305, 305, 625, 325); // NW block
-    g.fillRect(305, 825, 625, 325); // SW block
-    g.fillRect(1130, 305, 600, 325); // NE block
-    g.fillRect(1130, 825, 600, 325); // SE block
-
-    // Main GTA-2 style Avenues (140px wide)
-    g.fillStyle(0x1e293b, 1);
-    g.fillRect(140, 140, 1760, 140); // Top Ave (y=140..280)
-    g.fillRect(140, 660, 1760, 140); // Mid Ave (y=660..800)
-    g.fillRect(140, 1180, 1760, 140); // Bottom Ave (y=1180..1320)
-    g.fillRect(140, 140, 140, 1180); // West St (x=140..280)
-    g.fillRect(960, 140, 140, 1180); // Center Blvd (x=960..1100)
-    g.fillRect(1760, 140, 140, 1180); // East Ring (x=1760..1900)
-
-    // Driveway openings into blocks (Messe, Finish, Charging Park)
-    g.fillRect(1300, 795, 160, 90); // Entry to SE Charging Park from Mid Ave
-    g.fillRect(1440, 555, 160, 115); // Entry to NE Hannover Messe park from Mid Ave
-    g.fillRect(320, 800, 130, 140); // Entry to SW Aachen Finish park from Mid Ave
-
-    // Dedicated terracotta bike lanes
-    g.fillStyle(0x7c2d12, 0.72);
-    g.fillRect(140, 142, 1760, 16);
-    g.fillRect(140, 1302, 1760, 16);
-
-    // Roundabout at (1030, 1250)
-    g.fillStyle(0x1e293b, 1);
-    g.fillCircle(1030, 1250, 115);
-    g.fillStyle(0x22543d, 1);
-    g.fillCircle(1030, 1250, 46);
-    g.lineStyle(3, 0xf8fafc, 0.85);
-    g.strokeCircle(1030, 1250, 48);
-
-    // Dashed road centerlines
-    g.fillStyle(0xf8fafc, 0.72);
-    for (let x = 180; x < 1880; x += 38) {
-      if (Math.abs(x - 1030) > 85) {
-        g.fillRect(x, 208, 20, 3);
-        g.fillRect(x, 728, 20, 3);
-      }
-      if (Math.abs(x - 1030) > 120) {
-        g.fillRect(x, 1248, 20, 3);
-      }
-    }
-    for (let y = 180; y < 1280; y += 38) {
-      if (Math.abs(y - 210) > 85 && Math.abs(y - 730) > 85) {
-        g.fillRect(208, y, 3, 20);
-        if (Math.abs(y - 1250) > 120) g.fillRect(1028, y, 3, 20);
-        g.fillRect(1828, y, 3, 20);
-      }
-    }
-
-    // White Stop Lines (Haltelinien) at both signalized intersections
-    g.fillStyle(0xf8fafc, 0.92);
-    // Intersection 1 (1030, 210)
-    g.fillRect(948, 212, 6, 66); // EW eastbound stop
-    g.fillRect(1106, 142, 6, 66); // EW westbound stop
-    g.fillRect(962, 286, 66, 6); // NS northbound stop
-    g.fillRect(1032, 128, 66, 6); // NS southbound stop
-    // Intersection 2 (1030, 730)
-    g.fillRect(948, 732, 6, 66);
-    g.fillRect(1106, 662, 6, 66);
-    g.fillRect(962, 806, 66, 6);
-    g.fillRect(1032, 648, 66, 6);
-
-    // Zebra Crossings (Zebrastreifen)
-    this.zebras = [
-      { id: 'zebra_1', box: new Phaser.Geom.Rectangle(874, 144, 48, 132), axis: 'ew' },
-      { id: 'zebra_2', box: new Phaser.Geom.Rectangle(144, 1084, 132, 48), axis: 'ns' },
-      { id: 'zebra_3', box: new Phaser.Geom.Rectangle(1134, 664, 48, 132), axis: 'ew' }
-    ];
-    g.fillStyle(0xf8fafc, 0.88);
-    // Zebra 1 vertical stripes across Top Ave
-    for (let i = 0; i < 6; i++) g.fillRect(880, 152 + i * 21, 34, 10);
-    // Zebra 2 horizontal stripes across West St
-    for (let i = 0; i < 6; i++) g.fillRect(152 + i * 21, 1090, 10, 34);
-    // Zebra 3 vertical stripes across Mid Ave
-    for (let i = 0; i < 6; i++) g.fillRect(1140, 672 + i * 21, 34, 10);
-
-    // Construction zone strip on West St (minor roadwork)
-    g.fillStyle(0x9a3412, 0.55);
-    g.fillRect(148, 520, 52, 95);
-
-    // Buildings (detailed GTA-2 rooftops with AC vents & shadows)
-    const drawBuilding = (x: number, y: number, w: number, h: number, roof: number, trim: number) => {
-      g.fillStyle(0x020617, 0.48);
-      g.fillRect(x + 10, y + 10, w, h);
-      g.fillStyle(trim, 1);
-      g.fillRect(x, y, w, h);
-      g.fillStyle(roof, 1);
-      g.fillRect(x + 8, y + 8, w - 16, h - 16);
-      // Rooftop HVAC & skylight details
-      g.fillStyle(0x1e293b, 0.65);
-      g.fillRect(x + 18, y + 18, 28, 20);
-      g.fillStyle(0x38bdf8, 0.35);
-      g.fillRect(x + w - 54, y + 18, 34, 24);
-    };
-    drawBuilding(335, 330, 195, 130, 0x334155, 0x475569);
-    drawBuilding(575, 330, 210, 125, 0x475569, 0x64748b);
-    drawBuilding(335, 495, 220, 115, 0x1e3a8a, 0x3b82f6);
-    drawBuilding(665, 865, 215, 145, 0x3f3f46, 0x71717a);
-    drawBuilding(1165, 330, 145, 145, 0x334155, 0x64748b);
-
-    // Park fountain in NW courtyard
-    this.add.image(720, 540, 'park_fountain').setScale(1.4).setDepth(3);
-
-    // Landmarks & Preset Zones
-    this.add.image(490, 1020, 'landmark_aachen_dom').setScale(2.3).setDepth(3);
-    this.add
-      .text(490, 1072, 'Aachener Dom', {
-        fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontSize: '11px',
-        fontStyle: 'bold',
-        color: '#f8fafc',
-        backgroundColor: 'rgba(15,23,42,0.82)',
-        padding: { x: 5, y: 2 }
-      })
-      .setOrigin(0.5)
-      .setDepth(4);
-
-    this.add.image(1345, 425, 'landmark_hermesturm').setScale(2.3).setDepth(3);
-    this.add
-      .text(1345, 476, 'Hannover Messe', {
-        fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontSize: '11px',
-        fontStyle: 'bold',
-        color: '#f8fafc',
-        backgroundColor: 'rgba(15,23,42,0.82)',
-        padding: { x: 5, y: 2 }
-      })
-      .setOrigin(0.5)
-      .setDepth(4);
-
-    // Large Charging Park Apron in SE Block (always visible as city detail, interactive in charger_park!)
-    g.fillStyle(0x0f172a, 1);
-    g.fillRect(1195, 845, 440, 275);
-    // Canopy roof shadow & glowing stalls
-    g.fillStyle(0x1e293b, 0.9);
-    g.fillRect(1215, 855, 330, 32);
-    g.lineStyle(2, 0xfacc15, 0.8);
-    for (let i = 0; i < 6; i++) {
-      const bx = 1222 + i * 52;
-      // Head-in parking bay open at bottom (South) toward driving aisle
-      g.lineBetween(bx, 896, bx, 966);
-      g.lineBetween(bx + 44, 896, bx + 44, 966);
-      g.lineBetween(bx, 896, bx + 44, 896);
-      this.add.image(bx + 22, 901, 'wheel_stop').setDepth(4);
-      const net = this.station?.network || (i % 2 === 0 ? 'enbw' : 'tesla');
-      this.add.image(bx + 22, 875, `charger_${net}`).setScale(1.15).setDepth(5);
-    }
-
-    if (this.station?.hasMcDonalds || this.preset !== 'charger_park') {
-      this.add.image(1595, 910, 'mcd_kiosk').setScale(1.35).setDepth(4);
-    } else {
-      this.add.image(1595, 910, 'bistro_kiosk').setScale(1.35).setDepth(4);
-    }
-
-    // Target Zone per preset
-    if (this.preset === 'aachen_start') {
-      this.targetZone = new Phaser.Geom.Rectangle(1775, 155, 110, 96);
-      this.drawZoneMarker('A4 AUTOBAHN\nAUFFAHRT →', 0x2563eb);
-    } else if (this.preset === 'charger_park') {
-      // Bay #3 (x: 1326..1370, y: 898..966) - requires REVERSE parking!
-      this.targetZone = new Phaser.Geom.Rectangle(1326, 898, 44, 68);
-      this.drawZoneMarker(`↺ RÜCKWÄRTS\n⚡ ${this.station?.maxKw || 150} kW`, 0x22c55e);
-      this.add
-        .text(1348, 992, '⬆️ Heck zur Säule · Rückwärts einparken ↺', {
-          fontFamily: 'Plus Jakarta Sans, sans-serif',
-          fontSize: '10px',
-          fontStyle: 'bold',
-          color: '#fef08a',
-          backgroundColor: 'rgba(15,23,42,0.86)',
-          padding: { x: 6, y: 2 }
-        })
-        .setOrigin(0.5)
-        .setDepth(5);
-    } else if (this.preset === 'hannover_messe') {
-      this.targetZone = new Phaser.Geom.Rectangle(1465, 450, 120, 86);
-      this.drawZoneMarker('MESSE\nE-PARKPLATZ', 0x38bdf8);
-    } else {
-      // Aachen Finish E-Parking Bay
-      g.fillStyle(0x0f172a, 1);
-      g.fillRect(325, 860, 125, 165);
-      this.targetZone = new Phaser.Geom.Rectangle(342, 915, 92, 74);
-      this.drawZoneMarker('ZIEL\nAACHEN 🏁', 0x22c55e);
-    }
+  private zoomFor(width: number): number {
+    if (this.place?.autohof) return width < 640 ? 0.9 : 1.02;
+    return width < 640 ? 0.72 : 0.9;
   }
 
   private drawZoneMarker(label: string, color: number): void {
@@ -378,48 +307,34 @@ export class CityDriveScene extends Phaser.Scene {
   private spawnEnvironmentAndProps(): void {
     this.obstacles = this.physics.add.staticGroup();
 
-    const blocks: Array<[number, number, number, number]> = [
-      [335, 330, 195, 130],
-      [575, 330, 210, 125],
-      [335, 495, 220, 115],
-      [665, 865, 215, 145],
-      [1165, 330, 145, 145]
-    ];
-    blocks.forEach(([x, y, w, h]) => {
-      const box = this.add.rectangle(x + w / 2, y + h / 2, w, h, 0x000000, 0);
+    this.place.buildings.forEach(b => {
+      const box = this.add.rectangle(b.x + b.w / 2, b.y + b.h / 2, b.w, b.h, 0x000000, 0);
       this.physics.add.existing(box, true);
       this.obstacles.add(box);
     });
 
-    const treeSpots = [
-      [90, 95], [90, 420], [90, 760], [90, 1120], [90, 1390],
-      [540, 95], [840, 95], [1340, 95], [1640, 95],
-      [1955, 220], [1955, 620], [1955, 1020], [1955, 1360],
-      [540, 1390], [1440, 1390], [820, 540]
-    ];
-    treeSpots.forEach(([tx, ty]) => {
-      const t = this.obstacles.create(tx, ty, 'pixel_tree') as Phaser.Physics.Arcade.Image;
+    this.place.trees.forEach(spot => {
+      const t = this.obstacles.create(spot.x, spot.y, 'pixel_tree') as Phaser.Physics.Arcade.Image;
       t.setCircle(11, 3, 3);
       t.setDepth(6);
       t.refreshBody();
     });
+
+    this.streetlamps = this.place.lamps.slice();
+    this.streetlamps.forEach(lp => {
+      this.add.image(lp.x, lp.y, 'streetlamp').setDepth(11);
+    });
+
+    if (this.place.autohof) {
+      this.intersections = [];
+      return;
+    }
 
     // Construction cones on West St
     [535, 565, 595].forEach(cy => {
       const c = this.obstacles.create(172, cy, 'cone') as Phaser.Physics.Arcade.Image;
       c.setDepth(5);
       c.refreshBody();
-    });
-
-    // Streetlamps along avenues (glow warmly at dusk/night!)
-    this.streetlamps = [
-      { x: 320, y: 132 }, { x: 640, y: 132 }, { x: 1260, y: 132 }, { x: 1620, y: 132 },
-      { x: 320, y: 652 }, { x: 640, y: 652 }, { x: 1260, y: 652 }, { x: 1620, y: 652 },
-      { x: 320, y: 1172 }, { x: 760, y: 1172 }, { x: 1340, y: 1172 }, { x: 1680, y: 1172 },
-      { x: 1350, y: 855 }, { x: 1520, y: 855 }
-    ];
-    this.streetlamps.forEach(lp => {
-      this.add.image(lp.x, lp.y, 'streetlamp').setDepth(11);
     });
 
     // Signalized intersections
@@ -443,9 +358,22 @@ export class CityDriveScene extends Phaser.Scene {
     ];
 
     const addLightVisual = (interId: string, axis: 'ew' | 'ns', x: number, y: number) => {
-      const halo = this.add.circle(x, y, 16, 0x22c55e, 0.22).setDepth(14);
-      const sprite = this.add.image(x, y, 'tlight_green').setDepth(15);
-      this.signalVisuals.push({ interId, axis, sprite, halo });
+      const shimmer = this.add
+        .image(x, y + 22, 'wet_shimmer')
+        .setTint(0x22c55e)
+        .setScale(0.52, 0.55)
+        .setAlpha(0.28)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(2.5);
+      const halo = this.add
+        .image(x, y, 'light_glow_soft')
+        .setTint(0x22c55e)
+        .setScale(0.42)
+        .setAlpha(0.55)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14.6);
+      const sprite = this.add.image(x, y, 'tlight_green').setDepth(14.5);
+      this.signalVisuals.push({ interId, axis, sprite, halo, shimmer });
     };
 
     // Inter 1 lights
@@ -462,6 +390,36 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private spawnTrafficAndPedestrians(): void {
+    if (this.place.autohof) {
+      (this.place.liteCars || []).forEach(cfg => {
+        const sp = this.physics.add.image(cfg.wps[0].x, cfg.wps[0].y, cfg.tex).setDepth(7);
+        sp.setImmovable(true);
+        this.trafficCars.push({
+          sprite: sp,
+          waypoints: cfg.wps,
+          wpIndex: 1,
+          speed: cfg.speed,
+          currentSpeed: cfg.speed,
+          obeysLights: false,
+          holdWp: cfg.holdIndex,
+          holdSec: cfg.holdSec
+        });
+      });
+      (this.place.litePeds || []).forEach(pc => {
+        const start = pc.wps[0];
+        const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
+        sp.setImmovable(true);
+        this.pedestrians.push({
+          sprite: sp,
+          waypoints: pc.wps,
+          wpIndex: 1 % Math.max(1, pc.wps.length),
+          speed: pc.speed,
+          isCrossing: false
+        });
+      });
+      return;
+    }
+
     const carConfigs: Array<{
       tex: string;
       wps: Array<{ x: number; y: number }>;
@@ -526,41 +484,164 @@ export class CityDriveScene extends Phaser.Scene {
       });
     });
 
-    const pedConfigs: Array<{ tex: string; a: { x: number; y: number }; b: { x: number; y: number }; speed: number }> = [
-      { tex: 'ped_adult_0', a: { x: 896, y: 122 }, b: { x: 896, y: 298 }, speed: 34 },
-      { tex: 'ped_child', a: { x: 906, y: 125 }, b: { x: 906, y: 295 }, speed: 38 },
-      { tex: 'ped_adult_1', a: { x: 125, y: 1108 }, b: { x: 295, y: 1108 }, speed: 32 },
-      { tex: 'ped_adult_0', a: { x: 1156, y: 642 }, b: { x: 1156, y: 816 }, speed: 34 }
+    // Pure sidewalk strollers distributed across all city sidewalks (never block crosswalks)
+    const sidewalkPedConfigs: Array<{
+      tex: string;
+      wps: Array<{ x: number; y: number }>;
+      startIdx?: number;
+      speed: number;
+    }> = [
+      // NW block inner sidewalk loop
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 300, y: 294 }, { x: 944, y: 294 }, { x: 944, y: 642 }, { x: 300, y: 642 }],
+        speed: 32
+      },
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 944, y: 642 }, { x: 300, y: 642 }, { x: 300, y: 294 }, { x: 944, y: 294 }],
+        speed: 29
+      },
+      // SW block sidewalks (avoiding SW finish driveway at x=320..450, y=800..940)
+      {
+        tex: 'ped_child',
+        wps: [{ x: 470, y: 814 }, { x: 944, y: 814 }, { x: 944, y: 1162 }, { x: 470, y: 1162 }],
+        speed: 34
+      },
+      // Top Ave outer north sidewalk (west & east)
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 140, y: 118 }, { x: 760, y: 118 }],
+        speed: 30
+      },
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 1140, y: 118 }, { x: 1740, y: 118 }],
+        speed: 31
+      },
+      // West St outer west sidewalk (north stretch)
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 122, y: 180 }, { x: 122, y: 880 }],
+        speed: 28
+      },
+      // Bottom Ave outer south sidewalk (west & east)
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 180, y: 1344 }, { x: 890, y: 1344 }],
+        speed: 31
+      },
+      {
+        tex: 'ped_child',
+        wps: [{ x: 1160, y: 1344 }, { x: 1900, y: 1344 }],
+        speed: 35
+      },
+      // East Ring outer east sidewalk (south of A4 on-ramp)
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 1918, y: 390 }, { x: 1918, y: 1290 }],
+        speed: 30
+      },
+      // NE & SE block sidewalks along East Ring
+      {
+        tex: 'ped_adult_1',
+        wps: [{ x: 1116, y: 294 }, { x: 1742, y: 294 }, { x: 1742, y: 625 }, { x: 1742, y: 294 }],
+        speed: 30
+      },
+      {
+        tex: 'ped_adult_0',
+        wps: [{ x: 1742, y: 820 }, { x: 1742, y: 1162 }, { x: 1130, y: 1162 }, { x: 1742, y: 1162 }],
+        speed: 29
+      }
     ];
-    pedConfigs.forEach(pc => {
-      const sp = this.physics.add.image(pc.a.x, pc.a.y, pc.tex).setDepth(8);
+
+    sidewalkPedConfigs.forEach(pc => {
+      const start = pc.wps[pc.startIdx || 0];
+      const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
       sp.setImmovable(true);
-      this.pedestrians.push({ sprite: sp, a: pc.a, b: pc.b, toB: true, speed: pc.speed, isCrossing: true });
+      this.pedestrians.push({
+        sprite: sp,
+        waypoints: pc.wps,
+        wpIndex: ((pc.startIdx || 0) + 1) % pc.wps.length,
+        speed: pc.speed,
+        isCrossing: false
+      });
+    });
+
+    // Sidewalk pedestrians who occasionally cross a zebra crossing when passing by (never linger/block)
+    const zebraPedConfigs: Array<{
+      tex: string;
+      startPos: { x: number; y: number };
+      speed: number;
+      zebraId: string;
+      sideA: { x: number; y: number };
+      sideB: { x: number; y: number };
+      sidewalkPathA: Array<{ x: number; y: number }>;
+      sidewalkPathB: Array<{ x: number; y: number }>;
+      initialCooldown: number;
+    }> = [
+      {
+        tex: 'ped_adult_0',
+        startPos: { x: 640, y: 122 },
+        speed: 33,
+        zebraId: 'zebra_1',
+        sideA: { x: 898, y: 122 },
+        sideB: { x: 898, y: 294 },
+        sidewalkPathA: [{ x: 520, y: 122 }, { x: 938, y: 122 }],
+        sidewalkPathB: [{ x: 938, y: 294 }, { x: 520, y: 294 }],
+        initialCooldown: 6
+      },
+      {
+        tex: 'ped_adult_1',
+        startPos: { x: 122, y: 920 },
+        speed: 32,
+        zebraId: 'zebra_2',
+        sideA: { x: 122, y: 1108 },
+        sideB: { x: 294, y: 1108 },
+        sidewalkPathA: [{ x: 122, y: 860 }, { x: 122, y: 1320 }],
+        sidewalkPathB: [{ x: 294, y: 1160 }, { x: 294, y: 950 }],
+        initialCooldown: 9
+      },
+      {
+        tex: 'ped_child',
+        startPos: { x: 1360, y: 642 },
+        speed: 34,
+        zebraId: 'zebra_3',
+        sideA: { x: 1158, y: 642 },
+        sideB: { x: 1158, y: 814 },
+        sidewalkPathA: [{ x: 1116, y: 642 }, { x: 1410, y: 642 }],
+        sidewalkPathB: [{ x: 1275, y: 814 }, { x: 1116, y: 814 }],
+        initialCooldown: 11
+      }
+    ];
+
+    zebraPedConfigs.forEach(zc => {
+      const sp = this.physics.add.image(zc.startPos.x, zc.startPos.y, zc.tex).setDepth(8);
+      sp.setImmovable(true);
+      this.pedestrians.push({
+        sprite: sp,
+        waypoints: zc.sidewalkPathA,
+        wpIndex: 1,
+        speed: zc.speed,
+        isCrossing: false,
+        zebraLink: {
+          zebraId: zc.zebraId,
+          sideA: zc.sideA,
+          sideB: zc.sideB,
+          sidewalkPathA: zc.sidewalkPathA,
+          sidewalkPathB: zc.sidewalkPathB,
+          onSideA: true,
+          crossCooldownSec: zc.initialCooldown
+        }
+      });
     });
   }
 
   private spawnPlayer(): void {
-    let sx = 210;
-    let sy = 1010;
-    let rot = 0;
-
-    if (this.preset === 'aachen_start') {
-      sx = 210;
-      sy = 1005;
-      rot = 0;
-    } else if (this.preset === 'charger_park') {
-      sx = 810;
-      sy = 762;
-      rot = Math.PI / 2; // Facing East along Mid Avenue toward intersection & Ladepark!
-    } else if (this.preset === 'hannover_messe') {
-      sx = 1830;
-      sy = 240;
-      rot = -Math.PI / 2;
-    } else if (this.preset === 'aachen_finish') {
-      sx = 1830;
-      sy = 1250;
-      rot = -Math.PI / 2;
-    }
+    const spot = this.previewFx && this.place.previewPoint ? this.place.previewPoint : this.place.spawn;
+    const sx = spot.x;
+    const sy = spot.y;
+    const rot = spot.rot;
 
     this.player = this.physics.add
       .image(sx, sy, `car_${this.bridge.plan.vehicleId}`)
@@ -644,13 +725,12 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private setupLightingAndWeather(): void {
-    this.lampLightGfx = this.add.graphics().setDepth(11);
-    this.headlightGfx = this.add.graphics().setDepth(12);
     this.cableGfx = this.add.graphics().setDepth(13);
 
+    // Ambient GTA-2 twilight/night overlay BELOW additive light sprites so lights cut through darkness
     this.nightOverlay = this.add
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0x020617, 0)
-      .setDepth(14);
+      .setDepth(12);
     this.fogOverlay = this.add
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0xcbd5e1, 0)
       .setDepth(15);
@@ -658,13 +738,137 @@ export class CityDriveScene extends Phaser.Scene {
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0xe0f2fe, 0)
       .setDepth(17);
 
+    // Additive sodium-vapor streetlamp pools + wet-road specular shimmer reflections
+    this.lampVisuals = this.streetlamps.map((lp, idx) => {
+      const shimmer = this.add
+        .image(lp.x, lp.y + 34, 'wet_shimmer')
+        .setTint(0xfbbf24)
+        .setScale(0.85, 0.9)
+        .setAlpha(0)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(2.5);
+      const outer = this.add
+        .image(lp.x, lp.y + 10, 'light_glow_soft')
+        .setTint(0xffb74d)
+        .setScale(1.38)
+        .setAlpha(0)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14);
+      const core = this.add
+        .image(lp.x, lp.y + 4, 'light_glow_soft')
+        .setTint(0xfef08a)
+        .setScale(0.46)
+        .setAlpha(0)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14.1);
+      return { outer, core, shimmer, phase: idx * 0.9 };
+    });
+
+    // Additive neon sign glows + colored wet-asphalt reflection smears
+    this.neonVisuals = this.neonSigns.map(ns => {
+      const halo = this.add
+        .image(ns.x, ns.y, 'light_glow_soft')
+        .setTint(ns.color)
+        .setScale(1.15)
+        .setAlpha(0.55)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(14);
+      const isHorizontalRoad = Math.abs(ns.roadY - ns.y) >= Math.abs(ns.roadX - ns.x);
+      const shimmer = this.add
+        .image(ns.roadX, ns.roadY, 'wet_shimmer')
+        .setTint(ns.color)
+        .setScale(isHorizontalRoad ? 1.15 : 0.9, isHorizontalRoad ? 0.85 : 1.05)
+        .setRotation(isHorizontalRoad ? 0 : Math.PI / 2)
+        .setAlpha(0.32)
+        .setBlendMode(Phaser.BlendModes.ADD)
+        .setDepth(2.5);
+      return { halo, shimmer, phase: ns.phase, flicker: ns.flicker };
+    });
+
+    // Player car mirrored wet-road reflection + additive headlight cone + taillight glow
+    this.playerReflection = this.add
+      .image(this.player.x, this.player.y + 8, `car_${this.bridge.plan.vehicleId}`)
+      .setTint(0x93c5fd)
+      .setScale(0.96, -0.78)
+      .setAlpha(0.2)
+      .setDepth(2.4);
+    this.playerHeadlight = this.add
+      .image(this.player.x, this.player.y, 'headlight_cone')
+      .setOrigin(0.5, 0.95)
+      .setScale(1.22, 1.18)
+      .setAlpha(0.68)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(13.2);
+    this.playerTaillight = this.add
+      .image(this.player.x, this.player.y, 'light_glow_soft')
+      .setTint(0xef4444)
+      .setScale(0.52)
+      .setAlpha(0.42)
+      .setBlendMode(Phaser.BlendModes.ADD)
+      .setDepth(13.1);
+
+    // NPC mirrored wet-road reflections + additive headlights / taillights / police siren lightbar
+    this.npcVisuals = this.trafficCars.map(agent => {
+      const reflection = this.add
+        .image(agent.sprite.x, agent.sprite.y + 7, agent.sprite.texture.key)
+        .setTint(0x93c5fd)
+        .setScale(0.94, -0.74)
+        .setAlpha(0.18)
+        .setDepth(2.4);
+      let headlight: Phaser.GameObjects.Image | undefined;
+      let taillight: Phaser.GameObjects.Image | undefined;
+      let sirenGlow: Phaser.GameObjects.Image | undefined;
+      if (!agent.isCyclist) {
+        headlight = this.add
+          .image(agent.sprite.x, agent.sprite.y, 'headlight_cone')
+          .setOrigin(0.5, 0.95)
+          .setScale(0.86, 0.82)
+          .setAlpha(0.52)
+          .setBlendMode(Phaser.BlendModes.ADD)
+          .setDepth(13.1);
+        taillight = this.add
+          .image(agent.sprite.x, agent.sprite.y, 'light_glow_soft')
+          .setTint(0xef4444)
+          .setScale(0.42)
+          .setAlpha(0.32)
+          .setBlendMode(Phaser.BlendModes.ADD)
+          .setDepth(13);
+      }
+      if (agent.isPolice) {
+        sirenGlow = this.add
+          .image(agent.sprite.x, agent.sprite.y, 'light_glow_soft')
+          .setTint(0x38bdf8)
+          .setScale(0.75)
+          .setAlpha(0.55)
+          .setBlendMode(Phaser.BlendModes.ADD)
+          .setDepth(14.6);
+      }
+      return { agent, reflection, headlight, taillight, sirenGlow };
+    });
+
+    // Camera-local rain streaks & wet-asphalt splash rings (mobile-aware counts)
+    const streakCount = this.isMobilePerf ? 28 : 74;
     this.weatherParticles = [];
-    for (let i = 0; i < 65; i++) {
+    for (let i = 0; i < streakCount; i++) {
       const d = this.add
-        .image(Phaser.Math.Between(0, this.worldW), Phaser.Math.Between(0, this.worldH), 'rain_drop')
+        .image(Phaser.Math.Between(0, this.worldW), Phaser.Math.Between(0, this.worldH), 'rain_streak')
         .setDepth(16)
         .setAlpha(0);
       this.weatherParticles.push(d);
+    }
+
+    const splashCount = this.isMobilePerf ? 8 : 18;
+    this.rainSplashes = [];
+    for (let i = 0; i < splashCount; i++) {
+      const sp = this.add
+        .image(this.player.x, this.player.y, 'rain_splash')
+        .setDepth(2.6)
+        .setAlpha(0);
+      this.rainSplashes.push({
+        sprite: sp,
+        age: Phaser.Math.FloatBetween(0, 0.45),
+        maxAge: Phaser.Math.FloatBetween(0.28, 0.5)
+      });
     }
   }
 
@@ -702,8 +906,35 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private updateLightingVisuals(dt: number, profile: CityLightingProfile): void {
-    this.nightOverlay.setFillStyle(profile.ambientColor, profile.ambientAlpha);
-    this.fogOverlay.setAlpha(profile.isFog ? 0.22 + Math.sin(this.trafficTimer * 0.8) * 0.05 : 0);
+    const t = this.trafficTimer;
+    // GTA-2 urban neo-noir twilight mood floor so additive lights, neon & wet reflections pop
+    const visualAmbientAlpha = profile.isNight
+      ? Math.max(0.56, profile.ambientAlpha)
+      : profile.isDuskOrDawn
+        ? Math.max(0.32, profile.ambientAlpha + 0.14)
+        : profile.isRain || profile.isStorm
+          ? Math.max(0.34, profile.ambientAlpha + 0.14)
+          : Math.max(0.24, profile.ambientAlpha);
+    const visualAmbientColor =
+      profile.isNight || profile.isRain || profile.isStorm
+        ? 0x040b1a
+        : profile.isDuskOrDawn
+          ? 0x0f172a
+          : profile.ambientAlpha > 0
+            ? profile.ambientColor
+            : 0x0b1528;
+
+    this.nightOverlay.setFillStyle(visualAmbientColor, visualAmbientAlpha);
+    this.fogOverlay.setAlpha(profile.isFog ? 0.22 + Math.sin(t * 0.8) * 0.05 : 0);
+
+    // Wetness drives wet-asphalt reflections & shimmer (strongest in rain/storm, damp neo-noir sheen otherwise)
+    const wetness = profile.isStorm
+      ? 1.0
+      : profile.isRain
+        ? 0.92
+        : profile.isSnow
+          ? 0.25
+          : 0.68;
 
     // Storm lightning flash
     if (profile.isStorm) {
@@ -717,65 +948,164 @@ export class CityDriveScene extends Phaser.Scene {
       this.lightningOverlay.setAlpha(0);
     }
 
-    // Streetlamp pools
-    this.lampLightGfx.clear();
-    if (profile.streetlampsOn) {
-      this.streetlamps.forEach(lp => {
-        this.lampLightGfx.fillStyle(0xfef08a, profile.lampGlowAlpha * 0.45);
-        this.lampLightGfx.fillCircle(lp.x, lp.y + 8, 52);
-        this.lampLightGfx.fillStyle(0xfde047, profile.lampGlowAlpha);
-        this.lampLightGfx.fillCircle(lp.x, lp.y + 8, 22);
-      });
+    // Streetlamp additive pools & wet-asphalt specular shimmer
+    const lampStrength = profile.isNight
+      ? 0.95
+      : profile.streetlampsOn || profile.isDuskOrDawn || profile.isRain
+        ? 0.72
+        : 0.48;
+    for (const lv of this.lampVisuals) {
+      const shimmerPulse = 0.86 + Math.sin(t * 3.1 + lv.phase) * 0.14;
+      lv.outer.setAlpha(0.34 * lampStrength);
+      lv.core.setAlpha(0.62 * lampStrength);
+      lv.shimmer.setAlpha(0.36 * lampStrength * wetness * shimmerPulse);
+      lv.shimmer.setScale(0.84 + Math.sin(t * 2.4 + lv.phase) * 0.06, 0.92);
     }
 
-    // Dual headlights for player & NPC cars
-    this.headlightGfx.clear();
-    if (profile.headlightsOn) {
-      const drawBeams = (x: number, y: number, rot: number, reach: number, spread: number) => {
-        const fx = Math.sin(rot);
-        const fy = -Math.cos(rot);
-        const px = -fy;
-        const py = fx;
-        const tipX = x + fx * 20;
-        const tipY = y + fy * 20;
-        this.headlightGfx.fillStyle(0xfef08a, profile.headlightAlpha);
-        this.headlightGfx.fillTriangle(
-          tipX,
-          tipY,
-          tipX + fx * reach + px * spread,
-          tipY + fy * reach + py * spread,
-          tipX + fx * reach - px * spread,
-          tipY + fy * reach - py * spread
-        );
-      };
+    // Neon signs additive halos & wet-road color smears
+    const neonBoost = profile.isNight ? 1.0 : 0.82;
+    for (const nv of this.neonVisuals) {
+      const flickerDip =
+        nv.flicker && Math.sin(t * 17 + nv.phase) > 0.92 && Math.sin(t * 5.3 + nv.phase) > 0.3
+          ? 0.45
+          : 1.0;
+      const pulse = (0.88 + Math.sin(t * 2.6 + nv.phase) * 0.12) * flickerDip;
+      nv.halo.setAlpha(0.46 * neonBoost * pulse);
+      nv.shimmer.setAlpha(0.42 * neonBoost * wetness * pulse);
+    }
 
-      drawBeams(this.player.x, this.player.y, this.player.rotation, 165, 62);
-      for (const tc of this.trafficCars) {
-        if (tc.isCyclist) continue;
-        drawBeams(tc.sprite.x, tc.sprite.y, tc.sprite.rotation, 110, 40);
+    // Player car mirrored wet-road reflection, additive headlight cone & brake/taillight glow
+    const showHeadlights = profile.headlightsOn || profile.isNight || profile.isDuskOrDawn || wetness >= 0.6;
+    const beamAlpha = profile.isNight ? 0.78 : profile.isDuskOrDawn || profile.isRain ? 0.62 : 0.46;
+    const pFx = Math.sin(this.player.rotation);
+    const pFy = -Math.cos(this.player.rotation);
+
+    if (this.playerReflection) {
+      this.playerReflection.setPosition(this.player.x + 5, this.player.y + 10);
+      this.playerReflection.setRotation(this.player.rotation);
+      this.playerReflection.setAlpha(0.24 * wetness);
+    }
+    if (this.playerHeadlight) {
+      this.playerHeadlight.setPosition(this.player.x + pFx * 20, this.player.y + pFy * 20);
+      this.playerHeadlight.setRotation(this.player.rotation);
+      this.playerHeadlight.setAlpha(showHeadlights ? beamAlpha : 0);
+    }
+    this.roadWet = profile.isRain || profile.isStorm || profile.isSnow;
+
+    if (this.playerTaillight) {
+      const coasting =
+        !this.wasd?.W?.isDown &&
+        !this.cursors?.up?.isDown &&
+        !this.bridge.touch.up &&
+        !this.wasd?.S?.isDown &&
+        !this.cursors?.down?.isDown &&
+        !this.bridge.touch.down &&
+        !this.wasd?.SPACE?.isDown &&
+        !this.bridge.touch.brake &&
+        Math.abs(this.carSpeed) > 30;
+      const braking = this.wasd?.SPACE?.isDown || this.bridge.touch.brake || this.carSpeed < -5 || coasting;
+      this.playerTaillight.setPosition(this.player.x - pFx * 22, this.player.y - pFy * 22);
+      this.playerTaillight.setScale(braking ? 0.68 : 0.48);
+      this.playerTaillight.setAlpha(braking ? 0.75 : 0.42);
+    }
+
+    // NPC mirrored wet-road reflections, additive headlights, taillights & police siren lightbar
+    const sirenRed = Math.floor(t * 7.5) % 2 === 0;
+    for (const nv of this.npcVisuals) {
+      const sp = nv.agent.sprite;
+      const fx = Math.sin(sp.rotation);
+      const fy = -Math.cos(sp.rotation);
+      nv.reflection.setPosition(sp.x + 4, sp.y + 8);
+      nv.reflection.setRotation(sp.rotation);
+      nv.reflection.setAlpha(0.2 * wetness);
+
+      if (nv.headlight) {
+        nv.headlight.setPosition(sp.x + fx * 19, sp.y + fy * 19);
+        nv.headlight.setRotation(sp.rotation);
+        nv.headlight.setAlpha(showHeadlights ? beamAlpha * 0.72 : 0);
+      }
+      if (nv.taillight) {
+        const stopped = nv.agent.currentSpeed < 5;
+        nv.taillight.setPosition(sp.x - fx * 20, sp.y - fy * 20);
+        nv.taillight.setScale(stopped ? 0.52 : 0.36);
+        nv.taillight.setAlpha(stopped ? 0.65 : 0.34);
+      }
+      if (nv.sirenGlow) {
+        nv.sirenGlow.setPosition(sp.x, sp.y);
+        nv.sirenGlow.setTint(sirenRed ? 0xef4444 : 0x38bdf8);
+        nv.sirenGlow.setAlpha(0.62);
       }
     }
 
-    // Rain / Snow particle fall
-    for (const p of this.weatherParticles) {
-      if (profile.isRain) {
-        p.setAlpha(0.72);
+    // Rain / atmospheric GTA-2 drizzle / Snow particle fall (wrapped inside active camera view for density + mobile perf)
+    const camView = this.cameras.main.worldView;
+    const minX = camView.x - 40;
+    const maxX = camView.right + 40;
+    const minY = camView.y - 40;
+    const maxY = camView.bottom + 40;
+    const spanW = Math.max(200, maxX - minX);
+    const spanH = Math.max(200, maxY - minY);
+
+    const isHeavyRain = profile.isRain || profile.isStorm;
+    const isLightDrizzle = !isHeavyRain && !profile.isSnow && !profile.isFog;
+
+    for (let i = 0; i < this.weatherParticles.length; i++) {
+      const p = this.weatherParticles[i];
+      if (isHeavyRain || isLightDrizzle) {
+        const active = isHeavyRain || i % 2 === 0;
+        if (!active) {
+          p.setAlpha(0);
+          continue;
+        }
+        if (p.texture.key !== 'rain_streak') p.setTexture('rain_streak');
+        p.setAlpha(isHeavyRain ? (profile.isStorm ? 0.85 : 0.72) : 0.38);
         p.setTint(0xbae6fd);
-        p.setScale(1, 1);
-        p.y += 480 * dt;
-        p.x -= 90 * dt;
+        p.setScale(isHeavyRain ? 1.05 : 0.85, isHeavyRain ? 1.15 : 0.85);
+        p.y += (isHeavyRain ? 560 : 410) * dt;
+        p.x -= (isHeavyRain ? 120 : 82) * dt;
       } else if (profile.isSnow) {
+        if (p.texture.key !== 'rain_drop') p.setTexture('rain_drop');
         p.setAlpha(0.8);
         p.setTint(0xffffff);
         p.setScale(1.8, 0.45);
         p.y += 140 * dt;
-        p.x += Math.sin(this.trafficTimer * 2 + p.y * 0.03) * 35 * dt;
+        p.x += Math.sin(t * 2 + p.y * 0.03) * 35 * dt;
       } else {
         p.setAlpha(0);
+        continue;
       }
-      if (p.y > this.worldH) p.y = 0;
-      if (p.x < 0) p.x = this.worldW;
-      if (p.x > this.worldW) p.x = 0;
+
+      if (p.y > maxY || p.y < minY - 60) {
+        p.y = minY + Phaser.Math.FloatBetween(0, 24);
+        p.x = minX + Phaser.Math.FloatBetween(0, spanW);
+      }
+      if (p.x < minX) p.x += spanW;
+      if (p.x > maxX) p.x -= spanW;
+    }
+
+    // Wet-asphalt rain splash ripples
+    for (let i = 0; i < this.rainSplashes.length; i++) {
+      const sp = this.rainSplashes[i];
+      if (!isHeavyRain && !isLightDrizzle) {
+        sp.sprite.setAlpha(0);
+        continue;
+      }
+      if (isLightDrizzle && i % 2 === 1) {
+        sp.sprite.setAlpha(0);
+        continue;
+      }
+      sp.age += dt;
+      if (sp.age >= sp.maxAge) {
+        sp.age = 0;
+        sp.maxAge = Phaser.Math.FloatBetween(0.24, 0.46);
+        sp.sprite.setPosition(
+          minX + Phaser.Math.FloatBetween(20, Math.max(40, spanW - 20)),
+          minY + Phaser.Math.FloatBetween(20, Math.max(40, spanH - 20))
+        );
+      }
+      const prog = sp.age / sp.maxAge;
+      sp.sprite.setScale(0.45 + prog * 0.95);
+      sp.sprite.setAlpha((1 - prog) * (isHeavyRain ? 0.42 : 0.24));
     }
   }
 
@@ -812,8 +1142,10 @@ export class CityDriveScene extends Phaser.Scene {
       const inter = this.intersections.find(x => x.id === sv.interId);
       if (!inter) return;
       const phase = sv.axis === 'ew' ? inter.ewPhase : inter.nsPhase;
+      const col = phase === 'green' ? 0x22c55e : phase === 'amber' ? 0xfacc15 : 0xef4444;
       sv.sprite.setTexture(`tlight_${phase}`);
-      sv.halo.setFillStyle(phase === 'green' ? 0x22c55e : phase === 'amber' ? 0xfacc15 : 0xef4444, 0.25);
+      sv.halo.setTint(col);
+      sv.shimmer.setTint(col);
     });
 
     const profile = computeCityLightingProfile(
@@ -831,8 +1163,11 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     // === GTA 2 Controls (Keyboard + Shared TouchInput) ===
+    ensureTouchHoldsMatchPointers();
     const touch = this.bridge.touch;
-    const up = this.cursors.up.isDown || this.wasd.W.isDown || touch.up;
+    const autoDrive = this.previewDriveSec > 0;
+    if (autoDrive) this.previewDriveSec -= dt;
+    const up = this.cursors.up.isDown || this.wasd.W.isDown || touch.up || autoDrive;
     const down = this.cursors.down.isDown || this.wasd.S.isDown || touch.down;
     const left = this.cursors.left.isDown || this.wasd.A.isDown || touch.left;
     const right = this.cursors.right.isDown || this.wasd.D.isDown || touch.right;
@@ -849,12 +1184,11 @@ export class CityDriveScene extends Phaser.Scene {
       this.carSpeed = Math.min(maxFwd, this.carSpeed + 320 * dt);
     } else if (down) {
       this.carSpeed = Math.max(maxRev, this.carSpeed - 280 * dt);
-    } else if (brake) {
-      this.carSpeed *= Math.pow(0.05, dt);
     } else {
-      this.carSpeed *= Math.pow(0.24, dt);
+      const decel = (brake ? 1050 : 640) * dt;
+      this.carSpeed = this.carSpeed > 0 ? Math.max(0, this.carSpeed - decel) : Math.min(0, this.carSpeed + decel);
     }
-    if (Math.abs(this.carSpeed) < 3 && !up && !down) this.carSpeed = 0;
+    if (Math.abs(this.carSpeed) < 8 && !up && !down) this.carSpeed = 0;
 
     const steerFactor = Math.min(1, Math.abs(this.carSpeed) / 62);
     const dirSign = this.carSpeed >= -1 ? 1 : -1;
@@ -865,6 +1199,17 @@ export class CityDriveScene extends Phaser.Scene {
     const vx = Math.sin(this.player.rotation) * this.carSpeed;
     const vy = -Math.cos(this.player.rotation) * this.carSpeed;
     this.player.setVelocity(vx, vy);
+
+    for (const spin of this.spinners) spin.rotation += dt * 1.7;
+    this.surface.update(this, {
+      x: this.player.x,
+      y: this.player.y,
+      rotation: this.player.rotation,
+      speed: this.carSpeed,
+      onGrass: isGrassSurface(this.player.x, this.player.y, this.place.grass, this.place.asphalt, this.place.buildings),
+      wetRoad: this.roadWet,
+      dt
+    });
 
     // Check player traffic rule violations (Red lights & Zebra Crossings)
     const violation = detectPlayerTrafficViolation(
@@ -884,10 +1229,37 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     // Move NPCs (strictly obeying lights, zebra crossings & spacing!)
+    if (new URLSearchParams(window.location.search).has('erpreview')) {
+      const debugWindow = window as Window & {
+        __erNpc?: () => Array<{ x: number; y: number; vx: number; vy: number }>;
+      };
+      debugWindow.__erNpc = () =>
+        this.trafficCars.map(car => ({
+          x: car.sprite.x,
+          y: car.sprite.y,
+          vx: car.sprite.body?.velocity.x || 0,
+          vy: car.sprite.body?.velocity.y || 0
+        }));
+      const placeWindow = window as Window & { __erPlacePlayer?: (x: number, y: number) => void };
+      placeWindow.__erPlacePlayer = (x, y) => this.player.setPosition(x, y);
+    }
     for (const tc of this.trafficCars) {
+      if ((tc.holdLeft || 0) > 0) {
+        tc.holdLeft = Math.max(0, (tc.holdLeft || 0) - dt);
+        tc.currentSpeed = 0;
+        tc.sprite.setVelocity(0, 0);
+        continue;
+      }
       const target = tc.waypoints[tc.wpIndex];
       const dist = Phaser.Math.Distance.Between(tc.sprite.x, tc.sprite.y, target.x, target.y);
       if (dist < 16) {
+        if (tc.holdWp === tc.wpIndex && tc.holdSec && tc.holdSec > 0) {
+          tc.holdLeft = tc.holdSec;
+          tc.wpIndex = (tc.wpIndex + 1) % tc.waypoints.length;
+          tc.currentSpeed = 0;
+          tc.sprite.setVelocity(0, 0);
+          continue;
+        }
         tc.wpIndex = (tc.wpIndex + 1) % tc.waypoints.length;
       }
       const ang = Phaser.Math.Angle.Between(tc.sprite.x, tc.sprite.y, target.x, target.y);
@@ -899,7 +1271,8 @@ export class CityDriveScene extends Phaser.Scene {
         this.pedestrians,
         this.intersections,
         this.zebras,
-        ang
+        ang,
+        { x: this.player.x, y: this.player.y }
       );
       if (yieldNow) {
         tc.currentSpeed = 0;
@@ -910,12 +1283,88 @@ export class CityDriveScene extends Phaser.Scene {
       }
     }
 
-    // Move Pedestrians cleanly across crosswalks (wait at curb if a car is already in the crosswalk)
+    // Move Pedestrians along sidewalks; occasionally cross a zebra crossing if road is clear
     for (const pd of this.pedestrians) {
-      const dest = pd.toB ? pd.b : pd.a;
+      const link = pd.zebraLink;
+      if (link && link.crossCooldownSec > 0) {
+        link.crossCooldownSec = Math.max(0, link.crossCooldownSec - dt);
+      }
+
+      if (pd.isCrossing && pd.crossTarget) {
+        const dist = Phaser.Math.Distance.Between(
+          pd.sprite.x,
+          pd.sprite.y,
+          pd.crossTarget.x,
+          pd.crossTarget.y
+        );
+        if (dist < 7) {
+          pd.isCrossing = false;
+          pd.crossTarget = undefined;
+          if (link) {
+            link.onSideA = !link.onSideA;
+            const nextPath = link.onSideA ? link.sidewalkPathA : link.sidewalkPathB;
+            pd.waypoints = nextPath;
+            // Pick the sidewalk waypoint furthest from the crosswalk so the pedestrian walks away
+            let bestIdx = 0;
+            let bestDist = -1;
+            nextPath.forEach((wp, idx) => {
+              const d = Phaser.Math.Distance.Between(pd.sprite.x, pd.sprite.y, wp.x, wp.y);
+              if (d > bestDist) {
+                bestDist = d;
+                bestIdx = idx;
+              }
+            });
+            pd.wpIndex = bestIdx;
+            link.crossCooldownSec = Phaser.Math.FloatBetween(11, 18);
+          }
+        } else {
+          const ang = Phaser.Math.Angle.Between(
+            pd.sprite.x,
+            pd.sprite.y,
+            pd.crossTarget.x,
+            pd.crossTarget.y
+          );
+          const crossSpd = pd.speed * 1.15;
+          pd.sprite.setVelocity(Math.cos(ang) * crossSpd, Math.sin(ang) * crossSpd);
+          continue;
+        }
+      }
+
+      if (link && link.crossCooldownSec <= 0) {
+        const entryPt = link.onSideA ? link.sideA : link.sideB;
+        const distToEntry = Phaser.Math.Distance.Between(pd.sprite.x, pd.sprite.y, entryPt.x, entryPt.y);
+        if (distToEntry < 14) {
+          const zb = this.zebras.find(z => z.id === link.zebraId);
+          const zebraBlockedByVehicle =
+            !!zb &&
+            (Phaser.Geom.Rectangle.Contains(zb.box, this.player.x, this.player.y) ||
+              this.trafficCars.some(tc => Phaser.Geom.Rectangle.Contains(zb.box, tc.sprite.x, tc.sprite.y)));
+
+          if (!zebraBlockedByVehicle && Math.random() < 0.42) {
+            pd.isCrossing = true;
+            pd.crossTarget = link.onSideA ? link.sideB : link.sideA;
+            const ang = Phaser.Math.Angle.Between(
+              pd.sprite.x,
+              pd.sprite.y,
+              pd.crossTarget.x,
+              pd.crossTarget.y
+            );
+            const crossSpd = pd.speed * 1.15;
+            pd.sprite.setVelocity(Math.cos(ang) * crossSpd, Math.sin(ang) * crossSpd);
+            continue;
+          } else {
+            link.crossCooldownSec = 4.5;
+          }
+        }
+      }
+
+      const dest = pd.waypoints[pd.wpIndex];
       const dist = Phaser.Math.Distance.Between(pd.sprite.x, pd.sprite.y, dest.x, dest.y);
-      if (dist < 8) pd.toB = !pd.toB;
-      const ang = Phaser.Math.Angle.Between(pd.sprite.x, pd.sprite.y, dest.x, dest.y);
+      if (dist < 8) {
+        pd.wpIndex = (pd.wpIndex + 1) % pd.waypoints.length;
+      }
+      const nextDest = pd.waypoints[pd.wpIndex];
+      const ang = Phaser.Math.Angle.Between(pd.sprite.x, pd.sprite.y, nextDest.x, nextDest.y);
       pd.sprite.setVelocity(Math.cos(ang) * pd.speed, Math.sin(ang) * pd.speed);
     }
 
@@ -952,7 +1401,24 @@ export class CityDriveScene extends Phaser.Scene {
       this.reverseHintText.setVisible(false);
     }
 
-    if (inZone && Math.abs(this.carSpeed) < 30 && orientationOk) {
+    if (this.passThrough) {
+      const rampLabel =
+        this.preset === 'koeln_ring' ? 'Zur A1' : this.preset === 'ferry_denmark' ? 'Zum Fährterminal' : 'Zur A4 Auffahrt';
+      const doneLabel =
+        this.preset === 'koeln_ring'
+          ? '🛣️ Weiter auf die A1'
+          : this.preset === 'ferry_denmark'
+            ? '⛴️ Fähre erreicht'
+            : '🛣️ Auffahrt A4 – Gute Fahrt!';
+      if (inZone) {
+        this.completed = true;
+        this.reverseHintText.setVisible(false);
+        this.distText.setText(doneLabel);
+        this.bridge.onCitySegmentComplete(this.preset, this.cleanRun);
+      } else {
+        this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
+      }
+    } else if (inZone && Math.abs(this.carSpeed) < 30 && orientationOk) {
       this.dwellInTargetSec += dt;
       this.distText.setText(`✓ Perfekt! Halten… (${Math.min(100, Math.round((this.dwellInTargetSec / 0.6) * 100))}%)`);
       if (this.dwellInTargetSec >= 0.6) {
@@ -970,12 +1436,12 @@ export class CityDriveScene extends Phaser.Scene {
     } else {
       this.dwellInTargetSec = 0;
       const goalHint =
-        this.preset === 'aachen_start'
-          ? 'Zur A4 Auffahrt'
-          : this.preset === 'charger_park'
-            ? 'Rückwärts in Ladebucht einparken'
-            : this.preset === 'hannover_messe'
-              ? 'Zum Messe-Parkplatz'
+        this.preset === 'charger_park'
+          ? 'Rückwärts in Ladebucht einparken'
+          : this.preset === 'hannover_messe'
+            ? 'Zum Messe-Parkplatz'
+            : this.preset === 'koeln_ring'
+              ? 'Zur Rheinbrücke'
               : 'Ins Ziel einparken';
       this.distText.setText(`${goalHint} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
     }
@@ -984,8 +1450,8 @@ export class CityDriveScene extends Phaser.Scene {
   private playDriverPlugInSequence(): void {
     const carX = this.player.x;
     const carY = this.player.y;
-    const pillarX = this.targetZone.centerX;
-    const pillarY = 882;
+    const pillarX = this.pillar?.x ?? this.targetZone.centerX;
+    const pillarY = this.pillar?.y ?? this.targetZone.y;
     const portX = carX;
     const portY = carY - 22; // Rear of car faces North when parked reverse!
 

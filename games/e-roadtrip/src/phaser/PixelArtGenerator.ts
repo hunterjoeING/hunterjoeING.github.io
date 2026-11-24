@@ -252,7 +252,12 @@ function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void
     ewego: { body: '#15803d', accent: '#facc15' },
     electra: { body: '#5b21b6', accent: '#22d3ee' },
     ionity: { body: '#0f172a', accent: '#ec4899' },
-    ac_village: { body: '#334155', accent: '#4ade80' }
+    ac_village: { body: '#334155', accent: '#4ade80' },
+    fastned: { body: '#111827', accent: '#f5c400' },
+    totalenergies: { body: '#1e3a8a', accent: '#e10600' },
+    ac_dorfladen: { body: '#78350f', accent: '#fbbf24' },
+    atlante: { body: '#0f766e', accent: '#5eead4' },
+    vianeo: { body: '#0c4a6e', accent: '#38bdf8' }
   };
 
   const c = colors[net];
@@ -283,7 +288,12 @@ function drawNetworkLogoTexture(scene: Phaser.Scene, net: ChargerNetwork): void 
     ewego: '#15803d',
     electra: '#6d28d9',
     ionity: '#0f172a',
-    ac_village: '#0f766e'
+    ac_village: '#0f766e',
+    fastned: '#f5c400',
+    totalenergies: '#e10600',
+    ac_dorfladen: '#d97706',
+    atlante: '#0f766e',
+    vianeo: '#0284c7'
   };
 
   ctx.fillStyle = '#0f172a';
@@ -338,6 +348,24 @@ function drawNetworkLogoTexture(scene: Phaser.Scene, net: ChargerNetwork): void 
     ctx.fillRect(20, 8, 3, 12);
     ctx.fillStyle = '#38bdf8';
     ctx.fillRect(12, 10, 4, 8);
+  } else if (net === 'fastned') {
+    ctx.fillStyle = '#111827';
+    ctx.fillRect(7, 6, 4, 16);
+    ctx.fillRect(7, 6, 12, 4);
+    ctx.fillRect(7, 12, 10, 3);
+  } else if (net === 'totalenergies') {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 6, 16, 4);
+    ctx.fillRect(12, 6, 4, 16);
+    ctx.fillStyle = '#1e3a8a';
+    ctx.fillRect(6, 18, 16, 4);
+  } else if (net === 'ac_dorfladen') {
+    ctx.fillStyle = '#fef3c7';
+    ctx.fillRect(5, 12, 18, 10);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 6, 16, 6);
+    ctx.fillStyle = '#7f1d1d';
+    ctx.fillRect(8, 14, 5, 8);
   } else {
     // AC Village: white AC plug & green "AC" indicator
     ctx.fillStyle = '#ffffff';
@@ -674,6 +702,195 @@ function drawMiscTextures(scene: Phaser.Scene): void {
       tex.refresh();
     }
   }
+
+  // GTA2 additive soft radial glow sprite (tinted per light source)
+  if (!scene.textures.exists('light_glow_soft')) {
+    const tex = scene.textures.createCanvas('light_glow_soft', 128, 128);
+    if (tex) {
+      const ctx = tex.getContext();
+      const grad = ctx.createRadialGradient(64, 64, 2, 64, 64, 64);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
+      grad.addColorStop(0.22, 'rgba(255, 255, 255, 0.72)');
+      grad.addColorStop(0.55, 'rgba(255, 255, 255, 0.22)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 128);
+      tex.refresh();
+    }
+  }
+
+  // GTA2 additive dual-headlight volumetric beam cone (pointing UP / North)
+  if (!scene.textures.exists('headlight_cone')) {
+    const tex = scene.textures.createCanvas('headlight_cone', 96, 176);
+    if (tex) {
+      const ctx = tex.getContext();
+      const drawBeam = (ox: number) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(ox - 3, 170);
+        ctx.lineTo(ox + 3, 170);
+        ctx.lineTo(ox + 30, 8);
+        ctx.lineTo(ox - 30, 8);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(ox, 172, ox, 6);
+        grad.addColorStop(0, 'rgba(255, 252, 224, 0.92)');
+        grad.addColorStop(0.32, 'rgba(254, 240, 138, 0.45)');
+        grad.addColorStop(0.75, 'rgba(254, 249, 195, 0.14)');
+        grad.addColorStop(1, 'rgba(254, 249, 195, 0)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.restore();
+      };
+      drawBeam(38);
+      drawBeam(58);
+      // Soft merged outer halo
+      const halo = ctx.createRadialGradient(48, 152, 4, 48, 108, 66);
+      halo.addColorStop(0, 'rgba(255, 253, 232, 0.38)');
+      halo.addColorStop(0.55, 'rgba(254, 240, 138, 0.12)');
+      halo.addColorStop(1, 'rgba(254, 240, 138, 0)');
+      ctx.fillStyle = halo;
+      ctx.fillRect(0, 0, 96, 176);
+      tex.refresh();
+    }
+  }
+
+  // Wet-asphalt elongated specular shimmer reflection
+  if (!scene.textures.exists('wet_shimmer')) {
+    const tex = scene.textures.createCanvas('wet_shimmer', 48, 96);
+    if (tex) {
+      const ctx = tex.getContext();
+      const grad = ctx.createRadialGradient(24, 48, 2, 24, 48, 46);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+      grad.addColorStop(0.4, 'rgba(255, 255, 255, 0.35)');
+      grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      ctx.fillStyle = grad;
+      ctx.save();
+      ctx.translate(24, 48);
+      ctx.scale(0.55, 1);
+      ctx.beginPath();
+      ctx.arc(0, 0, 46, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      // Subtle wet ripple horizontal streaks
+      ctx.globalCompositeOperation = 'destination-out';
+      for (let y = 6; y < 92; y += 5) {
+        ctx.fillStyle = 'rgba(0,0,0,0.42)';
+        ctx.fillRect(0, y, 48, 2);
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      tex.refresh();
+    }
+  }
+
+  // Crisp angled rain streak for GTA2 wet streets
+  if (!scene.textures.exists('rain_streak')) {
+    const tex = scene.textures.createCanvas('rain_streak', 6, 26);
+    if (tex) {
+      const ctx = tex.getContext();
+      const grad = ctx.createLinearGradient(5, 0, 1, 26);
+      grad.addColorStop(0, 'rgba(186, 230, 253, 0)');
+      grad.addColorStop(0.55, 'rgba(186, 230, 253, 0.55)');
+      grad.addColorStop(1, 'rgba(224, 242, 254, 0.95)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(5, 0);
+      ctx.lineTo(1, 26);
+      ctx.stroke();
+      tex.refresh();
+    }
+  }
+
+  // Wet-asphalt rain splash ripple
+  if (!scene.textures.exists('rain_splash')) {
+    const tex = scene.textures.createCanvas('rain_splash', 14, 14);
+    if (tex) {
+      const ctx = tex.getContext();
+      ctx.imageSmoothingEnabled = false;
+      ctx.strokeStyle = 'rgba(186, 230, 253, 0.85)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.arc(7, 7, 5, 0, Math.PI * 2);
+      ctx.stroke();
+      tex.refresh();
+    }
+  }
+
+  paintSoftSpot(scene, 'grass_clod', 8, 8, ctx => {
+    ctx.fillStyle = '#4d7c0f';
+    ctx.fillRect(1, 2, 5, 4);
+    ctx.fillStyle = '#365314';
+    ctx.fillRect(2, 1, 3, 2);
+    ctx.fillStyle = '#a16207';
+    ctx.fillRect(3, 5, 3, 2);
+  });
+  paintSoftSpot(scene, 'spray_puff', 32, 32, ctx => {
+    const g = ctx.createRadialGradient(16, 16, 2, 16, 16, 15);
+    g.addColorStop(0, 'rgba(224,242,254,0.9)');
+    g.addColorStop(1, 'rgba(186,230,253,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(16, 16, 15, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  paintSoftSpot(scene, 'turbine_blades', 64, 64, ctx => {
+    ctx.translate(32, 32);
+    ctx.fillStyle = '#e2e8f0';
+    for (let i = 0; i < 3; i++) {
+      ctx.rotate((Math.PI * 2) / 3);
+      ctx.fillRect(-3, -2, 6, 28);
+    }
+    ctx.fillStyle = '#334155';
+    ctx.beginPath();
+    ctx.arc(0, 0, 4, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  paintSoftSpot(scene, 'blink_lamp', 12, 12, ctx => {
+    const g = ctx.createRadialGradient(6, 6, 1, 6, 6, 6);
+    g.addColorStop(0, 'rgba(251,191,36,0.95)');
+    g.addColorStop(1, 'rgba(251,191,36,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 12, 12);
+  });
+  paintSoftSpot(scene, 'beacon_lamp', 14, 14, ctx => {
+    const g = ctx.createRadialGradient(7, 7, 1, 7, 7, 7);
+    g.addColorStop(0, 'rgba(250,204,21,1)');
+    g.addColorStop(0.45, 'rgba(249,115,22,0.8)');
+    g.addColorStop(1, 'rgba(249,115,22,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, 14, 14);
+  });
+  paintSoftSpot(scene, 'baustelle_bake', 12, 22, ctx => {
+    ctx.fillStyle = '#f97316';
+    ctx.fillRect(1, 0, 10, 22);
+    ctx.fillStyle = '#f8fafc';
+    ctx.beginPath();
+    ctx.moveTo(1, 6);
+    ctx.lineTo(11, 0);
+    ctx.lineTo(11, 6);
+    ctx.lineTo(1, 12);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(1, 16);
+    ctx.lineTo(11, 10);
+    ctx.lineTo(11, 16);
+    ctx.lineTo(1, 22);
+    ctx.fill();
+  });
+}
+
+function paintSoftSpot(
+  scene: Phaser.Scene,
+  key: string,
+  w: number,
+  h: number,
+  draw: (ctx: CanvasRenderingContext2D) => void
+): void {
+  if (scene.textures.exists(key)) return;
+  const tex = scene.textures.createCanvas(key, w, h);
+  if (!tex) return;
+  draw(tex.getContext());
+  tex.refresh();
 }
 
 export function generateAllPixelTextures(scene: Phaser.Scene): void {
@@ -685,6 +902,8 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   drawTopDownCarTexture(scene, 'npc_compact_green', 'hatchback', 0x16a34a, 0xf8fafc);
   drawTopDownCarTexture(scene, 'npc_van_white', 'touring', 0xf1f5f9, 0x475569, { isVan: true });
   drawTopDownCarTexture(scene, 'npc_police', 'sedan_aero', 0xe2e8f0, 0x1d4ed8, { isPolice: true });
+  drawTopDownCarTexture(scene, 'npc_fast_red', 'sport', 0xdc2626, 0x111827);
+  drawTopDownCarTexture(scene, 'npc_fast_black', 'sedan_aero', 0x111827, 0xef4444);
   drawTruckTexture(scene);
 
   drawCyclistTexture(scene, 'cyclist_0', '#ef4444');
@@ -693,7 +912,7 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   drawPedestrianTexture(scene, 'ped_adult_1', '#0284c7', false);
   drawPedestrianTexture(scene, 'ped_child', '#facc15', true);
 
-  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'] as ChargerNetwork[]).forEach(net => {
+  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village', 'fastned', 'totalenergies', 'ac_dorfladen', 'atlante', 'vianeo'] as ChargerNetwork[]).forEach(net => {
     drawChargerStallTexture(scene, net);
     drawNetworkLogoTexture(scene, net);
   });
@@ -728,7 +947,12 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
     'npc_compact_green',
     'npc_van_white',
     'npc_police',
+    'npc_fast_red',
+    'npc_fast_black',
     'npc_truck',
+    'grass_clod',
+    'turbine_blades',
+    'baustelle_bake',
     'cyclist_0',
     'cyclist_1',
     'ped_adult_0',

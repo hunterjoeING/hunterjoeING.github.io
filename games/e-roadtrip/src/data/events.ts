@@ -7,7 +7,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     category: 'accident',
     icon: '🚑',
     description:
-      'Auf dem Standstreifen der A2 hat ein Kleinwagen eine Panne/Kollision mit Warnblinker, noch kein Rettungswagen vor Ort. Du kannst anhalten, absichern und Erste Hilfe leisten.',
+      'Auf dem Standstreifen der A2 hat ein Kleinwagen eine Panne/Kollision mit Warnblinker, noch kein Rettungswagen vor Ort. Du kannst anhalten, absichern und Hilfe anbieten.',
     choices: [
       {
         id: 'help_stop',
@@ -30,6 +30,24 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         stressDelta: 1,
         decisionPoints: 8,
         resultText: 'Du meldest den genauen Autobahnkilometer sofort an die Leitstelle.'
+      },
+      {
+        id: 'help_film',
+        label: 'Mit dem Handy filmen und live auf YouTube streamen',
+        hint: '+500 € · +5 Min · −10 Stress · 30 % Risiko einer Anzeige (−1000 €, +45 Min, +50 Stress)',
+        timeDeltaMin: 5,
+        socDeltaPct: 0,
+        costDeltaEur: -500,
+        stressDelta: -10,
+        decisionPoints: -8,
+        resultText: 'Der Stream läuft. 500 € kommen in den ersten Minuten rein, das Gefühl bleibt schal.',
+        fineRisk: {
+          probability: 0.3,
+          amountEur: 1000,
+          label: 'Anzeige',
+          timeDeltaMin: 45,
+          stressDelta: 50
+        }
       }
     ]
   },
@@ -55,14 +73,15 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
       },
       {
         id: 'detour_country',
-        label: 'Umleitung über die Landstraße (80 km/h)',
-        hint: '+11 Min Zeit · -3 % Akku (Mehrkilometer) · -2 Stress',
+        label: 'Umleitung über die Landstraße (70 km/h)',
+        hint: '+11 Min Zeit · 70 km/h bis zum Etappenende · -3 % Akku · -2 Stress',
         timeDeltaMin: 11,
         socDeltaPct: -3,
         costDeltaEur: 0,
         stressDelta: -2,
         decisionPoints: 16,
-        resultText: 'Gute Entscheidung! Über die Dörfer rollst du flüssig am Stau vorbei und sparst 13 Minuten.'
+        adjustSpeedKmh: 70,
+        resultText: 'Gute Entscheidung! Über die Dörfer rollst du mit 70 km/h am Stau vorbei.'
       }
     ]
   },
@@ -148,36 +167,34 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
 
   evt_speed_trap: {
     id: 'evt_speed_trap',
-    title: 'Baustellen-Blitzer / Zivilstreife!',
+    title: 'Blitzer am Fahrbahnrand',
     category: 'police',
     icon: '📸',
-    description:
-      'Plötzlich Tempo 100 wegen Fahrbahnschäden – dein Zieltempo war deutlich höher eingestellt!',
+    description: 'Ein Blitzer steht an der Strecke. Du liegst deutlich über dem Schild.',
     requiresSpeeding: true,
     choices: [
       {
         id: 'brake_smooth',
-        label: 'Sofort vom Strom & sanft auf 100 km/h rekuperieren',
+        label: 'Sofort vom Strom und sanft auf das Schild rekuperieren',
         hint: 'Kein Bußgeld · +3 Min · +8 Dynamik-Punkte',
         timeDeltaMin: 3,
         socDeltaPct: 1,
         costDeltaEur: 0,
         stressDelta: 4,
         decisionPoints: 10,
-        adjustSpeedKmh: 110,
-        resultText: 'Rechtzeitig abgebremst – kein rotes Blitzlicht!'
+        resultText: 'Rechtzeitig abgebremst – kein Blitz.'
       },
       {
         id: 'risk_ticket',
         label: 'Laufen lassen – vielleicht ist der Blitzer aus',
-        hint: '65 % Risiko auf 70 € Bußgeld · 0 Min',
+        hint: '65 % Risiko auf ein Bußgeld · 0 Min',
         timeDeltaMin: 0,
         socDeltaPct: 0,
         costDeltaEur: 0,
         stressDelta: 11,
         decisionPoints: -8,
-        fineRisk: { probability: 0.65, amountEur: 70, label: 'Blitzer-Foto A2 (+24 km/h)' },
-        resultText: 'Du hältst das Gaspedal unten…'
+        fineRisk: { probability: 0.65, amountEur: 70, label: 'Blitzer' },
+        resultText: 'Du hältst das Tempo…'
       }
     ]
   },
@@ -353,6 +370,210 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         resultText: 'Die Carabinieri ziehen das volle Prüfprogramm durch…'
       }
     ]
+  },
+
+  evt_dirty_toilets: {
+    id: 'evt_dirty_toilets',
+    title: 'Dreckige Toiletten an der Aire',
+    category: 'family',
+    icon: '🚻',
+    description:
+      'An der französischen Raststätte sind die WCs in einem üblen Zustand. Ehefrau und Kinder sind angewidert und wollen hier nicht bleiben.',
+    requiresFamily: true,
+    choices: [
+      {
+        id: 'next_aire',
+        label: 'Zur nächsten saubereren Aire weiterfahren',
+        hint: '+14 Min · etwas Stress, weil die Kinder warten müssen',
+        timeDeltaMin: 14,
+        socDeltaPct: -1,
+        costDeltaEur: 0,
+        stressDelta: 8,
+        decisionPoints: 10,
+        resultText: 'Die nächste Aire ist erträglich. Frau und Kinder sind trotzdem genervt von der Warterei.'
+      },
+      {
+        id: 'use_anyway',
+        label: 'Trotzdem diese Toiletten benutzen',
+        hint: 'Keine Umwegzeit · Stress für Frau und Kinder steigt deutlich',
+        timeDeltaMin: 6,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        stressDelta: 22,
+        decisionPoints: -4,
+        resultText: 'Frau und Kinder kommen wütend zurück. Die Stimmung im Auto ist spürbar schlechter.'
+      },
+      {
+        id: 'kids_only',
+        label: 'Nur die Kinder schnell, Erwachsene halten durch',
+        hint: '+8 Min · mittlerer Stress',
+        timeDeltaMin: 8,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        stressDelta: 14,
+        decisionPoints: 4,
+        resultText: 'Die Kinder sind durch, die Erwachsenen beißen die Zähne zusammen. Der Stress bleibt.'
+      }
+    ]
+  },
+
+  evt_hotel_overnight: {
+    id: 'evt_hotel_overnight',
+    title: 'Übernachtung in {ORT}',
+    category: 'family',
+    icon: '🏨',
+    description:
+      'Der Fahrtag endet in {ORT}. Frau und Kinder wollen schlafen. Du wählst, wo die Nacht verbracht wird. Das sehr gute Hotel lädt das Auto über Nacht per AC auf.',
+    requiresFamily: true,
+    choices: [
+      {
+        id: 'hotel_good',
+        label: 'Sehr gutes Hotel: AC über Nacht, Spa und Buffet',
+        hint: '289 € · 8 Stunden · Akku am Morgen hoch · Stress von Frau und Kindern sinkt stark',
+        timeDeltaMin: 480,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        lodgingDeltaEur: 289,
+        setSocPct: 95,
+        stressDelta: -36,
+        decisionPoints: 14,
+        resultText:
+          'Suite, Spa und Frühstücksbuffet. Frau und Kinder sind richtig erholt. Die Wallbox hat das Auto über Nacht auf einen hohen Stand geladen. Der Preis ist gesalzen.'
+      },
+      {
+        id: 'hotel_budget',
+        label: 'Budgethotel ohne Laden',
+        hint: '84 € · 8 Stunden · Stress neutral · Akku bleibt, wie er ist',
+        timeDeltaMin: 480,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        lodgingDeltaEur: 84,
+        stressDelta: 0,
+        decisionPoints: 8,
+        resultText: 'Ein schlichtes Zimmer, ruhige Nacht, kein Spa und keine Wallbox. Die Stimmung bleibt, der Akku auch.'
+      },
+      {
+        id: 'sleep_car',
+        label: 'Im Auto an der Autobahn-Aire schlafen',
+        hint: '0 € · 8 Stunden · Stress steigt · 10 % Risiko auf Einbruch',
+        timeDeltaMin: 480,
+        socDeltaPct: -2,
+        costDeltaEur: 0,
+        lodgingDeltaEur: 0,
+        stressDelta: 18,
+        decisionPoints: -2,
+        followUpEventId: 'evt_rest_area_robbery',
+        followUpChance: 0.1,
+        resultText:
+          'Kostenlos, aber eng und stickig. Frau und Kinder schlafen schlecht. Hoffentlich bleibt das Auto in der Nacht unangetastet.'
+      }
+    ]
+  },
+
+  evt_rest_area_robbery: {
+    id: 'evt_rest_area_robbery',
+    title: 'Einbruch an der Aire',
+    category: 'police',
+    icon: '🚨',
+    description:
+      'Mitten in der Nacht: die Seitenscheibe ist eingeschlagen, die Geldbörse weg. Die Gendarmerie will ein Protokoll. Das kostet Geld, Nerven und Zeit.',
+    choices: [
+      {
+        id: 'file_report',
+        label: 'Anzeige aufnehmen und auf die Gendarmerie warten',
+        hint: '−500 € · +2 Stunden Bürokratie · Stress steigt noch einmal',
+        timeDeltaMin: 120,
+        socDeltaPct: -1,
+        costDeltaEur: 0,
+        fineDeltaEur: 500,
+        stressDelta: 24,
+        decisionPoints: 8,
+        resultText:
+          'Die Börse ist weg (−500 €). Zwei Stunden Formulare, Fotos und Warten auf den Protokollbogen. Frau und Kinder sind fertig mit den Nerven.'
+      },
+      {
+        id: 'short_protocol',
+        label: 'Kurzprotokoll, Scheibe notdürftig abkleben, weiter',
+        hint: '−500 € · trotzdem +2 Stunden · etwas weniger Streit',
+        timeDeltaMin: 120,
+        socDeltaPct: -1,
+        costDeltaEur: 0,
+        fineDeltaEur: 500,
+        stressDelta: 20,
+        decisionPoints: 6,
+        resultText:
+          'Das Geld ist weg (−500 €). Auch das Kurzprotokoll dauert zwei Stunden. Danach rollt ihr mit Pappe in der Scheibe weiter.'
+      },
+      {
+        id: 'insurer_wait',
+        label: 'Versicherung anrufen und alles zu Protokoll geben',
+        hint: '−500 € · +2 Stunden · höchster Stress',
+        timeDeltaMin: 120,
+        socDeltaPct: -1,
+        costDeltaEur: 0,
+        fineDeltaEur: 500,
+        stressDelta: 28,
+        decisionPoints: 4,
+        resultText:
+          'Hotline, Aktenzeichen, Gendarmerie. −500 € und zwei Stunden. Die Stimmung im Auto ist am Boden.'
+      }
+    ]
+  },
+
+  evt_south_arrival: {
+    id: 'evt_south_arrival',
+    title: 'Montpellier erreicht',
+    category: 'family',
+    icon: '🌊',
+    description:
+      'Das Mittelmeer ist da: Montpellier, Palmen, warmes Licht. Frau und Kinder wollen kurz raus, bevor die Rückfahrt nach Aachen beginnt.',
+    requiresFamily: true,
+    choices: [
+      {
+        id: 'promenade',
+        label: '20 Minuten ans Wasser mit der Familie',
+        hint: '+20 Min · Stress sinkt · dann Rückfahrt',
+        timeDeltaMin: 20,
+        socDeltaPct: 0,
+        costDeltaEur: 8,
+        stressDelta: -14,
+        decisionPoints: 10,
+        resultText: 'Eis, ein Blick aufs Meer, kürzere Nerven. Danach geht es zurück Richtung Aachen.'
+      },
+      {
+        id: 'turn_now',
+        label: 'Sofort wenden und die Rückfahrt starten',
+        hint: '+3 Min · die Familie mault',
+        timeDeltaMin: 3,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        stressDelta: 8,
+        decisionPoints: 2,
+        resultText: 'Kein Strand. Frau und Kinder sind enttäuscht, der Zeitplan bleibt straff.'
+      }
+    ]
+  },
+
+  evt_tailgate: {
+    id: 'evt_tailgate',
+    title: 'Lichthupe und zu dicht',
+    category: 'police',
+    icon: '🚨',
+    description: 'Zu dicht aufgefahren, links geblinkt und die Lichthupe gegeben. Eine Kontrolle hat das gesehen.',
+    choices: [
+      {
+        id: 'tailgate_pay',
+        label: 'Bußgeld zahlen und Abstand halten',
+        hint: 'Betrag und Zeit stehen im Hinweis',
+        timeDeltaMin: 8,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        fineDeltaEur: 100,
+        stressDelta: 10,
+        decisionPoints: -4,
+        resultText: 'Abstand zu gering. Das Bußgeld ist fällig.'
+      }
+    ]
   }
 };
 
@@ -419,6 +640,104 @@ export const WIFE_DIALOGUES: Record<string, WifeDialogueDef> = {
     ]
   }
 };
+
+/** Game fines. Germany follows außerorts Bußgeldkatalog tiers. France starts at the 135 € radar ticket. */
+export function speedingFineEur(country: string, excessKmh: number): { amountEur: number; label: string } {
+  const over = Math.max(0, Math.round(excessKmh));
+  if (country === 'FR') {
+    const amountEur = over >= 50 ? 1500 : over >= 40 ? 375 : 135;
+    return { amountEur, label: `Radar automatique (+${over} km/h)` };
+  }
+  if (country === 'DE') {
+    const amountEur =
+      over <= 10 ? 30 : over <= 15 ? 50 : over <= 20 ? 70 : over <= 25 ? 115 : over <= 30 ? 180 : over <= 40 ? 260 : over <= 50 ? 480 : over <= 60 ? 600 : 700;
+    return { amountEur, label: `Blitzer (+${over} km/h)` };
+  }
+  const amountEur = over >= 40 ? 350 : over >= 20 ? 180 : 90;
+  return { amountEur, label: `Radarkontrolle (+${over} km/h)` };
+}
+
+/** Fresh event so the fine matches this flash, not a shared template. */
+export function buildSpeedTrapEvent(ctx: { country: string; signKmh: number; actualKmh: number }): GameEventDef {
+  const excess = Math.max(0, ctx.actualKmh - ctx.signKmh);
+  const fine = speedingFineEur(ctx.country, excess);
+  const brakeTo = Math.max(40, Math.round(ctx.signKmh / 5) * 5);
+  const french = ctx.country === 'FR';
+  const driven = Math.round(ctx.actualKmh);
+  return {
+    id: 'evt_speed_trap',
+    title: french ? 'Radar automatique / Gendarmerie' : ctx.country === 'DE' ? 'Blitzer am Fahrbahnrand' : 'Radarkontrolle',
+    category: 'police',
+    icon: '📸',
+    description: french
+      ? `Ein Radar automatique hat dich erfasst. Du fährst ${driven} km/h, erlaubt sind ${ctx.signKmh} km/h.`
+      : `Blitzer. Du fährst ${driven} km/h, das Schild sagt ${ctx.signKmh}.`,
+    requiresSpeeding: true,
+    choices: [
+      {
+        id: 'brake_smooth',
+        label: `Sofort vom Strom und sanft auf ${brakeTo} km/h rekuperieren`,
+        hint: 'Kein Bußgeld · +3 Min · +8 Dynamik-Punkte',
+        timeDeltaMin: 3,
+        socDeltaPct: 1,
+        costDeltaEur: 0,
+        stressDelta: 4,
+        decisionPoints: 10,
+        adjustSpeedKmh: brakeTo,
+        resultText: 'Rechtzeitig abgebremst – kein Blitz.'
+      },
+      {
+        id: 'risk_ticket',
+        label: french ? 'Weiterfahren – vielleicht ist das Radar aus' : 'Laufen lassen – vielleicht ist der Blitzer aus',
+        hint: `65 % Risiko auf ${fine.amountEur} € · 0 Min`,
+        timeDeltaMin: 0,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        stressDelta: 11,
+        decisionPoints: -8,
+        fineRisk: { probability: 0.65, amountEur: fine.amountEur, label: fine.label },
+        resultText: french ? 'Du lässt das Tempo stehen…' : 'Du hältst das Tempo…'
+      }
+    ]
+  };
+}
+
+export function buildTailgateEvent(country: string, amountEur: number): GameEventDef {
+  const where =
+    country === 'FR' ? 'Frankreich (Abstand / Nötigung)' : country === 'DE' ? 'Deutschland (Abstandsverstoß)' : 'Benelux';
+  const base = GAME_EVENTS.evt_tailgate;
+  const choice = base.choices[0];
+  return {
+    ...base,
+    description: `Zu dicht aufgefahren, links geblinkt und die Lichthupe gegeben. Kontrolle in ${where}.`,
+    choices: [
+      {
+        ...choice,
+        hint: `+${amountEur} € · +8 Min · +10 Stress`,
+        fineDeltaEur: amountEur,
+        resultText: `Kontrolle (${where}): ${amountEur} € wegen zu geringem Abstand.`
+      }
+    ]
+  };
+}
+
+export const HANNOVER_MESSE_REPORTS: string[] = [
+  'Halle 12: Der Kaffee war stärker als der Pitch. Drei Visitenkarten, ein Kuli, der nicht schreibt.',
+  'Am Stand gegenüber lief den ganzen Vormittag dasselbe Video. Nach der dritten Schleife hat die Partnerin den Ton ausgemacht.',
+  'Jemand hat dir eine Tasche voller Kataloge in die Hand gedrückt. Die Tasche war das beste Produkt des Tages.',
+  'In der Mittagsschlange stand ein Roboterarm und hat Brötchen belegt. Die Brötchen waren besser als der Roboter.',
+  'Der Vortrag „Zukunft der Ladekurve“ endete, als der Beamer ausging. Alle haben trotzdem geklatscht.',
+  'Du hast denselben Vertriebler dreimal getroffen. Beim dritten Mal habt ihr so getan, als wärt ihr alte Freunde.',
+  'Halle 27 roch nach Teppich und neuen Reifen. Der Hund wäre begeistert gewesen.',
+  'Ein Startup hat eine App gezeigt, die genau das kann, was dein Notizbuch schon kann. Nur mit Login.',
+  'Am Ausgang gab es eine Tombola. Gewonnen hat der Stand, der die meisten Kulis verschenkt hat.',
+  'Die Partnerin fasst die Messe in einem Satz zusammen: „Schön laut, und der Kaffee war umsonst.“'
+];
+
+export function randomMesseReport(): string {
+  const i = Math.floor(Math.random() * HANNOVER_MESSE_REPORTS.length);
+  return HANNOVER_MESSE_REPORTS[i] || HANNOVER_MESSE_REPORTS[0];
+}
 
 export function getEventById(id: string): GameEventDef | undefined {
   return GAME_EVENTS[id];

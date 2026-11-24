@@ -1,7 +1,8 @@
-import { ChargerNetwork, HighwayEdge, LevelConfig, TripPlan } from '../types';
-import { getCityById, getEdgeById } from '../data/europeMap';
+import { ChargerNetwork, ChargerStation, HighwayEdge, LevelConfig, PlannedStop, TripPlan } from '../types';
+import { getChargersForEdge, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
-import { evaluateTripPlan, getActiveRouteLegs } from '../sim/RoutePlanner';
+import { computeConsumptionKwh100 } from '../sim/EnergyModel';
+import { congestedCruiseKmh, defaultLegSpeedKmh, drivenSpeedKmh, getActiveRouteLegs, snapSpeedKmh } from '../sim/RoutePlanner';
 
 export interface BoxRect {
   x: number;
@@ -10,22 +11,10 @@ export interface BoxRect {
   h: number;
 }
 
-export interface RangeBandRing {
-  innerPx: number;
-  outerPx: number;
-  color: number;
-  alpha: number;
-  label: string;
-}
-
-export interface StageRangeOverlayData {
-  originX: number;
-  originY: number;
+export interface RouteSocBandSegment {
+  points: Array<{ x: number; y: number }>;
   startSocPct: number;
-  consumptionKwh100: number;
-  pxPerKm: number;
-  maxReachKm: number;
-  rings: RangeBandRing[];
+  endSocPct: number;
 }
 
 export interface CardLayoutNode {
@@ -48,6 +37,8 @@ export function isProviderSubscribed(
   if (network === 'electra') return subscriptionIds.includes('electra_plus');
   if (network === 'ionity') return subscriptionIds.includes('ionity_passport');
   if (network === 'ac_village') return subscriptionIds.includes('ac_rural_pass');
+  if (network === 'atlante') return subscriptionIds.includes('atlante_go');
+  if (network === 'vianeo') return subscriptionIds.includes('vianeo_pass');
   return false;
 }
 
@@ -98,69 +89,172 @@ export function getPointAlongEdge(
   return { x: last.x, y: last.y, angleRad: 0 };
 }
 
-export function computeRangeOverlayForStage(
+export function getPolylineSliceAlongEdge(
+  edge: HighwayEdge,
+  startT: number,
+  endT: number,
+  reverse = false
+): Array<{ x: number; y: number }> {
+  const pts = reverse ? [...edge.waypoints].reverse() : edge.waypoints;
+  if (pts.length < 2) return [];
+
+  const t0 = Math.max(0, Math.min(1, startT));
+  const t1 = Math.max(0, Math.min(1, endT));
+  if (t1 <= t0 + 0.0005) return [];
+
+  const cumLens: number[] = [0];
+  let total = 0;
+  for (let i = 0; i < pts.length - 1; i++) {
+    total += Math.hypot(pts[i + 1].x - pts[i].x, pts[i + 1].y - pts[i].y);
+    cumLens.push(total);
+  }
+  if (total < 0.001) return [];
+
+  const sampleAtDist = (dist: number): { x: number; y: number } => {
+    for (let i = 0; i < pts.length - 1; i++) {
+      if (dist <= cumLens[i + 1] || i === pts.length - 2) {
+        const segLen = cumLens[i + 1] - cumLens[i];
+        const u = segLen > 0 ? Math.max(0, Math.min(1, (dist - cumLens[i]) / segLen)) : 0;
+        return {
+          x: pts[i].x + (pts[i + 1].x - pts[i].x) * u,
+          y: pts[i].y + (pts[i + 1].y - pts[i].y) * u
+        };
+      }
+    }
+    const last = pts[pts.length - 1];
+    return { x: last.x, y: last.y };
+  };
+
+  const d0 = t0 * total;
+  const d1 = t1 * total;
+  const result: Array<{ x: number; y: number }> = [sampleAtDist(d0)];
+
+  for (let i = 1; i < pts.length - 1; i++) {
+    if (cumLens[i] > d0 + 0.5 && cumLens[i] < d1 - 0.5) {
+      result.push({ x: pts[i].x, y: pts[i].y });
+    }
+  }
+
+  result.push(sampleAtDist(d1));
+  return result;
+}
+
+export function computeRouteSocBandSegments(
   level: LevelConfig,
   plan: TripPlan,
-  selectedLegIndex: number
-): StageRangeOverlayData | null {
+  upperSocPct = 20,
+  lowerSocPct = 0,
+  onlyLegIndex?: number
+): RouteSocBandSegment[] {
   const legs = getActiveRouteLegs(level, plan);
-  if (legs.length === 0) return null;
-  const idx = Math.max(0, Math.min(legs.length - 1, selectedLegIndex));
-  const legSpec = legs[idx];
-  const edge = getEdgeById(legSpec.edgeId);
-  const originCity = getCityById(legSpec.reverse ? edge.toCityId : edge.fromCityId);
+  if (legs.length === 0) return [];
 
-  const forecast = evaluateTripPlan(level, plan);
-  const legFc = forecast.legForecasts[idx];
   const vehicle = getVehicleById(plan.vehicleId);
-  const startSocPct = Math.max(1, legFc ? legFc.startSocPct : 96);
-  const cons100 = Math.max(9.5, legFc ? legFc.consumptionKwh100 : vehicle.baseConsumption100);
+  let soc = 96; // Matches evaluateTripPlan initial SoC
+  const segments: RouteSocBandSegment[] = [];
+  let activeBand: RouteSocBandSegment | null = null;
 
-  // Average px/km across active route legs for consistent Europe map scaling
-  let sumPx = 0;
-  let sumKm = 0;
-  legs.forEach(l => {
-    const e = getEdgeById(l.edgeId);
-    sumPx += getEdgePixelLength(e);
-    sumKm += e.distanceKm;
-  });
-  const pxPerKm = sumKm > 0 ? sumPx / sumKm : 0.72;
+  const appendSubSegment = (
+    edge: HighwayEdge,
+    reverse: boolean,
+    p0: number,
+    p1: number,
+    cons100: number,
+    record: boolean
+  ): void => {
+    const segKm = Math.max(0, (p1 - p0) * edge.distanceKm);
+    const segKwh = (segKm / 100) * cons100;
+    const socDrop = (segKwh / vehicle.batteryKwh) * 100;
+    const nextSoc = soc - socDrop;
 
-  const kmForRemainingSoc = (targetSoc: number): number => {
-    if (startSocPct <= targetSoc) return 0;
-    const usableKwh = ((startSocPct - targetSoc) / 100) * vehicle.batteryKwh;
-    return (usableKwh / cons100) * 100;
+    if (record && socDrop > 0.001 && soc > lowerSocPct && nextSoc < upperSocPct) {
+      const bandStartSoc = Math.min(soc, upperSocPct);
+      const bandEndSoc = Math.max(nextSoc, lowerSocPct);
+      const frac0 = (soc - bandStartSoc) / socDrop;
+      const frac1 = (soc - bandEndSoc) / socDrop;
+      const t0 = p0 + frac0 * (p1 - p0);
+      const t1 = p0 + frac1 * (p1 - p0);
+      const slice = getPolylineSliceAlongEdge(edge, t0, t1, reverse);
+
+      if (slice.length >= 2) {
+        if (activeBand && soc <= upperSocPct + 0.05) {
+          const prevLast = activeBand.points[activeBand.points.length - 1];
+          const first = slice[0];
+          const startIdx = Math.hypot(first.x - prevLast.x, first.y - prevLast.y) < 1.5 ? 1 : 0;
+          for (let k = startIdx; k < slice.length; k++) {
+            activeBand.points.push(slice[k]);
+          }
+          activeBand.endSocPct = bandEndSoc;
+        } else {
+          activeBand = {
+            points: slice,
+            startSocPct: bandStartSoc,
+            endSocPct: bandEndSoc
+          };
+          segments.push(activeBand);
+        }
+      }
+    }
+
+    soc = nextSoc;
+    if (soc <= lowerSocPct) {
+      activeBand = null;
+    }
   };
 
-  const r25 = kmForRemainingSoc(25) * pxPerKm;
-  const r15 = kmForRemainingSoc(15) * pxPerKm;
-  const r10 = kmForRemainingSoc(10) * pxPerKm;
-  const r5 = kmForRemainingSoc(5) * pxPerKm;
-  const r0 = kmForRemainingSoc(0) * pxPerKm;
+  for (let i = 0; i < legs.length; i++) {
+    if (soc <= lowerSocPct) break;
+    const spec = legs[i];
+    const edge = getEdgeById(spec.edgeId);
+    const lp = plan.legPlans.find(x => x.legIndex === i);
+    const weather = spec.weatherOverride || edge.defaultWeather;
+    const chosenSpeed = snapSpeedKmh(
+      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather),
+      vehicle.maxSpeedKmh
+    );
+    const speed = congestedCruiseKmh(drivenSpeedKmh(edge, weather, chosenSpeed), edge.baseTrafficRisk);
+    const record = onlyLegIndex === undefined || i === onlyLegIndex;
+    if (onlyLegIndex !== undefined) activeBand = null;
+    const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
+    const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
 
-  const rings: RangeBandRing[] = [];
-  if (r15 > r25 + 1) {
-    rings.push({ innerPx: r25, outerPx: r15, color: 0x22c55e, alpha: 0.16, label: '25–15%' });
-  }
-  if (r10 > r15 + 1) {
-    rings.push({ innerPx: r15, outerPx: r10, color: 0xeab308, alpha: 0.19, label: '15–10%' });
-  }
-  if (r5 > r10 + 1) {
-    rings.push({ innerPx: r10, outerPx: r5, color: 0xf97316, alpha: 0.22, label: '10–5%' });
-  }
-  if (r0 > r5 + 1) {
-    rings.push({ innerPx: r5, outerPx: r0, color: 0xef4444, alpha: 0.24, label: '5–0%' });
+    const cons100 = computeConsumptionKwh100(
+      vehicle,
+      speed,
+      weather,
+      elevGain,
+      elevLoss,
+      edge.distanceKm,
+      level.trailerWeightKg || 0,
+      !!plan.behindTruckMode
+    );
+
+    const stopsOnLeg = plan.plannedStops
+      .filter(s => s.legIndex === i)
+      .map(s => {
+        const st = getChargersForEdge(edge.id).find(c => c.id === s.chargerId);
+        if (!st) return null;
+        const progressAlongRun = spec.reverse ? 1 - st.edgeProgress : st.edgeProgress;
+        return { stop: s, station: st, progress: progressAlongRun };
+      })
+      .filter((x): x is { stop: PlannedStop; station: ChargerStation; progress: number } => x !== null)
+      .sort((a, b) => a.progress - b.progress);
+
+    let cursorProgress = 0;
+    for (const item of stopsOnLeg) {
+      appendSubSegment(edge, !!spec.reverse, cursorProgress, item.progress, cons100, record);
+      if (soc <= lowerSocPct) break;
+      activeBand = null;
+      soc = Math.min(100, Math.max(soc + 2, item.stop.targetSocPct));
+      cursorProgress = item.progress;
+    }
+
+    if (soc > lowerSocPct) {
+      appendSubSegment(edge, !!spec.reverse, cursorProgress, 1, cons100, record);
+    }
   }
 
-  return {
-    originX: originCity.mapX,
-    originY: originCity.mapY,
-    startSocPct,
-    consumptionKwh100: cons100,
-    pxPerKm,
-    maxReachKm: Math.round(kmForRemainingSoc(0)),
-    rings
-  };
+  return segments;
 }
 
 export function resolveNonOverlappingCards(
@@ -171,25 +265,29 @@ export function resolveNonOverlappingCards(
 ): void {
   if (nodes.length === 0) return;
 
-  const fanOffsets = [
-    { dx: -1.0, dy: -1.18 },
-    { dx: 1.05, dy: 1.18 },
-    { dx: 1.15, dy: -1.1 },
-    { dx: -1.12, dy: 1.12 },
-    { dx: 0.0, dy: -1.45 },
-    { dx: 0.0, dy: 1.45 }
-  ];
-
-  nodes.forEach((n, idx) => {
-    const off = fanOffsets[idx % fanOffsets.length];
-    const hw = n.cardW * cardScale * 0.5;
-    const hh = n.cardH * cardScale * 0.5;
-    n.worldX = n.pinX + off.dx * (hw * 0.78 + 16 * cardScale);
-    n.worldY = n.pinY + off.dy * (hh + 20 * cardScale);
+  // Nearby pins (A4 rest stops sit a few pixels apart) start in a stack on
+  // alternating sides so the repulsion pass only has to polish the gaps.
+  const sorted = [...nodes].sort((a, b) => a.pinX - b.pinX || a.pinY - b.pinY);
+  const clusters: CardLayoutNode[][] = [];
+  sorted.forEach(n => {
+    const last = clusters[clusters.length - 1];
+    const head = last?.[last.length - 1];
+    if (head && Math.hypot(head.pinX - n.pinX, head.pinY - n.pinY) < 56) last.push(n);
+    else clusters.push([n]);
+  });
+  clusters.forEach(cluster => {
+    cluster.forEach((n, i) => {
+      const hw = n.cardW * cardScale * 0.5;
+      const hh = n.cardH * cardScale * 0.5;
+      const side = i % 2 === 0 ? -1 : 1;
+      const row = Math.floor(i / 2);
+      n.worldX = n.pinX + side * (hw * 0.72 + 20 * cardScale);
+      n.worldY = n.pinY + side * (hh + 16 * cardScale) * (row + 0.35);
+    });
   });
 
-  const pad = 6 * cardScale;
-  for (let iter = 0; iter < 24; iter++) {
+  const pad = 8 * cardScale;
+  for (let iter = 0; iter < 36; iter++) {
     // 1. Repel cards from each other
     for (let i = 0; i < nodes.length; i++) {
       const a = nodes[i];
@@ -251,9 +349,9 @@ export function resolveNonOverlappingCards(
         }
       }
 
-      // 4. Gentle spring pull toward pin
-      a.worldX += (a.pinX - a.worldX) * 0.035;
-      a.worldY += (a.pinY - a.worldY) * 0.035;
+      // 4. Gentle spring pull toward the pin, weak enough that a stack stays apart
+      a.worldX += (a.pinX - a.worldX) * 0.018;
+      a.worldY += (a.pinY - a.worldY) * 0.018;
     }
   }
 }

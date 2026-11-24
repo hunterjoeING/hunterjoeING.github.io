@@ -4,7 +4,7 @@ import {
   VehicleSpec,
   WeatherKind
 } from '../types';
-import { getSubscriptionById } from '../data/subscriptions';
+import { getSubscriptionById, roamingPriceForProvider } from '../data/subscriptions';
 
 export function computeConsumptionKwh100(
   vehicle: VehicleSpec,
@@ -63,7 +63,13 @@ export function getChargingPowerKw(
       break;
     }
   }
-  return Math.max(5, Math.min(station.maxKw, carKw));
+  const acStall = station.isAcOnly || station.maxKw <= 43;
+  if (acStall) {
+    return Math.max(5, Math.min(station.maxKw, vehicle.acMaxKw || 11));
+  }
+  let kw = Math.min(station.maxKw, carKw);
+  if (station.network === 'tesla' && vehicle.packVoltage === 800) kw = Math.min(kw, 150);
+  return Math.max(5, kw);
 }
 
 export interface TariffQuote {
@@ -73,6 +79,11 @@ export interface TariffQuote {
   usedSubscriptionName: string;
   usedSubId: string;
   hasMcDonaldsBonus: boolean;
+}
+
+/** Roaming €/kWh is fixed per provider and ignores the tariff tier (EnBW M = EnBW L). */
+function roamingRate(sub: SubscriptionSpec): number {
+  return roamingPriceForProvider(sub.provider) ?? sub.pricePerKwhRoaming;
 }
 
 function computeBestWithout(
@@ -91,7 +102,7 @@ function computeBestWithout(
   }
   for (const sub of activeSubs) {
     const isOwn = sub.provider === station.network;
-    const candidate = isOwn ? sub.pricePerKwhOwn : sub.pricePerKwhRoaming;
+    const candidate = isOwn ? sub.pricePerKwhOwn : roamingRate(sub);
     if (candidate < best) best = candidate;
   }
   return Number(best.toFixed(2));
@@ -104,8 +115,19 @@ export function getBestPriceForStation(
 ): TariffQuote {
   const activeSubs: SubscriptionSpec[] = subscriptionIds.map(getSubscriptionById);
   let bestPrice = station.baseAdhocEurPerKwh;
-  let bestName = 'Ad-hoc Kartenzahlung';
+  let bestName = station.network === 'ac_dorfladen' ? 'AC-Dorfladen Ad-hoc' : 'Ad-hoc Kartenzahlung';
   let bestId = 'adhoc';
+
+  if (station.network === 'tesla' && vehicle.superchargerFree) {
+    return {
+      pricePerKwh: 0,
+      pricePerKwhWithoutSub: station.baseAdhocEurPerKwh,
+      hasSubscriptionDiscount: station.baseAdhocEurPerKwh > 0.01,
+      usedSubscriptionName: 'Supercharger gratis (Model S)',
+      usedSubId: 'tesla_suc',
+      hasMcDonaldsBonus: false
+    };
+  }
 
   // Tesla drivers automatically unlock native Tesla Supercharger pricing!
   if (station.network === 'tesla' && vehicle.isTesla) {
@@ -123,7 +145,7 @@ export function getBestPriceForStation(
   for (const sub of activeSubs) {
     if (sub.id === 'adhoc') continue;
     const isOwn = sub.provider === station.network;
-    const candidatePrice = isOwn ? sub.pricePerKwhOwn : sub.pricePerKwhRoaming;
+    const candidatePrice = isOwn ? sub.pricePerKwhOwn : roamingRate(sub);
     if (candidatePrice < bestPrice) {
       bestPrice = candidatePrice;
       bestName = sub.name;
@@ -162,8 +184,12 @@ export function estimateChargeSession(
   toSocPct: number,
   subscriptionIds: string[]
 ): ChargeEstimate {
-  const start = Math.max(0, Math.min(99, fromSocPct));
-  const end = Math.max(start + 1, Math.min(100, toSocPct));
+  const start = Math.max(0, Math.min(100, fromSocPct));
+  const end = Math.max(start, Math.min(100, toSocPct));
+  if (end <= start + 0.4) {
+    const tariff = getBestPriceForStation(station, subscriptionIds, vehicle);
+    return { kwhAdded: 0, durationMinutes: 0, avgKw: 0, costEur: 0, tariff };
+  }
   let totalMinutes = 0;
   let totalKwh = 0;
 
@@ -192,6 +218,28 @@ export function estimateChargeSession(
     costEur: Number(costEur.toFixed(2)),
     tariff
   };
+}
+
+/** SoC reachable in a fixed number of minutes, used for the 4-hour Messe AC stay. */
+export function socAfterChargingMinutes(
+  vehicle: VehicleSpec,
+  station: ChargerStation,
+  fromSocPct: number,
+  minutes: number,
+  capSocPct: number
+): number {
+  let soc = Math.max(0, Math.min(100, fromSocPct));
+  const cap = Math.max(soc, Math.min(100, capSocPct));
+  let left = Math.max(0, minutes);
+  const kwhPerPct = Math.max(0.2, vehicle.batteryKwh / 100);
+  while (left > 0.4 && soc < cap - 0.15) {
+    const kw = getChargingPowerKw(vehicle, station, soc);
+    const dMin = Math.min(4, left);
+    const pct = (kw * dMin) / 60 / kwhPerPct;
+    soc = Math.min(cap, soc + pct);
+    left -= dMin;
+  }
+  return Math.round(soc * 10) / 10;
 }
 
 export function computeSubscriptionTripCost(

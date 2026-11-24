@@ -20,7 +20,7 @@ export const LEVELS: LevelConfig[] = [
     startBudgetEur: 26000,
     rewardBaseEur: 6500,
     departureTimeHour: 7.0,
-    targetArrivalMinutes: 585,
+    targetArrivalMinutes: 797,
     startCityId: 'aachen',
     destinationCityId: 'aachen',
     defaultRouteId: 'l1_route_a_ruhr',
@@ -36,7 +36,7 @@ export const LEVELS: LevelConfig[] = [
         chargingDensity: 'Sehr dicht',
         colorHex: 0x3b82f6,
         legs: [
-          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
           { edgeId: 'edge_koeln_kamen', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_kamen_bielefeld', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_bielefeld_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -90,7 +90,7 @@ export const LEVELS: LevelConfig[] = [
         chargingDensity: 'Ausgewogen',
         colorHex: 0xf59e0b,
         legs: [
-          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
           { edgeId: 'edge_koeln_olpe', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_olpe_kassel', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_kassel_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -109,7 +109,7 @@ export const LEVELS: LevelConfig[] = [
       }
     ],
     routeLegs: [
-      { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
+      { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
       { edgeId: 'edge_koeln_kamen', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
       { edgeId: 'edge_kamen_bielefeld', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false },
       { edgeId: 'edge_bielefeld_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -154,72 +154,105 @@ export const LEVELS: LevelConfig[] = [
     id: 'level_2_family_summer',
     order: 2,
     title: 'Level 2: Familien-Sommerurlaub',
-    subtitle: 'Ehefrau, 2 Kinder & Hund · Aachen → Paris / Frankreich',
-    badge: 'Kuratiertes Szenario · Struktur bereit',
-    playable: false,
-    regionLabel: 'Aachen → Paris (3 Routen)',
+    subtitle: 'Ehefrau, 2 Kinder & Hund · Aachen ↔ Montpellier',
+    badge: 'Spielbar · Vollversion',
+    playable: true,
+    regionLabel: 'Aachen ↔ Montpellier (3 Korridore)',
     startBudgetEur: 32000,
     rewardBaseEur: 8000,
     departureTimeHour: 5.5,
-    targetArrivalMinutes: 460,
+    targetArrivalMinutes: 2040,
+    costBenchmarkEurPerKm: 0.3,
     startCityId: 'aachen',
-    destinationCityId: 'paris',
-    defaultRouteId: 'l2_route_a_e42',
+    destinationCityId: 'montpellier',
+    defaultRouteId: 'l2_route_a_lyon',
     routeOptions: [
       {
-        id: 'l2_route_a_e42',
-        name: 'Route A · Direkt-Autoroute (E42 → Mons → A1)',
-        shortLabel: 'Direkt E42/A1',
-        highwaySummary: 'Lüttich → Mons → A1 Paris',
-        description: 'Direkte Autoroute mit IONITY & Electra+ Hubs, aber hoher Maut (34,50 €) und Stau vor Paris.',
+        id: 'l2_route_a_lyon',
+        name: 'Route A · Luxemburg & Lyon (A31 → A6 → A7/A9)',
+        shortLabel: 'Lux–Lyon',
+        highwaySummary: 'Luxemburg → Dijon → Lyon → Montpellier',
+        description: 'Langer Südfrankreich-Korridor über Lothringen und das Rhonetal. Übernachtung in Lyon, dann A7/A9 ans Mittelmeer. Maut etwa 75 € je Richtung.',
         elevationProfile: 'Hügelig',
         trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
         colorHex: 0x3b82f6,
         legs: [
-          { edgeId: 'edge_aachen_luettich', defaultTargetSpeedKmh: 120, weatherOverride: 'clear' },
-          { edgeId: 'edge_luettich_paris', defaultTargetSpeedKmh: 125, weatherOverride: 'clear' }
+          { edgeId: 'edge_aachen_luxemburg', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_luxemburg_dijon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_dijon_lyon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
+          { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
+          { edgeId: 'edge_lyon_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_dijon_lyon', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
+          { edgeId: 'edge_luxemburg_dijon', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
+          { edgeId: 'edge_aachen_luxemburg', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
         ],
-        defaultPlannedStops: [{ chargerId: 'chg_mons_ionity', legIndex: 1, targetSocPct: 80 }]
+        defaultPlannedStops: [
+          { chargerId: 'chg_nancy_tesla', legIndex: 1, targetSocPct: 80 },
+          { chargerId: 'chg_orange_tesla', legIndex: 3, targetSocPct: 70 }
+        ]
       },
       {
-        id: 'l2_route_b_bruessel',
-        name: 'Route B · Flachland über Brüssel & Lille',
-        shortLabel: 'Brüssel–Lille',
-        highwaySummary: 'E40 Brüssel → Lille → A1',
-        description: 'Flachste Route mit großen Tesla- & Electra-Parks, jedoch hohes Staurisiko am Brüsseler Ring.',
-        elevationProfile: 'Flachland',
-        trafficRisk: 'Hoch',
-        chargingDensity: 'Sehr dicht',
-        colorHex: 0x10b981,
-        legs: [
-          { edgeId: 'edge_aachen_bruessel', defaultTargetSpeedKmh: 120, weatherOverride: 'clear' },
-          { edgeId: 'edge_bruessel_lille', defaultTargetSpeedKmh: 120, weatherOverride: 'clear' },
-          { edgeId: 'edge_lille_paris', defaultTargetSpeedKmh: 125, weatherOverride: 'clear' }
-        ],
-        defaultPlannedStops: [{ chargerId: 'chg_arras_electra', legIndex: 2, targetSocPct: 80 }]
-      },
-      {
-        id: 'l2_route_c_ardennen',
-        name: 'Route C · Ardennen-Panorama (Luxemburg → Reims)',
-        shortLabel: 'Ardennen–Lux',
-        highwaySummary: 'E421 Ardennen → Luxemburg → Reims',
-        description: 'Bergige Ardennen-Etappen, kaum Stau und günstige Ladepreise in Luxemburg!',
-        elevationProfile: 'Bergig / Pässe',
+        id: 'l2_route_mid_reims',
+        name: 'Route Mitte · Reims & Nevers (A4 → A77 → A71)',
+        shortLabel: 'Reims–Nevers',
+        highwaySummary: 'Reims → Nevers → Clermont-Ferrand → Millau → Montpellier',
+        description:
+          'Zwischen Luxemburg und Paris. Über Reims und Nevers auf die A71, ab Clermont-Ferrand dieselbe A75 wie die Paris-Route. Übernachtung in Clermont-Ferrand. Tempolimit 130, bei Regen 110. Maut etwa 90 € je Richtung.',
+        elevationProfile: 'Hügelig',
         trafficRisk: 'Niedrig',
+        chargingDensity: 'Ausgewogen',
+        colorHex: 0x14b8a6,
+        legs: [
+          { edgeId: 'edge_aachen_reims', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_reims_nevers', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_nevers_clermont', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
+          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
+          { edgeId: 'edge_clermont_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_nevers_clermont', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
+          { edgeId: 'edge_reims_nevers', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
+          { edgeId: 'edge_aachen_reims', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
+        ],
+        defaultPlannedStops: [
+          { chargerId: 'chg_troyes_vianeo', legIndex: 1, targetSocPct: 75 },
+          { chargerId: 'chg_millau_electra', legIndex: 3, targetSocPct: 70 }
+        ]
+      },
+      {
+        id: 'l2_route_b_clermont',
+        name: 'Route B · Paris & Clermont-Ferrand (A1 → A71 → A75)',
+        shortLabel: 'Paris–Clermont',
+        highwaySummary: 'Lüttich → Paris → Clermont → Millau → Montpellier',
+        description: 'Über die A1 nach Paris, dann quer durch die Auvergne. Übernachtung in Clermont-Ferrand, am nächsten Tag das Millau-Viadukt. Maut etwa 100 € je Richtung.',
+        elevationProfile: 'Bergig / Pässe',
+        trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
         colorHex: 0xf59e0b,
         legs: [
-          { edgeId: 'edge_aachen_luxemburg', defaultTargetSpeedKmh: 115, weatherOverride: 'clear' },
-          { edgeId: 'edge_luxemburg_reims', defaultTargetSpeedKmh: 125, weatherOverride: 'clear' },
-          { edgeId: 'edge_reims_paris', defaultTargetSpeedKmh: 125, weatherOverride: 'clear' }
+          { edgeId: 'edge_aachen_luettich', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_luettich_paris', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_paris_clermont', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
+          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
+          { edgeId: 'edge_clermont_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_paris_clermont', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
+          { edgeId: 'edge_luettich_paris', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
+          { edgeId: 'edge_aachen_luettich', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
         ],
-        defaultPlannedStops: [{ chargerId: 'chg_lux_ionity', legIndex: 0, targetSocPct: 85 }]
+        defaultPlannedStops: [
+          { chargerId: 'chg_orleans_tesla', legIndex: 2, targetSocPct: 80 },
+          { chargerId: 'chg_millau_electra', legIndex: 3, targetSocPct: 70 }
+        ]
       }
     ],
     routeLegs: [
-      { edgeId: 'edge_aachen_luettich', defaultTargetSpeedKmh: 120, weatherOverride: 'clear' },
-      { edgeId: 'edge_luettich_paris', defaultTargetSpeedKmh: 125, weatherOverride: 'clear' }
+      { edgeId: 'edge_aachen_luxemburg', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
+      { edgeId: 'edge_luxemburg_dijon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+      { edgeId: 'edge_dijon_lyon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
+      { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
+      { edgeId: 'edge_lyon_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+      { edgeId: 'edge_dijon_lyon', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
+      { edgeId: 'edge_luxemburg_dijon', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
+      { edgeId: 'edge_aachen_luxemburg', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
     ],
     passengers: {
       label: 'Ehefrau + 2 kleine Kinder + Hund',
@@ -232,12 +265,16 @@ export const LEVELS: LevelConfig[] = [
     scoringWeights: { time: 0.20, cost: 0.20, stress: 0.35, efficiency: 0.15, decisions: 0.10 },
     specialRulesSummary: [
       'Starke Stress-Gewichtung (35 %) durch Kinder, Hund & Ehefrau',
-      '3 Routen nach Paris: Maut-Direkt vs. Brüssel-Stau vs. Ardennen-Steigung',
-      'EWE Go @ McDonald’s senkt Familien-Stress spürbar'
+      'Korridore: Luxemburg/Lyon, Mitte über Reims und Nevers (ab Clermont mit der Paris-Route), Paris/Clermont-Ferrand',
+      'In Frankreich: Atlante und ENGIE Vianeo statt EnBW und EWE Go',
+      'Frankreich: 130 km/h, bei Regen 110. Maut auf den Autoroutes',
+      'Blitzer nach dem gefahrenen Tempo gegen das Schild. In Frankreich: Radar automatique',
+      'Eine Übernachtung: gutes Hotel mit AC-Laden, Budgethotel oder im Auto an der Raststätte',
+      'AC-Dorfladen: 0,29 €/kWh Atomstrom, aber nur 22 kW'
     ],
     briefingText:
-      'Mit zwei Kindern und Hund auf der Rückbank zählt jede ruhige Ladepause doppelt. Vergleiche die 3 Routen durch Belgien, Nordfrankreich oder die Ardennen.',
-    eventPoolIds: ['evt_family_tablet', 'evt_wc_coffee', 'evt_stau_kamen'],
+      'Sommerferien: Mit Frau, zwei Kindern und Hund von Aachen nach Montpellier und zurück. Wähle Hin- und Rückweg, plane die Ladepausen und die eine Übernachtung so, dass die Nerven halten.',
+    eventPoolIds: ['evt_dirty_toilets', 'evt_hotel_overnight', 'evt_rest_area_robbery', 'evt_south_arrival', 'evt_charger_defect', 'evt_speed_trap'],
     wifeDialogueIds: ['dlg_diesel_remark', 'dlg_tight_buffer']
   },
 
