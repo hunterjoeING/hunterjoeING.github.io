@@ -2,7 +2,14 @@ import * as Phaser from 'phaser';
 import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { defaultLegSpeedKmh, getActiveRouteLegs, sectionMaxSpeedKmh, snapSpeedKmh } from '../sim/RoutePlanner';
+import {
+  activeSignKmh,
+  defaultLegSpeedKmh,
+  getActiveRouteLegs,
+  sectionMaxSpeedKmh,
+  snapSpeedKmh,
+  speedTrapChancePerSimMinute
+} from '../sim/RoutePlanner';
 import { ChargerStation, WeatherKind } from '../types';
 import {
   HighwayCar,
@@ -862,13 +869,26 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_wc_coffee');
         return;
       }
-      if (pool.includes('evt_speed_trap') && setSpeed > 138 && !run.triggeredEventIds.includes('evt_speed_trap')) {
-        run.triggeredEventIds.push('evt_speed_trap');
-        this.eventCooldownSec = 7;
-        this.bridge.paused = true;
-        SoundFX.alert();
-        this.bridge.onDynamicEventTrigger('evt_speed_trap');
-        return;
+      const trapSign = activeSignKmh(edge, weather, run.countryLimitKmh);
+      const excess = this.playerSpeedKmh - trapSign;
+      const trapMark = `evt_speed_trap@${run.currentLegIndex}`;
+      const trapsOnLeg = run.triggeredEventIds.filter(id => id.startsWith(trapMark)).length;
+      if (pool.includes('evt_speed_trap') && trapSign > 0 && excess > 8 && trapsOnLeg < 2) {
+        const chance = speedTrapChancePerSimMinute(excess, edge.policeRiskBase) * simMinutes;
+        if (Math.random() < chance) {
+          const destId = legSpec.reverse ? edge.fromCityId : edge.toCityId;
+          run.speedTrap = {
+            country: getCityById(destId).country,
+            signKmh: trapSign,
+            actualKmh: Math.round(this.playerSpeedKmh)
+          };
+          run.triggeredEventIds.push(`${trapMark}#${trapsOnLeg}`);
+          this.eventCooldownSec = 7;
+          this.bridge.paused = true;
+          SoundFX.alert();
+          this.bridge.onDynamicEventTrigger('evt_speed_trap');
+          return;
+        }
       }
       if (
         pool.includes('evt_dirty_toilets') &&

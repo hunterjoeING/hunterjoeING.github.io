@@ -17,7 +17,7 @@ import {
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
 import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
-import { getEventById, getWifeDialogueById } from './data/events';
+import { buildSpeedTrapEvent, getEventById, getWifeDialogueById } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import {
   createDefaultPlan,
@@ -910,14 +910,16 @@ class ERoadtripController {
       return;
     }
     const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : 'Montpellier';
+    const trap = eventId === 'evt_speed_trap' ? this.bridge.runState?.speedTrap : undefined;
+    const baseEvt = trap ? buildSpeedTrapEvent(trap) : evt;
     const shown =
       eventId === 'evt_hotel_overnight' || eventId === 'evt_south_arrival'
         ? {
-            ...evt,
-            title: evt.title.split('{ORT}').join(place),
-            description: evt.description.split('{ORT}').join(place)
+            ...baseEvt,
+            title: baseEvt.title.split('{ORT}').join(place),
+            description: baseEvt.description.split('{ORT}').join(place)
           }
-        : evt;
+        : baseEvt;
     this.drivingHUD.clearTouchStates();
     this.eventModal.showDynamicEvent(
       shown,

@@ -149,36 +149,34 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
 
   evt_speed_trap: {
     id: 'evt_speed_trap',
-    title: 'Baustellen-Blitzer / Zivilstreife!',
+    title: 'Blitzer am Fahrbahnrand',
     category: 'police',
     icon: '📸',
-    description:
-      'Plötzlich Tempo 100 wegen Fahrbahnschäden – dein Zieltempo war deutlich höher eingestellt!',
+    description: 'Ein Blitzer steht an der Strecke. Du liegst deutlich über dem Schild.',
     requiresSpeeding: true,
     choices: [
       {
         id: 'brake_smooth',
-        label: 'Sofort vom Strom & sanft auf 100 km/h rekuperieren',
+        label: 'Sofort vom Strom und sanft auf das Schild rekuperieren',
         hint: 'Kein Bußgeld · +3 Min · +8 Dynamik-Punkte',
         timeDeltaMin: 3,
         socDeltaPct: 1,
         costDeltaEur: 0,
         stressDelta: 4,
         decisionPoints: 10,
-        adjustSpeedKmh: 110,
-        resultText: 'Rechtzeitig abgebremst – kein rotes Blitzlicht!'
+        resultText: 'Rechtzeitig abgebremst – kein Blitz.'
       },
       {
         id: 'risk_ticket',
         label: 'Laufen lassen – vielleicht ist der Blitzer aus',
-        hint: '65 % Risiko auf 70 € Bußgeld · 0 Min',
+        hint: '65 % Risiko auf ein Bußgeld · 0 Min',
         timeDeltaMin: 0,
         socDeltaPct: 0,
         costDeltaEur: 0,
         stressDelta: 11,
         decisionPoints: -8,
-        fineRisk: { probability: 0.65, amountEur: 70, label: 'Blitzer-Foto A2 (+24 km/h)' },
-        resultText: 'Du hältst das Gaspedal unten…'
+        fineRisk: { probability: 0.65, amountEur: 70, label: 'Blitzer' },
+        resultText: 'Du hältst das Tempo…'
       }
     ]
   },
@@ -602,6 +600,67 @@ export const WIFE_DIALOGUES: Record<string, WifeDialogueDef> = {
     ]
   }
 };
+
+/** Game fines. Germany follows außerorts Bußgeldkatalog tiers. France starts at the 135 € radar ticket. */
+export function speedingFineEur(country: string, excessKmh: number): { amountEur: number; label: string } {
+  const over = Math.max(0, Math.round(excessKmh));
+  if (country === 'FR') {
+    const amountEur = over >= 50 ? 1500 : over >= 40 ? 375 : 135;
+    return { amountEur, label: `Radar automatique (+${over} km/h)` };
+  }
+  if (country === 'DE') {
+    const amountEur =
+      over <= 10 ? 30 : over <= 15 ? 50 : over <= 20 ? 70 : over <= 25 ? 115 : over <= 30 ? 180 : over <= 40 ? 260 : over <= 50 ? 480 : over <= 60 ? 600 : 700;
+    return { amountEur, label: `Blitzer (+${over} km/h)` };
+  }
+  const amountEur = over >= 40 ? 350 : over >= 20 ? 180 : 90;
+  return { amountEur, label: `Radarkontrolle (+${over} km/h)` };
+}
+
+/** Fresh event so the fine matches this flash, not a shared template. */
+export function buildSpeedTrapEvent(ctx: { country: string; signKmh: number; actualKmh: number }): GameEventDef {
+  const excess = Math.max(0, ctx.actualKmh - ctx.signKmh);
+  const fine = speedingFineEur(ctx.country, excess);
+  const brakeTo = Math.max(40, Math.round(ctx.signKmh / 5) * 5);
+  const french = ctx.country === 'FR';
+  const driven = Math.round(ctx.actualKmh);
+  return {
+    id: 'evt_speed_trap',
+    title: french ? 'Radar automatique / Gendarmerie' : ctx.country === 'DE' ? 'Blitzer am Fahrbahnrand' : 'Radarkontrolle',
+    category: 'police',
+    icon: '📸',
+    description: french
+      ? `Ein Radar automatique hat dich erfasst. Du fährst ${driven} km/h, erlaubt sind ${ctx.signKmh} km/h.`
+      : `Blitzer. Du fährst ${driven} km/h, das Schild sagt ${ctx.signKmh}.`,
+    requiresSpeeding: true,
+    choices: [
+      {
+        id: 'brake_smooth',
+        label: `Sofort vom Strom und sanft auf ${brakeTo} km/h rekuperieren`,
+        hint: 'Kein Bußgeld · +3 Min · +8 Dynamik-Punkte',
+        timeDeltaMin: 3,
+        socDeltaPct: 1,
+        costDeltaEur: 0,
+        stressDelta: 4,
+        decisionPoints: 10,
+        adjustSpeedKmh: brakeTo,
+        resultText: 'Rechtzeitig abgebremst – kein Blitz.'
+      },
+      {
+        id: 'risk_ticket',
+        label: french ? 'Weiterfahren – vielleicht ist das Radar aus' : 'Laufen lassen – vielleicht ist der Blitzer aus',
+        hint: `65 % Risiko auf ${fine.amountEur} € · 0 Min`,
+        timeDeltaMin: 0,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        stressDelta: 11,
+        decisionPoints: -8,
+        fineRisk: { probability: 0.65, amountEur: fine.amountEur, label: fine.label },
+        resultText: french ? 'Du lässt das Tempo stehen…' : 'Du hältst das Tempo…'
+      }
+    ]
+  };
+}
 
 export function getEventById(id: string): GameEventDef | undefined {
   return GAME_EVENTS[id];

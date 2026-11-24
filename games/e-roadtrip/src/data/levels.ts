@@ -268,12 +268,13 @@ export const LEVELS: LevelConfig[] = [
       'Starke Stress-Gewichtung (35 %) durch Kinder, Hund & Ehefrau',
       '3 lange Korridore: Luxemburg/Lyon, Paris/Clermont-Ferrand oder Autoroute du Soleil',
       'Frankreich: 130 km/h, bei Regen 110. Maut auf den Autoroutes',
+      'Blitzer nach dem gefahrenen Tempo gegen das Schild. In Frankreich: Radar automatique',
       'Eine Übernachtung: gutes Hotel mit AC-Laden, Budgethotel oder im Auto an der Raststätte',
       'AC-Dorfladen: 0,29 €/kWh Atomstrom, aber nur 22 kW'
     ],
     briefingText:
       'Sommerferien: Mit Frau, zwei Kindern und Hund von Aachen nach Montpellier und zurück. Wähle Hin- und Rückweg, plane die Ladepausen und die eine Übernachtung so, dass die Nerven halten.',
-    eventPoolIds: ['evt_dirty_toilets', 'evt_hotel_overnight', 'evt_rest_area_robbery', 'evt_south_arrival', 'evt_charger_defect'],
+    eventPoolIds: ['evt_dirty_toilets', 'evt_hotel_overnight', 'evt_rest_area_robbery', 'evt_south_arrival', 'evt_charger_defect', 'evt_speed_trap'],
     wifeDialogueIds: ['dlg_diesel_remark', 'dlg_tight_buffer']
   },
 

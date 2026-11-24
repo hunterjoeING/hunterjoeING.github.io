@@ -374,6 +374,8 @@ export interface RunState {
   currentSpeedKmh: number;
   /** Landstraße detour. Replaces the section sign until the leg ends. */
   countryLimitKmh?: number;
+  /** Filled when a speed trap flashes, so the fine matches that moment. */
+  speedTrap?: { country: string; signKmh: number; actualKmh: number };
   /** Temporary limit (Baustelle or French rain). Chosen cruise stays on the leg plan. */
   speedCapKmh?: number;
   /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */

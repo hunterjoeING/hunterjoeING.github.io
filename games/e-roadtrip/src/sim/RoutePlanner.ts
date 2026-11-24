@@ -152,6 +152,24 @@ export function congestedCruiseKmh(setKmh: number, trafficRisk: number): number 
   return Math.max(42, setKmh * factor);
 }
 
+/**
+ * Blitzer risk from the speed that is actually driven (or, in the forecast, the
+ * expected average) against the current sign. Unrestricted roads have no fine.
+ * Dense traffic lowers this only because it lowers the speed.
+ */
+export function policeRiskForSpeed(speedKmh: number, signKmh: number, policeRiskBase: number): number {
+  const base = Math.max(0, policeRiskBase);
+  if (!(signKmh > 0) || speedKmh <= signKmh + 8) return Math.min(0.24, base * 0.25);
+  return Math.min(0.95, base + (speedKmh - signKmh) * 0.015);
+}
+
+/** Chance of a speed-trap event per simulated minute while more than 8 km/h over the sign. */
+export function speedTrapChancePerSimMinute(excessKmh: number, policeRiskBase: number): number {
+  if (excessKmh <= 8) return 0;
+  const over = excessKmh - 8;
+  return Math.min(0.12, Math.max(0, policeRiskBase) * 0.08 + over * 0.0016);
+}
+
 export function getActiveRouteOption(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId'>): RouteOption {
   const id = plan?.selectedRouteId || level.defaultRouteId;
   return level.routeOptions.find(r => r.id === id) || level.routeOptions[0];
@@ -280,7 +298,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     if (lp && lp.targetSpeedKmh !== chosenSpeed) lp.targetSpeedKmh = chosenSpeed;
     const speed = chosenSpeed;
     const cruise = congestedCruiseKmh(speed, edge.baseTrafficRisk);
-    const signLimit = frenchRainCapKmh(edge, weather) ?? edge.speedLimitKmh;
+    const signLimit = activeSignKmh(edge, weather);
 
     const fromCity = getCityById(spec.reverse ? edge.toCityId : edge.fromCityId);
     const toCity = getCityById(spec.reverse ? edge.fromCityId : edge.toCityId);
@@ -381,12 +399,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     totalDriveMin += driveMin;
     totalTolls += edge.tollEur;
 
-    const policeRisk =
-      edge.speedLimitKmh > 0 && speed > edge.speedLimitKmh + 8
-        ? Math.min(0.95, edge.policeRiskBase + (speed - edge.speedLimitKmh) * 0.015)
-        : speed > 145
-          ? edge.policeRiskBase * 0.85
-          : edge.policeRiskBase * 0.25;
+    const policeRisk = policeRiskForSpeed(cruise, signLimit, edge.policeRiskBase);
 
     const breakdownRisk = soc < 0 || minSoc < 0;
     if (soc < 0) {
@@ -395,8 +408,10 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       warnings.push(`Sehr knappe Restreichweite am Ziel (${Math.round(soc)} %)!`);
     }
 
-    if (policeRisk > 0.45) {
-      warnings.push(`Hohes Blitzer-Risiko auf Etappe ${i + 1} (${speed} km/h)!`);
+    if (policeRisk > 0.45 && signLimit > 0) {
+      warnings.push(
+        `Hohes Blitzer-Risiko auf Etappe ${i + 1} (Ø ${Math.round(cruise)} km/h bei Schild ${signLimit})!`
+      );
     }
 
     legForecasts.push({
