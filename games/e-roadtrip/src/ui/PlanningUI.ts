@@ -18,7 +18,8 @@ import {
   getReturnRouteOption,
   levelHasReturnRoutes,
   PlanForecast,
-  sectionMaxSpeedKmh
+  sectionMaxSpeedKmh,
+  snapSpeedKmh
 } from '../sim/RoutePlanner';
 import { speedSignHtml } from './speedSign';
 import { getBestPriceForStation } from '../sim/EnergyModel';
@@ -480,10 +481,12 @@ export class PlanningUI {
             }
             const isSelectedLeg = lf.legIndex === selectedLegIndex;
             const edgeForLeg = spec ? getEdgeById(spec.edgeId) : undefined;
-            const sliderMax = edgeForLeg
+            const rawMax = edgeForLeg
               ? sectionMaxSpeedKmh(edgeForLeg, vehicle.maxSpeedKmh, lf.weather)
               : vehicle.maxSpeedKmh;
-            const speedVal = Math.min(lf.targetSpeedKmh, sliderMax);
+            const sliderMax = snapSpeedKmh(rawMax, rawMax);
+            const sliderMin = Math.min(40, sliderMax);
+            const speedVal = snapSpeedKmh(lf.targetSpeedKmh, sliderMax, sliderMin);
             const riskBadge =
               lf.policeRisk > 0.45
                 ? '<span class="risk-pill high">📸 Blitzer-Risiko!</span>'
@@ -491,7 +494,6 @@ export class PlanningUI {
                   ? '<span class="risk-pill med">⚠️ Erhöhtes Risiko</span>'
                   : '<span class="risk-pill low">🟢 Sicher</span>';
             const trafficPct = Math.round(lf.trafficRisk * 100);
-            const sliderMin = Math.min(40, speedVal, sliderMax);
             const rainCap = edgeForLeg?.speedLimitRainKmh;
             const posted = edgeForLeg && edgeForLeg.speedLimitKmh > 0 ? edgeForLeg.speedLimitKmh : 0;
             const rainActive = lf.weather === 'rain' || lf.weather === 'storm';
@@ -516,7 +518,7 @@ export class PlanningUI {
               </div>
               <div class="leg-controls">
                 <label>Zieltempo: <strong data-speed-readout="${lf.legIndex}">${speedVal} km/h</strong> · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
-                <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="${sliderMin}" max="${sliderMax}" step="1" value="${speedVal}" />
+                <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="${sliderMin}" max="${sliderMax}" step="5" value="${speedVal}" />
                 ${riskBadge}
               </div>
               ${rainNote}
@@ -704,8 +706,10 @@ export class PlanningUI {
 
     this.root.querySelectorAll('.leg-speed-slider').forEach(slider => {
       const applySpeed = () => {
+        const input = slider as HTMLInputElement;
         const legIndex = Number((slider as HTMLElement).dataset.leg);
-        const val = Number((slider as HTMLInputElement).value);
+        const val = snapSpeedKmh(Number(input.value), Number(input.max), Number(input.min));
+        if (input.value !== String(val)) input.value = String(val);
         const existing = plan.legPlans.find(l => l.legIndex === legIndex);
         if (existing) existing.targetSpeedKmh = val;
         else plan.legPlans.push({ legIndex, targetSpeedKmh: val });

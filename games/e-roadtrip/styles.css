@@ -505,6 +505,7 @@ body {
   font-size: 11.5px;
 }
 .leg-speed-slider,
+.dhud-speed-slider,
 .stop-target-slider {
   flex: 1 1 160px;
   width: 100%;

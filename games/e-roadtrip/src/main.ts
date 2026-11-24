@@ -26,6 +26,7 @@ import {
   getActiveRouteLegs,
   predictLiveTripSoc,
   sectionMaxSpeedKmh,
+  snapSpeedKmh,
   switchReturnRouteInPlan,
   switchRouteInPlan
 } from './sim/RoutePlanner';
@@ -226,7 +227,7 @@ class ERoadtripController {
         const vehicle = getVehicleById(run.plan.vehicleId);
         const weather = spec.weatherOverride || run.activeWeather || edge.defaultWeather;
         const max = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh);
-        const next = Math.min(max, Math.max(40, spd));
+        const next = snapSpeedKmh(spd, max);
         const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
         if (lp) lp.targetSpeedKmh = next;
         else run.plan.legPlans.push({ legIndex: run.currentLegIndex, targetSpeedKmh: next });
@@ -841,7 +842,7 @@ class ERoadtripController {
       const vehicle = getVehicleById(run.plan.vehicleId);
       const weather = spec?.weatherOverride || run.activeWeather || edge?.defaultWeather;
       let speed = choice.adjustSpeedKmh || 70;
-      if (edge) speed = Math.min(speed, sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh));
+      if (edge) speed = snapSpeedKmh(speed, sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh));
       const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
       if (lp) lp.targetSpeedKmh = speed;
       run.currentSpeedKmh = speed;
@@ -988,11 +989,19 @@ class ERoadtripController {
           return 'Kein weiterer Ladepark vor dem Ziel nötig.';
         } else {
           const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
-          if (lp) lp.targetSpeedKmh = 115;
-          run.currentSpeedKmh = 115;
+          const legsNow = getActiveRouteLegs(this.level, run.plan);
+          const specNow = legsNow[run.currentLegIndex];
+          const edgeNow = specNow ? getEdgeById(specNow.edgeId) : undefined;
+          const vehicleNow = getVehicleById(run.plan.vehicleId);
+          const weatherNow = specNow?.weatherOverride || run.activeWeather || edgeNow?.defaultWeather;
+          const eco = edgeNow
+            ? snapSpeedKmh(115, sectionMaxSpeedKmh(edgeNow, vehicleNow.maxSpeedKmh, weatherNow, run.countryLimitKmh))
+            : 115;
+          if (lp) lp.targetSpeedKmh = eco;
+          run.currentSpeedKmh = eco;
           run.replanCount += 1;
           run.goodReplanCount += 1;
-          return 'Zieltempo auf 115 km/h Eco-Modus gesenkt!';
+          return `Zieltempo auf ${eco} km/h Eco-Modus gesenkt!`;
         }
       },
       (choice: WifeDialogueChoice, routeChanged: boolean) => {
