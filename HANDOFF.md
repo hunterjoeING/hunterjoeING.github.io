@@ -16,11 +16,20 @@
 | E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` ([PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) im Fork, gegen `main`) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` ([PR #5](https://github.com/mic4rd/hunterjoeING.github.io/pull/5) im Fork, gegen `main`) | 🔄 PR im Fork offen |
-| E-Roadtrip: Touch-Fix und Level 2 Montpellier | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` ([PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6) im Fork, gegen Paket D) | 🔄 PR im Fork offen |
+| E-Roadtrip: Touch, Level 2, Kollisionen, Temposchilder | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` ([PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6) im Fork, gegen Paket D) | 🔄 PR im Fork offen |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-24 – Michael / Cursor Cloud Agent (Autobahn-Abstand und Temposchilder)
+- **Erledigt:**
+  - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
+  - Spieler und KI halten auf der Autobahn einen festen Abstand. Das gesetzte Tempo ist nur die Obergrenze; bei einem langsameren Fahrzeug davor wird gebremst und die nächste freie Spur zum Überholen genutzt. Kilometer, Verbrauch und Abrechnung nutzen die tatsächlich gefahrene Geschwindigkeit. Die Prognose liegt wegen `baseTrafficRisk` darunter (`congestedCruiseKmh`).
+  - Schilder je Etappe: Level 1 mischt Ende aller Streckenverbote, 130, 120 und 100 (roter Ring). Der blaue Ring ist weg. Frankreich bleibt bei 130 und 110 bei Regen. Die Stau-Umleitung über die Landstraße ist 70 km/h bis zum Etappenende. Das Schild begrenzt Slider, HUD-Tasten und das Autobahn-Tempo.
+- **Offen / Nächste Schritte:**
+  - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
+  - Level 3–7 bleiben `playable: false`.
 
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Touch-Steuerung und Level 2 Montpellier)
 - **Erledigt:**

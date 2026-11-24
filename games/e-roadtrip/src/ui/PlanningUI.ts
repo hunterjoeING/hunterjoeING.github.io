@@ -17,8 +17,10 @@ import {
   getActiveRouteOption,
   getReturnRouteOption,
   levelHasReturnRoutes,
-  PlanForecast
+  PlanForecast,
+  sectionMaxSpeedKmh
 } from '../sim/RoutePlanner';
+import { speedSignHtml } from './speedSign';
 import { getBestPriceForStation } from '../sim/EnergyModel';
 import { isProviderSubscribed } from '../phaser/MapLayout';
 import { SoundFX } from '../phaser/SoundFX';
@@ -70,15 +72,6 @@ function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
   const present = new Set(CHARGERS.filter(station => edgeIds.has(station.edgeId)).map(station => station.network));
   const extras = (['fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).filter(net => present.has(net));
   return [...BASE_FILTER_NETWORKS, ...extras];
-}
-
-function speedSignHtml(limitKmh: number): string {
-  const unlimited = limitKmh <= 0;
-  const shown = unlimited ? 130 : limitKmh;
-  const title = unlimited
-    ? 'Kein Tempolimit · Richtgeschwindigkeit 130 km/h'
-    : `Tempolimit ${shown} km/h`;
-  return `<span class="speed-sign ${unlimited ? 'advisory' : ''}" title="${title}" aria-label="${title}">${shown}</span>`;
 }
 
 function renderChargingCurveSvg(v: VehicleSpec): string {
@@ -486,7 +479,11 @@ export class PlanningUI {
               directionHeader = `<div class="leg-direction">${isReturn ? '⬅️ Rückweg' : '➡️ Hinweg'} · ${routeName}</div>`;
             }
             const isSelectedLeg = lf.legIndex === selectedLegIndex;
-            const speedVal = lf.targetSpeedKmh;
+            const edgeForLeg = spec ? getEdgeById(spec.edgeId) : undefined;
+            const sliderMax = edgeForLeg
+              ? sectionMaxSpeedKmh(edgeForLeg, vehicle.maxSpeedKmh, lf.weather)
+              : vehicle.maxSpeedKmh;
+            const speedVal = Math.min(lf.targetSpeedKmh, sliderMax);
             const riskBadge =
               lf.policeRisk > 0.45
                 ? '<span class="risk-pill high">📸 Blitzer-Risiko!</span>'
@@ -494,10 +491,9 @@ export class PlanningUI {
                   ? '<span class="risk-pill med">⚠️ Erhöhtes Risiko</span>'
                   : '<span class="risk-pill low">🟢 Sicher</span>';
             const trafficPct = Math.round(lf.trafficRisk * 100);
-            const sliderMin = Math.min(40, speedVal);
-            const edgeForLeg = spec ? getEdgeById(spec.edgeId) : undefined;
+            const sliderMin = Math.min(40, speedVal, sliderMax);
             const rainCap = edgeForLeg?.speedLimitRainKmh;
-            const posted = edgeForLeg && edgeForLeg.speedLimitKmh > 0 ? edgeForLeg.speedLimitKmh : 130;
+            const posted = edgeForLeg && edgeForLeg.speedLimitKmh > 0 ? edgeForLeg.speedLimitKmh : 0;
             const rainActive = lf.weather === 'rain' || lf.weather === 'storm';
             const rainNote = rainCap
               ? `<div class="leg-rain-cap">🌧️ Frankreich: ${posted} km/h, bei Regen ${rainCap} km/h.${rainActive ? ' Diese Etappe ist Regen, das Tempo wird darauf begrenzt.' : ''}</div>`
@@ -519,8 +515,8 @@ export class PlanningUI {
                 </div>
               </div>
               <div class="leg-controls">
-                <label>Zieltempo: <strong data-speed-readout="${lf.legIndex}">${speedVal} km/h</strong> (${lf.consumptionKwh100} kWh/100km)</label>
-                <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="${sliderMin}" max="${vehicle.maxSpeedKmh}" step="1" value="${speedVal}" />
+                <label>Zieltempo: <strong data-speed-readout="${lf.legIndex}">${speedVal} km/h</strong> · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
+                <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="${sliderMin}" max="${sliderMax}" step="1" value="${speedVal}" />
                 ${riskBadge}
               </div>
               ${rainNote}

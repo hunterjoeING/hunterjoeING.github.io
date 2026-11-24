@@ -55,14 +55,15 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
       },
       {
         id: 'detour_country',
-        label: 'Umleitung über die Landstraße (80 km/h)',
-        hint: '+11 Min Zeit · -3 % Akku (Mehrkilometer) · -2 Stress',
+        label: 'Umleitung über die Landstraße (70 km/h)',
+        hint: '+11 Min Zeit · 70 km/h bis zum Etappenende · -3 % Akku · -2 Stress',
         timeDeltaMin: 11,
         socDeltaPct: -3,
         costDeltaEur: 0,
         stressDelta: -2,
         decisionPoints: 16,
-        resultText: 'Gute Entscheidung! Über die Dörfer rollst du flüssig am Stau vorbei und sparst 13 Minuten.'
+        adjustSpeedKmh: 70,
+        resultText: 'Gute Entscheidung! Über die Dörfer rollst du mit 70 km/h am Stau vorbei.'
       }
     ]
   },

@@ -114,7 +114,7 @@ export interface HighwayEdge {
   toCityId: string;
   highwayName: string; // e.g. "A4 / A1 / A2"
   distanceKm: number;
-  speedLimitKmh: number; // 0 = German Autobahn unlimited (Richtgeschwindigkeit 130)
+  speedLimitKmh: number; // 0 = unrestricted (end-of-limit sign). A positive value is the red-ring maximum.
   /** French autoroute rain/storm cap (110). Absent on German edges. */
   speedLimitRainKmh?: number;
   elevationGainM: number;
@@ -372,6 +372,8 @@ export interface RunState {
   incidentLog: IncidentLogEntry[];
   activeWeather: WeatherKind;
   currentSpeedKmh: number;
+  /** Landstraße detour. Replaces the section sign until the leg ends. */
+  countryLimitKmh?: number;
   /** Temporary limit (Baustelle or French rain). Chosen cruise stays on the leg plan. */
   speedCapKmh?: number;
   /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */

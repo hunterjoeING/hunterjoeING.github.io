@@ -2,11 +2,14 @@ import * as Phaser from 'phaser';
 import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { defaultLegSpeedKmh, drivenSpeedKmh, frenchRainCapKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
+import { defaultLegSpeedKmh, drivenSpeedKmh, frenchRainCapKmh, getActiveRouteLegs, sectionMaxSpeedKmh } from '../sim/RoutePlanner';
 import { ChargerStation, WeatherKind } from '../types';
 import {
   HighwayCar,
   baseSpeed,
+  countSpriteOverlaps,
+  enforceTrafficGaps,
+  followSpeedKmh,
   laneIsClear,
   leadVehicle,
   preferredPlayerLane,
@@ -61,6 +64,13 @@ export class AutobahnScene extends Phaser.Scene {
   private laneSpacing = 72;
   private playerLane = 1;
   private laneCooldown = 0;
+  private playerSpeedKmh = 0;
+  private debugTraffic = false;
+  private debugMinPlayerGap = 9999;
+  private debugOverlapFrames = 0;
+  private debugSpeedSum = 0;
+  private debugSpeedSamples = 0;
+  private debugPops = 0;
   private npcs: HighwayCar[] = [];
   private trees: Phaser.GameObjects.Image[] = [];
   private lamps: LampPost[] = [];
@@ -103,6 +113,13 @@ export class AutobahnScene extends Phaser.Scene {
     this.builtLeg = -1;
     this.playerLane = 1;
     this.laneCooldown = 0;
+    this.playerSpeedKmh = 0;
+    this.debugTraffic = new URLSearchParams(window.location.search).has('erpreview');
+    this.debugMinPlayerGap = 9999;
+    this.debugOverlapFrames = 0;
+    this.debugSpeedSum = 0;
+    this.debugSpeedSamples = 0;
+    this.debugPops = 0;
     this.roadPhase = 40;
     this.hudTickAccum = 0;
     this.eventCooldownSec = 4;
@@ -234,6 +251,20 @@ export class AutobahnScene extends Phaser.Scene {
   private curveAt(y: number): number {
     const amp = Math.min(58, this.scale.width * 0.062);
     return Math.sin((y - this.roadPhase) / 560) * amp + Math.sin((y - this.roadPhase) / 1240 + 0.8) * amp * 0.4;
+  }
+
+  private nearestLane(x: number, y: number, rightOpen: boolean): number {
+    const maxLane = rightOpen ? 2 : 1;
+    let best = 0;
+    let bestDist = Infinity;
+    for (let lane = 0; lane <= maxLane; lane++) {
+      const dist = Math.abs(x - this.laneCenter(lane, y, rightOpen));
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = lane;
+      }
+    }
+    return best;
   }
 
   private laneCenter(lane: number, y: number, rightOpen: boolean): number {
@@ -418,15 +449,12 @@ export class AutobahnScene extends Phaser.Scene {
     const vehicle = getVehicleById(run.plan.vehicleId);
     const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
     const weather = this.previewWeather || legSpec.weatherOverride || edge.defaultWeather;
-    const chosen = Math.min(
-      vehicle.maxSpeedKmh,
-      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
-    );
     run.activeWeather = weather;
     const clockHour = (this.bridge.level.departureTimeHour + run.elapsedMinutes / 60) % 24;
     run.isNight = !!legSpec.isNightLeg || clockHour >= 19.2 || clockHour < 6.0;
 
     if (this.builtLeg !== run.currentLegIndex) {
+      if (this.builtLeg !== -1) run.countryLimitKmh = undefined;
       this.builtLeg = run.currentLegIndex;
       this.trafficRisk = this.previewRisk ?? edge.baseTrafficRisk;
       this.rebuildTraffic(this.trafficRisk);
@@ -435,25 +463,58 @@ export class AutobahnScene extends Phaser.Scene {
     const zone = workZoneFor(edge.id, edge.distanceKm, this.forceWorkZone);
     const inWork = !!zone && run.legProgressKm >= zone.startKm && run.legProgressKm <= zone.endKm;
     const rainCap = frenchRainCapKmh(edge, weather);
-    let capped = drivenSpeedKmh(edge, weather, chosen);
+    const signMax = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh);
+    if (lp && lp.targetSpeedKmh > signMax) lp.targetSpeedKmh = signMax;
+    const setSpeed = Math.min(signMax, lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather));
+    let driveMax = drivenSpeedKmh(edge, weather, setSpeed);
+    if (run.countryLimitKmh) driveMax = Math.min(driveMax, run.countryLimitKmh);
     let capValue: number | undefined;
     let capLabel: string | undefined;
-    if (rainCap && rainCap < chosen) {
+    if (rainCap) {
       capValue = rainCap;
       capLabel = 'Regen';
+    }
+    if (run.countryLimitKmh) {
+      capValue = run.countryLimitKmh;
+      capLabel = 'Landstraße';
     }
     if (inWork && zone && (!capValue || zone.limit < capValue)) {
       capValue = zone.limit;
       capLabel = 'Baustelle';
-      capped = Math.min(capped, zone.limit);
+      driveMax = Math.min(driveMax, zone.limit);
     }
-    run.currentSpeedKmh = capped;
-    run.speedCapKmh = capValue;
-    run.speedCapLabel = capLabel;
+    const trafficLimit = inWork && zone ? Math.min(signMax, zone.limit) : signMax;
     const rightOpen = !inWork;
 
+    const playerY = h * 0.72;
+    const visualLane = this.playerCar ? this.nearestLane(this.playerCar.x, playerY, rightOpen) : this.playerLane;
+    const followLanes = visualLane === this.playerLane ? [this.playerLane] : [this.playerLane, visualLane];
+    let leadGap: number | null = null;
+    let leadKmh: number | null = null;
+    for (const lane of followLanes) {
+      const lead = leadVehicle(this.npcs, lane, playerY, 280);
+      if (!lead) continue;
+      const gap = playerY - lead.sprite.y;
+      if (leadGap === null || gap < leadGap) {
+        leadGap = gap;
+        leadKmh = lead.speedKmh;
+      }
+    }
+    const commanded = followSpeedKmh(driveMax, leadGap, leadKmh);
+    if (this.playerSpeedKmh <= 1) this.playerSpeedKmh = commanded;
+    const urgent = leadGap !== null && leadGap < 78;
+    const rate = this.playerSpeedKmh < commanded ? 34 : urgent ? 120 : 68;
+    const step = rate * dtSec;
+    this.playerSpeedKmh =
+      this.playerSpeedKmh < commanded
+        ? Math.min(commanded, this.playerSpeedKmh + step)
+        : Math.max(commanded, this.playerSpeedKmh - step);
+    run.currentSpeedKmh = this.playerSpeedKmh;
+    run.speedCapKmh = capValue;
+    run.speedCapLabel = capLabel;
+
     const scrollBoost = this.bridge.timeScale >= 15 ? 1.35 : this.bridge.timeScale >= 5 ? 1.15 : 1;
-    const scrollPxPerSec = (capped / 120) * 280 * scrollBoost;
+    const scrollPxPerSec = (Math.max(40, this.playerSpeedKmh) / 120) * 280 * scrollBoost;
     this.roadPhase += scrollPxPerSec * dtSec;
     this.drawRoad(w, h, inWork);
 
@@ -489,26 +550,46 @@ export class AutobahnScene extends Phaser.Scene {
       }
     }
 
-    stepHighwayTraffic(this.npcs, dtSec, capped, scrollPxPerSec, h, this.trafficRisk, rightOpen);
+    stepHighwayTraffic(
+      this.npcs,
+      dtSec,
+      this.playerSpeedKmh,
+      scrollPxPerSec,
+      h,
+      this.trafficRisk,
+      rightOpen,
+      trafficLimit,
+      playerY,
+      visualLane
+    );
 
-    const playerY = h * 0.72;
     this.laneCooldown = Math.max(0, this.laneCooldown - dtSec);
-    const centered = Math.abs(this.playerCar.x - this.laneCenter(this.playerLane, playerY, rightOpen)) < 10;
+    const centered = Math.abs(this.playerCar.x - this.laneCenter(this.playerLane, playerY, rightOpen)) < 16;
     if (centered && this.laneCooldown <= 0) {
-      const desiredLane = preferredPlayerLane(chosen, rightOpen);
-      const lead = leadVehicle(this.npcs, this.playerLane, playerY, 160);
-      const blocked = !!lead && lead.speedKmh < chosen - 8;
+      const desiredLane = preferredPlayerLane(setSpeed, rightOpen);
+      const lead = leadVehicle(this.npcs, this.playerLane, playerY, 240);
+      const blocked = !!lead && lead.speedKmh < driveMax - 6;
+      const slowerAhead = (lane: number) => {
+        const other = leadVehicle(this.npcs, lane, playerY, 260);
+        return !!other && other.speedKmh < driveMax - 6;
+      };
       let next = this.playerLane;
       if (!rightOpen) next = Math.min(next, 1);
-      if (blocked && next > 0 && laneIsClear(this.npcs, next - 1, playerY)) next -= 1;
-      else if (!blocked && next < desiredLane && laneIsClear(this.npcs, next + 1, playerY)) next += 1;
-      else if (!blocked && next > desiredLane && laneIsClear(this.npcs, next - 1, playerY)) next -= 1;
+      if (blocked && next > 0 && laneIsClear(this.npcs, next - 1, playerY, 120)) next -= 1;
+      else if (!blocked && next < desiredLane && laneIsClear(this.npcs, next + 1, playerY, 120) && !slowerAhead(next + 1)) next += 1;
+      else if (!blocked && next > desiredLane && laneIsClear(this.npcs, next - 1, playerY, 120) && !slowerAhead(next - 1)) next -= 1;
       if (!rightOpen) next = Phaser.Math.Clamp(next, 0, 1);
       if (next !== this.playerLane) {
         this.playerLane = next;
-        this.laneCooldown = 1.05;
+        this.laneCooldown = blocked ? 0.45 : 0.9;
       }
     }
+    const heldLanes = visualLane === this.playerLane ? [this.playerLane] : [visualLane, this.playerLane];
+    this.debugPops += enforceTrafficGaps(this.npcs, {
+      y: playerY,
+      lanes: heldLanes,
+      speedKmh: this.playerSpeedKmh
+    });
     const playerTargetX = this.laneCenter(this.playerLane, playerY, rightOpen);
     this.playerCar.x = Phaser.Math.Linear(this.playerCar.x, playerTargetX, 0.14);
     this.playerCar.y = playerY;
@@ -576,7 +657,7 @@ export class AutobahnScene extends Phaser.Scene {
         continue;
       }
       drop.setAlpha(0.72);
-      drop.y += (520 + capped) * dtSec;
+      drop.y += (520 + this.playerSpeedKmh) * dtSec;
       drop.x -= 80 * dtSec;
       if (drop.y > h + 12) {
         drop.y = -12;
@@ -615,15 +696,53 @@ export class AutobahnScene extends Phaser.Scene {
       this.baken[i].setPosition(edgeX + this.laneSpacing * 0.95, y + 18);
     }
 
+    if (this.debugTraffic) {
+      const lanesNow = [this.playerLane];
+      const seen = this.nearestLane(this.playerCar.x, playerY, rightOpen);
+      if (seen !== this.playerLane) lanesNow.push(seen);
+      const overlaps = countSpriteOverlaps(this.npcs, playerY, lanesNow);
+      if (overlaps > 0) this.debugOverlapFrames += 1;
+      let nearest = 9999;
+      for (const car of this.npcs) {
+        if (!lanesNow.some(lane => Math.abs(car.lanePos - lane) <= 0.48)) continue;
+        const gap = playerY - car.sprite.y;
+        if (gap > 0) nearest = Math.min(nearest, gap);
+      }
+      this.debugMinPlayerGap = Math.min(this.debugMinPlayerGap, nearest);
+      this.debugSpeedSum += this.playerSpeedKmh;
+      this.debugSpeedSamples += 1;
+      const debugWindow = window as Window & {
+        __erHighway?: () => {
+          speed: number;
+          setSpeed: number;
+          sign: number;
+          minGap: number;
+          overlapFrames: number;
+          avgSpeed: number;
+          samples: number;
+          pops: number;
+        };
+      };
+      debugWindow.__erHighway = () => ({
+        speed: Math.round(this.playerSpeedKmh),
+        setSpeed: Math.round(setSpeed),
+        sign: edge.speedLimitKmh,
+        minGap: Math.round(this.debugMinPlayerGap),
+        overlapFrames: this.debugOverlapFrames,
+        avgSpeed: this.debugSpeedSamples ? Math.round(this.debugSpeedSum / this.debugSpeedSamples) : 0,
+        samples: this.debugSpeedSamples,
+        pops: this.debugPops
+      });
+    }
+
     const simMinPerRealSec = inWork ? 0.85 : this.bridge.timeScale === 15 ? 28 : this.bridge.timeScale === 5 ? 11 : 2.8;
     const simMinutes = simMinPerRealSec * dtSec;
-    const effectiveSpeed = capped * 0.92;
-    const deltaKm = (effectiveSpeed / 60) * simMinutes;
+    const deltaKm = (this.playerSpeedKmh / 60) * simMinutes;
     const elevGain = legSpec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = legSpec.reverse ? edge.elevationGainM : edge.elevationLossM;
     const cons100 = computeConsumptionKwh100(
       vehicle,
-      capped,
+      this.playerSpeedKmh,
       weather,
       elevGain,
       elevLoss,
@@ -641,7 +760,7 @@ export class AutobahnScene extends Phaser.Scene {
 
     const comfortDamping = 1 - (vehicle.comfortRating - 5) * 0.04;
     let stressDeltaPerMin = 0.02;
-    if (chosen > 145) stressDeltaPerMin += 0.14;
+    if (setSpeed > 145) stressDeltaPerMin += 0.14;
     if (weather === 'rain' || weather === 'snow') stressDeltaPerMin += 0.06;
     if (inWork) stressDeltaPerMin += 0.05;
     if (run.socPct < 15) stressDeltaPerMin += 0.28;
@@ -750,7 +869,7 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_wc_coffee');
         return;
       }
-      if (pool.includes('evt_speed_trap') && chosen > 138 && !run.triggeredEventIds.includes('evt_speed_trap')) {
+      if (pool.includes('evt_speed_trap') && setSpeed > 138 && !run.triggeredEventIds.includes('evt_speed_trap')) {
         run.triggeredEventIds.push('evt_speed_trap');
         this.eventCooldownSec = 7;
         this.bridge.paused = true;

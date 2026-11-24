@@ -7,8 +7,7 @@ import {
   PlannedStop,
   RouteOption,
   RunState,
-  TripPlan,
-  WeatherKind
+  TripPlan
 } from '../types';
 import { getVehicleById } from '../data/vehicles';
 import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
@@ -44,6 +43,8 @@ export interface LegForecast {
   }>;
   policeRisk: number;
   breakdownRisk: boolean;
+  /** Expected average after traffic. The set speed stays in targetSpeedKmh. */
+  cruiseKmh: number;
 }
 
 export interface PlanForecast {
@@ -68,24 +69,41 @@ export interface PlanForecast {
   warnings: string[];
 }
 
-/** German Autobahn advisory speed when an edge has no posted limit (`speedLimitKmh === 0`). */
+/** Starting cruise on an unrestricted German Autobahn. It is not a limit sign. */
 export const ADVISORY_SPEED_KMH = 130;
 
 /** French autoroute cap in rain or storm. Null when the edge has no rain limit. */
 export function frenchRainCapKmh(
   edge: Pick<HighwayEdge, 'speedLimitRainKmh'>,
-  weather?: WeatherKind
+  weather?: string
 ): number | null {
   if (weather !== 'rain' && weather !== 'storm') return null;
   if (!edge.speedLimitRainKmh || edge.speedLimitRainKmh <= 0) return null;
   return edge.speedLimitRainKmh;
 }
 
-/** Preset cruise speed: the posted limit, or Richtgeschwindigkeit 130 when the edge is unlimited. Rain uses the French cap when the edge has one. */
+/**
+ * Highest speed the player may select on this section.
+ * `speedLimitKmh === 0` is unrestricted (vehicle max). A country-road detour replaces the sign.
+ */
+export function sectionMaxSpeedKmh(
+  edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
+  vehicleMaxSpeedKmh: number,
+  weather?: string,
+  countryLimitKmh?: number
+): number {
+  if (countryLimitKmh && countryLimitKmh > 0) return Math.min(vehicleMaxSpeedKmh, countryLimitKmh);
+  const rainCap = frenchRainCapKmh(edge, weather);
+  if (rainCap) return Math.min(vehicleMaxSpeedKmh, rainCap);
+  if (edge.speedLimitKmh > 0) return Math.min(vehicleMaxSpeedKmh, edge.speedLimitKmh);
+  return vehicleMaxSpeedKmh;
+}
+
+/** Preset cruise: the posted sign, or 130 on an unrestricted Autobahn. Rain uses the French cap. */
 export function defaultLegSpeedKmh(
   edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
   vehicleMaxSpeedKmh: number,
-  weather?: WeatherKind
+  weather?: string
 ): number {
   const posted = edge.speedLimitKmh > 0 ? edge.speedLimitKmh : ADVISORY_SPEED_KMH;
   const rainCap = frenchRainCapKmh(edge, weather);
@@ -93,14 +111,19 @@ export function defaultLegSpeedKmh(
   return Math.min(vehicleMaxSpeedKmh, limit);
 }
 
-/** Speed used for consumption and the clock. Only French rain edges are hard-capped. */
+/** Hard cap from the sign. Unrestricted sections keep the chosen speed. */
 export function drivenSpeedKmh(
   edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
-  weather: WeatherKind | undefined,
+  weather: string | undefined,
   chosenKmh: number
 ): number {
-  const rainCap = frenchRainCapKmh(edge, weather);
-  return rainCap ? Math.min(chosenKmh, rainCap) : chosenKmh;
+  return Math.min(chosenKmh, sectionMaxSpeedKmh(edge, chosenKmh, weather));
+}
+
+/** Cruise after traffic. The set speed is only the ceiling; congestion pulls the average down. */
+export function congestedCruiseKmh(setKmh: number, trafficRisk: number): number {
+  const factor = Math.max(0.6, 0.96 - Math.max(0, trafficRisk) * 0.5);
+  return Math.max(42, setKmh * factor);
 }
 
 export function getActiveRouteOption(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId'>): RouteOption {
@@ -229,6 +252,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
     );
     const speed = drivenSpeedKmh(edge, weather, chosenSpeed);
+    const cruise = congestedCruiseKmh(speed, edge.baseTrafficRisk);
     const signLimit = frenchRainCapKmh(edge, weather) ?? edge.speedLimitKmh;
 
     const fromCity = getCityById(spec.reverse ? edge.toCityId : edge.fromCityId);
@@ -242,7 +266,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
 
     const cons100 = computeConsumptionKwh100(
       vehicle,
-      speed,
+      cruise,
       weather,
       elevGain,
       elevLoss,
@@ -324,10 +348,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     if (spec.overnightAtEnd) dwellMinutes += 480;
     if (spec.destinationAtEnd) dwellMinutes += 18;
 
-    // Effective average speed slightly lower than target due to junctions/traffic
-    const trafficPenalty = 1 - edge.baseTrafficRisk * 0.12;
-    const effectiveAvg = speed * 0.92 * trafficPenalty;
-    const driveMin = Math.round((edge.distanceKm / Math.max(40, effectiveAvg)) * 60);
+    const driveMin = Math.round((edge.distanceKm / Math.max(40, cruise)) * 60);
 
     totalDist += edge.distanceKm;
     totalDriveMin += driveMin;
@@ -369,7 +390,8 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       chargeMinutes: legChargeMin,
       stopSummaries,
       policeRisk,
-      breakdownRisk
+      breakdownRisk,
+      cruiseKmh: Math.round(cruise)
     });
   }
 
@@ -444,7 +466,11 @@ export function predictLiveTripSoc(
           ? run.currentSpeedKmh || preset
           : preset
     );
-    const speed = drivenSpeedKmh(edge, weather, chosenSpeed);
+    const capped = drivenSpeedKmh(edge, weather, chosenSpeed);
+    const speed =
+      i === startLeg && run.currentSpeedKmh > 0
+        ? Math.min(capped, run.currentSpeedKmh)
+        : congestedCruiseKmh(capped, edge.baseTrafficRisk);
 
     const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;

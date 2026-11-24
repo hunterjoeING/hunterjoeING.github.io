@@ -25,6 +25,7 @@ import {
   findNearestAvailableCharger,
   getActiveRouteLegs,
   predictLiveTripSoc,
+  sectionMaxSpeedKmh,
   switchReturnRouteInPlan,
   switchRouteInPlan
 } from './sim/RoutePlanner';
@@ -218,10 +219,18 @@ class ERoadtripController {
       onSpeedChange: (spd: number) => {
         const run = this.bridge.runState;
         if (!run) return;
+        const legs = getActiveRouteLegs(this.level, run.plan);
+        const spec = legs[run.currentLegIndex];
+        if (!spec) return;
+        const edge = getEdgeById(spec.edgeId);
+        const vehicle = getVehicleById(run.plan.vehicleId);
+        const weather = spec.weatherOverride || run.activeWeather || edge.defaultWeather;
+        const max = sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh);
+        const next = Math.min(max, Math.max(40, spd));
         const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
-        if (lp) lp.targetSpeedKmh = spd;
-        else run.plan.legPlans.push({ legIndex: run.currentLegIndex, targetSpeedKmh: spd });
-        run.currentSpeedKmh = spd;
+        if (lp) lp.targetSpeedKmh = next;
+        else run.plan.legPlans.push({ legIndex: run.currentLegIndex, targetSpeedKmh: next });
+        run.currentSpeedKmh = next;
         this.drivingHUD.update(this.level, run, this.bridge.timeScale);
       },
       onTimeScaleChange: (scale: number) => {
@@ -686,6 +695,7 @@ class ERoadtripController {
   private maybeStartPreview(): void {
     const kind = new URLSearchParams(window.location.search).get('erpreview');
     if (!kind) return;
+    if (kind === 'signs') return;
     if (kind === 'level2plan' || kind === 'level2hotel' || kind === 'level2arrival' || kind === 'level2rain' || kind === 'level2wc') {
       this.level = getLevelById('level_2_family_summer');
       this.bridge.level = this.level;
@@ -784,6 +794,25 @@ class ERoadtripController {
       this.enterCitySegment('charger_park', station.id);
     } else if (kind === 'autobahn') {
       this.enterAutobahn({ previewWeather: 'rain', previewRisk: 0.55, forceWorkZone: true });
+    } else if (kind === 'traffic') {
+      const run = this.bridge.runState;
+      if (run) {
+        const lp = run.plan.legPlans.find(leg => leg.legIndex === 0);
+        if (lp) lp.targetSpeedKmh = 120;
+        run.currentSpeedKmh = 120;
+        run.legProgressKm = 8;
+      }
+      this.enterAutobahn({ previewRisk: 0.55 });
+    } else if (kind === 'country') {
+      const run = this.bridge.runState;
+      if (run) {
+        run.countryLimitKmh = 70;
+        const lp = run.plan.legPlans.find(leg => leg.legIndex === 0);
+        if (lp) lp.targetSpeedKmh = 70;
+        run.currentSpeedKmh = 70;
+        run.legProgressKm = 8;
+      }
+      this.enterAutobahn({ previewRisk: 0.2 });
     }
   }
 
@@ -804,10 +833,18 @@ class ERoadtripController {
     run.peakStress = Math.max(run.peakStress, run.stress);
     run.decisionScoreAccum += choice.decisionPoints;
 
-    if (choice.adjustSpeedKmh) {
+    if (choice.id === 'detour_country') run.countryLimitKmh = 70;
+    if (choice.adjustSpeedKmh || choice.id === 'detour_country') {
+      const legs = getActiveRouteLegs(this.level, run.plan);
+      const spec = legs[run.currentLegIndex];
+      const edge = spec ? getEdgeById(spec.edgeId) : undefined;
+      const vehicle = getVehicleById(run.plan.vehicleId);
+      const weather = spec?.weatherOverride || run.activeWeather || edge?.defaultWeather;
+      let speed = choice.adjustSpeedKmh || 70;
+      if (edge) speed = Math.min(speed, sectionMaxSpeedKmh(edge, vehicle.maxSpeedKmh, weather, run.countryLimitKmh));
       const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
-      if (lp) lp.targetSpeedKmh = choice.adjustSpeedKmh;
-      run.currentSpeedKmh = choice.adjustSpeedKmh;
+      if (lp) lp.targetSpeedKmh = speed;
+      run.currentSpeedKmh = speed;
     }
 
     if (choice.insertNearestCharger) {
