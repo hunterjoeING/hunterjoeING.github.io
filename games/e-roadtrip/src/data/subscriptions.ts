@@ -10,7 +10,10 @@ export const PROVIDER_ROAMING_EUR_PER_KWH: Record<ChargerNetwork, number> = {
   ewego: 0.75,
   electra: 0.84,
   ionity: 0.89,
-  ac_village: 0.69
+  ac_village: 0.69,
+  fastned: 0.79,
+  totalenergies: 0.75,
+  ac_dorfladen: 0.29
 };
 
 export function roamingPriceForProvider(provider: SubscriptionSpec['provider']): number | null {

@@ -90,6 +90,13 @@ export class ResultsUI {
               ⚡ Verbrauch: <strong>${result.avgConsumptionKwh100} kWh/100km</strong> ·
               😰 Stress-Peak: <strong>${result.peakStress}%</strong>
             </p>
+            ${
+              run.overnightNote
+                ? `<p class="res-overnight">🏨 Übernachtung: ${run.overnightNote}${
+                    run.lodgingCostEur > 0 ? ` · Unterkunft ${run.lodgingCostEur.toFixed(2)} €` : ' · Unterkunft 0,00 €'
+                  }</p>`
+                : ''
+            }
             <div class="res-prize-badge">
               🏆 Prämie erhalten: <strong>+${result.prizeMoneyEur.toLocaleString('de-DE')} €</strong> · Neues Kapital: <strong>${save.cashEur.toLocaleString('de-DE')} €</strong>
             </div>
@@ -156,10 +163,15 @@ export class ResultsUI {
           <div class="next-lvl-grid">
             ${LEVELS.map(l => {
               const unlocked = l.order <= save.unlockedLevelOrder;
+              const status = !unlocked
+                ? '🔒 Erst Level ' + (l.order - 1) + ' meistern'
+                : l.playable
+                  ? '✅ Voll spielbar (Planung öffnen)'
+                  : '🔓 Struktur freigeschaltet (Vorschau)';
               return `
                 <button type="button" class="nl-chip ${unlocked ? 'unlocked clickable' : 'locked'}" data-nl-id="${l.id}" ${unlocked ? '' : 'disabled'}>
                   <strong>${l.title}</strong>
-                  <span>${l.playable ? '✅ Voll spielbar (Planung öffnen)' : unlocked ? '🔓 Struktur freigeschaltet (Vorschau)' : '🔒 Erst Level ' + (l.order - 1) + ' meistern'}</span>
+                  <span>${status}</span>
                 </button>
               `;
             }).join('')}

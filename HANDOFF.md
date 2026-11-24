@@ -16,10 +16,22 @@
 | E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` ([PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) im Fork, gegen `main`) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` ([PR #5](https://github.com/mic4rd/hunterjoeING.github.io/pull/5) im Fork, gegen `main`) | 🔄 PR im Fork offen |
+| E-Roadtrip: Touch-Fix und Level 2 Montpellier | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` (PR gegen `cursor/eroadtrip-package-d-79e6`) | 🔄 PR im Fork offen |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-24 – Michael / Cursor Cloud Agent (Touch-Steuerung und Level 2 Montpellier)
+- **Erledigt:**
+  - Feature-Branch `cursor/eroadtrip-touch-level2-5df0` von `cursor/eroadtrip-package-d-79e6` (Pakete A–D).
+  - Touch-Buttons hängen nicht mehr fest: ein `pointerId`-Register, Loslassen bei pointerup/cancel/leave, lostpointercapture, touchend/cancel, blur und `visibilitychange`, `setPointerCapture`, kein DOM-Neubau während der Fahrt, Reset wenn kein Finger registriert ist. CSS: `touch-action: none`, `user-select: none`, WebKit-Callout und Tap-Highlight.
+  - Level 2 ist spielbar: Aachen ↔ Montpellier, Hin- und Rückweg über Luxemburg/Lyon, Paris/Clermont-Ferrand oder die Autoroute du Soleil. Französische Limits 130/110 bei Regen, Ionity, Tesla, Fastned, TotalEnergies, Electra und AC-Dorfladen (0,29 €/kWh). Ereignisse: dreckige Aires, eine Übernachtung (gutes Hotel mit AC, Budgethotel, Auto mit 10 % Einbruch −500 € / +2 h), Ankunft Montpellier. Unterkunft ist ein eigener Kostenposten.
+  - Level 1 (Routen, Chips, Events) bleibt unverändert. Level 2 steht in der Auswahl; der Startknopf wartet, bis Level 1 abgeschlossen ist. Level 3–7 bleiben `playable: false`.
+  - `Architecture.md` und dieses Handoff aktualisiert. `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`. Touch per Chrome-Touch-Emulation geprüft (Halten, Long-Press, zwei Finger, touchcancel, blur, visibility). Level-2-Ereignisse im Browser geprüft.
+- **Offen / Nächste Schritte:**
+  - PR im Fork gegen `cursor/eroadtrip-package-d-79e6` (nur dieses Paket, nicht noch einmal A–D).
+  - Level 3–7 bleiben `playable: false`.
 
 ### 2026-11-23 – Michael / Cursor Cloud Agent (E-Roadtrip Paket D: Orte, Partikel, Autobahn, HUD)
 - **Erledigt:**

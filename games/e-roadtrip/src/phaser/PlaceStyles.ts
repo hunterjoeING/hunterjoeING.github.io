@@ -40,7 +40,7 @@ export function hashString(value: string): number {
 
 export function classifyAutohof(station: ChargerStation): AutohofStyle {
   const blob = `${station.id} ${station.name} ${station.cityHint}`.toLowerCase();
-  if (station.isAcOnly || station.network === 'ac_village') return 'rural';
+  if (station.isAcOnly || station.network === 'ac_village' || station.network === 'ac_dorfladen') return 'rural';
   const ruralHit = /dorf|börde|boerde|land|sauerland|weser|pass|berg|alpen|see|heide|flur/.test(blob);
   const urbanHit = /köln|koeln|hannover|messe|düsseldorf|duesseldorf|frankfurt|hamburg|berlin|münchen|muenchen|kreuz/.test(
     blob

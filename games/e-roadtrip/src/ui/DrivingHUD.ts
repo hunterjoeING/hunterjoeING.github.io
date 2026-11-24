@@ -2,7 +2,13 @@ import { LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { getActiveRouteLegs, predictLiveTripSoc } from '../sim/RoutePlanner';
-import { TouchInput, resetTouchInput } from '../phaser/GameBridge';
+import {
+  TouchControlKey,
+  isTouchKeyHeld,
+  pressTouchPointer,
+  releaseAllTouchPointers,
+  releaseTouchPointer
+} from '../phaser/GameBridge';
 import { SoundFX } from '../phaser/SoundFX';
 
 export interface DrivingHUDCallbacks {
@@ -36,7 +42,6 @@ export class DrivingHUD {
     }
     this.renderTouchControls();
     this.hudEl.addEventListener('pointerdown', ev => this.onHudPointer(ev));
-    window.addEventListener('blur', () => this.clearTouchStates());
   }
 
   private onHudPointer(ev: Event): void {
@@ -70,10 +75,8 @@ export class DrivingHUD {
   }
 
   public clearTouchStates(): void {
-    resetTouchInput();
-    this.touchEl.querySelectorAll('.touch-pad.pressed').forEach(el => {
-      el.classList.remove('pressed');
-    });
+    releaseAllTouchPointers();
+    this.paintTouchPads();
   }
 
   public setMode(mode: 'hidden' | 'autobahn' | 'city'): void {
@@ -127,7 +130,12 @@ export class DrivingHUD {
     const weatherBadge =
       run.activeWeather === 'rain' ? '🌧️ Regen' : run.activeWeather === 'snow' ? '❄️ Schnee' : run.isNight ? '🌙 Nacht' : '☀️ Klar';
 
-    const totalCost = (run.chargingCostEur + run.subscriptionCostEur + run.tollsAndFinesEur).toFixed(2);
+    const totalCost = (
+      run.chargingCostEur +
+      run.subscriptionCostEur +
+      run.tollsAndFinesEur +
+      (run.lodgingCostEur || 0)
+    ).toFixed(2);
     const speeds = [100, 120, 130, 150, 175].filter(s => s <= vehicle.maxSpeedKmh + 5);
     const shellKey = `${this.mode}|${speeds.join(',')}`;
     if (this.shellKey !== shellKey) {
@@ -184,7 +192,7 @@ export class DrivingHUD {
 
     const chosen =
       run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? run.currentSpeedKmh;
-    const capNote = run.speedCapKmh ? ` · Baustelle ${run.speedCapKmh}` : '';
+    const capNote = run.speedCapKmh ? ` · ${run.speedCapLabel || 'Limit'} ${run.speedCapKmh}` : '';
     this.setHtml('soc', `<strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)`);
     this.setHtml(
       'pred',
@@ -227,68 +235,99 @@ export class DrivingHUD {
   }
 
   private renderTouchControls(): void {
+    if (this.touchEl.dataset.bound === '1') return;
+    this.touchEl.dataset.bound = '1';
     this.touchEl.innerHTML = `
       <div class="touch-left">
-        <button type="button" class="touch-pad" data-t="left" aria-label="Links lenken">◀</button>
-        <button type="button" class="touch-pad" data-t="right" aria-label="Rechts lenken">▶</button>
+        <button type="button" class="touch-pad" data-t="left" draggable="false" aria-label="Links lenken">◀</button>
+        <button type="button" class="touch-pad" data-t="right" draggable="false" aria-label="Rechts lenken">▶</button>
       </div>
       <div class="touch-right">
-        <button type="button" class="touch-pad horn" data-t="horn" aria-label="Hupen">📯</button>
-        <button type="button" class="touch-pad stop" data-t="brake" aria-label="Handbremse">🛑</button>
-        <button type="button" class="touch-pad brake" data-t="down" aria-label="Rückwärts">▼</button>
-        <button type="button" class="touch-pad gas" data-t="up" aria-label="Gas geben">▲</button>
+        <button type="button" class="touch-pad horn" data-t="horn" draggable="false" aria-label="Hupen">📯</button>
+        <button type="button" class="touch-pad stop" data-t="brake" draggable="false" aria-label="Handbremse">🛑</button>
+        <button type="button" class="touch-pad brake" data-t="down" draggable="false" aria-label="Rückwärts">▼</button>
+        <button type="button" class="touch-pad gas" data-t="up" draggable="false" aria-label="Gas geben">▲</button>
       </div>
     `;
 
-    const bindHold = (btn: Element, key: 'left' | 'right' | 'up' | 'down' | 'brake') => {
-      const activeIds = new Set<number>();
-      const sync = () => {
-        const down = activeIds.size > 0;
-        TouchInput[key] = down;
-        btn.classList.toggle('pressed', down);
-      };
-
-      btn.addEventListener('pointerdown', ev => {
-        const e = ev as PointerEvent;
-        e.preventDefault();
-        e.stopPropagation();
-        activeIds.add(e.pointerId);
-        try {
-          (btn as HTMLElement).setPointerCapture(e.pointerId);
-        } catch (_) {}
-        sync();
-      });
-
-      const release = (ev: Event) => {
-        const e = ev as PointerEvent;
-        if (typeof e.pointerId === 'number') {
-          activeIds.delete(e.pointerId);
-        } else {
-          activeIds.clear();
-        }
-        sync();
-      };
-
-      btn.addEventListener('pointerup', release);
-      btn.addEventListener('pointercancel', release);
-      btn.addEventListener('lostpointercapture', release);
-      btn.addEventListener('contextmenu', e => e.preventDefault());
-    };
-
-    (['left', 'right', 'up', 'down', 'brake'] as const).forEach(k => {
-      const el = this.touchEl.querySelector(`[data-t="${k}"]`);
-      if (el) bindHold(el, k);
+    const root = this.touchEl;
+    root.addEventListener('pointerdown', ev => this.onTouchPointerDown(ev as PointerEvent), { capture: true, passive: false });
+    root.addEventListener('pointerleave', ev => this.onTouchPointerLeave(ev as PointerEvent), { capture: true });
+    root.addEventListener('lostpointercapture', ev => this.onTouchPointerGone(ev as PointerEvent), { capture: true });
+    root.addEventListener('contextmenu', ev => {
+      ev.preventDefault();
+      this.clearTouchStates();
     });
+    root.addEventListener('selectstart', ev => ev.preventDefault());
+    root.addEventListener('dragstart', ev => ev.preventDefault());
+    root.addEventListener('touchstart', ev => ev.preventDefault(), { passive: false });
 
-    const hornBtn = this.touchEl.querySelector('[data-t="horn"]');
-    hornBtn?.addEventListener('pointerdown', e => {
-      e.preventDefault();
-      e.stopPropagation();
-      TouchInput.hornPressed = true;
-      hornBtn.classList.add('pressed');
+    const gone = (ev: Event) => this.onTouchPointerGone(ev as PointerEvent);
+    window.addEventListener('pointerup', gone, true);
+    window.addEventListener('pointercancel', gone, true);
+    window.addEventListener('blur', () => this.clearTouchStates());
+    window.addEventListener('touchend', ev => this.onTouchContactEnd(ev), true);
+    window.addEventListener('touchcancel', ev => this.onTouchContactEnd(ev), true);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState !== 'visible') this.clearTouchStates();
     });
-    const releaseHorn = () => hornBtn?.classList.remove('pressed');
-    hornBtn?.addEventListener('pointerup', releaseHorn);
-    hornBtn?.addEventListener('pointercancel', releaseHorn);
+  }
+
+  private padFromEvent(ev: Event): HTMLElement | null {
+    const target = ev.target as HTMLElement | null;
+    const btn = target?.closest?.('[data-t]') as HTMLElement | null;
+    if (!btn || !this.touchEl.contains(btn)) return null;
+    return btn;
+  }
+
+  private onTouchPointerDown(ev: PointerEvent): void {
+    const btn = this.padFromEvent(ev);
+    if (!btn) return;
+    const key = btn.dataset.t as TouchControlKey | undefined;
+    if (!key) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    try {
+      btn.setPointerCapture(ev.pointerId);
+    } catch (_) {}
+    pressTouchPointer(ev.pointerId, key);
+    this.paintTouchPads();
+  }
+
+  private onTouchPointerLeave(ev: PointerEvent): void {
+    const btn = this.padFromEvent(ev);
+    if (!btn) return;
+    if (typeof btn.hasPointerCapture === 'function' && btn.hasPointerCapture(ev.pointerId)) return;
+    releaseTouchPointer(ev.pointerId);
+    this.paintTouchPads();
+  }
+
+  private onTouchPointerGone(ev: PointerEvent): void {
+    if (typeof ev.pointerId !== 'number') {
+      this.clearTouchStates();
+      return;
+    }
+    releaseTouchPointer(ev.pointerId);
+    const btn = this.padFromEvent(ev);
+    if (btn && typeof btn.releasePointerCapture === 'function' && btn.hasPointerCapture?.(ev.pointerId)) {
+      try {
+        btn.releasePointerCapture(ev.pointerId);
+      } catch (_) {}
+    }
+    this.paintTouchPads();
+  }
+
+  private onTouchContactEnd(ev: TouchEvent): void {
+    for (const touch of Array.from(ev.changedTouches)) {
+      releaseTouchPointer(touch.identifier);
+    }
+    this.paintTouchPads();
+  }
+
+  private paintTouchPads(): void {
+    this.touchEl.querySelectorAll<HTMLElement>('[data-t]').forEach(btn => {
+      const key = btn.dataset.t as TouchControlKey | undefined;
+      btn.classList.toggle('pressed', !!key && isTouchKeyHeld(key));
+    });
   }
 }

@@ -7,7 +7,8 @@ import {
   PlannedStop,
   RouteOption,
   RunState,
-  TripPlan
+  TripPlan,
+  WeatherKind
 } from '../types';
 import { getVehicleById } from '../data/vehicles';
 import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
@@ -70,10 +71,36 @@ export interface PlanForecast {
 /** German Autobahn advisory speed when an edge has no posted limit (`speedLimitKmh === 0`). */
 export const ADVISORY_SPEED_KMH = 130;
 
-/** Preset cruise speed: the posted limit, or Richtgeschwindigkeit 130 when the edge is unlimited. */
-export function defaultLegSpeedKmh(edge: Pick<HighwayEdge, 'speedLimitKmh'>, vehicleMaxSpeedKmh: number): number {
-  const limit = edge.speedLimitKmh > 0 ? edge.speedLimitKmh : ADVISORY_SPEED_KMH;
+/** French autoroute cap in rain or storm. Null when the edge has no rain limit. */
+export function frenchRainCapKmh(
+  edge: Pick<HighwayEdge, 'speedLimitRainKmh'>,
+  weather?: WeatherKind
+): number | null {
+  if (weather !== 'rain' && weather !== 'storm') return null;
+  if (!edge.speedLimitRainKmh || edge.speedLimitRainKmh <= 0) return null;
+  return edge.speedLimitRainKmh;
+}
+
+/** Preset cruise speed: the posted limit, or Richtgeschwindigkeit 130 when the edge is unlimited. Rain uses the French cap when the edge has one. */
+export function defaultLegSpeedKmh(
+  edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
+  vehicleMaxSpeedKmh: number,
+  weather?: WeatherKind
+): number {
+  const posted = edge.speedLimitKmh > 0 ? edge.speedLimitKmh : ADVISORY_SPEED_KMH;
+  const rainCap = frenchRainCapKmh(edge, weather);
+  const limit = rainCap ? Math.min(posted, rainCap) : posted;
   return Math.min(vehicleMaxSpeedKmh, limit);
+}
+
+/** Speed used for consumption and the clock. Only French rain edges are hard-capped. */
+export function drivenSpeedKmh(
+  edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
+  weather: WeatherKind | undefined,
+  chosenKmh: number
+): number {
+  const rainCap = frenchRainCapKmh(edge, weather);
+  return rainCap ? Math.min(chosenKmh, rainCap) : chosenKmh;
 }
 
 export function getActiveRouteOption(level: LevelConfig, plan?: Pick<TripPlan, 'selectedRouteId'>): RouteOption {
@@ -120,10 +147,14 @@ export function getActiveRouteLegs(
 function rebuildLegPlans(level: LevelConfig, plan: TripPlan): TripPlan {
   const vehicle = getVehicleById(plan.vehicleId);
   const legs = getActiveRouteLegs(level, plan);
-  plan.legPlans = legs.map((leg, idx) => ({
-    legIndex: idx,
-    targetSpeedKmh: defaultLegSpeedKmh(getEdgeById(leg.edgeId), vehicle.maxSpeedKmh)
-  }));
+  plan.legPlans = legs.map((leg, idx) => {
+    const edge = getEdgeById(leg.edgeId);
+    const weather = leg.weatherOverride || edge.defaultWeather;
+    return {
+      legIndex: idx,
+      targetSpeedKmh: defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
+    };
+  });
   plan.plannedStops = [];
   return plan;
 }
@@ -180,6 +211,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
   let totalElevGain = 0;
   let totalElevLoss = 0;
   let trafficWeightedSum = 0;
+  let dwellMinutes = level.id === 'level_1_aachen_hannover' ? 28 : 0;
 
   let firstStopName = `Ziel ${getCityById(level.destinationCityId).name}`;
   let firstStopArrivalSocPct: number | null = null;
@@ -191,11 +223,13 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
     const lp = plan.legPlans.find(x => x.legIndex === i);
-    const speed = Math.min(
-      vehicle.maxSpeedKmh,
-      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh)
-    );
     const weather = spec.weatherOverride || edge.defaultWeather;
+    const chosenSpeed = Math.min(
+      vehicle.maxSpeedKmh,
+      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
+    );
+    const speed = drivenSpeedKmh(edge, weather, chosenSpeed);
+    const signLimit = frenchRainCapKmh(edge, weather) ?? edge.speedLimitKmh;
 
     const fromCity = getCityById(spec.reverse ? edge.toCityId : edge.fromCityId);
     const toCity = getCityById(spec.reverse ? edge.fromCityId : edge.toCityId);
@@ -280,10 +314,15 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     soc -= (remKwh / vehicle.batteryKwh) * 100;
     minSoc = Math.min(minSoc, soc);
 
-    if (spec.citySegmentAtEnd === 'hannover_messe' && firstStopArrivalSocPct === null) {
+    if (
+      (spec.citySegmentAtEnd === 'hannover_messe' || spec.destinationAtEnd) &&
+      firstStopArrivalSocPct === null
+    ) {
       firstStopArrivalSocPct = Math.round(soc);
       firstStopName = toCity.name;
     }
+    if (spec.overnightAtEnd) dwellMinutes += 480;
+    if (spec.destinationAtEnd) dwellMinutes += 18;
 
     // Effective average speed slightly lower than target due to junctions/traffic
     const trafficPenalty = 1 - edge.baseTrafficRisk * 0.12;
@@ -317,8 +356,8 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       label: `${fromCity.name} → ${toCity.name}`,
       highwayName: edge.highwayName,
       distanceKm: edge.distanceKm,
-      targetSpeedKmh: speed,
-      speedLimitKmh: edge.speedLimitKmh,
+      targetSpeedKmh: chosenSpeed,
+      speedLimitKmh: signLimit,
       weather,
       elevationGainM: elevGain,
       elevationLossM: elevLoss,
@@ -339,8 +378,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
   }
 
   const subscriptionCostEur = computeSubscriptionTripCost(plan.subscriptionIds, vehicle);
-  const turnaroundMin = level.id === 'level_1_aachen_hannover' ? 28 : 0;
-  const totalMinutes = totalDriveMin + totalChargeMin + turnaroundMin;
+  const totalMinutes = totalDriveMin + totalChargeMin + dwellMinutes;
 
   if (totalMinutes > level.targetArrivalMinutes + 25) {
     warnings.push(
@@ -393,8 +431,12 @@ export function predictLiveTripSoc(
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
     const lp = run.plan.legPlans.find(x => x.legIndex === i);
-    const preset = lp?.targetSpeedKmh || defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh);
-    const speed = Math.min(
+    const weather =
+      i === startLeg
+        ? run.activeWeather || spec.weatherOverride || edge.defaultWeather
+        : spec.weatherOverride || edge.defaultWeather;
+    const preset = lp?.targetSpeedKmh || defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather);
+    const chosenSpeed = Math.min(
       vehicle.maxSpeedKmh,
       i === startLeg && opts?.overrideSpeedKmh !== undefined
         ? opts.overrideSpeedKmh
@@ -402,10 +444,7 @@ export function predictLiveTripSoc(
           ? run.currentSpeedKmh || preset
           : preset
     );
-    const weather =
-      i === startLeg
-        ? run.activeWeather || spec.weatherOverride || edge.defaultWeather
-        : spec.weatherOverride || edge.defaultWeather;
+    const speed = drivenSpeedKmh(edge, weather, chosenSpeed);
 
     const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
@@ -469,7 +508,7 @@ export function predictLiveTripSoc(
     soc -= (remKwh / vehicle.batteryKwh) * 100;
     distAccum += remKm;
 
-    if (!nextTarget && spec.citySegmentAtEnd === 'hannover_messe') {
+    if (!nextTarget && (spec.citySegmentAtEnd === 'hannover_messe' || spec.destinationAtEnd || spec.overnightAtEnd)) {
       const toCity = getCityById(spec.reverse ? edge.fromCityId : edge.toCityId);
       nextTarget = {
         name: toCity.name,

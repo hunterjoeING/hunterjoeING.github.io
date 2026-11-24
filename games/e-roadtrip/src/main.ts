@@ -16,7 +16,7 @@ import {
 } from './types';
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
-import { CHARGERS, getChargerById, getEdgeById } from './data/europeMap';
+import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { getEventById, getWifeDialogueById } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import {
@@ -34,7 +34,7 @@ import { BootScene } from './phaser/BootScene';
 import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
-import { ERoadtripBridge, TouchInput, resetTouchInput } from './phaser/GameBridge';
+import { ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
 import { ChargingCompletePayload, EventModal } from './ui/EventModal';
@@ -55,7 +55,10 @@ function createDefaultProviderFilter(): ProviderFilterMap {
     ewego: true,
     electra: true,
     ionity: true,
-    ac_village: true
+    ac_village: true,
+    fastned: true,
+    totalenergies: true,
+    ac_dorfladen: true
   };
 }
 
@@ -68,6 +71,7 @@ class ERoadtripController {
 
   private plannerEl: HTMLElement;
   private planningUI: PlanningUI;
+  private pendingFollowUp: { eventId: string; chance: number } | null = null;
   private drivingHUD: DrivingHUD;
   private eventModal: EventModal;
   private resultsUI: ResultsUI;
@@ -204,6 +208,11 @@ class ERoadtripController {
         s?.zoomFullEurope();
       }
     });
+
+    if (new URLSearchParams(window.location.search).has('erpreview')) {
+      const debugWindow = window as Window & { __erRun?: () => RunState | null };
+      debugWindow.__erRun = () => this.bridge.runState;
+    }
 
     this.drivingHUD = new DrivingHUD(hudEl, touchEl, {
       onSpeedChange: (spd: number) => {
@@ -441,6 +450,7 @@ class ERoadtripController {
       chargingCostEur: 0,
       subscriptionCostEur: subCost,
       tollsAndFinesEur: 0,
+      lodgingCostEur: 0,
       decisionScoreAccum: 0,
       replanCount: 0,
       goodReplanCount: 0,
@@ -676,6 +686,21 @@ class ERoadtripController {
   private maybeStartPreview(): void {
     const kind = new URLSearchParams(window.location.search).get('erpreview');
     if (!kind) return;
+    if (kind === 'level2plan' || kind === 'level2hotel' || kind === 'level2arrival' || kind === 'level2rain' || kind === 'level2wc') {
+      this.level = getLevelById('level_2_family_summer');
+      this.bridge.level = this.level;
+      this.save.unlockedLevelOrder = Math.max(this.save.unlockedLevelOrder, this.level.order);
+      const carId = this.save.ownedVehicleId || 'mg4_standard';
+      this.plan = createDefaultPlan(this.level, carId);
+      this.bridge.plan = this.plan;
+      if (kind === 'level2plan') {
+        this.renderPlanning();
+        this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
+        const map = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+        map?.fitCameraToRoute();
+        return;
+      }
+    }
     const clonedPlan: TripPlan = JSON.parse(JSON.stringify(this.plan));
     this.bridge.plan = clonedPlan;
     this.bridge.paused = false;
@@ -696,6 +721,7 @@ class ERoadtripController {
       chargingCostEur: 0,
       subscriptionCostEur: 0,
       tollsAndFinesEur: 0,
+      lodgingCostEur: 0,
       decisionScoreAccum: 0,
       replanCount: 0,
       goodReplanCount: 0,
@@ -713,6 +739,35 @@ class ERoadtripController {
     this.stageWrapEl.classList.add('driving-active');
     this.plannerEl.classList.add('hidden');
     window.requestAnimationFrame(() => this.game.scale.refresh());
+
+    if (kind === 'level2hotel' || kind === 'level2arrival' || kind === 'level2rain' || kind === 'level2wc') {
+      const run = this.bridge.runState;
+      const legs = getActiveRouteLegs(this.level, clonedPlan);
+      const idx =
+        kind === 'level2hotel'
+          ? legs.findIndex(leg => leg.overnightAtEnd)
+          : kind === 'level2arrival'
+            ? legs.findIndex(leg => leg.destinationAtEnd)
+            : kind === 'level2wc'
+              ? legs.findIndex(leg => !leg.reverse && !!getEdgeById(leg.edgeId).speedLimitRainKmh)
+              : legs.findIndex(leg => leg.weatherOverride === 'rain' && !!getEdgeById(leg.edgeId).speedLimitRainKmh);
+      const spec = legs[Math.max(0, idx)];
+      const edge = getEdgeById(spec.edgeId);
+      if (run && spec) {
+        run.currentLegIndex = Math.max(0, idx);
+        run.legProgressKm =
+          kind === 'level2rain' ? 12 : kind === 'level2wc' ? edge.distanceKm * 0.55 : Math.max(0, edge.distanceKm - 1.1);
+        run.triggeredEventIds = kind === 'level2wc' ? [] : ['evt_dirty_toilets'];
+        if (kind === 'level2rain') {
+          const legPlan = run.plan.legPlans.find(leg => leg.legIndex === run.currentLegIndex);
+          if (legPlan) legPlan.targetSpeedKmh = 130;
+          run.activeWeather = 'rain';
+        }
+      }
+      this.bridge.timeScale = kind === 'level2rain' || kind === 'level2wc' ? 1 : 15;
+      this.enterAutobahn();
+      return;
+    }
 
     if (kind === 'aachen') this.enterCitySegment('aachen_start');
     else if (kind === 'koeln') this.enterCitySegment('koeln_ring');
@@ -737,8 +792,14 @@ class ERoadtripController {
     if (!run) return choice.resultText;
 
     run.elapsedMinutes += choice.timeDeltaMin;
-    run.socPct = Math.max(1, Math.min(100, run.socPct + choice.socDeltaPct));
+    if (typeof choice.setSocPct === 'number') {
+      run.socPct = Math.max(1, Math.min(100, choice.setSocPct));
+    } else {
+      run.socPct = Math.max(1, Math.min(100, run.socPct + choice.socDeltaPct));
+    }
     run.chargingCostEur += choice.costDeltaEur;
+    if (choice.lodgingDeltaEur) run.lodgingCostEur += choice.lodgingDeltaEur;
+    if (choice.fineDeltaEur) run.tollsAndFinesEur += choice.fineDeltaEur;
     run.stress = Phaser.Math.Clamp(run.stress + choice.stressDelta, 0, 100);
     run.peakStress = Math.max(run.peakStress, run.stress);
     run.decisionScoreAccum += choice.decisionPoints;
@@ -776,6 +837,17 @@ class ERoadtripController {
       }
     }
 
+    if (choice.id === 'hotel_good' || choice.id === 'hotel_budget' || choice.id === 'sleep_car') {
+      const bill = choice.lodgingDeltaEur ?? 0;
+      run.overnightNote = `${choice.label} · ${bill.toFixed(0)} € · ${Math.round(choice.timeDeltaMin / 60)} h`;
+    }
+    if (choice.followUpEventId) {
+      this.pendingFollowUp = {
+        eventId: choice.followUpEventId,
+        chance: choice.followUpChance ?? 1
+      };
+    }
+
     let finalText = choice.resultText;
     if (choice.fineRisk && Math.random() < choice.fineRisk.probability) {
       run.tollsAndFinesEur += choice.fineRisk.amountEur;
@@ -793,17 +865,49 @@ class ERoadtripController {
     return finalText;
   }
 
+  private legArrivalCityName(): string {
+    const run = this.bridge.runState;
+    if (!run) return 'unterwegs';
+    const legs = getActiveRouteLegs(this.level, run.plan);
+    const spec = legs[run.currentLegIndex];
+    if (!spec) return 'unterwegs';
+    const edge = getEdgeById(spec.edgeId);
+    return getCityById(spec.reverse ? edge.fromCityId : edge.toCityId).name;
+  }
+
   private handleDynamicEvent(eventId: string): void {
     const evt = getEventById(eventId);
     if (!evt) {
       this.bridge.paused = false;
       return;
     }
+    const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : 'Montpellier';
+    const shown =
+      eventId === 'evt_hotel_overnight' || eventId === 'evt_south_arrival'
+        ? {
+            ...evt,
+            title: evt.title.split('{ORT}').join(place),
+            description: evt.description.split('{ORT}').join(place)
+          }
+        : evt;
     this.drivingHUD.clearTouchStates();
     this.eventModal.showDynamicEvent(
-      evt,
-      choice => this.applyEventChoice(evt.title, choice),
+      shown,
+      choice => {
+        const text = this.applyEventChoice(shown.title, choice);
+        const run = this.bridge.runState;
+        if (choice.fineDeltaEur && run?.overnightNote) {
+          run.overnightNote = `${run.overnightNote} · Einbruch −${choice.fineDeltaEur.toFixed(0)} €, +2 h Polizei`;
+        }
+        return text;
+      },
       () => {
+        const follow = this.pendingFollowUp;
+        this.pendingFollowUp = null;
+        if (follow && Math.random() < follow.chance) {
+          this.handleDynamicEvent(follow.eventId);
+          return;
+        }
         this.bridge.paused = false;
       }
     );
@@ -1062,5 +1166,13 @@ class ERoadtripController {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  if (new URLSearchParams(window.location.search).has('erpreview')) {
+    const debugWindow = window as Window & {
+      __erTouch?: typeof TouchInput;
+      __erTouchCount?: () => number;
+    };
+    debugWindow.__erTouch = TouchInput;
+    debugWindow.__erTouchCount = touchPointerCount;
+  }
   new ERoadtripController();
 });

@@ -252,7 +252,10 @@ function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void
     ewego: { body: '#15803d', accent: '#facc15' },
     electra: { body: '#5b21b6', accent: '#22d3ee' },
     ionity: { body: '#0f172a', accent: '#ec4899' },
-    ac_village: { body: '#334155', accent: '#4ade80' }
+    ac_village: { body: '#334155', accent: '#4ade80' },
+    fastned: { body: '#111827', accent: '#f5c400' },
+    totalenergies: { body: '#1e3a8a', accent: '#e10600' },
+    ac_dorfladen: { body: '#78350f', accent: '#fbbf24' }
   };
 
   const c = colors[net];
@@ -283,7 +286,10 @@ function drawNetworkLogoTexture(scene: Phaser.Scene, net: ChargerNetwork): void 
     ewego: '#15803d',
     electra: '#6d28d9',
     ionity: '#0f172a',
-    ac_village: '#0f766e'
+    ac_village: '#0f766e',
+    fastned: '#f5c400',
+    totalenergies: '#e10600',
+    ac_dorfladen: '#d97706'
   };
 
   ctx.fillStyle = '#0f172a';
@@ -338,6 +344,24 @@ function drawNetworkLogoTexture(scene: Phaser.Scene, net: ChargerNetwork): void 
     ctx.fillRect(20, 8, 3, 12);
     ctx.fillStyle = '#38bdf8';
     ctx.fillRect(12, 10, 4, 8);
+  } else if (net === 'fastned') {
+    ctx.fillStyle = '#111827';
+    ctx.fillRect(7, 6, 4, 16);
+    ctx.fillRect(7, 6, 12, 4);
+    ctx.fillRect(7, 12, 10, 3);
+  } else if (net === 'totalenergies') {
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 6, 16, 4);
+    ctx.fillRect(12, 6, 4, 16);
+    ctx.fillStyle = '#1e3a8a';
+    ctx.fillRect(6, 18, 16, 4);
+  } else if (net === 'ac_dorfladen') {
+    ctx.fillStyle = '#fef3c7';
+    ctx.fillRect(5, 12, 18, 10);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(6, 6, 16, 6);
+    ctx.fillStyle = '#7f1d1d';
+    ctx.fillRect(8, 14, 5, 8);
   } else {
     // AC Village: white AC plug & green "AC" indicator
     ctx.fillStyle = '#ffffff';
@@ -884,7 +908,7 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   drawPedestrianTexture(scene, 'ped_adult_1', '#0284c7', false);
   drawPedestrianTexture(scene, 'ped_child', '#facc15', true);
 
-  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'] as ChargerNetwork[]).forEach(net => {
+  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village', 'fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).forEach(net => {
     drawChargerStallTexture(scene, net);
     drawNetworkLogoTexture(scene, net);
   });

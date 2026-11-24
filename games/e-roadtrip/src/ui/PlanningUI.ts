@@ -9,7 +9,7 @@ import {
 } from '../types';
 import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { SUBSCRIPTIONS, roamingPriceForProvider } from '../data/subscriptions';
-import { CHARGERS, getEdgeById } from '../data/europeMap';
+import { CHARGERS, getCityById, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
 import {
   evaluateTripPlan,
@@ -45,7 +45,10 @@ const NET_LABEL: Record<string, string> = {
   ewego: 'EWE Go',
   electra: 'Electra+',
   ionity: 'IONITY',
-  ac_village: 'AC Dorf'
+  ac_village: 'AC Dorf',
+  fastned: 'Fastned',
+  totalenergies: 'TotalEnergies',
+  ac_dorfladen: 'AC-Dorfladen'
 };
 
 const NET_HEX: Record<ChargerNetwork, string> = {
@@ -54,8 +57,20 @@ const NET_HEX: Record<ChargerNetwork, string> = {
   ewego: '#22c55e',
   electra: '#a855f7',
   ionity: '#ec4899',
-  ac_village: '#14b8a6'
+  ac_village: '#14b8a6',
+  fastned: '#f5c400',
+  totalenergies: '#e10600',
+  ac_dorfladen: '#d97706'
 };
+
+const BASE_FILTER_NETWORKS: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
+
+function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
+  const edgeIds = new Set(level.routeOptions.flatMap(route => route.legs.map(leg => leg.edgeId)));
+  const present = new Set(CHARGERS.filter(station => edgeIds.has(station.edgeId)).map(station => station.network));
+  const extras = (['fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).filter(net => present.has(net));
+  return [...BASE_FILTER_NETWORKS, ...extras];
+}
 
 function speedSignHtml(limitKmh: number): string {
   const unlimited = limitKmh <= 0;
@@ -141,7 +156,7 @@ export class PlanningUI {
     const clampedLegIdx = Math.max(0, Math.min(forecast.legForecasts.length - 1, selectedLegIndex));
 
     if (this.filterBarEl && providerFilter) {
-      this.renderMapFilterBar(plan, selectedVehicle, providerFilter, showChargerStations);
+      this.renderMapFilterBar(level, plan, selectedVehicle, providerFilter, showChargerStations);
     }
 
     this.root.innerHTML = `
@@ -149,7 +164,12 @@ export class PlanningUI {
         <div class="plan-level-row">
           <select id="er-level-select" class="er-select" aria-label="Level auswählen">
             ${LEVELS.map(l => {
-              const lockTag = l.playable ? '' : ' 🔒 (Kuratiert · Vorschau)';
+              const unlocked = l.order <= save.unlockedLevelOrder;
+              const lockTag = !l.playable
+                ? ' 🔒 (Kuratiert · Vorschau)'
+                : !unlocked
+                  ? ` 🔒 (nach Level ${l.order - 1})`
+                  : '';
               return `<option value="${l.id}" ${l.id === level.id ? 'selected' : ''}>${l.title}${lockTag}</option>`;
             }).join('')}
           </select>
@@ -202,11 +222,13 @@ export class PlanningUI {
 
       <div class="plan-footer-cta">
         ${
-          level.playable
+          level.playable && level.order <= save.unlockedLevelOrder
             ? `<button type="button" id="btn-start-trip" class="er-primary-btn ${forecast.valid ? '' : 'warn'}" ${budgetLeft < 0 ? 'disabled' : ''}>
                 ${budgetLeft < 0 ? '❌ Budget reicht nicht für dieses Fahrzeug' : forecast.valid ? `🚀 Roadtrip starten (${activeRoute.shortLabel})!` : '⚠️ Trotz Reichweiten-Warnung starten'}
                </button>`
-            : `<div class="er-locked-notice">Dieses kuratierte Szenario ist bereits datengetrieben inkl. 3 Routen-Alternativen vorbereitet. Level 1 ist sofort komplett spielbar!</div>`
+            : level.playable
+              ? `<div class="er-locked-notice">Level ${level.order} wird freigeschaltet, sobald Level ${level.order - 1} abgeschlossen ist. Die Routen kannst du schon ansehen.</div>`
+              : `<div class="er-locked-notice">Dieses kuratierte Szenario ist bereits datengetrieben inkl. 3 Routen-Alternativen vorbereitet. Level 1 ist sofort komplett spielbar!</div>`
         }
       </div>
     `;
@@ -215,13 +237,14 @@ export class PlanningUI {
   }
 
   private renderMapFilterBar(
+    level: LevelConfig,
     plan: TripPlan,
     car: VehicleSpec,
     filter: ProviderFilterMap,
     showChargerStations: boolean
   ): void {
     if (!this.filterBarEl) return;
-    const networks: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
+    const networks = filterNetworksForLevel(level);
     this.filterBarEl.innerHTML = `
       <div class="mfb-row">
         <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" title="Einblenden: Symbole auf Hin- und Rückweg, farbig mit Abo und grau bei Ad-hoc. Aktive Anbieterchips zeigen zusätzlich die Detailkacheln der aktuellen Etappe. Ausblenden: keine Symbole, außer die angehakten Anbieter auf der aktuellen Etappe.">
@@ -428,6 +451,15 @@ export class PlanningUI {
     const stageChargers = CHARGERS.filter(c => c.edgeId === selectedSpec?.edgeId);
     const selectedForecast = forecast.legForecasts[selectedLegIndex];
     let previousReturn: boolean | null = null;
+    const overnightIdx = activeLegs.findIndex(leg => leg.overnightAtEnd);
+    const overnightCity =
+      overnightIdx >= 0
+        ? getCityById(
+            activeLegs[overnightIdx].reverse
+              ? getEdgeById(activeLegs[overnightIdx].edgeId).fromCityId
+              : getEdgeById(activeLegs[overnightIdx].edgeId).toCityId
+          ).name
+        : '';
 
     return `
       <div class="route-active-summary">
@@ -436,6 +468,11 @@ export class PlanningUI {
         <p>${activeRoute.description}</p>
         ${returnRoute && returnRoute.id !== activeRoute.id ? `<p>${returnRoute.description}</p>` : ''}
       </div>
+      ${
+        overnightCity
+          ? `<div class="overnight-plan-note">🏨 Übernachtung auf dem Hinweg in <b>${overnightCity}</b> (Etappe ${overnightIdx + 1}, am Etappenende). Unterwegs wählst du: gutes Hotel mit AC, Budgethotel oder Schlaf im Auto an der Aire. Kosten 0–289 €, etwa 8 Stunden, fließen in die Abrechnung ein.</div>`
+          : ''
+      }
 
       <div class="route-legs-list">
         ${forecast.legForecasts
@@ -458,6 +495,16 @@ export class PlanningUI {
                   : '<span class="risk-pill low">🟢 Sicher</span>';
             const trafficPct = Math.round(lf.trafficRisk * 100);
             const sliderMin = Math.min(40, speedVal);
+            const edgeForLeg = spec ? getEdgeById(spec.edgeId) : undefined;
+            const rainCap = edgeForLeg?.speedLimitRainKmh;
+            const posted = edgeForLeg && edgeForLeg.speedLimitKmh > 0 ? edgeForLeg.speedLimitKmh : 130;
+            const rainActive = lf.weather === 'rain' || lf.weather === 'storm';
+            const rainNote = rainCap
+              ? `<div class="leg-rain-cap">🌧️ Frankreich: ${posted} km/h, bei Regen ${rainCap} km/h.${rainActive ? ' Diese Etappe ist Regen, das Tempo wird darauf begrenzt.' : ''}</div>`
+              : '';
+            const overnightNote = spec?.overnightAtEnd
+              ? `<div class="leg-overnight">🏨 Hier endet der Fahrtag. Ereignis mit drei Möglichkeiten: sehr gutes Hotel (AC über Nacht, Spa und Buffet, teuer, Stress sinkt stark), Budgethotel (stressneutral, günstig, kein Laden) oder kostenlos im Auto an der Aire (Stress steigt, 10&nbsp;% Einbruch).</div>`
+              : '';
             return `
             ${directionHeader}
             <div class="leg-card ${isSelectedLeg ? 'active-stage' : ''}" data-leg-card="${lf.legIndex}">
@@ -476,6 +523,8 @@ export class PlanningUI {
                 <input type="range" class="leg-speed-slider" data-leg="${lf.legIndex}" min="${sliderMin}" max="${vehicle.maxSpeedKmh}" step="1" value="${speedVal}" />
                 ${riskBadge}
               </div>
+              ${rainNote}
+              ${overnightNote}
               ${
                 lf.stopSummaries.length > 0
                   ? `<div class="leg-stops">
@@ -533,7 +582,13 @@ export class PlanningUI {
                   · Auslastung ${Math.round(st.occupancyRisk * 100)}%
                   ${st.hasMcDonalds ? '· 🍔 McDonald’s' : ''}
                   ${st.trailerFriendly ? '· 🚐 Durchfahrt' : ''}
+                  ${st.isAcOnly ? '· AC langsam' : ''}
                 </div>
+                ${
+                  st.network === 'ac_dorfladen'
+                    ? `<div class="chg-flavour">Dorfladen-AC, 0,29 €/kWh Ad-hoc. Langsam, dafür günstiger Atomstrom aus dem französischen Netz.</div>`
+                    : ''
+                }
                 <div class="chg-actions">
                   <button type="button" class="er-mini-btn add-stop-btn" data-chg-id="${st.id}" data-leg-idx="${selectedLegIndex}" ${plannedHere ? 'disabled' : ''}>${plannedHere ? '✓ Eingeplant' : '+ Stopp einplanen'}</button>
                 </div>

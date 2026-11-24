@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
 import { getChargerById } from '../data/europeMap';
-import { ERoadtripBridge } from './GameBridge';
+import { ERoadtripBridge, ensureTouchHoldsMatchPointers } from './GameBridge';
 import {
   CityLightingProfile,
   PedestrianAgent,
@@ -173,6 +173,16 @@ export class CityDriveScene extends Phaser.Scene {
     this.spinners = this.place.spinners;
     this.surface = new SurfaceFx(this, this.isMobilePerf);
     this.previewDriveSec = this.previewFx ? 3.4 : 0;
+    if (new URLSearchParams(window.location.search).has('erpreview')) {
+      const debugWindow = window as Window & {
+        __erCity?: () => { speed: number; x: number; y: number };
+      };
+      debugWindow.__erCity = () => ({
+        speed: this.carSpeed,
+        x: this.player?.x || 0,
+        y: this.player?.y || 0
+      });
+    }
     this.targetZone = this.place.targetZone;
 
     this.physics.world.setBounds(0, 0, this.worldW, this.worldH);
@@ -1151,6 +1161,7 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     // === GTA 2 Controls (Keyboard + Shared TouchInput) ===
+    ensureTouchHoldsMatchPointers();
     const touch = this.bridge.touch;
     const autoDrive = this.previewDriveSec > 0;
     if (autoDrive) this.previewDriveSec -= dt;

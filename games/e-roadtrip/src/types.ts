@@ -42,7 +42,10 @@ export type ChargerNetwork =
   | 'ewego'
   | 'electra'
   | 'ionity'
-  | 'ac_village';
+  | 'ac_village'
+  | 'fastned'
+  | 'totalenergies'
+  | 'ac_dorfladen';
 
 export interface SubscriptionSpec {
   id: string;
@@ -112,6 +115,8 @@ export interface HighwayEdge {
   highwayName: string; // e.g. "A4 / A1 / A2"
   distanceKm: number;
   speedLimitKmh: number; // 0 = German Autobahn unlimited (Richtgeschwindigkeit 130)
+  /** French autoroute rain/storm cap (110). Absent on German edges. */
+  speedLimitRainKmh?: number;
   elevationGainM: number;
   elevationLossM: number;
   baseTrafficRisk: number; // 0..1
@@ -178,6 +183,15 @@ export interface EventChoice {
   adjustSpeedKmh?: number;
   /** Optional: trigger fine risk roll */
   fineRisk?: { probability: number; amountEur: number; label: string };
+  /** Flat lodging bill (hotel). Separate from charging and fines. */
+  lodgingDeltaEur?: number;
+  /** Cash loss that is not a kWh charge (theft, deductible). */
+  fineDeltaEur?: number;
+  /** Absolute SoC after the choice, e.g. overnight AC to a high morning value. */
+  setSocPct?: number;
+  /** Optional second event. Rolled after the player continues. */
+  followUpEventId?: string;
+  followUpChance?: number;
 }
 
 export interface GameEventDef {
@@ -220,6 +234,10 @@ export interface LevelRouteLegSpec {
   /** Local city drive segment mode at start or end of leg */
   citySegmentAtStart?: CityDrivePreset;
   citySegmentAtEnd?: CityDrivePreset;
+  /** Family overnight at the end of this leg. The player picks the stay on arrival. */
+  overnightAtEnd?: boolean;
+  /** Outbound destination reached (turnaround before the return legs). */
+  destinationAtEnd?: boolean;
 }
 
 export type CityDrivePreset =
@@ -271,6 +289,8 @@ export interface LevelConfig {
   trailerWeightKg?: number;
   requiresWinterTires?: boolean;
   ferryDeadlineMinutes?: number;
+  /** €/km baseline for the cost score. Level 1 keeps the default 0.082. */
+  costBenchmarkEurPerKm?: number;
   specialRulesSummary: string[];
   briefingText: string;
   eventPoolIds: string[];
@@ -336,6 +356,10 @@ export interface RunState {
   chargingCostEur: number;
   subscriptionCostEur: number;
   tollsAndFinesEur: number;
+  /** Hotels and other stays. 0 when the night was free. */
+  lodgingCostEur: number;
+  /** Shown on the trip summary after the overnight choice. */
+  overnightNote?: string;
   decisionScoreAccum: number;
   replanCount: number;
   goodReplanCount: number;
@@ -348,8 +372,10 @@ export interface RunState {
   incidentLog: IncidentLogEntry[];
   activeWeather: WeatherKind;
   currentSpeedKmh: number;
-  /** Temporary limit (Baustelle). Chosen cruise stays on the leg plan. */
+  /** Temporary limit (Baustelle or French rain). Chosen cruise stays on the leg plan. */
   speedCapKmh?: number;
+  /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */
+  speedCapLabel?: string;
   isNight: boolean;
   /** Used to avoid repeating same-leg charger stop */
   activeCityChargerId?: string;

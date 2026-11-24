@@ -109,7 +109,7 @@ export function getBestPriceForStation(
 ): TariffQuote {
   const activeSubs: SubscriptionSpec[] = subscriptionIds.map(getSubscriptionById);
   let bestPrice = station.baseAdhocEurPerKwh;
-  let bestName = 'Ad-hoc Kartenzahlung';
+  let bestName = station.network === 'ac_dorfladen' ? 'AC-Dorfladen Ad-hoc' : 'Ad-hoc Kartenzahlung';
   let bestId = 'adhoc';
 
   // Tesla drivers automatically unlock native Tesla Supercharger pricing!

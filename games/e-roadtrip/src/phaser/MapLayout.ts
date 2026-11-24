@@ -2,7 +2,7 @@ import { ChargerNetwork, ChargerStation, HighwayEdge, LevelConfig, PlannedStop, 
 import { getChargersForEdge, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { defaultLegSpeedKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
+import { defaultLegSpeedKmh, drivenSpeedKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
 
 export interface BoxRect {
   x: number;
@@ -205,13 +205,14 @@ export function computeRouteSocBandSegments(
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
     const lp = plan.legPlans.find(x => x.legIndex === i);
-    const speed = Math.min(
+    const weather = spec.weatherOverride || edge.defaultWeather;
+    const chosenSpeed = Math.min(
       vehicle.maxSpeedKmh,
-      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh)
+      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
     );
+    const speed = drivenSpeedKmh(edge, weather, chosenSpeed);
     const record = onlyLegIndex === undefined || i === onlyLegIndex;
     if (onlyLegIndex !== undefined) activeBand = null;
-    const weather = spec.weatherOverride || edge.defaultWeather;
     const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
 

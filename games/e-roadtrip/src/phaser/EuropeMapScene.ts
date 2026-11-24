@@ -61,7 +61,10 @@ const NET_COLORS: Record<string, number> = {
   ewego: 0x22c55e,
   electra: 0xa855f7,
   ionity: 0xec4899,
-  ac_village: 0x14b8a6
+  ac_village: 0x14b8a6,
+  fastned: 0xf5c400,
+  totalenergies: 0xe10600,
+  ac_dorfladen: 0xd97706
 };
 
 const NET_SHORT: Record<string, string> = {
@@ -70,7 +73,10 @@ const NET_SHORT: Record<string, string> = {
   ewego: 'EWE Go',
   electra: 'Electra+',
   ionity: 'IONITY',
-  ac_village: 'AC Dorf'
+  ac_village: 'AC Dorf',
+  fastned: 'Fastned',
+  totalenergies: 'TotalEnergies',
+  ac_dorfladen: 'AC-Dorfladen'
 };
 
 export class EuropeMapScene extends Phaser.Scene {

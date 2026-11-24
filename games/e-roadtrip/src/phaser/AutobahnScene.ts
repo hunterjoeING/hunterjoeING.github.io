@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { defaultLegSpeedKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
+import { defaultLegSpeedKmh, drivenSpeedKmh, frenchRainCapKmh, getActiveRouteLegs } from '../sim/RoutePlanner';
 import { ChargerStation, WeatherKind } from '../types';
 import {
   HighwayCar,
@@ -417,9 +417,11 @@ export class AutobahnScene extends Phaser.Scene {
     const edge = getEdgeById(legSpec.edgeId);
     const vehicle = getVehicleById(run.plan.vehicleId);
     const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
-    const chosen = Math.min(vehicle.maxSpeedKmh, lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh));
-
     const weather = this.previewWeather || legSpec.weatherOverride || edge.defaultWeather;
+    const chosen = Math.min(
+      vehicle.maxSpeedKmh,
+      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
+    );
     run.activeWeather = weather;
     const clockHour = (this.bridge.level.departureTimeHour + run.elapsedMinutes / 60) % 24;
     run.isNight = !!legSpec.isNightLeg || clockHour >= 19.2 || clockHour < 6.0;
@@ -432,9 +434,22 @@ export class AutobahnScene extends Phaser.Scene {
 
     const zone = workZoneFor(edge.id, edge.distanceKm, this.forceWorkZone);
     const inWork = !!zone && run.legProgressKm >= zone.startKm && run.legProgressKm <= zone.endKm;
-    const capped = inWork && zone ? Math.min(chosen, zone.limit) : chosen;
+    const rainCap = frenchRainCapKmh(edge, weather);
+    let capped = drivenSpeedKmh(edge, weather, chosen);
+    let capValue: number | undefined;
+    let capLabel: string | undefined;
+    if (rainCap && rainCap < chosen) {
+      capValue = rainCap;
+      capLabel = 'Regen';
+    }
+    if (inWork && zone && (!capValue || zone.limit < capValue)) {
+      capValue = zone.limit;
+      capLabel = 'Baustelle';
+      capped = Math.min(capped, zone.limit);
+    }
     run.currentSpeedKmh = capped;
-    run.speedCapKmh = inWork && zone ? zone.limit : undefined;
+    run.speedCapKmh = capValue;
+    run.speedCapLabel = capLabel;
     const rightOpen = !inWork;
 
     const scrollBoost = this.bridge.timeScale >= 15 ? 1.35 : this.bridge.timeScale >= 5 ? 1.15 : 1;
@@ -666,6 +681,7 @@ export class AutobahnScene extends Phaser.Scene {
 
     this.eventCooldownSec -= dtSec;
     if (this.eventCooldownSec <= 0) {
+      const pool = this.bridge.level.eventPoolIds;
       if (
         this.bridge.level.passengers.hasWife &&
         !run.wifeDialogueTriggered &&
@@ -679,7 +695,12 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onWifeDialogueTrigger(run.socPct < 24 ? 'dlg_diesel_remark' : this.bridge.level.wifeDialogueIds[0]);
         return;
       }
-      if (run.currentLegIndex === 1 && legRatio > 0.55 && !run.triggeredEventIds.includes('evt_stau_kamen')) {
+      if (
+        pool.includes('evt_stau_kamen') &&
+        run.currentLegIndex === 1 &&
+        legRatio > 0.55 &&
+        !run.triggeredEventIds.includes('evt_stau_kamen')
+      ) {
         run.triggeredEventIds.push('evt_stau_kamen');
         const hitJam = edge.baseTrafficRisk >= 0.35 || (edge.baseTrafficRisk >= 0.22 && Math.random() < 0.45);
         if (hitJam) {
@@ -690,7 +711,12 @@ export class AutobahnScene extends Phaser.Scene {
           return;
         }
       }
-      if (run.currentLegIndex === 2 && legRatio > 0.45 && !run.triggeredEventIds.includes('evt_accident_help')) {
+      if (
+        pool.includes('evt_accident_help') &&
+        run.currentLegIndex === 2 &&
+        legRatio > 0.45 &&
+        !run.triggeredEventIds.includes('evt_accident_help')
+      ) {
         run.triggeredEventIds.push('evt_accident_help');
         this.eventCooldownSec = 7;
         this.bridge.paused = true;
@@ -698,7 +724,12 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_accident_help');
         return;
       }
-      if (run.currentLegIndex === 4 && legRatio > 0.42 && !run.triggeredEventIds.includes('evt_rain_front')) {
+      if (
+        pool.includes('evt_rain_front') &&
+        run.currentLegIndex === 4 &&
+        legRatio > 0.42 &&
+        !run.triggeredEventIds.includes('evt_rain_front')
+      ) {
         run.triggeredEventIds.push('evt_rain_front');
         this.eventCooldownSec = 7;
         this.bridge.paused = true;
@@ -706,7 +737,12 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_rain_front');
         return;
       }
-      if (run.currentLegIndex === 5 && run.bladderNeed > 60 && !run.triggeredEventIds.includes('evt_wc_coffee')) {
+      if (
+        pool.includes('evt_wc_coffee') &&
+        run.currentLegIndex === 5 &&
+        run.bladderNeed > 60 &&
+        !run.triggeredEventIds.includes('evt_wc_coffee')
+      ) {
         run.triggeredEventIds.push('evt_wc_coffee');
         this.eventCooldownSec = 7;
         this.bridge.paused = true;
@@ -714,13 +750,32 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_wc_coffee');
         return;
       }
-      if (chosen > 138 && !run.triggeredEventIds.includes('evt_speed_trap')) {
+      if (pool.includes('evt_speed_trap') && chosen > 138 && !run.triggeredEventIds.includes('evt_speed_trap')) {
         run.triggeredEventIds.push('evt_speed_trap');
         this.eventCooldownSec = 7;
         this.bridge.paused = true;
         SoundFX.alert();
         this.bridge.onDynamicEventTrigger('evt_speed_trap');
         return;
+      }
+      if (
+        pool.includes('evt_dirty_toilets') &&
+        !run.triggeredEventIds.includes('evt_dirty_toilets') &&
+        !!edge.speedLimitRainKmh &&
+        legRatio > 0.42
+      ) {
+        const rollId = `evt_dirty_toilets_try_${run.currentLegIndex}`;
+        if (!run.triggeredEventIds.includes(rollId)) {
+          run.triggeredEventIds.push(rollId);
+          if (Math.random() < 0.7) {
+            run.triggeredEventIds.push('evt_dirty_toilets');
+            this.eventCooldownSec = 7;
+            this.bridge.paused = true;
+            SoundFX.alert();
+            this.bridge.onDynamicEventTrigger('evt_dirty_toilets');
+            return;
+          }
+        }
       }
     }
 
@@ -731,9 +786,29 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onTriggerCitySegment(preset);
         return;
       }
+      const overnightId = `evt_hotel_overnight@${run.currentLegIndex}`;
+      if (legSpec.overnightAtEnd && !run.triggeredEventIds.includes(overnightId)) {
+        run.triggeredEventIds.push(overnightId);
+        this.eventCooldownSec = 4;
+        this.bridge.paused = true;
+        SoundFX.alert();
+        this.bridge.onDynamicEventTrigger('evt_hotel_overnight');
+        return;
+      }
+      const arrivalId = `evt_south_arrival@${run.currentLegIndex}`;
+      if (legSpec.destinationAtEnd && !run.triggeredEventIds.includes(arrivalId)) {
+        run.triggeredEventIds.push(arrivalId);
+        this.eventCooldownSec = 4;
+        this.bridge.paused = true;
+        SoundFX.alert();
+        this.bridge.onDynamicEventTrigger('evt_south_arrival');
+        return;
+      }
       if (run.currentLegIndex < activeLegs.length - 1) {
         run.currentLegIndex += 1;
         run.legProgressKm = 0;
+        run.speedCapKmh = undefined;
+        run.speedCapLabel = undefined;
       } else {
         this.bridge.paused = true;
         this.bridge.onTriggerCitySegment('aachen_finish');
