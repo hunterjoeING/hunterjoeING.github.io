@@ -22,6 +22,14 @@
 
 ## 2. Session-Log (Neueste Einträge oben)
 
+### 2026-11-24 – Michael / Cursor Cloud Agent (Aachen–Köln unbeschränkt)
+- **Erledigt:**
+  - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
+  - `edge_aachen_koeln` von 120 auf 0 (unbeschränkt). Eine Kante, keine eigene Rück-Kante. Route A und Route C nutzen sie hin und zurück: Schild „Unbeschränkt“, Slider-Start 130, kein Blitzer-Bußgeld. Route B hat keine Etappe Aachen–Köln (Aachen–Düsseldorf bleibt unbeschränkt). Verkehrs-Vorschau startet auf dieser Etappe bei 130 statt 120.
+- **Offen / Nächste Schritte:**
+  - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
+  - Level 3–7 bleiben `playable: false`.
+
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Paket F)
 - **Erledigt:**
   - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.

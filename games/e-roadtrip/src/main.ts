@@ -780,8 +780,9 @@ class ERoadtripController {
       const run = this.bridge.runState;
       if (run) {
         const lp = run.plan.legPlans.find(leg => leg.legIndex === 0);
-        if (lp) lp.targetSpeedKmh = 120;
-        run.currentSpeedKmh = 120;
+        // Aachen–Köln is unrestricted. The preview starts at the 130 km/h advisory.
+        if (lp) lp.targetSpeedKmh = 130;
+        run.currentSpeedKmh = 130;
         run.legProgressKm = 8;
       }
       this.enterAutobahn({ previewRisk: 0.55 });

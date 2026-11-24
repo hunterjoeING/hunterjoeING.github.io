@@ -85,7 +85,7 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     toCityId: 'koeln',
     highwayName: 'A4',
     distanceKm: 72,
-    speedLimitKmh: 120,
+    speedLimitKmh: 0,
     elevationGainM: 120,
     elevationLossM: 255,
     baseTrafficRisk: 0.24,
