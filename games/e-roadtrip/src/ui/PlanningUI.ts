@@ -78,7 +78,8 @@ function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
   const extras = (['fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).filter(net => present.has(net));
   if (level.id === 'level_2_family_summer') {
     const french: ChargerNetwork[] = ['tesla', 'electra', 'ionity', 'atlante', 'vianeo'];
-    return [...french, ...extras];
+    if (present.has('ac_dorfladen')) french.push('ac_dorfladen');
+    return french;
   }
   return [...BASE_FILTER_NETWORKS, ...extras];
 }
@@ -408,6 +409,7 @@ export class PlanningUI {
               <div class="vc-mid">
                 <div class="vc-stats">
                   <span>⚡ ${v.baseConsumption100} kWh/100</span>
+                  <span>🔌 AC ${v.acMaxKw} kW</span>
                   <span>🪝 ${v.towingCapacityKg > 0 ? v.towingCapacityKg + ' kg' : 'Kein Haken'}</span>
                   ${
                     v.superchargerFree

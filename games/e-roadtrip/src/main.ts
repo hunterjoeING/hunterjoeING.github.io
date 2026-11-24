@@ -16,9 +16,9 @@ import {
 } from './types';
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
-import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
-import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById } from './data/events';
-import { computeSubscriptionTripCost, socAfterChargingMinutes } from './sim/EnergyModel';
+import { CHARGERS, getChargerById, getChargersForEdge, getCityById, getEdgeById } from './data/europeMap';
+import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
+import { computeSubscriptionTripCost, estimateChargeSession, socAfterChargingMinutes } from './sim/EnergyModel';
 import {
   createDefaultPlan,
   evaluateTripPlan,
@@ -796,6 +796,22 @@ class ERoadtripController {
         run.legProgressKm = 8;
       }
       this.enterAutobahn({ previewRisk: 0.2 });
+    } else if (kind === 'messe') {
+      const run = this.bridge.runState;
+      if (!run) return;
+      const legs = getActiveRouteLegs(this.level, run.plan);
+      const idx = legs.findIndex(leg => leg.citySegmentAtEnd === 'hannover_messe');
+      run.currentLegIndex = Math.max(0, idx);
+      run.socPct = 46;
+      run.hungerNeed = 64;
+      run.bladderNeed = 48;
+      this.openHannoverMesse(run);
+    } else if (kind === 'ac') {
+      const run = this.bridge.runState;
+      const station = getChargerById('chg_messe_ac_a2');
+      if (!run || !station) return;
+      this.bridge.paused = true;
+      this.eventModal.showChargingSession(station, this.level, run, 80, () => undefined);
     }
   }
 
@@ -904,15 +920,7 @@ class ERoadtripController {
   private openHannoverMesse(run: RunState): void {
     const legs = getActiveRouteLegs(this.level, run.plan);
     const leg = legs[run.currentLegIndex];
-    const planned = run.plan.plannedStops.find(
-      s =>
-        s.legIndex === run.currentLegIndex &&
-        !run.completedStopIds.includes(s.chargerId) &&
-        !run.skippedStopIds.includes(s.chargerId)
-    );
-    const station = planned ? getChargerById(planned.chargerId) : undefined;
-    const fair = station && station.fairStay && leg && station.edgeId === leg.edgeId ? station : undefined;
-    const stallFree = !fair || Math.random() < 0.5;
+    const fair = leg ? getChargersForEdge(leg.edgeId).find(station => station.fairStay) : undefined;
     const goOn = () => {
       run.currentLegIndex += 1;
       run.legProgressKm = 0;
@@ -920,75 +928,50 @@ class ERoadtripController {
     };
     this.bridge.paused = true;
     this.drivingHUD.clearTouchStates();
-
-    if (fair && stallFree && planned) {
-      const vehicle = getVehicleById(run.plan.vehicleId);
-      const cap = socAfterChargingMinutes(vehicle, fair, run.socPct, 210, planned.targetSocPct);
-      run.completedStopIds.push(fair.id);
-      this.eventModal.showChargingSession(fair, this.level, run, Math.max(run.socPct, cap), payload => {
-        run.socPct = payload.newSoc;
-        const spent = payload.minutesSpent;
-        const pad = Math.max(0, 240 - spent);
-        run.elapsedMinutes += pad;
-        run.chargingCostEur += payload.chargingCostEur;
-        run.tollsAndFinesEur += payload.breakCostEur;
-        if (payload.resetBladder) run.bladderNeed = 0;
-        run.hungerNeed = Math.max(0, Math.min(100, (run.hungerNeed || 0) + (payload.hungerDelta || 0)));
-        run.stress = Phaser.Math.Clamp(run.stress + payload.stressDelta - 4, 0, 100);
-        run.peakStress = Math.max(run.peakStress, run.stress);
-        run.incidentLog.push({
-          timeStr: formatClock(this.level, run.elapsedMinutes),
-          title: 'Hannover Messe',
-          detail: `Etwa 4 Stunden auf dem Gelände, einer von 6 AC-Punkten war frei. +${payload.addedKwh.toFixed(1)} kWh, Restzeit ${pad} Min.`,
-          impact: 'positive'
-        });
-        goOn();
-      });
-      return;
-    }
-
-    if (fair) {
-      run.completedStopIds.push(fair.id);
-      run.stress = Math.min(100, run.stress + 8);
-    }
-    const evt = {
-      id: 'evt_messe_visit',
-      title: fair ? 'Messeparkplatz voll' : 'Hannover Messe',
-      category: 'family' as const,
-      icon: '🍽️',
-      description: fair
-        ? 'Alle 6 AC-Ladepunkte am Messeparkplatz sind belegt. Der Termin dauert etwa 4 Stunden. Essen in der Halle geht trotzdem.'
-        : 'Der Messe-Termin dauert etwa 4 Stunden. In der Halle kannst du essen. Den AC-Lader am Parkplatz (6 Punkte, gut ausgelastet, 50 % frei) kannst du vorher in die Ladeplanung legen.',
-      choices: [
-        {
-          id: 'messe_eat',
-          label: 'In der Messehalle essen',
-          hint: '4 Stunden · Hunger sinkt stark · 22 € · Stress −12',
-          timeDeltaMin: 240,
-          socDeltaPct: 0,
-          costDeltaEur: 22,
-          stressDelta: -12,
-          decisionPoints: 6,
-          resultText: 'Warmes Essen in der Halle. Vier Stunden Messe, der Hunger ist weg.'
-        },
-        {
-          id: 'messe_skip',
-          label: 'Nur den Termin, nichts essen',
-          hint: '4 Stunden · Hunger steigt · Stress +4',
-          timeDeltaMin: 240,
-          socDeltaPct: 0,
-          costDeltaEur: 0,
-          stressDelta: 4,
-          decisionPoints: 1,
-          resultText: 'Vier Stunden auf dem Gelände, ohne Pause zum Essen.'
+    this.eventModal.showMesseVisit(choice => {
+      run.elapsedMinutes += 240;
+      run.bladderNeed = 0;
+      let hunger = run.hungerNeed || 0;
+      let foodNote = 'Ohne Essen.';
+      if (choice.eat) {
+        hunger = Math.max(0, hunger - 55);
+        run.chargingCostEur += 50;
+        run.stress = Math.max(0, run.stress - 8);
+        foodNote = 'Essen in der Halle: −50 €, Hunger deutlich runter.';
+      } else {
+        hunger = Math.min(100, hunger + 8);
+      }
+      run.hungerNeed = hunger;
+      let chargeNote = 'AC am Parkplatz ausgelassen.';
+      if (choice.charge && fair) {
+        if (Math.random() < 0.5) {
+          const vehicle = getVehicleById(run.plan.vehicleId);
+          const planned = run.plan.plannedStops.find(
+            stop => stop.chargerId === fair.id && stop.legIndex === run.currentLegIndex
+          );
+          const cap = planned ? planned.targetSocPct : 80;
+          const end = socAfterChargingMinutes(vehicle, fair, run.socPct, 210, cap);
+          const session = estimateChargeSession(vehicle, fair, run.socPct, end, run.plan.subscriptionIds);
+          run.socPct = end;
+          run.chargingCostEur += session.costEur;
+          chargeNote = `Einer von 6 AC-Punkten war frei: +${session.kwhAdded.toFixed(1)} kWh auf ${Math.round(end)} % für ${session.costEur.toFixed(2)} € (Onboard-Lader ${vehicle.acMaxKw} kW).`;
+        } else {
+          run.stress = Math.min(100, run.stress + 6);
+          chargeNote = 'Alle 6 AC-Punkte waren belegt. Geladen wurde nicht.';
         }
-      ]
-    };
-    this.eventModal.showDynamicEvent(
-      evt,
-      choice => this.applyEventChoice(evt.title, choice),
-      () => goOn()
-    );
+      }
+      if (fair && !run.completedStopIds.includes(fair.id)) run.completedStopIds.push(fair.id);
+      run.peakStress = Math.max(run.peakStress, run.stress);
+      const report = randomMesseReport();
+      const detail = `Vier Stunden Messe. Toilette automatisch. ${foodNote} ${chargeNote} ${report}`;
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: 'Hannover Messe',
+        detail,
+        impact: choice.eat ? 'positive' : 'neutral'
+      });
+      return detail;
+    }, goOn);
   }
 
   private handleDynamicEvent(eventId: string): void {

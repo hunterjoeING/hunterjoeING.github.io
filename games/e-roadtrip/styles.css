@@ -979,6 +979,28 @@ html[data-theme="light"] .er-trip-computer {
   color: var(--text-muted);
 }
 
+.messe-opt {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  cursor: pointer;
+}
+.messe-opt input {
+  margin-top: 3px;
+}
+.messe-report {
+  padding: 12px;
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  line-height: 1.45;
+}
+
 .er-outcome-box {
   padding: 12px;
   border-radius: 12px;

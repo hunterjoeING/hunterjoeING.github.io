@@ -721,6 +721,24 @@ export function buildTailgateEvent(country: string, amountEur: number): GameEven
   };
 }
 
+export const HANNOVER_MESSE_REPORTS: string[] = [
+  'Halle 12: Der Kaffee war stärker als der Pitch. Drei Visitenkarten, ein Kuli, der nicht schreibt.',
+  'Am Stand gegenüber lief den ganzen Vormittag dasselbe Video. Nach der dritten Schleife hat die Partnerin den Ton ausgemacht.',
+  'Jemand hat dir eine Tasche voller Kataloge in die Hand gedrückt. Die Tasche war das beste Produkt des Tages.',
+  'In der Mittagsschlange stand ein Roboterarm und hat Brötchen belegt. Die Brötchen waren besser als der Roboter.',
+  'Der Vortrag „Zukunft der Ladekurve“ endete, als der Beamer ausging. Alle haben trotzdem geklatscht.',
+  'Du hast denselben Vertriebler dreimal getroffen. Beim dritten Mal habt ihr so getan, als wärt ihr alte Freunde.',
+  'Halle 27 roch nach Teppich und neuen Reifen. Der Hund wäre begeistert gewesen.',
+  'Ein Startup hat eine App gezeigt, die genau das kann, was dein Notizbuch schon kann. Nur mit Login.',
+  'Am Ausgang gab es eine Tombola. Gewonnen hat der Stand, der die meisten Kulis verschenkt hat.',
+  'Die Partnerin fasst die Messe in einem Satz zusammen: „Schön laut, und der Kaffee war umsonst.“'
+];
+
+export function randomMesseReport(): string {
+  const i = Math.floor(Math.random() * HANNOVER_MESSE_REPORTS.length);
+  return HANNOVER_MESSE_REPORTS[i] || HANNOVER_MESSE_REPORTS[0];
+}
+
 export function getEventById(id: string): GameEventDef | undefined {
   return GAME_EVENTS[id];
 }

@@ -28,7 +28,8 @@ export const VEHICLES: VehicleSpec[] = [
     primaryColor: 0xea580c,
     accentColor: 0x0f172a,
     unlockLevel: 1,
-    tagline: 'Preiswerter LFP-Einsteiger: flache Ladekurve bis 60 %, kompakt & wendig.'
+    acMaxKw: 7,
+    tagline: 'Preiswerter LFP-Einsteiger: flache Ladekurve bis 60 %, kompakt & wendig. AC-Lader Serie 6,6 kW.'
   },
   {
     id: 'tesla_model_s_2015',
@@ -60,7 +61,8 @@ export const VEHICLES: VehicleSpec[] = [
     isTesla: true,
     superchargerFree: true,
     unlockLevel: 1,
-    tagline: '71,3 kWh nach 5 % Degradation. Supercharger wirklich 0,00 €/kWh. Ab etwa 80 % nur noch rund 100 − SoC kW.'
+    acMaxKw: 22,
+    tagline: '71,3 kWh nach 5 % Degradation. Supercharger wirklich 0,00 €/kWh. Ab etwa 80 % nur noch rund 100 − SoC kW. AC: Dual Charger 22 kW.'
   },
   {
     id: 'vw_id3_pro',
@@ -89,7 +91,8 @@ export const VEHICLES: VehicleSpec[] = [
     primaryColor: 0x0284c7,
     accentColor: 0xf8fafc,
     unlockLevel: 2,
-    tagline: 'Solider 77-kWh-Reisekompakter mit sehr ausgewogener Autobahn-Reichweite.'
+    acMaxKw: 11,
+    tagline: 'Solider 77-kWh-Reisekompakter mit sehr ausgewogener Autobahn-Reichweite. AC 11 kW.'
   },
   {
     id: 'tesla_model_3_highland',
@@ -120,7 +123,8 @@ export const VEHICLES: VehicleSpec[] = [
     accentColor: 0x1e293b,
     isTesla: true,
     unlockLevel: 2,
-    tagline: '60-kWh-LFP-Effizienzwunder (cW 0,219): 172-kW-Peak, starke LFP-Ladekurve & Supercharger inkl.'
+    acMaxKw: 11,
+    tagline: '60-kWh-LFP-Effizienzwunder (cW 0,219): 172-kW-Peak, starke LFP-Ladekurve & Supercharger inkl. AC 11 kW.'
   },
   {
     id: 'tesla_model_y_lr',
@@ -150,7 +154,8 @@ export const VEHICLES: VehicleSpec[] = [
     accentColor: 0x0f172a,
     isTesla: true,
     unlockLevel: 3,
-    tagline: 'Familien- & Zugfahrzeug-Allrounder: viel Platz, 1.600 kg Anhängelast.'
+    acMaxKw: 11,
+    tagline: 'Familien- & Zugfahrzeug-Allrounder: viel Platz, 1.600 kg Anhängelast. AC 11 kW.'
   },
   {
     id: 'xpeng_g6_lr',
@@ -181,7 +186,8 @@ export const VEHICLES: VehicleSpec[] = [
     accentColor: 0x0f172a,
     packVoltage: 800,
     unlockLevel: 3,
-    tagline: '800-Volt-Crossover: 84 kWh Netto, bis 280 kW Peak (10–80 % in <20 Min) & 1.500 kg Anhängelast.'
+    acMaxKw: 11,
+    tagline: '800-Volt-Crossover: 84 kWh Netto, bis 280 kW Peak (10–80 % in <20 Min) & 1.500 kg Anhängelast. AC 11 kW.'
   },
   {
     id: 'kia_ev6_gtline',
@@ -211,7 +217,8 @@ export const VEHICLES: VehicleSpec[] = [
     accentColor: 0x0f172a,
     packVoltage: 800,
     unlockLevel: 3,
-    tagline: '800-Volt-Lademonster: 10–80 % in nur 18 Minuten auf der gesamten Kurve.'
+    acMaxKw: 11,
+    tagline: '800-Volt-Lademonster: 10–80 % in nur 18 Minuten auf der gesamten Kurve. AC 11 kW.'
   },
   {
     id: 'vw_id7_tourer',
@@ -240,7 +247,8 @@ export const VEHICLES: VehicleSpec[] = [
     primaryColor: 0x1e40af,
     accentColor: 0x94a3b8,
     unlockLevel: 4,
-    tagline: 'Langstrecken-Kombi mit 86 kWh Netto, Top-Komfort (10/10) & Stress-Dämpfung.'
+    acMaxKw: 11,
+    tagline: 'Langstrecken-Kombi mit 86 kWh Netto, Top-Komfort (10/10) & Stress-Dämpfung. AC 11 kW.'
   },
   {
     id: 'porsche_taycan',
@@ -270,7 +278,8 @@ export const VEHICLES: VehicleSpec[] = [
     accentColor: 0x0f172a,
     packVoltage: 800,
     unlockLevel: 5,
-    tagline: '320-kW-800V-Rakete bis 260 km/h – gemacht für den e-Cannonball!'
+    acMaxKw: 22,
+    tagline: '320-kW-800V-Rakete bis 260 km/h – gemacht für den e-Cannonball! AC-Sonderausstattung 22 kW.'
   }
 ];
 

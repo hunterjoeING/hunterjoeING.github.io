@@ -10,6 +10,10 @@ export interface TrafficCarAgent {
   obeysLights: boolean;
   isPolice?: boolean;
   isCyclist?: boolean;
+  /** Waypoint index where the car parks and waits (Autohof bay). */
+  holdWp?: number;
+  holdSec?: number;
+  holdLeft?: number;
 }
 
 export interface PedestrianZebraLink {
@@ -134,12 +138,15 @@ export function shouldNpcYield(
   pedestrians: PedestrianAgent[],
   intersections: SignalIntersection[],
   zebras: ZebraCrosswalk[],
-  moveAngle: number
+  moveAngle: number,
+  player?: { x: number; y: number }
 ): boolean {
-  if (!npc.obeysLights) return false;
   const fx = Math.cos(moveAngle);
   const fy = Math.sin(moveAngle);
   const horizontal = Math.abs(fx) >= Math.abs(fy);
+  if (!npc.obeysLights) {
+    return vehicleAhead(npc, allNpcs, player, fx, fy);
+  }
 
   // Look ahead 48..88 px
   const probeX = npc.sprite.x + fx * 66;
@@ -168,18 +175,30 @@ export function shouldNpcYield(
     }
   }
 
-  // 3. Maintain safe spacing behind any NPC vehicle ahead in same direction
+  return vehicleAhead(npc, allNpcs, player, fx, fy);
+}
+
+function vehicleAhead(
+  npc: TrafficCarAgent,
+  allNpcs: TrafficCarAgent[],
+  player: { x: number; y: number } | undefined,
+  fx: number,
+  fy: number
+): boolean {
+  const blocked = (ox: number, oy: number) => {
+    const dx = ox - npc.sprite.x;
+    const dy = oy - npc.sprite.y;
+    const dist = Math.hypot(dx, dy);
+    if (dist < 26) return true;
+    const along = dx * fx + dy * fy;
+    const lateral = Math.abs(dx * fy - dy * fx);
+    return along > 16 && along < 112 && lateral < 28;
+  };
   for (const other of allNpcs) {
     if (other === npc) continue;
-    const dx = other.sprite.x - npc.sprite.x;
-    const dy = other.sprite.y - npc.sprite.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist > 4 && dist < 82) {
-      const dot = (dx / dist) * fx + (dy / dist) * fy;
-      if (dot > 0.78) return true;
-    }
+    if (blocked(other.sprite.x, other.sprite.y)) return true;
   }
-
+  if (player && blocked(player.x, player.y)) return true;
   return false;
 }
 

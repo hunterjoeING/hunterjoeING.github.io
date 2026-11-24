@@ -157,7 +157,7 @@ export const LEVELS: LevelConfig[] = [
     subtitle: 'Ehefrau, 2 Kinder & Hund · Aachen ↔ Montpellier',
     badge: 'Spielbar · Vollversion',
     playable: true,
-    regionLabel: 'Aachen ↔ Montpellier (4 Korridore)',
+    regionLabel: 'Aachen ↔ Montpellier (3 Korridore)',
     startBudgetEur: 32000,
     rewardBaseEur: 8000,
     departureTimeHour: 5.5,
@@ -189,7 +189,7 @@ export const LEVELS: LevelConfig[] = [
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_nancy_tesla', legIndex: 1, targetSocPct: 80 },
-          { chargerId: 'chg_orange_fastned', legIndex: 3, targetSocPct: 70 }
+          { chargerId: 'chg_orange_tesla', legIndex: 3, targetSocPct: 70 }
         ]
       },
       {
@@ -242,33 +242,6 @@ export const LEVELS: LevelConfig[] = [
           { chargerId: 'chg_orleans_tesla', legIndex: 2, targetSocPct: 80 },
           { chargerId: 'chg_millau_electra', legIndex: 3, targetSocPct: 70 }
         ]
-      },
-      {
-        id: 'l2_route_c_soleil',
-        name: 'Route C · Autoroute du Soleil (Brüssel → Paris → Lyon)',
-        shortLabel: 'Paris–Soleil',
-        highwaySummary: 'Brüssel → Lille → Paris → Lyon → Montpellier',
-        description: 'Der volle Sommerstau: Brüsseler Ring, A1 und die A6 Autoroute du Soleil. Übernachtung in Lyon, weiter auf der A7/A9. Dichtes Ladenetz, hohe Maut.',
-        elevationProfile: 'Hügelig',
-        trafficRisk: 'Hoch',
-        chargingDensity: 'Sehr dicht',
-        colorHex: 0xef4444,
-        legs: [
-          { edgeId: 'edge_aachen_bruessel', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
-          { edgeId: 'edge_bruessel_lille', defaultTargetSpeedKmh: 120, weatherOverride: 'clear' },
-          { edgeId: 'edge_lille_paris', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
-          { edgeId: 'edge_paris_lyon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-          { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
-          { edgeId: 'edge_lyon_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
-          { edgeId: 'edge_paris_lyon', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
-          { edgeId: 'edge_lille_paris', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
-          { edgeId: 'edge_bruessel_lille', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true },
-          { edgeId: 'edge_aachen_bruessel', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
-        ],
-        defaultPlannedStops: [
-          { chargerId: 'chg_auxerre_ionity', legIndex: 3, targetSocPct: 80 },
-          { chargerId: 'chg_orange_fastned', legIndex: 4, targetSocPct: 70 }
-        ]
       }
     ],
     routeLegs: [
@@ -292,7 +265,7 @@ export const LEVELS: LevelConfig[] = [
     scoringWeights: { time: 0.20, cost: 0.20, stress: 0.35, efficiency: 0.15, decisions: 0.10 },
     specialRulesSummary: [
       'Starke Stress-Gewichtung (35 %) durch Kinder, Hund & Ehefrau',
-      'Korridore: Luxemburg/Lyon, Mitte über Reims und Nevers (ab Clermont mit der Paris-Route), Paris/Clermont-Ferrand, Autoroute du Soleil',
+      'Korridore: Luxemburg/Lyon, Mitte über Reims und Nevers (ab Clermont mit der Paris-Route), Paris/Clermont-Ferrand',
       'In Frankreich: Atlante und ENGIE Vianeo statt EnBW und EWE Go',
       'Frankreich: 130 km/h, bei Regen 110. Maut auf den Autoroutes',
       'Blitzer nach dem gefahrenen Tempo gegen das Schild. In Frankreich: Radar automatique',

@@ -22,6 +22,8 @@ export interface VehicleSpec {
   weatherSensitivity: number;
   /** Charging curve sorted ascending by SoC */
   chargingCurve: ChargingCurvePoint[];
+  /** On-board AC charger in kW. DC stalls ignore this; AC power is min(stall, this). */
+  acMaxKw: number;
   maxSpeedKmh: number;
   towingCapacityKg: number;
   comfortRating: number; // 1..10

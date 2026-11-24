@@ -63,6 +63,10 @@ export function getChargingPowerKw(
       break;
     }
   }
+  const acStall = station.isAcOnly || station.maxKw <= 43;
+  if (acStall) {
+    return Math.max(5, Math.min(station.maxKw, vehicle.acMaxKw || 11));
+  }
   let kw = Math.min(station.maxKw, carKw);
   if (station.network === 'tesla' && vehicle.packVoltage === 800) kw = Math.min(kw, 150);
   return Math.max(5, kw);

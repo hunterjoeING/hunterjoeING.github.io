@@ -16,11 +16,23 @@
 | E-Roadtrip Visuals: GTA-2 Beleuchtung/Regen/Reflexionen & Pixel-Art-Europakarte | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-visuals-gta2-map-210f` (baut auf PR #2 auf) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket C: Planungskarte, Roaming, Hin/Rück, Tempo | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-planning-overview-e994` ([PR #4](https://github.com/mic4rd/hunterjoeING.github.io/pull/4) im Fork, gegen `main`) | 🔄 PR im Fork offen |
 | E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` ([PR #5](https://github.com/mic4rd/hunterjoeING.github.io/pull/5) im Fork, gegen `main`) | 🔄 PR im Fork offen |
-| E-Roadtrip: Touch, Level 2, Paket F | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` ([PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6) im Fork, gegen Paket D) | 🔄 PR im Fork offen |
+| E-Roadtrip: Touch, Level 2, Messe, AC, Autohof | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` ([PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6) im Fork, gegen Paket D) | 🔄 PR im Fork offen |
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
+- **Erledigt:**
+  - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
+  - Level 2 ohne Autoroute du Soleil. Entfernt: `edge_aachen_bruessel`, `edge_bruessel_lille`, `edge_lille_paris`, `edge_paris_lyon` und deren Lader. Luxemburg/Lyon, Reims/Nevers und Paris/Clermont bleiben.
+  - Hannover Messe hat einen eigenen Besuchsbildschirm: AC optional (6 Punkte, 50 % frei), Essen −50 €, Toilette automatisch, einer von 10 Berichten, etwa 4 Stunden.
+  - Fastned- und TotalEnergies-Parks auf Level 2 ersetzt durch IONITY Beaune, Tesla Orange, ENGIE Vianeo Vierzon und Atlante Béziers. Filter zeigt diese Anbieter, nicht Fastned/Total.
+  - AC-Leistung je Auto (`acMaxKw`). Ladeleistung an AC = min(Säule, Auto). Bildschirm sagt „AC-Laden“.
+  - Autohof-KI fährt ein, wartet an einer freien Säule und fährt über die Autobahn wieder raus. NPCs bremsen vor dem Auto davor, auch vor dem Spieler.
+- **Offen / Nächste Schritte:**
+  - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
+  - Level 3–7 bleiben `playable: false`.
 
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Aachen–Köln unbeschränkt)
 - **Erledigt:**

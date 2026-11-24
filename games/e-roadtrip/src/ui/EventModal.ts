@@ -108,6 +108,51 @@ export class EventModal {
     });
   }
 
+  public showMesseVisit(onConfirm: (choice: { charge: boolean; eat: boolean }) => string, onResume: () => void): void {
+    this.modalEl.classList.remove('hidden');
+    this.modalEl.innerHTML = `
+      <div class="er-modal-card">
+        <div class="er-modal-head">
+          <span class="er-modal-icon">🏛️</span>
+          <div>
+            <div class="er-modal-kicker">Hannover Messe · etwa 4 Stunden</div>
+            <h3>Messebesuch</h3>
+          </div>
+        </div>
+        <p class="er-modal-body">Der Termin dauert etwa 4 Stunden. Die Toilette ist automatisch dabei. AC-Laden am Parkplatz ist freiwillig: 6 Punkte, 22 kW, und nur etwa jeder zweite ist frei.</p>
+        <label class="messe-opt"><input type="checkbox" id="messe-charge" /> <span><strong>AC am Messeparkplatz</strong><br />6 Ladepunkte, 50 % Chance, dass einer frei ist.</span></label>
+        <label class="messe-opt"><input type="checkbox" id="messe-eat" /> <span><strong>In der Messe essen</strong><br />−50 €, Hunger sinkt deutlich.</span></label>
+        <div id="messe-actions" class="er-modal-choices">
+          <button type="button" class="er-primary-btn" id="messe-go">Vier Stunden bleiben</button>
+        </div>
+        <div id="messe-outcome" class="hidden"></div>
+      </div>
+    `;
+    this.modalEl.querySelector('#messe-go')?.addEventListener('click', () => {
+      SoundFX.click();
+      const charge = !!(this.modalEl.querySelector('#messe-charge') as HTMLInputElement | null)?.checked;
+      const eat = !!(this.modalEl.querySelector('#messe-eat') as HTMLInputElement | null)?.checked;
+      const report = onConfirm({ charge, eat });
+      const actions = this.modalEl.querySelector('#messe-actions');
+      const opts = this.modalEl.querySelectorAll('.messe-opt');
+      actions?.classList.add('hidden');
+      opts.forEach(el => el.classList.add('hidden'));
+      const out = this.modalEl.querySelector('#messe-outcome');
+      if (out) {
+        out.classList.remove('hidden');
+        out.innerHTML = `
+          <div class="messe-report">${report}</div>
+          <button type="button" class="er-primary-btn" id="messe-next">Weiterfahren →</button>
+        `;
+        out.querySelector('#messe-next')?.addEventListener('click', () => {
+          SoundFX.click();
+          this.close();
+          onResume();
+        });
+      }
+    });
+  }
+
   public showWifeStressDialogue(
     dlg: WifeDialogueDef,
     level: LevelConfig,
@@ -756,7 +801,7 @@ export class EventModal {
         <div class="er-modal-head">
           <span class="er-modal-icon">⚡</span>
           <div>
-            <div class="er-modal-kicker">Schnellladen aktiv · ${station.network.toUpperCase()}</div>
+            <div class="er-modal-kicker">${station.isAcOnly || station.maxKw <= 43 ? 'AC-Laden' : 'Schnellladen aktiv'} · ${station.network.toUpperCase()}</div>
             <h3>${station.name}</h3>
           </div>
           <div class="charge-when">

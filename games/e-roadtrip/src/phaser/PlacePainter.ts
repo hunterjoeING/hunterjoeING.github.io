@@ -25,6 +25,9 @@ export interface LiteAgent {
   tex: string;
   wps: Array<{ x: number; y: number }>;
   speed: number;
+  /** Index of the waypoint where the car waits (a charger bay). */
+  holdIndex?: number;
+  holdSec?: number;
 }
 
 export interface PlacePaint {
@@ -715,30 +718,51 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     { x: canopy.x + canopy.w - 20, y: canopy.y }
   ];
 
-  const aisleY = aisleTop + 70;
+  const aisleY = aisleTop + 28;
   const laneX = 270;
+  const spurMid = spurX + 55;
+  const eastboundY = 140;
+  const westboundY = 78;
+  const freeBay = (() => {
+    for (let i = 0; i < bayCount; i++) {
+      if (i === targetIndex) continue;
+      if (hashString(`${station.id}:stall:${i}`) % 3 === 0) continue;
+      return i;
+    }
+    return (targetIndex + 1) % bayCount;
+  })();
+  const bayPoint = (index: number) => ({ x: rowX + index * 58 + 23, y: aisleTop - 42 });
+  const visit = (index: number, startX: number): Array<{ x: number; y: number }> => {
+    const bay = bayPoint(index);
+    return [
+      { x: startX, y: eastboundY },
+      { x: spurMid, y: eastboundY },
+      { x: spurMid, y: aisleY },
+      { x: bay.x, y: aisleY },
+      bay,
+      { x: bay.x, y: aisleY },
+      { x: spurMid, y: aisleY },
+      { x: spurMid, y: eastboundY },
+      { x: Math.min(worldW - 80, startX + 220), y: eastboundY }
+    ];
+  };
   const liteCars: LiteAgent[] = [
     {
       tex: 'npc_sedan_blue',
-      wps: [
-        { x: laneX, y: 360 },
-        { x: laneX, y: aisleY },
-        { x: apron.x + apron.w - 280, y: aisleY },
-        { x: laneX, y: aisleY }
-      ],
-      speed: 70
-    }
-  ];
-  if (!mobile) {
-    liteCars.push({
+      wps: visit(freeBay, Math.min(worldW - 180, spurMid + 280)),
+      speed: 62,
+      holdIndex: 4,
+      holdSec: 8
+    },
+    {
       tex: 'npc_compact_green',
       wps: [
-        { x: apron.x + 480, y: aisleY },
-        { x: apron.x + apron.w - 300, y: aisleY }
+        { x: worldW - 80, y: westboundY },
+        { x: 70, y: westboundY }
       ],
-      speed: 54
-    });
-  }
+      speed: 78
+    }
+  ];
   const litePeds: LiteAgent[] = [
     {
       tex: 'ped_adult_0',

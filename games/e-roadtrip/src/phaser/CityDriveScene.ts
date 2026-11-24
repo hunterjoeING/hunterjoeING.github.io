@@ -400,7 +400,9 @@ export class CityDriveScene extends Phaser.Scene {
           wpIndex: 1,
           speed: cfg.speed,
           currentSpeed: cfg.speed,
-          obeysLights: false
+          obeysLights: false,
+          holdWp: cfg.holdIndex,
+          holdSec: cfg.holdSec
         });
       });
       (this.place.litePeds || []).forEach(pc => {
@@ -1227,10 +1229,37 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     // Move NPCs (strictly obeying lights, zebra crossings & spacing!)
+    if (new URLSearchParams(window.location.search).has('erpreview')) {
+      const debugWindow = window as Window & {
+        __erNpc?: () => Array<{ x: number; y: number; vx: number; vy: number }>;
+      };
+      debugWindow.__erNpc = () =>
+        this.trafficCars.map(car => ({
+          x: car.sprite.x,
+          y: car.sprite.y,
+          vx: car.sprite.body?.velocity.x || 0,
+          vy: car.sprite.body?.velocity.y || 0
+        }));
+      const placeWindow = window as Window & { __erPlacePlayer?: (x: number, y: number) => void };
+      placeWindow.__erPlacePlayer = (x, y) => this.player.setPosition(x, y);
+    }
     for (const tc of this.trafficCars) {
+      if ((tc.holdLeft || 0) > 0) {
+        tc.holdLeft = Math.max(0, (tc.holdLeft || 0) - dt);
+        tc.currentSpeed = 0;
+        tc.sprite.setVelocity(0, 0);
+        continue;
+      }
       const target = tc.waypoints[tc.wpIndex];
       const dist = Phaser.Math.Distance.Between(tc.sprite.x, tc.sprite.y, target.x, target.y);
       if (dist < 16) {
+        if (tc.holdWp === tc.wpIndex && tc.holdSec && tc.holdSec > 0) {
+          tc.holdLeft = tc.holdSec;
+          tc.wpIndex = (tc.wpIndex + 1) % tc.waypoints.length;
+          tc.currentSpeed = 0;
+          tc.sprite.setVelocity(0, 0);
+          continue;
+        }
         tc.wpIndex = (tc.wpIndex + 1) % tc.waypoints.length;
       }
       const ang = Phaser.Math.Angle.Between(tc.sprite.x, tc.sprite.y, target.x, target.y);
@@ -1242,7 +1271,8 @@ export class CityDriveScene extends Phaser.Scene {
         this.pedestrians,
         this.intersections,
         this.zebras,
-        ang
+        ang,
+        { x: this.player.x, y: this.player.y }
       );
       if (yieldNow) {
         tc.currentSpeed = 0;
