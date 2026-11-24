@@ -36,17 +36,18 @@ export const VEHICLES: VehicleSpec[] = [
     brand: 'Tesla',
     year: 2015,
     chemistry: 'NMC',
-    batteryKwh: 75.0,
+    batteryKwh: 71.3,
     baseConsumption100: 19.2,
     aeroFactor: 0.92,
     weatherSensitivity: 1.18,
     chargingCurve: [
-      { soc: 0, kw: 118 },
-      { soc: 22, kw: 112 },
-      { soc: 45, kw: 78 },
-      { soc: 65, kw: 54 },
-      { soc: 80, kw: 36 },
-      { soc: 100, kw: 10 }
+      { soc: 0, kw: 108 },
+      { soc: 25, kw: 96 },
+      { soc: 50, kw: 62 },
+      { soc: 70, kw: 38 },
+      { soc: 80, kw: 20 },
+      { soc: 90, kw: 10 },
+      { soc: 100, kw: 0 }
     ],
     maxSpeedKmh: 225,
     towingCapacityKg: 0,
@@ -57,8 +58,9 @@ export const VEHICLES: VehicleSpec[] = [
     primaryColor: 0x475569,
     accentColor: 0xdc2626,
     isTesla: true,
+    superchargerFree: true,
     unlockLevel: 1,
-    tagline: 'Großer 75-kWh-Akku & gratis Supercharger-Vorteil, aber frühes Lade-Derating.'
+    tagline: '71,3 kWh nach 5 % Degradation. Supercharger wirklich 0,00 €/kWh. Ab etwa 80 % nur noch rund 100 − SoC kW.'
   },
   {
     id: 'vw_id3_pro',
@@ -177,6 +179,7 @@ export const VEHICLES: VehicleSpec[] = [
     shape: 'suv',
     primaryColor: 0x06b6d4,
     accentColor: 0x0f172a,
+    packVoltage: 800,
     unlockLevel: 3,
     tagline: '800-Volt-Crossover: 84 kWh Netto, bis 280 kW Peak (10–80 % in <20 Min) & 1.500 kg Anhängelast.'
   },
@@ -206,6 +209,7 @@ export const VEHICLES: VehicleSpec[] = [
     shape: 'suv',
     primaryColor: 0x10b981,
     accentColor: 0x0f172a,
+    packVoltage: 800,
     unlockLevel: 3,
     tagline: '800-Volt-Lademonster: 10–80 % in nur 18 Minuten auf der gesamten Kurve.'
   },
@@ -264,6 +268,7 @@ export const VEHICLES: VehicleSpec[] = [
     shape: 'sport',
     primaryColor: 0xfacc15,
     accentColor: 0x0f172a,
+    packVoltage: 800,
     unlockLevel: 5,
     tagline: '320-kW-800V-Rakete bis 260 km/h – gemacht für den e-Cannonball!'
   }

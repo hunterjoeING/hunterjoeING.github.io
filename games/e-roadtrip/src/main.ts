@@ -17,8 +17,8 @@ import {
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
 import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
-import { buildSpeedTrapEvent, getEventById, getWifeDialogueById } from './data/events';
-import { computeSubscriptionTripCost } from './sim/EnergyModel';
+import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById } from './data/events';
+import { computeSubscriptionTripCost, socAfterChargingMinutes } from './sim/EnergyModel';
 import {
   createDefaultPlan,
   evaluateTripPlan,
@@ -59,7 +59,9 @@ function createDefaultProviderFilter(): ProviderFilterMap {
     ac_village: true,
     fastned: true,
     totalenergies: true,
-    ac_dorfladen: true
+    ac_dorfladen: true,
+    atlante: true,
+    vianeo: true
   };
 }
 
@@ -254,6 +256,10 @@ class ERoadtripController {
       },
       onToggleMapPreview: () => {
         this.openLiveMapPeek();
+      },
+      onTailgate: () => {
+        const run = this.bridge.runState;
+        if (run) run.tailgatePulse = true;
       }
     });
 
@@ -450,6 +456,7 @@ class ERoadtripController {
       stress: this.level.passengers.initialStress,
       peakStress: this.level.passengers.initialStress,
       bladderNeed: 10,
+      hungerNeed: 22,
       energyUsedKwh: 0,
       distanceDrivenKm: 0,
       chargingCostEur: 0,
@@ -584,6 +591,7 @@ class ERoadtripController {
             } else {
               run.bladderNeed = Math.max(0, run.bladderNeed - 35);
             }
+            run.hungerNeed = Math.max(0, Math.min(100, (run.hungerNeed || 0) + (payload.hungerDelta || 0)));
 
             if (arriveSoc <= 24 && payload.newSoc <= 82) {
               run.chargingEfficiencyBonus += 6;
@@ -637,30 +645,7 @@ class ERoadtripController {
     }
 
     if (preset === 'hannover_messe') {
-      run.elapsedMinutes += 28;
-      run.bladderNeed = 0;
-      run.stress = Math.max(0, run.stress - 8);
-      run.incidentLog.push({
-        timeStr: formatClock(this.level, run.elapsedMinutes),
-        title: 'Hannover Messe erreicht!',
-        detail: 'Messe-Termin & Turnaround (+28 Min). Jetzt Rückfahrt nach Aachen!',
-        impact: 'positive'
-      });
-
-      this.bridge.paused = true;
-      this.drivingHUD.clearTouchStates();
-      this.eventModal.showMapPeek(
-        `
-        <p><strong>🎉 Etappenziel Hannover Messe erreicht!</strong></p>
-        <p>Nach 28 Minuten Messe-Checkup geht es jetzt bei aufziehendem Regen und späterer Dämmerung zurück Richtung Aachen.</p>
-        <p>Aktueller Akku: <strong>${Math.round(run.socPct)}%</strong> · Stress: <strong>${Math.round(run.stress)}%</strong></p>
-        `,
-        () => {
-          run.currentLegIndex += 1;
-          run.legProgressKm = 0;
-          this.enterAutobahn();
-        }
-      );
+      this.openHannoverMesse(run);
       return;
     }
 
@@ -722,6 +707,7 @@ class ERoadtripController {
       stress: this.level.passengers.initialStress,
       peakStress: this.level.passengers.initialStress,
       bladderNeed: 10,
+      hungerNeed: 22,
       energyUsedKwh: 0,
       distanceDrivenKm: 0,
       chargingCostEur: 0,
@@ -877,11 +863,22 @@ class ERoadtripController {
     }
 
     let finalText = choice.resultText;
+    if (choice.id === 'messe_eat') {
+      run.hungerNeed = Math.max(0, run.hungerNeed - 55);
+      run.bladderNeed = Math.max(0, run.bladderNeed - 40);
+    }
+    if (choice.id === 'messe_skip') run.hungerNeed = Math.min(100, run.hungerNeed + 8);
     if (choice.fineRisk && Math.random() < choice.fineRisk.probability) {
       run.tollsAndFinesEur += choice.fineRisk.amountEur;
-      run.stress = Math.min(100, run.stress + 12);
+      const extraStress = choice.fineRisk.stressDelta ?? 12;
+      const extraTime = choice.fineRisk.timeDeltaMin ?? 0;
+      run.elapsedMinutes += extraTime;
+      run.stress = Math.min(100, run.stress + extraStress);
       run.peakStress = Math.max(run.peakStress, run.stress);
-      finalText += ` ⚠️ Pech gehabt: ${choice.fineRisk.label} (+${choice.fineRisk.amountEur} € Bußgeld)!`;
+      finalText +=
+        extraTime > 0
+          ? ` ⚠️ ${choice.fineRisk.label}: −${choice.fineRisk.amountEur} €, +${extraTime} Min, +${extraStress} Stress.`
+          : ` ⚠️ Pech gehabt: ${choice.fineRisk.label} (+${choice.fineRisk.amountEur} € Bußgeld)!`;
     }
 
     run.incidentLog.push({
@@ -903,6 +900,96 @@ class ERoadtripController {
     return getCityById(spec.reverse ? edge.fromCityId : edge.toCityId).name;
   }
 
+  private openHannoverMesse(run: RunState): void {
+    const legs = getActiveRouteLegs(this.level, run.plan);
+    const leg = legs[run.currentLegIndex];
+    const planned = run.plan.plannedStops.find(
+      s =>
+        s.legIndex === run.currentLegIndex &&
+        !run.completedStopIds.includes(s.chargerId) &&
+        !run.skippedStopIds.includes(s.chargerId)
+    );
+    const station = planned ? getChargerById(planned.chargerId) : undefined;
+    const fair = station && station.fairStay && leg && station.edgeId === leg.edgeId ? station : undefined;
+    const stallFree = !fair || Math.random() < 0.5;
+    const goOn = () => {
+      run.currentLegIndex += 1;
+      run.legProgressKm = 0;
+      this.enterAutobahn();
+    };
+    this.bridge.paused = true;
+    this.drivingHUD.clearTouchStates();
+
+    if (fair && stallFree && planned) {
+      const vehicle = getVehicleById(run.plan.vehicleId);
+      const cap = socAfterChargingMinutes(vehicle, fair, run.socPct, 210, planned.targetSocPct);
+      run.completedStopIds.push(fair.id);
+      this.eventModal.showChargingSession(fair, this.level, run, Math.max(run.socPct, cap), payload => {
+        run.socPct = payload.newSoc;
+        const spent = payload.minutesSpent;
+        const pad = Math.max(0, 240 - spent);
+        run.elapsedMinutes += pad;
+        run.chargingCostEur += payload.chargingCostEur;
+        run.tollsAndFinesEur += payload.breakCostEur;
+        if (payload.resetBladder) run.bladderNeed = 0;
+        run.hungerNeed = Math.max(0, Math.min(100, (run.hungerNeed || 0) + (payload.hungerDelta || 0)));
+        run.stress = Phaser.Math.Clamp(run.stress + payload.stressDelta - 4, 0, 100);
+        run.peakStress = Math.max(run.peakStress, run.stress);
+        run.incidentLog.push({
+          timeStr: formatClock(this.level, run.elapsedMinutes),
+          title: 'Hannover Messe',
+          detail: `Etwa 4 Stunden auf dem Gelände, einer von 6 AC-Punkten war frei. +${payload.addedKwh.toFixed(1)} kWh, Restzeit ${pad} Min.`,
+          impact: 'positive'
+        });
+        goOn();
+      });
+      return;
+    }
+
+    if (fair) {
+      run.completedStopIds.push(fair.id);
+      run.stress = Math.min(100, run.stress + 8);
+    }
+    const evt = {
+      id: 'evt_messe_visit',
+      title: fair ? 'Messeparkplatz voll' : 'Hannover Messe',
+      category: 'family' as const,
+      icon: '🍽️',
+      description: fair
+        ? 'Alle 6 AC-Ladepunkte am Messeparkplatz sind belegt. Der Termin dauert etwa 4 Stunden. Essen in der Halle geht trotzdem.'
+        : 'Der Messe-Termin dauert etwa 4 Stunden. In der Halle kannst du essen. Den AC-Lader am Parkplatz (6 Punkte, gut ausgelastet, 50 % frei) kannst du vorher in die Ladeplanung legen.',
+      choices: [
+        {
+          id: 'messe_eat',
+          label: 'In der Messehalle essen',
+          hint: '4 Stunden · Hunger sinkt stark · 22 € · Stress −12',
+          timeDeltaMin: 240,
+          socDeltaPct: 0,
+          costDeltaEur: 22,
+          stressDelta: -12,
+          decisionPoints: 6,
+          resultText: 'Warmes Essen in der Halle. Vier Stunden Messe, der Hunger ist weg.'
+        },
+        {
+          id: 'messe_skip',
+          label: 'Nur den Termin, nichts essen',
+          hint: '4 Stunden · Hunger steigt · Stress +4',
+          timeDeltaMin: 240,
+          socDeltaPct: 0,
+          costDeltaEur: 0,
+          stressDelta: 4,
+          decisionPoints: 1,
+          resultText: 'Vier Stunden auf dem Gelände, ohne Pause zum Essen.'
+        }
+      ]
+    };
+    this.eventModal.showDynamicEvent(
+      evt,
+      choice => this.applyEventChoice(evt.title, choice),
+      () => goOn()
+    );
+  }
+
   private handleDynamicEvent(eventId: string): void {
     const evt = getEventById(eventId);
     if (!evt) {
@@ -911,7 +998,8 @@ class ERoadtripController {
     }
     const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : 'Montpellier';
     const trap = eventId === 'evt_speed_trap' ? this.bridge.runState?.speedTrap : undefined;
-    const baseEvt = trap ? buildSpeedTrapEvent(trap) : evt;
+    const nudge = eventId === 'evt_tailgate' ? this.bridge.runState?.tailgateCase : undefined;
+    const baseEvt = trap ? buildSpeedTrapEvent(trap) : nudge ? buildTailgateEvent(nudge.country, nudge.amountEur) : evt;
     const shown =
       eventId === 'evt_hotel_overnight' || eventId === 'evt_south_arrival'
         ? {

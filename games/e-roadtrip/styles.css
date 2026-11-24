@@ -363,6 +363,9 @@ body {
   color: #dc2626;
   font-weight: 700;
 }
+.tesla-tag.abo {
+  color: #0f766e;
+}
 .curve-svg {
   color: var(--text-main);
   background: var(--bg-surface);
@@ -674,6 +677,70 @@ body {
   pointer-events: auto;
   position: relative;
   z-index: 2;
+}
+.tailgate-btn {
+  background: #b45309;
+  color: #fff;
+}
+.er-trip-computer {
+  position: absolute;
+  top: 108px;
+  right: 0;
+  width: 230px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.82);
+  color: #e2e8f0;
+  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}
+html[data-theme="light"] .er-trip-computer {
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+}
+.trip-kicker, .trip-road {
+  font-size: 11px;
+  opacity: 0.85;
+}
+.stage-map {
+  width: 100%;
+  height: 96px;
+  display: block;
+  margin-top: 4px;
+}
+.need-meters {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 8px 0;
+}
+.need-meter {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: rgba(15, 23, 42, 0.06);
+  font-size: 11px;
+}
+.need-meter i {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: #38bdf8;
+}
+.need-meter.hunger i { background: #f59e0b; }
+.need-meter.stress i { background: #ef4444; }
+.need-meter strong { display: block; font-size: 14px; }
+.charge-when {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+.charge-clock {
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .dhud-pill {
@@ -1484,6 +1551,10 @@ body {
   border-radius: 2px;
   display: inline-block;
 }
+.lg-dot.g::before { background: rgba(34, 197, 94, 0.85); }
+.lg-dot.y::before { background: rgba(234, 179, 8, 0.9); }
+.lg-dot.o::before { background: rgba(249, 115, 22, 0.9); }
+.lg-dot.r::before { background: rgba(239, 68, 68, 0.9); }
 .lg-dot.b::before {
   width: 14px;
   height: 7px;

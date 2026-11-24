@@ -10,7 +10,7 @@ import {
   snapSpeedKmh,
   speedTrapChancePerSimMinute
 } from '../sim/RoutePlanner';
-import { ChargerStation, WeatherKind } from '../types';
+import { ChargerStation, RunState, WeatherKind } from '../types';
 import {
   HighwayCar,
   baseSpeed,
@@ -65,6 +65,8 @@ export class AutobahnScene extends Phaser.Scene {
   private playerTaillight?: Phaser.GameObjects.Image;
   private playerBlinkL?: Phaser.GameObjects.Image;
   private playerBlinkR?: Phaser.GameObjects.Image;
+  private playerHalo?: Phaser.GameObjects.Ellipse;
+  private tailgateBlinkSec = 0;
   private nightOverlay!: Phaser.GameObjects.Rectangle;
   private roadGfx!: Phaser.GameObjects.Graphics;
   private roadPhase = 0;
@@ -178,6 +180,7 @@ export class AutobahnScene extends Phaser.Scene {
     }
 
     this.playerLane = 1;
+    this.playerHalo = this.add.ellipse(w / 2, h * 0.72, 54, 78, 0x38bdf8, 0.22).setStrokeStyle(4, 0xf8fafc, 0.95).setDepth(9);
     this.playerCar = this.add.image(w / 2, h * 0.72, `car_${this.bridge.plan.vehicleId}`).setDepth(10);
     this.playerReflection = this.add
       .image(this.playerCar.x, this.playerCar.y + 8, this.playerCar.texture.key)
@@ -295,7 +298,43 @@ export class AutobahnScene extends Phaser.Scene {
 
   private tangent(y: number): number {
     const dx = this.curveAt(y - 28) - this.curveAt(y + 28);
-    return Math.atan2(dx, -56);
+    return Math.atan2(dx, 56);
+  }
+
+  private carOnLeftAhead(playerY: number): HighwayCar | null {
+    let best: HighwayCar | null = null;
+    let bestGap = 220;
+    for (const car of this.npcs) {
+      if (car.kind === 'truck') continue;
+      if (car.lanePos > 0.55) continue;
+      if (car.lanePos > this.playerLane + 0.35) continue;
+      const gap = playerY - car.sprite.y;
+      if (gap < 24 || gap > 210) continue;
+      if (gap < bestGap) {
+        bestGap = gap;
+        best = car;
+      }
+    }
+    return best;
+  }
+
+  private fireTailgate(run: RunState, lead: HighwayCar | null): void {
+    const bump = this.bridge.level.passengers.hasWife ? 18 : 6;
+    run.stress = Phaser.Math.Clamp(run.stress + bump, 0, 100);
+    run.peakStress = Math.max(run.peakStress, run.stress);
+    this.tailgateBlinkSec = 2.8;
+    if (lead && lead.kind !== 'truck') lead.yieldRight = true;
+    if (!lead || Math.random() >= 0.14) return;
+    const legs = getActiveRouteLegs(this.bridge.level, run.plan);
+    const legSpec = legs[run.currentLegIndex] || legs[0];
+    const edge = getEdgeById(legSpec.edgeId);
+    const city = getCityById(legSpec.reverse ? edge.fromCityId : edge.toCityId);
+    const country = city.country || 'DE';
+    const amountEur = country === 'FR' ? 135 : country === 'DE' ? 100 : 90;
+    run.tailgateCase = { country, amountEur };
+    this.bridge.paused = true;
+    SoundFX.alert();
+    this.bridge.onDynamicEventTrigger('evt_tailgate');
   }
 
   private drawRoad(w: number, h: number, work: boolean): void {
@@ -512,6 +551,13 @@ export class AutobahnScene extends Phaser.Scene {
     run.currentSpeedKmh = this.playerSpeedKmh;
     run.speedCapKmh = capValue;
     run.speedCapLabel = capLabel;
+    this.tailgateBlinkSec = Math.max(0, this.tailgateBlinkSec - dtSec);
+    const leftLead = this.carOnLeftAhead(playerY);
+    run.tailgateReady = setSpeed - this.playerSpeedKmh > 10 && !!leftLead;
+    if (run.tailgatePulse) {
+      run.tailgatePulse = false;
+      this.fireTailgate(run, leftLead);
+    }
 
     const scrollBoost = this.bridge.timeScale >= 15 ? 1.35 : this.bridge.timeScale >= 5 ? 1.15 : 1;
     const scrollPxPerSec = (Math.max(40, this.playerSpeedKmh) / 120) * 280 * scrollBoost;
@@ -593,18 +639,21 @@ export class AutobahnScene extends Phaser.Scene {
     const playerTargetX = this.laneCenter(this.playerLane, playerY, rightOpen);
     this.playerCar.x = Phaser.Math.Linear(this.playerCar.x, playerTargetX, 0.14);
     this.playerCar.y = playerY;
-    const playerRot = this.tangent(playerY);
+    const laneYaw = Phaser.Math.Clamp((playerTargetX - this.playerCar.x) * 0.012, -0.2, 0.2);
+    const playerRot = this.tangent(playerY) + (this.tailgateBlinkSec > 0 ? -0.16 : laneYaw);
     this.playerCar.setRotation(playerRot);
+    this.playerHalo?.setPosition(this.playerCar.x, playerY).setRotation(playerRot);
     const blinkSide = playerTargetX - this.playerCar.x;
-    const blinkOn = Math.abs(blinkSide) > 8 && Math.sin(time * 0.02) > 0;
-    this.placeBlink(this.playerBlinkL, this.playerCar.x, playerY, playerRot, -1, blinkOn && blinkSide < 0);
-    this.placeBlink(this.playerBlinkR, this.playerCar.x, playerY, playerRot, 1, blinkOn && blinkSide > 0);
+    const blinkOn = (Math.abs(blinkSide) > 8 || this.tailgateBlinkSec > 0) && Math.sin(time * 0.02) > 0;
+    this.placeBlink(this.playerBlinkL, this.playerCar.x, playerY, playerRot, -1, blinkOn && (blinkSide < 0 || this.tailgateBlinkSec > 0));
+    this.placeBlink(this.playerBlinkR, this.playerCar.x, playerY, playerRot, 1, blinkOn && blinkSide > 0 && this.tailgateBlinkSec <= 0);
 
     const flash = Math.sin(time * 0.016) > 0;
     for (const car of this.npcs) {
       const y = car.sprite.y;
       const x = this.laneCenterF(car.lanePos, y, rightOpen);
-      const rot = this.tangent(y);
+      const laneYaw = Phaser.Math.Clamp((car.targetLane - car.lanePos) * 0.28, -0.2, 0.2);
+      const rot = this.tangent(y) + laneYaw;
       car.sprite.setPosition(x, y);
       car.sprite.setRotation(rot);
       const fx = Math.sin(rot);
@@ -757,9 +806,11 @@ export class AutobahnScene extends Phaser.Scene {
     run.socPct = Math.max(0, run.socPct - (kwhBurned / vehicle.batteryKwh) * 100);
     run.elapsedMinutes += simMinutes;
     run.bladderNeed = Math.min(100, run.bladderNeed + simMinutes * 0.35);
+    run.hungerNeed = Math.min(100, (run.hungerNeed || 0) + simMinutes * 0.12);
 
     const comfortDamping = 1 - (vehicle.comfortRating - 5) * 0.04;
     let stressDeltaPerMin = 0.02;
+    if (run.hungerNeed > 75) stressDeltaPerMin += 0.08;
     if (setSpeed > 145) stressDeltaPerMin += 0.14;
     if (weather === 'rain' || weather === 'snow') stressDeltaPerMin += 0.06;
     if (inWork) stressDeltaPerMin += 0.05;
@@ -791,7 +842,7 @@ export class AutobahnScene extends Phaser.Scene {
       .filter((x): x is { stop: (typeof run.plan.plannedStops)[number]; station: ChargerStation; p: number } => x !== null)
       .sort((a, b) => a.p - b.p)[0];
 
-    if (pendingStop && legRatio >= pendingStop.p) {
+    if (pendingStop && legRatio >= pendingStop.p && !pendingStop.station.fairStay) {
       this.bridge.paused = true;
       SoundFX.click();
       this.bridge.onTriggerChargerSegment(pendingStop.station);

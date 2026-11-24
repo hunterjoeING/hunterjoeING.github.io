@@ -22,6 +22,8 @@ export interface HighwayCar {
   pullTimer: number;
   burstTimer: number;
   braking: boolean;
+  /** Asked to move right as soon as the lane is clear. */
+  yieldRight?: boolean;
 }
 
 export function rosterForRisk(risk: number, mobile: boolean): HighwayKind[] {
@@ -132,6 +134,13 @@ export function stepHighwayTraffic(
   for (const car of cars) {
     car.cooldown = Math.max(0, car.cooldown - dt);
     car.pullTimer -= dt;
+    if (car.yieldRight && car.kind !== 'truck') {
+      const right = Math.min(maxLane, Math.floor(car.lanePos + 0.15) + 1);
+      if (right > car.targetLane) requestChange(cars, car, right, maxLane, false, playerY, playerLane);
+      if (car.pendingLane === null && car.targetLane >= right && Math.abs(car.lanePos - right) < 0.35) {
+        car.yieldRight = false;
+      }
+    }
     if (!rightLaneOpen && car.targetLane > 1 && car.pendingLane === null && Math.abs(car.lanePos - car.targetLane) < 0.08) {
       requestChange(cars, car, 1, maxLane, false, playerY, playerLane);
     }

@@ -7,7 +7,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     category: 'accident',
     icon: '🚑',
     description:
-      'Auf dem Standstreifen der A2 hat ein Kleinwagen eine Panne/Kollision mit Warnblinker, noch kein Rettungswagen vor Ort. Du kannst anhalten, absichern und Erste Hilfe leisten.',
+      'Auf dem Standstreifen der A2 hat ein Kleinwagen eine Panne/Kollision mit Warnblinker, noch kein Rettungswagen vor Ort. Du kannst anhalten, absichern und Hilfe anbieten.',
     choices: [
       {
         id: 'help_stop',
@@ -30,6 +30,24 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         stressDelta: 1,
         decisionPoints: 8,
         resultText: 'Du meldest den genauen Autobahnkilometer sofort an die Leitstelle.'
+      },
+      {
+        id: 'help_film',
+        label: 'Mit dem Handy filmen und live auf YouTube streamen',
+        hint: '+500 € · +5 Min · −10 Stress · 30 % Risiko einer Anzeige (−1000 €, +45 Min, +50 Stress)',
+        timeDeltaMin: 5,
+        socDeltaPct: 0,
+        costDeltaEur: -500,
+        stressDelta: -10,
+        decisionPoints: -8,
+        resultText: 'Der Stream läuft. 500 € kommen in den ersten Minuten rein, das Gefühl bleibt schal.',
+        fineRisk: {
+          probability: 0.3,
+          amountEur: 1000,
+          label: 'Anzeige',
+          timeDeltaMin: 45,
+          stressDelta: 50
+        }
       }
     ]
   },
@@ -534,6 +552,28 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         resultText: 'Kein Strand. Frau und Kinder sind enttäuscht, der Zeitplan bleibt straff.'
       }
     ]
+  },
+
+  evt_tailgate: {
+    id: 'evt_tailgate',
+    title: 'Lichthupe und zu dicht',
+    category: 'police',
+    icon: '🚨',
+    description: 'Zu dicht aufgefahren, links geblinkt und die Lichthupe gegeben. Eine Kontrolle hat das gesehen.',
+    choices: [
+      {
+        id: 'tailgate_pay',
+        label: 'Bußgeld zahlen und Abstand halten',
+        hint: 'Betrag und Zeit stehen im Hinweis',
+        timeDeltaMin: 8,
+        socDeltaPct: 0,
+        costDeltaEur: 0,
+        fineDeltaEur: 100,
+        stressDelta: 10,
+        decisionPoints: -4,
+        resultText: 'Abstand zu gering. Das Bußgeld ist fällig.'
+      }
+    ]
   }
 };
 
@@ -657,6 +697,25 @@ export function buildSpeedTrapEvent(ctx: { country: string; signKmh: number; act
         decisionPoints: -8,
         fineRisk: { probability: 0.65, amountEur: fine.amountEur, label: fine.label },
         resultText: french ? 'Du lässt das Tempo stehen…' : 'Du hältst das Tempo…'
+      }
+    ]
+  };
+}
+
+export function buildTailgateEvent(country: string, amountEur: number): GameEventDef {
+  const where =
+    country === 'FR' ? 'Frankreich (Abstand / Nötigung)' : country === 'DE' ? 'Deutschland (Abstandsverstoß)' : 'Benelux';
+  const base = GAME_EVENTS.evt_tailgate;
+  const choice = base.choices[0];
+  return {
+    ...base,
+    description: `Zu dicht aufgefahren, links geblinkt und die Lichthupe gegeben. Kontrolle in ${where}.`,
+    choices: [
+      {
+        ...choice,
+        hint: `+${amountEur} € · +8 Min · +10 Stress`,
+        fineDeltaEur: amountEur,
+        resultText: `Kontrolle (${where}): ${amountEur} € wegen zu geringem Abstand.`
       }
     ]
   };

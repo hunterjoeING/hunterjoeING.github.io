@@ -64,7 +64,9 @@ const NET_COLORS: Record<string, number> = {
   ac_village: 0x14b8a6,
   fastned: 0xf5c400,
   totalenergies: 0xe10600,
-  ac_dorfladen: 0xd97706
+  ac_dorfladen: 0xd97706,
+  atlante: 0x0f766e,
+  vianeo: 0x0284c7
 };
 
 const NET_SHORT: Record<string, string> = {
@@ -76,7 +78,9 @@ const NET_SHORT: Record<string, string> = {
   ac_village: 'AC Dorf',
   fastned: 'Fastned',
   totalenergies: 'TotalEnergies',
-  ac_dorfladen: 'AC-Dorfladen'
+  ac_dorfladen: 'AC-Dorfladen',
+  atlante: 'Atlante',
+  vianeo: 'Vianeo'
 };
 
 export class EuropeMapScene extends Phaser.Scene {
@@ -427,7 +431,8 @@ export class EuropeMapScene extends Phaser.Scene {
 
   private drawSoftRouteBand(
     g: Phaser.GameObjects.Graphics,
-    rawPts: Array<{ x: number; y: number }>
+    rawPts: Array<{ x: number; y: number }>,
+    tint?: number
   ): void {
     const pts: Array<{ x: number; y: number }> = [];
     for (const p of rawPts) {
@@ -476,7 +481,14 @@ export class EuropeMapScene extends Phaser.Scene {
     );
     const capSteps = 6;
 
-    const layers = getMapThemePalette(this.currentIsLight).socBandLayers;
+    const layers = tint == null
+      ? getMapThemePalette(this.currentIsLight).socBandLayers
+      : [
+          { hw: 18, color: tint, alpha: 0.1 },
+          { hw: 12, color: tint, alpha: 0.18 },
+          { hw: 7, color: tint, alpha: 0.28 },
+          { hw: 3.4, color: tint, alpha: 0.45 }
+        ];
 
     layers.forEach(layer => {
       const poly: Phaser.Math.Vector2[] = [];
@@ -760,16 +772,22 @@ export class EuropeMapScene extends Phaser.Scene {
     const activeEdgeIds = new Set(activeLegs.map(l => l.edgeId));
     const selectedLegIdx = Math.max(0, Math.min(activeLegs.length - 1, this.bridge.selectedLegIndex || 0));
 
-    // 0. Light-blue 20% -> 0% SoC band only along the active stage
-    const socBands = computeRouteSocBandSegments(
-      this.bridge.level,
-      this.bridge.plan,
-      20,
-      0,
-      selectedLegIdx
-    );
-    socBands.forEach(band => {
-      this.drawSoftRouteBand(rg, band.points);
+    // Coloured forecast ring along the active stage: 25–15 green, 15–10 yellow, 10–5 orange, 5–0 red.
+    const socPalette = [
+      { hi: 25, lo: 15, color: 0x22c55e },
+      { hi: 15, lo: 10, color: 0xeab308 },
+      { hi: 10, lo: 5, color: 0xf97316 },
+      { hi: 5, lo: 0, color: 0xef4444 }
+    ];
+    socPalette.forEach(band => {
+      const slices = computeRouteSocBandSegments(
+        this.bridge.level,
+        this.bridge.plan,
+        band.hi + 1.2,
+        Math.max(0, band.lo - 1.2),
+        selectedLegIdx
+      );
+      slices.forEach(slice => this.drawSoftRouteBand(rg, slice.points, band.color));
     });
 
     // 1. Draw corridors that are neither the chosen Hinweg nor the chosen Rückweg

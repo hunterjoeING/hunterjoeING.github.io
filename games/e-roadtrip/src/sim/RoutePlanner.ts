@@ -278,7 +278,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
   let totalElevGain = 0;
   let totalElevLoss = 0;
   let trafficWeightedSum = 0;
-  let dwellMinutes = level.id === 'level_1_aachen_hannover' ? 28 : 0;
+  let dwellMinutes = 0;
 
   let firstStopName = `Ziel ${getCityById(level.destinationCityId).name}`;
   let firstStopArrivalSocPct: number | null = null;
@@ -334,6 +334,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     const startSoc = soc;
     let cursorProgress = 0;
     let legChargeMin = 0;
+    let legFairMin = 0;
     const stopSummaries: LegForecast['stopSummaries'] = [];
 
     for (const item of stopsOnLeg) {
@@ -353,18 +354,28 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
         warnings.push(`Liegenbleiber vor „${item.station.name}“ auf Etappe ${i + 1}!`);
       }
 
-      const target = Math.min(100, Math.max(arriveSoc + 2, item.stop.targetSocPct));
-      const est = estimateChargeSession(
-        vehicle,
-        item.station,
-        Math.max(1, arriveSoc),
-        target,
-        plan.subscriptionIds
-      );
-      legChargeMin += est.durationMinutes;
-      totalChargeMin += est.durationMinutes;
-      totalChargeCost += est.costEur;
-      soc = target;
+      const target = Math.min(100, Math.max(arriveSoc, item.stop.targetSocPct));
+      let chargeMinutes = 0;
+      let chargeCost = 0;
+      if (target > arriveSoc + 0.4) {
+        const est = estimateChargeSession(
+          vehicle,
+          item.station,
+          Math.max(0, arriveSoc),
+          target,
+          plan.subscriptionIds
+        );
+        chargeMinutes = est.durationMinutes;
+        chargeCost = est.costEur;
+        if (item.station.fairStay) {
+          legFairMin = Math.max(legFairMin, est.durationMinutes);
+        } else {
+          legChargeMin += est.durationMinutes;
+          totalChargeMin += est.durationMinutes;
+        }
+        totalChargeCost += est.costEur;
+        soc = target;
+      }
       cursorProgress = item.progress;
 
       stopSummaries.push({
@@ -372,8 +383,8 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
         arriveSoc: Math.round(arriveSoc),
         departSoc: Math.round(soc),
         targetSocPct: item.stop.targetSocPct,
-        minutes: est.durationMinutes,
-        costEur: est.costEur
+        minutes: chargeMinutes,
+        costEur: chargeCost
       });
     }
 
@@ -390,6 +401,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       firstStopArrivalSocPct = Math.round(soc);
       firstStopName = toCity.name;
     }
+    if (spec.citySegmentAtEnd === 'hannover_messe') dwellMinutes += Math.max(240, legFairMin);
     if (spec.overnightAtEnd) dwellMinutes += 480;
     if (spec.destinationAtEnd) dwellMinutes += 18;
 

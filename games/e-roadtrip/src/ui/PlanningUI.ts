@@ -51,7 +51,9 @@ const NET_LABEL: Record<string, string> = {
   ac_village: 'AC Dorf',
   fastned: 'Fastned',
   totalenergies: 'TotalEnergies',
-  ac_dorfladen: 'AC-Dorfladen'
+  ac_dorfladen: 'AC-Dorfladen',
+  atlante: 'Atlante',
+  vianeo: 'ENGIE Vianeo'
 };
 
 const NET_HEX: Record<ChargerNetwork, string> = {
@@ -63,7 +65,9 @@ const NET_HEX: Record<ChargerNetwork, string> = {
   ac_village: '#14b8a6',
   fastned: '#f5c400',
   totalenergies: '#e10600',
-  ac_dorfladen: '#d97706'
+  ac_dorfladen: '#d97706',
+  atlante: '#0f766e',
+  vianeo: '#0284c7'
 };
 
 const BASE_FILTER_NETWORKS: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
@@ -72,7 +76,20 @@ function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
   const edgeIds = new Set(level.routeOptions.flatMap(route => route.legs.map(leg => leg.edgeId)));
   const present = new Set(CHARGERS.filter(station => edgeIds.has(station.edgeId)).map(station => station.network));
   const extras = (['fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).filter(net => present.has(net));
+  if (level.id === 'level_2_family_summer') {
+    const french: ChargerNetwork[] = ['tesla', 'electra', 'ionity', 'atlante', 'vianeo'];
+    return [...french, ...extras];
+  }
   return [...BASE_FILTER_NETWORKS, ...extras];
+}
+
+function subscriptionsForLevel(level: LevelConfig): typeof SUBSCRIPTIONS {
+  const french = level.id === 'level_2_family_summer';
+  return SUBSCRIPTIONS.filter(sub => {
+    if (french && (sub.provider === 'enbw' || sub.provider === 'ewego')) return false;
+    if (!french && (sub.provider === 'atlante' || sub.provider === 'vianeo')) return false;
+    return true;
+  });
 }
 
 function renderChargingCurveSvg(v: VehicleSpec): string {
@@ -180,7 +197,7 @@ export class PlanningUI {
           <button type="button" class="er-mini-btn" id="btn-zoom-out" title="Herauszoomen">➖ Zoom-</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-route">🎯 Route</button>
           <button type="button" class="er-mini-btn" id="btn-zoom-europe">🌍 Europa</button>
-          <span class="map-hint">Hover/Tipp öffnet einen Kasten · Anbieterfilter pinnt Kacheln der Etappe · Band: 20–0 % SoC</span>
+          <span class="map-hint">Hover/Tipp öffnet einen Kasten · Anbieterfilter pinnt Kacheln der Etappe · Ring: 25–0 % in Grün, Gelb, Orange, Rot</span>
         </div>
       </div>
 
@@ -210,7 +227,7 @@ export class PlanningUI {
 
       <div class="plan-tab-body">
         ${this.activeTab === 'car' ? this.renderVehiclesTab(plan, save) : ''}
-        ${this.activeTab === 'subs' ? this.renderSubsTab(plan, selectedVehicle) : ''}
+        ${this.activeTab === 'subs' ? this.renderSubsTab(level, plan, selectedVehicle) : ''}
         ${this.activeTab === 'route' ? this.renderRouteTab(level, plan, forecast, clampedLegIdx) : ''}
       </div>
 
@@ -259,7 +276,10 @@ export class PlanningUI {
       </div>
       <div class="mfb-legend">
         <span>Reichweite:</span>
-        <span class="lg-dot b">20–0 % SoC der aktiven Etappe</span>
+        <span class="lg-dot g">25–15</span>
+        <span class="lg-dot y">15–10</span>
+        <span class="lg-dot o">10–5</span>
+        <span class="lg-dot r">5–0 %</span>
       </div>
     `;
 
@@ -389,7 +409,13 @@ export class PlanningUI {
                 <div class="vc-stats">
                   <span>⚡ ${v.baseConsumption100} kWh/100</span>
                   <span>🪝 ${v.towingCapacityKg > 0 ? v.towingCapacityKg + ' kg' : 'Kein Haken'}</span>
-                  ${v.isTesla ? '<span class="tesla-tag">Supercharger inkl.</span>' : ''}
+                  ${
+                    v.superchargerFree
+                      ? '<span class="tesla-tag free">Supercharger gratis!</span>'
+                      : v.isTesla
+                        ? '<span class="tesla-tag abo">Supercharger Abo inkl.</span>'
+                        : ''
+                  }
                 </div>
                 ${renderChargingCurveSvg(v)}
               </div>
@@ -401,10 +427,10 @@ export class PlanningUI {
     `;
   }
 
-  private renderSubsTab(plan: TripPlan, car: VehicleSpec): string {
+  private renderSubsTab(level: LevelConfig, plan: TripPlan, car: VehicleSpec): string {
     return `
       <div class="subs-list">
-        ${SUBSCRIPTIONS.map(sub => {
+        ${subscriptionsForLevel(level).map(sub => {
           const isTeslaAuto = sub.id === 'tesla_suc' && !!car.isTesla;
           const isAdhocLocked = sub.id === 'adhoc';
           const checked = isAdhocLocked || isTeslaAuto || plan.subscriptionIds.includes(sub.id);
@@ -532,8 +558,8 @@ export class PlanningUI {
                             <div class="psp-info">
                               <span>⚡ <b>${ss.station.name}</b> · Ankunft <strong class="${ss.arriveSoc <= 8 ? 'text-danger' : ''}">${ss.arriveSoc}%</strong> → Abfahrt <strong>${ss.departSoc}%</strong> (~${ss.minutes} Min · ${ss.costEur.toFixed(2)} €)</span>
                               <label class="psp-soc-ctl">
-                                Ladeziel <strong data-soc-readout="${ss.station.id}-${lf.legIndex}">${ss.targetSocPct}%</strong>
-                                <input type="range" class="stop-target-slider" data-chg-id="${ss.station.id}" data-leg-idx="${lf.legIndex}" min="50" max="100" step="1" value="${ss.targetSocPct}" />
+                                Ladeziel <strong data-soc-readout="${ss.station.id}-${lf.legIndex}">${Math.min(100, Math.max(Math.ceil(ss.arriveSoc), ss.targetSocPct))}%</strong>
+                                <input type="range" class="stop-target-slider" data-chg-id="${ss.station.id}" data-leg-idx="${lf.legIndex}" min="${Math.min(99, Math.max(1, Math.ceil(ss.arriveSoc)))}" max="100" step="1" value="${Math.min(100, Math.max(Math.ceil(ss.arriveSoc), ss.targetSocPct))}" />
                               </label>
                             </div>
                             <button type="button" class="stop-rm-btn" data-rm-stop="${ss.station.id}" data-rm-leg="${lf.legIndex}" title="Stopp entfernen">✕</button>

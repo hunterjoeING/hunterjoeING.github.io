@@ -536,7 +536,8 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
   g.fillRect(0, 44, worldW, 4);
   g.fillRect(0, 176, worldW, 4);
 
-  fillAsphalt({ x: 230, y: 160, w: 110, h: apron.y - 80 });
+  const spurX = variant === 1 ? apron.x + apron.w - 280 : variant === 2 ? apron.x + 80 : 230;
+  fillAsphalt({ x: spurX, y: 160, w: 110, h: apron.y - 80 });
   fillAsphalt(apron, 0x0f172a);
   g.fillStyle(0x334155, 1);
   g.fillRect(apron.x + 8, apron.y + 8, apron.w - 16, 10);
@@ -604,6 +605,17 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     g.lineBetween(bx, by, bx + 46, by);
     scene.add.image(bx + 23, by + 8, 'wheel_stop').setDepth(4);
     scene.add.image(bx + 23, by + 4, `charger_${station.network}`).setScale(1.12).setDepth(5);
+    buildings.push({ x: bx + 12, y: by - 8, w: 22, h: 24 });
+    const occupied = i !== targetIndex && hashString(`${station.id}:stall:${i}`) % 3 === 0;
+    if (occupied) {
+      const parked = ['npc_sedan_blue', 'npc_compact_green', 'npc_van_white', 'npc_fast_red', 'npc_fast_black'];
+      scene.add
+        .image(bx + 23, by + 40, parked[i % parked.length])
+        .setScale(0.78)
+        .setRotation(Math.PI)
+        .setDepth(5);
+      buildings.push({ x: bx + 4, y: by + 16, w: 38, h: 48 });
+    }
     if (i === targetIndex) {
       targetZone = new Phaser.Geom.Rectangle(bx, by, 46, 68);
       pillar = { x: bx + 23, y: by + 4 };

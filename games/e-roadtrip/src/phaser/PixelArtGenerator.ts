@@ -255,7 +255,9 @@ function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void
     ac_village: { body: '#334155', accent: '#4ade80' },
     fastned: { body: '#111827', accent: '#f5c400' },
     totalenergies: { body: '#1e3a8a', accent: '#e10600' },
-    ac_dorfladen: { body: '#78350f', accent: '#fbbf24' }
+    ac_dorfladen: { body: '#78350f', accent: '#fbbf24' },
+    atlante: { body: '#0f766e', accent: '#5eead4' },
+    vianeo: { body: '#0c4a6e', accent: '#38bdf8' }
   };
 
   const c = colors[net];
@@ -289,7 +291,9 @@ function drawNetworkLogoTexture(scene: Phaser.Scene, net: ChargerNetwork): void 
     ac_village: '#0f766e',
     fastned: '#f5c400',
     totalenergies: '#e10600',
-    ac_dorfladen: '#d97706'
+    ac_dorfladen: '#d97706',
+    atlante: '#0f766e',
+    vianeo: '#0284c7'
   };
 
   ctx.fillStyle = '#0f172a';
@@ -908,7 +912,7 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   drawPedestrianTexture(scene, 'ped_adult_1', '#0284c7', false);
   drawPedestrianTexture(scene, 'ped_child', '#facc15', true);
 
-  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village', 'fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).forEach(net => {
+  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village', 'fastned', 'totalenergies', 'ac_dorfladen', 'atlante', 'vianeo'] as ChargerNetwork[]).forEach(net => {
     drawChargerStallTexture(scene, net);
     drawNetworkLogoTexture(scene, net);
   });

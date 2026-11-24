@@ -37,6 +37,8 @@ export function isProviderSubscribed(
   if (network === 'electra') return subscriptionIds.includes('electra_plus');
   if (network === 'ionity') return subscriptionIds.includes('ionity_passport');
   if (network === 'ac_village') return subscriptionIds.includes('ac_rural_pass');
+  if (network === 'atlante') return subscriptionIds.includes('atlante_go');
+  if (network === 'vianeo') return subscriptionIds.includes('vianeo_pass');
   return false;
 }
 

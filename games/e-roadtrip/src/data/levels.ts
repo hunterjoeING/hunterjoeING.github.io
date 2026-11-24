@@ -20,7 +20,7 @@ export const LEVELS: LevelConfig[] = [
     startBudgetEur: 26000,
     rewardBaseEur: 6500,
     departureTimeHour: 7.0,
-    targetArrivalMinutes: 585,
+    targetArrivalMinutes: 797,
     startCityId: 'aachen',
     destinationCityId: 'aachen',
     defaultRouteId: 'l1_route_a_ruhr',
@@ -157,7 +157,7 @@ export const LEVELS: LevelConfig[] = [
     subtitle: 'Ehefrau, 2 Kinder & Hund · Aachen ↔ Montpellier',
     badge: 'Spielbar · Vollversion',
     playable: true,
-    regionLabel: 'Aachen ↔ Montpellier (3 Korridore)',
+    regionLabel: 'Aachen ↔ Montpellier (4 Korridore)',
     startBudgetEur: 32000,
     rewardBaseEur: 8000,
     departureTimeHour: 5.5,
@@ -190,6 +190,32 @@ export const LEVELS: LevelConfig[] = [
         defaultPlannedStops: [
           { chargerId: 'chg_nancy_tesla', legIndex: 1, targetSocPct: 80 },
           { chargerId: 'chg_orange_fastned', legIndex: 3, targetSocPct: 70 }
+        ]
+      },
+      {
+        id: 'l2_route_mid_reims',
+        name: 'Route Mitte · Reims & Nevers (A4 → A77 → A71)',
+        shortLabel: 'Reims–Nevers',
+        highwaySummary: 'Reims → Nevers → Clermont-Ferrand → Millau → Montpellier',
+        description:
+          'Zwischen Luxemburg und Paris. Über Reims und Nevers auf die A71, ab Clermont-Ferrand dieselbe A75 wie die Paris-Route. Übernachtung in Clermont-Ferrand. Tempolimit 130, bei Regen 110. Maut etwa 90 € je Richtung.',
+        elevationProfile: 'Hügelig',
+        trafficRisk: 'Niedrig',
+        chargingDensity: 'Ausgewogen',
+        colorHex: 0x14b8a6,
+        legs: [
+          { edgeId: 'edge_aachen_reims', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
+          { edgeId: 'edge_reims_nevers', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_nevers_clermont', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
+          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
+          { edgeId: 'edge_clermont_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
+          { edgeId: 'edge_nevers_clermont', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
+          { edgeId: 'edge_reims_nevers', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
+          { edgeId: 'edge_aachen_reims', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
+        ],
+        defaultPlannedStops: [
+          { chargerId: 'chg_troyes_vianeo', legIndex: 1, targetSocPct: 75 },
+          { chargerId: 'chg_millau_electra', legIndex: 3, targetSocPct: 70 }
         ]
       },
       {
@@ -266,7 +292,8 @@ export const LEVELS: LevelConfig[] = [
     scoringWeights: { time: 0.20, cost: 0.20, stress: 0.35, efficiency: 0.15, decisions: 0.10 },
     specialRulesSummary: [
       'Starke Stress-Gewichtung (35 %) durch Kinder, Hund & Ehefrau',
-      '3 lange Korridore: Luxemburg/Lyon, Paris/Clermont-Ferrand oder Autoroute du Soleil',
+      'Korridore: Luxemburg/Lyon, Mitte über Reims und Nevers (ab Clermont mit der Paris-Route), Paris/Clermont-Ferrand, Autoroute du Soleil',
+      'In Frankreich: Atlante und ENGIE Vianeo statt EnBW und EWE Go',
       'Frankreich: 130 km/h, bei Regen 110. Maut auf den Autoroutes',
       'Blitzer nach dem gefahrenen Tempo gegen das Schild. In Frankreich: Radar automatique',
       'Eine Übernachtung: gutes Hotel mit AC-Laden, Budgethotel oder im Auto an der Raststätte',

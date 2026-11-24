@@ -31,6 +31,10 @@ export interface VehicleSpec {
   primaryColor: number;
   accentColor: number;
   isTesla?: boolean;
+  /** Model S lifetime free Supercharging. Other Teslas keep the included subscription tariff. */
+  superchargerFree?: boolean;
+  /** 800 V packs are power-limited on 400 V Tesla stalls. */
+  packVoltage?: 400 | 800;
   winterTiresIncluded?: boolean;
   unlockLevel: number;
   tagline: string;
@@ -45,7 +49,9 @@ export type ChargerNetwork =
   | 'ac_village'
   | 'fastned'
   | 'totalenergies'
-  | 'ac_dorfladen';
+  | 'ac_dorfladen'
+  | 'atlante'
+  | 'vianeo';
 
 export interface SubscriptionSpec {
   id: string;
@@ -148,6 +154,8 @@ export interface ChargerStation {
   hasRestroom?: boolean;
   trailerFriendly?: boolean; // Drive-through bays without uncoupling
   isAcOnly?: boolean;
+  /** Charged during a fixed city stay (Hannover Messe), not as a motorway pull-in. */
+  fairStay?: boolean;
 }
 
 export interface ScoringWeights {
@@ -182,7 +190,13 @@ export interface EventChoice {
   /** Optional: change target speed on current leg */
   adjustSpeedKmh?: number;
   /** Optional: trigger fine risk roll */
-  fineRisk?: { probability: number; amountEur: number; label: string };
+  fineRisk?: {
+    probability: number;
+    amountEur: number;
+    label: string;
+    timeDeltaMin?: number;
+    stressDelta?: number;
+  };
   /** Flat lodging bill (hotel). Separate from charging and fines. */
   lodgingDeltaEur?: number;
   /** Cash loss that is not a kWh charge (theft, deductible). */
@@ -351,6 +365,7 @@ export interface RunState {
   stress: number; // 0..100
   peakStress: number;
   bladderNeed: number; // 0..100
+  hungerNeed: number; // 0..100
   energyUsedKwh: number;
   distanceDrivenKm: number;
   chargingCostEur: number;
@@ -380,6 +395,12 @@ export interface RunState {
   speedCapKmh?: number;
   /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */
   speedCapLabel?: string;
+  /** Transient: a car sits in the left lane just ahead and the cruise is not reached. */
+  tailgateReady?: boolean;
+  /** Transient: HUD asked the motorway scene to flash and pressure the car ahead. */
+  tailgatePulse?: boolean;
+  /** Set when the tailgate roll produces a fine, consumed by the event modal. */
+  tailgateCase?: { country: string; amountEur: number };
   isNight: boolean;
   /** Used to avoid repeating same-leg charger stop */
   activeCityChargerId?: string;

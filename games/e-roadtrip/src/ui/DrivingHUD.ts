@@ -12,12 +12,84 @@ import {
 } from '../phaser/GameBridge';
 import { SoundFX } from '../phaser/SoundFX';
 
+function pointAlong(pts: Array<{ x: number; y: number }>, t: number): { x: number; y: number } {
+  if (pts.length === 0) return { x: 0, y: 0 };
+  const lengths: number[] = [];
+  let total = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const len = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
+    lengths.push(len);
+    total += len;
+  }
+  let remain = Math.max(0, Math.min(1, t)) * total;
+  for (let i = 1; i < pts.length; i++) {
+    const len = lengths[i - 1];
+    if (remain <= len || i === pts.length - 1) {
+      const u = len > 0 ? Math.max(0, Math.min(1, remain / len)) : 0;
+      return {
+        x: pts[i - 1].x + (pts[i].x - pts[i - 1].x) * u,
+        y: pts[i - 1].y + (pts[i].y - pts[i - 1].y) * u
+      };
+    }
+    remain -= len;
+  }
+  return pts[pts.length - 1];
+}
+
+function renderStageComputer(
+  fromName: string,
+  toName: string,
+  highway: string,
+  progress: number,
+  waypoints: Array<{ x: number; y: number }>,
+  from: { mapX: number; mapY: number },
+  to: { mapX: number; mapY: number },
+  reverse: boolean,
+  hh: string,
+  mm: string,
+  weather: string
+): string {
+  const raw = [{ x: from.mapX, y: from.mapY }, ...waypoints, { x: to.mapX, y: to.mapY }];
+  const pts = reverse ? raw.slice().reverse() : raw;
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  pts.forEach(p => {
+    minX = Math.min(minX, p.x);
+    minY = Math.min(minY, p.y);
+    maxX = Math.max(maxX, p.x);
+    maxY = Math.max(maxY, p.y);
+  });
+  const w = 210;
+  const h = 96;
+  const pad = 10;
+  const sx = Math.max(1, maxX - minX);
+  const sy = Math.max(1, maxY - minY);
+  const scale = Math.min((w - pad * 2) / sx, (h - pad * 2) / sy);
+  const ox = (w - sx * scale) / 2;
+  const oy = (h - sy * scale) / 2;
+  const mapped = pts.map(p => ({ x: ox + (p.x - minX) * scale, y: oy + (p.y - minY) * scale }));
+  const d = mapped.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
+  const dot = pointAlong(mapped, progress);
+  return `
+    <div class="trip-kicker">Bordcomputer · ${hh}:${mm} · ${weather}</div>
+    <strong>${fromName} → ${toName}</strong>
+    <div class="trip-road">${highway} · ${Math.round(progress * 100)} %</div>
+    <svg viewBox="0 0 ${w} ${h}" class="stage-map" aria-hidden="true">
+      <path d="${d}" fill="none" stroke="rgba(148,163,184,0.85)" stroke-width="4" stroke-linecap="round" />
+      <circle cx="${dot.x.toFixed(1)}" cy="${dot.y.toFixed(1)}" r="5.5" fill="#38bdf8" stroke="#f8fafc" stroke-width="2" />
+    </svg>
+  `;
+}
+
 export interface DrivingHUDCallbacks {
   onSpeedChange: (speedKmh: number) => void;
   onTimeScaleChange: (scale: number) => void;
   onForceEarlierStop: () => void;
   onUnplannedToiletStop: () => void;
   onToggleMapPreview: () => void;
+  onTailgate: () => void;
 }
 
 export class DrivingHUD {
@@ -76,6 +148,9 @@ export class DrivingHUD {
     } else if (btn.id === 'btn-peek-map') {
       SoundFX.click();
       this.cb.onToggleMapPreview();
+    } else if (btn.id === 'btn-tailgate') {
+      SoundFX.click();
+      this.cb.onTailgate();
     }
   }
 
@@ -191,8 +266,10 @@ export class DrivingHUD {
           <button type="button" class="dhud-action" id="btn-force-stop">⚡ Früher laden</button>
           <button type="button" class="dhud-action" id="btn-wc-stop">🚻 WC-Stopp (+8m)</button>
           <button type="button" class="dhud-action" id="btn-peek-map">🗺️ Karte</button>
+          <button type="button" class="dhud-action tailgate-btn hidden" id="btn-tailgate">Dicht auffahren, Blinker links und Lichthupe</button>
         </div>
-      </div>`
+      </div>
+      <aside id="er-trip-computer" class="er-trip-computer" aria-label="Bordcomputer"></aside>`
           : `
       <div class="dhud-row">
         <div class="dhud-pill soc" data-pill="soc">🔋 <span data-field="soc"></span></div>
@@ -253,6 +330,12 @@ export class DrivingHUD {
     this.hudEl.querySelectorAll<HTMLButtonElement>('[data-scale]').forEach(btn => {
       btn.classList.toggle('active', timeScale === Number(btn.dataset.scale));
     });
+    this.hudEl.querySelector('#btn-tailgate')?.classList.toggle('hidden', !run.tailgateReady);
+    const computer = this.hudEl.querySelector('#er-trip-computer');
+    if (computer && this.mode === 'autobahn') {
+      const progress = Math.max(0, Math.min(1, run.legProgressKm / Math.max(1, edge.distanceKm)));
+      computer.innerHTML = renderStageComputer(from.name, to.name, edge.highwayName, progress, edge.waypoints, from, to, !!leg.reverse, hh, mm, weatherBadge);
+    }
   }
 
   private setText(field: string, text: string): void {
