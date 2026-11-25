@@ -17,6 +17,29 @@ body {
   flex: 0 0 auto;
 }
 
+.er-version-label {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-surface);
+  color: var(--text-main);
+  font: 600 12px var(--font-ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.er-version-label:hover,
+.er-version-label:focus-visible {
+  border-color: var(--accent-gold);
+}
+
+@media (max-width: 560px) {
+  .arcade-topbar .topbar-left { flex-basis: 100%; }
+  .er-title-prefix, .er-title-subtitle { display: none; }
+}
+
 .er-shell {
   flex: 0 0 auto;
   display: flex;

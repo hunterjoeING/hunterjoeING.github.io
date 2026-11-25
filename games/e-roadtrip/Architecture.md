@@ -35,9 +35,9 @@ A push to `main` that changes `games/e-roadtrip/src/**`, `package.json`, `packag
 
 ```text
 games/e-roadtrip/
-├── index.html                  # Host page, topbar, #phaser-stage, #er-planner-panel, HUD & modal containers
+├── index.html                  # Host page, topbar version button, Phaser stage, planner, HUD & modal containers
 ├── styles.css                  # Light/Dark theme styles, responsive workspace, HUD, modals, touch controls
-├── package.json                # Typecheck, build, and test scripts
+├── package.json                # Game version and typecheck, build, and test scripts
 ├── package-lock.json           # Locked npm dependency tree
 ├── esbuild.mjs                 # IIFE build with Phaser supplied by the host page
 ├── tsconfig.json               # TypeScript strict config
@@ -52,7 +52,8 @@ games/e-roadtrip/
 │   ├── simulation.test.mjs     # Route forecasts, reachable stops, pricing, and scoring
 │   ├── traffic.test.mjs        # Traffic, collisions, and the route SoC band
 │   ├── controller.test.mjs     # Messe, vehicle/tariff selection, tolls, and repeat stops
-│   └── interactions.test.mjs   # Parking, highway ticks, hotel, charging, and HUD
+│   ├── interactions.test.mjs   # Parking, highway ticks, hotel, charging, and HUD
+│   └── releases.test.mjs       # Public catalog, release order, spoiler checks, and asset versions
 └── src/
     ├── main.ts                 # ERoadtripController (central orchestrator, DOM ↔ Phaser lifecycle)
     ├── types.ts                # All TypeScript domain models & state interfaces
@@ -174,7 +175,14 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
   - `shared/arcade.js` (`GAME_CATALOG`, `detectGameId()`, `FEEDBACK_TARGETS`)
   - `shared/burger-menu.js` (`GAMES` list)
   - `cloudflare-worker/worker.js` (`GAMES_META`)
+  - `shared/releases.js` (public version and release history)
 - **Theming:** Reads `document.documentElement.getAttribute('data-theme')` (`light` / `dark`) via `bridge.isLightTheme()` and `styles.css`.
+
+### Versioning & release notes
+
+The topbar button reads the current `eroadtrip` version from [the release catalog](../../shared/releases.js) and opens the shared changelog dialog through `shared/update-banner.js`. The public notes also appear on [the changelog page](../../changelogs.html#app=eroadtrip). §11 records developer changes and their Git references.
+
+Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps. Keep the package version, both root lockfile version fields, and the host page's `?v=` values for `styles.css`, `dist/e-roadtrip.js`, `releases.js`, and `update-banner.js` equal to the latest E-Roadtrip release. Every release entry names its `author` (Joe or Michi) and, when verifiable, the `model` in the user-facing form (e.g. „Michi · Sol 6.2“); agent tool names are never shown. On PRs to `main`, [the versioning workflow](../../.github/workflows/check-versioning.yml) checks version bumps and runs the game checks.
 
 ---
 
@@ -287,9 +295,10 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-24** · Fork PR #6 (`1a9c044`) · Package F added the four-colour active-stage ring, Reims/Nevers corridor, free Model S charging, and improvements to breaks, highway HUD, and Autohöfe.
 - **2026-11-24** · Fork PR #6 (`c0d4e9d`) · Made Aachen–Köln unrestricted in both directions on routes that use it.
 - **2026-11-24** · Fork PR #6 (`aad25fe`) · Removed Autoroute du Soleil and its chargers, replaced Fastned and TotalEnergies stations, and added the Messe visit, vehicle AC limits, and Autohof visitor traffic.
-- **2026-11-25** · Upstream PR #3 (`826fb33`) · Merged the feature branches from fork PRs #2–#6. [Upstream PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3)
+- **2026-11-25** · Upstream PR #3 (`826fb33`) (v0.3.0) · Merged the feature branches from fork PRs #2–#6. [Upstream PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3)
 - **2026-11-25** · `codex/review-fixes` (`022a699`) · Reviews 1–4 and 16 fixed stage-local charge stops, Messe AC forecasts, tolls, reachable replanning, and Tesla tariff selection.
 - **2026-11-25** · `codex/review-fixes` (`2b01e5a`) · Reviews 5–8 fixed collision footprints, city and Autohof routing, highway gaps, and the post-charge range band.
 - **2026-11-25** · `codex/review-fixes` (`f7abd66`) · Reviews 9–15 and 17–20 refined parking and braking, headlight flash, section limits and tick boundaries, hotel and charging accounting, and the mobile HUD.
 - **2026-11-25** · `codex/review-fixes` (`006a1bf`) · Corrected the architecture and Handoff, documented tuning and test workflows, added Node regressions to CI, and shortened the feedback title.
-- **2026-11-25** · Upstream PR #4 (`29fd861`) · Merged `codex/review-fixes` (reviews 1–20, docs, tests) into `main`; live on GitHub Pages.
+- **2026-11-25** · Upstream PR #4 (`29fd861`) (v0.4.0) · Merged `codex/review-fixes` (reviews 1–20, docs, tests) into `main`; live on GitHub Pages.
+- **2026-11-25** · `codex/arcade-versioning` · `fc3ad9b` · Added the topbar changelog button, recorded releases through v0.4.0, and added version and cache-busting checks. Follow-up commits add author and model per release, the menu link to the changelog page, and the no-tool-name test.

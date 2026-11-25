@@ -49,7 +49,8 @@ shared/
    - `index.html` $\rightarrow$ `QUIZZES` array (unless it is a hidden/partner quiz)
    - `shared/arcade.js` $\rightarrow$ `GAME_CATALOG`, `detectGameId()`, `FEEDBACK_TARGETS`
    - `cloudflare-worker/worker.js` $\rightarrow$ `GAMES_META`
-4. Run `node --check` on all modified JS files before committing.
+4. Add public quizzes to `shared/releases.js` using the hub card ID and an initial `v0.1.0` release. Skip hidden or admin quizzes. Follow [AGENTS.md rule 10](../AGENTS.md) for spoiler-free release notes.
+5. Run `node --check` on all modified JS files before committing.
 
 ---
 

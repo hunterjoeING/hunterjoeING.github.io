@@ -56,7 +56,7 @@
           "numberOfItems": 31,
           "itemListElement": [
             { "@type": "ListItem", "position": 1, "name": "Canyon Podracer 3D", "url": "https://hunterjoeing.github.io/games/podracer/" },
-            { "@type": "ListItem", "position": 2, "name": "E-Roadtrip", "url": "https://hunterjoeing.github.io/games/e-roadtrip/" },
+            { "@type": "ListItem", "position": 2, "name": "e-Roadtrip: Pixel Europe", "url": "https://hunterjoeing.github.io/games/e-roadtrip/" },
             { "@type": "ListItem", "position": 2, "name": "3D Spider Solitär (4 Farben)", "url": "https://hunterjoeing.github.io/games/solitaire3d/" },
             { "@type": "ListItem", "position": 3, "name": "Minesweeper 3D – Tech Demo KI-Agent", "url": "https://hunterjoeing.github.io/games/minesweeper/" },
             { "@type": "ListItem", "position": 3, "name": "Minesweeper 3D Prompt Version", "url": "https://hunterjoeing.github.io/games/minesweeper-3d-prompt-test/" },
@@ -903,12 +903,16 @@
         <a href="./impressum.html">Impressum</a>
         <span aria-hidden="true">·</span>
         <a href="./datenschutz.html">Datenschutz</a>
+        <span aria-hidden="true">·</span>
+        <a href="./changelogs.html">Changelogs</a>
       </nav>
     </footer>
   </div>
 
   <script src="./shared/arcade.js"></script>
   <script src="./shared/hidden-admin.js"></script>
+  <script src="./shared/releases.js?v=0.2.0"></script>
+  <script src="./shared/update-banner.js?v=0.2.0"></script>
   <script>
     (function () {
       const GAMES = [
@@ -937,11 +941,11 @@
           id: 'eroadtrip',
           href: './games/e-roadtrip/index.html',
           cat: 'strategy',
-          catLabel: 'Planung & GTA-2 Fahrt',
+          catLabel: 'Strategie - Action',
           featured: true,
           cta: 'Roadtrip starten →',
-          title: 'E-Roadtrip: Pixel Europe',
-          desc: 'Plane E-Auto-Langstrecken (Level 1: Aachen ↔ Hannover Messe) mit realen Ladekurven, Lade-Abos, Zeitraffer-Autobahn, GTA-2 Stadtverkehr, Stress-Dialogen &amp; Fahrzeug-Upgrade.',
+          title: 'e-Roadtrip: Pixel Europe',
+          desc: 'Plane E-Auto-Langstrecken (Level 1: Aachen ↔ Hannover Messe) mit realen Ladekurven, Lade-Abos, Zeitraffer-Autobahn, Top-Down-Stadtverkehr, Stress-Dialogen &amp; Fahrzeug-Upgrade.',
           accent: '#2563eb',
           glow: 'rgba(37, 99, 235, 0.30)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -1782,6 +1786,7 @@
             <div class="card-badges">
               <span class="badge-cat">${g.catLabel}</span>
               ${g.badge ? `<span class="badge-new">${g.badge}</span>` : ''}
+              ${window.ArcadeUpdates?.badgeHtml(g.id) || ''}
             </div>
           </div>
           <h3 class="card-title">${g.title}</h3>
@@ -1795,6 +1800,14 @@
           </div>
         `;
         a.addEventListener('click', (e) => {
+          const updateBtn = e.target.closest('.arcade-update-badge');
+          if (updateBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            ArcadeAudio.click();
+            ArcadeUpdates.openChangelog(g.id, updateBtn);
+            return;
+          }
           const fbBtn = e.target.closest('.card-fb-trigger');
           if (fbBtn) {
             e.preventDefault();

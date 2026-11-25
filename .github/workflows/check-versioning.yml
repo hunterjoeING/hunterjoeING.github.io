@@ -1,0 +1,41 @@
+name: Check Arcade versioning
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  check-versioning:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: games/e-roadtrip/package-lock.json
+
+      - name: Check release bumps and shared JavaScript
+        run: |
+          node --check shared/releases.js
+          node --check shared/update-banner.js
+          node scripts/check-release-bump.mjs
+
+      - name: Typecheck, test, and build E-Roadtrip
+        working-directory: games/e-roadtrip
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build
+          node --check dist/e-roadtrip.js
