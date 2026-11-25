@@ -53,7 +53,9 @@ games/e-roadtrip/
 │   ├── traffic.test.mjs        # Traffic, collisions, and the route SoC band
 │   ├── controller.test.mjs     # Messe, vehicle/tariff selection, tolls, and repeat stops
 │   ├── interactions.test.mjs   # Parking, highway ticks, hotel, charging, and HUD
-│   └── releases.test.mjs       # Public catalog, release order, spoiler checks, and asset versions
+│   ├── releases.test.mjs       # Public catalog, release order, spoiler checks, and asset versions
+│   ├── worker-validation.test.mjs # E-Roadtrip score plausibility and rejected POST requests
+│   └── arcade-scores.test.mjs  # Score submission events, callbacks, and dry-run behavior
 └── src/
     ├── main.ts                 # ERoadtripController (central orchestrator, DOM ↔ Phaser lifecycle)
     ├── types.ts                # All TypeScript domain models & state interfaces
@@ -177,6 +179,7 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
   - `cloudflare-worker/worker.js` (`GAMES_META`)
   - `shared/releases.js` (public version and release history)
 - **Theming:** Reads `document.documentElement.getAttribute('data-theme')` (`light` / `dark`) via `bridge.isLightTheme()` and `styles.css`.
+- **Global leaderboards.** Part (a) adds Worker validation and shared tabs ordered Level 1 (`eroadtrip_l1`), Level 2 (`eroadtrip_l2`), then Gesamt (`eroadtrip`). Game-client submissions are planned for part (b). [Worker score contract](../../cloudflare-worker/README.md#e-roadtrip-bestenlisten)
 
 ### Versioning & release notes
 
@@ -302,3 +305,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-25** · `codex/review-fixes` (`006a1bf`) · Corrected the architecture and Handoff, documented tuning and test workflows, added Node regressions to CI, and shortened the feedback title.
 - **2026-11-25** · Upstream PR #4 (`29fd861`) (v0.4.0) · Merged `codex/review-fixes` (reviews 1–20, docs, tests) into `main`; live on GitHub Pages.
 - **2026-11-25** · `codex/arcade-versioning` · `fc3ad9b` · Added the topbar changelog button, recorded releases through v0.4.0, and added version and cache-busting checks.
+- **2026-11-25** · `codex/arcade-leaderboard-groups` · SHA: (folgt) · Added Worker and Arcade support for E-Roadtrip level leaderboards (part a).

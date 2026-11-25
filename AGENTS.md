@@ -124,5 +124,6 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 ## 4. Cloudflare Worker, D1 & Telegram-Automatisierung (via GitHub Actions)
 
 * **Automatisches Worker-Deployment:** Jeder Push auf `main`, der `cloudflare-worker/**` ändert, triggert automatisch [`.github/workflows/deploy-worker.yml`](.github/workflows/deploy-worker.yml). Dieser Workflow löst die D1-Datenbank-ID auf, deployed `cloudflare-worker/worker.js` via `wrangler` auf `hunterjoe-scores.hunterjoeing.workers.dev`, synchronisiert die Worker-Secrets (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `ADMIN_SECRET`, `AGENT_API_KEY`), registriert automatisch den Telegram-Webhook (`/api/telegram/webhook`) und prüft `/api/health`.
+* **E-Roadtrip-Bestenlisten** · Der Worker prüft `eroadtrip` und `eroadtrip_*` serverseitig. Zielzeiten in `cloudflare-worker/worker.js` mit `games/e-roadtrip/src/data/levels.ts` synchron halten.
 * **D1-Operationen über `gh workflow run`:** Da `CLOUDFLARE_API_TOKEN` als GitHub Secret hinterlegt ist, können D1-Aktionen direkt aus dem Repository heraus per GitHub Actions (`gh workflow run ...`) ausgeführt werden (z. B. `promote-admin.yml`, `delete-reply.yml`). Nutze diese Workflows oder ergänze bei Bedarf einen `workflow_dispatch`-Workflow, statt den Nutzer nach manuellen Cloudflare-Klicks zu fragen.
 

@@ -3,10 +3,16 @@
 Dieser Ordner enthält das vollständige Backend für `https://hunterjoe-scores.hunterjoeing.workers.dev`.
 
 ## Enthaltene Features
-1. **Globale Highscores (`/api/summary`, `/api/scores`)** – 100 % abwärtskompatibel zu allen 21 Spielen & Quizzen.
+1. **Globale Highscores (`/api/summary`, `/api/scores`)** für Spiele und Quizze.
 2. **Benutzer-Login & Registrierung (`/api/auth/register`, `/api/auth/login`, `/api/auth/me`)** – Passwort-Hashing über WebCrypto `PBKDF2-SHA256` (60.000 Iterationen) und signierte `HMAC-SHA256` JWTs.
 3. **Cloudflare Turnstile CAPTCHA-Schutz** – Serverseitige Überprüfung gegen `https://challenges.cloudflare.com/turnstile/v0/siteverify` bei Registrierung, Login und beim Absenden neuer Wünsche.
 4. **Verbesserungswünsche & KI-Agent-Antworten (`/api/feedback`, `/api/feedback/:id/reply`, `/api/feedback/:id/vote`)** – Kommentare allgemein (`general`) oder pro Spiel/Quiz (`minesweeper`, `zombie`, `quiz_ai` usw.) inkl. Status (`open`, `in_progress`, `fixed`) und markierten Antworten von **🤖 KI-Agent (Antigravity)** bzw. **👑 Admin (Johannes)**.
+
+## E-Roadtrip-Bestenlisten
+
+`GET /api/summary` und `GET /api/scores?game=<id>` liefern die Gesamtbestenliste `eroadtrip` sowie `eroadtrip_l1` (Aachen ↔ Hannover Messe) und `eroadtrip_l2` (Familien-Sommerurlaub).
+
+Für `POST /api/scores` braucht die Gesamtbestenliste die Level-Board-ID in `meta.board` oder `meta.levelBoard`. Der Worker prüft Punkte als ganze Zahl von 100 bis 1000, numerische `meta.minutes` von 0,5 bis 20 Zielzeiten und numerische `meta.costEur` ab 0. Ein mitgesendetes `meta.levelId` muss zum Board passen. Ungültige Ergebnisse liefern HTTP 400 mit `{ ok: false, error }`. Zielzeiten und Level-IDs stehen in `EROADTRIP_LEVEL_TARGETS` und müssen mit `games/e-roadtrip/src/data/levels.ts` übereinstimmen. Beim Einreichen desselben Ergebnisses für mehrere Boards braucht jedes Board eine eigene `runId`.
 
 ## Schnell-Update in deinem Cloudflare-Account
 

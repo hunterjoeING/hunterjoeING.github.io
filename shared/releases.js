@@ -43,6 +43,15 @@ const arcadeReleases = {
   },
   releases: [
     {
+      app: "arcade", version: "0.3.0", date: "2026-11-25", type: "feature", title: "Bestenlisten pro Level",
+      highlights: [
+        "Eigene Bestenlisten für die ersten beiden E-Roadtrip-Level",
+        "Tabs für Level 1, Level 2 und die Gesamtbestenliste",
+        "Level-Bestwerte auf der E-Roadtrip-Spielkarte",
+        "Plausibilitätsprüfung für eingereichte E-Roadtrip-Ergebnisse",
+      ],
+    },
+    {
       app: "arcade", version: "0.2.0", date: "2026-11-25", type: "feature", title: "Versionen und Changelogs",
       highlights: [
         "Versionsnummern und Changelogs für jedes öffentliche Spiel und Quiz",
