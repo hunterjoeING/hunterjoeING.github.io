@@ -2,6 +2,21 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
+- **Branch / Push:** `codex/review-fixes` zum Fork `mic4rd/hunterjoeING.github.io` gepusht (Stand `85af6f7`). Über [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) gemergt (`29fd861`). [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html)
+- **Commits:** `022a699` (Review 1–4, 16: Ladeplanung, Messe-AC, Maut, Umplanung und Tesla-Tarife), `2b01e5a` (5–8: Kollisionen, Stadt-/Autohof- und Autobahnverkehr, Reichweitenband), `f7abd66` (9–15, 17–20: Rückwärtsparken, Bremsvorrang, Lichthupe, Abschnittslimits, Fahrtgrenzen, Hotel-AC, Lade- und Pausenabrechnung, mobiles HUD und Temporegler).
+- **Geprüft in den drei Review-Runden:** Typecheck, Build, Bundle-Syntax und lokale Regressionen mit Phaser- und DOM-Stubs, darunter beide Messe-Belegungsfälle, Eschweiler auf der Rückfahrt, Maut nach dem Hotel-Dialog und das Reichweitenband nach Herford. Der Chrome-Start war in der Sandbox blockiert.
+- **Offen:** Michael prüft Browser und Touch bei 320 und 390 px. Optionale Gameplay-Ideen bleiben offen. Die Fork-PRs #2–#6 sind am 25.11. geschlossen (Inhalt über Upstream-PR #3).
+- **Doku-Session auf demselben Branch:**
+  - Commit `006a1bf` (vom Orchestrator committet und zum Fork gepusht). Weiterhin kein Upstream-PR.
+  - Handoff und Architektur korrigiert, ältere Sessions archiviert, AGENTS.md präzisiert, Regressionstests und CI-Schritt ergänzt sowie den Feedback-Titel auf „E-Roadtrip“ geändert.
+  - Geprüft mit `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (20/20) und `node --check shared/arcade.js`.
+  - Regel 7: Upstream hat keine offenen Issues, PRs #1–#3 sind gemergt. Fork-PRs #2–#6 sind noch offen, ihre Branch-Spitzen liegen laut lokaler Git-Historie in Upstream-PR #3. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues, 0 offene PRs; Fork hat Issues deaktiviert, Fork-PRs #2–#6 offen.
+
+### 2026-11-25 – Upstream-Merge E-Roadtrip
+- Um 10:23 Uhr (Berlin) wurde [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) von `mic4rd:codex/review-fixes` nach `main` gemergt (Merge-Commit `29fd861`, Review-Fixes 1–20, Doku, Tests). Rebuild-Workflow inkl. `npm test` (20/20) und Pages-Deploy erfolgreich; Bundle unverändert, live auf https://hunterjoeing.github.io/games/e-roadtrip/ geprüft. Diese Handoff-Aktualisierung kommt per Folge-PR (Branch `docs/handoff-pr4`).
+- Um 00:09 Uhr (Berlin) wurde [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) von `cursor/eroadtrip-touch-level2-5df0` nach `main` gemergt (Merge-Commit `826fb33`). Der Merge enthält die Arbeit aus den Fork-PRs #2–#6.
+
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
 - **Erledigt:**
   - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.

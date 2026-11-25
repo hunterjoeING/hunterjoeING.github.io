@@ -18,9 +18,9 @@
 | E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` ([PR #5](https://github.com/mic4rd/hunterjoeING.github.io/pull/5) im Fork, gegen `main`) | ✅ über [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) (`826fb33`) gemergt; Fork-PR am 25.11. geschlossen |
 | E-Roadtrip: Touch, Level 2, Messe, AC, Autohof | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` ([PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6) im Fork, gegen Paket D) | ✅ über [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) (`826fb33`) gemergt; Fork-PR am 25.11. geschlossen |
 | E-Roadtrip Review-Fixes 1–20 + Doku | Michael / Codex CLI (gpt-6.2-sol high) | `codex/review-fixes` (`022a699`, `2b01e5a`, `f7abd66`, `006a1bf`, `85af6f7`) · [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) (Merge `29fd861`) | ✅ Gemerged und live auf https://hunterjoeing.github.io/games/e-roadtrip/ |
-| Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` (`fc3ad9b`) · Fork · kein PR | 🟡 Test auf Fork-Pages |
-| Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` (`0c85929`) · Fork · kein PR | 🟡 Teil (a) geprüft; Worker lokal mit `wrangler dev` getestet, nicht deployt |
-| E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` (`888b032`, `4d6303b`) auf `codex/arcade-leaderboard-groups` · Fork · kein PR | 🟡 Test auf Fork-Pages (Testmodus, kein POST) |
+| Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
+| Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
+| E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
 
 **Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.3.0
 
@@ -29,6 +29,13 @@
 ## 2. Session-Log (Neueste Einträge oben)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
+
+### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf) – Go-live Versionierung und Level-Bestenlisten
+
+- **Branch / PR** · Drei Upstream-PRs aus dem Fork, jeweils mit Merge-Commit: [#6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) `codex/arcade-versioning` (Merge `f58b077`, 12:50 Uhr Berlin), [#7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) `codex/arcade-leaderboard-groups` (Merge `116a458`, 12:53 Uhr), [#8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) `codex/eroadtrip-highscores` (Merge `ca2c357`, 12:56 Uhr). Vor #7 und #8 wurde jeweils `upstream/main` per Merge-Commit eingeholt (`ddedcb3`, `26e2e56`). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-25`).
+- **Erledigt** · Live: Arcade v0.3.0, e-Roadtrip v0.5.0. Workflows grün: `check-versioning` (#6, #7, #8), „Rebuild e-Roadtrip bundle“ (`f58b077`, `ca2c357`, kein Bot-Commit nötig), „Deploy Cloudflare Worker“ (`116a458`), Pages-Deploy für alle drei Merges.
+- **Geprüft** · Worker: `/api/health` ok, DB verbunden; `GET /api/scores` für `eroadtrip`, `eroadtrip_l1`, `eroadtrip_l2` liefert die neuen Titel „e-Roadtrip: Pixel Europe · Level …“ (0 Einträge); `podracer` weiter 24 Einträge; `/api/summary` unverändert (25 Records, 267 Plays). Kein POST an die Live-API. Live-Seite (curl + Headless-Chrome): Karte „e-Roadtrip: Pixel Europe“, Tag „Strategie - Action“, Pille „Neues Update v0.5“, Changelogs-Link in Footer und Menü, `/changelogs.html` mit „Person · Modell“, Spielseite zeigt v0.5.0, Live-Bundle identisch mit `main` (SHA-256), kein „GTA“ in nutzersichtbaren Texten. Lokal vor #8: typecheck, build, `node --check`, `npm test` 42/42.
+- **Offen** · Handy-Test durch Michael; erster echter Score nach dem Go-live steht noch aus. Fork-Pages bleiben auf `codex/eroadtrip-highscores`. Issue-/PR-Check (25.11., gh): Upstream nach dem Merge keine offenen PRs außer diesem Doku-PR.
 
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high) – E-Roadtrip Level-Bestenlisten (Teil b)
 
@@ -60,18 +67,3 @@
 - **Erledigt** · Öffentlicher Release-Katalog für Arcade, 10 Spiele und 28 Quizze, Update-Pille mit Gelesen-Status, Changelog-Dialog und filterbare Übersicht. E-Roadtrip zeigt v0.4.0 im Spiel. Regel 10 und PR-Workflow ergänzen die Versionsprüfung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (24/24), Syntax der JS-Dateien und Inline-Skripte, Sitemap und Workflow-YAML. Release-Bump auf `upstream/main` (Bootstrap) sowie mit Testdaten für fehlenden und vorhandenen Versionsanstieg, Dateiausnahmen und beide PR-Ausnahmen geprüft. Banner und Dialog mit DOM-Stubs geprüft.
 - **Offen** · Browser-/Touch-Test bei 320 und 390 px in beiden Themes. Chrome-Start in der Sandbox blockiert. Headless-Chrome-Test durch den Orchestrator (390/320 px, hell/dunkel: Pille, Dialog, Esc/Backdrop, blauer Punkt, Filter, E-Roadtrip-Versionsknopf) ohne JS-Fehler; echter Handy-Test durch Michael offen. Issue-/PR-Check vom Orchestrator nachgeholt: Upstream keine offenen Issues/PRs, Fork keine offenen PRs (Issues deaktiviert).
-
-### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
-- **Branch / Push:** `codex/review-fixes` zum Fork `mic4rd/hunterjoeING.github.io` gepusht (Stand `85af6f7`). Über [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) gemergt (`29fd861`). [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html)
-- **Commits:** `022a699` (Review 1–4, 16: Ladeplanung, Messe-AC, Maut, Umplanung und Tesla-Tarife), `2b01e5a` (5–8: Kollisionen, Stadt-/Autohof- und Autobahnverkehr, Reichweitenband), `f7abd66` (9–15, 17–20: Rückwärtsparken, Bremsvorrang, Lichthupe, Abschnittslimits, Fahrtgrenzen, Hotel-AC, Lade- und Pausenabrechnung, mobiles HUD und Temporegler).
-- **Geprüft in den drei Review-Runden:** Typecheck, Build, Bundle-Syntax und lokale Regressionen mit Phaser- und DOM-Stubs, darunter beide Messe-Belegungsfälle, Eschweiler auf der Rückfahrt, Maut nach dem Hotel-Dialog und das Reichweitenband nach Herford. Der Chrome-Start war in der Sandbox blockiert.
-- **Offen:** Michael prüft Browser und Touch bei 320 und 390 px. Optionale Gameplay-Ideen bleiben offen. Die Fork-PRs #2–#6 sind am 25.11. geschlossen (Inhalt über Upstream-PR #3).
-- **Doku-Session auf demselben Branch:**
-  - Commit `006a1bf` (vom Orchestrator committet und zum Fork gepusht). Weiterhin kein Upstream-PR.
-  - Handoff und Architektur korrigiert, ältere Sessions archiviert, AGENTS.md präzisiert, Regressionstests und CI-Schritt ergänzt sowie den Feedback-Titel auf „E-Roadtrip“ geändert.
-  - Geprüft mit `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (20/20) und `node --check shared/arcade.js`.
-  - Regel 7: Upstream hat keine offenen Issues, PRs #1–#3 sind gemergt. Fork-PRs #2–#6 sind noch offen, ihre Branch-Spitzen liegen laut lokaler Git-Historie in Upstream-PR #3. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues, 0 offene PRs; Fork hat Issues deaktiviert, Fork-PRs #2–#6 offen.
-
-### 2026-11-25 – Upstream-Merge E-Roadtrip
-- Um 10:23 Uhr (Berlin) wurde [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) von `mic4rd:codex/review-fixes` nach `main` gemergt (Merge-Commit `29fd861`, Review-Fixes 1–20, Doku, Tests). Rebuild-Workflow inkl. `npm test` (20/20) und Pages-Deploy erfolgreich; Bundle unverändert, live auf https://hunterjoeing.github.io/games/e-roadtrip/ geprüft. Diese Handoff-Aktualisierung kommt per Folge-PR (Branch `docs/handoff-pr4`).
-- Um 00:09 Uhr (Berlin) wurde [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) von `cursor/eroadtrip-touch-level2-5df0` nach `main` gemergt (Merge-Commit `826fb33`). Der Merge enthält die Arbeit aus den Fork-PRs #2–#6.
