@@ -32,7 +32,7 @@
 ### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf)
 - **Branch / PR** · `codex/arcade-versioning`, SHA `22d69b2`, gepusht in den Fork, kein PR. Danach per Merge-Commit in `codex/arcade-leaderboard-groups` und `codex/eroadtrip-highscores` übernommen.
 - **Erledigt** · Jeder Release-Eintrag hat `author` und optional `model` („Michi · Sol 6.2“, „Michi · Grok 4.7“, „Joe“), angezeigt auf `changelogs.html` und im Update-Dialog. Werkzeugnamen werden nie angezeigt (Regel 10 und Test). Die Arcade zeigt ausdrücklich nie ein Banner. Link „📝 Changelogs“ unten im Burger-Menü neben Impressum und Datenschutz; Changelogs-Seite hat den Link auch im eigenen Footer. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Joe-Einträge ohne Modell** · Weder Commits noch PR-Texte noch Trailer nennen ein Modell (auch `quiz_golf`, per Antigravity committet, ohne Modellangabe). Darum steht dort nur „Joe“.
+- **Joe-Einträge** · Laut Michi (25.11.) hat Joe bisher immer Hydrogen genutzt. Alle Joe-Einträge (auch `quiz_golf`) zeigen daher „Joe · Hydrogen“.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (25/25 auf `codex/arcade-versioning`), `node --check` auf `shared/*.js`; Headless-Chrome-Test von Changelog-Seite, Dialog und Burger-Menü. Issue-/PR-Check: Upstream und Fork ohne offene Issues/PRs.
 
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
