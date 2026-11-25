@@ -500,7 +500,7 @@
     },
     getPlayerName: () => cleanName(safeGet(NAME_KEY)) || 'Spieler',
     hasCustomPlayerName: () => !!cleanName(safeGet(NAME_KEY)),
-    setPlayerName: (name) => {
+    setPlayerName: (name, { dryRun = false, onSave } = {}) => {
       const cleaned = cleanName(name);
       try {
         if (cleaned) localStorage.setItem(NAME_KEY, cleaned);
@@ -508,9 +508,11 @@
       } catch (e) {}
       syncPlayerButtons();
       try { window.dispatchEvent(new CustomEvent('arcade:player-changed', { detail: cleaned || 'Spieler' })); } catch (e) {}
+      const nextName = cleaned || 'Spieler';
+      const notifySaved = () => { if (typeof onSave === 'function') onSave(nextName); };
 
       // Retrospective update if user just finished a round right before setting name
-      if (cleaned && _lastSubmission && (Date.now() - _lastSubmission.ts) < 120000) {
+      if (!dryRun && cleaned && _lastSubmission && (Date.now() - _lastSubmission.ts) < 120000) {
         const sub = _lastSubmission;
         fetch(`${API_BASE}/api/scores`, {
           method: 'POST',
@@ -532,11 +534,15 @@
               emitScoresUpdated();
             }
           })
+          .catch(() => {})
+          .finally(notifySaved)
           .catch(() => {});
+      } else {
+        notifySaved();
       }
-      return cleaned || 'Spieler';
+      return nextName;
     },
-    openPlayerNameModal: (onSave) => {
+    openPlayerNameModal: (onSave, { dryRun = false } = {}) => {
       removeModal();
       const current = cleanName(safeGet(NAME_KEY));
       const root = document.createElement('div');
@@ -564,9 +570,9 @@
       const inp = document.getElementById('arcade-name-field');
       const close = () => removeModal();
       const save = () => {
-        const next = window.ArcadeScores.setPlayerName(inp.value);
+        const name = inp.value;
         close();
-        if (typeof onSave === 'function') onSave(next);
+        window.ArcadeScores.setPlayerName(name, { dryRun, onSave });
       };
       document.getElementById('arcade-modal-close').addEventListener('click', close);
       document.getElementById('arcade-name-cancel').addEventListener('click', close);

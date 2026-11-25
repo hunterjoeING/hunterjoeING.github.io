@@ -109,6 +109,31 @@ export default function register(test) {
     assert.equal(fetchCalls, 0);
   });
 
+  test('name saves wait for a recent score update and can skip the POST in test mode', async () => {
+    const requests = [];
+    let finishRename;
+    const { scores } = loadScores(async (_url, init) => {
+      requests.push(JSON.parse(init.body));
+      if (requests.length === 2) await new Promise(resolve => { finishRename = resolve; });
+      return Response.json({ ok: true, rank: 1, entries: 1, plays: 1 });
+    });
+    await new Promise(resolve => scores.record('eroadtrip_l1', 812, '812 Punkte', false, {
+      runId: 'name-update', silent: true, onResult: resolve
+    }));
+    let savedName;
+    assert.equal(scores.setPlayerName('Neuer Name', { onSave: name => { savedName = name; } }), 'Neuer Name');
+    assert.equal(savedName, undefined);
+    assert.equal(requests[1].playerName, 'Neuer Name');
+    assert.equal(requests[1].runId, 'name-update');
+    finishRename();
+    await setImmediate();
+    assert.equal(savedName, 'Neuer Name');
+
+    scores.setPlayerName('Testname', { dryRun: true, onSave: name => { savedName = name; } });
+    assert.equal(savedName, 'Testname');
+    assert.equal(requests.length, 2);
+  });
+
   test('the hub lists public games and opens grouped E-Roadtrip tabs with independent selection', async () => {
     const requested = [];
     const { scores, window, document } = loadScores(async url => {
