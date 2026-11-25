@@ -156,7 +156,20 @@ export default function register(test) {
       }
       for (const text of [release.author, release.model, release.title, ...release.highlights].filter(Boolean)) {
         assert.ok(!toolPattern.test(text), `Werkzeugname darf nicht angezeigt werden: ${label}: ${text}`);
+        assert.ok(!/gta/i.test(text), `„GTA“ darf in Changelogs nicht vorkommen: ${label}: ${text}`);
       }
     }
+  });
+
+  test('e-Roadtrip uses its official name and no GTA wording in public catalog texts', () => {
+    assert.equal(apps.eroadtrip.title, 'e-Roadtrip: Pixel Europe');
+    for (const [id, app] of Object.entries(apps)) {
+      assert.ok(!/gta/i.test(app.title), `„GTA“ im App-Titel: ${id}`);
+    }
+    const hub = read('index.html');
+    const card = hub.match(/id: 'eroadtrip',[\s\S]*?desc: '[^']*'/)?.[0] || '';
+    assert.ok(card, 'e-Roadtrip-Karte im Hub fehlt');
+    assert.ok(card.includes("title: 'e-Roadtrip: Pixel Europe'"), 'Kartentitel muss „e-Roadtrip: Pixel Europe“ sein');
+    assert.ok(!/gta/i.test(card), '„GTA“ auf der e-Roadtrip-Karte');
   });
 }

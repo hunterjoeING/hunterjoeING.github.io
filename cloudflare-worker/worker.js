@@ -25,9 +25,9 @@ const CORS_HEADERS = {
 
 const GAMES_META = {
   podracer: { title: 'Canyon Podracer 3D', lowerIsBetter: false },
-  eroadtrip: { title: 'E-Roadtrip', lowerIsBetter: false },
-  eroadtrip_l1: { title: 'E-Roadtrip · Level 1: Aachen ↔ Hannover Messe', lowerIsBetter: false },
-  eroadtrip_l2: { title: 'E-Roadtrip · Level 2: Familien-Sommerurlaub', lowerIsBetter: false },
+  eroadtrip: { title: 'e-Roadtrip: Pixel Europe', lowerIsBetter: false },
+  eroadtrip_l1: { title: 'e-Roadtrip: Pixel Europe · Level 1: Aachen ↔ Hannover Messe', lowerIsBetter: false },
+  eroadtrip_l2: { title: 'e-Roadtrip: Pixel Europe · Level 2: Familien-Sommerurlaub', lowerIsBetter: false },
   minesweeper: { title: '3D Minesweeper', lowerIsBetter: true },
   minesweeper_3d_prompt_test: { title: 'Minesweeper 3d prompt Version', lowerIsBetter: true },
   roadster: { title: 'Roadster Lander', lowerIsBetter: false },

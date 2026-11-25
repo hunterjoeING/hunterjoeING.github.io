@@ -153,9 +153,9 @@
 
   const GAME_CATALOG = [
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️', lowerIsBetter: false },
-    { id: 'eroadtrip_l1', title: 'E-Roadtrip · Level 1', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 1' },
-    { id: 'eroadtrip_l2', title: 'E-Roadtrip · Level 2', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 2' },
-    { id: 'eroadtrip', title: 'E-Roadtrip', icon: '⚡', lowerIsBetter: false, group: 'eroadtrip', tabTitle: 'Gesamt' },
+    { id: 'eroadtrip_l1', title: 'e-Roadtrip: Pixel Europe · Level 1', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 1' },
+    { id: 'eroadtrip_l2', title: 'e-Roadtrip: Pixel Europe · Level 2', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 2' },
+    { id: 'eroadtrip', title: 'e-Roadtrip: Pixel Europe', icon: '⚡', lowerIsBetter: false, group: 'eroadtrip', tabTitle: 'Gesamt' },
     { id: 'minesweeper', title: '3D Minesweeper – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online)', icon: '💣', lowerIsBetter: true },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊', lowerIsBetter: true },
     { id: 'roadster', title: 'Roadster Lander', icon: '🚀', lowerIsBetter: false },
@@ -956,7 +956,7 @@
     { id: 'all', title: '✨ Alle Module & Allgemein', icon: '🌐' },
     { id: 'general', title: 'Allgemein / Ganze Website', icon: '🏠' },
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️' },
-    { id: 'eroadtrip', title: 'E-Roadtrip', icon: '⚡' },
+    { id: 'eroadtrip', title: 'e-Roadtrip: Pixel Europe', icon: '⚡' },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊' },
     { id: 'minesweeper', title: 'Minesweeper 3D – Tech Demo KI-Agent', icon: '💣' },
     { id: 'roadster', title: 'Hyper-Roadster Lander', icon: '🚀' },

@@ -3,7 +3,7 @@ const arcadeReleases = {
   apps: {
     arcade: { title: "HunterJoe Arcade", href: "./index.html", kind: "arcade" },
     podracer: { title: "Canyon Podracer 3D", href: "./games/podracer/index.html", kind: "game" },
-    eroadtrip: { title: "E-Roadtrip", href: "./games/e-roadtrip/index.html", kind: "game" },
+    eroadtrip: { title: "e-Roadtrip: Pixel Europe", href: "./games/e-roadtrip/index.html", kind: "game" },
     solitaire3d: { title: "3D Spider Solitär (4 Farben)", href: "./games/solitaire3d/index.html", kind: "game" },
     minesweeper_3d_prompt_test: { title: "Minesweeper 3d prompt Version", href: "./games/minesweeper-3d-prompt-test/index.html", kind: "game" },
     minesweeper: { title: "Minesweeper 3D – Tech Demo KI-Agent", href: "./games/minesweeper/index.html", kind: "game" },
@@ -46,10 +46,10 @@ const arcadeReleases = {
       app: "arcade", version: "0.3.0", date: "2026-11-25", type: "feature", title: "Bestenlisten pro Level",
       author: "Michi", model: "Sol 6.2",
       highlights: [
-        "Eigene Bestenlisten für die ersten beiden E-Roadtrip-Level",
+        "Eigene Bestenlisten für die ersten beiden e-Roadtrip-Level",
         "Tabs für Level 1, Level 2 und die Gesamtbestenliste",
-        "Level-Bestwerte auf der E-Roadtrip-Spielkarte",
-        "Plausibilitätsprüfung für eingereichte E-Roadtrip-Ergebnisse",
+        "Level-Bestwerte auf der e-Roadtrip-Spielkarte",
+        "Plausibilitätsprüfung für eingereichte e-Roadtrip-Ergebnisse",
       ],
     },
     {
@@ -123,7 +123,7 @@ const arcadeReleases = {
       highlights: [
         "Level 1 Aachen ↔ Hannover Messe",
         "Ladeplanung mit echten Ladekurven und Lade-Abos",
-        "Zeitraffer-Autobahn und GTA-2-Stadtfahrt",
+        "Zeitraffer-Autobahn und Top-Down-Stadtfahrt",
         "Fahrzeug-Upgrades",
       ],
     },
