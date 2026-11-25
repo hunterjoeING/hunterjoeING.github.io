@@ -185,7 +185,7 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
 
 The topbar button reads the current `eroadtrip` version from [the release catalog](../../shared/releases.js) and opens the shared changelog dialog through `shared/update-banner.js`. The public notes also appear on [the changelog page](../../changelogs.html#app=eroadtrip). §11 records developer changes and their Git references.
 
-Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps. Keep the package version, both root lockfile version fields, and the host page's `?v=` values for `styles.css`, `dist/e-roadtrip.js`, `releases.js`, and `update-banner.js` equal to the latest E-Roadtrip release. On PRs to `main`, [the versioning workflow](../../.github/workflows/check-versioning.yml) checks version bumps and runs the game checks.
+Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps. Keep the package version, both root lockfile version fields, and the host page's `?v=` values for `styles.css`, `dist/e-roadtrip.js`, `releases.js`, and `update-banner.js` equal to the latest E-Roadtrip release. Every release entry names its `author` (Joe or Michi) and, when verifiable, the `model` in the user-facing form (e.g. „Michi · Sol 6.2“); agent tool names are never shown. On PRs to `main`, [the versioning workflow](../../.github/workflows/check-versioning.yml) checks version bumps and runs the game checks.
 
 ---
 
@@ -304,5 +304,5 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-25** · `codex/review-fixes` (`f7abd66`) · Reviews 9–15 and 17–20 refined parking and braking, headlight flash, section limits and tick boundaries, hotel and charging accounting, and the mobile HUD.
 - **2026-11-25** · `codex/review-fixes` (`006a1bf`) · Corrected the architecture and Handoff, documented tuning and test workflows, added Node regressions to CI, and shortened the feedback title.
 - **2026-11-25** · Upstream PR #4 (`29fd861`) (v0.4.0) · Merged `codex/review-fixes` (reviews 1–20, docs, tests) into `main`; live on GitHub Pages.
-- **2026-11-25** · `codex/arcade-versioning` · `fc3ad9b` · Added the topbar changelog button, recorded releases through v0.4.0, and added version and cache-busting checks.
+- **2026-11-25** · `codex/arcade-versioning` · `fc3ad9b` · Added the topbar changelog button, recorded releases through v0.4.0, and added version and cache-busting checks. Follow-up commits add author and model per release, the menu link to the changelog page, and the no-tool-name test.
 - **2026-11-25** · `codex/arcade-leaderboard-groups` · `0c85929` · Added Worker and Arcade support for E-Roadtrip level leaderboards (part a).
