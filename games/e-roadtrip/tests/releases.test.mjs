@@ -142,4 +142,21 @@ export default function register(test) {
       }
     }
   });
+  test('every release names its author and optional model, never the agent tool', () => {
+    const people = new Set(['Joe', 'Michi']);
+    // Model names as the user knows them, e.g. "Sol 6.2", "Grok 4.7", "Neon", "Hydrogen".
+    const modelPattern = /^[A-Z][A-Za-z]*(?: \d+(?:\.\d+)*)?$/;
+    const toolPattern = /\b(?:codex|cursor|antigravity|copilot|windsurf|aider|claude code|cli)\b/i;
+    for (const release of releases) {
+      const label = `${release.app} v${release.version}`;
+      assert.ok(people.has(release.author), `Autor fehlt oder unbekannt (Joe/Michi): ${label}`);
+      if (release.model !== undefined) {
+        assert.ok(typeof release.model === 'string' && modelPattern.test(release.model),
+          `Modellname im Nutzerformat erwartet (z. B. "Sol 6.2"): ${label}`);
+      }
+      for (const text of [release.author, release.model, release.title, ...release.highlights].filter(Boolean)) {
+        assert.ok(!toolPattern.test(text), `Werkzeugname darf nicht angezeigt werden: ${label}: ${text}`);
+      }
+    }
+  });
 }

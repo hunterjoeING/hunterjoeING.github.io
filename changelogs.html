@@ -100,6 +100,8 @@
       <a href="./impressum.html">Impressum</a>
       <span aria-hidden="true">·</span>
       <a href="./datenschutz.html">Datenschutz</a>
+      <span aria-hidden="true">·</span>
+      <a href="./changelogs.html" aria-current="page">Changelogs</a>
     </footer>
   </main>
 
@@ -110,6 +112,7 @@
         <span class="release-version"></span>
         <span class="release-type"></span>
         <time></time>
+        <span class="release-author"></span>
       </div>
       <h3></h3>
       <div class="release-highlights"></div>
@@ -122,7 +125,7 @@
   <script>
     (function () {
       const { apps, releases } = ARCADE_RELEASES;
-      const { appHref, formatDate, highlightsHtml, markSeen } = ArcadeUpdates;
+      const { appHref, authorLabel, formatDate, highlightsHtml, markSeen } = ArcadeUpdates;
       const appSelect = document.getElementById('release-app');
       const fixes = document.getElementById('release-fixes');
       const list = document.getElementById('release-list');
@@ -152,6 +155,9 @@
           const date = fragment.querySelector('time');
           date.dateTime = entry.date;
           date.textContent = formatDate(entry.date);
+          const author = fragment.querySelector('.release-author');
+          author.textContent = authorLabel(entry);
+          author.hidden = !author.textContent;
           fragment.querySelector('h3').textContent = entry.title;
           fragment.querySelector('.release-highlights').innerHTML = highlightsHtml(entry);
           return fragment;
