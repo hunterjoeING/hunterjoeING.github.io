@@ -21,14 +21,22 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
+| 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity | `main` (`8c0fce8`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.0, Verbrennungsmotor v0.1.0) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.3.0
+**Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.4.0 · `wind_turbine` v0.1.0 · `combustion_engine` v0.1.0
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
+
+### 2026-11-25 – Joe / Antigravity – Zwei interaktive 3D-Explainer (Windkraftanlage & Verbrennungsmotor)
+
+- **Branch / PR** · `main`, Commit `8c0fce8` (+ Doku-Nachtrag), Push: ja, Ziel: Upstream `hunterjoeING/hunterjoeING.github.io`, kein PR. Live-URLs: https://hunterjoeing.github.io/games/wind-turbine/ und https://hunterjoeing.github.io/games/combustion-engine/.
+- **Erledigt** · Zwei eigenständige Three.js-3D-Explainer unter `games/wind-turbine/` (`v0.1.0`) und `games/combustion-engine/` (`v0.1.0`) umgesetzt und unter Games im Hub (`index.html`), im Burger-Menü (`shared/burger-menu.js`), in `shared/arcade.js` (`detectGameId`, `FEEDBACK_TARGETS`), in `sitemap.xml` sowie in `shared/releases.js` (`arcade` v0.4.0, beide Apps v0.1.0, Regel 10 geprüft) integriert. Beide Explainer bieten Außenansicht, `01 Cutaway`, `02 X-Ray`, `03 Exploded` mit je 12 3D-projizierten Labels + Bauteil-Inspektor, `04` Windgeschwindigkeits- bzw. Drehzahl-/Zeitlupen-Regler, `05` interaktive SVG-Leistungs- bzw. Prüfstandskurve und `06` geführte 6-Schritte-Tour sowie Dark-/Light-Mode und `Architecture.md`.
+- **Geprüft** · `node --check` auf alle geänderten/neuen JS-Dateien, `games/e-roadtrip/tests/releases.test.mjs` (6/6 bestanden), `node scripts/check-release-bump.mjs origin/main`, Headless-Chrome-WebGL-Verifikation (1280×800 und 390×844, Hell & Dunkel, Normal/Cutaway/X-Ray/Exploded/Tour, 0 Konsolen-/Seitenfehler, kein horizontales Scrollen). Issue-/PR-Check (25.11., `gh issue list` / `gh pr list`): 0 offene Issues, 0 offene PRs im Upstream.
+- **Offen** · Keine offenen Punkte.
 
 ### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf) – Go-live Versionierung und Level-Bestenlisten
 
@@ -61,9 +69,3 @@
 - **Nachtrag** · `setPlayerName(name, { dryRun, onSave })` / `openPlayerNameModal(onSave, { dryRun })`: `onSave` läuft erst nach dem Nachsende-POST des letzten Scores; `dryRun` unterdrückt diesen POST (Testmodus im Fork). Bestehende Aufrufer bleiben kompatibel. Teil der Arcade v0.3.0.
 - **Offen** · Spielanbindung in Teil (b) und Browserprüfung bei 320 px in beiden Themes (Chrome-Start in der Sandbox blockiert). Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs.
 - **Deployment** · Der Merge in Joes `main` deployt den Worker automatisch. Joe vor dem Merge informieren. In dieser Session gab es keinen Deploy und keine Anfrage an die Live-API.
-
-### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
-- **Branch / PR** · `codex/arcade-versioning` auf Basis von `upstream/main` (`039ed15`). Commits `fc3ad9b` + Doku-Nachtrag. Gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. [Fork-Test Übersicht](https://mic4rd.github.io/hunterjoeING.github.io/) · [Changelogs](https://mic4rd.github.io/hunterjoeING.github.io/changelogs.html)
-- **Erledigt** · Öffentlicher Release-Katalog für Arcade, 10 Spiele und 28 Quizze, Update-Pille mit Gelesen-Status, Changelog-Dialog und filterbare Übersicht. E-Roadtrip zeigt v0.4.0 im Spiel. Regel 10 und PR-Workflow ergänzen die Versionsprüfung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (24/24), Syntax der JS-Dateien und Inline-Skripte, Sitemap und Workflow-YAML. Release-Bump auf `upstream/main` (Bootstrap) sowie mit Testdaten für fehlenden und vorhandenen Versionsanstieg, Dateiausnahmen und beide PR-Ausnahmen geprüft. Banner und Dialog mit DOM-Stubs geprüft.
-- **Offen** · Browser-/Touch-Test bei 320 und 390 px in beiden Themes. Chrome-Start in der Sandbox blockiert. Headless-Chrome-Test durch den Orchestrator (390/320 px, hell/dunkel: Pille, Dialog, Esc/Backdrop, blauer Punkt, Filter, E-Roadtrip-Versionsknopf) ohne JS-Fehler; echter Handy-Test durch Michael offen. Issue-/PR-Check vom Orchestrator nachgeholt: Upstream keine offenen Issues/PRs, Fork keine offenen PRs (Issues deaktiviert).

@@ -36,4 +36,4 @@ Interaktiver Three.js-3D-Explainer einer 3,6-MW-Horizontalachsen-Windkraftanlage
 
 ## Changelog
 
-- **2026-11-25** (`main`) – Erstversion `v0.1.0`: Vollständiger 3D-Explainer einer 3,6-MW-Windkraftanlage mit Cutaway, X-Ray, Exploded View (12 Labels), Wind-Regler, interaktiver Leistungskurve und 6-Schritte-Tour.
+- **2026-11-25** (`main`, `8c0fce8`) – Erstversion `v0.1.0`: Vollständiger 3D-Explainer einer 3,6-MW-Windkraftanlage mit Cutaway, X-Ray, Exploded View (12 Labels), Wind-Regler, interaktiver Leistungskurve und 6-Schritte-Tour.
