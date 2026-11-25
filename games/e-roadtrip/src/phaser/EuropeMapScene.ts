@@ -18,6 +18,7 @@ import {
 import { ChargerStation } from '../types';
 import { getBestPriceForStation } from '../sim/EnergyModel';
 import {
+  evaluateTripPlan,
   getActiveRouteLegs,
   getActiveRouteOption,
   getMapChargerLegIndex,
@@ -686,7 +687,6 @@ export class EuropeMapScene extends Phaser.Scene {
         if (legIndex < 0) return;
         SoundFX.click();
         this.bridge.onMapSelectCharger(station, legIndex);
-        this.refreshDynamicState();
       });
       cardBg.on('pointerover', () => {
         this.cardCloseTimer?.remove(false);
@@ -763,7 +763,7 @@ export class EuropeMapScene extends Phaser.Scene {
     this.worldLayer.add(this.carMarker);
   }
 
-  public refreshDynamicState(): void {
+  public refreshDynamicState(forecast = evaluateTripPlan(this.bridge.level, this.bridge.plan)): void {
     if (!this.dynamicOverlay || !this.rangeOverlay) return;
     const g = this.dynamicOverlay;
     const rg = this.rangeOverlay;
@@ -783,16 +783,15 @@ export class EuropeMapScene extends Phaser.Scene {
       { hi: 10, lo: 5, color: 0xf97316 },
       { hi: 5, lo: 0, color: 0xef4444 }
     ];
-    socPalette.forEach(band => {
-      const slices = computeRouteSocBandSegments(
-        this.bridge.level,
-        this.bridge.plan,
-        band.hi + 1.2,
-        Math.max(0, band.lo - 1.2),
-        selectedLegIdx
-      );
-      slices.forEach(slice => this.drawSoftRouteBand(rg, slice.points, band.color));
-    });
+    const selectedLeg = activeLegs[selectedLegIdx];
+    const sections = forecast.legForecasts[selectedLegIdx]?.socSections;
+    if (selectedLeg && sections) {
+      const edge = getEdgeById(selectedLeg.edgeId);
+      for (const band of socPalette) {
+        const slices = computeRouteSocBandSegments(edge, !!selectedLeg.reverse, sections, band.hi, band.lo);
+        slices.forEach(slice => this.drawSoftRouteBand(rg, slice.points, band.color));
+      }
+    }
 
     // 1. Draw corridors that are neither the chosen Hinweg nor the chosen Rückweg
     const returnRoute = getReturnRouteOption(this.bridge.level, this.bridge.plan);

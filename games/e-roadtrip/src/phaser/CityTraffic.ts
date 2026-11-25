@@ -1,19 +1,44 @@
 import * as Phaser from 'phaser';
 import { CityDrivePreset, PoliceViolationKind, WeatherKind } from '../types';
+import type { Point } from './CityCollision';
+import type { TrafficRoute } from './CityLanes';
 
 export interface TrafficCarAgent {
-  sprite: Phaser.Physics.Arcade.Image;
-  waypoints: Array<{ x: number; y: number }>;
+  sprite: Phaser.GameObjects.Image;
+  route: TrafficRoute;
   wpIndex: number;
-  speed: number;
   currentSpeed: number;
-  obeysLights: boolean;
-  isPolice?: boolean;
-  isCyclist?: boolean;
-  /** Waypoint index where the car parks and waits (Autohof bay). */
-  holdWp?: number;
-  holdSec?: number;
-  holdLeft?: number;
+  holdLeft: number;
+  vx: number;
+  vy: number;
+}
+
+export function nextTrafficPose(npc: TrafficCarAgent, dt: number) {
+  let { x, y, rotation } = npc.sprite;
+  let { wpIndex } = npc;
+  let parked = false;
+  let remaining = npc.route.speed * dt;
+  while (remaining > 0 && wpIndex < npc.route.path.length) {
+    const target = npc.route.path[wpIndex];
+    const dx = target.x - x;
+    const dy = target.y - y;
+    const distance = Math.hypot(dx, dy);
+    if (distance > 0) rotation = Math.atan2(dy, dx) + Math.PI / 2 + (target.reverse ? Math.PI : 0);
+    if (remaining < distance) {
+      x += dx * remaining / distance;
+      y += dy * remaining / distance;
+      break;
+    }
+    x = target.x;
+    y = target.y;
+    wpIndex += 1;
+    remaining -= distance;
+    if (target.park) {
+      parked = true;
+      break;
+    }
+  }
+  return { x, y, rotation, wpIndex, parked };
 }
 
 export interface PedestrianZebraLink {
@@ -139,14 +164,11 @@ export function shouldNpcYield(
   intersections: SignalIntersection[],
   zebras: ZebraCrosswalk[],
   moveAngle: number,
-  player?: { x: number; y: number }
+  player: Point
 ): boolean {
   const fx = Math.cos(moveAngle);
   const fy = Math.sin(moveAngle);
   const horizontal = Math.abs(fx) >= Math.abs(fy);
-  if (!npc.obeysLights) {
-    return vehicleAhead(npc, allNpcs, player, fx, fy);
-  }
 
   // Look ahead 48..88 px
   const probeX = npc.sprite.x + fx * 66;
@@ -181,25 +203,25 @@ export function shouldNpcYield(
 function vehicleAhead(
   npc: TrafficCarAgent,
   allNpcs: TrafficCarAgent[],
-  player: { x: number; y: number } | undefined,
+  player: Point,
   fx: number,
   fy: number
 ): boolean {
-  const blocked = (ox: number, oy: number) => {
+  const ownRadius = npc.route.isCyclist ? 5 : 14;
+  const blocked = (ox: number, oy: number, otherRadius: number) => {
     const dx = ox - npc.sprite.x;
     const dy = oy - npc.sprite.y;
-    const dist = Math.hypot(dx, dy);
-    if (dist < 26) return true;
     const along = dx * fx + dy * fy;
     const lateral = Math.abs(dx * fy - dy * fx);
-    return along > 16 && along < 112 && lateral < 28;
+    return along > 0 && along < 45 + npc.route.speed * 0.35 && lateral < ownRadius + otherRadius + 1;
   };
   for (const other of allNpcs) {
     if (other === npc) continue;
-    if (blocked(other.sprite.x, other.sprite.y)) return true;
+    // Querverkehr wird über die tatsächlich belegte Kreuzung geregelt.
+    const parallel = Math.abs(fx * Math.sin(other.sprite.rotation) - fy * Math.cos(other.sprite.rotation));
+    if (parallel > 0.8 && blocked(other.sprite.x, other.sprite.y, other.route.isCyclist ? 5 : 14)) return true;
   }
-  if (player && blocked(player.x, player.y)) return true;
-  return false;
+  return blocked(player.x, player.y, 14);
 }
 
 export function detectPlayerTrafficViolation(

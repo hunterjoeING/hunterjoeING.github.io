@@ -26,7 +26,9 @@
 - **Branch:** `codex/review-fixes`, Änderungen im Arbeitsbaum.
 - **Erledigt:** E-Roadtrip-Review 1, 2, 3, 4 und 16. Ladestopps und Defekte pro Etappe, Messe-AC beim Besuch mit 210 Lademinuten und beiden Belegungsfällen, Level-2-Maut pro Etappe, gemeinsame Reichweitensuche für die Umplanung und fahrzeugabhängige Supercharger-Tarife. Architektur und Bundle aktualisiert.
 - **Geprüft:** Typecheck, Build, Bundle-Syntax und lokale Rechentests. Mit DOM- und Phaser-Stubs zusätzlich Messe-Dialog, Tarifwechsel, Eschweiler-Rückhalt und einmalige Mautbuchung nach dem Hotel-Dialog geprüft. Chrome-Start in der Sandbox blockiert.
-- **Offen:** Review-Befunde 5–15 und 17–20.
+- **Runde 2:** Review 5–8 umgesetzt. Autohof-Hindernisse sind an die Sprite-Grundrisse gekoppelt, bewegliche Fahrzeuge haben gedrehte Kapseln. Gerichtete KI-Spuren, belegte Kreuzungen, Rückwärtsparken in einer freien KI-Bucht und Ausfahrt am Kartenrand. Autobahnabstände je Spur über die Relativgeschwindigkeit und erneute Lückenprüfung beim Blinkende. Kartenfarben aus dem SoC-Verlauf der Etappenprognose. Architektur und Bundle aktualisiert.
+- **Geprüft in Runde 2:** Typecheck, Build und Bundle-Syntax. Lokale Regressionstests mit Phaser-Stubs für Autohof-Besuche in 210 Stations- und Displaykonfigurationen, die fünf Stadtsequenzen, Fahrzeugkontakte, den Autobahn-Spurwechsel und den Herford-Ladestopp. Chrome-Start in der Sandbox blockiert.
+- **Offen:** Review-Befunde 9–15 und 17–20.
 
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
 - **Erledigt:**

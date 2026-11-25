@@ -74,6 +74,14 @@ export function plannedRoadStopsOnLeg(plan: TripPlan, leg: LevelRouteLegSpec, le
   }).sort((a, b) => a.progress - b.progress);
 }
 
+export interface RouteSocSection {
+  fromProgress: number;
+  toProgress: number;
+  startSocPct: number;
+  endSocPct: number;
+  reachableStart: boolean;
+}
+
 export interface LegForecast {
   legIndex: number;
   label: string;
@@ -88,6 +96,7 @@ export interface LegForecast {
   consumptionKwh100: number;
   startSocPct: number;
   endSocPct: number;
+  socSections: RouteSocSection[];
   driveMinutes: number;
   chargeMinutes: number;
   stopSummaries: Array<{
@@ -386,20 +395,35 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     let cursorProgress = 0;
     let legChargeMin = 0;
     const stopSummaries: LegForecast['stopSummaries'] = [];
+    const socSections: RouteSocSection[] = [];
 
-    for (const item of stopsOnLeg) {
-      const segKm = Math.max(0, (item.progress - cursorProgress) * edge.distanceKm);
+    const driveTo = (progress: number) => {
+      const segKm = Math.max(0, (progress - cursorProgress) * edge.distanceKm);
       const segKwh = (segKm / 100) * cons100;
       totalEnergyKwh += segKwh;
       const usedSoc = (segKwh / vehicle.batteryKwh) * 100;
+      if (segKm > 0) {
+        socSections.push({
+          fromProgress: cursorProgress,
+          toProgress: progress,
+          startSocPct: soc,
+          endSocPct: soc - usedSoc,
+          reachableStart: minSoc > 0
+        });
+      }
+      cursorProgress = progress;
       soc -= usedSoc;
+      if (socWithoutMesseCharge !== undefined) socWithoutMesseCharge -= usedSoc;
+      minSoc = Math.min(minSoc, soc);
+    };
+
+    for (const item of stopsOnLeg) {
+      driveTo(item.progress);
       if (socWithoutMesseCharge !== undefined) {
-        socWithoutMesseCharge -= usedSoc;
         if (socWithoutMesseCharge > 0) {
           socWithoutMesseCharge = Math.min(100, Math.max(socWithoutMesseCharge, item.stop.targetSocPct));
         }
       }
-      minSoc = Math.min(minSoc, soc);
 
       const arriveSoc = soc;
       if (firstStopArrivalSocPct === null) {
@@ -429,7 +453,6 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
         totalChargeCost += est.costEur;
         soc = target;
       }
-      cursorProgress = item.progress;
 
       stopSummaries.push({
         station: item.station,
@@ -441,13 +464,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       });
     }
 
-    const remKm = Math.max(0, (1 - cursorProgress) * edge.distanceKm);
-    const remKwh = (remKm / 100) * cons100;
-    totalEnergyKwh += remKwh;
-    const remSoc = (remKwh / vehicle.batteryKwh) * 100;
-    soc -= remSoc;
-    if (socWithoutMesseCharge !== undefined) socWithoutMesseCharge -= remSoc;
-    minSoc = Math.min(minSoc, soc);
+    driveTo(1);
 
     if (
       (spec.citySegmentAtEnd === 'hannover_messe' || spec.destinationAtEnd) &&
@@ -515,6 +532,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       consumptionKwh100: cons100,
       startSocPct: Math.round(startSoc),
       endSocPct: Math.round(soc),
+      socSections,
       driveMinutes: driveMin,
       chargeMinutes: legChargeMin,
       stopSummaries,

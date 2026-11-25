@@ -1,6 +1,10 @@
 import * as Phaser from 'phaser';
 import { VEHICLES } from '../data/vehicles';
 import { ChargerNetwork, LandmarkKind, VehicleShape } from '../types';
+import {
+  BISTRO_KIOSK, CAR_CHASSIS, CAR_FOOTPRINT, CAR_SIZE, CHARGER_FOOTPRINT, CHARGER_SIZE,
+  MCD_KIOSK, TRUCK_FOOTPRINT, TRUCK_SIZE, WHEEL_STOP_SIZE
+} from './CityCollision';
 
 function hexCss(col: number): string {
   return '#' + col.toString(16).padStart(6, '0');
@@ -22,8 +26,7 @@ function drawTopDownCarTexture(
   options?: { isPolice?: boolean; isVan?: boolean }
 ): void {
   if (scene.textures.exists(key)) return;
-  const w = 32;
-  const h = 52;
+  const { w, h } = CAR_SIZE;
   const tex = scene.textures.createCanvas(key, w, h);
   if (!tex) return;
   const ctx = tex.getContext();
@@ -40,14 +43,14 @@ function drawTopDownCarTexture(
 
   // Wheels (4 corners)
   ctx.fillStyle = '#0f172a';
-  ctx.fillRect(2, 10, 4, 9);
-  ctx.fillRect(26, 10, 4, 9);
-  ctx.fillRect(2, 34, 4, 9);
-  ctx.fillRect(26, 34, 4, 9);
+  for (const y of [10, 34]) {
+    ctx.fillRect(CAR_FOOTPRINT.x, y, 4, 9);
+    ctx.fillRect(CAR_FOOTPRINT.x + CAR_FOOTPRINT.w - 4, y, 4, 9);
+  }
 
   // Main chassis silhouette (facing UP = North)
   ctx.fillStyle = darkBody;
-  ctx.fillRect(5, 4, 22, 44);
+  ctx.fillRect(CAR_CHASSIS.x, CAR_CHASSIS.y, CAR_CHASSIS.w, CAR_CHASSIS.h);
   ctx.fillStyle = body;
   ctx.fillRect(6, 5, 20, 42);
 
@@ -141,7 +144,7 @@ function drawTopDownCarTexture(
 function drawTruckTexture(scene: Phaser.Scene): void {
   const key = 'npc_truck';
   if (scene.textures.exists(key)) return;
-  const tex = scene.textures.createCanvas(key, 36, 92);
+  const tex = scene.textures.createCanvas(key, TRUCK_SIZE.w, TRUCK_SIZE.h);
   if (!tex) return;
   const ctx = tex.getContext();
   ctx.imageSmoothingEnabled = false;
@@ -152,8 +155,8 @@ function drawTruckTexture(scene: Phaser.Scene): void {
   // Wheels
   ctx.fillStyle = '#0f172a';
   [10, 22, 54, 72].forEach(y => {
-    ctx.fillRect(2, y, 4, 9);
-    ctx.fillRect(30, y, 4, 9);
+    ctx.fillRect(TRUCK_FOOTPRINT.x, y, 4, 9);
+    ctx.fillRect(TRUCK_FOOTPRINT.x + TRUCK_FOOTPRINT.w - 4, y, 4, 9);
   });
 
   // Tractor cab (red/white)
@@ -241,7 +244,7 @@ function drawPedestrianTexture(
 function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void {
   const key = `charger_${net}`;
   if (scene.textures.exists(key)) return;
-  const tex = scene.textures.createCanvas(key, 20, 20);
+  const tex = scene.textures.createCanvas(key, CHARGER_SIZE.w, CHARGER_SIZE.h);
   if (!tex) return;
   const ctx = tex.getContext();
   ctx.imageSmoothingEnabled = false;
@@ -264,7 +267,7 @@ function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.fillRect(4, 4, 14, 14);
   ctx.fillStyle = c.body;
-  ctx.fillRect(3, 2, 14, 14);
+  ctx.fillRect(CHARGER_FOOTPRINT.x, CHARGER_FOOTPRINT.y, CHARGER_FOOTPRINT.w, CHARGER_FOOTPRINT.h);
   ctx.fillStyle = c.accent;
   ctx.fillRect(5, 4, 10, 4);
   // Glowing status bar
@@ -564,13 +567,14 @@ function drawMiscTextures(scene: Phaser.Scene): void {
 
   // McDonald's Pixel Kiosk
   if (!scene.textures.exists('mcd_kiosk')) {
-    const tex = scene.textures.createCanvas('mcd_kiosk', 72, 48);
+    const { size, footprint } = MCD_KIOSK;
+    const tex = scene.textures.createCanvas('mcd_kiosk', size.w, size.h);
     if (tex) {
       const ctx = tex.getContext();
       ctx.fillStyle = 'rgba(0,0,0,0.32)';
       ctx.fillRect(4, 4, 66, 42);
       ctx.fillStyle = '#991b1b';
-      ctx.fillRect(2, 2, 66, 40);
+      ctx.fillRect(footprint.x, footprint.y, footprint.w, footprint.h);
       ctx.fillStyle = '#dc2626';
       ctx.fillRect(5, 5, 60, 34);
       // Golden Arches "M"
@@ -647,12 +651,12 @@ function drawMiscTextures(scene: Phaser.Scene): void {
 
   // Wheel stop bumper for head-in charging bays
   if (!scene.textures.exists('wheel_stop')) {
-    const tex = scene.textures.createCanvas('wheel_stop', 28, 6);
+    const tex = scene.textures.createCanvas('wheel_stop', WHEEL_STOP_SIZE.w, WHEEL_STOP_SIZE.h);
     if (tex) {
       const ctx = tex.getContext();
       ctx.imageSmoothingEnabled = false;
       ctx.fillStyle = '#0f172a';
-      ctx.fillRect(0, 0, 28, 6);
+      ctx.fillRect(0, 0, WHEEL_STOP_SIZE.w, WHEEL_STOP_SIZE.h);
       ctx.fillStyle = '#facc15';
       ctx.fillRect(2, 1, 6, 4);
       ctx.fillRect(11, 1, 6, 4);
@@ -683,14 +687,15 @@ function drawMiscTextures(scene: Phaser.Scene): void {
 
   // Bistro / Coffee Shop Kiosk
   if (!scene.textures.exists('bistro_kiosk')) {
-    const tex = scene.textures.createCanvas('bistro_kiosk', 64, 44);
+    const { size, footprint } = BISTRO_KIOSK;
+    const tex = scene.textures.createCanvas('bistro_kiosk', size.w, size.h);
     if (tex) {
       const ctx = tex.getContext();
       ctx.imageSmoothingEnabled = false;
       ctx.fillStyle = 'rgba(0,0,0,0.3)';
       ctx.fillRect(4, 4, 58, 38);
       ctx.fillStyle = '#78350f';
-      ctx.fillRect(2, 2, 58, 36);
+      ctx.fillRect(footprint.x, footprint.y, footprint.w, footprint.h);
       ctx.fillStyle = '#b45309';
       ctx.fillRect(5, 5, 52, 30);
       ctx.fillStyle = '#fef3c7';

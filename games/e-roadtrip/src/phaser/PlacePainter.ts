@@ -1,6 +1,11 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset } from '../types';
 import { ZebraCrosswalk } from './CityTraffic';
+import { TrafficRoute, cityTrafficRoutes, laneCenter, trafficRoute } from './CityLanes';
+import {
+  BISTRO_KIOSK, CAR_FOOTPRINT, CAR_SIZE, CHARGER_FOOTPRINT, CHARGER_SIZE,
+  MCD_KIOSK, TRUCK_FOOTPRINT, TRUCK_SIZE, WHEEL_STOP_SIZE, spriteFootprint
+} from './CityCollision';
 import {
   BuildingSpec,
   CityPalette,
@@ -21,13 +26,10 @@ export interface NeonMark {
   flicker?: boolean;
 }
 
-export interface LiteAgent {
+interface LitePedestrian {
   tex: string;
   wps: Array<{ x: number; y: number }>;
   speed: number;
-  /** Index of the waypoint where the car waits (a charger bay). */
-  holdIndex?: number;
-  holdSec?: number;
 }
 
 export interface PlacePaint {
@@ -49,8 +51,9 @@ export interface PlacePaint {
   pillar?: { x: number; y: number };
   spawn: { x: number; y: number; rot: number };
   spinners: Phaser.GameObjects.Image[];
-  liteCars?: LiteAgent[];
-  litePeds?: LiteAgent[];
+  traffic: TrafficRoute[];
+  trafficJunctions: Rect[];
+  litePeds?: LitePedestrian[];
   previewPoint?: { x: number; y: number; rot: number };
 }
 
@@ -70,6 +73,9 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
   const g = scene.add.graphics().setDepth(0);
   const neons: NeonMark[] = [];
   const passThrough = preset === 'aachen_start' || preset === 'koeln_ring' || preset === 'ferry_denmark';
+  const avenues = [140, 660, 1180].map(y => ({ x: y === 660 ? 0 : 140, y, w: y === 660 ? 2040 : 1900, h: 140 }));
+  const streets = [140, 960, 1760].map(x => ({ x, y: 0, w: 140, h: 1320 }));
+  const roads = [...avenues, ...streets];
 
   g.fillStyle(theme.grass, 1);
   g.fillRect(0, 0, worldW, worldH);
@@ -90,16 +96,15 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
   g.fillRect(0, 1348, worldW, worldH - 1348);
 
   g.fillStyle(theme.road, 1);
-  g.fillRect(140, 140, 1900, 140);
-  g.fillRect(140, 660, 1900, 140);
-  g.fillRect(140, 1180, 1900, 140);
-  g.fillRect(140, 140, 140, 1180);
-  g.fillRect(960, 140, 140, 1180);
-  g.fillRect(1760, 140, 140, 1180);
+  roads.forEach(road => g.fillRect(road.x, road.y, road.w, road.h));
 
   g.fillStyle(0x0b1220, 0.45);
-  [172, 232, 692, 752, 1212, 1272].forEach(y => g.fillRect(140, y, 1900, 16));
-  [172, 232, 992, 1052, 1792, 1852].forEach(x => g.fillRect(x, 140, 16, 1180));
+  for (const road of avenues) {
+    for (const dir of [-1, 1] as const) g.fillRect(road.x, laneCenter(road, 'ew', dir) - 8, road.w, 16);
+  }
+  for (const road of streets) {
+    for (const dir of [-1, 1] as const) g.fillRect(laneCenter(road, 'ns', dir) - 8, road.y, 16, road.h);
+  }
 
   const puddles: Array<[number, number, number, number]> = [
     [420, 215, 78, 26], [1320, 225, 82, 28], [510, 742, 74, 26], [1420, 1255, 80, 28], [1830, 520, 54, 28]
@@ -164,6 +169,10 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
   g.strokeCircle(1030, 1250, 46);
 
   g.fillStyle(0xf8fafc, 0.72);
+  for (let x = 8; x < 140; x += 38) g.fillRect(x, 728, 20, 3);
+  for (const street of streets) {
+    for (let y = 10; y < 125; y += 38) g.fillRect(street.x + street.w / 2 - 2, y, 3, 20);
+  }
   for (let x = 180; x < 1900; x += 38) {
     if (Math.abs(x - 1030) > 85) {
       g.fillRect(x, 208, 20, 3);
@@ -230,7 +239,7 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
     targetZone = new Phaser.Geom.Rectangle(1465, 450, 120, 86);
     zoneLabel = 'MESSE\nE-PARKPLATZ';
     zoneColor = 0x38bdf8;
-    spawn = { x: 1830, y: 240, rot: -Math.PI / 2 };
+    spawn = { x: 1970, y: laneCenter(avenues[0], 'ew', -1), rot: -Math.PI / 2 };
   } else {
     targetZone = new Phaser.Geom.Rectangle(348, 912, 86, 72);
     zoneLabel = 'ZIEL\nAACHEN';
@@ -266,14 +275,11 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
       { x: 1120, y: 300, w: 620, h: 340 },
       { x: 1120, y: 820, w: 620, h: 340 }
     ],
-    asphalt: [
-      { x: 140, y: 140, w: 1900, h: 140 },
-      { x: 140, y: 660, w: 1900, h: 140 },
-      { x: 140, y: 1180, w: 1900, h: 140 },
-      { x: 140, y: 140, w: 140, h: 1180 },
-      { x: 960, y: 140, w: 140, h: 1180 },
-      { x: 1760, y: 140, w: 140, h: 1180 }
-    ],
+    asphalt: roads,
+    traffic: cityTrafficRoutes(avenues, streets),
+    trafficJunctions: avenues.slice(0, 2).flatMap(avenue =>
+      streets.map(street => ({ x: street.x, y: avenue.y, w: street.w, h: avenue.h }))
+    ),
     buildings: footprint,
     trees: mobile ? trees.slice(0, 5) : trees,
     lamps: mobile ? lamps.filter((_, i) => i % 2 === 0) : lamps,
@@ -530,7 +536,8 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     asphalt.push(rect);
   };
 
-  fillAsphalt({ x: 0, y: 48, w: worldW, h: 128 }, 0x1e293b);
+  const motorway = { x: 0, y: 48, w: worldW, h: 128 };
+  fillAsphalt(motorway, 0x1e293b);
   g.fillStyle(0xf8fafc, 0.85);
   g.fillRect(0, 58, worldW, 3);
   g.fillRect(0, 164, worldW, 3);
@@ -539,18 +546,24 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
   g.fillRect(0, 44, worldW, 4);
   g.fillRect(0, 176, worldW, 4);
 
-  const spurX = variant === 1 ? apron.x + apron.w - 280 : variant === 2 ? apron.x + 80 : 230;
-  fillAsphalt({ x: spurX, y: 160, w: 110, h: apron.y - 80 });
+  const spur = { x: apron.x + 12 + variant * 4, y: 160, w: 104, h: apron.y - 148 };
+  fillAsphalt(spur);
   fillAsphalt(apron, 0x0f172a);
   g.fillStyle(0x334155, 1);
   g.fillRect(apron.x + 8, apron.y + 8, apron.w - 16, 10);
+  g.fillStyle(0xf8fafc, 0.65);
+  for (let y = 174; y < apron.y + 6; y += 32) g.fillRect(spur.x + spur.w / 2 - 1, y, 3, 16);
 
   const foodOnEast = variant === 1;
   const food: Rect = foodOnEast
     ? { x: apron.x + apron.w - 250, y: apron.y + 36, w: 150, h: 90 }
     : { x: apron.x + 150, y: apron.y + 36, w: 150, h: 90 };
-  buildings.push(food);
-  scene.add.image(food.x + food.w / 2, food.y + food.h / 2, station.hasMcDonalds ? 'mcd_kiosk' : 'bistro_kiosk').setScale(1.45).setDepth(4);
+  const foodX = food.x + food.w / 2;
+  const foodY = food.y + food.h / 2;
+  const kiosk = station.hasMcDonalds ? MCD_KIOSK : BISTRO_KIOSK;
+  const kioskScale = 1.45;
+  scene.add.image(foodX, foodY, station.hasMcDonalds ? 'mcd_kiosk' : 'bistro_kiosk').setScale(kioskScale).setDepth(4);
+  buildings.push(spriteFootprint(foodX, foodY, kiosk.size, kiosk.footprint, kioskScale));
   neons.push({
     x: food.x + food.w / 2,
     y: food.y - 8,
@@ -586,17 +599,25 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
   });
 
   // Chargers along the canopy's outer edge (not the player's bay).
+  const drawCharger = (x: number, y: number, scale: number) => {
+    scene.add.image(x, y, `charger_${station.network}`).setScale(scale).setDepth(5);
+    buildings.push(spriteFootprint(x, y, CHARGER_SIZE, CHARGER_FOOTPRINT, scale));
+  };
   const edgeCount = mobile ? 2 : 3;
   for (let i = 0; i < edgeCount; i++) {
     const cx = canopy.x + canopy.w + 18;
     const cy = canopy.y + 16 + i * 36;
-    scene.add.image(cx, cy, `charger_${station.network}`).setScale(1.05).setDepth(5);
+    drawCharger(cx, cy, 1.05);
   }
 
   const aisleTop = apron.y + apron.h - 150;
   const bayCount = style === 'rural' ? 4 : style === 'urban' ? (mobile ? 6 : 8) : 6;
   const rowX = apron.x + (variant === 2 ? 430 : 340);
   const targetIndex = hashString(station.id + ':bay') % bayCount;
+  const otherBays = Array.from({ length: bayCount }, (_, i) => i).filter(i => i !== targetIndex);
+  const occupiedBays = new Set(otherBays.filter(i => hashString(`${station.id}:stall:${i}`) % 3 === 0));
+  const npcBay = otherBays.find(i => !occupiedBays.has(i)) ?? otherBays[0];
+  occupiedBays.delete(npcBay);
   let targetZone = new Phaser.Geom.Rectangle(rowX, aisleTop - 78, 48, 70);
   let pillar = { x: targetZone.centerX, y: targetZone.y + 6 };
   for (let i = 0; i < bayCount; i++) {
@@ -607,17 +628,16 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     g.lineBetween(bx + 46, by, bx + 46, by + 68);
     g.lineBetween(bx, by, bx + 46, by);
     scene.add.image(bx + 23, by + 8, 'wheel_stop').setDepth(4);
-    scene.add.image(bx + 23, by + 4, `charger_${station.network}`).setScale(1.12).setDepth(5);
-    buildings.push({ x: bx + 12, y: by - 8, w: 22, h: 24 });
-    const occupied = i !== targetIndex && hashString(`${station.id}:stall:${i}`) % 3 === 0;
-    if (occupied) {
+    buildings.push({ x: bx + 23 - WHEEL_STOP_SIZE.w / 2, y: by + 8 - WHEEL_STOP_SIZE.h / 2, ...WHEEL_STOP_SIZE });
+    drawCharger(bx + 23, by + 4, 1.12);
+    if (occupiedBays.has(i)) {
       const parked = ['npc_sedan_blue', 'npc_compact_green', 'npc_van_white', 'npc_fast_red', 'npc_fast_black'];
       scene.add
         .image(bx + 23, by + 40, parked[i % parked.length])
         .setScale(0.78)
         .setRotation(Math.PI)
         .setDepth(5);
-      buildings.push({ x: bx + 4, y: by + 16, w: 38, h: 48 });
+      buildings.push(spriteFootprint(bx + 23, by + 40, CAR_SIZE, CAR_FOOTPRINT, 0.78));
     }
     if (i === targetIndex) {
       targetZone = new Phaser.Geom.Rectangle(bx, by, 46, 68);
@@ -640,6 +660,7 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
       .setRotation(variant === 0 ? Math.PI : 0)
       .setDepth(4)
       .setTint([0xffffff, 0xfecaca, 0xbfdbfe, 0xfde68a, 0xbbf7d0][i % 5]);
+    buildings.push(spriteFootprint(cx, cy, CAR_SIZE, CAR_FOOTPRINT, 0.82));
   }
 
   const truckCount = style === 'rural' ? (mobile ? 4 : 6) : style === 'urban' ? (mobile ? 7 : 11) : mobile ? 5 : 8;
@@ -647,10 +668,10 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     const col = i % 2;
     const row = Math.floor(i / 2);
     const tx = apron.x + apron.w - 180 + col * 70;
-    const ty = apron.y + 230 + row * 78;
+    const ty = apron.y + 240 + row * 78;
     if (ty + 36 > aisleTop - 16) continue;
     scene.add.image(tx, ty, 'npc_truck').setScale(0.78).setDepth(4).setTint(i % 2 ? 0xfecaca : 0xe2e8f0);
-    buildings.push({ x: tx - 16, y: ty - 36, w: 32, h: 72 });
+    buildings.push(spriteFootprint(tx, ty, TRUCK_SIZE, TRUCK_FOOTPRINT, 0.78));
   }
 
   const washRect: Rect = { x: apron.x + apron.w - 188, y: apron.y + 148, w: 156, h: 54 };
@@ -718,52 +739,40 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     { x: canopy.x + canopy.w - 20, y: canopy.y }
   ];
 
-  const aisleY = aisleTop + 28;
-  const laneX = 270;
-  const spurMid = spurX + 55;
-  const eastboundY = 140;
-  const westboundY = 78;
-  const freeBay = (() => {
-    for (let i = 0; i < bayCount; i++) {
-      if (i === targetIndex) continue;
-      if (hashString(`${station.id}:stall:${i}`) % 3 === 0) continue;
-      return i;
-    }
-    return (targetIndex + 1) % bayCount;
-  })();
-  const bayPoint = (index: number) => ({ x: rowX + index * 58 + 23, y: aisleTop - 42 });
-  const visit = (index: number, startX: number): Array<{ x: number; y: number }> => {
-    const bay = bayPoint(index);
-    return [
-      { x: startX, y: eastboundY },
-      { x: spurMid, y: eastboundY },
-      { x: spurMid, y: aisleY },
-      { x: bay.x, y: aisleY },
-      bay,
-      { x: bay.x, y: aisleY },
-      { x: spurMid, y: aisleY },
-      { x: spurMid, y: eastboundY },
-      { x: Math.min(worldW - 80, startX + 220), y: eastboundY }
-    ];
-  };
-  const liteCars: LiteAgent[] = [
-    {
-      tex: 'npc_sedan_blue',
-      wps: visit(freeBay, Math.min(worldW - 180, spurMid + 280)),
-      speed: 62,
-      holdIndex: 4,
-      holdSec: 8
-    },
-    {
-      tex: 'npc_compact_green',
-      wps: [
-        { x: worldW - 80, y: westboundY },
-        { x: 70, y: westboundY }
-      ],
-      speed: 78
-    }
+  const aisle = { x: spur.x, y: aisleTop + 12, w: apron.x + apron.w - spur.x, h: 128 };
+  g.fillStyle(0xf8fafc, 0.36);
+  for (let x = aisle.x + spur.w + 12; x < aisle.x + aisle.w - 34; x += 38) {
+    g.fillRect(x, aisle.y + aisle.h / 2, 18, 2);
+  }
+  const inboundX = laneCenter(spur, 'ns', 1);
+  const outboundX = laneCenter(spur, 'ns', -1);
+  const eastbound = laneCenter(motorway, 'ew', 1);
+  const westbound = laneCenter(motorway, 'ew', -1);
+  const aisleEast = laneCenter(aisle, 'ew', 1);
+  const aisleWest = laneCenter(aisle, 'ew', -1);
+  const bayX = rowX + npcBay * 58 + 23;
+  const bayY = aisleTop - 42;
+  const turnY = aisle.y + aisle.h - 6;
+  const traffic = [
+    trafficRoute('npc_sedan_blue', 62, [
+      { x: -60, y: eastbound }, { x: 74, y: eastbound, spawn: true },
+      { x: inboundX, y: eastbound }, { x: inboundX, y: aisleEast },
+      { x: bayX, y: aisleEast }, { x: bayX, y: turnY },
+      { x: bayX, y: bayY, reverse: true, park: true },
+      { x: bayX, y: aisleWest }, { x: outboundX, y: aisleWest },
+      { x: outboundX, y: eastbound }, { x: worldW + 60, y: eastbound }
+    ], { holdSec: 8 }),
+    trafficRoute('npc_compact_green', 78, [
+      { x: worldW + 60, y: westbound }, { x: worldW - 80, y: westbound, spawn: true },
+      { x: -60, y: westbound }
+    ])
   ];
-  const litePeds: LiteAgent[] = [
+  const trafficJunctions = [
+    { x: spur.x - 30, y: motorway.y + motorway.h / 2, w: spur.w + 60, h: 96 },
+    { x: spur.x, y: aisle.y, w: spur.w + 42, h: aisle.h },
+    { x: bayX - 20, y: bayY - 22, w: 40, h: turnY - bayY + 44 }
+  ];
+  const litePeds: LitePedestrian[] = [
     {
       tex: 'ped_adult_0',
       wps: [
@@ -814,9 +823,10 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     zoneColor: 0x22c55e,
     passThrough: false,
     pillar,
-    spawn: { x: laneX, y: 96, rot: Math.PI },
+    spawn: { x: apron.x + 130, y: apron.y + 52, rot: Math.PI },
     spinners,
-    liteCars,
+    traffic,
+    trafficJunctions,
     litePeds,
     previewPoint: { x: 48, y: apron.y + apron.h - 78, rot: Math.PI / 2 }
   };

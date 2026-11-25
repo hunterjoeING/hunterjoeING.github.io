@@ -170,7 +170,6 @@ class ERoadtripController {
 
     this.planningUI = new PlanningUI(this.plannerEl, {
       onPlanChanged: () => {
-        this.syncMapScene();
         this.renderPlanning();
       },
       onSelectRoute: (routeId: string) => {
@@ -184,17 +183,14 @@ class ERoadtripController {
       },
       onToggleProviderFilter: (network: ChargerNetwork) => {
         this.bridge.providerFilter[network] = !this.bridge.providerFilter[network];
-        this.syncMapScene();
         this.renderPlanning();
       },
       onToggleShowChargers: () => {
         this.bridge.showChargerStations = !this.bridge.showChargerStations;
-        this.syncMapScene();
         this.renderPlanning();
       },
       onResetProviderFilter: () => {
         this.bridge.providerFilter = createDefaultProviderFilter();
-        this.syncMapScene();
         this.renderPlanning();
       },
       onStartTrip: () => this.startTrip(),
@@ -363,31 +359,28 @@ class ERoadtripController {
   }
 
   private renderPlanning(): void {
+    const forecast = evaluateTripPlan(this.level, this.plan);
+    const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
+    if (mapScene?.scene.isActive()) mapScene.refreshDynamicState(forecast);
+
     this.planningUI.render(
       this.level,
       this.plan,
       this.save,
+      forecast,
       this.bridge.selectedLegIndex,
       this.bridge.providerFilter,
       this.bridge.showChargerStations
     );
   }
 
-  private syncMapScene(): void {
-    const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
-    if (mapScene && mapScene.scene.isActive()) {
-      mapScene.refreshDynamicState();
-    }
-  }
-
   private selectRoute(routeId: string): void {
     switchRouteInPlan(this.level, this.plan, routeId);
     this.bridge.plan = this.plan;
     this.bridge.selectedLegIndex = 0;
-    this.syncMapScene();
+    this.renderPlanning();
     const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
     mapScene?.fitCameraToRoute();
-    this.renderPlanning();
   }
 
   private selectReturnRoute(routeId: string): void {
@@ -396,17 +389,15 @@ class ERoadtripController {
     const legs = getActiveRouteLegs(this.level, this.plan);
     const firstReturn = legs.findIndex(leg => !!leg.reverse);
     this.bridge.selectedLegIndex = firstReturn >= 0 ? firstReturn : 0;
-    this.syncMapScene();
+    this.renderPlanning();
     const mapScene = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
     mapScene?.fitCameraToRoute();
-    this.renderPlanning();
   }
 
   private selectLeg(legIndex: number): void {
     const activeLegs = getActiveRouteLegs(this.level, this.plan);
     const clamped = Math.max(0, Math.min(activeLegs.length - 1, legIndex));
     this.bridge.selectedLegIndex = clamped;
-    this.syncMapScene();
     this.renderPlanning();
   }
 
@@ -420,7 +411,6 @@ class ERoadtripController {
     } else {
       this.plan.plannedStops.push({ chargerId: station.id, legIndex, targetSocPct: 80 });
     }
-    this.syncMapScene();
     this.renderPlanning();
   }
 

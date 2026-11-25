@@ -12,7 +12,6 @@ import { SUBSCRIPTIONS, roamingPriceForProvider } from '../data/subscriptions';
 import { CHARGERS, getCityById, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
 import {
-  evaluateTripPlan,
   getActiveRouteLegs,
   getActiveRouteOption,
   getReturnRouteOption,
@@ -159,11 +158,11 @@ export class PlanningUI {
     level: LevelConfig,
     plan: TripPlan,
     save: CampaignSave,
+    forecast: PlanForecast,
     selectedLegIndex = 0,
     providerFilter?: ProviderFilterMap,
     showChargerStations = true
   ): void {
-    const forecast = evaluateTripPlan(level, plan);
     const selectedVehicle = getVehicleById(plan.vehicleId);
     const activeRoute = getActiveRouteOption(level, plan);
     const budgetLeft = save.cashEur - (save.ownedVehicleId === selectedVehicle.id ? 0 : selectedVehicle.priceEur);
@@ -247,7 +246,7 @@ export class PlanningUI {
       </div>
     `;
 
-    this.bindEvents(level, plan, save, clampedLegIdx, providerFilter, showChargerStations);
+    this.bindEvents(level, plan, save, forecast, clampedLegIdx, providerFilter, showChargerStations);
   }
 
   private renderMapFilterBar(
@@ -646,6 +645,7 @@ export class PlanningUI {
     level: LevelConfig,
     plan: TripPlan,
     save: CampaignSave,
+    forecast: PlanForecast,
     selectedLegIndex: number,
     providerFilter?: ProviderFilterMap,
     showChargerStations = true
@@ -712,7 +712,7 @@ export class PlanningUI {
       btn.addEventListener('click', () => {
         SoundFX.click();
         this.activeTab = (btn as HTMLElement).dataset.ptab as 'car' | 'subs' | 'route';
-        this.render(level, plan, save, selectedLegIndex, providerFilter, showChargerStations);
+        this.render(level, plan, save, forecast, selectedLegIndex, providerFilter, showChargerStations);
       });
     });
 

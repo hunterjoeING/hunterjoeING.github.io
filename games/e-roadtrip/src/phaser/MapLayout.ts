@@ -1,8 +1,5 @@
-import { ChargerNetwork, HighwayEdge, LevelConfig, TripPlan } from '../types';
-import { getEdgeById } from '../data/europeMap';
-import { getVehicleById } from '../data/vehicles';
-import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { congestedCruiseKmh, defaultLegSpeedKmh, drivenSpeedKmh, estimateMesseCharge, getActiveRouteLegs, plannedMesseStopOnLeg, plannedRoadStopsOnLeg, snapSpeedKmh } from '../sim/RoutePlanner';
+import { ChargerNetwork, HighwayEdge } from '../types';
+import { RouteSocSection } from '../sim/RoutePlanner';
 
 export interface BoxRect {
   x: number;
@@ -140,115 +137,35 @@ export function getPolylineSliceAlongEdge(
 }
 
 export function computeRouteSocBandSegments(
-  level: LevelConfig,
-  plan: TripPlan,
-  upperSocPct = 20,
-  lowerSocPct = 0,
-  onlyLegIndex?: number
+  edge: HighwayEdge,
+  reverse: boolean,
+  sections: RouteSocSection[],
+  upperSocPct: number,
+  lowerSocPct: number
 ): RouteSocBandSegment[] {
-  const legs = getActiveRouteLegs(level, plan);
-  if (legs.length === 0) return [];
-
-  const vehicle = getVehicleById(plan.vehicleId);
-  let soc = 96; // Matches evaluateTripPlan initial SoC
   const segments: RouteSocBandSegment[] = [];
-  let activeBand: RouteSocBandSegment | null = null;
-
-  const appendSubSegment = (
-    edge: HighwayEdge,
-    reverse: boolean,
-    p0: number,
-    p1: number,
-    cons100: number,
-    record: boolean
-  ): void => {
-    const segKm = Math.max(0, (p1 - p0) * edge.distanceKm);
-    const segKwh = (segKm / 100) * cons100;
-    const socDrop = (segKwh / vehicle.batteryKwh) * 100;
-    const nextSoc = soc - socDrop;
-
-    if (record && socDrop > 0.001 && soc > lowerSocPct && nextSoc < upperSocPct) {
-      const bandStartSoc = Math.min(soc, upperSocPct);
-      const bandEndSoc = Math.max(nextSoc, lowerSocPct);
-      const frac0 = (soc - bandStartSoc) / socDrop;
-      const frac1 = (soc - bandEndSoc) / socDrop;
-      const t0 = p0 + frac0 * (p1 - p0);
-      const t1 = p0 + frac1 * (p1 - p0);
-      const slice = getPolylineSliceAlongEdge(edge, t0, t1, reverse);
-
-      if (slice.length >= 2) {
-        if (activeBand && soc <= upperSocPct + 0.05) {
-          const prevLast = activeBand.points[activeBand.points.length - 1];
-          const first = slice[0];
-          const startIdx = Math.hypot(first.x - prevLast.x, first.y - prevLast.y) < 1.5 ? 1 : 0;
-          for (let k = startIdx; k < slice.length; k++) {
-            activeBand.points.push(slice[k]);
-          }
-          activeBand.endSocPct = bandEndSoc;
-        } else {
-          activeBand = {
-            points: slice,
-            startSocPct: bandStartSoc,
-            endSocPct: bandEndSoc
-          };
-          segments.push(activeBand);
-        }
-      }
+  let previousEnd = -1;
+  for (const section of sections) {
+    if (!section.reachableStart) break;
+    const { startSocPct, endSocPct, fromProgress, toProgress } = section;
+    const start = Math.min(startSocPct, upperSocPct);
+    const end = Math.max(endSocPct, lowerSocPct);
+    if (start <= end) continue;
+    const progressAt = (soc: number) =>
+      fromProgress + ((startSocPct - soc) / (startSocPct - endSocPct)) * (toProgress - fromProgress);
+    const from = progressAt(start);
+    const to = progressAt(end);
+    const points = getPolylineSliceAlongEdge(edge, from, to, reverse);
+    if (points.length < 2) continue;
+    const previous = segments[segments.length - 1];
+    if (previous && Math.abs(previousEnd - from) < 1e-8 && Math.abs(previous.endSocPct - start) < 1e-8) {
+      previous.points.push(...points.slice(1));
+      previous.endSocPct = end;
+    } else {
+      segments.push({ points, startSocPct: start, endSocPct: end });
     }
-
-    soc = nextSoc;
-    if (soc <= lowerSocPct) {
-      activeBand = null;
-    }
-  };
-
-  for (let i = 0; i < legs.length; i++) {
-    if (soc <= lowerSocPct) break;
-    const spec = legs[i];
-    const edge = getEdgeById(spec.edgeId);
-    const lp = plan.legPlans.find(x => x.legIndex === i);
-    const weather = spec.weatherOverride || edge.defaultWeather;
-    const chosenSpeed = snapSpeedKmh(
-      lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather),
-      vehicle.maxSpeedKmh
-    );
-    const speed = congestedCruiseKmh(drivenSpeedKmh(edge, weather, chosenSpeed), edge.baseTrafficRisk);
-    const record = onlyLegIndex === undefined || i === onlyLegIndex;
-    if (onlyLegIndex !== undefined) activeBand = null;
-    const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
-    const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
-
-    const cons100 = computeConsumptionKwh100(
-      vehicle,
-      speed,
-      weather,
-      elevGain,
-      elevLoss,
-      edge.distanceKm,
-      level.trailerWeightKg || 0,
-      !!plan.behindTruckMode
-    );
-
-    const stopsOnLeg = plannedRoadStopsOnLeg(plan, spec, i);
-
-    let cursorProgress = 0;
-    for (const item of stopsOnLeg) {
-      appendSubSegment(edge, !!spec.reverse, cursorProgress, item.progress, cons100, record);
-      if (soc <= lowerSocPct) break;
-      activeBand = null;
-      soc = Math.min(100, Math.max(soc + 2, item.stop.targetSocPct));
-      cursorProgress = item.progress;
-    }
-
-    if (soc > lowerSocPct) {
-      appendSubSegment(edge, !!spec.reverse, cursorProgress, 1, cons100, record);
-      const messe = plannedMesseStopOnLeg(plan, spec, i);
-      if (messe) {
-        soc = estimateMesseCharge(vehicle, messe.station, soc, messe.stop.targetSocPct, plan.subscriptionIds).departSoc;
-      }
-    }
+    previousEnd = to;
   }
-
   return segments;
 }
 
