@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade</title>
+  <meta name="description" content="Interaktiver 3D-Explainer eines 4-Takt-Reihenvierzylinder-Ottomotors (DOHC 16V): Cutaway-Aufschnitt, X-Ray-Röntgenblick, Explosionsansicht mit 12 beschrifteten Baugruppen, Drehzahl-Regler, Drehmoment-/Leistungskurve &amp; 6-Schritte-Tour." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/combustion-engine/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade" />
+  <meta property="og:description" content="Erlebe in echtem 3D, wie ein 4-Takt-Verbrennungsmotor Kraftstoff in Drehmoment verwandelt: Cutaway, X-Ray, Explosionsansicht, Drehzahl-Regler, Prüfstandskurve &amp; geführte Tour." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/combustion-engine/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Verbrennungsmotor 3D – Interaktiver Explainer",
+    "description": "Interaktiver 3D-Explainer eines 2,0-Liter-4-Takt-Reihenvierzylinder-Ottomotors mit Cutaway, X-Ray, Explosionsansicht, Drehzahl-Regler, Drehmoment-/Leistungskurve und 6-Schritte-Tour.",
+    "url": "https://hunterjoeing.github.io/games/combustion-engine/",
+    "inLanguage": "de",
+    "isAccessibleForFree": true,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any (Webbrowser)",
+    "author": { "@type": "Person", "name": "Johannes Rudolph" }
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <link rel="stylesheet" href="./styles.css?v=0.1.0" />
+</head>
+<body>
+  <header class="arcade-topbar ce-topbar">
+    <div class="topbar-left">
+      <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
+      <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.1.0</button>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
+      <button type="button" class="icon-btn" id="btn-mute" title="Ton an/aus">🔊</button>
+    </div>
+  </header>
+
+  <main class="ce-workspace">
+    <section class="ce-viewport" id="ce-viewport" aria-label="Interaktive 3D-Ansicht Verbrennungsmotor">
+      <canvas id="ce-canvas"></canvas>
+      <div class="ce-label-layer" id="ce-label-layer" aria-label="Bauteil-Beschriftungen"></div>
+
+      <!-- 01 Cutaway · 02 X-Ray · 03 Exploded -->
+      <div class="ce-mode-dock" role="toolbar" aria-label="3D-Ansichtsmodus">
+        <div class="ce-dock-group">
+          <button type="button" class="ce-mode-btn" data-view-mode="normal">Außenansicht</button>
+          <button type="button" class="ce-mode-btn active" data-view-mode="cutaway"><span class="ce-mode-num">01</span> Cutaway</button>
+          <button type="button" class="ce-mode-btn" data-view-mode="xray"><span class="ce-mode-num">02</span> X-Ray</button>
+          <button type="button" class="ce-mode-btn" data-view-mode="exploded"><span class="ce-mode-num">03</span> Exploded</button>
+        </div>
+        <div class="ce-dock-group">
+          <button type="button" class="ce-chip-btn" id="ce-btn-labels" title="Alle 12 Baugruppen beschriften">🏷️ Labels</button>
+          <button type="button" class="ce-chip-btn active" id="ce-btn-flow" title="Gaswechsel-Partikel anzeigen">💨 Gasfluss</button>
+          <button type="button" class="ce-chip-btn" id="ce-btn-reset" title="Kamera zurücksetzen">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- 06 Step-by-Step Tour Card -->
+      <div class="ce-tour-card hidden" id="ce-tour-card" role="dialog" aria-label="Schritt-für-Schritt-Tour"></div>
+
+      <div class="ce-bottom-bar">
+        <button type="button" class="ce-tour-launcher" id="ce-btn-tour">🧭 06 Schritt-für-Schritt-Tour</button>
+        <button type="button" class="ce-mobile-toggle" id="ce-mobile-panel-toggle" aria-expanded="false">⚙️ Drehzahl, Dyno &amp; Details</button>
+        <div class="ce-orbit-hint">Ziehen: Drehen · Scroll/Pinch: Zoom · Klick: Bauteil prüfen</div>
+      </div>
+    </section>
+
+    <!-- Right Engineering Sidebar -->
+    <aside class="ce-side-panel" id="ce-side-panel" aria-label="Drehzahlsteuerung, Prüfstandskurve &amp; Bauteil-Inspektor">
+      <!-- 04 RPM Slider + Slow-Mo -->
+      <div class="ce-panel-section">
+        <div class="ce-section-head">
+          <label class="ce-section-label" for="ce-rpm-slider">04 · Motordrehzahl (RPM)</label>
+          <span class="ce-rpm-readout" id="ce-rpm-val">2.400 U/min</span>
+        </div>
+        <input type="range" class="ce-slider" id="ce-rpm-slider" min="0" max="7000" step="50" value="2400" />
+        <div class="ce-preset-row">
+          <button type="button" class="ce-preset-btn" data-rpm="850">Leerlauf</button>
+          <button type="button" class="ce-preset-btn" data-rpm="2400">Cruise</button>
+          <button type="button" class="ce-preset-btn" data-rpm="4200">Max Nm</button>
+          <button type="button" class="ce-preset-btn" data-rpm="6200">Max kW</button>
+        </div>
+        <div class="ce-speed-wrap">
+          <div class="ce-sub-label">Darstellungs-Tempo (Zeitlupe für 4-Takt-Analyse)</div>
+          <div class="ce-speed-row">
+            <button type="button" class="ce-speed-btn" data-scale="0">⏸ Pause</button>
+            <button type="button" class="ce-speed-btn" data-scale="0.06">0,06×</button>
+            <button type="button" class="ce-speed-btn active" data-scale="0.16">0,16×</button>
+            <button type="button" class="ce-speed-btn" data-scale="0.38">0,38×</button>
+          </div>
+        </div>
+        <div class="ce-status-pill" id="ce-status-badge" data-status="cruise">Teillast / Effizienzbereich</div>
+      </div>
+
+      <!-- Live 4-Cylinder Firing Order (1-3-4-2) -->
+      <div class="ce-panel-section">
+        <div class="ce-section-head">
+          <span class="ce-section-label">4-Takt Live · Zündfolge 1–3–4–2</span>
+          <span style="font-size:11px;color:var(--text-subtle);">2.0L DOHC 16V</span>
+        </div>
+        <div class="ce-cyl-grid" aria-label="Aktueller Takt pro Zylinder">
+          <div class="ce-cyl-pill" id="ce-cyl-badge-0" data-stroke="intake"><span class="ce-cyl-num">Zyl 1</span><span class="ce-cyl-stroke">Ansaugen</span></div>
+          <div class="ce-cyl-pill" id="ce-cyl-badge-1" data-stroke="compression"><span class="ce-cyl-num">Zyl 2</span><span class="ce-cyl-stroke">Verdichten</span></div>
+          <div class="ce-cyl-pill" id="ce-cyl-badge-2" data-stroke="exhaust"><span class="ce-cyl-num">Zyl 3</span><span class="ce-cyl-stroke">Ausstoßen</span></div>
+          <div class="ce-cyl-pill" id="ce-cyl-badge-3" data-stroke="power"><span class="ce-cyl-num">Zyl 4</span><span class="ce-cyl-stroke">Arbeiten</span></div>
+        </div>
+      </div>
+
+      <!-- Live Telemetry -->
+      <div class="ce-telemetry-grid" aria-label="Live-Telemetrie">
+        <div class="ce-metric">
+          <div class="ce-metric-label">Leistung P(n)</div>
+          <div class="ce-metric-val power" id="ce-tel-power">55 kW (75 PS)</div>
+        </div>
+        <div class="ce-metric">
+          <div class="ce-metric-label">Drehmoment M(n)</div>
+          <div class="ce-metric-val torque" id="ce-tel-torque">218 Nm</div>
+        </div>
+        <div class="ce-metric">
+          <div class="ce-metric-label">Zündungen / Sek.</div>
+          <div class="ce-metric-val" id="ce-tel-ign">80 / s</div>
+        </div>
+        <div class="ce-metric">
+          <div class="ce-metric-label">Wirkungsgrad η</div>
+          <div class="ce-metric-val" id="ce-tel-eff">37 %</div>
+        </div>
+      </div>
+
+      <!-- 05 Torque & Power Curve Chart -->
+      <div class="ce-panel-section">
+        <div class="ce-section-head">
+          <span class="ce-section-label">05 · Leistung &amp; Drehmoment</span>
+          <span style="font-size:11px;color:var(--text-subtle);">Prüfstand</span>
+        </div>
+        <div class="ce-chart-wrap">
+          <svg id="ce-dyno-chart" viewBox="0 0 320 158" role="img" aria-label="Leistungs- und Drehmomentkurve über Motordrehzahl"></svg>
+        </div>
+        <div class="ce-chart-legend">
+          <span><strong style="color:#2563eb;">━</strong> Leistung (kW) · <strong style="color:#ea580c;">┄</strong> Drehmoment (Nm)</span>
+          <span>Ziehen = RPM</span>
+        </div>
+      </div>
+
+      <!-- Selected Part Inspector -->
+      <div class="ce-panel-section" id="ce-inspector" aria-live="polite"></div>
+    </aside>
+  </main>
+
+  <script src="../../shared/arcade.js?v=0.4.0"></script>
+  <script src="../../shared/releases.js?v=0.4.0"></script>
+  <script src="../../shared/update-banner.js?v=0.4.0"></script>
+  <script src="../../shared/burger-menu.js?v=0.4.0"></script>
+  <script type="module" src="./ce-main.js?v=0.1.0"></script>
+</body>
+</html>

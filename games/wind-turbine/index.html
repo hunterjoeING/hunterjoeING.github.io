@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Windkraftanlage 3D – Interaktiver Explainer · HunterJoe Arcade</title>
+  <meta name="description" content="Interaktiver 3D-Explainer einer Windkraftanlage: Cutaway-Aufschnitt, X-Ray-Röntgenblick, Explosionsansicht mit 12 beschrifteten Baugruppen, Windgeschwindigkeits-Regler, Live-Leistungskurve &amp; 6-Schritte-Tour." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/wind-turbine/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="Windkraftanlage 3D – Interaktiver Explainer · HunterJoe Arcade" />
+  <meta property="og:description" content="Erlebe in echtem 3D, wie eine Windkraftanlage Wind in Strom verwandelt: Cutaway, X-Ray, Explosionsansicht, Wind-Regler, Leistungskurve &amp; geführte Tour." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/wind-turbine/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Windkraftanlage 3D – Interaktiver Explainer",
+    "description": "Interaktiver 3D-Explainer einer 3,6-MW-Windkraftanlage mit Cutaway, X-Ray, Explosionsansicht, Windgeschwindigkeits-Regler, Leistungskurve und Schritt-für-Schritt-Tour.",
+    "url": "https://hunterjoeing.github.io/games/wind-turbine/",
+    "inLanguage": "de",
+    "isAccessibleForFree": true,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any (Webbrowser)",
+    "author": { "@type": "Person", "name": "Johannes Rudolph" }
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <link rel="stylesheet" href="./styles.css?v=0.1.0" />
+</head>
+<body>
+  <header class="arcade-topbar wt-topbar">
+    <div class="topbar-left">
+      <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
+      <h1 class="topbar-title">🌬️ Windkraftanlage 3D</h1>
+      <button type="button" class="wt-version-pill" id="wt-version-btn" title="Änderungen dieser Version anzeigen">v0.1.0</button>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
+      <button type="button" class="icon-btn" id="btn-mute" title="Ton an/aus">🔊</button>
+    </div>
+  </header>
+
+  <main class="wt-workspace">
+    <section class="wt-viewport" id="wt-viewport" aria-label="Interaktive 3D-Ansicht Windkraftanlage">
+      <canvas id="wt-canvas"></canvas>
+      <div class="wt-label-layer" id="wt-label-layer" aria-label="Bauteil-Beschriftungen"></div>
+
+      <!-- 01 Cutaway · 02 X-Ray · 03 Exploded -->
+      <div class="wt-mode-dock" role="toolbar" aria-label="3D-Ansichtsmodus">
+        <div class="wt-dock-group">
+          <button type="button" class="wt-mode-btn active" data-view-mode="normal">Außenansicht</button>
+          <button type="button" class="wt-mode-btn" data-view-mode="cutaway"><span class="wt-mode-num">01</span> Cutaway</button>
+          <button type="button" class="wt-mode-btn" data-view-mode="xray"><span class="wt-mode-num">02</span> X-Ray</button>
+          <button type="button" class="wt-mode-btn" data-view-mode="exploded"><span class="wt-mode-num">03</span> Exploded</button>
+        </div>
+        <div class="wt-dock-group">
+          <button type="button" class="wt-chip-btn" id="wt-btn-labels" title="Alle 12 Bauteile beschriften">🏷️ Labels</button>
+          <button type="button" class="wt-chip-btn active" id="wt-btn-flow" title="Wind- &amp; Stromfluss anzeigen">💨 Fluss</button>
+          <button type="button" class="wt-chip-btn" id="wt-btn-reset" title="Kamera zurücksetzen">↺ Reset</button>
+        </div>
+      </div>
+
+      <!-- 06 Step-by-Step Tour Card -->
+      <div class="wt-tour-card hidden" id="wt-tour-card" role="dialog" aria-label="Schritt-für-Schritt-Tour"></div>
+
+      <div class="wt-bottom-bar">
+        <button type="button" class="wt-tour-launcher" id="wt-btn-tour">🧭 06 Schritt-für-Schritt-Tour</button>
+        <button type="button" class="wt-mobile-toggle" id="wt-mobile-panel-toggle" aria-expanded="false">⚙️ Wind, Kurve &amp; Details</button>
+        <div class="wt-orbit-hint">Ziehen: Drehen · Scroll/Pinch: Zoom · Klick: Bauteil prüfen</div>
+      </div>
+    </section>
+
+    <!-- Right Engineering Control & Telemetry Sidebar -->
+    <aside class="wt-side-panel" id="wt-side-panel" aria-label="Windsteuerung, Leistungskurve &amp; Bauteil-Inspektor">
+      <!-- 04 Wind Speed Slider -->
+      <div class="wt-panel-section">
+        <div class="wt-section-head">
+          <label class="wt-section-label" for="wt-wind-slider">04 · Windgeschwindigkeit</label>
+          <span class="wt-wind-readout" id="wt-wind-val">10.5 m/s</span>
+        </div>
+        <input type="range" class="wt-slider" id="wt-wind-slider" min="0" max="28" step="0.5" value="10.5" />
+        <div class="wt-preset-row">
+          <button type="button" class="wt-preset-btn" data-wind="2">Flaute</button>
+          <button type="button" class="wt-preset-btn" data-wind="6">Brise</button>
+          <button type="button" class="wt-preset-btn" data-wind="12">Nennwind</button>
+          <button type="button" class="wt-preset-btn" data-wind="26.5">Sturm</button>
+        </div>
+        <div class="wt-status-pill" id="wt-status-badge" data-status="partial">Teillast (Optimal-Cp)</div>
+      </div>
+
+      <!-- Live Telemetry -->
+      <div class="wt-telemetry-grid" aria-label="Live-Telemetrie">
+        <div class="wt-metric">
+          <div class="wt-metric-label">Elektr. Leistung</div>
+          <div class="wt-metric-val highlight" id="wt-tel-power">2.45 MW</div>
+        </div>
+        <div class="wt-metric">
+          <div class="wt-metric-label">Rotor-Drehzahl</div>
+          <div class="wt-metric-val" id="wt-tel-rpm">13.4 U/min</div>
+        </div>
+        <div class="wt-metric">
+          <div class="wt-metric-label">Blattwinkel (Pitch)</div>
+          <div class="wt-metric-val" id="wt-tel-pitch">0.3°</div>
+        </div>
+        <div class="wt-metric">
+          <div class="wt-metric-label">Generator-Drehzahl</div>
+          <div class="wt-metric-val" id="wt-tel-genrpm">1.233 U/min</div>
+        </div>
+        <div class="wt-metric">
+          <div class="wt-metric-label">Wirkungsgrad Cp</div>
+          <div class="wt-metric-val" id="wt-tel-cp">44 %</div>
+        </div>
+        <div class="wt-metric">
+          <div class="wt-metric-label">Versorgte Haushalte</div>
+          <div class="wt-metric-val" id="wt-tel-homes">~5.800</div>
+        </div>
+      </div>
+
+      <!-- 05 Power Curve Chart -->
+      <div class="wt-panel-section">
+        <div class="wt-section-head">
+          <span class="wt-section-label">05 · Leistungskurve P(v)</span>
+          <span style="font-size:11px;color:var(--text-subtle);">3,6 MW Klasse</span>
+        </div>
+        <div class="wt-chart-wrap">
+          <svg id="wt-power-chart" viewBox="0 0 320 152" role="img" aria-label="Leistungskurve in Megawatt über Windgeschwindigkeit in Meter pro Sekunde"></svg>
+        </div>
+        <div class="wt-chart-hint">Tipp: Direkt im Diagramm klicken oder ziehen, um den Wind zu regeln.</div>
+      </div>
+
+      <!-- Selected Part Inspector -->
+      <div class="wt-panel-section" id="wt-inspector" aria-live="polite"></div>
+    </aside>
+  </main>
+
+  <script src="../../shared/arcade.js?v=0.4.0"></script>
+  <script src="../../shared/releases.js?v=0.4.0"></script>
+  <script src="../../shared/update-banner.js?v=0.4.0"></script>
+  <script src="../../shared/burger-menu.js?v=0.4.0"></script>
+  <script type="module" src="./wt-main.js?v=0.1.0"></script>
+</body>
+</html>

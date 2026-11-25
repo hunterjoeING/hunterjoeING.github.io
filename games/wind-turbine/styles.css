@@ -1,0 +1,792 @@
+/* Windkraftanlage 3D Explainer – Responsive Studio UI (Light & Dark Mode) */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-deep);
+  color: var(--text-main);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}
+
+.wt-topbar {
+  flex: 0 0 auto;
+  z-index: 40;
+}
+
+.wt-version-pill {
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-sand);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-boutique);
+}
+
+.wt-version-pill:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+/* Main Workspace: 3D Stage + Right Engineering Panel */
+.wt-workspace {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 368px;
+  overflow: hidden;
+}
+
+.wt-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: #eef3fa;
+  touch-action: none;
+}
+
+html[data-theme="dark"] .wt-viewport {
+  background: #0b1220;
+}
+
+#wt-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+#wt-canvas:active {
+  cursor: grabbing;
+}
+
+/* Floating 3D Labels Layer */
+.wt-label-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  z-index: 12;
+}
+
+.wt-label-layer.is-visible {
+  opacity: 1;
+}
+
+.wt-label-pin {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 5px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.16);
+  background: rgba(255, 255, 255, 0.92);
+  color: #0f172a;
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  will-change: transform;
+}
+
+html[data-theme="dark"] .wt-label-pin {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(148, 163, 184, 0.28);
+  color: #f8fafc;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+.wt-pin-num {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.wt-label-pin:hover,
+.wt-label-pin.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #ffffff;
+  z-index: 5;
+}
+
+.wt-label-pin:hover .wt-pin-num,
+.wt-label-pin.active .wt-pin-num {
+  background: #ffffff;
+  color: var(--accent-primary);
+}
+
+/* Top-Left View Mode Dock (Normal / 01 Cutaway / 02 X-Ray / 03 Exploded) */
+.wt-mode-dock {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 16;
+}
+
+.wt-dock-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  padding: 5px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+}
+
+html[data-theme="dark"] .wt-dock-group {
+  background: rgba(17, 24, 39, 0.86);
+}
+
+.wt-mode-btn,
+.wt-chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s var(--ease-boutique);
+}
+
+.wt-mode-btn:hover,
+.wt-chip-btn:hover {
+  background: var(--bg-sand);
+  color: var(--text-main);
+}
+
+.wt-mode-btn.active {
+  background: var(--accent-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.28);
+}
+
+.wt-chip-btn.active {
+  background: var(--accent-sage-soft);
+  border-color: rgba(37, 99, 235, 0.3);
+  color: var(--accent-primary);
+}
+
+.wt-mode-num {
+  font-size: 10px;
+  opacity: 0.72;
+  font-weight: 700;
+}
+
+/* Bottom-Left Orbit Hint & Tour Launcher */
+.wt-bottom-bar {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+  z-index: 18;
+}
+
+.wt-tour-launcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--accent-primary);
+  background: var(--accent-primary);
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow-btn);
+  pointer-events: auto;
+  transition: all 0.2s var(--ease-boutique);
+}
+
+.wt-tour-launcher:hover {
+  background: var(--accent-primary-hover);
+  transform: translateY(-1px);
+}
+
+.wt-orbit-hint {
+  padding: 7px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+  font-size: 11.5px;
+  font-weight: 500;
+  backdrop-filter: blur(8px);
+  pointer-events: none;
+}
+
+html[data-theme="dark"] .wt-orbit-hint {
+  background: rgba(17, 24, 39, 0.78);
+}
+
+/* Step-by-Step Tour Card (Floating Bottom-Center) */
+.wt-tour-card {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 62px;
+  margin: 0 auto;
+  width: min(560px, calc(100% - 28px));
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-hover);
+  backdrop-filter: blur(12px);
+  z-index: 22;
+  animation: editorialFadeIn 0.25s var(--ease-boutique) both;
+}
+
+html[data-theme="dark"] .wt-tour-card {
+  background: rgba(17, 24, 39, 0.94);
+}
+
+.wt-tour-card.hidden {
+  display: none;
+}
+
+.wt-tour-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.wt-tour-step-pill {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.wt-tour-badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--bg-sand);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.wt-tour-close,
+.wt-inspector-close {
+  margin-left: auto;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-sand);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+}
+
+.wt-tour-close:hover,
+.wt-inspector-close:hover {
+  color: var(--text-main);
+  border-color: var(--accent-primary);
+}
+
+.wt-tour-title {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.wt-tour-body {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.wt-tour-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wt-tour-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wt-tour-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  background: var(--border-subtle);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wt-tour-dot.active {
+  width: 22px;
+  background: var(--accent-primary);
+}
+
+.wt-tour-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.wt-btn-ghost,
+.wt-btn-primary {
+  padding: 7px 13px;
+  border-radius: 9px;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.wt-btn-ghost {
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-main);
+}
+
+.wt-btn-ghost:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.wt-btn-primary {
+  border: 1px solid var(--accent-primary);
+  background: var(--accent-primary);
+  color: #ffffff;
+}
+
+.wt-btn-primary:hover {
+  background: var(--accent-primary-hover);
+}
+
+/* Right Engineering Side Panel */
+.wt-side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background: var(--bg-surface);
+  border-left: 1px solid var(--border-hairline);
+  overflow-y: auto;
+  z-index: 25;
+}
+
+.wt-panel-section {
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-hairline);
+}
+
+.wt-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.wt-section-label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.01em;
+}
+
+.wt-wind-readout {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.wt-slider {
+  width: 100%;
+  height: 6px;
+  accent-color: var(--accent-primary);
+  cursor: pointer;
+  margin: 4px 0 10px;
+}
+
+.wt-preset-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.wt-preset-btn {
+  padding: 6px 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.wt-preset-btn:hover,
+.wt-preset-btn.active {
+  border-color: var(--accent-primary);
+  background: var(--accent-sage-soft);
+  color: var(--accent-primary);
+}
+
+.wt-status-pill {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  background: var(--bg-sand);
+  color: var(--text-muted);
+}
+
+.wt-status-pill[data-status="partial"] {
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+}
+
+.wt-status-pill[data-status="rated"] {
+  background: rgba(21, 128, 61, 0.14);
+  color: #15803d;
+}
+
+html[data-theme="dark"] .wt-status-pill[data-status="rated"] {
+  color: #4ade80;
+}
+
+.wt-status-pill[data-status="cutout"] {
+  background: rgba(220, 38, 38, 0.15);
+  color: #dc2626;
+}
+
+html[data-theme="dark"] .wt-status-pill[data-status="cutout"] {
+  color: #f87171;
+}
+
+/* Telemetry Grid */
+.wt-telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.wt-metric {
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+}
+
+.wt-metric-label {
+  font-size: 11px;
+  color: var(--text-subtle);
+  font-weight: 500;
+}
+
+.wt-metric-val {
+  margin-top: 2px;
+  font-family: var(--font-display);
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.wt-metric-val.highlight {
+  color: var(--accent-primary);
+}
+
+/* Interactive Power Curve Chart */
+.wt-chart-wrap {
+  width: 100%;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  padding: 6px 4px 2px;
+  touch-action: none;
+}
+
+#wt-power-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: ew-resize;
+}
+
+.chart-grid {
+  stroke: var(--border-hairline);
+  stroke-width: 1;
+}
+
+.chart-marker-line {
+  stroke: var(--border-subtle);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.chart-marker-line.danger {
+  stroke: rgba(220, 38, 38, 0.55);
+}
+
+.chart-zone-rated {
+  fill: rgba(22, 163, 74, 0.08);
+}
+
+.chart-zone-cutout {
+  fill: rgba(220, 38, 38, 0.08);
+}
+
+.chart-curve-line {
+  stroke: #2563eb;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chart-axis-text {
+  fill: var(--text-subtle);
+  font-family: var(--font-ui);
+  font-size: 9.5px;
+  font-weight: 600;
+}
+
+.chart-unit-text {
+  fill: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.chart-live-guide {
+  stroke: var(--accent-primary);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 2;
+  opacity: 0.7;
+}
+
+.chart-live-ring {
+  fill: rgba(37, 99, 235, 0.22);
+}
+
+.chart-live-dot {
+  fill: #2563eb;
+  stroke: #ffffff;
+  stroke-width: 1.8;
+}
+
+.wt-chart-hint {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--text-subtle);
+}
+
+/* Part Inspector */
+.wt-inspector-empty {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.wt-inspector-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.wt-inspector-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--accent-primary);
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.wt-inspector-cat {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-primary);
+}
+
+.wt-inspector-title {
+  margin: 1px 0 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.25;
+}
+
+.wt-inspector-stage {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 9px;
+  border-radius: 8px;
+  background: var(--accent-sage-soft);
+  color: var(--accent-primary);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.wt-inspector-desc {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.wt-inspector-spec {
+  font-size: 11px;
+  color: var(--text-subtle);
+  padding-top: 8px;
+  border-top: 1px solid var(--border-hairline);
+}
+
+/* Mobile Drawer Toggle (hidden on desktop) */
+.wt-mobile-toggle {
+  display: none;
+}
+
+@media (max-width: 960px) {
+  .wt-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .wt-orbit-hint {
+    display: none;
+  }
+
+  .wt-mobile-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font-family: var(--font-ui);
+    font-size: 12.5px;
+    font-weight: 600;
+    box-shadow: var(--shadow-soft);
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
+  .wt-side-panel {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 74dvh;
+    border-left: none;
+    border-top: 1px solid var(--border-subtle);
+    border-radius: 18px 18px 0 0;
+    box-shadow: 0 -14px 36px rgba(15, 23, 42, 0.25);
+    transform: translateY(105%);
+    transition: transform 0.28s var(--ease-boutique);
+  }
+
+  .wt-side-panel.mobile-open {
+    transform: translateY(0);
+  }
+
+  .wt-mode-dock {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+  }
+
+  .wt-mode-btn,
+  .wt-chip-btn {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .wt-tour-card {
+    bottom: 66px;
+    padding: 13px 14px;
+  }
+}

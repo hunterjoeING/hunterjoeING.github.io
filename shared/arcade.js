@@ -240,6 +240,8 @@
   function detectGameId() {
     try {
       const p = (window.location.pathname || '').toLowerCase();
+      if (p.includes('/games/wind-turbine')) return 'wind_turbine';
+      if (p.includes('/games/combustion-engine')) return 'combustion_engine';
       if (p.includes('/games/podracer')) return 'podracer';
       if (p.includes('/games/e-roadtrip')) return 'eroadtrip';
       if (p.includes('/games/2048')) return 'p2048';
@@ -955,6 +957,8 @@
   const FEEDBACK_TARGETS = [
     { id: 'all', title: '✨ Alle Module & Allgemein', icon: '🌐' },
     { id: 'general', title: 'Allgemein / Ganze Website', icon: '🏠' },
+    { id: 'wind_turbine', title: 'Windkraftanlage 3D – Interaktiver Explainer', icon: '🌬️' },
+    { id: 'combustion_engine', title: 'Verbrennungsmotor 3D – Interaktiver Explainer', icon: '🔥' },
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️' },
     { id: 'eroadtrip', title: 'e-Roadtrip: Pixel Europe', icon: '⚡' },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊' },
