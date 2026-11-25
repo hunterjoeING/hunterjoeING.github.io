@@ -78,6 +78,7 @@ const arcadeReleases = {
         "Top 10 und deine Platzierung direkt nach der Fahrt",
         "Bestenlisten-Knopf im Spiel mit Tabs für beide Level und die Gesamtwertung",
         "Abgeschlossene Fahrten zählen auch für die Gesamtbestenliste",
+        "Einheitlicher Name „e-Roadtrip: Pixel Europe“ auf Karte, Spielseite und Bestenlisten",
       ],
     },
     {

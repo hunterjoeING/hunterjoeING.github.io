@@ -288,7 +288,7 @@ export class DrivingHUD {
       </div>
       <div class="dhud-controls">
         <div class="dhud-city-hint">
-          🎮 GTA-2 Stadt-Segment: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
+          🎮 Stadtfahrt: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
         </div>
       </div>`;
     }

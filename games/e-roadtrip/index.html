@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>E-Roadtrip – Pixel-Art E-Auto Planung &amp; GTA-2 Fahrt</title>
-  <meta name="description" content="Plane reale E-Auto-Roadtrips durch Europa mit Ladekurven, Lade-Abos, Autobahn-Autopilot, GTA-2 Stadtsegmenten, Dynamik-Events und Fahrzeug-Progression." />
+  <title>e-Roadtrip: Pixel Europe</title>
+  <meta name="description" content="Plane reale E-Auto-Roadtrips durch Europa mit Ladekurven, Lade-Abos, Autobahn-Autopilot, Top-Down-Stadtverkehr, Dynamik-Events und Fahrzeug-Progression." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/e-roadtrip/" />
@@ -22,7 +22,7 @@
   <header class="arcade-topbar">
     <div class="topbar-left">
       <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
-      <div class="topbar-title"><span class="er-title-prefix">⚡🚗 </span>E-Roadtrip<span class="er-title-subtitle"> · Pixel Europe &amp; GTA-2</span></div>
+      <div class="topbar-title"><span class="er-title-prefix">⚡🚗 </span>e-Roadtrip<span class="er-title-subtitle">: Pixel Europe</span></div>
       <button type="button" class="er-version-label" id="er-version-label" aria-haspopup="dialog" hidden></button>
     </div>
     <div class="topbar-right">
@@ -66,7 +66,7 @@
       if (!release) return;
       const button = document.getElementById('er-version-label');
       button.textContent = 'v' + release.version;
-      button.setAttribute('aria-label', 'E-Roadtrip ' + button.textContent + ' – Changelog öffnen');
+      button.setAttribute('aria-label', 'e-Roadtrip ' + button.textContent + ' – Changelog öffnen');
       button.addEventListener('click', () => ArcadeUpdates.openChangelog('eroadtrip', button));
       button.hidden = false;
     })();
