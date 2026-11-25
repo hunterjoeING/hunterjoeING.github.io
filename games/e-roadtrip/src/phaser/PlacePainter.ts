@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset } from '../types';
+import { ChargingBay } from '../sim/ChargingBay';
 import { ZebraCrosswalk } from './CityTraffic';
 import { TrafficRoute, cityTrafficRoutes, laneCenter, trafficRoute } from './CityLanes';
 import {
@@ -48,13 +49,25 @@ export interface PlacePaint {
   zoneLabel?: string;
   zoneColor?: number;
   passThrough: boolean;
-  pillar?: { x: number; y: number };
+  chargingBays?: PaintedChargingBay[];
   spawn: { x: number; y: number; rot: number };
   spinners: Phaser.GameObjects.Image[];
   traffic: TrafficRoute[];
   trafficJunctions: Rect[];
   litePeds?: LitePedestrian[];
   previewPoint?: { x: number; y: number; rot: number };
+}
+
+export interface PaintedChargingBay extends ChargingBay {
+  parkedCar: boolean;
+  occupied: boolean;
+  marker: Phaser.GameObjects.Rectangle;
+}
+
+export function setBayOccupied(bay: PaintedChargingBay, occupied: boolean): void {
+  bay.occupied = occupied;
+  const color = occupied ? 0xf87171 : 0x22c55e;
+  bay.marker.setFillStyle(color, occupied ? 0.14 : 0.24).setStrokeStyle(2, color, 0.95);
 }
 
 export function paintDrivingPlace(
@@ -598,39 +611,34 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     phase: 1.2
   });
 
-  // Chargers along the canopy's outer edge (not the player's bay).
-  const drawCharger = (x: number, y: number, scale: number) => {
-    scene.add.image(x, y, `charger_${station.network}`).setScale(scale).setDepth(5);
-    buildings.push(spriteFootprint(x, y, CHARGER_SIZE, CHARGER_FOOTPRINT, scale));
-  };
-  const edgeCount = mobile ? 2 : 3;
-  for (let i = 0; i < edgeCount; i++) {
-    const cx = canopy.x + canopy.w + 18;
-    const cy = canopy.y + 16 + i * 36;
-    drawCharger(cx, cy, 1.05);
-  }
-
   const aisleTop = apron.y + apron.h - 150;
-  const bayCount = style === 'rural' ? 4 : style === 'urban' ? (mobile ? 6 : 8) : 6;
+  const layoutCapacity = style === 'rural' ? 4 : style === 'urban' ? (mobile ? 6 : 8) : 6;
+  const bayCount = Math.min(station.stalls, layoutCapacity);
   const rowX = apron.x + (variant === 2 ? 430 : 340);
-  const targetIndex = hashString(station.id + ':bay') % bayCount;
-  const otherBays = Array.from({ length: bayCount }, (_, i) => i).filter(i => i !== targetIndex);
-  const occupiedBays = new Set(otherBays.filter(i => hashString(`${station.id}:stall:${i}`) % 3 === 0));
-  const npcBay = otherBays.find(i => !occupiedBays.has(i)) ?? otherBays[0];
-  occupiedBays.delete(npcBay);
-  let targetZone = new Phaser.Geom.Rectangle(rowX, aisleTop - 78, 48, 70);
-  let pillar = { x: targetZone.centerX, y: targetZone.y + 6 };
+  const indices = Array.from({ length: bayCount }, (_, i) => i);
+  const freeCount = Math.max(Math.min(2, bayCount), Math.round(bayCount * (1 - station.occupancyRisk)));
+  const occupiedBays = new Set(indices
+    .map(index => ({ index, order: hashString(`${station.id}:stall:${index}`) }))
+    .sort((a, b) => a.order - b.order)
+    .slice(0, bayCount - freeCount)
+    .map(({ index }) => index));
+  const npcBay = bayCount > 1 ? indices.find(i => !occupiedBays.has(i)) : undefined;
+  const chargingBays: PaintedChargingBay[] = [];
   for (let i = 0; i < bayCount; i++) {
     const bx = rowX + i * 58;
     const by = aisleTop - 78;
-    g.lineStyle(2, i === targetIndex ? 0x22c55e : 0xfacc15, 0.9);
-    g.lineBetween(bx, by, bx, by + 68);
-    g.lineBetween(bx + 46, by, bx + 46, by + 68);
-    g.lineBetween(bx, by, bx + 46, by);
+    const pillar = { x: bx + 23, y: by + 4 };
+    const marker = scene.add.rectangle(bx + 23, by + 34, 46, 68).setDepth(3);
+    const parkedCar = occupiedBays.has(i);
+    const bay = { bounds: { x: bx, y: by, w: 46, h: 68 }, pillar, parkedCar, occupied: parkedCar, marker };
+    chargingBays.push(bay);
+    setBayOccupied(bay, parkedCar);
     scene.add.image(bx + 23, by + 8, 'wheel_stop').setDepth(4);
     buildings.push({ x: bx + 23 - WHEEL_STOP_SIZE.w / 2, y: by + 8 - WHEEL_STOP_SIZE.h / 2, ...WHEEL_STOP_SIZE });
-    drawCharger(bx + 23, by + 4, 1.12);
-    if (occupiedBays.has(i)) {
+    scene.add.image(pillar.x, pillar.y, `charger_${station.network}`).setScale(1.12).setDepth(5);
+    scene.add.image(pillar.x, pillar.y - 10, `stall_badge_${station.network}`).setDepth(5.1);
+    buildings.push(spriteFootprint(pillar.x, pillar.y, CHARGER_SIZE, CHARGER_FOOTPRINT, 1.12));
+    if (parkedCar) {
       const parked = ['npc_sedan_blue', 'npc_compact_green', 'npc_van_white', 'npc_fast_red', 'npc_fast_black'];
       scene.add
         .image(bx + 23, by + 40, parked[i % parked.length])
@@ -638,10 +646,6 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
         .setRotation(Math.PI)
         .setDepth(5);
       buildings.push(spriteFootprint(bx + 23, by + 40, CAR_SIZE, CAR_FOOTPRINT, 0.78));
-    }
-    if (i === targetIndex) {
-      targetZone = new Phaser.Geom.Rectangle(bx, by, 46, 68);
-      pillar = { x: bx + 23, y: by + 4 };
     }
   }
 
@@ -750,28 +754,29 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
   const westbound = laneCenter(motorway, 'ew', -1);
   const aisleEast = laneCenter(aisle, 'ew', 1);
   const aisleWest = laneCenter(aisle, 'ew', -1);
-  const bayX = rowX + npcBay * 58 + 23;
-  const bayY = aisleTop - 42;
-  const turnY = aisle.y + aisle.h - 6;
-  const traffic = [
-    trafficRoute('npc_sedan_blue', 62, [
+  const traffic = [trafficRoute('npc_compact_green', 78, [
+    { x: worldW + 60, y: westbound }, { x: worldW - 80, y: westbound, spawn: true },
+    { x: -60, y: westbound }
+  ])];
+  const trafficJunctions = [
+    { x: spur.x - 30, y: motorway.y + motorway.h / 2, w: spur.w + 60, h: 96 },
+    { x: spur.x, y: aisle.y, w: spur.w + 42, h: aisle.h }
+  ];
+  if (npcBay !== undefined) {
+    const bay = chargingBays[npcBay];
+    const bayX = bay.pillar.x;
+    const bayY = bay.bounds.y + bay.bounds.h / 2;
+    const turnY = aisle.y + aisle.h - 6;
+    traffic.unshift(trafficRoute('npc_sedan_blue', 62, [
       { x: -60, y: eastbound }, { x: 74, y: eastbound, spawn: true },
       { x: inboundX, y: eastbound }, { x: inboundX, y: aisleEast },
       { x: bayX, y: aisleEast }, { x: bayX, y: turnY },
       { x: bayX, y: bayY, reverse: true, park: true },
       { x: bayX, y: aisleWest }, { x: outboundX, y: aisleWest },
       { x: outboundX, y: eastbound }, { x: worldW + 60, y: eastbound }
-    ], { holdSec: 8 }),
-    trafficRoute('npc_compact_green', 78, [
-      { x: worldW + 60, y: westbound }, { x: worldW - 80, y: westbound, spawn: true },
-      { x: -60, y: westbound }
-    ])
-  ];
-  const trafficJunctions = [
-    { x: spur.x - 30, y: motorway.y + motorway.h / 2, w: spur.w + 60, h: 96 },
-    { x: spur.x, y: aisle.y, w: spur.w + 42, h: aisle.h },
-    { x: bayX - 20, y: bayY - 22, w: 40, h: turnY - bayY + 44 }
-  ];
+    ], { holdSec: 8 }));
+    trafficJunctions.push({ x: bayX - 20, y: bayY - 22, w: 40, h: turnY - bayY + 44 });
+  }
   const litePeds: LitePedestrian[] = [
     {
       tex: 'ped_adult_0',
@@ -818,11 +823,9 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     lamps: mobile ? lamps.slice(0, 4) : lamps,
     neons,
     zebras: [],
-    targetZone,
-    zoneLabel: `↺ RÜCKWÄRTS\n${station.maxKw} kW`,
-    zoneColor: 0x22c55e,
+    targetZone: new Phaser.Geom.Rectangle(rowX, aisleTop - 78, bayCount * 58, 68),
     passThrough: false,
-    pillar,
+    chargingBays,
     spawn: { x: apron.x + 130, y: apron.y + 52, rot: Math.PI },
     spinners,
     traffic,

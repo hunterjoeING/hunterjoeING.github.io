@@ -129,7 +129,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(6px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
 }
 .map-fab:hover {
@@ -730,7 +729,8 @@ html[data-theme="light"] .er-driving-hud {
 }
 .er-trip-computer {
   align-self: flex-end;
-  width: 230px;
+  width: 270px;
+  max-width: 100%;
   padding: 8px 10px;
   border-radius: 12px;
   background: var(--bg-card);
@@ -746,13 +746,39 @@ html[data-theme="light"] .er-driving-hud {
   cursor: pointer;
   font-size: 12px;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 .er-trip-computer[open] summary {
   margin-bottom: 4px;
 }
-.trip-kicker, .trip-road {
+.trip-road {
   font-size: 11px;
   opacity: 0.85;
+}
+.trip-segments {
+  list-style: none;
+  margin: 0 0 4px;
+  padding: 0;
+  max-height: 116px;
+  overflow-y: auto;
+  font-size: 11px;
+}
+.trip-segments li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 4px 5px;
+  border-inline-start: 3px solid transparent;
+  overflow-wrap: anywhere;
+}
+.trip-segments li[aria-current="step"] {
+  border-inline-start-color: var(--accent-primary);
+  background: var(--bg-elevated);
+  border-radius: 3px;
+  font-weight: 600;
+}
+.trip-segments li > span {
+  white-space: nowrap;
 }
 .stage-map {
   width: 100%;
@@ -802,7 +828,6 @@ html[data-theme="light"] .er-driving-hud {
   color: var(--text-main);
   border: 1px solid var(--border-subtle);
   font-size: 12px;
-  backdrop-filter: blur(6px);
 }
 .dhud-pill.soc.low {
   border-color: #ef4444;
@@ -971,17 +996,38 @@ html[data-theme="light"] .er-driving-hud {
 }
 
 /* Modals & Results */
+body .arcade-modal-backdrop,
+html[data-theme="dark"] body .arcade-modal-backdrop,
+body .abm-backdrop {
+  background: rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
 .er-modal-overlay, .er-results-overlay {
   position: fixed;
   inset: 0;
   z-index: 950;
-  background: rgba(2, 6, 23, 0.72);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 14px;
   overflow-y: auto;
+}
+
+.er-modal-drive-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  font-size: 12px;
+}
+.er-modal-drive-status > * {
+  white-space: nowrap;
 }
 
 .er-modal-card, .results-card {
@@ -1635,7 +1681,6 @@ html[data-theme="light"] .er-driving-hud {
   font-size: 10.5px;
   font-weight: 600;
   cursor: pointer;
-  backdrop-filter: blur(6px);
 }
 .mfb-mode-btn.active {
   border-color: #facc15;
@@ -1663,7 +1708,6 @@ html[data-theme="light"] .er-driving-hud {
   border: 1px solid rgba(148, 163, 184, 0.25);
   color: #cbd5e1;
   font-size: 10px;
-  backdrop-filter: blur(6px);
 }
 .lg-dot {
   display: inline-flex;
@@ -1982,6 +2026,9 @@ html[data-theme="light"] .er-driving-hud {
   .dhud-row, .dhud-controls {
     gap: 4px;
   }
+  .dhud-row {
+    order: -2;
+  }
   .dhud-pill {
     padding: 2px 6px;
     font-size: 11px;
@@ -2010,11 +2057,12 @@ html[data-theme="light"] .er-driving-hud {
     min-height: 29px;
   }
   .er-trip-computer {
+    order: -1;
     width: 100%;
     padding: 4px 8px;
   }
   .stage-map {
-    height: 72px;
+    display: none;
   }
   .forecast-strip {
     grid-template-columns: repeat(3, 1fr);

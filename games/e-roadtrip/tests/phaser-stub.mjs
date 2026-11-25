@@ -7,7 +7,10 @@ export const Math = {
   Linear: (start, end, t) => start + (end - start) * t,
   Between: (min, max) => globalThis.Math.floor((min + max) / 2),
   FloatBetween: (min, max) => (min + max) / 2,
-  Angle: { Wrap: angle => globalThis.Math.atan2(globalThis.Math.sin(angle), globalThis.Math.cos(angle)) },
+  Angle: {
+    Wrap: angle => globalThis.Math.atan2(globalThis.Math.sin(angle), globalThis.Math.cos(angle)),
+    Between: (x, y, a, b) => globalThis.Math.atan2(b - y, a - x)
+  },
   Distance: { Between: (x, y, a, b) => globalThis.Math.hypot(x - a, y - b) }
 };
 

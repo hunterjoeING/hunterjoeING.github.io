@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { VEHICLES } from '../data/vehicles';
 import { ChargerNetwork, LandmarkKind, VehicleShape } from '../types';
+import { drawChargerBadge } from './ChargerBadges';
 import {
   BISTRO_KIOSK, CAR_CHASSIS, CAR_FOOTPRINT, CAR_SIZE, CHARGER_FOOTPRINT, CHARGER_SIZE,
   MCD_KIOSK, TRUCK_FOOTPRINT, TRUCK_SIZE, WHEEL_STOP_SIZE
@@ -264,6 +265,7 @@ function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void
   };
 
   const c = colors[net];
+  drawChargerBadge(scene, net, c.accent);
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.fillRect(4, 4, 14, 14);
   ctx.fillStyle = c.body;

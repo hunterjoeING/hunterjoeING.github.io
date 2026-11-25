@@ -205,22 +205,22 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
 
   evt_charger_defect: {
     id: 'evt_charger_defect',
-    title: 'Ladesäule defekt / blockiert!',
+    title: 'Ladesäule meldet eine Störung!',
     category: 'charger',
     icon: '🔌',
     description:
-      'Am angefahrenen Ladepark zeigt eine Säule „Störung – Kommunikation fehlgeschlagen“, und ein Verbrenner blockiert eine weitere Bucht.',
+      'Beim Anschließen meldet deine Ladesäule „Störung – Kommunikation fehlgeschlagen“. Die Hotline kann die Säule neu starten.',
     choices: [
       {
         id: 'wait_free_stall',
-        label: 'Auf freiwerdenden Nachbar-Stall warten & Hotline anrufen',
+        label: 'Hotline anrufen und auf Neustart warten',
         hint: '+11 Min Wartezeit · +6 Stress',
         timeDeltaMin: 11,
         socDeltaPct: 0,
         costDeltaEur: 0,
         stressDelta: 6,
         decisionPoints: 6,
-        resultText: 'Nach 11 Minuten fährt ein anderer E-Fahrer weg und du kannst anstecken.'
+        resultText: 'Nach 11 Minuten ist deine Ladesäule wieder bereit.'
       },
       {
         id: 'reroute_next_hub',

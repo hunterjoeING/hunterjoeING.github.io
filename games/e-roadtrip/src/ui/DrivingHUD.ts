@@ -1,7 +1,9 @@
 import { HighwayEdge, LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
+import { buildRemainingRoute } from '../sim/RouteNavigation';
 import { getActiveRouteLegs, highwaySection, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
+import { formatClock, formatDrivingCosts } from './DrivingStatus';
 import { speedSignHtml } from './speedSign';
 import {
   TouchControlKey,
@@ -14,14 +16,9 @@ import { SoundFX } from '../phaser/SoundFX';
 import { getEdgeWaypoints, getPointAlongEdge } from '../phaser/MapLayout';
 
 function renderStageComputer(
-  fromName: string,
-  toName: string,
   edge: HighwayEdge,
   progress: number,
   reverse: boolean,
-  hh: string,
-  mm: string,
-  weather: string,
   tollsEur: number,
   pauseCostEur: number
 ): string {
@@ -49,9 +46,6 @@ function renderStageComputer(
   const d = mapped.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
   const dot = project(getPointAlongEdge(edge, progress, reverse));
   return `
-    <div class="trip-kicker">${hh}:${mm} · ${weather}</div>
-    <strong>${fromName} → ${toName}</strong>
-    <div class="trip-road">${edge.highwayName} · ${Math.round(progress * 100)} %</div>
     ${edge.tollEur > 0 || tollsEur > 0 ? `<div class="trip-road">Maut bisher ${tollsEur.toFixed(2)} € · Etappe ${edge.tollEur.toFixed(2)} €</div>` : ''}
     ${pauseCostEur > 0 ? `<div class="trip-road">Pausen bisher ${pauseCostEur.toFixed(2)} €</div>` : ''}
     <svg viewBox="0 0 ${w} ${h}" class="stage-map" aria-hidden="true">
@@ -197,9 +191,6 @@ export class DrivingHUD {
     const vehicle = getVehicleById(run.plan.vehicleId);
 
     const pred = predictLiveTripSoc(level, run);
-    const clockTotalMin = Math.round(level.departureTimeHour * 60 + run.elapsedMinutes);
-    const hh = String(Math.floor(clockTotalMin / 60) % 24).padStart(2, '0');
-    const mm = String(clockTotalMin % 60).padStart(2, '0');
     const socRound = Math.round(run.socPct);
     const rangeEstKm = Math.round(
       ((run.socPct / 100) * vehicle.batteryKwh) / (Math.max(10, pred.consumptionKwh100) / 100)
@@ -217,14 +208,6 @@ export class DrivingHUD {
     const weatherBadge =
       run.activeWeather === 'rain' ? '🌧️ Regen' : run.activeWeather === 'snow' ? '❄️ Schnee' : run.isNight ? '🌙 Nacht' : '☀️ Klar';
 
-    const totalCost = (
-      run.chargingCostEur +
-      run.subscriptionCostEur +
-      run.tollsEur +
-      run.incidentalCostEur +
-      run.pauseCostEur +
-      (run.lodgingCostEur || 0)
-    ).toFixed(2);
     const sliderMax = snapSpeedKmh(vehicle.maxSpeedKmh, vehicle.maxSpeedKmh);
     const signLimit = run.highwaySignLegIndex === run.currentLegIndex && run.highwaySignKmh !== undefined
       ? run.highwaySignKmh
@@ -274,7 +257,8 @@ export class DrivingHUD {
       </div>
       <div class="dhud-replan-feedback" data-field="replan-feedback" role="status"></div>
       <details class="er-trip-computer" ${this.compactLayout.matches ? '' : 'open'}>
-        <summary>Bordcomputer</summary>
+        <summary>Navi · <span data-field="nav-summary"></span></summary>
+        <ol class="trip-segments" data-field="nav-segments" aria-label="Verbleibende Etappen" tabindex="0"></ol>
         <div id="er-trip-computer"></div>
       </details>`
           : `
@@ -317,12 +301,12 @@ export class DrivingHUD {
       'route',
       citySubtitle || `${from.name} → ${to.name} (${Math.round(run.legProgressKm)}/${edge.distanceKm} km)`
     );
-    this.setText('clock', `${hh}:${mm} · ${weatherBadge}`);
+    this.setText('clock', `${formatClock(level, run.elapsedMinutes)} · ${weatherBadge}`);
     this.setHtml(
       'stress',
-      `${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}%`
+      `${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}% · Hunger ${Math.round(run.hungerNeed)}%`
     );
-    this.setText('cost', `${totalCost} €`);
+    this.setText('cost', formatDrivingCosts(run));
     this.setText('replan-feedback', this.replanFeedback);
     this.setHtml('speed-sign', speedSignHtml(signLimit));
     this.setText('tempo', `Ist ${Math.round(run.currentSpeedKmh)} · Ziel ${chosen}`);
@@ -343,10 +327,15 @@ export class DrivingHUD {
     this.hudEl.querySelector('#btn-tailgate')?.classList.toggle('hidden', !run.tailgateReady);
     const computer = this.hudEl.querySelector('#er-trip-computer');
     if (computer && this.mode === 'autobahn') {
+      const route = buildRemainingRoute(level, run);
+      this.setText('nav-summary', `${route.destination} · ${Math.round(route.remainingKm)} km · ca. ${Math.ceil(route.etaMinutes)} Min`);
+      this.setHtml('nav-segments', route.segments.map(segment => `
+        <li${segment.current ? ' aria-current="step"' : ''}>
+          <div><b>${segment.highwayName}</b> · ${segment.from} → ${segment.to}</div>
+          <span>${Math.round(segment.remainingKm)} km</span>
+        </li>`).join(''));
       const progress = Math.max(0, Math.min(1, run.legProgressKm / Math.max(1, edge.distanceKm)));
-      computer.innerHTML = renderStageComputer(
-        from.name, to.name, edge, progress, !!leg.reverse, hh, mm, weatherBadge, run.tollsEur, run.pauseCostEur
-      );
+      computer.innerHTML = renderStageComputer(edge, progress, !!leg.reverse, run.tollsEur, run.pauseCostEur);
     }
   }
 

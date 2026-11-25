@@ -34,7 +34,7 @@ export class EventModal {
   private chargeTimer: number | null = null;
   private stopBreakAnim: (() => void) | null = null;
 
-  constructor(modalEl: HTMLElement) {
+  constructor(modalEl: HTMLElement, private renderDriveStatus = () => '') {
     this.modalEl = modalEl;
   }
 
@@ -66,6 +66,7 @@ export class EventModal {
             <h3>${evt.title}</h3>
           </div>
         </div>
+        ${this.renderDriveStatus()}
         <p class="er-modal-body">${evt.description}</p>
         <div class="er-modal-choices" id="evt-choices">
           ${evt.choices
@@ -123,6 +124,7 @@ export class EventModal {
             <h3>Messebesuch</h3>
           </div>
         </div>
+        ${this.renderDriveStatus()}
         <p class="er-modal-body">Der Termin dauert etwa 4 Stunden. Die Toilette ist automatisch dabei.</p>
         ${options.chargerAvailable ? `<label class="messe-opt"><input type="checkbox" id="messe-charge" ${options.chargePlanned ? 'checked' : ''} /> <span><strong>AC am Messeparkplatz</strong><br />${MESSE_CHARGE_MINUTES} Min Ladezeit, 6 Ladepunkte mit je 22 kW, 50 % Chance auf einen freien Platz.</span></label>` : ''}
         <label class="messe-opt"><input type="checkbox" id="messe-eat" /> <span><strong>In der Messe essen</strong><br />−50 €, Hunger sinkt deutlich.</span></label>
@@ -185,6 +187,7 @@ export class EventModal {
             </div>
           </div>
 
+          ${this.renderDriveStatus()}
           <blockquote class="wife-quote">${dlg.quote}</blockquote>
           <p class="wife-hint">${dlg.contextHint}</p>
 
@@ -299,6 +302,7 @@ export class EventModal {
               <h3>${labelMap[info.kind]}</h3>
             </div>
           </div>
+          ${this.renderDriveStatus()}
           <p class="er-modal-body">${info.reason}</p>
           <div class="er-outcome-box">
             <strong>✅ Keine Strafe!</strong> Du warst ordnungsgemäß gestoppt bzw. hattest Vorfahrt – die gegnerische Versicherung übernimmt alles (0 € · 0 Strafpunkte).
@@ -324,6 +328,7 @@ export class EventModal {
             <h3>${labelMap[info.kind]}</h3>
           </div>
         </div>
+        ${this.renderDriveStatus()}
         <p class="er-modal-body">${info.reason} Wähle deine Reaktion mit klarem Risiko/Nutzen-Verhältnis:</p>
         <div class="er-modal-choices" id="col-choices">
           <button type="button" class="er-choice-btn" id="col-polite">
@@ -452,6 +457,7 @@ export class EventModal {
             <h3>${title}</h3>
           </div>
         </div>
+        ${this.renderDriveStatus()}
         <p class="er-modal-body">${desc}</p>
         <div class="er-modal-choices" id="pol-choices">
           <button type="button" class="er-choice-btn" id="pol-admit">
@@ -852,6 +858,7 @@ export class EventModal {
             <h3>Aktuelle Etappen &amp; Restakku</h3>
           </div>
         </div>
+        ${this.renderDriveStatus()}
         <div class="er-modal-body">${summaryHtml}</div>
         <button type="button" class="er-primary-btn" id="btn-map-close">Zurück ans Steuer →</button>
       </div>

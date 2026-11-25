@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
 import { getChargerById } from '../data/europeMap';
+import { isRearParked } from '../sim/ChargingBay';
 import { ERoadtripBridge, ensureTouchHoldsMatchPointers } from './GameBridge';
 import {
   CityLightingProfile,
@@ -20,7 +21,7 @@ import {
 } from './CityCollision';
 import { Rect } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
-import { paintDrivingPlace, PlacePaint } from './PlacePainter';
+import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } from './PlacePainter';
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
 
 export class CityDriveScene extends Phaser.Scene {
@@ -103,7 +104,6 @@ export class CityDriveScene extends Phaser.Scene {
   private place!: PlacePaint;
   private surface!: SurfaceFx;
   private passThrough = false;
-  private pillar?: { x: number; y: number };
   private spinners: Phaser.GameObjects.Image[] = [];
   private roadWet = false;
   private previewFx = false;
@@ -111,7 +111,6 @@ export class CityDriveScene extends Phaser.Scene {
   private previewLock = false;
 
   private dwellInTargetSec = 0;
-  private reversedIntoBay = false;
   private collisionCooldownSec = 0;
   private violationCooldownSec = 0;
   private stormFlashTimer = 4;
@@ -133,11 +132,9 @@ export class CityDriveScene extends Phaser.Scene {
     this.previewDriveSec = 0;
     this.roadWet = false;
     this.passThrough = false;
-    this.pillar = undefined;
     this.spinners = [];
     this.carSpeed = 0;
     this.dwellInTargetSec = 0;
-    this.reversedIntoBay = false;
     this.collisionCooldownSec = 0;
     this.violationCooldownSec = 1.2;
     this.completed = false;
@@ -178,7 +175,6 @@ export class CityDriveScene extends Phaser.Scene {
     this.zebras = this.place.zebras;
     this.neonSigns = this.place.neons;
     this.passThrough = this.place.passThrough;
-    this.pillar = this.place.pillar;
     this.spinners = this.place.spinners;
     this.surface = new SurfaceFx(this, this.isMobilePerf);
     this.previewDriveSec = this.previewFx ? 3.4 : 0;
@@ -618,24 +614,29 @@ export class CityDriveScene extends Phaser.Scene {
       this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed);
       return false;
     }
-    if (moving) {
-      if (this.preset === 'charger_park') this.trackBayEntry(x, y, rotation);
-      this.player.setPosition(x, y).setRotation(rotation);
-    }
+    if (moving) this.player.setPosition(x, y).setRotation(rotation);
     return true;
   }
 
-  private trackBayEntry(x: number, y: number, rotation: number): void {
-    const bay = this.targetZone;
-    const car = rotatedCarBounds(x, y, rotation);
-    if (car.y >= bay.bottom || car.y + car.h <= bay.top || car.x < bay.left || car.x + car.w > bay.right) {
-      this.reversedIntoBay = false;
-      return;
+  private updateChargingBays(): { parked?: PaintedChargingBay; nearest?: PaintedChargingBay } {
+    const { x, y, rotation } = this.player;
+    const car = { x, y, rotation, speed: this.carSpeed, footprint: rotatedCarBounds(x, y, rotation) };
+    const traffic = this.trafficCars.map(agent => this.trafficShape(agent));
+    let parked: PaintedChargingBay | undefined;
+    let nearest: PaintedChargingBay | undefined;
+    let nearestDistance = Infinity;
+    for (const bay of this.place.chargingBays ?? []) {
+      const occupied = bay.parkedCar || traffic.some(shape => capsuleOverlapsRect(shape, bay.bounds));
+      if (bay.occupied !== occupied) setBayOccupied(bay, occupied);
+      if (occupied) continue;
+      if (isRearParked(bay, car)) parked = bay;
+      const distance = Math.hypot(bay.bounds.x + bay.bounds.w / 2 - x, bay.bounds.y + bay.bounds.h / 2 - y);
+      if (distance < nearestDistance) {
+        nearest = bay;
+        nearestDistance = distance;
+      }
     }
-    const previous = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
-    if (previous.y >= bay.bottom) {
-      this.reversedIntoBay = this.carSpeed < 0 && y < this.player.y && Math.cos(rotation) < 0;
-    }
+    return { parked, nearest };
   }
 
   private stepTraffic(dt: number): void {
@@ -1344,21 +1345,13 @@ export class CityDriveScene extends Phaser.Scene {
       pd.sprite.setVelocity(Math.cos(ang) * pd.speed, Math.sin(ang) * pd.speed);
     }
 
-    // Nav arrow & HUD distance indicator
-    const angleToTarget = Phaser.Math.Angle.Between(
-      this.player.x,
-      this.player.y,
-      this.targetZone.centerX,
-      this.targetZone.centerY
-    );
-    const distToTarget = Math.round(
-      Phaser.Math.Distance.Between(
-        this.player.x,
-        this.player.y,
-        this.targetZone.centerX,
-        this.targetZone.centerY
-      )
-    );
+    const chargingBay = this.preset === 'charger_park';
+    const { parked, nearest } = chargingBay ? this.updateChargingBays() : {};
+    const targetBay = (parked ?? nearest)?.bounds;
+    const targetX = targetBay ? targetBay.x + targetBay.w / 2 : this.targetZone.centerX;
+    const targetY = targetBay ? targetBay.y + targetBay.h / 2 : this.targetZone.centerY;
+    const angleToTarget = Phaser.Math.Angle.Between(this.player.x, this.player.y, targetX, targetY);
+    const distToTarget = Phaser.Math.Distance.Between(this.player.x, this.player.y, targetX, targetY);
     this.navArrow.setPosition(this.scale.width / 2, 62);
     this.navArrow.setRotation(angleToTarget + Math.PI / 2);
     this.distText.setPosition(this.scale.width / 2, 84);
@@ -1366,19 +1359,10 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Parking / Completion Check
     const inZone = Phaser.Geom.Rectangle.Contains(this.targetZone, this.player.x, this.player.y);
-    const chargingBay = this.preset === 'charger_park';
-    const revAngleErr = Math.abs(Phaser.Math.Angle.Wrap(this.player.rotation - Math.PI));
-    const car = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
-    const bay = this.targetZone;
-    const fits = car.x >= bay.left && car.x + car.w <= bay.right && car.y >= bay.top && car.y + car.h <= bay.bottom;
-    const parkingReady = chargingBay
-      ? this.reversedIntoBay && fits && revAngleErr <= Math.PI / 12 && this.carSpeed === 0
-      : inZone && Math.abs(this.carSpeed) < 30;
+    const parkingReady = !chargingBay && inZone && Math.abs(this.carSpeed) < 30;
 
-    if (chargingBay && distToTarget < 190 && !parkingReady) {
-      this.reverseHintText.setText(this.reversedIntoBay
-        ? 'Gerade und vollständig in der Bucht anhalten'
-        : 'Von unten rückwärts in die Bucht fahren');
+    if (nearest && distToTarget < 190 && !parked) {
+      this.reverseHintText.setText('In einer grünen Bucht mit dem Heck zur Säule halten');
       this.reverseHintText.setVisible(true);
     } else {
       this.reverseHintText.setVisible(false);
@@ -1401,6 +1385,10 @@ export class CityDriveScene extends Phaser.Scene {
       } else {
         this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
       }
+    } else if (parked) {
+      this.completed = true;
+      this.carSpeed = 0;
+      this.playDriverPlugInSequence(parked.pillar);
     } else if (parkingReady) {
       this.dwellInTargetSec += dt;
       this.distText.setText(`✓ Perfekt! Halten… (${Math.min(100, Math.round((this.dwellInTargetSec / 0.6) * 100))}%)`);
@@ -1409,8 +1397,6 @@ export class CityDriveScene extends Phaser.Scene {
         this.reverseHintText.setVisible(false);
         if (this.preset === 'aachen_finish') {
           this.triggerArrivalConfetti();
-        } else if (this.preset === 'charger_park') {
-          this.playDriverPlugInSequence();
         } else {
           this.bridge.onCitySegmentComplete(this.preset, this.cleanRun);
         }
@@ -1419,21 +1405,21 @@ export class CityDriveScene extends Phaser.Scene {
       this.dwellInTargetSec = 0;
       const goalHint =
         this.preset === 'charger_park'
-          ? 'Rückwärts in Ladebucht einparken'
+          ? 'Zu einer freien Ladebucht'
           : this.preset === 'hannover_messe'
             ? 'Zum Messe-Parkplatz'
             : this.preset === 'koeln_ring'
               ? 'Zur Rheinbrücke'
               : 'Ins Ziel einparken';
-      this.distText.setText(`${goalHint} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
+      this.distText.setText(chargingBay && !nearest
+        ? 'Alle Ladebuchten belegt'
+        : `${goalHint} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
     }
   }
 
-  private playDriverPlugInSequence(): void {
+  private playDriverPlugInSequence({ x: pillarX, y: pillarY }: PaintedChargingBay['pillar']): void {
     const carX = this.player.x;
     const carY = this.player.y;
-    const pillarX = this.pillar?.x ?? this.targetZone.centerX;
-    const pillarY = this.pillar?.y ?? this.targetZone.y;
     const rear = CAR_FOOTPRINT.h / 2;
     const portX = carX - Math.sin(this.player.rotation) * rear;
     const portY = carY + Math.cos(this.player.rotation) * rear;

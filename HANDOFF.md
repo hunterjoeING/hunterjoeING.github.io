@@ -21,6 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
+| E-Roadtrip v0.6.0 · Run A | Michi / Codex (GPT-6) | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), kein PR | ✅ Umsetzung und lokale Checks abgeschlossen · Run B, Commit und Push offen |
 
 **Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.3.0
 
@@ -29,6 +30,13 @@
 ## 2. Session-Log (Neueste Einträge oben)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
+
+### 2026-11-25 – Michi / Codex (GPT-6) – Run A
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA: (folgt). Push: nein, weder Fork noch Upstream. Kein PR und keine Fork-Pages-Test-URL für diesen Stand.
+- **Erledigt** · Ladebuchten prüfen Position, Ausrichtung und Stillstand. Alle freien Buchten sind grün, belegte rot. Der Fahrer schließt das Kabel an der gewählten Säule an. Säulen tragen Anbieter-Kürzel als Pixelgrafik. Dialoge dunkeln ab und zeigen wichtige Fahrtwerte. Das Autobahn-Navi zeigt alle verbleibenden Straßen, Einzel- und Gesamtdistanzen sowie die geschätzte Fahrzeit bis zum nächsten Halt.
+- **Geprüft** · `npm run typecheck`, reproduzierbarer `npm run build`, `node --check` für das Bundle und fünf geänderte Testskripte, `npm test` (48/48). Die CSS-Regeln für die Abdunklung in beiden Themes wurden statisch geprüft. Keine Anfragen an die Live-Bestenliste. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Der gemeinsame Release v0.6.0 folgt in Run B.
+- **Offen** · Browser- und Handytest (Hell/Dunkel, Ladebuchten und Logos, Messe-Dialog, Navi auf schmalem Bildschirm). Chromium-Start lokal durch die Sandbox blockiert. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
 
 ### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf) – Go-live Versionierung und Level-Bestenlisten
 
@@ -61,9 +69,3 @@
 - **Nachtrag** · `setPlayerName(name, { dryRun, onSave })` / `openPlayerNameModal(onSave, { dryRun })`: `onSave` läuft erst nach dem Nachsende-POST des letzten Scores; `dryRun` unterdrückt diesen POST (Testmodus im Fork). Bestehende Aufrufer bleiben kompatibel. Teil der Arcade v0.3.0.
 - **Offen** · Spielanbindung in Teil (b) und Browserprüfung bei 320 px in beiden Themes (Chrome-Start in der Sandbox blockiert). Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs.
 - **Deployment** · Der Merge in Joes `main` deployt den Worker automatisch. Joe vor dem Merge informieren. In dieser Session gab es keinen Deploy und keine Anfrage an die Live-API.
-
-### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
-- **Branch / PR** · `codex/arcade-versioning` auf Basis von `upstream/main` (`039ed15`). Commits `fc3ad9b` + Doku-Nachtrag. Gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. [Fork-Test Übersicht](https://mic4rd.github.io/hunterjoeING.github.io/) · [Changelogs](https://mic4rd.github.io/hunterjoeING.github.io/changelogs.html)
-- **Erledigt** · Öffentlicher Release-Katalog für Arcade, 10 Spiele und 28 Quizze, Update-Pille mit Gelesen-Status, Changelog-Dialog und filterbare Übersicht. E-Roadtrip zeigt v0.4.0 im Spiel. Regel 10 und PR-Workflow ergänzen die Versionsprüfung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (24/24), Syntax der JS-Dateien und Inline-Skripte, Sitemap und Workflow-YAML. Release-Bump auf `upstream/main` (Bootstrap) sowie mit Testdaten für fehlenden und vorhandenen Versionsanstieg, Dateiausnahmen und beide PR-Ausnahmen geprüft. Banner und Dialog mit DOM-Stubs geprüft.
-- **Offen** · Browser-/Touch-Test bei 320 und 390 px in beiden Themes. Chrome-Start in der Sandbox blockiert. Headless-Chrome-Test durch den Orchestrator (390/320 px, hell/dunkel: Pille, Dialog, Esc/Backdrop, blauer Punkt, Filter, E-Roadtrip-Versionsknopf) ohne JS-Fehler; echter Handy-Test durch Michael offen. Issue-/PR-Check vom Orchestrator nachgeholt: Upstream keine offenen Issues/PRs, Fork keine offenen PRs (Issues deaktiviert).

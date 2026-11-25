@@ -6,22 +6,23 @@ export default function register(test, game) {
   const m = game;
   const { near, route1, route2, mkRun, carImage, mkScene, npc } = createFixtures(game);
 
-  test('The parking bay requires reverse entry and the brake has priority', () => {
-    const city = new m.CityDriveScene();
-    city.targetZone = { left: 0, right: 46, top: 0, bottom: 68 };
-    city.player = carImage(23, 91, Math.PI);
-    city.carSpeed = -30;
-    city.trackBayEntry(23, 89, Math.PI);
-    assert.equal(city.reversedIntoBay, true);
-    city.trackBayEntry(6, 40, Math.PI);
-    assert.equal(city.reversedIntoBay, false);
-    city.player = carImage(23, 91, 0);
-    city.carSpeed = 30;
-    city.trackBayEntry(23, 89, 0);
-    assert.equal(city.reversedIntoBay, false);
-    assert.ok(m.rotatedCarBounds(7, 43, Math.PI).x < 0);
-    assert.ok(m.rotatedCarBounds(23, 43, Math.PI - 0.65).w > 46);
+  test('A stopped rear-in pose needs no reverse history and allows a small overhang', () => {
+    const bay = { bounds: { x: 0, y: 0, w: 46, h: 68 }, pillar: { x: 23, y: 4 } };
+    const ready = (x, y, rotation, speed = 0) => m.isRearParked(bay, {
+      x, y, rotation, speed, footprint: m.rotatedCarBounds(x, y, rotation)
+    });
+    assert.ok(ready(23, 40, Math.PI));
+    assert.ok(ready(23, 53, Math.PI - Math.PI / 6, -5));
+    assert.ok(!ready(23, 40, 0), 'nose in');
+    assert.ok(!ready(23, 40, Math.PI - Math.PI / 4), 'rear points too far away');
+    assert.ok(!ready(23, 74, Math.PI), 'center outside');
+    assert.ok(!ready(23, 63, Math.PI), 'too little of the footprint is inside');
+    assert.ok(!ready(23, 40, Math.PI, -8), 'still moving');
+  });
 
+  test('The city brake has priority over acceleration', () => {
+    const city = new m.CityDriveScene();
+    city.player = carImage();
     city.bridge = { level: route1, paused: false, touch: {} };
     const idle = { isDown: false };
     city.wasd = { W: { isDown: true }, SPACE: { isDown: true }, A: idle, S: idle, D: idle, H: idle };
@@ -37,6 +38,19 @@ export default function register(test, game) {
     city.bridge.onPoliceViolation = () => assert.equal(city.physics.world.isPaused, true);
     city.triggerPoliceStop('red_light');
     assert.equal(city.bridge.paused, true);
+  });
+
+  test('Driving decisions show hunger and other trip values inside the modal', () => {
+    const run = mkRun();
+    run.chargingCostEur = 12.5;
+    const modal = new DomStub();
+    new m.EventModal(modal, () => m.renderDriveStatus(route1, run))
+      .showMesseVisit({ chargePlanned: false, chargerAvailable: true }, () => '', () => {});
+    assert.match(modal.innerHTML, /Hunger <b>90 %<\/b>/);
+    assert.match(modal.innerHTML, /Akku <b>80 %<\/b>/);
+    assert.match(modal.innerHTML, /Stress <b>20 %<\/b>/);
+    assert.match(modal.innerHTML, /Ausgaben <b>12\.50 €<\/b>/);
+    assert.match(modal.innerHTML, /<time>\d{2}:\d{2}<\/time>/);
   });
 
   test('Headlight flash targets the actual lead car and radar uses the work-zone sign', (t) => {
@@ -264,7 +278,9 @@ export default function register(test, game) {
     assert.equal(slider.value, '165');
     assert.match(compact.querySelector('[data-field="speed-sign"]').innerHTML, /80 km\/h/);
     const map = compact.querySelector('#er-trip-computer').innerHTML;
-    assert.match(map, /Köln → Aachen/);
+    const segments = compact.querySelector('[data-field="nav-segments"]').innerHTML;
+    assert.match(segments, /aria-current="step"[\s\S]*Köln → Aachen/);
+    assert.match(compact.querySelector('[data-field="nav-summary"]').textContent, /^Aachen · \d+ km · ca\. \d+ Min$/);
     const match = map.match(/<path d="M([\d.]+) ([\d.]+)[^"]+"[\s\S]*?<circle cx="([\d.]+)" cy="([\d.]+)"/);
     assert.deepEqual(match.slice(1, 3), match.slice(3, 5));
     assert.equal(m.snapSpeedKmh(188, 188), 185);

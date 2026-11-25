@@ -6,7 +6,7 @@ export default function register(test, game) {
     createDefaultPlan, getActiveRouteLegs, getMapChargerLegIndex, evaluateTripPlan,
     stopKey, isPendingStop, predictLiveTripSoc, plannedRoadStopsOnLeg, getMesseChargerForVisit,
     estimateMesseCharge, evaluateRun, findReachableAdditionalStop, getBestPriceForStation,
-    computeSubscriptionTripCost
+    computeSubscriptionTripCost, buildRemainingRoute
   } = game;
   const l1 = getLevelById('level_1_aachen_hannover');
   const l2 = getLevelById('level_2_family_summer');
@@ -20,7 +20,73 @@ export default function register(test, game) {
     activeWeather: 'clear',
     currentSpeedKmh: 110,
     completedStopKeys: [],
-    skippedStopKeys: []
+    skippedStopKeys: [],
+    triggeredEventIds: []
+  });
+
+  test('Navigation shows the remaining roads to the Messe and follows the return direction afterward', () => {
+    const run = baseRun(createDefaultPlan(l1, mg.id));
+    const legs = getActiveRouteLegs(l1, run.plan);
+    const route = buildRemainingRoute(l1, run);
+    assert.equal(route.destination, 'Hannover Messe');
+    assert.equal(route.segments.length, 4);
+    assert.deepEqual(route.segments.map(segment => segment.highwayName),
+      legs.slice(0, 4).map(leg => getEdgeById(leg.edgeId).highwayName));
+    assert.equal(route.segments[0].remainingKm, getEdgeById(legs[0].edgeId).distanceKm - 5);
+    assert.deepEqual(route.segments.map(segment => segment.current), [true, false, false, false]);
+    assert.equal(route.remainingKm, route.segments.reduce((total, segment) => total + segment.remainingKm, 0));
+    assert.ok(route.etaMinutes > 0);
+    assert.ok(buildRemainingRoute(l1, { ...run, speedCapKmh: 60 }).etaMinutes > route.etaMinutes);
+    const returning = buildRemainingRoute(l1, { ...run, currentLegIndex: 4, legProgressKm: 0 });
+    assert.equal(returning.segments[0].from, 'Hannover Messe');
+    assert.equal(returning.destination, 'Aachen');
+    assert.equal(returning.segments.at(-1).to, 'Aachen');
+  });
+
+  test('Navigation cuts the last segment at the next pending charger in its driving direction', () => {
+    const run = baseRun(createDefaultPlan(l1, mg.id));
+    const herford = getChargerById('chg_herford_tesla');
+    const legs = getActiveRouteLegs(l1, run.plan);
+    const herfordIndex = legs.findIndex(leg => herford.edgeId === leg.edgeId);
+    run.plan.plannedStops.push(
+      { legIndex: herfordIndex, chargerId: herford.id, targetSocPct: 80 },
+      { legIndex: 0, chargerId: tesla.id, targetSocPct: 80 },
+      { legIndex: legs.length - 1, chargerId: tesla.id, targetSocPct: 80 }
+    );
+    run.legProgressKm = tesla.edgeProgress * getEdgeById(tesla.edgeId).distanceKm;
+    assert.equal(buildRemainingRoute(l1, run).destination, tesla.name);
+    assert.equal(buildRemainingRoute(l1, run).remainingKm, 0);
+    run.completedStopKeys.push(stopKey(0, tesla.id));
+    const route = buildRemainingRoute(l1, run);
+    assert.equal(route.destination, herford.name);
+    assert.equal(route.segments.length, herfordIndex + 1);
+    assert.equal(route.segments.at(-1).remainingKm, herford.edgeProgress * getEdgeById(herford.edgeId).distanceKm);
+    run.skippedStopKeys.push(stopKey(herfordIndex, herford.id));
+    assert.equal(buildRemainingRoute(l1, run).destination, 'Hannover Messe');
+
+    const reverse = buildRemainingRoute(l1, { ...run, currentLegIndex: legs.length - 1, legProgressKm: 2 });
+    assert.equal(reverse.destination, tesla.name);
+    assert.equal(reverse.remainingKm, (1 - tesla.edgeProgress) * getEdgeById(tesla.edgeId).distanceKm - 2);
+  });
+
+  test('Navigation switches from the overnight stop to Montpellier on a one-way route', () => {
+    const oneWay = {
+      ...l2,
+      routeOptions: l2.routeOptions.map(option => ({ ...option, legs: option.legs.filter(leg => !leg.reverse) }))
+    };
+    const run = baseRun(createDefaultPlan(oneWay, mg.id));
+    const legs = getActiveRouteLegs(oneWay, run.plan);
+    const overnightIndex = legs.findIndex(leg => leg.overnightAtEnd);
+    const night = buildRemainingRoute(oneWay, run);
+    assert.equal(night.destination, 'Übernachtung · Lyon');
+    assert.equal(night.segments.length, overnightIndex + 1);
+    run.currentLegIndex = overnightIndex;
+    run.legProgressKm = getEdgeById(legs[overnightIndex].edgeId).distanceKm;
+    run.triggeredEventIds.push(`evt_hotel_overnight@${overnightIndex}`);
+    const morning = buildRemainingRoute(oneWay, run);
+    assert.equal(morning.destination, 'Montpellier');
+    assert.equal(morning.segments.length, 1);
+    assert.equal(morning.segments[0].from, 'Lyon');
   });
 
   test('Eschweiler stops are independent in the map and live forecast', () => {

@@ -30,6 +30,7 @@ export default function register(test, game) {
     const images = [];
     city.add = {
       rectangle: () => sprite(),
+      triangle: () => sprite(),
       graphics: () => sprite(),
       text: () => sprite(),
       image: (...args) => {
@@ -136,7 +137,7 @@ export default function register(test, game) {
     for (const station of CHARGERS) {
       for (const mobile of [true, false]) {
         const { city, images } = createCity('charger_park', station, mobile);
-        const { cityId, spawn, targetZone, buildings } = city.place;
+        const { cityId, spawn, chargingBays, buildings } = city.place;
         const description = `${station.id} ${cityId} mobile=${mobile}`;
         const props = images.filter(({ texture, scale }) =>
           texture.key.startsWith('charger_') || (texture.key.startsWith('npc_') && scale < 1)
@@ -148,8 +149,15 @@ export default function register(test, game) {
           );
         }
         assert.ok(!city.hitsObstacle(vehicleCapsule(spawn.x, spawn.y, spawn.rot)), `spawn: ${description}`);
-        const parkedCar = vehicleCapsule(targetZone.centerX, targetZone.centerY, Math.PI);
-        assert.ok(!city.hitsObstacle(parkedCar), `charging bay: ${description}`);
+        const freeBays = chargingBays.filter(bay => !bay.occupied);
+        assert.ok(freeBays.length >= Math.min(2, chargingBays.length), description);
+        assert.equal(images.filter(image => image.texture.key === `stall_badge_${station.network}`).length,
+          chargingBays.length, description);
+        for (const bay of freeBays) {
+          const { x, y, w, h } = bay.bounds;
+          const parkedCar = vehicleCapsule(x + w / 2, y + h / 2, Math.PI);
+          assert.ok(!city.hitsObstacle(parkedCar), `charging bay: ${description}`);
+        }
         const [visitor, passing] = city.trafficCars;
         let reversed = false;
         let parked = false;
@@ -173,6 +181,64 @@ export default function register(test, game) {
         assert.ok(passingExited, `through vehicle did not exit: ${description}`);
       }
     }
+  });
+
+  test('Each free bay can initiate charging and occupied bays become available when vacated', () => {
+    const station = { ...getChargerById('chg_herford_tesla'), occupancyRisk: 0.5 };
+    const { city } = createCity('charger_park', station, false);
+    const { chargingBays } = city.place;
+    assert.ok(chargingBays.some(bay => bay.occupied));
+    assert.ok(chargingBays.filter(bay => !bay.occupied).length > 1);
+    for (const bay of chargingBays) {
+      const { x, y, w, h } = bay.bounds;
+      city.player.setPosition(x + w / 2, y + h / 2).setRotation(Math.PI);
+      const { parked, nearest } = city.updateChargingBays();
+      if (bay.parkedCar) {
+        assert.equal(parked, undefined);
+        assert.notEqual(nearest, bay);
+      } else {
+        assert.equal(parked?.pillar, bay.pillar);
+        assert.equal(nearest, bay);
+      }
+    }
+    const bay = chargingBays.find(candidate => !candidate.parkedCar);
+    const { x, y, w, h } = bay.bounds;
+    const visitor = city.trafficCars[0].sprite;
+    const previous = { x: visitor.x, y: visitor.y };
+    city.player.setPosition(x + w / 2, y + h / 2).setRotation(Math.PI);
+    visitor.setPosition(city.player.x, city.player.y).setRotation(Math.PI);
+    assert.equal(city.updateChargingBays().parked, undefined);
+    assert.equal(bay.occupied, true);
+    visitor.setPosition(previous.x, previous.y);
+    assert.equal(city.updateChargingBays().parked, bay);
+    assert.equal(bay.occupied, false);
+
+    city.preset = 'charger_park';
+    city.bridge.level = getLevelById('level_1_aachen_hannover');
+    city.bridge.touch = {};
+    city.targetZone = city.place.targetZone;
+    city.scale = { width: 390 };
+    city.surface = { update() {} };
+    city.updateLightingVisuals = () => {};
+    city.pedestrians = [];
+    const idle = { isDown: false };
+    city.wasd = { W: idle, A: idle, S: idle, D: idle, SPACE: idle, H: idle };
+    city.cursors = { up: idle, down: idle, left: idle, right: idle };
+    city.setupNavIndicator();
+    let connectedPillar;
+    city.playDriverPlugInSequence = pillar => { connectedPillar = pillar; };
+
+    const occupied = chargingBays.find(candidate => candidate.parkedCar);
+    city.player.setPosition(occupied.bounds.x + occupied.bounds.w / 2,
+      occupied.bounds.y + occupied.bounds.h / 2);
+    city.update(0, 50);
+    assert.equal(connectedPillar, undefined);
+
+    const alternate = chargingBays.find(candidate => candidate !== bay && !candidate.occupied);
+    city.player.setPosition(alternate.bounds.x + alternate.bounds.w / 2,
+      alternate.bounds.y + alternate.bounds.h / 2);
+    city.update(0, 50);
+    assert.equal(connectedPillar, alternate.pillar);
   });
 
   test('City traffic clears intersections and completes its routes', t => {

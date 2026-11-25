@@ -16,7 +16,7 @@ import {
 } from './types';
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
-import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
+import { getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { newRunId, submitRun } from './sim/Leaderboard';
@@ -49,16 +49,10 @@ import { CityDriveScene } from './phaser/CityDriveScene';
 import { ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
+import { formatClock, renderDriveStatus } from './ui/DrivingStatus';
 import { ChargingCompletePayload, EventModal } from './ui/EventModal';
 import { ResultsUI } from './ui/ResultsUI';
 import { SoundFX } from './phaser/SoundFX';
-
-function formatClock(level: LevelConfig, elapsedMin: number): string {
-  const total = Math.round(level.departureTimeHour * 60 + elapsedMin);
-  const hh = String(Math.floor(total / 60) % 24).padStart(2, '0');
-  const mm = String(total % 60).padStart(2, '0');
-  return `${hh}:${mm}`;
-}
 
 function createDefaultProviderFilter(): ProviderFilterMap {
   return {
@@ -104,7 +98,10 @@ class ERoadtripController {
     const modalEl = document.getElementById('er-modal-overlay')!;
     const resultsEl = document.getElementById('er-results-overlay')!;
 
-    this.eventModal = new EventModal(modalEl);
+    this.eventModal = new EventModal(modalEl, () => {
+      const run = this.bridge.runState;
+      return run ? renderDriveStatus(this.level, run) : '';
+    });
 
     this.bridge = {
       level: this.level,
@@ -503,7 +500,7 @@ class ERoadtripController {
     this.drivingHUD.setMode('city');
     const titleMap: Record<CityDrivePreset, string> = {
       aachen_start: 'Aachen Innenstadt → A4 Auffahrt',
-      charger_park: `Ladepark Einfahrt (Rückwärts einparken!)`,
+      charger_park: 'Ladepark → Freie Ladebucht',
       hannover_messe: 'Hannover Messe → E-Parkplatz',
       aachen_finish: 'Aachen Ausfahrt → Ziel-Parkplatz',
       ferry_denmark: 'Hirtshals Fährhafen',
@@ -562,7 +559,7 @@ class ERoadtripController {
 
     if (preset === 'charger_park') {
       const stationId = run.activeCityChargerId;
-      const station = stationId ? CHARGERS.find(c => c.id === stationId) : undefined;
+      const station = stationId ? getChargerById(stationId) : undefined;
       if (!station) {
         this.enterAutobahn();
         return;
@@ -608,7 +605,7 @@ class ERoadtripController {
         );
       };
 
-      if (!run.triggeredEventIds.includes(`def_${visitKey}`) && Math.random() < station.defectRisk + station.occupancyRisk * 0.35) {
+      if (!run.triggeredEventIds.includes(`def_${visitKey}`) && Math.random() < station.defectRisk) {
         run.triggeredEventIds.push(`def_${visitKey}`);
         const evt = getEventById('evt_charger_defect');
         if (evt) {
