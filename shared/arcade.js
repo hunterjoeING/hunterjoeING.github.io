@@ -901,7 +901,7 @@
     { id: 'all', title: '✨ Alle Module & Allgemein', icon: '🌐' },
     { id: 'general', title: 'Allgemein / Ganze Website', icon: '🏠' },
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️' },
-    { id: 'eroadtrip', title: 'E-Roadtrip (Aachen–Hannover)', icon: '⚡' },
+    { id: 'eroadtrip', title: 'E-Roadtrip', icon: '⚡' },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊' },
     { id: 'minesweeper', title: 'Minesweeper 3D – Tech Demo KI-Agent', icon: '💣' },
     { id: 'roadster', title: 'Hyper-Roadster Lander', icon: '🚀' },
