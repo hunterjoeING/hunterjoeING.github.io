@@ -6,14 +6,15 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { build } from 'esbuild';
 
 const gameDir = fileURLToPath(new URL('..', import.meta.url));
+const { version } = JSON.parse(await readFile(join(gameDir, 'package.json'), 'utf8'));
 const tempDir = await mkdtemp(join(tmpdir(), 'e-roadtrip-tests-'));
 const bundle = join(tempDir, 'game.mjs');
 const modules = [
   'main', 'data/events', 'data/europeMap', 'data/levels', 'data/vehicles',
-  'sim/RoutePlanner', 'sim/EnergyModel', 'sim/ScoringEngine',
+  'sim/RoutePlanner', 'sim/EnergyModel', 'sim/ScoringEngine', 'sim/Leaderboard',
   'phaser/CityCollision', 'phaser/MapLayout', 'phaser/AutobahnTraffic',
   'phaser/CityDriveScene', 'phaser/PlacePainter', 'phaser/AutobahnScene',
-  'ui/EventModal', 'ui/DrivingHUD', 'ui/PlanningUI'
+  'ui/EventModal', 'ui/DrivingHUD', 'ui/PlanningUI', 'ui/ResultsUI'
 ];
 
 try {
@@ -26,6 +27,7 @@ try {
     format: 'esm',
     platform: 'node',
     outfile: bundle,
+    define: { __EROADTRIP_VERSION__: JSON.stringify(version) },
     // The stub covers only the Phaser APIs exercised by the tests.
     logOverride: { 'import-is-undefined': 'silent' },
     plugins: [{
@@ -57,7 +59,7 @@ try {
   });
 
   const game = await import(pathToFileURL(bundle).href);
-  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'releases', 'worker-validation', 'arcade-scores']) {
+  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
     const { default: register } = await import(`./${name}.test.mjs`);
     register(test, game);
   }

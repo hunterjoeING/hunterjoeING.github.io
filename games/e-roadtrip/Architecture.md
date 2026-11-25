@@ -35,11 +35,11 @@ A push to `main` that changes `games/e-roadtrip/src/**`, `package.json`, `packag
 
 ```text
 games/e-roadtrip/
-├── index.html                  # Host page, topbar version button, Phaser stage, planner, HUD & modal containers
+├── index.html                  # Host page, topbar version and leaderboard buttons, Phaser stage, planner, HUD & modals
 ├── styles.css                  # Light/Dark theme styles, responsive workspace, HUD, modals, touch controls
 ├── package.json                # Game version and typecheck, build, and test scripts
 ├── package-lock.json           # Locked npm dependency tree
-├── esbuild.mjs                 # IIFE build with Phaser supplied by the host page
+├── esbuild.mjs                 # IIFE build with host-supplied Phaser and version from package.json
 ├── tsconfig.json               # TypeScript strict config
 ├── dist/
 │   ├── phaser.min.js           # Pre-bundled Phaser 3 runtime
@@ -55,7 +55,8 @@ games/e-roadtrip/
 │   ├── interactions.test.mjs   # Parking, highway ticks, hotel, charging, and HUD
 │   ├── releases.test.mjs       # Public catalog, release order, spoiler checks, and asset versions
 │   ├── worker-validation.test.mjs # E-Roadtrip score plausibility and rejected POST requests
-│   └── arcade-scores.test.mjs  # Score submission events, callbacks, and dry-run behavior
+│   ├── arcade-scores.test.mjs  # Score callbacks, dry-run behavior, and name updates
+│   └── leaderboard.test.mjs    # Payload validation, hostname gating, duplicate protection, and results panel
 └── src/
     ├── main.ts                 # ERoadtripController (central orchestrator, DOM ↔ Phaser lifecycle)
     ├── types.ts                # All TypeScript domain models & state interfaces
@@ -71,6 +72,7 @@ games/e-roadtrip/
     │   ├── RoutePlanner.ts     # TripPlan, separate outbound/return corridors, forecast, live SoC, nearest charger
     │   ├── PauseEffects.ts     # Shared accounting for pause time, costs, needs, and stress
     │   ├── ScoringEngine.ts    # 100..1000 weighted evaluation (time, cost, stress, efficiency, decisions)
+    │   ├── Leaderboard.ts      # Score payload, client plausibility, host guard, run IDs, and ArcadeScores adapter
     │   └── SaveState.ts        # Campaign persistence in localStorage ('eroadtrip_campaign_v1')
     ├── phaser/                 # Phaser 3 scenes & procedural pixel art
     │   ├── GameBridge.ts       # ERoadtripBridge interface + TouchInput keyed by pointerId
@@ -94,7 +96,7 @@ games/e-roadtrip/
         ├── DrivingHUD.ts       # In-drive HUD, speed control, time scale, and city touch pads
         ├── BreakPixelAnim.ts   # Pixel-art mini-animations during charging/break activities
         ├── EventModal.ts       # Modals: live charging curve, dynamic events, wife dialogues, map peek, breakdowns
-        ├── ResultsUI.ts        # End-of-trip scorecard, sub-scores, incident log, prize payout, next level
+        ├── ResultsUI.ts        # End-of-trip scorecard, level leaderboard, incident log, prize payout, next level
         ├── speedSign.ts        # Shared speed sign markup
         └── TouchscreenWidget.ts # In-dash SoC and route forecast at a charger
 ```
@@ -135,7 +137,7 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
    - **Charging and breaks.** The controller pauses the run during blocking events, breaks, and the live map. Charging, WC, food, and Messe activities share pause and needs accounting. At a charger, time spent is the later of the charge and activity end times. Bladder need drops after a chosen WC activity or stop. `EventModal` shows the in-dash SoC and route forecast via `TouchscreenWidget.renderVehicleTouchscreenHtml()`.
    - **Messe visit.** A planned Hannover Messe AC stop presets the “AC am Messeparkplatz” checkbox at the end of the outbound drive. It remains editable at the visit. The planner shows departure SoC with a free point and with all points occupied, plus the return-range scenario without fair charging. The live map carries both scenarios until the parking outcome is known. If a point is free, charging uses the visit’s AC window and target. Full occupancy leaves arrival SoC unchanged. The visit includes a toilet break, optional €50 meal, and one of ten reports. Visit and charger values are in §9.
    - **Replanning.** “Früher laden”, passenger dialogue, and replanning events share `findReachableAdditionalStop()`. It searches ahead using forecast consumption and reachable planned charges, excludes completed and skipped stops by stage, and offers additional road chargers. Confirming the passenger suggestion adds the stop shown.
-4. **Completion** · `finishLevel(cleanArrival)` evaluates the run, pays `prizeMoneyEur`, advances the campaign unlock if needed, records the time with each new best score, and displays `ResultsUI`.
+4. **Completion** · `finishLevel(cleanArrival)` evaluates the run once, pays `prizeMoneyEur`, advances the campaign unlock if needed, records the time with each new best score, submits to the leaderboards, and displays `ResultsUI` with the level-board outcome.
 
 ---
 
@@ -153,7 +155,13 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
 - The weighted result is clamped to `100..1000`. Time, cost, stress, efficiency, and decisions each score on `0..100` and use `LevelConfig.scoringWeights`.
 - Cost includes charging, subscription shares, tolls, pauses, incidentals, and lodging. A toll is booked once per completed highway stage index, including stages interrupted by an event. Planning, the trip computer, and results show tolls separately. Benchmarks and grade thresholds are in §9.
 
-### 4.3 Persistence (`SaveState.ts`)
+### 4.3 Global leaderboards (`Leaderboard.ts`)
+
+- Starting a drive allocates one run ID for a configured `boardId`. Completion sends the score to Gesamt with a derived `_all` ID, then to the level board with the original ID. The level submission provides the rank and entry count. The client deduplicates by run ID and checks for an integer score within the scoring bounds, finite time within the Worker's allowed range, and finite nonnegative cost. The metadata includes the level board and the game version injected from `package.json`.
+- Real submissions require `hunterjoeing.github.io`. Forks, local copies, and `?lbdebug=1` use `ArcadeScores.record()` in dry-run mode. It logs the payload and updates local bests. The results panel can read the top 10 in either mode and highlights names using case-insensitive matching.
+- Results use the shared name dialog. For two minutes after a real submission, it can re-send the latest level entry under the new name, then refresh the panel. Test-mode name changes skip the re-send. The results panel and topbar open the shared leaderboard on the selected level, with tabs for Level 1, Level 2, and Gesamt.
+
+### 4.4 Persistence (`SaveState.ts`)
 
 - `localStorage` key `eroadtrip_campaign_v1` stores `cashEur`, `ownedVehicleId`, `unlockedLevelOrder`, and `completedLevels` (`bestScore`, `bestMinutes`).
 
@@ -163,7 +171,7 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
 
 - **Map graph** (`src/data/europeMap.ts`) · `CityNode[]`, `HighwayEdge[]`, and `ChargerStation[]` in normalized 1800×1420 coordinates. Edges carry distances, speed signs (with optional rain limits), elevation, tolls, vignette data, weather, and waypoints.
 - **Vehicles** (`src/data/vehicles.ts`) · Nine EVs, with battery and charger values in §9.
-- **Level 1** (`level_1_aachen_hannover`, playable) · Aachen ↔ Hannover Messe, target 797 minutes. Routes are “Route A · Ruhr-Klassik (A4 → A1 → A2)”, “Route B · Nord-Flachland (A44 → A43 → A30 → A2)”, and “Route C · Sauerland & Kasseler Berge (A4 → A45 → A7)”.
+- **Level 1** (`level_1_aachen_hannover`, playable) · Aachen ↔ Hannover Messe. Routes are “Route A · Ruhr-Klassik (A4 → A1 → A2)”, “Route B · Nord-Flachland (A44 → A43 → A30 → A2)”, and “Route C · Sauerland & Kasseler Berge (A4 → A45 → A7)”.
 - **Level 2** (`level_2_family_summer`, playable) · Aachen ↔ Montpellier. Routes are “Route A · Luxemburg & Lyon (A31 → A6 → A7/A9)”, “Route Mitte · Reims & Nevers (A4 → A77 → A71)”, and “Route B · Paris & Clermont-Ferrand (A1 → A71 → A75)”. The middle and Paris corridors join at Clermont-Ferrand. The overnight options are the hotel with AC, the budget hotel, and sleeping in the car (10% robbery chance). Level select displays Level 2 from the start and enables departure after Level 1.
 - **Levels 3–7** · `level_3_alps_winter` through `level_7_nordkapp_ultimate` define routes, passengers, and scoring parameters with `playable: false`.
 
@@ -179,13 +187,13 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
   - `cloudflare-worker/worker.js` (`GAMES_META`)
   - `shared/releases.js` (public version and release history)
 - **Theming:** Reads `document.documentElement.getAttribute('data-theme')` (`light` / `dark`) via `bridge.isLightTheme()` and `styles.css`.
-- **Global leaderboards.** Part (a) adds Worker validation and shared tabs ordered Level 1 (`eroadtrip_l1`), Level 2 (`eroadtrip_l2`), then Gesamt (`eroadtrip`). Game-client submissions are planned for part (b). [Worker score contract](../../cloudflare-worker/README.md#e-roadtrip-bestenlisten)
+- **Global leaderboards.** The game uses the shared `ArcadeScores` client and the Worker score contract. See §4.3 and §9. [Worker score contract](../../cloudflare-worker/README.md#e-roadtrip-bestenlisten)
 
 ### Versioning & release notes
 
 The topbar button reads the current `eroadtrip` version from [the release catalog](../../shared/releases.js) and opens the shared changelog dialog through `shared/update-banner.js`. The public notes also appear on [the changelog page](../../changelogs.html#app=eroadtrip). §11 records developer changes and their Git references.
 
-Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps. Keep the package version, both root lockfile version fields, and the host page's `?v=` values for `styles.css`, `dist/e-roadtrip.js`, `releases.js`, and `update-banner.js` equal to the latest E-Roadtrip release. On PRs to `main`, [the versioning workflow](../../.github/workflows/check-versioning.yml) checks version bumps and runs the game checks.
+Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps. Keep the package version, both root lockfile version fields, and the host page's `?v=` values for `styles.css`, `dist/e-roadtrip.js`, `releases.js`, and `update-banner.js` equal to the latest E-Roadtrip release. Use the hub's Arcade version for `arcade.js`. On PRs to `main`, [the versioning workflow](../../.github/workflows/check-versioning.yml) checks version bumps and runs the game checks.
 
 ---
 
@@ -221,7 +229,8 @@ All prices and timing values below are in-game settings.
 | `src/data/subscriptions.ts` · `SUBSCRIPTIONS` | Tariff inventory and own-network rates | See the 10 entries below. Level 2 hides EnBW and EWE Go, while Level 1 hides Atlante and ENGIE Vianeo. |
 | `src/sim/EnergyModel.ts` · `getBestPriceForStation()` | Supercharger price for Tesla vehicles | €0.00/kWh for the 2015 Model S (`superchargerFree`), €0.39/kWh for Model 3/Y |
 | `src/data/vehicles.ts` · `batteryKwh`, `acMaxKw`, `chargingCurve`, `superchargerFree` | Usable capacity, AC onboard limit, DC power by SoC, and free Tesla charging | See the vehicle table below. |
-| `src/data/levels.ts` · `targetArrivalMinutes` | Target trip duration for time scoring, by level order | Level 1 in §5, then 2,040 / 190 / 860 / 270 / 640 / 2,150 min |
+| `src/data/levels.ts` · `targetArrivalMinutes` | Target trip duration for time scoring, by level order. Keep the Worker's `EROADTRIP_LEVEL_TARGETS` in sync with the playable levels. | 797 / 2,040 / 190 / 860 / 270 / 640 / 2,150 min |
+| `src/data/levels.ts` · `boardId`, `cloudflare-worker/worker.js` · `EROADTRIP_LEVEL_TARGETS` | Level board IDs and shared ranking | Level 1 `eroadtrip_l1`, Level 2 `eroadtrip_l2`, Gesamt `eroadtrip`. Levels 3–7 have no board. The Worker accepts times from 0.5 to 20 times the target. |
 | `src/data/levels.ts` · `costBenchmarkEurPerKm` and `src/sim/ScoringEngine.ts` fallback | Cost scoring reference per km | Level 2 €0.30/km. All other levels use €0.082/km. Benchmark floors at €30. |
 | `src/data/levels.ts` · `rewardBaseEur` → `src/sim/ScoringEngine.ts` · `prizeMoneyEur` | Base reward by level order and score-adjusted payout | €6,500 / €8,000 / €9,500 / €11,000 / €14,000 / €13,000 / €25,000. Payout is `Math.round(rewardBaseEur * (0.55 + 0.95 * totalScore / 1000))`. |
 | `src/phaser/AutobahnScene.ts` · `simMinPerRealSec` | Game minutes advanced per real second | `1×` → 2.8, `5×` → 11, `15×` → 28. Work zones force 0.85. |
@@ -272,6 +281,8 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 ### Manual test checklist
 
 - [ ] At 320 and 390 px, test the HUD and touch pads in light and dark mode, including simultaneous steering and throttle and releasing both controls. Drag the speed slider and check it stays usable through a sign change.
+- [ ] At 320 and 390 px in both themes, check the results leaderboard, long player names, name dialog, and the Level 1, Level 2, and Gesamt tabs. Check the topbar trophy button on both levels.
+- [ ] Complete a drive on fork Pages. Check that the results show the dry-run hint and the console logs both boards with distinct run IDs. Confirm there is no score POST, including after a name change.
 - [ ] At an Autohof, reverse into the marked player bay and stop fully inside it. Watch an AI visitor enter, reverse into its bay, and leave, while through traffic passes.
 - [ ] In Level 1, select Route A both ways and add Tesla Eschweiler on stages 1 and 8. Confirm that both stops are planned and can trigger independently.
 - [ ] Plan Hannover Messe AC and check the opt-in checkbox at the visit. Check departure/return forecasts for both a free point and full occupancy.
@@ -306,3 +317,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-25** · Upstream PR #4 (`29fd861`) (v0.4.0) · Merged `codex/review-fixes` (reviews 1–20, docs, tests) into `main`; live on GitHub Pages.
 - **2026-11-25** · `codex/arcade-versioning` · `fc3ad9b` · Added the topbar changelog button, recorded releases through v0.4.0, and added version and cache-busting checks.
 - **2026-11-25** · `codex/arcade-leaderboard-groups` · `0c85929` · Added Worker and Arcade support for E-Roadtrip level leaderboards (part a).
+- **2026-11-25** · `codex/eroadtrip-highscores` · SHA: (folgt) · E-Roadtrip v0.5.0 submits completed drives to the level and overall boards and shows the level leaderboard and rank in results (part b).

@@ -11,6 +11,7 @@ export const DEFAULT_SCORING_WEIGHTS: ScoringWeights = {
 export const LEVELS: LevelConfig[] = [
   {
     id: 'level_1_aachen_hannover',
+    boardId: 'eroadtrip_l1',
     order: 1,
     title: 'Level 1: Aachen ↔ Hannover Messe',
     subtitle: 'Tages-Geschäftstrip hin & zurück · 3 Routen-Alternativen',
@@ -152,6 +153,7 @@ export const LEVELS: LevelConfig[] = [
 
   {
     id: 'level_2_family_summer',
+    boardId: 'eroadtrip_l2',
     order: 2,
     title: 'Level 2: Familien-Sommerurlaub',
     subtitle: 'Ehefrau, 2 Kinder & Hund · Aachen ↔ Montpellier',

@@ -2,6 +2,18 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
+- **Erledigt:**
+  - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
+  - Level 2 ohne Autoroute du Soleil. Entfernt: `edge_aachen_bruessel`, `edge_bruessel_lille`, `edge_lille_paris`, `edge_paris_lyon` und deren Lader. Luxemburg/Lyon, Reims/Nevers und Paris/Clermont bleiben.
+  - Hannover Messe hat einen eigenen Besuchsbildschirm: AC optional (6 Punkte, 50 % frei), Essen −50 €, Toilette automatisch, einer von 10 Berichten, etwa 4 Stunden.
+  - Fastned- und TotalEnergies-Parks auf Level 2 ersetzt durch IONITY Beaune, Tesla Orange, ENGIE Vianeo Vierzon und Atlante Béziers. Filter zeigt diese Anbieter, nicht Fastned/Total.
+  - AC-Leistung je Auto (`acMaxKw`). Ladeleistung an AC = min(Säule, Auto). Bildschirm sagt „AC-Laden“.
+  - Autohof-KI fährt ein, wartet an einer freien Säule und fährt über die Autobahn wieder raus. NPCs bremsen vor dem Auto davor, auch vor dem Spieler.
+- **Offen / Nächste Schritte:**
+  - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
+  - Level 3–7 bleiben `playable: false`.
+
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Aachen–Köln unbeschränkt)
 - **Erledigt:**
   - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.

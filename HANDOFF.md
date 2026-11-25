@@ -20,14 +20,23 @@
 | E-Roadtrip Review-Fixes 1–20 + Doku | Michael / Codex CLI (gpt-6.2-sol high) | `codex/review-fixes` (`022a699`, `2b01e5a`, `f7abd66`, `006a1bf`, `85af6f7`) · [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) (Merge `29fd861`) | ✅ Gemerged und live auf https://hunterjoeing.github.io/games/e-roadtrip/ |
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` (`fc3ad9b`) · Fork · kein PR | 🟡 Test auf Fork-Pages |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` (`0c85929`) · Fork · kein PR | 🟡 Teil (a) geprüft; Worker lokal mit `wrangler dev` getestet, nicht deployt |
+| E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` (`(folgt)`) auf `codex/arcade-leaderboard-groups` · Fork · kein PR | 🟡 Test auf Fork-Pages (Testmodus, kein POST) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.4.0 · `arcade` v0.3.0
+**Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.3.0
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
+
+### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high) – E-Roadtrip Level-Bestenlisten (Teil b)
+
+- **Branch / PR** · `codex/eroadtrip-highscores` auf `codex/arcade-leaderboard-groups` (`f30054a`). Commit `(folgt)`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html (Fork-Pages auf diesem Branch).
+- **Erledigt** · E-Roadtrip v0.5.0: kaputten Aufruf `ArcadeScores.submit` (existiert nicht, daher nie Scores) ersetzt durch `src/sim/Leaderboard.ts`. Abgeschlossene Fahrten (nur aus `finishLevel()`, einmal pro Run-ID) gehen an das Levelboard (`eroadtrip_l1`/`eroadtrip_l2`, `boardId` in `levels.ts`) und an `eroadtrip` (Gesamt, eigene Run-ID). Ergebnis-Screen mit Top 10, Platz und „Name ändern“; Topbar-Knopf „🏆 Bestenliste“ mit Level-Tabs. Echte Einreichung nur auf `hunterjoeing.github.io`; Fork, lokal und `?lbdebug=1` laufen im Testmodus (dryRun, nur `console.info`). Version per esbuild-`define` aus `package.json`. Release-Eintrag v0.5.0 nach Regel 10 geprüft.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Worker und Shared-Skripte, `npm test` (siehe Commit), Headless-Chrome-Check auf Fork-Pages durch den Orchestrator. Keine POSTs an die Live-API.
+- **Offen** · Handy-Test durch Michael. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues/PRs, Fork 0 offene PRs.
+- **Merge-Reihenfolge** · `codex/arcade-versioning` → `codex/arcade-leaderboard-groups` (Teil a, Worker deployt beim Merge automatisch – Joe vorher informieren) → `codex/eroadtrip-highscores` (Teil b).
 
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
 
@@ -58,15 +67,3 @@
 ### 2026-11-25 – Upstream-Merge E-Roadtrip
 - Um 10:23 Uhr (Berlin) wurde [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) von `mic4rd:codex/review-fixes` nach `main` gemergt (Merge-Commit `29fd861`, Review-Fixes 1–20, Doku, Tests). Rebuild-Workflow inkl. `npm test` (20/20) und Pages-Deploy erfolgreich; Bundle unverändert, live auf https://hunterjoeing.github.io/games/e-roadtrip/ geprüft. Diese Handoff-Aktualisierung kommt per Folge-PR (Branch `docs/handoff-pr4`).
 - Um 00:09 Uhr (Berlin) wurde [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) von `cursor/eroadtrip-touch-level2-5df0` nach `main` gemergt (Merge-Commit `826fb33`). Der Merge enthält die Arbeit aus den Fork-PRs #2–#6.
-
-### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
-- **Erledigt:**
-  - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
-  - Level 2 ohne Autoroute du Soleil. Entfernt: `edge_aachen_bruessel`, `edge_bruessel_lille`, `edge_lille_paris`, `edge_paris_lyon` und deren Lader. Luxemburg/Lyon, Reims/Nevers und Paris/Clermont bleiben.
-  - Hannover Messe hat einen eigenen Besuchsbildschirm: AC optional (6 Punkte, 50 % frei), Essen −50 €, Toilette automatisch, einer von 10 Berichten, etwa 4 Stunden.
-  - Fastned- und TotalEnergies-Parks auf Level 2 ersetzt durch IONITY Beaune, Tesla Orange, ENGIE Vianeo Vierzon und Atlante Béziers. Filter zeigt diese Anbieter, nicht Fastned/Total.
-  - AC-Leistung je Auto (`acMaxKw`). Ladeleistung an AC = min(Säule, Auto). Bildschirm sagt „AC-Laden“.
-  - Autohof-KI fährt ein, wartet an einer freien Säule und fährt über die Autobahn wieder raus. NPCs bremsen vor dem Auto davor, auch vor dem Spieler.
-- **Offen / Nächste Schritte:**
-  - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
-  - Level 3–7 bleiben `playable: false`.

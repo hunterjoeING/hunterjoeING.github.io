@@ -8,6 +8,7 @@ export interface ChargingCurvePoint {
 }
 
 export interface VehicleSpec {
+  shortName: string;
   id: string;
   name: string;
   brand: string;
@@ -287,6 +288,7 @@ export interface RouteOption {
 
 export interface LevelConfig {
   id: string;
+  boardId?: string;
   order: number;
   title: string;
   subtitle: string;
@@ -363,6 +365,8 @@ export interface IncidentLogEntry {
 
 export interface RunState {
   levelId: string;
+  leaderboardRunId?: string;
+  completed?: boolean;
   plan: TripPlan;
   currentLegIndex: number;
   legProgressKm: number;

@@ -4,6 +4,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'mg4_standard',
     name: 'MG4 Electric Standard',
+    shortName: 'MG4',
     brand: 'MG',
     year: 2023,
     chemistry: 'LFP',
@@ -34,6 +35,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'tesla_model_s_2015',
     name: 'Tesla Model S 85 (2015)',
+    shortName: 'Model S',
     brand: 'Tesla',
     year: 2015,
     chemistry: 'NMC',
@@ -67,6 +69,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'vw_id3_pro',
     name: 'VW ID.3 Pro S',
+    shortName: 'ID.3',
     brand: 'Volkswagen',
     year: 2024,
     chemistry: 'NMC',
@@ -97,6 +100,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'tesla_model_3_highland',
     name: 'Tesla Model 3 Highland SR (LFP)',
+    shortName: 'Model 3',
     brand: 'Tesla',
     year: 2025,
     chemistry: 'LFP',
@@ -129,6 +133,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'tesla_model_y_lr',
     name: 'Tesla Model Y Long Range',
+    shortName: 'Model Y',
     brand: 'Tesla',
     year: 2025,
     chemistry: 'NMC',
@@ -160,6 +165,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'xpeng_g6_lr',
     name: 'XPeng G6 Long Range (800V)',
+    shortName: 'XPeng G6',
     brand: 'XPeng',
     year: 2025,
     chemistry: 'NMC',
@@ -192,6 +198,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'kia_ev6_gtline',
     name: 'Kia EV6 800V RWD',
+    shortName: 'EV6',
     brand: 'Kia',
     year: 2024,
     chemistry: 'NMC',
@@ -223,6 +230,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'vw_id7_tourer',
     name: 'VW ID.7 Tourer Pro S',
+    shortName: 'ID.7 Tourer',
     brand: 'Volkswagen',
     year: 2025,
     chemistry: 'NMC',
@@ -253,6 +261,7 @@ export const VEHICLES: VehicleSpec[] = [
   {
     id: 'porsche_taycan',
     name: 'Porsche Taycan Performance+',
+    shortName: 'Taycan',
     brand: 'Porsche',
     year: 2025,
     chemistry: 'NMC',

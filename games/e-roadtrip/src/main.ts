@@ -19,6 +19,7 @@ import { getVehicleById } from './data/vehicles';
 import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
+import { newRunId, submitRun } from './sim/Leaderboard';
 import { applyPause } from './sim/PauseEffects';
 import {
   CITY_TRANSITION_MINUTES,
@@ -307,6 +308,10 @@ class ERoadtripController {
       this.returnToPlanning(this.level.id);
     });
 
+    document.getElementById('btn-er-leaderboard')?.addEventListener('click', () => {
+      window.ArcadeScores?.openLeaderboardModal?.(this.level.boardId ?? 'eroadtrip_l1');
+    });
+
     document.getElementById('map-btn-zoom-in')?.addEventListener('click', () => {
       SoundFX.click();
       const s = this.game.scene.getScene('EuropeMapScene') as EuropeMapScene | undefined;
@@ -439,6 +444,7 @@ class ERoadtripController {
     resetTouchInput();
     this.bridge.runState = {
       levelId: this.level.id,
+      leaderboardRunId: newRunId(this.level.boardId, window.ArcadeScores),
       plan: clonedPlan,
       currentLegIndex: 0,
       legProgressKm: 0,
@@ -1158,7 +1164,8 @@ class ERoadtripController {
 
   private finishLevel(cleanArrival: boolean): void {
     const run = this.bridge.runState;
-    if (!run) return;
+    if (!run || run.completed) return;
+    run.completed = true;
     this.eventModal.close();
     this.drivingHUD.setMode('hidden');
     resetTouchInput();
@@ -1177,7 +1184,8 @@ class ERoadtripController {
       };
     }
     saveCampaignState(this.save);
-    this.resultsUI.show(this.level, run, result, this.save);
+    const submission = submitRun(this.level, run, result, window.location, window.ArcadeScores);
+    this.resultsUI.show(this.level, run, result, this.save, submission);
   }
 
   private returnToPlanning(levelId: string): void {
