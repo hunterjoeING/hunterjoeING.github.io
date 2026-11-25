@@ -1,0 +1,258 @@
+// Public release history. Releases are grouped by app, newest version first within each app.
+const arcadeReleases = {
+  apps: {
+    arcade: { title: "HunterJoe Arcade", href: "./index.html", kind: "arcade" },
+    podracer: { title: "Canyon Podracer 3D", href: "./games/podracer/index.html", kind: "game" },
+    eroadtrip: { title: "E-Roadtrip", href: "./games/e-roadtrip/index.html", kind: "game" },
+    solitaire3d: { title: "3D Spider Solitär (4 Farben)", href: "./games/solitaire3d/index.html", kind: "game" },
+    minesweeper_3d_prompt_test: { title: "Minesweeper 3d prompt Version", href: "./games/minesweeper-3d-prompt-test/index.html", kind: "game" },
+    minesweeper: { title: "Minesweeper 3D – Tech Demo KI-Agent", href: "./games/minesweeper/index.html", kind: "game" },
+    roadster: { title: "Hyper-Roadster", href: "./games/roadster/index.html", kind: "game" },
+    zombie: { title: "Zombie Horde: Gate Runner", href: "./games/zombie/index.html", kind: "game" },
+    tower: { title: "Bastion Tower Defense", href: "./games/tower/index.html", kind: "game" },
+    solitaire: { title: "Klondike Solitaire", href: "./games/solitaire/index.html", kind: "game" },
+    p2048: { title: "2048 Prism", href: "./games/2048/index.html", kind: "game" },
+    quiz_fussball: { title: "Fußball – Das große Quiz", href: "./games/quiz-fussball/index.html", kind: "quiz" },
+    quiz_american_football: { title: "American Football – Das große NFL-Quiz", href: "./games/quiz-american-football/index.html", kind: "quiz" },
+    quiz_golf: { title: "Golf – Das große Quiz", href: "./games/quiz-golf/index.html", kind: "quiz" },
+    quiz_mil_air: { title: "Militärflugzeuge Quiz: Kampfjets bis Pionierzeit", href: "./games/quiz-military-aircraft/index.html", kind: "quiz" },
+    quiz_airliners: { title: "Passagierflugzeuge Quiz: A380 bis Concorde", href: "./games/quiz-airliners/index.html", kind: "quiz" },
+    quiz_etfs: { title: "Passives Investieren & ETFs Quiz", href: "./games/quiz-etfs/index.html", kind: "quiz" },
+    quiz_bitcoin: { title: "Bitcoin Mega-Quiz: Protokoll bis Lightning", href: "./games/quiz-bitcoin/index.html", kind: "quiz" },
+    quiz_porsche: { title: "Porsche & Taycan Quiz (75 Fragen)", href: "./games/quiz-porsche/index.html", kind: "quiz" },
+    quiz_f1: { title: "Formel 1 – Legenden, Technik & Königsklasse", href: "./games/quiz-f1/index.html", kind: "quiz" },
+    quiz_apple: { title: "Apple – Produkte, Kult & Technikgeschichte", href: "./games/quiz-apple/index.html", kind: "quiz" },
+    quiz_md11: { title: "McDonnell Douglas MD-11 Quiz", href: "./games/quiz-md11/index.html", kind: "quiz" },
+    quiz_naildesign: { title: "Nageldesign Quiz: Finger- & Fußnägel", href: "./games/quiz-naildesign/index.html", kind: "quiz" },
+    quiz_torten: { title: "Torten Quiz: Klassiker & Patisserie", href: "./games/quiz-torten/index.html", kind: "quiz" },
+    quiz_geburt: { title: "Bewusste Schwangerschaft & sanfte Geburt", href: "./games/quiz-geburt/index.html", kind: "quiz" },
+    quiz_ai: { title: "KI: Entstehung & Funktionsweise Quiz", href: "./games/quiz-ai/index.html", kind: "quiz" },
+    quiz_movies: { title: "Kino & Filme Quiz (ohne RomComs)", href: "./games/quiz-movies/index.html", kind: "quiz" },
+    quiz_egypt: { title: "Ägyptische Geschichte Quiz", href: "./games/quiz-egypt/index.html", kind: "quiz" },
+    quiz_diving: { title: "Tauchen & Scuba Diving Quiz", href: "./games/quiz-diving/index.html", kind: "quiz" },
+    quiz_cpus: { title: "Prozessoren-Quiz (2000–Heute)", href: "./games/quiz-cpus/index.html", kind: "quiz" },
+    quiz_gpus: { title: "Grafikkarten-Quiz (2000–Heute)", href: "./games/quiz-gpus/index.html", kind: "quiz" },
+    quiz_phones: { title: "Handys & Smartphones Quiz (25 Jahre)", href: "./games/quiz-phones/index.html", kind: "quiz" },
+    quiz_pilze_aachen: { title: "Pilz-Sammler-Quiz: Region Aachen & Eifel", href: "./games/quiz-pilze-aachen/index.html", kind: "quiz" },
+    quiz_swiss_trains: { title: "Schweizer Eisenbahnloks (ca. 1970–Heute)", href: "./games/quiz-swiss-trains/index.html", kind: "quiz" },
+    quiz_emob: { title: "E-Mobilität & Tesla Nerd-Quiz", href: "./games/quiz-emobility/index.html", kind: "quiz" },
+    quiz_pol: { title: "Politik & Ökonomie: Freiheitliches Denken", href: "./games/quiz-politics/index.html", kind: "quiz" },
+    quiz_hist: { title: "Geschichte & Weltereignisse", href: "./games/quiz-history/index.html", kind: "quiz" },
+    quiz_china: { title: "Neuere Chinesische Geschichte Quiz", href: "./games/quiz-china/index.html", kind: "quiz" },
+    quiz: { title: "Quiz Arena: Klassik", href: "./games/quiz/index.html", kind: "quiz" },
+  },
+  releases: [
+    {
+      app: "arcade", version: "0.2.0", date: "2026-11-25", type: "feature", title: "Versionen und Changelogs",
+      highlights: [
+        "Versionsnummern und Changelogs für jedes öffentliche Spiel und Quiz",
+        "Update-Hinweis mit blauem Punkt auf der Spielkarte",
+        "Neue Seite „Changelogs“ mit Filter nach Spiel und Quiz",
+        "Link „Changelogs“ im Footer",
+      ],
+    },
+    {
+      app: "arcade", version: "0.1.0", date: "2026-11-13", type: "feature", title: "Erste Version",
+      banner: false,
+      highlights: [
+        "Der Start des Web-Projekts HunterJoe Arcade",
+      ],
+    },
+    {
+      app: "eroadtrip", version: "0.4.0", date: "2026-11-25", type: "feature", title: "Ladeplanung und mobiles HUD",
+      ref: "PR #4",
+      highlights: [
+        "Derselbe Ladepark ist auf Hin- und Rückweg nutzbar",
+        "Maut wird pro Etappe abgebucht",
+        "KI-Autos fahren rechts und kreisen nicht mehr",
+        "Die Bremse hat Vorrang vor dem Gas. Das Hotel lädt acht Stunden lang mit 11 kW",
+        "Überarbeitetes Handy-HUD",
+      ],
+    },
+    {
+      app: "eroadtrip", version: "0.3.0", date: "2026-11-25", type: "feature", title: "Auf nach Montpellier",
+      ref: "PR #3",
+      highlights: [
+        "Level 2 nach Montpellier mit Hotel-Übernachtung",
+        "Getrennte Planung für Hin- und Rückweg",
+        "Vierfarbiger Reichweitenring",
+        "Messe-Besuch mit Essen und AC-Laden",
+        "Neue Autohöfe, Blitzer nach echter Geschwindigkeit und Unfall-Event mit Streaming-Option",
+      ],
+    },
+    {
+      app: "eroadtrip", version: "0.2.0", date: "2026-11-21", type: "feature", title: "Mehr Routen und bessere Übersicht",
+      highlights: [
+        "Drei alternative Routen pro Level mit Vergleich",
+        "Detaillierte Pixel-Europakarte mit Zoom und Anbieter-Logos",
+        "Prognose des Akkustands bei Ankunft",
+        "Etappenwahl, Anbieter-Filter und Reichweitenringe",
+        "Pausen-Animationen, Stadtverkehr mit Regeln und Polizei sowie bessere Touch-Steuerung",
+      ],
+    },
+    {
+      app: "eroadtrip", version: "0.1.0", date: "2026-11-20", type: "feature", title: "Erste spielbare Version",
+      ref: "b6a44e4",
+      banner: false,
+      highlights: [
+        "Level 1 Aachen ↔ Hannover Messe",
+        "Ladeplanung mit echten Ladekurven und Lade-Abos",
+        "Zeitraffer-Autobahn und GTA-2-Stadtfahrt",
+        "Fahrzeug-Upgrades",
+      ],
+    },
+
+    // Retrospective debut entries do not show update banners.
+    {
+      app: "podracer", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["3D-Rennen durch einen Wüsten-Canyon mit Boost-Pads und Hindernissen"],
+    },
+    {
+      app: "solitaire3d", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Spider Solitär mit vier Farben auf einem 3D-Kartentisch"],
+    },
+    {
+      app: "minesweeper_3d_prompt_test", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Minesweeper auf einem frei drehbaren und auffächerbaren 3D-Würfel"],
+    },
+    {
+      app: "minesweeper", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Räumliches Minensuchrätsel mit 13 Geometrien und optionaler Assistenz"],
+    },
+    {
+      app: "roadster", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Landespiel mit Rampe, Stickstoffdüsen und Gyro-Hilfe"],
+    },
+    {
+      app: "zombie", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Brückenspiel mit Zombie-Wellen, Energietoren und Verstärkungen"],
+    },
+    {
+      app: "tower", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Turmverteidigung mit drei Routen, ausbaubaren Türmen und Boss-Wellen"],
+    },
+    {
+      app: "solitaire", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Klondike mit Ein- oder Drei-Karten-Zug, Tipps und Rückgängig-Funktion"],
+    },
+    {
+      app: "p2048", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Zahlenpuzzle mit 4×4- und 5×5-Feldern, Wischgesten und Pfeiltasten"],
+    },
+    {
+      app: "quiz_fussball", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Fußballquiz mit Vereins-Special und Bestenlisten je Themenbereich"],
+    },
+    {
+      app: "quiz_american_football", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Footballquiz zu Spielregeln, Ligageschichte und Fankultur"],
+    },
+    {
+      app: "quiz_golf", version: "0.1.0", date: "2026-11-22", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Golfquiz zu Spielregeln, Ausrüstung, Turnieren und Plätzen"],
+    },
+    {
+      app: "quiz_mil_air", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zur Geschichte und Technik der militärischen Luftfahrt"],
+    },
+    {
+      app: "quiz_airliners", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Verkehrsflugzeugen und der Technik an Bord"],
+    },
+    {
+      app: "quiz_etfs", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Indexfonds, langfristigem Sparen und Besteuerung"],
+    },
+    {
+      app: "quiz_bitcoin", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zur Geschichte und Funktionsweise digitaler Währungen"],
+    },
+    {
+      app: "quiz_porsche", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zur Modellgeschichte und Technik von Sportwagen"],
+    },
+    {
+      app: "quiz_f1", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Fahrern, Rennstrecken und Technik der Formel 1"],
+    },
+    {
+      app: "quiz_apple", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zur Geschichte eines Technikunternehmens und seiner Produkte"],
+    },
+    {
+      app: "quiz_md11", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Konstruktion und Einsatzgeschichte eines dreistrahligen Verkehrsflugzeugs"],
+    },
+    {
+      app: "quiz_naildesign", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Nagelpflege, Gestaltung und Materialkunde"],
+    },
+    {
+      app: "quiz_torten", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Backtechniken, Tortendekoration und internationalen Klassikern"],
+    },
+    {
+      app: "quiz_geburt", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Geburtsvorbereitung und der ersten Zeit nach der Entbindung"],
+    },
+    {
+      app: "quiz_ai", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zur Geschichte und Funktionsweise künstlicher Intelligenz"],
+    },
+    {
+      app: "quiz_movies", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Filmquiz zu unterschiedlichen Genres und Kinotechnik"],
+    },
+    {
+      app: "quiz_egypt", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zur Geschichte Ägyptens von der Frühzeit bis zur Moderne"],
+    },
+    {
+      app: "quiz_diving", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Tauchpraxis, Ausrüstung und Physik unter Wasser"],
+    },
+    {
+      app: "quiz_cpus", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Bilderquiz zur Geschichte von Computerprozessoren"],
+    },
+    {
+      app: "quiz_gpus", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Bilderquiz zu PC-Grafikkarten aus verschiedenen Jahren"],
+    },
+    {
+      app: "quiz_phones", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Bilderquiz zu Mobiltelefonen aus mehreren Generationen"],
+    },
+    {
+      app: "quiz_pilze_aachen", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Bilderquiz zur Bestimmung regionaler Pilzarten und ihrer Giftigkeit"],
+    },
+    {
+      app: "quiz_swiss_trains", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Bilderquiz zu Fahrzeugen der Schweizer Eisenbahn"],
+    },
+    {
+      app: "quiz_emob", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu Elektroautos, Batterietechnik und Schnellladen"],
+    },
+    {
+      app: "quiz_pol", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu wirtschaftspolitischen Ideen und Denkschulen"],
+    },
+    {
+      app: "quiz_hist", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zu historischen Meilensteinen verschiedener Epochen"],
+    },
+    {
+      app: "quiz_china", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Quiz zur neueren Geschichte Chinas"],
+    },
+    {
+      app: "quiz", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
+      banner: false, highlights: ["Allgemeinwissen oder Themenmix mit optionalem Zeitlimit"],
+    },
+  ],
+};
+
+if (typeof window !== "undefined") window.ARCADE_RELEASES = arcadeReleases;
+if (typeof module !== "undefined") module.exports = arcadeReleases;

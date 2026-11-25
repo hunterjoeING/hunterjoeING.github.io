@@ -16,13 +16,14 @@
   <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
   <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./styles.css?v=0.4.0" />
 </head>
 <body>
   <header class="arcade-topbar">
     <div class="topbar-left">
       <a href="../../index.html" class="back-hub-btn">← Dashboard</a>
-      <div class="topbar-title">⚡🚗 E-Roadtrip · Pixel Europe &amp; GTA-2</div>
+      <div class="topbar-title"><span class="er-title-prefix">⚡🚗 </span>E-Roadtrip<span class="er-title-subtitle"> · Pixel Europe &amp; GTA-2</span></div>
+      <button type="button" class="er-version-label" id="er-version-label" aria-haspopup="dialog" hidden></button>
     </div>
     <div class="topbar-right">
       <button type="button" id="btn-toggle-touch" class="hub-action-btn" title="Bildschirm-Touch-Steuerung ein/aus">🎮 Touch</button>
@@ -56,7 +57,20 @@
 
   <script src="../../shared/arcade.js"></script>
   <script src="../../shared/burger-menu.js"></script>
+  <script src="../../shared/releases.js?v=0.4.0"></script>
+  <script src="../../shared/update-banner.js?v=0.4.0"></script>
+  <script>
+    (function () {
+      const release = window.ArcadeUpdates?.latest('eroadtrip');
+      if (!release) return;
+      const button = document.getElementById('er-version-label');
+      button.textContent = 'v' + release.version;
+      button.setAttribute('aria-label', 'E-Roadtrip ' + button.textContent + ' – Changelog öffnen');
+      button.addEventListener('click', () => ArcadeUpdates.openChangelog('eroadtrip', button));
+      button.hidden = false;
+    })();
+  </script>
   <script src="./dist/phaser.min.js"></script>
-  <script src="./dist/e-roadtrip.js"></script>
+  <script src="./dist/e-roadtrip.js?v=0.4.0"></script>
 </body>
 </html>

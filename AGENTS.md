@@ -31,6 +31,7 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
      - Erledigte und offene Arbeit sowie ausgeführte Checks festhalten. Das Ergebnis der Issue-/PR-Prüfung oder den Grund fürs Überspringen angeben. Fehlt der Netzzugriff, „Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen“ vermerken.
      - Für committete Arbeit die Commit-SHAs eintragen und „Änderungen im Arbeitsbaum“ entfernen. Bei einem Lauf ohne Commit/Push `SHA: (folgt)` eintragen. Der Orchestrator ergänzt nach Commit und Push die SHAs im Handoff und Changelog sowie den Push-Status und die Test-URL und holt ggf. die Issue-/PR-Prüfung nach.
      - Bei mehr als fünf Session-Einträgen die ältesten nach `HANDOFF-archive.md` verschieben.
+     - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 8. **Mobile-First & Android/iOS-Stabilität:**
    * Fixierte Hintergrund-Canvas-Elemente (`#cosmos-canvas` und `.cosmos-vignette`) müssen `height: 100lvh` (`left: 0; bottom: 0` auf Android/Desktop bzw. `top: 0; bottom: auto` per `@supports (-webkit-touch-callout: none)` auf iOS) nutzen, `transform-origin` am `#hub-shell` auf den sichtbaren Viewport begrenzen (`min(35lvh, 300px)`) und bei Touch-Scroll (`e.pointerType !== 'mouse'`) oder beim Ein-/Ausblenden der mobilen Adressleiste keinerlei Kamera- oder Layout-Sprünge auslösen.
    * Alle Seiten müssen sowohl den **Dark Mode** als auch den **Light Mode** (`html[data-theme="light"]` via `ArcadeTheme`) sauber unterstützen.
@@ -40,6 +41,15 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
      - Geänderte Werte, Konstanten, Routen, Anbieter und Dateinamen in den betroffenen Abschnitten einschließlich Stellschrauben-Tabelle und offenen Punkten nachziehen. Werte an einer Stelle pflegen und Doppelbeschreibungen vermeiden.
      - Pro Aufgabe oder PR genau einen kurzen Changelog-Eintrag (1–3 Zeilen) unten ergänzen, mit Datum, Branch und Commit-SHA oder PR. Überholte Aussagen im alten Eintrag mit „(später ersetzt …)“ kennzeichnen.
      - Die Sprache der jeweiligen Datei beibehalten. Die E-Roadtrip-Architektur ist auf Englisch, `HANDOFF.md` auf Deutsch.
+     - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
+10. **Semantische Versionierung und öffentliche Changelogs:** Diese Regel gilt für Cursor, Codex, Antigravity, alle weiteren Agenten und alle Menschen, die am Repository arbeiten.
+   * Jedes öffentliche Spiel, jedes öffentliche Quiz und die Arcade (`arcade`) haben eine eigene Version nach `MAJOR.MINOR.PATCH`. MINOR und PATCH sind Zähler. Auf `0.9.0` folgen `0.10.0`, `0.11.0` usw. Bis zur ausdrücklichen Freigabe von Michi oder Joe bleibt die App in Beta. `1.0.0` ist für die fertige Version reserviert. Setze erst nach Freigabe `allowStable: true` beim App-Eintrag.
+   * **Feature (`0.x.0`):** Für spielerrelevante neue Inhalte oder Funktionen MINOR erhöhen, PATCH auf 0 setzen und einen Eintrag vom Typ `feature` mit 3–5 kurzen deutschen Stichpunkten für Spieler ergänzen. Die Karte zeigt ab dem Release-Datum bis einschließlich 14 Tage danach „Neues Update“ mit blauem Punkt. Das Öffnen des App-Changelogs blendet den Punkt aus. Nachgetragene Ersteinträge sind mit `banner: false` gekennzeichnet und lösen nie einen Hinweis aus. Ein Ersteintrag mit dem Titel „Erste Version“ hat 1–3 Stichpunkte.
+   * **Patch (`0.x.y` mit `y > 0`):** Bei Fixes, Wartung und kleinen Änderungen PATCH erhöhen und einen Eintrag vom Typ `patch` mit 1–3 kurzen deutschen Stichpunkten ergänzen. Patches lösen keinen Update-Hinweis aus. Im Popup stehen sie eingeklappt unter „Kleinere Fixes“. In der Übersicht sind Fixes standardmäßig sichtbar und per Checkbox ausblendbar. Reine Doku-, CI- und Teständerungen erhöhen keine Version.
+   * **Pflege:** `shared/releases.js` ist die Quelle für App-IDs, Versionen und Release-Notizen. Einträge sind pro App absteigend nach Version sortiert, mit ebenfalls absteigendem oder gleichem Datum. Die Übersicht sortiert über alle Apps nach Datum und dann numerisch nach Version. Release-Datum ist der geplante Merge- oder Live-Tag im Format `JJJJ-MM-TT`. Bei späterem Merge korrigiert der Orchestrator das Datum.
+   * **Zuordnung:** Änderungen am Hub (`index.html`), an `changelogs.html`, `shared/arcade.js` und allgemein genutzten Laufzeitdateien unter `shared/` gehören zur App `arcade`. Bei E-Roadtrip zusätzlich `package.json`, die beiden Versionsfelder in `package-lock.json` und die `?v=`-Werte von `styles.css`, `dist/e-roadtrip.js`, `releases.js` und `update-banner.js` in `games/e-roadtrip/index.html` auf dieselbe Version setzen.
+   * **PR-Prüfung:** CI verlangt für geänderte öffentliche Spiel- und Quiz-Verzeichnisse, den Hub, die Changelog-Übersicht und Dateien unter `shared/` einen Versionsanstieg gegenüber dem Basisbranch. Release-Datei, Markdown, Testverzeichnisse und das generierte E-Roadtrip-Bundle zählen dabei nicht als auslösende Dateien. `[no-release]` im PR-Titel oder das Label `no-release` überspringt den Versionsvergleich.
+   * **Spoilerfreiheit:** Changelogs enthalten keine Quizfragen, Antworten, Lösungen, Hinweise, versteckten oder Admin-Inhalte, PINs, Geheimnisse oder Easter Eggs. Eine Angabe wie „12 neue Fragen in der Kategorie Bundesliga“ ist erlaubt. Versteckte und Admin-Quizze dürfen überhaupt nicht in `shared/releases.js` erscheinen.
 
 ---
 
@@ -51,9 +61,12 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
 ├── index.html                       # Haupt-Hub (Spiele- & Quiz-Übersicht, 3D-Hintergrund, Community-Board)
 ├── impressum.html                   # Impressum nach § 5 DDG (Johannes Rudolph, Aachen)
 ├── datenschutz.html                 # Datenschutzerklärung (DSGVO, LocalStorage, Cloudflare Turnstile/D1)
+├── changelogs.html                   # Öffentliche Release-Übersicht mit Filter nach App
 ├── shared/
 │   ├── arcade.css                   # Globales Design-System, Dark/Light-Theme, Nav, Modals, Feedback-UI
 │   ├── arcade.js                    # Globale Services (ArcadeAudio, ArcadeTheme, ArcadeScores, ArcadeAuth, ArcadeFeedback)
+│   ├── releases.js                  # App-Katalog und öffentliche Versionshistorie
+│   ├── update-banner.js             # Update-Pille, Gelesen-Status und Changelog-Dialog
 │   ├── burger-menu.js               # Modulares Top-Right Burger-Menü (☰) + Slide-Over-Drawer (Dark/Light)
 │   ├── quiz-engine.js               # Zentrale Quiz-Logik (Seen-Tracking, Rundenlänge, Timer/Entspannt)
 │   ├── quiz-board.js                # Einheitliche lokale Quiz-Bestenliste (localStorage, optionale Namenseingabe)
@@ -103,7 +116,8 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
    * `index.html` $\rightarrow$ Array `QUIZZES`
    * `shared/arcade.js` $\rightarrow$ `GAME_CATALOG`, `detectGameId()`, `FEEDBACK_TARGETS`
    * `cloudflare-worker/worker.js` $\rightarrow$ `GAMES_META`
-4. **Syntax- & Funktionstest:** Führe `node --check` auf allen geänderten JS-Dateien aus.
+4. **Version anlegen:** Trage das öffentliche Quiz mit seiner Hub-ID und einem Release `v0.1.0` in `shared/releases.js` ein (Regel 10). Überspringe diesen Schritt für versteckte oder Admin-Quizze.
+5. **Syntax- & Funktionstest:** Führe `node --check` auf allen geänderten JS-Dateien aus.
 
 ---
 

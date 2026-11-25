@@ -903,12 +903,16 @@
         <a href="./impressum.html">Impressum</a>
         <span aria-hidden="true">·</span>
         <a href="./datenschutz.html">Datenschutz</a>
+        <span aria-hidden="true">·</span>
+        <a href="./changelogs.html">Changelogs</a>
       </nav>
     </footer>
   </div>
 
   <script src="./shared/arcade.js"></script>
   <script src="./shared/hidden-admin.js"></script>
+  <script src="./shared/releases.js?v=0.2.0"></script>
+  <script src="./shared/update-banner.js?v=0.2.0"></script>
   <script>
     (function () {
       const GAMES = [
@@ -1782,6 +1786,7 @@
             <div class="card-badges">
               <span class="badge-cat">${g.catLabel}</span>
               ${g.badge ? `<span class="badge-new">${g.badge}</span>` : ''}
+              ${window.ArcadeUpdates?.badgeHtml(g.id) || ''}
             </div>
           </div>
           <h3 class="card-title">${g.title}</h3>
@@ -1795,6 +1800,14 @@
           </div>
         `;
         a.addEventListener('click', (e) => {
+          const updateBtn = e.target.closest('.arcade-update-badge');
+          if (updateBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            ArcadeAudio.click();
+            ArcadeUpdates.openChangelog(g.id, updateBtn);
+            return;
+          }
           const fbBtn = e.target.closest('.card-fb-trigger');
           if (fbBtn) {
             e.preventDefault();

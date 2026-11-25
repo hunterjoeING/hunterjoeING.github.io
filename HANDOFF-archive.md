@@ -2,6 +2,16 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-24 – Michael / Cursor Cloud Agent (Paket F)
+- **Erledigt:**
+  - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
+  - Aachen–Düsseldorf wieder unbeschränkt. Ladeziel ab Ankunfts-SoC. Pausen zeigen Toilettendrang, Hunger und Stress. Reichweitenring auf der aktiven Etappe in Grün/Gelb/Orange/Rot mit weichem Rand.
+  - Auffahrunfall: „Hilfe anbieten“ plus YouTube-Stream (+500 €, 30 % Anzeige −1000 € / +45 Min / +50 Stress). PKW folgen der Kurve und fahren vorwärts. Eigenes Auto mit Halo. Bordcomputer rechts mit Etappenkarte. Lichthupe-Button nur bei Tempo-Defizit und Auto auf der linken Spur.
+  - Hannover Messe: 4 Stunden, Essen, AC-Parkplatz mit 6 Punkten und 50 % frei. Model S 0,00 €/kWh, andere Teslas „Supercharger Abo inkl.“. Level-2-Mitte über Reims und Nevers, ab Clermont mit der Paris-Route. Level 2: Atlante und ENGIE Vianeo statt EnBW und EWE Go. Tesla-Roaming 0,61 €/kWh. Autohof-Varianten, belegte Säulen, Kollision an der Säule.
+- **Offen / Nächste Schritte:**
+  - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
+  - Level 3–7 bleiben `playable: false`.
+
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Blitzer nach gefahrenem Tempo)
 - **Erledigt:**
   - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6).

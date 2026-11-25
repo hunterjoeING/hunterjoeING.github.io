@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Changelogs · HunterJoe Arcade</title>
+  <meta name="description" content="Versionsverlauf und Neuigkeiten zu HunterJoe Arcade und den öffentlichen Spielen und Quizzen." />
+  <meta name="theme-color" content="#F6F8FC" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/changelogs.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="./favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <link rel="stylesheet" href="./shared/arcade.css" />
+  <style>
+    .changelogs-shell {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 20px 16px calc(36px + env(safe-area-inset-bottom, 0px));
+    }
+    .release-card { padding: clamp(16px, 4vw, 32px); }
+    .release-card h1, .release-card h2 { margin: 0; line-height: 1.25; }
+    .release-card h2 { font-size: 1.25rem; }
+    .release-card a { color: var(--text-main); }
+    .release-filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: end;
+      gap: 8px 20px;
+      margin-top: 16px;
+    }
+    .release-select { display: grid; gap: 4px; min-width: 0; width: min(100%, 25rem); }
+    .release-select select {
+      width: 100%;
+      min-height: 44px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font: inherit;
+    }
+    .release-fix-filter { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; }
+    .release-fix-filter input { accent-color: var(--accent-gold); }
+    .release-list { display: grid; gap: 12px; margin-top: 16px; }
+    .release-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px 10px;
+      margin: 8px 0;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    .release-version {
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--accent-gold-soft);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+    .release-card h3 { margin: 12px 0 4px; font-size: 1.05rem; }
+    .release-card ul { margin: 0; padding-inline-start: 20px; }
+    .release-card li + li { margin-top: 4px; }
+    .changelogs-shell .arcade-legal-footer { margin-top: 20px; }
+  </style>
+</head>
+<body data-no-leaderboard="1">
+  <header class="arcade-topbar">
+    <div class="topbar-left">
+      <a href="./index.html" class="back-hub-btn">← Dashboard</a>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkelmodus wechseln"></button>
+    </div>
+  </header>
+
+  <main class="changelogs-shell">
+    <section class="glass-card release-card" aria-labelledby="changelogs-title">
+      <h1 id="changelogs-title">Changelogs</h1>
+      <div class="release-filters">
+        <label class="release-select">
+          Spiel, Quiz oder Arcade
+          <select id="release-app"><option value="">Alle</option></select>
+        </label>
+        <label class="release-fix-filter">
+          <input type="checkbox" id="release-fixes" checked />
+          Kleinere Fixes anzeigen
+        </label>
+      </div>
+    </section>
+    <p id="release-empty" role="status" hidden>Für diese Auswahl sind keine Einträge vorhanden.</p>
+    <div class="release-list" id="release-list"></div>
+    <noscript><p>Die Changelogs werden mit JavaScript angezeigt.</p></noscript>
+
+    <footer class="arcade-legal-footer">
+      <a href="./impressum.html">Impressum</a>
+      <span aria-hidden="true">·</span>
+      <a href="./datenschutz.html">Datenschutz</a>
+    </footer>
+  </main>
+
+  <template id="release-entry">
+    <article class="glass-card release-card">
+      <h2><a></a></h2>
+      <div class="release-meta">
+        <span class="release-version"></span>
+        <span class="release-type"></span>
+        <time></time>
+      </div>
+      <h3></h3>
+      <div class="release-highlights"></div>
+    </article>
+  </template>
+
+  <script src="./shared/arcade.js"></script>
+  <script src="./shared/releases.js?v=0.2.0"></script>
+  <script src="./shared/update-banner.js?v=0.2.0"></script>
+  <script>
+    (function () {
+      const { apps, releases } = ARCADE_RELEASES;
+      const { appHref, formatDate, highlightsHtml, markSeen } = ArcadeUpdates;
+      const appSelect = document.getElementById('release-app');
+      const fixes = document.getElementById('release-fixes');
+      const list = document.getElementById('release-list');
+      const template = document.getElementById('release-entry');
+      const collator = new Intl.Collator('de', { numeric: true });
+      const sorted = [...releases].sort((a, b) =>
+        b.date.localeCompare(a.date) || collator.compare(b.version, a.version));
+
+      const appOptions = Object.entries(apps).sort(([a], [b]) =>
+        a === 'arcade' ? -1 : b === 'arcade' ? 1 : collator.compare(apps[a].title, apps[b].title));
+      for (const [id, app] of appOptions) {
+        appSelect.add(new Option(app.kind === 'arcade' ? 'Arcade' : app.title, id));
+      }
+
+      function render() {
+        const appId = appSelect.value;
+        if (appId) markSeen(appId);
+        const entries = sorted.filter(entry =>
+          (!appId || entry.app === appId) && (fixes.checked || entry.type !== 'patch'));
+        list.replaceChildren(...entries.map(entry => {
+          const fragment = template.content.cloneNode(true);
+          const link = fragment.querySelector('a');
+          link.textContent = apps[entry.app].title;
+          link.href = appHref(entry.app);
+          fragment.querySelector('.release-version').textContent = 'v' + entry.version;
+          fragment.querySelector('.release-type').textContent = entry.type === 'feature' ? 'Feature' : 'Fix';
+          const date = fragment.querySelector('time');
+          date.dateTime = entry.date;
+          date.textContent = formatDate(entry.date);
+          fragment.querySelector('h3').textContent = entry.title;
+          fragment.querySelector('.release-highlights').innerHTML = highlightsHtml(entry);
+          return fragment;
+        }));
+        document.getElementById('release-empty').hidden = entries.length > 0;
+      }
+
+      function readHash() {
+        const appId = new URLSearchParams(location.hash.slice(1)).get('app');
+        appSelect.value = Object.hasOwn(apps, appId) ? appId : '';
+        render();
+      }
+
+      appSelect.addEventListener('change', () => {
+        const url = new URL(location.href);
+        url.hash = appSelect.value ? new URLSearchParams({ app: appSelect.value }).toString() : '';
+        history.replaceState(null, '', url);
+        render();
+      });
+      fixes.addEventListener('change', render);
+      window.addEventListener('hashchange', readHash);
+      readHash();
+    })();
+  </script>
+</body>
+</html>
