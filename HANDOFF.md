@@ -20,7 +20,7 @@
 | E-Roadtrip Review-Fixes 1–20 + Doku | Michael / Codex CLI (gpt-6.2-sol high) | `codex/review-fixes` (`022a699`, `2b01e5a`, `f7abd66`, `006a1bf`, `85af6f7`) · [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) (Merge `29fd861`) | ✅ Gemerged und live auf https://hunterjoeing.github.io/games/e-roadtrip/ |
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` (`fc3ad9b`) · Fork · kein PR | 🟡 Test auf Fork-Pages |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` (`0c85929`) · Fork · kein PR | 🟡 Teil (a) geprüft; Worker lokal mit `wrangler dev` getestet, nicht deployt |
-| E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` (`888b032`) auf `codex/arcade-leaderboard-groups` · Fork · kein PR | 🟡 Test auf Fork-Pages (Testmodus, kein POST) |
+| E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` (`888b032`, `4d6303b`) auf `codex/arcade-leaderboard-groups` · Fork · kein PR | 🟡 Test auf Fork-Pages (Testmodus, kein POST) |
 
 **Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.3.0
 
@@ -32,7 +32,7 @@
 
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high) – E-Roadtrip Level-Bestenlisten (Teil b)
 
-- **Branch / PR** · `codex/eroadtrip-highscores` auf `codex/arcade-leaderboard-groups` (`f30054a`). Commit `888b032`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html (Fork-Pages auf diesem Branch).
+- **Branch / PR** · `codex/eroadtrip-highscores` auf `codex/arcade-leaderboard-groups` (`f30054a`). Commits `888b032`, `4d6303b`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html (Fork-Pages auf diesem Branch).
 - **Erledigt** · E-Roadtrip v0.5.0: kaputten Aufruf `ArcadeScores.submit` (existiert nicht, daher nie Scores) ersetzt durch `src/sim/Leaderboard.ts`. Abgeschlossene Fahrten (nur aus `finishLevel()`, einmal pro Run-ID) gehen an das Levelboard (`eroadtrip_l1`/`eroadtrip_l2`, `boardId` in `levels.ts`) und an `eroadtrip` (Gesamt, eigene Run-ID). Ergebnis-Screen mit Top 10, Platz und „Name ändern“; Topbar-Knopf „🏆 Bestenliste“ mit Level-Tabs. Echte Einreichung nur auf `hunterjoeing.github.io`; Fork, lokal und `?lbdebug=1` laufen im Testmodus (dryRun, nur `console.info`). Version per esbuild-`define` aus `package.json`. Release-Eintrag v0.5.0 nach Regel 10 geprüft.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Worker und Shared-Skripte, `npm test` (40/40), Headless-Chrome-Check durch den Orchestrator bei 390/320 px hell/dunkel: Fork-Seite v0.5.0, Topbar-Knopf sichtbar, Dialog mit Tabs Level 1/Level 2/Gesamt (Live-GET), Ergebnis-Panel im Testmodus (lokaler Harness, Top 10 mit gemockten Daten, Namen escaped, eigener Eintrag hervorgehoben), kein horizontales Scrollen, keine JS-Fehler. Danach Rang-Spalte bei 320 px korrigiert (`#`, nowrap) und doppelten Testmodus-Hinweis entfernt. Alle POSTs abgefangen: 0 POSTs an die Live-API.
 - **Offen** · Handy-Test durch Michael. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues/PRs, Fork 0 offene PRs.
