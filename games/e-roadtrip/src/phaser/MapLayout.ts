@@ -1,8 +1,8 @@
-import { ChargerNetwork, ChargerStation, HighwayEdge, LevelConfig, PlannedStop, TripPlan } from '../types';
-import { getChargersForEdge, getEdgeById } from '../data/europeMap';
+import { ChargerNetwork, HighwayEdge, LevelConfig, TripPlan } from '../types';
+import { getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
-import { congestedCruiseKmh, defaultLegSpeedKmh, drivenSpeedKmh, getActiveRouteLegs, snapSpeedKmh } from '../sim/RoutePlanner';
+import { congestedCruiseKmh, defaultLegSpeedKmh, drivenSpeedKmh, estimateMesseCharge, getActiveRouteLegs, plannedMesseStopOnLeg, plannedRoadStopsOnLeg, snapSpeedKmh } from '../sim/RoutePlanner';
 
 export interface BoxRect {
   x: number;
@@ -229,16 +229,7 @@ export function computeRouteSocBandSegments(
       !!plan.behindTruckMode
     );
 
-    const stopsOnLeg = plan.plannedStops
-      .filter(s => s.legIndex === i)
-      .map(s => {
-        const st = getChargersForEdge(edge.id).find(c => c.id === s.chargerId);
-        if (!st) return null;
-        const progressAlongRun = spec.reverse ? 1 - st.edgeProgress : st.edgeProgress;
-        return { stop: s, station: st, progress: progressAlongRun };
-      })
-      .filter((x): x is { stop: PlannedStop; station: ChargerStation; progress: number } => x !== null)
-      .sort((a, b) => a.progress - b.progress);
+    const stopsOnLeg = plannedRoadStopsOnLeg(plan, spec, i);
 
     let cursorProgress = 0;
     for (const item of stopsOnLeg) {
@@ -251,6 +242,10 @@ export function computeRouteSocBandSegments(
 
     if (soc > lowerSocPct) {
       appendSubSegment(edge, !!spec.reverse, cursorProgress, 1, cons100, record);
+      const messe = plannedMesseStopOnLeg(plan, spec, i);
+      if (messe) {
+        soc = estimateMesseCharge(vehicle, messe.station, soc, messe.stop.targetSocPct, plan.subscriptionIds).departSoc;
+      }
     }
   }
 

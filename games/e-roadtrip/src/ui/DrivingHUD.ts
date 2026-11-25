@@ -47,7 +47,9 @@ function renderStageComputer(
   reverse: boolean,
   hh: string,
   mm: string,
-  weather: string
+  weather: string,
+  tollsEur: number,
+  legTollEur: number
 ): string {
   const raw = [{ x: from.mapX, y: from.mapY }, ...waypoints, { x: to.mapX, y: to.mapY }];
   const pts = reverse ? raw.slice().reverse() : raw;
@@ -76,6 +78,7 @@ function renderStageComputer(
     <div class="trip-kicker">Bordcomputer · ${hh}:${mm} · ${weather}</div>
     <strong>${fromName} → ${toName}</strong>
     <div class="trip-road">${highway} · ${Math.round(progress * 100)} %</div>
+    ${legTollEur > 0 || tollsEur > 0 ? `<div class="trip-road">Maut bisher ${tollsEur.toFixed(2)} € · Etappe ${legTollEur.toFixed(2)} €</div>` : ''}
     <svg viewBox="0 0 ${w} ${h}" class="stage-map" aria-hidden="true">
       <path d="${d}" fill="none" stroke="rgba(148,163,184,0.85)" stroke-width="4" stroke-linecap="round" />
       <circle cx="${dot.x.toFixed(1)}" cy="${dot.y.toFixed(1)}" r="5.5" fill="#38bdf8" stroke="#f8fafc" stroke-width="2" />
@@ -99,6 +102,8 @@ export class DrivingHUD {
   private mode: 'hidden' | 'autobahn' | 'city' = 'hidden';
   private forceTouchVisible = false;
   private shellKey = '';
+  private replanFeedback = '';
+  private replanFeedbackTimer?: number;
 
   constructor(hudEl: HTMLElement, touchEl: HTMLElement, cb: DrivingHUDCallbacks) {
     this.hudEl = hudEl;
@@ -163,8 +168,22 @@ export class DrivingHUD {
     this.paintTouchPads();
   }
 
+  public showReplanFeedback(message: string): void {
+    window.clearTimeout(this.replanFeedbackTimer);
+    this.replanFeedback = message;
+    this.setText('replan-feedback', message);
+    this.replanFeedbackTimer = window.setTimeout(() => {
+      this.replanFeedback = '';
+      this.setText('replan-feedback', '');
+    }, 7000);
+  }
+
   public setMode(mode: 'hidden' | 'autobahn' | 'city'): void {
     this.mode = mode;
+    if (mode === 'hidden') {
+      window.clearTimeout(this.replanFeedbackTimer);
+      this.replanFeedback = '';
+    }
     this.hudEl.classList.toggle('hidden', mode === 'hidden');
     if (mode !== 'city') {
       this.clearTouchStates();
@@ -217,7 +236,8 @@ export class DrivingHUD {
     const totalCost = (
       run.chargingCostEur +
       run.subscriptionCostEur +
-      run.tollsAndFinesEur +
+      run.tollsEur +
+      run.incidentalCostEur +
       (run.lodgingCostEur || 0)
     ).toFixed(2);
     const sliderMax = vehicle.maxSpeedKmh;
@@ -269,6 +289,7 @@ export class DrivingHUD {
           <button type="button" class="dhud-action tailgate-btn hidden" id="btn-tailgate">Dicht auffahren, Blinker links und Lichthupe</button>
         </div>
       </div>
+      <div class="dhud-replan-feedback" data-field="replan-feedback" role="status"></div>
       <aside id="er-trip-computer" class="er-trip-computer" aria-label="Bordcomputer"></aside>`
           : `
       <div class="dhud-row">
@@ -316,6 +337,7 @@ export class DrivingHUD {
       `${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}%`
     );
     this.setText('cost', `${totalCost} €`);
+    this.setText('replan-feedback', this.replanFeedback);
     this.setText('tempo', `${Math.round(run.currentSpeedKmh)} km/h${capNote}`);
     this.hudEl.querySelector('[data-pill="soc"]')?.classList.toggle('low', socRound < 15);
     this.hudEl.querySelector('[data-pill="stress"]')?.classList.toggle('warn', run.stress > 60);
@@ -334,7 +356,10 @@ export class DrivingHUD {
     const computer = this.hudEl.querySelector('#er-trip-computer');
     if (computer && this.mode === 'autobahn') {
       const progress = Math.max(0, Math.min(1, run.legProgressKm / Math.max(1, edge.distanceKm)));
-      computer.innerHTML = renderStageComputer(from.name, to.name, edge.highwayName, progress, edge.waypoints, from, to, !!leg.reverse, hh, mm, weatherBadge);
+      computer.innerHTML = renderStageComputer(
+        from.name, to.name, edge.highwayName, progress, edge.waypoints, from, to,
+        !!leg.reverse, hh, mm, weatherBadge, run.tollsEur, edge.tollEur
+      );
     }
   }
 

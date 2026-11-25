@@ -23,7 +23,7 @@ export function evaluateRun(
 
   // 2. Total costs (0..100) - baseline reasonable cost ~ 0.085 €/km
   const totalCostEur = Number(
-    (run.chargingCostEur + run.subscriptionCostEur + run.tollsAndFinesEur + (run.lodgingCostEur || 0)).toFixed(2)
+    (run.chargingCostEur + run.subscriptionCostEur + run.tollsEur + run.incidentalCostEur + (run.lodgingCostEur || 0)).toFixed(2)
   );
   const benchmarkCost = Math.max(30, run.distanceDrivenKm * (level.costBenchmarkEurPerKm ?? 0.082));
   const costRatio = totalCostEur / benchmarkCost;

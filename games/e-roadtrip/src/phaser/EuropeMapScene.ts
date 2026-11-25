@@ -20,8 +20,10 @@ import { getBestPriceForStation } from '../sim/EnergyModel';
 import {
   getActiveRouteLegs,
   getActiveRouteOption,
+  getMapChargerLegIndex,
   getReturnRouteOption,
-  routeOutboundLegs
+  routeOutboundLegs,
+  stopKey
 } from '../sim/RoutePlanner';
 import { getVehicleById } from '../data/vehicles';
 import { ERoadtripBridge } from './GameBridge';
@@ -51,6 +53,7 @@ interface ChargerPinNode extends CardLayoutNode {
   priceText: Phaser.GameObjects.Text;
   noSubText: Phaser.GameObjects.Text;
   onSelectedStage: boolean;
+  isPlanned: boolean;
   compactIcon: boolean;
   grayIcon: boolean;
 }
@@ -678,10 +681,11 @@ export class EuropeMapScene extends Phaser.Scene {
 
       cardBg.on('pointerup', () => {
         if (this.totalDragDist > 8 || this.isPinching || !card.visible) return;
-        const activeEdgeIds = new Set(getActiveRouteLegs(this.bridge.level, this.bridge.plan).map(l => l.edgeId));
-        if (!activeEdgeIds.has(station.edgeId)) return;
+        const legs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
+        const legIndex = getMapChargerLegIndex(station, legs, this.bridge.selectedLegIndex);
+        if (legIndex < 0) return;
         SoundFX.click();
-        this.bridge.onMapSelectCharger(station);
+        this.bridge.onMapSelectCharger(station, legIndex);
         this.refreshDynamicState();
       });
       cardBg.on('pointerover', () => {
@@ -719,6 +723,7 @@ export class EuropeMapScene extends Phaser.Scene {
         worldX: station.mapX,
         worldY: station.mapY - 26,
         onSelectedStage: false,
+        isPlanned: false,
         compactIcon: true,
         grayIcon: false
       });
@@ -769,7 +774,6 @@ export class EuropeMapScene extends Phaser.Scene {
 
     const activeRoute = getActiveRouteOption(this.bridge.level, this.bridge.plan);
     const activeLegs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
-    const activeEdgeIds = new Set(activeLegs.map(l => l.edgeId));
     const selectedLegIdx = Math.max(0, Math.min(activeLegs.length - 1, this.bridge.selectedLegIndex || 0));
 
     // Coloured forecast ring along the active stage: 25–15 green, 15–10 yellow, 10–5 orange, 5–0 red.
@@ -917,15 +921,16 @@ export class EuropeMapScene extends Phaser.Scene {
     //    Ausblenden: nothing, unless a chip is on — then only that provider on the active stage.
     //    Einblenden: every charger on the chosen Hin- and Rückweg. Chips add detail tiles (layoutChargerCards).
     const vehicle = getVehicleById(this.bridge.plan.vehicleId);
-    const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
-    const selectedLeg = activeLegs[selectedLegIdx];
+    const selectedKeys = new Set(this.bridge.plan.plannedStops.map(s => stopKey(s.legIndex, s.chargerId)));
     const showStations = this.bridge.showChargerStations;
 
     this.pinObjects.forEach(node => {
       const { station } = node;
-      node.onActiveRoute = activeEdgeIds.has(station.edgeId);
-      node.onSelectedStage = !!selectedLeg && selectedLeg.edgeId === station.edgeId;
-      const isSelected = selectedIds.has(station.id);
+      const legIndex = getMapChargerLegIndex(station, activeLegs, selectedLegIdx);
+      node.onActiveRoute = legIndex >= 0;
+      node.onSelectedStage = legIndex === selectedLegIdx;
+      const isSelected = node.onActiveRoute && selectedKeys.has(stopKey(legIndex, station.id));
+      node.isPlanned = isSelected;
       const isSub = isProviderSubscribed(station.network, this.bridge.plan.subscriptionIds, vehicle.isTesla);
       const isFilteredOn = this.bridge.providerFilter[station.network] !== false;
       node.isSubscribed = isSub;
@@ -971,7 +976,7 @@ export class EuropeMapScene extends Phaser.Scene {
       node.logo.setAlpha(1);
 
       const icons = `${station.hasMcDonalds ? ' 🍔' : ''}${station.trailerFriendly ? ' 🚐' : ''}`;
-      const shortNet = NET_SHORT[station.network] || station.network.toUpperCase();
+      const shortNet = station.fairStay ? 'Messe-AC' : NET_SHORT[station.network] || station.network.toUpperCase();
       node.titleText.setText(`${isSelected ? '✓ ' : ''}${shortNet} · ${station.maxKw}kW (${station.stalls}x)${icons}`);
       node.priceText.setText(`${tariff.pricePerKwh.toFixed(2)} €/kWh`);
       node.priceText.setColor(priceIsRoaming ? '#f87171' : tariff.hasSubscriptionDiscount ? '#4ade80' : '#facc15');
@@ -1069,11 +1074,10 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
-    const selectedIds = new Set(this.bridge.plan.plannedStops.map(s => s.chargerId));
     const visibleNodes: ChargerPinNode[] = [];
 
     this.pinObjects.forEach(node => {
-      const isSelected = selectedIds.has(node.station.id);
+      const isSelected = node.isPlanned;
       const iconPx = (node.compactIcon ? 12 : isSelected ? 20 : 18) * Math.min(1, invScale * 1.15);
       const iconSize = Phaser.Math.Clamp(iconPx, 9, 22);
       node.icon.setDisplaySize(iconSize, iconSize);
@@ -1128,7 +1132,7 @@ export class EuropeMapScene extends Phaser.Scene {
 
     visibleNodes.forEach(n => {
       n.card.setPosition(n.worldX, n.worldY);
-      const isSelected = selectedIds.has(n.station.id);
+      const isSelected = n.isPlanned;
       const lineColor = isSelected ? 0xfacc15 : n.grayIcon ? 0x64748b : NET_COLORS[n.station.network] || 0x38bdf8;
       this.leaderOverlay.lineStyle(Math.max(0.9, 1.6 * cardScale), lineColor, 0.9);
       this.leaderOverlay.lineBetween(n.pinX, n.pinY, n.worldX, n.worldY);

@@ -16,16 +16,23 @@ import {
 } from './types';
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
-import { CHARGERS, getChargerById, getChargersForEdge, getCityById, getEdgeById } from './data/europeMap';
+import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
-import { computeSubscriptionTripCost, estimateChargeSession, socAfterChargingMinutes } from './sim/EnergyModel';
+import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import {
   createDefaultPlan,
+  estimateMesseCharge,
   evaluateTripPlan,
-  findNearestAvailableCharger,
+  findReachableAdditionalStop,
   getActiveRouteLegs,
+  getMesseChargerForVisit,
+  isPendingStop,
+  isStationOnLeg,
+  MESSE_VISIT_MINUTES,
+  NO_REACHABLE_CHARGER,
   predictLiveTripSoc,
   snapSpeedKmh,
+  stopKey,
   switchReturnRouteInPlan,
   switchRouteInPlan
 } from './sim/RoutePlanner';
@@ -112,8 +119,8 @@ class ERoadtripController {
         this.maybeStartPreview();
       },
 
-      onMapSelectCharger: (station: ChargerStation) => {
-        this.toggleChargerInPlan(station);
+      onMapSelectCharger: (station: ChargerStation, legIndex: number) => {
+        this.toggleChargerInPlan(station, legIndex);
       },
 
       onMapSelectRoute: (routeId: string) => {
@@ -403,26 +410,15 @@ class ERoadtripController {
     this.renderPlanning();
   }
 
-  private toggleChargerInPlan(station: ChargerStation): void {
-    const activeLegs = getActiveRouteLegs(this.level, this.plan);
-    const matchingLegs = activeLegs
-      .map((l, idx) => ({ l, idx }))
-      .filter(x => x.l.edgeId === station.edgeId);
-    if (matchingLegs.length === 0) return;
+  private toggleChargerInPlan(station: ChargerStation, legIndex: number): void {
+    const leg = getActiveRouteLegs(this.level, this.plan)[legIndex];
+    if (!isStationOnLeg(station, leg)) return;
 
-    const existingStop = this.plan.plannedStops.findIndex(
-      s => s.chargerId === station.id && matchingLegs.some(m => m.idx === s.legIndex)
-    );
+    const existingStop = this.plan.plannedStops.findIndex(s => s.chargerId === station.id && s.legIndex === legIndex);
     if (existingStop >= 0) {
       this.plan.plannedStops.splice(existingStop, 1);
     } else {
-      const preferred =
-        matchingLegs.find(m => m.idx === this.bridge.selectedLegIndex) || matchingLegs[0];
-      this.plan.plannedStops.push({
-        chargerId: station.id,
-        legIndex: preferred.idx,
-        targetSocPct: 80
-      });
+      this.plan.plannedStops.push({ chargerId: station.id, legIndex, targetSocPct: 80 });
     }
     this.syncMapScene();
     this.renderPlanning();
@@ -461,15 +457,17 @@ class ERoadtripController {
       distanceDrivenKm: 0,
       chargingCostEur: 0,
       subscriptionCostEur: subCost,
-      tollsAndFinesEur: 0,
+      tollsEur: 0,
+      paidTollLegIndices: [],
+      incidentalCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
       replanCount: 0,
       goodReplanCount: 0,
       chargingEfficiencyBonus: 0,
       collisionsCount: 0,
-      completedStopIds: [],
-      skippedStopIds: [],
+      completedStopKeys: [],
+      skippedStopKeys: [],
       triggeredEventIds: [],
       wifeDialogueTriggered: false,
       incidentLog: [],
@@ -566,6 +564,7 @@ class ERoadtripController {
         return;
       }
 
+      const visitKey = stopKey(run.currentLegIndex, station.id);
       const startChargingFlow = () => {
         const stopPlan = run.plan.plannedStops.find(
           s => s.chargerId === station.id && s.legIndex === run.currentLegIndex
@@ -581,11 +580,11 @@ class ERoadtripController {
           run,
           targetSoc,
           (payload: ChargingCompletePayload) => {
-            run.completedStopIds.push(station.id);
+            run.completedStopKeys.push(visitKey);
             run.socPct = payload.newSoc;
             run.elapsedMinutes += payload.minutesSpent;
             run.chargingCostEur += payload.chargingCostEur;
-            run.tollsAndFinesEur += payload.breakCostEur;
+            run.incidentalCostEur += payload.breakCostEur;
             if (payload.resetBladder) {
               run.bladderNeed = 0;
             } else {
@@ -613,8 +612,8 @@ class ERoadtripController {
         );
       };
 
-      if (!run.triggeredEventIds.includes(`def_${station.id}`) && Math.random() < station.defectRisk + station.occupancyRisk * 0.35) {
-        run.triggeredEventIds.push(`def_${station.id}`);
+      if (!run.triggeredEventIds.includes(`def_${visitKey}`) && Math.random() < station.defectRisk + station.occupancyRisk * 0.35) {
+        run.triggeredEventIds.push(`def_${visitKey}`);
         const evt = getEventById('evt_charger_defect');
         if (evt) {
           this.bridge.paused = true;
@@ -622,14 +621,11 @@ class ERoadtripController {
           this.eventModal.showDynamicEvent(
             evt,
             choice => {
-              this.applyEventChoice(evt.title, choice);
-              if (choice.insertNearestCharger) {
-                run.skippedStopIds.push(station.id);
-              }
-              return choice.resultText;
+              if (choice.insertNearestCharger) run.skippedStopKeys.push(visitKey);
+              return this.applyEventChoice(evt.title, choice);
             },
             () => {
-              if (run.skippedStopIds.includes(station.id)) {
+              if (run.skippedStopKeys.includes(visitKey)) {
                 this.enterAutobahn();
               } else {
                 startChargingFlow();
@@ -712,15 +708,17 @@ class ERoadtripController {
       distanceDrivenKm: 0,
       chargingCostEur: 0,
       subscriptionCostEur: 0,
-      tollsAndFinesEur: 0,
+      tollsEur: 0,
+      paidTollLegIndices: [],
+      incidentalCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
       replanCount: 0,
       goodReplanCount: 0,
       chargingEfficiencyBonus: 0,
       collisionsCount: 0,
-      completedStopIds: [],
-      skippedStopIds: [],
+      completedStopKeys: [],
+      skippedStopKeys: [],
       triggeredEventIds: [],
       wifeDialogueTriggered: false,
       incidentLog: [],
@@ -827,7 +825,7 @@ class ERoadtripController {
     }
     run.chargingCostEur += choice.costDeltaEur;
     if (choice.lodgingDeltaEur) run.lodgingCostEur += choice.lodgingDeltaEur;
-    if (choice.fineDeltaEur) run.tollsAndFinesEur += choice.fineDeltaEur;
+    if (choice.fineDeltaEur) run.incidentalCostEur += choice.fineDeltaEur;
     run.stress = Phaser.Math.Clamp(run.stress + choice.stressDelta, 0, 100);
     run.peakStress = Math.max(run.peakStress, run.stress);
     run.decisionScoreAccum += choice.decisionPoints;
@@ -839,33 +837,6 @@ class ERoadtripController {
       const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
       if (lp) lp.targetSpeedKmh = speed;
       run.currentSpeedKmh = speed;
-    }
-
-    if (choice.insertNearestCharger) {
-      const legs = getActiveRouteLegs(this.level, run.plan);
-      const leg = legs[run.currentLegIndex];
-      const edge = getEdgeById(leg.edgeId);
-      const nearest = findNearestAvailableCharger(
-        this.level,
-        run.plan,
-        run.currentLegIndex,
-        run.legProgressKm / edge.distanceKm,
-        run.completedStopIds
-      );
-      if (nearest) {
-        const exists = run.plan.plannedStops.some(
-          s => s.chargerId === nearest.station.id && s.legIndex === nearest.legIndex
-        );
-        if (!exists) {
-          run.plan.plannedStops.push({
-            chargerId: nearest.station.id,
-            legIndex: nearest.legIndex,
-            targetSocPct: 78
-          });
-          run.replanCount += 1;
-          run.goodReplanCount += 1;
-        }
-      }
     }
 
     if (choice.id === 'hotel_good' || choice.id === 'hotel_budget' || choice.id === 'sleep_car') {
@@ -880,13 +851,17 @@ class ERoadtripController {
     }
 
     let finalText = choice.resultText;
+    if (choice.insertNearestCharger) {
+      const nearest = findReachableAdditionalStop(this.level, run);
+      finalText = nearest ? `${finalText} ${this.insertAdditionalStop(run, nearest, 78)}` : NO_REACHABLE_CHARGER;
+    }
     if (choice.id === 'messe_eat') {
       run.hungerNeed = Math.max(0, run.hungerNeed - 55);
       run.bladderNeed = Math.max(0, run.bladderNeed - 40);
     }
     if (choice.id === 'messe_skip') run.hungerNeed = Math.min(100, run.hungerNeed + 8);
     if (choice.fineRisk && Math.random() < choice.fineRisk.probability) {
-      run.tollsAndFinesEur += choice.fineRisk.amountEur;
+      run.incidentalCostEur += choice.fineRisk.amountEur;
       const extraStress = choice.fineRisk.stressDelta ?? 12;
       const extraTime = choice.fineRisk.timeDeltaMin ?? 0;
       run.elapsedMinutes += extraTime;
@@ -920,7 +895,10 @@ class ERoadtripController {
   private openHannoverMesse(run: RunState): void {
     const legs = getActiveRouteLegs(this.level, run.plan);
     const leg = legs[run.currentLegIndex];
-    const fair = leg ? getChargersForEdge(leg.edgeId).find(station => station.fairStay) : undefined;
+    const fair = getMesseChargerForVisit(leg);
+    const planned = fair && run.plan.plannedStops.find(
+      stop => stop.chargerId === fair.id && stop.legIndex === run.currentLegIndex
+    );
     const goOn = () => {
       run.currentLegIndex += 1;
       run.legProgressKm = 0;
@@ -928,8 +906,8 @@ class ERoadtripController {
     };
     this.bridge.paused = true;
     this.drivingHUD.clearTouchStates();
-    this.eventModal.showMesseVisit(choice => {
-      run.elapsedMinutes += 240;
+    this.eventModal.showMesseVisit({ chargePlanned: !!planned, chargerAvailable: !!fair }, choice => {
+      run.elapsedMinutes += MESSE_VISIT_MINUTES;
       run.bladderNeed = 0;
       let hunger = run.hungerNeed || 0;
       let foodNote = 'Ohne Essen.';
@@ -943,24 +921,23 @@ class ERoadtripController {
       }
       run.hungerNeed = hunger;
       let chargeNote = 'AC am Parkplatz ausgelassen.';
-      if (choice.charge && fair) {
-        if (Math.random() < 0.5) {
+      if (fair) {
+        const visitKey = stopKey(run.currentLegIndex, fair.id);
+        if (choice.charge && Math.random() < 1 - fair.occupancyRisk) {
           const vehicle = getVehicleById(run.plan.vehicleId);
-          const planned = run.plan.plannedStops.find(
-            stop => stop.chargerId === fair.id && stop.legIndex === run.currentLegIndex
-          );
-          const cap = planned ? planned.targetSocPct : 80;
-          const end = socAfterChargingMinutes(vehicle, fair, run.socPct, 210, cap);
-          const session = estimateChargeSession(vehicle, fair, run.socPct, end, run.plan.subscriptionIds);
-          run.socPct = end;
+          const session = estimateMesseCharge(vehicle, fair, run.socPct, planned?.targetSocPct ?? 80, run.plan.subscriptionIds);
+          run.socPct = session.departSoc;
           run.chargingCostEur += session.costEur;
-          chargeNote = `Einer von 6 AC-Punkten war frei: +${session.kwhAdded.toFixed(1)} kWh auf ${Math.round(end)} % für ${session.costEur.toFixed(2)} € (Onboard-Lader ${vehicle.acMaxKw} kW).`;
+          chargeNote = `Einer von 6 AC-Punkten war frei: +${session.kwhAdded.toFixed(1)} kWh auf ${Math.round(session.departSoc)} % für ${session.costEur.toFixed(2)} € (Onboard-Lader ${vehicle.acMaxKw} kW).`;
+          run.completedStopKeys.push(visitKey);
         } else {
-          run.stress = Math.min(100, run.stress + 6);
-          chargeNote = 'Alle 6 AC-Punkte waren belegt. Geladen wurde nicht.';
+          run.skippedStopKeys.push(visitKey);
+          if (choice.charge) {
+            run.stress = Math.min(100, run.stress + 6);
+            chargeNote = 'Alle 6 AC-Punkte waren belegt. Geladen wurde nicht.';
+          }
         }
       }
-      if (fair && !run.completedStopIds.includes(fair.id)) run.completedStopIds.push(fair.id);
       run.peakStress = Math.max(run.peakStress, run.stress);
       const report = randomMesseReport();
       const detail = `Vier Stunden Messe. Toilette automatisch. ${foodNote} ${chargeNote} ${report}`;
@@ -1028,29 +1005,9 @@ class ERoadtripController {
       dlg,
       this.level,
       run,
-      action => {
+      (action, nearest) => {
         if (action === 'insert_stop') {
-          const legs = getActiveRouteLegs(this.level, run.plan);
-          const leg = legs[run.currentLegIndex];
-          const edge = getEdgeById(leg.edgeId);
-          const nearest = findNearestAvailableCharger(
-            this.level,
-            run.plan,
-            run.currentLegIndex,
-            run.legProgressKm / edge.distanceKm,
-            run.completedStopIds
-          );
-          if (nearest) {
-            run.plan.plannedStops.push({
-              chargerId: nearest.station.id,
-              legIndex: nearest.legIndex,
-              targetSocPct: 75
-            });
-            run.replanCount += 1;
-            run.goodReplanCount += 1;
-            return `Zwischenstopp „${nearest.station.name}“ eingeplant!`;
-          }
-          return 'Kein weiterer Ladepark vor dem Ziel nötig.';
+          return nearest ? this.insertAdditionalStop(run, nearest, 75) : NO_REACHABLE_CHARGER;
         } else {
           const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
           const vehicleNow = getVehicleById(run.plan.vehicleId);
@@ -1090,7 +1047,7 @@ class ERoadtripController {
     this.eventModal.showCollisionDialogue(
       info,
       (cost, mins, stressDelta, decisionPts, punishCollision, summary) => {
-        run.tollsAndFinesEur += cost;
+        run.incidentalCostEur += cost;
         run.elapsedMinutes += mins;
         run.stress = Math.min(100, run.stress + stressDelta);
         run.peakStress = Math.max(run.peakStress, run.stress);
@@ -1116,7 +1073,7 @@ class ERoadtripController {
     this.eventModal.showPoliceViolationDialogue(
       kind,
       (cost, mins, stressDelta, decisionPts, summary) => {
-        run.tollsAndFinesEur += cost;
+        run.incidentalCostEur += cost;
         run.elapsedMinutes += mins;
         run.stress = Math.min(100, run.stress + stressDelta);
         run.peakStress = Math.max(run.peakStress, run.stress);
@@ -1135,7 +1092,7 @@ class ERoadtripController {
   private handleBatteryDepleted(): void {
     const run = this.bridge.runState;
     if (!run) return;
-    run.tollsAndFinesEur += 145;
+    run.incidentalCostEur += 145;
     run.elapsedMinutes += 45;
     run.socPct = 28;
     run.stress = Math.min(100, run.stress + 28);
@@ -1158,40 +1115,29 @@ class ERoadtripController {
     );
   }
 
+  private insertAdditionalStop(run: RunState, candidate: { legIndex: number; station: ChargerStation }, targetSocPct: number): string {
+    const { legIndex, station } = candidate;
+    run.plan.plannedStops.push({ chargerId: station.id, legIndex, targetSocPct });
+    run.replanCount += 1;
+    run.goodReplanCount += 1;
+    return `Zwischenstopp „${station.name}“ auf Etappe ${legIndex + 1} eingeplant.`;
+  }
+
   private forceEarlierChargeStop(): void {
     const run = this.bridge.runState;
     if (!run) return;
-    const legs = getActiveRouteLegs(this.level, run.plan);
-    const leg = legs[run.currentLegIndex];
-    const edge = getEdgeById(leg.edgeId);
-    const nearest = findNearestAvailableCharger(
-      this.level,
-      run.plan,
-      run.currentLegIndex,
-      run.legProgressKm / edge.distanceKm,
-      run.completedStopIds
-    );
+    const nearest = findReachableAdditionalStop(this.level, run);
+    const feedback = nearest ? this.insertAdditionalStop(run, nearest, 80) : NO_REACHABLE_CHARGER;
     if (nearest) {
-      const exists = run.plan.plannedStops.some(
-        s => s.chargerId === nearest.station.id && s.legIndex === nearest.legIndex
-      );
-      if (!exists) {
-        run.plan.plannedStops.push({
-          chargerId: nearest.station.id,
-          legIndex: nearest.legIndex,
-          targetSocPct: 80
-        });
-        run.replanCount += 1;
-        run.goodReplanCount += 1;
-        run.incidentLog.push({
-          timeStr: formatClock(this.level, run.elapsedMinutes),
-          title: 'Umplanung während Fahrt',
-          detail: `Ladestopp „${nearest.station.name}“ zusätzlich eingefügt.`,
-          impact: 'positive'
-        });
-      }
-      this.drivingHUD.update(this.level, run, this.bridge.timeScale);
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: 'Umplanung während Fahrt',
+        detail: feedback,
+        impact: 'positive'
+      });
     }
+    this.drivingHUD.showReplanFeedback(feedback);
+    this.drivingHUD.update(this.level, run, this.bridge.timeScale);
   }
 
   private openLiveMapPeek(): void {
@@ -1202,14 +1148,19 @@ class ERoadtripController {
     const legs = getActiveRouteLegs(this.level, run.plan);
     const forecast = evaluateTripPlan(this.level, run.plan);
     const livePred = predictLiveTripSoc(this.level, run);
+    const finalSocWithoutMesse = livePred.predictedFinalSocWithoutMessePct;
     const upcoming = run.plan.plannedStops
-      .filter(s => s.legIndex >= run.currentLegIndex && !run.completedStopIds.includes(s.chargerId))
-      .map(s => CHARGERS.find(c => c.id === s.chargerId)?.name || s.chargerId);
+      .filter(s => s.legIndex >= run.currentLegIndex && isPendingStop(run, s))
+      .flatMap(s => {
+        const station = getChargerById(s.chargerId);
+        return station && isStationOnLeg(station, legs[s.legIndex]) ? [station.name] : [];
+      });
 
     const html = `
       <p><b>Aktuelle Etappe:</b> ${run.currentLegIndex + 1} / ${legs.length} · <b>Akku:</b> ${Math.round(run.socPct)}%</p>
       <p><b>🎯 Prognose nächstes Ziel (${livePred.nextStopName}, ${livePred.distanceToNextKm} km):</b> <strong>${livePred.predictedArrivalNextSocPct}% SoC</strong></p>
       <p><b>🏁 Prognose Endziel:</b> <strong>${livePred.predictedFinalSocPct}% SoC</strong></p>
+      ${finalSocWithoutMesse === undefined ? '' : `<p><b>Bei belegtem Messeparkplatz:</b> ${finalSocWithoutMesse > 0 ? `${finalSocWithoutMesse}% SoC am Ziel` : 'Reichweite reicht nicht bis zum Ziel.'}</p>`}
       <p><b>Geplante verbleibende Ladestopps:</b> ${upcoming.length > 0 ? upcoming.join(', ') : 'Keine mehr bis zum Ziel'}</p>
       <p><b>Prognose Schnittverbrauch:</b> ~${forecast.avgConsumptionKwh100} kWh/100km</p>
     `;

@@ -22,6 +22,12 @@
 
 ## 2. Session-Log (Neueste Einträge oben)
 
+### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol)
+- **Branch:** `codex/review-fixes`, Änderungen im Arbeitsbaum.
+- **Erledigt:** E-Roadtrip-Review 1, 2, 3, 4 und 16. Ladestopps und Defekte pro Etappe, Messe-AC beim Besuch mit 210 Lademinuten und beiden Belegungsfällen, Level-2-Maut pro Etappe, gemeinsame Reichweitensuche für die Umplanung und fahrzeugabhängige Supercharger-Tarife. Architektur und Bundle aktualisiert.
+- **Geprüft:** Typecheck, Build, Bundle-Syntax und lokale Rechentests. Mit DOM- und Phaser-Stubs zusätzlich Messe-Dialog, Tarifwechsel, Eschweiler-Rückhalt und einmalige Mautbuchung nach dem Hotel-Dialog geprüft. Chrome-Start in der Sandbox blockiert.
+- **Offen:** Review-Befunde 5–15 und 17–20.
+
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
 - **Erledigt:**
   - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.

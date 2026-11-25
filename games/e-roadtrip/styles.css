@@ -678,6 +678,19 @@ body {
   position: relative;
   z-index: 2;
 }
+.dhud-replan-feedback:not(:empty) {
+  align-self: flex-start;
+  position: relative;
+  z-index: 2;
+  padding: 6px 9px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text-main);
+  font-size: 12px;
+}
+.dhud-replan-feedback:empty {
+  position: absolute;
+}
 .tailgate-btn {
   background: #b45309;
   color: #fff;

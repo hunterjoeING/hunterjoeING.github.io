@@ -90,6 +90,10 @@ export class ResultsUI {
               ⚡ Verbrauch: <strong>${result.avgConsumptionKwh100} kWh/100km</strong> ·
               😰 Stress-Peak: <strong>${result.peakStress}%</strong>
             </p>
+            <p class="res-summary-line">
+              Laden ${run.chargingCostEur.toFixed(2)} € · Abos ${run.subscriptionCostEur.toFixed(2)} € ·
+              Maut ${run.tollsEur.toFixed(2)} € · Nebenkosten ${run.incidentalCostEur.toFixed(2)} €
+            </p>
             ${
               run.overnightNote
                 ? `<p class="res-overnight">🏨 Übernachtung: ${run.overnightNote}${
@@ -107,7 +111,7 @@ export class ResultsUI {
           <div class="res-panel">
             <h3>📊 Detail-Auswertung</h3>
             ${renderBar('Zeit-Performance', result.subScores.time, result.weights.time)}
-            ${renderBar('Gesamtkosten (Laden/Abos/Strafen)', result.subScores.cost, result.weights.cost)}
+            ${renderBar('Gesamtkosten', result.subScores.cost, result.weights.cost)}
             ${renderBar('Beifahrer-Stress & Peaks', result.subScores.stress, result.weights.stress)}
             ${renderBar('Effizienz & Ladekurve', result.subScores.efficiency, result.weights.efficiency)}
             ${renderBar('Dynamische Entscheidungen & Parken', result.subScores.decisions, result.weights.decisions)}

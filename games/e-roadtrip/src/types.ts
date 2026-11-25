@@ -345,6 +345,7 @@ export interface LiveSocPrediction {
   distanceToNextKm: number;
   predictedArrivalNextSocPct: number;
   predictedFinalSocPct: number;
+  predictedFinalSocWithoutMessePct?: number;
   isCriticalNext: boolean;
   isCriticalFinal: boolean;
   consumptionKwh100: number;
@@ -372,7 +373,9 @@ export interface RunState {
   distanceDrivenKm: number;
   chargingCostEur: number;
   subscriptionCostEur: number;
-  tollsAndFinesEur: number;
+  tollsEur: number;
+  paidTollLegIndices: number[];
+  incidentalCostEur: number;
   /** Hotels and other stays. 0 when the night was free. */
   lodgingCostEur: number;
   /** Shown on the trip summary after the overnight choice. */
@@ -382,8 +385,8 @@ export interface RunState {
   goodReplanCount: number;
   chargingEfficiencyBonus: number;
   collisionsCount: number;
-  completedStopIds: string[];
-  skippedStopIds: string[];
+  completedStopKeys: string[];
+  skippedStopKeys: string[];
   triggeredEventIds: string[];
   wifeDialogueTriggered: boolean;
   incidentLog: IncidentLogEntry[];

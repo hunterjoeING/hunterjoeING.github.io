@@ -32,7 +32,7 @@ export interface ERoadtripBridge {
   isLightTheme: () => boolean;
 
   onBootReady: () => void;
-  onMapSelectCharger: (station: ChargerStation) => void;
+  onMapSelectCharger: (station: ChargerStation, legIndex: number) => void;
   onMapSelectRoute: (routeId: string) => void;
   onMapSelectLeg: (legIndex: number) => void;
   onAutobahnHudTick: (run: RunState) => void;

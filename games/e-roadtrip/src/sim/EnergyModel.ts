@@ -6,6 +6,8 @@ import {
 } from '../types';
 import { getSubscriptionById, roamingPriceForProvider } from '../data/subscriptions';
 
+const CHARGING_ENERGY_FACTOR = 1.04;
+
 export function computeConsumptionKwh100(
   vehicle: VehicleSpec,
   speedKmh: number,
@@ -113,7 +115,10 @@ export function getBestPriceForStation(
   subscriptionIds: string[],
   vehicle: VehicleSpec
 ): TariffQuote {
-  const activeSubs: SubscriptionSpec[] = subscriptionIds.map(getSubscriptionById);
+  const activeIds = vehicle.isTesla && !subscriptionIds.includes('tesla_suc')
+    ? [...subscriptionIds, 'tesla_suc']
+    : subscriptionIds;
+  const activeSubs = activeIds.map(getSubscriptionById);
   let bestPrice = station.baseAdhocEurPerKwh;
   let bestName = station.network === 'ac_dorfladen' ? 'AC-Dorfladen Ad-hoc' : 'Ad-hoc Kartenzahlung';
   let bestId = 'adhoc';
@@ -131,7 +136,7 @@ export function getBestPriceForStation(
 
   // Tesla drivers automatically unlock native Tesla Supercharger pricing!
   if (station.network === 'tesla' && vehicle.isTesla) {
-    const withoutSub = computeBestWithout(station, subscriptionIds, vehicle, 'tesla_suc');
+    const withoutSub = computeBestWithout(station, activeIds, vehicle, 'tesla_suc');
     return {
       pricePerKwh: 0.39,
       pricePerKwhWithoutSub: withoutSub,
@@ -157,7 +162,7 @@ export function getBestPriceForStation(
   const priceWithoutSub =
     bestId === 'adhoc'
       ? Number(station.baseAdhocEurPerKwh.toFixed(2))
-      : computeBestWithout(station, subscriptionIds, vehicle, bestId);
+      : computeBestWithout(station, activeIds, vehicle, bestId);
 
   return {
     pricePerKwh: roundedBest,
@@ -201,7 +206,7 @@ export function estimateChargeSession(
     const kw = getChargingPowerKw(vehicle, station, midSoc);
     const kwhStep = kwhPerPct * step;
     // Slight charger overhead (4%)
-    totalKwh += kwhStep * 1.04;
+    totalKwh += kwhStep * CHARGING_ENERGY_FACTOR;
     totalMinutes += (kwhStep / kw) * 60;
   }
 
@@ -220,26 +225,27 @@ export function estimateChargeSession(
   };
 }
 
-/** SoC reachable in a fixed number of minutes, used for the 4-hour Messe AC stay. */
-export function socAfterChargingMinutes(
+/** AC-Ladung mit fester Ladezeit während eines Aufenthalts. */
+export function estimateTimedAcCharge(
   vehicle: VehicleSpec,
   station: ChargerStation,
   fromSocPct: number,
   minutes: number,
-  capSocPct: number
-): number {
-  let soc = Math.max(0, Math.min(100, fromSocPct));
-  const cap = Math.max(soc, Math.min(100, capSocPct));
-  let left = Math.max(0, minutes);
-  const kwhPerPct = Math.max(0.2, vehicle.batteryKwh / 100);
-  while (left > 0.4 && soc < cap - 0.15) {
-    const kw = getChargingPowerKw(vehicle, station, soc);
-    const dMin = Math.min(4, left);
-    const pct = (kw * dMin) / 60 / kwhPerPct;
-    soc = Math.min(cap, soc + pct);
-    left -= dMin;
-  }
-  return Math.round(soc * 10) / 10;
+  capSocPct: number,
+  subscriptionIds: string[]
+) {
+  const kw = getChargingPowerKw(vehicle, station, fromSocPct);
+  const kwhPerPct = vehicle.batteryKwh / 100;
+  const wantedKwh = fromSocPct > 0 ? Math.max(0, Math.min(100, capSocPct) - fromSocPct) * kwhPerPct : 0;
+  const batteryKwh = Math.min(wantedKwh, kw * minutes / 60);
+  const billedKwh = batteryKwh * CHARGING_ENERGY_FACTOR;
+  const tariff = getBestPriceForStation(station, subscriptionIds, vehicle);
+  return {
+    departSoc: fromSocPct + batteryKwh / kwhPerPct,
+    durationMinutes: Math.round(batteryKwh / kw * 60),
+    kwhAdded: Number(billedKwh.toFixed(1)),
+    costEur: Number((billedKwh * tariff.pricePerKwh).toFixed(2))
+  };
 }
 
 export function computeSubscriptionTripCost(

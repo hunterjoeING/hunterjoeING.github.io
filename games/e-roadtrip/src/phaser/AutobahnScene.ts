@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { getChargersForEdge, getCityById, getEdgeById } from '../data/europeMap';
+import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
 import {
@@ -8,9 +8,11 @@ import {
   getActiveRouteLegs,
   sectionMaxSpeedKmh,
   snapSpeedKmh,
-  speedTrapChancePerSimMinute
+  speedTrapChancePerSimMinute,
+  isPendingStop,
+  plannedRoadStopsOnLeg
 } from '../sim/RoutePlanner';
-import { ChargerStation, RunState, WeatherKind } from '../types';
+import { RunState, WeatherKind } from '../types';
 import {
   HighwayCar,
   baseSpeed,
@@ -831,18 +833,10 @@ export class AutobahnScene extends Phaser.Scene {
     }
 
     const legRatio = Math.min(1, run.legProgressKm / edge.distanceKm);
-    const pendingStop = run.plan.plannedStops
-      .filter(s => s.legIndex === run.currentLegIndex && !run.completedStopIds.includes(s.chargerId) && !run.skippedStopIds.includes(s.chargerId))
-      .map(s => {
-        const st = getChargersForEdge(edge.id).find(c => c.id === s.chargerId);
-        if (!st) return null;
-        const p = legSpec.reverse ? 1 - st.edgeProgress : st.edgeProgress;
-        return { stop: s, station: st, p };
-      })
-      .filter((x): x is { stop: (typeof run.plan.plannedStops)[number]; station: ChargerStation; p: number } => x !== null)
-      .sort((a, b) => a.p - b.p)[0];
+    const pendingStop = plannedRoadStopsOnLeg(run.plan, legSpec, run.currentLegIndex)
+      .find(({ stop }) => isPendingStop(run, stop));
 
-    if (pendingStop && legRatio >= pendingStop.p && !pendingStop.station.fairStay) {
+    if (pendingStop && legRatio >= pendingStop.progress) {
       this.bridge.paused = true;
       SoundFX.click();
       this.bridge.onTriggerChargerSegment(pendingStop.station);
@@ -963,6 +957,10 @@ export class AutobahnScene extends Phaser.Scene {
     }
 
     if (run.legProgressKm >= edge.distanceKm) {
+      if (edge.tollEur > 0 && !run.paidTollLegIndices.includes(run.currentLegIndex)) {
+        run.tollsEur += edge.tollEur;
+        run.paidTollLegIndices.push(run.currentLegIndex);
+      }
       const preset = legSpec.citySegmentAtEnd;
       if (preset === 'hannover_messe' || preset === 'aachen_finish' || preset === 'koeln_ring') {
         this.bridge.paused = true;

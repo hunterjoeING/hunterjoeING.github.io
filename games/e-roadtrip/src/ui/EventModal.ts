@@ -12,7 +12,7 @@ import {
 } from '../types';
 import { getVehicleById } from '../data/vehicles';
 import { estimateChargeSession, getChargingPowerKw } from '../sim/EnergyModel';
-import { findNearestAvailableCharger, predictLiveTripSoc } from '../sim/RoutePlanner';
+import { findReachableAdditionalStop, MESSE_CHARGE_MINUTES, NO_REACHABLE_CHARGER, predictLiveTripSoc, stopKey } from '../sim/RoutePlanner';
 import { SoundFX } from '../phaser/SoundFX';
 import { playBreakPixelAnimation } from './BreakPixelAnim';
 import { renderVehicleTouchscreenHtml } from './TouchscreenWidget';
@@ -108,7 +108,11 @@ export class EventModal {
     });
   }
 
-  public showMesseVisit(onConfirm: (choice: { charge: boolean; eat: boolean }) => string, onResume: () => void): void {
+  public showMesseVisit(
+    options: { chargePlanned: boolean; chargerAvailable: boolean },
+    onConfirm: (choice: { charge: boolean; eat: boolean }) => string,
+    onResume: () => void
+  ): void {
     this.modalEl.classList.remove('hidden');
     this.modalEl.innerHTML = `
       <div class="er-modal-card">
@@ -119,8 +123,8 @@ export class EventModal {
             <h3>Messebesuch</h3>
           </div>
         </div>
-        <p class="er-modal-body">Der Termin dauert etwa 4 Stunden. Die Toilette ist automatisch dabei. AC-Laden am Parkplatz ist freiwillig: 6 Punkte, 22 kW, und nur etwa jeder zweite ist frei.</p>
-        <label class="messe-opt"><input type="checkbox" id="messe-charge" /> <span><strong>AC am Messeparkplatz</strong><br />6 Ladepunkte, 50 % Chance, dass einer frei ist.</span></label>
+        <p class="er-modal-body">Der Termin dauert etwa 4 Stunden. Die Toilette ist automatisch dabei.</p>
+        ${options.chargerAvailable ? `<label class="messe-opt"><input type="checkbox" id="messe-charge" ${options.chargePlanned ? 'checked' : ''} /> <span><strong>AC am Messeparkplatz</strong><br />${MESSE_CHARGE_MINUTES} Min Ladezeit, 6 Ladepunkte mit je 22 kW, 50 % Chance auf einen freien Platz.</span></label>` : ''}
         <label class="messe-opt"><input type="checkbox" id="messe-eat" /> <span><strong>In der Messe essen</strong><br />−50 €, Hunger sinkt deutlich.</span></label>
         <div id="messe-actions" class="er-modal-choices">
           <button type="button" class="er-primary-btn" id="messe-go">Vier Stunden bleiben</button>
@@ -150,28 +154,21 @@ export class EventModal {
           onResume();
         });
       }
-    });
+    }, { once: true });
   }
 
   public showWifeStressDialogue(
     dlg: WifeDialogueDef,
     level: LevelConfig,
     run: RunState,
-    onApplyRouteAction: (action: 'insert_stop' | 'eco_speed') => string,
+    onApplyRouteAction: (action: 'insert_stop' | 'eco_speed', stop?: { legIndex: number; station: ChargerStation }) => string,
     onSelectReply: (choice: WifeDialogueChoice, routeChanged: boolean) => void,
     onResume: () => void
   ): void {
     let routeChanged = false;
     let routeFeedback = '';
-    const nearest = findNearestAvailableCharger(
-      level,
-      run.plan,
-      run.currentLegIndex,
-      0.2,
-      [...run.completedStopIds, ...run.plan.plannedStops.map(s => s.chargerId)]
-    );
-
     const render = () => {
+      const nearest = findReachableAdditionalStop(level, run);
       const stressColor = run.stress > 65 ? '#ef4444' : run.stress > 40 ? '#f59e0b' : '#22c55e';
       const pred = predictLiveTripSoc(level, run);
       this.modalEl.classList.remove('hidden');
@@ -202,7 +199,7 @@ export class EventModal {
                   ? `<button type="button" class="er-mini-btn" id="btn-wife-add-stop" ${routeChanged ? 'disabled' : ''}>
                       ⚡ +${dlg.suggestedQuickStopMinutes} Min Zwischenstopp: ${nearest.station.name}
                      </button>`
-                  : `<span class="wme-note">Nächster Ladestopp ist bereits eingeplant.</span>`
+                  : `<span class="wme-note">${NO_REACHABLE_CHARGER}</span>`
               }
               <button type="button" class="er-mini-btn" id="btn-wife-eco">
                 🐢 Tempo auf 115 km/h senken (-22 % Verbrauch)
@@ -229,7 +226,7 @@ export class EventModal {
       this.modalEl.querySelector('#btn-wife-add-stop')?.addEventListener('click', () => {
         SoundFX.click();
         routeChanged = true;
-        routeFeedback = onApplyRouteAction('insert_stop');
+        routeFeedback = onApplyRouteAction('insert_stop', nearest ?? undefined);
         render();
       });
 
@@ -757,7 +754,7 @@ export class EventModal {
       const pctProgress = Math.min(100, Math.round(currentSoc));
       const livePred = predictLiveTripSoc(level, run, {
         overrideSocPct: currentSoc,
-        skipStationId: station.id
+        skipStopKey: stopKey(run.currentLegIndex, station.id)
       });
       const predClass =
         livePred.predictedArrivalNextSocPct <= 5
