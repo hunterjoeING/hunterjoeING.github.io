@@ -19,7 +19,7 @@
 | E-Roadtrip: Touch, Level 2, Messe, AC, Autohof | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` ([PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6) im Fork, gegen Paket D) | ✅ über [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) (`826fb33`) gemergt; Fork-PR am 25.11. geschlossen |
 | E-Roadtrip Review-Fixes 1–20 + Doku | Michael / Codex CLI (gpt-6.2-sol high) | `codex/review-fixes` (`022a699`, `2b01e5a`, `f7abd66`, `006a1bf`, `85af6f7`) · [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) (Merge `29fd861`) | ✅ Gemerged und live auf https://hunterjoeing.github.io/games/e-roadtrip/ |
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` (`fc3ad9b`) · Fork · kein PR | 🟡 Test auf Fork-Pages |
-| Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex (GPT-6) | `codex/arcade-leaderboard-groups` · lokal · kein PR | 🟡 Teil (a) geprüft, Spielanbindung folgt |
+| Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` (`0c85929`) · Fork · kein PR | 🟡 Teil (a) geprüft; Worker lokal mit `wrangler dev` getestet, nicht deployt |
 
 **Aktuelle Versionen** · `eroadtrip` v0.4.0 · `arcade` v0.3.0
 
@@ -31,10 +31,10 @@
 
 ### 2026-11-25 – Michael / Codex (GPT-6)
 
-- **Branch / PR** · `codex/arcade-leaderboard-groups` auf `codex/arcade-versioning` (`749bda1`). Änderungen im Arbeitsbaum. SHA: (folgt). Push: nein, Ziel Fork `mic4rd/hunterjoeING.github.io`. Kein PR, keine Fork-Pages-Test-URL für diesen Branch.
+- **Branch / PR** · `codex/arcade-leaderboard-groups` auf `codex/arcade-versioning` (`749bda1`). Commit `0c85929`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Test-URL über Teil (b): https://mic4rd.github.io/hunterjoeING.github.io/ (Fork-Pages auf `codex/eroadtrip-highscores`). Worker zusätzlich lokal mit `wrangler dev --local` geprüft (400 bei ungültigen E-Roadtrip-Scores, andere Spiele unverändert); kein Deploy, kein POST an die Live-API.
 - **Erledigt** · Der Worker kennt beide E-Roadtrip-Levelboards und prüft Einreichungen für diese und die Gesamtbestenliste. Die gemeinsame Bestenliste zeigt Level 1, Level 2 und Gesamt. Die Hub-Karte zeigt globale Level-Bestwerte. `record()` liefert den bisherigen Boolean und meldet den POST-Ausgang per Event und Callback. Der Dry-Run protokolliert den Payload und speichert den lokalen Bestwert. Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10).
 - **Geprüft** · `node --check` für Worker, Shared-Skripte, Testdateien und Bundle, Syntax der Hub-Inline-Skripte, `npm run typecheck`, `npm run build` (Bundle bytegleich), `npm test` (31/31) und Release-Bump für `arcade` im Arbeitsbaum gegen `749bda1`. Hub-Bestwerte, Tabs, Refresh und Escape mit lokalen Stubs geprüft.
-- **Offen** · Spielanbindung in Teil (b) und Browserprüfung bei 320 px in beiden Themes (Chrome-Start in der Sandbox blockiert). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Spielanbindung in Teil (b) und Browserprüfung bei 320 px in beiden Themes (Chrome-Start in der Sandbox blockiert). Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs.
 - **Deployment** · Der Merge in Joes `main` deployt den Worker automatisch. Joe vor dem Merge informieren. In dieser Session gab es keinen Deploy und keine Anfrage an die Live-API.
 
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
