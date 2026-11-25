@@ -23,6 +23,14 @@ export const WHEEL_STOP_SIZE = { w: 28, h: 6 };
 export const MCD_KIOSK = { size: { w: 72, h: 48 }, footprint: { x: 2, y: 2, w: 66, h: 40 } };
 export const BISTRO_KIOSK = { size: { w: 64, h: 44 }, footprint: { x: 2, y: 2, w: 58, h: 36 } };
 
+export function rotatedCarBounds(x: number, y: number, rotation: number): Rect {
+  const sin = Math.abs(Math.sin(rotation));
+  const cos = Math.abs(Math.cos(rotation));
+  const w = CAR_FOOTPRINT.w * cos + CAR_FOOTPRINT.h * sin;
+  const h = CAR_FOOTPRINT.w * sin + CAR_FOOTPRINT.h * cos;
+  return { x: x - w / 2, y: y - h / 2, w, h };
+}
+
 export function spriteFootprint(
   x: number, y: number, size: { w: number; h: number }, box: Rect, scale: number
 ): Rect {

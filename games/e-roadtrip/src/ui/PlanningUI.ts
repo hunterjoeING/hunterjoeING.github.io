@@ -11,6 +11,7 @@ import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { SUBSCRIPTIONS, roamingPriceForProvider } from '../data/subscriptions';
 import { CHARGERS, getCityById, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
+import { HOTEL_AC } from '../data/events';
 import {
   getActiveRouteLegs,
   getActiveRouteOption,
@@ -519,7 +520,7 @@ export class PlanningUI {
             }
             const isSelectedLeg = lf.legIndex === selectedLegIndex;
             const edgeForLeg = spec ? getEdgeById(spec.edgeId) : undefined;
-            const sliderMax = vehicle.maxSpeedKmh;
+            const sliderMax = snapSpeedKmh(vehicle.maxSpeedKmh, vehicle.maxSpeedKmh);
             const sliderMin = Math.min(40, sliderMax);
             const speedVal = snapSpeedKmh(lf.targetSpeedKmh, sliderMax, sliderMin);
             const riskBadge =
@@ -537,8 +538,13 @@ export class PlanningUI {
             const rainNote = rainCap
               ? `<div class="leg-rain-cap">🌧️ Frankreich: ${posted || 130} km/h, bei Regen ${rainCap} km/h.${rainActive ? ` Diese Etappe ist Regen, das Tempo startet bei ${rainCap}.` : ''}</div>`
               : '';
+            const hotelAc = forecast.hotelAc;
             const overnightNote = spec?.overnightAtEnd
-              ? `<div class="leg-overnight">🏨 Hier endet der Fahrtag. Ereignis mit drei Möglichkeiten: sehr gutes Hotel (AC über Nacht, Spa und Buffet, teuer, Stress sinkt stark), Budgethotel (stressneutral, günstig, kein Laden) oder kostenlos im Auto an der Aire (Stress steigt, 10&nbsp;% Einbruch).</div>`
+              ? `<div class="leg-overnight">🏨 Übernachtung (8 Std.). Hotel mit AC und Frühstück: ${HOTEL_AC.lodgingEur}&nbsp;€.
+                ${hotelAc?.legIndex === lf.legIndex
+                  ? `Akku ${Math.round(hotelAc.arriveSoc)} → ${Math.round(hotelAc.departSoc)}&nbsp;% (${hotelAc.minutes} Min. Ladezeit). ${hotelAc.reachable ? `Am Reiseziel: ${Math.round(hotelAc.finalSocPct)}&nbsp;%.` : 'Die Reichweite reicht auch mit Hotel-AC nicht bis ans Ziel.'}`
+                  : 'Das Hotel ist mit dem aktuellen Ladeplan nicht erreichbar.'}
+                Die Hauptprognose rechnet mit der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Übernachten im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
               : '';
             return `
             ${directionHeader}
@@ -554,7 +560,7 @@ export class PlanningUI {
                 </div>
               </div>
               <div class="leg-controls">
-                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
+                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> (max. ${sliderMax}) · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
                 <input type="range" class="leg-speed-slider${overLimit ? ' over-limit' : ''}" data-leg="${lf.legIndex}" data-sign="${signKmh}" min="${sliderMin}" max="${sliderMax}" step="5" value="${speedVal}"${overLimit ? ' title="über dem Temposchild"' : ''} />
                 ${riskBadge}
               </div>

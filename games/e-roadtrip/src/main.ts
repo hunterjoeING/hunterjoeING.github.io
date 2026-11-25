@@ -19,8 +19,11 @@ import { getVehicleById } from './data/vehicles';
 import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
+import { applyPause } from './sim/PauseEffects';
 import {
+  CITY_TRANSITION_MINUTES,
   createDefaultPlan,
+  estimateHotelCharge,
   estimateMesseCharge,
   evaluateTripPlan,
   findReachableAdditionalStop,
@@ -231,7 +234,6 @@ class ERoadtripController {
         const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
         if (lp) lp.targetSpeedKmh = next;
         else run.plan.legPlans.push({ legIndex: run.currentLegIndex, targetSpeedKmh: next });
-        run.currentSpeedKmh = next;
         this.drivingHUD.update(this.level, run, this.bridge.timeScale);
       },
       onTimeScaleChange: (scale: number) => {
@@ -246,12 +248,10 @@ class ERoadtripController {
       onUnplannedToiletStop: () => {
         const run = this.bridge.runState;
         if (!run) return;
-        run.elapsedMinutes += 8;
-        run.bladderNeed = 0;
-        run.stress = Math.max(0, run.stress - 14);
+        applyPause(run, { minutes: 8, resetBladder: true, stressDelta: -14 });
         run.incidentLog.push({
           timeStr: formatClock(this.level, run.elapsedMinutes),
-          title: 'Ungeplanter WC-/Kaffee-Stopp',
+          title: 'Ungeplanter WC-Stopp',
           detail: '+8 Min · Harndrang 0 % · Stress -14 %',
           impact: 'positive'
         });
@@ -262,7 +262,7 @@ class ERoadtripController {
       },
       onTailgate: () => {
         const run = this.bridge.runState;
-        if (run) run.tailgatePulse = true;
+        if (run?.tailgateReady && !this.bridge.paused) run.tailgatePulse = true;
       }
     });
 
@@ -355,6 +355,11 @@ class ERoadtripController {
     };
 
     this.game = new Phaser.Game(config);
+    if (typeof ResizeObserver !== 'undefined') {
+      const stageObserver = new ResizeObserver(() => this.game.scale.refresh());
+      stageObserver.observe(parent);
+      this.game.events.once(Phaser.Core.Events.DESTROY, () => stageObserver.disconnect());
+    }
     this.game.scene.start('BootScene', { bridge: this.bridge });
   }
 
@@ -450,6 +455,7 @@ class ERoadtripController {
       tollsEur: 0,
       paidTollLegIndices: [],
       incidentalCostEur: 0,
+      pauseCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
       replanCount: 0,
@@ -525,6 +531,8 @@ class ERoadtripController {
     this.bridge.paused = false;
     this.drivingHUD.setMode('autobahn');
     if (this.bridge.runState) {
+      this.bridge.runState.tailgateReady = false;
+      this.bridge.runState.tailgatePulse = false;
       this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale);
     }
     this.game.scene.start('AutobahnScene', { bridge: this.bridge, ...(preview || {}) });
@@ -535,7 +543,7 @@ class ERoadtripController {
     if (!run) return;
 
     if (preset === 'aachen_start') {
-      run.elapsedMinutes += 7;
+      run.elapsedMinutes += CITY_TRANSITION_MINUTES.aachen_start ?? 0;
       run.incidentLog.push({
         timeStr: formatClock(this.level, run.elapsedMinutes),
         title: 'Aachen Stadt-Ausfahrt → A4',
@@ -572,29 +580,21 @@ class ERoadtripController {
           (payload: ChargingCompletePayload) => {
             run.completedStopKeys.push(visitKey);
             run.socPct = payload.newSoc;
-            run.elapsedMinutes += payload.minutesSpent;
             run.chargingCostEur += payload.chargingCostEur;
-            run.incidentalCostEur += payload.breakCostEur;
-            if (payload.resetBladder) {
-              run.bladderNeed = 0;
-            } else {
-              run.bladderNeed = Math.max(0, run.bladderNeed - 35);
-            }
-            run.hungerNeed = Math.max(0, Math.min(100, (run.hungerNeed || 0) + (payload.hungerDelta || 0)));
+            for (const activity of payload.activities) applyPause(run, activity);
+            const mcdRelief = station.hasMcDonalds && run.plan.subscriptionIds.includes('ewe_go') ? -12 : -4;
+            applyPause(run, { minutes: payload.minutesSpent, stressDelta: payload.addedKwh > 0 ? mcdRelief : 0 });
 
-            if (arriveSoc <= 24 && payload.newSoc <= 82) {
+            if (payload.addedKwh > 0 && arriveSoc <= 24 && payload.newSoc <= 82) {
               run.chargingEfficiencyBonus += 6;
             }
-            const mcdRelief = station.hasMcDonalds && run.plan.subscriptionIds.includes('ewe_go') ? -12 : -4;
-            run.stress = Phaser.Math.Clamp(run.stress + mcdRelief + payload.stressDelta, 0, 100);
-            run.peakStress = Math.max(run.peakStress, run.stress);
 
             const breakNote =
               payload.takenBreaks.length > 0 ? ` · Pausen: ${payload.takenBreaks.join(', ')}` : '';
             run.incidentLog.push({
               timeStr: formatClock(this.level, run.elapsedMinutes),
               title: `Laden: ${station.name}`,
-              detail: `+${payload.addedKwh.toFixed(1)} kWh (${Math.round(arriveSoc)}% → ${payload.newSoc}%) in ${payload.minutesSpent} Min · ${payload.chargingCostEur.toFixed(2)} €${breakNote}`,
+              detail: `+${payload.addedKwh.toFixed(1)} kWh (${Math.round(arriveSoc)}% → ${Math.round(payload.newSoc)}%) in ${Math.round(payload.minutesSpent)} Min · ${payload.chargingCostEur.toFixed(2)} €${breakNote}`,
               impact: 'positive'
             });
             this.enterAutobahn();
@@ -636,7 +636,7 @@ class ERoadtripController {
     }
 
     if (preset === 'koeln_ring') {
-      run.elapsedMinutes += 6;
+      run.elapsedMinutes += CITY_TRANSITION_MINUTES.koeln_ring ?? 0;
       run.incidentLog.push({
         timeStr: formatClock(this.level, run.elapsedMinutes),
         title: 'Köln-Ring → A1',
@@ -645,6 +645,7 @@ class ERoadtripController {
       });
       run.currentLegIndex += 1;
       run.legProgressKm = 0;
+      run.countryLimitKmh = undefined;
       this.enterAutobahn();
       return;
     }
@@ -701,6 +702,7 @@ class ERoadtripController {
       tollsEur: 0,
       paidTollLegIndices: [],
       incidentalCostEur: 0,
+      pauseCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
       replanCount: 0,
@@ -807,17 +809,14 @@ class ERoadtripController {
     const run = this.bridge.runState;
     if (!run) return choice.resultText;
 
-    run.elapsedMinutes += choice.timeDeltaMin;
-    if (typeof choice.setSocPct === 'number') {
-      run.socPct = Math.max(1, Math.min(100, choice.setSocPct));
-    } else {
-      run.socPct = Math.max(1, Math.min(100, run.socPct + choice.socDeltaPct));
-    }
-    run.chargingCostEur += choice.costDeltaEur;
+    applyPause(run, {
+      minutes: choice.timeDeltaMin, costEur: choice.pauseCostEur, stressDelta: choice.stressDelta,
+      resetBladder: choice.resetBladder, hungerDelta: choice.hungerDelta
+    });
+    if (choice.socDeltaPct) run.socPct = Math.max(0, Math.min(100, run.socPct + choice.socDeltaPct));
+    run.incidentalCostEur += choice.costDeltaEur;
     if (choice.lodgingDeltaEur) run.lodgingCostEur += choice.lodgingDeltaEur;
     if (choice.fineDeltaEur) run.incidentalCostEur += choice.fineDeltaEur;
-    run.stress = Phaser.Math.Clamp(run.stress + choice.stressDelta, 0, 100);
-    run.peakStress = Math.max(run.peakStress, run.stress);
     run.decisionScoreAccum += choice.decisionPoints;
 
     if (choice.id === 'detour_country') run.countryLimitKmh = 70;
@@ -826,7 +825,6 @@ class ERoadtripController {
       const speed = snapSpeedKmh(choice.adjustSpeedKmh || 70, vehicle.maxSpeedKmh);
       const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
       if (lp) lp.targetSpeedKmh = speed;
-      run.currentSpeedKmh = speed;
     }
 
     if (choice.id === 'hotel_good' || choice.id === 'hotel_budget' || choice.id === 'sleep_car') {
@@ -845,18 +843,21 @@ class ERoadtripController {
       const nearest = findReachableAdditionalStop(this.level, run);
       finalText = nearest ? `${finalText} ${this.insertAdditionalStop(run, nearest, 78)}` : NO_REACHABLE_CHARGER;
     }
-    if (choice.id === 'messe_eat') {
-      run.hungerNeed = Math.max(0, run.hungerNeed - 55);
-      run.bladderNeed = Math.max(0, run.bladderNeed - 40);
+    if (choice.id === 'hotel_good') {
+      const arrivalSoc = run.socPct;
+      const charge = estimateHotelCharge(getVehicleById(run.plan.vehicleId), arrivalSoc);
+      run.socPct = charge.departSoc;
+      const note = charge.billedKwh > 0
+        ? `Hotel-AC ${Math.round(arrivalSoc)} → ${Math.round(run.socPct)} % in ${charge.durationMinutes} Min`
+        : `Akku morgens unverändert bei ${Math.round(run.socPct)} %`;
+      run.overnightNote += ` · ${note}`;
+      finalText += ` ${note}.`;
     }
-    if (choice.id === 'messe_skip') run.hungerNeed = Math.min(100, run.hungerNeed + 8);
     if (choice.fineRisk && Math.random() < choice.fineRisk.probability) {
       run.incidentalCostEur += choice.fineRisk.amountEur;
       const extraStress = choice.fineRisk.stressDelta ?? 12;
       const extraTime = choice.fineRisk.timeDeltaMin ?? 0;
-      run.elapsedMinutes += extraTime;
-      run.stress = Math.min(100, run.stress + extraStress);
-      run.peakStress = Math.max(run.peakStress, run.stress);
+      applyPause(run, { minutes: extraTime, stressDelta: extraStress });
       finalText +=
         extraTime > 0
           ? ` ⚠️ ${choice.fineRisk.label}: −${choice.fineRisk.amountEur} €, +${extraTime} Min, +${extraStress} Stress.`
@@ -892,24 +893,17 @@ class ERoadtripController {
     const goOn = () => {
       run.currentLegIndex += 1;
       run.legProgressKm = 0;
+      run.countryLimitKmh = undefined;
       this.enterAutobahn();
     };
     this.bridge.paused = true;
     this.drivingHUD.clearTouchStates();
     this.eventModal.showMesseVisit({ chargePlanned: !!planned, chargerAvailable: !!fair }, choice => {
-      run.elapsedMinutes += MESSE_VISIT_MINUTES;
-      run.bladderNeed = 0;
-      let hunger = run.hungerNeed || 0;
-      let foodNote = 'Ohne Essen.';
-      if (choice.eat) {
-        hunger = Math.max(0, hunger - 55);
-        run.chargingCostEur += 50;
-        run.stress = Math.max(0, run.stress - 8);
-        foodNote = 'Essen in der Halle: −50 €, Hunger deutlich runter.';
-      } else {
-        hunger = Math.min(100, hunger + 8);
-      }
-      run.hungerNeed = hunger;
+      applyPause(run, {
+        minutes: MESSE_VISIT_MINUTES, resetBladder: true, hungerDelta: choice.eat ? -55 : 8,
+        costEur: choice.eat ? 50 : 0, stressDelta: choice.eat ? -8 : 0
+      });
+      const foodNote = choice.eat ? 'Essen in der Halle: −50 €, Hunger deutlich runter.' : 'Ohne Essen.';
       let chargeNote = 'AC am Parkplatz ausgelassen.';
       if (fair) {
         const visitKey = stopKey(run.currentLegIndex, fair.id);
@@ -923,12 +917,11 @@ class ERoadtripController {
         } else {
           run.skippedStopKeys.push(visitKey);
           if (choice.charge) {
-            run.stress = Math.min(100, run.stress + 6);
+            applyPause(run, { stressDelta: 6 });
             chargeNote = 'Alle 6 AC-Punkte waren belegt. Geladen wurde nicht.';
           }
         }
       }
-      run.peakStress = Math.max(run.peakStress, run.stress);
       const report = randomMesseReport();
       const detail = `Vier Stunden Messe. Toilette automatisch. ${foodNote} ${chargeNote} ${report}`;
       run.incidentLog.push({
@@ -951,12 +944,18 @@ class ERoadtripController {
     const trap = eventId === 'evt_speed_trap' ? this.bridge.runState?.speedTrap : undefined;
     const nudge = eventId === 'evt_tailgate' ? this.bridge.runState?.tailgateCase : undefined;
     const baseEvt = trap ? buildSpeedTrapEvent(trap) : nudge ? buildTailgateEvent(nudge.country, nudge.amountEur) : evt;
+    const run = this.bridge.runState;
+    const hotelCharge = eventId === 'evt_hotel_overnight' && run
+      ? estimateHotelCharge(getVehicleById(run.plan.vehicleId), run.socPct) : undefined;
     const shown =
       eventId === 'evt_hotel_overnight' || eventId === 'evt_south_arrival'
         ? {
             ...baseEvt,
             title: baseEvt.title.split('{ORT}').join(place),
-            description: baseEvt.description.split('{ORT}').join(place)
+            description: baseEvt.description.split('{ORT}').join(place),
+            choices: baseEvt.choices.map(choice => hotelCharge && choice.id === 'hotel_good'
+              ? { ...choice, hint: `${choice.hint} · Akku morgens ${Math.round(hotelCharge.departSoc)} %` }
+              : choice)
           }
         : baseEvt;
     this.drivingHUD.clearTouchStates();
@@ -964,9 +963,8 @@ class ERoadtripController {
       shown,
       choice => {
         const text = this.applyEventChoice(shown.title, choice);
-        const run = this.bridge.runState;
-        if (choice.fineDeltaEur && run?.overnightNote) {
-          run.overnightNote = `${run.overnightNote} · Einbruch −${choice.fineDeltaEur.toFixed(0)} €, +2 h Polizei`;
+        if (eventId === 'evt_rest_area_robbery' && choice.fineDeltaEur && run?.overnightNote) {
+          run.overnightNote += ` · Einbruch −${choice.fineDeltaEur.toFixed(0)} €, +${choice.timeDeltaMin / 60} h Polizei`;
         }
         return text;
       },
@@ -1003,7 +1001,6 @@ class ERoadtripController {
           const vehicleNow = getVehicleById(run.plan.vehicleId);
           const eco = snapSpeedKmh(115, vehicleNow.maxSpeedKmh);
           if (lp) lp.targetSpeedKmh = eco;
-          run.currentSpeedKmh = eco;
           run.replanCount += 1;
           run.goodReplanCount += 1;
           return `Zieltempo auf ${eco} km/h Eco-Modus gesenkt!`;

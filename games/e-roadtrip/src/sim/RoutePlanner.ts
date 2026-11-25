@@ -1,5 +1,6 @@
 import {
   ChargerStation,
+  CityDrivePreset,
   HighwayEdge,
   LevelConfig,
   LevelRouteLegSpec,
@@ -15,12 +16,15 @@ import { getChargerById, getChargersForEdge, getCityById, getEdgeById } from '..
 import {
   computeConsumptionKwh100,
   computeSubscriptionTripCost,
+  estimateAcWindow,
   estimateChargeSession,
   estimateTimedAcCharge
 } from './EnergyModel';
+import { HOTEL_AC } from '../data/events';
 
 export const MESSE_VISIT_MINUTES = 240;
 export const MESSE_CHARGE_MINUTES = 210;
+export const CITY_TRANSITION_MINUTES: Partial<Record<CityDrivePreset, number>> = { aachen_start: 7, koeln_ring: 6 };
 export const NO_REACHABLE_CHARGER = 'Kein zusätzlicher Ladepunkt auf der Route mit dem aktuellen Akku erreichbar.';
 
 export function stopKey(legIndex: number, chargerId: string): string {
@@ -63,6 +67,10 @@ export function estimateMesseCharge(
   vehicle: VehicleSpec, station: ChargerStation, arrivalSoc: number, targetSoc: number, subscriptionIds: string[]
 ) {
   return estimateTimedAcCharge(vehicle, station, arrivalSoc, MESSE_CHARGE_MINUTES, targetSoc, subscriptionIds);
+}
+
+export function estimateHotelCharge(vehicle: VehicleSpec, arrivalSoc: number) {
+  return estimateAcWindow(vehicle, HOTEL_AC.maxKw, arrivalSoc, HOTEL_AC.stayMinutes, HOTEL_AC.targetSocPct);
 }
 
 export function plannedRoadStopsOnLeg(plan: TripPlan, leg: LevelRouteLegSpec, legIndex: number) {
@@ -129,6 +137,7 @@ export interface PlanForecast {
   firstStopArrivalSocPct: number;
   finalArrivalSocPct: number;
   withoutMesseCharge?: { finalSocPct: number; reachable: boolean };
+  hotelAc?: { legIndex: number; arriveSoc: number; departSoc: number; minutes: number; finalSocPct: number; reachable: boolean };
   totalElevationGainM: number;
   totalElevationLossM: number;
   avgTrafficRisk: number;
@@ -178,18 +187,35 @@ export function activeSignKmh(
   return edge.speedLimitKmh > 0 ? edge.speedLimitKmh : 0;
 }
 
-/** Legal sign, or the car's top speed where the road is unrestricted. Used for AI traffic, not the slider. */
-export function sectionMaxSpeedKmh(
-  edge: Pick<HighwayEdge, 'speedLimitKmh' | 'speedLimitRainKmh'>,
-  vehicleMaxSpeedKmh: number,
-  weather?: string,
-  countryLimitKmh?: number
-): number {
-  if (countryLimitKmh && countryLimitKmh > 0) return Math.min(vehicleMaxSpeedKmh, countryLimitKmh);
-  const rainCap = frenchRainCapKmh(edge, weather);
-  if (rainCap) return Math.min(vehicleMaxSpeedKmh, rainCap);
-  if (edge.speedLimitKmh > 0) return Math.min(vehicleMaxSpeedKmh, edge.speedLimitKmh);
-  return vehicleMaxSpeedKmh;
+export function highwaySection(
+  edge: HighwayEdge, reverse: boolean, progressKm: number, weather?: string,
+  countryLimitKmh?: number, workLimitKmh?: number
+): { country: string; signKmh: number; endKm: number } {
+  const sections = edge.roadSections;
+  if (!sections) {
+    const regularSign = activeSignKmh(edge, weather, countryLimitKmh);
+    return {
+      country: getCityById(edge.fromCityId).country,
+      signKmh: workLimitKmh ? Math.min(regularSign || Infinity, workLimitKmh) : regularSign,
+      endKm: edge.distanceKm
+    };
+  }
+  let section = sections[0];
+  let endKm = edge.distanceKm;
+  for (let i = 0; i < sections.length; i++) {
+    const from = sections[i].fromKm;
+    const to = sections[i + 1]?.fromKm ?? edge.distanceKm;
+    const start = reverse ? edge.distanceKm - to : from;
+    const end = reverse ? edge.distanceKm - from : to;
+    if (progressKm >= start && (progressKm < end || end === edge.distanceKm)) {
+      section = sections[i];
+      endKm = end;
+      break;
+    }
+  }
+  const regularSign = activeSignKmh(section, weather, countryLimitKmh);
+  const signKmh = workLimitKmh ? Math.min(regularSign || Infinity, workLimitKmh) : regularSign;
+  return { country: section.country, signKmh, endKm };
 }
 
 /** Preset cruise: the posted sign, or 130 on an unrestricted Autobahn. Rain uses the French cap. */
@@ -337,6 +363,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
   const legs = getActiveRouteLegs(level, plan);
   let soc = 96; // Start at 96% at start city
   let socWithoutMesseCharge: number | undefined;
+  let hotelAc: PlanForecast['hotelAc'];
   let minSoc = soc;
   let totalDist = 0;
   let totalDriveMin = 0;
@@ -414,6 +441,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       cursorProgress = progress;
       soc -= usedSoc;
       if (socWithoutMesseCharge !== undefined) socWithoutMesseCharge -= usedSoc;
+      if (hotelAc) hotelAc.finalSocPct -= usedSoc;
       minSoc = Math.min(minSoc, soc);
     };
 
@@ -423,6 +451,9 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
         if (socWithoutMesseCharge > 0) {
           socWithoutMesseCharge = Math.min(100, Math.max(socWithoutMesseCharge, item.stop.targetSocPct));
         }
+      }
+      if (hotelAc && hotelAc.finalSocPct > 0) {
+        hotelAc.finalSocPct = Math.min(100, Math.max(hotelAc.finalSocPct, item.stop.targetSocPct));
       }
 
       const arriveSoc = soc;
@@ -438,7 +469,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       const target = Math.min(100, Math.max(arriveSoc, item.stop.targetSocPct));
       let chargeMinutes = 0;
       let chargeCost = 0;
-      if (target > arriveSoc + 0.4) {
+      if (target > Math.max(0, arriveSoc)) {
         const est = estimateChargeSession(
           vehicle,
           item.station,
@@ -494,10 +525,21 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
         });
       }
     }
-    if (spec.overnightAtEnd) dwellMinutes += 480;
+    if (spec.overnightAtEnd) {
+      dwellMinutes += HOTEL_AC.stayMinutes;
+      if (minSoc > 0) {
+        const charge = estimateHotelCharge(vehicle, soc);
+        hotelAc = {
+          legIndex: i, arriveSoc: soc, departSoc: charge.departSoc,
+          minutes: charge.durationMinutes, finalSocPct: charge.departSoc, reachable: true
+        };
+      }
+    }
     if (spec.destinationAtEnd) dwellMinutes += 18;
 
-    const driveMin = Math.round((edge.distanceKm / Math.max(40, cruise)) * 60);
+    const startCityMin = i === 0 && spec.citySegmentAtStart ? CITY_TRANSITION_MINUTES[spec.citySegmentAtStart] ?? 0 : 0;
+    const endCityMin = spec.citySegmentAtEnd ? CITY_TRANSITION_MINUTES[spec.citySegmentAtEnd] ?? 0 : 0;
+    const driveMin = Math.round((edge.distanceKm / Math.max(40, cruise)) * 60) + startCityMin + endCityMin;
 
     totalDist += edge.distanceKm;
     totalDriveMin += driveMin;
@@ -572,6 +614,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     firstStopName,
     firstStopArrivalSocPct,
     finalArrivalSocPct: Math.round(soc),
+    hotelAc: hotelAc && { ...hotelAc, reachable: hotelAc.finalSocPct > 0 },
     withoutMesseCharge: socWithoutMesseCharge === undefined ? undefined : {
       finalSocPct: Math.round(socWithoutMesseCharge),
       reachable: socWithoutMesseCharge > 0 && minSoc > 0

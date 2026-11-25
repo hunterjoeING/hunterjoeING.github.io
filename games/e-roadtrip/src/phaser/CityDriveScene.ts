@@ -15,7 +15,8 @@ import {
   shouldNpcYield
 } from './CityTraffic';
 import {
-  Capsule, capsuleInsideWorld, capsuleOverlapsRect, capsulesOverlap, circleAt, vehicleCapsule
+  CAR_FOOTPRINT, Capsule, capsuleInsideWorld, capsuleOverlapsRect, capsulesOverlap, circleAt, rotatedCarBounds,
+  vehicleCapsule
 } from './CityCollision';
 import { Rect } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
@@ -110,6 +111,7 @@ export class CityDriveScene extends Phaser.Scene {
   private previewLock = false;
 
   private dwellInTargetSec = 0;
+  private reversedIntoBay = false;
   private collisionCooldownSec = 0;
   private violationCooldownSec = 0;
   private stormFlashTimer = 4;
@@ -135,6 +137,7 @@ export class CityDriveScene extends Phaser.Scene {
     this.spinners = [];
     this.carSpeed = 0;
     this.dwellInTargetSec = 0;
+    this.reversedIntoBay = false;
     this.collisionCooldownSec = 0;
     this.violationCooldownSec = 1.2;
     this.completed = false;
@@ -251,7 +254,17 @@ export class CityDriveScene extends Phaser.Scene {
     };
     this.scale.on('resize', this.resizeHandler);
 
+    const syncPhysicsPause = () => {
+      const world = this.physics.world;
+      if (this.bridge.paused || this.completed) {
+        if (!world.isPaused) world.pause();
+      } else if (world.isPaused) {
+        world.resume();
+      }
+    };
+    this.events.on(Phaser.Scenes.Events.PRE_UPDATE, syncPhysicsPause);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off(Phaser.Scenes.Events.PRE_UPDATE, syncPhysicsPause);
       if (this.resizeHandler) {
         this.scale.off('resize', this.resizeHandler);
         this.resizeHandler = undefined;
@@ -605,8 +618,24 @@ export class CityDriveScene extends Phaser.Scene {
       this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed);
       return false;
     }
-    if (moving) this.player.setPosition(x, y).setRotation(rotation);
+    if (moving) {
+      if (this.preset === 'charger_park') this.trackBayEntry(x, y, rotation);
+      this.player.setPosition(x, y).setRotation(rotation);
+    }
     return true;
+  }
+
+  private trackBayEntry(x: number, y: number, rotation: number): void {
+    const bay = this.targetZone;
+    const car = rotatedCarBounds(x, y, rotation);
+    if (car.y >= bay.bottom || car.y + car.h <= bay.top || car.x < bay.left || car.x + car.w > bay.right) {
+      this.reversedIntoBay = false;
+      return;
+    }
+    const previous = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
+    if (previous.y >= bay.bottom) {
+      this.reversedIntoBay = this.carSpeed < 0 && y < this.player.y && Math.cos(rotation) < 0;
+    }
   }
 
   private stepTraffic(dt: number): void {
@@ -691,6 +720,7 @@ export class CityDriveScene extends Phaser.Scene {
     }
     SoundFX.bump();
     this.bridge.paused = true;
+    this.physics.world.pause();
     this.bridge.onCollisionEvent({
       kind,
       playerAtFault: fault.playerAtFault,
@@ -706,6 +736,7 @@ export class CityDriveScene extends Phaser.Scene {
     SoundFX.alert();
     this.cameras.main.flash(180, 30, 64, 175, true);
     this.bridge.paused = true;
+    this.physics.world.pause();
     this.bridge.onPoliceViolation(kind);
   }
 
@@ -1096,6 +1127,7 @@ export class CityDriveScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     const dt = Math.min(0.05, delta / 1000);
+    if (dt <= 0 || this.bridge.paused || this.completed) return;
     this.collisionCooldownSec = Math.max(0, this.collisionCooldownSec - dt);
     this.violationCooldownSec = Math.max(0, this.violationCooldownSec - dt);
 
@@ -1142,10 +1174,6 @@ export class CityDriveScene extends Phaser.Scene {
     );
     this.updateLightingVisuals(dt, profile);
 
-    if (this.bridge.paused || this.completed) {
-      return;
-    }
-
     // === GTA 2 Controls (Keyboard + Shared TouchInput) ===
     ensureTouchHoldsMatchPointers();
     const touch = this.bridge.touch;
@@ -1164,15 +1192,15 @@ export class CityDriveScene extends Phaser.Scene {
 
     const maxFwd = 230;
     const maxRev = -115;
-    if (up) {
+    if (!brake && up) {
       this.carSpeed = Math.min(maxFwd, this.carSpeed + 320 * dt);
-    } else if (down) {
+    } else if (!brake && down) {
       this.carSpeed = Math.max(maxRev, this.carSpeed - 280 * dt);
     } else {
       const decel = (brake ? 1050 : 640) * dt;
       this.carSpeed = this.carSpeed > 0 ? Math.max(0, this.carSpeed - decel) : Math.min(0, this.carSpeed + decel);
     }
-    if (Math.abs(this.carSpeed) < 8 && !up && !down) this.carSpeed = 0;
+    if (Math.abs(this.carSpeed) < 8 && (brake || (!up && !down))) this.carSpeed = 0;
 
     const steerFactor = Math.min(1, Math.abs(this.carSpeed) / 62);
     const dirSign = this.carSpeed >= -1 ? 1 : -1;
@@ -1338,12 +1366,19 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Parking / Completion Check
     const inZone = Phaser.Geom.Rectangle.Contains(this.targetZone, this.player.x, this.player.y);
-    // At charging stations, car must reverse into head-in spot (rear North toward pillar -> front South -> rotation ~ PI)
+    const chargingBay = this.preset === 'charger_park';
     const revAngleErr = Math.abs(Phaser.Math.Angle.Wrap(this.player.rotation - Math.PI));
-    const orientationOk = this.preset !== 'charger_park' || revAngleErr <= 0.65;
+    const car = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
+    const bay = this.targetZone;
+    const fits = car.x >= bay.left && car.x + car.w <= bay.right && car.y >= bay.top && car.y + car.h <= bay.bottom;
+    const parkingReady = chargingBay
+      ? this.reversedIntoBay && fits && revAngleErr <= Math.PI / 12 && this.carSpeed === 0
+      : inZone && Math.abs(this.carSpeed) < 30;
 
-    if (this.preset === 'charger_park' && distToTarget < 190 && !orientationOk) {
-      this.reverseHintText.setText('⚠️ Rückwärts einparken! (Heck zur Ladesäule oben)');
+    if (chargingBay && distToTarget < 190 && !parkingReady) {
+      this.reverseHintText.setText(this.reversedIntoBay
+        ? 'Gerade und vollständig in der Bucht anhalten'
+        : 'Von unten rückwärts in die Bucht fahren');
       this.reverseHintText.setVisible(true);
     } else {
       this.reverseHintText.setVisible(false);
@@ -1366,7 +1401,7 @@ export class CityDriveScene extends Phaser.Scene {
       } else {
         this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
       }
-    } else if (inZone && Math.abs(this.carSpeed) < 30 && orientationOk) {
+    } else if (parkingReady) {
       this.dwellInTargetSec += dt;
       this.distText.setText(`✓ Perfekt! Halten… (${Math.min(100, Math.round((this.dwellInTargetSec / 0.6) * 100))}%)`);
       if (this.dwellInTargetSec >= 0.6) {
@@ -1399,8 +1434,9 @@ export class CityDriveScene extends Phaser.Scene {
     const carY = this.player.y;
     const pillarX = this.pillar?.x ?? this.targetZone.centerX;
     const pillarY = this.pillar?.y ?? this.targetZone.y;
-    const portX = carX;
-    const portY = carY - 22; // Rear of car faces North when parked reverse!
+    const rear = CAR_FOOTPRINT.h / 2;
+    const portX = carX - Math.sin(this.player.rotation) * rear;
+    const portY = carY + Math.cos(this.player.rotation) * rear;
 
     this.distText.setText('🚶 Fahrer steigt aus & steckt Ladekabel an…');
     const driver = this.add.image(carX - 18, carY, 'ped_driver').setDepth(18);

@@ -49,12 +49,16 @@ export function getEdgePixelLength(edge: HighwayEdge): number {
   return Math.max(1, len);
 }
 
+export function getEdgeWaypoints(edge: HighwayEdge, reverse: boolean): HighwayEdge['waypoints'] {
+  return reverse ? [...edge.waypoints].reverse() : edge.waypoints;
+}
+
 export function getPointAlongEdge(
   edge: HighwayEdge,
   progress01: number,
   reverse = false
 ): { x: number; y: number; angleRad: number } {
-  const pts = reverse ? [...edge.waypoints].reverse() : edge.waypoints;
+  const pts = getEdgeWaypoints(edge, reverse);
   if (pts.length === 0) return { x: 0, y: 0, angleRad: 0 };
   if (pts.length === 1) return { x: pts[0].x, y: pts[0].y, angleRad: 0 };
 
@@ -92,7 +96,7 @@ export function getPolylineSliceAlongEdge(
   endT: number,
   reverse = false
 ): Array<{ x: number; y: number }> {
-  const pts = reverse ? [...edge.waypoints].reverse() : edge.waypoints;
+  const pts = getEdgeWaypoints(edge, reverse);
   if (pts.length < 2) return [];
 
   const t0 = Math.max(0, Math.min(1, startT));

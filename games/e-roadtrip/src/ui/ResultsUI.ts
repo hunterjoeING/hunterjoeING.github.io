@@ -92,7 +92,7 @@ export class ResultsUI {
             </p>
             <p class="res-summary-line">
               Laden ${run.chargingCostEur.toFixed(2)} € · Abos ${run.subscriptionCostEur.toFixed(2)} € ·
-              Maut ${run.tollsEur.toFixed(2)} € · Nebenkosten ${run.incidentalCostEur.toFixed(2)} €
+              Maut ${run.tollsEur.toFixed(2)} € · Pausen ${run.pauseCostEur.toFixed(2)} € · Sonstige Kosten ${run.incidentalCostEur.toFixed(2)} €
             </p>
             ${
               run.overnightNote

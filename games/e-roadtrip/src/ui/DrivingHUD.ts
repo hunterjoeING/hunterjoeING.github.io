@@ -1,7 +1,7 @@
-import { LevelConfig, RunState } from '../types';
+import { HighwayEdge, LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
-import { activeSignKmh, getActiveRouteLegs, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
+import { getActiveRouteLegs, highwaySection, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
 import { speedSignHtml } from './speedSign';
 import {
   TouchControlKey,
@@ -11,48 +11,21 @@ import {
   releaseTouchPointer
 } from '../phaser/GameBridge';
 import { SoundFX } from '../phaser/SoundFX';
-
-function pointAlong(pts: Array<{ x: number; y: number }>, t: number): { x: number; y: number } {
-  if (pts.length === 0) return { x: 0, y: 0 };
-  const lengths: number[] = [];
-  let total = 0;
-  for (let i = 1; i < pts.length; i++) {
-    const len = Math.hypot(pts[i].x - pts[i - 1].x, pts[i].y - pts[i - 1].y);
-    lengths.push(len);
-    total += len;
-  }
-  let remain = Math.max(0, Math.min(1, t)) * total;
-  for (let i = 1; i < pts.length; i++) {
-    const len = lengths[i - 1];
-    if (remain <= len || i === pts.length - 1) {
-      const u = len > 0 ? Math.max(0, Math.min(1, remain / len)) : 0;
-      return {
-        x: pts[i - 1].x + (pts[i].x - pts[i - 1].x) * u,
-        y: pts[i - 1].y + (pts[i].y - pts[i - 1].y) * u
-      };
-    }
-    remain -= len;
-  }
-  return pts[pts.length - 1];
-}
+import { getEdgeWaypoints, getPointAlongEdge } from '../phaser/MapLayout';
 
 function renderStageComputer(
   fromName: string,
   toName: string,
-  highway: string,
+  edge: HighwayEdge,
   progress: number,
-  waypoints: Array<{ x: number; y: number }>,
-  from: { mapX: number; mapY: number },
-  to: { mapX: number; mapY: number },
   reverse: boolean,
   hh: string,
   mm: string,
   weather: string,
   tollsEur: number,
-  legTollEur: number
+  pauseCostEur: number
 ): string {
-  const raw = [{ x: from.mapX, y: from.mapY }, ...waypoints, { x: to.mapX, y: to.mapY }];
-  const pts = reverse ? raw.slice().reverse() : raw;
+  const pts = getEdgeWaypoints(edge, reverse);
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -71,14 +44,16 @@ function renderStageComputer(
   const scale = Math.min((w - pad * 2) / sx, (h - pad * 2) / sy);
   const ox = (w - sx * scale) / 2;
   const oy = (h - sy * scale) / 2;
-  const mapped = pts.map(p => ({ x: ox + (p.x - minX) * scale, y: oy + (p.y - minY) * scale }));
+  const project = (p: { x: number; y: number }) => ({ x: ox + (p.x - minX) * scale, y: oy + (p.y - minY) * scale });
+  const mapped = pts.map(project);
   const d = mapped.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ');
-  const dot = pointAlong(mapped, progress);
+  const dot = project(getPointAlongEdge(edge, progress, reverse));
   return `
-    <div class="trip-kicker">Bordcomputer · ${hh}:${mm} · ${weather}</div>
+    <div class="trip-kicker">${hh}:${mm} · ${weather}</div>
     <strong>${fromName} → ${toName}</strong>
-    <div class="trip-road">${highway} · ${Math.round(progress * 100)} %</div>
-    ${legTollEur > 0 || tollsEur > 0 ? `<div class="trip-road">Maut bisher ${tollsEur.toFixed(2)} € · Etappe ${legTollEur.toFixed(2)} €</div>` : ''}
+    <div class="trip-road">${edge.highwayName} · ${Math.round(progress * 100)} %</div>
+    ${edge.tollEur > 0 || tollsEur > 0 ? `<div class="trip-road">Maut bisher ${tollsEur.toFixed(2)} € · Etappe ${edge.tollEur.toFixed(2)} €</div>` : ''}
+    ${pauseCostEur > 0 ? `<div class="trip-road">Pausen bisher ${pauseCostEur.toFixed(2)} €</div>` : ''}
     <svg viewBox="0 0 ${w} ${h}" class="stage-map" aria-hidden="true">
       <path d="${d}" fill="none" stroke="rgba(148,163,184,0.85)" stroke-width="4" stroke-linecap="round" />
       <circle cx="${dot.x.toFixed(1)}" cy="${dot.y.toFixed(1)}" r="5.5" fill="#38bdf8" stroke="#f8fafc" stroke-width="2" />
@@ -102,6 +77,7 @@ export class DrivingHUD {
   private mode: 'hidden' | 'autobahn' | 'city' = 'hidden';
   private forceTouchVisible = false;
   private shellKey = '';
+  private readonly compactLayout = window.matchMedia('(max-width: 920px)');
   private replanFeedback = '';
   private replanFeedbackTimer?: number;
 
@@ -120,6 +96,13 @@ export class DrivingHUD {
     }
     this.renderTouchControls();
     this.hudEl.addEventListener('pointerdown', ev => this.onHudPointer(ev));
+    this.hudEl.addEventListener('click', ev => {
+      if (ev.detail === 0) this.onHudPointer(ev);
+    });
+    this.compactLayout.addEventListener('change', () => {
+      const map = this.hudEl.querySelector<HTMLDetailsElement>('.er-trip-computer');
+      if (map) map.open = !this.compactLayout.matches;
+    });
     this.hudEl.addEventListener('input', ev => {
       const target = ev.target as HTMLInputElement | null;
       if (!target || !target.classList.contains('dhud-speed-slider')) return;
@@ -183,6 +166,7 @@ export class DrivingHUD {
     if (mode === 'hidden') {
       window.clearTimeout(this.replanFeedbackTimer);
       this.replanFeedback = '';
+      this.shellKey = '';
     }
     this.hudEl.classList.toggle('hidden', mode === 'hidden');
     if (mode !== 'city') {
@@ -238,18 +222,16 @@ export class DrivingHUD {
       run.subscriptionCostEur +
       run.tollsEur +
       run.incidentalCostEur +
+      run.pauseCostEur +
       (run.lodgingCostEur || 0)
     ).toFixed(2);
-    const sliderMax = vehicle.maxSpeedKmh;
-    const selectableMax = snapSpeedKmh(sliderMax, sliderMax);
-    let signLimit = activeSignKmh(edge, run.activeWeather, run.countryLimitKmh);
-    if (run.speedCapLabel === 'Baustelle' && run.speedCapKmh) signLimit = run.speedCapKmh;
+    const sliderMax = snapSpeedKmh(vehicle.maxSpeedKmh, vehicle.maxSpeedKmh);
+    const signLimit = run.highwaySignLegIndex === run.currentLegIndex && run.highwaySignKmh !== undefined
+      ? run.highwaySignKmh
+      : highwaySection(edge, !!leg.reverse, run.legProgressKm, run.activeWeather, run.countryLimitKmh).signKmh;
     const catalog = [70, 80, 100, 110, 120, 130, 150, 175];
-    let speeds = catalog.filter(s => s <= selectableMax + 0.01);
-    if (speeds.length === 0 || speeds[speeds.length - 1] < selectableMax - 0.5) {
-      speeds = [...speeds, selectableMax].filter((value, index, all) => all.indexOf(value) === index);
-    }
-    const shellKey = `${this.mode}|${speeds.join(',')}|${sliderMax}|${signLimit}`;
+    const speeds = [...catalog.filter(s => s < sliderMax), sliderMax];
+    const shellKey = `${this.mode}|${sliderMax}`;
     if (this.shellKey !== shellKey) {
       this.shellKey = shellKey;
       const speedButtons = speeds
@@ -270,11 +252,12 @@ export class DrivingHUD {
         <div class="dhud-pill">💶 <span data-field="cost"></span></div>
       </div>
       <div class="dhud-controls">
-        <div class="dhud-group">
-          ${speedSignHtml(signLimit)}
-          <span>Tempo (<span data-field="tempo"></span>):</span>
-          <input type="range" class="dhud-speed-slider" min="40" max="${sliderMax}" step="5" value="${selectableMax}" aria-label="Zieltempo" />
-          ${speedButtons}
+        <div class="dhud-group dhud-speed">
+          <span data-field="speed-sign"></span>
+          <span class="dhud-tempo"><span data-field="tempo"></span><small data-field="tempo-cap"></small></span>
+          <input type="range" class="dhud-speed-slider" min="40" max="${sliderMax}" step="5" value="${sliderMax}" aria-label="Zieltempo" />
+          <span class="dhud-max">max. ${sliderMax} km/h</span>
+          <div class="dhud-presets">${speedButtons}</div>
         </div>
         <div class="dhud-group">
           <span>Zeitraffer:</span>
@@ -284,13 +267,16 @@ export class DrivingHUD {
         </div>
         <div class="dhud-group">
           <button type="button" class="dhud-action" id="btn-force-stop">⚡ Früher laden</button>
-          <button type="button" class="dhud-action" id="btn-wc-stop">🚻 WC-Stopp (+8m)</button>
-          <button type="button" class="dhud-action" id="btn-peek-map">🗺️ Karte</button>
-          <button type="button" class="dhud-action tailgate-btn hidden" id="btn-tailgate">Dicht auffahren, Blinker links und Lichthupe</button>
+          <button type="button" class="dhud-action" id="btn-wc-stop">🚻 WC (+8 Min)</button>
+          <button type="button" class="dhud-action" id="btn-peek-map">🗺️ Reiseplan</button>
+          <button type="button" class="dhud-action tailgate-btn hidden" id="btn-tailgate">Lichthupe</button>
         </div>
       </div>
       <div class="dhud-replan-feedback" data-field="replan-feedback" role="status"></div>
-      <aside id="er-trip-computer" class="er-trip-computer" aria-label="Bordcomputer"></aside>`
+      <details class="er-trip-computer" ${this.compactLayout.matches ? '' : 'open'}>
+        <summary>Bordcomputer</summary>
+        <div id="er-trip-computer"></div>
+      </details>`
           : `
       <div class="dhud-row">
         <div class="dhud-pill soc" data-pill="soc">🔋 <span data-field="soc"></span></div>
@@ -308,18 +294,18 @@ export class DrivingHUD {
     }
 
     const chosen = snapSpeedKmh(
-      run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? selectableMax,
+      run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? sliderMax,
       sliderMax
     );
     const overSign = signLimit > 0 && chosen > signLimit;
     const speedSlider = this.hudEl.querySelector('.dhud-speed-slider') as HTMLInputElement | null;
     if (speedSlider) {
       speedSlider.classList.toggle('over-limit', overSign);
+      speedSlider.setAttribute('aria-valuetext', `${chosen} km/h`);
       if (document.activeElement !== speedSlider && speedSlider.value !== String(chosen)) {
         speedSlider.value = String(chosen);
       }
     }
-    const capNote = run.speedCapKmh ? ` · ${run.speedCapLabel || 'Limit'} ${run.speedCapKmh}` : '';
     this.setHtml('soc', `<strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)`);
     this.setHtml(
       'pred',
@@ -338,14 +324,16 @@ export class DrivingHUD {
     );
     this.setText('cost', `${totalCost} €`);
     this.setText('replan-feedback', this.replanFeedback);
-    this.setText('tempo', `${Math.round(run.currentSpeedKmh)} km/h${capNote}`);
+    this.setHtml('speed-sign', speedSignHtml(signLimit));
+    this.setText('tempo', `Ist ${Math.round(run.currentSpeedKmh)} · Ziel ${chosen}`);
+    this.setText('tempo-cap', run.speedCapLabel ?? '');
     this.hudEl.querySelector('[data-pill="soc"]')?.classList.toggle('low', socRound < 15);
     this.hudEl.querySelector('[data-pill="stress"]')?.classList.toggle('warn', run.stress > 60);
     const predPill = this.hudEl.querySelector('[data-pill="pred"]');
     predPill?.classList.remove('low', 'warn', 'ok');
     predPill?.classList.add(nextSocClass);
     this.hudEl.querySelectorAll<HTMLButtonElement>('[data-spd]').forEach(btn => {
-      const active = Math.abs(chosen - Number(btn.dataset.spd)) < 4;
+      const active = chosen === Number(btn.dataset.spd);
       btn.classList.toggle('active', active);
       btn.classList.toggle('over-limit', active && overSign);
     });
@@ -357,8 +345,7 @@ export class DrivingHUD {
     if (computer && this.mode === 'autobahn') {
       const progress = Math.max(0, Math.min(1, run.legProgressKm / Math.max(1, edge.distanceKm)));
       computer.innerHTML = renderStageComputer(
-        from.name, to.name, edge.highwayName, progress, edge.waypoints, from, to,
-        !!leg.reverse, hh, mm, weatherBadge, run.tollsEur, edge.tollEur
+        from.name, to.name, edge, progress, !!leg.reverse, hh, mm, weatherBadge, run.tollsEur, run.pauseCostEur
       );
     }
   }

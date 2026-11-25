@@ -301,6 +301,10 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     highwayName: 'E40',
     distanceKm: 46,
     speedLimitKmh: 120,
+    roadSections: [
+      { fromKm: 0, country: 'DE', speedLimitKmh: 120 },
+      { fromKm: 10, country: 'BE', speedLimitKmh: 120 }
+    ],
     elevationGainM: 220,
     elevationLossM: 240,
     baseTrafficRisk: 0.18,
@@ -317,6 +321,10 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     distanceKm: 378,
     speedLimitKmh: 130,
     speedLimitRainKmh: 110,
+    roadSections: [
+      { fromKm: 0, country: 'BE', speedLimitKmh: 120 },
+      { fromKm: 175, country: 'FR', speedLimitKmh: 130, speedLimitRainKmh: 110 }
+    ],
     elevationGainM: 420,
     elevationLossM: 460,
     baseTrafficRisk: 0.34,
@@ -332,6 +340,11 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     highwayName: 'E42 / E421',
     distanceKm: 158,
     speedLimitKmh: 120,
+    roadSections: [
+      { fromKm: 0, country: 'DE', speedLimitKmh: 120 },
+      { fromKm: 10, country: 'BE', speedLimitKmh: 120 },
+      { fromKm: 100, country: 'LU', speedLimitKmh: 120 }
+    ],
     elevationGainM: 1180,
     elevationLossM: 960,
     baseTrafficRisk: 0.14,
@@ -348,6 +361,10 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     distanceKm: 196,
     speedLimitKmh: 130,
     speedLimitRainKmh: 110,
+    roadSections: [
+      { fromKm: 0, country: 'LU', speedLimitKmh: 130, speedLimitRainKmh: 110 },
+      { fromKm: 22, country: 'FR', speedLimitKmh: 130, speedLimitRainKmh: 110 }
+    ],
     elevationGainM: 640,
     elevationLossM: 780,
     baseTrafficRisk: 0.12,
@@ -364,6 +381,11 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     distanceKm: 268,
     speedLimitKmh: 130,
     speedLimitRainKmh: 110,
+    roadSections: [
+      { fromKm: 0, country: 'DE', speedLimitKmh: 120 },
+      { fromKm: 10, country: 'BE', speedLimitKmh: 120 },
+      { fromKm: 178, country: 'FR', speedLimitKmh: 130, speedLimitRainKmh: 110 }
+    ],
     elevationGainM: 420,
     elevationLossM: 390,
     baseTrafficRisk: 0.24,
@@ -444,6 +466,10 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     distanceKm: 336,
     speedLimitKmh: 130,
     speedLimitRainKmh: 110,
+    roadSections: [
+      { fromKm: 0, country: 'LU', speedLimitKmh: 130, speedLimitRainKmh: 110 },
+      { fromKm: 19, country: 'FR', speedLimitKmh: 130, speedLimitRainKmh: 110 }
+    ],
     elevationGainM: 480,
     elevationLossM: 420,
     baseTrafficRisk: 0.16,

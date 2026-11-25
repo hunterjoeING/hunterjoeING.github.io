@@ -28,7 +28,9 @@
 - **Geprüft:** Typecheck, Build, Bundle-Syntax und lokale Rechentests. Mit DOM- und Phaser-Stubs zusätzlich Messe-Dialog, Tarifwechsel, Eschweiler-Rückhalt und einmalige Mautbuchung nach dem Hotel-Dialog geprüft. Chrome-Start in der Sandbox blockiert.
 - **Runde 2:** Review 5–8 umgesetzt. Autohof-Hindernisse sind an die Sprite-Grundrisse gekoppelt, bewegliche Fahrzeuge haben gedrehte Kapseln. Gerichtete KI-Spuren, belegte Kreuzungen, Rückwärtsparken in einer freien KI-Bucht und Ausfahrt am Kartenrand. Autobahnabstände je Spur über die Relativgeschwindigkeit und erneute Lückenprüfung beim Blinkende. Kartenfarben aus dem SoC-Verlauf der Etappenprognose. Architektur und Bundle aktualisiert.
 - **Geprüft in Runde 2:** Typecheck, Build und Bundle-Syntax. Lokale Regressionstests mit Phaser-Stubs für Autohof-Besuche in 210 Stations- und Displaykonfigurationen, die fünf Stadtsequenzen, Fahrzeugkontakte, den Autobahn-Spurwechsel und den Herford-Ladestopp. Chrome-Start in der Sandbox blockiert.
-- **Offen:** Review-Befunde 9–15 und 17–20.
+- **Runde 3:** Review 9–15 und 17–20 umgesetzt. Rückwärtsparken mit Konturprüfung und Stillstand, Bremsvorrang und dialogfeste Stadtphysik, Lichthupe für den bremsenden Vordermann, Abschnittslimits für HUD und Radar, exakte Fahrtgrenzen, Hotel-AC und Pausenabrechnung, stationsbezogene Ladekurve, mobiles HUD und stabile Temporegelung. Architektur, Changelog und Bundle aktualisiert. Alle 20 Review-Befunde sind bearbeitet.
+- **Geprüft in Runde 3:** Typecheck, Build, Bundle-Syntax und lokale Regressionstests mit Phaser- und DOM-Stubs. Chrome-Start in der Sandbox blockiert.
+- **Offen:** Spielerischer Browser- und Touch-Test der mobilen Ansicht bei 320 und 390 px. Die optionalen Gameplay-Ideen bleiben offen.
 
 ### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
 - **Erledigt:**
