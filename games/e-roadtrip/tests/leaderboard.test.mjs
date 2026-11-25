@@ -125,7 +125,7 @@ export default function register(test, game) {
     assert.doesNotThrow(() => ui.show(route1, run, result, save));
     assert.match(root.innerHTML, /Globale Bestenliste · Level 1/);
     assert.equal(root.querySelector('#res-lb-debug').hidden, false);
-    assert.equal(root.querySelector('#res-lb-rank').textContent, 'Testmodus – nicht gesendet');
+    assert.equal(root.querySelector('#res-lb-rank').textContent, '');
     await setImmediate();
     assert.equal(state.textContent, 'Bestenliste gerade nicht erreichbar.');
   });

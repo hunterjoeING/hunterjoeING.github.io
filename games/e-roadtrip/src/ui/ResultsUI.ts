@@ -125,7 +125,7 @@ export class ResultsUI {
             <p class="res-lb-status" id="res-lb-debug" hidden>Testmodus: Score wird nicht gesendet</p>
             <p class="res-lb-status" id="res-lb-state" role="status"></p>
             <table class="arcade-board-table res-lb-table" aria-label="Top 10" hidden>
-              <thead><tr><th scope="col">Platz</th><th scope="col">Spieler</th><th scope="col">Ergebnis</th></tr></thead>
+              <thead><tr><th scope="col" aria-label="Platz">#</th><th scope="col">Spieler</th><th scope="col">Ergebnis</th></tr></thead>
               <tbody id="res-lb-rows"></tbody>
             </table>
             <div class="res-lb-actions">
@@ -260,7 +260,7 @@ export class ResultsUI {
     });
     all.addEventListener('click', () => scores?.openLeaderboardModal(boardId));
 
-    rank.textContent = dryRun ? 'Testmodus – nicht gesendet' : submission ? 'Speichere dein Ergebnis…' : '';
+    rank.textContent = dryRun ? '' : submission ? 'Speichere dein Ergebnis…' : '';
     if (dryRun || !submission) {
       void refresh();
     } else {
