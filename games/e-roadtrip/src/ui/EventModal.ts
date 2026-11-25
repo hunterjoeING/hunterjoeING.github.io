@@ -295,7 +295,7 @@ export class EventModal {
           <div class="er-modal-head">
             <span class="er-modal-icon">🛡️</span>
             <div>
-              <div class="er-modal-kicker">GTA-Stadtverkehr · Keine Schuld</div>
+              <div class="er-modal-kicker">Stadtverkehr · Keine Schuld</div>
               <h3>${labelMap[info.kind]}</h3>
             </div>
           </div>
@@ -320,7 +320,7 @@ export class EventModal {
         <div class="er-modal-head">
           <span class="er-modal-icon">💥</span>
           <div>
-            <div class="er-modal-kicker">GTA-Stadtverkehr · Eigenverschulden</div>
+            <div class="er-modal-kicker">Stadtverkehr · Eigenverschulden</div>
             <h3>${labelMap[info.kind]}</h3>
           </div>
         </div>

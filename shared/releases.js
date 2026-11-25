@@ -71,6 +71,17 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "eroadtrip", version: "0.5.0", date: "2026-11-25", type: "feature", title: "Globale Bestenlisten pro Level",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Eigene globale Bestenlisten für Level 1 und Level 2",
+        "Top 10 und deine Platzierung direkt nach der Fahrt",
+        "Bestenlisten-Knopf im Spiel mit Tabs für beide Level und die Gesamtwertung",
+        "Abgeschlossene Fahrten zählen auch für die Gesamtbestenliste",
+        "Einheitlicher Name „e-Roadtrip: Pixel Europe“ auf Karte, Spielseite und Bestenlisten",
+      ],
+    },
+    {
       app: "eroadtrip", version: "0.4.0", date: "2026-11-25", type: "feature", title: "Ladeplanung und mobiles HUD",
       author: "Michi", model: "Sol 6.2",
       ref: "PR #4",

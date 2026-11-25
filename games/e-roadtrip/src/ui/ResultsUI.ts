@@ -2,15 +2,8 @@ import { CampaignSave, EvaluationResult, LevelConfig, RunState } from '../types'
 import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { LEVELS } from '../data/levels';
 import { getResaleValue } from '../sim/SaveState';
+import { shouldSubmit, SubmissionResult } from '../sim/Leaderboard';
 import { SoundFX } from '../phaser/SoundFX';
-
-declare global {
-  interface Window {
-    ArcadeScores?: {
-      submit: (gameId: string, score: number, label: string) => void;
-    };
-  }
-}
 
 export interface ResultsCallbacks {
   onKeepCarAndReplay: (nextLevelId: string) => void;
@@ -35,21 +28,9 @@ export class ResultsUI {
     level: LevelConfig,
     run: RunState,
     result: EvaluationResult,
-    save: CampaignSave
+    save: CampaignSave,
+    submission?: Promise<SubmissionResult>
   ): void {
-    // Submit to HunterJoe Arcade Global Highscores!
-    try {
-      if (window.ArcadeScores && typeof window.ArcadeScores.submit === 'function') {
-        const hrs = Math.floor(result.totalMinutes / 60);
-        const mins = result.totalMinutes % 60;
-        window.ArcadeScores.submit(
-          'eroadtrip',
-          result.totalScore,
-          `${result.totalScore} Pkt · ${hrs}h${String(mins).padStart(2, '0')}m`
-        );
-      }
-    } catch (_) {}
-
     const currentCar = getVehicleById(run.plan.vehicleId);
     const resaleEur = getResaleValue(currentCar.id);
     const totalAfterResale = save.cashEur + resaleEur;
@@ -137,6 +118,23 @@ export class ResultsUI {
           </div>
         </div>
 
+        ${level.boardId ? `
+          <section class="res-panel res-leaderboard" aria-labelledby="res-lb-title">
+            <h3 id="res-lb-title">🌍 Globale Bestenliste · Level ${level.order}</h3>
+            <p class="res-lb-status" id="res-lb-rank" role="status"></p>
+            <p class="res-lb-status" id="res-lb-debug" hidden>Testmodus: Score wird nicht gesendet</p>
+            <p class="res-lb-status" id="res-lb-state" role="status"></p>
+            <table class="arcade-board-table res-lb-table" aria-label="Top 10" hidden>
+              <thead><tr><th scope="col" aria-label="Platz">#</th><th scope="col">Spieler</th><th scope="col">Ergebnis</th></tr></thead>
+              <tbody id="res-lb-rows"></tbody>
+            </table>
+            <div class="res-lb-actions">
+              <button type="button" class="secondary-btn" id="res-lb-name" aria-haspopup="dialog">👤 Name ändern</button>
+              <button type="button" class="secondary-btn" id="res-lb-all" aria-haspopup="dialog">🏆 Alle Level</button>
+            </div>
+          </section>
+        ` : ''}
+
         <div class="res-garage-box">
           <h3>🚘 Fahrzeug-Entscheidung &amp; Kampagne</h3>
           <p>
@@ -184,6 +182,7 @@ export class ResultsUI {
       </div>
     `;
     this.root.scrollTop = 0;
+    if (level.boardId) this.bindLeaderboard(level.boardId, submission);
 
     const nextPlayable =
       LEVELS.find(l => l.order > level.order && l.playable && l.order <= save.unlockedLevelOrder) ||
@@ -214,5 +213,66 @@ export class ResultsUI {
         this.cb.onKeepCarAndReplay(lid);
       });
     });
+  }
+
+  private bindLeaderboard(boardId: string, submission?: Promise<SubmissionResult>): void {
+    const scores = window.ArcadeScores;
+    const dryRun = !shouldSubmit(window.location);
+    const rank = this.root.querySelector<HTMLElement>('#res-lb-rank')!;
+    this.root.querySelector<HTMLElement>('#res-lb-debug')!.hidden = !dryRun;
+    const state = this.root.querySelector<HTMLElement>('#res-lb-state')!;
+    const table = this.root.querySelector<HTMLTableElement>('.res-lb-table')!;
+    const rows = this.root.querySelector<HTMLTableSectionElement>('#res-lb-rows')!;
+    const name = this.root.querySelector<HTMLButtonElement>('#res-lb-name')!;
+    const all = this.root.querySelector<HTMLButtonElement>('#res-lb-all')!;
+    const unavailable = 'Bestenliste gerade nicht erreichbar.';
+    let refreshId = 0;
+
+    const refresh = async () => {
+      const id = ++refreshId;
+      table.hidden = true;
+      state.textContent = 'Lade globale Bestenliste…';
+      try {
+        const data = await scores?.fetchLeaderboard?.(boardId, 10);
+        if (!state.isConnected || refreshId !== id) return;
+        if (!data?.ok) throw new Error(unavailable);
+
+        rows.replaceChildren();
+        const myName = scores?.getPlayerName?.().toLowerCase();
+        for (const [index, entry] of data.top.slice(0, 10).entries()) {
+          const row = rows.insertRow();
+          row.classList.toggle('is-me', !!myName && entry.playerName.toLowerCase() === myName);
+          row.insertCell().textContent = `#${index + 1}`;
+          row.insertCell().textContent = entry.playerName;
+          row.insertCell().textContent = entry.label || `${entry.score} Pkt`;
+        }
+        table.hidden = data.top.length === 0;
+        state.textContent = table.hidden ? 'Noch keine Einträge – sichere dir Platz 1!' : '';
+      } catch {
+        if (state.isConnected && refreshId === id) state.textContent = unavailable;
+      }
+    };
+
+    name.disabled = !scores?.openPlayerNameModal || (!dryRun && !!submission);
+    all.disabled = !scores?.openLeaderboardModal;
+    name.addEventListener('click', () => {
+      scores?.openPlayerNameModal(() => { if (state.isConnected) void refresh(); }, { dryRun });
+    });
+    all.addEventListener('click', () => scores?.openLeaderboardModal(boardId));
+
+    rank.textContent = dryRun ? '' : submission ? 'Speichere dein Ergebnis…' : '';
+    if (dryRun || !submission) {
+      void refresh();
+    } else {
+      state.textContent = 'Lade globale Bestenliste…';
+      void submission.then(({ ok, rank: place, entries }) => {
+        if (!state.isConnected) return;
+        rank.textContent = ok && place && entries
+          ? `Dein Platz: #${place} von ${entries}`
+          : 'Dein Ergebnis konnte nicht gespeichert werden.';
+        name.disabled = !scores?.openPlayerNameModal;
+        void refresh();
+      });
+    }
   }
 }

@@ -1,8 +1,8 @@
 {
   "name": "e-roadtrip",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
-  "description": "E-Roadtrip – Pixel-Art E-Car Roadtrip Planning & GTA-2 Style Driving Game (Phaser 3 + TypeScript)",
+  "description": "e-Roadtrip: Pixel Europe – pixel-art EV roadtrip planning and top-down driving game (Phaser 3 + TypeScript)",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "build": "node esbuild.mjs",

@@ -40,6 +40,11 @@ body {
   .er-title-prefix, .er-title-subtitle { display: none; }
 }
 
+@media (max-width: 480px) {
+  .er-leaderboard-label { display: none; }
+  .arcade-topbar .topbar-right { flex: 0 1 auto; flex-wrap: wrap; }
+}
+
 .er-shell {
   flex: 0 0 auto;
   display: flex;
@@ -1270,6 +1275,35 @@ html[data-theme="light"] .er-driving-hud {
   margin: 0 0 8px;
   font-size: 14px;
 }
+.res-leaderboard {
+  flex-shrink: 0;
+  min-width: 0;
+}
+.res-lb-status {
+  margin: 0 0 8px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+}
+.res-lb-status:empty { display: none; }
+#res-lb-rank { font-weight: 700; color: var(--text-main); }
+.res-lb-table {
+  width: 100%;
+  font-size: 12.5px;
+  overflow-wrap: anywhere;
+}
+.res-lb-table th,
+.res-lb-table td { padding: 8px 6px; }
+.res-lb-table th { overflow-wrap: normal; }
+.res-lb-table th:first-child,
+.res-lb-table td:first-child { width: 1%; white-space: nowrap; overflow-wrap: normal; }
+.res-lb-table tr.is-me td { background: var(--accent-gold-soft); color: var(--text-main); }
+.res-lb-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.res-lb-actions button { min-height: 44px; }
 .res-bar-row {
   margin-bottom: 8px;
 }

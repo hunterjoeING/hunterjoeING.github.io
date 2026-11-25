@@ -20,8 +20,9 @@
 | E-Roadtrip Review-Fixes 1–20 + Doku | Michael / Codex CLI (gpt-6.2-sol high) | `codex/review-fixes` (`022a699`, `2b01e5a`, `f7abd66`, `006a1bf`, `85af6f7`) · [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) (Merge `29fd861`) | ✅ Gemerged und live auf https://hunterjoeing.github.io/games/e-roadtrip/ |
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` (`fc3ad9b`) · Fork · kein PR | 🟡 Test auf Fork-Pages |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` (`0c85929`) · Fork · kein PR | 🟡 Teil (a) geprüft; Worker lokal mit `wrangler dev` getestet, nicht deployt |
+| E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` (`888b032`, `4d6303b`) auf `codex/arcade-leaderboard-groups` · Fork · kein PR | 🟡 Test auf Fork-Pages (Testmodus, kein POST) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.4.0 · `arcade` v0.3.0
+**Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.3.0
 
 ---
 
@@ -29,9 +30,18 @@
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
 
+### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high) – E-Roadtrip Level-Bestenlisten (Teil b)
+
+- **Branch / PR** · `codex/eroadtrip-highscores` auf `codex/arcade-leaderboard-groups` (`f30054a`). Commits `888b032`, `4d6303b`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html (Fork-Pages auf diesem Branch).
+- **Erledigt** · E-Roadtrip v0.5.0: kaputten Aufruf `ArcadeScores.submit` (existiert nicht, daher nie Scores) ersetzt durch `src/sim/Leaderboard.ts`. Abgeschlossene Fahrten (nur aus `finishLevel()`, einmal pro Run-ID) gehen an das Levelboard (`eroadtrip_l1`/`eroadtrip_l2`, `boardId` in `levels.ts`) und an `eroadtrip` (Gesamt, eigene Run-ID). Ergebnis-Screen mit Top 10, Platz und „Name ändern“; Topbar-Knopf „🏆 Bestenliste“ mit Level-Tabs. Echte Einreichung nur auf `hunterjoeing.github.io`; Fork, lokal und `?lbdebug=1` laufen im Testmodus (dryRun, nur `console.info`). Version per esbuild-`define` aus `package.json`. Release-Eintrag v0.5.0 nach Regel 10 geprüft.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Worker und Shared-Skripte, `npm test` (40/40), Headless-Chrome-Check durch den Orchestrator bei 390/320 px hell/dunkel: Fork-Seite v0.5.0, Topbar-Knopf sichtbar, Dialog mit Tabs Level 1/Level 2/Gesamt (Live-GET), Ergebnis-Panel im Testmodus (lokaler Harness, Top 10 mit gemockten Daten, Namen escaped, eigener Eintrag hervorgehoben), kein horizontales Scrollen, keine JS-Fehler. Danach Rang-Spalte bei 320 px korrigiert (`#`, nowrap) und doppelten Testmodus-Hinweis entfernt. Alle POSTs abgefangen: 0 POSTs an die Live-API.
+- **Offen** · Handy-Test durch Michael. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues/PRs, Fork 0 offene PRs.
+- **Merge-Reihenfolge** · `codex/arcade-versioning` → `codex/arcade-leaderboard-groups` (Teil a, Worker deployt beim Merge automatisch – Joe vorher informieren) → `codex/eroadtrip-highscores` (Teil b).
+
 ### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf)
-- **Branch / PR** · `codex/arcade-versioning`, SHA `22d69b2`, gepusht in den Fork, kein PR. Danach per Merge-Commit in `codex/arcade-leaderboard-groups` und `codex/eroadtrip-highscores` übernommen.
+- **Branch / PR** · `codex/arcade-versioning`, SHA `22d69b2`, gepusht in den Fork, kein PR. Danach per Merge-Commit in `codex/arcade-leaderboard-groups` (`cbf620d`) und `codex/eroadtrip-highscores` (`a909a1d`) übernommen; dort `author`/`model` für Arcade v0.3.0 und E-Roadtrip v0.5.0 ergänzt (Michi · Sol 6.2). Tests: 25/25, 33/33, 41/41.
 - **Erledigt** · Jeder Release-Eintrag hat `author` und optional `model` („Michi · Sol 6.2“, „Michi · Grok 4.7“, „Joe“), angezeigt auf `changelogs.html` und im Update-Dialog. Werkzeugnamen werden nie angezeigt (Regel 10 und Test). Die Arcade zeigt ausdrücklich nie ein Banner. Link „📝 Changelogs“ unten im Burger-Menü neben Impressum und Datenschutz; Changelogs-Seite hat den Link auch im eigenen Footer. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
+- **Name (Spiel)** · `codex/eroadtrip-highscores`: Seitentitel, Meta-Beschreibung, Topbar „e-Roadtrip: Pixel Europe“, Stadtfahrt-Hinweis im HUD und Unfall-Dialog ohne „GTA“; Stichpunkt in e-Roadtrip v0.5.0.
 - **Name** · Offizieller Name „e-Roadtrip: Pixel Europe“, Kartentag „Strategie - Action“, kein „GTA“ in nutzersichtbaren Texten (Regel 10, Test). Hub-Karte, Menü und Release-Texte hier; `arcade.js`/Worker-Namen in `codex/arcade-leaderboard-groups`, Spieltexte in `codex/eroadtrip-highscores` (in Arcade v0.2.0 bzw. e-Roadtrip v0.5.0 enthalten, keine neue Version).
 - **Joe-Einträge** · Laut Michi (25.11.) hat Joe bisher immer Hydrogen genutzt. Alle Joe-Einträge (auch `quiz_golf`) zeigen daher „Joe · Hydrogen“.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (25/25 auf `codex/arcade-versioning`), `node --check` auf `shared/*.js`; Headless-Chrome-Test von Changelog-Seite, Dialog und Burger-Menü. Issue-/PR-Check: Upstream und Fork ohne offene Issues/PRs.
@@ -65,15 +75,3 @@
 ### 2026-11-25 – Upstream-Merge E-Roadtrip
 - Um 10:23 Uhr (Berlin) wurde [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) von `mic4rd:codex/review-fixes` nach `main` gemergt (Merge-Commit `29fd861`, Review-Fixes 1–20, Doku, Tests). Rebuild-Workflow inkl. `npm test` (20/20) und Pages-Deploy erfolgreich; Bundle unverändert, live auf https://hunterjoeing.github.io/games/e-roadtrip/ geprüft. Diese Handoff-Aktualisierung kommt per Folge-PR (Branch `docs/handoff-pr4`).
 - Um 00:09 Uhr (Berlin) wurde [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) von `cursor/eroadtrip-touch-level2-5df0` nach `main` gemergt (Merge-Commit `826fb33`). Der Merge enthält die Arbeit aus den Fork-PRs #2–#6.
-
-### 2026-11-24 – Michael / Cursor Cloud Agent (Soleil raus, Messe, AC, Autohof)
-- **Erledigt:**
-  - Gleicher Branch und [PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6). Kein zweiter PR.
-  - Level 2 ohne Autoroute du Soleil. Entfernt: `edge_aachen_bruessel`, `edge_bruessel_lille`, `edge_lille_paris`, `edge_paris_lyon` und deren Lader. Luxemburg/Lyon, Reims/Nevers und Paris/Clermont bleiben.
-  - Hannover Messe hat einen eigenen Besuchsbildschirm: AC optional (6 Punkte, 50 % frei), Essen −50 €, Toilette automatisch, einer von 10 Berichten, etwa 4 Stunden.
-  - Fastned- und TotalEnergies-Parks auf Level 2 ersetzt durch IONITY Beaune, Tesla Orange, ENGIE Vianeo Vierzon und Atlante Béziers. Filter zeigt diese Anbieter, nicht Fastned/Total.
-  - AC-Leistung je Auto (`acMaxKw`). Ladeleistung an AC = min(Säule, Auto). Bildschirm sagt „AC-Laden“.
-  - Autohof-KI fährt ein, wartet an einer freien Säule und fährt über die Autobahn wieder raus. NPCs bremsen vor dem Auto davor, auch vor dem Spieler.
-- **Offen / Nächste Schritte:**
-  - PR #6 bleibt gegen `cursor/eroadtrip-package-d-79e6` offen.
-  - Level 3–7 bleiben `playable: false`.
