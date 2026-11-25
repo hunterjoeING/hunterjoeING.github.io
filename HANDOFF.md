@@ -18,7 +18,7 @@
 | E-Roadtrip Paket D: Städte, Autohöfe, Partikel, Autobahn-FSD, HUD | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-package-d-79e6` ([PR #5](https://github.com/mic4rd/hunterjoeING.github.io/pull/5) im Fork, gegen `main`) | ✅ über [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) (`826fb33`) gemergt; Fork-PR am 25.11. geschlossen |
 | E-Roadtrip: Touch, Level 2, Messe, AC, Autohof | Michael (`mic4rd`) / Cursor Cloud Agent | `cursor/eroadtrip-touch-level2-5df0` ([PR #6](https://github.com/mic4rd/hunterjoeING.github.io/pull/6) im Fork, gegen Paket D) | ✅ über [Upstream-PR #3](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/3) (`826fb33`) gemergt; Fork-PR am 25.11. geschlossen |
 | E-Roadtrip Review-Fixes 1–20 + Doku | Michael / Codex CLI (gpt-6.2-sol high) | `codex/review-fixes` (`022a699`, `2b01e5a`, `f7abd66`, `006a1bf`, `85af6f7`) · [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) (Merge `29fd861`) | ✅ Gemerged und live auf https://hunterjoeing.github.io/games/e-roadtrip/ |
-| Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · Fork als Ziel · kein PR | 🟡 In Arbeit/Test |
+| Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` (`fc3ad9b`) · Fork · kein PR | 🟡 Test auf Fork-Pages |
 
 **Aktuelle Versionen** · `eroadtrip` v0.4.0 · `arcade` v0.2.0
 
@@ -29,10 +29,10 @@
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
 
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
-- **Branch / PR** · `codex/arcade-versioning` auf Basis von `upstream/main` (`039ed15`). SHA: (folgt). Push ausstehend, Ziel Fork `mic4rd/hunterjoeING.github.io`, kein PR.
+- **Branch / PR** · `codex/arcade-versioning` auf Basis von `upstream/main` (`039ed15`). Commits `fc3ad9b` + Doku-Nachtrag. Gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. [Fork-Test Übersicht](https://mic4rd.github.io/hunterjoeING.github.io/) · [Changelogs](https://mic4rd.github.io/hunterjoeING.github.io/changelogs.html)
 - **Erledigt** · Öffentlicher Release-Katalog für Arcade, 10 Spiele und 28 Quizze, Update-Pille mit Gelesen-Status, Changelog-Dialog und filterbare Übersicht. E-Roadtrip zeigt v0.4.0 im Spiel. Regel 10 und PR-Workflow ergänzen die Versionsprüfung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (24/24), Syntax der JS-Dateien und Inline-Skripte, Sitemap und Workflow-YAML. Release-Bump auf `upstream/main` (Bootstrap) sowie mit Testdaten für fehlenden und vorhandenen Versionsanstieg, Dateiausnahmen und beide PR-Ausnahmen geprüft. Banner und Dialog mit DOM-Stubs geprüft.
-- **Offen** · Browser-/Touch-Test bei 320 und 390 px in beiden Themes. Chrome-Start in der Sandbox blockiert. Der Orchestrator ergänzt SHA, Push-Status und Fork-Pages-Test-URL. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Browser-/Touch-Test bei 320 und 390 px in beiden Themes. Chrome-Start in der Sandbox blockiert. Headless-Chrome-Test durch den Orchestrator (390/320 px, hell/dunkel: Pille, Dialog, Esc/Backdrop, blauer Punkt, Filter, E-Roadtrip-Versionsknopf) ohne JS-Fehler; echter Handy-Test durch Michael offen. Issue-/PR-Check vom Orchestrator nachgeholt: Upstream keine offenen Issues/PRs, Fork keine offenen PRs (Issues deaktiviert).
 
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high)
 - **Branch / Push:** `codex/review-fixes` zum Fork `mic4rd/hunterjoeING.github.io` gepusht (Stand `85af6f7`). Über [Upstream-PR #4](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/4) gemergt (`29fd861`). [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html)

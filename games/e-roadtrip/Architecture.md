@@ -301,4 +301,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-25** · `codex/review-fixes` (`f7abd66`) · Reviews 9–15 and 17–20 refined parking and braking, headlight flash, section limits and tick boundaries, hotel and charging accounting, and the mobile HUD.
 - **2026-11-25** · `codex/review-fixes` (`006a1bf`) · Corrected the architecture and Handoff, documented tuning and test workflows, added Node regressions to CI, and shortened the feedback title.
 - **2026-11-25** · Upstream PR #4 (`29fd861`) (v0.4.0) · Merged `codex/review-fixes` (reviews 1–20, docs, tests) into `main`; live on GitHub Pages.
-- **2026-11-25** · `codex/arcade-versioning` · SHA: (folgt) · Added the topbar changelog button, recorded releases through v0.4.0, and added version and cache-busting checks.
+- **2026-11-25** · `codex/arcade-versioning` · `fc3ad9b` · Added the topbar changelog button, recorded releases through v0.4.0, and added version and cache-busting checks.
