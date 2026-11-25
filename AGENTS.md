@@ -18,17 +18,28 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
    * **Auf dem Arbeits-Branch:** Fertige Änderungen zeitnah nach abgeschlossenen Dateien/Arbeitsschritten committen und auf den jeweiligen Branch pushen.
    * **Generierte Bundles (`dist/e-roadtrip.js`):** Merge-Konflikte in gebauten Bundles niemals manuell auflösen, sondern nach dem Merge/Rebase einfach `npm run build` im jeweiligen Spieleordner neu ausführen.
 5. **Syntax-Check vor jedem Commit:** Führe vor jedem Commit `node --check` auf alle geänderten JS-Dateien aus, damit `main` jederzeit fehlerfrei bleibt.
+   * **E-Roadtrip:** In `games/e-roadtrip` zusätzlich `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js` und `npm test` ausführen.
 6. **Gezielte, chirurgische Edits statt Komplett-Überschreibungen:**
    * Nutze gezielte Zeilen-Ersetzungen anstatt große Dateien komplett neu zu schreiben.
    * Prüfe nach jeder JS-Änderung die Syntax mit `node --check <datei.js>`.
 7. **Agent-Koordination (`HANDOFF.md`, Issues & PR-Kommentare):**
-   * **Vor jeder Session:** `HANDOFF.md` lesen sowie offene GitHub Issues (`gh issue list`) und Pull Requests (`gh pr list`) prüfen, um Doppelarbeit zu vermeiden.
+   * **Vor jeder Session:** `AGENTS.md`, `HANDOFF.md` und die Architektur-Doku nach Regel 9 lesen. Im Upstream und Fork offene GitHub Issues (`gh issue list`) und Pull Requests (`gh pr list`) prüfen, um Doppelarbeit zu vermeiden.
    * **Aufgaben & Rückfragen:** Aufgaben, Bugs und „Wer macht was“ über **GitHub Issues** koordinieren; Code-Rückfragen und Reviews direkt als **Pull-Request-Kommentare** schreiben.
-   * **Nach jeder Session:** `HANDOFF.md` kurz aktualisieren (was wurde gemacht, welcher Branch/PR, was ist offen).
+   * **Zum Abschluss in `HANDOFF.md` prüfen:**
+     - In §1 eine Zeile für den Arbeitsbranch anlegen oder aktualisieren. Branch, PR-/Upstream-Status und Status-Emoji angeben. Erledigte oder gemergte Zeilen auf ✅ setzen.
+     - In §2 oben den Session-Eintrag mit Datum, Verantwortlichen, Agent und Modell ergänzen. Branch, Commit-SHAs, Push ja/nein und Ziel (Fork/Upstream), PR-Nummer oder „kein PR“ und ggf. die Fork-Pages-Test-URL angeben.
+     - Erledigte und offene Arbeit sowie ausgeführte Checks festhalten. Das Ergebnis der Issue-/PR-Prüfung oder den Grund fürs Überspringen angeben. Fehlt der Netzzugriff, „Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen“ vermerken.
+     - Für committete Arbeit die Commit-SHAs eintragen und „Änderungen im Arbeitsbaum“ entfernen. Bei einem Lauf ohne Commit/Push `SHA: (folgt)` eintragen. Der Orchestrator ergänzt nach Commit und Push die SHAs im Handoff und Changelog sowie den Push-Status und die Test-URL und holt ggf. die Issue-/PR-Prüfung nach.
+     - Bei mehr als fünf Session-Einträgen die ältesten nach `HANDOFF-archive.md` verschieben.
 8. **Mobile-First & Android/iOS-Stabilität:**
    * Fixierte Hintergrund-Canvas-Elemente (`#cosmos-canvas` und `.cosmos-vignette`) müssen `height: 100lvh` (`left: 0; bottom: 0` auf Android/Desktop bzw. `top: 0; bottom: auto` per `@supports (-webkit-touch-callout: none)` auf iOS) nutzen, `transform-origin` am `#hub-shell` auf den sichtbaren Viewport begrenzen (`min(35lvh, 300px)`) und bei Touch-Scroll (`e.pointerType !== 'mouse'`) oder beim Ein-/Ausblenden der mobilen Adressleiste keinerlei Kamera- oder Layout-Sprünge auslösen.
    * Alle Seiten müssen sowohl den **Dark Mode** als auch den **Light Mode** (`html[data-theme="light"]` via `ArcadeTheme`) sauber unterstützen.
-9. **Architektur-Doku:** Vor Änderungen an einem Spiel die jeweilige games/<slug>/Architecture.md (Quizzes: shared/QUIZ_ARCHITECTURE.md) lesen. Bei Änderungen an Struktur, Steuerung, Simulationsregeln oder Designentscheidungen die betroffenen Abschnitte und den Changelog im selben PR aktualisieren.
+9. **Architektur-Doku:** Vor Änderungen an einem Spiel `games/<slug>/Architecture.md` lesen, für Quizzes `shared/QUIZ_ARCHITECTURE.md`. Änderungen an Struktur, Steuerung, Simulationsregeln oder Designentscheidungen im selben PR dokumentieren.
+   * **Zum Abschluss in der Architektur-Doku prüfen:**
+     - In der Modulübersicht jede neue, gelöschte oder umbenannte Datei nachziehen und die Beschreibung mit dem Code abgleichen.
+     - Geänderte Werte, Konstanten, Routen, Anbieter und Dateinamen in den betroffenen Abschnitten einschließlich Stellschrauben-Tabelle und offenen Punkten nachziehen. Werte an einer Stelle pflegen und Doppelbeschreibungen vermeiden.
+     - Pro Aufgabe oder PR genau einen kurzen Changelog-Eintrag (1–3 Zeilen) unten ergänzen, mit Datum, Branch und Commit-SHA oder PR. Überholte Aussagen im alten Eintrag mit „(später ersetzt …)“ kennzeichnen.
+     - Die Sprache der jeweiligen Datei beibehalten. Die E-Roadtrip-Architektur ist auf Englisch, `HANDOFF.md` auf Deutsch.
 
 ---
 

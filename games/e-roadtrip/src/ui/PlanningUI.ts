@@ -11,12 +11,14 @@ import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { SUBSCRIPTIONS, roamingPriceForProvider } from '../data/subscriptions';
 import { CHARGERS, getCityById, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
+import { HOTEL_AC } from '../data/events';
 import {
-  evaluateTripPlan,
   getActiveRouteLegs,
   getActiveRouteOption,
   getReturnRouteOption,
+  isStationOnLeg,
   levelHasReturnRoutes,
+  MESSE_CHARGE_MINUTES,
   PlanForecast,
   activeSignKmh,
   snapSpeedKmh
@@ -157,11 +159,11 @@ export class PlanningUI {
     level: LevelConfig,
     plan: TripPlan,
     save: CampaignSave,
+    forecast: PlanForecast,
     selectedLegIndex = 0,
     providerFilter?: ProviderFilterMap,
     showChargerStations = true
   ): void {
-    const forecast = evaluateTripPlan(level, plan);
     const selectedVehicle = getVehicleById(plan.vehicleId);
     const activeRoute = getActiveRouteOption(level, plan);
     const budgetLeft = save.cashEur - (save.ownedVehicleId === selectedVehicle.id ? 0 : selectedVehicle.priceEur);
@@ -245,7 +247,7 @@ export class PlanningUI {
       </div>
     `;
 
-    this.bindEvents(level, plan, save, clampedLegIdx, providerFilter, showChargerStations);
+    this.bindEvents(level, plan, save, forecast, clampedLegIdx, providerFilter, showChargerStations);
   }
 
   private renderMapFilterBar(
@@ -308,7 +310,11 @@ export class PlanningUI {
       <div class="forecast-strip">
         <div class="fc-metric"><span>Distanz</span><strong>${f.totalDistanceKm} km</strong></div>
         <div class="fc-metric"><span>Dauer (Ziel ${Math.floor(level.targetArrivalMinutes / 60)}h${String(level.targetArrivalMinutes % 60).padStart(2, '0')})</span><strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong></div>
-        <div class="fc-metric"><span>Strom + Abos</span><strong>${f.estimatedTotalCostEur.toFixed(2)} €</strong></div>
+        <div class="fc-metric">
+          <span>Strom + Abos</span><strong>${(f.estimatedChargingCostEur + f.subscriptionCostEur).toFixed(2)} €</strong>
+          ${f.tollsEur > 0 ? `<span>Maut ${f.tollsEur.toFixed(2)} €</span><span>Gesamt ${f.estimatedTotalCostEur.toFixed(2)} €</span>` : ''}
+          ${f.withoutMesseCharge ? '<span>Bei freiem Messe-Ladepunkt</span>' : ''}
+        </div>
         <div class="fc-metric ${nextCrit}" title="Prognostizierter Akkustand bei Ankunft am nächsten geplanten Ziel">
           <span>Ankunft: ${f.firstStopName.slice(0, 14)}</span>
           <strong>${f.firstStopArrivalSocPct}% SoC</strong>
@@ -316,6 +322,7 @@ export class PlanningUI {
         <div class="fc-metric ${finalCrit}" title="Prognostizierter Akkustand am finalen Ziel">
           <span>Ziel-SoC / Budget</span>
           <strong>${f.finalArrivalSocPct}% · ${Math.round(budgetLeft / 1000)}k€</strong>
+          ${f.withoutMesseCharge ? `<span>Ohne Messe-AC: ${f.withoutMesseCharge.reachable ? `${f.withoutMesseCharge.finalSocPct}% am Ziel` : 'Reichweite reicht nicht'}</span>` : ''}
         </div>
       </div>
       ${
@@ -430,6 +437,7 @@ export class PlanningUI {
   }
 
   private renderSubsTab(level: LevelConfig, plan: TripPlan, car: VehicleSpec): string {
+    const supercharger = CHARGERS.find(station => station.network === 'tesla');
     return `
       <div class="subs-list">
         ${subscriptionsForLevel(level).map(sub => {
@@ -437,20 +445,23 @@ export class PlanningUI {
           const isAdhocLocked = sub.id === 'adhoc';
           const checked = isAdhocLocked || isTeslaAuto || plan.subscriptionIds.includes(sub.id);
           const roaming = roamingPriceForProvider(sub.provider);
+          const ownPrice = sub.id === 'tesla_suc' && supercharger
+            ? getBestPriceForStation(supercharger, [sub.id], car).pricePerKwh
+            : sub.pricePerKwhOwn;
           return `
             <label class="sub-card ${checked ? 'active' : ''} ${isAdhocLocked ? 'locked' : ''}">
               <input type="checkbox" class="sub-toggle" data-sub-id="${sub.id}" ${checked ? 'checked' : ''} ${isTeslaAuto || isAdhocLocked ? 'disabled' : ''} />
               <div class="sub-info">
                 <div class="sub-top">
-                  <strong>${sub.name}</strong>
+                  <strong>${isTeslaAuto ? 'Tesla Supercharger Fahrzeugtarif' : sub.name}</strong>
                   <span class="sub-fee">${isTeslaAuto ? '0,00 € (Tesla inkl.)' : isAdhocLocked ? 'Immer aktiv' : `${sub.monthlyFeeEur.toFixed(2)} €/Mt · Trip-Anteil ${sub.tripShareFeeEur.toFixed(2)} €`}</span>
                 </div>
-                <div class="sub-prices">Eigenes Netz: <b>${sub.pricePerKwhOwn.toFixed(2)} €/kWh</b>${
+                <div class="sub-prices">Eigenes Netz: <b>${ownPrice.toFixed(2)} €/kWh</b>${
                   roaming != null
                     ? ` · Roaming: <b>${roaming.toFixed(2)} €/kWh</b> <span class="sub-roam-note">(fest je Anbieter)</span>`
                     : ' · Ad-hoc immer möglich'
                 }</div>
-                <div class="sub-desc">${isAdhocLocked ? 'Immer angehakt und nicht abwählbar. ' : ''}${sub.bestFor}</div>
+                <div class="sub-desc">${isAdhocLocked ? 'Immer angehakt und nicht abwählbar. ' : ''}${isTeslaAuto ? 'Für dieses Fahrzeug inklusive.' : sub.bestFor}</div>
               </div>
             </label>
           `;
@@ -470,7 +481,7 @@ export class PlanningUI {
     const returnRoute = levelHasReturnRoutes(level) ? getReturnRouteOption(level, plan) : null;
     const activeLegs = getActiveRouteLegs(level, plan);
     const selectedSpec = activeLegs[selectedLegIndex];
-    const stageChargers = CHARGERS.filter(c => c.edgeId === selectedSpec?.edgeId);
+    const stageChargers = CHARGERS.filter(station => isStationOnLeg(station, selectedSpec));
     const selectedForecast = forecast.legForecasts[selectedLegIndex];
     let previousReturn: boolean | null = null;
     const overnightIdx = activeLegs.findIndex(leg => leg.overnightAtEnd);
@@ -509,7 +520,7 @@ export class PlanningUI {
             }
             const isSelectedLeg = lf.legIndex === selectedLegIndex;
             const edgeForLeg = spec ? getEdgeById(spec.edgeId) : undefined;
-            const sliderMax = vehicle.maxSpeedKmh;
+            const sliderMax = snapSpeedKmh(vehicle.maxSpeedKmh, vehicle.maxSpeedKmh);
             const sliderMin = Math.min(40, sliderMax);
             const speedVal = snapSpeedKmh(lf.targetSpeedKmh, sliderMax, sliderMin);
             const riskBadge =
@@ -527,8 +538,13 @@ export class PlanningUI {
             const rainNote = rainCap
               ? `<div class="leg-rain-cap">🌧️ Frankreich: ${posted || 130} km/h, bei Regen ${rainCap} km/h.${rainActive ? ` Diese Etappe ist Regen, das Tempo startet bei ${rainCap}.` : ''}</div>`
               : '';
+            const hotelAc = forecast.hotelAc;
             const overnightNote = spec?.overnightAtEnd
-              ? `<div class="leg-overnight">🏨 Hier endet der Fahrtag. Ereignis mit drei Möglichkeiten: sehr gutes Hotel (AC über Nacht, Spa und Buffet, teuer, Stress sinkt stark), Budgethotel (stressneutral, günstig, kein Laden) oder kostenlos im Auto an der Aire (Stress steigt, 10&nbsp;% Einbruch).</div>`
+              ? `<div class="leg-overnight">🏨 Übernachtung (8 Std.). Hotel mit AC und Frühstück: ${HOTEL_AC.lodgingEur}&nbsp;€.
+                ${hotelAc?.legIndex === lf.legIndex
+                  ? `Akku ${Math.round(hotelAc.arriveSoc)} → ${Math.round(hotelAc.departSoc)}&nbsp;% (${hotelAc.minutes} Min. Ladezeit). ${hotelAc.reachable ? `Am Reiseziel: ${Math.round(hotelAc.finalSocPct)}&nbsp;%.` : 'Die Reichweite reicht auch mit Hotel-AC nicht bis ans Ziel.'}`
+                  : 'Das Hotel ist mit dem aktuellen Ladeplan nicht erreichbar.'}
+                Die Hauptprognose rechnet mit der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Übernachten im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
               : '';
             return `
             ${directionHeader}
@@ -537,14 +553,14 @@ export class PlanningUI {
                 ${speedSignHtml(lf.speedLimitKmh)}
                 <div class="leg-title-block">
                   <strong>${isSelectedLeg ? '📍 ' : ''}Etappe ${lf.legIndex + 1}: ${lf.label}</strong>
-                  <span class="leg-meta">${lf.highwayName} · ${lf.distanceKm} km · ⛰️ +${lf.elevationGainM}/-${lf.elevationLossM}m · 🚦 Stau ${trafficPct}% · ${lf.weather}</span>
+                  <span class="leg-meta">${lf.highwayName} · ${lf.distanceKm} km · ⛰️ +${lf.elevationGainM}/-${lf.elevationLossM}m · 🚦 Stau ${trafficPct}% · ${lf.weather}${edgeForLeg?.tollEur ? ` · Maut ${edgeForLeg.tollEur.toFixed(2)} €` : ''}</span>
                 </div>
                 <div class="leg-soc ${lf.endSocPct < 10 ? 'danger' : ''}">
                   ${lf.startSocPct}% → <strong>${lf.endSocPct}%</strong>
                 </div>
               </div>
               <div class="leg-controls">
-                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
+                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> (max. ${sliderMax}) · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
                 <input type="range" class="leg-speed-slider${overLimit ? ' over-limit' : ''}" data-leg="${lf.legIndex}" data-sign="${signKmh}" min="${sliderMin}" max="${sliderMax}" step="5" value="${speedVal}"${overLimit ? ' title="über dem Temposchild"' : ''} />
                 ${riskBadge}
               </div>
@@ -558,7 +574,9 @@ export class PlanningUI {
                           ss => `
                           <div class="planned-stop-pill">
                             <div class="psp-info">
-                              <span>⚡ <b>${ss.station.name}</b> · Ankunft <strong class="${ss.arriveSoc <= 8 ? 'text-danger' : ''}">${ss.arriveSoc}%</strong> → Abfahrt <strong>${ss.departSoc}%</strong> (~${ss.minutes} Min · ${ss.costEur.toFixed(2)} €)</span>
+                              <span>⚡ <b>${ss.station.name}</b> · Ankunft <strong class="${ss.arriveSoc <= 8 ? 'text-danger' : ''}">${ss.arriveSoc}%</strong>${ss.blockedDepartSoc === undefined
+                                ? ` → Abfahrt <strong>${ss.departSoc}%</strong> (~${ss.minutes} Min · ${ss.costEur.toFixed(2)} €)`
+                                : ` · Abfahrt bei freiem Platz (50&nbsp;%): <strong>${ss.departSoc}%</strong> (${ss.minutes} Min · ${ss.costEur.toFixed(2)} €) · bei Belegung: <strong>${ss.blockedDepartSoc}%</strong>`}</span>
                               <label class="psp-soc-ctl">
                                 Ladeziel <strong data-soc-readout="${ss.station.id}-${lf.legIndex}">${Math.min(100, Math.max(Math.ceil(ss.arriveSoc), ss.targetSocPct))}%</strong>
                                 <input type="range" class="stop-target-slider" data-chg-id="${ss.station.id}" data-leg-idx="${lf.legIndex}" min="${Math.min(99, Math.max(1, Math.ceil(ss.arriveSoc)))}" max="100" step="1" value="${Math.min(100, Math.max(Math.ceil(ss.arriveSoc), ss.targetSocPct))}" />
@@ -610,12 +628,14 @@ export class PlanningUI {
                   ${st.isAcOnly ? '· AC langsam' : ''}
                 </div>
                 ${
-                  st.network === 'ac_dorfladen'
+                  st.fairStay
+                    ? `<div class="chg-flavour">Optional beim Messebesuch. Bis zu ${MESSE_CHARGE_MINUTES} Min AC-Laden innerhalb des Besuchs.</div>`
+                    : st.network === 'ac_dorfladen'
                     ? `<div class="chg-flavour">Dorfladen-AC, 0,29 €/kWh Ad-hoc. Langsam, dafür günstiger Atomstrom aus dem französischen Netz.</div>`
                     : ''
                 }
                 <div class="chg-actions">
-                  <button type="button" class="er-mini-btn add-stop-btn" data-chg-id="${st.id}" data-leg-idx="${selectedLegIndex}" ${plannedHere ? 'disabled' : ''}>${plannedHere ? '✓ Eingeplant' : '+ Stopp einplanen'}</button>
+                  <button type="button" class="er-mini-btn add-stop-btn" data-chg-id="${st.id}" data-leg-idx="${selectedLegIndex}" ${plannedHere ? 'disabled' : ''}>${plannedHere ? '✓ Eingeplant' : st.fairStay ? '+ Messe-AC einplanen' : '+ Stopp einplanen'}</button>
                 </div>
               </div>
             `;
@@ -631,6 +651,7 @@ export class PlanningUI {
     level: LevelConfig,
     plan: TripPlan,
     save: CampaignSave,
+    forecast: PlanForecast,
     selectedLegIndex: number,
     providerFilter?: ProviderFilterMap,
     showChargerStations = true
@@ -697,7 +718,7 @@ export class PlanningUI {
       btn.addEventListener('click', () => {
         SoundFX.click();
         this.activeTab = (btn as HTMLElement).dataset.ptab as 'car' | 'subs' | 'route';
-        this.render(level, plan, save, selectedLegIndex, providerFilter, showChargerStations);
+        this.render(level, plan, save, forecast, selectedLegIndex, providerFilter, showChargerStations);
       });
     });
 
@@ -709,9 +730,6 @@ export class PlanningUI {
         if (v.unlockLevel > save.unlockedLevelOrder) return;
         SoundFX.click();
         plan.vehicleId = id;
-        if (v.isTesla && !plan.subscriptionIds.includes('tesla_suc')) {
-          plan.subscriptionIds.push('tesla_suc');
-        }
         this.cb.onPlanChanged();
       });
     });
@@ -719,7 +737,7 @@ export class PlanningUI {
     this.root.querySelectorAll('.sub-toggle').forEach(cbEl => {
       cbEl.addEventListener('change', () => {
         const id = (cbEl as HTMLElement).dataset.subId;
-        if (!id || id === 'adhoc') return;
+        if (!id || id === 'adhoc' || (id === 'tesla_suc' && getVehicleById(plan.vehicleId).isTesla)) return;
         SoundFX.click();
         const checked = (cbEl as HTMLInputElement).checked;
         if (checked && !plan.subscriptionIds.includes(id)) {

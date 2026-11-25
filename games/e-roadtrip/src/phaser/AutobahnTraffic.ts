@@ -9,6 +9,8 @@ export interface HighwayCar {
   taillight?: Phaser.GameObjects.Image;
   blinkL?: Phaser.GameObjects.Image;
   blinkR?: Phaser.GameObjects.Image;
+  /** Vorzeichenbehafteter Abstand zum Spieler entlang der Straße. */
+  distanceKm: number;
   lanePos: number;
   targetLane: number;
   pendingLane: number | null;
@@ -51,36 +53,52 @@ export function baseSpeed(kind: HighwayKind): number {
   return Phaser.Math.Between(100, 120);
 }
 
-function sameLane(a: number, b: number): boolean {
-  return Math.abs(a - b) < 0.45;
+// 120 km/h entsprechen bei normalem Tempo 280 px/s. Die Verkehrslogik läuft in Echtzeit.
+export const HIGHWAY_PX_PER_KM = 8400;
+export const LANE_CHANGE_PER_SEC = 1.45;
+const CHANGE_SECONDS = 1 / LANE_CHANGE_PER_SEC;
+
+type VehicleOnRoad = {
+  distanceKm: number;
+  lanes: number[];
+  kind: HighwayKind | 'player';
+  speedKmh: number;
+};
+
+function occupiedLanes(car: HighwayCar): number[] {
+  if (car.lanePos === car.targetLane) return [car.targetLane];
+  const from = car.lanePos < car.targetLane ? Math.floor(car.lanePos) : Math.ceil(car.lanePos);
+  return [from, car.targetLane];
 }
 
-function gapAhead(cars: HighwayCar[], car: HighwayCar, range: number): number {
-  let best = range + 1;
-  for (const other of cars) {
-    if (other === car || !sameLane(other.lanePos, car.lanePos)) continue;
-    const dy = car.sprite.y - other.sprite.y;
-    if (dy > 18 && dy < best) best = dy;
-  }
-  return best;
+/** Mindestabstand von Fahrzeugmitte zu Fahrzeugmitte in der Projektion. */
+export function bumperGap(kindA: VehicleOnRoad['kind'], kindB: VehicleOnRoad['kind']): number {
+  const half = (kind: VehicleOnRoad['kind']) => (kind === 'truck' ? 44 : 28);
+  return half(kindA) + half(kindB) + 18;
 }
 
-function laneClear(
+function hasMergeRoom(
+  distanceKm: number,
+  speedKmh: number,
+  other: Pick<VehicleOnRoad, 'distanceKm' | 'speedKmh'>,
+  rangePx: number
+): boolean {
+  const gap = other.distanceKm - distanceKm;
+  const projectedGap = gap + ((other.speedKmh - speedKmh) * CHANGE_SECONDS) / 3600;
+  return gap * projectedGap > 0 && Math.min(Math.abs(gap), Math.abs(projectedGap)) * HIGHWAY_PX_PER_KM >= rangePx;
+}
+
+function canChange(
   cars: HighwayCar[],
   car: HighwayCar,
   lane: number,
-  playerY?: number,
-  playerLane?: number
+  player: VehicleOnRoad
 ): boolean {
   for (const other of cars) {
-    if (other === car) continue;
-    if (!sameLane(other.lanePos, lane) && Math.abs(other.targetLane - lane) > 0.2) continue;
-    if (Math.abs(other.sprite.y - car.sprite.y) < 150) return false;
+    if (other === car || !occupiedLanes(other).includes(lane)) continue;
+    if (!hasMergeRoom(car.distanceKm, car.speedKmh, other, 150)) return false;
   }
-  if (playerY !== undefined && playerLane !== undefined && Math.abs(playerLane - lane) <= 0.45) {
-    if (Math.abs(playerY - car.sprite.y) < 160) return false;
-  }
-  return true;
+  return !player.lanes.includes(lane) || hasMergeRoom(car.distanceKm, car.speedKmh, player, 160);
 }
 
 function requestChange(
@@ -88,62 +106,80 @@ function requestChange(
   car: HighwayCar,
   to: number,
   maxLane: number,
-  allowReckless: boolean,
-  playerY?: number,
-  playerLane?: number
+  player: VehicleOnRoad
 ): void {
-  if (car.cooldown > 0 || car.pendingLane !== null) return;
-  if (Math.abs(car.lanePos - car.targetLane) > 0.08) return;
-  if (to < 0 || to > maxLane || to === car.targetLane) return;
-  if (!laneClear(cars, car, to, playerY, playerLane)) return;
-  const reckless = allowReckless && car.reckless;
+  if (car.cooldown > 0 || car.pendingLane !== null || car.lanePos !== car.targetLane) return;
+  if (to < 0 || to > maxLane || to === car.targetLane || !canChange(cars, car, to, player)) return;
   car.cooldown = car.kind === 'truck' ? 5 : 2.4;
-  if (reckless) {
-    car.blinkDir = 0;
-    car.blinkHold = 0;
-    car.pendingLane = null;
-    car.targetLane = to;
-    return;
-  }
   car.blinkDir = to < car.targetLane ? -1 : 1;
   car.pendingLane = to;
   car.blinkHold = 0.72;
 }
 
-/** Centre-to-centre gap that keeps the sprites from overlapping, plus a visible cushion. */
-export function bumperGap(kindA: HighwayKind | 'player', kindB: HighwayKind | 'player'): number {
-  const half = (kind: HighwayKind | 'player') => (kind === 'truck' ? 44 : 28);
-  return half(kindA) + half(kindB) + 18;
+function nearestLead(vehicle: VehicleOnRoad, traffic: VehicleOnRoad[], rangePx: number): VehicleOnRoad | undefined {
+  let nearest: VehicleOnRoad | undefined;
+  let clearance = rangePx;
+  for (const other of traffic) {
+    const distance = (other.distanceKm - vehicle.distanceKm) * HIGHWAY_PX_PER_KM;
+    if (distance <= 0 || !vehicle.lanes.some(lane => other.lanes.includes(lane))) continue;
+    const gap = distance - bumperGap(vehicle.kind, other.kind);
+    if (gap < clearance) {
+      nearest = other;
+      clearance = gap;
+    }
+  }
+  return nearest;
 }
 
-/** Real-time motorway traffic. Right lane is 2, middle is 1, left (fast) is 0. */
 export function stepHighwayTraffic(
   cars: HighwayCar[],
   dt: number,
   playerKmh: number,
-  scrollPxPerSec: number,
+  playerLanes: number[],
+  playerY: number,
   viewH: number,
   risk: number,
   rightLaneOpen: boolean,
-  roadLimitKmh = 400,
-  playerY?: number,
-  playerLane?: number
-): void {
+  roadLimitKmh: number
+): number {
+  if (dt <= 0) return playerKmh;
   const maxLane = rightLaneOpen ? 2 : 1;
   const limit = Math.max(40, roadLimitKmh);
+  const player: VehicleOnRoad = { distanceKm: 0, lanes: playerLanes, kind: 'player', speedKmh: playerKmh };
+
+  // Erst die Spurwechsel freigeben. Ein bereits gestarteter Wechsel belegt beide Spuren.
   for (const car of cars) {
     car.cooldown = Math.max(0, car.cooldown - dt);
+    if (car.pendingLane === null) continue;
+    car.blinkHold = Math.max(0, car.blinkHold - dt);
+    if (car.blinkHold > 0) continue;
+    if (car.pendingLane <= maxLane && canChange(cars, car, car.pendingLane, player)) {
+      if (car.pendingLane > car.targetLane) car.yieldRight = false;
+      car.targetLane = car.pendingLane;
+    } else {
+      car.blinkDir = 0;
+      car.cooldown = 0.25;
+    }
+    car.pendingLane = null;
+  }
+
+  const traffic = cars.map(car => ({
+    car,
+    distanceKm: car.distanceKm,
+    lanes: occupiedLanes(car),
+    kind: car.kind,
+    speedKmh: car.speedKmh
+  }));
+  const vehicles = [...traffic, player];
+  for (const vehicle of traffic) {
+    const { car } = vehicle;
     car.pullTimer -= dt;
     if (car.yieldRight && car.kind !== 'truck') {
-      const right = Math.min(maxLane, Math.floor(car.lanePos + 0.15) + 1);
-      if (right > car.targetLane) requestChange(cars, car, right, maxLane, false, playerY, playerLane);
-      if (car.pendingLane === null && car.targetLane >= right && Math.abs(car.lanePos - right) < 0.35) {
-        car.yieldRight = false;
-      }
+      const right = Math.min(maxLane, car.targetLane + 1);
+      if (right > car.targetLane) requestChange(cars, car, right, maxLane, player);
+      if (car.targetLane >= maxLane) car.yieldRight = false;
     }
-    if (!rightLaneOpen && car.targetLane > 1 && car.pendingLane === null && Math.abs(car.lanePos - car.targetLane) < 0.08) {
-      requestChange(cars, car, 1, maxLane, false, playerY, playerLane);
-    }
+    if (!rightLaneOpen && car.targetLane === 2) requestChange(cars, car, 1, maxLane, player);
 
     let desired = Math.min(limit, car.baseDesired);
     if (car.kind === 'fast') {
@@ -155,83 +191,76 @@ export function stepHighwayTraffic(
       desired = car.braking ? Math.min(limit, Math.max(limit * 0.86, car.baseDesired - 10)) : Math.min(limit, car.baseDesired + 6);
     }
 
-    let aheadGap = gapAhead(cars, car, 260);
-    let lead = desired;
-    const follow = bumperGap(car.kind, 'car');
-    let blocked = false;
-    if (aheadGap < 260) {
-      for (const other of cars) {
-        if (other === car || !sameLane(other.lanePos, car.lanePos)) continue;
-        const dy = car.sprite.y - other.sprite.y;
-        if (dy > 12 && dy <= aheadGap + 2) lead = other.speedKmh;
-      }
-    }
-    if (playerY !== undefined && playerLane !== undefined && sameLane(car.lanePos, playerLane)) {
-      const dy = car.sprite.y - playerY;
-      if (dy > 12 && dy < aheadGap) {
-        aheadGap = dy;
-        lead = playerKmh;
-      }
-    }
-    if (aheadGap < 260 && lead < desired + 1) {
-      if (aheadGap < follow) {
-        const crush = Math.max(0, Math.min(1, (follow - aheadGap) / follow));
-        desired = Math.min(desired, Math.max(32, lead - 16 * crush));
-        blocked = true;
-      } else if (lead < desired) {
-        const room = Math.min(1, (aheadGap - follow) / 110);
-        desired = Math.min(desired, lead + (desired - lead) * room);
-        if (lead + 8 < Math.min(limit, car.baseDesired) && aheadGap < follow + 90) blocked = true;
-      }
-    }
-
-    const closing = aheadGap < follow + 24;
-    const accel = car.kind === 'truck' ? (car.speedKmh < desired ? 18 : 36) : closing ? 130 : car.speedKmh < desired ? 42 : 80;
+    const lead = nearestLead(vehicle, vehicles, 170);
+    const gap = lead ? (lead.distanceKm - car.distanceKm) * HIGHWAY_PX_PER_KM : Infinity;
+    const follow = lead ? bumperGap(car.kind, lead.kind) : 78;
+    const blocked = !!lead && lead.speedKmh + 8 < desired && gap < follow + 90;
+    if (lead) desired = followSpeedKmh(desired, gap, lead.speedKmh, follow);
+    const accel = car.kind === 'truck' ? (car.speedKmh < desired ? 18 : 36) : gap < follow + 24 ? 130 : car.speedKmh < desired ? 42 : 80;
     if (car.speedKmh < desired) car.speedKmh = Math.min(desired, car.speedKmh + accel * dt);
     else car.speedKmh = Math.max(desired, car.speedKmh - accel * dt);
 
     if (blocked && car.kind === 'car' && car.targetLane > 0) {
-      requestChange(cars, car, car.targetLane - 1, maxLane, false, playerY, playerLane);
+      requestChange(cars, car, car.targetLane - 1, maxLane, player);
     }
     if (blocked && car.kind === 'fast' && car.reckless && Math.random() < dt * 0.35) {
-      requestChange(cars, car, Math.min(maxLane, car.targetLane + 1), maxLane, true, playerY, playerLane);
+      requestChange(cars, car, car.targetLane + 1, maxLane, player);
     }
     if (car.kind === 'truck' && car.pullTimer <= 0) {
       car.pullTimer = Phaser.Math.FloatBetween(3.2, 6.5);
       const often = risk >= 0.32 ? 0.62 : 0.18;
-      if (car.targetLane >= 2 && Math.random() < often) requestChange(cars, car, 1, maxLane, false, playerY, playerLane);
-      else if (car.targetLane === 1) requestChange(cars, car, Math.min(2, maxLane), maxLane, false, playerY, playerLane);
+      if (rightLaneOpen && car.targetLane === 2 && Math.random() < often) requestChange(cars, car, 1, maxLane, player);
+      else if (car.targetLane === 1) requestChange(cars, car, maxLane, maxLane, player);
     }
+    vehicle.speedKmh = car.speedKmh;
+  }
 
-    if (car.blinkHold > 0) {
-      car.blinkHold -= dt;
-      if (car.blinkHold <= 0 && car.pendingLane !== null) {
-        car.targetLane = Phaser.Math.Clamp(car.pendingLane, 0, maxLane);
-        car.pendingLane = null;
+  // Jede Spur behält ihren eigenen Vordermann. Ein Wechsel verknüpft nur die
+  // Abstandsgrenzen des wechselnden Fahrzeugs mit seinen beiden Spuren.
+  const frontByLane: VehicleOnRoad[] = [];
+  for (const vehicle of vehicles.sort((a, b) => b.distanceKm - a.distanceKm)) {
+    for (const lane of vehicle.lanes) {
+      const front = frontByLane[lane];
+      if (front) {
+        const spaceKm = front.distanceKm - vehicle.distanceKm - bumperGap(front.kind, vehicle.kind) / HIGHWAY_PX_PER_KM;
+        vehicle.speedKmh = Math.min(vehicle.speedKmh, front.speedKmh + (Math.max(0, spaceKm) * 3600) / dt);
       }
+      frontByLane[lane] = vehicle;
     }
+  }
+
+  for (const { car, speedKmh } of traffic) {
+    car.speedKmh = speedKmh;
+    car.distanceKm += ((speedKmh - player.speedKmh) * dt) / 3600;
     const diff = car.targetLane - car.lanePos;
-    if (Math.abs(diff) < 0.02) {
+    const laneStep = LANE_CHANGE_PER_SEC * dt;
+    if (Math.abs(diff) <= laneStep) {
       car.lanePos = car.targetLane;
       if (car.pendingLane === null) car.blinkDir = 0;
     } else {
-      car.lanePos += Math.sign(diff) * Math.min(Math.abs(diff), 1.45 * dt);
-      if (car.blinkDir === 0 && !car.reckless) car.blinkDir = diff < 0 ? -1 : 1;
+      car.lanePos += Math.sign(diff) * laneStep;
     }
+  }
+  recycleOffscreenCars(cars, playerY, viewH, limit, maxLane);
+  return player.speedKmh;
+}
 
-    const dy = ((playerKmh - car.speedKmh) * scrollPxPerSec) / Math.max(70, playerKmh);
-    car.sprite.y += dy * dt;
-    if (car.sprite.y > viewH + 130) {
-      car.sprite.y = -180 - Math.random() * 220;
-      car.speedKmh = Math.min(limit, car.baseDesired);
-      const home = car.kind === 'truck' ? Math.min(2, maxLane) : car.kind === 'fast' ? 0 : Math.min(1, maxLane);
-      car.targetLane = home;
-      car.lanePos = home;
-      car.pendingLane = null;
-      car.blinkDir = 0;
-    } else if (car.sprite.y < -360) {
-      car.sprite.y = viewH + 30;
-    }
+function recycleOffscreenCars(cars: HighwayCar[], playerY: number, viewH: number, limit: number, maxLane: number): void {
+  for (const car of cars) {
+    const y = playerY - car.distanceKm * HIGHWAY_PX_PER_KM;
+    if (y >= -360 && y <= viewH + 220) continue;
+    const home = car.kind === 'truck' ? maxLane : car.kind === 'fast' ? 0 : 1;
+    const spawnY = y < -360 ? viewH + 140 : -180 - Math.random() * 150;
+    const distanceKm = (playerY - spawnY) / HIGHWAY_PX_PER_KM;
+    const speedKmh = Math.min(limit, car.baseDesired);
+    if (!laneIsClear(cars, home, distanceKm, speedKmh)) continue;
+    car.distanceKm = distanceKm;
+    car.speedKmh = speedKmh;
+    car.targetLane = home;
+    car.lanePos = home;
+    car.pendingLane = null;
+    car.blinkDir = 0;
+    car.blinkHold = 0;
   }
 }
 
@@ -242,117 +271,44 @@ export function preferredPlayerLane(speedKmh: number, rightLaneOpen: boolean): n
   return 0;
 }
 
-export function laneIsClear(cars: HighwayCar[], lane: number, y: number, range = 168): boolean {
-  for (const car of cars) {
-    const inLane = Math.abs(car.lanePos - lane) <= 0.55;
-    const entering = Math.abs(car.targetLane - lane) <= 0.35 && Math.abs(car.lanePos - lane) < 0.8;
-    if (!inLane && !entering) continue;
-    if (Math.abs(car.sprite.y - y) < range) return false;
-  }
-  return true;
+export function laneIsClear(cars: HighwayCar[], lane: number, distanceKm: number, speedKmh: number, rangePx = 168): boolean {
+  return cars.every(car => !occupiedLanes(car).includes(lane) || hasMergeRoom(distanceKm, speedKmh, car, rangePx));
 }
 
-export function leadVehicle(cars: HighwayCar[], lane: number, y: number, range: number): HighwayCar | null {
-  let best: HighwayCar | null = null;
-  let bestDy = range;
+export function leadVehicle(cars: HighwayCar[], lane: number, rangePx: number): HighwayCar | null {
+  let nearest: HighwayCar | null = null;
+  let clearance = Infinity;
   for (const car of cars) {
-    if (Math.abs(car.lanePos - lane) > 0.55 && Math.abs(car.targetLane - lane) > 0.35) continue;
-    const dy = y - car.sprite.y;
-    if (dy > 16 && dy < bestDy) {
-      bestDy = dy;
-      best = car;
+    if (car.distanceKm <= 0 || !occupiedLanes(car).includes(lane)) continue;
+    const distance = car.distanceKm * HIGHWAY_PX_PER_KM;
+    if (distance >= rangePx) continue;
+    const gap = distance - bumperGap('player', car.kind);
+    if (gap < clearance) {
+      nearest = car;
+      clearance = gap;
     }
   }
-  return best;
+  return nearest;
 }
 
-/** Set speed is the ceiling. Inside the comfort gap the car matches the leader instead of diving away. */
-export function followSpeedKmh(maxKmh: number, gapPx: number | null, leadKmh: number | null): number {
-  if (gapPx === null || leadKmh === null) return maxKmh;
-  const minGap = 78;
-  const comfort = 200;
-  if (gapPx < minGap) {
-    const crush = Math.max(0, Math.min(1, (minGap - gapPx) / minGap));
-    return Math.max(36, Math.min(maxKmh, leadKmh - 20 * crush));
-  }
+export function followSpeedKmh(maxKmh: number, gapPx: number, leadKmh: number, minGap = 78): number {
+  const comfort = minGap + 122;
+  if (gapPx <= minGap) return Math.min(maxKmh, leadKmh);
   if (gapPx >= comfort) return maxKmh;
   const t = (gapPx - minGap) / (comfort - minGap);
   return Math.min(maxKmh, leadKmh) + (maxKmh - Math.min(maxKmh, leadKmh)) * t * t;
 }
 
-function inPlayerLane(car: HighwayCar, lanes: number[]): boolean {
-  return lanes.some(lane => Math.abs(car.lanePos - lane) <= 0.5 || Math.abs(car.targetLane - lane) <= 0.35);
-}
-
-/**
- * Keep a hard gap in every lane. Cars ahead of the player are packed forward;
- * a later car is never pushed back into the one in front or into the player.
- */
-export function enforceTrafficGaps(
-  cars: HighwayCar[],
-  player: { y: number; lanes: number[]; speedKmh: number } | null
-): number {
-  let pops = 0;
-  const place = (car: HighwayCar, toY: number, speedCap?: number) => {
-    if (toY < car.sprite.y - 0.5 || toY > car.sprite.y + 0.5) {
-      if (Math.abs(car.sprite.y - toY) > 8) pops += 1;
-      car.sprite.y = toY;
-    }
-    if (speedCap !== undefined && car.speedKmh > speedCap) car.speedKmh = speedCap;
-  };
-
-  const lanes = new Set<number>();
-  for (const car of cars) lanes.add(Math.round(car.lanePos));
-  for (const lane of lanes) {
-    if (player && player.lanes.some(held => Math.abs(held - lane) < 0.1)) continue;
-    const group = cars
-      .filter(car => Math.abs(car.lanePos - lane) <= 0.48)
-      .sort((a, b) => a.sprite.y - b.sprite.y);
-    for (let i = 1; i < group.length; i++) {
-      const front = group[i - 1];
-      const rear = group[i];
-      const need = bumperGap(front.kind, rear.kind);
-      if (rear.sprite.y - front.sprite.y < need) place(rear, front.sprite.y + need, front.speedKmh);
-    }
-  }
-
-  if (!player) return pops;
-  const mine = cars.filter(car => inPlayerLane(car, player.lanes));
-  const ahead = mine.filter(car => car.sprite.y <= player.y).sort((a, b) => b.sprite.y - a.sprite.y);
-  let rearY = player.y;
-  let rearKind: HighwayKind | 'player' = 'player';
-  for (const car of ahead) {
-    const need = bumperGap(rearKind, car.kind);
-    const maxY = rearY - need;
-    if (car.sprite.y > maxY) place(car, maxY);
-    rearY = car.sprite.y;
-    rearKind = car.kind;
-  }
-  const behind = mine.filter(car => car.sprite.y > player.y).sort((a, b) => a.sprite.y - b.sprite.y);
-  rearY = player.y;
-  rearKind = 'player';
-  for (const car of behind) {
-    const need = bumperGap(rearKind, car.kind) * (rearKind === 'player' ? 0.9 : 1);
-    const minY = rearY + need;
-    if (car.sprite.y < minY) place(car, minY, Math.max(36, player.speedKmh - 6));
-    rearY = car.sprite.y;
-    rearKind = car.kind;
-  }
-  return pops;
-}
-
-/** Sprites whose bodies occupy the same lane. The cushion inside bumperGap is ignored. */
-export function countSpriteOverlaps(cars: HighwayCar[], playerY: number, playerLanes: number[]): number {
+export function countSpriteOverlaps(cars: HighwayCar[], playerLanes: number[]): number {
   let count = 0;
   for (const car of cars) {
     const near = playerLanes.some(lane => Math.abs(car.lanePos - lane) <= 0.48);
-    if (!near) continue;
-    if (Math.abs(playerY - car.sprite.y) < bumperGap('player', car.kind) - 16) count += 1;
+    if (near && Math.abs(car.distanceKm) * HIGHWAY_PX_PER_KM < bumperGap('player', car.kind) - 16) count += 1;
   }
   for (let i = 0; i < cars.length; i++) {
     for (let j = i + 1; j < cars.length; j++) {
       if (Math.abs(cars[i].lanePos - cars[j].lanePos) > 0.48) continue;
-      if (Math.abs(cars[i].sprite.y - cars[j].sprite.y) < bumperGap(cars[i].kind, cars[j].kind) - 16) count += 1;
+      if (Math.abs(cars[i].distanceKm - cars[j].distanceKm) * HIGHWAY_PX_PER_KM < bumperGap(cars[i].kind, cars[j].kind) - 16) count += 1;
     }
   }
   return count;

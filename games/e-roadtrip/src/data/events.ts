@@ -1,5 +1,7 @@
 import { GameEventDef, WifeDialogueDef } from '../types';
 
+export const HOTEL_AC = { maxKw: 11, stayMinutes: 480, targetSocPct: 95, lodgingEur: 289 };
+
 export const GAME_EVENTS: Record<string, GameEventDef> = {
   evt_accident_help: {
     id: 'evt_accident_help',
@@ -131,13 +133,15 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
       {
         id: 'quick_pitstop',
         label: 'Kurzer 8-Min-Raststätten-Stopp (ohne Laden)',
-        hint: '+8 Min · 5,50 € Kaffee · -18 Stress',
+        hint: '+8 Min · 5,50 € Kaffee · WC · −18 Stress',
         timeDeltaMin: 8,
         socDeltaPct: 0,
-        costDeltaEur: 5.5,
+        costDeltaEur: 0,
+        pauseCostEur: 5.5,
+        resetBladder: true,
         stressDelta: -18,
         decisionPoints: 10,
-        resultText: 'Frischer Kaffee und kurze Beine-vertreten-Pause wirken Wunder für die Stimmung.'
+        resultText: 'Toilette, frischer Kaffee und kurz die Beine vertreten: Die Stimmung bessert sich.'
       },
       {
         id: 'combine_charge',
@@ -149,7 +153,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         stressDelta: -12,
         decisionPoints: 16,
         insertNearestCharger: true,
-        resultText: 'Clever kombiniert: Ladepause + WC auf einen Schlag!'
+        resultText: 'Der Ladestopp ist eingeplant. Dort könnt ihr in der Ladepause aufs WC.'
       },
       {
         id: 'hold_on',
@@ -318,7 +322,9 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         hint: '+15 Min · 12 € · -24 Stress',
         timeDeltaMin: 15,
         socDeltaPct: 0,
-        costDeltaEur: 12,
+        costDeltaEur: 0,
+        pauseCostEur: 12,
+        hungerDelta: -25,
         stressDelta: -24,
         decisionPoints: 12,
         resultText: 'Nach 15 Minuten und zwei Kugeln Eis herrscht wieder himmlische Ruhe.'
@@ -389,17 +395,19 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         socDeltaPct: -1,
         costDeltaEur: 0,
         stressDelta: 8,
+        resetBladder: true,
         decisionPoints: 10,
         resultText: 'Die nächste Aire ist erträglich. Frau und Kinder sind trotzdem genervt von der Warterei.'
       },
       {
         id: 'use_anyway',
         label: 'Trotzdem diese Toiletten benutzen',
-        hint: 'Keine Umwegzeit · Stress für Frau und Kinder steigt deutlich',
+        hint: '+6 Min · Toilettendrang auf 0 % · Stress steigt deutlich',
         timeDeltaMin: 6,
         socDeltaPct: 0,
         costDeltaEur: 0,
         stressDelta: 22,
+        resetBladder: true,
         decisionPoints: -4,
         resultText: 'Frau und Kinder kommen wütend zurück. Die Stimmung im Auto ist spürbar schlechter.'
       },
@@ -429,22 +437,22 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
       {
         id: 'hotel_good',
         label: 'Sehr gutes Hotel: AC über Nacht, Spa und Buffet',
-        hint: '289 € · 8 Stunden · Akku am Morgen hoch · Stress von Frau und Kindern sinkt stark',
-        timeDeltaMin: 480,
+        hint: `${HOTEL_AC.lodgingEur} € · 8 Stunden · AC bis ${HOTEL_AC.maxKw} kW inklusive · Frühstück und Erholung`,
+        timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: 0,
         costDeltaEur: 0,
-        lodgingDeltaEur: 289,
-        setSocPct: 95,
+        lodgingDeltaEur: HOTEL_AC.lodgingEur,
+        hungerDelta: -70,
         stressDelta: -36,
         decisionPoints: 14,
         resultText:
-          'Suite, Spa und Frühstücksbuffet. Frau und Kinder sind richtig erholt. Die Wallbox hat das Auto über Nacht auf einen hohen Stand geladen. Der Preis ist gesalzen.'
+          'Suite, Spa und Frühstücksbuffet. Frau und Kinder sind satt und erholt. Der Preis ist gesalzen.'
       },
       {
         id: 'hotel_budget',
         label: 'Budgethotel ohne Laden',
         hint: '84 € · 8 Stunden · Stress neutral · Akku bleibt, wie er ist',
-        timeDeltaMin: 480,
+        timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: 0,
         costDeltaEur: 0,
         lodgingDeltaEur: 84,
@@ -456,7 +464,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         id: 'sleep_car',
         label: 'Im Auto an der Autobahn-Aire schlafen',
         hint: '0 € · 8 Stunden · Stress steigt · 10 % Risiko auf Einbruch',
-        timeDeltaMin: 480,
+        timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: -2,
         costDeltaEur: 0,
         lodgingDeltaEur: 0,
@@ -535,7 +543,9 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         hint: '+20 Min · Stress sinkt · dann Rückfahrt',
         timeDeltaMin: 20,
         socDeltaPct: 0,
-        costDeltaEur: 8,
+        costDeltaEur: 0,
+        pauseCostEur: 8,
+        hungerDelta: -20,
         stressDelta: -14,
         decisionPoints: 10,
         resultText: 'Eis, ein Blick aufs Meer, kürzere Nerven. Danach geht es zurück Richtung Aachen.'
@@ -559,7 +569,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     title: 'Lichthupe und zu dicht',
     category: 'police',
     icon: '🚨',
-    description: 'Zu dicht aufgefahren, links geblinkt und die Lichthupe gegeben. Eine Kontrolle hat das gesehen.',
+    description: 'Du hast dem Vordermann aus kurzer Distanz Lichthupe gegeben. Die Polizei hat es gesehen.',
     choices: [
       {
         id: 'tailgate_pay',
@@ -657,7 +667,7 @@ export function speedingFineEur(country: string, excessKmh: number): { amountEur
   return { amountEur, label: `Radarkontrolle (+${over} km/h)` };
 }
 
-/** Fresh event so the fine matches this flash, not a shared template. */
+/** Das Radar ist in Sicht, die Messung steht noch bevor. */
 export function buildSpeedTrapEvent(ctx: { country: string; signKmh: number; actualKmh: number }): GameEventDef {
   const excess = Math.max(0, ctx.actualKmh - ctx.signKmh);
   const fine = speedingFineEur(ctx.country, excess);
@@ -670,8 +680,8 @@ export function buildSpeedTrapEvent(ctx: { country: string; signKmh: number; act
     category: 'police',
     icon: '📸',
     description: french
-      ? `Ein Radar automatique hat dich erfasst. Du fährst ${driven} km/h, erlaubt sind ${ctx.signKmh} km/h.`
-      : `Blitzer. Du fährst ${driven} km/h, das Schild sagt ${ctx.signKmh}.`,
+      ? `Vor dir steht ein Radar automatique. Du fährst ${driven} km/h, erlaubt sind ${ctx.signKmh} km/h.`
+      : `Du siehst vor dir ein Radargerät. Du fährst ${driven} km/h, erlaubt sind ${ctx.signKmh} km/h.`,
     requiresSpeeding: true,
     choices: [
       {
@@ -709,7 +719,7 @@ export function buildTailgateEvent(country: string, amountEur: number): GameEven
   const choice = base.choices[0];
   return {
     ...base,
-    description: `Zu dicht aufgefahren, links geblinkt und die Lichthupe gegeben. Kontrolle in ${where}.`,
+    description: `Du hast dem Vordermann aus kurzer Distanz Lichthupe gegeben. Kontrolle: ${where}.`,
     choices: [
       {
         ...choice,

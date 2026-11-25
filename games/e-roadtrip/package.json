@@ -5,7 +5,8 @@
   "description": "E-Roadtrip – Pixel-Art E-Car Roadtrip Planning & GTA-2 Style Driving Game (Phaser 3 + TypeScript)",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "node esbuild.mjs"
+    "build": "node esbuild.mjs",
+    "test": "node tests/run.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.25.0",

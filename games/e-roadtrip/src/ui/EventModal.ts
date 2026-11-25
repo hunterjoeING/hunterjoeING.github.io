@@ -11,8 +11,11 @@ import {
   WifeDialogueDef
 } from '../types';
 import { getVehicleById } from '../data/vehicles';
-import { estimateChargeSession, getChargingPowerKw } from '../sim/EnergyModel';
-import { findNearestAvailableCharger, predictLiveTripSoc } from '../sim/RoutePlanner';
+import {
+  CHARGE_SETUP_MINUTES, getBestPriceForStation, getChargingPowerKw, isAcCharger, measureChargeStep
+} from '../sim/EnergyModel';
+import { applyPauseNeeds, PauseEffects } from '../sim/PauseEffects';
+import { findReachableAdditionalStop, MESSE_CHARGE_MINUTES, NO_REACHABLE_CHARGER, predictLiveTripSoc, stopKey } from '../sim/RoutePlanner';
 import { SoundFX } from '../phaser/SoundFX';
 import { playBreakPixelAnimation } from './BreakPixelAnim';
 import { renderVehicleTouchscreenHtml } from './TouchscreenWidget';
@@ -21,11 +24,8 @@ export interface ChargingCompletePayload {
   addedKwh: number;
   minutesSpent: number;
   chargingCostEur: number;
-  breakCostEur: number;
   newSoc: number;
-  stressDelta: number;
-  hungerDelta: number;
-  resetBladder: boolean;
+  activities: PauseEffects[];
   takenBreaks: string[];
 }
 
@@ -108,7 +108,11 @@ export class EventModal {
     });
   }
 
-  public showMesseVisit(onConfirm: (choice: { charge: boolean; eat: boolean }) => string, onResume: () => void): void {
+  public showMesseVisit(
+    options: { chargePlanned: boolean; chargerAvailable: boolean },
+    onConfirm: (choice: { charge: boolean; eat: boolean }) => string,
+    onResume: () => void
+  ): void {
     this.modalEl.classList.remove('hidden');
     this.modalEl.innerHTML = `
       <div class="er-modal-card">
@@ -119,8 +123,8 @@ export class EventModal {
             <h3>Messebesuch</h3>
           </div>
         </div>
-        <p class="er-modal-body">Der Termin dauert etwa 4 Stunden. Die Toilette ist automatisch dabei. AC-Laden am Parkplatz ist freiwillig: 6 Punkte, 22 kW, und nur etwa jeder zweite ist frei.</p>
-        <label class="messe-opt"><input type="checkbox" id="messe-charge" /> <span><strong>AC am Messeparkplatz</strong><br />6 Ladepunkte, 50 % Chance, dass einer frei ist.</span></label>
+        <p class="er-modal-body">Der Termin dauert etwa 4 Stunden. Die Toilette ist automatisch dabei.</p>
+        ${options.chargerAvailable ? `<label class="messe-opt"><input type="checkbox" id="messe-charge" ${options.chargePlanned ? 'checked' : ''} /> <span><strong>AC am Messeparkplatz</strong><br />${MESSE_CHARGE_MINUTES} Min Ladezeit, 6 Ladepunkte mit je 22 kW, 50 % Chance auf einen freien Platz.</span></label>` : ''}
         <label class="messe-opt"><input type="checkbox" id="messe-eat" /> <span><strong>In der Messe essen</strong><br />−50 €, Hunger sinkt deutlich.</span></label>
         <div id="messe-actions" class="er-modal-choices">
           <button type="button" class="er-primary-btn" id="messe-go">Vier Stunden bleiben</button>
@@ -150,28 +154,21 @@ export class EventModal {
           onResume();
         });
       }
-    });
+    }, { once: true });
   }
 
   public showWifeStressDialogue(
     dlg: WifeDialogueDef,
     level: LevelConfig,
     run: RunState,
-    onApplyRouteAction: (action: 'insert_stop' | 'eco_speed') => string,
+    onApplyRouteAction: (action: 'insert_stop' | 'eco_speed', stop?: { legIndex: number; station: ChargerStation }) => string,
     onSelectReply: (choice: WifeDialogueChoice, routeChanged: boolean) => void,
     onResume: () => void
   ): void {
     let routeChanged = false;
     let routeFeedback = '';
-    const nearest = findNearestAvailableCharger(
-      level,
-      run.plan,
-      run.currentLegIndex,
-      0.2,
-      [...run.completedStopIds, ...run.plan.plannedStops.map(s => s.chargerId)]
-    );
-
     const render = () => {
+      const nearest = findReachableAdditionalStop(level, run);
       const stressColor = run.stress > 65 ? '#ef4444' : run.stress > 40 ? '#f59e0b' : '#22c55e';
       const pred = predictLiveTripSoc(level, run);
       this.modalEl.classList.remove('hidden');
@@ -202,7 +199,7 @@ export class EventModal {
                   ? `<button type="button" class="er-mini-btn" id="btn-wife-add-stop" ${routeChanged ? 'disabled' : ''}>
                       ⚡ +${dlg.suggestedQuickStopMinutes} Min Zwischenstopp: ${nearest.station.name}
                      </button>`
-                  : `<span class="wme-note">Nächster Ladestopp ist bereits eingeplant.</span>`
+                  : `<span class="wme-note">${NO_REACHABLE_CHARGER}</span>`
               }
               <button type="button" class="er-mini-btn" id="btn-wife-eco">
                 🐢 Tempo auf 115 km/h senken (-22 % Verbrauch)
@@ -229,7 +226,7 @@ export class EventModal {
       this.modalEl.querySelector('#btn-wife-add-stop')?.addEventListener('click', () => {
         SoundFX.click();
         routeChanged = true;
-        routeFeedback = onApplyRouteAction('insert_stop');
+        routeFeedback = onApplyRouteAction('insert_stop', nearest ?? undefined);
         render();
       });
 
@@ -533,29 +530,28 @@ export class EventModal {
     onComplete: (payload: ChargingCompletePayload) => void
   ): void {
     const vehicle = getVehicleById(run.plan.vehicleId);
-    const startSoc = Math.max(2, Math.round(run.socPct));
-    let activeTarget = Math.min(100, Math.max(startSoc, targetSocPct));
-    const est = estimateChargeSession(
-      vehicle,
-      station,
-      startSoc,
-      activeTarget,
-      run.plan.subscriptionIds
-    );
+    let currentSoc = run.socPct;
+    let activeTarget = Math.min(100, Math.max(currentSoc, targetSocPct));
+    const tariff = getBestPriceForStation(station, run.plan.subscriptionIds, vehicle);
+    const ac = isAcCharger(station);
+    const curve = (ac ? [0, 100] : Array.from({ length: 101 }, (_, soc) => soc))
+      .map(soc => ({ soc, kw: getChargingPowerKw(vehicle, station, soc) }));
+    const w = 260;
+    const h = 76;
+    const maxKw = Math.max(10, Math.ceil(Math.max(...curve.map(p => p.kw)) / 10) * 10);
+    const chartX = (soc: number) => (soc / 100) * (w - 16) + 8;
+    const chartY = (kw: number) => h - 10 - (kw / maxKw) * (h - 20);
+    const curvePoints = curve.map(p => `${chartX(p.soc).toFixed(1)},${chartY(p.kw).toFixed(1)}`).join(' ');
 
-    let currentSoc = startSoc;
     let addedKwh = 0;
-    let chargeMinutes = 2.5;
+    let chargeMinutes = CHARGE_SETUP_MINUTES;
     let chargingCostEur = 0;
-    let breakMinutes = 0;
-    let breakCostEur = 0;
-    let breakStressDelta = 0;
-    let hungerDelta = 0;
-    let resetBladder = false;
-    let shownBladder = run.bladderNeed;
-    let shownHunger = run.hungerNeed || 0;
-    let shownStress = run.stress;
-    let finished = false;
+    let activityEndMinute = 0;
+    let pauseCostEur = 0;
+    const sessionMinutes = () => Math.max(chargeMinutes, activityEndMinute);
+    const activities: PauseEffects[] = [];
+    const shownNeeds = { bladderNeed: run.bladderNeed, hungerNeed: run.hungerNeed, stress: run.stress };
+    let finished = currentSoc >= activeTarget;
     let breakBusy = false;
     const usedBreaks = new Set<BreakActivityKind>();
     const takenBreakLabels: string[] = [];
@@ -593,81 +589,33 @@ export class EventModal {
       breakBusy = true;
       SoundFX.click();
 
-      const meta: Record<
-        BreakActivityKind,
-        { label: string; mins: number; cost: number; stress: number; bladder: boolean; hunger: number; caption: string }
-      > = {
-        eat: {
-          label: '🍔 Etwas gegessen (+20 Min)',
-          mins: 20,
-          cost: 0,
-          stress: -10,
-          bladder: false,
-          hunger: -60,
-          caption: ''
-        },
-        toilet: {
-          label: '🚻 Toilettenpause (+5 Min)',
-          mins: 5,
-          cost: 0,
-          stress: -6,
-          bladder: true,
-          hunger: 0,
-          caption: ''
-        },
-        dog: {
-          label: '🐕 Mit Hund Gassi gegangen (+8 Min)',
-          mins: 8,
-          cost: 0,
-          stress: -14,
-          bladder: false,
-          hunger: 0,
-          caption: ''
-        },
-        children: {
-          label: '🛝 Kinder auf Spielplatz (+10 Min)',
-          mins: 10,
-          cost: 0,
-          stress: -16,
-          bladder: false,
-          hunger: 0,
-          caption: ''
-        },
-        shopping: {
-          label: '🛍️ Frau war shoppen (+10 Min, -50 €)',
-          mins: 10,
-          cost: 50,
-          stress: -18,
-          bladder: false,
-          hunger: 0,
-          caption: ''
-        }
+      const meta: Record<BreakActivityKind, PauseEffects & { label: string; minutes: number }> = {
+        eat: { label: '🍔 Etwas gegessen', minutes: 20, stressDelta: -10, hungerDelta: -60 },
+        toilet: { label: '🚻 Toilettenpause', minutes: 5, stressDelta: -6, resetBladder: true },
+        dog: { label: '🐕 Mit Hund Gassi gegangen', minutes: 8, stressDelta: -14 },
+        children: { label: '🛝 Kinder auf dem Spielplatz', minutes: 10, stressDelta: -16 },
+        shopping: { label: '🛍️ Shoppen', minutes: 10, costEur: 50, stressDelta: -18 }
       };
 
-      const cfg = meta[kind];
-      const beforeBladder = Math.round(shownBladder);
-      const beforeHunger = Math.round(shownHunger);
-      const beforeStress = Math.round(shownStress);
-      breakMinutes += cfg.mins;
-      breakCostEur += cfg.cost;
-      breakStressDelta += cfg.stress;
-      hungerDelta += cfg.hunger;
-      if (cfg.bladder) {
-        resetBladder = true;
-        shownBladder = 0;
-      }
-      shownHunger = Math.max(0, Math.min(100, shownHunger + cfg.hunger));
-      shownStress = Math.max(0, Math.min(100, shownStress + cfg.stress));
-      cfg.caption = `${cfg.label}: Toilette ${beforeBladder}→${Math.round(shownBladder)} %, Hunger ${beforeHunger}→${Math.round(shownHunger)} %, Stress ${beforeStress}→${Math.round(shownStress)} %.`;
-      takenBreakLabels.push(cfg.label);
+      const { label, minutes, ...effects } = meta[kind];
+      const before = { ...shownNeeds };
+      activityEndMinute = sessionMinutes() + minutes;
+      pauseCostEur += effects.costEur ?? 0;
+      activities.push(effects);
+      applyPauseNeeds(shownNeeds, effects);
+      const caption = `${label} (${minutes} Min). Toilettendrang ${Math.round(before.bladderNeed)} → ${Math.round(shownNeeds.bladderNeed)} %, Hunger ${Math.round(before.hungerNeed)} → ${Math.round(shownNeeds.hungerNeed)} %, Stress ${Math.round(before.stress)} → ${Math.round(shownNeeds.stress)} %.`;
+      takenBreakLabels.push(label);
       renderChargeNumbers();
 
       breakStageBox.classList.remove('hidden');
-      breakCaption.textContent = cfg.caption;
+      breakCaption.textContent = caption;
       renderActionsAndBreaks();
 
       if (this.stopBreakAnim) this.stopBreakAnim();
       this.stopBreakAnim = playBreakPixelAnimation(breakCanvas, kind, 2800, () => {
+        while (!finished && chargeMinutes < activityEndMinute) {
+          chargeOneStep(activityEndMinute);
+        }
         breakBusy = false;
         breakStageBox.classList.add('hidden');
         renderChargeNumbers();
@@ -692,11 +640,11 @@ export class EventModal {
           ☕ Pausen-Aktivitäten während des Ladens ${breakBusy ? '<span class="break-lock-badge">🔒 Pause läuft – Laden nicht unterbrechbar</span>' : ''}
         </div>
         <div class="break-btn-grid">
-          ${mkBtn('eat', '🍔 Etwas essen (+20 Min)', true)}
-          ${mkBtn('toilet', '🚻 Toilette (+5 Min)', true)}
-          ${mkBtn('dog', '🐕 Hund Gassi (+8 Min · -Stress)', pax.hasDog)}
-          ${mkBtn('children', '🛝 Kinder Spielplatz (+10 Min · -Stress)', pax.childrenCount > 0)}
-          ${mkBtn('shopping', '🛍️ Frau shoppen (+10 Min · -50 € · -Stress)', pax.hasWife)}
+          ${mkBtn('eat', '🍔 Etwas essen (20 Min)', true)}
+          ${mkBtn('toilet', '🚻 Toilette (5 Min)', true)}
+          ${mkBtn('dog', '🐕 Hund Gassi (8 Min)', pax.hasDog)}
+          ${mkBtn('children', '🛝 Kinder Spielplatz (10 Min)', pax.childrenCount > 0)}
+          ${mkBtn('shopping', '🛍️ Frau shoppen (10 Min · 50 €)', pax.hasWife)}
         </div>
       `;
 
@@ -710,7 +658,7 @@ export class EventModal {
       dynActions.innerHTML = `
         ${
           activeTarget < 100
-            ? `<button type="button" class="er-mini-btn" id="btn-charge-more" ${breakBusy ? 'disabled' : ''}>+10 % Ziel (${Math.min(100, activeTarget + 10)}%)</button>`
+            ? `<button type="button" class="er-mini-btn" id="btn-charge-more" ${breakBusy ? 'disabled' : ''}>+10 % Ziel (${Math.round(Math.min(100, activeTarget + 10))}%)</button>`
             : ''
         }
         <button type="button" class="er-primary-btn" id="btn-unplug" ${breakBusy ? 'disabled' : ''}>
@@ -727,6 +675,7 @@ export class EventModal {
       dynActions.querySelector('#btn-charge-more')?.addEventListener('click', () => {
         if (breakBusy) return;
         SoundFX.click();
+        if (finished) chargeMinutes = sessionMinutes();
         activeTarget = Math.min(100, activeTarget + 10);
         finished = false;
         renderChargeNumbers();
@@ -740,24 +689,21 @@ export class EventModal {
         this.close();
         onComplete({
           addedKwh,
-          minutesSpent: Math.round(chargeMinutes + breakMinutes),
+          minutesSpent: sessionMinutes(),
           chargingCostEur: Number(chargingCostEur.toFixed(2)),
-          breakCostEur,
-          newSoc: Math.round(currentSoc),
-          stressDelta: breakStressDelta,
-          hungerDelta,
-          resetBladder,
+          newSoc: currentSoc,
+          activities,
           takenBreaks: takenBreakLabels
         });
       });
     };
 
     const renderChargeNumbers = () => {
-      const kwNow = Math.round(getChargingPowerKw(vehicle, station, currentSoc));
+      const kwNow = getChargingPowerKw(vehicle, station, currentSoc);
       const pctProgress = Math.min(100, Math.round(currentSoc));
       const livePred = predictLiveTripSoc(level, run, {
         overrideSocPct: currentSoc,
-        skipStationId: station.id
+        skipStopKey: stopKey(run.currentLegIndex, station.id)
       });
       const predClass =
         livePred.predictedArrivalNextSocPct <= 5
@@ -766,22 +712,12 @@ export class EventModal {
             ? 'warn'
             : 'ok';
 
-      const w = 260;
-      const h = 76;
-      const maxKw = 330;
-      const pts = vehicle.chargingCurve
-        .map(p => {
-          const x = (p.soc / 100) * (w - 16) + 8;
-          const y = h - 10 - (p.kw / maxKw) * (h - 20);
-          return `${x.toFixed(1)},${y.toFixed(1)}`;
-        })
-        .join(' ');
-      const dotX = (currentSoc / 100) * (w - 16) + 8;
-      const dotY = h - 10 - (kwNow / maxKw) * (h - 20);
+      const dotX = chartX(currentSoc);
+      const dotY = chartY(kwNow);
 
       vtsMount.innerHTML = renderVehicleTouchscreenHtml(level, run, currentSoc, station.id);
 
-      const clockTotal = Math.round(level.departureTimeHour * 60 + run.elapsedMinutes + chargeMinutes + breakMinutes);
+      const clockTotal = Math.round(level.departureTimeHour * 60 + run.elapsedMinutes + sessionMinutes());
       const clockH = String(Math.floor(clockTotal / 60) % 24).padStart(2, '0');
       const clockM = String(clockTotal % 60).padStart(2, '0');
       const weatherLabel =
@@ -801,23 +737,23 @@ export class EventModal {
         <div class="er-modal-head">
           <span class="er-modal-icon">⚡</span>
           <div>
-            <div class="er-modal-kicker">${station.isAcOnly || station.maxKw <= 43 ? 'AC-Laden' : 'Schnellladen aktiv'} · ${station.network.toUpperCase()}</div>
+            <div class="er-modal-kicker">${ac ? 'AC-Laden' : 'Schnellladen aktiv'} · ${station.network.toUpperCase()}</div>
             <h3>${station.name}</h3>
           </div>
           <div class="charge-when">
-            <span class="charge-kw-pill">${kwNow} kW</span>
+            <span class="charge-kw-pill">${Math.round(kwNow)} kW</span>
             <span class="charge-clock">${clockH}:${clockM} · ${weatherLabel}</span>
           </div>
         </div>
         <div class="need-meters">
-          ${meter('🚻 Toilettendrang', shownBladder, 'bladder')}
-          ${meter('🍽️ Hunger', shownHunger, 'hunger')}
-          ${meter('😤 Stress', shownStress, 'stress')}
+          ${meter('🚻 Toilettendrang', shownNeeds.bladderNeed, 'bladder')}
+          ${meter('🍽️ Hunger', shownNeeds.hungerNeed, 'hunger')}
+          ${meter('😤 Stress', shownNeeds.stress, 'stress')}
         </div>
 
         <div class="charge-soc-bar-wrap">
           <div class="charge-soc-bar" style="width:${pctProgress}%"></div>
-          <span class="charge-soc-label">${pctProgress}% SoC (Ziel ${activeTarget}%)</span>
+          <span class="charge-soc-label">${pctProgress}% SoC (Ziel ${Math.round(activeTarget)}%)</span>
         </div>
 
         <div class="charge-arrival-pred ${predClass}">
@@ -835,7 +771,7 @@ export class EventModal {
         <div class="charge-curve-box">
           <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
             <polyline fill="none" stroke="rgba(148,163,184,0.3)" stroke-width="1" points="8,${h - 10} ${w - 8},${h - 10}" />
-            <polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="${pts}" />
+            <polyline fill="none" stroke="#2563eb" stroke-width="2.5" points="${curvePoints}" />
             <line x1="${dotX.toFixed(1)}" y1="6" x2="${dotX.toFixed(1)}" y2="${h - 10}" stroke="#22c55e" stroke-dasharray="3 2" />
             <circle cx="${dotX.toFixed(1)}" cy="${dotY.toFixed(1)}" r="5" fill="#22c55e" stroke="#ffffff" stroke-width="1.5" />
           </svg>
@@ -843,51 +779,60 @@ export class EventModal {
 
         <div class="charge-stats-grid">
           <div><span>Geladen</span><strong>+${addedKwh.toFixed(1)} kWh</strong></div>
-          <div><span>Zeit (+Pause)</span><strong>${Math.round(chargeMinutes + breakMinutes)} Min</strong></div>
+          <div><span>Zeit vor Ort</span><strong>${Math.round(sessionMinutes())} Min</strong></div>
           <div>
             <span>Tarif</span>
-            <strong>${est.tariff.pricePerKwh.toFixed(2)} €/kWh</strong>
-            ${est.tariff.hasSubscriptionDiscount ? `<small style="opacity:0.7;text-decoration:line-through">${est.tariff.pricePerKwhWithoutSub.toFixed(2)} €</small>` : ''}
+            <strong>${tariff.pricePerKwh.toFixed(2)} €/kWh</strong>
+            ${tariff.hasSubscriptionDiscount ? `<small style="opacity:0.7;text-decoration:line-through">${tariff.pricePerKwhWithoutSub.toFixed(2)} €</small>` : ''}
           </div>
-          <div><span>Laden + Shop</span><strong>${(chargingCostEur + breakCostEur).toFixed(2)} €</strong></div>
+          <div><span>Laden + Shop</span><strong>${(chargingCostEur + pauseCostEur).toFixed(2)} €</strong></div>
         </div>
 
         ${
-          est.tariff.hasMcDonaldsBonus
+          tariff.hasMcDonaldsBonus
             ? `<div class="mcd-bonus-banner">🍔 EWE Go @ McDonald’s Partner-Standort: Komfort-Bonus (-12 Stress)!</div>`
-            : `<div class="charge-tarif-note">Abgerechnet über: <b>${est.tariff.usedSubscriptionName}</b></div>`
+            : `<div class="charge-tarif-note">Abgerechnet über: <b>${tariff.usedSubscriptionName}</b></div>`
         }
       `;
     };
 
-    const startTicker = () => {
-      if (this.chargeTimer !== null) return;
-      // Slowed down charging curve animation (1% per 360ms) so player has ample time to react
-      this.chargeTimer = window.setInterval(() => {
-        if (currentSoc >= activeTarget) {
-          finished = true;
-          SoundFX.chargeDone();
-          if (this.chargeTimer !== null) {
-            window.clearInterval(this.chargeTimer);
-            this.chargeTimer = null;
-          }
-          renderChargeNumbers();
-          renderActionsAndBreaks();
-          return;
+    const chargeOneStep = (untilMinute = Infinity) => {
+      let nextSoc = Math.min(activeTarget, currentSoc + 1);
+      let step = measureChargeStep(vehicle, station, currentSoc, nextSoc);
+      const remainingMinutes = untilMinute - chargeMinutes;
+      if (step.minutes > remainingMinutes) {
+        // Ein Pausenende kann mitten in einen animierten Prozent-Schritt fallen.
+        let low = currentSoc;
+        let high = nextSoc;
+        for (let i = 0; i < 24; i++) {
+          const mid = (low + high) / 2;
+          if (measureChargeStep(vehicle, station, currentSoc, mid).minutes > remainingMinutes) high = mid;
+          else low = mid;
         }
+        nextSoc = low;
+        step = measureChargeStep(vehicle, station, currentSoc, nextSoc);
+        chargeMinutes = untilMinute;
+      } else {
+        chargeMinutes += step.minutes;
+      }
+      currentSoc = nextSoc;
+      addedKwh += step.billedKwh;
+      chargingCostEur += step.billedKwh * tariff.pricePerKwh;
+      if (currentSoc >= activeTarget) {
+        finished = true;
+        SoundFX.chargeDone();
+        if (this.chargeTimer !== null) window.clearInterval(this.chargeTimer);
+        this.chargeTimer = null;
+      }
+    };
 
-        const stepSoc = 1.0;
-        const nextSoc = Math.min(activeTarget, currentSoc + stepSoc);
-        const dSoc = nextSoc - currentSoc;
-        const midSoc = (currentSoc + nextSoc) / 2;
-        const kw = getChargingPowerKw(vehicle, station, midSoc);
-        const kwhStep = (vehicle.batteryKwh * dSoc) / 100;
-        const billedKwh = kwhStep * 1.04;
-        addedKwh += billedKwh;
-        chargingCostEur += billedKwh * est.tariff.pricePerKwh;
-        chargeMinutes += (kwhStep / kw) * 60;
-        currentSoc = nextSoc;
+    const startTicker = () => {
+      if (finished || this.chargeTimer !== null) return;
+      this.chargeTimer = window.setInterval(() => {
+        if (breakBusy && chargeMinutes >= activityEndMinute) return;
+        chargeOneStep(breakBusy ? activityEndMinute : Infinity);
         renderChargeNumbers();
+        if (finished) renderActionsAndBreaks();
       }, 360);
     };
 

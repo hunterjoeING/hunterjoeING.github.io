@@ -1,7 +1,7 @@
 import { LevelConfig, RunState } from '../types';
-import { CHARGERS } from '../data/europeMap';
+import { getChargerById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
-import { getActiveRouteOption, predictLiveTripSoc } from '../sim/RoutePlanner';
+import { getActiveRouteLegs, getActiveRouteOption, isPendingStop, isStationOnLeg, predictLiveTripSoc, stopKey } from '../sim/RoutePlanner';
 
 export function renderVehicleTouchscreenHtml(
   level: LevelConfig,
@@ -11,9 +11,10 @@ export function renderVehicleTouchscreenHtml(
 ): string {
   const vehicle = getVehicleById(run.plan.vehicleId);
   const activeRoute = getActiveRouteOption(level, run.plan);
+  const currentStopKey = stopKey(run.currentLegIndex, stationId);
   const livePred = predictLiveTripSoc(level, run, {
     overrideSocPct: currentSocPct,
-    skipStationId: stationId
+    skipStopKey: currentStopKey
   });
 
   const cons100 = Math.max(9.5, livePred.consumptionKwh100);
@@ -45,16 +46,16 @@ export function renderVehicleTouchscreenHtml(
           ? 'ts-orange'
           : 'ts-danger';
 
+  const legs = getActiveRouteLegs(level, run.plan);
   const remainingStops = run.plan.plannedStops
-    .filter(
-      s =>
-        s.legIndex >= run.currentLegIndex &&
-        s.chargerId !== stationId &&
-        !run.completedStopIds.includes(s.chargerId) &&
-        !run.skippedStopIds.includes(s.chargerId)
+    .filter(s =>
+      s.legIndex >= run.currentLegIndex && stopKey(s.legIndex, s.chargerId) !== currentStopKey && isPendingStop(run, s)
     )
-    .slice(0, 3)
-    .map(s => CHARGERS.find(c => c.id === s.chargerId)?.name || s.chargerId);
+    .flatMap(s => {
+      const station = getChargerById(s.chargerId);
+      return station && isStationOnLeg(station, legs[s.legIndex]) ? [station.name] : [];
+    })
+    .slice(0, 3);
 
   return `
     <div class="er-vehicle-touchscreen" aria-label="Fahrzeug-Touchscreen">

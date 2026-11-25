@@ -11,8 +11,14 @@ import {
   computeCityLightingProfile,
   detectPlayerTrafficViolation,
   evaluateCollisionFault,
+  nextTrafficPose,
   shouldNpcYield
 } from './CityTraffic';
+import {
+  CAR_FOOTPRINT, Capsule, capsuleInsideWorld, capsuleOverlapsRect, capsulesOverlap, circleAt, rotatedCarBounds,
+  vehicleCapsule
+} from './CityCollision';
+import { Rect } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
 import { paintDrivingPlace, PlacePaint } from './PlacePainter';
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
@@ -22,7 +28,7 @@ export class CityDriveScene extends Phaser.Scene {
   private preset: CityDrivePreset = 'aachen_start';
   private station?: ChargerStation;
 
-  private player!: Phaser.Physics.Arcade.Image;
+  private player!: Phaser.GameObjects.Image;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: Record<'W' | 'A' | 'S' | 'D' | 'SPACE' | 'H', Phaser.Input.Keyboard.Key>;
 
@@ -45,7 +51,8 @@ export class CityDriveScene extends Phaser.Scene {
 
   private trafficCars: TrafficCarAgent[] = [];
   private pedestrians: PedestrianAgent[] = [];
-  private obstacles!: Phaser.Physics.Arcade.StaticGroup;
+  private obstacleRects: Rect[] = [];
+  private obstacleCircles: Capsule[] = [];
 
   private targetZone!: Phaser.Geom.Rectangle;
   private targetGlow?: Phaser.GameObjects.Rectangle;
@@ -104,6 +111,7 @@ export class CityDriveScene extends Phaser.Scene {
   private previewLock = false;
 
   private dwellInTargetSec = 0;
+  private reversedIntoBay = false;
   private collisionCooldownSec = 0;
   private violationCooldownSec = 0;
   private stormFlashTimer = 4;
@@ -129,6 +137,7 @@ export class CityDriveScene extends Phaser.Scene {
     this.spinners = [];
     this.carSpeed = 0;
     this.dwellInTargetSec = 0;
+    this.reversedIntoBay = false;
     this.collisionCooldownSec = 0;
     this.violationCooldownSec = 1.2;
     this.completed = false;
@@ -245,7 +254,17 @@ export class CityDriveScene extends Phaser.Scene {
     };
     this.scale.on('resize', this.resizeHandler);
 
+    const syncPhysicsPause = () => {
+      const world = this.physics.world;
+      if (this.bridge.paused || this.completed) {
+        if (!world.isPaused) world.pause();
+      } else if (world.isPaused) {
+        world.resume();
+      }
+    };
+    this.events.on(Phaser.Scenes.Events.PRE_UPDATE, syncPhysicsPause);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off(Phaser.Scenes.Events.PRE_UPDATE, syncPhysicsPause);
       if (this.resizeHandler) {
         this.scale.off('resize', this.resizeHandler);
         this.resizeHandler = undefined;
@@ -305,19 +324,10 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private spawnEnvironmentAndProps(): void {
-    this.obstacles = this.physics.add.staticGroup();
-
-    this.place.buildings.forEach(b => {
-      const box = this.add.rectangle(b.x + b.w / 2, b.y + b.h / 2, b.w, b.h, 0x000000, 0);
-      this.physics.add.existing(box, true);
-      this.obstacles.add(box);
-    });
-
-    this.place.trees.forEach(spot => {
-      const t = this.obstacles.create(spot.x, spot.y, 'pixel_tree') as Phaser.Physics.Arcade.Image;
-      t.setCircle(11, 3, 3);
-      t.setDepth(6);
-      t.refreshBody();
+    this.obstacleRects = this.place.buildings.slice();
+    this.obstacleCircles = this.place.trees.map(spot => {
+      this.add.image(spot.x, spot.y, 'pixel_tree').setDepth(6);
+      return circleAt(spot.x, spot.y, 11);
     });
 
     this.streetlamps = this.place.lamps.slice();
@@ -332,9 +342,8 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Construction cones on West St
     [535, 565, 595].forEach(cy => {
-      const c = this.obstacles.create(172, cy, 'cone') as Phaser.Physics.Arcade.Image;
-      c.setDepth(5);
-      c.refreshBody();
+      this.add.image(172, cy, 'cone').setDepth(5);
+      this.obstacleRects.push({ x: 168, y: cy - 4, w: 8, h: 8 });
     });
 
     // Signalized intersections
@@ -390,21 +399,17 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private spawnTrafficAndPedestrians(): void {
-    if (this.place.autohof) {
-      (this.place.liteCars || []).forEach(cfg => {
-        const sp = this.physics.add.image(cfg.wps[0].x, cfg.wps[0].y, cfg.tex).setDepth(7);
-        sp.setImmovable(true);
-        this.trafficCars.push({
-          sprite: sp,
-          waypoints: cfg.wps,
-          wpIndex: 1,
-          speed: cfg.speed,
-          currentSpeed: cfg.speed,
-          obeysLights: false,
-          holdWp: cfg.holdIndex,
-          holdSec: cfg.holdSec
-        });
+    for (const route of this.place.traffic) {
+      const start = route.path[route.startIndex];
+      const next = route.path[route.startIndex + 1];
+      const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
+      const sprite = this.add.image(start.x, start.y, route.tex).setDepth(7).setRotation(rotation);
+      this.trafficCars.push({
+        sprite, route, wpIndex: route.startIndex + 1, currentSpeed: 0, holdLeft: 0, vx: 0, vy: 0
       });
+    }
+
+    if (this.place.autohof) {
       (this.place.litePeds || []).forEach(pc => {
         const start = pc.wps[0];
         const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
@@ -419,70 +424,6 @@ export class CityDriveScene extends Phaser.Scene {
       });
       return;
     }
-
-    const carConfigs: Array<{
-      tex: string;
-      wps: Array<{ x: number; y: number }>;
-      speed: number;
-      obeys: boolean;
-      isPolice?: boolean;
-      isCyclist?: boolean;
-    }> = [
-      {
-        tex: 'npc_sedan_blue',
-        wps: [{ x: 320, y: 242 }, { x: 1800, y: 242 }, { x: 1800, y: 695 }, { x: 320, y: 695 }],
-        speed: 104,
-        obeys: true
-      },
-      {
-        tex: 'npc_van_white',
-        wps: [{ x: 1790, y: 175 }, { x: 242, y: 175 }, { x: 242, y: 1215 }, { x: 1790, y: 1215 }],
-        speed: 96,
-        obeys: true
-      },
-      {
-        tex: 'npc_compact_green',
-        wps: [{ x: 995, y: 1120 }, { x: 995, y: 180 }, { x: 1065, y: 180 }, { x: 1065, y: 1120 }],
-        speed: 98,
-        obeys: true
-      },
-      {
-        tex: 'npc_police',
-        wps: [{ x: 1065, y: 190 }, { x: 1065, y: 1120 }, { x: 242, y: 1120 }, { x: 242, y: 190 }],
-        speed: 110,
-        obeys: true,
-        isPolice: true
-      },
-      {
-        tex: 'cyclist_0',
-        wps: [{ x: 240, y: 150 }, { x: 1740, y: 150 }],
-        speed: 60,
-        obeys: true,
-        isCyclist: true
-      },
-      {
-        tex: 'cyclist_1',
-        wps: [{ x: 1740, y: 1310 }, { x: 240, y: 1310 }],
-        speed: 58,
-        obeys: true,
-        isCyclist: true
-      }
-    ];
-
-    carConfigs.forEach(cfg => {
-      const sp = this.physics.add.image(cfg.wps[0].x, cfg.wps[0].y, cfg.tex).setDepth(7);
-      sp.setImmovable(true);
-      this.trafficCars.push({
-        sprite: sp,
-        waypoints: cfg.wps,
-        wpIndex: 1,
-        speed: cfg.speed,
-        currentSpeed: cfg.speed,
-        obeysLights: cfg.obeys,
-        isPolice: cfg.isPolice,
-        isCyclist: cfg.isCyclist
-      });
-    });
 
     // Pure sidewalk strollers distributed across all city sidewalks (never block crosswalks)
     const sidewalkPedConfigs: Array<{
@@ -639,37 +580,110 @@ export class CityDriveScene extends Phaser.Scene {
 
   private spawnPlayer(): void {
     const spot = this.previewFx && this.place.previewPoint ? this.place.previewPoint : this.place.spawn;
-    const sx = spot.x;
-    const sy = spot.y;
-    const rot = spot.rot;
+    this.player = this.add.image(spot.x, spot.y, `car_${this.bridge.plan.vehicleId}`).setDepth(10).setRotation(spot.rot);
+  }
 
-    this.player = this.physics.add
-      .image(sx, sy, `car_${this.bridge.plan.vehicleId}`)
-      .setDepth(10);
-    this.player.setCollideWorldBounds(true);
-    this.player.setCircle(14, 2, 12);
-    this.player.setRotation(rot);
+  private hitsObstacle(shape: Capsule): boolean {
+    return this.obstacleRects.some(rect => capsuleOverlapsRect(shape, rect)) ||
+      this.obstacleCircles.some(circle => capsulesOverlap(shape, circle));
+  }
 
-    this.physics.add.collider(this.player, this.obstacles, () => {
-      this.handleCollision('obstacle', this.player.x, this.player.y, 0);
-    });
+  private trafficShape(car: TrafficCarAgent): Capsule {
+    const { x, y, rotation } = car.sprite;
+    return vehicleCapsule(x, y, rotation, car.route.isCyclist);
+  }
 
-    this.trafficCars.forEach(tc => {
-      this.physics.add.collider(this.player, tc.sprite, () => {
-        this.handleCollision(
-          tc.isCyclist ? 'cyclist' : 'car',
-          tc.sprite.x,
-          tc.sprite.y,
-          tc.currentSpeed
-        );
-      });
-    });
+  private movePlayer(dt: number, turn: number): boolean {
+    const moving = this.carSpeed !== 0 || turn !== 0;
+    const rotation = this.player.rotation + turn * dt;
+    const x = this.player.x + Math.sin(rotation) * this.carSpeed * dt;
+    const y = this.player.y - Math.cos(rotation) * this.carSpeed * dt;
+    const shape = vehicleCapsule(x, y, rotation);
+    if (moving && !capsuleInsideWorld(shape, this.worldW, this.worldH)) {
+      this.carSpeed = 0;
+      return false;
+    }
+    if (moving && this.hitsObstacle(shape)) {
+      this.handleCollision('obstacle', x, y, 0);
+      return false;
+    }
+    for (const car of this.trafficCars) {
+      if (!capsulesOverlap(shape, this.trafficShape(car))) continue;
+      this.handleCollision(car.route.isCyclist ? 'cyclist' : 'car', car.sprite.x, car.sprite.y, car.currentSpeed);
+      return false;
+    }
+    for (const ped of this.pedestrians) {
+      const body = ped.sprite.body;
+      if (!body || !capsuleOverlapsRect(shape, { x: body.x, y: body.y, w: body.width, h: body.height })) continue;
+      this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed);
+      return false;
+    }
+    if (moving) {
+      if (this.preset === 'charger_park') this.trackBayEntry(x, y, rotation);
+      this.player.setPosition(x, y).setRotation(rotation);
+    }
+    return true;
+  }
 
-    this.pedestrians.forEach(pd => {
-      this.physics.add.collider(this.player, pd.sprite, () => {
-        this.handleCollision('pedestrian', pd.sprite.x, pd.sprite.y, pd.speed);
-      });
-    });
+  private trackBayEntry(x: number, y: number, rotation: number): void {
+    const bay = this.targetZone;
+    const car = rotatedCarBounds(x, y, rotation);
+    if (car.y >= bay.bottom || car.y + car.h <= bay.top || car.x < bay.left || car.x + car.w > bay.right) {
+      this.reversedIntoBay = false;
+      return;
+    }
+    const previous = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
+    if (previous.y >= bay.bottom) {
+      this.reversedIntoBay = this.carSpeed < 0 && y < this.player.y && Math.cos(rotation) < 0;
+    }
+  }
+
+  private stepTraffic(dt: number): void {
+    const playerShape = vehicleCapsule(this.player.x, this.player.y, this.player.rotation);
+    for (const car of this.trafficCars) {
+      const { sprite, route } = car;
+      car.currentSpeed = car.vx = car.vy = 0;
+      if (car.holdLeft > 0) {
+        car.holdLeft = Math.max(0, car.holdLeft - dt);
+        continue;
+      }
+      const others = this.trafficCars.filter(other => other !== car);
+      const otherShapes = others.map(other => this.trafficShape(other));
+      if (car.wpIndex === route.path.length) {
+        const [start, next] = route.path;
+        const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
+        const shape = vehicleCapsule(start.x, start.y, rotation, route.isCyclist);
+        if (!otherShapes.some(other => capsulesOverlap(shape, other))) {
+          sprite.setPosition(start.x, start.y).setRotation(rotation);
+          car.wpIndex = 1;
+        }
+        continue;
+      }
+
+      const next = nextTrafficPose(car, dt);
+      const angle = Math.atan2(next.y - sprite.y, next.x - sprite.x);
+      if (shouldNpcYield(car, others, this.pedestrians, this.intersections, this.zebras, angle, this.player)) continue;
+
+      const shape = vehicleCapsule(next.x, next.y, next.rotation, route.isCyclist);
+      const currentShape = this.trafficShape(car);
+      const occupied = this.place.trafficJunctions.some(junction =>
+        capsuleOverlapsRect(shape, junction) && !capsuleOverlapsRect(currentShape, junction) &&
+        (capsuleOverlapsRect(playerShape, junction) || otherShapes.some(other => capsuleOverlapsRect(other, junction)))
+      );
+      if (occupied || this.hitsObstacle(shape) || otherShapes.some(other => capsulesOverlap(shape, other))) continue;
+      if (capsulesOverlap(shape, playerShape)) {
+        this.handleCollision(route.isCyclist ? 'cyclist' : 'car', sprite.x, sprite.y, route.speed);
+        if (this.bridge.paused) return;
+        continue;
+      }
+
+      car.vx = (next.x - sprite.x) / dt;
+      car.vy = (next.y - sprite.y) / dt;
+      car.currentSpeed = Math.hypot(car.vx, car.vy);
+      car.wpIndex = next.wpIndex;
+      if (next.parked) car.holdLeft = route.holdSec ?? 0;
+      sprite.setPosition(next.x, next.y).setRotation(next.rotation);
+    }
   }
 
   private handleCollision(
@@ -706,6 +720,7 @@ export class CityDriveScene extends Phaser.Scene {
     }
     SoundFX.bump();
     this.bridge.paused = true;
+    this.physics.world.pause();
     this.bridge.onCollisionEvent({
       kind,
       playerAtFault: fault.playerAtFault,
@@ -721,6 +736,7 @@ export class CityDriveScene extends Phaser.Scene {
     SoundFX.alert();
     this.cameras.main.flash(180, 30, 64, 175, true);
     this.bridge.paused = true;
+    this.physics.world.pause();
     this.bridge.onPoliceViolation(kind);
   }
 
@@ -818,7 +834,7 @@ export class CityDriveScene extends Phaser.Scene {
       let headlight: Phaser.GameObjects.Image | undefined;
       let taillight: Phaser.GameObjects.Image | undefined;
       let sirenGlow: Phaser.GameObjects.Image | undefined;
-      if (!agent.isCyclist) {
+      if (!agent.route.isCyclist) {
         headlight = this.add
           .image(agent.sprite.x, agent.sprite.y, 'headlight_cone')
           .setOrigin(0.5, 0.95)
@@ -834,7 +850,7 @@ export class CityDriveScene extends Phaser.Scene {
           .setBlendMode(Phaser.BlendModes.ADD)
           .setDepth(13);
       }
-      if (agent.isPolice) {
+      if (agent.route.isPolice) {
         sirenGlow = this.add
           .image(agent.sprite.x, agent.sprite.y, 'light_glow_soft')
           .setTint(0x38bdf8)
@@ -1111,6 +1127,7 @@ export class CityDriveScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     const dt = Math.min(0.05, delta / 1000);
+    if (dt <= 0 || this.bridge.paused || this.completed) return;
     this.collisionCooldownSec = Math.max(0, this.collisionCooldownSec - dt);
     this.violationCooldownSec = Math.max(0, this.violationCooldownSec - dt);
 
@@ -1157,11 +1174,6 @@ export class CityDriveScene extends Phaser.Scene {
     );
     this.updateLightingVisuals(dt, profile);
 
-    if (this.bridge.paused || this.completed) {
-      this.player.setVelocity(0, 0);
-      return;
-    }
-
     // === GTA 2 Controls (Keyboard + Shared TouchInput) ===
     ensureTouchHoldsMatchPointers();
     const touch = this.bridge.touch;
@@ -1180,25 +1192,29 @@ export class CityDriveScene extends Phaser.Scene {
 
     const maxFwd = 230;
     const maxRev = -115;
-    if (up) {
+    if (!brake && up) {
       this.carSpeed = Math.min(maxFwd, this.carSpeed + 320 * dt);
-    } else if (down) {
+    } else if (!brake && down) {
       this.carSpeed = Math.max(maxRev, this.carSpeed - 280 * dt);
     } else {
       const decel = (brake ? 1050 : 640) * dt;
       this.carSpeed = this.carSpeed > 0 ? Math.max(0, this.carSpeed - decel) : Math.min(0, this.carSpeed + decel);
     }
-    if (Math.abs(this.carSpeed) < 8 && !up && !down) this.carSpeed = 0;
+    if (Math.abs(this.carSpeed) < 8 && (brake || (!up && !down))) this.carSpeed = 0;
 
     const steerFactor = Math.min(1, Math.abs(this.carSpeed) / 62);
     const dirSign = this.carSpeed >= -1 ? 1 : -1;
-    const turnRate = 2.75 * steerFactor * dirSign;
-    if (left) this.player.rotation -= turnRate * dt;
-    if (right) this.player.rotation += turnRate * dt;
-
-    const vx = Math.sin(this.player.rotation) * this.carSpeed;
-    const vy = -Math.cos(this.player.rotation) * this.carSpeed;
-    this.player.setVelocity(vx, vy);
+    const turn = 2.75 * steerFactor * dirSign * (Number(right) - Number(left));
+    // Begrenzte Teilschritte prüfen auch die gedrehte Karosserie an schmalen Hindernissen.
+    const substeps = Math.ceil(dt * 60);
+    const step = dt / substeps;
+    let playerCanMove = true;
+    for (let i = 0; i < substeps; i++) {
+      if (playerCanMove) playerCanMove = this.movePlayer(step, turn);
+      if (this.bridge.paused) return;
+      this.stepTraffic(step);
+      if (this.bridge.paused) return;
+    }
 
     for (const spin of this.spinners) spin.rotation += dt * 1.7;
     this.surface.update(this, {
@@ -1228,7 +1244,7 @@ export class CityDriveScene extends Phaser.Scene {
       return;
     }
 
-    // Move NPCs (strictly obeying lights, zebra crossings & spacing!)
+    // Positionsdaten für die Verkehrs-Vorschau.
     if (new URLSearchParams(window.location.search).has('erpreview')) {
       const debugWindow = window as Window & {
         __erNpc?: () => Array<{ x: number; y: number; vx: number; vy: number }>;
@@ -1237,52 +1253,12 @@ export class CityDriveScene extends Phaser.Scene {
         this.trafficCars.map(car => ({
           x: car.sprite.x,
           y: car.sprite.y,
-          vx: car.sprite.body?.velocity.x || 0,
-          vy: car.sprite.body?.velocity.y || 0
+          vx: car.vx,
+          vy: car.vy
         }));
       const placeWindow = window as Window & { __erPlacePlayer?: (x: number, y: number) => void };
       placeWindow.__erPlacePlayer = (x, y) => this.player.setPosition(x, y);
     }
-    for (const tc of this.trafficCars) {
-      if ((tc.holdLeft || 0) > 0) {
-        tc.holdLeft = Math.max(0, (tc.holdLeft || 0) - dt);
-        tc.currentSpeed = 0;
-        tc.sprite.setVelocity(0, 0);
-        continue;
-      }
-      const target = tc.waypoints[tc.wpIndex];
-      const dist = Phaser.Math.Distance.Between(tc.sprite.x, tc.sprite.y, target.x, target.y);
-      if (dist < 16) {
-        if (tc.holdWp === tc.wpIndex && tc.holdSec && tc.holdSec > 0) {
-          tc.holdLeft = tc.holdSec;
-          tc.wpIndex = (tc.wpIndex + 1) % tc.waypoints.length;
-          tc.currentSpeed = 0;
-          tc.sprite.setVelocity(0, 0);
-          continue;
-        }
-        tc.wpIndex = (tc.wpIndex + 1) % tc.waypoints.length;
-      }
-      const ang = Phaser.Math.Angle.Between(tc.sprite.x, tc.sprite.y, target.x, target.y);
-      tc.sprite.setRotation(ang + Math.PI / 2);
-
-      const yieldNow = shouldNpcYield(
-        tc,
-        this.trafficCars,
-        this.pedestrians,
-        this.intersections,
-        this.zebras,
-        ang,
-        { x: this.player.x, y: this.player.y }
-      );
-      if (yieldNow) {
-        tc.currentSpeed = 0;
-        tc.sprite.setVelocity(0, 0);
-      } else {
-        tc.currentSpeed = tc.speed;
-        tc.sprite.setVelocity(Math.cos(ang) * tc.speed, Math.sin(ang) * tc.speed);
-      }
-    }
-
     // Move Pedestrians along sidewalks; occasionally cross a zebra crossing if road is clear
     for (const pd of this.pedestrians) {
       const link = pd.zebraLink;
@@ -1390,12 +1366,19 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Parking / Completion Check
     const inZone = Phaser.Geom.Rectangle.Contains(this.targetZone, this.player.x, this.player.y);
-    // At charging stations, car must reverse into head-in spot (rear North toward pillar -> front South -> rotation ~ PI)
+    const chargingBay = this.preset === 'charger_park';
     const revAngleErr = Math.abs(Phaser.Math.Angle.Wrap(this.player.rotation - Math.PI));
-    const orientationOk = this.preset !== 'charger_park' || revAngleErr <= 0.65;
+    const car = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
+    const bay = this.targetZone;
+    const fits = car.x >= bay.left && car.x + car.w <= bay.right && car.y >= bay.top && car.y + car.h <= bay.bottom;
+    const parkingReady = chargingBay
+      ? this.reversedIntoBay && fits && revAngleErr <= Math.PI / 12 && this.carSpeed === 0
+      : inZone && Math.abs(this.carSpeed) < 30;
 
-    if (this.preset === 'charger_park' && distToTarget < 190 && !orientationOk) {
-      this.reverseHintText.setText('⚠️ Rückwärts einparken! (Heck zur Ladesäule oben)');
+    if (chargingBay && distToTarget < 190 && !parkingReady) {
+      this.reverseHintText.setText(this.reversedIntoBay
+        ? 'Gerade und vollständig in der Bucht anhalten'
+        : 'Von unten rückwärts in die Bucht fahren');
       this.reverseHintText.setVisible(true);
     } else {
       this.reverseHintText.setVisible(false);
@@ -1418,13 +1401,12 @@ export class CityDriveScene extends Phaser.Scene {
       } else {
         this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
       }
-    } else if (inZone && Math.abs(this.carSpeed) < 30 && orientationOk) {
+    } else if (parkingReady) {
       this.dwellInTargetSec += dt;
       this.distText.setText(`✓ Perfekt! Halten… (${Math.min(100, Math.round((this.dwellInTargetSec / 0.6) * 100))}%)`);
       if (this.dwellInTargetSec >= 0.6) {
         this.completed = true;
         this.reverseHintText.setVisible(false);
-        this.player.setVelocity(0, 0);
         if (this.preset === 'aachen_finish') {
           this.triggerArrivalConfetti();
         } else if (this.preset === 'charger_park') {
@@ -1452,8 +1434,9 @@ export class CityDriveScene extends Phaser.Scene {
     const carY = this.player.y;
     const pillarX = this.pillar?.x ?? this.targetZone.centerX;
     const pillarY = this.pillar?.y ?? this.targetZone.y;
-    const portX = carX;
-    const portY = carY - 22; // Rear of car faces North when parked reverse!
+    const rear = CAR_FOOTPRINT.h / 2;
+    const portX = carX - Math.sin(this.player.rotation) * rear;
+    const portY = carY + Math.cos(this.player.rotation) * rear;
 
     this.distText.setText('🚶 Fahrer steigt aus & steckt Ladekabel an…');
     const driver = this.add.image(carX - 18, carY, 'ped_driver').setDepth(18);

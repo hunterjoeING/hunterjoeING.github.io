@@ -125,6 +125,8 @@ export interface HighwayEdge {
   speedLimitKmh: number; // 0 = unrestricted (end-of-limit sign). A positive value is the red-ring maximum.
   /** French autoroute rain/storm cap (110). Absent on German edges. */
   speedLimitRainKmh?: number;
+  /** Abschnittsbeginn in Kilometern ab fromCityId, aufsteigend ab 0. */
+  roadSections?: Array<{ fromKm: number; country: string; speedLimitKmh: number; speedLimitRainKmh?: number }>;
   elevationGainM: number;
   elevationLossM: number;
   baseTrafficRisk: number; // 0..1
@@ -203,8 +205,9 @@ export interface EventChoice {
   lodgingDeltaEur?: number;
   /** Cash loss that is not a kWh charge (theft, deductible). */
   fineDeltaEur?: number;
-  /** Absolute SoC after the choice, e.g. overnight AC to a high morning value. */
-  setSocPct?: number;
+  resetBladder?: boolean;
+  hungerDelta?: number;
+  pauseCostEur?: number;
   /** Optional second event. Rolled after the player continues. */
   followUpEventId?: string;
   followUpChance?: number;
@@ -345,6 +348,7 @@ export interface LiveSocPrediction {
   distanceToNextKm: number;
   predictedArrivalNextSocPct: number;
   predictedFinalSocPct: number;
+  predictedFinalSocWithoutMessePct?: number;
   isCriticalNext: boolean;
   isCriticalFinal: boolean;
   consumptionKwh100: number;
@@ -372,7 +376,10 @@ export interface RunState {
   distanceDrivenKm: number;
   chargingCostEur: number;
   subscriptionCostEur: number;
-  tollsAndFinesEur: number;
+  tollsEur: number;
+  paidTollLegIndices: number[];
+  incidentalCostEur: number;
+  pauseCostEur: number;
   /** Hotels and other stays. 0 when the night was free. */
   lodgingCostEur: number;
   /** Shown on the trip summary after the overnight choice. */
@@ -382,8 +389,8 @@ export interface RunState {
   goodReplanCount: number;
   chargingEfficiencyBonus: number;
   collisionsCount: number;
-  completedStopIds: string[];
-  skippedStopIds: string[];
+  completedStopKeys: string[];
+  skippedStopKeys: string[];
   triggeredEventIds: string[];
   wifeDialogueTriggered: boolean;
   incidentLog: IncidentLogEntry[];
@@ -391,13 +398,16 @@ export interface RunState {
   currentSpeedKmh: number;
   /** Landstraße detour. Replaces the section sign until the leg ends. */
   countryLimitKmh?: number;
+  /** Aktuelles Autobahnschild für Bordcomputer und Radar (0 = unbeschränkt). */
+  highwaySignKmh?: number;
+  highwaySignLegIndex?: number;
   /** Filled when a speed trap flashes, so the fine matches that moment. */
   speedTrap?: { country: string; signKmh: number; actualKmh: number };
   /** Temporary limit (Baustelle or French rain). Chosen cruise stays on the leg plan. */
   speedCapKmh?: number;
   /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */
   speedCapLabel?: string;
-  /** Transient: a car sits in the left lane just ahead and the cruise is not reached. */
+  /** Transient: ein Pkw bremst das eigene Fahrzeug auf derselben linken Spur aus. */
   tailgateReady?: boolean;
   /** Transient: HUD asked the motorway scene to flash and pressure the car ahead. */
   tailgatePulse?: boolean;

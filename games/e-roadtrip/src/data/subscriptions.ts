@@ -45,8 +45,8 @@ export const SUBSCRIPTIONS: SubscriptionSpec[] = [
     pricePerKwhRoaming: PROVIDER_ROAMING_EUR_PER_KWH.tesla,
     specialPerk: 'tesla_native',
     teslaFreeIncluded: true,
-    bestFor: 'Viele Stalls, quasi kein Defektrisiko. Für Tesla-Fahrer automatisch gratis & Bestpreis!',
-    description: 'Mit Tesla automatisch ohne Monatsgebühr inklusive (0,39–0,43 €/kWh). Model S lädt an Superchargern für 0,00 €. Für Fremdmarken 9,99 €/Monat, Roaming etwa 0,20 €/kWh über dem Abo-Preis (0,61 €). 800-V-Autos bleiben an der 400-V-Säule auf 150 kW begrenzt.'
+    bestFor: 'Für Fremdmarken buchbar. Tesla-Fahrzeuge haben einen eigenen Tarif.',
+    description: 'Mit Tesla automatisch ohne Monatsgebühr inklusive (0,39 €/kWh). Model S lädt an Superchargern für 0,00 €. Für Fremdmarken 9,99 €/Monat, Roaming etwa 0,20 €/kWh über dem Abo-Preis (0,61 €). 800-V-Autos bleiben an der 400-V-Säule auf 150 kW begrenzt.'
   },
   {
     id: 'enbw_m',
