@@ -79,6 +79,7 @@
       const p = (window.location.pathname || '').toLowerCase();
       if (p.endsWith('/impressum.html')) return 'impressum';
       if (p.endsWith('/datenschutz.html')) return 'datenschutz';
+      if (p.endsWith('/changelogs.html')) return 'changelogs';
       const all = [...GAMES_NAV, ...QUIZZES_1000_NAV, ...QUIZZES_THEMEN_NAV, ...QUIZZES_FOTO_NAV];
       for (const item of all) {
         const slug = item.path.replace('/index.html', '').toLowerCase();
@@ -150,7 +151,7 @@
       .abm-link-title { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
       .abm-link-meta { font-size:11px; font-variant-numeric:tabular-nums; color:#475569; padding:2px 8px; border-radius:999px; background:#EEF2F8; flex-shrink:0; }
       .abm-link.active .abm-link-meta { background:rgba(255,255,255,0.20); color:#FFFFFF; }
-      .abm-foot { display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 20px; border-top:1px solid rgba(15,23,42,0.08); background:#FFFFFF; font-size:12.5px; }
+      .abm-foot { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px; padding:14px 20px; border-top:1px solid rgba(15,23,42,0.08); background:#FFFFFF; font-size:12.5px; }
       .abm-foot a { color:#1E3A8A; text-decoration:none; font-weight:500; }
       .abm-foot a:hover { text-decoration:underline; }
       html[data-theme="dark"] .abm-backdrop { background:rgba(6,10,20,0.72); }
@@ -321,7 +322,7 @@
     drawer.setAttribute('aria-hidden', 'true');
 
     const root = drawerState.rootHref;
-    const fbTarget = (drawerState.currentId === 'hub' || drawerState.currentId === 'impressum' || drawerState.currentId === 'datenschutz')
+    const fbTarget = (drawerState.currentId === 'hub' || drawerState.currentId === 'impressum' || drawerState.currentId === 'datenschutz' || drawerState.currentId === 'changelogs')
       ? 'all'
       : drawerState.currentId;
 
@@ -356,6 +357,7 @@
       <div class="abm-foot">
         <a href="${esc(root + 'impressum.html')}">⚖️ Impressum</a>
         <a href="${esc(root + 'datenschutz.html')}">🔒 Datenschutz</a>
+        <a href="${esc(root + 'changelogs.html')}">📝 Changelogs</a>
       </div>
     `;
 

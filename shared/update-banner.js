@@ -26,6 +26,11 @@
     return dateFormat.format(new Date(date));
   }
 
+  // Person and model only (AGENTS.md rule 10); the agent tool is never shown.
+  function authorLabel(release) {
+    return [release.author, release.model].filter(Boolean).join(' · ');
+  }
+
   function appHref(appId) {
     return new URL(apps[appId].href, siteRoot).href;
   }
@@ -64,6 +69,8 @@
   }
 
   function badgeHtml(appId) {
+    // The arcade itself never shows a banner; its releases only appear on changelogs.html.
+    if (!apps[appId] || apps[appId].kind === 'arcade') return '';
     const feature = latestFeature(appId);
     if (!feature || feature.banner === false) return '';
 
@@ -83,7 +90,8 @@
 
   function releaseHeading(release) {
     return `<strong>v${escapeHtml(release.version)} · ${escapeHtml(release.title)}</strong>
-      <time datetime="${escapeHtml(release.date)}">${escapeHtml(formatDate(release.date))}</time>`;
+      <span class="arcade-update-meta"><time datetime="${escapeHtml(release.date)}">${escapeHtml(formatDate(release.date))}</time>${
+        authorLabel(release) ? ` · <span class="arcade-update-author">${escapeHtml(authorLabel(release))}</span>` : ''}</span>`;
   }
 
   function openChangelog(appId, trigger = document.activeElement) {
@@ -194,7 +202,7 @@
       padding: 10px 0;
       cursor: pointer;
     }
-    #arcade-updates-dialog time {
+    #arcade-updates-dialog .arcade-update-meta {
       display: block;
       color: var(--text-muted);
       font-size: 0.875rem;
@@ -220,5 +228,5 @@
   `;
   document.head.append(style);
 
-  window.ArcadeUpdates = { appHref, badgeHtml, formatDate, highlightsHtml, latest, markSeen, openChangelog };
+  window.ArcadeUpdates = { appHref, authorLabel, badgeHtml, formatDate, highlightsHtml, latest, markSeen, openChangelog };
 })();
