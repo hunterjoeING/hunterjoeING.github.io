@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Run A und Run B | Michi / Codex (Sol 6.2) | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), kein PR | 🟡 Lokal umgesetzt und geprüft · Run B Commit, Push, Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Run A und Run B | Michi / Codex (Sol 6.2) | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · `170ca90`, `2950c66` · Fork gepusht, Fork-Pages auf diesem Branch, kein PR | 🟡 Im Fork testbar · Spieltest durch Michi und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -33,12 +33,13 @@
 
 ### 2026-11-25 – Michi / Codex (Sol 6.2) – Run A und Run B
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). Run A: `170ca90`. Run B SHA: (folgt). Run B Push: nein, weder Fork noch Upstream. Kein PR und nicht upstream gemergt. Geplante Fork-Pages-Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). Run A: `170ca90`. Run B + Nachtrag: `2950c66`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR, nicht upstream gemergt. Fork-Pages auf diesem Branch, Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/
 - **Run A** · Jede freie Ladebucht akzeptiert die rückwärtige Parkposition. Freie Buchten sind grün, belegte rot. Säulen tragen Anbieter-Kürzel. Dialoge dunkeln ab und das Navi zeigt alle verbleibenden Straßen bis zum nächsten Halt. Run A bestand 48/48 Tests.
 - **Run B** · Level 2 fährt bis Montpellier und behält die Übernachtung auf der Hinfahrt. Am Ziel folgt ein überspringbares Strandfinale nach Gesamtstress. Der Restakku zieht in jedem Level Punkte ab. Feste Stadt-Hindernisse verursachen drei Stufen Wertverlust. Ein ausgelöster Airbag beendet die Fahrt mit 0 Punkten. Getroffene Pylonen fliegen weg und erhöhen jeweils einmal den Stress. Verkehrsunfälle und die Ladebuchten aus Run A wurden mitgeprüft.
+- **Nachtrag Orchestrator (direkt, ohne Codex-Lauf)** · „Etwas essen“ in der Ladepause kostet jetzt 20 € (`EventModal.ts`, vorher kostenlos; Test in `interactions.test.mjs`, Tuning-Tabelle §9). Das 50-€-Messe-Essen (`main.ts`) ist eine eigene Entscheidung und bleibt.
 - **Bestenlisten und Deployment** · Arcade v0.3.1 akzeptiert gewertete Zieleinläufe ab 0 Punkten. Der Worker akzeptiert kürzere Fahrten in Level 2. Der Merge in `upstream/main` deployt den Worker automatisch. Der Airbag-Abbruch erzeugt keine Bestenlisteneinreichung. Keine Anfragen an die Live-API.
 - **Geprüft** · `npm run typecheck`, `npm run build` (reproduzierbar), `node --check` für geänderte JS-Dateien und Bundle, `npm test` (61/61), Versionsprüfung gegen `279202c`. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Offen** · Spieltest in beiden Themes und Ausrichtungen, insbesondere Strandfinale, Ladebuchten, Schadenstufen und Pylonen. Lokaler Browserstart durch die Sandbox blockiert. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Spieltest in beiden Themes und Ausrichtungen, insbesondere Strandfinale, Ladebuchten, Schadenstufen und Pylonen. Lokaler Browserstart durch die Sandbox blockiert. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues/PRs, Fork 0 offene PRs.
 
 ### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf) – Go-live Versionierung und Level-Bestenlisten
 
