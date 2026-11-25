@@ -57,7 +57,7 @@ try {
   });
 
   const game = await import(pathToFileURL(bundle).href);
-  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'releases']) {
+  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'releases', 'worker-validation', 'arcade-scores']) {
     const { default: register } = await import(`./${name}.test.mjs`);
     register(test, game);
   }

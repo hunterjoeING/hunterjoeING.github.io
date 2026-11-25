@@ -25,7 +25,9 @@ const CORS_HEADERS = {
 
 const GAMES_META = {
   podracer: { title: 'Canyon Podracer 3D', lowerIsBetter: false },
-  eroadtrip: { title: 'E-Roadtrip', lowerIsBetter: false },
+  eroadtrip: { title: 'e-Roadtrip: Pixel Europe', lowerIsBetter: false },
+  eroadtrip_l1: { title: 'e-Roadtrip: Pixel Europe · Level 1: Aachen ↔ Hannover Messe', lowerIsBetter: false },
+  eroadtrip_l2: { title: 'e-Roadtrip: Pixel Europe · Level 2: Familien-Sommerurlaub', lowerIsBetter: false },
   minesweeper: { title: '3D Minesweeper', lowerIsBetter: true },
   minesweeper_3d_prompt_test: { title: 'Minesweeper 3d prompt Version', lowerIsBetter: true },
   roadster: { title: 'Roadster Lander', lowerIsBetter: false },
@@ -95,6 +97,39 @@ const GAMES_META = {
   quiz_apple_flops_curiosities: { title: 'Apple: Flops, Kurioses & Insider-Wissen', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
 };
+
+// Keep target minutes and level IDs in sync with games/e-roadtrip/src/data/levels.ts.
+const EROADTRIP_LEVEL_TARGETS = {
+  eroadtrip_l1: { levelId: 'level_1_aachen_hannover', targetMinutes: 797 },
+  eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 2040 }
+};
+
+function isEroadtripBoard(gid) {
+  return typeof gid === 'string' && (gid === 'eroadtrip' || gid.startsWith('eroadtrip_'));
+}
+
+export function validateEroadtripScore(gid, body) {
+  if (!isEroadtripBoard(gid)) return null;
+  const meta = body?.meta;
+  if (!meta || typeof meta !== 'object' || Array.isArray(meta)) return 'Missing or invalid score meta';
+
+  const board = gid === 'eroadtrip' ? (meta.board ?? meta.levelBoard) : gid;
+  if (typeof board !== 'string' || !Object.hasOwn(EROADTRIP_LEVEL_TARGETS, board)) {
+    return 'Unknown E-Roadtrip level board';
+  }
+  const { levelId, targetMinutes } = EROADTRIP_LEVEL_TARGETS[board];
+  const rawScore = body.score;
+  const score = typeof rawScore === 'number' || typeof rawScore === 'string' ? Number(rawScore) : NaN;
+  if (!Number.isInteger(score) || score < 100 || score > 1000) {
+    return 'E-Roadtrip score must be an integer from 100 to 1000';
+  }
+  if (!Number.isFinite(meta.minutes) || meta.minutes < 0.5 * targetMinutes || meta.minutes > 20 * targetMinutes) {
+    return 'E-Roadtrip minutes outside the allowed range for this level';
+  }
+  if (!Number.isFinite(meta.costEur) || meta.costEur < 0) return 'Invalid E-Roadtrip costEur';
+  if (Object.hasOwn(meta, 'levelId') && meta.levelId !== levelId) return 'E-Roadtrip levelId does not match the board';
+  return null;
+}
 
 function jsonResponse(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -825,6 +860,8 @@ export default {
         const body = await request.json().catch(() => ({}));
         const gid = cleanText(body.gameId, 40);
         if (!gid) return jsonResponse({ ok: false, error: 'Missing gameId' }, 400);
+        const validationError = validateEroadtripScore(gid, body);
+        if (validationError) return jsonResponse({ ok: false, error: validationError }, 400);
 
         const cfg = GAMES_META[gid] || { title: gid, lowerIsBetter: false };
         const playerName = cleanText(body.playerName || 'Spieler', 24) || 'Spieler';
@@ -837,8 +874,11 @@ export default {
         let existingScoreVal = score;
 
         if (runId) {
-          const existing = await db.prepare('SELECT id, score FROM scores WHERE run_id = ?1').bind(runId).first();
+          const existing = await db.prepare('SELECT id, game_id AS gameId, score FROM scores WHERE run_id = ?1').bind(runId).first();
           if (existing) {
+            if (existing.gameId !== gid && (isEroadtripBoard(gid) || isEroadtripBoard(existing.gameId))) {
+              return jsonResponse({ ok: false, error: 'runId belongs to a different board' }, 400);
+            }
             existingScoreVal = Number(existing.score);
             existingIsBetter = cfg.lowerIsBetter ? score < existingScoreVal : score > existingScoreVal;
             if (existingIsBetter) {

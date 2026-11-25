@@ -909,10 +909,10 @@
     </footer>
   </div>
 
-  <script src="./shared/arcade.js"></script>
+  <script src="./shared/arcade.js?v=0.3.0"></script>
   <script src="./shared/hidden-admin.js"></script>
-  <script src="./shared/releases.js?v=0.2.0"></script>
-  <script src="./shared/update-banner.js?v=0.2.0"></script>
+  <script src="./shared/releases.js?v=0.3.0"></script>
+  <script src="./shared/update-banner.js?v=0.3.0"></script>
   <script>
     (function () {
       const GAMES = [
@@ -1727,6 +1727,18 @@
           if (!ms) return null;
           const geo = ms.geo || ms.level || 'Klassik';
           return ms.player ? `${ms.player}: ${ms.time}s · ${geo}` : `${ms.time}s · ${geo}`;
+        }
+        if (id === 'eroadtrip') {
+          const levelBests = [];
+          for (const level of [1, 2]) {
+            const boardId = `eroadtrip_l${level}`;
+            const entry = ArcadeScores.getBest(boardId);
+            const best = entry?.isGlobal
+              ? { playerName: entry.playerName, score: entry.best }
+              : ArcadeScores.getSummaryCache()?.games?.[boardId]?.best;
+            if (best) levelBests.push(`L${level}: ${best.playerName || 'Spieler'} ${best.score}`);
+          }
+          return levelBests.join(' · ') || null;
         }
         const entry = ArcadeScores.getBest(id);
         if (!entry) return null;

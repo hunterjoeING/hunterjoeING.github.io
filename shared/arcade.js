@@ -153,7 +153,9 @@
 
   const GAME_CATALOG = [
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️', lowerIsBetter: false },
-    { id: 'eroadtrip', title: 'E-Roadtrip', icon: '⚡', lowerIsBetter: false },
+    { id: 'eroadtrip_l1', title: 'e-Roadtrip: Pixel Europe · Level 1', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 1' },
+    { id: 'eroadtrip_l2', title: 'e-Roadtrip: Pixel Europe · Level 2', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 2' },
+    { id: 'eroadtrip', title: 'e-Roadtrip: Pixel Europe', icon: '⚡', lowerIsBetter: false, group: 'eroadtrip', tabTitle: 'Gesamt' },
     { id: 'minesweeper', title: '3D Minesweeper – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online)', icon: '💣', lowerIsBetter: true },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊', lowerIsBetter: true },
     { id: 'roadster', title: 'Roadster Lander', icon: '🚀', lowerIsBetter: false },
@@ -220,6 +222,11 @@
   ];
 
   const GAME_MAP = Object.fromEntries(GAME_CATALOG.map(g => [g.id, g]));
+
+  function getGroupMembers(id) {
+    const group = GAME_MAP[id]?.group;
+    return group ? GAME_CATALOG.filter(game => game.group === group) : [];
+  }
 
   function escapeHtml(str) {
     return String(str == null ? '' : str)
@@ -359,6 +366,29 @@
     } catch (e) {}
   }
 
+  function emitScoreSubmitted(detail, onResult) {
+    try {
+      window.dispatchEvent(new CustomEvent('arcade:score-submitted', { detail }));
+    } catch (e) {}
+    if (typeof onResult === 'function') {
+      try { onResult(detail); } catch (e) {}
+    }
+  }
+
+  async function postScore(payload) {
+    const response = await fetch(`${API_BASE}/api/scores`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      keepalive: true,
+      body: JSON.stringify(payload)
+    });
+    const result = await response.json().catch(() => null);
+    if (!response.ok || !result?.ok) {
+      throw new Error(result?.error || (response.ok ? 'Invalid score response' : 'HTTP ' + response.status));
+    }
+    return result;
+  }
+
   function updateSummaryEntry(gameId, bestRow, plays, entries) {
     if (!_summary) {
       _summary = { ok: true, totalRecords: 0, totalPlays: 0, games: {} };
@@ -406,16 +436,18 @@
 
   async function renderBoardContent(bodyEl, subEl, gameId, limit) {
     bodyEl.innerHTML = '<div style="text-align:center;padding:28px;color:#94a3b8;">Lade globale Bestenliste…</div>';
+    const loading = bodyEl.firstElementChild;
     if (subEl) subEl.innerHTML = '';
     try {
       const data = await window.ArcadeScores.fetchLeaderboard(gameId, limit);
+      if (bodyEl.firstElementChild !== loading) return;
       const myName = window.ArcadeScores.getPlayerName().toLowerCase();
       if (subEl) {
         subEl.innerHTML = `
           <span>🕹️ <strong>${Number(data.plays || 0)}</strong> gespielte Runden · <strong>${Number(data.entries || 0)}</strong> Einträge</span>
           <button type="button" class="arcade-toast-btn" id="arcade-board-edit-name">👤 Name: ${escapeHtml(window.ArcadeScores.getPlayerName())}</button>
         `;
-        const editBtn = document.getElementById('arcade-board-edit-name');
+        const editBtn = subEl.querySelector('#arcade-board-edit-name');
         if (editBtn) {
           editBtn.addEventListener('click', () => {
             window.ArcadeScores.openPlayerNameModal(() => renderBoardContent(bodyEl, subEl, gameId, limit));
@@ -452,6 +484,7 @@
         </table>
       `;
     } catch (e) {
+      if (bodyEl.firstElementChild !== loading) return;
       bodyEl.innerHTML = '<div style="text-align:center;padding:28px;color:#fca5a5;">Bestenliste gerade nicht erreichbar. Bitte später erneut versuchen.</div>';
     }
   }
@@ -460,13 +493,14 @@
     API_BASE,
     CATALOG: GAME_CATALOG,
     detectGameId,
+    getGroupMembers,
     newRunId: (gameId) => {
       const prefix = String(gameId || 'run').replace(/[^a-zA-Z0-9_-]/g, '');
       return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
     },
     getPlayerName: () => cleanName(safeGet(NAME_KEY)) || 'Spieler',
     hasCustomPlayerName: () => !!cleanName(safeGet(NAME_KEY)),
-    setPlayerName: (name) => {
+    setPlayerName: (name, { dryRun = false, onSave } = {}) => {
       const cleaned = cleanName(name);
       try {
         if (cleaned) localStorage.setItem(NAME_KEY, cleaned);
@@ -474,9 +508,11 @@
       } catch (e) {}
       syncPlayerButtons();
       try { window.dispatchEvent(new CustomEvent('arcade:player-changed', { detail: cleaned || 'Spieler' })); } catch (e) {}
+      const nextName = cleaned || 'Spieler';
+      const notifySaved = () => { if (typeof onSave === 'function') onSave(nextName); };
 
       // Retrospective update if user just finished a round right before setting name
-      if (cleaned && _lastSubmission && (Date.now() - _lastSubmission.ts) < 120000) {
+      if (!dryRun && cleaned && _lastSubmission && (Date.now() - _lastSubmission.ts) < 120000) {
         const sub = _lastSubmission;
         fetch(`${API_BASE}/api/scores`, {
           method: 'POST',
@@ -498,11 +534,15 @@
               emitScoresUpdated();
             }
           })
+          .catch(() => {})
+          .finally(notifySaved)
           .catch(() => {});
+      } else {
+        notifySaved();
       }
-      return cleaned || 'Spieler';
+      return nextName;
     },
-    openPlayerNameModal: (onSave) => {
+    openPlayerNameModal: (onSave, { dryRun = false } = {}) => {
       removeModal();
       const current = cleanName(safeGet(NAME_KEY));
       const root = document.createElement('div');
@@ -530,9 +570,9 @@
       const inp = document.getElementById('arcade-name-field');
       const close = () => removeModal();
       const save = () => {
-        const next = window.ArcadeScores.setPlayerName(inp.value);
+        const name = inp.value;
         close();
-        if (typeof onSave === 'function') onSave(next);
+        window.ArcadeScores.setPlayerName(name, { dryRun, onSave });
       };
       document.getElementById('arcade-modal-close').addEventListener('click', close);
       document.getElementById('arcade-name-cancel').addEventListener('click', close);
@@ -546,14 +586,21 @@
     },
     openLeaderboardModal: (gameId) => {
       removeModal();
-      let activeId = GAME_MAP[gameId] ? gameId : (detectGameId() || 'minesweeper');
-      const showTabs = !detectGameId() || !GAME_MAP[gameId];
+      const detectedId = detectGameId();
+      let activeId = GAME_MAP[gameId] ? gameId : (detectedId || 'minesweeper');
+      const groupMembers = getGroupMembers(activeId);
+      const showGroupTabs = groupMembers.length > 1;
+      const tabs = showGroupTabs ? groupMembers
+        : (!detectedId || !GAME_MAP[gameId] ? GAME_CATALOG.filter(g => !g.unlisted) : []);
+      const showTabs = tabs.length > 0;
+      const boardTitle = showGroupTabs ? GAME_MAP[GAME_MAP[activeId].group]?.title
+        : (!showTabs ? GAME_MAP[activeId]?.title || activeId : '');
       const root = document.createElement('div');
       root.id = 'arcade-modal-root';
       root.className = 'arcade-modal-backdrop';
       const tabsHtml = showTabs
         ? `<div class="arcade-modal-tabs" id="arcade-modal-tabs">
-            ${GAME_CATALOG.filter(g => !g.unlisted).map(g => `<button type="button" class="arcade-tab-btn ${g.id === activeId ? 'active' : ''}" data-gid="${g.id}">${g.icon} ${escapeHtml(g.title)}</button>`).join('')}
+            ${tabs.map(g => `<button type="button" class="arcade-tab-btn ${g.id === activeId ? 'active' : ''}" data-gid="${g.id}">${showGroupTabs ? escapeHtml(g.tabTitle || g.title) : g.icon + ' ' + escapeHtml(g.title)}</button>`).join('')}
            </div>`
         : '';
       const isSub = /\/games\/[^/]+/.test((window.location.pathname || '').toLowerCase());
@@ -569,7 +616,7 @@
       root.innerHTML = `
         <div class="arcade-modal-card">
           <div class="arcade-modal-head">
-            <h3 class="arcade-modal-title" id="arcade-board-title">🏆 Globale Bestenliste${showTabs ? '' : ' · ' + escapeHtml(GAME_MAP[activeId]?.title || activeId)}</h3>
+            <h3 class="arcade-modal-title" id="arcade-board-title">🏆 Globale Bestenliste${boardTitle ? ' · ' + escapeHtml(boardTitle) : ''}</h3>
             <div style="display:flex;gap:6px;align-items:center;">
               <button type="button" class="icon-btn" id="arcade-board-refresh" title="Aktualisieren">↻</button>
               <button type="button" class="icon-btn" id="arcade-modal-close" title="Schließen">✕</button>
@@ -611,10 +658,17 @@
       root.addEventListener('click', e => { if (e.target === root) close(); });
       if (showTabs) {
         const tabsEl = document.getElementById('arcade-modal-tabs');
+        if (showGroupTabs) tabsEl.querySelector('.arcade-tab-btn.active')?.focus();
         tabsEl.addEventListener('click', e => {
           const btn = e.target.closest('.arcade-tab-btn');
           if (!btn) return;
-          activeId = btn.dataset.gid;
+          const nextId = btn.dataset.gid;
+          if (!showGroupTabs && getGroupMembers(nextId).length > 1) {
+            close();
+            window.ArcadeScores.openLeaderboardModal(nextId);
+            return;
+          }
+          activeId = nextId;
           tabsEl.querySelectorAll('.arcade-tab-btn').forEach(b => b.classList.toggle('active', b === btn));
           renderBoardContent(bodyEl, subEl, activeId, 25);
         });
@@ -750,15 +804,21 @@
         runId,
         meta: opts.meta || undefined
       };
+      if (opts.dryRun === true) {
+        if (isPersonalBetter) emitScoresUpdated();
+        console.info('[ArcadeScores dryRun]', payload);
+        emitScoreSubmitted({ ok: false, dryRun: true, payload }, opts.onResult);
+        return isPersonalBetter;
+      }
       _lastSubmission = { ...payload, ts: Date.now() };
 
-      // Optimistic local-summary update if beating known global best
+      // E-Roadtrip results enter the global summary after server validation.
       const curBest = window.ArcadeScores.getBest(gameId);
       const knownPlays = Math.max(Number(curBest?.plays || 0), Number(_summary?.games?.[gameId]?.plays || 0));
       const beatsKnown = !curBest
         ? true
         : (isLower ? payload.score < curBest.best : payload.score > curBest.best);
-      if (beatsKnown) {
+      if (beatsKnown && GAME_MAP[gameId]?.group !== 'eroadtrip') {
         updateSummaryEntry(
           gameId,
           { playerName, score: payload.score, label: payload.label, createdAt: new Date().toISOString() },
@@ -768,17 +828,12 @@
         emitScoresUpdated();
       }
 
-      fetch(`${API_BASE}/api/scores`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        keepalive: true,
-        body: JSON.stringify(payload)
-      })
-        .then(r => r.ok ? r.json() : null)
+      postScore(payload)
         .then(res => {
-          if (!res || !res.ok) return;
           updateSummaryEntry(gameId, res.best, res.plays, res.entries);
           emitScoresUpdated();
+          const { rank, entries, plays, isGlobalRecord } = res;
+          emitScoreSubmitted({ gameId, runId, score: payload.score, rank, entries, plays, isGlobalRecord, ok: true }, opts.onResult);
 
           if (!opts.silent && (res.isGlobalRecord || isPersonalBetter)) {
             const rankText = res.isGlobalRecord
@@ -809,7 +864,7 @@
               });
             }
           }
-        })
+        }, error => emitScoreSubmitted({ gameId, runId, ok: false, error: error?.message || String(error) }, opts.onResult))
         .catch(() => {});
 
       return isPersonalBetter;
@@ -901,7 +956,7 @@
     { id: 'all', title: '✨ Alle Module & Allgemein', icon: '🌐' },
     { id: 'general', title: 'Allgemein / Ganze Website', icon: '🏠' },
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️' },
-    { id: 'eroadtrip', title: 'E-Roadtrip', icon: '⚡' },
+    { id: 'eroadtrip', title: 'e-Roadtrip: Pixel Europe', icon: '⚡' },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊' },
     { id: 'minesweeper', title: 'Minesweeper 3D – Tech Demo KI-Agent', icon: '💣' },
     { id: 'roadster', title: 'Hyper-Roadster Lander', icon: '🚀' },

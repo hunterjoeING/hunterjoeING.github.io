@@ -43,6 +43,16 @@ const arcadeReleases = {
   },
   releases: [
     {
+      app: "arcade", version: "0.3.0", date: "2026-11-25", type: "feature", title: "Bestenlisten pro Level",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Eigene Bestenlisten für die ersten beiden e-Roadtrip-Level",
+        "Tabs für Level 1, Level 2 und die Gesamtbestenliste",
+        "Level-Bestwerte auf der e-Roadtrip-Spielkarte",
+        "Plausibilitätsprüfung für eingereichte e-Roadtrip-Ergebnisse",
+      ],
+    },
+    {
       app: "arcade", version: "0.2.0", date: "2026-11-25", type: "feature", title: "Versionen und Changelogs",
       author: "Michi", model: "Sol 6.2",
       highlights: [
