@@ -1,6 +1,6 @@
 {
   "name": "e-roadtrip",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "description": "e-Roadtrip: Pixel Europe – pixel-art EV roadtrip planning and top-down driving game (Phaser 3 + TypeScript)",
   "scripts": {

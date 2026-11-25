@@ -1,5 +1,7 @@
 export class Scene {}
 
+export const Scenes = { Events: { SHUTDOWN: 'shutdown' } };
+
 export const BlendModes = { ADD: 1 };
 export const Input = { Keyboard: { JustDown: () => false } };
 export const Math = {

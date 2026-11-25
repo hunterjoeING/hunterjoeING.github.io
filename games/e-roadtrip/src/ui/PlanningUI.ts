@@ -192,6 +192,7 @@ export class PlanningUI {
           </div>
         </div>
         <p class="plan-briefing">${level.briefingText}</p>
+        <p class="plan-briefing">Plane so, dass du mit wenig Restakku sicher ankommst. Ab 5 % Restakku gibt es im Ziel Punktabzug.</p>
         <div class="plan-rules-chips">
           ${level.specialRulesSummary.map(r => `<span class="rule-chip">${r}</span>`).join('')}
         </div>
@@ -261,7 +262,7 @@ export class PlanningUI {
     const networks = filterNetworksForLevel(level);
     this.filterBarEl.innerHTML = `
       <div class="mfb-row">
-        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" title="Einblenden: Symbole auf Hin- und Rückweg, farbig mit Abo und grau bei Ad-hoc. Aktive Anbieterchips zeigen zusätzlich die Detailkacheln der aktuellen Etappe. Ausblenden: keine Symbole, außer die angehakten Anbieter auf der aktuellen Etappe.">
+        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" title="Einblenden: Symbole entlang der geplanten Route, farbig mit Abo und grau bei Ad-hoc. Aktive Anbieterchips zeigen zusätzlich die Detailkacheln der aktuellen Etappe. Ausblenden: keine Symbole, außer die angehakten Anbieter auf der aktuellen Etappe.">
           ${showChargerStations ? '🔌 Ladestationen einblenden' : '🔌 Ladestationen ausblenden'}
         </button>
         ${networks

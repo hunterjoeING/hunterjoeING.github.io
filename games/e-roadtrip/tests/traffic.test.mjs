@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
+import { createFixtures } from './fixtures.mjs';
 
 function sprite(x = 0, y = 0, texture = '') {
   const image = {
-    x, y, rotation: 0, scale: 1, texture: { key: texture },
+    x, y, angle: 0, rotation: 0, scale: 1, texture: { key: texture },
     body: { x: x - 8, y: y - 8, width: 16, height: 16 },
     setRotation(rotation) { this.rotation = rotation; return this; },
     setPosition(x, y) { Object.assign(this, { x, y }); return this; },
@@ -21,9 +22,10 @@ export default function register(test, game) {
     CityDriveScene, paintDrivingPlace, getLevelById, createDefaultPlan, getActiveRouteLegs,
     getChargerById, getChargersForEdge, getEdgeById, evaluateTripPlan, computeRouteSocBandSegments,
     HIGHWAY_PX_PER_KM, stepHighwayTraffic, countSpriteOverlaps, CHARGERS,
-    capsuleOverlapsRect, circleAt, vehicleCapsule
+    capsuleOverlapsRect, circleAt, vehicleCapsule, evaluatePropertyDamage, evaluateRun
   } = game;
   const dt = 1 / 60;
+  const { mkRun, route1 } = createFixtures(game);
 
   function createCity(preset, station, mobile) {
     const city = new CityDriveScene();
@@ -39,14 +41,18 @@ export default function register(test, game) {
         return image;
       }
     };
-    city.physics = { add: { image: sprite } };
+    city.physics = { add: { image: sprite }, world: { pause() {} } };
     city.place = paintDrivingPlace(city, { preset, station, mobile });
     city.worldW = city.place.worldW;
     city.worldH = city.place.worldH;
     city.spawnEnvironmentAndProps();
     city.spawnTrafficAndPedestrians();
     city.player = sprite(city.place.spawn.x, city.place.spawn.y).setRotation(city.place.spawn.rot);
-    city.bridge = { paused: false };
+    city.bridge = {
+      paused: false,
+      onPropertyDamage(damage) { city.damageEvents.push(damage); }
+    };
+    city.damageEvents = [];
     city.handleCollision = kind => { city.lastCollision = kind; };
     return { city, images };
   }
@@ -137,14 +143,15 @@ export default function register(test, game) {
     for (const station of CHARGERS) {
       for (const mobile of [true, false]) {
         const { city, images } = createCity('charger_park', station, mobile);
-        const { cityId, spawn, chargingBays, buildings } = city.place;
+        const { cityId, spawn, chargingBays, buildings, parkedVehicles } = city.place;
         const description = `${station.id} ${cityId} mobile=${mobile}`;
         const props = images.filter(({ texture, scale }) =>
           texture.key.startsWith('charger_') || (texture.key.startsWith('npc_') && scale < 1)
         );
         for (const prop of props) {
+          const footprintList = prop.texture.key.startsWith('charger_') ? buildings : parkedVehicles;
           assert.ok(
-            buildings.some(rect => capsuleOverlapsRect(circleAt(prop.x, prop.y, 2), rect)),
+            footprintList.some(rect => capsuleOverlapsRect(circleAt(prop.x, prop.y, 2), rect)),
             `missing obstacle for ${prop.texture.key}: ${description}`
           );
         }
@@ -215,7 +222,7 @@ export default function register(test, game) {
 
     city.preset = 'charger_park';
     city.bridge.level = getLevelById('level_1_aachen_hannover');
-    city.bridge.touch = {};
+    city.bridge.touch = { left: false, right: false, up: false, down: false, brake: false };
     city.targetZone = city.place.targetZone;
     city.scale = { width: 390 };
     city.surface = { update() {} };
@@ -267,30 +274,136 @@ export default function register(test, game) {
     }
   });
 
-  test('Charger posts and rotated traffic cars stop the player', t => {
+  test('Static property damage uses absolute impact speed and three half-open tiers', () => {
+    const scratch = { tier: 'scratch', lossEur: 800, stressDelta: 10 };
+    const dent = { tier: 'dent', lossEur: 1300, stressDelta: 20 };
+    const airbag = { tier: 'airbag', lossEur: 5000, stressDelta: 0 };
+    for (const speed of [0, 16, 74.99]) assert.deepEqual(evaluatePropertyDamage(speed), scratch);
+    for (const speed of [75, -115, 164.99]) assert.deepEqual(evaluatePropertyDamage(speed), dent);
+    for (const speed of [165, -165, 230]) assert.deepEqual(evaluatePropertyDamage(speed), airbag);
+  });
+
+  test('Charger posts trigger property damage before the car bumper reaches the post', t => {
     t.mock.method(Math, 'random', () => 0.5);
     const station = getChargerById('chg_herford_tesla');
-    const { city, images } = createCity('charger_park', station, false);
-    const post = images.find(image => image.texture.key === `charger_${station.network}`);
+    for (const direction of [-1, 1]) {
+      const { city, images } = createCity('charger_park', station, false);
+      const post = images.find(image => image.texture.key === `charger_${station.network}`);
+      city.player.setPosition(post.x - direction * 48, post.y - 1).setRotation(direction * Math.PI / 2);
+      const driveIntoPost = speed => {
+        city.bridge.paused = false;
+        city.carSpeed = speed;
+        for (let steps = 0; steps < 30; steps++) if (!city.movePlayer(dt, 0)) break;
+      };
 
-    function driveToContact() {
-      for (let step = 0; step < 30; step++) {
-        if (!city.movePlayer(dt, 0)) break;
-      }
-    }
-
-    for (const [x, rotation] of [[post.x - 48, Math.PI / 2], [post.x + 48, -Math.PI / 2]]) {
-      city.lastCollision = undefined;
-      city.player.setPosition(x, post.y - 1).setRotation(rotation);
-      city.carSpeed = 230;
-      driveToContact();
-      assert.equal(city.lastCollision, 'obstacle');
+      driveIntoPost(230);
+      assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['airbag']);
       assert.ok(Math.abs(city.player.x - post.x) > 27, 'car bumper stopped short of the charger');
+      assert.equal(city.lastCollision, undefined);
+      driveIntoPost(230);
+      assert.equal(city.damageEvents.length, 1);
     }
+  });
+
+  test('Reversing away rearms a building hit and world edges count as static property', () => {
+    const { city } = createCity('aachen_start');
+    city.obstacleRects = [{ x: 200, y: 90, w: 50, h: 60 }];
+    city.obstacleCircles = [];
+    city.trafficCars = [];
+    city.pedestrians = [];
+    city.player.setPosition(177, 120).setRotation(Math.PI / 2);
+    const drive = (speed, steps) => {
+      city.bridge.paused = false;
+      city.carSpeed = speed;
+      for (let i = 0; i < steps; i++) if (!city.movePlayer(dt, 0)) return false;
+      return true;
+    };
+    assert.equal(drive(90, 1), false);
+    assert.equal(drive(90, 1), false);
+    assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent']);
+    assert.equal(drive(-100, 10), true);
+    assert.equal(drive(53, 30), false);
+    assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent', 'scratch']);
+
+    city.player.setPosition(24, 120).setRotation(-Math.PI / 2);
+    assert.equal(drive(230, 1), false);
+    assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent', 'scratch', 'airbag']);
+  });
+
+  test('Parked and moving traffic still go through the opponent collision flow', t => {
+    t.mock.method(Math, 'random', () => 0.5);
+    const station = getChargerById('chg_herford_tesla');
+    const { city } = createCity('charger_park', station, false);
     city.player.setPosition(850, 45).setRotation(Math.PI / 2);
     city.trafficCars[0].sprite.setPosition(905, 45).setRotation(0);
-    city.lastCollision = undefined;
-    driveToContact();
+    city.carSpeed = 230;
+    for (let steps = 0; steps < 30; steps++) if (!city.movePlayer(dt, 0)) break;
     assert.equal(city.lastCollision, 'car');
+    assert.deepEqual(city.damageEvents, []);
+
+    const parked = city.place.parkedVehicles[0];
+    city.player.setPosition(parked.x + parked.w / 2, parked.y + parked.h + 22).setRotation(0);
+    city.carSpeed = 230;
+    assert.equal(city.movePlayer(dt, 0), false);
+    assert.equal(city.lastCollision, 'obstacle');
+    assert.deepEqual(city.damageEvents, []);
+  });
+
+  test('Cars, cyclists and pedestrians keep their fault handling and scoring path', () => {
+    for (const [kind, speed, atFault] of [
+      ['car', 0, false], ['car', 120, true], ['cyclist', 120, true], ['pedestrian', 120, true]
+    ]) {
+      const city = new CityDriveScene();
+      const run = mkRun();
+      let collision;
+      city.bridge = {
+        runState: run, paused: false, onCollisionEvent(info) { collision = info; },
+        onPropertyDamage: assert.fail
+      };
+      city.player = sprite(100, 100);
+      city.cameras = { main: { shake() {} } };
+      city.physics = { world: { pause() {} } };
+      city.carSpeed = speed;
+      city.handleCollision(kind, 100, 85, 10);
+      assert.equal(collision.kind, kind);
+      assert.equal(collision.playerAtFault, atFault);
+      assert.equal(city.bridge.paused, true);
+      assert.equal(city.carSpeed, 0);
+      assert.equal(run.collisionsCount, Number(atFault));
+      assert.equal(run.propertyDamageEur, 0);
+    }
+  });
+
+  test('Construction cones fling away, count once each, and only increase stress', () => {
+    const { city, images } = createCity('aachen_start');
+    const [first, second] = images.filter(image => image.texture.key === 'cone');
+    const run = mkRun(route1);
+    run.completed = false;
+    city.bridge.runState = run;
+    city.trafficCars = [];
+    city.pedestrians = [];
+    const flung = [];
+    city.tweens = { add(tween) { flung.push(tween); } };
+    const hit = cone => {
+      city.player.setPosition(cone.x - 27, cone.y).setRotation(Math.PI / 2);
+      city.carSpeed = 230;
+      assert.equal(city.movePlayer(dt, 0), true);
+      assert.ok(city.player.x > cone.x - 27);
+      assert.equal(city.carSpeed, 230);
+    };
+    const original = structuredClone(run);
+    const directScoring = current => evaluateRun(route1, current, true).subScores.decisions;
+    hit(first);
+    assert.deepEqual(run, { ...original, stress: 21, peakStress: 21 });
+    hit(first);
+    assert.deepEqual(run, { ...original, stress: 21, peakStress: 21 });
+    hit(second);
+    assert.deepEqual(run, { ...original, stress: 22, peakStress: 22 });
+    assert.deepEqual(flung.map(tween => tween.targets), [first, second]);
+    assert(flung.every(tween => tween.x !== tween.targets.x));
+    assert.equal(directScoring(run), directScoring(original));
+    assert.equal(city.bridge.paused, false);
+    assert.equal(city.lastCollision, undefined);
+    assert.deepEqual(city.damageEvents, []);
   });
 }

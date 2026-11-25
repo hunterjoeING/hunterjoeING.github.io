@@ -528,42 +528,6 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     ]
   },
 
-  evt_south_arrival: {
-    id: 'evt_south_arrival',
-    title: 'Montpellier erreicht',
-    category: 'family',
-    icon: '🌊',
-    description:
-      'Das Mittelmeer ist da: Montpellier, Palmen, warmes Licht. Frau und Kinder wollen kurz raus, bevor die Rückfahrt nach Aachen beginnt.',
-    requiresFamily: true,
-    choices: [
-      {
-        id: 'promenade',
-        label: '20 Minuten ans Wasser mit der Familie',
-        hint: '+20 Min · Stress sinkt · dann Rückfahrt',
-        timeDeltaMin: 20,
-        socDeltaPct: 0,
-        costDeltaEur: 0,
-        pauseCostEur: 8,
-        hungerDelta: -20,
-        stressDelta: -14,
-        decisionPoints: 10,
-        resultText: 'Eis, ein Blick aufs Meer, kürzere Nerven. Danach geht es zurück Richtung Aachen.'
-      },
-      {
-        id: 'turn_now',
-        label: 'Sofort wenden und die Rückfahrt starten',
-        hint: '+3 Min · die Familie mault',
-        timeDeltaMin: 3,
-        socDeltaPct: 0,
-        costDeltaEur: 0,
-        stressDelta: 8,
-        decisionPoints: 2,
-        resultText: 'Kein Strand. Frau und Kinder sind enttäuscht, der Zeitplan bleibt straff.'
-      }
-    ]
-  },
-
   evt_tailgate: {
     id: 'evt_tailgate',
     title: 'Lichthupe und zu dicht',

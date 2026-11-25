@@ -67,6 +67,21 @@ export default function register(test) {
     assert.equal(scores.getGroupMembers('minesweeper').length, 0);
   });
 
+  test('zero is recordable for E-Roadtrip completions without changing other high-score games', async () => {
+    const payloads = [];
+    const { scores } = loadScores(async (_url, init) => {
+      payloads.push(JSON.parse(init.body));
+      return Response.json({ ok: true, rank: 1, entries: 1, plays: 1 });
+    });
+    for (const board of ['eroadtrip', 'eroadtrip_l1', 'eroadtrip_l2']) {
+      await new Promise(resolve => scores.record(board, 0, '0 Punkte', false, { onResult: resolve, silent: true }));
+    }
+    scores.record('podracer', 0, '0 Punkte', false, { onResult: assert.fail, silent: true });
+    assert.deepEqual(payloads.map(({ gameId, score }) => [gameId, score]), [
+      ['eroadtrip', 0], ['eroadtrip_l1', 0], ['eroadtrip_l2', 0]
+    ]);
+  });
+
   test('record publishes validation and transport errors while preserving local scores', async () => {
     const { scores, window } = loadScores(async (_url, init) => {
       if (JSON.parse(init.body).runId === 'offline') throw new Error('Offline');

@@ -842,13 +842,9 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_hotel_overnight');
         return;
       }
-      const arrivalId = `evt_south_arrival@${run.currentLegIndex}`;
-      if (legSpec.destinationAtEnd && !run.triggeredEventIds.includes(arrivalId)) {
-        run.triggeredEventIds.push(arrivalId);
-        this.eventCooldownSec = 4;
+      if (legSpec.destinationAtEnd) {
         this.bridge.paused = true;
-        SoundFX.alert();
-        this.bridge.onDynamicEventTrigger('evt_south_arrival');
+        this.bridge.onDestinationArrival();
         return;
       }
       if (run.currentLegIndex < activeLegs.length - 1) {

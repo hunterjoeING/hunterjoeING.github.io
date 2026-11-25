@@ -50,6 +50,7 @@ export interface PlacePaint {
   zoneColor?: number;
   passThrough: boolean;
   chargingBays?: PaintedChargingBay[];
+  parkedVehicles?: Rect[];
   spawn: { x: number; y: number; rot: number };
   spinners: Phaser.GameObjects.Image[];
   traffic: TrafficRoute[];
@@ -624,6 +625,7 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     .map(({ index }) => index));
   const npcBay = bayCount > 1 ? indices.find(i => !occupiedBays.has(i)) : undefined;
   const chargingBays: PaintedChargingBay[] = [];
+  const parkedVehicles: Rect[] = [];
   for (let i = 0; i < bayCount; i++) {
     const bx = rowX + i * 58;
     const by = aisleTop - 78;
@@ -645,7 +647,7 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
         .setScale(0.78)
         .setRotation(Math.PI)
         .setDepth(5);
-      buildings.push(spriteFootprint(bx + 23, by + 40, CAR_SIZE, CAR_FOOTPRINT, 0.78));
+      parkedVehicles.push(spriteFootprint(bx + 23, by + 40, CAR_SIZE, CAR_FOOTPRINT, 0.78));
     }
   }
 
@@ -664,7 +666,7 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
       .setRotation(variant === 0 ? Math.PI : 0)
       .setDepth(4)
       .setTint([0xffffff, 0xfecaca, 0xbfdbfe, 0xfde68a, 0xbbf7d0][i % 5]);
-    buildings.push(spriteFootprint(cx, cy, CAR_SIZE, CAR_FOOTPRINT, 0.82));
+    parkedVehicles.push(spriteFootprint(cx, cy, CAR_SIZE, CAR_FOOTPRINT, 0.82));
   }
 
   const truckCount = style === 'rural' ? (mobile ? 4 : 6) : style === 'urban' ? (mobile ? 7 : 11) : mobile ? 5 : 8;
@@ -675,7 +677,7 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     const ty = apron.y + 240 + row * 78;
     if (ty + 36 > aisleTop - 16) continue;
     scene.add.image(tx, ty, 'npc_truck').setScale(0.78).setDepth(4).setTint(i % 2 ? 0xfecaca : 0xe2e8f0);
-    buildings.push(spriteFootprint(tx, ty, TRUCK_SIZE, TRUCK_FOOTPRINT, 0.78));
+    parkedVehicles.push(spriteFootprint(tx, ty, TRUCK_SIZE, TRUCK_FOOTPRINT, 0.78));
   }
 
   const washRect: Rect = { x: apron.x + apron.w - 188, y: apron.y + 148, w: 156, h: 54 };
@@ -826,6 +828,7 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     targetZone: new Phaser.Geom.Rectangle(rowX, aisleTop - 78, bayCount * 58, 68),
     passThrough: false,
     chargingBays,
+    parkedVehicles,
     spawn: { x: apron.x + 130, y: apron.y + 52, rot: Math.PI },
     spinners,
     traffic,

@@ -8,6 +8,7 @@ import {
   RunState,
   TripPlan
 } from '../types';
+import type { PropertyDamage } from '../sim/PropertyDamage';
 
 export interface TouchInputState {
   left: boolean;
@@ -42,6 +43,8 @@ export interface ERoadtripBridge {
   onDynamicEventTrigger: (eventId: string) => void;
   onWifeDialogueTrigger: (dialogueId: string) => void;
   onCollisionEvent: (info: CollisionInfo) => void;
+  onPropertyDamage: (damage: PropertyDamage) => void;
+  onDestinationArrival: () => void;
   onPoliceViolation: (kind: PoliceViolationKind) => void;
   onBatteryDepleted: () => void;
 }

@@ -1,4 +1,5 @@
 import type { LevelConfig, RunState } from '../types';
+import { totalRunCost } from '../sim/ScoringEngine';
 
 export function formatClock(level: LevelConfig, elapsedMin: number): string {
   const total = Math.round(level.departureTimeHour * 60 + elapsedMin);
@@ -8,8 +9,7 @@ export function formatClock(level: LevelConfig, elapsedMin: number): string {
 }
 
 export function formatDrivingCosts(run: RunState): string {
-  return (run.chargingCostEur + run.subscriptionCostEur + run.tollsEur + run.incidentalCostEur +
-    run.pauseCostEur + (run.lodgingCostEur || 0)).toFixed(2) + ' €';
+  return totalRunCost(run).toFixed(2) + ' €';
 }
 
 export function renderDriveStatus(level: LevelConfig, run: RunState): string {

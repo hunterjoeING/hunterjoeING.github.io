@@ -43,6 +43,13 @@ const arcadeReleases = {
   },
   releases: [
     {
+      app: "arcade", version: "0.3.1", date: "2026-11-25", type: "patch", title: "Bestenlisten für kürzere Fahrten",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Die e-Roadtrip-Bestenlisten akzeptieren kürzere Fahrzeiten in Level 2 und gewertete Zieleinläufe ab 0 Punkten.",
+      ],
+    },
+    {
       app: "arcade", version: "0.3.0", date: "2026-11-25", type: "feature", title: "Bestenlisten pro Level",
       author: "Michi", model: "Sol 6.2",
       highlights: [
@@ -68,6 +75,17 @@ const arcadeReleases = {
       banner: false,
       highlights: [
         "Der Start des Web-Projekts HunterJoe Arcade",
+      ],
+    },
+    {
+      app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Neues Finale in Montpellier",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen",
+        "Dialoge dunkeln die Fahrt ab. Das Navi zeigt alle verbleibenden Straßen bis zum nächsten Halt.",
+        "Level 2 endet nach der Hinfahrt mit einem neuen Finale in Montpellier",
+        "Restakku am Ziel kann Punkte kosten, Essen in der Ladepause kostet 20 €",
+        "Rempler an Gebäuden und Ladesäulen verursachen Wertverlust am Auto",
       ],
     },
     {

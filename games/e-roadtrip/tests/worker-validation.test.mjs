@@ -7,13 +7,22 @@ const level1 = {
 };
 const level2 = {
   score: '790',
-  meta: { levelId: 'level_2_family_summer', minutes: 2040, costEur: 0 }
+  meta: { levelId: 'level_2_family_summer', minutes: 1100, costEur: 0 }
 };
 
 export default function register(test) {
   test('worker accepts both E-Roadtrip level boards and overall board metadata aliases', () => {
     assert.equal(validateEroadtripScore('eroadtrip_l1', level1), null);
     assert.equal(validateEroadtripScore('eroadtrip_l2', level2), null);
+    assert.equal(validateEroadtripScore('eroadtrip_l2', {
+      score: 0, meta: { ...level2.meta, minutes: 850 }
+    }), null);
+    assert.equal(validateEroadtripScore('eroadtrip_l2', {
+      score: 1, meta: { ...level2.meta, minutes: 550 }
+    }), null);
+    assert.match(validateEroadtripScore('eroadtrip_l2', {
+      score: 0, meta: { ...level2.meta, minutes: 549 }
+    }), /minutes/);
     assert.equal(validateEroadtripScore('eroadtrip', {
       ...level1, meta: { ...level1.meta, board: 'eroadtrip_l1' }
     }), null);
@@ -29,7 +38,7 @@ export default function register(test) {
   });
 
   test('worker rejects implausible E-Roadtrip results and leaves other game validation alone', () => {
-    for (const score of [812.5, 99, 1001, Infinity, [812]]) {
+    for (const score of [812.5, -1, 1001, Infinity, [812], "", "  "]) {
       assert.match(validateEroadtripScore('eroadtrip_l1', { ...level1, score }), /integer/);
     }
     for (const minutes of [398, 15941, '797', NaN]) {
@@ -71,7 +80,7 @@ export default function register(test) {
 
     const invalid = await post({ ...level1, score: 812.5, gameId: 'eroadtrip_l1' });
     assert.equal(invalid.status, 400);
-    assert.deepEqual(await invalid.json(), { ok: false, error: 'E-Roadtrip score must be an integer from 100 to 1000' });
+    assert.deepEqual(await invalid.json(), { ok: false, error: 'E-Roadtrip score must be an integer from 0 to 1000' });
     assert.equal(lookups, 0);
 
     const collision = await post({ ...level2, gameId: 'eroadtrip_l2', runId: 'existing-run' });

@@ -247,6 +247,12 @@ export default function register(test, game) {
     actions.querySelector('#btn-unplug').click();
     near(result.minutesSpent, 7.5);
     near(result.newSoc, 43);
+    start(80);
+    root.querySelector('#break-buttons-box').querySelector('eat').click();
+    for (const [id, end] of [...timeouts]) { timeouts.delete(id); end(); }
+    actions.querySelector('#btn-unplug').click();
+    assert.equal(result.activities[0].costEur, 20, 'eating during a charging stop costs 20 €');
+    assert.equal(result.activities[0].hungerDelta, -60);
   });
 
   test('The return HUD map starts at the right waypoint and keeps a focused slider', (t) => {

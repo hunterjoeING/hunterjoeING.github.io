@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
 import { getChargerById } from '../data/europeMap';
 import { isRearParked } from '../sim/ChargingBay';
+import { evaluatePropertyDamage, recordConeHit, STATIC_CONTACT_CLEARANCE_PX } from '../sim/PropertyDamage';
 import { ERoadtripBridge, ensureTouchHoldsMatchPointers } from './GameBridge';
 import {
   CityLightingProfile,
@@ -23,6 +24,8 @@ import { Rect } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
 import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } from './PlacePainter';
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
+
+type PropertyContact = Rect | Capsule | 'worldEdge';
 
 export class CityDriveScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
@@ -54,6 +57,9 @@ export class CityDriveScene extends Phaser.Scene {
   private pedestrians: PedestrianAgent[] = [];
   private obstacleRects: Rect[] = [];
   private obstacleCircles: Capsule[] = [];
+  private propertyContacts = new Set<PropertyContact>();
+  private cones: { bounds: Rect; sprite: Phaser.GameObjects.Image }[] = [];
+  private hitCones = new Set<number>();
 
   private targetZone!: Phaser.Geom.Rectangle;
   private targetGlow?: Phaser.GameObjects.Rectangle;
@@ -136,6 +142,9 @@ export class CityDriveScene extends Phaser.Scene {
     this.carSpeed = 0;
     this.dwellInTargetSec = 0;
     this.collisionCooldownSec = 0;
+    this.propertyContacts.clear();
+    this.cones = [];
+    this.hitCones.clear();
     this.violationCooldownSec = 1.2;
     this.completed = false;
     this.cleanRun = true;
@@ -337,10 +346,10 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     // Construction cones on West St
-    [535, 565, 595].forEach(cy => {
-      this.add.image(172, cy, 'cone').setDepth(5);
-      this.obstacleRects.push({ x: 168, y: cy - 4, w: 8, h: 8 });
-    });
+    this.cones = [535, 565, 595].map(y => ({
+      bounds: { x: 168, y: y - 4, w: 8, h: 8 },
+      sprite: this.add.image(172, y, 'cone').setDepth(5)
+    }));
 
     // Signalized intersections
     this.intersections = [
@@ -581,7 +590,55 @@ export class CityDriveScene extends Phaser.Scene {
 
   private hitsObstacle(shape: Capsule): boolean {
     return this.obstacleRects.some(rect => capsuleOverlapsRect(shape, rect)) ||
-      this.obstacleCircles.some(circle => capsulesOverlap(shape, circle));
+      this.obstacleCircles.some(circle => capsulesOverlap(shape, circle)) ||
+      this.hitsParkedVehicle(shape);
+  }
+
+  private hitsParkedVehicle(shape: Capsule): boolean {
+    return this.place.parkedVehicles?.some(rect => capsuleOverlapsRect(shape, rect)) ?? false;
+  }
+
+  private hitProperty(contact: PropertyContact): void {
+    const impactSpeed = Math.abs(this.carSpeed);
+    this.carSpeed = 0;
+    if (this.propertyContacts.has(contact) || this.completed || this.bridge.paused) return;
+
+    this.propertyContacts.add(contact);
+    const damage = evaluatePropertyDamage(impactSpeed);
+    SoundFX.bump();
+    this.bridge.paused = true;
+    this.physics.world.pause();
+    this.bridge.onPropertyDamage(damage);
+  }
+
+  private releasePropertyContacts(shape: Capsule): void {
+    if (this.propertyContacts.size === 0) return;
+    const clearance = { ...shape, radius: shape.radius + STATIC_CONTACT_CLEARANCE_PX };
+    for (const contact of this.propertyContacts) {
+      const nearby = contact === 'worldEdge' ? !capsuleInsideWorld(clearance, this.worldW, this.worldH) :
+        'radius' in contact ? capsulesOverlap(clearance, contact) : capsuleOverlapsRect(clearance, contact);
+      if (!nearby) this.propertyContacts.delete(contact);
+    }
+  }
+
+  private knockAwayCones(shape: Capsule, x: number, rotation: number): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    this.cones.forEach(({ bounds, sprite }, id) => {
+      if (this.hitCones.has(id) || !capsuleOverlapsRect(shape, bounds) ||
+          !recordConeHit(run, this.hitCones, id)) return;
+
+      const direction = Math.sign(this.carSpeed);
+      const side = sprite.x < x ? -1 : 1;
+      this.tweens.add({
+        targets: sprite,
+        x: sprite.x + 42 * Math.sin(rotation) * direction + side * 26,
+        y: sprite.y - 42 * Math.cos(rotation) * direction - 14,
+        angle: sprite.angle + side * 210,
+        duration: 350,
+        ease: 'Quad.Out'
+      });
+    });
   }
 
   private trafficShape(car: TrafficCarAgent): Capsule {
@@ -595,13 +652,21 @@ export class CityDriveScene extends Phaser.Scene {
     const x = this.player.x + Math.sin(rotation) * this.carSpeed * dt;
     const y = this.player.y - Math.cos(rotation) * this.carSpeed * dt;
     const shape = vehicleCapsule(x, y, rotation);
-    if (moving && !capsuleInsideWorld(shape, this.worldW, this.worldH)) {
-      this.carSpeed = 0;
-      return false;
-    }
-    if (moving && this.hitsObstacle(shape)) {
-      this.handleCollision('obstacle', x, y, 0);
-      return false;
+    if (moving) {
+      if (!capsuleInsideWorld(shape, this.worldW, this.worldH)) {
+        this.hitProperty('worldEdge');
+        return false;
+      }
+      const contact = this.obstacleRects.find(rect => capsuleOverlapsRect(shape, rect)) ??
+        this.obstacleCircles.find(circle => capsulesOverlap(shape, circle));
+      if (contact) {
+        this.hitProperty(contact);
+        return false;
+      }
+      if (this.hitsParkedVehicle(shape)) {
+        this.handleCollision('obstacle', x, y, 0);
+        return false;
+      }
     }
     for (const car of this.trafficCars) {
       if (!capsulesOverlap(shape, this.trafficShape(car))) continue;
@@ -614,7 +679,11 @@ export class CityDriveScene extends Phaser.Scene {
       this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed);
       return false;
     }
-    if (moving) this.player.setPosition(x, y).setRotation(rotation);
+    if (moving) {
+      this.knockAwayCones(shape, x, rotation);
+      this.player.setPosition(x, y).setRotation(rotation);
+      this.releasePropertyContacts(shape);
+    }
     return true;
   }
 
@@ -1175,7 +1244,7 @@ export class CityDriveScene extends Phaser.Scene {
     );
     this.updateLightingVisuals(dt, profile);
 
-    // === GTA 2 Controls (Keyboard + Shared TouchInput) ===
+    // Keyboard and shared touch controls
     ensureTouchHoldsMatchPointers();
     const touch = this.bridge.touch;
     const autoDrive = this.previewDriveSec > 0;

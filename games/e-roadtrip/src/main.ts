@@ -20,7 +20,7 @@ import { getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { newRunId, submitRun } from './sim/Leaderboard';
-import { applyPause } from './sim/PauseEffects';
+import { applyPause, applyStress } from './sim/PauseEffects';
 import {
   CITY_TRANSITION_MINUTES,
   createDefaultPlan,
@@ -40,12 +40,14 @@ import {
   switchReturnRouteInPlan,
   switchRouteInPlan
 } from './sim/RoutePlanner';
-import { evaluateRun } from './sim/ScoringEngine';
+import { evaluateRun, hasRelaxedBeachFinale } from './sim/ScoringEngine';
+import type { PropertyDamage } from './sim/PropertyDamage';
 import { getResaleValue, loadCampaignSave, resetCampaignSave, saveCampaignState } from './sim/SaveState';
 import { BootScene } from './phaser/BootScene';
 import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
+import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
 import { ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
@@ -159,6 +161,9 @@ class ERoadtripController {
       onCollisionEvent: (info: CollisionInfo) => {
         this.handleCollision(info);
       },
+
+      onPropertyDamage: damage => this.handlePropertyDamage(damage),
+      onDestinationArrival: () => this.playDestinationFinale(),
 
       onPoliceViolation: (kind: PoliceViolationKind) => {
         this.handlePoliceViolation(kind);
@@ -353,7 +358,7 @@ class ERoadtripController {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene]
+      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene, MontpellierFinaleScene]
     };
 
     this.game = new Phaser.Game(config);
@@ -458,6 +463,7 @@ class ERoadtripController {
       tollsEur: 0,
       paidTollLegIndices: [],
       incidentalCostEur: 0,
+      propertyDamageEur: 0,
       pauseCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
@@ -482,7 +488,7 @@ class ERoadtripController {
   }
 
   private stopAllGameplayScenes(): void {
-    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene'].forEach(k => {
+    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene', 'MontpellierFinaleScene'].forEach(k => {
       const sc = this.game.scene.getScene(k);
       if (
         sc &&
@@ -664,8 +670,10 @@ class ERoadtripController {
   }
 
   private maybeStartPreview(): void {
-    const kind = new URLSearchParams(window.location.search).get('erpreview');
-    if (!kind) return;
+    const preview = new URLSearchParams(window.location.search).get('erpreview');
+    if (!preview) return;
+    const stressedArrival = preview === 'level2arrival-stress';
+    const kind = stressedArrival ? 'level2arrival' : preview;
     if (kind === 'signs') return;
     if (kind === 'level2plan' || kind === 'level2hotel' || kind === 'level2arrival' || kind === 'level2rain' || kind === 'level2wc') {
       this.level = getLevelById('level_2_family_summer');
@@ -705,6 +713,7 @@ class ERoadtripController {
       tollsEur: 0,
       paidTollLegIndices: [],
       incidentalCostEur: 0,
+      propertyDamageEur: 0,
       pauseCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
@@ -735,7 +744,7 @@ class ERoadtripController {
             ? legs.findIndex(leg => leg.destinationAtEnd)
             : kind === 'level2wc'
               ? legs.findIndex(leg => !leg.reverse && !!getEdgeById(leg.edgeId).speedLimitRainKmh)
-              : legs.findIndex(leg => leg.weatherOverride === 'rain' && !!getEdgeById(leg.edgeId).speedLimitRainKmh);
+              : legs.findIndex(leg => !!getEdgeById(leg.edgeId).speedLimitRainKmh);
       const spec = legs[Math.max(0, idx)];
       const edge = getEdgeById(spec.edgeId);
       if (run && spec) {
@@ -743,6 +752,11 @@ class ERoadtripController {
         run.legProgressKm =
           kind === 'level2rain' ? 12 : kind === 'level2wc' ? edge.distanceKm * 0.55 : Math.max(0, edge.distanceKm - 1.1);
         run.triggeredEventIds = kind === 'level2wc' ? [] : ['evt_dirty_toilets'];
+        if (stressedArrival) {
+          run.stress = 75;
+          run.peakStress = 85;
+          run.wifeDialogueTriggered = true;
+        }
         if (kind === 'level2rain') {
           const legPlan = run.plan.legPlans.find(leg => leg.legIndex === run.currentLegIndex);
           if (legPlan) legPlan.targetSpeedKmh = 130;
@@ -943,15 +957,14 @@ class ERoadtripController {
       this.bridge.paused = false;
       return;
     }
-    const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : 'Montpellier';
     const trap = eventId === 'evt_speed_trap' ? this.bridge.runState?.speedTrap : undefined;
     const nudge = eventId === 'evt_tailgate' ? this.bridge.runState?.tailgateCase : undefined;
     const baseEvt = trap ? buildSpeedTrapEvent(trap) : nudge ? buildTailgateEvent(nudge.country, nudge.amountEur) : evt;
     const run = this.bridge.runState;
     const hotelCharge = eventId === 'evt_hotel_overnight' && run
       ? estimateHotelCharge(getVehicleById(run.plan.vehicleId), run.socPct) : undefined;
-    const shown =
-      eventId === 'evt_hotel_overnight' || eventId === 'evt_south_arrival'
+    const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : '';
+    const shown = eventId === 'evt_hotel_overnight'
         ? {
             ...baseEvt,
             title: baseEvt.title.split('{ORT}').join(place),
@@ -1051,6 +1064,30 @@ class ERoadtripController {
         this.bridge.paused = false;
       }
     );
+  }
+
+  private handlePropertyDamage(damage: PropertyDamage): void {
+    const run = this.bridge.runState;
+    if (!run || run.completed) return;
+    const titles = {
+      scratch: 'Ein paar Kratzer am Auto',
+      dent: 'Eine Beule im Auto',
+      airbag: 'Airbag geöffnet – Reise zu Ende'
+    };
+    const title = titles[damage.tier];
+    const gameOver = damage.tier === 'airbag';
+    run.propertyDamageEur += damage.lossEur;
+    applyStress(run, damage.stressDelta);
+    const detail = `Wertverlust Auto: ${damage.lossEur.toLocaleString('de-DE')} €` +
+      (damage.stressDelta ? ` · +${damage.stressDelta} Stress` : '');
+    run.incidentLog.push({
+      timeStr: formatClock(this.level, run.elapsedMinutes), title, detail, impact: 'negative'
+    });
+    this.drivingHUD.clearTouchStates();
+    this.eventModal.showPropertyDamage(title, detail, gameOver, () => {
+      if (gameOver) this.finishLevel(false, true);
+      else this.bridge.paused = false;
+    });
   }
 
   private handlePoliceViolation(kind: PoliceViolationKind): void {
@@ -1159,7 +1196,24 @@ class ERoadtripController {
     });
   }
 
-  private finishLevel(cleanArrival: boolean): void {
+  private playDestinationFinale(): void {
+    const run = this.bridge.runState;
+    if (!run || run.completed) return;
+    this.drivingHUD.setMode('hidden');
+    resetTouchInput();
+    this.stopAllGameplayScenes();
+    this.stageWrapEl.classList.add('finale-active');
+    this.game.scene.start('MontpellierFinaleScene', {
+      relaxed: hasRelaxedBeachFinale(run),
+      isLightTheme: this.bridge.isLightTheme,
+      onComplete: () => {
+        if (this.bridge.runState === run) this.finishLevel(true);
+      }
+    });
+    window.requestAnimationFrame(() => this.game.scale.refresh());
+  }
+
+  private finishLevel(cleanArrival: boolean, gameOver = false): void {
     const run = this.bridge.runState;
     if (!run || run.completed) return;
     run.completed = true;
@@ -1168,7 +1222,12 @@ class ERoadtripController {
     resetTouchInput();
     this.stopAllGameplayScenes();
 
-    const result = evaluateRun(this.level, run, cleanArrival);
+    this.stageWrapEl.classList.remove('finale-active');
+    const result = evaluateRun(this.level, run, cleanArrival, gameOver);
+    if (gameOver) {
+      this.resultsUI.show(this.level, run, result, this.save);
+      return;
+    }
     this.save.cashEur += result.prizeMoneyEur;
     if (this.save.unlockedLevelOrder <= this.level.order) {
       this.save.unlockedLevelOrder = this.level.order + 1;
@@ -1200,7 +1259,7 @@ class ERoadtripController {
     this.eventModal.close();
     this.resultsUI.hide();
     this.drivingHUD.setMode('hidden');
-    this.stageWrapEl.classList.remove('driving-active');
+    this.stageWrapEl.classList.remove('driving-active', 'finale-active');
     this.plannerEl.classList.remove('hidden');
 
     this.stopAllGameplayScenes();

@@ -24,7 +24,7 @@ interface RemainingRoute {
 function stageDestination(run: RunState, leg: LevelRouteLegSpec, index: number, city: string): string | undefined {
   if (leg.citySegmentAtEnd === 'hannover_messe') return 'Hannover Messe';
   if (leg.overnightAtEnd && !run.triggeredEventIds.includes(`evt_hotel_overnight@${index}`)) return `Übernachtung · ${city}`;
-  if (leg.destinationAtEnd && !run.triggeredEventIds.includes(`evt_south_arrival@${index}`)) return city;
+  if (leg.destinationAtEnd) return city;
   if (leg.citySegmentAtEnd === 'ferry_denmark') return `Fährterminal · ${city}`;
   if (leg.citySegmentAtEnd === 'aachen_finish') return city;
   return undefined;

@@ -256,7 +256,7 @@ export interface LevelRouteLegSpec {
   citySegmentAtEnd?: CityDrivePreset;
   /** Family overnight at the end of this leg. The player picks the stay on arrival. */
   overnightAtEnd?: boolean;
-  /** Outbound destination reached (turnaround before the return legs). */
+  /** End of the trip at the destination, with no onward drive. */
   destinationAtEnd?: boolean;
 }
 
@@ -383,6 +383,7 @@ export interface RunState {
   tollsEur: number;
   paidTollLegIndices: number[];
   incidentalCostEur: number;
+  propertyDamageEur: number;
   pauseCostEur: number;
   /** Hotels and other stays. 0 when the night was free. */
   lodgingCostEur: number;
@@ -424,6 +425,9 @@ export interface RunState {
 
 export interface EvaluationResult {
   totalScore: number; // 0..1000
+  finalSocPct: number;
+  finalSocPenalty: number;
+  gameOver: boolean;
   subScores: {
     time: number;       // 0..100
     cost: number;       // 0..100

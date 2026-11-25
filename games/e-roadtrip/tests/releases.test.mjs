@@ -123,6 +123,35 @@ export default function register(test) {
     }
   });
 
+  test('the hub shows the unread v0.6 dot for the full release window', () => {
+    const window = { ARCADE_RELEASES: loadCatalog() };
+    let now = new Date(2026, 10, 25, 12).getTime();
+    class FixedDate extends Date {
+      constructor(value = now) { super(value); }
+    }
+    const values = new Map();
+    const localStorage = { getItem: key => values.get(key), setItem: (key, value) => values.set(key, value) };
+    runInNewContext(read('shared/update-banner.js'), {
+      window, URL, Date: FixedDate, localStorage,
+      document: {
+        currentScript: { src: 'https://example.test/shared/update-banner.js' },
+        createElement: () => ({}), head: { append() {} },
+        querySelectorAll: () => []
+      }
+    });
+    const { badgeHtml, latest, markSeen } = window.ArcadeUpdates;
+    assert.equal(latest('eroadtrip').version, '0.6.0');
+    assert.match(badgeHtml('eroadtrip'), /arcade-update-dot.*Neues Update v0\.6/s);
+    now = new Date(2026, 11, 9, 12).getTime();
+    assert.match(badgeHtml('eroadtrip'), /arcade-update-dot/);
+    markSeen('eroadtrip');
+    assert.match(badgeHtml('eroadtrip'), /Neues Update v0\.6/);
+    assert.doesNotMatch(badgeHtml('eroadtrip'), /arcade-update-dot/);
+    now = new Date(2026, 11, 10, 12).getTime();
+    assert.equal(badgeHtml('eroadtrip'), '');
+    assert.equal(badgeHtml('arcade'), '');
+  });
+
   test('quiz release titles and highlights contain no question or correct answer strings', () => {
     const quizApps = Object.keys(apps).filter(id => apps[id].kind === 'quiz');
     const files = new Set();

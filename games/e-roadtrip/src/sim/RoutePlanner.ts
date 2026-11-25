@@ -535,8 +535,6 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
         };
       }
     }
-    if (spec.destinationAtEnd) dwellMinutes += 18;
-
     const startCityMin = i === 0 && spec.citySegmentAtStart ? CITY_TRANSITION_MINUTES[spec.citySegmentAtStart] ?? 0 : 0;
     const endCityMin = spec.citySegmentAtEnd ? CITY_TRANSITION_MINUTES[spec.citySegmentAtEnd] ?? 0 : 0;
     const driveMin = Math.round((edge.distanceKm / Math.max(40, cruise)) * 60) + startCityMin + endCityMin;
@@ -748,8 +746,8 @@ export function predictLiveTripSoc(
     if (!nextTarget && (isMesseVisit(spec) || spec.destinationAtEnd || spec.overnightAtEnd)) {
       const toCity = getCityById(spec.reverse ? edge.fromCityId : edge.toCityId);
       nextTarget = {
-        name: toCity.name,
-        kind: 'turnaround',
+        name: spec.destinationAtEnd ? `Ziel ${toCity.name}` : toCity.name,
+        kind: spec.destinationAtEnd ? 'destination' : 'turnaround',
         distKm: Math.max(1, Math.round(distAccum)),
         socPct: Math.round(soc)
       };

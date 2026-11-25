@@ -21,9 +21,9 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Run A | Michi / Codex (GPT-6) | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), kein PR | ✅ Umsetzung und lokale Checks abgeschlossen · Run B, Commit und Push offen |
+| E-Roadtrip v0.6.0 · Run A und Run B | Michi / Codex (Sol 6.2) | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), kein PR | 🟡 Lokal umgesetzt und geprüft · Run B Commit, Push, Spieltest und Upstream-Merge offen |
 
-**Aktuelle Versionen** · `eroadtrip` v0.5.0 · `arcade` v0.3.0
+**Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
 ---
 
@@ -31,12 +31,14 @@
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
 
-### 2026-11-25 – Michi / Codex (GPT-6) – Run A
+### 2026-11-25 – Michi / Codex (Sol 6.2) – Run A und Run B
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA: (folgt). Push: nein, weder Fork noch Upstream. Kein PR und keine Fork-Pages-Test-URL für diesen Stand.
-- **Erledigt** · Ladebuchten prüfen Position, Ausrichtung und Stillstand. Alle freien Buchten sind grün, belegte rot. Der Fahrer schließt das Kabel an der gewählten Säule an. Säulen tragen Anbieter-Kürzel als Pixelgrafik. Dialoge dunkeln ab und zeigen wichtige Fahrtwerte. Das Autobahn-Navi zeigt alle verbleibenden Straßen, Einzel- und Gesamtdistanzen sowie die geschätzte Fahrzeit bis zum nächsten Halt.
-- **Geprüft** · `npm run typecheck`, reproduzierbarer `npm run build`, `node --check` für das Bundle und fünf geänderte Testskripte, `npm test` (48/48). Die CSS-Regeln für die Abdunklung in beiden Themes wurden statisch geprüft. Keine Anfragen an die Live-Bestenliste. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Der gemeinsame Release v0.6.0 folgt in Run B.
-- **Offen** · Browser- und Handytest (Hell/Dunkel, Ladebuchten und Logos, Messe-Dialog, Navi auf schmalem Bildschirm). Chromium-Start lokal durch die Sandbox blockiert. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). Run A: `170ca90`. Run B SHA: (folgt). Run B Push: nein, weder Fork noch Upstream. Kein PR und nicht upstream gemergt. Geplante Fork-Pages-Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/
+- **Run A** · Jede freie Ladebucht akzeptiert die rückwärtige Parkposition. Freie Buchten sind grün, belegte rot. Säulen tragen Anbieter-Kürzel. Dialoge dunkeln ab und das Navi zeigt alle verbleibenden Straßen bis zum nächsten Halt. Run A bestand 48/48 Tests.
+- **Run B** · Level 2 fährt bis Montpellier und behält die Übernachtung auf der Hinfahrt. Am Ziel folgt ein überspringbares Strandfinale nach Gesamtstress. Der Restakku zieht in jedem Level Punkte ab. Feste Stadt-Hindernisse verursachen drei Stufen Wertverlust. Ein ausgelöster Airbag beendet die Fahrt mit 0 Punkten. Getroffene Pylonen fliegen weg und erhöhen jeweils einmal den Stress. Verkehrsunfälle und die Ladebuchten aus Run A wurden mitgeprüft.
+- **Bestenlisten und Deployment** · Arcade v0.3.1 akzeptiert gewertete Zieleinläufe ab 0 Punkten. Der Worker akzeptiert kürzere Fahrten in Level 2. Der Merge in `upstream/main` deployt den Worker automatisch. Der Airbag-Abbruch erzeugt keine Bestenlisteneinreichung. Keine Anfragen an die Live-API.
+- **Geprüft** · `npm run typecheck`, `npm run build` (reproduzierbar), `node --check` für geänderte JS-Dateien und Bundle, `npm test` (61/61), Versionsprüfung gegen `279202c`. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
+- **Offen** · Spieltest in beiden Themes und Ausrichtungen, insbesondere Strandfinale, Ladebuchten, Schadenstufen und Pylonen. Lokaler Browserstart durch die Sandbox blockiert. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
 
 ### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf) – Go-live Versionierung und Level-Bestenlisten
 

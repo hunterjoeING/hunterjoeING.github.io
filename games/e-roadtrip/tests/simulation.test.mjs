@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createFixtures } from './fixtures.mjs';
 
 export default function register(test, game) {
   const {
@@ -6,7 +7,7 @@ export default function register(test, game) {
     createDefaultPlan, getActiveRouteLegs, getMapChargerLegIndex, evaluateTripPlan,
     stopKey, isPendingStop, predictLiveTripSoc, plannedRoadStopsOnLeg, getMesseChargerForVisit,
     estimateMesseCharge, evaluateRun, findReachableAdditionalStop, getBestPriceForStation,
-    computeSubscriptionTripCost, buildRemainingRoute
+    computeSubscriptionTripCost, buildRemainingRoute, levelHasReturnRoutes, LEVELS, finalSocPenalty
   } = game;
   const l1 = getLevelById('level_1_aachen_hannover');
   const l2 = getLevelById('level_2_family_summer');
@@ -22,6 +23,29 @@ export default function register(test, game) {
     completedStopKeys: [],
     skippedStopKeys: [],
     triggeredEventIds: []
+  });
+
+  test('Final SoC penalties use the unrounded end-of-run percentage and half-open tiers', () => {
+    const cases = [[0, 0], [4.99, 0], [5, 50], [9.99, 50], [10, 75],
+      [12, 75], [15, 100], [19.99, 100], [20, 150], [100, 150]];
+    for (const [soc, points] of cases) assert.equal(finalSocPenalty(soc), points);
+
+    const { mkRun } = createFixtures(game);
+    for (const level of LEVELS) {
+      const run = mkRun(level);
+      run.socPct = 4.99;
+      const base = evaluateRun(level, run, true).totalScore;
+      for (const [socPct, points] of cases) {
+        const result = evaluateRun(level, { ...run, socPct }, true);
+        assert.equal(result.finalSocPct, socPct);
+        assert.equal(result.finalSocPenalty, points);
+        assert.equal(result.totalScore, Math.max(0, base - points));
+      }
+    }
+    const poorRun = { ...mkRun(l2), elapsedMinutes: 2000, propertyDamageEur: 5000,
+      stress: 100, peakStress: 100, energyUsedKwh: 200, collisionsCount: 10 };
+    assert.equal(evaluateRun(l2, poorRun, false).totalScore, 0);
+    assert.equal(evaluateRun(l2, poorRun, false).gameOver, false);
   });
 
   test('Navigation shows the remaining roads to the Messe and follows the return direction afterward', () => {
@@ -70,23 +94,20 @@ export default function register(test, game) {
   });
 
   test('Navigation switches from the overnight stop to Montpellier on a one-way route', () => {
-    const oneWay = {
-      ...l2,
-      routeOptions: l2.routeOptions.map(option => ({ ...option, legs: option.legs.filter(leg => !leg.reverse) }))
-    };
-    const run = baseRun(createDefaultPlan(oneWay, mg.id));
-    const legs = getActiveRouteLegs(oneWay, run.plan);
+    const run = baseRun(createDefaultPlan(l2, mg.id));
+    const legs = getActiveRouteLegs(l2, run.plan);
     const overnightIndex = legs.findIndex(leg => leg.overnightAtEnd);
-    const night = buildRemainingRoute(oneWay, run);
+    const night = buildRemainingRoute(l2, run);
     assert.equal(night.destination, 'Übernachtung · Lyon');
     assert.equal(night.segments.length, overnightIndex + 1);
     run.currentLegIndex = overnightIndex;
     run.legProgressKm = getEdgeById(legs[overnightIndex].edgeId).distanceKm;
     run.triggeredEventIds.push(`evt_hotel_overnight@${overnightIndex}`);
-    const morning = buildRemainingRoute(oneWay, run);
+    const morning = buildRemainingRoute(l2, run);
     assert.equal(morning.destination, 'Montpellier');
     assert.equal(morning.segments.length, 1);
     assert.equal(morning.segments[0].from, 'Lyon');
+    assert.equal(predictLiveTripSoc(l2, { ...run, currentLegIndex: overnightIndex + 1, legProgressKm: 0 }).nextStopKind, 'destination');
   });
 
   test('Eschweiler stops are independent in the map and live forecast', () => {
@@ -154,9 +175,18 @@ export default function register(test, game) {
   });
 
   test('Level 2 tolls are included in the forecast and score', () => {
-    for (const [i, toll] of [150, 188, 207].entries()) {
+    for (const [i, toll] of [75, 94, 103.5].entries()) {
       const l2Plan = createDefaultPlan(l2, mg.id, l2.routeOptions[i].id);
       const forecast = evaluateTripPlan(l2, l2Plan);
+      const route = l2.routeOptions[i];
+      const legs = getActiveRouteLegs(l2, l2Plan);
+      assert.equal(levelHasReturnRoutes(l2), false);
+      assert.equal(l2Plan.returnRouteId, '');
+      assert.equal(legs.length, 4);
+      assert.equal(legs.filter(leg => leg.overnightAtEnd).length, 1);
+      assert.equal(legs.filter(leg => leg.destinationAtEnd).length, 1);
+      assert.equal(getEdgeById(legs.at(-1).edgeId).toCityId, 'montpellier');
+      assert(route.defaultPlannedStops.every(stop => stop.legIndex < legs.length));
       assert.equal(forecast.tollsEur, toll);
       assert.equal(forecast.estimatedTotalCostEur, toll);
       const l2Run = {
@@ -165,6 +195,7 @@ export default function register(test, game) {
         chargingCostEur: 24,
         subscriptionCostEur: 3.5,
         incidentalCostEur: 5,
+        propertyDamageEur: 800,
         lodgingCostEur: 89,
         pauseCostEur: 4.5,
         distanceDrivenKm: forecast.totalDistanceKm,
@@ -177,7 +208,7 @@ export default function register(test, game) {
         chargingEfficiencyBonus: 0,
         collisionsCount: 0
       };
-      assert.equal(evaluateRun(l2, l2Run, true).totalCostEur, toll + 126);
+      assert.equal(evaluateRun(l2, l2Run, true).totalCostEur, toll + 926);
     }
   });
 

@@ -29,7 +29,7 @@ export default function register(test, game) {
       const submission = buildSubmission(level, run, result);
       const { score, label, meta } = submission;
       assert.equal(score, 812);
-      assert.equal(label, `812 Pkt · A-Rang · ${level === route1 ? '13h17m' : '34h00m'} · Model 3`);
+      assert.equal(label, `812 Pkt · A-Rang · ${level === route1 ? '13h17m' : '18h20m'} · Model 3`);
       assert.ok(label.length <= 80);
       assert.deepEqual(meta, {
         board: level.boardId, levelId: level.id, routeId: run.plan.selectedRouteId, vehicleId: run.plan.vehicleId,
@@ -38,6 +38,7 @@ export default function register(test, game) {
       });
       assert.equal(validateEroadtripScore(level.boardId, submission), null);
       assert.equal(validateEroadtripScore('eroadtrip', submission), null);
+      assert.equal(buildSubmission(level, run, { ...result, totalScore: 0 }).score, 0);
       for (const totalMinutes of [Math.ceil(level.targetArrivalMinutes / 2), level.targetArrivalMinutes * 20]) {
         assert.equal(validateEroadtripScore(level.boardId, buildSubmission(level, run, { ...result, totalMinutes })), null);
       }
@@ -52,7 +53,7 @@ export default function register(test, game) {
     const result = mockResult(route1, run);
     const api = { record: assert.fail };
     for (const overrides of [
-      { totalScore: 99 }, { totalScore: 1001 }, { totalScore: 812.5 },
+      { totalScore: -1 }, { gameOver: true }, { totalScore: 1001 }, { totalScore: 812.5 },
       { totalMinutes: NaN }, { totalMinutes: 398 }, { totalMinutes: 15941 },
       { totalCostEur: -1 }, { totalCostEur: Infinity }
     ]) {
@@ -106,8 +107,8 @@ export default function register(test, game) {
       assert.equal(validateEroadtripScore(gameId, { score, meta }), null);
       return [gameId, score, label, lower, meta.board, runId];
     }), [
-      ['eroadtrip', 812, '812 Pkt · A-Rang · 34h00m · Model 3', false, 'eroadtrip_l2', 'level-two-run_all'],
-      ['eroadtrip_l2', 812, '812 Pkt · A-Rang · 34h00m · Model 3', false, 'eroadtrip_l2', 'level-two-run']
+      ['eroadtrip', 812, '812 Pkt · A-Rang · 18h20m · Model 3', false, 'eroadtrip_l2', 'level-two-run_all'],
+      ['eroadtrip_l2', 812, '812 Pkt · A-Rang · 18h20m · Model 3', false, 'eroadtrip_l2', 'level-two-run']
     ]);
   });
 
@@ -143,7 +144,7 @@ export default function register(test, game) {
     } };
     const controller = Object.assign(Object.create(ERoadtripController.prototype), {
       level: route1, bridge: { runState: run }, save: campaign,
-      eventModal: { close() {} }, drivingHUD: { setMode() {} }, stopAllGameplayScenes() {},
+      stageWrapEl: new DomStub(), eventModal: { close() {} }, drivingHUD: { setMode() {} }, stopAllGameplayScenes() {},
       resultsUI: { show: (...args) => results.push(args) }
     });
     try {

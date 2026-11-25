@@ -101,7 +101,7 @@ const GAMES_META = {
 // Keep target minutes and level IDs in sync with games/e-roadtrip/src/data/levels.ts.
 const EROADTRIP_LEVEL_TARGETS = {
   eroadtrip_l1: { levelId: 'level_1_aachen_hannover', targetMinutes: 797 },
-  eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 2040 }
+  eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 1100, legacyMaxMinutes: 40800 }
 };
 
 function isEroadtripBoard(gid) {
@@ -117,13 +117,14 @@ export function validateEroadtripScore(gid, body) {
   if (typeof board !== 'string' || !Object.hasOwn(EROADTRIP_LEVEL_TARGETS, board)) {
     return 'Unknown E-Roadtrip level board';
   }
-  const { levelId, targetMinutes } = EROADTRIP_LEVEL_TARGETS[board];
+  const { levelId, targetMinutes, legacyMaxMinutes } = EROADTRIP_LEVEL_TARGETS[board];
   const rawScore = body.score;
-  const score = typeof rawScore === 'number' || typeof rawScore === 'string' ? Number(rawScore) : NaN;
-  if (!Number.isInteger(score) || score < 100 || score > 1000) {
-    return 'E-Roadtrip score must be an integer from 100 to 1000';
+  const score = typeof rawScore === 'number' || (typeof rawScore === 'string' && rawScore.trim()) ? Number(rawScore) : NaN;
+  if (!Number.isInteger(score) || score < 0 || score > 1000) {
+    return 'E-Roadtrip score must be an integer from 0 to 1000';
   }
-  if (!Number.isFinite(meta.minutes) || meta.minutes < 0.5 * targetMinutes || meta.minutes > 20 * targetMinutes) {
+  const maxMinutes = legacyMaxMinutes ?? 20 * targetMinutes;
+  if (!Number.isFinite(meta.minutes) || meta.minutes < 0.5 * targetMinutes || meta.minutes > maxMinutes) {
     return 'E-Roadtrip minutes outside the allowed range for this level';
   }
   if (!Number.isFinite(meta.costEur) || meta.costEur < 0) return 'Invalid E-Roadtrip costEur';

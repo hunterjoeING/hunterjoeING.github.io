@@ -5,10 +5,34 @@ function clamp(v: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, v));
 }
 
+export function calculateOverallStress(run: Pick<RunState, 'peakStress' | 'stress'>): number {
+  return run.peakStress * 0.65 + run.stress * 0.35;
+}
+
+export const BEACH_FINALE_STRESS_THRESHOLD = 60;
+
+export function hasRelaxedBeachFinale(run: Pick<RunState, 'peakStress' | 'stress'>): boolean {
+  return calculateOverallStress(run) < BEACH_FINALE_STRESS_THRESHOLD;
+}
+
+export function finalSocPenalty(socPct: number): number {
+  if (socPct < 5) return 0;
+  if (socPct < 10) return 50;
+  if (socPct < 15) return 75;
+  if (socPct < 20) return 100;
+  return 150;
+}
+
+export function totalRunCost(run: RunState): number {
+  return Number((run.chargingCostEur + run.subscriptionCostEur + run.tollsEur + run.incidentalCostEur +
+    run.pauseCostEur + run.lodgingCostEur + run.propertyDamageEur).toFixed(2));
+}
+
 export function evaluateRun(
   level: LevelConfig,
   run: RunState,
-  cleanParkBonus: boolean
+  cleanParkBonus: boolean,
+  gameOver = false
 ): EvaluationResult {
   const w = level.scoringWeights;
   const vehicle = getVehicleById(run.plan.vehicleId);
@@ -22,15 +46,13 @@ export function evaluateRun(
   );
 
   // 2. Total costs (0..100) - baseline reasonable cost ~ 0.085 €/km
-  const totalCostEur = Number(
-    (run.chargingCostEur + run.subscriptionCostEur + run.tollsEur + run.incidentalCostEur + run.pauseCostEur + run.lodgingCostEur).toFixed(2)
-  );
+  const totalCostEur = totalRunCost(run);
   const benchmarkCost = Math.max(30, run.distanceDrivenKm * (level.costBenchmarkEurPerKm ?? 0.082));
   const costRatio = totalCostEur / benchmarkCost;
   const costScore = clamp(115 - costRatio * 34, 15, 100);
 
   // 3. Passenger stress (especially peaks!) (0..100)
-  const stressPenalty = run.peakStress * 0.65 + run.stress * 0.35;
+  const stressPenalty = calculateOverallStress(run);
   const stressScore = w.stress === 0 ? 100 : clamp(108 - stressPenalty * 1.05, 10, 100);
 
   // 4. Vehicle efficiency & charging curve usage (0..100)
@@ -54,10 +76,12 @@ export function evaluateRun(
     effBase * w.efficiency +
     decisionsScore * w.decisions;
 
-  const totalScore = Math.round(clamp(weighted * 10, 100, 1000));
+  const penalty = finalSocPenalty(run.socPct);
+  const baseScore = Math.round(clamp(weighted * 10, 100, 1000));
+  const totalScore = gameOver ? 0 : Math.max(0, baseScore - penalty);
 
   const prizeMultiplier = 0.55 + (totalScore / 1000) * 0.95;
-  const prizeMoneyEur = Math.round(level.rewardBaseEur * prizeMultiplier);
+  const prizeMoneyEur = gameOver ? 0 : Math.round(level.rewardBaseEur * prizeMultiplier);
 
   let gradeLabel = 'Solide E-Fahrt';
   if (totalScore >= 880) gradeLabel = 'S-Rang · Langstrecken-Meister!';
@@ -67,6 +91,9 @@ export function evaluateRun(
 
   return {
     totalScore,
+    finalSocPct: run.socPct,
+    finalSocPenalty: penalty,
+    gameOver,
     subScores: {
       time: Math.round(timeScore),
       cost: Math.round(costScore),
@@ -81,7 +108,7 @@ export function evaluateRun(
     avgConsumptionKwh100: Number(avgConsumption.toFixed(1)),
     peakStress: Math.round(run.peakStress),
     prizeMoneyEur,
-    cleanArrival: cleanParkBonus && run.collisionsCount === 0,
-    gradeLabel
+    cleanArrival: !gameOver && cleanParkBonus && run.collisionsCount === 0,
+    gradeLabel: gameOver ? 'Fahrt abgebrochen' : gradeLabel
   };
 }

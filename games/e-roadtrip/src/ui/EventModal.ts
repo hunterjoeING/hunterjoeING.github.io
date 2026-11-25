@@ -48,6 +48,7 @@ export class EventModal {
       this.stopBreakAnim = null;
     }
     this.modalEl.classList.add('hidden');
+    this.modalEl.removeAttribute('aria-labelledby');
     this.modalEl.innerHTML = '';
   }
 
@@ -272,6 +273,30 @@ export class EventModal {
     render();
   }
 
+  public showPropertyDamage(title: string, detail: string, gameOver: boolean, onClose: () => void): void {
+    this.modalEl.classList.remove('hidden');
+    this.modalEl.setAttribute('aria-labelledby', 'er-damage-title');
+    this.modalEl.innerHTML = `
+      <div class="er-modal-card">
+        <div class="er-modal-head">
+          <span class="er-modal-icon" aria-hidden="true">💥</span>
+          <h3 id="er-damage-title">${title}</h3>
+        </div>
+        <p class="er-modal-body">${detail}</p>
+        <button type="button" class="er-primary-btn" id="er-damage-ok">
+          ${gameOver ? 'Zur Auswertung' : 'Weiterfahren'} →
+        </button>
+      </div>
+    `;
+    const button = this.modalEl.querySelector<HTMLButtonElement>('#er-damage-ok');
+    button?.addEventListener('click', () => {
+      SoundFX.click();
+      this.close();
+      onClose();
+    }, { once: true });
+    button?.focus();
+  }
+
   public showCollisionDialogue(
     info: CollisionInfo,
     onResolve: (
@@ -287,7 +312,7 @@ export class EventModal {
       car: 'Kollision im Stadtverkehr',
       pedestrian: 'Kontakt / Beinahe-Unfall mit Fußgänger',
       cyclist: 'Kontakt am Radweg mit Radfahrer',
-      obstacle: 'Baustellen-Pylone / Bordstein gestreift'
+      obstacle: 'Kontakt mit einem parkenden Fahrzeug'
     };
 
     this.modalEl.classList.remove('hidden');
@@ -596,7 +621,7 @@ export class EventModal {
       SoundFX.click();
 
       const meta: Record<BreakActivityKind, PauseEffects & { label: string; minutes: number }> = {
-        eat: { label: '🍔 Etwas gegessen', minutes: 20, stressDelta: -10, hungerDelta: -60 },
+        eat: { label: '🍔 Etwas gegessen', minutes: 20, costEur: 20, stressDelta: -10, hungerDelta: -60 },
         toilet: { label: '🚻 Toilettenpause', minutes: 5, stressDelta: -6, resetBladder: true },
         dog: { label: '🐕 Mit Hund Gassi gegangen', minutes: 8, stressDelta: -14 },
         children: { label: '🛝 Kinder auf dem Spielplatz', minutes: 10, stressDelta: -16 },
@@ -646,7 +671,7 @@ export class EventModal {
           ☕ Pausen-Aktivitäten während des Ladens ${breakBusy ? '<span class="break-lock-badge">🔒 Pause läuft – Laden nicht unterbrechbar</span>' : ''}
         </div>
         <div class="break-btn-grid">
-          ${mkBtn('eat', '🍔 Etwas essen (20 Min)', true)}
+          ${mkBtn('eat', '🍔 Etwas essen (20 Min · 20 €)', true)}
           ${mkBtn('toilet', '🚻 Toilette (5 Min)', true)}
           ${mkBtn('dog', '🐕 Hund Gassi (8 Min)', pax.hasDog)}
           ${mkBtn('children', '🛝 Kinder Spielplatz (10 Min)', pax.childrenCount > 0)}

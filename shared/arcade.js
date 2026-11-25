@@ -790,7 +790,8 @@
 
       const numScore = Number(score);
       const isLower = !!lowerIsBetter || !!(GAME_MAP[gameId] && GAME_MAP[gameId].lowerIsBetter);
-      if (!Number.isFinite(numScore) || numScore < 0 || (numScore === 0 && !isLower)) {
+      const acceptsZero = isLower || GAME_MAP[gameId]?.group === 'eroadtrip';
+      if (!Number.isFinite(numScore) || numScore < 0 || (numScore === 0 && !acceptsZero)) {
         return isPersonalBetter;
       }
 

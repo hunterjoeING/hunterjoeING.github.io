@@ -89,6 +89,12 @@ body {
   height: clamp(420px, 82dvh, 820px);
 }
 
+/* Keep the whole finale and its skip hint visible in a short landscape viewport. */
+.er-workspace.driving-active.finale-active .er-stage-panel {
+  height: min(72dvh, 620px);
+  min-height: 0;
+}
+
 #phaser-stage {
   width: 100%;
   height: 100%;
