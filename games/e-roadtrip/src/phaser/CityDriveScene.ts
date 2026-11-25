@@ -603,8 +603,9 @@ export class CityDriveScene extends Phaser.Scene {
     this.carSpeed = 0;
     if (this.propertyContacts.has(contact) || this.completed || this.bridge.paused) return;
 
-    this.propertyContacts.add(contact);
     const damage = evaluatePropertyDamage(impactSpeed);
+    if (!damage) return;
+    this.propertyContacts.add(contact);
     SoundFX.bump();
     this.bridge.paused = true;
     this.physics.world.pause();

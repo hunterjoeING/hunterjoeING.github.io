@@ -278,7 +278,8 @@ export default function register(test, game) {
     const scratch = { tier: 'scratch', lossEur: 800, stressDelta: 10 };
     const dent = { tier: 'dent', lossEur: 1300, stressDelta: 20 };
     const airbag = { tier: 'airbag', lossEur: 5000, stressDelta: 0 };
-    for (const speed of [0, 16, 74.99]) assert.deepEqual(evaluatePropertyDamage(speed), scratch);
+    for (const speed of [0, 16, -29.99]) assert.equal(evaluatePropertyDamage(speed), null, 'gentle touch only stops the car');
+    for (const speed of [30, -30, 74.99]) assert.deepEqual(evaluatePropertyDamage(speed), scratch);
     for (const speed of [75, -115, 164.99]) assert.deepEqual(evaluatePropertyDamage(speed), dent);
     for (const speed of [165, -165, 230]) assert.deepEqual(evaluatePropertyDamage(speed), airbag);
   });
