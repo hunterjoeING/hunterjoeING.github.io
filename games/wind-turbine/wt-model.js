@@ -90,15 +90,15 @@ function createAirfoilBladeGeometry(length = 8.4) {
       const camber = 0.045 * chord * Math.sin(Math.PI * s);
       const sign = theta <= Math.PI ? 1 : -1;
 
-      const ax = s * chord - pitchAxisOffset;
+      const ax = pitchAxisOffset - s * chord;
       const az = camber + sign * yt;
 
       const bx = cx * (1 - rootBlend) + ax * rootBlend;
       const bz = cz * (1 - rootBlend) + az * rootBlend;
 
-      // Verwindung um Y-Achse
-      const rx = bx * Math.cos(twistRad) - bz * Math.sin(twistRad);
-      const rz = bx * Math.sin(twistRad) + bz * Math.cos(twistRad) + preBendZ;
+      // Verwindung um Y-Achse (passend zur Drehrichtung im Uhrzeigersinn)
+      const rx = bx * Math.cos(-twistRad) - bz * Math.sin(-twistRad);
+      const rz = bx * Math.sin(-twistRad) + bz * Math.cos(-twistRad) + preBendZ;
 
       positions.push(rx, y, rz);
       uvs.push(u, t);
@@ -460,39 +460,41 @@ export function createWindTurbineModel() {
   shellCutawayMeshes.push(gbFrontCover);
   registerXrayShell(gbFrontCover);
 
-  // Zahnrad 1: Großes Antriebsrad (Hauptwelle)
-  const gear1 = new THREE.Mesh(createGearGeometry(24, 0.62, 0.53, 0.26, 0.18), mats.gearGold);
+  // Zahnrad 1: Großes Antriebsrad (Hauptwelle) – Teilkreis ~0.50
+  const gear1 = new THREE.Mesh(createGearGeometry(24, 0.54, 0.46, 0.26, 0.18), mats.gearGold);
   gear1.position.set(0, 0, 0.34);
   gearboxGroup.add(gear1);
 
-  // Zahnrad 2: Zwischenrad (meshed oberhalb/seitlich)
-  const gear2 = new THREE.Mesh(createGearGeometry(14, 0.36, 0.29, 0.26, 0.1), mats.steelBright);
-  gear2.position.set(0.45, 0.45, 0.34);
+  // Zahnrad 2: Zwischenrad – Teilkreis ~0.265 (Achsabstand sqrt(0.54^2+0.54^2) = 0.764)
+  const gear2 = new THREE.Mesh(createGearGeometry(13, 0.30, 0.23, 0.26, 0.09), mats.steelBright);
+  gear2.position.set(0.54, 0.54, 0.34);
   gearboxGroup.add(gear2);
 
-  // Zwischenwelle + Stufe 2 Großrad
-  const interShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.72, 16), mats.steelBright);
-  interShaft.rotation.x = Math.PI / 2;
-  interShaft.position.set(0.45, 0.45, 0.02);
+  // Zwischenwelle + Stufe 2 Großrad (Teilkreis ~0.52)
+  const interShaftGeo = new THREE.CylinderGeometry(0.085, 0.085, 0.78, 16);
+  interShaftGeo.rotateX(Math.PI / 2);
+  const interShaft = new THREE.Mesh(interShaftGeo, mats.steelBright);
+  interShaft.position.set(0.54, 0.54, 0.04);
   gearboxGroup.add(interShaft);
 
-  const gear3 = new THREE.Mesh(createGearGeometry(20, 0.50, 0.42, 0.24, 0.1), mats.gearGold);
-  gear3.position.set(0.45, 0.45, -0.26);
+  const gear3 = new THREE.Mesh(createGearGeometry(22, 0.56, 0.48, 0.24, 0.09), mats.gearGold);
+  gear3.position.set(0.54, 0.54, -0.26);
   gearboxGroup.add(gear3);
 
-  // Zahnrad 4: Schnelles Ausgangsritzel (treibt schnelle Welle an)
-  const gear4 = new THREE.Mesh(createGearGeometry(11, 0.24, 0.18, 0.26, 0.08), mats.steelBright);
+  // Zahnrad 4: Schnelles Ausgangsritzel – Teilkreis ~0.245 (Achsabstand 0.764)
+  const gear4 = new THREE.Mesh(createGearGeometry(11, 0.28, 0.21, 0.26, 0.08), mats.steelBright);
   gear4.position.set(0, 0, -0.26);
   gearboxGroup.add(gear4);
 
   // =========================================================================
-  // 5. SCHEIBENBREMSE
+  // 5. SCHEIBENBREMSE (Geometrie vorgekippt -> rotation.z dreht exakt um Z-Achse!)
   // =========================================================================
   const brakeGroup = registerPartGroup('brake', new THREE.Group());
   brakeGroup.position.set(0, 0.25, -0.78);
 
-  const brakeDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.48, 0.08, 32), mats.steelBright);
-  brakeDisc.rotation.x = Math.PI / 2;
+  const brakeDiscGeo = new THREE.CylinderGeometry(0.46, 0.46, 0.08, 32);
+  brakeDiscGeo.rotateX(Math.PI / 2);
+  const brakeDisc = new THREE.Mesh(brakeDiscGeo, mats.steelBright);
   brakeGroup.add(brakeDisc);
 
   const brakeCaliper = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.36, 0.24), mats.brakeRed);
@@ -500,17 +502,19 @@ export function createWindTurbineModel() {
   brakeGroup.add(brakeCaliper);
 
   // =========================================================================
-  // 6. SCHNELLE GENERATORWELLE
+  // 6. SCHNELLE GENERATORWELLE (Geometrie vorgekippt -> rotation.z dreht exakt um Z-Achse!)
   // =========================================================================
   const highSpeedGroup = registerPartGroup('highSpeedShaft', new THREE.Group());
   highSpeedGroup.position.set(0, 0.25, -1.18);
 
-  const hsShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 1.75, 20), mats.steelBright);
-  hsShaft.rotation.x = Math.PI / 2;
+  const hsShaftGeo = new THREE.CylinderGeometry(0.11, 0.11, 1.75, 20);
+  hsShaftGeo.rotateX(Math.PI / 2);
+  const hsShaft = new THREE.Mesh(hsShaftGeo, mats.steelBright);
   highSpeedGroup.add(hsShaft);
 
-  const hsCoupling = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.22, 0.28, 18), mats.gearGold);
-  hsCoupling.rotation.x = Math.PI / 2;
+  const hsCouplingGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.28, 18);
+  hsCouplingGeo.rotateX(Math.PI / 2);
+  const hsCoupling = new THREE.Mesh(hsCouplingGeo, mats.gearGold);
   hsCoupling.position.z = -0.35;
   highSpeedGroup.add(hsCoupling);
 
@@ -983,11 +987,13 @@ export function createWindTurbineModel() {
     bladesSpinGroup.rotation.z = state.rotorAngle;
     mainShaftSpin.rotation.z = state.rotorAngle;
 
-    // Echte Gegendrehung & Drehzahlübersetzung der Getrieberäder
+    // Echte Gegendrehung & Drehzahlübersetzung der Getrieberäder (24:13 und 22:11)
     gear1.rotation.z = state.rotorAngle;
-    gear2.rotation.z = -state.rotorAngle * (24 / 14);
-    gear3.rotation.z = -state.rotorAngle * (24 / 14);
-    const highSpeedAngle = state.rotorAngle * (24 / 14) * (20 / 11);
+    const interAngle = -state.rotorAngle * (24 / 13);
+    gear2.rotation.z = interAngle;
+    interShaft.rotation.z = interAngle;
+    gear3.rotation.z = interAngle;
+    const highSpeedAngle = state.rotorAngle * (24 / 13) * (22 / 11);
     gear4.rotation.z = highSpeedAngle;
     brakeDisc.rotation.z = highSpeedAngle;
     hsShaft.rotation.z = highSpeedAngle;

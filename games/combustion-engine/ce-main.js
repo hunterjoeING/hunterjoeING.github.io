@@ -537,10 +537,35 @@ function init() {
     else startTour(0);
   });
 
+  const elDrawerBackdrop = document.getElementById('ce-drawer-backdrop');
+  const elDrawerClose = document.getElementById('ce-drawer-close');
+
+  function setDrawerOpen(open) {
+    if (!elPanelDrawer) return;
+    elPanelDrawer.classList.toggle('mobile-open', open);
+    elDrawerBackdrop?.classList.toggle('visible', open);
+    if (elDrawerToggle) {
+      elDrawerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      elDrawerToggle.textContent = open ? '✕ Steuerung ausblenden' : '⚙️ Drehzahl, Dyno & Details';
+    }
+  }
+
   elDrawerToggle?.addEventListener('click', () => {
-    const open = elPanelDrawer.classList.toggle('mobile-open');
-    elDrawerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    elDrawerToggle.textContent = open ? '✕ Steuerung ausblenden' : '⚙️ Drehzahl, Dyno & Details';
+    setDrawerOpen(!elPanelDrawer.classList.contains('mobile-open'));
+    if (window.ArcadeAudio) window.ArcadeAudio.click();
+  });
+
+  elDrawerClose?.addEventListener('click', () => {
+    setDrawerOpen(false);
+    if (window.ArcadeAudio) window.ArcadeAudio.click();
+  });
+
+  elDrawerBackdrop?.addEventListener('click', () => setDrawerOpen(false));
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && elPanelDrawer?.classList.contains('mobile-open')) {
+      setDrawerOpen(false);
+    }
   });
 
   // Topbar Mute & Version Changelog

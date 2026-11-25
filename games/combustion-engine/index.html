@@ -45,14 +45,14 @@
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.1.0" />
+  <link rel="stylesheet" href="./styles.css?v=0.1.1" />
 </head>
 <body>
   <header class="arcade-topbar ce-topbar">
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
       <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
-      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.1.0</button>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.1.1</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
@@ -90,8 +90,18 @@
       </div>
     </section>
 
+    <div class="ce-drawer-backdrop" id="ce-drawer-backdrop" aria-hidden="true"></div>
+
     <!-- Right Engineering Sidebar -->
     <aside class="ce-side-panel" id="ce-side-panel" aria-label="Drehzahlsteuerung, Prüfstandskurve &amp; Bauteil-Inspektor">
+      <div class="ce-drawer-header">
+        <span class="ce-drawer-handle" aria-hidden="true"></span>
+        <div class="ce-drawer-header-row">
+          <span class="ce-drawer-title">⚙️ Drehzahl, Dyno &amp; Details</span>
+          <button type="button" class="ce-drawer-close" id="ce-drawer-close" aria-label="Zurück zur 3D-Ansicht">✕ Zurück zu 3D</button>
+        </div>
+      </div>
+
       <!-- 04 RPM Slider + Slow-Mo -->
       <div class="ce-panel-section">
         <div class="ce-section-head">
@@ -172,9 +182,9 @@
   </main>
 
   <script src="../../shared/arcade.js?v=0.4.0"></script>
-  <script src="../../shared/releases.js?v=0.4.0"></script>
+  <script src="../../shared/releases.js?v=0.4.1"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
   <script src="../../shared/burger-menu.js?v=0.4.0"></script>
-  <script type="module" src="./ce-main.js?v=0.1.0"></script>
+  <script type="module" src="./ce-main.js?v=0.1.1"></script>
 </body>
 </html>

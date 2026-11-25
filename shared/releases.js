@@ -54,12 +54,27 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "wind_turbine", version: "0.1.1", date: "2026-11-25", type: "patch", title: "Drehachse im Triebstrang & mobiles Menü",
+      author: "Joe",
+      highlights: [
+        "Rotationsachse von Bremsscheibe, schneller Welle und Kupplung sowie Verzahnung im Getriebe und Blattausrichtung korrigiert",
+        "Mobiles Steuerungsmenü hat jetzt einen festen Schließen-Knopf und schließt beim Tippen außerhalb",
+      ],
+    },
+    {
       app: "wind_turbine", version: "0.1.0", date: "2026-11-25", type: "feature", title: "Erste Version",
       author: "Joe",
       highlights: [
         "Interaktive 3,6-MW-Windkraftanlage in 3D mit Cutaway-Aufschnitt, X-Ray-Röntgenblick und Explosionsansicht mit 12 beschrifteten Baugruppen",
         "Windgeschwindigkeits-Regler (0–28 m/s) mit aktiver Pitch-Blattverstellung, verzahntem Getriebe und Sturmabschaltung",
         "Interaktive Live-Leistungskurve P(v) sowie geführte 6-Schritte-Tour von Wind bis Stromnetz",
+      ],
+    },
+    {
+      app: "combustion_engine", version: "0.1.1", date: "2026-11-25", type: "patch", title: "Mobiles Steuerungsmenü schließen",
+      author: "Joe",
+      highlights: [
+        "Mobiles Steuerungsmenü hat jetzt einen festen „Zurück zu 3D“-Knopf und schließt beim Tippen auf den Hintergrund oder per Escape",
       ],
     },
     {
