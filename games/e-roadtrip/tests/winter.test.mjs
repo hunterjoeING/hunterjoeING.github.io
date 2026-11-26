@@ -232,6 +232,17 @@ export default function register(test, game) {
       const controller = controllerWithRun(run);
       controller.playDestinationFinale = assert.fail;
       controller.finishLevel = clean => { assert.equal(clean, true); fired.push('innsbruck'); };
+      scene.bridge.onAlpineEvent = event => {
+        fired.push(event.kind);
+        if (event.kind === 'pass') {
+          run.alpinePass = { legIndex: run.currentLegIndex, name: event.name, chainsFitted: true, complete: true };
+        } else if (event.kind === 'descent') {
+          run.alpineDescent = { legIndex: run.currentLegIndex, mode: 'strong', recoveredKwh: 0, brakeHeatM: 0, overheated: false };
+        } else {
+          assert.fail('B mode with ample headroom should avoid overheating');
+        }
+        scene.bridge.paused = false;
+      };
       scene.bridge.onDestinationArrival = () => controller.handleDestinationArrival();
       scene.bridge.onDynamicEventTrigger = id => {
         fired.push(id);
@@ -246,6 +257,7 @@ export default function register(test, game) {
       assert.equal(run.tollsEur, forecast.tollsEur);
       assert.ok(index === 0 ? fired.includes('evt_vignette_check') : fired.includes('evt_avalanche_closure'));
       assert.equal(fired.includes('evt_child_cold'), index === 0);
+      assert.deepEqual(fired.filter(id => id === 'pass' || id === 'descent'), index === 0 ? [] : ['pass', 'descent']);
       assert.ok(run.socPct > 0);
       assert.ok(run.energyUsedKwh < getVehicleById(car).batteryKwh);
       const result = evaluateRun(level, run, true);

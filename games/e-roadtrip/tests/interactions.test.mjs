@@ -78,6 +78,7 @@ export default function register(test, game) {
   test('The city brake has priority over acceleration', () => {
     const city = new m.CityDriveScene();
     city.player = carImage();
+    city.place = {};
     city.bridge = { level: route1, paused: false, touch: {} };
     const idle = { isDown: false };
     city.wasd = { W: { isDown: true }, SPACE: { isDown: true }, A: idle, S: idle, D: idle, H: idle };

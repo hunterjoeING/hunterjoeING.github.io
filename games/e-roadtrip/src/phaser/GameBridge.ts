@@ -4,6 +4,7 @@ import {
   CollisionInfo,
   LevelConfig,
   PoliceViolationKind,
+  PassName,
   ProviderFilterMap,
   RunState,
   TripPlan
@@ -18,6 +19,11 @@ export interface TouchInputState {
   brake: boolean;
   hornPressed: boolean;
 }
+
+export type AlpineEvent =
+  | { kind: 'pass'; name: PassName }
+  | { kind: 'descent' }
+  | { kind: 'overheat' };
 
 export interface ERoadtripBridge {
   level: LevelConfig;
@@ -40,6 +46,7 @@ export interface ERoadtripBridge {
   onTriggerChargerSegment: (station: ChargerStation) => void;
   onTriggerCitySegment: (preset: CityDrivePreset) => void;
   onCitySegmentComplete: (preset: CityDrivePreset, cleanArrival: boolean) => void;
+  onAlpineEvent: (event: AlpineEvent) => void;
   onDynamicEventTrigger: (eventId: string) => void;
   onWifeDialogueTrigger: (dialogueId: string) => void;
   onCollisionEvent: (info: CollisionInfo) => void;

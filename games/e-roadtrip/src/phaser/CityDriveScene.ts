@@ -1,5 +1,7 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
+import { passGrip, passTravelHeading } from '../sim/AlpineDriving';
+import { passNavigation, passOnIce, passRoadContains } from './AlpinePass';
 import { getChargerById } from '../data/europeMap';
 import { isRearParked } from '../sim/ChargingBay';
 import { evaluatePropertyDamage, recordConeHit, STATIC_CONTACT_CLEARANCE_PX } from '../sim/PropertyDamage';
@@ -25,7 +27,7 @@ import { SoundFX } from './SoundFX';
 import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } from './PlacePainter';
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
 
-type PropertyContact = Rect | Capsule | 'worldEdge';
+type PropertyContact = Rect | Capsule | 'worldEdge' | 'passEdge';
 
 export class CityDriveScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
@@ -39,6 +41,7 @@ export class CityDriveScene extends Phaser.Scene {
   private worldW = 2040;
   private worldH = 1480;
   private carSpeed = 0;
+  private travelHeading?: number;
 
   private trafficTimer = 0;
   private intersections: SignalIntersection[] = [];
@@ -140,6 +143,7 @@ export class CityDriveScene extends Phaser.Scene {
     this.passThrough = false;
     this.spinners = [];
     this.carSpeed = 0;
+    this.travelHeading = undefined;
     this.dwellInTargetSec = 0;
     this.collisionCooldownSec = 0;
     this.propertyContacts.clear();
@@ -177,7 +181,9 @@ export class CityDriveScene extends Phaser.Scene {
     this.place = paintDrivingPlace(this, {
       preset: this.preset,
       station: this.station,
-      mobile: this.isMobilePerf
+      mobile: this.isMobilePerf,
+      passName: this.bridge.runState?.alpinePass?.name,
+      light: this.bridge.isLightTheme()
     });
     this.worldW = this.place.worldW;
     this.worldH = this.place.worldH;
@@ -217,6 +223,7 @@ export class CityDriveScene extends Phaser.Scene {
     if (!this.previewFx && new URLSearchParams(window.location.search).get('erpreview')) {
       const frame = this.time.delayedCall(120, () => {
         if (!this.scene.isActive() || !this.cameras?.main) return;
+        if (this.place.passRoad) return;
         this.previewLock = true;
         this.cameras.main.stopFollow();
         if (this.place.autohof) {
@@ -331,7 +338,8 @@ export class CityDriveScene extends Phaser.Scene {
   private spawnEnvironmentAndProps(): void {
     this.obstacleRects = this.place.buildings.slice();
     this.obstacleCircles = this.place.trees.map(spot => {
-      this.add.image(spot.x, spot.y, 'pixel_tree').setDepth(6);
+      const tree = this.add.image(spot.x, spot.y, 'pixel_tree').setDepth(6);
+      if (this.place.passRoad) tree.setTint(0xd3edf7);
       return circleAt(spot.x, spot.y, 11);
     });
 
@@ -340,7 +348,7 @@ export class CityDriveScene extends Phaser.Scene {
       this.add.image(lp.x, lp.y, 'streetlamp').setDepth(11);
     });
 
-    if (this.place.autohof) {
+    if (this.place.autohof || this.place.passRoad) {
       this.intersections = [];
       return;
     }
@@ -429,6 +437,8 @@ export class CityDriveScene extends Phaser.Scene {
       });
       return;
     }
+
+    if (this.place.passRoad) return;
 
     // Pure sidewalk strollers distributed across all city sidewalks (never block crosswalks)
     const sidewalkPedConfigs: Array<{
@@ -606,6 +616,7 @@ export class CityDriveScene extends Phaser.Scene {
     const damage = evaluatePropertyDamage(impactSpeed);
     if (!damage) return;
     this.propertyContacts.add(contact);
+    if (contact === 'passEdge') this.cleanRun = false;
     SoundFX.bump();
     this.bridge.paused = true;
     this.physics.world.pause();
@@ -617,6 +628,7 @@ export class CityDriveScene extends Phaser.Scene {
     const clearance = { ...shape, radius: shape.radius + STATIC_CONTACT_CLEARANCE_PX };
     for (const contact of this.propertyContacts) {
       const nearby = contact === 'worldEdge' ? !capsuleInsideWorld(clearance, this.worldW, this.worldH) :
+        contact === 'passEdge' ? !passRoadContains(this.place.passRoad!, clearance) :
         'radius' in contact ? capsulesOverlap(clearance, contact) : capsuleOverlapsRect(clearance, contact);
       if (!nearby) this.propertyContacts.delete(contact);
     }
@@ -647,13 +659,19 @@ export class CityDriveScene extends Phaser.Scene {
     return vehicleCapsule(x, y, rotation, car.route.isCyclist);
   }
 
-  private movePlayer(dt: number, turn: number): boolean {
+  private movePlayer(dt: number, turn: number, grip = 1): boolean {
     const moving = this.carSpeed !== 0 || turn !== 0;
     const rotation = this.player.rotation + turn * dt;
-    const x = this.player.x + Math.sin(rotation) * this.carSpeed * dt;
-    const y = this.player.y - Math.cos(rotation) * this.carSpeed * dt;
+    const travel = grip < 1 ? passTravelHeading(this.travelHeading ?? this.player.rotation, rotation, grip, dt) : rotation;
+    const x = this.player.x + Math.sin(travel) * this.carSpeed * dt;
+    const y = this.player.y - Math.cos(travel) * this.carSpeed * dt;
     const shape = vehicleCapsule(x, y, rotation);
     if (moving) {
+      if (this.place.passRoad && !passRoadContains(this.place.passRoad, shape)) {
+        this.travelHeading = undefined;
+        this.hitProperty('passEdge');
+        return false;
+      }
       if (!capsuleInsideWorld(shape, this.worldW, this.worldH)) {
         this.hitProperty('worldEdge');
         return false;
@@ -682,6 +700,7 @@ export class CityDriveScene extends Phaser.Scene {
     }
     if (moving) {
       this.knockAwayCones(shape, x, rotation);
+      this.travelHeading = travel;
       this.player.setPosition(x, y).setRotation(rotation);
       this.releasePropertyContacts(shape);
     }
@@ -782,6 +801,7 @@ export class CityDriveScene extends Phaser.Scene {
 
     this.collisionCooldownSec = 2.6;
     this.carSpeed = 0;
+    this.travelHeading = undefined;
     if (fault.playerAtFault) {
       this.cleanRun = false;
       if (this.bridge.runState) this.bridge.runState.collisionsCount += 1;
@@ -1261,27 +1281,30 @@ export class CityDriveScene extends Phaser.Scene {
       SoundFX.horn();
     }
 
+    const road = this.place.passRoad;
+    const onIce = road ? passOnIce(road, this.player) : false;
+    const grip = road ? passGrip(onIce, !!this.bridge.runState?.alpinePass?.chainsFitted) : 1;
     const maxFwd = 230;
     const maxRev = -115;
     if (!brake && up) {
-      this.carSpeed = Math.min(maxFwd, this.carSpeed + 320 * dt);
+      this.carSpeed = Math.min(maxFwd, this.carSpeed + 320 * grip * dt);
     } else if (!brake && down) {
-      this.carSpeed = Math.max(maxRev, this.carSpeed - 280 * dt);
+      this.carSpeed = Math.max(maxRev, this.carSpeed - 280 * grip * dt);
     } else {
-      const decel = (brake ? 1050 : 640) * dt;
+      const decel = (brake ? 1050 : 640) * grip * dt;
       this.carSpeed = this.carSpeed > 0 ? Math.max(0, this.carSpeed - decel) : Math.min(0, this.carSpeed + decel);
     }
     if (Math.abs(this.carSpeed) < 8 && (brake || (!up && !down))) this.carSpeed = 0;
 
     const steerFactor = Math.min(1, Math.abs(this.carSpeed) / 62);
     const dirSign = this.carSpeed >= -1 ? 1 : -1;
-    const turn = 2.75 * steerFactor * dirSign * (Number(right) - Number(left));
+    const turn = 2.75 * steerFactor * grip * dirSign * (Number(right) - Number(left));
     // Begrenzte Teilschritte prüfen auch die gedrehte Karosserie an schmalen Hindernissen.
     const substeps = Math.ceil(dt * 60);
     const step = dt / substeps;
     let playerCanMove = true;
     for (let i = 0; i < substeps; i++) {
-      if (playerCanMove) playerCanMove = this.movePlayer(step, turn);
+      if (playerCanMove) playerCanMove = this.movePlayer(step, turn, grip);
       if (this.bridge.paused) return;
       this.stepTraffic(step);
       if (this.bridge.paused) return;
@@ -1295,6 +1318,7 @@ export class CityDriveScene extends Phaser.Scene {
       speed: this.carSpeed,
       onGrass: isGrassSurface(this.player.x, this.player.y, this.place.grass, this.place.asphalt, this.place.buildings),
       wetRoad: this.roadWet,
+      snowyRoad: !!road && !onIce,
       dt
     });
 
@@ -1420,7 +1444,10 @@ export class CityDriveScene extends Phaser.Scene {
     const targetBay = (parked ?? nearest)?.bounds;
     const targetX = targetBay ? targetBay.x + targetBay.w / 2 : this.targetZone.centerX;
     const targetY = targetBay ? targetBay.y + targetBay.h / 2 : this.targetZone.centerY;
-    const angleToTarget = Phaser.Math.Angle.Between(this.player.x, this.player.y, targetX, targetY);
+    const passNav = road && passNavigation(road, this.player);
+    const angleToTarget = Phaser.Math.Angle.Between(
+      this.player.x, this.player.y, passNav ? passNav.aim.x : targetX, passNav ? passNav.aim.y : targetY
+    );
     const distToTarget = Phaser.Math.Distance.Between(this.player.x, this.player.y, targetX, targetY);
     this.navArrow.setPosition(this.scale.width / 2, 62);
     this.navArrow.setRotation(angleToTarget + Math.PI / 2);
@@ -1440,9 +1467,9 @@ export class CityDriveScene extends Phaser.Scene {
 
     if (this.passThrough) {
       const rampLabel =
-        this.preset === 'koeln_ring' ? 'Zur A1' : this.preset === 'ferry_denmark' ? 'Zum Fährterminal' : 'Zur A4 Auffahrt';
+        passNav ? 'Zur Passhöhe' : this.preset === 'koeln_ring' ? 'Zur A1' : this.preset === 'ferry_denmark' ? 'Zum Fährterminal' : 'Zur A4 Auffahrt';
       const doneLabel =
-        this.preset === 'koeln_ring'
+        passNav ? 'Passhöhe erreicht' : this.preset === 'koeln_ring'
           ? '🛣️ Weiter auf die A1'
           : this.preset === 'ferry_denmark'
             ? '⛴️ Fähre erreicht'
@@ -1453,7 +1480,9 @@ export class CityDriveScene extends Phaser.Scene {
         this.distText.setText(doneLabel);
         this.bridge.onCitySegmentComplete(this.preset, this.cleanRun);
       } else {
-        this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
+        const remaining = passNav?.distance ?? distToTarget;
+        this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(remaining / 6))} m`);
+        if (onIce) this.reverseHintText.setText('Glatteis').setVisible(true);
       }
     } else if (parked) {
       this.completed = true;

@@ -110,6 +110,42 @@ export class EventModal {
     });
   }
 
+  public showChainFitting(minutes: number, onFitted: () => void): void {
+    this.modalEl.classList.remove('hidden');
+    this.modalEl.innerHTML = `
+      <div class="er-modal-card">
+        <div class="er-modal-head">
+          <span class="er-modal-icon">⛓️</span>
+          <div>
+            <div class="er-modal-kicker">Haltebucht · +${minutes} Min</div>
+            <h3 id="chain-title">Schneeketten aufziehen</h3>
+          </div>
+        </div>
+        ${this.renderDriveStatus()}
+        <p class="er-modal-body" aria-live="polite" id="chain-progress">Raste die linke Schneekette ein.</p>
+        <button type="button" class="er-primary-btn" id="chain-click">Linke Kette einrasten</button>
+      </div>
+    `;
+    this.modalEl.setAttribute('aria-labelledby', 'chain-title');
+    const button = this.modalEl.querySelector<HTMLButtonElement>('#chain-click');
+    const progress = this.modalEl.querySelector('#chain-progress');
+    let leftFitted = false;
+    button?.focus();
+    button?.addEventListener('click', () => {
+      if (button.disabled) return;
+      SoundFX.click();
+      if (!leftFitted) {
+        leftFitted = true;
+        button.textContent = 'Rechte Kette einrasten';
+        if (progress) progress.textContent = 'Linke Kette sitzt. Jetzt die rechte einrasten.';
+        return;
+      }
+      button.disabled = true;
+      this.close();
+      onFitted();
+    });
+  }
+
   public showMesseVisit(
     options: { chargePlanned: boolean; chargerAvailable: boolean },
     onConfirm: (choice: { charge: boolean; eat: boolean }) => string,

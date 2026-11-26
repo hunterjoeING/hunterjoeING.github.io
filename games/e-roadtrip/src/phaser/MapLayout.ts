@@ -152,13 +152,17 @@ export function computeRouteSocBandSegments(
   for (const section of sections) {
     if (!section.reachableStart) break;
     const { startSocPct, endSocPct, fromProgress, toProgress } = section;
-    const start = Math.min(startSocPct, upperSocPct);
-    const end = Math.max(endSocPct, lowerSocPct);
-    if (start <= end) continue;
+    const low = Math.max(Math.min(startSocPct, endSocPct), lowerSocPct);
+    const high = Math.min(Math.max(startSocPct, endSocPct), upperSocPct);
+    const flat = startSocPct === endSocPct;
+    if (flat ? startSocPct <= lowerSocPct || startSocPct > upperSocPct : low >= high) continue;
+    const rising = endSocPct > startSocPct;
+    const start = rising ? low : high;
+    const end = rising ? high : low;
     const progressAt = (soc: number) =>
       fromProgress + ((startSocPct - soc) / (startSocPct - endSocPct)) * (toProgress - fromProgress);
-    const from = progressAt(start);
-    const to = progressAt(end);
+    const from = start === end ? fromProgress : progressAt(start);
+    const to = start === end ? toProgress : progressAt(end);
     const points = getPolylineSliceAlongEdge(edge, from, to, reverse);
     if (points.length < 2) continue;
     const previous = segments[segments.length - 1];

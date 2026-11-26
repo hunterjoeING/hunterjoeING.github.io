@@ -8,6 +8,7 @@ import { getSubscriptionById, roamingPriceForProvider } from '../data/subscripti
 
 const CHARGING_ENERGY_FACTOR = 1.04;
 export const CHARGE_SETUP_MINUTES = 2.5;
+export const CLIMB_ENERGY_KWH_PER_M = 0.0056;
 
 export function computeConsumptionKwh100(
   vehicle: VehicleSpec,
@@ -36,7 +37,7 @@ export function computeConsumptionKwh100(
   // Potential energy delta per 100 km (~2000 kg EV -> ~0.55 kWh per 100m climb, 60% regen on descent)
   const netGainKwhPer100 =
     distanceKm > 0
-      ? ((elevationGainM * 0.0056 - elevationLossM * 0.0033) / distanceKm) * 100
+      ? ((elevationGainM * CLIMB_ENERGY_KWH_PER_M - elevationLossM * 0.0033) / distanceKm) * 100
       : 0;
 
   let trailerMult = 1.0;

@@ -11,6 +11,7 @@ import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { SUBSCRIPTIONS, roamingPriceForProvider } from '../data/subscriptions';
 import { CHARGERS, getCityById, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
+import { alpineLeg } from '../sim/AlpineDriving';
 import { HOTEL_AC } from '../data/events';
 import {
   getActiveRouteLegs,
@@ -169,6 +170,7 @@ export class PlanningUI {
   ): void {
     const selectedVehicle = getVehicleById(plan.vehicleId);
     const activeRoute = getActiveRouteOption(level, plan);
+    const hasAlpinePass = activeRoute.legs.some(leg => alpineLeg(level.id, getEdgeById(leg.edgeId), leg)?.pass);
     const budgetLeft = save.cashEur - (save.ownedVehicleId === selectedVehicle.id ? 0 : selectedVehicle.priceEur);
     const clampedLegIdx = Math.max(0, Math.min(forecast.legForecasts.length - 1, selectedLegIndex));
 
@@ -195,7 +197,7 @@ export class PlanningUI {
           </div>
         </div>
         <p class="plan-briefing">${level.briefingText}</p>
-        ${level.playable && level.requiresWinterTires ? '<p class="plan-briefing">Winterreifen sind Pflicht und bereits montiert. Die Prognose rechnet mit Vorkonditionierung und einer typischen Wartezeit an den betroffenen Ladestationen.</p>' : ''}
+        ${level.playable && level.requiresWinterTires ? `<p class="plan-briefing">Winterreifen sind Pflicht und bereits montiert. Die Prognose rechnet mit Vorkonditionierung und einer typischen Wartezeit an den betroffenen Ladestationen.${hasAlpinePass ? ' Für den Pass sind Schneeketten und normale Rekuperation eingeplant.' : ''}</p>` : ''}
         <p class="plan-briefing">Plane so, dass du mit wenig Restakku sicher ankommst. Ab 5 % Restakku gibt es im Ziel Punktabzug.</p>
         <div class="plan-rules-chips">
           ${level.specialRulesSummary.map(r => `<span class="rule-chip">${r}</span>`).join('')}

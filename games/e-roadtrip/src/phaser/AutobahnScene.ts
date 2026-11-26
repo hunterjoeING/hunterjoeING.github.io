@@ -1,6 +1,8 @@
 import * as Phaser from 'phaser';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
+import { alpineLeg } from '../sim/AlpineDriving';
+import { alpineRoadEnergy, brakesOverheat } from '../sim/AlpineDescent';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
 import { nextWinterRoadEvent, SNOWPLOUGH_SPEED_KMH, winterRoadEnergyKwh } from '../sim/WinterDriving';
 import {
@@ -767,7 +769,13 @@ export class AutobahnScene extends Phaser.Scene {
     const stopKm = pendingStop ? pendingStop.progress * edge.distanceKm : Infinity;
     const workBoundaryKm = !zone || run.legProgressKm >= zone.endKm
       ? Infinity : inWork ? zone.endKm : zone.startKm;
-    const boundaryKm = Math.min(stopKm, section.endKm, workBoundaryKm);
+    const alpine = alpineLeg(this.bridge.level.id, edge, legSpec);
+    const pass = run.alpinePass?.legIndex !== run.currentLegIndex ? alpine?.pass : undefined;
+    const descent = alpine?.descent;
+    const descentState = run.alpineDescent?.legIndex === run.currentLegIndex ? run.alpineDescent : undefined;
+    const nextDescentKm = descent && !descentState ? Math.max(run.legProgressKm, descent.startKm) : Infinity;
+    const passKm = pass ? Math.max(run.legProgressKm, pass.entryKm) : Infinity;
+    const boundaryKm = Math.min(stopKm, section.endKm, workBoundaryKm, passKm, nextDescentKm);
     const simMinPerRealSec = inWork ? 0.85 : this.bridge.timeScale === 15 ? 28 : this.bridge.timeScale === 5 ? 11 : 2.8;
     const kmPerMinute = this.playerSpeedKmh / 60;
     const availableMinutes = simMinPerRealSec * dtSec;
@@ -782,18 +790,23 @@ export class AutobahnScene extends Phaser.Scene {
       this.playerSpeedKmh,
       weather,
       elevGain,
-      elevLoss,
+      descent ? 0 : elevLoss,
       edge.distanceKm,
       this.bridge.level.trailerWeightKg || 0,
       !!run.plan.behindTruckMode
     );
-    const kwhBurned = winterRoadEnergyKwh(
+    const baseKwh = winterRoadEnergyKwh(
       cons100, deltaKm, !!this.bridge.level.requiresWinterTires,
       run.distanceDrivenKm, run.coldStart, run.snowploughUntilKm
     );
+    const fromKm = run.legProgressKm;
     if (deltaKm > 0) {
-      run.legProgressKm = deltaKm === remainingKm ? boundaryKm : run.legProgressKm + deltaKm;
+      run.legProgressKm = deltaKm === remainingKm ? boundaryKm : fromKm + deltaKm;
     }
+    const downhill = descentState && alpineRoadEnergy(
+      descent, fromKm, run.legProgressKm, baseKwh, run.socPct, vehicle.batteryKwh, descentState.mode
+    );
+    const kwhBurned = downhill ? downhill.netKwh : baseKwh;
     run.distanceDrivenKm += deltaKm;
     run.energyUsedKwh += kwhBurned;
     run.socPct = Math.max(0, run.socPct - (kwhBurned / vehicle.batteryKwh) * 100);
@@ -824,10 +837,36 @@ export class AutobahnScene extends Phaser.Scene {
       return;
     }
 
+    if (descentState && downhill) descentState.recoveredKwh += downhill.recoveredKwh;
+    if (descentState && downhill && !descentState.overheated) {
+      descentState.brakeHeatM += downhill.brakeHeatM;
+      if (brakesOverheat(descentState.brakeHeatM)) {
+        descentState.overheated = true;
+        this.bridge.paused = true;
+        SoundFX.alert();
+        this.bridge.onAlpineEvent({ kind: 'overheat' });
+        return;
+      }
+    }
+
     if (pendingStop && run.legProgressKm >= stopKm) {
       this.bridge.paused = true;
       SoundFX.click();
       this.bridge.onTriggerChargerSegment(pendingStop.station);
+      return;
+    }
+
+    if (pass && run.legProgressKm >= passKm) {
+      this.bridge.paused = true;
+      SoundFX.alert();
+      this.bridge.onAlpineEvent({ kind: 'pass', name: pass.name });
+      return;
+    }
+
+    if (run.legProgressKm >= nextDescentKm) {
+      this.bridge.paused = true;
+      SoundFX.alert();
+      this.bridge.onAlpineEvent({ kind: 'descent' });
       return;
     }
 

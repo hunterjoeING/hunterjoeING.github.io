@@ -9,6 +9,7 @@ import {
   LevelConfig,
   PoliceViolationKind,
   ProviderFilterMap,
+  type RegenMode,
   RunState,
   TripPlan,
   WeatherKind,
@@ -18,6 +19,8 @@ import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
 import { getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
+import { BRAKE_OVERHEAT_EVENT, buildChainRequirement, CHAIN_CHECK_EVENT, chainFittingChoice, REGEN_EVENT } from './data/alpineEvents';
+import { ALPINE_PASS_PRESET, chainCheckOccurs } from './sim/AlpineDriving';
 import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
@@ -53,7 +56,7 @@ import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
 import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
-import { ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
+import { type AlpineEvent, ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI, DEFAULT_SHOW_ALL_CHARGERS } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
 import { formatClock, renderDriveStatus } from './ui/DrivingStatus';
@@ -154,6 +157,8 @@ class ERoadtripController {
       onCitySegmentComplete: (preset, cleanArrival) => {
         this.handleCitySegmentComplete(preset, cleanArrival);
       },
+
+      onAlpineEvent: event => this.handleAlpineEvent(event),
 
       onDynamicEventTrigger: (eventId: string) => {
         this.handleDynamicEvent(eventId);
@@ -526,7 +531,8 @@ class ERoadtripController {
       hannover_messe: 'Hannover Messe → E-Parkplatz',
       aachen_finish: 'Aachen Ausfahrt → Ziel-Parkplatz',
       ferry_denmark: 'Hirtshals Fährhafen',
-      koeln_ring: 'Köln-Ring → A1'
+      koeln_ring: 'Köln-Ring → A1',
+      alpine_pass: `${this.bridge.runState?.alpinePass?.name ?? 'Alpenpass'} → Passhöhe`
     };
     if (this.bridge.runState) {
       this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale, titleMap[preset]);
@@ -537,6 +543,43 @@ class ERoadtripController {
       chargerId,
       previewFx
     });
+  }
+
+  private handleAlpineEvent(event: AlpineEvent): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    this.drivingHUD.clearTouchStates();
+    if (event.kind === 'pass') {
+      const requirement = buildChainRequirement(event.name);
+      const fitting = chainFittingChoice();
+      let fit = false;
+      const enterPass = (chainsFitted: boolean) => {
+        run.alpinePass = { legIndex: run.currentLegIndex, name: event.name, chainsFitted, complete: false };
+        this.enterCitySegment(ALPINE_PASS_PRESET);
+      };
+      this.eventModal.showDynamicEvent(requirement, choice => {
+        fit = choice.id === fitting.id;
+        return fit ? choice.resultText : this.applyEventChoice(requirement.title, choice);
+      }, () => {
+        if (!fit) {
+          enterPass(false);
+          return;
+        }
+        this.eventModal.showChainFitting(fitting.timeDeltaMin, () => {
+          this.applyEventChoice(requirement.title, fitting);
+          enterPass(true);
+        });
+      });
+      return;
+    }
+
+    const dialog = event.kind === 'descent' ? REGEN_EVENT : BRAKE_OVERHEAT_EVENT;
+    this.eventModal.showDynamicEvent(dialog, choice => {
+      if (event.kind === 'descent') {
+        run.alpineDescent = { legIndex: run.currentLegIndex, mode: choice.id as RegenMode, recoveredKwh: 0, brakeHeatM: 0, overheated: false };
+      }
+      return this.applyEventChoice(dialog.title, choice);
+    }, () => { this.bridge.paused = false; });
   }
 
   private enterChargerSegment(station: ChargerStation): void {
@@ -597,6 +640,27 @@ class ERoadtripController {
   private handleCitySegmentComplete(preset: CityDrivePreset, cleanArrival: boolean): void {
     const run = this.bridge.runState;
     if (!run) return;
+
+    if (preset === ALPINE_PASS_PRESET) {
+      const pass = run.alpinePass;
+      if (!pass || pass.complete) return;
+      pass.complete = true;
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: `${pass.name} · Passhöhe`,
+        detail: cleanArrival ? 'Passhöhe erreicht.' : 'Passhöhe nach einem Zwischenfall erreicht.',
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      if (chainCheckOccurs(pass.chainsFitted, Math.random())) {
+        this.bridge.paused = true;
+        this.drivingHUD.clearTouchStates();
+        this.eventModal.showDynamicEvent(CHAIN_CHECK_EVENT,
+          choice => this.applyEventChoice(CHAIN_CHECK_EVENT.title, choice), () => this.enterAutobahn());
+      } else {
+        this.enterAutobahn();
+      }
+      return;
+    }
 
     if (preset === 'aachen_start') {
       run.elapsedMinutes += CITY_TRANSITION_MINUTES.aachen_start ?? 0;

@@ -267,13 +267,17 @@ export interface LevelRouteLegSpec {
   destinationAtEnd?: boolean;
 }
 
+export type PassName = 'Zirler Berg' | 'Achenpass';
+export type RegenMode = 'coast' | 'normal' | 'strong';
+
 export type CityDrivePreset =
   | 'aachen_start'
   | 'charger_park'
   | 'hannover_messe'
   | 'aachen_finish'
   | 'ferry_denmark'
-  | 'koeln_ring';
+  | 'koeln_ring'
+  | 'alpine_pass';
 
 export type ElevationProfileKind = 'Flachland' | 'Hügelig' | 'Bergig / Pässe';
 export type TrafficRiskKind = 'Niedrig' | 'Mittel' | 'Hoch';
@@ -388,6 +392,8 @@ export interface RunState {
   distanceDrivenKm: number;
   coldStart?: boolean;
   snowploughUntilKm?: number;
+  alpinePass?: { legIndex: number; name: PassName; chainsFitted: boolean; complete: boolean };
+  alpineDescent?: { legIndex: number; mode: RegenMode; recoveredKwh: number; brakeHeatM: number; overheated: boolean };
   chargingCostEur: number;
   subscriptionCostEur: number;
   tollsEur: number;

@@ -1,6 +1,8 @@
 import { HighwayEdge, LevelConfig, RunState } from '../types';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
+import { alpineLeg } from '../sim/AlpineDriving';
+import { REGEN_MODES } from '../sim/AlpineDescent';
 import { buildRemainingRoute } from '../sim/RouteNavigation';
 import { getActiveRouteLegs, highwaySection, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
 import { formatClock, formatDrivingCosts } from './DrivingStatus';
@@ -317,7 +319,11 @@ export class DrivingHUD {
     this.setText('replan-feedback', this.replanFeedback);
     this.setHtml('speed-sign', speedSignHtml(signLimit));
     this.setText('tempo', `Ist ${Math.round(run.currentSpeedKmh)} · Ziel ${chosen}`);
-    this.setText('tempo-cap', run.speedCapLabel ?? '');
+    const descent = alpineLeg(level.id, edge, leg)?.descent;
+    const regen = run.alpineDescent?.legIndex === run.currentLegIndex ? run.alpineDescent : undefined;
+    const regenLabel = descent && regen && run.legProgressKm >= descent.startKm && run.legProgressKm <= descent.endKm
+      ? `${REGEN_MODES[regen.mode].label} · +${regen.recoveredKwh.toFixed(1)} kWh` : '';
+    this.setText('tempo-cap', [run.speedCapLabel, regenLabel].filter(Boolean).join(' · '));
     this.hudEl.querySelector('[data-pill="soc"]')?.classList.toggle('low', socRound < 15);
     this.hudEl.querySelector('[data-pill="stress"]')?.classList.toggle('warn', run.stress > 60);
     const predPill = this.hudEl.querySelector('[data-pill="pred"]');
