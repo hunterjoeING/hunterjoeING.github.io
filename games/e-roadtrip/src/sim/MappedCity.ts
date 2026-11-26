@@ -1,4 +1,5 @@
-import type { CityCrosswalk, CityPoint, MappedCityRoad } from '../data/cityLayouts/types';
+import type { CityCrosswalk, CityPoint, MappedCityLayout, MappedCityRoad } from '../data/cityLayouts/types';
+import { subtractCityRect } from './WinterCity';
 
 export interface MappedRoadSpan {
   a: CityPoint;
@@ -12,6 +13,14 @@ export function mappedRoadSpans(roads: MappedCityRoad[]): MappedRoadSpan[] {
     const a = road.points[index];
     return { a, b, road, length: Math.hypot(b.x - a.x, b.y - a.y) };
   }));
+}
+
+export function mappedCityWater(layout: MappedCityLayout, spans: MappedRoadSpan[]) {
+  // The mapped road bridges run straight across the river. Rail spans remain closed to cars.
+  return spans.filter(({ road }) => road.bridge).reduce((water, { a, b, road }) =>
+    water.flatMap(rect => subtractCityRect(rect, {
+      x: Math.min(a.x, b.x), y: a.y - road.width / 2, w: Math.abs(a.x - b.x), h: road.width
+    })), layout.water);
 }
 
 export function projectToCityRoad(point: CityPoint, { a, b, length }: MappedRoadSpan) {

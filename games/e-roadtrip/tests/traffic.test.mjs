@@ -267,10 +267,11 @@ export default function register(test, game) {
     assert.equal(connectedPillar, alternate.pillar);
   });
 
-  test('City traffic clears intersections and completes its routes', t => {
+  test('Hannover, Köln and Hirtshals traffic clears crossings and completes its routes', t => {
     t.mock.method(Math, 'random', () => 0.5);
     for (const preset of ['koeln_ring', 'hannover_messe', 'ferry_denmark']) {
       const { city } = createCity(preset);
+      city.player.setPosition(20, city.worldH - 20);
       const laps = city.trafficCars.map(() => 0);
       for (let frame = 0; frame < 60 * 110; frame++) {
         cycleLights(city, frame * dt);
@@ -278,9 +279,6 @@ export default function register(test, game) {
         city.stepTraffic(dt);
         city.trafficCars.forEach((car, index) => {
           if (car.wpIndex < before[index]) laps[index]++;
-          if (car.route.tex === 'npc_compact_green' && car.vy < -90 && car.sprite.y < 620) {
-            assert.ok(car.sprite.x > 1030, `northbound lane: ${preset}`);
-          }
         });
       }
       assert.ok(laps.every(count => count >= 2), `city traffic stuck: ${preset} (${laps} laps)`);
@@ -362,6 +360,57 @@ export default function register(test, game) {
     assert.equal(confetti, 0);
     for (let frame = 11; frame < 15; frame++) finish.update(50 + frame * 50, 50);
     assert.equal(confetti, 1);
+  });
+
+  test('Regional city steering reaches the signed targets and preserves their arrival rules', () => {
+    const [a, b, c] = route1.routeOptions;
+    const preview = getLevelById('level_7_nordkapp_ultimate');
+    for (const [preset, level, route] of [
+      ...[a, b, c].map(route => ['hannover_messe', route1, route]),
+      ...[a, c].map(route => ['koeln_ring', route1, route]),
+      ['ferry_denmark', preview, preview.routeOptions[0]]
+    ]) {
+      const { city } = createCity(preset, undefined, true, route.id, true);
+      const { player, place: { cityGuide, targetZone } } = city;
+      city.trafficCars = [];
+      prepareCityUpdate(city, preset, level);
+      const arrived = () => player.x >= targetZone.left && player.x <= targetZone.right &&
+        player.y >= targetZone.top && player.y <= targetZone.bottom;
+      for (let frame = 0; frame < 2400 && !arrived(); frame++) {
+        const { aim } = cityGuide.navigate(player);
+        const error = Math.atan2(aim.y - player.y, aim.x - player.x) + Math.PI / 2 - player.rotation;
+        const arc = Math.atan2(Math.sin(error), Math.cos(error));
+        city.carSpeed = Math.abs(arc) > 0.35 ? 62 : 110;
+        assert.ok(city.movePlayer(dt, Math.max(-2.75, Math.min(2.75, arc * 8))),
+          `${preset} ${route.id} hit an obstacle at ${player.x}, ${player.y}`);
+      }
+      assert.ok(arrived(), `${preset} ${route.id} missed the target at ${player.x}, ${player.y}`);
+      const completions = [];
+      city.bridge.onCitySegmentComplete = (...args) => completions.push(args);
+      if (cityGuide.wrongExits.length) {
+        const position = { x: player.x, y: player.y };
+        for (const { x, y } of cityGuide.wrongExits) {
+          player.setPosition(x, y);
+          city.update(0, 50);
+          assert.equal(city.reverseHintText.text, 'Falsche Auffahrt · bitte wenden');
+          assert.equal(city.reverseHintText.visible, true);
+        }
+        player.setPosition(position.x, position.y);
+      }
+      if (preset === 'hannover_messe') city.carSpeed = 110;
+      city.update(50, 50);
+      if (preset === 'hannover_messe') {
+        assert.deepEqual(completions, []);
+        player.setPosition(targetZone.centerX, targetZone.centerY);
+        city.carSpeed = 0;
+        for (let frame = 0; frame < 11; frame++) city.update(100 + frame * 50, 50);
+        assert.deepEqual(completions, []);
+        for (let frame = 11; frame < 15; frame++) city.update(100 + frame * 50, 50);
+      }
+      assert.deepEqual(completions, [[preset, true]]);
+      city.update(1000, 50);
+      assert.equal(completions.length, 1);
+    }
   });
 
   test('München and Innsbruck cars and cyclists complete their routes in both themes', () => {

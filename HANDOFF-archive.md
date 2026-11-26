@@ -2,6 +2,13 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf) – Go-live Versionierung und Level-Bestenlisten
+
+- **Branch / PR** · Drei Upstream-PRs aus dem Fork, jeweils mit Merge-Commit: [#6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) `codex/arcade-versioning` (Merge `f58b077`, 12:50 Uhr Berlin), [#7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) `codex/arcade-leaderboard-groups` (Merge `116a458`, 12:53 Uhr), [#8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) `codex/eroadtrip-highscores` (Merge `ca2c357`, 12:56 Uhr). Vor #7 und #8 wurde jeweils `upstream/main` per Merge-Commit eingeholt (`ddedcb3`, `26e2e56`). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-25`).
+- **Erledigt** · Live: Arcade v0.3.0, e-Roadtrip v0.5.0. Workflows grün: `check-versioning` (#6, #7, #8), „Rebuild e-Roadtrip bundle“ (`f58b077`, `ca2c357`, kein Bot-Commit nötig), „Deploy Cloudflare Worker“ (`116a458`), Pages-Deploy für alle drei Merges.
+- **Geprüft** · Worker: `/api/health` ok, DB verbunden; `GET /api/scores` für `eroadtrip`, `eroadtrip_l1`, `eroadtrip_l2` liefert die neuen Titel „e-Roadtrip: Pixel Europe · Level …“ (0 Einträge); `podracer` weiter 24 Einträge; `/api/summary` unverändert (25 Records, 267 Plays). Kein POST an die Live-API. Live-Seite (curl + Headless-Chrome): Karte „e-Roadtrip: Pixel Europe“, Tag „Strategie - Action“, Pille „Neues Update v0.5“, Changelogs-Link in Footer und Menü, `/changelogs.html` mit „Person · Modell“, Spielseite zeigt v0.5.0, Live-Bundle identisch mit `main` (SHA-256), offizieller Spielname in nutzersichtbaren Texten. Lokal vor #8: typecheck, build, `node --check`, `npm test` 42/42.
+- **Offen** · Handy-Test durch Michael; erster echter Score nach dem Go-live steht noch aus. Fork-Pages bleiben auf `codex/eroadtrip-highscores`. Issue-/PR-Check (25.11., gh): Upstream nach dem Merge keine offenen PRs außer diesem Doku-PR.
+
 ### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high) – E-Roadtrip Level-Bestenlisten (Teil b)
 
 - **Branch / PR** · `codex/eroadtrip-highscores` auf `codex/arcade-leaderboard-groups` (`f30054a`). Commits `888b032`, `4d6303b`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html (Fork-Pages auf diesem Branch).

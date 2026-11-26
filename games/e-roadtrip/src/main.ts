@@ -25,6 +25,7 @@ import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
 import { aachenCityDrive, isAachenCity } from './sim/AachenCity';
+import { isRegionalCity, koelnMotorway, regionalCityDrive } from './sim/RegionalCity';
 import { isWinterCity, winterCityDrive, WINTER_CITY_MINUTES } from './sim/WinterCity';
 import {
   SECTION_CONTROL_EVENT_ID, TUNNEL_CLOSURE_EVENT_ID, TUNNEL_DETOUR_CHOICE_ID, WINTER_TUNNEL
@@ -533,16 +534,14 @@ class ERoadtripController {
     this.drivingHUD.setMode('city');
     const titleMap = {
       charger_park: 'Ladepark → Freie Ladebucht',
-      hannover_messe: 'Hannover Messe → E-Parkplatz',
-      ferry_denmark: 'Hirtshals Fährhafen',
-      koeln_ring: 'Köln-Ring → A1',
       alpine_pass: `${this.bridge.runState?.alpinePass?.name ?? 'Alpenpass'} → Passhöhe`
     };
     const run = this.bridge.runState;
     if (run) {
       const routeId = preset === 'aachen_finish' ? run.plan.returnRouteId : run.plan.selectedRouteId;
       const title = isAachenCity(preset) ? aachenCityDrive(preset, this.level.order, routeId).title
-        : isWinterCity(preset) ? winterCityDrive(preset, routeId).title : titleMap[preset];
+        : isWinterCity(preset) ? winterCityDrive(preset, routeId).title
+          : isRegionalCity(preset) ? regionalCityDrive(preset, routeId).title : titleMap[preset];
       this.drivingHUD.update(this.level, run, this.bridge.timeScale, title);
     }
     this.game.scene.start('CityDriveScene', {
@@ -779,11 +778,12 @@ class ERoadtripController {
     }
 
     if (preset === 'koeln_ring') {
+      const { title, road, direction } = koelnMotorway(run.plan.selectedRouteId);
       run.elapsedMinutes += CITY_TRANSITION_MINUTES.koeln_ring ?? 0;
       run.incidentLog.push({
         timeStr: formatClock(this.level, run.elapsedMinutes),
-        title: 'Köln-Ring → A1',
-        detail: cleanArrival ? 'Am Dom vorbei auf die A1.' : 'Mit Zwischenfall weiter Richtung Kamen.',
+        title,
+        detail: cleanArrival ? `Weiter auf der ${road} Richtung ${direction}.` : `Nach einem Zwischenfall weiter Richtung ${direction}.`,
         impact: cleanArrival ? 'positive' : 'negative'
       });
       run.currentLegIndex += 1;

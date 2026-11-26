@@ -14,6 +14,7 @@ export function road(kind: RoadKind, ...coordinates: [number, number][]): CityRo
 export interface CityLandmark extends CityPoint {
   label: string;
   art: string;
+  caption?: CityPoint;
   nightGlow?: { color: number; reflection: CityPoint };
 }
 
@@ -21,6 +22,7 @@ export const landmark = (x: number, y: number, label: string, art: string): City
 
 export interface CitySign extends CityPoint {
   label: string;
+  motorway?: boolean;
 }
 
 export interface CityTrafficSpec {
@@ -28,6 +30,7 @@ export interface CityTrafficSpec {
   speed: number;
   path: CityPoint[];
   cyclist?: boolean;
+  police?: boolean;
 }
 
 export interface CityLayout {
@@ -54,6 +57,8 @@ export interface MappedCityRoad extends CityRoad {
   cobbled?: boolean;
   oneWay?: boolean;
   navigationCost?: number;
+  fourLane?: boolean;
+  bridge?: 'road' | 'cable';
 }
 
 export interface CityCrosswalk extends CityPoint {
@@ -79,3 +84,8 @@ export interface MappedCityLayout extends CityLayout {
 
 export const points = (...coordinates: [number, number][]): CityPoint[] =>
   coordinates.map(([x, y]) => ({ x, y }));
+
+export const cityPoint = (x: number, y: number): CityPoint => ({ x, y });
+
+export const mappedRoad = (kind: RoadKind, width: number, ...line: CityPoint[]): MappedCityRoad =>
+  ({ kind, width, points: line });

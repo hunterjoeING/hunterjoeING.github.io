@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Runs A–C, Level 3 Runs A–D und Stadtszenen Aachen | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork bis `44f3815`, kein PR | 🟡 Aachen umgesetzt · Commit, Fork-Push, Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Level 3 und Stadtszenen Aachen, Hannover, Köln, Hirtshals | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork bis `b21ad68`, kein PR | 🟡 Stadtkarten umgesetzt · Commit, Fork-Push, Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -30,6 +30,13 @@
 ## 2. Session-Log (Neueste Einträge oben)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
+
+### 2026-11-26 – Michi / Codex (Sol 6.2) – v0.6.0 · Stadtszenen Hannover/Köln/Hirtshals
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `b21ad68`. SHA: (folgt). Push: nein, vorgesehen für den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Nordausgerichtete Karten für Hannover, Köln und Hirtshals. Hannover A/B fahren über Messe-Nord, C über Messe-Süd. Beide Zufahrten führen zum E-Parkplatz mit dem bestehenden Besuch und AC-Angebot. Köln A fährt auf die A1 nach Norden, C über die Rodenkirchener Brücke auf die A4 Richtung Olpe. Über die Ringe sind Dom und Deutz erreichbar. Hirtshals führt über die E39 zur Fährabfertigung und bleibt Teil der Level-7-Vorschau. Das generische Straßengitter ist entfernt. Der gemeinsame Renderer nutzt statische Kartenkacheln, Gewässer, Brücken und reduzierte Details auf Mobilgeräten.
+- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (117/117), `git diff --check` und Versionsprüfung gegen `279202c`. Alle Standardprognosen der Level 1–3 liegen im Zeitfenster des Workers. Ladepläne für Level 1–2 und die Level-3-Abschlussfahrten sind durch Tests belegt. Zeitpauschalen bleiben bei den bisherigen Werten. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
+- **Offen** · Spieltest auf Desktop und bei 320/390 px in beiden Themes. Chrome und Chromium werden von der lokalen Sandbox beim Start blockiert. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
 
 ### 2026-11-26 – Michi / Codex (Sol 6.2) – v0.6.0 · Stadtszenen Aachen
 
@@ -65,10 +72,3 @@
 - **Bestenlisten und Deployment** · Arcade v0.3.1 akzeptiert gewertete Zieleinläufe ab 0 Punkten. Der Worker akzeptiert kürzere Fahrten in Level 2. Der Merge in `upstream/main` deployt den Worker automatisch. Der Airbag-Abbruch erzeugt keine Bestenlisteneinreichung. Keine Anfragen an die Live-API.
 - **Geprüft** · `npm run typecheck`, `npm run build` (reproduzierbar), `node --check` für geänderte JS-Dateien und Bundle, `npm test` (61/61), Versionsprüfung gegen `279202c`. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 - **Offen** · Spieltest in beiden Themes und Ausrichtungen, insbesondere Strandfinale, Ladebuchten, Schadenstufen und Pylonen. Lokaler Browserstart durch die Sandbox blockiert. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues/PRs, Fork 0 offene PRs.
-
-### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf) – Go-live Versionierung und Level-Bestenlisten
-
-- **Branch / PR** · Drei Upstream-PRs aus dem Fork, jeweils mit Merge-Commit: [#6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) `codex/arcade-versioning` (Merge `f58b077`, 12:50 Uhr Berlin), [#7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) `codex/arcade-leaderboard-groups` (Merge `116a458`, 12:53 Uhr), [#8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) `codex/eroadtrip-highscores` (Merge `ca2c357`, 12:56 Uhr). Vor #7 und #8 wurde jeweils `upstream/main` per Merge-Commit eingeholt (`ddedcb3`, `26e2e56`). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-25`).
-- **Erledigt** · Live: Arcade v0.3.0, e-Roadtrip v0.5.0. Workflows grün: `check-versioning` (#6, #7, #8), „Rebuild e-Roadtrip bundle“ (`f58b077`, `ca2c357`, kein Bot-Commit nötig), „Deploy Cloudflare Worker“ (`116a458`), Pages-Deploy für alle drei Merges.
-- **Geprüft** · Worker: `/api/health` ok, DB verbunden; `GET /api/scores` für `eroadtrip`, `eroadtrip_l1`, `eroadtrip_l2` liefert die neuen Titel „e-Roadtrip: Pixel Europe · Level …“ (0 Einträge); `podracer` weiter 24 Einträge; `/api/summary` unverändert (25 Records, 267 Plays). Kein POST an die Live-API. Live-Seite (curl + Headless-Chrome): Karte „e-Roadtrip: Pixel Europe“, Tag „Strategie - Action“, Pille „Neues Update v0.5“, Changelogs-Link in Footer und Menü, `/changelogs.html` mit „Person · Modell“, Spielseite zeigt v0.5.0, Live-Bundle identisch mit `main` (SHA-256), kein „GTA“ in nutzersichtbaren Texten. Lokal vor #8: typecheck, build, `node --check`, `npm test` 42/42.
-- **Offen** · Handy-Test durch Michael; erster echter Score nach dem Go-live steht noch aus. Fork-Pages bleiben auf `codex/eroadtrip-highscores`. Issue-/PR-Check (25.11., gh): Upstream nach dem Merge keine offenen PRs außer diesem Doku-PR.

@@ -29,7 +29,7 @@ import { SoundFX } from './SoundFX';
 import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } from './PlacePainter';
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
 
-type PropertyContact = Rect | Capsule | 'worldEdge' | 'passEdge';
+type PropertyContact = Rect | Capsule | 'worldEdge' | 'passEdge' | 'water';
 
 export class CityDriveScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
@@ -369,43 +369,12 @@ export class CityDriveScene extends Phaser.Scene {
         sprite: this.add.image(x, y, 'cone').setDepth(5)
       }));
     }
-    if (this.place.autohof || this.place.passRoad || this.place.cityGuide) {
-      this.intersections = this.place.signals?.map(({ id, x, y, radius }, index) => ({
-        id, centerX: x, centerY: y,
-        box: new Phaser.Geom.Rectangle(x - radius, y - radius, 2 * radius, 2 * radius),
-        ewPhase: index === 0 ? 'green' : 'red',
-        nsPhase: index === 0 ? 'red' : 'green'
-      })) ?? [];
-      this.spawnSignalVisuals();
-      return;
-    }
-
-    // Construction cones on West St
-    this.cones = [535, 565, 595].map(y => ({
-      bounds: { x: 168, y: y - 4, w: 8, h: 8 },
-      sprite: this.add.image(172, y, 'cone').setDepth(5)
-    }));
-
-    // Signalized intersections
-    this.intersections = [
-      {
-        id: 'inter_top',
-        centerX: 1030,
-        centerY: 210,
-        box: new Phaser.Geom.Rectangle(962, 142, 136, 136),
-        ewPhase: 'green',
-        nsPhase: 'red'
-      },
-      {
-        id: 'inter_mid',
-        centerX: 1030,
-        centerY: 730,
-        box: new Phaser.Geom.Rectangle(962, 662, 136, 136),
-        ewPhase: 'red',
-        nsPhase: 'green'
-      }
-    ];
-
+    this.intersections = this.place.signals?.map(({ id, x, y, radius }, index) => ({
+      id, centerX: x, centerY: y,
+      box: new Phaser.Geom.Rectangle(x - radius, y - radius, 2 * radius, 2 * radius),
+      ewPhase: index === 0 ? 'green' : 'red',
+      nsPhase: index === 0 ? 'red' : 'green'
+    })) ?? [];
     this.spawnSignalVisuals();
   }
 
@@ -450,176 +419,14 @@ export class CityDriveScene extends Phaser.Scene {
       });
     }
 
-    if (this.place.autohof || this.place.cityGuide) {
-      (this.place.litePeds || []).forEach(pc => {
-        const start = pc.wps[0];
-        const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
-        sp.setImmovable(true);
-        this.pedestrians.push({
-          sprite: sp,
-          waypoints: pc.wps,
-          wpIndex: 1 % Math.max(1, pc.wps.length),
-          speed: pc.speed,
-          isCrossing: false,
-          zebraLink: pc.zebraLink
-        });
+    for (const { tex, wps, speed, zebraLink } of this.place.litePeds ?? []) {
+      const start = wps[0];
+      const sp = this.physics.add.image(start.x, start.y, tex).setDepth(8);
+      sp.setImmovable(true);
+      this.pedestrians.push({
+        sprite: sp, waypoints: wps, wpIndex: 1 % wps.length, speed, isCrossing: false, zebraLink
       });
-      return;
     }
-
-    if (this.place.passRoad) return;
-
-    // Pure sidewalk strollers distributed across all city sidewalks (never block crosswalks)
-    const sidewalkPedConfigs: Array<{
-      tex: string;
-      wps: Array<{ x: number; y: number }>;
-      startIdx?: number;
-      speed: number;
-    }> = [
-      // NW block inner sidewalk loop
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 300, y: 294 }, { x: 944, y: 294 }, { x: 944, y: 642 }, { x: 300, y: 642 }],
-        speed: 32
-      },
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 944, y: 642 }, { x: 300, y: 642 }, { x: 300, y: 294 }, { x: 944, y: 294 }],
-        speed: 29
-      },
-      // SW block sidewalks (avoiding SW finish driveway at x=320..450, y=800..940)
-      {
-        tex: 'ped_child',
-        wps: [{ x: 470, y: 814 }, { x: 944, y: 814 }, { x: 944, y: 1162 }, { x: 470, y: 1162 }],
-        speed: 34
-      },
-      // Top Ave outer north sidewalk (west & east)
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 140, y: 118 }, { x: 760, y: 118 }],
-        speed: 30
-      },
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 1140, y: 118 }, { x: 1740, y: 118 }],
-        speed: 31
-      },
-      // West St outer west sidewalk (north stretch)
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 122, y: 180 }, { x: 122, y: 880 }],
-        speed: 28
-      },
-      // Bottom Ave outer south sidewalk (west & east)
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 180, y: 1344 }, { x: 890, y: 1344 }],
-        speed: 31
-      },
-      {
-        tex: 'ped_child',
-        wps: [{ x: 1160, y: 1344 }, { x: 1900, y: 1344 }],
-        speed: 35
-      },
-      // East Ring outer east sidewalk (south of A4 on-ramp)
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 1918, y: 390 }, { x: 1918, y: 1290 }],
-        speed: 30
-      },
-      // NE & SE block sidewalks along East Ring
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 1116, y: 294 }, { x: 1742, y: 294 }, { x: 1742, y: 625 }, { x: 1742, y: 294 }],
-        speed: 30
-      },
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 1742, y: 820 }, { x: 1742, y: 1162 }, { x: 1130, y: 1162 }, { x: 1742, y: 1162 }],
-        speed: 29
-      }
-    ];
-
-    sidewalkPedConfigs.forEach(pc => {
-      const start = pc.wps[pc.startIdx || 0];
-      const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
-      sp.setImmovable(true);
-      this.pedestrians.push({
-        sprite: sp,
-        waypoints: pc.wps,
-        wpIndex: ((pc.startIdx || 0) + 1) % pc.wps.length,
-        speed: pc.speed,
-        isCrossing: false
-      });
-    });
-
-    // Sidewalk pedestrians who occasionally cross a zebra crossing when passing by (never linger/block)
-    const zebraPedConfigs: Array<{
-      tex: string;
-      startPos: { x: number; y: number };
-      speed: number;
-      zebraId: string;
-      sideA: { x: number; y: number };
-      sideB: { x: number; y: number };
-      sidewalkPathA: Array<{ x: number; y: number }>;
-      sidewalkPathB: Array<{ x: number; y: number }>;
-      initialCooldown: number;
-    }> = [
-      {
-        tex: 'ped_adult_0',
-        startPos: { x: 640, y: 122 },
-        speed: 33,
-        zebraId: 'zebra_1',
-        sideA: { x: 898, y: 122 },
-        sideB: { x: 898, y: 294 },
-        sidewalkPathA: [{ x: 520, y: 122 }, { x: 938, y: 122 }],
-        sidewalkPathB: [{ x: 938, y: 294 }, { x: 520, y: 294 }],
-        initialCooldown: 6
-      },
-      {
-        tex: 'ped_adult_1',
-        startPos: { x: 122, y: 920 },
-        speed: 32,
-        zebraId: 'zebra_2',
-        sideA: { x: 122, y: 1108 },
-        sideB: { x: 294, y: 1108 },
-        sidewalkPathA: [{ x: 122, y: 860 }, { x: 122, y: 1320 }],
-        sidewalkPathB: [{ x: 294, y: 1160 }, { x: 294, y: 950 }],
-        initialCooldown: 9
-      },
-      {
-        tex: 'ped_child',
-        startPos: { x: 1360, y: 642 },
-        speed: 34,
-        zebraId: 'zebra_3',
-        sideA: { x: 1158, y: 642 },
-        sideB: { x: 1158, y: 814 },
-        sidewalkPathA: [{ x: 1116, y: 642 }, { x: 1410, y: 642 }],
-        sidewalkPathB: [{ x: 1275, y: 814 }, { x: 1116, y: 814 }],
-        initialCooldown: 11
-      }
-    ];
-
-    zebraPedConfigs.forEach(zc => {
-      const sp = this.physics.add.image(zc.startPos.x, zc.startPos.y, zc.tex).setDepth(8);
-      sp.setImmovable(true);
-      this.pedestrians.push({
-        sprite: sp,
-        waypoints: zc.sidewalkPathA,
-        wpIndex: 1,
-        speed: zc.speed,
-        isCrossing: false,
-        zebraLink: {
-          zebraId: zc.zebraId,
-          sideA: zc.sideA,
-          sideB: zc.sideB,
-          sidewalkPathA: zc.sidewalkPathA,
-          sidewalkPathB: zc.sidewalkPathB,
-          onSideA: true,
-          crossCooldownSec: zc.initialCooldown
-        }
-      });
-    });
   }
 
   private spawnPlayer(): void {
@@ -630,7 +437,11 @@ export class CityDriveScene extends Phaser.Scene {
   private hitsObstacle(shape: Capsule): boolean {
     return this.obstacleRects.some(rect => capsuleOverlapsRect(shape, rect)) ||
       this.obstacleCircles.some(circle => capsulesOverlap(shape, circle)) ||
-      this.hitsParkedVehicle(shape);
+      this.hitsWater(shape) || this.hitsParkedVehicle(shape);
+  }
+
+  private hitsWater(shape: Capsule): boolean {
+    return this.place.water?.some(rect => capsuleOverlapsRect(shape, rect)) ?? false;
   }
 
   private hitsParkedVehicle(shape: Capsule): boolean {
@@ -658,6 +469,7 @@ export class CityDriveScene extends Phaser.Scene {
     for (const contact of this.propertyContacts) {
       const nearby = contact === 'worldEdge' ? !capsuleInsideWorld(clearance, this.worldW, this.worldH) :
         contact === 'passEdge' ? !passRoadContains(this.place.passRoad!, clearance) :
+        contact === 'water' ? this.hitsWater(clearance) :
         'radius' in contact ? capsulesOverlap(clearance, contact) : capsuleOverlapsRect(clearance, contact);
       if (!nearby) this.propertyContacts.delete(contact);
     }
@@ -709,6 +521,10 @@ export class CityDriveScene extends Phaser.Scene {
         this.obstacleCircles.find(circle => capsulesOverlap(shape, circle));
       if (contact) {
         this.hitProperty(contact);
+        return false;
+      }
+      if (this.hitsWater(shape)) {
+        this.hitProperty('water');
         return false;
       }
       if (this.hitsParkedVehicle(shape)) {
@@ -1012,7 +828,7 @@ export class CityDriveScene extends Phaser.Scene {
   private setupNavIndicator(): void {
     this.moveMinimap = this.place.cityMinimap && createCityMinimap(this, this.place.cityMinimap, this.worldW, this.worldH, {
       x: this.targetZone.centerX, y: this.targetZone.centerY
-    });
+    }, this.place.water);
     this.navArrow = this.add
       .triangle(0, 0, 0, -10, -7, 8, 7, 8, 0xfacc15)
       .setStrokeStyle(1.5, 0x0f172a)
@@ -1511,14 +1327,8 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     if (this.passThrough) {
-      const rampLabel =
-        cityGuide ? cityGuide.label : passNav ? 'Zur Passhöhe' : this.preset === 'koeln_ring' ? 'Zur A1' : this.preset === 'ferry_denmark' ? 'Zum Fährterminal' : 'Zur A4 Auffahrt';
-      const doneLabel =
-        cityGuide ? cityGuide.completionLabel : passNav ? 'Passhöhe erreicht' : this.preset === 'koeln_ring'
-          ? '🛣️ Weiter auf die A1'
-          : this.preset === 'ferry_denmark'
-            ? '⛴️ Fähre erreicht'
-            : '🛣️ Auffahrt A4 – Gute Fahrt!';
+      const rampLabel = cityGuide?.label ?? 'Zur Passhöhe';
+      const doneLabel = cityGuide?.completionLabel ?? 'Passhöhe erreicht';
       if (inZone) {
         this.completed = true;
         this.reverseHintText.setVisible(false);
@@ -1547,15 +1357,9 @@ export class CityDriveScene extends Phaser.Scene {
       }
     } else {
       this.dwellInTargetSec = 0;
-      const goalHint =
-        this.preset === 'charger_park'
-          ? 'Zu einer freien Ladebucht'
-          : cityGuide ? (approach && !this.cityApproachReached ? approach.label : cityGuide.label)
-          : this.preset === 'hannover_messe'
-            ? 'Zum Messe-Parkplatz'
-            : this.preset === 'koeln_ring'
-              ? 'Zur Rheinbrücke'
-              : 'Ins Ziel einparken';
+      const goalHint = chargingBay ? 'Zu einer freien Ladebucht'
+        : approach && !this.cityApproachReached ? approach.label
+          : cityGuide?.label ?? 'Ins Ziel einparken';
       this.distText.setText(chargingBay && !nearest
         ? 'Alle Ladebuchten belegt'
         : `${goalHint} · ${Math.max(0, Math.round((cityNav?.distance ?? distToTarget) / 6))} m`);

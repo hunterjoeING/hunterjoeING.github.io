@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import type { CityLandmark, CityPoint, CityRect, MappedCityLayout } from '../data/cityLayouts/types';
-import { mappedCityLane, mappedCrosswalk, mappedRoadContains, mappedRoadSpans, type MappedRoadSpan } from '../sim/MappedCity';
+import { mappedCityLane, mappedCityWater, mappedCrosswalk, mappedRoadContains, mappedRoadSpans, type MappedRoadSpan } from '../sim/MappedCity';
 import { cityRectsOverlap, pointInCityRect } from '../sim/WinterCity';
 import { trafficRoute } from './CityLanes';
 import type { PlacePaint } from './PlacePainter';
@@ -58,14 +58,50 @@ function paintRoads(g: Graphics, spans: MappedRoadSpan[], mobile: boolean) {
     const dy = (b.y - a.y) / length;
     const otherSpans = spans.filter(other => other !== span);
     const laneMark = road.kind === 'motorway' ? 0xffe9b2 : 0xe4ded1;
+    const offsets = road.fourLane ? [-road.width / 4, road.width / 4] : [0];
     for (let at = 32; at < length - 23; at += 35) {
       const mark = { x: a.x + dx * at, y: a.y + dy * at };
       if (mappedRoadContains(otherSpans, mark, -9)) continue;
-      g.lineStyle(2, laneMark, 0.75).lineBetween(mark.x, mark.y, mark.x + dx * 17, mark.y + dy * 17);
+      for (const offset of offsets) {
+        const x = mark.x - dy * offset;
+        const y = mark.y + dx * offset;
+        g.lineStyle(2, laneMark, 0.75).lineBetween(x, y, x + dx * 17, y + dy * 17);
+      }
     }
     if (road.kind === 'motorway') {
-      for (const offset of [-42, 42]) g.lineStyle(2, 0xe4ded1, 0.78)
+      if (road.fourLane) g.lineStyle(3, 0xc4bba6).lineBetween(a.x, a.y, b.x, b.y);
+      const edge = road.fourLane ? road.width / 2 - 8 : 42;
+      for (const offset of [-edge, edge]) g.lineStyle(2, 0xe4ded1, 0.78)
         .lineBetween(a.x - dy * offset, a.y + dx * offset, b.x - dy * offset, b.y + dx * offset);
+    }
+  }
+}
+
+function paintWater(g: Graphics, areas: CityRect[], light: boolean, mobile: boolean): void {
+  for (const area of areas) {
+    fill(g, area, light ? 0x659ca7 : 0x47788b);
+    const step = mobile ? 110 : 66;
+    for (let y = area.y + 4; y + 4 < area.y + area.h; y += 25) {
+      for (let x = area.x + 9 + (y * 3 % 43); x + 18 < area.x + area.w; x += step) {
+        fill(g, { x, y, w: 14 + (x % 11), h: 2 }, 0xd0e7d8, 0.28);
+      }
+    }
+  }
+}
+
+function paintBridges(g: Graphics, spans: MappedRoadSpan[], water: CityRect[]): void {
+  for (const { a, b, road } of spans) {
+    if (!road.bridge) continue;
+    const left = Math.min(a.x, b.x);
+    const right = Math.max(a.x, b.x);
+    const river = water.find(rect => pointInCityRect({ x: (a.x + b.x) / 2, y: a.y }, rect));
+    for (const y of [a.y - road.width / 2, a.y + road.width / 2]) {
+      g.lineStyle(5, 0xd3d2c0).lineBetween(left, y, right, y);
+      if (road.bridge !== 'cable' || !river) continue;
+      for (const x of [river.x - 18, river.x + river.w + 18]) {
+        g.lineStyle(2, 0xb3c0b2).lineBetween(x - 67, y, x, y - 38).lineBetween(x, y - 38, x + 67, y);
+        g.lineStyle(4, 0xe6dbc4).lineBetween(x, y - 38, x, y + 3);
+      }
     }
   }
 }
@@ -146,9 +182,9 @@ function bakeCityGround(scene: Phaser.Scene, g: Graphics, width: number, height:
 
 export function paintMappedCity(
   scene: Phaser.Scene, layout: MappedCityLayout, art: LandmarkArt,
-  options: { light: boolean; mobile: boolean; night: boolean; signedExit: CityPoint; signLabel: string }
+  options: { light: boolean; mobile: boolean; night: boolean; signedExit?: CityPoint; signLabel?: string }
 ): Pick<PlacePaint, 'worldW' | 'worldH' | 'cityId' | 'grass' | 'asphalt' | 'roadSurface' | 'buildings' |
-  'slowZone' | 'trees' | 'lamps' | 'neons' | 'traffic' | 'trafficJunctions' | 'zebras' | 'signals' | 'litePeds' | 'cityMinimap'> {
+  'water' | 'slowZone' | 'trees' | 'lamps' | 'neons' | 'traffic' | 'trafficJunctions' | 'zebras' | 'signals' | 'litePeds' | 'cityMinimap'> {
   const { width, height, landmarks, plazas, parks } = layout;
   const { light, mobile, night } = options;
   const spans = mappedRoadSpans(layout.roads);
@@ -170,10 +206,12 @@ export function paintMappedCity(
       g.lineStyle(1, 0xd1c1af, 0.7).lineBetween(plaza.x, y, plaza.x + plaza.w, y);
     }
   }
+  paintWater(g, layout.water, light, mobile);
   paintRoads(g, spans, mobile);
+  paintBridges(g, spans, layout.water);
 
   const landmarkBounds = Object.values(landmarks).flatMap(spot => art.footprint(spot) ?? []);
-  const reserved = [...plazas, ...landmarkBounds,
+  const reserved = [...plazas, ...landmarkBounds, ...layout.water,
     ...layout.roundaboutIslands.map(({ x, y }) => ({ x: x - 120, y: y - 120, w: 240, h: 240 })),
     ...layout.peds.flatMap(({ wps }) => wps.map(({ x, y }) => ({ x: x - 32, y: y - 32, w: 64, h: 64 })))
   ];
@@ -204,34 +242,34 @@ export function paintMappedCity(
   for (const feature of Object.values(landmarks)) {
     art.draw(g, feature, night);
     const area = art.footprint(feature);
-    caption(scene, { x: feature.x, y: area ? area.y + area.h + 15 : feature.y }, feature.label, 'landmark');
+    caption(scene, feature.caption ?? { x: feature.x, y: area ? area.y + area.h + 15 : feature.y }, feature.label, 'landmark');
   }
   bakeCityGround(scene, g, width, height, mobile);
   for (const sign of Object.values(layout.signs)) {
     const selected = sign === options.signedExit;
-    const text = selected ? options.signLabel : sign.label;
+    const text = selected ? options.signLabel ?? sign.label : sign.label;
     const x = Math.max(145, Math.min(width - 145, sign.x));
-    caption(scene, { x, y: sign.y - 59 }, text, 'motorway');
+    caption(scene, { x, y: Math.max(18, sign.y - 59) }, text, 'motorway');
   }
   const selectedRoad = spans.find(({ b }) => b === options.signedExit);
-  if (selectedRoad) {
+  if (selectedRoad && selectedRoad.length >= 140 && options.signLabel) {
     const { a, b } = selectedRoad;
     caption(scene, { x: a.x * 0.65 + b.x * 0.35, y: a.y * 0.65 + b.y * 0.35 - 62 },
       options.signLabel, 'motorway');
   }
-  for (const sign of layout.captions) caption(scene, sign, sign.label, 'place');
+  for (const sign of layout.captions) caption(scene, sign, sign.label, sign.motorway ? 'motorway' : 'place');
 
   return {
     worldW: width, worldH: height, cityId: layout.id, grass: [ground], asphalt: plazas,
     roadSurface: point => mappedRoadContains(spans, point),
     slowZone: point => mappedRoadContains(cobbledSpans, point),
-    cityMinimap: layout.roads, signals: layout.signals,
+    cityMinimap: layout.roads, signals: layout.signals, water: mappedCityWater(layout, spans),
     buildings, trees: [], lamps: ringLamps(spans, mobile), zebras, trafficJunctions: [],
     neons: night ? Object.values(landmarks).flatMap(({ x, y, nightGlow }, phase) => nightGlow ? [{
       x, y, phase, color: nightGlow.color, roadX: nightGlow.reflection.x, roadY: nightGlow.reflection.y
     }] : []) : [],
-    traffic: layout.traffic.map(({ path, speed, tex, cyclist }) =>
-      trafficRoute(tex, speed, mappedCityLane(path, cyclist ? 21 : 19), { isCyclist: cyclist })),
+    traffic: layout.traffic.map(({ path, speed, tex, cyclist, police }) =>
+      trafficRoute(tex, speed, mappedCityLane(path, cyclist ? 21 : 19), { isCyclist: cyclist, isPolice: police })),
     litePeds: [...layout.peds, ...crossings.map(({ walk, sideA, sideB, sidewalkPathA, sidewalkPathB }) => ({
       tex: walk.tex, speed: 32, wps: sidewalkPathA,
       zebraLink: { zebraId: walk.id, sideA, sideB, sidewalkPathA, sidewalkPathB, onSideA: true, crossCooldownSec: 4 }
@@ -240,7 +278,8 @@ export function paintMappedCity(
 }
 
 export function createCityMinimap(
-  scene: Phaser.Scene, roads: MappedCityLayout['roads'], worldW: number, worldH: number, target: CityPoint
+  scene: Phaser.Scene, roads: MappedCityLayout['roads'], worldW: number, worldH: number, target: CityPoint,
+  water: CityRect[] = []
 ) {
   const width = 83;
   const height = Math.round(width / worldW * worldH);
@@ -252,6 +291,7 @@ export function createCityMinimap(
     .setStrokeStyle(1, 0x15191b).setDepth(22.1).setScrollFactor(0);
   map.fillStyle(0x181f22, 0.87).fillRoundedRect(-3, -3, width + 6, height + 6, 4);
   map.lineStyle(1, 0x747d77).strokeRoundedRect(-3, -3, width + 6, height + 6, 4);
+  for (const area of water) fill(map, { x: px(area.x), y: py(area.y), w: px(area.w), h: py(area.h) }, 0x416879);
   for (const road of roads) {
     map.lineStyle(road.kind === 'street' ? 0.8 : 1.5, road.kind === 'motorway' ? 0x86bbd9 : 0xa6a59b);
     for (let i = 1; i < road.points.length; i++) {
