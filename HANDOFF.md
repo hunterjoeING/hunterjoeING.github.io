@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2 mit Montpellier, Level 3, Stadtkarten, Nachtstart und Abendsonne, Spieltest-Korrekturen, Europakarte | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · lokaler Fork-Stand `eede53a` · kein PR | 🟡 Unveröffentlicht · Europakarte geprüft · Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2 mit Montpellier, Level 3, Stadtkarten, Nachtstart und Abendsonne, Spieltest-Korrekturen, Europakarte | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `dab304f` · kein PR | 🟡 Unveröffentlicht · Europakarte geprüft · Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -31,10 +31,10 @@
 
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Europakarte
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `eede53a`. SHA: (folgt). Änderungen im Arbeitsbaum. Push nein, vorgesehen für den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Test nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `eede53a`. SHA `dab304f`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
 - **Erledigt** · Natural-Earth-Karte von Island und Gibraltar bis zum Schwarzen Meer und Ural. Planungs- und Live-Karte, Europa-Ansicht, Routen und Ladestationsmarker nutzen dieselbe Projektion. Stadtbeschriftungen weichen einander bei Zoom und Verschieben aus. Die North Coast 500 ist als Rundkurs eingezeichnet. Die Quelldaten der Stopps sind erhalten. Fünf küstennahe Kartenanker liegen leicht landeinwärts. Bundle-Revision 11.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Release-Datei, Generator und geänderte Tests, `npm test` (142/142), reproduzierbare Geodaten und Bundle, `git diff --check` und Versionsprüfung gegen `279202c`. Alle neun Fahrprognosen für Level 1–3 stimmen mit `eede53a` überein, einschließlich Distanz, Zeit, Maut und Energie. Karten- und Label-Tests laufen offline. Die Geodatei misst 80.748 Bytes, das Bundle 3.077.865 Bytes (gzip 802.863 Bytes). Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
-- **Offen** · Browser-Spieltest der Planung, Europa-Ansicht und Schottland bei 390 px in beiden Themes. Chromium konnte in der Sandbox nicht starten. Upstream-Merge nach Freigabe.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Release-Datei, Generator und geänderte Tests, `npm test` (142/142), reproduzierbare Geodaten und Bundle, `git diff --check` und Versionsprüfung gegen `279202c`. Alle neun Fahrprognosen für Level 1–3 stimmen mit `eede53a` überein, einschließlich Distanz, Zeit, Maut und Energie. Karten- und Label-Tests laufen offline. Die Geodatei misst 80.748 Bytes, das Bundle 3.077.865 Bytes (gzip 802.863 Bytes). Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen. Orchestrator: Browser-Screenshots der Planungskarte (Level 1–3, 1280 und 390 px) und Schottland mit der North Coast 500 (1280 px) geprüft.
+- **Offen** · Spieltest der Karte auf dem Fork, insbesondere Schottland bei 390 px und beide Themes. Upstream-Merge nach Freigabe.
 
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Korrekturen aus dem Spieltest
 
