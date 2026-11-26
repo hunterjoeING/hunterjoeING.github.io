@@ -1,3 +1,5 @@
+/** North-up Köln layout, reserved for the still unplayable Level 5 start (Köln → München).
+ *  Level 1 no longer uses a Köln city drive: the Aachen–Köln stage continues on the Autobahn at Kreuz Köln-West. */
 import { cityPoint as p, landmark, mappedRoad, points, type CityPoint, type CityRect, type MappedCityLayout } from './types';
 
 const kreuzWest = p(387, 976);

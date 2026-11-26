@@ -11,10 +11,23 @@ export default function register(test, game) {
     KOELN, KOELN_JUNCTIONS, KOELN_RHEIN, KOELN_EXITS, HIRTSHALS, HIRTSHALS_CHECK_IN,
     regionalCityDrive, mappedRoadSpans, mappedRoadContains, mappedCityNavigator, pointInCityRect,
     paintDrivingPlace, vehicleCapsule, capsuleOverlapsRect, ERoadtripController, createDefaultPlan,
-    getLevelById, CITY_TRANSITION_MINUTES
+    getLevelById, LEVELS, CITY_TRANSITION_MINUTES
   } = game;
   const { mkRun, route1: level1 } = createFixtures(game);
   const [a, b, c] = level1.routeOptions;
+
+
+  test('Playable levels no longer use a Köln city drive; the map stays for Level 5', () => {
+    const legsOf = level => [level.routeLegs, ...level.routeOptions.map(option => option.legs)].flat();
+    const segments = level => legsOf(level).flatMap(leg => [leg.citySegmentAtStart, leg.citySegmentAtEnd]);
+    for (const level of LEVELS.filter(level => level.playable)) {
+      assert.ok(!segments(level).includes('koeln_ring'), level.id);
+    }
+    const level5 = getLevelById('level_5_ecannonball');
+    assert.equal(level5.playable, false);
+    assert.equal(level5.startCityId, 'koeln');
+    assert.ok(!segments(level5).includes('koeln_ring'));
+  });
 
   test('Hannover places the Cityring, centre, forest, Messe and motorway junctions north-up', () => {
     const { kroepcke, hbf, rathaus, arena, airport, herrenhaeuser, zoo, hcc, messe, messeLaatzen, zagArena } = HANNOVER.landmarks;

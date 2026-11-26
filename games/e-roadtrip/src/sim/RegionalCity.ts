@@ -52,6 +52,7 @@ export function regionalCityDrive(preset: RegionalPreset, routeId: string): Regi
       title: `Hannover · ${ramp} → E-Parkplatz`, wrongExits: wrongExits(HANNOVER_WRONG_EXITS)
     };
   }
+  // Kept for Level 5 (Köln start). Not used as a live city segment in Levels 1–3.
   if (preset === 'koeln_ring') {
     const { exit, road, direction, title } = koelnMotorway(routeId);
     return {
