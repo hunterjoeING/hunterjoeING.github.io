@@ -266,16 +266,18 @@ export const LEVELS: LevelConfig[] = [
 
   {
     id: 'level_3_alps_winter',
+    boardId: 'eroadtrip_l3',
     order: 3,
     title: 'Level 3: Winter-Alpenüberquerung',
-    subtitle: 'Schneeketten, Pass vs. Inntal & Kälteverbrauch',
-    badge: 'Kuratiertes Szenario · Struktur bereit',
-    playable: false,
+    subtitle: 'Inntal oder Passstraße · Schneefahrt nach Innsbruck',
+    badge: 'Spielbar · Winter-Skiurlaub',
+    playable: true,
     regionLabel: 'München → Innsbruck (3 Alpenrouten)',
     startBudgetEur: 38000,
     rewardBaseEur: 9500,
     departureTimeHour: 6.0,
-    targetArrivalMinutes: 190,
+    targetArrivalMinutes: 165,
+    costBenchmarkEurPerKm: 0.28,
     startCityId: 'muenchen',
     destinationCityId: 'innsbruck',
     defaultRouteId: 'l3_route_a_inntal',
@@ -290,22 +292,22 @@ export const LEVELS: LevelConfig[] = [
         trafficRisk: 'Hoch',
         chargingDensity: 'Sehr dicht',
         colorHex: 0x3b82f6,
-        legs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow' }],
-        defaultPlannedStops: [{ chargerId: 'chg_irschenberg_enbw', legIndex: 0, targetSocPct: 80 }]
+        legs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', destinationAtEnd: true }],
+        defaultPlannedStops: []
       },
       {
         id: 'l3_route_b_zirler',
         name: 'Route B · Garmisch & Zirler Berg Pass (A95 → B177)',
         shortLabel: 'Zirler Berg Pass',
         highwaySummary: 'A95 Garmisch → Mittenwald → Zirler Berg',
-        description: 'Extrem steiler Alpenpass (+1.660 hm!) und nur ein 22-kW-Dorflader unterwegs, aber staufrei & mautfrei.',
+        description: 'Steiler Alpenpass mit einem 22-kW-Dorflader unterwegs. Die Strecke ist mautfrei.',
         elevationProfile: 'Bergig / Pässe',
         trafficRisk: 'Niedrig',
         chargingDensity: 'Dünn / Anspruchsvoll',
         colorHex: 0xf59e0b,
         legs: [
           { edgeId: 'edge_muenchen_garmisch', defaultTargetSpeedKmh: 110, weatherOverride: 'snow' },
-          { edgeId: 'edge_garmisch_innsbruck', defaultTargetSpeedKmh: 70, weatherOverride: 'snow' }
+          { edgeId: 'edge_garmisch_innsbruck', defaultTargetSpeedKmh: 70, weatherOverride: 'snow', destinationAtEnd: true }
         ],
         defaultPlannedStops: []
       },
@@ -314,16 +316,16 @@ export const LEVELS: LevelConfig[] = [
         name: 'Route C · Achenpass & Tegernsee (A8 → B307)',
         shortLabel: 'Achenpass',
         highwaySummary: 'Holzkirchen → Achenpass → Inntal',
-        description: 'Ausgewogene Bergstrecke mit mittlerem Staurisiko und 150-kW-Lader am Achenkirch-Pass.',
+        description: 'Bergstrecke mit mäßigem Verkehr und zwei Ladeoptionen in Achenkirch.',
         elevationProfile: 'Bergig / Pässe',
         trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
         colorHex: 0x10b981,
-        legs: [{ edgeId: 'edge_muenchen_achenpass_innsbruck', defaultTargetSpeedKmh: 85, weatherOverride: 'snow' }],
-        defaultPlannedStops: [{ chargerId: 'chg_achenkirch_enbw', legIndex: 0, targetSocPct: 78 }]
+        legs: [{ edgeId: 'edge_muenchen_achenpass_innsbruck', defaultTargetSpeedKmh: 85, weatherOverride: 'snow', destinationAtEnd: true }],
+        defaultPlannedStops: []
       }
     ],
-    routeLegs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow' }],
+    routeLegs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', destinationAtEnd: true }],
     passengers: {
       label: 'Winter-Skiurlaub Crew',
       hasWife: true,
@@ -335,13 +337,12 @@ export const LEVELS: LevelConfig[] = [
     requiresWinterTires: true,
     scoringWeights: { time: 0.25, cost: 0.20, stress: 0.25, efficiency: 0.20, decisions: 0.10 },
     specialRulesSummary: [
-      'Winterreifen & Schneeketten-Pflicht am Pass',
-      '+28 % Kälte- & Schneeverbrauch plus Höhenmeter-Anstieg',
-      '3 Alpenübergänge: Inntal-Stau vs. Zirler Berg Steigung vs. Achenpass'
+      'Schnee und Steigungen erhöhen den Verbrauch',
+      'Skiurlauber können Ladestopps verzögern'
     ],
     briefingText:
-      'Eisige Temperaturen, Schneefall und steile Alpenrampen fordern Wärmepumpe und Routenwahl heraus.',
-    eventPoolIds: ['evt_vignette_check', 'evt_rain_front', 'evt_accident_help'],
+      'Ihr startet um 06:00 Uhr bei −8 °C am Münchner Stadtrand. Wähle die Inntal-Autobahn oder eine Passstraße nach Innsbruck.',
+    eventPoolIds: ['evt_child_cold', 'evt_inntal_ski_jam', 'evt_vignette_check', 'evt_snowplough_convoy', 'evt_avalanche_closure'],
     wifeDialogueIds: ['dlg_diesel_remark']
   },
 

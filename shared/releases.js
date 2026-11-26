@@ -47,6 +47,7 @@ const arcadeReleases = {
       author: "Michi", model: "Sol 6.2",
       highlights: [
         "Die e-Roadtrip-Bestenlisten akzeptieren kürzere Fahrzeiten in Level 2 und gewertete Zieleinläufe ab 0 Punkten.",
+        "Eigene Bestenliste und Bestwert auf der Spielkarte für e-Roadtrip Level 3.",
       ],
     },
     {
@@ -78,14 +79,14 @@ const arcadeReleases = {
       ],
     },
     {
-      app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Neues Finale in Montpellier",
+      app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Winterfahrt nach Innsbruck",
       author: "Michi", model: "Sol 6.2",
       highlights: [
-        "Leichter rückwärts in jeder freien Ladebucht einparken, Anbieter an den Säulen erkennen und eine aufgeräumte Planungskarte",
-        "Dialoge dunkeln die Fahrt ab. Das Navi zeigt alle verbleibenden Straßen bis zum nächsten Halt und lässt unnötige Ladestopps auslassen.",
+        "Neues Level 3: Winter-Alpenüberquerung von München nach Innsbruck",
         "Level 2 endet nach der Hinfahrt mit einem neuen Finale in Montpellier",
-        "Restakku am Ziel kann Punkte kosten, Essen in der Ladepause kostet 20 €",
-        "Rempler an Gebäuden und Ladesäulen verursachen Wertverlust am Auto",
+        "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen. Rempler an Gebäuden und Säulen verursachen Wertverlust.",
+        "Aufgeräumte Planungskarte, abgedunkelte Dialoge und ein Navi mit allen Straßen bis zum nächsten Halt. Unnötige Ladestopps lassen sich auslassen.",
+        "Restakku am Ziel kann Punkte kosten. Essen in der Ladepause kostet 20 €.",
       ],
     },
     {

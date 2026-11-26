@@ -195,6 +195,7 @@ export class PlanningUI {
           </div>
         </div>
         <p class="plan-briefing">${level.briefingText}</p>
+        ${level.playable && level.requiresWinterTires ? '<p class="plan-briefing">Winterreifen sind Pflicht und bereits montiert. Die Prognose rechnet mit Vorkonditionierung und einer typischen Wartezeit an den betroffenen Ladestationen.</p>' : ''}
         <p class="plan-briefing">Plane so, dass du mit wenig Restakku sicher ankommst. Ab 5 % Restakku gibt es im Ziel Punktabzug.</p>
         <div class="plan-rules-chips">
           ${level.specialRulesSummary.map(r => `<span class="rule-chip">${r}</span>`).join('')}

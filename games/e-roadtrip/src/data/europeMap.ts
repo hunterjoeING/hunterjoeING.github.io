@@ -575,12 +575,16 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     highwayName: 'A8 / A93 / A12',
     distanceKm: 165,
     speedLimitKmh: 100,
+    roadSections: [
+      { fromKm: 0, country: 'DE', speedLimitKmh: 100 },
+      { fromKm: 93, country: 'AT', speedLimitKmh: 100 }
+    ],
     elevationGainM: 780,
     elevationLossM: 420,
     baseTrafficRisk: 0.56,
     policeRiskBase: 0.42,
     tollEur: 12,
-    vignetteRequired: 'AT Vignette (11,50 €)',
+    vignetteRequired: 'AT Vignette',
     isTunnelOption: true,
     waypoints: [{ x: 1006, y: 1012 }, { x: 1020, y: 1048 }, { x: 1016, y: 1088 }],
     defaultWeather: 'snow'
@@ -2279,7 +2283,24 @@ export const CHARGERS: ChargerStation[] = [
     baseAdhocEurPerKwh: 0.79,
     occupancyRisk: 0.32,
     defectRisk: 0.08,
+    winterQueue: true,
     hasRestroom: true
+  },
+  {
+    id: 'chg_kufstein_ac',
+    name: 'AC-Ladepunkt Angath / Kufstein',
+    cityHint: 'A12 Inntal (AT)',
+    edgeId: 'edge_muenchen_innsbruck',
+    edgeProgress: 0.77,
+    mapX: 1014,
+    mapY: 1073,
+    network: 'ac_village',
+    stalls: 4,
+    maxKw: 22,
+    baseAdhocEurPerKwh: 0.42,
+    occupancyRisk: 0.12,
+    defectRisk: 0.02,
+    isAcOnly: true
   },
   {
     id: 'chg_mittenwald_ac',
@@ -2311,7 +2332,24 @@ export const CHARGERS: ChargerStation[] = [
     baseAdhocEurPerKwh: 0.72,
     occupancyRisk: 0.20,
     defectRisk: 0.08,
+    winterQueue: true,
     hasRestroom: true
+  },
+  {
+    id: 'chg_achenkirch_ac',
+    name: 'AC-Ladepunkt Achenkirch Dorf',
+    cityHint: 'Achenpass B307',
+    edgeId: 'edge_muenchen_achenpass_innsbruck',
+    edgeProgress: 0.63,
+    mapX: 1000,
+    mapY: 1064,
+    network: 'ac_village',
+    stalls: 4,
+    maxKw: 22,
+    baseAdhocEurPerKwh: 0.42,
+    occupancyRisk: 0.12,
+    defectRisk: 0.02,
+    isAcOnly: true
   },
 
   // === LEVEL 4 (Scotland Highlands) ===

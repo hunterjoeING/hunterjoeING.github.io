@@ -159,6 +159,8 @@ export interface ChargerStation {
   hasRestroom?: boolean;
   trailerFriendly?: boolean; // Drive-through bays without uncoupling
   isAcOnly?: boolean;
+  /** Ski-holiday queue on arrival in the winter level. */
+  winterQueue?: boolean;
   /** Charged during a fixed city stay (Hannover Messe), not as a motorway pull-in. */
   fairStay?: boolean;
 }
@@ -212,6 +214,11 @@ export interface EventChoice {
   /** Optional second event. Rolled after the player continues. */
   followUpEventId?: string;
   followUpChance?: number;
+  /** Start the trip with a cold battery and cabin. */
+  startsCold?: boolean;
+  /** Winter road event effects, measured independently of route progress. */
+  winterDetourKm?: number;
+  snowploughKm?: number;
 }
 
 export interface GameEventDef {
@@ -379,6 +386,8 @@ export interface RunState {
   hungerNeed: number; // 0..100
   energyUsedKwh: number;
   distanceDrivenKm: number;
+  coldStart?: boolean;
+  snowploughUntilKm?: number;
   chargingCostEur: number;
   subscriptionCostEur: number;
   tollsEur: number;

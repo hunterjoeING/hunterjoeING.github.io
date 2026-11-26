@@ -28,6 +28,7 @@ const GAMES_META = {
   eroadtrip: { title: 'e-Roadtrip: Pixel Europe', lowerIsBetter: false },
   eroadtrip_l1: { title: 'e-Roadtrip: Pixel Europe · Level 1: Aachen ↔ Hannover Messe', lowerIsBetter: false },
   eroadtrip_l2: { title: 'e-Roadtrip: Pixel Europe · Level 2: Familien-Sommerurlaub', lowerIsBetter: false },
+  eroadtrip_l3: { title: 'e-Roadtrip: Pixel Europe · Level 3: Winter-Alpenüberquerung', lowerIsBetter: false },
   minesweeper: { title: '3D Minesweeper', lowerIsBetter: true },
   minesweeper_3d_prompt_test: { title: 'Minesweeper 3d prompt Version', lowerIsBetter: true },
   roadster: { title: 'Roadster Lander', lowerIsBetter: false },
@@ -101,7 +102,8 @@ const GAMES_META = {
 // Keep target minutes and level IDs in sync with games/e-roadtrip/src/data/levels.ts.
 const EROADTRIP_LEVEL_TARGETS = {
   eroadtrip_l1: { levelId: 'level_1_aachen_hannover', targetMinutes: 797 },
-  eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 1100, legacyMaxMinutes: 40800 }
+  eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 1100, legacyMaxMinutes: 40800 },
+  eroadtrip_l3: { levelId: 'level_3_alps_winter', targetMinutes: 165 }
 };
 
 function isEroadtripBoard(gid) {

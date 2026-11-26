@@ -22,14 +22,15 @@ export default function register(test, game) {
     ...evaluateRun(level, run, true), totalScore: 812, gradeLabel: 'A-Rang · Souverän geplant'
   });
 
-  test('leaderboard payloads carry the short label and validate on both worker boards', () => {
-    for (const level of [route1, route2]) {
+  test('leaderboard payloads carry the short label and validate on the level and overall worker boards', () => {
+    const durations = ['13h17m', '18h20m', '2h45m'];
+    for (const level of LEVELS.filter(level => level.playable)) {
       const run = mockRun(level);
       const result = mockResult(level, run);
       const submission = buildSubmission(level, run, result);
       const { score, label, meta } = submission;
       assert.equal(score, 812);
-      assert.equal(label, `812 Pkt · A-Rang · ${level === route1 ? '13h17m' : '18h20m'} · Model 3`);
+      assert.equal(label, `812 Pkt · A-Rang · ${durations[level.order - 1]} · Model 3`);
       assert.ok(label.length <= 80);
       assert.deepEqual(meta, {
         board: level.boardId, levelId: level.id, routeId: run.plan.selectedRouteId, vehicleId: run.plan.vehicleId,
@@ -45,7 +46,7 @@ export default function register(test, game) {
       assert.equal(buildSubmission(level, run, { ...result, totalMinutes: Math.ceil(level.targetArrivalMinutes / 2) - 1 }), null);
       assert.equal(buildSubmission(level, run, { ...result, totalMinutes: level.targetArrivalMinutes * 20 + 1 }), null);
     }
-    assert.deepEqual(LEVELS.map(level => level.boardId), ['eroadtrip_l1', 'eroadtrip_l2', ...Array(5).fill(undefined)]);
+    assert.deepEqual(LEVELS.map(level => level.boardId), ['eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip_l3', ...Array(4).fill(undefined)]);
   });
 
   test('implausible scores and levels without a board skip ArcadeScores', async () => {
@@ -61,7 +62,7 @@ export default function register(test, game) {
       assert.deepEqual(await submitRun(route1, run, { ...result, ...overrides }, live, api), { ok: false, dryRun: false });
     }
     assert.equal(buildSubmission(route2, run, result), null);
-    const preview = LEVELS[2];
+    const preview = LEVELS[3];
     assert.equal(newRunId(preview.boardId, api), undefined);
     assert.equal(buildSubmission(preview, mockRun(preview), result), null);
     assert.deepEqual(await submitRun(preview, { ...mockRun(preview), leaderboardRunId: 'preview' }, result, live, api),
@@ -75,17 +76,18 @@ export default function register(test, game) {
       [{ hostname: 'localhost', search: '' }, false], [{ hostname: '', search: '' }, false],
       [{ hostname: 'hunterjoeing.github.io.example.test', search: '' }, false]
     ];
+    const level = LEVELS[2];
     for (const [index, [location, allowed]] of cases.entries()) {
       assert.equal(shouldSubmit(location), allowed);
       const calls = [];
-      const run = { ...mockRun(), leaderboardRunId: `host-${index}` };
+      const run = { ...mockRun(level), leaderboardRunId: `host-${index}` };
       const api = { record(board, _score, _label, _lower, opts) {
         calls.push([board, opts.dryRun]);
         opts.onResult?.({ ok: allowed, dryRun: !allowed });
       } };
-      const outcome = await submitRun(route1, run, mockResult(route1, run), location, api);
+      const outcome = await submitRun(level, run, mockResult(level, run), location, api);
       assert.equal(outcome.dryRun, !allowed);
-      assert.deepEqual(calls, [['eroadtrip', !allowed], ['eroadtrip_l1', !allowed]]);
+      assert.deepEqual(calls, [['eroadtrip', !allowed], ['eroadtrip_l3', !allowed]]);
     }
   });
 

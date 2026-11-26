@@ -63,7 +63,7 @@ export default function register(test) {
     assert.deepEqual(requests.map(({ url, method, payload }) => [new URL(url).pathname, method, payload.runId]),
       [['/api/scores', 'POST', 'test-run']]);
     assert.deepEqual(Array.from(scores.getGroupMembers('eroadtrip_l2'), member => member.id),
-      ['eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip']);
+      ['eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip_l3', 'eroadtrip']);
     assert.equal(scores.getGroupMembers('minesweeper').length, 0);
   });
 
@@ -73,12 +73,12 @@ export default function register(test) {
       payloads.push(JSON.parse(init.body));
       return Response.json({ ok: true, rank: 1, entries: 1, plays: 1 });
     });
-    for (const board of ['eroadtrip', 'eroadtrip_l1', 'eroadtrip_l2']) {
+    for (const board of ['eroadtrip', 'eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip_l3']) {
       await new Promise(resolve => scores.record(board, 0, '0 Punkte', false, { onResult: resolve, silent: true }));
     }
     scores.record('podracer', 0, '0 Punkte', false, { onResult: assert.fail, silent: true });
     assert.deepEqual(payloads.map(({ gameId, score }) => [gameId, score]), [
-      ['eroadtrip', 0], ['eroadtrip_l1', 0], ['eroadtrip_l2', 0]
+      ['eroadtrip', 0], ['eroadtrip_l1', 0], ['eroadtrip_l2', 0], ['eroadtrip_l3', 0]
     ]);
   });
 
@@ -165,7 +165,7 @@ export default function register(test) {
     scores.openLeaderboardModal();
     assert.deepEqual(tabIds(), Array.from(scores.CATALOG).filter(game => !game.unlisted).map(game => game.id));
     clickTab('eroadtrip');
-    assert.deepEqual(tabIds(), ['eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip']);
+    assert.deepEqual(tabIds(), ['eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip_l3', 'eroadtrip']);
     assert.match(modal().innerHTML, /active" data-gid="eroadtrip">Gesamt/);
     clickTab('eroadtrip_l1');
     document.getElementById('arcade-board-refresh').click();
@@ -173,11 +173,28 @@ export default function register(test) {
     window.location.pathname = '/games/e-roadtrip/';
     scores.openLeaderboardModal('eroadtrip_l2');
     assert.match(modal().innerHTML, /active" data-gid="eroadtrip_l2">Level 2/);
+    clickTab('eroadtrip_l3');
+    assert.match(modal().innerHTML, /data-gid="eroadtrip_l3">Level 3/);
+    assert.equal(requested.at(-1), 'eroadtrip_l3');
     window.dispatchEvent(Object.assign(new Event('keydown'), { key: 'Escape' }));
     assert.equal(modal(), null);
     scores.openLeaderboardModal();
-    assert.deepEqual(tabIds(), ['eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip']);
-    assert.deepEqual(requested, ['minesweeper', 'eroadtrip', 'eroadtrip_l1', 'eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip']);
+    assert.deepEqual(tabIds(), ['eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip_l3', 'eroadtrip']);
+    assert.deepEqual(requested, ['minesweeper', 'eroadtrip', 'eroadtrip_l1', 'eroadtrip_l1', 'eroadtrip_l2', 'eroadtrip_l3', 'eroadtrip']);
     await setImmediate();
+  });
+
+  test('the hub game card shows all three global level bests', () => {
+    const hub = readFileSync(new URL('../../../index.html', import.meta.url), 'utf8');
+    const source = hub.slice(hub.indexOf('function readItemBest('), hub.indexOf('function updateHeaderStats('));
+    const ArcadeScores = {
+      getBest: id => id === 'eroadtrip_l1' ? { isGlobal: true, best: 812, playerName: 'Ada' } : undefined,
+      getSummaryCache: () => ({ games: {
+        eroadtrip_l2: { best: { playerName: 'Bea', score: 789 } },
+        eroadtrip_l3: { best: { playerName: 'Chris', score: 836 } }
+      } })
+    };
+    const readItemBest = runInNewContext(source + '\nreadItemBest', { ArcadeScores });
+    assert.equal(readItemBest('eroadtrip'), 'L1: Ada 812 · L2: Bea 789 · L3: Chris 836');
   });
 }

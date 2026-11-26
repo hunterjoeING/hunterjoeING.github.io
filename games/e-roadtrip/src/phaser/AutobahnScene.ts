@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
+import { nextWinterRoadEvent, SNOWPLOUGH_SPEED_KMH, winterRoadEnergyKwh } from '../sim/WinterDriving';
 import {
   defaultLegSpeedKmh,
   getActiveRouteLegs,
@@ -496,14 +497,17 @@ export class AutobahnScene extends Phaser.Scene {
       vehicle.maxSpeedKmh
     );
     if (lp && lp.targetSpeedKmh !== setSpeed) lp.targetSpeedKmh = setSpeed;
-    const driveMax = inWork ? Math.min(setSpeed, section.signKmh) : setSpeed;
+    const inConvoy = (run.snowploughUntilKm ?? 0) > run.distanceDrivenKm;
+    const workCap = inWork ? section.signKmh : undefined;
+    const speedCap = inConvoy ? Math.min(SNOWPLOUGH_SPEED_KMH, workCap ?? Infinity) : workCap;
+    const driveMax = Math.min(setSpeed, speedCap ?? Infinity);
     const trafficLimit = Math.min(vehicle.maxSpeedKmh, section.signKmh || Infinity);
     const rightOpen = !inWork;
 
     const playerY = h * 0.72;
     this.laneCooldown = Math.max(0, this.laneCooldown - dtSec);
     if (this.playerLanePos === this.playerLane && this.laneCooldown <= 0) {
-      const desiredLane = preferredPlayerLane(setSpeed, rightOpen);
+      const desiredLane = preferredPlayerLane(inConvoy ? driveMax : setSpeed, rightOpen);
       const slowerAhead = (lane: number, range = 260) => {
         const other = leadVehicle(this.npcs, lane, range);
         return !!other && other.speedKmh < driveMax - 6;
@@ -551,8 +555,8 @@ export class AutobahnScene extends Phaser.Scene {
     for (const car of this.npcs) car.sprite.y = playerY - car.distanceKm * HIGHWAY_PX_PER_KM;
 
     run.currentSpeedKmh = this.playerSpeedKmh;
-    run.speedCapKmh = inWork ? section.signKmh : undefined;
-    run.speedCapLabel = inWork ? 'Baustelle' : undefined;
+    run.speedCapKmh = speedCap;
+    run.speedCapLabel = inConvoy ? 'Schneepflug-Kolonne' : inWork ? 'Baustelle' : undefined;
     const signChanged = run.highwaySignLegIndex !== run.currentLegIndex || run.highwaySignKmh !== section.signKmh;
     run.highwaySignKmh = section.signKmh;
     run.highwaySignLegIndex = run.currentLegIndex;
@@ -783,7 +787,10 @@ export class AutobahnScene extends Phaser.Scene {
       this.bridge.level.trailerWeightKg || 0,
       !!run.plan.behindTruckMode
     );
-    const kwhBurned = (deltaKm / 100) * cons100;
+    const kwhBurned = winterRoadEnergyKwh(
+      cons100, deltaKm, !!this.bridge.level.requiresWinterTires,
+      run.distanceDrivenKm, run.coldStart, run.snowploughUntilKm
+    );
     if (deltaKm > 0) {
       run.legProgressKm = deltaKm === remainingKm ? boundaryKm : run.legProgressKm + deltaKm;
     }
@@ -862,6 +869,15 @@ export class AutobahnScene extends Phaser.Scene {
         return;
       }
       this.bridge.onAutobahnHudTick(run);
+      return;
+    }
+
+    const winterEvent = nextWinterRoadEvent(this.bridge.level, run, edge);
+    if (winterEvent) {
+      run.triggeredEventIds.push(winterEvent);
+      this.bridge.paused = true;
+      SoundFX.alert();
+      this.bridge.onDynamicEventTrigger(winterEvent);
       return;
     }
 

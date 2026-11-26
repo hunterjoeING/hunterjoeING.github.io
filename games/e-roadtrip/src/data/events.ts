@@ -1,8 +1,12 @@
 import { GameEventDef, WifeDialogueDef } from '../types';
+import { WINTER_EVENTS } from './winterEvents';
 
 export const HOTEL_AC = { maxKw: 11, stayMinutes: 480, targetSocPct: 95, lodgingEur: 289 };
+export const AUSTRIAN_VIGNETTE = { costEur: 11.5, minutes: 2 };
+const vignettePrice = `${AUSTRIAN_VIGNETTE.costEur.toFixed(2).replace('.', ',')} €`;
 
 export const GAME_EVENTS: Record<string, GameEventDef> = {
+  ...WINTER_EVENTS,
   evt_accident_help: {
     id: 'evt_accident_help',
     title: 'Auffahrunfall auf der Nebenspur',
@@ -279,18 +283,18 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     category: 'toll',
     icon: '🎫',
     description:
-      'Vor der Landesgrenze benötigst du eine Autobahn-Vignette (11,50 €). Alternativ lockt eine mautfreie Passstraße.',
+      `Vor der Landesgrenze benötigst du eine Autobahn-Vignette (${vignettePrice}). Alternativ lockt eine mautfreie Passstraße.`,
     choices: [
       {
         id: 'buy_vignette',
-        label: 'Digitale Vignette kaufen (11,50 €)',
+        label: `Digitale Vignette kaufen (${vignettePrice})`,
         hint: 'Schnell & legal · keine Strafe',
-        timeDeltaMin: 2,
+        timeDeltaMin: AUSTRIAN_VIGNETTE.minutes,
         socDeltaPct: 0,
-        costDeltaEur: 11.5,
+        costDeltaEur: AUSTRIAN_VIGNETTE.costEur,
         stressDelta: -3,
         decisionPoints: 10,
-        resultText: 'Digital-Vignette in 2 Minuten aktiviert – freie Fahrt auf der Autobahn.'
+        resultText: `Digital-Vignette in ${AUSTRIAN_VIGNETTE.minutes} Minuten aktiviert – freie Fahrt auf der Autobahn.`
       },
       {
         id: 'skip_vignette',

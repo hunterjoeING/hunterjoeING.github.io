@@ -18,7 +18,10 @@ import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
 import { getChargerById, getCityById, getEdgeById } from './data/europeMap';
 import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
+import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
+import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
+import { findWinterQueueAlternative } from './sim/WinterCharging';
 import { newRunId, submitRun } from './sim/Leaderboard';
 import { applyPause, applyStress } from './sim/PauseEffects';
 import {
@@ -141,7 +144,7 @@ class ERoadtripController {
       },
 
       onTriggerChargerSegment: (station: ChargerStation) => {
-        this.enterChargerSegment(station);
+        this.handleRoadChargerArrival(station);
       },
 
       onTriggerCitySegment: (preset: CityDrivePreset) => {
@@ -165,7 +168,7 @@ class ERoadtripController {
       },
 
       onPropertyDamage: damage => this.handlePropertyDamage(damage),
-      onDestinationArrival: () => this.playDestinationFinale(),
+      onDestinationArrival: () => this.handleDestinationArrival(),
 
       onPoliceViolation: (kind: PoliceViolationKind) => {
         this.handlePoliceViolation(kind);
@@ -487,6 +490,16 @@ class ERoadtripController {
     this.stageWrapEl.classList.add('driving-active');
     this.plannerEl.classList.add('hidden');
     window.requestAnimationFrame(() => this.game.scale.refresh());
+    if (this.level.id === WINTER_LEVEL_ID) {
+      this.bridge.runState.activeWeather = 'snow';
+      this.bridge.paused = true;
+      this.eventModal.showDynamicEvent(
+        WINTER_START_EVENT,
+        choice => this.applyEventChoice(WINTER_START_EVENT.title, choice),
+        () => this.enterAutobahn()
+      );
+      return;
+    }
     this.enterCitySegment('aachen_start');
   }
 
@@ -531,6 +544,37 @@ class ERoadtripController {
     if (!run) return;
     run.activeCityChargerId = station.id;
     this.enterCitySegment('charger_park', station.id);
+  }
+
+  private handleRoadChargerArrival(station: ChargerStation): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    const stop = this.level.id === WINTER_LEVEL_ID && station.winterQueue
+      ? run.plan.plannedStops.find(s => s.chargerId === station.id && s.legIndex === run.currentLegIndex)
+      : undefined;
+    if (!stop) {
+      this.enterChargerSegment(station);
+      return;
+    }
+
+    const key = stopKey(stop.legIndex, station.id);
+    const cars = winterQueueCars(run.leaderboardRunId ?? run.levelId, key);
+    const skip = evaluateStopSkip(this.level, run, stop);
+    const alternative = findWinterQueueAlternative(this.level, run, stop, station);
+    const event = buildWinterQueueEvent(station, cars, skip.allowed, alternative?.station);
+    this.bridge.paused = true;
+    this.drivingHUD.clearTouchStates();
+    this.eventModal.showDynamicEvent(event, choice => {
+      if (choice.id === 'winter_queue_skip') run.skippedStopKeys.push(key);
+      if (choice.id === 'winter_queue_alternative' && alternative) {
+        run.skippedStopKeys.push(key);
+        if (!run.plan.plannedStops.includes(alternative.stop)) run.plan.plannedStops.push(alternative.stop);
+      }
+      return this.applyEventChoice(event.title, choice);
+    }, () => {
+      if (run.skippedStopKeys.includes(key)) this.enterAutobahn();
+      else this.enterChargerSegment(station);
+    });
   }
 
   private enterAutobahn(preview?: {
@@ -833,8 +877,24 @@ class ERoadtripController {
       minutes: choice.timeDeltaMin, costEur: choice.pauseCostEur, stressDelta: choice.stressDelta,
       resetBladder: choice.resetBladder, hungerDelta: choice.hungerDelta
     });
-    if (choice.socDeltaPct) run.socPct = Math.max(0, Math.min(100, run.socPct + choice.socDeltaPct));
-    run.incidentalCostEur += choice.costDeltaEur;
+    if (choice.socDeltaPct) {
+      const previousSoc = run.socPct;
+      run.socPct = Math.max(0, Math.min(100, previousSoc + choice.socDeltaPct));
+      if (this.level.id === WINTER_LEVEL_ID && run.socPct < previousSoc) {
+        run.energyUsedKwh += (previousSoc - run.socPct) / 100 * getVehicleById(run.plan.vehicleId).batteryKwh;
+      }
+    }
+    if (choice.startsCold) run.coldStart = true;
+    if (choice.winterDetourKm) {
+      const vehicle = getVehicleById(run.plan.vehicleId);
+      const kwh = winterDetourEnergyKwh(vehicle, choice.winterDetourKm, choice.timeDeltaMin, run);
+      run.energyUsedKwh += kwh;
+      run.socPct = Math.max(0, run.socPct - kwh / vehicle.batteryKwh * 100);
+      run.distanceDrivenKm += choice.winterDetourKm;
+    }
+    if (choice.snowploughKm) run.snowploughUntilKm = run.distanceDrivenKm + choice.snowploughKm;
+    if (this.level.id === WINTER_LEVEL_ID && choice.id === 'buy_vignette') run.tollsEur += choice.costDeltaEur;
+    else run.incidentalCostEur += choice.costDeltaEur;
     if (choice.lodgingDeltaEur) run.lodgingCostEur += choice.lodgingDeltaEur;
     if (choice.fineDeltaEur) run.incidentalCostEur += choice.fineDeltaEur;
     run.decisionScoreAccum += choice.decisionPoints;
@@ -967,7 +1027,9 @@ class ERoadtripController {
     const hotelCharge = eventId === 'evt_hotel_overnight' && run
       ? estimateHotelCharge(getVehicleById(run.plan.vehicleId), run.socPct) : undefined;
     const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : '';
-    const shown = eventId === 'evt_hotel_overnight'
+    const shown = this.level.id === WINTER_LEVEL_ID && eventId === 'evt_vignette_check'
+        ? { ...baseEvt, description: 'Für die österreichische Inntal-Autobahn brauchst du eine Vignette.' }
+        : eventId === 'evt_hotel_overnight'
         ? {
             ...baseEvt,
             title: baseEvt.title.split('{ORT}').join(place),
@@ -1224,6 +1286,14 @@ class ERoadtripController {
     this.eventModal.showMapPeek(html, () => {
       this.bridge.paused = false;
     });
+  }
+
+  private handleDestinationArrival(): void {
+    if (this.level.id === WINTER_LEVEL_ID) {
+      this.finishLevel(true);
+      return;
+    }
+    this.playDestinationFinale();
   }
 
   private playDestinationFinale(): void {
