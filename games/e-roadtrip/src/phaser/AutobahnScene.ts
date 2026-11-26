@@ -876,7 +876,7 @@ export class AutobahnScene extends Phaser.Scene {
         run.paidTollLegIndices.push(run.currentLegIndex);
       }
       const preset = legSpec.citySegmentAtEnd;
-      if (preset === 'hannover_messe' || preset === 'aachen_finish' || preset === 'koeln_ring') {
+      if (preset === 'hannover_messe' || preset === 'aachen_finish' || preset === 'koeln_ring' || preset === 'innsbruck_finish') {
         this.bridge.paused = true;
         this.bridge.onTriggerCitySegment(preset);
         return;

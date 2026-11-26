@@ -24,6 +24,7 @@ import { ALPINE_PASS_PRESET, chainCheckOccurs } from './sim/AlpineDriving';
 import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
+import { isWinterCity, winterCityDrive, WINTER_CITY_MINUTES } from './sim/WinterCity';
 import { findWinterQueueAlternative } from './sim/WinterCharging';
 import { newRunId, submitRun } from './sim/Leaderboard';
 import { applyPause, applyStress } from './sim/PauseEffects';
@@ -501,7 +502,7 @@ class ERoadtripController {
       this.eventModal.showDynamicEvent(
         WINTER_START_EVENT,
         choice => this.applyEventChoice(WINTER_START_EVENT.title, choice),
-        () => this.enterAutobahn()
+        () => this.enterCitySegment(getActiveRouteLegs(this.level, clonedPlan)[0].citySegmentAtStart ?? 'muenchen_start')
       );
       return;
     }
@@ -525,7 +526,7 @@ class ERoadtripController {
     resetTouchInput();
     this.bridge.paused = false;
     this.drivingHUD.setMode('city');
-    const titleMap: Record<CityDrivePreset, string> = {
+    const titleMap = {
       aachen_start: 'Aachen Innenstadt → A4 Auffahrt',
       charger_park: 'Ladepark → Freie Ladebucht',
       hannover_messe: 'Hannover Messe → E-Parkplatz',
@@ -534,8 +535,10 @@ class ERoadtripController {
       koeln_ring: 'Köln-Ring → A1',
       alpine_pass: `${this.bridge.runState?.alpinePass?.name ?? 'Alpenpass'} → Passhöhe`
     };
-    if (this.bridge.runState) {
-      this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale, titleMap[preset]);
+    const run = this.bridge.runState;
+    if (run) {
+      const title = isWinterCity(preset) ? winterCityDrive(preset, run.plan.selectedRouteId).title : titleMap[preset];
+      this.drivingHUD.update(this.level, run, this.bridge.timeScale, title);
     }
     this.game.scene.start('CityDriveScene', {
       bridge: this.bridge,
@@ -640,6 +643,20 @@ class ERoadtripController {
   private handleCitySegmentComplete(preset: CityDrivePreset, cleanArrival: boolean): void {
     const run = this.bridge.runState;
     if (!run) return;
+
+    if (isWinterCity(preset)) {
+      const city = winterCityDrive(preset, run.plan.selectedRouteId);
+      run.elapsedMinutes += WINTER_CITY_MINUTES[preset];
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: city.title,
+        detail: cleanArrival ? 'Ziel ohne Zwischenfall erreicht.' : 'Ziel nach einem Zwischenfall erreicht.',
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      if (preset === 'muenchen_start') this.enterAutobahn();
+      else this.handleDestinationArrival(cleanArrival);
+      return;
+    }
 
     if (preset === ALPINE_PASS_PRESET) {
       const pass = run.alpinePass;
@@ -1352,9 +1369,9 @@ class ERoadtripController {
     });
   }
 
-  private handleDestinationArrival(): void {
+  private handleDestinationArrival(cleanArrival = true): void {
     if (this.level.id === WINTER_LEVEL_ID) {
-      this.finishLevel(true);
+      this.finishLevel(cleanArrival);
       return;
     }
     this.playDestinationFinale();

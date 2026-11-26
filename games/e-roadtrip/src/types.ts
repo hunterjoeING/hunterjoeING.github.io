@@ -277,6 +277,8 @@ export type CityDrivePreset =
   | 'aachen_finish'
   | 'ferry_denmark'
   | 'koeln_ring'
+  | 'muenchen_start'
+  | 'innsbruck_finish'
   | 'alpine_pass';
 
 export type ElevationProfileKind = 'Flachland' | 'Hügelig' | 'Bergig / Pässe';

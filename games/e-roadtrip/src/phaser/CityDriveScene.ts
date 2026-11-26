@@ -5,6 +5,7 @@ import { passNavigation, passOnIce, passRoadContains } from './AlpinePass';
 import { getChargerById } from '../data/europeMap';
 import { isRearParked } from '../sim/ChargingBay';
 import { evaluatePropertyDamage, recordConeHit, STATIC_CONTACT_CLEARANCE_PX } from '../sim/PropertyDamage';
+import { pointInCityRect } from '../sim/WinterCity';
 import { ERoadtripBridge, ensureTouchHoldsMatchPointers } from './GameBridge';
 import {
   CityLightingProfile,
@@ -113,6 +114,7 @@ export class CityDriveScene extends Phaser.Scene {
   private place!: PlacePaint;
   private surface!: SurfaceFx;
   private passThrough = false;
+  private cityApproachReached = false;
   private spinners: Phaser.GameObjects.Image[] = [];
   private roadWet = false;
   private previewFx = false;
@@ -141,6 +143,7 @@ export class CityDriveScene extends Phaser.Scene {
     this.previewDriveSec = 0;
     this.roadWet = false;
     this.passThrough = false;
+    this.cityApproachReached = false;
     this.spinners = [];
     this.carSpeed = 0;
     this.travelHeading = undefined;
@@ -180,6 +183,7 @@ export class CityDriveScene extends Phaser.Scene {
 
     this.place = paintDrivingPlace(this, {
       preset: this.preset,
+      routeId: this.bridge.runState?.plan.selectedRouteId ?? this.bridge.plan.selectedRouteId,
       station: this.station,
       mobile: this.isMobilePerf,
       passName: this.bridge.runState?.alpinePass?.name,
@@ -324,7 +328,7 @@ export class CityDriveScene extends Phaser.Scene {
     this.targetLabel = this.add
       .text(this.targetZone.centerX, this.targetZone.centerY, label, {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontSize: '10px',
+      fontSize: this.place.winterCity ? '16px' : '10px',
         fontStyle: 'bold',
         color: '#ffffff',
         align: 'center',
@@ -339,7 +343,7 @@ export class CityDriveScene extends Phaser.Scene {
     this.obstacleRects = this.place.buildings.slice();
     this.obstacleCircles = this.place.trees.map(spot => {
       const tree = this.add.image(spot.x, spot.y, 'pixel_tree').setDepth(6);
-      if (this.place.passRoad) tree.setTint(0xd3edf7);
+      if (this.place.passRoad || this.place.winterCity) tree.setTint(0xd3edf7);
       return circleAt(spot.x, spot.y, 11);
     });
 
@@ -348,7 +352,13 @@ export class CityDriveScene extends Phaser.Scene {
       this.add.image(lp.x, lp.y, 'streetlamp').setDepth(11);
     });
 
-    if (this.place.autohof || this.place.passRoad) {
+    if (this.place.winterCity) {
+      this.cones = this.place.winterCity.cones.map(({ x, y }) => ({
+        bounds: { x: x - 4, y: y - 4, w: 8, h: 8 },
+        sprite: this.add.image(x, y, 'cone').setDepth(5)
+      }));
+    }
+    if (this.place.autohof || this.place.passRoad || this.place.winterCity) {
       this.intersections = [];
       return;
     }
@@ -422,7 +432,7 @@ export class CityDriveScene extends Phaser.Scene {
       });
     }
 
-    if (this.place.autohof) {
+    if (this.place.autohof || this.place.winterCity) {
       (this.place.litePeds || []).forEach(pc => {
         const start = pc.wps[0];
         const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
@@ -616,7 +626,7 @@ export class CityDriveScene extends Phaser.Scene {
     const damage = evaluatePropertyDamage(impactSpeed);
     if (!damage) return;
     this.propertyContacts.add(contact);
-    if (contact === 'passEdge') this.cleanRun = false;
+    if (contact === 'passEdge' || this.place.winterCity) this.cleanRun = false;
     SoundFX.bump();
     this.bridge.paused = true;
     this.physics.world.pause();
@@ -743,7 +753,8 @@ export class CityDriveScene extends Phaser.Scene {
         const [start, next] = route.path;
         const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
         const shape = vehicleCapsule(start.x, start.y, rotation, route.isCyclist);
-        if (!otherShapes.some(other => capsulesOverlap(shape, other))) {
+        if (!otherShapes.some(other => capsulesOverlap(shape, other)) &&
+            (!this.place.winterCity || !capsulesOverlap(shape, playerShape))) {
           sprite.setPosition(start.x, start.y).setRotation(rotation);
           car.wpIndex = 1;
         }
@@ -1318,7 +1329,7 @@ export class CityDriveScene extends Phaser.Scene {
       speed: this.carSpeed,
       onGrass: isGrassSurface(this.player.x, this.player.y, this.place.grass, this.place.asphalt, this.place.buildings),
       wetRoad: this.roadWet,
-      snowyRoad: !!road && !onIce,
+      snowyRoad: (!!road && !onIce) || (!!this.place.winterCity && profile.isSnow),
       dt
     });
 
@@ -1445,8 +1456,17 @@ export class CityDriveScene extends Phaser.Scene {
     const targetX = targetBay ? targetBay.x + targetBay.w / 2 : this.targetZone.centerX;
     const targetY = targetBay ? targetBay.y + targetBay.h / 2 : this.targetZone.centerY;
     const passNav = road && passNavigation(road, this.player);
+    const winterCity = this.place.winterCity;
+    const approach = winterCity?.approach;
+    if (approach && Phaser.Math.Distance.Between(this.player.x, this.player.y, approach.goal.x, approach.goal.y) < 54) {
+      this.cityApproachReached = true;
+    }
+    const cityNav = winterCity && (
+      approach && !this.cityApproachReached ? approach.navigate(this.player) : winterCity.navigate(this.player)
+    );
+    const aim = passNav ? passNav.aim : cityNav ? cityNav.aim : { x: targetX, y: targetY };
     const angleToTarget = Phaser.Math.Angle.Between(
-      this.player.x, this.player.y, passNav ? passNav.aim.x : targetX, passNav ? passNav.aim.y : targetY
+      this.player.x, this.player.y, aim.x, aim.y
     );
     const distToTarget = Phaser.Math.Distance.Between(this.player.x, this.player.y, targetX, targetY);
     this.navArrow.setPosition(this.scale.width / 2, 62);
@@ -1467,9 +1487,9 @@ export class CityDriveScene extends Phaser.Scene {
 
     if (this.passThrough) {
       const rampLabel =
-        passNav ? 'Zur Passhöhe' : this.preset === 'koeln_ring' ? 'Zur A1' : this.preset === 'ferry_denmark' ? 'Zum Fährterminal' : 'Zur A4 Auffahrt';
+        winterCity ? winterCity.label : passNav ? 'Zur Passhöhe' : this.preset === 'koeln_ring' ? 'Zur A1' : this.preset === 'ferry_denmark' ? 'Zum Fährterminal' : 'Zur A4 Auffahrt';
       const doneLabel =
-        passNav ? 'Passhöhe erreicht' : this.preset === 'koeln_ring'
+        winterCity ? 'Auffahrt erreicht · Gute Fahrt!' : passNav ? 'Passhöhe erreicht' : this.preset === 'koeln_ring'
           ? '🛣️ Weiter auf die A1'
           : this.preset === 'ferry_denmark'
             ? '⛴️ Fähre erreicht'
@@ -1480,9 +1500,11 @@ export class CityDriveScene extends Phaser.Scene {
         this.distText.setText(doneLabel);
         this.bridge.onCitySegmentComplete(this.preset, this.cleanRun);
       } else {
-        const remaining = passNav?.distance ?? distToTarget;
+        const remaining = passNav?.distance ?? cityNav?.distance ?? distToTarget;
         this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(remaining / 6))} m`);
         if (onIce) this.reverseHintText.setText('Glatteis').setVisible(true);
+        const wrongExit = winterCity?.wrongExits.find(exit => pointInCityRect(this.player, exit.zone));
+        if (wrongExit) this.reverseHintText.setText('Falsche Auffahrt · bitte wenden').setVisible(true);
       }
     } else if (parked) {
       this.completed = true;
@@ -1505,6 +1527,7 @@ export class CityDriveScene extends Phaser.Scene {
       const goalHint =
         this.preset === 'charger_park'
           ? 'Zu einer freien Ladebucht'
+          : winterCity ? (approach && !this.cityApproachReached ? approach.label : 'Zum Hotelparkplatz')
           : this.preset === 'hannover_messe'
             ? 'Zum Messe-Parkplatz'
             : this.preset === 'koeln_ring'
@@ -1512,7 +1535,7 @@ export class CityDriveScene extends Phaser.Scene {
               : 'Ins Ziel einparken';
       this.distText.setText(chargingBay && !nearest
         ? 'Alle Ladebuchten belegt'
-        : `${goalHint} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
+        : `${goalHint} · ${Math.max(0, Math.round((cityNav?.distance ?? distToTarget) / 6))} m`);
     }
   }
 

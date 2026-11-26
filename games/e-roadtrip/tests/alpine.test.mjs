@@ -285,7 +285,7 @@ export default function register(test, game) {
     assert.equal(descentState, run.alpineDescent);
     assert.equal(descentState.overheated, true);
     assert.ok(descentState.brakeHeatM > previousHeat && descentState.recoveredKwh > previousRecovery);
-    assert.deepEqual(fired, ['destination']);
+    assert.deepEqual(fired, ['innsbruck_finish']);
   });
 
   test('live reserve uses Segeln before choice and reflects the chosen mode afterwards', () => {

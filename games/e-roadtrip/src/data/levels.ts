@@ -292,7 +292,7 @@ export const LEVELS: LevelConfig[] = [
         trafficRisk: 'Hoch',
         chargingDensity: 'Sehr dicht',
         colorHex: 0x3b82f6,
-        legs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', destinationAtEnd: true }],
+        legs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }],
         defaultPlannedStops: []
       },
       {
@@ -306,8 +306,8 @@ export const LEVELS: LevelConfig[] = [
         chargingDensity: 'Dünn / Anspruchsvoll',
         colorHex: 0xf59e0b,
         legs: [
-          { edgeId: 'edge_muenchen_garmisch', defaultTargetSpeedKmh: 110, weatherOverride: 'snow' },
-          { edgeId: 'edge_garmisch_innsbruck', defaultTargetSpeedKmh: 70, weatherOverride: 'snow', destinationAtEnd: true }
+          { edgeId: 'edge_muenchen_garmisch', defaultTargetSpeedKmh: 110, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start' },
+          { edgeId: 'edge_garmisch_innsbruck', defaultTargetSpeedKmh: 70, weatherOverride: 'snow', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }
         ],
         defaultPlannedStops: []
       },
@@ -321,11 +321,11 @@ export const LEVELS: LevelConfig[] = [
         trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
         colorHex: 0x10b981,
-        legs: [{ edgeId: 'edge_muenchen_achenpass_innsbruck', defaultTargetSpeedKmh: 85, weatherOverride: 'snow', destinationAtEnd: true }],
+        legs: [{ edgeId: 'edge_muenchen_achenpass_innsbruck', defaultTargetSpeedKmh: 85, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }],
         defaultPlannedStops: []
       }
     ],
-    routeLegs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', destinationAtEnd: true }],
+    routeLegs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }],
     passengers: {
       label: 'Winter-Skiurlaub Crew',
       hasWife: true,
@@ -341,7 +341,7 @@ export const LEVELS: LevelConfig[] = [
       'Skiurlauber können Ladestopps verzögern'
     ],
     briefingText:
-      'Ihr startet um 06:00 Uhr bei −8 °C am Münchner Stadtrand. Wähle die Inntal-Autobahn oder eine Passstraße nach Innsbruck.',
+      'Ihr startet um 06:00 Uhr bei −8 °C am Marienplatz. Wähle die Inntal-Autobahn oder eine Passstraße zum Altstadt-Hotel in Innsbruck.',
     eventPoolIds: ['evt_child_cold', 'evt_inntal_ski_jam', 'evt_vignette_check', 'evt_snowplough_convoy', 'evt_avalanche_closure'],
     wifeDialogueIds: ['dlg_diesel_remark']
   },

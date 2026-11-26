@@ -2,6 +2,10 @@ import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, type PassName } from '../types';
 import { ALPINE_PASS_PRESET } from '../sim/AlpineDriving';
 import { paintAlpinePass, type PassRoad } from './AlpinePass';
+import { isWinterCity } from '../sim/WinterCity';
+import type { winterCityDrive, winterCityNavigator } from '../sim/WinterCity';
+import type { CityPoint } from '../data/cityLayouts/types';
+import { paintWinterCity } from './WinterCityPainter';
 import { ChargingBay } from '../sim/ChargingBay';
 import { ZebraCrosswalk } from './CityTraffic';
 import { TrafficRoute, cityTrafficRoutes, laneCenter, trafficRoute } from './CityLanes';
@@ -52,6 +56,13 @@ export interface PlacePaint {
   zoneColor?: number;
   passThrough: boolean;
   passRoad?: PassRoad;
+  winterCity?: {
+    label: string;
+    cones: CityPoint[];
+    wrongExits: ReturnType<typeof winterCityDrive>['wrongExits'];
+    navigate: ReturnType<typeof winterCityNavigator>;
+    approach?: { goal: CityPoint; label: string; navigate: ReturnType<typeof winterCityNavigator> };
+  };
   chargingBays?: PaintedChargingBay[];
   parkedVehicles?: Rect[];
   spawn: { x: number; y: number; rot: number };
@@ -76,8 +87,9 @@ export function setBayOccupied(bay: PaintedChargingBay, occupied: boolean): void
 
 export function paintDrivingPlace(
   scene: Phaser.Scene,
-  opts: { preset: CityDrivePreset; station?: ChargerStation; mobile: boolean; passName?: PassName; light?: boolean }
+  opts: { preset: CityDrivePreset; station?: ChargerStation; mobile: boolean; passName?: PassName; light?: boolean; routeId?: string }
 ): PlacePaint {
+  if (isWinterCity(opts.preset)) return paintWinterCity(scene, opts.preset, opts.routeId ?? '', !!opts.light, opts.mobile);
   if (opts.preset === ALPINE_PASS_PRESET) return paintAlpinePass(scene, opts.passName ?? 'Zirler Berg', !!opts.light);
   if (opts.preset === 'charger_park' && opts.station) {
     return paintAutohof(scene, opts.station, opts.mobile);

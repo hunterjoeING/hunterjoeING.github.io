@@ -8,7 +8,7 @@ export default function register(test, game) {
     evaluateRun, evaluateStopSkip, evaluateTripPlan, findWinterQueueAlternative, getActiveRouteLegs,
     getChargerById, getEdgeById, getEventById, getLevelById, getVehicleById, getWifeDialogueById,
     nextWinterRoadEvent, PlanningUI, predictLiveTripSoc, SNOWPLOUGH_SPEED_KMH, stopKey, winterQueueCars,
-    winterRoadEnergyKwh, winterStartEffects, WINTER_LEVEL_ID, WINTER_START_EVENT
+    winterRoadEnergyKwh, winterStartEffects, WINTER_CITY_MINUTES, WINTER_LEVEL_ID, WINTER_START_EVENT
   } = game;
   const { mkRun, mkScene, near, route2 } = createFixtures(game);
   const level = getLevelById(WINTER_LEVEL_ID);
@@ -42,14 +42,18 @@ export default function register(test, game) {
     assert.match(root.innerHTML, /Winterreifen sind Pflicht und bereits montiert/);
   });
 
-  test('München departure pauses before the highway and applies both cold-start choices', t => {
+  test('München departure applies either cold-start choice before the city and books the exit before the highway', t => {
     const oldFrame = window.requestAnimationFrame;
     window.requestAnimationFrame = () => {};
     t.after(() => { window.requestAnimationFrame = oldFrame; });
     for (const precondition of [true, false]) {
       const controller = Object.assign(controllerWithRun(null), {
         plan: createDefaultPlan(level, car), save: { ownedVehicleId: car },
-        stageWrapEl: new DomStub(), plannerEl: new DomStub(), enterCitySegment: assert.fail,
+        stageWrapEl: new DomStub(), plannerEl: new DomStub(),
+        enterCitySegment(preset) {
+          assert.equal(preset, 'muenchen_start');
+          this.bridge.paused = false;
+        },
         eventModal: { showDynamicEvent(event, choose, resume) {
           assert.equal(event, WINTER_START_EVENT);
           assert.match(event.title, /München.*06:00.*−8 °C/);
@@ -69,6 +73,11 @@ export default function register(test, game) {
       assert.equal(Boolean(run.coldStart), !precondition);
       assert.equal(run.activeWeather, 'snow');
       assert.equal(paused, false);
+      controller.bridge.paused = true;
+      controller.handleCitySegmentComplete('muenchen_start', true);
+      assert.equal(run.elapsedMinutes, effects.timeDeltaMin + WINTER_CITY_MINUTES.muenchen_start);
+      assert.match(run.incidentLog.at(-1).title, /Marienplatz.*A8 Salzburg/);
+      assert.equal(controller.bridge.paused, false);
     }
   });
 
@@ -214,11 +223,19 @@ export default function register(test, game) {
     const scores = [];
     for (const [index, route] of level.routeOptions.entries()) {
       const plan = createDefaultPlan(level, car, route.id);
-      const forecast = evaluateTripPlan(level, plan);
       const legs = getActiveRouteLegs(level, plan);
+      const forecast = evaluateTripPlan(level, plan);
       assert.equal(getEdgeById(legs.at(-1).edgeId).toCityId, 'innsbruck');
       assert.equal(legs.filter(leg => leg.destinationAtEnd).length, 1);
       assert.equal(forecast.valid, true);
+      const roadOnly = evaluateTripPlan({
+        ...level,
+        routeOptions: level.routeOptions.map(option => ({
+          ...option, legs: option.legs.map(leg => ({ ...leg, citySegmentAtStart: undefined, citySegmentAtEnd: undefined }))
+        }))
+      }, plan);
+      const cityMinutes = WINTER_CITY_MINUTES.muenchen_start + WINTER_CITY_MINUTES.innsbruck_finish;
+      assert.equal(forecast.totalMinutes, roadOnly.totalMinutes + cityMinutes);
       assert.ok(forecast.totalMinutes <= level.targetArrivalMinutes);
       assert.equal(forecast.tollsEur, index === 0 ? 23.5 : 0);
       const effects = winterStartEffects(index !== 0);
@@ -232,6 +249,8 @@ export default function register(test, game) {
       const controller = controllerWithRun(run);
       controller.playDestinationFinale = assert.fail;
       controller.finishLevel = clean => { assert.equal(clean, true); fired.push('innsbruck'); };
+      controller.enterAutobahn = () => {};
+      controller.handleCitySegmentComplete('muenchen_start', true);
       scene.bridge.onAlpineEvent = event => {
         fired.push(event.kind);
         if (event.kind === 'pass') {
@@ -243,7 +262,7 @@ export default function register(test, game) {
         }
         scene.bridge.paused = false;
       };
-      scene.bridge.onDestinationArrival = () => controller.handleDestinationArrival();
+      scene.bridge.onDestinationArrival = assert.fail;
       scene.bridge.onDynamicEventTrigger = id => {
         fired.push(id);
         const event = getEventById(id);
@@ -252,6 +271,10 @@ export default function register(test, game) {
         scene.bridge.paused = false;
       };
       for (let tick = 0; tick < 350 && !scene.bridge.paused; tick++) scene.update(tick * 50, 50);
+      assert.equal(fired.at(-1), 'innsbruck_finish', fired.join(', '));
+      const arrivalMinutes = run.elapsedMinutes;
+      controller.handleCitySegmentComplete('innsbruck_finish', true);
+      assert.equal(run.elapsedMinutes, arrivalMinutes + WINTER_CITY_MINUTES.innsbruck_finish);
       assert.equal(fired.at(-1), 'innsbruck', fired.join(', '));
       assert.ok(!fired.includes('aachen_finish') && !fired.includes('leer'));
       assert.equal(run.tollsEur, forecast.tollsEur);

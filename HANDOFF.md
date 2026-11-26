@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Runs A–C und Level 3 Runs A–B | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · bis Level 3 Run A im Fork (`7cfa750`), Run B lokal (SHA: (folgt)), kein PR | 🟡 Level 3 Run B umgesetzt · Push, Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Runs A–C und Level 3 Runs A, B und D | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand mit Level 3 Run B (`39103b6`), Run D lokal (SHA: (folgt)), kein PR | 🟡 Level 3 Run D umgesetzt · Push, Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -31,9 +31,16 @@
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
 
+### 2026-11-26 – Michi / Codex (GPT-6) – Level 3 Run D – Städte
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA: (folgt). Push nein, Ziel Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Zwei nordorientierte Stadtfahrten mit Wahrzeichen, Schneematsch, Verkehr, Fußgängern, Radfahrern und Pylonen. München startet am Marienplatz mit A8 für A/C und A95 für B. Andere Auffahrten geben einen Wendehinweis. Innsbruck startet an der A12 im Osten (A/C) oder Westen (B) und führt zum Altstadt-Hotel. Die Parkszene übergibt an den vorhandenen Ergebnisablauf über den Einstiegspunkt für das Winterfinale.
+- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` auf Bundle, Release-Datei und geänderten Tests, `npm test` (98/98), Versionsprüfung gegen `279202c`, `git diff --check`. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Keine Anfrage an die Live-Wertung.
+- **Offen** · Spieltest auf Desktop und Handy in beiden Themes, da die Sandbox den Browserstart blockiert. Tunnel und überspringbare Szene nach dem Parken folgen in Run C. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+
 ### 2026-11-26 – Michi / Codex (GPT-6) – Level 3 Run B
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA: (folgt). Änderungen im Arbeitsbaum. Push nein, Ziel Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA: `39103b6`. Push: ja, laut lokalem Tracking-Stand des Forks `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
 - **Erledigt** · Zirler Berg und Achenpass mit Kehren, Schneerändern, Leitplanken, Glatteis und Gegenverkehr. Schneeketten in zwei Schritten oder ohne Ketten mit möglicher Polizeikontrolle. Rekuperation im Gefälle mit drei Stufen, Akku-Taper, Bremskühlpause und Live-Prognose über Ladestopps hinweg.
 - **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` auf Bundle und geänderten Tests, `npm test` (90/90), Versionsprüfung gegen `279202c`, `git diff --check`. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Keine Anfrage an die Live-Wertung.
 - **Offen** · Spieltest auf Desktop und Handy in beiden Themes, da die Sandbox den Browserstart blockiert. Tunnel und Innsbruck-Szene folgen in Level 3 Run C. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
@@ -67,11 +74,3 @@
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Worker und Shared-Skripte, `npm test` (40/40), Headless-Chrome-Check durch den Orchestrator bei 390/320 px hell/dunkel: Fork-Seite v0.5.0, Topbar-Knopf sichtbar, Dialog mit Tabs Level 1/Level 2/Gesamt (Live-GET), Ergebnis-Panel im Testmodus (lokaler Harness, Top 10 mit gemockten Daten, Namen escaped, eigener Eintrag hervorgehoben), kein horizontales Scrollen, keine JS-Fehler. Danach Rang-Spalte bei 320 px korrigiert (`#`, nowrap) und doppelten Testmodus-Hinweis entfernt. Alle POSTs abgefangen: 0 POSTs an die Live-API.
 - **Offen** · Handy-Test durch Michael. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues/PRs, Fork 0 offene PRs.
 - **Merge-Reihenfolge** · `codex/arcade-versioning` → `codex/arcade-leaderboard-groups` (Teil a, Worker deployt beim Merge automatisch – Joe vorher informieren) → `codex/eroadtrip-highscores` (Teil b).
-
-### 2026-11-25 – Michael / Website Wolfgang (Orchestrator, direkt, ohne Codex-Lauf)
-- **Branch / PR** · `codex/arcade-versioning`, SHA `22d69b2`, gepusht in den Fork, kein PR. Danach per Merge-Commit in `codex/arcade-leaderboard-groups` (`cbf620d`) und `codex/eroadtrip-highscores` (`a909a1d`) übernommen; dort `author`/`model` für Arcade v0.3.0 und E-Roadtrip v0.5.0 ergänzt (Michi · Sol 6.2). Tests: 25/25, 33/33, 41/41.
-- **Erledigt** · Jeder Release-Eintrag hat `author` und optional `model` („Michi · Sol 6.2“, „Michi · Grok 4.7“, „Joe“), angezeigt auf `changelogs.html` und im Update-Dialog. Werkzeugnamen werden nie angezeigt (Regel 10 und Test). Die Arcade zeigt ausdrücklich nie ein Banner. Link „📝 Changelogs“ unten im Burger-Menü neben Impressum und Datenschutz; Changelogs-Seite hat den Link auch im eigenen Footer. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Name (Spiel)** · `codex/eroadtrip-highscores`: Seitentitel, Meta-Beschreibung, Topbar „e-Roadtrip: Pixel Europe“, Stadtfahrt-Hinweis im HUD und Unfall-Dialog ohne „GTA“; Stichpunkt in e-Roadtrip v0.5.0.
-- **Name** · Offizieller Name „e-Roadtrip: Pixel Europe“, Kartentag „Strategie - Action“, kein „GTA“ in nutzersichtbaren Texten (Regel 10, Test). Hub-Karte, Menü und Release-Texte hier; `arcade.js`/Worker-Namen in `codex/arcade-leaderboard-groups`, Spieltexte in `codex/eroadtrip-highscores` (in Arcade v0.2.0 bzw. e-Roadtrip v0.5.0 enthalten, keine neue Version).
-- **Joe-Einträge** · Laut Michi (25.11.) hat Joe bisher immer Hydrogen genutzt. Alle Joe-Einträge (auch `quiz_golf`) zeigen daher „Joe · Hydrogen“.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (25/25 auf `codex/arcade-versioning`), `node --check` auf `shared/*.js`; Headless-Chrome-Test von Changelog-Seite, Dialog und Burger-Menü. Issue-/PR-Check: Upstream und Fork ohne offene Issues/PRs.

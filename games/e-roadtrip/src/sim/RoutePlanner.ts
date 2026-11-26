@@ -23,13 +23,16 @@ import {
 import { alpineLeg, CHAIN_FITTING_MINUTES } from './AlpineDriving';
 import { alpineForecastBoundaries, alpineRoadEnergy } from './AlpineDescent';
 import { AUSTRIAN_VIGNETTE, HOTEL_AC } from '../data/events';
+import { WINTER_CITY_MINUTES } from './WinterCity';
 import {
   QUEUE_MINUTES_PER_CAR, TYPICAL_QUEUE_CARS, WINTER_LEVEL_ID, WINTER_ROAD_EVENTS, winterRoadEnergyKwh, winterStartEffects
 } from './WinterDriving';
 
 export const MESSE_VISIT_MINUTES = 240;
 export const MESSE_CHARGE_MINUTES = 210;
-export const CITY_TRANSITION_MINUTES: Partial<Record<CityDrivePreset, number>> = { aachen_start: 7, koeln_ring: 6 };
+export const CITY_TRANSITION_MINUTES: Partial<Record<CityDrivePreset, number>> = {
+  aachen_start: 7, koeln_ring: 6, ...WINTER_CITY_MINUTES
+};
 export const NO_REACHABLE_CHARGER = 'Kein zusätzlicher Ladepunkt auf der Route mit dem aktuellen Akku erreichbar.';
 export const SKIP_PROMPT_KM = 15;
 export const SKIP_RESERVE_SOC_PCT = 10;

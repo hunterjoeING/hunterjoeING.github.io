@@ -1,6 +1,8 @@
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
 import type { LevelConfig, LevelRouteLegSpec, RunState } from '../types';
+import { INNSBRUCK_HOTEL_LABEL } from '../data/cityLayouts/innsbruck';
+import { winterCityRoute } from './WinterCity';
 import {
   CITY_TRANSITION_MINUTES, congestedCruiseKmh, defaultLegSpeedKmh, getActiveRouteLegs,
   isPendingStop, plannedRoadStopsOnLeg, snapSpeedKmh
@@ -23,6 +25,7 @@ interface RemainingRoute {
 
 function stageDestination(run: RunState, leg: LevelRouteLegSpec, index: number, city: string): string | undefined {
   if (leg.citySegmentAtEnd === 'hannover_messe') return 'Hannover Messe';
+  if (leg.citySegmentAtEnd === 'innsbruck_finish') return `Innsbruck · ${INNSBRUCK_HOTEL_LABEL}`;
   if (leg.overnightAtEnd && !run.triggeredEventIds.includes(`evt_hotel_overnight@${index}`)) return `Übernachtung · ${city}`;
   if (leg.destinationAtEnd) return city;
   if (leg.citySegmentAtEnd === 'ferry_denmark') return `Fährterminal · ${city}`;
@@ -51,7 +54,9 @@ export function buildRemainingRoute(level: LevelConfig, run: RunState): Remainin
       (index === legs.length - 1 ? to : undefined);
 
     if (remainingKm > 0 || destination) {
-      route.segments.push({ highwayName: edge.highwayName, from, to: charger?.station.name ?? to, remainingKm, current });
+      const endpoint = leg.citySegmentAtEnd === 'innsbruck_finish'
+        ? winterCityRoute(run.plan.selectedRouteId).innsbruckApproach.label : to;
+      route.segments.push({ highwayName: edge.highwayName, from, to: charger?.station.name ?? endpoint, remainingKm, current });
     }
     route.remainingKm += remainingKm;
 
