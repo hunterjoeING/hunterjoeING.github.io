@@ -23,11 +23,15 @@ npm run build       # node esbuild.mjs
 node --check dist/e-roadtrip.js
 npm test
 ```
-`esbuild.mjs` bundles `src/main.ts` as an IIFE named `ERoadtripApp` (`--bundle --format=iife --global-name=ERoadtripApp --outfile=dist/e-roadtrip.js --sourcemap=inline`). A `phaser-global` plugin resolves `import … from 'phaser'` to `window.Phaser`, loaded by `index.html` from `dist/phaser.min.js`. The inline sourcemap (`sourcemap: 'inline'`) accounts for most of the roughly 2.1 MB game bundle. Phaser is served separately.
+`esbuild.mjs` bundles `src/main.ts` as an IIFE named `ERoadtripApp` (`--bundle --format=iife --global-name=ERoadtripApp --outfile=dist/e-roadtrip.js --sourcemap=inline`). A `phaser-global` plugin resolves `import … from 'phaser'` to `window.Phaser`, loaded by `index.html` from `dist/phaser.min.js`. The inline sourcemap (`sourcemap: 'inline'`) accounts for most of the roughly 3.1 MB game bundle. Phaser is served separately.
 
 GitHub Pages serves `dist/e-roadtrip.js` directly. Rebuild and commit it with changes to `src/`. Resolve bundle conflicts by merging the source and running `npm run build`. The root `.gitattributes` marks the bundle `-diff linguist-generated merge=binary` so Git retains the current side in a conflict without inserting markers.
 
 A push to `main` that changes `games/e-roadtrip/src/**`, `package.json`, `package-lock.json`, `tsconfig.json`, or `esbuild.mjs` runs `npm ci`, typecheck, tests, and build. CI commits the generated bundle back to `main` only if its bytes change. The path filter excludes `dist/` and the commit uses the default `GITHUB_TOKEN`. [CI rebuild workflow](../../.github/workflows/rebuild-e-roadtrip.yml)
+
+### Regenerate the Europe map
+
+With Node.js 22.18+ and the Natural Earth GeoJSON files available locally, run `npm run build:geo -- /home/box/projects/geodata` from `games/e-roadtrip/`. The argument takes precedence over `NATURAL_EARTH_DIR` and the default shown here. The generator reads the 10m land, minor-island and populated-place layers and the 50m admin-0, lake and river layers. It writes `src/data/europeGeoData.generated.ts` with packed delta-coded paths. Commit that output with geography changes, then rebuild the game bundle. The normal build and CI use the generated file directly. The Natural Earth snapshot is public domain. The supplied files do not identify a version or commit. [Natural Earth](https://www.naturalearthdata.com/) · [GeoJSON source](https://github.com/nvkelso/natural-earth-vector/tree/master/geojson)
 
 ---
 
@@ -37,10 +41,14 @@ A push to `main` that changes `games/e-roadtrip/src/**`, `package.json`, `packag
 games/e-roadtrip/
 ├── index.html                  # Host page, topbar version and leaderboard buttons, Phaser stage, planner, HUD & modals
 ├── styles.css                  # Light/Dark theme styles, responsive workspace, HUD, modals, touch controls
-├── package.json                # Game version and typecheck, build, and test scripts
+├── package.json                # Game version and typecheck, bundle, geography and test commands
 ├── package-lock.json           # Locked npm dependency tree
 ├── esbuild.mjs                 # IIFE build with host-supplied Phaser and version from package.json
 ├── tsconfig.json               # TypeScript strict config
+├── scripts/                   # Offline Natural Earth processing
+│   ├── build-europe-geo.mjs    # Fits and crops the projection and generates the map layer data
+│   ├── europe-geo-geometry.mjs # Polygon and line clipping, simplification and geometry predicates
+│   └── europe-geo-places.mjs   # German names, country labels and city selection
 ├── dist/
 │   ├── phaser.min.js           # Pre-bundled Phaser 3 runtime
 │   └── e-roadtrip.js           # Compiled IIFE bundle of src/main.ts
@@ -61,6 +69,7 @@ games/e-roadtrip/
 │   ├── montpellier.test.mjs    # City guidance and parking, evening timetable, weather overrides, cutscenes, and score bounds
 │   ├── winter-tunnel.test.mjs  # Section-control math, highway boundaries and lighting, fines, and closure choices
 │   ├── alpine.test.mjs         # Pass driving, chains, rail damage, descent boundaries, and regen forecasts
+│   ├── europe-map.test.mjs     # Coast and city geography, road placement, Scotland loop, label collisions, texture caching, and route invariants
 │   ├── releases.test.mjs       # Public catalog, release order, spoiler checks, and asset versions
 │   ├── worker-validation.test.mjs # Forecast and score bounds, payload plausibility, and rejected POST requests
 │   ├── arcade-scores.test.mjs  # Score callbacks, dry-run behavior, and name updates
@@ -71,8 +80,17 @@ games/e-roadtrip/
     ├── data/                   # Static game data (no simulation logic)
     │   ├── vehicles.ts         # 9 EVs (MG4, Model S 2015, ID.3, Model 3/Y, XPeng G6, EV6, ID.7, Taycan)
     │   ├── subscriptions.ts    # 10 tariff entries plus fixed provider roaming rates (see §9 for the inventory and exceptions)
-    │   ├── europeGeography.ts  # Coastlines, country borders & geographic polygons for EuropeMapScene
-    │   ├── europeMap.ts        # CityNode[], HighwayEdge[], ChargerStation[] graph (normalized 1800×1420 coords)
+    │   ├── europeGeoData.generated.ts # Map bounds and fit, packed Natural Earth layers and reference places
+    │   ├── europeGeoEncoding.ts # Packs and decodes coordinate deltas
+    │   ├── europeProjection.ts # Shared Lambert azimuthal equal-area projection
+    │   ├── europeGeography.ts  # Converts latitude and longitude with the generated map fit
+    │   ├── europeCityCoordinates.ts # City centres, junctions, passes and terminal locations
+    │   ├── europeRoadCoordinates.ts # Projected corridors' geographic bends and crossing anchors
+    │   ├── europeMap.ts        # Graph data plus derived map coordinates and charger pins
+    │   ├── europeMapPath.ts    # Display polyline length, direction and interpolation
+    │   ├── europeTerrain.ts    # Geographic ridge and forest axes for pixel-art relief
+    │   ├── routes/
+    │   │   └── northCoast500.ts # Ordered Scottish scenic loop, road bends and label stops
     │   ├── levels.ts           # 7 campaign levels (1–3 playable, 4–7 previews)
     │   ├── cityLayouts/        # North-up city layout data
     │   │   ├── types.ts        # Layout schema, roads, landmarks, signs, and traffic data
@@ -112,9 +130,11 @@ games/e-roadtrip/
     │   ├── BootScene.ts        # Procedural texture initialization via PixelArtGenerator -> starts EuropeMapScene
     │   ├── PixelArtGenerator.ts# Runtime canvas/pixel-art sprite, landmark & additive light/rain texture generation
     │   ├── ChargerBadges.ts    # Bitmap provider initials on Autohof charging posts
-    │   ├── EuropePixelMap.ts   # Baked 900×710 pixel-art Europe canvas (coastlines, relief, forests, lakes, dark/light)
-    │   ├── MapLayout.ts        # Map projection, zoom/bounds & route geometry helpers
-    │   ├── EuropeMapScene.ts   # Planning map: pan/zoom, label anchors, outbound/return icons, provider-chip tiles, hover card, SoC band on the active leg
+    │   ├── EuropePixelMap.ts   # Cached nearest-neighbour basemap canvas per theme
+    │   ├── EuropeMapLabelLayout.ts # Pure viewport projection, camera fits and priority collision pass
+    │   ├── EuropeMapLabels.ts  # Graph, reference, scenic and country labels and motorway tags
+    │   ├── MapLayout.ts        # Itinerary polyline slices, SoC bands and charger card placement
+    │   ├── EuropeMapScene.ts   # Planning, live map and Europe overview, plus route and charger overlays
     │   ├── AutobahnScene.ts    # Curved FSD highway: weather, lane traffic, work zones, tunnel, and events
     │   ├── AutobahnTraffic.ts  # Lane roster, bumper gap, follow speed, overtakes
     │   ├── CityDriveScene.ts   # Top-down city, Autohof and pass driving, with shared controls and collisions
@@ -169,7 +189,9 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
 ### 3.2 Gameplay Loop & Scene Transitions
 
 1. **Boot** · `BootScene` generates pixel-art textures via `PixelArtGenerator`, starts `EuropeMapScene`, and calls `onBootReady()` to render the planner.
-2. **Planning** · `EuropePixelMap.ts` bakes a 900×710 texture per theme, scaled 2× with nearest-neighbour filtering. It includes coastlines, relief, forests, waterways, borders, and urban footprints. The map observes `<html data-theme>` to switch between `europe_map_pixel_dark` and `europe_map_pixel_light` while preserving alignment. Köln’s label sits to the right of its marker to leave space for Aachen’s label below its marker. City coordinates still anchor the routes.
+2. **Planning** · Planning, the live map and “Europa” share `EuropeMapScene` and the same themed basemap. `EuropePixelMap.ts` bakes the sea, land, terrain, waterways, borders and urban pixels once per theme. The scene switches cached textures when `<html data-theme>` changes. Route fit uses all waypoints on the selected itinerary. “Europa” fits the full projected bounds, which also set the pan limits and texture dimensions (see §9).
+   - `EuropeMapLabelLayout` uses measured screen-space boxes and tries alternate anchors before hiding a label. Level and graph cities come first, then the scenic labels, route badges, capitals and other reference places. Motorway and country labels use remaining space. Reference cities use paired hollow markers that leave with their labels. Zoom, pan and resize rerun placement. Köln’s anchors stay to the right of its marker.
+   - The North Coast 500 appears as a dashed, theme-aware scenic line. Inverness uses its existing graph marker. Applecross, Ullapool, Durness and John o’ Groats use scenic markers. Their labels become eligible when zoomed in (see §9).
    - Level start leaves `subscriptionIds` and `plannedStops` empty. Selecting a route clears planned stops. The ad-hoc checkbox stays checked and disabled. `TripPlan.selectedRouteId` and `returnRouteId` select the outbound and return corridors independently when a level has a return. `getActiveRouteLegs()` composes the stages for speed, charging, and total-trip forecasts.
    - The default speed follows the edge sign and applicable rain limit, with 130 km/h on unrestricted stretches. Level 3 uses the suggested cruise on each route leg (see §9). The planner and HUD offer speeds in 5 km/h steps up to the vehicle’s top selectable speed (200 for Model 3, 185 for EV6). The forecast uses `congestedCruiseKmh` and `baseTrafficRisk`. The forecast includes fixed allowances for the city transitions listed in §9. It accounts for the Messe visit as dwell time.
    - Level 1 has the six default provider chips (`tesla`, `enbw`, `ewego`, `electra`, `ionity`, `ac_village`). Level 2 shows `tesla`, `electra`, `ionity`, `atlante`, `vianeo`, and `ac_dorfladen` when it occurs on a level route. These nine networks cover all stations in `europeMap.ts`. The morning rest stop (`overnightAtEnd`) appears on Level 2’s route tab.
@@ -262,7 +284,9 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
 
 ## 5. Content Inventory & Current Status
 
-- **Map graph** (`src/data/europeMap.ts`) · `CityNode[]`, `HighwayEdge[]`, and `ChargerStation[]` in normalized 1800×1420 coordinates. Edges carry distances, speed signs (with optional rain limits), elevation, tolls, vignette data, weather, and waypoints.
+- **Map graph** (`src/data/europeMap.ts`) · City markers and road vertices use one projection. Each edge begins and ends at its graph markers and follows geographic road and crossing anchors. Charger pins and the live car use fractional edge progress along the projected path. The desktop HUD stage sketch uses the same waypoints, including reverse traversal. Distances, signs, elevation, time, tolls, energy, events and scoring read the explicit simulation fields. Projected positions and path lengths feed only the map visuals.
+- **Reference geography** · The map reaches from Iceland and Iberia to the Urals and the full Black Sea, with the North African shore and Italy, Greece and their islands. River and lake outlines come from Natural Earth, whose shared admin-0 arcs supply the inland borders. The place list selects up to four cities per country, with capitals first and other cities ranked by population. Graph duplicates are skipped. Ridge, peak and woodland art uses geographic axes for the Highlands, Pyrenees, Alps, Scandinavian mountains and other ranges.
+- **Scenic routes** · `northCoast500.ts` supplies the geographic stops and road bends for an Inverness loop. A handful of coastal display anchors sit on the adjacent road where the supplied coordinates fall outside the simplified land. The scenic line lives entirely in the display overlay.
 - **Vehicles** (`src/data/vehicles.ts`) · Nine EVs, with battery and charger values in §9.
 - **Level 1** (`level_1_aachen_hannover`, playable) · Aachen ↔ Hannover Messe. Routes are “Route A · Ruhr-Klassik (A4 → A1 → A2)”, “Route B · Nord-Flachland (A44 → A43 → A30 → A2)”, and “Route C · Sauerland & Kasseler Berge (A4 → A45 → A7)”.
 - **Level 2** (`level_2_family_summer`, playable) · Four clear-weather stages from Aachen to Montpellier. The family leaves Aachen at 23:35, drives through the night, takes an eight-hour rest in the morning after stage three and continues in the afternoon toward an evening arrival at Palavas (nominal clocks in §9). Routes are “Route A · Luxemburg & Lyon (A31 → A6 → A7/A9)”, “Route Mitte · Reims & Nevers (A4 → A77 → A71)”, and “Route B · Paris & Clermont-Ferrand (A1 → A71 → A75)”. The last two share the rest stop in Clermont-Ferrand. The rest choices are the hotel with AC, the budget hotel, and sleeping in the car (10% robbery chance). The planner shows the departure clock and an arrival estimate for a reachable plan. The nominal schedule is in §9. Level select displays Level 2 from the start and enables departure after Level 1.
@@ -295,7 +319,7 @@ Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps.
 
 - **Pre-bundled IIFE in `dist/` (`esbuild` + `phaser.min.js`):** The host repository is a pure static GitHub Pages site without a server-side build pipeline. Pre-bundling `src/main.ts` as an IIFE keeps `games/e-roadtrip/index.html` zero-config in production while still allowing strict TypeScript development.
 - **`ERoadtripBridge` decoupling (`src/phaser/GameBridge.ts`):** Phaser scenes (`EuropeMapScene`, `AutobahnScene`, `CityDriveScene`) use `ERoadtripBridge` callbacks to communicate with the controller. This keeps simulation/UI state in `ERoadtripController` + `PlanningUI` / `DrivingHUD` / `EventModal` and makes both sides independently testable and replaceable.
-- **Procedural pixel art (`PixelArtGenerator.ts`) & inline geography (`europeGeography.ts`):** Sprites, vehicles, and landmarks are generated at boot on HTML5 canvases. The map also uses inline geographic data.
+- **Procedural pixel art and geographic outlines.** `PixelArtGenerator.ts` builds sprites, vehicles and landmarks at boot. The Natural Earth build fits a similarity transform by least squares to nine original corridor markers from Aachen to Montpellier, the Alps, and Hirtshals. All map layers use the same projection, scale and rotation. A translated, rectangular crop covers the continent.
 - **Framework-agnostic simulation.** `EnergyModel`, `RoutePlanner`, and `ScoringEngine` share calculation code across planning and driving without a Phaser or DOM dependency. `SaveState` handles browser storage.
 - **Staged campaign:** Preview levels already define route options, passenger profiles, and scoring weights so later iterations can add balancing, city presets, and events without redesigning `types.ts`.
 
@@ -306,7 +330,7 @@ Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps.
 - **City time.** Review the Aachen departure allowance and the Montpellier approaches after playing both corridors. The Messe approaches measure about 1,100 px and keep their existing visit-only schedule. The Köln map remains for Level 5. The city allowances in §9 feed both the planner and runtime.
 - **Ferry preview.** Level 7's deadline is configuration only. The relevant preview routes reference the harbour preset.
 - **Legacy provider paths.** Fastned and TotalEnergies have roaming entries, but zero stations in `europeMap.ts`. Their network types, filter/name/colour tables, and sprite generation remain in `types.ts`, `PlanningUI.ts`, `EuropeMapScene.ts`, and `PixelArtGenerator.ts`. `main.ts` also retains their default filter keys.
-- **Verification.** CI runs `npm ci`, typecheck, `npm test`, and build (see §1). Local checks also include `node --check dist/e-roadtrip.js`. Node regressions use Phaser and DOM stubs. The manual checklist in §10 covers browser rendering and touch.
+- **Verification.** CI runs `npm ci`, typecheck, `npm test`, and build (see §1). Local checks also include `node --check dist/e-roadtrip.js`. Node regressions use Phaser and DOM stubs. `europe-map.test.mjs` checks land and coast distances, straits and Scottish firths, the scenic loop, charger and waypoint alignment, collision-free labels at 390 px, texture caching for both themes and the nine pre-change Level 1–3 forecasts. The manual checklist in §10 covers browser rendering and touch.
 
 ---
 
@@ -321,6 +345,9 @@ All prices and timing values below are in-game settings.
 | `src/sim/CoastalLight.ts` · `MONTPELLIER_LIGHTING`, `MONTPELLIER_PREVIEW_HOUR` and `src/phaser/CoastalEffects.ts` | Montpellier city and beach lighting | Dry, clear and golden at every clock and in both themes. Amber ambient tint in the city (13%), east-northeast shadows from west-southwest sun, and a smaller animated sea-glitter pool on mobile. Both arrival previews start at 18:00 with clear weather. |
 | `src/phaser/CityDriveScene.ts` · `updateLightingVisuals()` | Level 2 Aachen departure visibility | Clear-weather night overlay at 44% opacity. Motorway signs, nav arrow and minimap render above the overlay. |
 | `src/main.ts` · `refreshStageSize()` | Re-read the Phaser parent size before every scale refresh | Stops the canvas staying on the previous height after a scene change such as highway to city, which left dark bars on phones (e.g. 338 instead of 489 px at 390 px width). |
+| `src/data/europeGeoData.generated.ts` · `MAP_BOUNDS`, `src/data/europeProjection.ts` and `src/phaser/EuropePixelMap.ts` · `PIXEL_MAP_SCALE` | Europe projection, world bounds and texture size | Lambert azimuthal equal-area at 52°N, 12°E. The fit is about 4,109 px per unit-sphere radius and 1.9° clockwise. The 3474 × 2946 px world uses one 1737 × 1473 texture per theme, scaled 2× with nearest-neighbour filtering. |
+| `scripts/build-europe-geo.mjs` · `coastTolerance`, `buildPolygons()`, `buildLines()` | Douglas–Peucker tolerance and map detail in world pixels | Coast 0.55 in the Scotland region, 1.15 in western and central Europe, 1.65 elsewhere, and 0.12 close to protected stops. Vertices are integer pixels with tenths near those stops. Land rings smaller than 2 px² and lakes smaller than 7 px² are dropped. Lake, river and border tolerances are 1.35, 1.5 and 1.15 px. |
+| `src/phaser/EuropeMapLabelLayout.ts` · camera fits, `src/phaser/EuropeMapLabels.ts` · `SCENIC_LABEL_ZOOM` | Europe overview and route camera | The full-map fit sets the minimum zoom. Route fit caps at 2.2× and manual zoom at 4.8×. Scenic labels become eligible at 1.15×. |
 | `src/sim/RoutePlanner.ts` · `MESSE_VISIT_MINUTES`, `MESSE_CHARGE_MINUTES` | Messe dwell time and AC window within the visit | 240 min, 210 min |
 | `src/sim/RoutePlanner.ts` · `CITY_TRANSITION_MINUTES` | Fixed city-drive allowance at the first stage’s start and applicable stage ends | `aachen_start: 9`, `koeln_ring: 6` (reserved for Level 5), `montpellier_finish: 7`, `muenchen_start: 5`, `innsbruck_finish: 4` (minutes). Montpellier’s 7 min cover the compressed exit-to-coast drive and reversing into the lot. Winter values come from `WINTER_CITY_MINUTES` in `src/sim/WinterCity.ts`. Other presets default to zero. |
 | `src/data/cityLayouts/` · `AACHEN`, `HANNOVER`, `KOELN`, `HIRTSHALS`, `MONTPELLIER`, `MUENCHEN`, `INNSBRUCK` | Mapped city world bounds | Aachen 4320 × 3120 px, Hannover 2440 × 1740 px, Köln 2360 × 1760 px, Hirtshals 2140 × 1560 px, Montpellier 3040 × 2370 px, Munich 2400 × 1760 px, Innsbruck 2400 × 1580 px. |
@@ -436,7 +463,7 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-23** · `99baa6f`, `7b9c579` · Added local build dependencies and TypeScript settings, ignored `node_modules`, and documented branch collaboration.
 - **2026-11-23** · `cursor/eroadtrip-reproducible-build-459e`, upstream PR #2 (`f42c39f`) · Added CI bundle rebuilds and binary merge attributes. The esbuild script takes Phaser from `window.Phaser`.
 - **2026-11-23** · `cursor/eroadtrip-planning-range-gta2-e223`, fork PR #2 (`fe1eb5a`) · Cleared preselected tariffs/stops, improved crossings and the A4 on-ramp, and added the light-blue 20→0% band (later replaced by the four-colour range ring, Package F).
-- **2026-11-23** · `cursor/eroadtrip-visuals-gta2-map-210f`, fork PR #3 (`b7234f6`) · Added city lighting and wet-road effects and the baked, theme-aware pixel-art Europe map.
+- **2026-11-23** · `cursor/eroadtrip-visuals-gta2-map-210f`, fork PR #3 (`b7234f6`) · Added city lighting and wet-road effects and the baked, theme-aware pixel-art Europe map (später ersetzt: Natural Earth supplies the geographic layers).
 - **2026-11-23** · `cursor/eroadtrip-planning-overview-e994`, fork PR #4 (`3a96c14`) · Package C added separate outbound/return planning, fixed roaming rates, stage speed signs, and stage-filtered charger details.
 - **2026-11-23** · `cursor/eroadtrip-planning-overview-e994`, fork PR #4 (`3f80487`) · Corrected hidden and visible station modes and enabled chips to pin non-overlapping detail tiles when stations are shown.
 - **2026-11-23** · `cursor/eroadtrip-package-d-79e6`, fork PR #5 (`8216074`) · Package D added city and Autohof designs (später ersetzt: the city grids became mapped scenes), surface effects, curved highway traffic, work zones, and stable pointer-driven HUD controls.
@@ -471,3 +498,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `74c9836` · Scheduled Level 2 as a night drive with a morning rest stop and evening arrival. Montpellier’s city drive and both beach scenes now share fixed dry golden-hour lighting.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `f30acf3` · Documented city world bounds, the phone stage-size refresh, cone stress, the Level 2 night departure, and Arcade v0.3.1.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `1ae937d` · Refreshed city stress on impact, clarified airbag results, kept “H hupen” together, and separated the Aachen and Köln map labels.
+- **2026-11-26** · `codex/eroadtrip-v0.6` · SHA: (folgt) · Replaced the Europe basemap with projected Natural Earth data, projected the road and city overlays, and added priority labels and the North Coast 500.

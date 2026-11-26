@@ -11,6 +11,8 @@ const tempDir = await mkdtemp(join(tmpdir(), 'e-roadtrip-tests-'));
 const bundle = join(tempDir, 'game.mjs');
 const modules = [
   'main', 'data/events', 'data/europeMap', 'data/levels', 'data/vehicles',
+  'data/europeCityCoordinates', 'data/europeGeoData.generated', 'data/europeGeography', 'data/routes/northCoast500',
+  'phaser/EuropeMapLabelLayout', 'phaser/EuropeMapLabels', 'phaser/EuropePixelMap',
   'sim/RoutePlanner', 'sim/EnergyModel', 'sim/ScoringEngine', 'sim/Leaderboard',
   'sim/ChargingBay', 'sim/RouteNavigation', 'sim/PropertyDamage',
   'sim/AlpineDriving', 'sim/AlpineDescent', 'data/alpineEvents', 'phaser/AlpinePass',
@@ -68,7 +70,7 @@ try {
 
   const game = await import(pathToFileURL(bundle).href);
   for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'finale', 'winter', 'winter-city', 'aachen-city',
-    'regional-city', 'montpellier', 'winter-tunnel', 'alpine', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
+    'regional-city', 'montpellier', 'winter-tunnel', 'alpine', 'europe-map', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
     const { default: register } = await import(`./${name}.test.mjs`);
     register(test, game);
   }

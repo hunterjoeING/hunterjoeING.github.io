@@ -107,8 +107,8 @@ export interface CityNode {
   id: string;
   name: string;
   country: CountryCode;
-  mapX: number; // 0..1800 normalized Europe pixel map coords
-  mapY: number; // 0..1420
+  mapX: number; // projected Europe map pixels
+  mapY: number;
   landmark?: LandmarkKind;
   isMajor?: boolean;
   isJunction?: boolean;

@@ -2,6 +2,13 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Köln-Stadtfahrt in Level 1 entfernt
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `ce16a28`. SHA `e130a68`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · In Level 1 entfällt die Stadtfahrt `koeln_ring` auf allen Routen (Aachen–Köln bleibt Autobahn am Kreuz Köln-West). Die 6-Minuten-Stadtpauschale gilt in den spielbaren Levels nicht mehr. Layout, `koelnMotorway()` und die RegionalCity-Führung bleiben für den späteren Start in Level 5 (Köln → München). Changelog-Highlight ohne „Köln“. Selbst umgesetzt, kein neues Modell.
+- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check`, `npm test` (119/119), `git diff --check`. Level-1-Standardpläne: Route A 473 Fahr-/713 Gesamtminuten, Route B 427/667, Route C 463/703 (A und C jeweils 6 Minuten kürzer). Alle liegen im Worker-Fenster zu Ziel 797 Min. (0,5×–20×). Issue-/PR-Check: 0 offen.
+- **Offen** · Spieltest und Upstream-Merge. Konflikte mit `upstream/main` (`0e73752`) beim Merge auflösen.
+
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Stadtszenen Hannover/Köln/Hirtshals
 
 - **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `b21ad68`. SHA `4ea71cd`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
