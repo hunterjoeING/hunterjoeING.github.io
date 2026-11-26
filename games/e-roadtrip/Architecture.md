@@ -518,4 +518,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `1ae937d` · Refreshed city stress on impact, clarified airbag results, kept “H hupen” together, and separated the Aachen and Köln map labels.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `dab304f` · Replaced the Europe basemap with projected Natural Earth data, projected the road and city overlays, and added priority labels and the North Coast 500.
 
-- **2026-11-26** · `codex/eroadtrip-v0.6` · SHA: (folgt) · Extended Level 3 to Sirmione via three winter corridors, with Alpine lakes, seeded pass hazards, a castle arrival, and a synchronized score target.
+- **2026-11-26** · `codex/eroadtrip-v0.6` · `bd76e26` · Extended Level 3 to Sirmione via three winter corridors, with Alpine lakes, seeded pass hazards, a castle arrival, and a synchronized score target.
