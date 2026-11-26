@@ -2,6 +2,13 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Stadtszenen Aachen
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `44f3815`. SHA `b21ad68`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Gemeinsame Aachen-Karte für Abfahrt und Heimkehr. Level 1 fährt über den Europaplatz zur A544, Level 2 über den Kaiserplatz nach Aachen-Brand. Nachts führt das Navi über den Alleenring nach Hause ins Pontviertel. Abfahrtspauschale von sieben auf neun Minuten erhöht, da die empfohlenen Stadtstrecken länger sind.
+- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` für Bundle und geänderte Skripte, `npm test` (109/109), `git diff --check` und Versionsprüfung gegen `279202c`. Alle Standardprognosen der Level 1–3 liegen im Zeitfenster des Workers. Für alle sechs Routen der Level 1–2 sind erreichbare Ladepläne belegt, Level 3 läuft weiter durch den bestehenden Abschlusstest. Keine Live-Wertungsanfragen.. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Die Überarbeitung gehört zu v0.6.0. Die öffentlichen Stichpunkte werden im nächsten Stadtszenen-Lauf gesammelt aktualisiert.
+- **Offen** · Spieltest auf Desktop und bei 320/390 px in beiden Themes.
+
 ### 2026-11-26 – Michi / Codex (GPT-6) – Level 3 Run C – Tunnel und Ankunft
 
 - **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `82abb4f`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
