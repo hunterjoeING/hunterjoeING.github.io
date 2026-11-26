@@ -26,9 +26,11 @@ import {
   createDefaultPlan,
   estimateHotelCharge,
   estimateMesseCharge,
+  evaluateStopSkip,
   evaluateTripPlan,
   findReachableAdditionalStop,
   getActiveRouteLegs,
+  getApproachingRoadStop,
   getMesseChargerForVisit,
   isPendingStop,
   isStationOnLeg,
@@ -248,6 +250,7 @@ class ERoadtripController {
       onForceEarlierStop: () => {
         this.forceEarlierChargeStop();
       },
+      onStopSkipDecision: (key, action) => this.changeRoadStopSkip(key, action),
       onUnplannedToiletStop: () => {
         const run = this.bridge.runState;
         if (!run) return;
@@ -1164,6 +1167,33 @@ class ERoadtripController {
       });
     }
     this.drivingHUD.showReplanFeedback(feedback);
+    this.drivingHUD.update(this.level, run, this.bridge.timeScale);
+  }
+
+  private changeRoadStopSkip(key: string, action: 'skip' | 'undo'): void {
+    const run = this.bridge.runState;
+    if (!run || run.completed || this.bridge.paused) return;
+    const approach = getApproachingRoadStop(this.level, run);
+    if (!approach || approach.key !== key || approach.skipped !== (action === 'undo')) return;
+
+    const name = approach.station.name;
+    let title: string;
+    let detail: string;
+    if (action === 'undo') {
+      run.skippedStopKeys.splice(run.skippedStopKeys.indexOf(key), 1);
+      delete run.undoableRoadStopKey;
+      title = `Ladestopp wieder eingeplant: ${name}`;
+      detail = 'Stopp wieder auf der Route.';
+    } else {
+      const evaluation = evaluateStopSkip(this.level, run, approach.stop);
+      if (!evaluation.allowed) return;
+      run.skippedStopKeys.push(key);
+      run.undoableRoadStopKey = key;
+      title = `Ladestopp ausgelassen: ${name}`;
+      detail = `Prognose ≈ ${Math.round(evaluation.projectedSocPct)} % am nächsten Ziel`;
+    }
+    run.incidentLog.push({ timeStr: formatClock(this.level, run.elapsedMinutes), title, detail, impact: 'neutral' });
+    this.drivingHUD.showReplanFeedback(title);
     this.drivingHUD.update(this.level, run, this.bridge.timeScale);
   }
 

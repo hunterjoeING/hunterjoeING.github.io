@@ -5,7 +5,7 @@ import { createFixtures } from './fixtures.mjs';
 export default function register(test, game) {
   const {
     ERoadtripController, EventModal, PlanningUI, getVehicleById, createDefaultPlan,
-    getActiveRouteLegs, getEdgeById, stopKey
+    getActiveRouteLegs, getChargerById, getEdgeById, stopKey, getApproachingRoadStop, buildRemainingRoute
   } = game;
   const { route1: level, route2: l2, mkRun, mkScene } = createFixtures(game);
 
@@ -119,5 +119,89 @@ export default function register(test, game) {
     run.skippedStopKeys.push(stopKey(0, chargerId));
     scene.update(1000, 16);
     assert.deepEqual(fired, [chargerId]);
+  });
+
+  test('Skipping an earlier-charge insertion updates the Navi and the highway, and undo restores it before the exit', t => {
+    t.mock.method(Math, 'random', () => 0.5);
+    const station = getChargerById('chg_eschweiler_tesla');
+    const next = getChargerById('chg_aachener_land_ionity');
+    const exitKm = station.edgeProgress * getEdgeById(station.edgeId).distanceKm;
+    const key = stopKey(0, station.id);
+
+    for (const undoBeforeExit of [true, false]) {
+      const run = mkRun(level);
+      run.legProgressKm = exitKm - 0.02;
+      run.plan.plannedStops.push({ legIndex: 0, chargerId: next.id, targetSocPct: 80 });
+      const { scene, fired } = mkScene(level, run);
+      const feedback = [];
+      const controller = Object.assign(Object.create(ERoadtripController.prototype), {
+        level, bridge: scene.bridge,
+        drivingHUD: { showReplanFeedback: message => feedback.push(message), update() {} }
+      });
+      controller.forceEarlierChargeStop();
+      assert.equal(buildRemainingRoute(level, run).destination, station.name);
+      assert.deepEqual([run.replanCount, run.goodReplanCount], [1, 1]);
+
+      run.socPct = 10;
+      controller.changeRoadStopSkip(key, 'skip');
+      assert.deepEqual(run.skippedStopKeys, [], 'a stale enabled button cannot skip below reserve');
+      run.socPct = 80;
+      controller.changeRoadStopSkip(key, 'skip');
+      assert.deepEqual(run.skippedStopKeys, [key]);
+      assert.equal(getApproachingRoadStop(level, run).skipped, true);
+      assert.equal(buildRemainingRoute(level, run).destination, next.name);
+      assert.ok(buildRemainingRoute(level, run).segments.every(segment => segment.to !== station.name));
+      assert.match(feedback.at(-1), /^Ladestopp ausgelassen:/);
+      assert.match(run.incidentLog.at(-1).detail, /Prognose ≈ \d+ % am nächsten Ziel/);
+      assert.equal(run.incidentLog.at(-1).impact, 'neutral');
+
+      if (undoBeforeExit) {
+        run.legProgressKm = exitKm;
+        controller.changeRoadStopSkip(key, 'undo');
+        assert.deepEqual(run.skippedStopKeys, []);
+        assert.equal(buildRemainingRoute(level, run).destination, station.name);
+        assert.match(run.incidentLog.at(-1).title, /wieder eingeplant/);
+        scene.update(1000, 16);
+        assert.deepEqual(fired, [station.id]);
+      } else {
+        scene.update(1000, 16);
+        assert.ok(run.legProgressKm > exitKm);
+        assert.deepEqual(fired, []);
+        controller.changeRoadStopSkip(key, 'undo');
+        assert.deepEqual(run.skippedStopKeys, [key]);
+        assert.equal(getApproachingRoadStop(level, run).key, stopKey(0, next.id));
+        assert.match(run.incidentLog.at(-1).title, /^Ladestopp ausgelassen:/);
+      }
+      assert.deepEqual([run.replanCount, run.goodReplanCount], [1, 1]);
+    }
+  });
+
+  test('A defect skip resumes with a replacement charger and cannot be undone from the HUD', t => {
+    t.mock.method(Math, 'random', () => 0);
+    const run = mkRun(level);
+    const station = getChargerById('chg_eschweiler_tesla');
+    const key = stopKey(0, station.id);
+    run.plan.plannedStops.push({ legIndex: 0, chargerId: station.id, targetSocPct: 80 });
+    run.legProgressKm = station.edgeProgress * getEdgeById(station.edgeId).distanceKm;
+    run.activeCityChargerId = station.id;
+    let resumed = false;
+    const controller = Object.assign(Object.create(ERoadtripController.prototype), {
+      level, bridge: { runState: run, paused: false },
+      drivingHUD: { clearTouchStates() {} },
+      enterAutobahn() { this.bridge.paused = false; resumed = true; },
+      eventModal: {
+        showDynamicEvent(event, choose, close) {
+          choose(event.choices.find(choice => choice.insertNearestCharger));
+          close();
+        }
+      }
+    });
+    controller.handleCitySegmentComplete('charger_park', true);
+    assert.ok(resumed);
+    assert.deepEqual(run.skippedStopKeys, [key]);
+    assert.equal(getApproachingRoadStop(level, run).skipped, false);
+    assert.match(buildRemainingRoute(level, run).destination, /Aachener Land/);
+    controller.changeRoadStopSkip(key, 'undo');
+    assert.deepEqual(run.skippedStopKeys, [key]);
   });
 }

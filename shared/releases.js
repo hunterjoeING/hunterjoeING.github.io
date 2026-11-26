@@ -82,7 +82,7 @@ const arcadeReleases = {
       author: "Michi", model: "Sol 6.2",
       highlights: [
         "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen",
-        "Dialoge dunkeln die Fahrt ab. Das Navi zeigt alle verbleibenden Straßen bis zum nächsten Halt.",
+        "Dialoge dunkeln die Fahrt ab. Das Navi zeigt alle verbleibenden Straßen bis zum nächsten Halt und lässt unnötige Ladestopps auslassen.",
         "Level 2 endet nach der Hinfahrt mit einem neuen Finale in Montpellier",
         "Restakku am Ziel kann Punkte kosten, Essen in der Ladepause kostet 20 €",
         "Rempler an Gebäuden und Ladesäulen verursachen Wertverlust am Auto",

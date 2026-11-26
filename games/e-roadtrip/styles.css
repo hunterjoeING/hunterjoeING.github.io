@@ -733,6 +733,40 @@ html[data-theme="light"] .er-driving-hud {
 .dhud-replan-feedback:empty {
   position: absolute;
 }
+.dhud-stop-card:not([hidden]) {
+  align-self: flex-end;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 3px 6px;
+  width: min(100%, 390px);
+  padding: 4px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  box-shadow: var(--shadow-soft);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+}
+.dhud-stop-actions {
+  display: flex;
+  gap: 4px;
+  pointer-events: auto;
+}
+.dhud-stop-actions .dhud-btn {
+  min-height: 44px;
+}
+.dhud-stop-actions .dhud-keep-stop {
+  border-color: var(--accent-primary);
+}
+.dhud-stop-copy {
+  grid-column: 1 / -1;
+}
+.dhud-stop-warning {
+  color: var(--dhud-warning);
+}
 .er-trip-computer {
   align-self: flex-end;
   width: 270px;
@@ -2026,6 +2060,9 @@ body .abm-backdrop {
     background: var(--bg-elevated);
     pointer-events: auto;
   }
+  .er-workspace.driving-active .er-driving-hud:has(> .dhud-stop-card:not([hidden])) {
+    max-height: min(calc(50% + 80px), calc(100% - 120px));
+  }
   .er-driving-hud > * {
     flex-shrink: 0;
   }
@@ -2066,6 +2103,10 @@ body .abm-backdrop {
     order: -1;
     width: 100%;
     padding: 4px 8px;
+  }
+  .dhud-stop-card:not([hidden]) {
+    order: -2;
+    width: 100%;
   }
   .stage-map {
     display: none;

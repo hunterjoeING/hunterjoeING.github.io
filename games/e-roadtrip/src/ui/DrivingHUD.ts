@@ -4,6 +4,7 @@ import { getVehicleById } from '../data/vehicles';
 import { buildRemainingRoute } from '../sim/RouteNavigation';
 import { getActiveRouteLegs, highwaySection, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
 import { formatClock, formatDrivingCosts } from './DrivingStatus';
+import { StopSkipCard, stopSkipCardHtml } from './StopSkipCard';
 import { speedSignHtml } from './speedSign';
 import {
   TouchControlKey,
@@ -59,6 +60,7 @@ export interface DrivingHUDCallbacks {
   onSpeedChange: (speedKmh: number) => void;
   onTimeScaleChange: (scale: number) => void;
   onForceEarlierStop: () => void;
+  onStopSkipDecision: (key: string, action: 'skip' | 'undo') => void;
   onUnplannedToiletStop: () => void;
   onToggleMapPreview: () => void;
   onTailgate: () => void;
@@ -74,6 +76,7 @@ export class DrivingHUD {
   private readonly compactLayout = window.matchMedia('(max-width: 920px)');
   private replanFeedback = '';
   private replanFeedbackTimer?: number;
+  private stopSkipCard?: StopSkipCard;
 
   constructor(hudEl: HTMLElement, touchEl: HTMLElement, cb: DrivingHUDCallbacks) {
     this.hudEl = hudEl;
@@ -109,7 +112,7 @@ export class DrivingHUD {
   private onHudPointer(ev: Event): void {
     const target = ev.target as HTMLElement | null;
     const btn = target?.closest('button');
-    if (!btn || !this.hudEl.contains(btn)) return;
+    if (!btn || btn.hasAttribute('data-stop-action') || !this.hudEl.contains(btn)) return;
     ev.preventDefault();
     ev.stopPropagation();
     if (btn.hasAttribute('disabled')) return;
@@ -256,6 +259,7 @@ export class DrivingHUD {
         </div>
       </div>
       <div class="dhud-replan-feedback" data-field="replan-feedback" role="status"></div>
+      ${stopSkipCardHtml}
       <details class="er-trip-computer" ${this.compactLayout.matches ? '' : 'open'}>
         <summary>Navi · <span data-field="nav-summary"></span></summary>
         <ol class="trip-segments" data-field="nav-segments" aria-label="Verbleibende Etappen" tabindex="0"></ol>
@@ -275,7 +279,10 @@ export class DrivingHUD {
           🎮 Stadtfahrt: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
         </div>
       </div>`;
+      const stopCard = this.mode === 'autobahn' ? this.hudEl.querySelector<HTMLElement>('.dhud-stop-card') : null;
+      this.stopSkipCard = stopCard ? new StopSkipCard(stopCard, this.cb.onStopSkipDecision) : undefined;
     }
+    this.stopSkipCard?.update(level, run);
 
     const chosen = snapSpeedKmh(
       run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex)?.targetSpeedKmh ?? sliderMax,

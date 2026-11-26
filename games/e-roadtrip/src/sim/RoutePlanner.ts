@@ -26,6 +26,8 @@ export const MESSE_VISIT_MINUTES = 240;
 export const MESSE_CHARGE_MINUTES = 210;
 export const CITY_TRANSITION_MINUTES: Partial<Record<CityDrivePreset, number>> = { aachen_start: 7, koeln_ring: 6 };
 export const NO_REACHABLE_CHARGER = 'Kein zusätzlicher Ladepunkt auf der Route mit dem aktuellen Akku erreichbar.';
+export const SKIP_PROMPT_KM = 15;
+export const SKIP_RESERVE_SOC_PCT = 10;
 
 export function stopKey(legIndex: number, chargerId: string): string {
   return `${legIndex}:${chargerId}`;
@@ -80,6 +82,43 @@ export function plannedRoadStopsOnLeg(plan: TripPlan, leg: LevelRouteLegSpec, le
     if (!station || station.edgeId !== leg.edgeId || station.fairStay) return [];
     return [{ stop, station, progress: leg.reverse ? 1 - station.edgeProgress : station.edgeProgress }];
   }).sort((a, b) => a.progress - b.progress);
+}
+
+function roadStopsAhead(level: LevelConfig, run: RunState) {
+  const index = run.currentLegIndex;
+  const leg = getActiveRouteLegs(level, run.plan)[index];
+  if (!leg) return [];
+  const edge = getEdgeById(leg.edgeId);
+  return plannedRoadStopsOnLeg(run.plan, leg, index)
+    .map(item => ({
+      ...item,
+      key: stopKey(index, item.stop.chargerId),
+      distanceKm: item.progress * edge.distanceKm - run.legProgressKm
+    }))
+    .filter(item => item.distanceKm >= 0);
+}
+
+export function isSkippableRoadStop(level: LevelConfig, run: RunState, stop: PlannedStop): boolean {
+  return isPendingStop(run, stop) && roadStopsAhead(level, run)
+    .some(item => item.key === stopKey(stop.legIndex, stop.chargerId));
+}
+
+export function getApproachingRoadStop(level: LevelConfig, run: RunState) {
+  const nearby = roadStopsAhead(level, run).filter(item => item.distanceKm <= SKIP_PROMPT_KM);
+  const undo = nearby.find(item => item.key === run.undoableRoadStopKey && run.skippedStopKeys.includes(item.key));
+  if (undo) return { ...undo, skipped: true };
+  const next = nearby.find(item => isPendingStop(run, item.stop));
+  return next && { ...next, skipped: false };
+}
+
+export function evaluateStopSkip(level: LevelConfig, run: RunState, stop: PlannedStop) {
+  if (!isSkippableRoadStop(level, run, stop)) {
+    return { allowed: false, projectedSocPct: null, nextTargetName: '', reason: 'not-skippable' } as const;
+  }
+  const forecast = predictLiveTripSoc(level, run, { skipStopKey: stopKey(stop.legIndex, stop.chargerId) });
+  const projectedSocPct = forecast.exactArrivalNextSocPct;
+  const allowed = projectedSocPct >= SKIP_RESERVE_SOC_PCT;
+  return { allowed, projectedSocPct, nextTargetName: forecast.nextStopName, reason: allowed ? null : 'reserve' } as const;
 }
 
 export interface RouteSocSection {
@@ -728,7 +767,7 @@ export function predictLiveTripSoc(
           name: item.station.name,
           kind: 'charger',
           distKm: Math.max(1, Math.round(distAccum)),
-          socPct: Math.round(soc)
+          socPct: soc
         };
       }
 
@@ -749,7 +788,7 @@ export function predictLiveTripSoc(
         name: spec.destinationAtEnd ? `Ziel ${toCity.name}` : toCity.name,
         kind: spec.destinationAtEnd ? 'destination' : 'turnaround',
         distKm: Math.max(1, Math.round(distAccum)),
-        socPct: Math.round(soc)
+        socPct: soc
       };
     }
 
@@ -767,19 +806,21 @@ export function predictLiveTripSoc(
       name: `Ziel ${finalCity.name}`,
       kind: 'destination',
       distKm: Math.max(1, Math.round(distAccum)),
-      socPct: Math.round(soc)
+      socPct: soc
     };
   }
 
   const finalSoc = Math.round(soc);
+  const nextSoc = Math.round(nextTarget.socPct);
   return {
     nextStopName: nextTarget.name,
     nextStopKind: nextTarget.kind,
     distanceToNextKm: nextTarget.distKm,
-    predictedArrivalNextSocPct: nextTarget.socPct,
+    predictedArrivalNextSocPct: nextSoc,
+    exactArrivalNextSocPct: nextTarget.socPct,
     predictedFinalSocPct: finalSoc,
     predictedFinalSocWithoutMessePct: socWithoutMesseCharge === undefined ? undefined : Math.round(socWithoutMesseCharge),
-    isCriticalNext: nextTarget.socPct <= 5,
+    isCriticalNext: nextSoc <= 5,
     isCriticalFinal: finalSoc <= 5,
     consumptionKwh100: liveCons100
   };

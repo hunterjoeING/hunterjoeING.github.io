@@ -7,7 +7,8 @@ export default function register(test, game) {
     createDefaultPlan, getActiveRouteLegs, getMapChargerLegIndex, evaluateTripPlan,
     stopKey, isPendingStop, predictLiveTripSoc, plannedRoadStopsOnLeg, getMesseChargerForVisit,
     estimateMesseCharge, evaluateRun, findReachableAdditionalStop, getBestPriceForStation,
-    computeSubscriptionTripCost, buildRemainingRoute, levelHasReturnRoutes, LEVELS, finalSocPenalty
+    computeSubscriptionTripCost, buildRemainingRoute, levelHasReturnRoutes, LEVELS, finalSocPenalty,
+    evaluateStopSkip, getApproachingRoadStop, isSkippableRoadStop, SKIP_PROMPT_KM, SKIP_RESERVE_SOC_PCT
   } = game;
   const l1 = getLevelById('level_1_aachen_hannover');
   const l2 = getLevelById('level_2_family_summer');
@@ -46,6 +47,67 @@ export default function register(test, game) {
       stress: 100, peakStress: 100, energyUsedKwh: 200, collisionsCount: 10 };
     assert.equal(evaluateRun(l2, poorRun, false).totalScore, 0);
     assert.equal(evaluateRun(l2, poorRun, false).gameOver, false);
+  });
+
+  test('Road skips use the exact 10% arrival reserve at the next pending charger', () => {
+    const { mkRun, near } = createFixtures(game);
+    const run = mkRun(l1);
+    const first = getChargerById('chg_herford_tesla');
+    const second = getChargerById('chg_bad_oeynhausen_ewego');
+    run.currentLegIndex = 3;
+    run.legProgressKm = first.edgeProgress * getEdgeById(first.edgeId).distanceKm - 1;
+    const stop = { legIndex: 3, chargerId: first.id, targetSocPct: 80 };
+    run.plan.plannedStops = [stop, { legIndex: 3, chargerId: second.id, targetSocPct: 80 }];
+    const skipStopKey = stopKey(stop.legIndex, stop.chargerId);
+    const consumptionPct = -predictLiveTripSoc(l1, run, { skipStopKey, overrideSocPct: 0 }).exactArrivalNextSocPct;
+    assert.equal(SKIP_RESERVE_SOC_PCT, 10);
+
+    for (const [reserve, reason] of [[9.99, 'reserve'], [10, null]]) {
+      run.socPct = consumptionPct + reserve;
+      const result = evaluateStopSkip(l1, run, stop);
+      near(result.projectedSocPct, reserve);
+      assert.equal(result.allowed, reason === null);
+      assert.equal(result.reason, reason);
+      assert.equal(result.nextTargetName, second.name);
+      assert.equal(predictLiveTripSoc(l1, run, { skipStopKey }).predictedArrivalNextSocPct, 10);
+    }
+    run.currentSpeedKmh = 80;
+    assert.ok(evaluateStopSkip(l1, run, stop).projectedSocPct > SKIP_RESERVE_SOC_PCT);
+    assert.deepEqual(run.skippedStopKeys, []);
+  });
+
+  test('Approaches are limited to the next road exit within 15 km on the active leg', () => {
+    const { mkRun } = createFixtures(game);
+    const run = mkRun(l1);
+    run.currentLegIndex = 3;
+    const road = getChargerById('chg_herford_tesla');
+    const fair = getMesseChargerForVisit(getActiveRouteLegs(l1, run.plan)[3]);
+    const stop = { legIndex: 3, chargerId: road.id, targetSocPct: 80 };
+    const fairStop = { ...stop, chargerId: fair.id };
+    run.plan.plannedStops = [{ ...stop, legIndex: 4 }, fairStop, stop];
+    const exitKm = road.edgeProgress * getEdgeById(road.edgeId).distanceKm;
+    assert.equal(SKIP_PROMPT_KM, 15);
+    run.legProgressKm = exitKm - 15.01;
+    assert.equal(getApproachingRoadStop(l1, run), undefined);
+    run.legProgressKm = exitKm - 15;
+    assert.equal(getApproachingRoadStop(l1, run).stop, stop);
+    assert.equal(getApproachingRoadStop(l1, run).distanceKm, 15);
+    assert.equal(evaluateStopSkip(l1, run, stop).nextTargetName, 'Hannover Messe');
+    assert.equal(isSkippableRoadStop(l1, run, run.plan.plannedStops[0]), false);
+    run.legProgressKm = fair.edgeProgress * getEdgeById(fair.edgeId).distanceKm - 1;
+    assert.equal(evaluateStopSkip(l1, run, stop).reason, 'not-skippable');
+    assert.equal(evaluateStopSkip(l1, run, fairStop).reason, 'not-skippable');
+    assert.equal(getApproachingRoadStop(l1, run), undefined);
+
+    const hotelRun = mkRun(l2);
+    const legs = getActiveRouteLegs(l2, hotelRun.plan);
+    hotelRun.currentLegIndex = legs.findIndex(leg => leg.overnightAtEnd);
+    hotelRun.legProgressKm = getEdgeById(legs[hotelRun.currentLegIndex].edgeId).distanceKm - 1;
+    assert.match(buildRemainingRoute(l2, hotelRun).destination, /^Übernachtung · /);
+    assert.equal(getApproachingRoadStop(l2, hotelRun), undefined);
+    assert.equal(evaluateStopSkip(l2, hotelRun, {
+      legIndex: hotelRun.currentLegIndex, chargerId: 'evt_hotel_overnight', targetSocPct: 95
+    }).reason, 'not-skippable');
   });
 
   test('Navigation shows the remaining roads to the Messe and follows the return direction afterward', () => {

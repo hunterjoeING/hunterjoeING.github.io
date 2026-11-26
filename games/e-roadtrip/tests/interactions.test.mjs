@@ -6,6 +6,61 @@ export default function register(test, game) {
   const m = game;
   const { near, route1, route2, mkRun, carImage, mkScene, npc } = createFixtures(game);
 
+  test('The highway card updates its reserve, keeps the driving controls mounted, and uses click for its actions', () => {
+    const run = mkRun(route1);
+    const station = m.getChargerById('chg_eschweiler_tesla');
+    const later = m.getChargerById('chg_aachener_land_ionity');
+    const exitKm = station.edgeProgress * m.getEdgeById(station.edgeId).distanceKm;
+    const key = m.stopKey(0, station.id);
+    run.legProgressKm = exitKm - 2;
+    run.socPct = 10;
+    run.plan.plannedStops = [station, later].map(({ id: chargerId }) => ({ legIndex: 0, chargerId, targetSocPct: 80 }));
+    const root = new DomStub();
+    const card = root.querySelector('.dhud-stop-card');
+    const keep = card.querySelector('[data-stop-action="keep"]');
+    const skip = card.querySelector('[data-stop-action="skip"]');
+    const undo = card.querySelector('[data-stop-action="undo"]');
+    const title = card.querySelector('[data-field="skip-title"]');
+    const warning = card.querySelector('#dhud-skip-warning');
+    const calls = [];
+    const hud = new m.DrivingHUD(root, new DomStub(), {
+      onStopSkipDecision: (stop, action) => calls.push([stop, action])
+    });
+    hud.setMode('autobahn');
+    hud.update(route1, run, 1);
+    const shell = root.innerHTML;
+    assert.ok(!card.hidden);
+    assert.match(title.textContent, /^Ladestopp .* in 2 km$/);
+    assert.match(card.querySelector('[data-field="skip-forecast"]').textContent, /^Ohne Laden: Ankunft IONITY Aachener Land/);
+    assert.match(warning.textContent, /^Reicht nicht – nur noch ≈ /);
+    assert.ok(skip.disabled && !warning.hidden);
+    skip.click();
+    assert.deepEqual(calls, []);
+    assert.deepEqual(run.skippedStopKeys, [], 'driving toward the charger is the default');
+    run.socPct = 80;
+    hud.update(route1, run, 1);
+    assert.equal(root.innerHTML, shell);
+    assert.ok(!skip.disabled && warning.hidden);
+    skip.click();
+    assert.deepEqual(calls, [[key, 'skip']]);
+    run.skippedStopKeys.push(key);
+    run.undoableRoadStopKey = key;
+    hud.update(route1, run, 1);
+    assert.match(title.textContent, /^Ausgelassen/);
+    assert.ok(!undo.hidden && skip.hidden && keep.hidden);
+    undo.click();
+    assert.deepEqual(calls.at(-1), [key, 'undo']);
+
+    run.skippedStopKeys.length = 0;
+    delete run.undoableRoadStopKey;
+    hud.update(route1, run, 1);
+    keep.click();
+    hud.update(route1, run, 1);
+    assert.ok(card.hidden);
+    assert.equal(calls.length, 2);
+    assert.deepEqual(run.skippedStopKeys, []);
+  });
+
   test('A stopped rear-in pose needs no reverse history and allows a small overhang', () => {
     const bay = { bounds: { x: 0, y: 0, w: 46, h: 68 }, pillar: { x: 23, y: 4 } };
     const ready = (x, y, rotation, speed = 0) => m.isRearParked(bay, {
@@ -146,6 +201,26 @@ export default function register(test, game) {
     const b = stressAt(155);
     near(a[0], b[0]);
     near(a[1], b[1]);
+  });
+
+  test('Crossing into the 15 km approach refreshes the HUD before the regular tick', t => {
+    t.mock.method(Math, 'random', () => 0.5);
+    const run = mkRun(route1);
+    const station = m.getChargerById('chg_aachener_land_ionity');
+    const exitKm = station.edgeProgress * m.getEdgeById(station.edgeId).distanceKm;
+    run.plan.plannedStops.push({ chargerId: station.id, legIndex: 0, targetSocPct: 80 });
+    run.legProgressKm = exitKm - m.SKIP_PROMPT_KM - 0.02;
+    run.highwaySignLegIndex = 0;
+    run.highwaySignKmh = 0;
+    const { scene } = mkScene(route1, run);
+    const updates = [];
+    scene.bridge.onAutobahnHudTick = state => updates.push(m.getApproachingRoadStop(route1, state));
+    scene.update(16, 16);
+    assert.equal(updates.length, 1);
+    assert.equal(updates[0].station.id, station.id);
+    assert.ok(updates[0].distanceKm <= m.SKIP_PROMPT_KM);
+    assert.equal(scene.bridge.timeScale, 15);
+    assert.equal(scene.bridge.paused, false);
   });
 
   test('Hotel AC, overnight notes, and pause costs use the selected activity', t => {

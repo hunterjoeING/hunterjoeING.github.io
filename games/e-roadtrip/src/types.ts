@@ -349,6 +349,7 @@ export interface LiveSocPrediction {
   nextStopKind: 'charger' | 'turnaround' | 'destination';
   distanceToNextKm: number;
   predictedArrivalNextSocPct: number;
+  exactArrivalNextSocPct: number;
   predictedFinalSocPct: number;
   predictedFinalSocWithoutMessePct?: number;
   isCriticalNext: boolean;
@@ -396,6 +397,8 @@ export interface RunState {
   collisionsCount: number;
   completedStopKeys: string[];
   skippedStopKeys: string[];
+  /** Voluntary road skip that can be undone until its exit has been passed. */
+  undoableRoadStopKey?: string;
   triggeredEventIds: string[];
   wifeDialogueTriggered: boolean;
   incidentLog: IncidentLogEntry[];

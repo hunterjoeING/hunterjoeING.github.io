@@ -9,7 +9,8 @@ import {
   snapSpeedKmh,
   speedTrapChancePerSimMinute,
   isPendingStop,
-  plannedRoadStopsOnLeg
+  plannedRoadStopsOnLeg,
+  SKIP_PROMPT_KM
 } from '../sim/RoutePlanner';
 import { RunState, WeatherKind } from '../types';
 import {
@@ -768,6 +769,7 @@ export class AutobahnScene extends Phaser.Scene {
     const availableMinutes = simMinPerRealSec * dtSec;
     const remainingKm = Math.max(0, boundaryKm - run.legProgressKm);
     const deltaKm = Math.min(kmPerMinute * availableMinutes, remainingKm);
+    const beforeStopApproach = stopKm - run.legProgressKm > SKIP_PROMPT_KM;
     const simMinutes = remainingKm === 0 ? 0 : kmPerMinute > 0 ? deltaKm / kmPerMinute : availableMinutes;
     const elevGain = legSpec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = legSpec.reverse ? edge.elevationGainM : edge.elevationLossM;
@@ -977,7 +979,8 @@ export class AutobahnScene extends Phaser.Scene {
     }
 
     this.hudTickAccum += dtSec;
-    if (this.hudTickAccum >= 0.12) this.updateHud(run, tailgateLead);
+    const enteredStopApproach = beforeStopApproach && stopKm - run.legProgressKm <= SKIP_PROMPT_KM;
+    if (enteredStopApproach || this.hudTickAccum >= 0.12) this.updateHud(run, tailgateLead);
   }
 
   private updateHud(run: RunState, tailgateLead: HighwayCar | null): void {

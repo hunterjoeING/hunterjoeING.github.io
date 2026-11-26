@@ -9,7 +9,7 @@ export function createFixtures(m) {
     socPct: 80, elapsedMinutes: 0, stress: 20, peakStress: 20, bladderNeed: 70, hungerNeed: 90,
     distanceDrivenKm: 0, energyUsedKwh: 0, chargingCostEur: 0, subscriptionCostEur: 0,
     tollsEur: 0, paidTollLegIndices: [], incidentalCostEur: 0, propertyDamageEur: 0, lodgingCostEur: 0, pauseCostEur: 0,
-    collisionsCount: 0, goodReplanCount: 0, chargingEfficiencyBonus: 0,
+    collisionsCount: 0, replanCount: 0, goodReplanCount: 0, chargingEfficiencyBonus: 0,
     decisionScoreAccum: 0, triggeredEventIds: [], completedStopKeys: [], skippedStopKeys: [],
     incidentLog: [], activeWeather: 'clear', currentSpeedKmh: 130, isNight: false
   });
