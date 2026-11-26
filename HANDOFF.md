@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Nachtfahrt und Abendsonne in Montpellier | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Änderungen lokal · kein PR | 🟡 Umsetzung geprüft · Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Nachtfahrt und Abendsonne in Montpellier | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `74c9836` · kein PR | 🟡 Umsetzung geprüft · Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -31,7 +31,7 @@
 
 ### 2026-11-26 – Michi / Codex (GPT-6) – v0.6.0 · Nachtfahrt und Abendsonne in Montpellier
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `95ef368`. SHA: (folgt). Änderungen im Arbeitsbaum. Push: nein, vorgesehen für den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `95ef368`. SHA `74c9836`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
 - **Erledigt** · Level 2 startet nachts. Die Schlafpause liegt morgens nach Etappe 3, die weitere Fahrt am Nachmittag. Die Planung zeigt die Startzeit und bei erreichbarem Ladeplan die geschätzte Ankunft. Montpellier bleibt in der Stadtfahrt und beiden Strandszenen trocken und goldfarben. Beide Ankunftsvorschauen starten bei klarem Wetter. Die Lichter auf der Autobahn folgen weiter der Fahrzeit.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` auf Bundle und Tests, `npm test` (130/130), Versionsprüfung gegen `279202c`, `git diff --check`. Alle drei Standardprognosen liegen im Zeitfenster des unveränderten Workers. Acht erreichbare Ladepläne mit Abweichungen ergeben 17:11–20:30 Uhr. Vergleichsfahrten mit dem MG4 über Paris und hohen Ladezielen können später ankommen. Keine Anfrage an die Live-Wertung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 - **Offen** · In beiden Themes bei 390 px Aachen bei Nacht und beide Montpellier-Anfahrten samt Parken und Strandszenen spielen. Browserstart und lokaler HTTP-Server scheitern an der Sandbox. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
