@@ -22,13 +22,20 @@
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
 | 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
-| E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `c1d1f29` · kein PR | 🟡 Unveröffentlicht · Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` (`0ddbc5e`, Upstream-Merge `5e751d6`) · [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) (Merge `2aebc51`) | ✅ Gemerged, Worker deployt und live (e-Roadtrip v0.6.0, Arcade v0.4.1) |
 
-**Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-26 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live e-Roadtrip v0.6.0
+
+- **Branch / PR** · `upstream/main` (`0e73752`, Joes 3D-Explainer und Arcade v0.4.0) per Merge-Commit `5e751d6` in `codex/eroadtrip-v0.6` eingeholt, dann [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) aus dem Fork, gemergt von `mic4rd` (Merge `2aebc51`, 23:33 Uhr Berlin). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-26`).
+- **Konflikte** · `shared/releases.js`: Unser Arcade-Patch (vorher v0.3.1) ist jetzt v0.4.1 über Joes v0.4.0; Joes Einträge für Arcade, Windkraftanlage und Verbrennungsmotor bleiben unverändert. `index.html`: `arcade.js`/`releases.js` auf `?v=0.4.1`, `update-banner.js` auf Joes `?v=0.4.0`; `changelogs.html` und die e-Roadtrip-Seite ebenfalls auf `arcade.js?v=0.4.1`. `HANDOFF.md`: Joes Statuszeile und Session-Eintrag übernommen, ein doppelter Archiv-Eintrag entfernt.
+- **Geprüft** · Vor dem Merge `npm run typecheck`, `npm run build` (Bundle bytegleich, rev 16), `node --check dist/e-roadtrip.js`, `npm test` (167/167), `node scripts/check-release-bump.mjs upstream/main` (arcade, eroadtrip). Workflows auf `2aebc51` grün: `check-versioning` (PR #10), „Rebuild e-Roadtrip bundle“ (kein Bot-Commit), „Deploy Cloudflare Worker“, „pages build and deployment“. Worker: `/api/health` ok, DB verbunden; `GET /api/scores` liefert für `eroadtrip_l3` den neuen Titel „Level 3: Winter-Alpenüberquerung“. Die Levelziele L2 1882 und L3 564 stehen im deployten Stand von `cloudflare-worker/worker.js`; der Worker hat dafür keinen GET-Endpunkt. Live-Seite zeigt v0.6.0, den Hinweis „Neues Update v0.6“ auf der Hub-Karte und den Changelog „Winterfahrt an den Gardasee“ (Michi · Sol 6.2). Headless-Chrome-Stichprobe L1–L3 (Planung und Start), Aachen-Vorschau und 390 px ohne JS-Fehler, 0 POSTs (alle abgefangen).
+- **Offen** · Handy-Test durch Michi. Punkt 2 (`legacyMaxMinutes` in L2) bleibt offen. Issue-/PR-Check (26.11., gh): Upstream 0 offene Issues und PRs, Fork 0 offene PRs.
 
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high · Orchestrator – v0.6.0 · Standblinker und Fahrspur
 
