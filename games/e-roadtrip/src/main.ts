@@ -24,6 +24,7 @@ import { ALPINE_PASS_PRESET, chainCheckOccurs } from './sim/AlpineDriving';
 import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
+import { aachenCityDrive, isAachenCity } from './sim/AachenCity';
 import { isWinterCity, winterCityDrive, WINTER_CITY_MINUTES } from './sim/WinterCity';
 import {
   SECTION_CONTROL_EVENT_ID, TUNNEL_CLOSURE_EVENT_ID, TUNNEL_DETOUR_CHOICE_ID, WINTER_TUNNEL
@@ -531,17 +532,17 @@ class ERoadtripController {
     this.bridge.paused = false;
     this.drivingHUD.setMode('city');
     const titleMap = {
-      aachen_start: 'Aachen Innenstadt → A4 Auffahrt',
       charger_park: 'Ladepark → Freie Ladebucht',
       hannover_messe: 'Hannover Messe → E-Parkplatz',
-      aachen_finish: 'Aachen Ausfahrt → Ziel-Parkplatz',
       ferry_denmark: 'Hirtshals Fährhafen',
       koeln_ring: 'Köln-Ring → A1',
       alpine_pass: `${this.bridge.runState?.alpinePass?.name ?? 'Alpenpass'} → Passhöhe`
     };
     const run = this.bridge.runState;
     if (run) {
-      const title = isWinterCity(preset) ? winterCityDrive(preset, run.plan.selectedRouteId).title : titleMap[preset];
+      const routeId = preset === 'aachen_finish' ? run.plan.returnRouteId : run.plan.selectedRouteId;
+      const title = isAachenCity(preset) ? aachenCityDrive(preset, this.level.order, routeId).title
+        : isWinterCity(preset) ? winterCityDrive(preset, routeId).title : titleMap[preset];
       this.drivingHUD.update(this.level, run, this.bridge.timeScale, title);
     }
     this.game.scene.start('CityDriveScene', {
@@ -684,11 +685,12 @@ class ERoadtripController {
     }
 
     if (preset === 'aachen_start') {
+      const drive = aachenCityDrive(preset, this.level.order, run.plan.selectedRouteId);
       run.elapsedMinutes += CITY_TRANSITION_MINUTES.aachen_start ?? 0;
       run.incidentLog.push({
         timeStr: formatClock(this.level, run.elapsedMinutes),
-        title: 'Aachen Stadt-Ausfahrt → A4',
-        detail: cleanArrival ? 'Sauber auf die A4 aufgefahren!' : 'Mit Zwischenfall auf die A4.',
+        title: drive.title,
+        detail: cleanArrival ? drive.completionLabel : `${drive.motorway} nach einem Zwischenfall erreicht.`,
         impact: cleanArrival ? 'positive' : 'negative'
       });
       this.enterAutobahn();

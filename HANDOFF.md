@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Runs A–C und Level 3 Runs A–D | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand mit Level 3 Run D (`015af8d`) und Run C (`82abb4f`), kein PR | 🟡 Level 3 komplett im Fork · Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Runs A–C, Level 3 Runs A–D und Stadtszenen Aachen | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork bis `44f3815`, kein PR | 🟡 Aachen umgesetzt · Commit, Fork-Push, Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -30,6 +30,13 @@
 ## 2. Session-Log (Neueste Einträge oben)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
+
+### 2026-11-26 – Michi / Codex (Sol 6.2) – v0.6.0 · Stadtszenen Aachen
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `44f3815`. SHA: (folgt). Push: nein, vorgesehen für den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Gemeinsame Aachen-Karte für Abfahrt und Heimkehr. Level 1 fährt über den Europaplatz zur A544, Level 2 über den Kaiserplatz nach Aachen-Brand. Nachts führt das Navi über den Alleenring nach Hause ins Pontviertel. Abfahrtspauschale von sieben auf neun Minuten erhöht, da die empfohlenen Stadtstrecken länger sind.
+- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` für Bundle und geänderte Skripte, `npm test` (109/109), `git diff --check` und Versionsprüfung gegen `279202c`. Alle Standardprognosen der Level 1–3 liegen im Zeitfenster des Workers. Für alle sechs Routen der Level 1–2 sind erreichbare Ladepläne belegt, Level 3 läuft weiter durch den bestehenden Abschlusstest. Keine Live-Wertungsanfragen.. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Die Überarbeitung gehört zu v0.6.0. Die öffentlichen Stichpunkte werden im nächsten Stadtszenen-Lauf gesammelt aktualisiert.
+- **Offen** · Spieltest auf Desktop und bei 320/390 px in beiden Themes. Lokaler Browserstart durch die Sandbox blockiert. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
 
 ### 2026-11-26 – Michi / Codex (GPT-6) – Level 3 Run C – Tunnel und Ankunft
 
@@ -65,11 +72,3 @@
 - **Erledigt** · Live: Arcade v0.3.0, e-Roadtrip v0.5.0. Workflows grün: `check-versioning` (#6, #7, #8), „Rebuild e-Roadtrip bundle“ (`f58b077`, `ca2c357`, kein Bot-Commit nötig), „Deploy Cloudflare Worker“ (`116a458`), Pages-Deploy für alle drei Merges.
 - **Geprüft** · Worker: `/api/health` ok, DB verbunden; `GET /api/scores` für `eroadtrip`, `eroadtrip_l1`, `eroadtrip_l2` liefert die neuen Titel „e-Roadtrip: Pixel Europe · Level …“ (0 Einträge); `podracer` weiter 24 Einträge; `/api/summary` unverändert (25 Records, 267 Plays). Kein POST an die Live-API. Live-Seite (curl + Headless-Chrome): Karte „e-Roadtrip: Pixel Europe“, Tag „Strategie - Action“, Pille „Neues Update v0.5“, Changelogs-Link in Footer und Menü, `/changelogs.html` mit „Person · Modell“, Spielseite zeigt v0.5.0, Live-Bundle identisch mit `main` (SHA-256), kein „GTA“ in nutzersichtbaren Texten. Lokal vor #8: typecheck, build, `node --check`, `npm test` 42/42.
 - **Offen** · Handy-Test durch Michael; erster echter Score nach dem Go-live steht noch aus. Fork-Pages bleiben auf `codex/eroadtrip-highscores`. Issue-/PR-Check (25.11., gh): Upstream nach dem Merge keine offenen PRs außer diesem Doku-PR.
-
-### 2026-11-25 – Michael / Codex CLI (gpt-6.2-sol high) – E-Roadtrip Level-Bestenlisten (Teil b)
-
-- **Branch / PR** · `codex/eroadtrip-highscores` auf `codex/arcade-leaderboard-groups` (`f30054a`). Commits `888b032`, `4d6303b`. Push: ja, Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Test-URL: https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/index.html (Fork-Pages auf diesem Branch).
-- **Erledigt** · E-Roadtrip v0.5.0: kaputten Aufruf `ArcadeScores.submit` (existiert nicht, daher nie Scores) ersetzt durch `src/sim/Leaderboard.ts`. Abgeschlossene Fahrten (nur aus `finishLevel()`, einmal pro Run-ID) gehen an das Levelboard (`eroadtrip_l1`/`eroadtrip_l2`, `boardId` in `levels.ts`) und an `eroadtrip` (Gesamt, eigene Run-ID). Ergebnis-Screen mit Top 10, Platz und „Name ändern“; Topbar-Knopf „🏆 Bestenliste“ mit Level-Tabs. Echte Einreichung nur auf `hunterjoeing.github.io`; Fork, lokal und `?lbdebug=1` laufen im Testmodus (dryRun, nur `console.info`). Version per esbuild-`define` aus `package.json`. Release-Eintrag v0.5.0 nach Regel 10 geprüft.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Worker und Shared-Skripte, `npm test` (40/40), Headless-Chrome-Check durch den Orchestrator bei 390/320 px hell/dunkel: Fork-Seite v0.5.0, Topbar-Knopf sichtbar, Dialog mit Tabs Level 1/Level 2/Gesamt (Live-GET), Ergebnis-Panel im Testmodus (lokaler Harness, Top 10 mit gemockten Daten, Namen escaped, eigener Eintrag hervorgehoben), kein horizontales Scrollen, keine JS-Fehler. Danach Rang-Spalte bei 320 px korrigiert (`#`, nowrap) und doppelten Testmodus-Hinweis entfernt. Alle POSTs abgefangen: 0 POSTs an die Live-API.
-- **Offen** · Handy-Test durch Michael. Issue-/PR-Check vom Orchestrator nachgeholt (25.11., gh): Upstream 0 offene Issues/PRs, Fork 0 offene PRs.
-- **Merge-Reihenfolge** · `codex/arcade-versioning` → `codex/arcade-leaderboard-groups` (Teil a, Worker deployt beim Merge automatisch – Joe vorher informieren) → `codex/eroadtrip-highscores` (Teil b).

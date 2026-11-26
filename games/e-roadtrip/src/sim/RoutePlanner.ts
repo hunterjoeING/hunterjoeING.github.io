@@ -31,7 +31,7 @@ import {
 export const MESSE_VISIT_MINUTES = 240;
 export const MESSE_CHARGE_MINUTES = 210;
 export const CITY_TRANSITION_MINUTES: Partial<Record<CityDrivePreset, number>> = {
-  aachen_start: 7, koeln_ring: 6, ...WINTER_CITY_MINUTES
+  aachen_start: 9, koeln_ring: 6, ...WINTER_CITY_MINUTES
 };
 export const NO_REACHABLE_CHARGER = 'Kein zusätzlicher Ladepunkt auf der Route mit dem aktuellen Akku erreichbar.';
 export const SKIP_PROMPT_KM = 15;

@@ -195,8 +195,9 @@ export function paintWinterCity(
     zoneLabel: drive.label.replace(' · ', '\n'), zoneColor: 0x86efac, passThrough: drive.passThrough,
     spawn: drive.spawn, spinners: [], traffic: layout.traffic.map(paintTraffic), trafficJunctions: [],
     litePeds: layout.peds,
-    winterCity: {
-      label: drive.label, cones: layout.cones, wrongExits: drive.wrongExits,
+    cityGuide: {
+      snow: true, completionLabel: 'Auffahrt erreicht · Gute Fahrt!',
+      label: drive.passThrough ? drive.label : 'Zum Hotelparkplatz', cones: layout.cones, wrongExits: drive.wrongExits,
       navigate: winterCityNavigator(spans, drive.goal),
       approach: drive.via && { goal: drive.via, label: drive.spawn.label, navigate: winterCityNavigator(spans, drive.via) }
     }

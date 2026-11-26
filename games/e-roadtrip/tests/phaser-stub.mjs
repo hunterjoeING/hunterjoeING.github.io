@@ -3,6 +3,7 @@ export class Scene {}
 export const Scenes = { Events: { SHUTDOWN: 'shutdown' } };
 
 export const BlendModes = { ADD: 1 };
+export const Textures = { FilterMode: { NEAREST: 1 } };
 export const Input = { Keyboard: { JustDown: () => false } };
 export const Math = {
   Clamp: (value, min, max) => globalThis.Math.min(max, globalThis.Math.max(min, value)),

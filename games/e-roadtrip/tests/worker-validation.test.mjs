@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createFixtures } from './fixtures.mjs';
 import worker, { validateEroadtripScore } from '../../../cloudflare-worker/worker.js';
 
 const level1 = {
@@ -53,6 +54,69 @@ export default function register(test, game) {
       const validTime = { ...meta, minutes: targetArrivalMinutes };
       assert.match(validateEroadtripScore(board, { score: 812, meta: { ...validTime, levelId: level2.meta.levelId } }), /levelId/);
       assert.match(validateEroadtripScore(board, { score: 812, meta: { ...validTime, costEur: -1 } }), /costEur/);
+    }
+  });
+
+  test('Aachen city minutes keep every default forecast within score bounds and Levels 1 and 2 reachable with charging', t => {
+    const { mkRun, route1, route2 } = createFixtures(game);
+    const { CITY_TRANSITION_MINUTES, getLevelById, createDefaultPlan, evaluateTripPlan, evaluateRun, buildSubmission } = game;
+    const winter = getLevelById('level_3_alps_winter');
+    for (const level of [route1, route2, winter]) {
+      const minutes = level.routeOptions.map(route => {
+        const plan = createDefaultPlan(level, 'mg4_standard', route.id);
+        const forecast = evaluateTripPlan(level, plan);
+        const meta = { board: level.boardId, levelId: level.id, minutes: Math.round(forecast.totalMinutes),
+          costEur: forecast.estimatedTotalCostEur };
+        for (const board of [level.boardId, 'eroadtrip']) {
+          assert.equal(validateEroadtripScore(board, { score: 0, meta }), null, route.id);
+        }
+        return meta.minutes;
+      });
+      t.diagnostic(`Level ${level.order} default forecasts: ${minutes.join(', ')} min`);
+    }
+
+    const scenarios = [
+      [route1, 'mg4_standard', [
+        [[2, 'chg_kamen_tesla'], [4, 'chg_bad_oeynhausen_ewego'], [7, 'chg_frechen_ewego']],
+        [[2, 'chg_muenster_tesla'], [4, 'chg_osnabrueck_electra'], [7, 'chg_willich_electra']],
+        [[2, 'chg_wilnsdorf_tesla'], [4, 'chg_hildesheim_enbw'], [5, 'chg_wilnsdorf_tesla']]
+      ]],
+      [route2, 'xpeng_g6_lr', [
+        [[1, 'chg_metz_sud_ionity'], [2, 'chg_beaune_ionity']],
+        [[1, 'chg_troyes_vianeo'], [2, 'chg_moulins_vianeo'], [3, 'chg_entraygues_dorfladen']],
+        [[1, 'chg_mons_ionity'], [2, 'chg_orleans_tesla'], [3, 'chg_entraygues_dorfladen']]
+      ]]
+    ];
+    for (const [level, vehicle, stopsByRoute] of scenarios) {
+      for (const [index, route] of level.routeOptions.entries()) {
+        const plan = createDefaultPlan(level, vehicle, route.id);
+        if (route.id === 'l2_route_b_clermont') {
+          for (const leg of plan.legPlans) leg.targetSpeedKmh = Math.min(120, leg.targetSpeedKmh);
+        }
+        plan.plannedStops = stopsByRoute[index].map(([legIndex, chargerId]) => ({
+          chargerId, legIndex, targetSocPct: level === route1 ? 90 : 94
+        }));
+        const forecast = evaluateTripPlan(level, plan);
+        assert.ok(forecast.valid, route.id);
+        assert.ok(forecast.finalArrivalSocPct > 0, route.id);
+        const withoutAachen = {
+          ...level,
+          routeOptions: level.routeOptions.map(option => ({
+            ...option,
+            legs: option.legs.map(leg => leg.citySegmentAtStart === 'aachen_start'
+              ? { ...leg, citySegmentAtStart: undefined } : leg)
+          }))
+        };
+        assert.equal(forecast.totalMinutes, evaluateTripPlan(withoutAachen, plan).totalMinutes + CITY_TRANSITION_MINUTES.aachen_start);
+        const run = {
+          ...mkRun(level, vehicle), plan, elapsedMinutes: forecast.totalMinutes, distanceDrivenKm: forecast.totalDistanceKm,
+          chargingCostEur: forecast.estimatedChargingCostEur, tollsEur: forecast.tollsEur, socPct: forecast.finalArrivalSocPct
+        };
+        const submission = buildSubmission(level, run, evaluateRun(level, run, true));
+        assert.ok(submission, route.id);
+        assert.equal(validateEroadtripScore(level.boardId, submission), null);
+        assert.equal(validateEroadtripScore('eroadtrip', submission), null);
+      }
     }
   });
 

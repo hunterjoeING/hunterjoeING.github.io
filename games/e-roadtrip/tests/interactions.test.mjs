@@ -188,7 +188,8 @@ export default function register(test, game) {
     const planned = m.evaluateTripPlan(route1, mkRun().plan);
     const highway = planned.legForecasts.reduce((sum, leg) =>
       sum + Math.round(leg.distanceKm / m.congestedCruiseKmh(leg.targetSpeedKmh, leg.trafficRisk) * 60), 0);
-    assert.equal(planned.totalDriveMinutes - highway, 13);
+    const city = m.CITY_TRANSITION_MINUTES;
+    assert.equal(planned.totalDriveMinutes - highway, city.aachen_start + city.koeln_ring);
     const stressAt = target => {
       const state = mkRun();
       state.plan.legPlans[0].targetSpeedKmh = target;

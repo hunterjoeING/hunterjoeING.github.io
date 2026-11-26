@@ -29,13 +29,14 @@ export default function register(test, game) {
   const dt = 1 / 60;
   const { mkRun, route1 } = createFixtures(game);
 
-  function createCity(preset, station, mobile, routeId, light) {
+  function createCity(preset, station, mobile, routeId, light, levelOrder) {
     const city = new CityDriveScene();
     const images = [];
     city.add = {
       rectangle: () => sprite(),
       triangle: () => sprite(),
       graphics: () => sprite(),
+      renderTexture: () => Object.assign(sprite(), { texture: { setFilter() {} } }),
       text: () => sprite(),
       image: (...args) => {
         const image = sprite(...args);
@@ -44,9 +45,10 @@ export default function register(test, game) {
       }
     };
     city.physics = { add: { image: sprite }, world: { pause() {} } };
-    city.place = paintDrivingPlace(city, { preset, station, mobile, routeId, light });
+    city.place = paintDrivingPlace(city, { preset, station, mobile, routeId, light, levelOrder });
     city.worldW = city.place.worldW;
     city.worldH = city.place.worldH;
+    city.zebras = city.place.zebras;
     city.spawnEnvironmentAndProps();
     city.spawnTrafficAndPedestrians();
     city.player = sprite(city.place.spawn.x, city.place.spawn.y).setRotation(city.place.spawn.rot);
@@ -65,7 +67,7 @@ export default function register(test, game) {
     city.bridge.touch = { left: false, right: false, up: false, down: false, brake: false };
     city.targetZone = city.place.targetZone;
     city.passThrough = city.place.passThrough;
-    city.scale = { width: 390 };
+    city.scale = { width: 390, height: 480 };
     city.surface = { update() {} };
     city.updateLightingVisuals = () => {};
     city.pedestrians = [];
@@ -73,6 +75,16 @@ export default function register(test, game) {
     city.wasd = { W: idle, A: idle, S: idle, D: idle, SPACE: idle, H: idle };
     city.cursors = { up: idle, down: idle, left: idle, right: idle };
     city.setupNavIndicator();
+  }
+
+  function cycleLights(city, elapsed) {
+    const cycle = elapsed % 14;
+    const eastWest = cycle < 5.5 ? 'green' : cycle < 7 ? 'amber' : 'red';
+    const northSouth = cycle < 7 ? 'red' : cycle < 12.5 ? 'green' : 'amber';
+    city.intersections.forEach((intersection, index) => {
+      intersection.ewPhase = index === 0 ? eastWest : northSouth;
+      intersection.nsPhase = index === 0 ? northSouth : eastWest;
+    });
   }
 
   test('The active-leg SoC band turns green again after charging at Herford', () => {
@@ -257,17 +269,11 @@ export default function register(test, game) {
 
   test('City traffic clears intersections and completes its routes', t => {
     t.mock.method(Math, 'random', () => 0.5);
-    for (const preset of ['aachen_start', 'koeln_ring', 'hannover_messe', 'aachen_finish', 'ferry_denmark']) {
+    for (const preset of ['koeln_ring', 'hannover_messe', 'ferry_denmark']) {
       const { city } = createCity(preset);
       const laps = city.trafficCars.map(() => 0);
       for (let frame = 0; frame < 60 * 110; frame++) {
-        const cycle = (frame / 60) % 14;
-        const eastWest = cycle < 5.5 ? 'green' : cycle < 7 ? 'amber' : 'red';
-        const northSouth = cycle < 7 ? 'red' : cycle < 12.5 ? 'green' : 'amber';
-        city.intersections.forEach((intersection, index) => {
-          intersection.ewPhase = index === 0 ? eastWest : northSouth;
-          intersection.nsPhase = index === 0 ? northSouth : eastWest;
-        });
+        cycleLights(city, frame * dt);
         const before = city.trafficCars.map(car => car.wpIndex);
         city.stepTraffic(dt);
         city.trafficCars.forEach((car, index) => {
@@ -279,6 +285,83 @@ export default function register(test, game) {
       }
       assert.ok(laps.every(count => count >= 2), `city traffic stuck: ${preset} (${laps} laps)`);
     }
+  });
+
+  test('Aachen traffic completes its routes in daylight and at night', () => {
+    for (const [preset, mobile] of [['aachen_start', true], ['aachen_finish', false]]) {
+      const { city } = createCity(preset, undefined, mobile);
+      assert.deepEqual(city.intersections.map(inter => inter.id), ['hansemannplatz', 'kaiserplatz']);
+      assert.equal(city.signalVisuals.length, 8);
+      const laps = city.trafficCars.map(() => 0);
+      for (let frame = 0; frame < 60 * 170; frame++) {
+        cycleLights(city, frame * dt);
+        const before = city.trafficCars.map(car => car.wpIndex);
+        city.stepTraffic(dt);
+        city.trafficCars.forEach((car, index) => {
+          if (car.wpIndex < before[index]) laps[index]++;
+        });
+      }
+      assert.ok(laps.every(count => count >= 2), `${preset}: ${JSON.stringify(city.trafficCars.map((car, index) => ({
+        laps: laps[index], x: Math.round(car.sprite.x), y: Math.round(car.sprite.y), wp: car.wpIndex,
+        target: car.route.path[car.wpIndex],
+        nearest: city.place.buildings.filter(area =>
+          capsuleOverlapsRect(vehicleCapsule(car.sprite.x, car.sprite.y, car.sprite.rotation + 0.05, car.route.isCyclist), area))
+      })))}`);
+    }
+  });
+
+  test('Aachen roads can be driven to each motorway and the home parking lot', () => {
+    for (const [preset, order] of [['aachen_start', 1], ['aachen_start', 2], ['aachen_finish', 1]]) {
+      const { city } = createCity(preset, undefined, true, undefined, false, order);
+      city.trafficCars = [];
+      city.pedestrians = [];
+      const { targetZone, cityGuide: { navigate } } = city.place;
+      const hasArrived = () => city.player.x >= targetZone.left && city.player.x <= targetZone.right &&
+        city.player.y >= targetZone.top && city.player.y <= targetZone.bottom;
+      for (let frame = 0; frame < 3600 && !hasArrived(); frame++) {
+        const { player } = city;
+        const { aim } = navigate(player);
+        const error = Math.atan2(aim.y - player.y, aim.x - player.x) + Math.PI / 2 - player.rotation;
+        const arc = Math.atan2(Math.sin(error), Math.cos(error));
+        const turn = Math.max(-2.75, Math.min(2.75, arc * 8));
+        city.carSpeed = Math.abs(arc) > 0.35 ? 62 : 100;
+        assert.ok(city.movePlayer(dt, turn), `${preset} Level ${order}: obstacle at ${player.x}, ${player.y}`);
+      }
+      assert.ok(hasArrived(), `${preset} Level ${order}: missed destination at ${city.player.x}, ${city.player.y}`);
+    }
+  });
+
+  test('Aachen ignores wrong exits and triggers confetti only after parking at home', () => {
+    const level1 = getLevelById('level_1_aachen_hannover');
+    const level2 = getLevelById('level_2_family_summer');
+    const start = createCity('aachen_start', undefined, true, level2.defaultRouteId, false, 2).city;
+    prepareCityUpdate(start, 'aachen_start', level2);
+    const completed = [];
+    start.bridge.onCitySegmentComplete = (...args) => completed.push(args);
+    const wrong = start.place.cityGuide.wrongExits.find(exit => exit.label.includes('Kreuz Aachen'));
+    start.player.setPosition(wrong.x, wrong.y);
+    start.update(0, 50);
+    assert.equal(start.reverseHintText.text, 'Falsche Auffahrt · bitte wenden');
+    assert.equal(start.reverseHintText.visible, true);
+    assert.match(start.distText.text, /Zur A44 · Aachen-Brand/);
+    assert.equal(start.cleanRun, true);
+    assert.deepEqual(completed, []);
+    start.player.setPosition(start.targetZone.centerX, start.targetZone.centerY);
+    start.update(50, 50);
+    assert.match(start.distText.text, /^A44 erreicht/);
+    assert.deepEqual(completed, [['aachen_start', true]]);
+
+    const finish = createCity('aachen_finish', undefined, true, level1.defaultRouteId, true).city;
+    prepareCityUpdate(finish, 'aachen_finish', level1);
+    let confetti = 0;
+    finish.triggerArrivalConfetti = () => { confetti++; };
+    finish.update(0, 50);
+    assert.match(finish.distText.text, /Nach Hause · Pontviertel/);
+    finish.player.setPosition(finish.targetZone.centerX, finish.targetZone.centerY);
+    for (let frame = 0; frame < 11; frame++) finish.update(50 + frame * 50, 50);
+    assert.equal(confetti, 0);
+    for (let frame = 11; frame < 15; frame++) finish.update(50 + frame * 50, 50);
+    assert.equal(confetti, 1);
   });
 
   test('München and Innsbruck cars and cyclists complete their routes in both themes', () => {
@@ -307,7 +390,7 @@ export default function register(test, game) {
     prepareCityUpdate(start, 'muenchen_start', level);
     const completed = [];
     start.bridge.onCitySegmentComplete = (...args) => completed.push(args);
-    const wrong = start.place.winterCity.wrongExits.find(exit => exit.label === 'A95 Garmisch');
+    const wrong = start.place.cityGuide.wrongExits.find(exit => exit.label === 'A95 Garmisch');
     start.player.setPosition(wrong.x, wrong.y);
     start.update(0, 50);
     assert.equal(start.reverseHintText.visible, true);
@@ -325,7 +408,7 @@ export default function register(test, game) {
     finish.bridge.onCitySegmentComplete = (...args) => completed.push(args);
     finish.update(0, 50);
     assert.match(finish.distText.text, /Innsbruck-West/);
-    const { goal } = finish.place.winterCity.approach;
+    const { goal } = finish.place.cityGuide.approach;
     finish.player.setPosition(goal.x, goal.y);
     finish.update(50, 50);
     assert.match(finish.distText.text, /Hotelparkplatz/);
@@ -342,7 +425,7 @@ export default function register(test, game) {
         const { city } = createCity(preset, undefined, false, routeId, false);
         city.trafficCars = [];
         city.pedestrians = [];
-        const { targetZone, winterCity: { approach, navigate } } = city.place;
+        const { targetZone, cityGuide: { approach, navigate } } = city.place;
         let approachReached = !approach;
         const hasArrived = () => city.player.x >= targetZone.left && city.player.x <= targetZone.right &&
           city.player.y >= targetZone.top && city.player.y <= targetZone.bottom;

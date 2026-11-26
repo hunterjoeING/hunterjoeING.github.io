@@ -56,10 +56,11 @@ games/e-roadtrip/
 │   ├── interactions.test.mjs   # Parking, highway ticks, hotel, charging, and HUD
 │   ├── winter.test.mjs         # Level 3 campaign, winter effects, charger choices, and route completions
 │   ├── winter-city.test.mjs    # Landmark geography, motorway mapping, city guidance, and dawn
+│   ├── aachen-city.test.mjs    # Aachen geography, ramp selection, drivable guidance, lighting, and traffic lanes
 │   ├── winter-tunnel.test.mjs  # Section-control math, highway boundaries and lighting, fines, and closure choices
 │   ├── alpine.test.mjs         # Pass driving, chains, rail damage, descent boundaries, and regen forecasts
 │   ├── releases.test.mjs       # Public catalog, release order, spoiler checks, and asset versions
-│   ├── worker-validation.test.mjs # E-Roadtrip score plausibility and rejected POST requests
+│   ├── worker-validation.test.mjs # Forecast and score bounds, payload plausibility, and rejected POST requests
 │   ├── arcade-scores.test.mjs  # Score callbacks, dry-run behavior, and name updates
 │   └── leaderboard.test.mjs    # Payload validation, hostname gating, duplicate protection, and results panel
 └── src/
@@ -166,6 +167,17 @@ Phaser scenes read state from `bridge` and emit callbacks (`onBootReady`, `onMap
    - **Skipping a planned road charge.** The highway refreshes the HUD on entering the approach window (see §9). A compact card shows the next pending road charger on the current stage and the live arrival SoC at the next target without that charge. It uses the regular HUD ticks and leaves the drive running at the selected time scale. “Anfahren” dismisses the card and keeps the route. “Auslassen” records the stage-local skipped key and logs the projected arrival. The highway trigger, Navi, live map and forecast read the same skip state. “Rückgängig” restores the stop and logs the change through the exit marker. Only player-initiated skips offer undo. The Messe visit and overnight stay are fixed.
    - **Winter charging queues.** Queue-enabled stops show a dialog at the exit before the charger park. The number of waiting cars is stable per run ID and stop key. Waiting advances time and opens the park. Continuing without the stop uses `evaluateStopSkip()` with the usual reserve. A nearby lower-power station can replace the planned stop when its own arrival reserve is met. Both departure choices mark the queued stop skipped. The alternative preserves an existing plan at that station or inherits the original target SoC.
    - **City driving.** Playable presets are `aachen_start`, `koeln_ring` (outbound Aachen–Köln pass-through), `hannover_messe`, `aachen_finish`, `charger_park`, `muenchen_start`, `innsbruck_finish`, and `alpine_pass` (the last three are Level 3). `ferry_denmark` exists in the type and painter and is reserved for Level 7. `PlaceStyles` and `PlacePainter` supply local landmarks and rural, classic, and urban service areas. AI follows directed lanes and rounded turns, reserves busy intersections and manoeuvring areas, and resumes its route outside the visible map. An eastbound service-area visitor backs into a charging bay and rejoins the eastbound lane forwards. Westbound traffic passes through.
+     - **Aachen home base.** Both presets use the same north-up street map. The Grabenring surrounds the Dom–Katschhof–Rathaus axis. The Alleenring connects the Ponttor, Ludwigsallee, Quellenhof and Eurogress on Monheimsallee, Hansemannplatz, Kaiserplatz, and the southern gates and station approaches. The Lousberg, Stadtgarten and Tivoli sit to the north, with the RWTH sites, Uniklinik and Westpark to the west. The Europaplatz fountain is on the east-northeast edge of the city. Street shapes and distances are compressed, with the distant motorway junctions and border crossings represented by signed map exits.
+     - **Aachen driving.** In the Pontviertel, the home driveway joins Pontstraße near the campus. Cobbled streets have a lower speed cap and carry pedestrians. The rings and eastern corridors carry traffic, with a separate cycle route by the RWTH. Pedestrians use the zebra crossing rules, and Hansemannplatz and Kaiserplatz have traffic lights. At night the rings have street lamps and the Dom, Quellenhof and Eurogress are lit. The map and minimap are drawn once, with camera-sized portions displayed as the player moves. The in-city Navi follows the road graph and the roundabout's traffic direction.
+
+       | City drive | Selected route | Signed route and target |
+       | --- | --- | --- |
+       | Leave Aachen | Level 1 A / C | Alleenring → Hansemannplatz → Jülicher Straße → Europaplatz → A544, Kreuz Aachen / A4 Köln |
+       | Leave Aachen | Level 1 B | Same A544 approach, signed for A44 Düsseldorf at Kreuz Aachen |
+       | Leave Aachen | Level 2 A / Mitte / B | Alleenring → Kaiserplatz → Adalbertsteinweg → Trierer Straße → Aachen-Brand and A44 Lüttich / Lichtenbusch. This uses the southern approach for a separate city drive. |
+       | Arrive in Aachen | Level 1 return | A544 → Europaplatz → Jülicher Straße → Alleenring → Zuhause in the Pontviertel. Holding in the parking zone starts the existing arrival sequence. |
+
+       Other signed exits show the turn-back hint. They remain connected to the guidance graph so the player can rejoin the selected route.
      - **Munich departure.** The north-up map has the Altstadtring, Mittlerer Ring, and A99 bypass open to the south. The Isar runs east of the old town with bridges and the Museumsinsel. Olympiapark sits to the northwest, the Englischer Garten follows the west bank, and the Allianz Arena marks the far north. Routes A and C take the A8 Salzburg ramp at Ramersdorf to the southeast, with a Holzkirchen instruction on C. Route B takes the A95 at Luise-Kiesselbach-Platz to the southwest. The other signed ramps show a turn-back hint.
      - **Innsbruck arrival.** The Altstadt sits south of the Inn, with the Nordkette to the north, the Sill joining from the southeast, the airport to the west, and Bergisel and A13 to the south. The A12 signs follow the west–east interchange order. Routes A and C enter from the east at Innsbruck-Ost. Route B enters from the west past the airport at Innsbruck-West. The in-city arrow follows connected roads to the indicated ramp and the hotel lot by Maria-Theresien-Straße.
      - Both winter cities use the standard city traffic, pedestrians, cyclists, cones, static damage, snow effects, and clock-based lighting. Water blocks cars outside the bridges and the museum island.
@@ -259,7 +271,7 @@ Follow [AGENTS.md rule 10](../../AGENTS.md) for release notes and version bumps.
 
 ## 8. Known Limitations & Open Points
 
-- **City time.** Review whether to add fixed time allowances for the Aachen finish, Messe approach, and charger parks (see §3.2 and §9).
+- **City time.** Review the Aachen departure allowance after playing both routes. The Aachen finish, Messe approach, and charger parks have no fixed transition allowance (see §9).
 - **Legacy provider paths.** Fastned and TotalEnergies have roaming entries, but zero stations in `europeMap.ts`. Their network types, filter/name/colour tables, and sprite generation remain in `types.ts`, `PlanningUI.ts`, `EuropeMapScene.ts`, and `PixelArtGenerator.ts`. `main.ts` also retains their default filter keys.
 - **Verification.** CI runs `npm ci`, typecheck, `npm test`, and build (see §1). Local checks also include `node --check dist/e-roadtrip.js`. Node regressions use Phaser and DOM stubs. The manual checklist in §10 covers browser rendering and touch.
 
@@ -273,7 +285,10 @@ All prices and timing values below are in-game settings.
 | --- | --- | --- |
 | `src/data/events.ts` · `HOTEL_AC` | Good hotel’s charger cap, overnight window, target, and lodging cost | 11 kW, 480 min, 95%, €289 |
 | `src/sim/RoutePlanner.ts` · `MESSE_VISIT_MINUTES`, `MESSE_CHARGE_MINUTES` | Messe dwell time and AC window within the visit | 240 min, 210 min |
-| `src/sim/RoutePlanner.ts` · `CITY_TRANSITION_MINUTES` | Fixed city-drive allowance at the first stage’s start and applicable stage ends | `aachen_start: 7`, `koeln_ring: 6`, `muenchen_start: 5`, `innsbruck_finish: 4` (minutes). Winter values come from `WINTER_CITY_MINUTES` in `src/sim/WinterCity.ts` and also apply at runtime. Other presets default to zero. |
+| `src/sim/RoutePlanner.ts` · `CITY_TRANSITION_MINUTES` | Fixed city-drive allowance at the first stage’s start and applicable stage ends | `aachen_start: 9`, `koeln_ring: 6`, `muenchen_start: 5`, `innsbruck_finish: 4` (minutes). Aachen departure covers the longer recommended road routes. Winter values come from `WINTER_CITY_MINUTES` in `src/sim/WinterCity.ts` and also apply at runtime. Other presets default to zero. |
+| `src/data/cityLayouts/aachen.ts` · `AACHEN` | Shared Aachen world bounds | 4320 × 3120 px, 4.04× the generic city area. |
+| `src/phaser/CityDriveScene.ts` · `zoomFor()` and city speed | Aachen camera and cobbled-street pace | 0.64 below 360 px, 0.7 below 640 px, 0.9 elsewhere. Cobbled streets cap forward speed at 125 px/s. |
+| `src/phaser/MappedCityPainter.ts` · `bakeCityGround()`, `ringLamps()` | Static ground and details on different screens | 960 px world tiles, rendered at 62.5% on mobile. Mobile thins trees, pavers, roof details and lamps. |
 | `src/sim/RoutePlanner.ts` · `SKIP_PROMPT_KM`, `SKIP_RESERVE_SOC_PCT` | Road charger approach window and minimum projected arrival SoC for skipping | 15 km, 10% |
 | `src/sim/ChargingBay.ts` · `PARKING_MIN_OVERLAP`, `PARKING_REAR_TOLERANCE_DEG`, `PARKING_MAX_SPEED` | Required share of rotated car bounds inside a bay, rear angle to the post, and speed ceiling | 75%, 35°, 6 px/s |
 | `src/phaser/PlacePainter.ts` · `layoutCapacity`, `freeCount` in `paintAutohof()` | Visible charging bays and initial availability | Up to the station’s stall count, capped at 4 rural, 6 classic, and 6 mobile or 8 desktop urban. The free count is the rounded unoccupied share with at least two free bays when the layout permits. |
@@ -361,6 +376,7 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - [ ] Plan a reachable Herford charge and confirm the range band turns green again after the stop.
 - [ ] In Level 2, check one toll per outbound stage, including the hotel and final approach. Confirm all three routes end in Montpellier and the results show the final SoC deduction.
 - [ ] After finishing Level 2, open each Level 3 route and confirm it ends at Innsbruck. Try both cold-start choices, the Inntal vignette, and the pass events. At Kufstein and Achenkirch, check waiting, the skip reserve, and the slower charger option at 320 and 390 px in both themes.
+- [ ] Drive Aachen Level 1 A/C and B, then a Level 2 departure. Check the exit signs, turn-back hint, cones, zebra crossings, traffic lights, and the Navi through the roundabout and at Kaiserplatz. Return at night through the same roundabout and park at Zuhause. On desktop and at 320 and 390 px in both themes, check landmark visibility, illumination, the minimap above the touch pads and combined throttle/steering.
 - [ ] In Munich, drive the A8 and A95 departures and one wrong ramp. In Innsbruck, enter from both sides and stop in the hotel lot. At 320 and 390 px in both themes, check landmark and motorway sign readability, dawn lighting, snow spray, and the Navi arrows at turns.
 - [ ] On the Zirler Berg and Achenpass, try both chain choices and steer through the hairpins with combined touch input. Check the ice warning, road-edge impacts, oncoming cars, and the summit marker in both themes and orientations. Repeat without chains to see the grip change and possible police check.
 - [ ] At the start of a pass descent, compare Segeln and B-Modus, including after a high-SoC charge at Achenkirch. Check the HUD recovery readout, the brake cooldown when it triggers, and continuous route progress after resuming from a charger.
@@ -406,3 +422,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-26** · `codex/eroadtrip-v0.6` · Level 3 Run B · `39103b6` · Added the Zirler Berg and Achenpass climbs, snow chains and checks, and downhill recuperation with brake cooldown.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · Level 3 Run D · `015af8d` · Added north-up Munich and Innsbruck city drives with route-specific ramps, winter scenery and traffic, and the hotel parking handoff.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · Level 3 Run C · `82abb4f` · Added the Innsbruck hotel finale and the Inntal tunnel with section control and closures. Updated the briefing and fork cache revisions and verified all three default routes against the worker score contract.
+- **2026-11-26** · `codex/eroadtrip-v0.6` · SHA: (folgt) · Aachen city rebuild with a shared north-up map, route-specific motorway exits and night parking in the Pontviertel.

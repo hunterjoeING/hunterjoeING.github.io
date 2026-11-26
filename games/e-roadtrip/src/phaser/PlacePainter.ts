@@ -2,12 +2,15 @@ import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, type PassName } from '../types';
 import { ALPINE_PASS_PRESET } from '../sim/AlpineDriving';
 import { paintAlpinePass, type PassRoad } from './AlpinePass';
+import { aachenCityDrive, isAachenCity } from '../sim/AachenCity';
+import { mappedCityNavigator, mappedRoadSpans } from '../sim/MappedCity';
+import { aachenLandmarkFootprint, drawAachenLandmark } from './AachenLandmarks';
+import { paintMappedCity } from './MappedCityPainter';
 import { isWinterCity } from '../sim/WinterCity';
-import type { winterCityDrive, winterCityNavigator } from '../sim/WinterCity';
-import type { CityPoint } from '../data/cityLayouts/types';
+import type { CityPoint, CityRect, CitySignal, MappedCityRoad } from '../data/cityLayouts/types';
 import { paintWinterCity } from './WinterCityPainter';
 import { ChargingBay } from '../sim/ChargingBay';
-import { ZebraCrosswalk } from './CityTraffic';
+import { PedestrianZebraLink, ZebraCrosswalk } from './CityTraffic';
 import { TrafficRoute, cityTrafficRoutes, laneCenter, trafficRoute } from './CityLanes';
 import {
   BISTRO_KIOSK, CAR_FOOTPRINT, CAR_SIZE, CHARGER_FOOTPRINT, CHARGER_SIZE,
@@ -37,7 +40,10 @@ interface LitePedestrian {
   tex: string;
   wps: Array<{ x: number; y: number }>;
   speed: number;
+  zebraLink?: PedestrianZebraLink;
 }
+
+type CityNavigator = (point: CityPoint) => { aim: CityPoint; distance: number };
 
 export interface PlacePaint {
   worldW: number;
@@ -56,13 +62,19 @@ export interface PlacePaint {
   zoneColor?: number;
   passThrough: boolean;
   passRoad?: PassRoad;
-  winterCity?: {
+  cityGuide?: {
     label: string;
+    completionLabel: string;
+    snow?: boolean;
     cones: CityPoint[];
-    wrongExits: ReturnType<typeof winterCityDrive>['wrongExits'];
-    navigate: ReturnType<typeof winterCityNavigator>;
-    approach?: { goal: CityPoint; label: string; navigate: ReturnType<typeof winterCityNavigator> };
+    wrongExits: Array<CityPoint & { label: string; zone: CityRect }>;
+    navigate: CityNavigator;
+    approach?: { goal: CityPoint; label: string; navigate: CityNavigator };
   };
+  cityMinimap?: MappedCityRoad[];
+  signals?: CitySignal[];
+  roadSurface?: (point: CityPoint) => boolean;
+  slowZone?: (point: CityPoint) => boolean;
   chargingBays?: PaintedChargingBay[];
   parkedVehicles?: Rect[];
   spawn: { x: number; y: number; rot: number };
@@ -87,8 +99,26 @@ export function setBayOccupied(bay: PaintedChargingBay, occupied: boolean): void
 
 export function paintDrivingPlace(
   scene: Phaser.Scene,
-  opts: { preset: CityDrivePreset; station?: ChargerStation; mobile: boolean; passName?: PassName; light?: boolean; routeId?: string }
+  opts: { preset: CityDrivePreset; station?: ChargerStation; mobile: boolean; passName?: PassName; light?: boolean; routeId?: string; levelOrder?: number; night?: boolean }
 ): PlacePaint {
+  if (isAachenCity(opts.preset)) {
+    const drive = aachenCityDrive(opts.preset, opts.levelOrder ?? 1, opts.routeId ?? '');
+    const place = paintMappedCity(scene, drive.layout, { footprint: aachenLandmarkFootprint, draw: drawAachenLandmark }, {
+      light: !!opts.light, mobile: opts.mobile, night: !!opts.night || opts.preset === 'aachen_finish',
+      signedExit: drive.exitPoint, signLabel: drive.signLabel
+    });
+    const { x, y, w, h } = drive.target;
+    return {
+      ...place, autohof: false, passThrough: drive.passThrough, spawn: drive.spawn, spinners: [],
+      targetZone: new Phaser.Geom.Rectangle(x, y, w, h),
+      zoneLabel: drive.passThrough ? drive.motorway : 'Zuhause', zoneColor: 0x86efac,
+      cityGuide: {
+        label: drive.navLabel, completionLabel: drive.completionLabel,
+        cones: drive.layout.cones, wrongExits: drive.wrongExits,
+        navigate: mappedCityNavigator(mappedRoadSpans(drive.layout.roads), drive.goal)
+      }
+    };
+  }
   if (isWinterCity(opts.preset)) return paintWinterCity(scene, opts.preset, opts.routeId ?? '', !!opts.light, opts.mobile);
   if (opts.preset === ALPINE_PASS_PRESET) return paintAlpinePass(scene, opts.passName ?? 'Zirler Berg', !!opts.light);
   if (opts.preset === 'charger_park' && opts.station) {
@@ -102,7 +132,7 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
   const worldH = 1560;
   const g = scene.add.graphics().setDepth(0);
   const neons: NeonMark[] = [];
-  const passThrough = preset === 'aachen_start' || preset === 'koeln_ring' || preset === 'ferry_denmark';
+  const passThrough = preset === 'koeln_ring' || preset === 'ferry_denmark';
   const avenues = [140, 660, 1180].map(y => ({ x: y === 660 ? 0 : 140, y, w: y === 660 ? 2040 : 1900, h: 140 }));
   const streets = [140, 960, 1760].map(x => ({ x, y: 0, w: 140, h: 1320 }));
   const roads = [...avenues, ...streets];
@@ -157,11 +187,6 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
     g.fillRect(1448, 430, 250, 28);
     g.lineStyle(2, 0x38bdf8, 0.85);
     g.strokeRect(1455, 448, 130, 90);
-  } else if (preset === 'aachen_finish') {
-    g.fillStyle(theme.road, 1);
-    g.fillRect(320, 800, 140, 200);
-    g.fillStyle(0x0f172a, 1);
-    g.fillRect(336, 900, 108, 96);
   }
 
   if (passThrough) {
@@ -262,7 +287,7 @@ function paintCity(scene: Phaser.Scene, theme: CityPalette, preset: CityDrivePre
   let zoneLabel: string | undefined;
   let zoneColor: number | undefined;
   let spawn = { x: 210, y: 1005, rot: 0 };
-  if (preset === 'aachen_start' || preset === 'koeln_ring' || preset === 'ferry_denmark') {
+  if (preset === 'koeln_ring' || preset === 'ferry_denmark') {
     targetZone = new Phaser.Geom.Rectangle(1895, 158, 160, 108);
     spawn = { x: 210, y: 1005, rot: 0 };
   } else if (preset === 'hannover_messe') {
