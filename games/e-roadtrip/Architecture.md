@@ -460,3 +460,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `4ea71cd` · Replaced the remaining city grids with Hannover Messe, Köln and Hirtshals maps, including route-specific motorway guidance and the original parking and check-in triggers.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `e130a68` · Removed the Level 1 Köln city drive. The north-up Köln map is kept for the Level 5 start.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `b47c48f` · Added the north-up Montpellier arrival on all Level 2 routes, rear-first parking at the Palavas hotel, and a skippable prelude before the existing beach finale.
+- **2026-11-26** · `codex/eroadtrip-v0.6` · `@@FIX@@` · Re-read the stage size before every Phaser scale refresh so the canvas follows the driving HUD after scene changes on phones.

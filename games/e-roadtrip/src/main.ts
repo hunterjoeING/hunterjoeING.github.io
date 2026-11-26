@@ -383,7 +383,7 @@ class ERoadtripController {
 
     this.game = new Phaser.Game(config);
     if (typeof ResizeObserver !== 'undefined') {
-      const stageObserver = new ResizeObserver(() => this.game.scale.refresh());
+      const stageObserver = new ResizeObserver(() => this.refreshStageSize());
       stageObserver.observe(parent);
       this.game.events.once(Phaser.Core.Events.DESTROY, () => stageObserver.disconnect());
     }
@@ -503,7 +503,7 @@ class ERoadtripController {
 
     this.stageWrapEl.classList.add('driving-active');
     this.plannerEl.classList.add('hidden');
-    window.requestAnimationFrame(() => this.game.scale.refresh());
+    window.requestAnimationFrame(() => this.refreshStageSize());
     if (this.level.id === WINTER_LEVEL_ID) {
       this.bridge.runState.activeWeather = 'snow';
       this.bridge.paused = true;
@@ -515,6 +515,13 @@ class ERoadtripController {
       return;
     }
     this.enterCitySegment('aachen_start');
+  }
+
+  /** Phaser's refresh() reuses the cached parent size and then silently re-reads it, so its own poll never sees the change. */
+  private refreshStageSize(): void {
+    const scale = this.game.scale;
+    scale.getParentBounds?.();
+    scale.refresh();
   }
 
   private stopAllGameplayScenes(): void {
@@ -882,7 +889,7 @@ class ERoadtripController {
     };
     this.stageWrapEl.classList.add('driving-active');
     this.plannerEl.classList.add('hidden');
-    window.requestAnimationFrame(() => this.game.scale.refresh());
+    window.requestAnimationFrame(() => this.refreshStageSize());
 
     if (kind === 'level2hotel' || kind === 'level2arrival' || kind === 'level2rain' || kind === 'level2wc') {
       const run = this.bridge.runState;
@@ -1428,7 +1435,7 @@ class ERoadtripController {
     } else {
       this.game.scene.start(winter ? 'InnsbruckFinaleScene' : 'MontpellierFinaleScene', finale);
     }
-    window.requestAnimationFrame(() => this.game.scale.refresh());
+    window.requestAnimationFrame(() => this.refreshStageSize());
   }
 
   private finishLevel(cleanArrival: boolean, gameOver = false): void {
@@ -1484,7 +1491,7 @@ class ERoadtripController {
     this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
     this.renderPlanning();
     window.requestAnimationFrame(() => {
-      this.game.scale.refresh();
+      this.refreshStageSize();
     });
   }
 }
