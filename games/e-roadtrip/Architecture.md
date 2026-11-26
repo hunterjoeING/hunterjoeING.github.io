@@ -539,3 +539,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `036d0ef` · Local providers without a tariff and the Tesla pass no longer mix: Tesla pass prices apply only at Tesla stations, and Autobrennero and Neogy charge their own ad-hoc price (0.75 and 0.76 €/kWh). Removed the stale “vorgeschlagene Ladestopps” sentence from the Level 3 briefing.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `3d5f243` · Consumption labels always use one decimal place via `formatConsumption()`.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `c1d1f29` · Added stopped city indicators and traffic-side placement at starts, previews and collision recovery.
+- **2026-11-26** · `main` · `2aebc51` · Released v0.6.0 upstream via PR #10 with Arcade v0.4.1; the worker now enforces Level 2 1882 and Level 3 564 target minutes.
