@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2 mit Montpellier, Level 3, Stadtkarten, Nachtstart und Abendsonne | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `@@SHA@@` · kein PR | 🟡 Doku-Abgleich erledigt · Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2 mit Montpellier, Level 3, Stadtkarten, Nachtstart und Abendsonne | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `f30acf3` · kein PR | 🟡 Doku-Abgleich erledigt · Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -31,7 +31,7 @@
 
 ### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Doku-Abgleich
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `@@SHA@@`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `f30acf3`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
 - **Erledigt** · Lücken aus dem Doku-Abgleich geschlossen: Weltgrößen von München, Innsbruck und Montpellier, `refreshStageSize()` in der Modulübersicht und in §9, Pylonen-Stress in der Stellschrauben-Tabelle, geschärfte Nachtfahrt-Formulierung, Arcade v0.3.1, Nachtstart in der L2-Checkliste. Statuszeile wieder auf die gesamte v0.6.0 bezogen, Modellnamen vereinheitlicht, erledigte Issue-/PR-Check-Sätze entfernt. Die Codex-Checkliste um Tabellenpflege, Altlasten-Suche, Branch-Statuszeile, festen Modellnamen und Orchestrator-Nacharbeit ergänzt. Selbst umgesetzt, ohne Codex. Kein Versionssprung.
 - **Geprüft** · `npm test` und Build in `games/e-roadtrip` (Docs only). Issue-/PR-Check: 0 offen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 - **Offen** · Fork-Spieltest und Upstream-Merge.
