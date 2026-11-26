@@ -69,7 +69,7 @@ export function newRunId(boardId: string | undefined, api?: ArcadeScoresApi): st
 export function buildSubmission(level: LevelConfig, run: RunState, result: EvaluationResult) {
   const { boardId, targetArrivalMinutes: targetMinutes } = level;
   const { totalScore: score, totalMinutes: minutes, totalCostEur: costEur } = result;
-  if (!boardId || run.levelId !== level.id || !Number.isInteger(score) || score < 100 || score > 1000 ||
+  if (!boardId || result.gameOver || run.levelId !== level.id || !Number.isInteger(score) || score < 0 || score > 1000 ||
       !Number.isFinite(minutes) || minutes < 0.5 * targetMinutes || minutes > 20 * targetMinutes ||
       !Number.isFinite(costEur) || costEur < 0) return null;
 

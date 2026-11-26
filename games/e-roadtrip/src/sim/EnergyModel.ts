@@ -1,13 +1,15 @@
 import {
+  ChargerNetwork,
   ChargerStation,
   SubscriptionSpec,
   VehicleSpec,
   WeatherKind
 } from '../types';
-import { getSubscriptionById, roamingPriceForProvider } from '../data/subscriptions';
+import { SUBSCRIPTIONS, getSubscriptionById, roamingPriceForProvider } from '../data/subscriptions';
 
 const CHARGING_ENERGY_FACTOR = 1.04;
 export const CHARGE_SETUP_MINUTES = 2.5;
+export const CLIMB_ENERGY_KWH_PER_M = 0.0056;
 
 export function computeConsumptionKwh100(
   vehicle: VehicleSpec,
@@ -36,7 +38,7 @@ export function computeConsumptionKwh100(
   // Potential energy delta per 100 km (~2000 kg EV -> ~0.55 kWh per 100m climb, 60% regen on descent)
   const netGainKwhPer100 =
     distanceKm > 0
-      ? ((elevationGainM * 0.0056 - elevationLossM * 0.0033) / distanceKm) * 100
+      ? ((elevationGainM * CLIMB_ENERGY_KWH_PER_M - elevationLossM * 0.0033) / distanceKm) * 100
       : 0;
 
   let trailerMult = 1.0;
@@ -96,6 +98,21 @@ function roamingRate(sub: SubscriptionSpec): number {
   return roamingPriceForProvider(sub.provider) ?? sub.pricePerKwhRoaming;
 }
 
+/** Networks that sell no subscription in the game (local or legacy providers) always charge their own ad-hoc price. */
+export function networkHasSubscription(network: ChargerNetwork): boolean {
+  return SUBSCRIPTIONS.some(sub => sub.provider === network);
+}
+
+/**
+ * A tariff applies to a station only when it is the station's own provider or a roaming partner.
+ * The Tesla pass never roams to other networks, and networks without any subscription take ad-hoc only.
+ */
+export function subscriptionAppliesAtStation(sub: SubscriptionSpec, station: ChargerStation): boolean {
+  if (sub.provider === station.network) return true;
+  if (sub.provider === 'tesla') return false;
+  return networkHasSubscription(station.network);
+}
+
 function computeBestWithout(
   station: ChargerStation,
   subscriptionIds: string[],
@@ -104,7 +121,8 @@ function computeBestWithout(
 ): number {
   const activeSubs: SubscriptionSpec[] = subscriptionIds
     .filter(id => id !== excludeSubId && id !== 'adhoc')
-    .map(getSubscriptionById);
+    .map(getSubscriptionById)
+    .filter(sub => subscriptionAppliesAtStation(sub, station));
 
   let best = station.baseAdhocEurPerKwh;
   if (station.network === 'tesla' && vehicle.isTesla && excludeSubId !== 'tesla_suc') {
@@ -156,7 +174,7 @@ export function getBestPriceForStation(
   }
 
   for (const sub of activeSubs) {
-    if (sub.id === 'adhoc') continue;
+    if (sub.id === 'adhoc' || !subscriptionAppliesAtStation(sub, station)) continue;
     const isOwn = sub.provider === station.network;
     const candidatePrice = isOwn ? sub.pricePerKwhOwn : roamingRate(sub);
     if (candidatePrice < bestPrice) {

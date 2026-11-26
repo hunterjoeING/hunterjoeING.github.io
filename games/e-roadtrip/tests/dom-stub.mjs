@@ -26,7 +26,9 @@ export class DomStub {
   }
 
   getContext() { return null; }
+  focus() {}
   setAttribute(key, value) { this.attrs[key] = value; }
+  removeAttribute(key) { delete this.attrs[key]; }
 
   dispatch(name) {
     const listener = this.listeners.get(name);

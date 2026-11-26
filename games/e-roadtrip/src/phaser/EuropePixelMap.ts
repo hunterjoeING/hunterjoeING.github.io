@@ -1,25 +1,10 @@
 import * as Phaser from 'phaser';
-import {
-  COUNTRY_BORDERS,
-  DENMARK_ZEALAND_POLY,
-  EXTRA_ISLAND_POLYS,
-  FOREST_ZONES,
-  IRELAND_POLY,
-  LAKES,
-  MAINLAND_EUROPE_POLY,
-  MAP_BOUNDS,
-  MOUNTAIN_CLUSTERS,
-  MapPoint,
-  RELIEF_ZONES,
-  RIVERS,
-  SARDINIA_CORSICA_POLYS,
-  SCANDINAVIA_POLY,
-  SICILY_POLY,
-  UK_POLY
-} from '../data/europeGeography';
+import { BORDER_PATHS, LAKE_POLYGONS, LAND_POLYGONS, MAP_BOUNDS, RIVER_PATHS } from '../data/europeGeoData.generated';
+import { FOREST_ZONES, MOUNTAIN_CLUSTERS, RELIEF_ZONES } from '../data/europeTerrain';
+import type { MapPoint } from '../data/europeProjection';
 import { CITIES } from '../data/europeMap';
 
-export const PIXEL_MAP_SCALE = 2; // 900x710 pixel-art canvas displayed at 1800x1420
+export const PIXEL_MAP_SCALE = 2;
 
 export interface MapThemePalette {
   bgHex: number;
@@ -76,7 +61,7 @@ export interface MapThemePalette {
 export function getMapThemePalette(isLight: boolean): MapThemePalette {
   if (isLight) {
     return {
-      bgHex: 0x9ec5e8,
+      bgHex: 0x8db9e2,
       oceanDeep: '#8db9e2',
       oceanMid: '#9ec6ea',
       oceanShelf: '#b4d6f2',
@@ -136,7 +121,7 @@ export function getMapThemePalette(isLight: boolean): MapThemePalette {
   }
 
   return {
-    bgHex: 0x09192f,
+    bgHex: 0x08172c,
     oceanDeep: '#08172c',
     oceanMid: '#0b203b',
     oceanShelf: '#102c50',
@@ -225,11 +210,26 @@ function tracePoly(ctx: CanvasRenderingContext2D, poly: MapPoint[], scale: numbe
   ctx.closePath();
 }
 
+function traceGeoPath(ctx: CanvasRenderingContext2D, path: number[], closed = false): void {
+  ctx.moveTo(path[0] / PIXEL_MAP_SCALE, path[1] / PIXEL_MAP_SCALE);
+  for (let i = 2; i < path.length; i += 2) {
+    ctx.lineTo(path[i] / PIXEL_MAP_SCALE, path[i + 1] / PIXEL_MAP_SCALE);
+  }
+  if (closed) ctx.closePath();
+}
+
+function traceLand(ctx: CanvasRenderingContext2D): void {
+  ctx.beginPath();
+  for (const polygon of LAND_POLYGONS) {
+    for (const ring of polygon) traceGeoPath(ctx, ring, true);
+  }
+}
+
 function drawPixelTree(
   ctx: CanvasRenderingContext2D,
   px: number,
   py: number,
-  kind: 'conifer' | 'mixed',
+  kind: 'pine' | 'mixed' | 'deciduous',
   variant: number,
   pal: MapThemePalette
 ): void {
@@ -239,7 +239,7 @@ function drawPixelTree(
   ctx.fillStyle = pal.treeShadow;
   ctx.fillRect(x - 1, y + 1, 3, 1);
 
-  if (kind === 'conifer' || variant < 0.55) {
+  if (kind === 'pine' || (kind === 'mixed' && variant < 0.55)) {
     // Crisp 3x4 pixel conifer
     ctx.fillStyle = pal.treeDark;
     ctx.fillRect(x - 1, y, 3, 1);
@@ -304,17 +304,6 @@ export function ensureEuropePixelMapTexture(scene: Phaser.Scene, isLight: boolea
   const pal = getMapThemePalette(isLight);
   const rng = createSeededRng(20261123);
 
-  const allLandPolys: MapPoint[][] = [
-    MAINLAND_EUROPE_POLY,
-    DENMARK_ZEALAND_POLY,
-    UK_POLY,
-    IRELAND_POLY,
-    SCANDINAVIA_POLY,
-    SICILY_POLY,
-    ...SARDINIA_CORSICA_POLYS,
-    ...EXTRA_ISLAND_POLYS
-  ];
-
   // 1. Deep ocean + subtle graticule + pixel wave sparkles
   ctx.fillStyle = pal.oceanDeep;
   ctx.fillRect(0, 0, cw, ch);
@@ -338,8 +327,7 @@ export function ensureEuropePixelMapTexture(scene: Phaser.Scene, isLight: boolea
     ctx.lineCap = 'round';
     ctx.strokeStyle = color;
     ctx.lineWidth = lineWidth;
-    ctx.beginPath();
-    allLandPolys.forEach(poly => tracePoly(ctx, poly, PIXEL_MAP_SCALE));
+    traceLand(ctx);
     ctx.stroke();
     ctx.restore();
   };
@@ -349,9 +337,8 @@ export function ensureEuropePixelMapTexture(scene: Phaser.Scene, isLight: boolea
 
   // 3. Base land fill + subtle pixel dither texture, clipped strictly to landmasses
   ctx.save();
-  ctx.beginPath();
-  allLandPolys.forEach(poly => tracePoly(ctx, poly, PIXEL_MAP_SCALE));
-  ctx.clip();
+  traceLand(ctx);
+  ctx.clip('evenodd');
 
   ctx.fillStyle = pal.landBase;
   ctx.fillRect(0, 0, cw, ch);
@@ -463,40 +450,26 @@ export function ensureEuropePixelMapTexture(scene: Phaser.Scene, isLight: boolea
   ctx.lineWidth = 1.5;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
-  RIVERS.forEach(river => {
-    if (river.points.length < 2) return;
-    ctx.beginPath();
-    ctx.moveTo(Math.round(river.points[0].x / PIXEL_MAP_SCALE), Math.round(river.points[0].y / PIXEL_MAP_SCALE));
-    for (let i = 1; i < river.points.length; i++) {
-      ctx.lineTo(Math.round(river.points[i].x / PIXEL_MAP_SCALE), Math.round(river.points[i].y / PIXEL_MAP_SCALE));
-    }
-    ctx.stroke();
-  });
+  ctx.beginPath();
+  RIVER_PATHS.forEach(path => traceGeoPath(ctx, path));
+  ctx.stroke();
 
-  LAKES.forEach(lake => {
-    ctx.fillStyle = pal.lakeFill;
-    ctx.strokeStyle = pal.lakeBorder;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    tracePoly(ctx, lake.points, PIXEL_MAP_SCALE);
-    ctx.fill();
-    ctx.stroke();
-  });
+  ctx.fillStyle = pal.lakeFill;
+  ctx.strokeStyle = pal.lakeBorder;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  LAKE_POLYGONS.forEach(polygon => polygon.forEach(ring => traceGeoPath(ctx, ring, true)));
+  ctx.fill('evenodd');
+  ctx.stroke();
 
-  // 8. Country Borders (crisp pixel-dashed lines)
+  // 8. Country borders
   ctx.save();
   ctx.strokeStyle = pal.borderColor;
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 3]);
-  COUNTRY_BORDERS.forEach(border => {
-    if (border.length < 2) return;
-    ctx.beginPath();
-    ctx.moveTo(Math.round(border[0].x / PIXEL_MAP_SCALE), Math.round(border[0].y / PIXEL_MAP_SCALE));
-    for (let i = 1; i < border.length; i++) {
-      ctx.lineTo(Math.round(border[i].x / PIXEL_MAP_SCALE), Math.round(border[i].y / PIXEL_MAP_SCALE));
-    }
-    ctx.stroke();
-  });
+  ctx.beginPath();
+  BORDER_PATHS.forEach(path => traceGeoPath(ctx, path));
+  ctx.stroke();
   ctx.restore();
 
   // 9. Detailed pixel-art city urban footprints
@@ -529,9 +502,8 @@ export function ensureEuropePixelMapTexture(scene: Phaser.Scene, isLight: boolea
   ctx.save();
   ctx.lineJoin = 'round';
   ctx.strokeStyle = pal.coastOutline;
-  ctx.lineWidth = 1.4;
-  ctx.beginPath();
-  allLandPolys.forEach(poly => tracePoly(ctx, poly, PIXEL_MAP_SCALE));
+  ctx.lineWidth = 0.75;
+  traceLand(ctx);
   ctx.stroke();
   ctx.restore();
 

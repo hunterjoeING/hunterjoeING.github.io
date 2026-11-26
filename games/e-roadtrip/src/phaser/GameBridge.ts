@@ -4,10 +4,12 @@ import {
   CollisionInfo,
   LevelConfig,
   PoliceViolationKind,
+  PassName,
   ProviderFilterMap,
   RunState,
   TripPlan
 } from '../types';
+import type { PropertyDamage } from '../sim/PropertyDamage';
 
 export interface TouchInputState {
   left: boolean;
@@ -17,6 +19,11 @@ export interface TouchInputState {
   brake: boolean;
   hornPressed: boolean;
 }
+
+export type AlpineEvent =
+  | { kind: 'pass'; name: PassName }
+  | { kind: 'descent' }
+  | { kind: 'overheat' };
 
 export interface ERoadtripBridge {
   level: LevelConfig;
@@ -36,12 +43,16 @@ export interface ERoadtripBridge {
   onMapSelectRoute: (routeId: string) => void;
   onMapSelectLeg: (legIndex: number) => void;
   onAutobahnHudTick: (run: RunState) => void;
+  onCityStressChanged: (run: RunState) => void;
   onTriggerChargerSegment: (station: ChargerStation) => void;
   onTriggerCitySegment: (preset: CityDrivePreset) => void;
   onCitySegmentComplete: (preset: CityDrivePreset, cleanArrival: boolean) => void;
+  onAlpineEvent: (event: AlpineEvent) => void;
   onDynamicEventTrigger: (eventId: string) => void;
   onWifeDialogueTrigger: (dialogueId: string) => void;
   onCollisionEvent: (info: CollisionInfo) => void;
+  onPropertyDamage: (damage: PropertyDamage) => void;
+  onDestinationArrival: () => void;
   onPoliceViolation: (kind: PoliceViolationKind) => void;
   onBatteryDepleted: () => void;
 }

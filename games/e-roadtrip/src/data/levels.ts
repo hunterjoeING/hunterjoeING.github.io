@@ -1,4 +1,7 @@
 import { LevelConfig, ScoringWeights } from '../types';
+import { HOTEL_AC, REST_AREA_STAY_MINUTES } from './events';
+import { ALPS_TO_GARDA_ROUTES } from './routes/alpsToGarda';
+import { TUNNEL_CLOSURE_EVENT_ID } from '../sim/WinterTunnel';
 
 export const DEFAULT_SCORING_WEIGHTS: ScoringWeights = {
   time: 0.30,
@@ -37,7 +40,7 @@ export const LEVELS: LevelConfig[] = [
         chargingDensity: 'Sehr dicht',
         colorHex: 0x3b82f6,
         legs: [
-          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
+          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_koeln_kamen', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_kamen_bielefeld', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_bielefeld_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -91,7 +94,7 @@ export const LEVELS: LevelConfig[] = [
         chargingDensity: 'Ausgewogen',
         colorHex: 0xf59e0b,
         legs: [
-          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
+          { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_koeln_olpe', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_olpe_kassel', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
           { edgeId: 'edge_kassel_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -110,7 +113,7 @@ export const LEVELS: LevelConfig[] = [
       }
     ],
     routeLegs: [
-      { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start', citySegmentAtEnd: 'koeln_ring' },
+      { edgeId: 'edge_aachen_koeln', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtStart: 'aachen_start' },
       { edgeId: 'edge_koeln_kamen', defaultTargetSpeedKmh: 125, weatherOverride: 'clear', isNightLeg: false },
       { edgeId: 'edge_kamen_bielefeld', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false },
       { edgeId: 'edge_bielefeld_hannover', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: false, citySegmentAtEnd: 'hannover_messe' },
@@ -156,14 +159,14 @@ export const LEVELS: LevelConfig[] = [
     boardId: 'eroadtrip_l2',
     order: 2,
     title: 'Level 2: Familien-Sommerurlaub',
-    subtitle: 'Ehefrau, 2 Kinder & Hund · Aachen ↔ Montpellier',
+    subtitle: 'Ehefrau, 2 Kinder & Hund · Aachen → Montpellier',
     badge: 'Spielbar · Vollversion',
     playable: true,
-    regionLabel: 'Aachen ↔ Montpellier (3 Korridore)',
+    regionLabel: 'Aachen → Montpellier (3 Korridore)',
     startBudgetEur: 32000,
     rewardBaseEur: 8000,
-    departureTimeHour: 5.5,
-    targetArrivalMinutes: 2040,
+    departureTimeHour: 12,
+    targetArrivalMinutes: 1882,
     costBenchmarkEurPerKm: 0.3,
     startCityId: 'aachen',
     destinationCityId: 'montpellier',
@@ -174,7 +177,7 @@ export const LEVELS: LevelConfig[] = [
         name: 'Route A · Luxemburg & Lyon (A31 → A6 → A7/A9)',
         shortLabel: 'Lux–Lyon',
         highwaySummary: 'Luxemburg → Dijon → Lyon → Montpellier',
-        description: 'Langer Südfrankreich-Korridor über Lothringen und das Rhonetal. Übernachtung in Lyon, dann A7/A9 ans Mittelmeer. Maut etwa 75 € je Richtung.',
+        description: 'Durch Lothringen und das Rhonetal bis Lyon. Abends übernachten, am nächsten Morgen über A7 und A9 ans Mittelmeer. Maut etwa 75 €.',
         elevationProfile: 'Hügelig',
         trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
@@ -183,11 +186,7 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_luxemburg', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_luxemburg_dijon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
           { edgeId: 'edge_dijon_lyon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-          { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
-          { edgeId: 'edge_lyon_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
-          { edgeId: 'edge_dijon_lyon', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
-          { edgeId: 'edge_luxemburg_dijon', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
-          { edgeId: 'edge_aachen_luxemburg', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
+          { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_nancy_tesla', legIndex: 1, targetSocPct: 80 },
@@ -200,7 +199,7 @@ export const LEVELS: LevelConfig[] = [
         shortLabel: 'Reims–Nevers',
         highwaySummary: 'Reims → Nevers → Clermont-Ferrand → Millau → Montpellier',
         description:
-          'Zwischen Luxemburg und Paris. Über Reims und Nevers auf die A71, ab Clermont-Ferrand dieselbe A75 wie die Paris-Route. Übernachtung in Clermont-Ferrand. Tempolimit 130, bei Regen 110. Maut etwa 90 € je Richtung.',
+          'Zwischen Luxemburg und Paris. Über Reims und Nevers auf die A71, abends Übernachtung in Clermont-Ferrand. Am nächsten Morgen über die A75 ans Meer. Tempolimit 130, bei Regen 110. Maut etwa 90 €.',
         elevationProfile: 'Hügelig',
         trafficRisk: 'Niedrig',
         chargingDensity: 'Ausgewogen',
@@ -209,11 +208,7 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_reims', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_reims_nevers', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
           { edgeId: 'edge_nevers_clermont', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
-          { edgeId: 'edge_clermont_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
-          { edgeId: 'edge_nevers_clermont', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
-          { edgeId: 'edge_reims_nevers', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
-          { edgeId: 'edge_aachen_reims', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
+          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_troyes_vianeo', legIndex: 1, targetSocPct: 75 },
@@ -225,7 +220,7 @@ export const LEVELS: LevelConfig[] = [
         name: 'Route B · Paris & Clermont-Ferrand (A1 → A71 → A75)',
         shortLabel: 'Paris–Clermont',
         highwaySummary: 'Lüttich → Paris → Clermont → Millau → Montpellier',
-        description: 'Über die A1 nach Paris, dann quer durch die Auvergne. Übernachtung in Clermont-Ferrand, am nächsten Tag das Millau-Viadukt. Maut etwa 100 € je Richtung.',
+        description: 'Über die A1 nach Paris, dann quer durch die Auvergne. Abends übernachtet ihr in Clermont-Ferrand, am nächsten Tag geht es über das Millau-Viadukt ans Meer. Maut etwa 100 €.',
         elevationProfile: 'Bergig / Pässe',
         trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
@@ -234,11 +229,7 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_luettich', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_luettich_paris', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
           { edgeId: 'edge_paris_clermont', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
-          { edgeId: 'edge_clermont_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
-          { edgeId: 'edge_paris_clermont', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
-          { edgeId: 'edge_luettich_paris', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
-          { edgeId: 'edge_aachen_luettich', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
+          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_orleans_tesla', legIndex: 2, targetSocPct: 80 },
@@ -250,11 +241,7 @@ export const LEVELS: LevelConfig[] = [
       { edgeId: 'edge_aachen_luxemburg', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
       { edgeId: 'edge_luxemburg_dijon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
       { edgeId: 'edge_dijon_lyon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-      { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true },
-      { edgeId: 'edge_lyon_montpellier', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
-      { edgeId: 'edge_dijon_lyon', reverse: true, defaultTargetSpeedKmh: 110, weatherOverride: 'rain' },
-      { edgeId: 'edge_luxemburg_dijon', reverse: true, defaultTargetSpeedKmh: 130, weatherOverride: 'clear', isNightLeg: true },
-      { edgeId: 'edge_aachen_luxemburg', reverse: true, defaultTargetSpeedKmh: 120, weatherOverride: 'clear', isNightLeg: true, citySegmentAtEnd: 'aachen_finish' }
+      { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
     ],
     passengers: {
       label: 'Ehefrau + 2 kleine Kinder + Hund',
@@ -271,77 +258,36 @@ export const LEVELS: LevelConfig[] = [
       'In Frankreich: Atlante und ENGIE Vianeo statt EnBW und EWE Go',
       'Frankreich: 130 km/h, bei Regen 110. Maut auf den Autoroutes',
       'Blitzer nach dem gefahrenen Tempo gegen das Schild. In Frankreich: Radar automatique',
-      'Eine Übernachtung: gutes Hotel mit AC-Laden, Budgethotel oder im Auto an der Raststätte',
+      `Übernachtung nach Etappe 3: ${HOTEL_AC.stayMinutes / 60} Stunden im Hotel, ${REST_AREA_STAY_MINUTES / 60} Stunden am Rastplatz im Auto`,
       'AC-Dorfladen: 0,29 €/kWh Atomstrom, aber nur 22 kW'
     ],
     briefingText:
-      'Sommerferien: Mit Frau, zwei Kindern und Hund von Aachen nach Montpellier und zurück. Wähle Hin- und Rückweg, plane die Ladepausen und die eine Übernachtung so, dass die Nerven halten.',
-    eventPoolIds: ['evt_dirty_toilets', 'evt_hotel_overnight', 'evt_rest_area_robbery', 'evt_south_arrival', 'evt_charger_defect', 'evt_speed_trap'],
+      'Mit Frau, zwei Kindern und Hund geht es von Aachen ans Mittelmeer. Ihr fahrt mittags los und übernachtet unterwegs. Nach der Hotelnacht erreicht ihr Montpellier am frühen Nachmittag. Wer am Rastplatz im Auto schläft, kommt schon um die Mittagszeit an.',
+    eventPoolIds: ['evt_dirty_toilets', 'evt_hotel_overnight', 'evt_rest_area_robbery', 'evt_charger_defect', 'evt_speed_trap'],
     wifeDialogueIds: ['dlg_diesel_remark', 'dlg_tight_buffer']
   },
 
   {
     id: 'level_3_alps_winter',
+    boardId: 'eroadtrip_l3',
     order: 3,
     title: 'Level 3: Winter-Alpenüberquerung',
-    subtitle: 'Schneeketten, Pass vs. Inntal & Kälteverbrauch',
-    badge: 'Kuratiertes Szenario · Struktur bereit',
-    playable: false,
-    regionLabel: 'München → Innsbruck (3 Alpenrouten)',
+    subtitle: 'München → Sirmione (3 Alpenrouten)',
+    badge: 'Spielbar · Winterfahrt an den Gardasee',
+    playable: true,
+    regionLabel: 'München → Sirmione (3 Alpenrouten)',
     startBudgetEur: 38000,
     rewardBaseEur: 9500,
-    departureTimeHour: 6.0,
-    targetArrivalMinutes: 190,
+    departureTimeHour: 6.5,
+    targetArrivalMinutes: 564,
+    costBenchmarkEurPerKm: 0.28,
     startCityId: 'muenchen',
-    destinationCityId: 'innsbruck',
-    defaultRouteId: 'l3_route_a_inntal',
-    routeOptions: [
-      {
-        id: 'l3_route_a_inntal',
-        name: 'Route A · Inntal-Autobahn (A8 → A93 → A12)',
-        shortLabel: 'Inntal A8/A12',
-        highwaySummary: 'A8 Irschenberg → Kufstein → A12',
-        description: 'Gute EnBW- & IONITY-Dichte, aber Ski-Urlauberstau am Inntaldreieck + AT-Vignette.',
-        elevationProfile: 'Hügelig',
-        trafficRisk: 'Hoch',
-        chargingDensity: 'Sehr dicht',
-        colorHex: 0x3b82f6,
-        legs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow' }],
-        defaultPlannedStops: [{ chargerId: 'chg_irschenberg_enbw', legIndex: 0, targetSocPct: 80 }]
-      },
-      {
-        id: 'l3_route_b_zirler',
-        name: 'Route B · Garmisch & Zirler Berg Pass (A95 → B177)',
-        shortLabel: 'Zirler Berg Pass',
-        highwaySummary: 'A95 Garmisch → Mittenwald → Zirler Berg',
-        description: 'Extrem steiler Alpenpass (+1.660 hm!) und nur ein 22-kW-Dorflader unterwegs, aber staufrei & mautfrei.',
-        elevationProfile: 'Bergig / Pässe',
-        trafficRisk: 'Niedrig',
-        chargingDensity: 'Dünn / Anspruchsvoll',
-        colorHex: 0xf59e0b,
-        legs: [
-          { edgeId: 'edge_muenchen_garmisch', defaultTargetSpeedKmh: 110, weatherOverride: 'snow' },
-          { edgeId: 'edge_garmisch_innsbruck', defaultTargetSpeedKmh: 70, weatherOverride: 'snow' }
-        ],
-        defaultPlannedStops: []
-      },
-      {
-        id: 'l3_route_c_achenpass',
-        name: 'Route C · Achenpass & Tegernsee (A8 → B307)',
-        shortLabel: 'Achenpass',
-        highwaySummary: 'Holzkirchen → Achenpass → Inntal',
-        description: 'Ausgewogene Bergstrecke mit mittlerem Staurisiko und 150-kW-Lader am Achenkirch-Pass.',
-        elevationProfile: 'Bergig / Pässe',
-        trafficRisk: 'Mittel',
-        chargingDensity: 'Ausgewogen',
-        colorHex: 0x10b981,
-        legs: [{ edgeId: 'edge_muenchen_achenpass_innsbruck', defaultTargetSpeedKmh: 85, weatherOverride: 'snow' }],
-        defaultPlannedStops: [{ chargerId: 'chg_achenkirch_enbw', legIndex: 0, targetSocPct: 78 }]
-      }
-    ],
-    routeLegs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow' }],
+    destinationCityId: 'sirmione',
+    defaultRouteId: ALPS_TO_GARDA_ROUTES[0].id,
+    routeOptions: ALPS_TO_GARDA_ROUTES,
+    routeLegs: ALPS_TO_GARDA_ROUTES[0].legs,
     passengers: {
-      label: 'Winter-Skiurlaub Crew',
+      label: 'Familienausflug an den Gardasee',
       hasWife: true,
       childrenCount: 1,
       hasDog: false,
@@ -351,13 +297,17 @@ export const LEVELS: LevelConfig[] = [
     requiresWinterTires: true,
     scoringWeights: { time: 0.25, cost: 0.20, stress: 0.25, efficiency: 0.20, decisions: 0.10 },
     specialRulesSummary: [
-      'Winterreifen & Schneeketten-Pflicht am Pass',
-      '+28 % Kälte- & Schneeverbrauch plus Höhenmeter-Anstieg',
-      '3 Alpenübergänge: Inntal-Stau vs. Zirler Berg Steigung vs. Achenpass'
+      'Vorwärmen kostet Zeit und Akku. Beim Kaltstart steigt zunächst der Verbrauch, und die Familie friert.',
+      'Bei Kettenpflicht kannst du vor den Kehren in der Bucht Schneeketten anlegen. Ohne Ketten droht eine Kontrolle.',
+      'Glatteis liegt auch in den Kehren. Überhole Lkw nur bei freier Sicht und gestrichelter Mittellinie. Achte auf Warndreiecke.',
+      'Bergab bestimmst du die Rekuperation. Ein voller Akku nimmt wenig Energie auf, und die Bremsen können heiß werden.',
+      'Am Berglader kannst du bei einer Schlange warten, weiterfahren oder einen langsameren Ladepunkt wählen.',
+      'Die Abschnittskontrolle im Inntal-Tunnel misst das Durchschnittstempo. Bei Sperrung kannst du warten oder ausweichen.',
+      'Stau, Schneepflüge und Lawinensperren können die Route verzögern. Für die Inntal-Autobahn brauchst du eine Vignette.'
     ],
     briefingText:
-      'Eisige Temperaturen, Schneefall und steile Alpenrampen fordern Wärmepumpe und Routenwahl heraus.',
-    eventPoolIds: ['evt_vignette_check', 'evt_rain_front', 'evt_accident_help'],
+      'Um 06:30 Uhr startet ihr bei −8 °C am Marienplatz. Fahrt über den Brenner, über Fernpass und Reschen oder über den Jaufenpass. Oben warten Schnee und Kehren, unten die Wintersonne am Gardasee. Euer Ziel ist die Scaligerburg in Sirmione.',
+    eventPoolIds: ['evt_child_cold', 'evt_inntal_ski_jam', 'evt_vignette_check', 'evt_snowplough_convoy', 'evt_avalanche_closure', TUNNEL_CLOSURE_EVENT_ID],
     wifeDialogueIds: ['dlg_diesel_remark']
   },
 

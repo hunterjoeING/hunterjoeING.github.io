@@ -1,27 +1,50 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
+import { passGrip, passTravelHeading } from '../sim/AlpineDriving';
+import { PASS_FOLLOW_MIN_PER_SECOND, PASS_NEAR_MISS_STRESS, passOnIce } from '../sim/AlpineHazards';
+import { applyStress } from '../sim/PauseEffects';
+import { AlpinePassTraffic } from './AlpinePassTraffic';
+import { passNavigation, passRoadContains } from './AlpinePass';
 import { getChargerById } from '../data/europeMap';
+import { MONTPELLIER_HOTEL_GOAL, MONTPELLIER_SEA } from '../data/cityLayouts/montpellier';
+import { isRearParked } from '../sim/ChargingBay';
+import { applyMontpellierWeather, MONTPELLIER_LIGHTING } from '../sim/CoastalLight';
+import { evaluatePropertyDamage, MIN_DAMAGE_IMPACT_PX_PER_SEC, recordConeHit, STATIC_CONTACT_CLEARANCE_PX } from '../sim/PropertyDamage';
+import { pointInCityRect } from '../sim/WinterCity';
+import { createCityMinimap } from './MappedCityPainter';
+import { COASTAL_BACKGROUND, createSeaGlitter, followCoastalShadow } from './CoastalEffects';
 import { ERoadtripBridge, ensureTouchHoldsMatchPointers } from './GameBridge';
 import {
   CityLightingProfile,
   PedestrianAgent,
   SignalIntersection,
+  SignalPhase,
   TrafficCarAgent,
   ZebraCrosswalk,
   computeCityLightingProfile,
   detectPlayerTrafficViolation,
   evaluateCollisionFault,
-  nextTrafficPose,
-  shouldNpcYield
+  stepCityTraffic,
+  trafficShape
 } from './CityTraffic';
 import {
   CAR_FOOTPRINT, Capsule, capsuleInsideWorld, capsuleOverlapsRect, capsulesOverlap, circleAt, rotatedCarBounds,
   vehicleCapsule
 } from './CityCollision';
+import {
+  capsuleOnRoad, COLLISION_GRACE_SEC, findCollisionRecoveryPoint, RECOVERY_TRAFFIC_CLEARANCE_PX, TRAFFIC_RECOVERY_RADIUS_PX
+} from './CityCollisionRecovery';
 import { Rect } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
-import { paintDrivingPlace, PlacePaint } from './PlacePainter';
+import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } from './PlacePainter';
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
+
+type PropertyContact = Rect | Capsule | 'worldEdge' | 'passEdge' | 'water';
+type TurnSignal = -1 | 0 | 1;
+export const CITY_STOP_SPEED_PX_PER_SEC = 8;
+export const CITY_TURN_SIGNAL_HZ = 1.5;
+const CITY_PARKING_DWELL_SEC = 0.6;
+const SIGNAL_COLOR: Record<SignalPhase, number> = { green: 0x22c55e, amber: 0xfacc15, red: 0xef4444 };
 
 export class CityDriveScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
@@ -29,12 +52,16 @@ export class CityDriveScene extends Phaser.Scene {
   private station?: ChargerStation;
 
   private player!: Phaser.GameObjects.Image;
+  private turnLamps?: { left: Phaser.GameObjects.Graphics; right: Phaser.GameObjects.Graphics };
+  private turnSignal: TurnSignal = 0;
+  private turnSignalPhase = 0;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: Record<'W' | 'A' | 'S' | 'D' | 'SPACE' | 'H', Phaser.Input.Keyboard.Key>;
 
   private worldW = 2040;
   private worldH = 1480;
   private carSpeed = 0;
+  private travelHeading?: number;
 
   private trafficTimer = 0;
   private intersections: SignalIntersection[] = [];
@@ -42,8 +69,8 @@ export class CityDriveScene extends Phaser.Scene {
     interId: string;
     axis: 'ew' | 'ns';
     sprite: Phaser.GameObjects.Image;
-    halo: Phaser.GameObjects.Image;
-    shimmer: Phaser.GameObjects.Image;
+    halo?: Phaser.GameObjects.Image;
+    shimmer?: Phaser.GameObjects.Image;
   }> = [];
   private zebras: ZebraCrosswalk[] = [];
   private wasInInter = new Set<string>();
@@ -53,12 +80,16 @@ export class CityDriveScene extends Phaser.Scene {
   private pedestrians: PedestrianAgent[] = [];
   private obstacleRects: Rect[] = [];
   private obstacleCircles: Capsule[] = [];
+  private propertyContacts = new Set<PropertyContact>();
+  private cones: { bounds: Rect; sprite: Phaser.GameObjects.Image }[] = [];
+  private hitCones = new Set<number>();
 
   private targetZone!: Phaser.Geom.Rectangle;
   private targetGlow?: Phaser.GameObjects.Rectangle;
   private targetLabel?: Phaser.GameObjects.Text;
   private reverseHintText!: Phaser.GameObjects.Text;
   private navArrow!: Phaser.GameObjects.Triangle;
+  private moveMinimap?: ReturnType<typeof createCityMinimap>;
   private distText!: Phaser.GameObjects.Text;
 
   private cableGfx!: Phaser.GameObjects.Graphics;
@@ -103,16 +134,20 @@ export class CityDriveScene extends Phaser.Scene {
   private place!: PlacePaint;
   private surface!: SurfaceFx;
   private passThrough = false;
-  private pillar?: { x: number; y: number };
+  private passTraffic?: AlpinePassTraffic;
+  private passUnsafeLane = false;
+  private cityApproachReached = false;
   private spinners: Phaser.GameObjects.Image[] = [];
   private roadWet = false;
+  private updateCoastalLight?: (time: number) => void;
   private previewFx = false;
   private previewDriveSec = 0;
   private previewLock = false;
 
   private dwellInTargetSec = 0;
-  private reversedIntoBay = false;
-  private collisionCooldownSec = 0;
+  private collisionGraceSec = 0;
+  private collisionRecoveryHeading?: number;
+  private bumpFeedbackSec = 0;
   private violationCooldownSec = 0;
   private stormFlashTimer = 4;
   private completed = false;
@@ -128,17 +163,29 @@ export class CityDriveScene extends Phaser.Scene {
   init(data: { bridge: ERoadtripBridge; preset: CityDrivePreset; chargerId?: string; previewFx?: boolean }): void {
     this.bridge = data.bridge;
     this.preset = data.preset;
+    if (this.preset === 'montpellier_finish' && this.bridge.runState) applyMontpellierWeather(this.bridge.runState);
     this.station = data.chargerId ? getChargerById(data.chargerId) : undefined;
     this.previewFx = !!data.previewFx;
     this.previewDriveSec = 0;
     this.roadWet = false;
+    this.updateCoastalLight = undefined;
     this.passThrough = false;
-    this.pillar = undefined;
+    this.passTraffic = undefined;
+    this.passUnsafeLane = false;
+    this.cityApproachReached = false;
     this.spinners = [];
     this.carSpeed = 0;
+    this.turnSignal = 0;
+    this.turnSignalPhase = 0;
+    this.turnLamps = undefined;
+    this.travelHeading = undefined;
     this.dwellInTargetSec = 0;
-    this.reversedIntoBay = false;
-    this.collisionCooldownSec = 0;
+    this.collisionGraceSec = 0;
+    this.collisionRecoveryHeading = undefined;
+    this.bumpFeedbackSec = 0;
+    this.propertyContacts.clear();
+    this.cones = [];
+    this.hitCones.clear();
     this.violationCooldownSec = 1.2;
     this.completed = false;
     this.cleanRun = true;
@@ -168,17 +215,28 @@ export class CityDriveScene extends Phaser.Scene {
       w0 < 640 ||
       (typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0 && w0 < 900);
 
+    const run = this.bridge.runState;
+    const lighting = computeCityLightingProfile(
+      this.bridge.level.departureTimeHour, run?.elapsedMinutes ?? 0, this.preset,
+      run?.activeWeather ?? 'clear', run?.isNight
+    );
     this.place = paintDrivingPlace(this, {
       preset: this.preset,
+      levelOrder: this.bridge.level.order,
+      routeId: (this.preset === 'aachen_finish' ? run?.plan.returnRouteId : undefined) ||
+        run?.plan.selectedRouteId || this.bridge.plan.selectedRouteId,
       station: this.station,
-      mobile: this.isMobilePerf
+      mobile: this.isMobilePerf,
+      passName: run?.alpinePass?.name,
+      passSeed: run?.leaderboardRunId ?? run?.plan.selectedRouteId,
+      light: this.bridge.isLightTheme(),
+      night: lighting.isNight
     });
     this.worldW = this.place.worldW;
     this.worldH = this.place.worldH;
     this.zebras = this.place.zebras;
     this.neonSigns = this.place.neons;
     this.passThrough = this.place.passThrough;
-    this.pillar = this.place.pillar;
     this.spinners = this.place.spinners;
     this.surface = new SurfaceFx(this, this.isMobilePerf);
     this.previewDriveSec = this.previewFx ? 3.4 : 0;
@@ -191,18 +249,25 @@ export class CityDriveScene extends Phaser.Scene {
         x: this.player?.x || 0,
         y: this.player?.y || 0
       });
+      (debugWindow as Window & { __erZoom?: (zoom: number) => void }).__erZoom = (zoom: number) => {
+        this.previewLock = false;
+        this.cameras.main.startFollow(this.player, true, 1, 1);
+        this.cameras.main.setZoom(zoom);
+      };
     }
     this.targetZone = this.place.targetZone;
 
     this.physics.world.setBounds(0, 0, this.worldW, this.worldH);
     this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);
-    this.cameras.main.setBackgroundColor(this.place.autohof ? 0x14532d : 0x10281c);
+    this.cameras.main.setBackgroundColor(this.preset === 'montpellier_finish'
+      ? COASTAL_BACKGROUND : this.place.autohof ? 0x14532d : 0x10281c);
 
     if (this.place.zoneLabel && this.place.zoneColor !== undefined) {
       this.drawZoneMarker(this.place.zoneLabel, this.place.zoneColor);
     }
     this.spawnEnvironmentAndProps();
     this.spawnTrafficAndPedestrians();
+    if (this.place.passRoad) this.passTraffic = new AlpinePassTraffic(this.place.passRoad, this);
     this.spawnPlayer();
     this.setupLightingAndWeather();
     this.setupNavIndicator();
@@ -212,6 +277,7 @@ export class CityDriveScene extends Phaser.Scene {
     if (!this.previewFx && new URLSearchParams(window.location.search).get('erpreview')) {
       const frame = this.time.delayedCall(120, () => {
         if (!this.scene.isActive() || !this.cameras?.main) return;
+        if (this.place.passRoad || this.place.cityMinimap) return;
         this.previewLock = true;
         this.cameras.main.stopFollow();
         if (this.place.autohof) {
@@ -227,7 +293,7 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Optional subtle Bloom PostFX on WebGL desktop; degrades gracefully on Canvas2D / mobile
     const isWebGL = this.game.renderer.type === Phaser.WEBGL;
-    if (isWebGL && !this.isMobilePerf && this.cameras.main.postFX) {
+    if (this.preset !== 'montpellier_finish' && isWebGL && !this.isMobilePerf && this.cameras.main.postFX) {
       try {
         this.cameras.main.postFX.addBloom(0xffffff, 1, 1, 1.12, 0.32, 2);
       } catch {
@@ -285,6 +351,7 @@ export class CityDriveScene extends Phaser.Scene {
 
   private zoomFor(width: number): number {
     if (this.place?.autohof) return width < 640 ? 0.9 : 1.02;
+    if (this.place?.cityMinimap) return width < 360 ? 0.64 : width < 640 ? 0.7 : 0.9;
     return width < 640 ? 0.72 : 0.9;
   }
 
@@ -312,7 +379,7 @@ export class CityDriveScene extends Phaser.Scene {
     this.targetLabel = this.add
       .text(this.targetZone.centerX, this.targetZone.centerY, label, {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontSize: '10px',
+        fontSize: this.place.cityGuide ? '16px' : '10px',
         fontStyle: 'bold',
         color: '#ffffff',
         align: 'center',
@@ -326,7 +393,8 @@ export class CityDriveScene extends Phaser.Scene {
   private spawnEnvironmentAndProps(): void {
     this.obstacleRects = this.place.buildings.slice();
     this.obstacleCircles = this.place.trees.map(spot => {
-      this.add.image(spot.x, spot.y, 'pixel_tree').setDepth(6);
+      const tree = this.add.image(spot.x, spot.y, 'pixel_tree').setDepth(6);
+      if (this.place.passRoad || this.place.cityGuide?.snow) tree.setTint(0xd3edf7);
       return circleAt(spot.x, spot.y, 11);
     });
 
@@ -335,67 +403,50 @@ export class CityDriveScene extends Phaser.Scene {
       this.add.image(lp.x, lp.y, 'streetlamp').setDepth(11);
     });
 
-    if (this.place.autohof) {
-      this.intersections = [];
-      return;
+    if (this.place.cityGuide) {
+      this.cones = this.place.cityGuide.cones.map(({ x, y }) => ({
+        bounds: { x: x - 4, y: y - 4, w: 8, h: 8 },
+        sprite: this.add.image(x, y, 'cone').setDepth(5)
+      }));
     }
+    this.intersections = this.place.signals?.map(({ id, x, y, radius }, index) => ({
+      id, centerX: x, centerY: y,
+      box: new Phaser.Geom.Rectangle(x - radius, y - radius, 2 * radius, 2 * radius),
+      ewPhase: index === 0 ? 'green' : 'red',
+      nsPhase: index === 0 ? 'red' : 'green'
+    })) ?? [];
+    this.spawnSignalVisuals();
+  }
 
-    // Construction cones on West St
-    [535, 565, 595].forEach(cy => {
-      this.add.image(172, cy, 'cone').setDepth(5);
-      this.obstacleRects.push({ x: 168, y: cy - 4, w: 8, h: 8 });
-    });
-
-    // Signalized intersections
-    this.intersections = [
-      {
-        id: 'inter_top',
-        centerX: 1030,
-        centerY: 210,
-        box: new Phaser.Geom.Rectangle(962, 142, 136, 136),
-        ewPhase: 'green',
-        nsPhase: 'red'
-      },
-      {
-        id: 'inter_mid',
-        centerX: 1030,
-        centerY: 730,
-        box: new Phaser.Geom.Rectangle(962, 662, 136, 136),
-        ewPhase: 'red',
-        nsPhase: 'green'
-      }
-    ];
-
-    const addLightVisual = (interId: string, axis: 'ew' | 'ns', x: number, y: number) => {
-      const shimmer = this.add
+  private spawnSignalVisuals(): void {
+    const coast = this.preset === 'montpellier_finish';
+    const addLightVisual = (interId: string, axis: 'ew' | 'ns', x: number, y: number, phase: SignalPhase) => {
+      const shimmer = coast ? undefined : this.add
         .image(x, y + 22, 'wet_shimmer')
-        .setTint(0x22c55e)
+        .setTint(SIGNAL_COLOR[phase])
         .setScale(0.52, 0.55)
         .setAlpha(0.28)
         .setBlendMode(Phaser.BlendModes.ADD)
         .setDepth(2.5);
-      const halo = this.add
+      const halo = coast ? undefined : this.add
         .image(x, y, 'light_glow_soft')
-        .setTint(0x22c55e)
+        .setTint(SIGNAL_COLOR[phase])
         .setScale(0.42)
         .setAlpha(0.55)
         .setBlendMode(Phaser.BlendModes.ADD)
         .setDepth(14.6);
-      const sprite = this.add.image(x, y, 'tlight_green').setDepth(14.5);
+      const sprite = this.add.image(x, y, `tlight_${phase}`).setDepth(14.5);
       this.signalVisuals.push({ interId, axis, sprite, halo, shimmer });
     };
 
-    // Inter 1 lights
-    addLightVisual('inter_top', 'ew', 944, 286);
-    addLightVisual('inter_top', 'ew', 1116, 134);
-    addLightVisual('inter_top', 'ns', 944, 134);
-    addLightVisual('inter_top', 'ns', 1116, 286);
-
-    // Inter 2 lights
-    addLightVisual('inter_mid', 'ew', 944, 806);
-    addLightVisual('inter_mid', 'ew', 1116, 654);
-    addLightVisual('inter_mid', 'ns', 944, 654);
-    addLightVisual('inter_mid', 'ns', 1116, 806);
+    for (const { id, centerX: x, centerY: y, box, ewPhase, nsPhase } of this.intersections) {
+      const dx = box.width / 2 + 8;
+      const dy = box.height / 2 + 8;
+      addLightVisual(id, 'ew', x - dx, y, ewPhase);
+      addLightVisual(id, 'ew', x + dx, y, ewPhase);
+      addLightVisual(id, 'ns', x, y - dy, nsPhase);
+      addLightVisual(id, 'ns', x, y + dy, nsPhase);
+    }
   }
 
   private spawnTrafficAndPedestrians(): void {
@@ -405,296 +456,266 @@ export class CityDriveScene extends Phaser.Scene {
       const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
       const sprite = this.add.image(start.x, start.y, route.tex).setDepth(7).setRotation(rotation);
       this.trafficCars.push({
-        sprite, route, wpIndex: route.startIndex + 1, currentSpeed: 0, holdLeft: 0, vx: 0, vy: 0
+        sprite, route, wpIndex: route.startIndex + 1, currentSpeed: 0, holdLeft: 0, blockedSec: 0, ghostSec: 0, vx: 0, vy: 0
       });
     }
 
-    if (this.place.autohof) {
-      (this.place.litePeds || []).forEach(pc => {
-        const start = pc.wps[0];
-        const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
-        sp.setImmovable(true);
-        this.pedestrians.push({
-          sprite: sp,
-          waypoints: pc.wps,
-          wpIndex: 1 % Math.max(1, pc.wps.length),
-          speed: pc.speed,
-          isCrossing: false
-        });
+    for (const { tex, wps, speed, zebraLink } of this.place.litePeds ?? []) {
+      const start = wps[0];
+      const sp = this.physics.add.image(start.x, start.y, tex).setDepth(8);
+      sp.setImmovable(true);
+      this.pedestrians.push({
+        sprite: sp, waypoints: wps, wpIndex: 1 % wps.length, speed, isCrossing: false, zebraLink
       });
-      return;
     }
-
-    // Pure sidewalk strollers distributed across all city sidewalks (never block crosswalks)
-    const sidewalkPedConfigs: Array<{
-      tex: string;
-      wps: Array<{ x: number; y: number }>;
-      startIdx?: number;
-      speed: number;
-    }> = [
-      // NW block inner sidewalk loop
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 300, y: 294 }, { x: 944, y: 294 }, { x: 944, y: 642 }, { x: 300, y: 642 }],
-        speed: 32
-      },
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 944, y: 642 }, { x: 300, y: 642 }, { x: 300, y: 294 }, { x: 944, y: 294 }],
-        speed: 29
-      },
-      // SW block sidewalks (avoiding SW finish driveway at x=320..450, y=800..940)
-      {
-        tex: 'ped_child',
-        wps: [{ x: 470, y: 814 }, { x: 944, y: 814 }, { x: 944, y: 1162 }, { x: 470, y: 1162 }],
-        speed: 34
-      },
-      // Top Ave outer north sidewalk (west & east)
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 140, y: 118 }, { x: 760, y: 118 }],
-        speed: 30
-      },
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 1140, y: 118 }, { x: 1740, y: 118 }],
-        speed: 31
-      },
-      // West St outer west sidewalk (north stretch)
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 122, y: 180 }, { x: 122, y: 880 }],
-        speed: 28
-      },
-      // Bottom Ave outer south sidewalk (west & east)
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 180, y: 1344 }, { x: 890, y: 1344 }],
-        speed: 31
-      },
-      {
-        tex: 'ped_child',
-        wps: [{ x: 1160, y: 1344 }, { x: 1900, y: 1344 }],
-        speed: 35
-      },
-      // East Ring outer east sidewalk (south of A4 on-ramp)
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 1918, y: 390 }, { x: 1918, y: 1290 }],
-        speed: 30
-      },
-      // NE & SE block sidewalks along East Ring
-      {
-        tex: 'ped_adult_1',
-        wps: [{ x: 1116, y: 294 }, { x: 1742, y: 294 }, { x: 1742, y: 625 }, { x: 1742, y: 294 }],
-        speed: 30
-      },
-      {
-        tex: 'ped_adult_0',
-        wps: [{ x: 1742, y: 820 }, { x: 1742, y: 1162 }, { x: 1130, y: 1162 }, { x: 1742, y: 1162 }],
-        speed: 29
-      }
-    ];
-
-    sidewalkPedConfigs.forEach(pc => {
-      const start = pc.wps[pc.startIdx || 0];
-      const sp = this.physics.add.image(start.x, start.y, pc.tex).setDepth(8);
-      sp.setImmovable(true);
-      this.pedestrians.push({
-        sprite: sp,
-        waypoints: pc.wps,
-        wpIndex: ((pc.startIdx || 0) + 1) % pc.wps.length,
-        speed: pc.speed,
-        isCrossing: false
-      });
-    });
-
-    // Sidewalk pedestrians who occasionally cross a zebra crossing when passing by (never linger/block)
-    const zebraPedConfigs: Array<{
-      tex: string;
-      startPos: { x: number; y: number };
-      speed: number;
-      zebraId: string;
-      sideA: { x: number; y: number };
-      sideB: { x: number; y: number };
-      sidewalkPathA: Array<{ x: number; y: number }>;
-      sidewalkPathB: Array<{ x: number; y: number }>;
-      initialCooldown: number;
-    }> = [
-      {
-        tex: 'ped_adult_0',
-        startPos: { x: 640, y: 122 },
-        speed: 33,
-        zebraId: 'zebra_1',
-        sideA: { x: 898, y: 122 },
-        sideB: { x: 898, y: 294 },
-        sidewalkPathA: [{ x: 520, y: 122 }, { x: 938, y: 122 }],
-        sidewalkPathB: [{ x: 938, y: 294 }, { x: 520, y: 294 }],
-        initialCooldown: 6
-      },
-      {
-        tex: 'ped_adult_1',
-        startPos: { x: 122, y: 920 },
-        speed: 32,
-        zebraId: 'zebra_2',
-        sideA: { x: 122, y: 1108 },
-        sideB: { x: 294, y: 1108 },
-        sidewalkPathA: [{ x: 122, y: 860 }, { x: 122, y: 1320 }],
-        sidewalkPathB: [{ x: 294, y: 1160 }, { x: 294, y: 950 }],
-        initialCooldown: 9
-      },
-      {
-        tex: 'ped_child',
-        startPos: { x: 1360, y: 642 },
-        speed: 34,
-        zebraId: 'zebra_3',
-        sideA: { x: 1158, y: 642 },
-        sideB: { x: 1158, y: 814 },
-        sidewalkPathA: [{ x: 1116, y: 642 }, { x: 1410, y: 642 }],
-        sidewalkPathB: [{ x: 1275, y: 814 }, { x: 1116, y: 814 }],
-        initialCooldown: 11
-      }
-    ];
-
-    zebraPedConfigs.forEach(zc => {
-      const sp = this.physics.add.image(zc.startPos.x, zc.startPos.y, zc.tex).setDepth(8);
-      sp.setImmovable(true);
-      this.pedestrians.push({
-        sprite: sp,
-        waypoints: zc.sidewalkPathA,
-        wpIndex: 1,
-        speed: zc.speed,
-        isCrossing: false,
-        zebraLink: {
-          zebraId: zc.zebraId,
-          sideA: zc.sideA,
-          sideB: zc.sideB,
-          sidewalkPathA: zc.sidewalkPathA,
-          sidewalkPathB: zc.sidewalkPathB,
-          onSideA: true,
-          crossCooldownSec: zc.initialCooldown
-        }
-      });
-    });
   }
 
   private spawnPlayer(): void {
     const spot = this.previewFx && this.place.previewPoint ? this.place.previewPoint : this.place.spawn;
     this.player = this.add.image(spot.x, spot.y, `car_${this.bridge.plan.vehicleId}`).setDepth(10).setRotation(spot.rot);
+    const lamps = (side: -1 | 1) => {
+      const x = side < 0 ? -12 : 7;
+      return this.add.graphics().setDepth(10.1).setVisible(false)
+        .fillStyle(0xf97316).fillRect(x, -23, 5, 4).fillRect(x, 19, 5, 4)
+        .fillStyle(0xffc15a).fillRect(x + 1, -22, 3, 2).fillRect(x + 1, 20, 3, 2);
+    };
+    this.turnLamps = { left: lamps(-1), right: lamps(1) };
+  }
+
+  private updateTurnSignal(signal: TurnSignal, dt: number): void {
+    const wasLit = !!this.turnSignal && this.turnSignalPhase < 0.5;
+    this.turnSignalPhase = signal && signal === this.turnSignal
+      ? (this.turnSignalPhase + dt * CITY_TURN_SIGNAL_HZ) % 1 : 0;
+    this.turnSignal = signal;
+    if (!this.turnLamps) return;
+    const lit = this.turnSignalPhase < 0.5;
+    this.turnLamps.left.setVisible(lit && signal === -1);
+    this.turnLamps.right.setVisible(lit && signal === 1);
+    if (lit && signal) {
+      const lamp = signal < 0 ? this.turnLamps.left : this.turnLamps.right;
+      lamp.setPosition(this.player.x, this.player.y).setRotation(this.player.rotation);
+      if (!wasLit) SoundFX.indicatorTick();
+    }
   }
 
   private hitsObstacle(shape: Capsule): boolean {
     return this.obstacleRects.some(rect => capsuleOverlapsRect(shape, rect)) ||
-      this.obstacleCircles.some(circle => capsulesOverlap(shape, circle));
+      this.obstacleCircles.some(circle => capsulesOverlap(shape, circle)) ||
+      this.hitsWater(shape) || this.hitsParkedVehicle(shape);
   }
 
-  private trafficShape(car: TrafficCarAgent): Capsule {
-    const { x, y, rotation } = car.sprite;
-    return vehicleCapsule(x, y, rotation, car.route.isCyclist);
+  private hitsWater(shape: Capsule): boolean {
+    return this.place.water?.some(rect => capsuleOverlapsRect(shape, rect)) ?? false;
   }
 
-  private movePlayer(dt: number, turn: number): boolean {
+  private hitsParkedVehicle(shape: Capsule): boolean {
+    return this.place.parkedVehicles?.some(rect => capsuleOverlapsRect(shape, rect)) ?? false;
+  }
+
+  private hitProperty(contact: PropertyContact): void {
+    const impactSpeed = Math.abs(this.carSpeed);
+    this.carSpeed = 0;
+    if (this.propertyContacts.has(contact) || this.collisionGraceSec > 0 || this.completed || this.bridge.paused) return;
+
+    const damage = evaluatePropertyDamage(impactSpeed);
+    if (!damage) {
+      if (impactSpeed > 0) this.bumpFeedback();
+      return;
+    }
+    this.propertyContacts.add(contact);
+    if (this.place.passRoad || this.place.cityGuide) this.cleanRun = false;
+    SoundFX.bump();
+    this.bridge.paused = true;
+    this.physics.world.pause();
+    this.bridge.onPropertyDamage(damage);
+  }
+
+  private releasePropertyContacts(shape: Capsule): void {
+    if (this.propertyContacts.size === 0) return;
+    const clearance = { ...shape, radius: shape.radius + STATIC_CONTACT_CLEARANCE_PX };
+    for (const contact of this.propertyContacts) {
+      const nearby = contact === 'worldEdge' ? !capsuleInsideWorld(clearance, this.worldW, this.worldH) :
+        contact === 'passEdge' ? !passRoadContains(this.place.passRoad!, clearance) :
+        contact === 'water' ? this.hitsWater(clearance) :
+        'radius' in contact ? capsulesOverlap(clearance, contact) : capsuleOverlapsRect(clearance, contact);
+      if (!nearby) this.propertyContacts.delete(contact);
+    }
+  }
+
+  private knockAwayCones(shape: Capsule, x: number, rotation: number): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    this.cones.forEach(({ bounds, sprite }, id) => {
+      if (this.hitCones.has(id) || !capsuleOverlapsRect(shape, bounds) ||
+          !recordConeHit(run, this.hitCones, id)) return;
+
+      this.bridge.onCityStressChanged(run);
+      const direction = Math.sign(this.carSpeed);
+      const side = sprite.x < x ? -1 : 1;
+      this.tweens.add({
+        targets: sprite,
+        x: sprite.x + 42 * Math.sin(rotation) * direction + side * 26,
+        y: sprite.y - 42 * Math.cos(rotation) * direction - 14,
+        angle: sprite.angle + side * 210,
+        duration: 350,
+        ease: 'Quad.Out'
+      });
+    });
+  }
+
+  private pedestrianShape(ped: PedestrianAgent): Rect | undefined {
+    const body = ped.sprite.body;
+    if (body) return { x: body.x, y: body.y, w: body.width, h: body.height };
+  }
+
+  private updateCollisionRecovery(dt: number): void {
+    const heading = this.collisionRecoveryHeading;
+    if (heading === undefined && this.collisionGraceSec <= 0) return;
+    if (heading !== undefined) {
+      this.collisionRecoveryHeading = undefined;
+      this.collisionGraceSec = COLLISION_GRACE_SEC;
+      const origin = { x: this.player.x, y: this.player.y };
+      const traffic = this.trafficCars.map(trafficShape);
+      const pedestrians = this.pedestrians.map(ped => this.pedestrianShape(ped));
+      const stopBoxes = [
+        ...this.intersections.map(({ box }) => ({ x: box.x, y: box.y, w: box.width, h: box.height })),
+        ...this.place.trafficJunctions
+      ];
+      const { passRoad, roadSurface, asphalt } = this.place;
+      const point = findCollisionRecoveryPoint(origin, heading, this.place.travelLanes, stopBoxes, shape => {
+        if (!capsuleInsideWorld(shape, this.worldW, this.worldH)) return false;
+        const onRoad = passRoad ? passRoadContains(passRoad, shape) :
+          capsuleOnRoad(shape, spot => !!roadSurface?.(spot) || asphalt.some(rect => pointInCityRect(spot, rect)));
+        const trafficClearance = { ...shape, radius: shape.radius + RECOVERY_TRAFFIC_CLEARANCE_PX };
+        return onRoad && !this.hitsObstacle(shape) && !this.passTraffic?.obstructs(trafficClearance) &&
+          !traffic.some(other => capsulesOverlap(trafficClearance, other)) &&
+          !pedestrians.some(rect => rect && capsuleOverlapsRect(shape, rect));
+      });
+      if (point) {
+        this.player.setPosition(point.x, point.y).setRotation(point.rot);
+        this.releasePropertyContacts(vehicleCapsule(point.x, point.y, point.rot));
+      }
+      for (const car of this.trafficCars) {
+        const nearby = [origin, this.player].some(({ x, y }) =>
+          Math.hypot(car.sprite.x - x, car.sprite.y - y) <= TRAFFIC_RECOVERY_RADIUS_PX);
+        if (nearby) car.ghostSec = COLLISION_GRACE_SEC;
+      }
+    } else {
+      this.collisionGraceSec = Math.max(0, this.collisionGraceSec - dt);
+    }
+    const dim = this.collisionGraceSec > 0 && Math.floor(this.collisionGraceSec * 10) % 2 === 0;
+    this.player.setAlpha(dim ? 0.45 : 1);
+  }
+
+  private movePlayer(dt: number, turn: number, grip = 1): boolean {
     const moving = this.carSpeed !== 0 || turn !== 0;
     const rotation = this.player.rotation + turn * dt;
-    const x = this.player.x + Math.sin(rotation) * this.carSpeed * dt;
-    const y = this.player.y - Math.cos(rotation) * this.carSpeed * dt;
+    const travel = grip < 1 ? passTravelHeading(this.travelHeading ?? this.player.rotation, rotation, grip, dt) : rotation;
+    const x = this.player.x + Math.sin(travel) * this.carSpeed * dt;
+    const y = this.player.y - Math.cos(travel) * this.carSpeed * dt;
     const shape = vehicleCapsule(x, y, rotation);
-    if (moving && !capsuleInsideWorld(shape, this.worldW, this.worldH)) {
-      this.carSpeed = 0;
-      return false;
+    if (moving) {
+      if (this.place.passRoad && !passRoadContains(this.place.passRoad, shape)) {
+        this.travelHeading = undefined;
+        this.hitProperty('passEdge');
+        return false;
+      }
+      if (!capsuleInsideWorld(shape, this.worldW, this.worldH)) {
+        this.hitProperty('worldEdge');
+        return false;
+      }
+      const contact = this.obstacleRects.find(rect => capsuleOverlapsRect(shape, rect)) ??
+        this.obstacleCircles.find(circle => capsulesOverlap(shape, circle)) ??
+        (this.passTraffic && capsulesOverlap(shape, this.passTraffic.parked) ? this.passTraffic.parked : undefined);
+      if (contact) {
+        this.hitProperty(contact);
+        return false;
+      }
+      if (this.hitsWater(shape)) {
+        this.hitProperty('water');
+        return false;
+      }
+      if (this.hitsParkedVehicle(shape)) {
+        this.handleCollision('obstacle', x, y, 0, travel);
+        return false;
+      }
     }
-    if (moving && this.hitsObstacle(shape)) {
-      this.handleCollision('obstacle', x, y, 0);
-      return false;
-    }
-    for (const car of this.trafficCars) {
-      if (!capsulesOverlap(shape, this.trafficShape(car))) continue;
-      this.handleCollision(car.route.isCyclist ? 'cyclist' : 'car', car.sprite.x, car.sprite.y, car.currentSpeed);
-      return false;
-    }
-    for (const ped of this.pedestrians) {
-      const body = ped.sprite.body;
-      if (!body || !capsuleOverlapsRect(shape, { x: body.x, y: body.y, w: body.width, h: body.height })) continue;
-      this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed);
-      return false;
+    if (this.collisionGraceSec <= 0) {
+      const passCollision = this.passTraffic?.collision(shape);
+      if (passCollision) {
+        this.handleCollision('car', passCollision.x, passCollision.y, passCollision.speedPx, travel);
+        return false;
+      }
+      for (const car of this.trafficCars) {
+        if (car.ghostSec > 0 || !capsulesOverlap(shape, trafficShape(car))) continue;
+        this.handleCollision(car.route.isCyclist ? 'cyclist' : 'car', car.sprite.x, car.sprite.y, car.currentSpeed, travel);
+        return false;
+      }
+      for (const ped of this.pedestrians) {
+        const body = this.pedestrianShape(ped);
+        if (!body || !capsuleOverlapsRect(shape, body)) continue;
+        this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed, travel);
+        return false;
+      }
     }
     if (moving) {
-      if (this.preset === 'charger_park') this.trackBayEntry(x, y, rotation);
+      this.knockAwayCones(shape, x, rotation);
+      this.travelHeading = travel;
       this.player.setPosition(x, y).setRotation(rotation);
+      this.releasePropertyContacts(shape);
     }
     return true;
   }
 
-  private trackBayEntry(x: number, y: number, rotation: number): void {
-    const bay = this.targetZone;
-    const car = rotatedCarBounds(x, y, rotation);
-    if (car.y >= bay.bottom || car.y + car.h <= bay.top || car.x < bay.left || car.x + car.w > bay.right) {
-      this.reversedIntoBay = false;
-      return;
+  private updateChargingBays(): { parked?: PaintedChargingBay; nearest?: PaintedChargingBay } {
+    const { x, y, rotation } = this.player;
+    const car = { x, y, rotation, speed: this.carSpeed, footprint: rotatedCarBounds(x, y, rotation) };
+    const traffic = this.trafficCars.map(trafficShape);
+    let parked: PaintedChargingBay | undefined;
+    let nearest: PaintedChargingBay | undefined;
+    let nearestDistance = Infinity;
+    for (const bay of this.place.chargingBays ?? []) {
+      const occupied = bay.parkedCar || traffic.some(shape => capsuleOverlapsRect(shape, bay.bounds));
+      if (bay.occupied !== occupied) setBayOccupied(bay, occupied);
+      if (occupied) continue;
+      if (isRearParked(bay, car)) parked = bay;
+      const distance = Math.hypot(bay.bounds.x + bay.bounds.w / 2 - x, bay.bounds.y + bay.bounds.h / 2 - y);
+      if (distance < nearestDistance) {
+        nearest = bay;
+        nearestDistance = distance;
+      }
     }
-    const previous = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
-    if (previous.y >= bay.bottom) {
-      this.reversedIntoBay = this.carSpeed < 0 && y < this.player.y && Math.cos(rotation) < 0;
-    }
+    return { parked, nearest };
   }
 
   private stepTraffic(dt: number): void {
-    const playerShape = vehicleCapsule(this.player.x, this.player.y, this.player.rotation);
-    for (const car of this.trafficCars) {
-      const { sprite, route } = car;
-      car.currentSpeed = car.vx = car.vy = 0;
-      if (car.holdLeft > 0) {
-        car.holdLeft = Math.max(0, car.holdLeft - dt);
-        continue;
-      }
-      const others = this.trafficCars.filter(other => other !== car);
-      const otherShapes = others.map(other => this.trafficShape(other));
-      if (car.wpIndex === route.path.length) {
-        const [start, next] = route.path;
-        const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
-        const shape = vehicleCapsule(start.x, start.y, rotation, route.isCyclist);
-        if (!otherShapes.some(other => capsulesOverlap(shape, other))) {
-          sprite.setPosition(start.x, start.y).setRotation(rotation);
-          car.wpIndex = 1;
-        }
-        continue;
-      }
-
-      const next = nextTrafficPose(car, dt);
-      const angle = Math.atan2(next.y - sprite.y, next.x - sprite.x);
-      if (shouldNpcYield(car, others, this.pedestrians, this.intersections, this.zebras, angle, this.player)) continue;
-
-      const shape = vehicleCapsule(next.x, next.y, next.rotation, route.isCyclist);
-      const currentShape = this.trafficShape(car);
-      const occupied = this.place.trafficJunctions.some(junction =>
-        capsuleOverlapsRect(shape, junction) && !capsuleOverlapsRect(currentShape, junction) &&
-        (capsuleOverlapsRect(playerShape, junction) || otherShapes.some(other => capsuleOverlapsRect(other, junction)))
-      );
-      if (occupied || this.hitsObstacle(shape) || otherShapes.some(other => capsulesOverlap(shape, other))) continue;
-      if (capsulesOverlap(shape, playerShape)) {
+    stepCityTraffic(dt, {
+      cars: this.trafficCars,
+      pedestrians: this.pedestrians,
+      intersections: this.intersections,
+      zebras: this.zebras,
+      junctions: this.place.trafficJunctions,
+      player: this.player,
+      playerInGrace: this.collisionGraceSec > 0,
+      hitsObstacle: shape => this.hitsObstacle(shape),
+      onPlayerContact: ({ route, sprite }) => {
         this.handleCollision(route.isCyclist ? 'cyclist' : 'car', sprite.x, sprite.y, route.speed);
-        if (this.bridge.paused) return;
-        continue;
+        return this.bridge.paused;
       }
-
-      car.vx = (next.x - sprite.x) / dt;
-      car.vy = (next.y - sprite.y) / dt;
-      car.currentSpeed = Math.hypot(car.vx, car.vy);
-      car.wpIndex = next.wpIndex;
-      if (next.parked) car.holdLeft = route.holdSec ?? 0;
-      sprite.setPosition(next.x, next.y).setRotation(next.rotation);
-    }
+    });
   }
 
   private handleCollision(
     kind: 'car' | 'pedestrian' | 'cyclist' | 'obstacle',
     otherX: number,
     otherY: number,
-    otherSpeed: number
+    otherSpeed: number,
+    travel = this.travelHeading ?? this.player.rotation
   ): void {
-    if (this.collisionCooldownSec > 0 || this.completed || this.bridge.paused) return;
-    if (Math.abs(this.carSpeed) < 26 && kind === 'obstacle') {
-      this.carSpeed = -this.carSpeed * 0.4;
+    if (this.collisionGraceSec > 0 || this.completed || this.bridge.paused) return;
+    if (Math.abs(this.carSpeed) < MIN_DAMAGE_IMPACT_PX_PER_SEC) {
+      if (this.carSpeed !== 0) this.bumpFeedback();
+      this.carSpeed = kind === 'obstacle' ? -this.carSpeed * 0.4 : 0;
       return;
     }
 
@@ -709,8 +730,9 @@ export class CityDriveScene extends Phaser.Scene {
       otherSpeed
     );
 
-    this.collisionCooldownSec = 2.6;
+    this.collisionRecoveryHeading = this.carSpeed < 0 ? travel + Math.PI : travel;
     this.carSpeed = 0;
+    this.travelHeading = undefined;
     if (fault.playerAtFault) {
       this.cleanRun = false;
       if (this.bridge.runState) this.bridge.runState.collisionsCount += 1;
@@ -728,6 +750,13 @@ export class CityDriveScene extends Phaser.Scene {
     });
   }
 
+  private bumpFeedback(): void {
+    if (this.bumpFeedbackSec > 0) return;
+    this.bumpFeedbackSec = 0.22;
+    SoundFX.bump();
+    this.cameras?.main?.shake(90, 0.002);
+  }
+
   private triggerPoliceStop(kind: PoliceViolationKind): void {
     if (this.violationCooldownSec > 0 || this.completed || this.bridge.paused) return;
     this.violationCooldownSec = 6.0;
@@ -742,8 +771,12 @@ export class CityDriveScene extends Phaser.Scene {
 
   private setupLightingAndWeather(): void {
     this.cableGfx = this.add.graphics().setDepth(13);
+    if (this.preset === 'montpellier_finish') {
+      this.setupCoastalLight();
+      return;
+    }
 
-    // Ambient GTA-2 twilight/night overlay BELOW additive light sprites so lights cut through darkness
+    // Place the ambient overlay below additive lights so their beams stay visible.
     this.nightOverlay = this.add
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0x020617, 0)
       .setDepth(12);
@@ -888,7 +921,30 @@ export class CityDriveScene extends Phaser.Scene {
     }
   }
 
+  private setupCoastalLight(): void {
+    const { ambientColor, ambientAlpha } = MONTPELLIER_LIGHTING;
+    this.add.rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, ambientColor, ambientAlpha)
+      .setDepth(12);
+    const densities = this.isMobilePerf ? [30, 9, 5] : [62, 16, 10];
+    const glitter = MONTPELLIER_SEA.map(({ x, y, w, h }, index) =>
+      createSeaGlitter(this, { x: x + 12, y: y + 4, w: w - 24, h: h - 8 }, densities[index], 2,
+        index === 0 ? MONTPELLIER_HOTEL_GOAL.x - 115 : undefined));
+    const shadows = [
+      followCoastalShadow(this, this.player, 57, 23),
+      ...this.trafficCars.map(({ sprite, route }) =>
+        followCoastalShadow(this, sprite, route.isCyclist ? 25 : 49, route.isCyclist ? 9 : 20)),
+      ...this.pedestrians.map(({ sprite }) => followCoastalShadow(this, sprite, 27, 7))
+    ];
+    this.updateCoastalLight = time => {
+      glitter.forEach(pool => pool.update(time));
+      shadows.forEach(update => update());
+    };
+  }
+
   private setupNavIndicator(): void {
+    this.moveMinimap = this.place.cityMinimap && createCityMinimap(this, this.place.cityMinimap, this.worldW, this.worldH, {
+      x: this.targetZone.centerX, y: this.targetZone.centerY
+    }, this.place.water);
     this.navArrow = this.add
       .triangle(0, 0, 0, -10, -7, 8, 7, 8, 0xfacc15)
       .setStrokeStyle(1.5, 0x0f172a)
@@ -923,9 +979,10 @@ export class CityDriveScene extends Phaser.Scene {
 
   private updateLightingVisuals(dt: number, profile: CityLightingProfile): void {
     const t = this.trafficTimer;
-    // GTA-2 urban neo-noir twilight mood floor so additive lights, neon & wet reflections pop
+    // Keep additive lights and street reflections visible in the ambient palette.
+    const aachenDeparture = this.preset === 'aachen_start' && this.bridge.level.order === 2 && !profile.isRain;
     const visualAmbientAlpha = profile.isNight
-      ? Math.max(0.56, profile.ambientAlpha)
+      ? aachenDeparture ? 0.44 : Math.max(0.56, profile.ambientAlpha)
       : profile.isDuskOrDawn
         ? Math.max(0.32, profile.ambientAlpha + 0.14)
         : profile.isRain || profile.isStorm
@@ -1053,7 +1110,7 @@ export class CityDriveScene extends Phaser.Scene {
       }
     }
 
-    // Rain / atmospheric GTA-2 drizzle / Snow particle fall (wrapped inside active camera view for density + mobile perf)
+    // Wrap rain, drizzle and snow inside the camera view to preserve density.
     const camView = this.cameras.main.worldView;
     const minX = camView.x - 40;
     const maxX = camView.right + 40;
@@ -1127,8 +1184,13 @@ export class CityDriveScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     const dt = Math.min(0.05, delta / 1000);
-    if (dt <= 0 || this.bridge.paused || this.completed) return;
-    this.collisionCooldownSec = Math.max(0, this.collisionCooldownSec - dt);
+    if (this.bridge.paused || this.completed) {
+      this.updateTurnSignal(0, 0);
+      return;
+    }
+    if (dt <= 0) return;
+    this.updateCollisionRecovery(dt);
+    this.bumpFeedbackSec = Math.max(0, this.bumpFeedbackSec - dt);
     this.violationCooldownSec = Math.max(0, this.violationCooldownSec - dt);
 
     // Update paired perpendicular traffic light phases
@@ -1159,22 +1221,20 @@ export class CityDriveScene extends Phaser.Scene {
       const inter = this.intersections.find(x => x.id === sv.interId);
       if (!inter) return;
       const phase = sv.axis === 'ew' ? inter.ewPhase : inter.nsPhase;
-      const col = phase === 'green' ? 0x22c55e : phase === 'amber' ? 0xfacc15 : 0xef4444;
+      const col = SIGNAL_COLOR[phase];
       sv.sprite.setTexture(`tlight_${phase}`);
-      sv.halo.setTint(col);
-      sv.shimmer.setTint(col);
+      sv.halo?.setTint(col);
+      sv.shimmer?.setTint(col);
     });
 
+    const run = this.bridge.runState;
     const profile = computeCityLightingProfile(
-      this.bridge.level.departureTimeHour,
-      this.bridge.runState?.elapsedMinutes || 0,
-      this.preset,
-      this.bridge.runState?.activeWeather || 'clear',
-      this.bridge.runState?.isNight
+      this.bridge.level.departureTimeHour, run?.elapsedMinutes ?? 0, this.preset,
+      run?.activeWeather ?? 'clear', run?.isNight
     );
-    this.updateLightingVisuals(dt, profile);
+    if (!this.updateCoastalLight) this.updateLightingVisuals(dt, profile);
 
-    // === GTA 2 Controls (Keyboard + Shared TouchInput) ===
+    // Keyboard and shared touch controls
     ensureTouchHoldsMatchPointers();
     const touch = this.bridge.touch;
     const autoDrive = this.previewDriveSec > 0;
@@ -1190,30 +1250,58 @@ export class CityDriveScene extends Phaser.Scene {
       SoundFX.horn();
     }
 
-    const maxFwd = 230;
+    const road = this.place.passRoad;
+    const onIce = road ? passOnIce(road, this.player) : false;
+    const grip = road ? passGrip(onIce, !!this.bridge.runState?.alpinePass?.chainsFitted) : 1;
+    const passSituation = this.passTraffic?.situation(this.player);
+    const maxFwd = this.place.slowZone?.(this.player) ? 125 : 230;
     const maxRev = -115;
     if (!brake && up) {
-      this.carSpeed = Math.min(maxFwd, this.carSpeed + 320 * dt);
+      this.carSpeed = this.carSpeed > maxFwd
+        ? Math.max(maxFwd, this.carSpeed - 640 * grip * dt)
+        : Math.min(maxFwd, this.carSpeed + 320 * grip * dt);
     } else if (!brake && down) {
-      this.carSpeed = Math.max(maxRev, this.carSpeed - 280 * dt);
+      this.carSpeed = Math.max(maxRev, this.carSpeed - 280 * grip * dt);
     } else {
-      const decel = (brake ? 1050 : 640) * dt;
+      const decel = (brake ? 1050 : 640) * grip * dt;
       this.carSpeed = this.carSpeed > 0 ? Math.max(0, this.carSpeed - decel) : Math.min(0, this.carSpeed + decel);
     }
-    if (Math.abs(this.carSpeed) < 8 && (brake || (!up && !down))) this.carSpeed = 0;
+    if (Math.abs(this.carSpeed) < CITY_STOP_SPEED_PX_PER_SEC && (brake || (!up && !down))) this.carSpeed = 0;
 
-    const steerFactor = Math.min(1, Math.abs(this.carSpeed) / 62);
+    if (passSituation && run) {
+      const { cap, unsafe } = passSituation;
+      if (this.collisionGraceSec <= 0 && up && !brake && this.carSpeed > cap) {
+        this.carSpeed = cap;
+        run.elapsedMinutes += dt * PASS_FOLLOW_MIN_PER_SECOND * Math.max(0, 1 - cap / 155);
+      }
+      if (unsafe && !this.passUnsafeLane && this.carSpeed > 0) {
+        applyStress(run, PASS_NEAR_MISS_STRESS);
+        this.bridge.onCityStressChanged(run);
+      }
+      this.passUnsafeLane = unsafe;
+    }
+
+    const absSpeed = Math.abs(this.carSpeed);
+    const steerFactor = absSpeed < CITY_STOP_SPEED_PX_PER_SEC ? 0 : Math.min(1, absSpeed / 62);
     const dirSign = this.carSpeed >= -1 ? 1 : -1;
-    const turn = 2.75 * steerFactor * dirSign * (Number(right) - Number(left));
+    const steering: TurnSignal = left === right ? 0 : left ? -1 : 1;
+    const turn = 2.75 * steerFactor * grip * dirSign * steering;
     // Begrenzte Teilschritte prüfen auch die gedrehte Karosserie an schmalen Hindernissen.
     const substeps = Math.ceil(dt * 60);
     const step = dt / substeps;
     let playerCanMove = true;
     for (let i = 0; i < substeps; i++) {
-      if (playerCanMove) playerCanMove = this.movePlayer(step, turn);
-      if (this.bridge.paused) return;
+      if (playerCanMove) playerCanMove = this.movePlayer(step, turn, grip);
+      if (this.bridge.paused) {
+        this.updateTurnSignal(0, 0);
+        return;
+      }
       this.stepTraffic(step);
-      if (this.bridge.paused) return;
+      this.passTraffic?.step(step);
+      if (this.bridge.paused) {
+        this.updateTurnSignal(0, 0);
+        return;
+      }
     }
 
     for (const spin of this.spinners) spin.rotation += dt * 1.7;
@@ -1222,8 +1310,9 @@ export class CityDriveScene extends Phaser.Scene {
       y: this.player.y,
       rotation: this.player.rotation,
       speed: this.carSpeed,
-      onGrass: isGrassSurface(this.player.x, this.player.y, this.place.grass, this.place.asphalt, this.place.buildings),
+      onGrass: !this.place.roadSurface?.(this.player) && isGrassSurface(this.player.x, this.player.y, this.place.grass, this.place.asphalt, this.place.buildings),
       wetRoad: this.roadWet,
+      snowyRoad: (!!road && !onIce) || (!!this.place.cityGuide?.snow && profile.isSnow),
       dt
     });
 
@@ -1241,6 +1330,7 @@ export class CityDriveScene extends Phaser.Scene {
     );
     if (violation) {
       this.triggerPoliceStop(violation);
+      this.updateTurnSignal(0, 0);
       return;
     }
 
@@ -1344,21 +1434,34 @@ export class CityDriveScene extends Phaser.Scene {
       pd.sprite.setVelocity(Math.cos(ang) * pd.speed, Math.sin(ang) * pd.speed);
     }
 
-    // Nav arrow & HUD distance indicator
+    this.updateCoastalLight?.(this.trafficTimer);
+    this.updateNavigationAndArrival(dt, onIce);
+    const stopped = Math.abs(this.carSpeed) < CITY_STOP_SPEED_PX_PER_SEC;
+    this.updateTurnSignal(stopped && !this.completed && !this.bridge.paused && !this.previewFx ? steering : 0, dt);
+  }
+
+  private updateNavigationAndArrival(dt: number, onIce: boolean): void {
+    const road = this.place.passRoad;
+    const chargingBay = this.preset === 'charger_park';
+    const { parked, nearest } = chargingBay ? this.updateChargingBays() : {};
+    const targetBay = (parked ?? nearest)?.bounds;
+    const targetX = targetBay ? targetBay.x + targetBay.w / 2 : this.targetZone.centerX;
+    const targetY = targetBay ? targetBay.y + targetBay.h / 2 : this.targetZone.centerY;
+    this.moveMinimap?.(this.player, this.scale.width, this.scale.height);
+    const passNav = road && passNavigation(road, this.player);
+    const cityGuide = this.place.cityGuide;
+    const approach = cityGuide?.approach;
+    if (approach && Phaser.Math.Distance.Between(this.player.x, this.player.y, approach.goal.x, approach.goal.y) < 54) {
+      this.cityApproachReached = true;
+    }
+    const cityNav = cityGuide && (
+      approach && !this.cityApproachReached ? approach.navigate(this.player) : cityGuide.navigate(this.player)
+    );
+    const aim = passNav ? passNav.aim : cityNav ? cityNav.aim : { x: targetX, y: targetY };
     const angleToTarget = Phaser.Math.Angle.Between(
-      this.player.x,
-      this.player.y,
-      this.targetZone.centerX,
-      this.targetZone.centerY
+      this.player.x, this.player.y, aim.x, aim.y
     );
-    const distToTarget = Math.round(
-      Phaser.Math.Distance.Between(
-        this.player.x,
-        this.player.y,
-        this.targetZone.centerX,
-        this.targetZone.centerY
-      )
-    );
+    const distToTarget = Phaser.Math.Distance.Between(this.player.x, this.player.y, targetX, targetY);
     this.navArrow.setPosition(this.scale.width / 2, 62);
     this.navArrow.setRotation(angleToTarget + Math.PI / 2);
     this.distText.setPosition(this.scale.width / 2, 84);
@@ -1366,74 +1469,73 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Parking / Completion Check
     const inZone = Phaser.Geom.Rectangle.Contains(this.targetZone, this.player.x, this.player.y);
-    const chargingBay = this.preset === 'charger_park';
-    const revAngleErr = Math.abs(Phaser.Math.Angle.Wrap(this.player.rotation - Math.PI));
-    const car = rotatedCarBounds(this.player.x, this.player.y, this.player.rotation);
-    const bay = this.targetZone;
-    const fits = car.x >= bay.left && car.x + car.w <= bay.right && car.y >= bay.top && car.y + car.h <= bay.bottom;
-    const parkingReady = chargingBay
-      ? this.reversedIntoBay && fits && revAngleErr <= Math.PI / 12 && this.carSpeed === 0
-      : inZone && Math.abs(this.carSpeed) < 30;
+    const arrivalBay = this.place.arrivalBay;
+    const { x, y, rotation } = this.player;
+    const parkingReady = arrivalBay
+      ? isRearParked(arrivalBay, { x, y, rotation, speed: this.carSpeed, footprint: rotatedCarBounds(x, y, rotation) })
+      : !chargingBay && inZone && Math.abs(this.carSpeed) < 30;
 
-    if (chargingBay && distToTarget < 190 && !parkingReady) {
-      this.reverseHintText.setText(this.reversedIntoBay
-        ? 'Gerade und vollständig in der Bucht anhalten'
-        : 'Von unten rückwärts in die Bucht fahren');
+    if (nearest && distToTarget < 190 && !parked) {
+      this.reverseHintText.setText('In einer grünen Bucht mit dem Heck zur Säule halten');
+      this.reverseHintText.setVisible(true);
+    } else if (arrivalBay && distToTarget < 190 && !parkingReady) {
+      this.reverseHintText.setText('In der grünen Bucht mit dem Heck zur Säule halten');
       this.reverseHintText.setVisible(true);
     } else {
       this.reverseHintText.setVisible(false);
     }
 
     if (this.passThrough) {
-      const rampLabel =
-        this.preset === 'koeln_ring' ? 'Zur A1' : this.preset === 'ferry_denmark' ? 'Zum Fährterminal' : 'Zur A4 Auffahrt';
-      const doneLabel =
-        this.preset === 'koeln_ring'
-          ? '🛣️ Weiter auf die A1'
-          : this.preset === 'ferry_denmark'
-            ? '⛴️ Fähre erreicht'
-            : '🛣️ Auffahrt A4 – Gute Fahrt!';
+      const descending = road?.summitPx !== undefined && passNav && passNav.along >= road.summitPx;
+      const rampLabel = cityGuide?.label ?? (descending ? 'Zum Passausgang' : 'Zur Passhöhe');
+      const doneLabel = cityGuide?.completionLabel ?? `${this.place.zoneLabel} erreicht`;
       if (inZone) {
         this.completed = true;
         this.reverseHintText.setVisible(false);
         this.distText.setText(doneLabel);
         this.bridge.onCitySegmentComplete(this.preset, this.cleanRun);
       } else {
-        this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
+        const remaining = passNav?.distance ?? cityNav?.distance ?? distToTarget;
+        this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(remaining / 6))} m`);
+        const hint = this.passTraffic?.situation(this.player).hint;
+        if (onIce || hint) this.reverseHintText.setText([onIce ? 'Glatteis' : '', hint].filter(Boolean).join(' · '))
+          .setVisible(true);
       }
+    } else if (parked) {
+      this.completed = true;
+      this.carSpeed = 0;
+      this.playDriverPlugInSequence(parked.pillar);
     } else if (parkingReady) {
       this.dwellInTargetSec += dt;
-      this.distText.setText(`✓ Perfekt! Halten… (${Math.min(100, Math.round((this.dwellInTargetSec / 0.6) * 100))}%)`);
-      if (this.dwellInTargetSec >= 0.6) {
+      const holdPct = Math.min(100, Math.round(this.dwellInTargetSec / CITY_PARKING_DWELL_SEC * 100));
+      this.distText.setText(`✓ Perfekt! Halten… (${holdPct}%)`);
+      if (this.dwellInTargetSec >= CITY_PARKING_DWELL_SEC) {
         this.completed = true;
         this.reverseHintText.setVisible(false);
         if (this.preset === 'aachen_finish') {
           this.triggerArrivalConfetti();
-        } else if (this.preset === 'charger_park') {
-          this.playDriverPlugInSequence();
         } else {
           this.bridge.onCitySegmentComplete(this.preset, this.cleanRun);
         }
       }
     } else {
       this.dwellInTargetSec = 0;
-      const goalHint =
-        this.preset === 'charger_park'
-          ? 'Rückwärts in Ladebucht einparken'
-          : this.preset === 'hannover_messe'
-            ? 'Zum Messe-Parkplatz'
-            : this.preset === 'koeln_ring'
-              ? 'Zur Rheinbrücke'
-              : 'Ins Ziel einparken';
-      this.distText.setText(`${goalHint} · ${Math.max(0, Math.round(distToTarget / 6))} m`);
+      const goalHint = chargingBay ? 'Zu einer freien Ladebucht'
+        : approach && !this.cityApproachReached ? approach.label
+          : cityGuide?.label ?? 'Ins Ziel einparken';
+      this.distText.setText(chargingBay && !nearest
+        ? 'Alle Ladebuchten belegt'
+        : `${goalHint} · ${Math.max(0, Math.round((cityNav?.distance ?? distToTarget) / 6))} m`);
+    }
+
+    if (!this.completed && cityGuide?.wrongExits.some(exit => pointInCityRect(this.player, exit.zone))) {
+      this.reverseHintText.setText(cityGuide.wrongExitHint ?? 'Falsche Auffahrt · bitte wenden').setVisible(true);
     }
   }
 
-  private playDriverPlugInSequence(): void {
+  private playDriverPlugInSequence({ x: pillarX, y: pillarY }: PaintedChargingBay['pillar']): void {
     const carX = this.player.x;
     const carY = this.player.y;
-    const pillarX = this.pillar?.x ?? this.targetZone.centerX;
-    const pillarY = this.pillar?.y ?? this.targetZone.y;
     const rear = CAR_FOOTPRINT.h / 2;
     const portX = carX - Math.sin(this.player.rotation) * rear;
     const portY = carY + Math.cos(this.player.rotation) * rear;

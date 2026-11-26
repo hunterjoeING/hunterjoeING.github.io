@@ -6,22 +6,79 @@ export default function register(test, game) {
   const m = game;
   const { near, route1, route2, mkRun, carImage, mkScene, npc } = createFixtures(game);
 
-  test('The parking bay requires reverse entry and the brake has priority', () => {
-    const city = new m.CityDriveScene();
-    city.targetZone = { left: 0, right: 46, top: 0, bottom: 68 };
-    city.player = carImage(23, 91, Math.PI);
-    city.carSpeed = -30;
-    city.trackBayEntry(23, 89, Math.PI);
-    assert.equal(city.reversedIntoBay, true);
-    city.trackBayEntry(6, 40, Math.PI);
-    assert.equal(city.reversedIntoBay, false);
-    city.player = carImage(23, 91, 0);
-    city.carSpeed = 30;
-    city.trackBayEntry(23, 89, 0);
-    assert.equal(city.reversedIntoBay, false);
-    assert.ok(m.rotatedCarBounds(7, 43, Math.PI).x < 0);
-    assert.ok(m.rotatedCarBounds(23, 43, Math.PI - 0.65).w > 46);
+  test('The highway card updates its reserve, keeps the driving controls mounted, and uses click for its actions', () => {
+    const run = mkRun(route1);
+    const station = m.getChargerById('chg_eschweiler_tesla');
+    const later = m.getChargerById('chg_aachener_land_ionity');
+    const exitKm = station.edgeProgress * m.getEdgeById(station.edgeId).distanceKm;
+    const key = m.stopKey(0, station.id);
+    run.legProgressKm = exitKm - 2;
+    run.socPct = 10;
+    run.plan.plannedStops = [station, later].map(({ id: chargerId }) => ({ legIndex: 0, chargerId, targetSocPct: 80 }));
+    const root = new DomStub();
+    const card = root.querySelector('.dhud-stop-card');
+    const keep = card.querySelector('[data-stop-action="keep"]');
+    const skip = card.querySelector('[data-stop-action="skip"]');
+    const undo = card.querySelector('[data-stop-action="undo"]');
+    const title = card.querySelector('[data-field="skip-title"]');
+    const warning = card.querySelector('#dhud-skip-warning');
+    const calls = [];
+    const hud = new m.DrivingHUD(root, new DomStub(), {
+      onStopSkipDecision: (stop, action) => calls.push([stop, action])
+    });
+    hud.setMode('autobahn');
+    hud.update(route1, run, 1);
+    const shell = root.innerHTML;
+    assert.ok(!card.hidden);
+    assert.match(title.textContent, /^Ladestopp .* in 2 km$/);
+    assert.match(card.querySelector('[data-field="skip-forecast"]').textContent, /^Ohne Laden: Ankunft IONITY Aachener Land/);
+    assert.match(warning.textContent, /^Reicht nicht – nur noch ≈ /);
+    assert.ok(skip.disabled && !warning.hidden);
+    skip.click();
+    assert.deepEqual(calls, []);
+    assert.deepEqual(run.skippedStopKeys, [], 'driving toward the charger is the default');
+    run.socPct = 80;
+    hud.update(route1, run, 1);
+    assert.equal(root.innerHTML, shell);
+    assert.ok(!skip.disabled && warning.hidden);
+    skip.click();
+    assert.deepEqual(calls, [[key, 'skip']]);
+    run.skippedStopKeys.push(key);
+    run.undoableRoadStopKey = key;
+    hud.update(route1, run, 1);
+    assert.match(title.textContent, /^Ausgelassen/);
+    assert.ok(!undo.hidden && skip.hidden && keep.hidden);
+    undo.click();
+    assert.deepEqual(calls.at(-1), [key, 'undo']);
 
+    run.skippedStopKeys.length = 0;
+    delete run.undoableRoadStopKey;
+    hud.update(route1, run, 1);
+    keep.click();
+    hud.update(route1, run, 1);
+    assert.ok(card.hidden);
+    assert.equal(calls.length, 2);
+    assert.deepEqual(run.skippedStopKeys, []);
+  });
+
+  test('A stopped rear-in pose needs no reverse history and allows a small overhang', () => {
+    const bay = { bounds: { x: 0, y: 0, w: 46, h: 68 }, pillar: { x: 23, y: 4 } };
+    const ready = (x, y, rotation, speed = 0) => m.isRearParked(bay, {
+      x, y, rotation, speed, footprint: m.rotatedCarBounds(x, y, rotation)
+    });
+    assert.ok(ready(23, 40, Math.PI));
+    assert.ok(ready(23, 53, Math.PI - Math.PI / 6, -5));
+    assert.ok(!ready(23, 40, 0), 'nose in');
+    assert.ok(!ready(23, 40, Math.PI - Math.PI / 4), 'rear points too far away');
+    assert.ok(!ready(23, 74, Math.PI), 'center outside');
+    assert.ok(!ready(23, 63, Math.PI), 'too little of the footprint is inside');
+    assert.ok(!ready(23, 40, Math.PI, -8), 'still moving');
+  });
+
+  test('The city brake has priority over acceleration', () => {
+    const city = new m.CityDriveScene();
+    city.player = carImage();
+    city.place = {};
     city.bridge = { level: route1, paused: false, touch: {} };
     const idle = { isDown: false };
     city.wasd = { W: { isDown: true }, SPACE: { isDown: true }, A: idle, S: idle, D: idle, H: idle };
@@ -37,6 +94,19 @@ export default function register(test, game) {
     city.bridge.onPoliceViolation = () => assert.equal(city.physics.world.isPaused, true);
     city.triggerPoliceStop('red_light');
     assert.equal(city.bridge.paused, true);
+  });
+
+  test('Driving decisions show hunger and other trip values inside the modal', () => {
+    const run = mkRun();
+    run.chargingCostEur = 12.5;
+    const modal = new DomStub();
+    new m.EventModal(modal, () => m.renderDriveStatus(route1, run))
+      .showMesseVisit({ chargePlanned: false, chargerAvailable: true }, () => '', () => {});
+    assert.match(modal.innerHTML, /Hunger <b>90 %<\/b>/);
+    assert.match(modal.innerHTML, /Akku <b>80 %<\/b>/);
+    assert.match(modal.innerHTML, /Stress <b>20 %<\/b>/);
+    assert.match(modal.innerHTML, /Ausgaben <b>12\.50 €<\/b>/);
+    assert.match(modal.innerHTML, /<time>\d{2}:\d{2}<\/time>/);
   });
 
   test('Headlight flash targets the actual lead car and radar uses the work-zone sign', (t) => {
@@ -118,7 +188,8 @@ export default function register(test, game) {
     const planned = m.evaluateTripPlan(route1, mkRun().plan);
     const highway = planned.legForecasts.reduce((sum, leg) =>
       sum + Math.round(leg.distanceKm / m.congestedCruiseKmh(leg.targetSpeedKmh, leg.trafficRisk) * 60), 0);
-    assert.equal(planned.totalDriveMinutes - highway, 13);
+    const city = m.CITY_TRANSITION_MINUTES;
+    assert.equal(planned.totalDriveMinutes - highway, city.aachen_start);
     const stressAt = target => {
       const state = mkRun();
       state.plan.legPlans[0].targetSpeedKmh = target;
@@ -132,6 +203,26 @@ export default function register(test, game) {
     const b = stressAt(155);
     near(a[0], b[0]);
     near(a[1], b[1]);
+  });
+
+  test('Crossing into the 15 km approach refreshes the HUD before the regular tick', t => {
+    t.mock.method(Math, 'random', () => 0.5);
+    const run = mkRun(route1);
+    const station = m.getChargerById('chg_aachener_land_ionity');
+    const exitKm = station.edgeProgress * m.getEdgeById(station.edgeId).distanceKm;
+    run.plan.plannedStops.push({ chargerId: station.id, legIndex: 0, targetSocPct: 80 });
+    run.legProgressKm = exitKm - m.SKIP_PROMPT_KM - 0.02;
+    run.highwaySignLegIndex = 0;
+    run.highwaySignKmh = 0;
+    const { scene } = mkScene(route1, run);
+    const updates = [];
+    scene.bridge.onAutobahnHudTick = state => updates.push(m.getApproachingRoadStop(route1, state));
+    scene.update(16, 16);
+    assert.equal(updates.length, 1);
+    assert.equal(updates[0].station.id, station.id);
+    assert.ok(updates[0].distanceKm <= m.SKIP_PROMPT_KM);
+    assert.equal(scene.bridge.timeScale, 15);
+    assert.equal(scene.bridge.paused, false);
   });
 
   test('Hotel AC, overnight notes, and pause costs use the selected activity', t => {
@@ -149,7 +240,7 @@ export default function register(test, game) {
     currentModal.choose(currentModal.event.choices[0]);
     near(run.socPct, 96.7);
     assert.equal(run.hungerNeed, 20);
-    assert.equal(run.elapsedMinutes, 480);
+    assert.equal(run.elapsedMinutes, 960);
     const summary = run.overnightNote;
     controller.handleDynamicEvent('evt_tailgate');
     currentModal.choose(currentModal.event.choices[0]);
@@ -159,8 +250,8 @@ export default function register(test, game) {
     assert.match(run.overnightNote, /Einbruch −500 €, \+2 h/);
     const taycan = m.getVehicleById('porsche_taycan');
     const sim = m.estimateHotelCharge(taycan, 0.25);
-    assert.ok(sim.departSoc < 95 && sim.departSoc > 90);
-    assert.equal(sim.durationMinutes, 480);
+    assert.ok(sim.departSoc >= 94.5 && sim.departSoc <= 95);
+    assert.ok(sim.durationMinutes > 480 && sim.durationMinutes <= 960);
 
     const routePlan = m.createDefaultPlan(route2, 'tesla_model_s_2015');
     m.getActiveRouteLegs(route2, routePlan).forEach((leg, legIndex) => {
@@ -233,6 +324,12 @@ export default function register(test, game) {
     actions.querySelector('#btn-unplug').click();
     near(result.minutesSpent, 7.5);
     near(result.newSoc, 43);
+    start(80);
+    root.querySelector('#break-buttons-box').querySelector('eat').click();
+    for (const [id, end] of [...timeouts]) { timeouts.delete(id); end(); }
+    actions.querySelector('#btn-unplug').click();
+    assert.equal(result.activities[0].costEur, 20, 'eating during a charging stop costs 20 €');
+    assert.equal(result.activities[0].hungerDelta, -60);
   });
 
   test('The return HUD map starts at the right waypoint and keeps a focused slider', (t) => {
@@ -264,7 +361,9 @@ export default function register(test, game) {
     assert.equal(slider.value, '165');
     assert.match(compact.querySelector('[data-field="speed-sign"]').innerHTML, /80 km\/h/);
     const map = compact.querySelector('#er-trip-computer').innerHTML;
-    assert.match(map, /Köln → Aachen/);
+    const segments = compact.querySelector('[data-field="nav-segments"]').innerHTML;
+    assert.match(segments, /aria-current="step"[\s\S]*Köln → Aachen/);
+    assert.match(compact.querySelector('[data-field="nav-summary"]').textContent, /^Aachen · \d+ km · ca\. \d+ Min$/);
     const match = map.match(/<path d="M([\d.]+) ([\d.]+)[^"]+"[\s\S]*?<circle cx="([\d.]+)" cy="([\d.]+)"/);
     assert.deepEqual(match.slice(1, 3), match.slice(3, 5));
     assert.equal(m.snapSpeedKmh(188, 188), 185);

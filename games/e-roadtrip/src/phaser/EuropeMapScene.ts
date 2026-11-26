@@ -6,17 +6,14 @@ import {
   getCityById,
   getEdgeById
 } from '../data/europeMap';
-import {
-  COUNTRY_LABELS,
-  MAP_BOUNDS
-} from '../data/europeGeography';
+import { MAP_BOUNDS } from '../data/europeGeoData.generated';
 import {
   PIXEL_MAP_SCALE,
   ensureEuropePixelMapTexture,
   getMapThemePalette
 } from './EuropePixelMap';
 import { ChargerStation } from '../types';
-import { getBestPriceForStation } from '../sim/EnergyModel';
+import { getBestPriceForStation, networkHasSubscription } from '../sim/EnergyModel';
 import {
   evaluateTripPlan,
   getActiveRouteLegs,
@@ -29,7 +26,6 @@ import {
 import { getVehicleById } from '../data/vehicles';
 import { ERoadtripBridge } from './GameBridge';
 import {
-  BoxRect,
   CardLayoutNode,
   computeRouteSocBandSegments,
   getPointAlongEdge,
@@ -37,6 +33,8 @@ import {
   resolveNonOverlappingCards
 } from './MapLayout';
 import { SoundFX } from './SoundFX';
+import { EuropeMapLabels, northCoastLine, scenicMapColor, type MapDecoration } from './EuropeMapLabels';
+import { overviewMapZoom, routeMapView } from './EuropeMapLabelLayout';
 
 interface ChargerPinNode extends CardLayoutNode {
   station: ChargerStation;
@@ -70,7 +68,9 @@ const NET_COLORS: Record<string, number> = {
   totalenergies: 0xe10600,
   ac_dorfladen: 0xd97706,
   atlante: 0x0f766e,
-  vianeo: 0x0284c7
+  vianeo: 0x0284c7,
+  a22: 0x147d83,
+  neogy: 0x638a24
 };
 
 const NET_SHORT: Record<string, string> = {
@@ -84,7 +84,9 @@ const NET_SHORT: Record<string, string> = {
   totalenergies: 'TotalEnergies',
   ac_dorfladen: 'AC-Dorfladen',
   atlante: 'Atlante',
-  vianeo: 'Vianeo'
+  vianeo: 'Vianeo',
+  a22: 'Autobrennero',
+  neogy: 'Neogy'
 };
 
 export class EuropeMapScene extends Phaser.Scene {
@@ -92,7 +94,6 @@ export class EuropeMapScene extends Phaser.Scene {
   private worldLayer!: Phaser.GameObjects.Container;
   private baseMapImage!: Phaser.GameObjects.Image;
   private baseNetworkGfx!: Phaser.GameObjects.Graphics;
-  private countryLabelTexts: Phaser.GameObjects.Text[] = [];
   private legendTexts: Phaser.GameObjects.Text[] = [];
   private cityDotVisuals: Array<{
     dot: Phaser.GameObjects.Arc;
@@ -111,14 +112,10 @@ export class EuropeMapScene extends Phaser.Scene {
   private chargerLayer!: Phaser.GameObjects.Container;
 
   private pinObjects: ChargerPinNode[] = [];
-  private cityLabels: Array<{
-    text: Phaser.GameObjects.Text;
-    x: number;
-    y: number;
-    isMajor: boolean;
-    isActive: boolean;
-  }> = [];
-  private shieldTags: Array<{ cont: Phaser.GameObjects.Container; x: number; y: number; major: boolean }> = [];
+  private mapLabels!: EuropeMapLabels;
+  private shieldTags: MapDecoration[] = [];
+  private routeDecorations: MapDecoration[] = [];
+  private cameraView: 'route' | 'europe' | 'manual' = 'route';
   private carMarker?: Phaser.GameObjects.Image;
 
   private mapBounds = MAP_BOUNDS;
@@ -148,11 +145,11 @@ export class EuropeMapScene extends Phaser.Scene {
   init(data: { bridge: ERoadtripBridge }): void {
     this.bridge = data.bridge;
     this.pinObjects = [];
-    this.cityLabels = [];
     this.cityDotVisuals = [];
-    this.countryLabelTexts = [];
     this.legendTexts = [];
     this.shieldTags = [];
+    this.routeDecorations = [];
+    this.cameraView = 'route';
     this.lastLayoutZoom = -1;
     this.lastDetailTier = -1;
     this.activePointers.clear();
@@ -183,7 +180,14 @@ export class EuropeMapScene extends Phaser.Scene {
     this.stageLabelsLayer = this.add.container(0, 0);
     this.worldLayer.add(this.stageLabelsLayer);
 
+    const labelLayer = this.add.container(0, 0);
+    this.worldLayer.add(labelLayer);
+    this.mapLabels = new EuropeMapLabels(this, labelLayer);
     this.drawCitiesAndLandmarks();
+    this.mapLabels.addReferencePlaces();
+    this.mapLabels.applyTheme(this.currentIsLight);
+    // Keep labels above the graph markers and below the charger controls.
+    this.worldLayer.bringToTop(labelLayer);
 
     this.leaderOverlay = this.add.graphics();
     this.worldLayer.add(this.leaderOverlay);
@@ -216,7 +220,17 @@ export class EuropeMapScene extends Phaser.Scene {
 
     this.resizeHandler = () => {
       if (!this.scene.isActive() || !this.cameras?.main) return;
+      if (this.cameraView === 'route') {
+        this.fitCameraToRoute(true);
+        return;
+      }
+      if (this.cameraView === 'europe') this.zoomFullEurope();
       this.clampCameraTargets();
+      const cam = this.cameras.main;
+      if (!this.smoothCamActive) {
+        cam.scrollX = this.targetScrollX;
+        cam.scrollY = this.targetScrollY;
+      }
       this.layoutChargerCards(true);
     };
     this.scale.on('resize', this.resizeHandler);
@@ -268,21 +282,7 @@ export class EuropeMapScene extends Phaser.Scene {
     this.baseNetworkGfx = this.add.graphics();
     this.worldLayer.add(this.baseNetworkGfx);
 
-    COUNTRY_LABELS.forEach(cl => {
-      const lbl = this.add.text(cl.x, cl.y, cl.name, {
-        fontFamily: 'Outfit, sans-serif',
-        fontSize: '12px',
-        fontStyle: 'bold',
-        color: pal.countryLabelColor,
-        letterSpacing: 2,
-        resolution: 4
-      });
-      lbl.setOrigin(0.5);
-      this.worldLayer.add(lbl);
-      this.countryLabelTexts.push(lbl);
-    });
-
-    // Autobahn shields (visible even when zoomed out on major corridors!)
+    // Motorway shields on the level corridors and the wider network.
     const levelEdgeIds = new Set<string>();
     this.bridge.level.routeOptions.forEach(opt => opt.legs.forEach(l => levelEdgeIds.add(l.edgeId)));
 
@@ -311,11 +311,14 @@ export class EuropeMapScene extends Phaser.Scene {
         .setOrigin(0.5);
       cont.add([rect, txt]);
       this.worldLayer.add(cont);
-      this.shieldTags.push({ cont, x: mid.x, y: mid.y, major: onLevel });
+      this.shieldTags.push({
+        id: `shield-${edge.id}`, object: cont, x: mid.x, y: mid.y,
+        kind: 'shield', width: rect.width + 2, height: rect.height + 2, minZoom: onLevel ? 0.26 : 0.95
+      });
     });
 
-    const cx = 135;
-    const cy = 1280;
+    const cx = this.mapBounds.w * 0.045;
+    const cy = this.mapBounds.h * 0.79;
     const nTxt = this.add
       .text(cx, cy - 34, 'N', {
         fontFamily: 'Outfit, sans-serif',
@@ -360,13 +363,19 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
+    g.lineStyle(2, scenicMapColor(this.currentIsLight), 0.95);
+    let phase = 0;
+    for (let i = 1; i < northCoastLine.length; i++) {
+      const from = northCoastLine[i - 1], to = northCoastLine[i];
+      phase = this.drawDashedLine(g, from.x, from.y, to.x, to.y, 2.7, 1.7, phase);
+    }
     this.drawMapLegendDecor(g);
   }
 
   private drawMapLegendDecor(g: Phaser.GameObjects.Graphics): void {
     const pal = getMapThemePalette(this.currentIsLight);
-    const cx = 135;
-    const cy = 1280;
+    const cx = this.mapBounds.w * 0.045;
+    const cy = this.mapBounds.h * 0.79;
     const accent = this.currentIsLight ? 0x0284c7 : 0x38bdf8;
     g.lineStyle(2, accent, 0.6);
     g.strokeCircle(cx, cy, 26);
@@ -389,7 +398,7 @@ export class EuropeMapScene extends Phaser.Scene {
     }
     this.drawBaseNetworkAndLegend();
 
-    this.countryLabelTexts.forEach(lbl => lbl.setColor(pal.countryLabelColor));
+    this.mapLabels.applyTheme(this.currentIsLight);
     if (this.legendTexts[0]) this.legendTexts[0].setColor(this.currentIsLight ? '#0284c7' : '#38bdf8');
     if (this.legendTexts[1]) this.legendTexts[1].setColor(pal.legendTextColor);
 
@@ -402,11 +411,6 @@ export class EuropeMapScene extends Phaser.Scene {
       }
     });
 
-    this.cityLabels.forEach(item => {
-      item.text.setColor(item.isActive ? pal.cityLabelActiveColor : pal.cityLabelMutedColor);
-      item.text.setBackgroundColor(item.isActive ? pal.cityLabelActiveBg : pal.cityLabelMutedBg);
-    });
-
     this.refreshDynamicState();
   }
 
@@ -417,20 +421,22 @@ export class EuropeMapScene extends Phaser.Scene {
     x2: number,
     y2: number,
     dashLen: number,
-    gapLen: number
-  ): void {
+    gapLen: number,
+    phase = 0
+  ): number {
     const dx = x2 - x1;
     const dy = y2 - y1;
     const dist = Math.hypot(dx, dy);
-    if (dist < 1) return;
+    if (dist === 0) return phase;
     const ux = dx / dist;
     const uy = dy / dist;
-    let pos = 0;
-    while (pos < dist) {
+    const cycle = dashLen + gapLen;
+    for (let pos = -phase; pos < dist; pos += cycle) {
+      const start = Math.max(0, pos);
       const end = Math.min(dist, pos + dashLen);
-      g.lineBetween(x1 + ux * pos, y1 + uy * pos, x1 + ux * end, y1 + uy * end);
-      pos += dashLen + gapLen;
+      if (end > start) g.lineBetween(x1 + ux * start, y1 + uy * start, x1 + ux * end, y1 + uy * end);
     }
+    return (dist + phase) % cycle;
   }
 
   private drawSoftRouteBand(
@@ -574,25 +580,7 @@ export class EuropeMapScene extends Phaser.Scene {
         this.worldLayer.add(lm);
       }
 
-      const label = this.add.text(city.mapX, city.mapY + 8, city.name, {
-        fontFamily: 'Plus Jakarta Sans, sans-serif',
-        fontSize: isInLevel ? '11.5px' : city.isMajor ? '10px' : '9px',
-        fontStyle: isInLevel || city.isMajor ? 'bold' : 'normal',
-        color: isInLevel ? pal.cityLabelActiveColor : pal.cityLabelMutedColor,
-        backgroundColor: isInLevel ? pal.cityLabelActiveBg : pal.cityLabelMutedBg,
-        padding: { x: 4, y: 1.5 },
-        resolution: 4
-      });
-      label.setOrigin(0.5, 0);
-      label.setDepth(9);
-      this.worldLayer.add(label);
-      this.cityLabels.push({
-        text: label,
-        x: city.mapX,
-        y: city.mapY + 8,
-        isMajor: !!city.isMajor,
-        isActive: isInLevel
-      });
+      this.mapLabels.addGraphCity(city, isInLevel, radius + (outerRing ? 3.2 : 0));
     });
   }
 
@@ -771,6 +759,7 @@ export class EuropeMapScene extends Phaser.Scene {
     rg.clear();
     this.routePillsLayer.removeAll(true);
     this.stageLabelsLayer.removeAll(true);
+    this.routeDecorations = [];
 
     const activeRoute = getActiveRouteOption(this.bridge.level, this.bridge.plan);
     const activeLegs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
@@ -840,6 +829,10 @@ export class EuropeMapScene extends Phaser.Scene {
           this.bridge.onMapSelectRoute(opt.id);
         });
         this.routePillsLayer.add(pill);
+        this.routeDecorations.push({
+          id: `route-${opt.id}`, kind: 'route', object: pill, x: wp.x, y: wp.y - 16,
+          width: Math.max(bg.width, txt.width) + 2, height: bg.height + 2, hitTarget: bg
+        });
       }
     });
 
@@ -895,6 +888,10 @@ export class EuropeMapScene extends Phaser.Scene {
           .setOrigin(0.5);
         stageBadge.add([bg, txt]);
         this.stageLabelsLayer.add(stageBadge);
+        this.routeDecorations.push({
+          id: 'selected-stage', kind: 'stage', object: stageBadge, x: midPt.x, y: midPt.y + 18,
+          width: Math.max(bg.width, txt.width) + 2, height: bg.height + 2
+        });
 
         // Origin ring around stage start city
         g.lineStyle(2.5, 0x38bdf8, 0.95);
@@ -917,8 +914,8 @@ export class EuropeMapScene extends Phaser.Scene {
     });
 
     // 3. Charger icons. Colour follows the subscription, not the provider chip.
-    //    Ausblenden: nothing, unless a chip is on — then only that provider on the active stage.
-    //    Einblenden: every charger on the chosen Hin- and Rückweg. Chips add detail tiles (layoutChargerCards).
+    //    Off (default): planned stops plus, for chips that are on, that provider on the active stage.
+    //    "Alle Ladestationen" on: every charger on the chosen route. Chips add detail tiles (layoutChargerCards).
     const vehicle = getVehicleById(this.bridge.plan.vehicleId);
     const selectedKeys = new Set(this.bridge.plan.plannedStops.map(s => stopKey(s.legIndex, s.chargerId)));
     const showStations = this.bridge.showChargerStations;
@@ -939,7 +936,7 @@ export class EuropeMapScene extends Phaser.Scene {
 
       const visible = showStations
         ? node.onActiveRoute || isSelected
-        : node.onSelectedStage && isFilteredOn;
+        : (node.onSelectedStage && isFilteredOn) || isSelected;
       node.compactIcon = !node.onSelectedStage;
       node.grayIcon = !isSub;
       node.isFilteredVisible = visible;
@@ -983,7 +980,7 @@ export class EuropeMapScene extends Phaser.Scene {
       if (tariff.hasSubscriptionDiscount && isSub) {
         node.noSubText.setText(`ohne Abo: ${tariff.pricePerKwhWithoutSub.toFixed(2)} €/kWh`);
       } else if (priceIsRoaming) {
-        node.noSubText.setText('Roaming / Ad-hoc');
+        node.noSubText.setText(networkHasSubscription(station.network) ? 'Roaming / Ad-hoc' : 'Ad-hoc');
       } else {
         node.noSubText.setText(station.cityHint.slice(0, 22));
       }
@@ -1023,6 +1020,9 @@ export class EuropeMapScene extends Phaser.Scene {
     if (!cam || !this.leaderOverlay) return;
 
     const zoom = cam.zoom;
+    const fixedObstacles = this.mapLabels.layout({
+      width: cam.width, height: cam.height, scrollX: cam.scrollX, scrollY: cam.scrollY, zoom
+    }, [...this.shieldTags, ...this.routeDecorations], force);
     const tier = zoom < 0.95 ? 0 : zoom < 1.55 ? 1 : 2;
     if (!force && tier === this.lastDetailTier && Math.abs(zoom - this.lastLayoutZoom) < 0.04) return;
     this.lastLayoutZoom = zoom;
@@ -1032,47 +1032,6 @@ export class EuropeMapScene extends Phaser.Scene {
 
     const invScale = Phaser.Math.Clamp(1.0 / zoom, 0.22, 1.35);
     const cardScale = Phaser.Math.Clamp(0.95 / Math.pow(zoom, 0.85), 0.24, 0.95);
-    const labelScale = Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.72), 0.28, 1.05);
-
-    // Update city labels visibility & crisp screen-consistent scale
-    const fixedObstacles: BoxRect[] = [];
-    this.cityLabels.forEach(item => {
-      item.text.setScale(labelScale);
-      const show = item.isActive || (tier >= 1 && item.isMajor) || tier >= 2;
-      item.text.setVisible(show);
-      if (show) {
-        fixedObstacles.push({
-          x: item.x,
-          y: item.y + 8 * labelScale,
-          w: Math.max(46, item.text.width * labelScale),
-          h: 16 * labelScale
-        });
-      }
-    });
-
-    // Update Autobahn shields
-    this.shieldTags.forEach(s => {
-      const shScale = Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.75), 0.3, 1.0);
-      s.cont.setScale(shScale);
-      const show = s.major || tier >= 1;
-      s.cont.setVisible(show);
-      if (show) {
-        fixedObstacles.push({ x: s.x, y: s.y, w: 32 * shScale, h: 16 * shScale });
-      }
-    });
-
-    // Scale stage labels and route pills cleanly
-    this.stageLabelsLayer.list.forEach(obj => {
-      if (obj instanceof Phaser.GameObjects.Container) {
-        obj.setScale(Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.78), 0.26, 1.0));
-      }
-    });
-    this.routePillsLayer.list.forEach(obj => {
-      if (obj instanceof Phaser.GameObjects.Container) {
-        obj.setScale(Phaser.Math.Clamp(1.0 / Math.pow(zoom, 0.78), 0.28, 1.0));
-      }
-    });
-
     const visibleNodes: ChargerPinNode[] = [];
 
     this.pinObjects.forEach(node => {
@@ -1141,13 +1100,14 @@ export class EuropeMapScene extends Phaser.Scene {
   public zoomBy(factor: number): void {
     const cam = this.cameras.main;
     if (!cam) return;
+    this.cameraView = 'manual';
     if (!this.smoothCamActive) {
       this.targetZoom = cam.zoom;
       this.targetScrollX = cam.scrollX;
       this.targetScrollY = cam.scrollY;
     }
     const centerWorld = cam.getWorldPoint(cam.width / 2, cam.height / 2);
-    const nextZoom = Phaser.Math.Clamp(this.targetZoom * factor, 0.42, 4.8);
+    const nextZoom = Phaser.Math.Clamp(this.targetZoom * factor, this.minZoom(cam), 4.8);
     this.targetZoom = nextZoom;
     // Keep center anchored cleanly
     this.targetScrollX = centerWorld.x - cam.width / 2;
@@ -1159,27 +1119,11 @@ export class EuropeMapScene extends Phaser.Scene {
   public fitCameraToRoute(immediate = false): void {
     const cam = this.cameras.main;
     if (!cam) return;
+    this.cameraView = 'route';
     const activeLegs = getActiveRouteLegs(this.bridge.level, this.bridge.plan);
-    const cities = activeLegs.flatMap(l => {
-      const e = getEdgeById(l.edgeId);
-      return [getCityById(e.fromCityId), getCityById(e.toCityId)];
-    });
-    if (cities.length === 0) return;
-
-    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
-    cities.forEach(c => {
-      minX = Math.min(minX, c.mapX);
-      maxX = Math.max(maxX, c.mapX);
-      minY = Math.min(minY, c.mapY);
-      maxY = Math.max(maxY, c.mapY);
-    });
-    const padX = 120;
-    const padY = 100;
-    const boxW = Math.max(260, maxX - minX + padX * 2);
-    const boxH = Math.max(220, maxY - minY + padY * 2);
-    const zoom = Phaser.Math.Clamp(Math.min(cam.width / boxW, cam.height / boxH), 0.48, 2.2);
-    const cx = (minX + maxX) / 2;
-    const cy = (minY + maxY) / 2;
+    const points = activeLegs.flatMap(leg => getEdgeById(leg.edgeId).waypoints);
+    if (points.length === 0) return;
+    const { x: cx, y: cy, zoom } = routeMapView(points, cam.width, cam.height);
 
     if (immediate) {
       cam.setZoom(zoom);
@@ -1204,17 +1148,24 @@ export class EuropeMapScene extends Phaser.Scene {
   public zoomFullEurope(): void {
     const cam = this.cameras.main;
     if (!cam) return;
-    const zoom = Phaser.Math.Clamp(Math.min(cam.width / 1380, cam.height / 1320), 0.42, 1.4);
-    this.targetZoom = zoom;
-    this.targetScrollX = 780 - cam.width / 2;
-    this.targetScrollY = 710 - cam.height / 2;
+    this.cameraView = 'europe';
+    this.targetZoom = this.minZoom(cam);
+    this.targetScrollX = (this.mapBounds.w - cam.width) / 2;
+    this.targetScrollY = (this.mapBounds.h - cam.height) / 2;
     this.clampCameraTargets();
     this.smoothCamActive = true;
   }
 
+  private minZoom(cam: Phaser.Cameras.Scene2D.Camera): number {
+    return overviewMapZoom(cam.width, cam.height, this.mapBounds);
+  }
+
   private clampCameraTargets(): void {
-    this.targetScrollX = Phaser.Math.Clamp(this.targetScrollX, -220, this.mapBounds.w - 180);
-    this.targetScrollY = Phaser.Math.Clamp(this.targetScrollY, -180, this.mapBounds.h - 140);
+    const cam = this.cameras.main;
+    const marginX = Math.min(160, cam.width / (4 * this.targetZoom));
+    const marginY = Math.min(130, cam.height / (4 * this.targetZoom));
+    this.targetScrollX = Phaser.Math.Clamp(this.targetScrollX, marginX - cam.width / 2, this.mapBounds.w - marginX - cam.width / 2);
+    this.targetScrollY = Phaser.Math.Clamp(this.targetScrollY, marginY - cam.height / 2, this.mapBounds.h - marginY - cam.height / 2);
   }
 
   private getPointerCanvasPoint(pointer: Phaser.Input.Pointer): { x: number; y: number } {
@@ -1328,6 +1279,7 @@ export class EuropeMapScene extends Phaser.Scene {
         const dist = Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y);
 
         if (this.prevPinchDist > 8 && dist > 8 && this.prevPinchMid) {
+          this.cameraView = 'manual';
           const oldZoom = cam.zoom;
           const anchorWorld = this.screenToWorld(
             this.prevPinchMid.x,
@@ -1338,7 +1290,7 @@ export class EuropeMapScene extends Phaser.Scene {
             cam.scrollY
           );
           const ratio = dist / this.prevPinchDist;
-          const nextZoom = Phaser.Math.Clamp(oldZoom * ratio, 0.42, 4.8);
+          const nextZoom = Phaser.Math.Clamp(oldZoom * ratio, this.minZoom(cam), 4.8);
           const nextScroll = this.scrollForAnchor(anchorWorld.x, anchorWorld.y, midX, midY, cam, nextZoom);
 
           cam.setZoom(nextZoom);
@@ -1356,6 +1308,7 @@ export class EuropeMapScene extends Phaser.Scene {
       }
 
       if (!pointer.isDown || !this.dragStart || this.isPinching) return;
+      this.cameraView = 'manual';
       const dx = (this.dragStart.x - pt.x) / cam.zoom;
       const dy = (this.dragStart.y - pt.y) / cam.zoom;
       this.targetZoom = cam.zoom;
@@ -1364,6 +1317,7 @@ export class EuropeMapScene extends Phaser.Scene {
       this.clampCameraTargets();
       cam.scrollX = this.targetScrollX;
       cam.scrollY = this.targetScrollY;
+      this.layoutChargerCards();
     });
 
     const handleUp = (pointer: Phaser.Input.Pointer) => {
@@ -1396,13 +1350,14 @@ export class EuropeMapScene extends Phaser.Scene {
       'wheel',
       (pointer: Phaser.Input.Pointer, _objs: unknown[], _dx: number, dy: number) => {
         const cam = this.cameras.main;
+        this.cameraView = 'manual';
         const pt = this.getPointerCanvasPoint(pointer);
         const baseZoom = this.smoothCamActive ? this.targetZoom : cam.zoom;
         const baseScrollX = this.smoothCamActive ? this.targetScrollX : cam.scrollX;
         const baseScrollY = this.smoothCamActive ? this.targetScrollY : cam.scrollY;
         const anchorWorld = this.screenToWorld(pt.x, pt.y, cam, baseZoom, baseScrollX, baseScrollY);
         const factor = dy > 0 ? 0.86 : 1.16;
-        const nextZoom = Phaser.Math.Clamp(baseZoom * factor, 0.42, 4.8);
+        const nextZoom = Phaser.Math.Clamp(baseZoom * factor, this.minZoom(cam), 4.8);
         const nextScroll = this.scrollForAnchor(anchorWorld.x, anchorWorld.y, pt.x, pt.y, cam, nextZoom);
 
         this.targetZoom = nextZoom;

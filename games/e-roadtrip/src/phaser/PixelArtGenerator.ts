@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { VEHICLES } from '../data/vehicles';
 import { ChargerNetwork, LandmarkKind, VehicleShape } from '../types';
+import { drawChargerBadge } from './ChargerBadges';
 import {
   BISTRO_KIOSK, CAR_CHASSIS, CAR_FOOTPRINT, CAR_SIZE, CHARGER_FOOTPRINT, CHARGER_SIZE,
   MCD_KIOSK, TRUCK_FOOTPRINT, TRUCK_SIZE, WHEEL_STOP_SIZE
@@ -260,10 +261,13 @@ function drawChargerStallTexture(scene: Phaser.Scene, net: ChargerNetwork): void
     totalenergies: { body: '#1e3a8a', accent: '#e10600' },
     ac_dorfladen: { body: '#78350f', accent: '#fbbf24' },
     atlante: { body: '#0f766e', accent: '#5eead4' },
-    vianeo: { body: '#0c4a6e', accent: '#38bdf8' }
+    vianeo: { body: '#0c4a6e', accent: '#38bdf8' },
+    a22: { body: '#134d50', accent: '#56d2d6' },
+    neogy: { body: '#3d5219', accent: '#abda59' }
   };
 
   const c = colors[net];
+  drawChargerBadge(scene, net, c.accent);
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.fillRect(4, 4, 14, 14);
   ctx.fillStyle = c.body;
@@ -296,7 +300,9 @@ function drawNetworkLogoTexture(scene: Phaser.Scene, net: ChargerNetwork): void 
     totalenergies: '#e10600',
     ac_dorfladen: '#d97706',
     atlante: '#0f766e',
-    vianeo: '#0284c7'
+    vianeo: '#0284c7',
+    a22: '#147d83',
+    neogy: '#638a24'
   };
 
   ctx.fillStyle = '#0f172a';
@@ -917,7 +923,7 @@ export function generateAllPixelTextures(scene: Phaser.Scene): void {
   drawPedestrianTexture(scene, 'ped_adult_1', '#0284c7', false);
   drawPedestrianTexture(scene, 'ped_child', '#facc15', true);
 
-  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village', 'fastned', 'totalenergies', 'ac_dorfladen', 'atlante', 'vianeo'] as ChargerNetwork[]).forEach(net => {
+  (['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village', 'fastned', 'totalenergies', 'ac_dorfladen', 'atlante', 'vianeo', 'a22', 'neogy'] as ChargerNetwork[]).forEach(net => {
     drawChargerStallTexture(scene, net);
     drawNetworkLogoTexture(scene, net);
   });

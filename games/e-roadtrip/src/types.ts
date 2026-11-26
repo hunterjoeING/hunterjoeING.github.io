@@ -54,7 +54,9 @@ export type ChargerNetwork =
   | 'totalenergies'
   | 'ac_dorfladen'
   | 'atlante'
-  | 'vianeo';
+  | 'vianeo'
+  | 'a22'
+  | 'neogy';
 
 export interface SubscriptionSpec {
   id: string;
@@ -107,8 +109,8 @@ export interface CityNode {
   id: string;
   name: string;
   country: CountryCode;
-  mapX: number; // 0..1800 normalized Europe pixel map coords
-  mapY: number; // 0..1420
+  mapX: number; // projected Europe map pixels
+  mapY: number;
   landmark?: LandmarkKind;
   isMajor?: boolean;
   isJunction?: boolean;
@@ -159,6 +161,8 @@ export interface ChargerStation {
   hasRestroom?: boolean;
   trailerFriendly?: boolean; // Drive-through bays without uncoupling
   isAcOnly?: boolean;
+  /** Ski-holiday queue on arrival in the winter level. */
+  winterQueue?: boolean;
   /** Charged during a fixed city stay (Hannover Messe), not as a motorway pull-in. */
   fairStay?: boolean;
 }
@@ -212,6 +216,11 @@ export interface EventChoice {
   /** Optional second event. Rolled after the player continues. */
   followUpEventId?: string;
   followUpChance?: number;
+  /** Start the trip with a cold battery and cabin. */
+  startsCold?: boolean;
+  /** Winter road event effects, measured independently of route progress. */
+  winterDetourKm?: number;
+  snowploughKm?: number;
 }
 
 export interface GameEventDef {
@@ -256,9 +265,12 @@ export interface LevelRouteLegSpec {
   citySegmentAtEnd?: CityDrivePreset;
   /** Family overnight at the end of this leg. The player picks the stay on arrival. */
   overnightAtEnd?: boolean;
-  /** Outbound destination reached (turnaround before the return legs). */
+  /** End of the trip at the destination, with no onward drive. */
   destinationAtEnd?: boolean;
 }
+
+export type PassName = 'Fernpass' | 'Jaufenpass';
+export type RegenMode = 'coast' | 'normal' | 'strong';
 
 export type CityDrivePreset =
   | 'aachen_start'
@@ -266,7 +278,11 @@ export type CityDrivePreset =
   | 'hannover_messe'
   | 'aachen_finish'
   | 'ferry_denmark'
-  | 'koeln_ring';
+  | 'koeln_ring'
+  | 'montpellier_finish'
+  | 'muenchen_start'
+  | 'innsbruck_finish'
+  | 'alpine_pass';
 
 export type ElevationProfileKind = 'Flachland' | 'Hügelig' | 'Bergig / Pässe';
 export type TrafficRiskKind = 'Niedrig' | 'Mittel' | 'Hoch';
@@ -283,6 +299,7 @@ export interface RouteOption {
   chargingDensity: ChargingDensityKind;
   colorHex: number;
   legs: LevelRouteLegSpec[];
+  /** Charging stops for an internal reference plan. */
   defaultPlannedStops?: PlannedStop[];
 }
 
@@ -349,6 +366,7 @@ export interface LiveSocPrediction {
   nextStopKind: 'charger' | 'turnaround' | 'destination';
   distanceToNextKm: number;
   predictedArrivalNextSocPct: number;
+  exactArrivalNextSocPct: number;
   predictedFinalSocPct: number;
   predictedFinalSocWithoutMessePct?: number;
   isCriticalNext: boolean;
@@ -378,11 +396,17 @@ export interface RunState {
   hungerNeed: number; // 0..100
   energyUsedKwh: number;
   distanceDrivenKm: number;
+  coldStart?: boolean;
+  snowploughUntilKm?: number;
+  alpinePass?: { legIndex: number; name: PassName; chainsFitted: boolean; complete: boolean };
+  alpineDescent?: { legIndex: number; mode: RegenMode; recoveredKwh: number; brakeHeatM: number; overheated: boolean };
+  winterTunnel?: { legIndex: number; driveMinutes: number; averageKmh?: number };
   chargingCostEur: number;
   subscriptionCostEur: number;
   tollsEur: number;
   paidTollLegIndices: number[];
   incidentalCostEur: number;
+  propertyDamageEur: number;
   pauseCostEur: number;
   /** Hotels and other stays. 0 when the night was free. */
   lodgingCostEur: number;
@@ -395,6 +419,8 @@ export interface RunState {
   collisionsCount: number;
   completedStopKeys: string[];
   skippedStopKeys: string[];
+  /** Voluntary road skip that can be undone until its exit has been passed. */
+  undoableRoadStopKey?: string;
   triggeredEventIds: string[];
   wifeDialogueTriggered: boolean;
   incidentLog: IncidentLogEntry[];
@@ -409,7 +435,7 @@ export interface RunState {
   speedTrap?: { country: string; signKmh: number; actualKmh: number };
   /** Temporary limit (Baustelle or French rain). Chosen cruise stays on the leg plan. */
   speedCapKmh?: number;
-  /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */
+  /** HUD notice for a temporary road restriction or an upcoming tunnel. */
   speedCapLabel?: string;
   /** Transient: ein Pkw bremst das eigene Fahrzeug auf derselben linken Spur aus. */
   tailgateReady?: boolean;
@@ -424,6 +450,9 @@ export interface RunState {
 
 export interface EvaluationResult {
   totalScore: number; // 0..1000
+  finalSocPct: number;
+  finalSocPenalty: number;
+  gameOver: boolean;
   subScores: {
     time: number;       // 0..100
     cost: number;       // 0..100

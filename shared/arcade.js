@@ -155,6 +155,7 @@
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️', lowerIsBetter: false },
     { id: 'eroadtrip_l1', title: 'e-Roadtrip: Pixel Europe · Level 1', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 1' },
     { id: 'eroadtrip_l2', title: 'e-Roadtrip: Pixel Europe · Level 2', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 2' },
+    { id: 'eroadtrip_l3', title: 'e-Roadtrip: Pixel Europe · Level 3', icon: '⚡', lowerIsBetter: false, unlisted: true, group: 'eroadtrip', tabTitle: 'Level 3' },
     { id: 'eroadtrip', title: 'e-Roadtrip: Pixel Europe', icon: '⚡', lowerIsBetter: false, group: 'eroadtrip', tabTitle: 'Gesamt' },
     { id: 'minesweeper', title: '3D Minesweeper – Tech Demo KI-Agent (Danke an Verstand2Go, minesweeper3d.online)', icon: '💣', lowerIsBetter: true },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊', lowerIsBetter: true },
@@ -792,7 +793,8 @@
 
       const numScore = Number(score);
       const isLower = !!lowerIsBetter || !!(GAME_MAP[gameId] && GAME_MAP[gameId].lowerIsBetter);
-      if (!Number.isFinite(numScore) || numScore < 0 || (numScore === 0 && !isLower)) {
+      const acceptsZero = isLower || GAME_MAP[gameId]?.group === 'eroadtrip';
+      if (!Number.isFinite(numScore) || numScore < 0 || (numScore === 0 && !acceptsZero)) {
         return isPersonalBetter;
       }
 

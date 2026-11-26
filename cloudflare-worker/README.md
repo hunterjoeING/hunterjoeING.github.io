@@ -10,9 +10,9 @@ Dieser Ordner enthält das vollständige Backend für `https://hunterjoe-scores.
 
 ## E-Roadtrip-Bestenlisten
 
-`GET /api/summary` und `GET /api/scores?game=<id>` liefern die Gesamtbestenliste `eroadtrip` sowie `eroadtrip_l1` (Aachen ↔ Hannover Messe) und `eroadtrip_l2` (Familien-Sommerurlaub).
+`GET /api/summary` und `GET /api/scores?game=<id>` liefern die Gesamtbestenliste `eroadtrip` sowie `eroadtrip_l1` (Aachen ↔ Hannover Messe), `eroadtrip_l2` (Familien-Sommerurlaub) und `eroadtrip_l3` (Winter-Alpenüberquerung).
 
-Für `POST /api/scores` braucht die Gesamtbestenliste die Level-Board-ID in `meta.board` oder `meta.levelBoard`. Der Worker prüft Punkte als ganze Zahl von 100 bis 1000, numerische `meta.minutes` von 0,5 bis 20 Zielzeiten und numerische `meta.costEur` ab 0. Ein mitgesendetes `meta.levelId` muss zum Board passen. Ungültige Ergebnisse liefern HTTP 400 mit `{ ok: false, error }`. Zielzeiten und Level-IDs stehen in `EROADTRIP_LEVEL_TARGETS` und müssen mit `games/e-roadtrip/src/data/levels.ts` übereinstimmen. Beim Einreichen desselben Ergebnisses für mehrere Boards braucht jedes Board eine eigene `runId`.
+Für `POST /api/scores` braucht die Gesamtbestenliste die Level-Board-ID in `meta.board` oder `meta.levelBoard`. Der Worker prüft Punkte als ganze Zahl von 0 bis 1000, numerische `meta.minutes` ab der halben Zielzeit und numerische `meta.costEur` ab 0. Für Level 1 und 3 liegt die Obergrenze bei 20 Zielzeiten. Level 2 behält die bisherige Obergrenze von 40.800 Minuten für ältere Spielversionen. Ein mitgesendetes `meta.levelId` muss zum Board passen. Ungültige Ergebnisse liefern HTTP 400 mit `{ ok: false, error }`. Zielzeiten und Level-IDs stehen in `EROADTRIP_LEVEL_TARGETS` und müssen mit `games/e-roadtrip/src/data/levels.ts` übereinstimmen. Beim Einreichen desselben Ergebnisses für mehrere Boards braucht jedes Board eine eigene `runId`.
 
 ## Schnell-Update in deinem Cloudflare-Account
 

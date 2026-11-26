@@ -5,10 +5,11 @@ export function createFixtures(m) {
   const route1 = m.getLevelById('level_1_aachen_hannover');
   const route2 = m.getLevelById('level_2_family_summer');
   const mkRun = (level = route1, v = 'mg4_standard') => ({
-    plan: m.createDefaultPlan(level, v), currentLegIndex: 0, legProgressKm: 0,
+    levelId: level.id, plan: m.createDefaultPlan(level, v), currentLegIndex: 0, legProgressKm: 0,
     socPct: 80, elapsedMinutes: 0, stress: 20, peakStress: 20, bladderNeed: 70, hungerNeed: 90,
     distanceDrivenKm: 0, energyUsedKwh: 0, chargingCostEur: 0, subscriptionCostEur: 0,
-    tollsEur: 0, paidTollLegIndices: [], incidentalCostEur: 0, lodgingCostEur: 0, pauseCostEur: 0,
+    tollsEur: 0, paidTollLegIndices: [], incidentalCostEur: 0, propertyDamageEur: 0, lodgingCostEur: 0, pauseCostEur: 0,
+    collisionsCount: 0, replanCount: 0, goodReplanCount: 0, chargingEfficiencyBonus: 0,
     decisionScoreAccum: 0, triggeredEventIds: [], completedStopKeys: [], skippedStopKeys: [],
     incidentLog: [], activeWeather: 'clear', currentSpeedKmh: 130, isNight: false
   });
@@ -25,6 +26,7 @@ export function createFixtures(m) {
     const scene = new m.AutobahnScene();
     scene.bridge = { runState: run, level, paused: false, timeScale: 15,
       onAutobahnHudTick() {}, onDynamicEventTrigger(id) { fired.push(id); },
+      onDestinationArrival() { fired.push('destination'); },
       onTriggerCitySegment(id) { fired.push(id); }, onTriggerChargerSegment(station) { fired.push(station.id); },
       onWifeDialogueTrigger(id) { fired.push(id); }, onBatteryDepleted() { fired.push('leer'); } };
     scene.scale = { width: 390, height: 370 };

@@ -911,9 +911,9 @@
     </footer>
   </div>
 
-  <script src="./shared/arcade.js?v=0.4.0"></script>
+  <script src="./shared/arcade.js?v=0.4.1"></script>
   <script src="./shared/hidden-admin.js"></script>
-  <script src="./shared/releases.js?v=0.4.0"></script>
+  <script src="./shared/releases.js?v=0.4.1"></script>
   <script src="./shared/update-banner.js?v=0.4.0"></script>
   <script>
     (function () {
@@ -992,7 +992,7 @@
           featured: true,
           cta: 'Roadtrip starten →',
           title: 'e-Roadtrip: Pixel Europe',
-          desc: 'Plane E-Auto-Langstrecken (Level 1: Aachen ↔ Hannover Messe) mit realen Ladekurven, Lade-Abos, Zeitraffer-Autobahn, Top-Down-Stadtverkehr, Stress-Dialogen &amp; Fahrzeug-Upgrade.',
+          desc: 'Plane E-Auto-Langstrecken mit realen Ladekurven, Lade-Abos, Zeitraffer-Autobahn und Top-Down-Stadtverkehr. In Level 3 fährst du auf drei Winterrouten von München nach Sirmione am Gardasee.',
           accent: '#2563eb',
           glow: 'rgba(37, 99, 235, 0.30)',
           icon: `<svg width="38" height="38" viewBox="0 0 40 40" fill="none">
@@ -1777,7 +1777,7 @@
         }
         if (id === 'eroadtrip') {
           const levelBests = [];
-          for (const level of [1, 2]) {
+          for (const level of [1, 2, 3]) {
             const boardId = `eroadtrip_l${level}`;
             const entry = ArcadeScores.getBest(boardId);
             const best = entry?.isGlobal

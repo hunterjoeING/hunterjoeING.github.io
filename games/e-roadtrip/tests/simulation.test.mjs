@@ -1,12 +1,14 @@
 import assert from 'node:assert/strict';
+import { createFixtures } from './fixtures.mjs';
 
 export default function register(test, game) {
   const {
     getLevelById, getVehicleById, getChargerById, getEdgeById, getChargersForEdge,
-    createDefaultPlan, getActiveRouteLegs, getMapChargerLegIndex, evaluateTripPlan,
+    createDefaultPlan, switchRouteInPlan, switchReturnRouteInPlan, getActiveRouteLegs, getMapChargerLegIndex, evaluateTripPlan,
     stopKey, isPendingStop, predictLiveTripSoc, plannedRoadStopsOnLeg, getMesseChargerForVisit,
     estimateMesseCharge, evaluateRun, findReachableAdditionalStop, getBestPriceForStation,
-    computeSubscriptionTripCost
+    computeSubscriptionTripCost, buildRemainingRoute, levelHasReturnRoutes, LEVELS, finalSocPenalty,
+    evaluateStopSkip, getApproachingRoadStop, isSkippableRoadStop, SKIP_PROMPT_KM, SKIP_RESERVE_SOC_PCT
   } = game;
   const l1 = getLevelById('level_1_aachen_hannover');
   const l2 = getLevelById('level_2_family_summer');
@@ -20,7 +22,183 @@ export default function register(test, game) {
     activeWeather: 'clear',
     currentSpeedKmh: 110,
     completedStopKeys: [],
-    skippedStopKeys: []
+    skippedStopKeys: [],
+    triggeredEventIds: []
+  });
+
+  test('Player plans open empty and clear manually added charges on route changes and restart', () => {
+    for (const level of LEVELS) {
+      assert.equal(createDefaultPlan(level, mg.id).plannedStops.length, 0, level.id);
+      for (const route of level.routeOptions) {
+        const plan = createDefaultPlan(level, mg.id, route.id);
+        assert.equal(plan.plannedStops.length, 0, route.id);
+        const chosenStop = { ...route.defaultPlannedStops[0] };
+        plan.plannedStops.push(chosenStop);
+        assert.equal(createDefaultPlan(level, mg.id, route.id).plannedStops.length, 0, route.id);
+
+        for (const next of level.routeOptions.filter(option => option !== route)) {
+          const routeChange = createDefaultPlan(level, mg.id, route.id);
+          routeChange.plannedStops.push(chosenStop);
+          switchRouteInPlan(level, routeChange, next.id);
+          assert.equal(routeChange.selectedRouteId, next.id);
+          assert.equal(routeChange.plannedStops.length, 0, `${route.id} → ${next.id}`);
+
+          if (levelHasReturnRoutes(level)) {
+            const returnChange = createDefaultPlan(level, mg.id, route.id);
+            returnChange.plannedStops.push(chosenStop);
+            switchReturnRouteInPlan(level, returnChange, next.id);
+            assert.equal(returnChange.returnRouteId, next.id);
+            assert.equal(returnChange.plannedStops.length, 0, `${route.id} ← ${next.id}`);
+          }
+        }
+      }
+    }
+  });
+
+  test('Final SoC penalties use the unrounded end-of-run percentage and half-open tiers', () => {
+    const cases = [[0, 0], [4.99, 0], [5, 50], [9.99, 50], [10, 75],
+      [12, 75], [15, 100], [19.99, 100], [20, 150], [100, 150]];
+    for (const [soc, points] of cases) assert.equal(finalSocPenalty(soc), points);
+
+    const { mkRun } = createFixtures(game);
+    for (const level of LEVELS) {
+      const run = mkRun(level);
+      run.socPct = 4.99;
+      const base = evaluateRun(level, run, true).totalScore;
+      for (const [socPct, points] of cases) {
+        const result = evaluateRun(level, { ...run, socPct }, true);
+        assert.equal(result.finalSocPct, socPct);
+        assert.equal(result.finalSocPenalty, points);
+        assert.equal(result.totalScore, Math.max(0, base - points));
+      }
+    }
+    const poorRun = { ...mkRun(l2), elapsedMinutes: 2000, propertyDamageEur: 5000,
+      stress: 100, peakStress: 100, energyUsedKwh: 200, collisionsCount: 10 };
+    assert.equal(evaluateRun(l2, poorRun, false).totalScore, 0);
+    assert.equal(evaluateRun(l2, poorRun, false).gameOver, false);
+  });
+
+  test('Road skips use the exact 10% arrival reserve at the next pending charger', () => {
+    const { mkRun, near } = createFixtures(game);
+    const run = mkRun(l1);
+    const first = getChargerById('chg_herford_tesla');
+    const second = getChargerById('chg_bad_oeynhausen_ewego');
+    run.currentLegIndex = 3;
+    run.legProgressKm = first.edgeProgress * getEdgeById(first.edgeId).distanceKm - 1;
+    const stop = { legIndex: 3, chargerId: first.id, targetSocPct: 80 };
+    run.plan.plannedStops = [stop, { legIndex: 3, chargerId: second.id, targetSocPct: 80 }];
+    const skipStopKey = stopKey(stop.legIndex, stop.chargerId);
+    const consumptionPct = -predictLiveTripSoc(l1, run, { skipStopKey, overrideSocPct: 0 }).exactArrivalNextSocPct;
+    assert.equal(SKIP_RESERVE_SOC_PCT, 10);
+
+    for (const [reserve, reason] of [[9.99, 'reserve'], [10, null]]) {
+      run.socPct = consumptionPct + reserve;
+      const result = evaluateStopSkip(l1, run, stop);
+      near(result.projectedSocPct, reserve);
+      assert.equal(result.allowed, reason === null);
+      assert.equal(result.reason, reason);
+      assert.equal(result.nextTargetName, second.name);
+      assert.equal(predictLiveTripSoc(l1, run, { skipStopKey }).predictedArrivalNextSocPct, 10);
+    }
+    run.currentSpeedKmh = 80;
+    assert.ok(evaluateStopSkip(l1, run, stop).projectedSocPct > SKIP_RESERVE_SOC_PCT);
+    assert.deepEqual(run.skippedStopKeys, []);
+  });
+
+  test('Approaches are limited to the next road exit within 15 km on the active leg', () => {
+    const { mkRun } = createFixtures(game);
+    const run = mkRun(l1);
+    run.currentLegIndex = 3;
+    const road = getChargerById('chg_herford_tesla');
+    const fair = getMesseChargerForVisit(getActiveRouteLegs(l1, run.plan)[3]);
+    const stop = { legIndex: 3, chargerId: road.id, targetSocPct: 80 };
+    const fairStop = { ...stop, chargerId: fair.id };
+    run.plan.plannedStops = [{ ...stop, legIndex: 4 }, fairStop, stop];
+    const exitKm = road.edgeProgress * getEdgeById(road.edgeId).distanceKm;
+    assert.equal(SKIP_PROMPT_KM, 15);
+    run.legProgressKm = exitKm - 15.01;
+    assert.equal(getApproachingRoadStop(l1, run), undefined);
+    run.legProgressKm = exitKm - 15;
+    assert.equal(getApproachingRoadStop(l1, run).stop, stop);
+    assert.equal(getApproachingRoadStop(l1, run).distanceKm, 15);
+    assert.equal(evaluateStopSkip(l1, run, stop).nextTargetName, 'Hannover Messe');
+    assert.equal(isSkippableRoadStop(l1, run, run.plan.plannedStops[0]), false);
+    run.legProgressKm = fair.edgeProgress * getEdgeById(fair.edgeId).distanceKm - 1;
+    assert.equal(evaluateStopSkip(l1, run, stop).reason, 'not-skippable');
+    assert.equal(evaluateStopSkip(l1, run, fairStop).reason, 'not-skippable');
+    assert.equal(getApproachingRoadStop(l1, run), undefined);
+
+    const hotelRun = mkRun(l2);
+    const legs = getActiveRouteLegs(l2, hotelRun.plan);
+    hotelRun.currentLegIndex = legs.findIndex(leg => leg.overnightAtEnd);
+    hotelRun.legProgressKm = getEdgeById(legs[hotelRun.currentLegIndex].edgeId).distanceKm - 1;
+    assert.match(buildRemainingRoute(l2, hotelRun).destination, /^Schlafpause · /);
+    assert.equal(getApproachingRoadStop(l2, hotelRun), undefined);
+    assert.equal(evaluateStopSkip(l2, hotelRun, {
+      legIndex: hotelRun.currentLegIndex, chargerId: 'evt_hotel_overnight', targetSocPct: 95
+    }).reason, 'not-skippable');
+  });
+
+  test('Navigation shows the remaining roads to the Messe and follows the return direction afterward', () => {
+    const run = baseRun(createDefaultPlan(l1, mg.id));
+    const legs = getActiveRouteLegs(l1, run.plan);
+    const route = buildRemainingRoute(l1, run);
+    assert.equal(route.destination, 'Hannover Messe');
+    assert.equal(route.segments.length, 4);
+    assert.deepEqual(route.segments.map(segment => segment.highwayName),
+      legs.slice(0, 4).map(leg => getEdgeById(leg.edgeId).highwayName));
+    assert.equal(route.segments[0].remainingKm, getEdgeById(legs[0].edgeId).distanceKm - 5);
+    assert.deepEqual(route.segments.map(segment => segment.current), [true, false, false, false]);
+    assert.equal(route.remainingKm, route.segments.reduce((total, segment) => total + segment.remainingKm, 0));
+    assert.ok(route.etaMinutes > 0);
+    assert.ok(buildRemainingRoute(l1, { ...run, speedCapKmh: 60 }).etaMinutes > route.etaMinutes);
+    const returning = buildRemainingRoute(l1, { ...run, currentLegIndex: 4, legProgressKm: 0 });
+    assert.equal(returning.segments[0].from, 'Hannover Messe');
+    assert.equal(returning.destination, 'Aachen');
+    assert.equal(returning.segments.at(-1).to, 'Aachen');
+  });
+
+  test('Navigation cuts the last segment at the next pending charger in its driving direction', () => {
+    const run = baseRun(createDefaultPlan(l1, mg.id));
+    const herford = getChargerById('chg_herford_tesla');
+    const legs = getActiveRouteLegs(l1, run.plan);
+    const herfordIndex = legs.findIndex(leg => herford.edgeId === leg.edgeId);
+    run.plan.plannedStops.push(
+      { legIndex: herfordIndex, chargerId: herford.id, targetSocPct: 80 },
+      { legIndex: 0, chargerId: tesla.id, targetSocPct: 80 },
+      { legIndex: legs.length - 1, chargerId: tesla.id, targetSocPct: 80 }
+    );
+    run.legProgressKm = tesla.edgeProgress * getEdgeById(tesla.edgeId).distanceKm;
+    assert.equal(buildRemainingRoute(l1, run).destination, tesla.name);
+    assert.equal(buildRemainingRoute(l1, run).remainingKm, 0);
+    run.completedStopKeys.push(stopKey(0, tesla.id));
+    const route = buildRemainingRoute(l1, run);
+    assert.equal(route.destination, herford.name);
+    assert.equal(route.segments.length, herfordIndex + 1);
+    assert.equal(route.segments.at(-1).remainingKm, herford.edgeProgress * getEdgeById(herford.edgeId).distanceKm);
+    run.skippedStopKeys.push(stopKey(herfordIndex, herford.id));
+    assert.equal(buildRemainingRoute(l1, run).destination, 'Hannover Messe');
+
+    const reverse = buildRemainingRoute(l1, { ...run, currentLegIndex: legs.length - 1, legProgressKm: 2 });
+    assert.equal(reverse.destination, tesla.name);
+    assert.equal(reverse.remainingKm, (1 - tesla.edgeProgress) * getEdgeById(tesla.edgeId).distanceKm - 2);
+  });
+
+  test('Navigation switches from the overnight stop to Montpellier on a one-way route', () => {
+    const run = baseRun(createDefaultPlan(l2, mg.id));
+    const legs = getActiveRouteLegs(l2, run.plan);
+    const overnightIndex = legs.findIndex(leg => leg.overnightAtEnd);
+    const night = buildRemainingRoute(l2, run);
+    assert.equal(night.destination, 'Schlafpause · Lyon');
+    assert.equal(night.segments.length, overnightIndex + 1);
+    run.currentLegIndex = overnightIndex;
+    run.legProgressKm = getEdgeById(legs[overnightIndex].edgeId).distanceKm;
+    run.triggeredEventIds.push(`evt_hotel_overnight@${overnightIndex}`);
+    const morning = buildRemainingRoute(l2, run);
+    assert.equal(morning.destination, 'Hôtel de la Plage · Palavas-les-Flots');
+    assert.equal(morning.segments.length, 1);
+    assert.equal(morning.segments[0].from, 'Lyon');
+    assert.equal(predictLiveTripSoc(l2, { ...run, currentLegIndex: overnightIndex + 1, legProgressKm: 0 }).nextStopKind, 'destination');
   });
 
   test('Eschweiler stops are independent in the map and live forecast', () => {
@@ -88,9 +266,18 @@ export default function register(test, game) {
   });
 
   test('Level 2 tolls are included in the forecast and score', () => {
-    for (const [i, toll] of [150, 188, 207].entries()) {
+    for (const [i, toll] of [75, 94, 103.5].entries()) {
       const l2Plan = createDefaultPlan(l2, mg.id, l2.routeOptions[i].id);
       const forecast = evaluateTripPlan(l2, l2Plan);
+      const route = l2.routeOptions[i];
+      const legs = getActiveRouteLegs(l2, l2Plan);
+      assert.equal(levelHasReturnRoutes(l2), false);
+      assert.equal(l2Plan.returnRouteId, '');
+      assert.equal(legs.length, 4);
+      assert.equal(legs.filter(leg => leg.overnightAtEnd).length, 1);
+      assert.equal(legs.filter(leg => leg.destinationAtEnd).length, 1);
+      assert.equal(getEdgeById(legs.at(-1).edgeId).toCityId, 'montpellier');
+      assert(route.defaultPlannedStops.every(stop => stop.legIndex < legs.length));
       assert.equal(forecast.tollsEur, toll);
       assert.equal(forecast.estimatedTotalCostEur, toll);
       const l2Run = {
@@ -99,6 +286,7 @@ export default function register(test, game) {
         chargingCostEur: 24,
         subscriptionCostEur: 3.5,
         incidentalCostEur: 5,
+        propertyDamageEur: 800,
         lodgingCostEur: 89,
         pauseCostEur: 4.5,
         distanceDrivenKm: forecast.totalDistanceKm,
@@ -111,7 +299,7 @@ export default function register(test, game) {
         chargingEfficiencyBonus: 0,
         collisionsCount: 0
       };
-      assert.equal(evaluateRun(l2, l2Run, true).totalCostEur, toll + 126);
+      assert.equal(evaluateRun(l2, l2Run, true).totalCostEur, toll + 926);
     }
   });
 

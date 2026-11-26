@@ -8,6 +8,7 @@ export interface SurfaceSample {
   speed: number;
   onGrass: boolean;
   wetRoad: boolean;
+  snowyRoad?: boolean;
   dt: number;
 }
 
@@ -49,7 +50,7 @@ export class SurfaceFx {
       if (sample.onGrass) {
         this.addStamp(sample);
         this.burst(scene, 'grass_clod', sample, Math.abs(sample.speed) > 120 ? 3 : 2, 46, 0.42);
-      } else if (sample.wetRoad && Math.abs(sample.speed) > 55) {
+      } else if (sample.snowyRoad || (sample.wetRoad && Math.abs(sample.speed) > 55)) {
         const fast = Math.abs(sample.speed) > 150;
         this.burst(scene, 'spray_puff', sample, fast ? (this.mobile ? 2 : 4) : this.mobile ? 1 : 2, 90 + Math.abs(sample.speed) * 0.3, 0.62);
       }
@@ -106,6 +107,7 @@ export class SurfaceFx {
       sprite.setAlpha(key === 'spray_puff' ? 0.55 : 0.9);
       sprite.setScale(key === 'spray_puff' ? 0.45 + Math.min(0.8, Math.abs(sample.speed) / 280) : 1);
       if (key === 'grass_clod') sprite.setTint(i % 2 === 0 ? 0x65a30d : 0x854d0e);
+      else if (sample.snowyRoad) sprite.setTint(0xf0f8ff);
       else sprite.clearTint();
       const spray = key === 'spray_puff';
       this.puffs.push({

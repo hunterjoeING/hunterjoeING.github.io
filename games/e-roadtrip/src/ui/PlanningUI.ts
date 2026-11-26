@@ -11,7 +11,8 @@ import { VEHICLES, getVehicleById } from '../data/vehicles';
 import { SUBSCRIPTIONS, roamingPriceForProvider } from '../data/subscriptions';
 import { CHARGERS, getCityById, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
-import { HOTEL_AC } from '../data/events';
+import { alpineLeg } from '../sim/AlpineDriving';
+import { HOTEL_AC, REST_AREA_STAY_MINUTES } from '../data/events';
 import {
   getActiveRouteLegs,
   getActiveRouteOption,
@@ -24,9 +25,13 @@ import {
   snapSpeedKmh
 } from '../sim/RoutePlanner';
 import { speedSignHtml } from './speedSign';
+import { formatClock, formatConsumption } from './DrivingStatus';
 import { getBestPriceForStation } from '../sim/EnergyModel';
 import { isProviderSubscribed } from '../phaser/MapLayout';
 import { SoundFX } from '../phaser/SoundFX';
+
+/** Map filter "Alle Ladestationen" starts off so the planning map stays uncluttered. */
+export const DEFAULT_SHOW_ALL_CHARGERS = false;
 
 export interface PlanningCallbacks {
   onPlanChanged: () => void;
@@ -55,7 +60,9 @@ const NET_LABEL: Record<string, string> = {
   totalenergies: 'TotalEnergies',
   ac_dorfladen: 'AC-Dorfladen',
   atlante: 'Atlante',
-  vianeo: 'ENGIE Vianeo'
+  vianeo: 'ENGIE Vianeo',
+  a22: 'Autobrennero',
+  neogy: 'Neogy'
 };
 
 const NET_HEX: Record<ChargerNetwork, string> = {
@@ -69,21 +76,23 @@ const NET_HEX: Record<ChargerNetwork, string> = {
   totalenergies: '#e10600',
   ac_dorfladen: '#d97706',
   atlante: '#0f766e',
-  vianeo: '#0284c7'
+  vianeo: '#0284c7',
+  a22: '#147d83',
+  neogy: '#638a24'
 };
 
 const BASE_FILTER_NETWORKS: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
 
-function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
+export function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
   const edgeIds = new Set(level.routeOptions.flatMap(route => route.legs.map(leg => leg.edgeId)));
   const present = new Set(CHARGERS.filter(station => edgeIds.has(station.edgeId)).map(station => station.network));
-  const extras = (['fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).filter(net => present.has(net));
+  const extras = (['fastned', 'totalenergies', 'ac_dorfladen', 'a22', 'neogy'] as ChargerNetwork[]).filter(net => present.has(net));
   if (level.id === 'level_2_family_summer') {
     const french: ChargerNetwork[] = ['tesla', 'electra', 'ionity', 'atlante', 'vianeo'];
     if (present.has('ac_dorfladen')) french.push('ac_dorfladen');
     return french;
   }
-  return [...BASE_FILTER_NETWORKS, ...extras];
+  return [...BASE_FILTER_NETWORKS.filter(net => present.has(net)), ...extras];
 }
 
 function subscriptionsForLevel(level: LevelConfig): typeof SUBSCRIPTIONS {
@@ -162,10 +171,11 @@ export class PlanningUI {
     forecast: PlanForecast,
     selectedLegIndex = 0,
     providerFilter?: ProviderFilterMap,
-    showChargerStations = true
+    showChargerStations = DEFAULT_SHOW_ALL_CHARGERS
   ): void {
     const selectedVehicle = getVehicleById(plan.vehicleId);
     const activeRoute = getActiveRouteOption(level, plan);
+    const hasAlpinePass = activeRoute.legs.some(leg => alpineLeg(level.id, getEdgeById(leg.edgeId), leg)?.pass);
     const budgetLeft = save.cashEur - (save.ownedVehicleId === selectedVehicle.id ? 0 : selectedVehicle.priceEur);
     const clampedLegIdx = Math.max(0, Math.min(forecast.legForecasts.length - 1, selectedLegIndex));
 
@@ -192,6 +202,8 @@ export class PlanningUI {
           </div>
         </div>
         <p class="plan-briefing">${level.briefingText}</p>
+        ${level.playable && level.requiresWinterTires ? `<p class="plan-briefing">Winterreifen sind Pflicht und bereits montiert. Die Prognose rechnet mit Vorkonditionierung und einer typischen Wartezeit an den betroffenen Ladestationen.${hasAlpinePass ? ' Für den Pass sind Schneeketten und normale Rekuperation eingeplant.' : ''}</p>` : ''}
+        <p class="plan-briefing">Plane so, dass du mit wenig Restakku sicher ankommst. Ab 5 % Restakku gibt es im Ziel Punktabzug.</p>
         <div class="plan-rules-chips">
           ${level.specialRulesSummary.map(r => `<span class="rule-chip">${r}</span>`).join('')}
         </div>
@@ -261,8 +273,8 @@ export class PlanningUI {
     const networks = filterNetworksForLevel(level);
     this.filterBarEl.innerHTML = `
       <div class="mfb-row">
-        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" title="Einblenden: Symbole auf Hin- und Rückweg, farbig mit Abo und grau bei Ad-hoc. Aktive Anbieterchips zeigen zusätzlich die Detailkacheln der aktuellen Etappe. Ausblenden: keine Symbole, außer die angehakten Anbieter auf der aktuellen Etappe.">
-          ${showChargerStations ? '🔌 Ladestationen einblenden' : '🔌 Ladestationen ausblenden'}
+        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" aria-pressed="${showChargerStations ? 'true' : 'false'}" title="An: alle Ladestationen entlang der gewählten Route, farbig mit Abo und grau bei Ad-hoc. Aus (Standard): nur die angehakten Anbieter auf der aktuellen Etappe und deine geplanten Stopps.">
+          🔌 Alle Ladestationen
         </button>
         ${networks
           .map(net => {
@@ -309,7 +321,13 @@ export class PlanningUI {
     return `
       <div class="forecast-strip">
         <div class="fc-metric"><span>Distanz</span><strong>${f.totalDistanceKm} km</strong></div>
-        <div class="fc-metric"><span>Dauer (Ziel ${Math.floor(level.targetArrivalMinutes / 60)}h${String(level.targetArrivalMinutes % 60).padStart(2, '0')})</span><strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong></div>
+        <div class="fc-metric">
+          <span>Dauer (Ziel ${Math.floor(level.targetArrivalMinutes / 60)}h${String(level.targetArrivalMinutes % 60).padStart(2, '0')})</span>
+          <strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong>
+          ${level.id === 'level_2_family_summer'
+            ? `<span>Abfahrt ${formatClock(level, 0)}${f.valid ? ` · Ankunft ca. ${formatClock(level, f.totalMinutes)}` : ''}</span>`
+            : ''}
+        </div>
         <div class="fc-metric">
           <span>Strom + Abos</span><strong>${(f.estimatedChargingCostEur + f.subscriptionCostEur).toFixed(2)} €</strong>
           ${f.tollsEur > 0 ? `<span>Maut ${f.tollsEur.toFixed(2)} €</span><span>Gesamt ${f.estimatedTotalCostEur.toFixed(2)} €</span>` : ''}
@@ -328,7 +346,7 @@ export class PlanningUI {
       ${
         f.warnings.length > 0
           ? `<div class="forecast-warnings">${f.warnings.map(w => `<div>⚠️ ${w}</div>`).join('')}</div>`
-          : `<div class="forecast-ok">✅ Planung stabil · Min. SoC ${f.minSocEncountered}% · Schnitt ${f.avgConsumptionKwh100} kWh/100km</div>`
+          : `<div class="forecast-ok">✅ Planung stabil · Min. SoC ${f.minSocEncountered}% · Schnitt ${formatConsumption(f.avgConsumptionKwh100)}</div>`
       }
     `;
   }
@@ -374,6 +392,7 @@ export class PlanningUI {
         <div class="route-compare-grid">
           ${this.renderRouteOptionCards(level, 'out', outbound.id)}
         </div>
+        ${level.id === 'level_3_alps_winter' ? `<p class="plan-briefing">${outbound.description}</p>` : ''}
         ${
           hasReturn && inbound
             ? `
@@ -415,7 +434,7 @@ export class PlanningUI {
               </div>
               <div class="vc-mid">
                 <div class="vc-stats">
-                  <span>⚡ ${v.baseConsumption100} kWh/100</span>
+                  <span>⚡ ${formatConsumption(v.baseConsumption100, 'kWh/100')}</span>
                   <span>🔌 AC ${v.acMaxKw} kW</span>
                   <span>🪝 ${v.towingCapacityKg > 0 ? v.towingCapacityKg + ' kg' : 'Kein Haken'}</span>
                   ${
@@ -503,7 +522,7 @@ export class PlanningUI {
       </div>
       ${
         overnightCity
-          ? `<div class="overnight-plan-note">🏨 Übernachtung auf dem Hinweg in <b>${overnightCity}</b> (Etappe ${overnightIdx + 1}, am Etappenende). Unterwegs wählst du: gutes Hotel mit AC, Budgethotel oder Schlaf im Auto an der Aire. Kosten 0–289 €, etwa 8 Stunden, fließen in die Abrechnung ein.</div>`
+          ? `<div class="overnight-plan-note">🏨 Übernachtung in <b>${overnightCity}</b> nach Etappe ${overnightIdx + 1}. Im Hotel mit AC oder im Budgethotel bleibst du ${HOTEL_AC.stayMinutes / 60} Stunden, im Auto am Rastplatz ${REST_AREA_STAY_MINUTES / 60} Stunden. Kosten: 0–${HOTEL_AC.lodgingEur} €.</div>`
           : ''
       }
 
@@ -540,11 +559,11 @@ export class PlanningUI {
               : '';
             const hotelAc = forecast.hotelAc;
             const overnightNote = spec?.overnightAtEnd
-              ? `<div class="leg-overnight">🏨 Übernachtung (8 Std.). Hotel mit AC und Frühstück: ${HOTEL_AC.lodgingEur}&nbsp;€.
+              ? `<div class="leg-overnight">🏨 Abends Übernachtung. Hotel mit AC, Spa und Frühstücksbuffet: ${HOTEL_AC.lodgingEur}&nbsp;€.
                 ${hotelAc?.legIndex === lf.legIndex
                   ? `Akku ${Math.round(hotelAc.arriveSoc)} → ${Math.round(hotelAc.departSoc)}&nbsp;% (${hotelAc.minutes} Min. Ladezeit). ${hotelAc.reachable ? `Am Reiseziel: ${Math.round(hotelAc.finalSocPct)}&nbsp;%.` : 'Die Reichweite reicht auch mit Hotel-AC nicht bis ans Ziel.'}`
                   : 'Das Hotel ist mit dem aktuellen Ladeplan nicht erreichbar.'}
-                Die Hauptprognose rechnet mit der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Übernachten im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
+                Die Hauptprognose rechnet mit der Hotelnacht und der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Schlafen im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
               : '';
             return `
             ${directionHeader}
@@ -560,7 +579,7 @@ export class PlanningUI {
                 </div>
               </div>
               <div class="leg-controls">
-                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> (max. ${sliderMax}) · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
+                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> (max. ${sliderMax}) · Ø ${lf.cruiseKmh} km/h im Verkehr (${formatConsumption(lf.consumptionKwh100)})</label>
                 <input type="range" class="leg-speed-slider${overLimit ? ' over-limit' : ''}" data-leg="${lf.legIndex}" data-sign="${signKmh}" min="${sliderMin}" max="${sliderMax}" step="5" value="${speedVal}"${overLimit ? ' title="über dem Temposchild"' : ''} />
                 ${riskBadge}
               </div>
@@ -654,7 +673,7 @@ export class PlanningUI {
     forecast: PlanForecast,
     selectedLegIndex: number,
     providerFilter?: ProviderFilterMap,
-    showChargerStations = true
+    showChargerStations = DEFAULT_SHOW_ALL_CHARGERS
   ): void {
     this.root.querySelector('#er-level-select')?.addEventListener('change', e => {
       SoundFX.click();

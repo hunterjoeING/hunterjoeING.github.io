@@ -20,12 +20,22 @@ import {
   estimateChargeSession,
   estimateTimedAcCharge
 } from './EnergyModel';
-import { HOTEL_AC } from '../data/events';
+import { alpineLeg, CHAIN_FITTING_MINUTES } from './AlpineDriving';
+import { alpineForecastBoundaries, alpineRoadEnergy } from './AlpineDescent';
+import { AUSTRIAN_VIGNETTE, HOTEL_AC } from '../data/events';
+import { WINTER_CITY_MINUTES } from './WinterCity';
+import {
+  QUEUE_MINUTES_PER_CAR, TYPICAL_QUEUE_CARS, WINTER_LEVEL_ID, WINTER_ROAD_EVENTS, winterRoadEnergyKwh, winterStartEffects
+} from './WinterDriving';
 
 export const MESSE_VISIT_MINUTES = 240;
 export const MESSE_CHARGE_MINUTES = 210;
-export const CITY_TRANSITION_MINUTES: Partial<Record<CityDrivePreset, number>> = { aachen_start: 7, koeln_ring: 6 };
+export const CITY_TRANSITION_MINUTES: Partial<Record<CityDrivePreset, number>> = {
+  aachen_start: 9, koeln_ring: 6, montpellier_finish: 7, ...WINTER_CITY_MINUTES // koeln_ring reserved for Level 5
+};
 export const NO_REACHABLE_CHARGER = 'Kein zusätzlicher Ladepunkt auf der Route mit dem aktuellen Akku erreichbar.';
+export const SKIP_PROMPT_KM = 15;
+export const SKIP_RESERVE_SOC_PCT = 10;
 
 export function stopKey(legIndex: number, chargerId: string): string {
   return `${legIndex}:${chargerId}`;
@@ -80,6 +90,43 @@ export function plannedRoadStopsOnLeg(plan: TripPlan, leg: LevelRouteLegSpec, le
     if (!station || station.edgeId !== leg.edgeId || station.fairStay) return [];
     return [{ stop, station, progress: leg.reverse ? 1 - station.edgeProgress : station.edgeProgress }];
   }).sort((a, b) => a.progress - b.progress);
+}
+
+function roadStopsAhead(level: LevelConfig, run: RunState) {
+  const index = run.currentLegIndex;
+  const leg = getActiveRouteLegs(level, run.plan)[index];
+  if (!leg) return [];
+  const edge = getEdgeById(leg.edgeId);
+  return plannedRoadStopsOnLeg(run.plan, leg, index)
+    .map(item => ({
+      ...item,
+      key: stopKey(index, item.stop.chargerId),
+      distanceKm: item.progress * edge.distanceKm - run.legProgressKm
+    }))
+    .filter(item => item.distanceKm >= 0);
+}
+
+export function isSkippableRoadStop(level: LevelConfig, run: RunState, stop: PlannedStop): boolean {
+  return isPendingStop(run, stop) && roadStopsAhead(level, run)
+    .some(item => item.key === stopKey(stop.legIndex, stop.chargerId));
+}
+
+export function getApproachingRoadStop(level: LevelConfig, run: RunState) {
+  const nearby = roadStopsAhead(level, run).filter(item => item.distanceKm <= SKIP_PROMPT_KM);
+  const undo = nearby.find(item => item.key === run.undoableRoadStopKey && run.skippedStopKeys.includes(item.key));
+  if (undo) return { ...undo, skipped: true };
+  const next = nearby.find(item => isPendingStop(run, item.stop));
+  return next && { ...next, skipped: false };
+}
+
+export function evaluateStopSkip(level: LevelConfig, run: RunState, stop: PlannedStop) {
+  if (!isSkippableRoadStop(level, run, stop)) {
+    return { allowed: false, projectedSocPct: null, nextTargetName: '', reason: 'not-skippable' } as const;
+  }
+  const forecast = predictLiveTripSoc(level, run, { skipStopKey: stopKey(stop.legIndex, stop.chargerId) });
+  const projectedSocPct = forecast.exactArrivalNextSocPct;
+  const allowed = projectedSocPct >= SKIP_RESERVE_SOC_PCT;
+  return { allowed, projectedSocPct, nextTargetName: forecast.nextStopName, reason: allowed ? null : 'reserve' } as const;
 }
 
 export interface RouteSocSection {
@@ -313,7 +360,9 @@ function rebuildLegPlans(level: LevelConfig, plan: TripPlan): TripPlan {
     const weather = leg.weatherOverride || edge.defaultWeather;
     return {
       legIndex: idx,
-      targetSpeedKmh: defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
+      targetSpeedKmh: level.id === WINTER_LEVEL_ID
+        ? snapSpeedKmh(leg.defaultTargetSpeedKmh, vehicle.maxSpeedKmh)
+        : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
     };
   });
   plan.plannedStops = [];
@@ -334,6 +383,14 @@ export function createDefaultPlan(level: LevelConfig, vehicleId: string, routeId
     plannedStops: []
   };
   return rebuildLegPlans(level, plan);
+}
+
+/** Route data supplies the charging stops for internal benchmarks. */
+export function createReferencePlan(level: LevelConfig, vehicleId: string, routeId?: string): TripPlan {
+  const plan = createDefaultPlan(level, vehicleId, routeId);
+  const route = getActiveRouteOption(level, plan);
+  plan.plannedStops = (route?.defaultPlannedStops ?? []).map(stop => ({ ...stop }));
+  return plan;
 }
 
 export function switchRouteInPlan(level: LevelConfig, plan: TripPlan, routeId: string): TripPlan {
@@ -361,7 +418,8 @@ export function switchReturnRouteInPlan(level: LevelConfig, plan: TripPlan, rout
 export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForecast {
   const vehicle = getVehicleById(plan.vehicleId);
   const legs = getActiveRouteLegs(level, plan);
-  let soc = 96; // Start at 96% at start city
+  const preconditioning = level.id === WINTER_LEVEL_ID ? winterStartEffects(true) : undefined;
+  let soc = 96 + (preconditioning?.socDeltaPct ?? 0);
   let socWithoutMesseCharge: number | undefined;
   let hotelAc: PlanForecast['hotelAc'];
   let minSoc = soc;
@@ -370,11 +428,11 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
   let totalChargeMin = 0;
   let totalChargeCost = 0;
   let totalTolls = 0;
-  let totalEnergyKwh = 0;
+  let totalEnergyKwh = (96 - soc) / 100 * vehicle.batteryKwh;
   let totalElevGain = 0;
   let totalElevLoss = 0;
   let trafficWeightedSum = 0;
-  let dwellMinutes = 0;
+  let dwellMinutes = preconditioning?.timeDeltaMin ?? 0;
 
   let firstStopName = `Ziel ${getCityById(level.destinationCityId).name}`;
   let firstStopArrivalSocPct: number | null = null;
@@ -405,12 +463,15 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     totalElevLoss += elevLoss;
     trafficWeightedSum += edge.baseTrafficRisk * edge.distanceKm;
 
+    const alpine = alpineLeg(level.id, edge, spec);
+    if (alpine?.pass) dwellMinutes += CHAIN_FITTING_MINUTES;
+    const descent = alpine?.descent;
     const cons100 = computeConsumptionKwh100(
       vehicle,
       cruise,
       weather,
       elevGain,
-      elevLoss,
+      descent ? 0 : elevLoss,
       edge.distanceKm,
       level.trailerWeightKg || 0,
       !!plan.behindTruckMode
@@ -420,33 +481,45 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
 
     const startSoc = soc;
     let cursorProgress = 0;
+    let legEnergyKwh = 0;
     let legChargeMin = 0;
     const stopSummaries: LegForecast['stopSummaries'] = [];
     const socSections: RouteSocSection[] = [];
 
     const driveTo = (progress: number) => {
-      const segKm = Math.max(0, (progress - cursorProgress) * edge.distanceKm);
-      const segKwh = (segKm / 100) * cons100;
-      totalEnergyKwh += segKwh;
-      const usedSoc = (segKwh / vehicle.batteryKwh) * 100;
-      if (segKm > 0) {
+      const boundaries = descent
+        ? alpineForecastBoundaries(descent, cursorProgress * edge.distanceKm, progress * edge.distanceKm)
+            .map(km => km / edge.distanceKm)
+        : [progress];
+      for (const endProgress of boundaries) {
+        const segKm = Math.max(0, (endProgress - cursorProgress) * edge.distanceKm);
+        if (segKm <= 0) continue;
+        const baseKwh = winterRoadEnergyKwh(cons100, segKm, !!level.requiresWinterTires);
+        const fromKm = cursorProgress * edge.distanceKm;
+        const segKwh = descent
+          ? alpineRoadEnergy(descent, fromKm, fromKm + segKm, baseKwh, soc, vehicle.batteryKwh, 'normal').netKwh
+          : baseKwh;
+        totalEnergyKwh += segKwh;
+        legEnergyKwh += segKwh;
+        const usedSoc = (segKwh / vehicle.batteryKwh) * 100;
         socSections.push({
           fromProgress: cursorProgress,
-          toProgress: progress,
+          toProgress: endProgress,
           startSocPct: soc,
           endSocPct: soc - usedSoc,
           reachableStart: minSoc > 0
         });
+        cursorProgress = endProgress;
+        soc -= usedSoc;
+        if (socWithoutMesseCharge !== undefined) socWithoutMesseCharge -= usedSoc;
+        if (hotelAc) hotelAc.finalSocPct -= usedSoc;
+        minSoc = Math.min(minSoc, soc);
       }
-      cursorProgress = progress;
-      soc -= usedSoc;
-      if (socWithoutMesseCharge !== undefined) socWithoutMesseCharge -= usedSoc;
-      if (hotelAc) hotelAc.finalSocPct -= usedSoc;
-      minSoc = Math.min(minSoc, soc);
     };
 
     for (const item of stopsOnLeg) {
       driveTo(item.progress);
+      if (preconditioning && item.station.winterQueue) dwellMinutes += TYPICAL_QUEUE_CARS * QUEUE_MINUTES_PER_CAR;
       if (socWithoutMesseCharge !== undefined) {
         if (socWithoutMesseCharge > 0) {
           socWithoutMesseCharge = Math.min(100, Math.max(socWithoutMesseCharge, item.stop.targetSocPct));
@@ -535,8 +608,6 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
         };
       }
     }
-    if (spec.destinationAtEnd) dwellMinutes += 18;
-
     const startCityMin = i === 0 && spec.citySegmentAtStart ? CITY_TRANSITION_MINUTES[spec.citySegmentAtStart] ?? 0 : 0;
     const endCityMin = spec.citySegmentAtEnd ? CITY_TRANSITION_MINUTES[spec.citySegmentAtEnd] ?? 0 : 0;
     const driveMin = Math.round((edge.distanceKm / Math.max(40, cruise)) * 60) + startCityMin + endCityMin;
@@ -544,6 +615,10 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
     totalDist += edge.distanceKm;
     totalDriveMin += driveMin;
     totalTolls += edge.tollEur;
+    if (preconditioning && edge.vignetteRequired && level.eventPoolIds.includes(WINTER_ROAD_EVENTS.vignette)) {
+      totalTolls += AUSTRIAN_VIGNETTE.costEur;
+      dwellMinutes += AUSTRIAN_VIGNETTE.minutes;
+    }
 
     const policeRisk = policeRiskForSpeed(cruise, signLimit, edge.policeRiskBase);
 
@@ -571,7 +646,8 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
       elevationGainM: elevGain,
       elevationLossM: elevLoss,
       trafficRisk: edge.baseTrafficRisk,
-      consumptionKwh100: cons100,
+      consumptionKwh100: descent ? legEnergyKwh / edge.distanceKm * 100
+        : winterRoadEnergyKwh(cons100, 100, !!level.requiresWinterTires),
       startSocPct: Math.round(startSoc),
       endSocPct: Math.round(soc),
       socSections,
@@ -628,7 +704,7 @@ export function evaluateTripPlan(level: LevelConfig, plan: TripPlan): PlanForeca
   };
 }
 
-function liveLegConsumption(
+function liveLegEnergy(
   level: LevelConfig,
   run: RunState,
   spec: LevelRouteLegSpec,
@@ -636,7 +712,7 @@ function liveLegConsumption(
   vehicle: VehicleSpec,
   legIndex: number,
   overrideSpeedKmh?: number
-): number {
+) {
   const isCurrentLeg = legIndex === run.currentLegIndex;
   const lp = run.plan.legPlans.find(x => x.legIndex === legIndex);
   const weather =
@@ -654,24 +730,43 @@ function liveLegConsumption(
         ? Math.min(vehicle.maxSpeedKmh, run.currentSpeedKmh)
         : preset;
   const capped = drivenSpeedKmh(edge, weather, chosenSpeed);
+  // Use the intended cruise for the winter reserve after a temporary slowdown.
+  const winterCruise = isCurrentLeg && overrideSpeedKmh === undefined ? Math.max(preset, capped) : capped;
   const speed =
-    isCurrentLeg && run.currentSpeedKmh > 0
+    level.id === WINTER_LEVEL_ID
+      ? winterCruise
+      : isCurrentLeg && run.currentSpeedKmh > 0
       ? Math.min(capped, run.currentSpeedKmh)
       : congestedCruiseKmh(capped, edge.baseTrafficRisk);
 
   const elevGain = spec.reverse ? edge.elevationLossM : edge.elevationGainM;
   const elevLoss = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
 
-  return computeConsumptionKwh100(
+  const descent = alpineLeg(level.id, edge, spec)?.descent;
+  const cons100 = computeConsumptionKwh100(
     vehicle,
     speed,
     weather,
     elevGain,
-    elevLoss,
+    descent ? 0 : elevLoss,
     edge.distanceKm,
     level.trailerWeightKg || 0,
     !!run.plan.behindTruckMode
   );
+  const baseEnergy = (km: number, forecastDrivenKm: number) => winterRoadEnergyKwh(
+    cons100, km, !!level.requiresWinterTires, run.distanceDrivenKm + forecastDrivenKm, run.coldStart
+  );
+  // A reserve prediction does not rely on a stronger mode before the player chooses one.
+  const mode = run.alpineDescent?.legIndex === legIndex ? run.alpineDescent.mode : 'coast';
+  return {
+    baseEnergy,
+    roadEnergy(fromKm: number, km: number, socPct: number, forecastDrivenKm: number) {
+      const baseKwh = baseEnergy(km, forecastDrivenKm);
+      return descent
+        ? alpineRoadEnergy(descent, fromKm, fromKm + km, baseKwh, socPct, vehicle.batteryKwh, mode).netKwh
+        : baseKwh;
+    }
+  };
 }
 
 export function predictLiveTripSoc(
@@ -696,10 +791,8 @@ export function predictLiveTripSoc(
   for (let i = startLeg; i < legs.length; i++) {
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
-    const cons100 = liveLegConsumption(level, run, spec, edge, vehicle, i, opts?.overrideSpeedKmh);
-    if (i === startLeg) {
-      liveCons100 = cons100;
-    }
+    const { baseEnergy, roadEnergy } = liveLegEnergy(level, run, spec, edge, vehicle, i, opts?.overrideSpeedKmh);
+    if (i === startLeg) liveCons100 = baseEnergy(100, 0);
 
     const startProgress01 =
       i === startLeg ? Math.min(1, Math.max(0, run.legProgressKm / Math.max(1, edge.distanceKm))) : 0;
@@ -714,7 +807,7 @@ export function predictLiveTripSoc(
     let cursor = startProgress01;
     for (const item of stopsOnLeg) {
       const segKm = Math.max(0, (item.progress - cursor) * edge.distanceKm);
-      const segKwh = (segKm / 100) * cons100;
+      const segKwh = roadEnergy(cursor * edge.distanceKm, segKm, soc, distAccum);
       const usedSoc = (segKwh / vehicle.batteryKwh) * 100;
       soc -= usedSoc;
       if (socWithoutMesseCharge !== undefined) {
@@ -730,7 +823,7 @@ export function predictLiveTripSoc(
           name: item.station.name,
           kind: 'charger',
           distKm: Math.max(1, Math.round(distAccum)),
-          socPct: Math.round(soc)
+          socPct: soc
         };
       }
 
@@ -739,7 +832,7 @@ export function predictLiveTripSoc(
     }
 
     const remKm = Math.max(0, (1 - cursor) * edge.distanceKm);
-    const remKwh = (remKm / 100) * cons100;
+    const remKwh = roadEnergy(cursor * edge.distanceKm, remKm, soc, distAccum);
     const remSoc = (remKwh / vehicle.batteryKwh) * 100;
     soc -= remSoc;
     if (socWithoutMesseCharge !== undefined) socWithoutMesseCharge -= remSoc;
@@ -748,10 +841,10 @@ export function predictLiveTripSoc(
     if (!nextTarget && (isMesseVisit(spec) || spec.destinationAtEnd || spec.overnightAtEnd)) {
       const toCity = getCityById(spec.reverse ? edge.fromCityId : edge.toCityId);
       nextTarget = {
-        name: toCity.name,
-        kind: 'turnaround',
+        name: spec.destinationAtEnd ? `Ziel ${toCity.name}` : toCity.name,
+        kind: spec.destinationAtEnd ? 'destination' : 'turnaround',
         distKm: Math.max(1, Math.round(distAccum)),
-        socPct: Math.round(soc)
+        socPct: soc
       };
     }
 
@@ -769,19 +862,21 @@ export function predictLiveTripSoc(
       name: `Ziel ${finalCity.name}`,
       kind: 'destination',
       distKm: Math.max(1, Math.round(distAccum)),
-      socPct: Math.round(soc)
+      socPct: soc
     };
   }
 
   const finalSoc = Math.round(soc);
+  const nextSoc = Math.round(nextTarget.socPct);
   return {
     nextStopName: nextTarget.name,
     nextStopKind: nextTarget.kind,
     distanceToNextKm: nextTarget.distKm,
-    predictedArrivalNextSocPct: nextTarget.socPct,
+    predictedArrivalNextSocPct: nextSoc,
+    exactArrivalNextSocPct: nextTarget.socPct,
     predictedFinalSocPct: finalSoc,
     predictedFinalSocWithoutMessePct: socWithoutMesseCharge === undefined ? undefined : Math.round(socWithoutMesseCharge),
-    isCriticalNext: nextTarget.socPct <= 5,
+    isCriticalNext: nextSoc <= 5,
     isCriticalFinal: finalSoc <= 5,
     consumptionKwh100: liveCons100
   };
@@ -795,11 +890,12 @@ export function findReachableAdditionalStop(
   const vehicle = getVehicleById(run.plan.vehicleId);
   const planned = new Map(run.plan.plannedStops.map(stop => [stopKey(stop.legIndex, stop.chargerId), stop]));
   let soc = run.socPct;
+  let forecastDrivenKm = 0;
 
   for (let i = run.currentLegIndex; i < legs.length; i++) {
     const spec = legs[i];
     const edge = getEdgeById(spec.edgeId);
-    const socPerKm = liveLegConsumption(level, run, spec, edge, vehicle, i) / vehicle.batteryKwh;
+    const { roadEnergy } = liveLegEnergy(level, run, spec, edge, vehicle, i);
     let cursorKm = i === run.currentLegIndex ? Math.min(edge.distanceKm, run.legProgressKm) : 0;
     const candidates = getChargersForEdge(spec.edgeId)
       .filter(station => !station.fairStay)
@@ -810,7 +906,8 @@ export function findReachableAdditionalStop(
     for (const { station, km } of candidates) {
       const key = stopKey(i, station.id);
       if (run.completedStopKeys.includes(key) || run.skippedStopKeys.includes(key)) continue;
-      soc -= (km - cursorKm) * socPerKm;
+      soc -= roadEnergy(cursorKm, km - cursorKm, soc, forecastDrivenKm) / vehicle.batteryKwh * 100;
+      forecastDrivenKm += km - cursorKm;
       if (soc <= 0.15) return null;
 
       const stop = planned.get(key);
@@ -820,7 +917,8 @@ export function findReachableAdditionalStop(
       cursorKm = km;
     }
 
-    soc -= (edge.distanceKm - cursorKm) * socPerKm;
+    soc -= roadEnergy(cursorKm, edge.distanceKm - cursorKm, soc, forecastDrivenKm) / vehicle.batteryKwh * 100;
+    forecastDrivenKm += edge.distanceKm - cursorKm;
     if (soc <= 0.15) return null;
   }
   return null;

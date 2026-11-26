@@ -1,83 +1,95 @@
 import { CityNode, HighwayEdge, ChargerStation } from '../types';
+import { CITY_COORDINATES } from './europeCityCoordinates';
+import { ROAD_COORDINATES } from './europeRoadCoordinates';
+import { projectMapPoint } from './europeGeography';
+import { getPointAlongEdge } from './europeMapPath';
+import { ALPS_TO_GARDA_CHARGERS, ALPS_TO_GARDA_EDGES, ALPS_TO_GARDA_STOPS } from './routes/alpsToGarda';
 
-export const CITIES: CityNode[] = [
+const cityData: Omit<CityNode, 'mapX' | 'mapY'>[] = [
   // Core Germany & NRW / Niedersachsen
-  { id: 'aachen', name: 'Aachen', country: 'DE', mapX: 680, mapY: 805, landmark: 'aachen_dom', isMajor: true, hasLocalSegment: true },
-  { id: 'duesseldorf', name: 'Düsseldorf', country: 'DE', mapX: 698, mapY: 752, isMajor: true },
-  { id: 'koeln', name: 'Köln', country: 'DE', mapX: 732, mapY: 792, landmark: 'koeln_dom', isMajor: true },
-  { id: 'kamen', name: 'Kamener Kreuz', country: 'DE', mapX: 778, mapY: 734, isJunction: true },
-  { id: 'olpe', name: 'Olpe / Sauerland', country: 'DE', mapX: 786, mapY: 798, isJunction: true },
-  { id: 'muenster', name: 'Münster', country: 'DE', mapX: 766, mapY: 690 },
-  { id: 'osnabrueck', name: 'Osnabrück', country: 'DE', mapX: 808, mapY: 660 },
-  { id: 'bielefeld', name: 'Bielefeld', country: 'DE', mapX: 840, mapY: 692 },
-  { id: 'bremen', name: 'Bremen', country: 'DE', mapX: 855, mapY: 585, isMajor: true },
-  { id: 'hannover', name: 'Hannover Messe', country: 'DE', mapX: 908, mapY: 662, landmark: 'hermesturm', isMajor: true, hasLocalSegment: true },
-  { id: 'kassel', name: 'Kassel', country: 'DE', mapX: 888, mapY: 764, isJunction: true },
-  { id: 'hamburg', name: 'Hamburg', country: 'DE', mapX: 922, mapY: 548, landmark: 'hamburger_michel', isMajor: true },
-  { id: 'luebeck', name: 'Lübeck', country: 'DE', mapX: 966, mapY: 520 },
-  { id: 'berlin', name: 'Berlin', country: 'DE', mapX: 1122, mapY: 646, landmark: 'fernsehturm', isMajor: true },
-  { id: 'leipzig', name: 'Leipzig', country: 'DE', mapX: 1054, mapY: 742 },
-  { id: 'dresden', name: 'Dresden', country: 'DE', mapX: 1138, mapY: 772, isMajor: true },
-  { id: 'frankfurt', name: 'Frankfurt', country: 'DE', mapX: 838, mapY: 856, landmark: 'frankfurt_skyline', isMajor: true },
-  { id: 'wuerzburg', name: 'Würzburg', country: 'DE', mapX: 912, mapY: 874, isJunction: true },
-  { id: 'stuttgart', name: 'Stuttgart', country: 'DE', mapX: 870, mapY: 944, isMajor: true },
-  { id: 'nuernberg', name: 'Nürnberg', country: 'DE', mapX: 985, mapY: 916, isMajor: true },
-  { id: 'ulm', name: 'Ulm', country: 'DE', mapX: 924, mapY: 984, isJunction: true },
-  { id: 'muenchen', name: 'München', country: 'DE', mapX: 1006, mapY: 1012, landmark: 'munich_frauenkirche', isMajor: true },
-  { id: 'garmisch', name: 'Garmisch', country: 'DE', mapX: 962, mapY: 1066 },
+  { id: 'aachen', name: 'Aachen', country: 'DE', landmark: 'aachen_dom', isMajor: true, hasLocalSegment: true },
+  { id: 'duesseldorf', name: 'Düsseldorf', country: 'DE', isMajor: true },
+  { id: 'koeln', name: 'Köln', country: 'DE', landmark: 'koeln_dom', isMajor: true },
+  { id: 'kamen', name: 'Kamener Kreuz', country: 'DE', isJunction: true },
+  { id: 'olpe', name: 'Olpe / Sauerland', country: 'DE', isJunction: true },
+  { id: 'muenster', name: 'Münster', country: 'DE' },
+  { id: 'osnabrueck', name: 'Osnabrück', country: 'DE' },
+  { id: 'bielefeld', name: 'Bielefeld', country: 'DE' },
+  { id: 'bremen', name: 'Bremen', country: 'DE', isMajor: true },
+  { id: 'hannover', name: 'Hannover Messe', country: 'DE', landmark: 'hermesturm', isMajor: true, hasLocalSegment: true },
+  { id: 'kassel', name: 'Kassel', country: 'DE', isJunction: true },
+  { id: 'hamburg', name: 'Hamburg', country: 'DE', landmark: 'hamburger_michel', isMajor: true },
+  { id: 'luebeck', name: 'Lübeck', country: 'DE' },
+  { id: 'berlin', name: 'Berlin', country: 'DE', landmark: 'fernsehturm', isMajor: true },
+  { id: 'leipzig', name: 'Leipzig', country: 'DE' },
+  { id: 'dresden', name: 'Dresden', country: 'DE', isMajor: true },
+  { id: 'frankfurt', name: 'Frankfurt', country: 'DE', landmark: 'frankfurt_skyline', isMajor: true },
+  { id: 'wuerzburg', name: 'Würzburg', country: 'DE', isJunction: true },
+  { id: 'stuttgart', name: 'Stuttgart', country: 'DE', isMajor: true },
+  { id: 'nuernberg', name: 'Nürnberg', country: 'DE', isMajor: true },
+  { id: 'ulm', name: 'Ulm', country: 'DE', isJunction: true },
+  { id: 'muenchen', name: 'München', country: 'DE', landmark: 'munich_frauenkirche', isMajor: true },
+  { id: 'garmisch', name: 'Garmisch', country: 'DE' },
 
   // Benelux & France
-  { id: 'amsterdam', name: 'Amsterdam', country: 'NL', mapX: 618, mapY: 676, landmark: 'windmills_nl', isMajor: true },
-  { id: 'hoek', name: 'Hoek v. Holland', country: 'NL', mapX: 584, mapY: 704, isJunction: true },
-  { id: 'bruessel', name: 'Brüssel', country: 'BE', mapX: 604, mapY: 788, landmark: 'atomium', isMajor: true },
-  { id: 'luettich', name: 'Lüttich', country: 'BE', mapX: 648, mapY: 816, isJunction: true },
-  { id: 'luxemburg', name: 'Luxemburg', country: 'LU', mapX: 676, mapY: 880, isMajor: true },
-  { id: 'lille', name: 'Lille', country: 'FR', mapX: 554, mapY: 800 },
-  { id: 'calais', name: 'Calais / Tunnel', country: 'FR', mapX: 496, mapY: 774, isJunction: true },
-  { id: 'reims', name: 'Reims', country: 'FR', mapX: 576, mapY: 876 },
-  { id: 'nevers', name: 'Nevers', country: 'FR', mapX: 556, mapY: 988 },
-  { id: 'paris', name: 'Paris', country: 'FR', mapX: 502, mapY: 912, landmark: 'eiffel', isMajor: true },
-  { id: 'lyon', name: 'Lyon', country: 'FR', mapX: 586, mapY: 1084, isMajor: true },
-  { id: 'nizza', name: 'Nizza', country: 'FR', mapX: 668, mapY: 1184, isMajor: true },
-  { id: 'dijon', name: 'Dijon', country: 'FR', mapX: 612, mapY: 978, isMajor: true },
-  { id: 'clermont', name: 'Clermont-Ferrand', country: 'FR', mapX: 534, mapY: 1048, isMajor: true },
-  { id: 'montpellier', name: 'Montpellier', country: 'FR', mapX: 548, mapY: 1176, isMajor: true },
+  { id: 'amsterdam', name: 'Amsterdam', country: 'NL', landmark: 'windmills_nl', isMajor: true },
+  { id: 'hoek', name: 'Hoek v. Holland', country: 'NL', isJunction: true },
+  { id: 'bruessel', name: 'Brüssel', country: 'BE', landmark: 'atomium', isMajor: true },
+  { id: 'luettich', name: 'Lüttich', country: 'BE', isJunction: true },
+  { id: 'luxemburg', name: 'Luxemburg', country: 'LU', isMajor: true },
+  { id: 'lille', name: 'Lille', country: 'FR' },
+  { id: 'calais', name: 'Calais / Tunnel', country: 'FR', isJunction: true },
+  { id: 'reims', name: 'Reims', country: 'FR' },
+  { id: 'nevers', name: 'Nevers', country: 'FR' },
+  { id: 'paris', name: 'Paris', country: 'FR', landmark: 'eiffel', isMajor: true },
+  { id: 'lyon', name: 'Lyon', country: 'FR', isMajor: true },
+  { id: 'nizza', name: 'Nizza', country: 'FR', isMajor: true },
+  { id: 'dijon', name: 'Dijon', country: 'FR', isMajor: true },
+  { id: 'clermont', name: 'Clermont-Ferrand', country: 'FR', isMajor: true },
+  { id: 'montpellier', name: 'Montpellier', country: 'FR', isMajor: true },
 
   // UK
-  { id: 'london', name: 'London', country: 'UK', mapX: 410, mapY: 744, landmark: 'big_ben', isMajor: true },
-  { id: 'manchester', name: 'Manchester', country: 'UK', mapX: 368, mapY: 626 },
-  { id: 'york', name: 'York', country: 'UK', mapX: 416, mapY: 610 },
-  { id: 'newcastle', name: 'Newcastle', country: 'UK', mapX: 412, mapY: 540 },
-  { id: 'edinburgh', name: 'Edinburgh / Highlands', country: 'UK', mapX: 372, mapY: 468, landmark: 'highlands', isMajor: true },
-  { id: 'inverness', name: 'Inverness', country: 'UK', mapX: 344, mapY: 392 },
+  { id: 'london', name: 'London', country: 'UK', landmark: 'big_ben', isMajor: true },
+  { id: 'manchester', name: 'Manchester', country: 'UK' },
+  { id: 'york', name: 'York', country: 'UK' },
+  { id: 'newcastle', name: 'Newcastle', country: 'UK' },
+  { id: 'edinburgh', name: 'Edinburgh / Highlands', country: 'UK', landmark: 'highlands', isMajor: true },
+  { id: 'inverness', name: 'Inverness', country: 'UK' },
 
   // Alps & Italy
-  { id: 'basel', name: 'Basel', country: 'CH', mapX: 786, mapY: 994 },
-  { id: 'gotthard', name: 'Gotthard', country: 'CH', mapX: 846, mapY: 1082, isJunction: true },
-  { id: 'reschen', name: 'Reschenpass', country: 'AT', mapX: 952, mapY: 1104, isJunction: true },
-  { id: 'innsbruck', name: 'Innsbruck / Brenner', country: 'AT', mapX: 1016, mapY: 1088, landmark: 'alps', isMajor: true },
-  { id: 'mailand', name: 'Mailand', country: 'IT', mapX: 862, mapY: 1152, isMajor: true },
-  { id: 'bozen', name: 'Bozen', country: 'IT', mapX: 1012, mapY: 1136 },
-  { id: 'verona', name: 'Verona', country: 'IT', mapX: 986, mapY: 1186 },
-  { id: 'venedig', name: 'Venedig', country: 'IT', mapX: 1062, mapY: 1184, isMajor: true },
-  { id: 'bologna', name: 'Bologna', country: 'IT', mapX: 1016, mapY: 1226 },
-  { id: 'florenz', name: 'Florenz', country: 'IT', mapX: 1006, mapY: 1264 },
-  { id: 'rom', name: 'Rom', country: 'IT', mapX: 1044, mapY: 1322, landmark: 'colosseum', isMajor: true },
+  { id: 'basel', name: 'Basel', country: 'CH' },
+  { id: 'gotthard', name: 'Gotthard', country: 'CH', isJunction: true },
+  { id: 'reschen', name: 'Reschenpass', country: 'AT', isJunction: true },
+  { id: 'innsbruck', name: 'Innsbruck', country: 'AT', landmark: 'alps', isMajor: true },
+  { id: 'mailand', name: 'Mailand', country: 'IT', isMajor: true },
+  { id: 'bozen', name: 'Bozen', country: 'IT' },
+  { id: 'verona', name: 'Verona', country: 'IT' },
+  { id: 'venedig', name: 'Venedig', country: 'IT', isMajor: true },
+  { id: 'bologna', name: 'Bologna', country: 'IT' },
+  { id: 'florenz', name: 'Florenz', country: 'IT' },
+  { id: 'rom', name: 'Rom', country: 'IT', landmark: 'colosseum', isMajor: true },
+
+  ...ALPS_TO_GARDA_STOPS,
 
   // Denmark & Scandinavia
-  { id: 'esbjerg', name: 'Esbjerg', country: 'DK', mapX: 840, mapY: 392 },
-  { id: 'kolding', name: 'Kolding', country: 'DK', mapX: 902, mapY: 396 },
-  { id: 'kopenhagen', name: 'Kopenhagen', country: 'DK', mapX: 1020, mapY: 416, isMajor: true },
-  { id: 'hirtshals', name: 'Hirtshals Fähre', country: 'DK', mapX: 896, mapY: 290, landmark: 'ferry', isMajor: true },
-  { id: 'goeteborg', name: 'Göteborg', country: 'SE', mapX: 1018, mapY: 308, isMajor: true },
-  { id: 'oslo', name: 'Oslo', country: 'NO', mapX: 970, mapY: 236, isMajor: true },
-  { id: 'trondheim', name: 'Trondheim', country: 'NO', mapX: 996, mapY: 156 },
-  { id: 'oestersund', name: 'Östersund', country: 'SE', mapX: 1088, mapY: 176 },
-  { id: 'narvik', name: 'Narvik / Lofoten', country: 'NO', mapX: 1136, mapY: 88 },
-  { id: 'nordkapp', name: 'Nordkapp', country: 'NO', mapX: 1246, mapY: 42, landmark: 'nordkapp', isMajor: true }
+  { id: 'esbjerg', name: 'Esbjerg', country: 'DK' },
+  { id: 'kolding', name: 'Kolding', country: 'DK' },
+  { id: 'kopenhagen', name: 'Kopenhagen', country: 'DK', isMajor: true },
+  { id: 'hirtshals', name: 'Hirtshals Fähre', country: 'DK', landmark: 'ferry', isMajor: true },
+  { id: 'goeteborg', name: 'Göteborg', country: 'SE', isMajor: true },
+  { id: 'oslo', name: 'Oslo', country: 'NO', isMajor: true },
+  { id: 'trondheim', name: 'Trondheim', country: 'NO' },
+  { id: 'oestersund', name: 'Östersund', country: 'SE' },
+  { id: 'narvik', name: 'Narvik / Lofoten', country: 'NO' },
+  { id: 'nordkapp', name: 'Nordkapp', country: 'NO', landmark: 'nordkapp', isMajor: true }
 ];
 
-export const HIGHWAY_EDGES: HighwayEdge[] = [
+export const CITIES: CityNode[] = cityData.map(city => {
+  const { x: mapX, y: mapY } = projectMapPoint(CITY_COORDINATES[city.id]);
+  return { ...city, mapX, mapY };
+});
+
+const edgeData: Omit<HighwayEdge, 'waypoints'>[] = [
   // === LEVEL 1 ROUTE A (Klassik Ruhr A4 -> A1 -> A2) ===
   {
     id: 'edge_aachen_koeln',
@@ -91,11 +103,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.24,
     policeRiskBase: 0.14,
     tollEur: 0,
-    waypoints: [
-      { x: 680, y: 805 },
-      { x: 706, y: 798 },
-      { x: 732, y: 792 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -110,11 +117,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.48,
     policeRiskBase: 0.25,
     tollEur: 0,
-    waypoints: [
-      { x: 732, y: 792 },
-      { x: 754, y: 762 },
-      { x: 778, y: 734 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -129,11 +131,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.38,
     policeRiskBase: 0.22,
     tollEur: 0,
-    waypoints: [
-      { x: 778, y: 734 },
-      { x: 808, y: 712 },
-      { x: 840, y: 692 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -148,11 +145,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.20,
     tollEur: 0,
-    waypoints: [
-      { x: 840, y: 692 },
-      { x: 874, y: 676 },
-      { x: 908, y: 662 }
-    ],
     defaultWeather: 'clear'
   },
 
@@ -169,11 +161,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.16,
     tollEur: 0,
-    waypoints: [
-      { x: 680, y: 805 },
-      { x: 686, y: 776 },
-      { x: 698, y: 752 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -188,11 +175,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.25,
     policeRiskBase: 0.18,
     tollEur: 0,
-    waypoints: [
-      { x: 698, y: 752 },
-      { x: 728, y: 718 },
-      { x: 766, y: 690 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -207,11 +189,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.18,
     policeRiskBase: 0.15,
     tollEur: 0,
-    waypoints: [
-      { x: 766, y: 690 },
-      { x: 786, y: 674 },
-      { x: 808, y: 660 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -226,11 +203,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.18,
     tollEur: 0,
-    waypoints: [
-      { x: 808, y: 660 },
-      { x: 858, y: 656 },
-      { x: 908, y: 662 }
-    ],
     defaultWeather: 'clear'
   },
 
@@ -247,11 +219,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.16,
     policeRiskBase: 0.14,
     tollEur: 0,
-    waypoints: [
-      { x: 732, y: 792 },
-      { x: 760, y: 796 },
-      { x: 786, y: 798 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -266,11 +233,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.14,
     policeRiskBase: 0.16,
     tollEur: 0,
-    waypoints: [
-      { x: 786, y: 798 },
-      { x: 836, y: 786 },
-      { x: 888, y: 764 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -285,11 +247,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.18,
     policeRiskBase: 0.22,
     tollEur: 0,
-    waypoints: [
-      { x: 888, y: 764 },
-      { x: 902, y: 714 },
-      { x: 908, y: 662 }
-    ],
     defaultWeather: 'clear'
   },
 
@@ -310,7 +267,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.18,
     policeRiskBase: 0.24,
     tollEur: 0,
-    waypoints: [{ x: 680, y: 805 }, { x: 664, y: 810 }, { x: 648, y: 816 }],
     defaultWeather: 'clear'
   },
   {
@@ -330,7 +286,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.36,
     tollEur: 34.5,
-    waypoints: [{ x: 648, y: 816 }, { x: 575, y: 848 }, { x: 502, y: 912 }],
     defaultWeather: 'clear'
   },
   {
@@ -350,7 +305,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.14,
     policeRiskBase: 0.25,
     tollEur: 0,
-    waypoints: [{ x: 680, y: 805 }, { x: 676, y: 842 }, { x: 676, y: 880 }],
     defaultWeather: 'clear'
   },
   {
@@ -370,7 +324,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.12,
     policeRiskBase: 0.30,
     tollEur: 12.0,
-    waypoints: [{ x: 676, y: 880 }, { x: 626, y: 878 }, { x: 576, y: 876 }],
     defaultWeather: 'clear'
   },
   {
@@ -391,12 +344,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.24,
     policeRiskBase: 0.28,
     tollEur: 16,
-    waypoints: [
-      { x: 680, y: 805 },
-      { x: 640, y: 840 },
-      { x: 600, y: 862 },
-      { x: 576, y: 876 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -412,12 +359,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.16,
     policeRiskBase: 0.3,
     tollEur: 29,
-    waypoints: [
-      { x: 576, y: 876 },
-      { x: 572, y: 920 },
-      { x: 560, y: 956 },
-      { x: 556, y: 988 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -433,11 +374,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.12,
     policeRiskBase: 0.26,
     tollEur: 17,
-    waypoints: [
-      { x: 556, y: 988 },
-      { x: 548, y: 1016 },
-      { x: 534, y: 1048 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -453,7 +389,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.34,
     tollEur: 14.5,
-    waypoints: [{ x: 576, y: 876 }, { x: 538, y: 894 }, { x: 502, y: 912 }],
     defaultWeather: 'clear'
   },
 
@@ -475,12 +410,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.16,
     policeRiskBase: 0.34,
     tollEur: 30,
-    waypoints: [
-      { x: 676, y: 880 },
-      { x: 654, y: 922 },
-      { x: 636, y: 954 },
-      { x: 612, y: 978 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -496,11 +425,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.28,
     policeRiskBase: 0.36,
     tollEur: 18,
-    waypoints: [
-      { x: 612, y: 978 },
-      { x: 598, y: 1032 },
-      { x: 586, y: 1084 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -516,12 +440,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.38,
     tollEur: 27,
-    waypoints: [
-      { x: 586, y: 1084 },
-      { x: 572, y: 1128 },
-      { x: 555, y: 1156 },
-      { x: 548, y: 1176 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -537,12 +455,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.36,
     tollEur: 37,
-    waypoints: [
-      { x: 502, y: 912 },
-      { x: 506, y: 968 },
-      { x: 518, y: 1010 },
-      { x: 534, y: 1048 }
-    ],
     defaultWeather: 'clear'
   },
   {
@@ -558,80 +470,10 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.14,
     policeRiskBase: 0.28,
     tollEur: 32,
-    waypoints: [
-      { x: 534, y: 1048 },
-      { x: 520, y: 1106 },
-      { x: 536, y: 1146 },
-      { x: 548, y: 1176 }
-    ],
     defaultWeather: 'clear'
   },
 
-  // === LEVEL 3 (München -> Innsbruck / Brenner) ===
-  {
-    id: 'edge_muenchen_innsbruck',
-    fromCityId: 'muenchen',
-    toCityId: 'innsbruck',
-    highwayName: 'A8 / A93 / A12',
-    distanceKm: 165,
-    speedLimitKmh: 100,
-    elevationGainM: 780,
-    elevationLossM: 420,
-    baseTrafficRisk: 0.56,
-    policeRiskBase: 0.42,
-    tollEur: 12,
-    vignetteRequired: 'AT Vignette (11,50 €)',
-    isTunnelOption: true,
-    waypoints: [{ x: 1006, y: 1012 }, { x: 1020, y: 1048 }, { x: 1016, y: 1088 }],
-    defaultWeather: 'snow'
-  },
-  {
-    id: 'edge_muenchen_garmisch',
-    fromCityId: 'muenchen',
-    toCityId: 'garmisch',
-    highwayName: 'A95',
-    distanceKm: 92,
-    speedLimitKmh: 0,
-    elevationGainM: 480,
-    elevationLossM: 260,
-    baseTrafficRisk: 0.22,
-    policeRiskBase: 0.20,
-    tollEur: 0,
-    waypoints: [{ x: 1006, y: 1012 }, { x: 982, y: 1038 }, { x: 962, y: 1066 }],
-    defaultWeather: 'snow'
-  },
-  {
-    id: 'edge_garmisch_innsbruck',
-    fromCityId: 'garmisch',
-    toCityId: 'innsbruck',
-    highwayName: 'B177 Zirler Berg',
-    distanceKm: 62,
-    speedLimitKmh: 80,
-    elevationGainM: 1180,
-    elevationLossM: 1290,
-    baseTrafficRisk: 0.16,
-    policeRiskBase: 0.30,
-    tollEur: 0,
-    isPassOption: true,
-    waypoints: [{ x: 962, y: 1066 }, { x: 988, y: 1078 }, { x: 1016, y: 1088 }],
-    defaultWeather: 'snow'
-  },
-  {
-    id: 'edge_muenchen_achenpass_innsbruck',
-    fromCityId: 'muenchen',
-    toCityId: 'innsbruck',
-    highwayName: 'A8 / B307 Achenpass',
-    distanceKm: 148,
-    speedLimitKmh: 90,
-    elevationGainM: 940,
-    elevationLossM: 810,
-    baseTrafficRisk: 0.30,
-    policeRiskBase: 0.26,
-    tollEur: 0,
-    isPassOption: true,
-    waypoints: [{ x: 1006, y: 1012 }, { x: 996, y: 1052 }, { x: 1016, y: 1088 }],
-    defaultWeather: 'snow'
-  },
+  ...ALPS_TO_GARDA_EDGES,
 
   // === LEVEL 4 (Amsterdam -> Edinburgh / Highlands) ===
   {
@@ -646,7 +488,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.42,
     tollEur: 0,
-    waypoints: [{ x: 618, y: 676 }, { x: 562, y: 734 }, { x: 496, y: 774 }],
     defaultWeather: 'rain'
   },
   {
@@ -661,7 +502,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.52,
     policeRiskBase: 0.30,
     tollEur: 95,
-    waypoints: [{ x: 496, y: 774 }, { x: 462, y: 758 }, { x: 410, y: 744 }],
     defaultWeather: 'fog'
   },
   {
@@ -676,7 +516,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.42,
     policeRiskBase: 0.34,
     tollEur: 0,
-    waypoints: [{ x: 410, y: 744 }, { x: 422, y: 676 }, { x: 416, y: 610 }],
     defaultWeather: 'rain'
   },
   {
@@ -691,7 +530,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.28,
     tollEur: 0,
-    waypoints: [{ x: 416, y: 610 }, { x: 404, y: 538 }, { x: 372, y: 468 }],
     defaultWeather: 'fog'
   },
   {
@@ -706,7 +544,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.28,
     policeRiskBase: 0.45,
     tollEur: 0,
-    waypoints: [{ x: 618, y: 676 }, { x: 598, y: 690 }, { x: 584, y: 704 }],
     defaultWeather: 'rain'
   },
   {
@@ -721,7 +558,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.30,
     policeRiskBase: 0.26,
     tollEur: 78,
-    waypoints: [{ x: 584, y: 704 }, { x: 470, y: 668 }, { x: 368, y: 626 }],
     defaultWeather: 'fog'
   },
   {
@@ -736,7 +572,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.20,
     policeRiskBase: 0.28,
     tollEur: 0,
-    waypoints: [{ x: 368, y: 626 }, { x: 348, y: 545 }, { x: 372, y: 468 }],
     defaultWeather: 'fog'
   },
   {
@@ -751,7 +586,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.08,
     policeRiskBase: 0.05,
     tollEur: 110,
-    waypoints: [{ x: 618, y: 676 }, { x: 510, y: 602 }, { x: 412, y: 540 }],
     defaultWeather: 'fog'
   },
   {
@@ -766,7 +600,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.12,
     policeRiskBase: 0.22,
     tollEur: 0,
-    waypoints: [{ x: 412, y: 540 }, { x: 396, y: 502 }, { x: 372, y: 468 }],
     defaultWeather: 'fog'
   },
 
@@ -783,7 +616,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.46,
     policeRiskBase: 0.28,
     tollEur: 0,
-    waypoints: [{ x: 732, y: 792 }, { x: 786, y: 826 }, { x: 838, y: 856 }],
     defaultWeather: 'clear'
   },
   {
@@ -798,7 +630,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.44,
     policeRiskBase: 0.26,
     tollEur: 0,
-    waypoints: [{ x: 838, y: 856 }, { x: 876, y: 866 }, { x: 912, y: 874 }],
     defaultWeather: 'clear'
   },
   {
@@ -813,7 +644,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.22,
     tollEur: 0,
-    waypoints: [{ x: 912, y: 874 }, { x: 950, y: 896 }, { x: 985, y: 916 }],
     defaultWeather: 'clear'
   },
   {
@@ -828,7 +658,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.36,
     policeRiskBase: 0.25,
     tollEur: 0,
-    waypoints: [{ x: 985, y: 916 }, { x: 998, y: 964 }, { x: 1006, y: 1012 }],
     defaultWeather: 'clear'
   },
   {
@@ -843,7 +672,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.24,
     tollEur: 0,
-    waypoints: [{ x: 732, y: 792 }, { x: 778, y: 878 }, { x: 870, y: 944 }],
     defaultWeather: 'clear'
   },
   {
@@ -858,7 +686,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.42,
     policeRiskBase: 0.30,
     tollEur: 0,
-    waypoints: [{ x: 870, y: 944 }, { x: 898, y: 966 }, { x: 924, y: 984 }],
     defaultWeather: 'clear'
   },
   {
@@ -873,7 +700,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.32,
     policeRiskBase: 0.22,
     tollEur: 0,
-    waypoints: [{ x: 924, y: 984 }, { x: 966, y: 998 }, { x: 1006, y: 1012 }],
     defaultWeather: 'clear'
   },
   {
@@ -888,7 +714,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.16,
     policeRiskBase: 0.20,
     tollEur: 0,
-    waypoints: [{ x: 888, y: 764 }, { x: 902, y: 822 }, { x: 912, y: 874 }],
     defaultWeather: 'clear'
   },
   {
@@ -903,7 +728,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.14,
     policeRiskBase: 0.18,
     tollEur: 0,
-    waypoints: [{ x: 912, y: 874 }, { x: 920, y: 928 }, { x: 924, y: 984 }],
     defaultWeather: 'clear'
   },
 
@@ -920,7 +744,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.44,
     policeRiskBase: 0.38,
     tollEur: 19,
-    waypoints: [{ x: 1016, y: 1088 }, { x: 1014, y: 1112 }, { x: 1012, y: 1136 }],
     defaultWeather: 'clear'
   },
   {
@@ -935,7 +758,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.36,
     policeRiskBase: 0.35,
     tollEur: 14,
-    waypoints: [{ x: 1012, y: 1136 }, { x: 998, y: 1162 }, { x: 986, y: 1186 }],
     defaultWeather: 'clear'
   },
   {
@@ -950,7 +772,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.42,
     policeRiskBase: 0.38,
     tollEur: 12,
-    waypoints: [{ x: 986, y: 1186 }, { x: 1002, y: 1206 }, { x: 1016, y: 1226 }],
     defaultWeather: 'clear'
   },
   {
@@ -965,7 +786,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.46,
     policeRiskBase: 0.44,
     tollEur: 11,
-    waypoints: [{ x: 1016, y: 1226 }, { x: 1012, y: 1246 }, { x: 1006, y: 1264 }],
     defaultWeather: 'clear'
   },
   {
@@ -980,7 +800,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.32,
     policeRiskBase: 0.42,
     tollEur: 22,
-    waypoints: [{ x: 1006, y: 1264 }, { x: 1026, y: 1292 }, { x: 1044, y: 1322 }],
     defaultWeather: 'clear'
   },
   {
@@ -995,7 +814,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.30,
     policeRiskBase: 0.34,
     tollEur: 18,
-    waypoints: [{ x: 1012, y: 1136 }, { x: 1042, y: 1164 }, { x: 1062, y: 1184 }],
     defaultWeather: 'clear'
   },
   {
@@ -1010,7 +828,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.24,
     policeRiskBase: 0.34,
     tollEur: 13,
-    waypoints: [{ x: 1062, y: 1184 }, { x: 1040, y: 1206 }, { x: 1016, y: 1226 }],
     defaultWeather: 'clear'
   },
   {
@@ -1025,7 +842,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.20,
     policeRiskBase: 0.30,
     tollEur: 16,
-    waypoints: [{ x: 1016, y: 1226 }, { x: 1068, y: 1272 }, { x: 1044, y: 1322 }],
     defaultWeather: 'clear'
   },
   {
@@ -1041,7 +857,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     policeRiskBase: 0.26,
     tollEur: 0,
     isPassOption: true,
-    waypoints: [{ x: 1016, y: 1088 }, { x: 984, y: 1098 }, { x: 952, y: 1104 }],
     defaultWeather: 'clear'
   },
   {
@@ -1056,7 +871,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.18,
     policeRiskBase: 0.28,
     tollEur: 9,
-    waypoints: [{ x: 952, y: 1104 }, { x: 904, y: 1130 }, { x: 862, y: 1152 }],
     defaultWeather: 'clear'
   },
   {
@@ -1071,7 +885,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.26,
     policeRiskBase: 0.38,
     tollEur: 26,
-    waypoints: [{ x: 862, y: 1152 }, { x: 934, y: 1208 }, { x: 1006, y: 1264 }],
     defaultWeather: 'clear'
   },
 
@@ -1088,7 +901,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.44,
     policeRiskBase: 0.22,
     tollEur: 0,
-    waypoints: [{ x: 908, y: 662 }, { x: 916, y: 605 }, { x: 922, y: 548 }],
     defaultWeather: 'rain'
   },
   {
@@ -1103,7 +915,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.32,
     tollEur: 0,
-    waypoints: [{ x: 922, y: 548 }, { x: 908, y: 470 }, { x: 902, y: 396 }],
     defaultWeather: 'rain'
   },
   {
@@ -1118,7 +929,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.18,
     policeRiskBase: 0.36,
     tollEur: 0,
-    waypoints: [{ x: 902, y: 396 }, { x: 900, y: 342 }, { x: 896, y: 290 }],
     defaultWeather: 'rain'
   },
   {
@@ -1133,7 +943,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.14,
     policeRiskBase: 0.45,
     tollEur: 125,
-    waypoints: [{ x: 896, y: 290 }, { x: 938, y: 264 }, { x: 970, y: 236 }],
     defaultWeather: 'rain'
   },
   {
@@ -1148,7 +957,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.16,
     policeRiskBase: 0.52,
     tollEur: 18,
-    waypoints: [{ x: 970, y: 236 }, { x: 984, y: 194 }, { x: 996, y: 156 }],
     defaultWeather: 'snow'
   },
   {
@@ -1163,7 +971,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.10,
     policeRiskBase: 0.50,
     tollEur: 22,
-    waypoints: [{ x: 996, y: 156 }, { x: 1068, y: 120 }, { x: 1136, y: 88 }],
     defaultWeather: 'snow'
   },
   {
@@ -1178,7 +985,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.08,
     policeRiskBase: 0.45,
     tollEur: 0,
-    waypoints: [{ x: 1136, y: 88 }, { x: 1192, y: 64 }, { x: 1246, y: 42 }],
     defaultWeather: 'snow'
   },
   {
@@ -1193,7 +999,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.24,
     policeRiskBase: 0.20,
     tollEur: 0,
-    waypoints: [{ x: 908, y: 662 }, { x: 944, y: 590 }, { x: 966, y: 520 }],
     defaultWeather: 'rain'
   },
   {
@@ -1208,7 +1013,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.20,
     policeRiskBase: 0.34,
     tollEur: 75,
-    waypoints: [{ x: 966, y: 520 }, { x: 996, y: 468 }, { x: 1020, y: 416 }],
     defaultWeather: 'rain'
   },
   {
@@ -1223,7 +1027,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.38,
     tollEur: 62,
-    waypoints: [{ x: 1020, y: 416 }, { x: 1024, y: 362 }, { x: 1018, y: 308 }],
     defaultWeather: 'rain'
   },
   {
@@ -1238,7 +1041,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.08,
     policeRiskBase: 0.36,
     tollEur: 0,
-    waypoints: [{ x: 1018, y: 308 }, { x: 1054, y: 240 }, { x: 1088, y: 176 }],
     defaultWeather: 'snow'
   },
   {
@@ -1253,7 +1055,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.06,
     policeRiskBase: 0.36,
     tollEur: 0,
-    waypoints: [{ x: 1088, y: 176 }, { x: 1114, y: 132 }, { x: 1136, y: 88 }],
     defaultWeather: 'snow'
   },
   {
@@ -1268,7 +1069,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.16,
     policeRiskBase: 0.30,
     tollEur: 0,
-    waypoints: [{ x: 922, y: 548 }, { x: 874, y: 468 }, { x: 840, y: 392 }],
     defaultWeather: 'rain'
   },
   {
@@ -1283,7 +1083,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.10,
     policeRiskBase: 0.28,
     tollEur: 0,
-    waypoints: [{ x: 840, y: 392 }, { x: 862, y: 340 }, { x: 896, y: 290 }],
     defaultWeather: 'rain'
   },
 
@@ -1300,7 +1099,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.25,
     policeRiskBase: 0.20,
     tollEur: 0,
-    waypoints: [{ x: 908, y: 662 }, { x: 1018, y: 652 }, { x: 1122, y: 646 }],
     defaultWeather: 'clear'
   },
   {
@@ -1315,7 +1113,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.18,
     tollEur: 0,
-    waypoints: [{ x: 922, y: 548 }, { x: 1025, y: 598 }, { x: 1122, y: 646 }],
     defaultWeather: 'clear'
   },
   {
@@ -1330,7 +1127,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.20,
     policeRiskBase: 0.18,
     tollEur: 0,
-    waypoints: [{ x: 1122, y: 646 }, { x: 1086, y: 696 }, { x: 1054, y: 742 }],
     defaultWeather: 'clear'
   },
   {
@@ -1345,7 +1141,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.18,
     policeRiskBase: 0.18,
     tollEur: 0,
-    waypoints: [{ x: 1054, y: 742 }, { x: 1096, y: 758 }, { x: 1138, y: 772 }],
     defaultWeather: 'clear'
   },
   {
@@ -1360,7 +1155,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.22,
     policeRiskBase: 0.20,
     tollEur: 0,
-    waypoints: [{ x: 1054, y: 742 }, { x: 1022, y: 830 }, { x: 985, y: 916 }],
     defaultWeather: 'clear'
   },
   {
@@ -1375,7 +1169,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.28,
     policeRiskBase: 0.18,
     tollEur: 0,
-    waypoints: [{ x: 808, y: 660 }, { x: 832, y: 622 }, { x: 855, y: 585 }],
     defaultWeather: 'clear'
   },
   {
@@ -1390,7 +1183,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.36,
     policeRiskBase: 0.20,
     tollEur: 0,
-    waypoints: [{ x: 855, y: 585 }, { x: 888, y: 566 }, { x: 922, y: 548 }],
     defaultWeather: 'clear'
   },
   {
@@ -1405,7 +1197,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.28,
     policeRiskBase: 0.44,
     tollEur: 0,
-    waypoints: [{ x: 698, y: 752 }, { x: 654, y: 710 }, { x: 618, y: 676 }],
     defaultWeather: 'rain'
   },
   {
@@ -1420,7 +1211,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.24,
     tollEur: 0,
-    waypoints: [{ x: 838, y: 856 }, { x: 804, y: 926 }, { x: 786, y: 994 }],
     defaultWeather: 'clear'
   },
   {
@@ -1435,7 +1225,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.48,
     policeRiskBase: 0.55,
     tollEur: 42,
-    waypoints: [{ x: 786, y: 994 }, { x: 820, y: 1036 }, { x: 846, y: 1082 }],
     defaultWeather: 'snow'
   },
   {
@@ -1450,7 +1239,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.34,
     policeRiskBase: 0.45,
     tollEur: 12,
-    waypoints: [{ x: 846, y: 1082 }, { x: 856, y: 1118 }, { x: 862, y: 1152 }],
     defaultWeather: 'clear'
   },
   {
@@ -1466,7 +1254,6 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.44,
     policeRiskBase: 0.38,
     tollEur: 44,
-    waypoints: [{ x: 586, y: 1084 }, { x: 618, y: 1148 }, { x: 668, y: 1184 }],
     defaultWeather: 'clear'
   },
   {
@@ -1481,12 +1268,24 @@ export const HIGHWAY_EDGES: HighwayEdge[] = [
     baseTrafficRisk: 0.12,
     policeRiskBase: 0.26,
     tollEur: 0,
-    waypoints: [{ x: 372, y: 468 }, { x: 358, y: 430 }, { x: 344, y: 392 }],
     defaultWeather: 'fog'
   }
 ];
 
-export const CHARGERS: ChargerStation[] = [
+export const HIGHWAY_EDGES: HighwayEdge[] = edgeData.map(edge => {
+  const from = getCityById(edge.fromCityId);
+  const to = getCityById(edge.toCityId);
+  return {
+    ...edge,
+    waypoints: [
+      { x: from.mapX, y: from.mapY },
+      ...ROAD_COORDINATES[edge.id].map(projectMapPoint),
+      { x: to.mapX, y: to.mapY }
+    ]
+  };
+});
+
+const chargerData: Omit<ChargerStation, 'mapX' | 'mapY'>[] = [
   // === LEVEL 1 ROUTE A (A4 -> A1 -> A2) ===
   {
     id: 'chg_eschweiler_tesla',
@@ -1494,8 +1293,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 Ausfahrt Eschweiler',
     edgeId: 'edge_aachen_koeln',
     edgeProgress: 0.22,
-    mapX: 691,
-    mapY: 802,
     network: 'tesla',
     stalls: 12,
     maxKw: 250,
@@ -1511,8 +1308,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 Rastanlage Aachener Land',
     edgeId: 'edge_aachen_koeln',
     edgeProgress: 0.36,
-    mapX: 699,
-    mapY: 800,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -1527,8 +1322,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 / Kreuz Köln-West',
     edgeId: 'edge_aachen_koeln',
     edgeProgress: 0.78,
-    mapX: 720,
-    mapY: 795,
     network: 'ewego',
     stalls: 4,
     maxKw: 150,
@@ -1545,8 +1338,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 / A1 Kreuz Köln-West',
     edgeId: 'edge_aachen_koeln',
     edgeProgress: 0.89,
-    mapX: 726,
-    mapY: 793,
     network: 'enbw',
     stalls: 12,
     maxKw: 300,
@@ -1562,8 +1353,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 / A3 Leverkusener Kreuz',
     edgeId: 'edge_koeln_kamen',
     edgeProgress: 0.18,
-    mapX: 740,
-    mapY: 781,
     network: 'ewego',
     stalls: 4,
     maxKw: 300,
@@ -1579,8 +1368,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 Bergisches Land',
     edgeId: 'edge_koeln_kamen',
     edgeProgress: 0.46,
-    mapX: 753,
-    mapY: 763,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -1596,8 +1383,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 / A2 Dortmund / Unna',
     edgeId: 'edge_koeln_kamen',
     edgeProgress: 0.70,
-    mapX: 764,
-    mapY: 750,
     network: 'tesla',
     stalls: 12,
     maxKw: 250,
@@ -1613,8 +1398,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 / A2 Kamener Kreuz',
     edgeId: 'edge_koeln_kamen',
     edgeProgress: 0.90,
-    mapX: 774,
-    mapY: 738,
     network: 'enbw',
     stalls: 24,
     maxKw: 400,
@@ -1630,8 +1413,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Ausfahrt Kamen',
     edgeId: 'edge_kamen_bielefeld',
     edgeProgress: 0.18,
-    mapX: 790,
-    mapY: 726,
     network: 'tesla',
     stalls: 20,
     maxKw: 250,
@@ -1648,8 +1429,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Rastanlage Rhynern',
     edgeId: 'edge_kamen_bielefeld',
     edgeProgress: 0.38,
-    mapX: 801,
-    mapY: 717,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -1664,8 +1443,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Ausfahrt Oelde',
     edgeId: 'edge_kamen_bielefeld',
     edgeProgress: 0.58,
-    mapX: 813,
-    mapY: 709,
     network: 'ewego',
     stalls: 4,
     maxKw: 300,
@@ -1681,8 +1458,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Ostwestfalen',
     edgeId: 'edge_kamen_bielefeld',
     edgeProgress: 0.78,
-    mapX: 826,
-    mapY: 701,
     network: 'electra',
     stalls: 8,
     maxKw: 300,
@@ -1698,8 +1473,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Bielefeld-Süd',
     edgeId: 'edge_kamen_bielefeld',
     edgeProgress: 0.91,
-    mapX: 834,
-    mapY: 696,
     network: 'enbw',
     stalls: 16,
     maxKw: 300,
@@ -1715,8 +1488,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Ostwestfalen-Lippe',
     edgeId: 'edge_bielefeld_hannover',
     edgeProgress: 0.18,
-    mapX: 852,
-    mapY: 686,
     network: 'tesla',
     stalls: 12,
     maxKw: 250,
@@ -1732,8 +1503,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 / Weserbergland',
     edgeId: 'edge_bielefeld_hannover',
     edgeProgress: 0.34,
-    mapX: 863,
-    mapY: 681,
     network: 'ewego',
     stalls: 6,
     maxKw: 300,
@@ -1750,8 +1519,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Schaumburger Land',
     edgeId: 'edge_bielefeld_hannover',
     edgeProgress: 0.54,
-    mapX: 877,
-    mapY: 675,
     network: 'electra',
     stalls: 6,
     maxKw: 300,
@@ -1766,8 +1533,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 vor Hannover',
     edgeId: 'edge_bielefeld_hannover',
     edgeProgress: 0.68,
-    mapX: 886,
-    mapY: 671,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -1783,8 +1548,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Hannover-Ost',
     edgeId: 'edge_bielefeld_hannover',
     edgeProgress: 0.83,
-    mapX: 896,
-    mapY: 667,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -1799,8 +1562,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Hannover Messe Süd',
     edgeId: 'edge_bielefeld_hannover',
     edgeProgress: 0.94,
-    mapX: 904,
-    mapY: 663,
     network: 'enbw',
     stalls: 12,
     maxKw: 300,
@@ -1818,8 +1579,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A44 Jülicher Börde',
     edgeId: 'edge_aachen_duesseldorf',
     edgeProgress: 0.26,
-    mapX: 683,
-    mapY: 790,
     network: 'enbw',
     stalls: 8,
     maxKw: 300,
@@ -1834,8 +1593,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A52 / A44 Niederrhein',
     edgeId: 'edge_aachen_duesseldorf',
     edgeProgress: 0.62,
-    mapX: 690,
-    mapY: 769,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -1851,8 +1608,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A44 / A52 Meerbusch',
     edgeId: 'edge_aachen_duesseldorf',
     edgeProgress: 0.85,
-    mapX: 694,
-    mapY: 759,
     network: 'electra',
     stalls: 6,
     maxKw: 300,
@@ -1867,8 +1622,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A43 Ruhrgebiet',
     edgeId: 'edge_duesseldorf_muenster',
     edgeProgress: 0.32,
-    mapX: 717,
-    mapY: 730,
     network: 'tesla',
     stalls: 12,
     maxKw: 250,
@@ -1883,8 +1636,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A43 Münsterland',
     edgeId: 'edge_duesseldorf_muenster',
     edgeProgress: 0.56,
-    mapX: 734,
-    mapY: 713,
     network: 'ewego',
     stalls: 4,
     maxKw: 300,
@@ -1900,8 +1651,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A43 / A1 Kreuz Münster',
     edgeId: 'edge_duesseldorf_muenster',
     edgeProgress: 0.84,
-    mapX: 754,
-    mapY: 699,
     network: 'enbw',
     stalls: 12,
     maxKw: 300,
@@ -1917,8 +1666,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 Greven / Münster',
     edgeId: 'edge_muenster_osnabrueck',
     edgeProgress: 0.45,
-    mapX: 784,
-    mapY: 676,
     network: 'tesla',
     stalls: 12,
     maxKw: 250,
@@ -1934,8 +1681,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 / Kreuz Lotte-Osnabrück',
     edgeId: 'edge_muenster_osnabrueck',
     edgeProgress: 0.80,
-    mapX: 799,
-    mapY: 666,
     network: 'enbw',
     stalls: 16,
     maxKw: 400,
@@ -1951,8 +1696,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A30 / A33',
     edgeId: 'edge_osnabrueck_hannover',
     edgeProgress: 0.25,
-    mapX: 832,
-    mapY: 658,
     network: 'electra',
     stalls: 10,
     maxKw: 300,
@@ -1967,8 +1710,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 / B65 Minden',
     edgeId: 'edge_osnabrueck_hannover',
     edgeProgress: 0.48,
-    mapX: 856,
-    mapY: 656,
     network: 'ewego',
     stalls: 4,
     maxKw: 300,
@@ -1984,8 +1725,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 / Schaumburg',
     edgeId: 'edge_osnabrueck_hannover',
     edgeProgress: 0.64,
-    mapX: 872,
-    mapY: 658,
     network: 'electra',
     stalls: 6,
     maxKw: 300,
@@ -2000,8 +1739,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Hannover-West',
     edgeId: 'edge_osnabrueck_hannover',
     edgeProgress: 0.80,
-    mapX: 888,
-    mapY: 660,
     network: 'enbw',
     stalls: 16,
     maxKw: 300,
@@ -2019,8 +1756,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 Oberbergisches Land',
     edgeId: 'edge_koeln_olpe',
     edgeProgress: 0.42,
-    mapX: 755,
-    mapY: 795,
     network: 'ewego',
     stalls: 4,
     maxKw: 300,
@@ -2036,8 +1771,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 / A45 Sauerland',
     edgeId: 'edge_koeln_olpe',
     edgeProgress: 0.84,
-    mapX: 777,
-    mapY: 797,
     network: 'enbw',
     stalls: 12,
     maxKw: 300,
@@ -2052,8 +1785,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A45 Siegerland Autohof',
     edgeId: 'edge_olpe_kassel',
     edgeProgress: 0.18,
-    mapX: 804,
-    mapY: 794,
     network: 'tesla',
     stalls: 8,
     maxKw: 250,
@@ -2069,8 +1800,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A44 Sauerland / Hessen',
     edgeId: 'edge_olpe_kassel',
     edgeProgress: 0.56,
-    mapX: 842,
-    mapY: 783,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -2085,8 +1814,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 / A44 MAXI Autohof',
     edgeId: 'edge_olpe_kassel',
     edgeProgress: 0.76,
-    mapX: 863,
-    mapY: 775,
     network: 'tesla',
     stalls: 8,
     maxKw: 250,
@@ -2102,8 +1829,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 / A44 Kasseler Kreuz',
     edgeId: 'edge_olpe_kassel',
     edgeProgress: 0.92,
-    mapX: 880,
-    mapY: 767,
     network: 'ewego',
     stalls: 6,
     maxKw: 300,
@@ -2119,8 +1844,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 Leinetal',
     edgeId: 'edge_kassel_hannover',
     edgeProgress: 0.45,
-    mapX: 897,
-    mapY: 718,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -2135,8 +1858,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 Harzvorland',
     edgeId: 'edge_kassel_hannover',
     edgeProgress: 0.66,
-    mapX: 904,
-    mapY: 697,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2152,8 +1873,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 Hildesheimer Börde',
     edgeId: 'edge_kassel_hannover',
     edgeProgress: 0.80,
-    mapX: 906,
-    mapY: 682,
     network: 'enbw',
     stalls: 16,
     maxKw: 300,
@@ -2169,8 +1888,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 / Messe Hannover',
     edgeId: 'edge_kassel_hannover',
     edgeProgress: 0.93,
-    mapX: 907,
-    mapY: 669,
     network: 'ewego',
     stalls: 6,
     maxKw: 300,
@@ -2188,8 +1905,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E42 / A2 (BE/FR)',
     edgeId: 'edge_luettich_paris',
     edgeProgress: 0.36,
-    mapX: 595,
-    mapY: 836,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -2204,8 +1919,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 Nord Frankreich',
     edgeId: 'edge_luettich_paris',
     edgeProgress: 0.78,
-    mapX: 534,
-    mapY: 884,
     network: 'electra',
     stalls: 10,
     maxKw: 300,
@@ -2220,8 +1933,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A3 Luxemburg (günstig!)',
     edgeId: 'edge_aachen_luxemburg',
     edgeProgress: 0.88,
-    mapX: 676,
-    mapY: 871,
     network: 'ionity',
     stalls: 12,
     maxKw: 350,
@@ -2236,8 +1947,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 Reims (FR)',
     edgeId: 'edge_luxemburg_reims',
     edgeProgress: 0.88,
-    mapX: 588,
-    mapY: 876,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2247,72 +1956,7 @@ export const CHARGERS: ChargerStation[] = [
     hasRestroom: true
   },
 
-  // === LEVEL 3 (Alps Winter) ===
-  {
-    id: 'chg_irschenberg_enbw',
-    name: 'EnBW HyperNetz Irschenberg',
-    cityHint: 'A8 Rosenheim / Inntal',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.42,
-    mapX: 1014,
-    mapY: 1044,
-    network: 'enbw',
-    stalls: 16,
-    maxKw: 300,
-    baseAdhocEurPerKwh: 0.72,
-    occupancyRisk: 0.35,
-    defectRisk: 0.05,
-    hasMcDonalds: true,
-    hasRestroom: true
-  },
-  {
-    id: 'chg_kufstein_ionity',
-    name: 'IONITY Angath / Kufstein',
-    cityHint: 'A12 Inntal (AT)',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.76,
-    mapX: 1018,
-    mapY: 1070,
-    network: 'ionity',
-    stalls: 6,
-    maxKw: 350,
-    baseAdhocEurPerKwh: 0.79,
-    occupancyRisk: 0.32,
-    defectRisk: 0.08,
-    hasRestroom: true
-  },
-  {
-    id: 'chg_mittenwald_ac',
-    name: 'Alpen-Dorflader Mittenwald AC',
-    cityHint: 'Zirler Berg Passstraße',
-    edgeId: 'edge_garmisch_innsbruck',
-    edgeProgress: 0.48,
-    mapX: 988,
-    mapY: 1077,
-    network: 'ac_village',
-    stalls: 2,
-    maxKw: 22,
-    baseAdhocEurPerKwh: 0.65,
-    occupancyRisk: 0.25,
-    defectRisk: 0.12,
-    isAcOnly: true
-  },
-  {
-    id: 'chg_achenkirch_enbw',
-    name: 'EnBW / TIWAG Achenkirch',
-    cityHint: 'Achenpass B307',
-    edgeId: 'edge_muenchen_achenpass_innsbruck',
-    edgeProgress: 0.62,
-    mapX: 1003,
-    mapY: 1061,
-    network: 'enbw',
-    stalls: 4,
-    maxKw: 150,
-    baseAdhocEurPerKwh: 0.72,
-    occupancyRisk: 0.20,
-    defectRisk: 0.08,
-    hasRestroom: true
-  },
+  ...ALPS_TO_GARDA_CHARGERS,
 
   // === LEVEL 4 (Scotland Highlands) ===
   {
@@ -2321,8 +1965,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E40 Flandern',
     edgeId: 'edge_amsterdam_calais',
     edgeProgress: 0.62,
-    mapX: 540,
-    mapY: 744,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2337,8 +1979,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1(M) England',
     edgeId: 'edge_london_york',
     edgeProgress: 0.50,
-    mapX: 422,
-    mapY: 676,
     network: 'ionity',
     stalls: 12,
     maxKw: 350,
@@ -2353,8 +1993,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A74(M) Schottland-Grenze',
     edgeId: 'edge_manchester_edinburgh',
     edgeProgress: 0.64,
-    mapX: 356,
-    mapY: 518,
     network: 'ac_village',
     stalls: 4,
     maxKw: 22,
@@ -2369,8 +2007,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 Küstenstraße',
     edgeId: 'edge_newcastle_edinburgh',
     edgeProgress: 0.50,
-    mapX: 396,
-    mapY: 502,
     network: 'ac_village',
     stalls: 2,
     maxKw: 22,
@@ -2387,8 +2023,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A3 Taunus',
     edgeId: 'edge_koeln_frankfurt',
     edgeProgress: 0.60,
-    mapX: 796,
-    mapY: 832,
     network: 'ionity',
     stalls: 12,
     maxKw: 350,
@@ -2403,8 +2037,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A9 Altmühltal',
     edgeId: 'edge_nuernberg_muenchen',
     edgeProgress: 0.35,
-    mapX: 993,
-    mapY: 950,
     network: 'tesla',
     stalls: 24,
     maxKw: 250,
@@ -2419,8 +2051,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A8 Schwäbische Alb',
     edgeId: 'edge_stuttgart_ulm',
     edgeProgress: 0.65,
-    mapX: 906,
-    mapY: 970,
     network: 'enbw',
     stalls: 24,
     maxKw: 400,
@@ -2436,8 +2066,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 Rhön',
     edgeId: 'edge_kassel_wuerzburg',
     edgeProgress: 0.55,
-    mapX: 904,
-    mapY: 825,
     network: 'electra',
     stalls: 10,
     maxKw: 400,
@@ -2454,8 +2082,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A22 Gardasee (Gespann-tauglich!)',
     edgeId: 'edge_bozen_verona',
     edgeProgress: 0.75,
-    mapX: 992,
-    mapY: 1173,
     network: 'tesla',
     stalls: 24,
     maxKw: 250,
@@ -2471,8 +2097,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 Toskana',
     edgeId: 'edge_florenz_rom',
     edgeProgress: 0.42,
-    mapX: 1022,
-    mapY: 1288,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -2488,8 +2112,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A13 Po-Ebene',
     edgeId: 'edge_venedig_bologna',
     edgeProgress: 0.48,
-    mapX: 1040,
-    mapY: 1205,
     network: 'electra',
     stalls: 8,
     maxKw: 300,
@@ -2505,8 +2127,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 Emilia',
     edgeId: 'edge_mailand_florenz',
     edgeProgress: 0.40,
-    mapX: 920,
-    mapY: 1197,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -2524,8 +2144,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 Lüneburger Heide',
     edgeId: 'edge_hannover_hamburg',
     edgeProgress: 0.56,
-    mapX: 916,
-    mapY: 598,
     network: 'enbw',
     stalls: 20,
     maxKw: 300,
@@ -2541,8 +2159,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E45 Jütland (DK)',
     edgeId: 'edge_kolding_hirtshals',
     edgeProgress: 0.52,
-    mapX: 899,
-    mapY: 340,
     network: 'ionity',
     stalls: 10,
     maxKw: 350,
@@ -2557,8 +2173,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E6 Dovrefjell (NO)',
     edgeId: 'edge_oslo_trondheim',
     edgeProgress: 0.58,
-    mapX: 985,
-    mapY: 190,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2573,8 +2187,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E6 Nordland (NO)',
     edgeId: 'edge_trondheim_narvik',
     edgeProgress: 0.55,
-    mapX: 1072,
-    mapY: 118,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -2589,8 +2201,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E6 Finnmark',
     edgeId: 'edge_narvik_nordkapp',
     edgeProgress: 0.62,
-    mapX: 1204,
-    mapY: 59,
     network: 'tesla',
     stalls: 8,
     maxKw: 150,
@@ -2605,8 +2215,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E20 Seeland (DK)',
     edgeId: 'edge_luebeck_kopenhagen',
     edgeProgress: 0.66,
-    mapX: 1002,
-    mapY: 450,
     network: 'electra',
     stalls: 8,
     maxKw: 300,
@@ -2621,8 +2229,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E45 Schweden Inland',
     edgeId: 'edge_oestersund_narvik',
     edgeProgress: 0.46,
-    mapX: 1110,
-    mapY: 135,
     network: 'ac_village',
     stalls: 2,
     maxKw: 50,
@@ -2639,8 +2245,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E40 / E42 Wallonie (BE)',
     edgeId: 'edge_aachen_luettich',
     edgeProgress: 0.55,
-    mapX: 662,
-    mapY: 811,
     network: 'tesla',
     stalls: 12,
     maxKw: 250,
@@ -2655,8 +2259,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E42 Wallonie (BE)',
     edgeId: 'edge_luettich_paris',
     edgeProgress: 0.20,
-    mapX: 618,
-    mapY: 829,
     network: 'electra',
     stalls: 8,
     maxKw: 300,
@@ -2671,8 +2273,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A2 Hauts-de-France',
     edgeId: 'edge_luettich_paris',
     edgeProgress: 0.52,
-    mapX: 572,
-    mapY: 851,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2687,8 +2287,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'E25 Ardennen',
     edgeId: 'edge_aachen_luxemburg',
     edgeProgress: 0.66,
-    mapX: 676,
-    mapY: 855,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2703,8 +2301,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 Lothringen (FR)',
     edgeId: 'edge_luxemburg_reims',
     edgeProgress: 0.35,
-    mapX: 641,
-    mapY: 877,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -2719,8 +2315,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 Champagne (FR)',
     edgeId: 'edge_reims_paris',
     edgeProgress: 0.48,
-    mapX: 540,
-    mapY: 893,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -2735,8 +2329,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A31 Lothringen (FR)',
     edgeId: 'edge_luxemburg_dijon',
     edgeProgress: 0.28,
-    mapX: 658,
-    mapY: 910,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -2751,8 +2343,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A31 Nancy (FR)',
     edgeId: 'edge_luxemburg_dijon',
     edgeProgress: 0.52,
-    mapX: 640,
-    mapY: 940,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2767,8 +2357,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Atomstrom, 22 kW AC, 0,29 €/kWh',
     edgeId: 'edge_luxemburg_dijon',
     edgeProgress: 0.72,
-    mapX: 624,
-    mapY: 962,
     network: 'ac_dorfladen',
     stalls: 2,
     maxKw: 22,
@@ -2784,8 +2372,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A6 Burgund (FR)',
     edgeId: 'edge_dijon_lyon',
     edgeProgress: 0.38,
-    mapX: 604,
-    mapY: 1000,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -2800,8 +2386,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A6 Mâcon (FR)',
     edgeId: 'edge_dijon_lyon',
     edgeProgress: 0.72,
-    mapX: 592,
-    mapY: 1055,
     network: 'electra',
     stalls: 6,
     maxKw: 300,
@@ -2816,8 +2400,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 Rhône (FR)',
     edgeId: 'edge_lyon_montpellier',
     edgeProgress: 0.28,
-    mapX: 578,
-    mapY: 1104,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -2832,8 +2414,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 / A9 Orange (FR)',
     edgeId: 'edge_lyon_montpellier',
     edgeProgress: 0.55,
-    mapX: 562,
-    mapY: 1142,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -2848,8 +2428,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Atomstrom, 22 kW AC, 0,29 €/kWh',
     edgeId: 'edge_lyon_montpellier',
     edgeProgress: 0.82,
-    mapX: 552,
-    mapY: 1164,
     network: 'ac_dorfladen',
     stalls: 2,
     maxKw: 22,
@@ -2865,8 +2443,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A10 / A71 (FR)',
     edgeId: 'edge_paris_clermont',
     edgeProgress: 0.22,
-    mapX: 504,
-    mapY: 940,
     network: 'tesla',
     stalls: 18,
     maxKw: 250,
@@ -2881,8 +2457,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A71 Berry (FR)',
     edgeId: 'edge_paris_clermont',
     edgeProgress: 0.48,
-    mapX: 512,
-    mapY: 990,
     network: 'vianeo',
     stalls: 6,
     maxKw: 300,
@@ -2897,8 +2471,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Atomstrom, 22 kW AC, 0,29 €/kWh',
     edgeId: 'edge_paris_clermont',
     edgeProgress: 0.62,
-    mapX: 516,
-    mapY: 1005,
     network: 'ac_dorfladen',
     stalls: 2,
     maxKw: 22,
@@ -2914,8 +2486,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A71 Auvergne (FR)',
     edgeId: 'edge_paris_clermont',
     edgeProgress: 0.78,
-    mapX: 526,
-    mapY: 1028,
     network: 'ionity',
     stalls: 6,
     maxKw: 350,
@@ -2930,8 +2500,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Atomstrom, 22 kW AC, 0,29 €/kWh',
     edgeId: 'edge_clermont_montpellier',
     edgeProgress: 0.3,
-    mapX: 526,
-    mapY: 1080,
     network: 'ac_dorfladen',
     stalls: 2,
     maxKw: 22,
@@ -2947,8 +2515,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A75 Viaduc de Millau (FR)',
     edgeId: 'edge_clermont_montpellier',
     edgeProgress: 0.45,
-    mapX: 522,
-    mapY: 1118,
     network: 'electra',
     stalls: 6,
     maxKw: 300,
@@ -2963,8 +2529,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A9 Hérault (FR)',
     edgeId: 'edge_clermont_montpellier',
     edgeProgress: 0.72,
-    mapX: 538,
-    mapY: 1154,
     network: 'atlante',
     stalls: 8,
     maxKw: 300,
@@ -2974,45 +2538,11 @@ export const CHARGERS: ChargerStation[] = [
     hasRestroom: true
   },
   {
-    id: 'chg_holzkirchen_tesla',
-    name: 'Tesla Supercharger Weyarn / Holzkirchen',
-    cityHint: 'A8 Oberbayern',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.24,
-    mapX: 1013,
-    mapY: 1030,
-    network: 'tesla',
-    stalls: 16,
-    maxKw: 250,
-    baseAdhocEurPerKwh: 0.66,
-    occupancyRisk: 0.12,
-    defectRisk: 0.02,
-    hasRestroom: true
-  },
-  {
-    id: 'chg_brenner_tesla',
-    name: 'Tesla Supercharger Innsbruck / Brenner-Nord',
-    cityHint: 'A12 / A13 Inntal (AT)',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.90,
-    mapX: 1017,
-    mapY: 1080,
-    network: 'tesla',
-    stalls: 16,
-    maxKw: 250,
-    baseAdhocEurPerKwh: 0.64,
-    occupancyRisk: 0.14,
-    defectRisk: 0.02,
-    hasRestroom: true
-  },
-  {
     id: 'chg_montabaur_tesla',
     name: 'Tesla Supercharger Mogendorf / Montabaur',
     cityHint: 'A3 Westerwald',
     edgeId: 'edge_koeln_frankfurt',
     edgeProgress: 0.44,
-    mapX: 779,
-    mapY: 822,
     network: 'tesla',
     stalls: 20,
     maxKw: 250,
@@ -3027,8 +2557,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A3 Spessart',
     edgeId: 'edge_frankfurt_wuerzburg',
     edgeProgress: 0.65,
-    mapX: 886,
-    mapY: 869,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -3043,8 +2571,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A3 Franken',
     edgeId: 'edge_wuerzburg_nuernberg',
     edgeProgress: 0.50,
-    mapX: 950,
-    mapY: 896,
     network: 'enbw',
     stalls: 16,
     maxKw: 400,
@@ -3060,8 +2586,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A9 Ingolstadt',
     edgeId: 'edge_nuernberg_muenchen',
     edgeProgress: 0.64,
-    mapX: 1000,
-    mapY: 977,
     network: 'ionity',
     stalls: 12,
     maxKw: 350,
@@ -3076,8 +2600,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A7 Schleswig-Holstein',
     edgeId: 'edge_hamburg_kolding',
     edgeProgress: 0.52,
-    mapX: 912,
-    mapY: 469,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -3092,8 +2614,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A22 Südtirol (IT)',
     edgeId: 'edge_innsbruck_bozen',
     edgeProgress: 0.45,
-    mapX: 1014,
-    mapY: 1110,
     network: 'ionity',
     stalls: 8,
     maxKw: 350,
@@ -3109,8 +2629,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A1 / A22 Emilia (IT)',
     edgeId: 'edge_verona_bologna',
     edgeProgress: 0.65,
-    mapX: 1006,
-    mapY: 1212,
     network: 'tesla',
     stalls: 16,
     maxKw: 250,
@@ -3125,8 +2643,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A4 zwischen Grenze und Reims',
     edgeId: 'edge_aachen_reims',
     edgeProgress: 0.58,
-    mapX: 612,
-    mapY: 852,
     network: 'atlante',
     stalls: 8,
     maxKw: 300,
@@ -3142,8 +2658,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A26 südlich von Reims',
     edgeId: 'edge_reims_nevers',
     edgeProgress: 0.42,
-    mapX: 566,
-    mapY: 936,
     network: 'vianeo',
     stalls: 6,
     maxKw: 300,
@@ -3158,8 +2672,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A77 vor Nevers',
     edgeId: 'edge_reims_nevers',
     edgeProgress: 0.9,
-    mapX: 558,
-    mapY: 980,
     network: 'atlante',
     stalls: 4,
     maxKw: 150,
@@ -3174,8 +2686,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'A77 / A71 zwischen Nevers und Clermont',
     edgeId: 'edge_nevers_clermont',
     edgeProgress: 0.48,
-    mapX: 546,
-    mapY: 1018,
     network: 'vianeo',
     stalls: 6,
     maxKw: 360,
@@ -3191,8 +2701,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Hannover Messe / Laatzen, von der A2',
     edgeId: 'edge_bielefeld_hannover',
     edgeProgress: 0.96,
-    mapX: 900,
-    mapY: 664,
     network: 'ac_village',
     stalls: 6,
     maxKw: 22,
@@ -3209,8 +2717,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Hannover Messe / Laatzen, von der A30',
     edgeId: 'edge_osnabrueck_hannover',
     edgeProgress: 0.96,
-    mapX: 896,
-    mapY: 658,
     network: 'ac_village',
     stalls: 6,
     maxKw: 22,
@@ -3227,8 +2733,6 @@ export const CHARGERS: ChargerStation[] = [
     cityHint: 'Hannover Messe / Laatzen, von Kassel',
     edgeId: 'edge_kassel_hannover',
     edgeProgress: 0.96,
-    mapX: 902,
-    mapY: 670,
     network: 'ac_village',
     stalls: 6,
     maxKw: 22,
@@ -3240,6 +2744,13 @@ export const CHARGERS: ChargerStation[] = [
     fairStay: true
   }
 ];
+
+export const CHARGERS: ChargerStation[] = chargerData.map(station => {
+  const { x, y, angleRad } = getPointAlongEdge(getEdgeById(station.edgeId), station.edgeProgress);
+  // Place a nearby AC alternative beside the main road so the two pins remain distinguishable.
+  const offset = station.id === 'chg_kufstein_ac' ? 6 : 0;
+  return { ...station, mapX: x - Math.sin(angleRad) * offset, mapY: y + Math.cos(angleRad) * offset };
+});
 
 export function getCityById(id: string): CityNode {
   return CITIES.find(c => c.id === id) || CITIES[0];

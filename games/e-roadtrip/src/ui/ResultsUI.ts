@@ -4,6 +4,7 @@ import { LEVELS } from '../data/levels';
 import { getResaleValue } from '../sim/SaveState';
 import { shouldSubmit, SubmissionResult } from '../sim/Leaderboard';
 import { SoundFX } from '../phaser/SoundFX';
+import { formatConsumption } from './DrivingStatus';
 
 export interface ResultsCallbacks {
   onKeepCarAndReplay: (nextLevelId: string) => void;
@@ -32,6 +33,8 @@ export class ResultsUI {
     submission?: Promise<SubmissionResult>
   ): void {
     const currentCar = getVehicleById(run.plan.vehicleId);
+    const showLeaderboard = !!level.boardId && !result.gameOver;
+    const finalSoc = result.finalSocPct.toLocaleString('de-DE', { maximumFractionDigits: 2 });
     const resaleEur = getResaleValue(currentCar.id);
     const totalAfterResale = save.cashEur + resaleEur;
 
@@ -63,40 +66,49 @@ export class ResultsUI {
             <div class="res-score-sub">/ 1.000 Pkt</div>
           </div>
           <div>
-            <div class="res-kicker">${level.title} abgeschlossen!</div>
-            <h2>${result.gradeLabel}</h2>
+            <div class="res-kicker">${level.title} ${result.gameOver ? 'abgebrochen' : 'abgeschlossen!'}</div>
+            <h2>${result.gradeLabel}${result.gameOver ? ' · Airbag ausgelöst' : ''}</h2>
             <p class="res-summary-line">
               ⏱️ Gesamtzeit: <strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong> (Ziel ${tHrs}h ${String(tMins).padStart(2, '0')}m) ·
               💶 Kosten: <strong>${result.totalCostEur.toFixed(2)} €</strong> ·
-              ⚡ Verbrauch: <strong>${result.avgConsumptionKwh100} kWh/100km</strong> ·
+              ⚡ Verbrauch: <strong>${formatConsumption(result.avgConsumptionKwh100)}</strong> ·
               😰 Stress-Peak: <strong>${result.peakStress}%</strong>
             </p>
             <p class="res-summary-line">
               Laden ${run.chargingCostEur.toFixed(2)} € · Abos ${run.subscriptionCostEur.toFixed(2)} € ·
               Maut ${run.tollsEur.toFixed(2)} € · Pausen ${run.pauseCostEur.toFixed(2)} € · Sonstige Kosten ${run.incidentalCostEur.toFixed(2)} €
             </p>
+            ${run.propertyDamageEur > 0 ? `<p class="res-summary-line">Wertverlust Auto <strong>${run.propertyDamageEur.toFixed(2)} €</strong></p>` : ''}
             ${
               run.overnightNote
-                ? `<p class="res-overnight">🏨 Übernachtung: ${run.overnightNote}${
+                ? `<p class="res-overnight">🏨 Schlafpause: ${run.overnightNote}${
                     run.lodgingCostEur > 0 ? ` · Unterkunft ${run.lodgingCostEur.toFixed(2)} €` : ' · Unterkunft 0,00 €'
                   }</p>`
                 : ''
             }
-            <div class="res-prize-badge">
-              🏆 Prämie erhalten: <strong>+${result.prizeMoneyEur.toLocaleString('de-DE')} €</strong> · Neues Kapital: <strong>${save.cashEur.toLocaleString('de-DE')} €</strong>
-            </div>
+            ${result.gameOver ? '' : `
+              <div class="res-prize-badge">
+                🏆 Prämie erhalten: <strong>+${result.prizeMoneyEur.toLocaleString('de-DE')} €</strong> · Neues Kapital: <strong>${save.cashEur.toLocaleString('de-DE')} €</strong>
+              </div>
+            `}
           </div>
         </div>
 
-        <div class="res-columns">
-          <div class="res-panel">
-            <h3>📊 Detail-Auswertung</h3>
-            ${renderBar('Zeit-Performance', result.subScores.time, result.weights.time)}
-            ${renderBar('Gesamtkosten', result.subScores.cost, result.weights.cost)}
-            ${renderBar('Beifahrer-Stress & Peaks', result.subScores.stress, result.weights.stress)}
-            ${renderBar('Effizienz & Ladekurve', result.subScores.efficiency, result.weights.efficiency)}
-            ${renderBar('Dynamische Entscheidungen & Parken', result.subScores.decisions, result.weights.decisions)}
-          </div>
+        <div${result.gameOver ? '' : ' class="res-columns"'}>
+          ${result.gameOver ? '' : `
+            <div class="res-panel">
+              <h3>📊 Detail-Auswertung</h3>
+              ${renderBar('Zeit-Performance', result.subScores.time, result.weights.time)}
+              ${renderBar('Gesamtkosten', result.subScores.cost, result.weights.cost)}
+              ${renderBar('Beifahrer-Stress & Peaks', result.subScores.stress, result.weights.stress)}
+              ${renderBar('Effizienz & Ladekurve', result.subScores.efficiency, result.weights.efficiency)}
+              ${renderBar('Dynamische Entscheidungen & Parken', result.subScores.decisions, result.weights.decisions)}
+              <div class="res-bar-head">
+                <span>Rest-Akku ${finalSoc} %</span>
+                <strong>${result.finalSocPenalty === 0 ? '0' : `−${result.finalSocPenalty}`} Pkt</strong>
+              </div>
+            </div>
+          `}
 
           <div class="res-panel">
             <h3>📝 Fahrtbuch &amp; Ereignisse</h3>
@@ -118,7 +130,7 @@ export class ResultsUI {
           </div>
         </div>
 
-        ${level.boardId ? `
+        ${showLeaderboard ? `
           <section class="res-panel res-leaderboard" aria-labelledby="res-lb-title">
             <h3 id="res-lb-title">🌍 Globale Bestenliste · Level ${level.order}</h3>
             <p class="res-lb-status" id="res-lb-rank" role="status"></p>
@@ -182,7 +194,7 @@ export class ResultsUI {
       </div>
     `;
     this.root.scrollTop = 0;
-    if (level.boardId) this.bindLeaderboard(level.boardId, submission);
+    if (showLeaderboard && level.boardId) this.bindLeaderboard(level.boardId, submission);
 
     const nextPlayable =
       LEVELS.find(l => l.order > level.order && l.playable && l.order <= save.unlockedLevelOrder) ||

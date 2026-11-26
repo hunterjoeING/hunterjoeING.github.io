@@ -9,6 +9,7 @@ import {
   LevelConfig,
   PoliceViolationKind,
   ProviderFilterMap,
+  type RegenMode,
   RunState,
   TripPlan,
   WeatherKind,
@@ -16,19 +17,33 @@ import {
 } from './types';
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
-import { CHARGERS, getChargerById, getCityById, getEdgeById } from './data/europeMap';
-import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
+import { getChargerById, getCityById, getEdgeById } from './data/europeMap';
+import { buildSectionControlEvent, buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
+import { BRAKE_OVERHEAT_EVENT, buildChainRequirement, CHAIN_CHECK_EVENT, chainFittingChoice, REGEN_EVENT } from './data/alpineEvents';
+import { ALPINE_PASS_PRESET, chainCheckOccurs } from './sim/AlpineDriving';
+import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
+import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
+import { aachenCityDrive, isAachenCity } from './sim/AachenCity';
+import { applyMontpellierWeather, MONTPELLIER_PREVIEW_HOUR } from './sim/CoastalLight';
+import { isRegionalCity, koelnMotorway, regionalCityDrive } from './sim/RegionalCity';
+import { isWinterCity, winterCityDrive, WINTER_CITY_MINUTES } from './sim/WinterCity';
+import {
+  SECTION_CONTROL_EVENT_ID, TUNNEL_CLOSURE_EVENT_ID, TUNNEL_DETOUR_CHOICE_ID, WINTER_TUNNEL
+} from './sim/WinterTunnel';
+import { findWinterQueueAlternative } from './sim/WinterCharging';
 import { newRunId, submitRun } from './sim/Leaderboard';
-import { applyPause } from './sim/PauseEffects';
+import { applyPause, applyStress } from './sim/PauseEffects';
 import {
   CITY_TRANSITION_MINUTES,
   createDefaultPlan,
   estimateHotelCharge,
   estimateMesseCharge,
+  evaluateStopSkip,
   evaluateTripPlan,
   findReachableAdditionalStop,
   getActiveRouteLegs,
+  getApproachingRoadStop,
   getMesseChargerForVisit,
   isPendingStop,
   isStationOnLeg,
@@ -40,25 +55,24 @@ import {
   switchReturnRouteInPlan,
   switchRouteInPlan
 } from './sim/RoutePlanner';
-import { evaluateRun } from './sim/ScoringEngine';
+import { evaluateRun, hasRelaxedBeachFinale } from './sim/ScoringEngine';
+import type { PropertyDamage } from './sim/PropertyDamage';
 import { getResaleValue, loadCampaignSave, resetCampaignSave, saveCampaignState } from './sim/SaveState';
 import { BootScene } from './phaser/BootScene';
 import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
-import { ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
-import { PlanningUI } from './ui/PlanningUI';
+import { computeCityLightingProfile } from './phaser/CityTraffic';
+import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
+import { MontpellierBeachArrivalScene } from './phaser/MontpellierBeachArrivalScene';
+import { SirmioneFinaleScene } from './phaser/SirmioneFinaleScene';
+import { type AlpineEvent, ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
+import { PlanningUI, DEFAULT_SHOW_ALL_CHARGERS } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
+import { formatClock, formatConsumption, renderDriveStatus } from './ui/DrivingStatus';
 import { ChargingCompletePayload, EventModal } from './ui/EventModal';
 import { ResultsUI } from './ui/ResultsUI';
 import { SoundFX } from './phaser/SoundFX';
-
-function formatClock(level: LevelConfig, elapsedMin: number): string {
-  const total = Math.round(level.departureTimeHour * 60 + elapsedMin);
-  const hh = String(Math.floor(total / 60) % 24).padStart(2, '0');
-  const mm = String(total % 60).padStart(2, '0');
-  return `${hh}:${mm}`;
-}
 
 function createDefaultProviderFilter(): ProviderFilterMap {
   return {
@@ -72,7 +86,9 @@ function createDefaultProviderFilter(): ProviderFilterMap {
     totalenergies: true,
     ac_dorfladen: true,
     atlante: true,
-    vianeo: true
+    vianeo: true,
+    a22: true,
+    neogy: true
   };
 }
 
@@ -104,7 +120,10 @@ class ERoadtripController {
     const modalEl = document.getElementById('er-modal-overlay')!;
     const resultsEl = document.getElementById('er-results-overlay')!;
 
-    this.eventModal = new EventModal(modalEl);
+    this.eventModal = new EventModal(modalEl, () => {
+      const run = this.bridge.runState;
+      return run ? renderDriveStatus(this.level, run) : '';
+    });
 
     this.bridge = {
       level: this.level,
@@ -112,7 +131,7 @@ class ERoadtripController {
       runState: null,
       selectedLegIndex: 0,
       providerFilter: createDefaultProviderFilter(),
-      showChargerStations: true,
+      showChargerStations: DEFAULT_SHOW_ALL_CHARGERS,
       timeScale: 5,
       paused: false,
       touch: TouchInput,
@@ -139,8 +158,10 @@ class ERoadtripController {
         this.drivingHUD.update(this.level, run, this.bridge.timeScale);
       },
 
+      onCityStressChanged: run => this.drivingHUD.updateStress(run),
+
       onTriggerChargerSegment: (station: ChargerStation) => {
-        this.enterChargerSegment(station);
+        this.handleRoadChargerArrival(station);
       },
 
       onTriggerCitySegment: (preset: CityDrivePreset) => {
@@ -150,6 +171,8 @@ class ERoadtripController {
       onCitySegmentComplete: (preset, cleanArrival) => {
         this.handleCitySegmentComplete(preset, cleanArrival);
       },
+
+      onAlpineEvent: event => this.handleAlpineEvent(event),
 
       onDynamicEventTrigger: (eventId: string) => {
         this.handleDynamicEvent(eventId);
@@ -162,6 +185,9 @@ class ERoadtripController {
       onCollisionEvent: (info: CollisionInfo) => {
         this.handleCollision(info);
       },
+
+      onPropertyDamage: damage => this.handlePropertyDamage(damage),
+      onDestinationArrival: () => this.handleDestinationArrival(),
 
       onPoliceViolation: (kind: PoliceViolationKind) => {
         this.handlePoliceViolation(kind);
@@ -246,6 +272,7 @@ class ERoadtripController {
       onForceEarlierStop: () => {
         this.forceEarlierChargeStop();
       },
+      onStopSkipDecision: (key, action) => this.changeRoadStopSkip(key, action),
       onUnplannedToiletStop: () => {
         const run = this.bridge.runState;
         if (!run) return;
@@ -356,12 +383,13 @@ class ERoadtripController {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene]
+      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene, MontpellierBeachArrivalScene,
+        MontpellierFinaleScene, SirmioneFinaleScene]
     };
 
     this.game = new Phaser.Game(config);
     if (typeof ResizeObserver !== 'undefined') {
-      const stageObserver = new ResizeObserver(() => this.game.scale.refresh());
+      const stageObserver = new ResizeObserver(() => this.refreshStageSize());
       stageObserver.observe(parent);
       this.game.events.once(Phaser.Core.Events.DESTROY, () => stageObserver.disconnect());
     }
@@ -461,6 +489,7 @@ class ERoadtripController {
       tollsEur: 0,
       paidTollLegIndices: [],
       incidentalCostEur: 0,
+      propertyDamageEur: 0,
       pauseCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
@@ -480,12 +509,30 @@ class ERoadtripController {
 
     this.stageWrapEl.classList.add('driving-active');
     this.plannerEl.classList.add('hidden');
-    window.requestAnimationFrame(() => this.game.scale.refresh());
+    window.requestAnimationFrame(() => this.refreshStageSize());
+    if (this.level.id === WINTER_LEVEL_ID) {
+      this.bridge.runState.activeWeather = 'snow';
+      this.bridge.paused = true;
+      this.eventModal.showDynamicEvent(
+        WINTER_START_EVENT,
+        choice => this.applyEventChoice(WINTER_START_EVENT.title, choice),
+        () => this.enterCitySegment(getActiveRouteLegs(this.level, clonedPlan)[0].citySegmentAtStart ?? 'muenchen_start')
+      );
+      return;
+    }
     this.enterCitySegment('aachen_start');
   }
 
+  /** Phaser's refresh() reuses the cached parent size and then silently re-reads it, so its own poll never sees the change. */
+  private refreshStageSize(): void {
+    const scale = this.game.scale;
+    scale.getParentBounds?.();
+    scale.refresh();
+  }
+
   private stopAllGameplayScenes(): void {
-    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene'].forEach(k => {
+    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene', 'MontpellierBeachArrivalScene',
+      'MontpellierFinaleScene', 'SirmioneFinaleScene'].forEach(k => {
       const sc = this.game.scene.getScene(k);
       if (
         sc &&
@@ -501,16 +548,23 @@ class ERoadtripController {
     resetTouchInput();
     this.bridge.paused = false;
     this.drivingHUD.setMode('city');
-    const titleMap: Record<CityDrivePreset, string> = {
-      aachen_start: 'Aachen Innenstadt → A4 Auffahrt',
-      charger_park: `Ladepark Einfahrt (Rückwärts einparken!)`,
-      hannover_messe: 'Hannover Messe → E-Parkplatz',
-      aachen_finish: 'Aachen Ausfahrt → Ziel-Parkplatz',
-      ferry_denmark: 'Hirtshals Fährhafen',
-      koeln_ring: 'Köln-Ring → A1'
+    const titleMap = {
+      charger_park: 'Ladepark → Freie Ladebucht',
+      alpine_pass: this.bridge.runState?.alpinePass?.name ?? 'Alpenpass'
     };
-    if (this.bridge.runState) {
-      this.drivingHUD.update(this.level, this.bridge.runState, this.bridge.timeScale, titleMap[preset]);
+    const run = this.bridge.runState;
+    if (run) {
+      if (preset === 'montpellier_finish') applyMontpellierWeather(run);
+      if (preset === 'aachen_start' && this.level.id === 'level_2_family_summer') {
+        run.isNight = computeCityLightingProfile(
+          this.level.departureTimeHour, run.elapsedMinutes, preset, run.activeWeather
+        ).isNight;
+      }
+      const routeId = preset === 'aachen_finish' ? run.plan.returnRouteId : run.plan.selectedRouteId;
+      const title = isAachenCity(preset) ? aachenCityDrive(preset, this.level.order, routeId).title
+        : isWinterCity(preset) ? winterCityDrive(preset, routeId).title
+          : isRegionalCity(preset) ? regionalCityDrive(preset, routeId).title : titleMap[preset];
+      this.drivingHUD.update(this.level, run, this.bridge.timeScale, title);
     }
     this.game.scene.start('CityDriveScene', {
       bridge: this.bridge,
@@ -520,11 +574,79 @@ class ERoadtripController {
     });
   }
 
+  private handleAlpineEvent(event: AlpineEvent): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    this.drivingHUD.clearTouchStates();
+    if (event.kind === 'pass') {
+      const requirement = buildChainRequirement(event.name);
+      const fitting = chainFittingChoice();
+      let fit = false;
+      const enterPass = (chainsFitted: boolean) => {
+        run.alpinePass = { legIndex: run.currentLegIndex, name: event.name, chainsFitted, complete: false };
+        this.enterCitySegment(ALPINE_PASS_PRESET);
+      };
+      this.eventModal.showDynamicEvent(requirement, choice => {
+        fit = choice.id === fitting.id;
+        return fit ? choice.resultText : this.applyEventChoice(requirement.title, choice);
+      }, () => {
+        if (!fit) {
+          enterPass(false);
+          return;
+        }
+        this.eventModal.showChainFitting(fitting.timeDeltaMin, () => {
+          this.applyEventChoice(requirement.title, fitting);
+          enterPass(true);
+        });
+      });
+      return;
+    }
+
+    const dialog = event.kind === 'descent' ? REGEN_EVENT : BRAKE_OVERHEAT_EVENT;
+    this.eventModal.showDynamicEvent(dialog, choice => {
+      if (event.kind === 'descent') {
+        run.alpineDescent = { legIndex: run.currentLegIndex, mode: choice.id as RegenMode, recoveredKwh: 0, brakeHeatM: 0, overheated: false };
+      }
+      return this.applyEventChoice(dialog.title, choice);
+    }, () => { this.bridge.paused = false; });
+  }
+
   private enterChargerSegment(station: ChargerStation): void {
     const run = this.bridge.runState;
     if (!run) return;
     run.activeCityChargerId = station.id;
     this.enterCitySegment('charger_park', station.id);
+  }
+
+  private handleRoadChargerArrival(station: ChargerStation): void {
+    const run = this.bridge.runState;
+    if (!run) return;
+    const stop = this.level.id === WINTER_LEVEL_ID && station.winterQueue
+      ? run.plan.plannedStops.find(s => s.chargerId === station.id && s.legIndex === run.currentLegIndex)
+      : undefined;
+    if (!stop) {
+      this.enterChargerSegment(station);
+      return;
+    }
+
+    const key = stopKey(stop.legIndex, station.id);
+    const cars = winterQueueCars(run.leaderboardRunId ?? run.levelId, key);
+    const skip = evaluateStopSkip(this.level, run, stop);
+    const alternative = findWinterQueueAlternative(this.level, run, stop, station);
+    const event = buildWinterQueueEvent(station, cars, skip.allowed, alternative?.station);
+    this.bridge.paused = true;
+    this.drivingHUD.clearTouchStates();
+    this.eventModal.showDynamicEvent(event, choice => {
+      if (choice.id === 'winter_queue_skip') run.skippedStopKeys.push(key);
+      if (choice.id === 'winter_queue_alternative' && alternative) {
+        run.skippedStopKeys.push(key);
+        if (!run.plan.plannedStops.includes(alternative.stop)) run.plan.plannedStops.push(alternative.stop);
+      }
+      return this.applyEventChoice(event.title, choice);
+    }, () => {
+      if (run.skippedStopKeys.includes(key)) this.enterAutobahn();
+      else this.enterChargerSegment(station);
+    });
   }
 
   private enterAutobahn(preview?: {
@@ -548,12 +670,62 @@ class ERoadtripController {
     const run = this.bridge.runState;
     if (!run) return;
 
+    if (preset === 'montpellier_finish') {
+      const city = regionalCityDrive(preset, run.plan.selectedRouteId);
+      run.elapsedMinutes += CITY_TRANSITION_MINUTES[preset] ?? 0;
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: city.title,
+        detail: cleanArrival ? city.completionLabel : 'Strandhotel nach einem Zwischenfall erreicht.',
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      this.handleDestinationArrival(cleanArrival, true);
+      return;
+    }
+
+    if (isWinterCity(preset)) {
+      const city = winterCityDrive(preset, run.plan.selectedRouteId);
+      run.elapsedMinutes += WINTER_CITY_MINUTES[preset];
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: city.title,
+        detail: cleanArrival ? 'Ziel ohne Zwischenfall erreicht.' : 'Ziel nach einem Zwischenfall erreicht.',
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      if (preset === 'muenchen_start') this.enterAutobahn();
+      else this.handleDestinationArrival(cleanArrival);
+      return;
+    }
+
+    if (preset === ALPINE_PASS_PRESET) {
+      const pass = run.alpinePass;
+      if (!pass || pass.complete) return;
+      pass.complete = true;
+      const landmark = pass.name === 'Jaufenpass' ? 'Passausgang' : 'Passhöhe';
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: `${pass.name} · ${landmark}`,
+        detail: cleanArrival ? `${landmark} erreicht.` : `${landmark} nach einem Zwischenfall erreicht.`,
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      if (chainCheckOccurs(pass.chainsFitted, Math.random())) {
+        this.bridge.paused = true;
+        this.drivingHUD.clearTouchStates();
+        this.eventModal.showDynamicEvent(CHAIN_CHECK_EVENT,
+          choice => this.applyEventChoice(CHAIN_CHECK_EVENT.title, choice), () => this.enterAutobahn());
+      } else {
+        this.enterAutobahn();
+      }
+      return;
+    }
+
     if (preset === 'aachen_start') {
+      const drive = aachenCityDrive(preset, this.level.order, run.plan.selectedRouteId);
       run.elapsedMinutes += CITY_TRANSITION_MINUTES.aachen_start ?? 0;
       run.incidentLog.push({
         timeStr: formatClock(this.level, run.elapsedMinutes),
-        title: 'Aachen Stadt-Ausfahrt → A4',
-        detail: cleanArrival ? 'Sauber auf die A4 aufgefahren!' : 'Mit Zwischenfall auf die A4.',
+        title: drive.title,
+        detail: cleanArrival ? drive.completionLabel : `${drive.motorway} nach einem Zwischenfall erreicht.`,
         impact: cleanArrival ? 'positive' : 'negative'
       });
       this.enterAutobahn();
@@ -562,7 +734,7 @@ class ERoadtripController {
 
     if (preset === 'charger_park') {
       const stationId = run.activeCityChargerId;
-      const station = stationId ? CHARGERS.find(c => c.id === stationId) : undefined;
+      const station = stationId ? getChargerById(stationId) : undefined;
       if (!station) {
         this.enterAutobahn();
         return;
@@ -608,7 +780,7 @@ class ERoadtripController {
         );
       };
 
-      if (!run.triggeredEventIds.includes(`def_${visitKey}`) && Math.random() < station.defectRisk + station.occupancyRisk * 0.35) {
+      if (!run.triggeredEventIds.includes(`def_${visitKey}`) && Math.random() < station.defectRisk) {
         run.triggeredEventIds.push(`def_${visitKey}`);
         const evt = getEventById('evt_charger_defect');
         if (evt) {
@@ -642,11 +814,12 @@ class ERoadtripController {
     }
 
     if (preset === 'koeln_ring') {
+      const { title, road, direction } = koelnMotorway(run.plan.selectedRouteId);
       run.elapsedMinutes += CITY_TRANSITION_MINUTES.koeln_ring ?? 0;
       run.incidentLog.push({
         timeStr: formatClock(this.level, run.elapsedMinutes),
-        title: 'Köln-Ring → A1',
-        detail: cleanArrival ? 'Am Dom vorbei auf die A1.' : 'Mit Zwischenfall weiter Richtung Kamen.',
+        title,
+        detail: cleanArrival ? `Weiter auf der ${road} Richtung ${direction}.` : `Nach einem Zwischenfall weiter Richtung ${direction}.`,
         impact: cleanArrival ? 'positive' : 'negative'
       });
       run.currentLegIndex += 1;
@@ -667,8 +840,10 @@ class ERoadtripController {
   }
 
   private maybeStartPreview(): void {
-    const kind = new URLSearchParams(window.location.search).get('erpreview');
-    if (!kind) return;
+    const preview = new URLSearchParams(window.location.search).get('erpreview');
+    if (!preview) return;
+    const stressedArrival = preview === 'level2arrival-stress';
+    const kind = stressedArrival ? 'level2arrival' : preview;
     if (kind === 'signs') return;
     if (kind === 'level2plan' || kind === 'level2hotel' || kind === 'level2arrival' || kind === 'level2rain' || kind === 'level2wc') {
       this.level = getLevelById('level_2_family_summer');
@@ -708,6 +883,7 @@ class ERoadtripController {
       tollsEur: 0,
       paidTollLegIndices: [],
       incidentalCostEur: 0,
+      propertyDamageEur: 0,
       pauseCostEur: 0,
       lodgingCostEur: 0,
       decisionScoreAccum: 0,
@@ -726,7 +902,7 @@ class ERoadtripController {
     };
     this.stageWrapEl.classList.add('driving-active');
     this.plannerEl.classList.add('hidden');
-    window.requestAnimationFrame(() => this.game.scale.refresh());
+    window.requestAnimationFrame(() => this.refreshStageSize());
 
     if (kind === 'level2hotel' || kind === 'level2arrival' || kind === 'level2rain' || kind === 'level2wc') {
       const run = this.bridge.runState;
@@ -738,14 +914,32 @@ class ERoadtripController {
             ? legs.findIndex(leg => leg.destinationAtEnd)
             : kind === 'level2wc'
               ? legs.findIndex(leg => !leg.reverse && !!getEdgeById(leg.edgeId).speedLimitRainKmh)
-              : legs.findIndex(leg => leg.weatherOverride === 'rain' && !!getEdgeById(leg.edgeId).speedLimitRainKmh);
+              : legs.findIndex(leg => !!getEdgeById(leg.edgeId).speedLimitRainKmh);
       const spec = legs[Math.max(0, idx)];
       const edge = getEdgeById(spec.edgeId);
       if (run && spec) {
         run.currentLegIndex = Math.max(0, idx);
         run.legProgressKm =
           kind === 'level2rain' ? 12 : kind === 'level2wc' ? edge.distanceKm * 0.55 : Math.max(0, edge.distanceKm - 1.1);
+        if (kind === 'level2arrival') {
+          run.elapsedMinutes = ((24 + MONTPELLIER_PREVIEW_HOUR - this.level.departureTimeHour) % 24) * 60;
+          applyMontpellierWeather(run);
+        } else {
+          const forecast = evaluateTripPlan(this.level, clonedPlan);
+          const leg = forecast.legForecasts[run.currentLegIndex];
+          const elapsed = forecast.legForecasts.slice(0, run.currentLegIndex)
+            .reduce((total, stage) => total + stage.driveMinutes + stage.chargeMinutes, 0);
+          run.elapsedMinutes = elapsed + Math.round(leg.driveMinutes * run.legProgressKm / edge.distanceKm);
+          run.isNight = computeCityLightingProfile(
+            this.level.departureTimeHour, run.elapsedMinutes, 'charger_park', run.activeWeather
+          ).isNight;
+        }
         run.triggeredEventIds = kind === 'level2wc' ? [] : ['evt_dirty_toilets'];
+        if (stressedArrival) {
+          run.stress = 75;
+          run.peakStress = 85;
+          run.wifeDialogueTriggered = true;
+        }
         if (kind === 'level2rain') {
           const legPlan = run.plan.legPlans.find(leg => leg.legIndex === run.currentLegIndex);
           if (legPlan) legPlan.targetSpeedKmh = 130;
@@ -753,7 +947,7 @@ class ERoadtripController {
         }
       }
       this.bridge.timeScale = kind === 'level2rain' || kind === 'level2wc' ? 1 : 15;
-      this.enterAutobahn();
+      this.enterAutobahn(kind === 'level2rain' ? { previewWeather: 'rain' } : undefined);
       return;
     }
 
@@ -767,6 +961,11 @@ class ERoadtripController {
       this.enterCitySegment('charger_park', station.id, kind === 'tracks');
     } else if (kind === 'autohof-urban') {
       const station = getChargerById('chg_frechen_ewego');
+      if (!station || !this.bridge.runState) return;
+      this.bridge.runState.activeCityChargerId = station.id;
+      this.enterCitySegment('charger_park', station.id);
+    } else if (kind === 'autohof-uk') {
+      const station = getChargerById('chg_cumbria_ac');
       if (!station || !this.bridge.runState) return;
       this.bridge.runState.activeCityChargerId = station.id;
       this.enterCitySegment('charger_park', station.id);
@@ -819,8 +1018,24 @@ class ERoadtripController {
       minutes: choice.timeDeltaMin, costEur: choice.pauseCostEur, stressDelta: choice.stressDelta,
       resetBladder: choice.resetBladder, hungerDelta: choice.hungerDelta
     });
-    if (choice.socDeltaPct) run.socPct = Math.max(0, Math.min(100, run.socPct + choice.socDeltaPct));
-    run.incidentalCostEur += choice.costDeltaEur;
+    if (choice.socDeltaPct) {
+      const previousSoc = run.socPct;
+      run.socPct = Math.max(0, Math.min(100, previousSoc + choice.socDeltaPct));
+      if (this.level.id === WINTER_LEVEL_ID && run.socPct < previousSoc) {
+        run.energyUsedKwh += (previousSoc - run.socPct) / 100 * getVehicleById(run.plan.vehicleId).batteryKwh;
+      }
+    }
+    if (choice.startsCold) run.coldStart = true;
+    if (choice.winterDetourKm) {
+      const vehicle = getVehicleById(run.plan.vehicleId);
+      const kwh = winterDetourEnergyKwh(vehicle, choice.winterDetourKm, choice.timeDeltaMin, run);
+      run.energyUsedKwh += kwh;
+      run.socPct = Math.max(0, run.socPct - kwh / vehicle.batteryKwh * 100);
+      run.distanceDrivenKm += choice.winterDetourKm;
+    }
+    if (choice.snowploughKm) run.snowploughUntilKm = run.distanceDrivenKm + choice.snowploughKm;
+    if (this.level.id === WINTER_LEVEL_ID && choice.id === 'buy_vignette') run.tollsEur += choice.costDeltaEur;
+    else run.incidentalCostEur += choice.costDeltaEur;
     if (choice.lodgingDeltaEur) run.lodgingCostEur += choice.lodgingDeltaEur;
     if (choice.fineDeltaEur) run.incidentalCostEur += choice.fineDeltaEur;
     run.decisionScoreAccum += choice.decisionPoints;
@@ -941,20 +1156,23 @@ class ERoadtripController {
   }
 
   private handleDynamicEvent(eventId: string): void {
-    const evt = getEventById(eventId);
+    const run = this.bridge.runState;
+    const average = run?.winterTunnel?.averageKmh;
+    const evt = eventId === SECTION_CONTROL_EVENT_ID && average !== undefined
+      ? buildSectionControlEvent(average) : getEventById(eventId);
     if (!evt) {
       this.bridge.paused = false;
       return;
     }
-    const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : 'Montpellier';
     const trap = eventId === 'evt_speed_trap' ? this.bridge.runState?.speedTrap : undefined;
     const nudge = eventId === 'evt_tailgate' ? this.bridge.runState?.tailgateCase : undefined;
     const baseEvt = trap ? buildSpeedTrapEvent(trap) : nudge ? buildTailgateEvent(nudge.country, nudge.amountEur) : evt;
-    const run = this.bridge.runState;
     const hotelCharge = eventId === 'evt_hotel_overnight' && run
       ? estimateHotelCharge(getVehicleById(run.plan.vehicleId), run.socPct) : undefined;
-    const shown =
-      eventId === 'evt_hotel_overnight' || eventId === 'evt_south_arrival'
+    const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : '';
+    const shown = this.level.id === WINTER_LEVEL_ID && eventId === 'evt_vignette_check'
+        ? { ...baseEvt, description: 'Für die österreichische Inntal-Autobahn brauchst du eine Vignette.' }
+        : eventId === 'evt_hotel_overnight'
         ? {
             ...baseEvt,
             title: baseEvt.title.split('{ORT}').join(place),
@@ -969,6 +1187,9 @@ class ERoadtripController {
       shown,
       choice => {
         const text = this.applyEventChoice(shown.title, choice);
+        if (eventId === TUNNEL_CLOSURE_EVENT_ID && run && choice.id === TUNNEL_DETOUR_CHOICE_ID) {
+          run.legProgressKm = WINTER_TUNNEL.endKm;
+        }
         if (eventId === 'evt_rest_area_robbery' && choice.fineDeltaEur && run?.overnightNote) {
           run.overnightNote += ` · Einbruch −${choice.fineDeltaEur.toFixed(0)} €, +${choice.timeDeltaMin / 60} h Polizei`;
         }
@@ -1056,6 +1277,31 @@ class ERoadtripController {
     );
   }
 
+  private handlePropertyDamage(damage: PropertyDamage): void {
+    const run = this.bridge.runState;
+    if (!run || run.completed) return;
+    const titles = {
+      scratch: 'Ein paar Kratzer am Auto',
+      dent: 'Eine Beule im Auto',
+      airbag: 'Airbag geöffnet – Reise zu Ende'
+    };
+    const title = titles[damage.tier];
+    const gameOver = damage.tier === 'airbag';
+    run.propertyDamageEur += damage.lossEur;
+    applyStress(run, damage.stressDelta);
+    this.drivingHUD.updateStress(run);
+    const detail = `Wertverlust Auto: ${damage.lossEur.toLocaleString('de-DE')} €` +
+      (damage.stressDelta ? ` · +${damage.stressDelta} Stress` : '');
+    run.incidentLog.push({
+      timeStr: formatClock(this.level, run.elapsedMinutes), title, detail, impact: 'negative'
+    });
+    this.drivingHUD.clearTouchStates();
+    this.eventModal.showPropertyDamage(title, detail, gameOver, () => {
+      if (gameOver) this.finishLevel(false, true);
+      else this.bridge.paused = false;
+    });
+  }
+
   private handlePoliceViolation(kind: PoliceViolationKind): void {
     const run = this.bridge.runState;
     if (!run) {
@@ -1133,6 +1379,33 @@ class ERoadtripController {
     this.drivingHUD.update(this.level, run, this.bridge.timeScale);
   }
 
+  private changeRoadStopSkip(key: string, action: 'skip' | 'undo'): void {
+    const run = this.bridge.runState;
+    if (!run || run.completed || this.bridge.paused) return;
+    const approach = getApproachingRoadStop(this.level, run);
+    if (!approach || approach.key !== key || approach.skipped !== (action === 'undo')) return;
+
+    const name = approach.station.name;
+    let title: string;
+    let detail: string;
+    if (action === 'undo') {
+      run.skippedStopKeys.splice(run.skippedStopKeys.indexOf(key), 1);
+      delete run.undoableRoadStopKey;
+      title = `Ladestopp wieder eingeplant: ${name}`;
+      detail = 'Stopp wieder auf der Route.';
+    } else {
+      const evaluation = evaluateStopSkip(this.level, run, approach.stop);
+      if (!evaluation.allowed) return;
+      run.skippedStopKeys.push(key);
+      run.undoableRoadStopKey = key;
+      title = `Ladestopp ausgelassen: ${name}`;
+      detail = `Prognose ≈ ${Math.round(evaluation.projectedSocPct)} % am nächsten Ziel`;
+    }
+    run.incidentLog.push({ timeStr: formatClock(this.level, run.elapsedMinutes), title, detail, impact: 'neutral' });
+    this.drivingHUD.showReplanFeedback(title);
+    this.drivingHUD.update(this.level, run, this.bridge.timeScale);
+  }
+
   private openLiveMapPeek(): void {
     const run = this.bridge.runState;
     if (!run) return;
@@ -1155,14 +1428,54 @@ class ERoadtripController {
       <p><b>🏁 Prognose Endziel:</b> <strong>${livePred.predictedFinalSocPct}% SoC</strong></p>
       ${finalSocWithoutMesse === undefined ? '' : `<p><b>Bei belegtem Messeparkplatz:</b> ${finalSocWithoutMesse > 0 ? `${finalSocWithoutMesse}% SoC am Ziel` : 'Reichweite reicht nicht bis zum Ziel.'}</p>`}
       <p><b>Geplante verbleibende Ladestopps:</b> ${upcoming.length > 0 ? upcoming.join(', ') : 'Keine mehr bis zum Ziel'}</p>
-      <p><b>Prognose Schnittverbrauch:</b> ~${forecast.avgConsumptionKwh100} kWh/100km</p>
+      <p><b>Prognose Schnittverbrauch:</b> ~${formatConsumption(forecast.avgConsumptionKwh100)}</p>
     `;
     this.eventModal.showMapPeek(html, () => {
       this.bridge.paused = false;
     });
   }
 
-  private finishLevel(cleanArrival: boolean): void {
+  private handleDestinationArrival(cleanArrival = true, beachArrival = false): void {
+    this.playDestinationFinale(cleanArrival, beachArrival);
+  }
+
+  private playDestinationFinale(cleanArrival = true, beachArrival = false): void {
+    const run = this.bridge.runState;
+    if (!run || run.completed) return;
+    const winter = this.level.id === WINTER_LEVEL_ID;
+    if (!winter) applyMontpellierWeather(run);
+    this.drivingHUD.setMode('hidden');
+    resetTouchInput();
+    this.stopAllGameplayScenes();
+    this.stageWrapEl.classList.add('finale-active');
+    const finale = {
+      relaxed: hasRelaxedBeachFinale(run),
+      isLightTheme: this.bridge.isLightTheme,
+      onComplete: () => {
+        if (this.bridge.runState === run) this.finishLevel(cleanArrival);
+      }
+    };
+    if (beachArrival) {
+      this.game.scene.start('MontpellierBeachArrivalScene', {
+        carColor: getVehicleById(run.plan.vehicleId).primaryColor,
+        onComplete: () => {
+          if (this.bridge.runState !== run || run.completed) return;
+          applyMontpellierWeather(run);
+          this.game.scene.stop('MontpellierBeachArrivalScene');
+          this.game.scene.start('MontpellierFinaleScene', finale);
+        }
+      });
+    } else if (winter) {
+      this.game.scene.start('SirmioneFinaleScene', {
+        ...finale, carColor: getVehicleById(run.plan.vehicleId).primaryColor
+      });
+    } else {
+      this.game.scene.start('MontpellierFinaleScene', finale);
+    }
+    window.requestAnimationFrame(() => this.refreshStageSize());
+  }
+
+  private finishLevel(cleanArrival: boolean, gameOver = false): void {
     const run = this.bridge.runState;
     if (!run || run.completed) return;
     run.completed = true;
@@ -1171,7 +1484,12 @@ class ERoadtripController {
     resetTouchInput();
     this.stopAllGameplayScenes();
 
-    const result = evaluateRun(this.level, run, cleanArrival);
+    this.stageWrapEl.classList.remove('finale-active');
+    const result = evaluateRun(this.level, run, cleanArrival, gameOver);
+    if (gameOver) {
+      this.resultsUI.show(this.level, run, result, this.save);
+      return;
+    }
     this.save.cashEur += result.prizeMoneyEur;
     if (this.save.unlockedLevelOrder <= this.level.order) {
       this.save.unlockedLevelOrder = this.level.order + 1;
@@ -1203,14 +1521,14 @@ class ERoadtripController {
     this.eventModal.close();
     this.resultsUI.hide();
     this.drivingHUD.setMode('hidden');
-    this.stageWrapEl.classList.remove('driving-active');
+    this.stageWrapEl.classList.remove('driving-active', 'finale-active');
     this.plannerEl.classList.remove('hidden');
 
     this.stopAllGameplayScenes();
     this.game.scene.start('EuropeMapScene', { bridge: this.bridge });
     this.renderPlanning();
     window.requestAnimationFrame(() => {
-      this.game.scale.refresh();
+      this.refreshStageSize();
     });
   }
 }

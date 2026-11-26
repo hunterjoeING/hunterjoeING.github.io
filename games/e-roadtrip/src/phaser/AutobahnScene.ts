@@ -1,7 +1,14 @@
 import * as Phaser from 'phaser';
 import { getCityById, getEdgeById } from '../data/europeMap';
 import { getVehicleById } from '../data/vehicles';
+import { alpineLeg } from '../sim/AlpineDriving';
+import { alpineRoadEnergy, brakesOverheat } from '../sim/AlpineDescent';
 import { computeConsumptionKwh100 } from '../sim/EnergyModel';
+import { nextWinterRoadEvent, SNOWPLOUGH_SPEED_KMH, winterRoadEnergyKwh } from '../sim/WinterDriving';
+import {
+  sectionControlAverageKmh, sectionControlIsSpeeding, SECTION_CONTROL_EVENT_ID,
+  TUNNEL_CLOSURE_EVENT_ID, WINTER_TUNNEL, winterTunnelFor
+} from '../sim/WinterTunnel';
 import {
   defaultLegSpeedKmh,
   getActiveRouteLegs,
@@ -9,7 +16,8 @@ import {
   snapSpeedKmh,
   speedTrapChancePerSimMinute,
   isPendingStop,
-  plannedRoadStopsOnLeg
+  plannedRoadStopsOnLeg,
+  SKIP_PROMPT_KM
 } from '../sim/RoutePlanner';
 import { RunState, WeatherKind } from '../types';
 import {
@@ -306,10 +314,10 @@ export class AutobahnScene extends Phaser.Scene {
     this.bridge.onDynamicEventTrigger('evt_tailgate');
   }
 
-  private drawRoad(w: number, h: number, work: boolean): void {
+  private drawRoad(w: number, h: number, work: boolean, tunnel = false): void {
     const g = this.roadGfx;
     g.clear();
-    g.fillStyle(0x14532d, 1);
+    g.fillStyle(tunnel ? 0x101726 : 0x14532d, 1);
     g.fillRect(0, 0, w, h);
 
     const step = this.isMobilePerf ? 28 : 16;
@@ -329,10 +337,20 @@ export class AutobahnScene extends Phaser.Scene {
       shoulderL.push({ x: mid - nx * (half + 16), y: y - ny * (half + 16) });
       shoulderR.push({ x: mid + nx * (half + 16), y: y + ny * (half + 16) });
     }
-    g.fillStyle(0x334155, 1);
+    g.fillStyle(tunnel ? 0x737a83 : 0x334155, 1);
     g.fillPoints(shoulderL.concat(shoulderR.slice().reverse()), true);
     g.fillStyle(work ? 0x0b1220 : 0x172033, 1);
     g.fillPoints(left.concat(right.slice().reverse()), true);
+
+    if (tunnel) {
+      g.lineStyle(4, 0xad936c, 0.88);
+      for (const wall of [shoulderL, shoulderR]) {
+        g.beginPath();
+        g.moveTo(wall[0].x, wall[0].y);
+        wall.slice(1).forEach(p => g.lineTo(p.x, p.y));
+        g.strokePath();
+      }
+    }
 
     g.lineStyle(3, 0xf8fafc, 0.88);
     g.beginPath();
@@ -459,6 +477,28 @@ export class AutobahnScene extends Phaser.Scene {
     });
   }
 
+  private pauseForTunnelEvent(run: RunState, tunnel: typeof WINTER_TUNNEL): boolean {
+    const state = run.winterTunnel?.legIndex === run.currentLegIndex ? run.winterTunnel : undefined;
+    let eventId: string | undefined;
+    if (!state && run.legProgressKm === tunnel.startKm) {
+      run.winterTunnel = { legIndex: run.currentLegIndex, driveMinutes: 0 };
+      if (this.bridge.level.eventPoolIds.includes(TUNNEL_CLOSURE_EVENT_ID) && Math.random() < tunnel.closureChance) {
+        eventId = TUNNEL_CLOSURE_EVENT_ID;
+      }
+    } else if (state && run.legProgressKm === tunnel.endKm && state.averageKmh === undefined) {
+      const average = sectionControlAverageKmh(tunnel.endKm - tunnel.startKm, state.driveMinutes);
+      state.averageKmh = average;
+      if (average !== undefined && sectionControlIsSpeeding(average, tunnel.limitKmh)) {
+        eventId = SECTION_CONTROL_EVENT_ID;
+      }
+    }
+    if (!eventId) return false;
+    this.bridge.paused = true;
+    SoundFX.alert();
+    this.bridge.onDynamicEventTrigger(eventId);
+    return true;
+  }
+
   update(time: number, delta: number): void {
     const run = this.bridge.runState;
     if (!run || !this.playerCar) return;
@@ -471,6 +511,10 @@ export class AutobahnScene extends Phaser.Scene {
     const legSpec = activeLegs[run.currentLegIndex];
     if (!legSpec) return;
     const edge = getEdgeById(legSpec.edgeId);
+    const tunnel = winterTunnelFor(this.bridge.level.id, legSpec);
+    if (tunnel && this.pauseForTunnelEvent(run, tunnel)) return;
+    const inTunnel = !!tunnel && run.legProgressKm >= tunnel.startKm && run.legProgressKm < tunnel.endKm;
+    const nearTunnel = !!tunnel && run.legProgressKm >= tunnel.approachKm && run.legProgressKm < tunnel.startKm;
     const vehicle = getVehicleById(run.plan.vehicleId);
     const lp = run.plan.legPlans.find(x => x.legIndex === run.currentLegIndex);
     const weather = this.previewWeather || legSpec.weatherOverride || edge.defaultWeather;
@@ -488,21 +532,25 @@ export class AutobahnScene extends Phaser.Scene {
     const zone = workZoneFor(edge.id, edge.distanceKm, this.forceWorkZone);
     const inWork = !!zone && run.legProgressKm >= zone.startKm && run.legProgressKm < zone.endKm;
     const section = highwaySection(
-      edge, !!legSpec.reverse, run.legProgressKm, weather, run.countryLimitKmh, inWork ? zone?.limit : undefined
+      edge, !!legSpec.reverse, run.legProgressKm, weather, run.countryLimitKmh,
+      inTunnel ? tunnel.limitKmh : inWork ? zone?.limit : undefined
     );
     const setSpeed = snapSpeedKmh(
       lp ? lp.targetSpeedKmh : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather),
       vehicle.maxSpeedKmh
     );
     if (lp && lp.targetSpeedKmh !== setSpeed) lp.targetSpeedKmh = setSpeed;
-    const driveMax = inWork ? Math.min(setSpeed, section.signKmh) : setSpeed;
+    const inConvoy = (run.snowploughUntilKm ?? 0) > run.distanceDrivenKm;
+    const workCap = inWork ? section.signKmh : undefined;
+    const speedCap = inConvoy ? Math.min(SNOWPLOUGH_SPEED_KMH, workCap ?? Infinity) : workCap;
+    const driveMax = Math.min(setSpeed, speedCap ?? Infinity);
     const trafficLimit = Math.min(vehicle.maxSpeedKmh, section.signKmh || Infinity);
     const rightOpen = !inWork;
 
     const playerY = h * 0.72;
     this.laneCooldown = Math.max(0, this.laneCooldown - dtSec);
     if (this.playerLanePos === this.playerLane && this.laneCooldown <= 0) {
-      const desiredLane = preferredPlayerLane(setSpeed, rightOpen);
+      const desiredLane = preferredPlayerLane(inConvoy ? driveMax : setSpeed, rightOpen);
       const slowerAhead = (lane: number, range = 260) => {
         const other = leadVehicle(this.npcs, lane, range);
         return !!other && other.speedKmh < driveMax - 6;
@@ -550,8 +598,11 @@ export class AutobahnScene extends Phaser.Scene {
     for (const car of this.npcs) car.sprite.y = playerY - car.distanceKm * HIGHWAY_PX_PER_KM;
 
     run.currentSpeedKmh = this.playerSpeedKmh;
-    run.speedCapKmh = inWork ? section.signKmh : undefined;
-    run.speedCapLabel = inWork ? 'Baustelle' : undefined;
+    run.speedCapKmh = speedCap;
+    const roadNotice = inTunnel ? 'Tunnel · Abschnittskontrolle' : nearTunnel ? `Tunnel voraus · ${tunnel.limitKmh} km/h` :
+      inConvoy ? 'Schneepflug-Kolonne' : inWork ? 'Baustelle' : undefined;
+    const tunnelNoticeChanged = !!tunnel && run.speedCapLabel !== roadNotice;
+    run.speedCapLabel = roadNotice;
     const signChanged = run.highwaySignLegIndex !== run.currentLegIndex || run.highwaySignKmh !== section.signKmh;
     run.highwaySignKmh = section.signKmh;
     run.highwaySignLegIndex = run.currentLegIndex;
@@ -563,14 +614,15 @@ export class AutobahnScene extends Phaser.Scene {
         this.fireTailgate(run, tailgateLead, section.country);
       }
     }
-    if (signChanged) this.updateHud(run, tailgateLead);
+    if (signChanged || tunnelNoticeChanged) this.updateHud(run, tailgateLead);
 
     const scrollBoost = this.bridge.timeScale >= 15 ? 1.35 : this.bridge.timeScale >= 5 ? 1.15 : 1;
     const scrollPxPerSec = (Math.max(40, this.playerSpeedKmh) / 120) * 280 * scrollBoost;
     this.roadPhase += scrollPxPerSec * dtSec;
-    this.drawRoad(w, h, inWork);
+    this.drawRoad(w, h, inWork, inTunnel);
 
     for (const tree of this.trees) {
+      if (tunnel) tree.setVisible(!inTunnel);
       const along = Number(tree.getData('along')) + scrollPxPerSec * dtSec;
       const y = ((along % (h + 50)) + (h + 50)) % (h + 50) - 20;
       tree.setData('along', along);
@@ -580,18 +632,20 @@ export class AutobahnScene extends Phaser.Scene {
     }
 
     const wet = weather === 'rain' || weather === 'storm';
-    const showLights = run.isNight || wet || clockHour >= 17.5 || clockHour < 7;
+    const showLights = inTunnel || run.isNight || wet || clockHour >= 17.5 || clockHour < 7;
     for (const lamp of this.lamps) {
       lamp.along = (lamp.along + scrollPxPerSec * dtSec) % (h + 80);
       const y = lamp.along - 20;
       const edgeX = this.laneCenter(lamp.side < 0 ? 0 : rightOpen ? 2 : 1, y, rightOpen);
       const x = edgeX + lamp.side * (this.laneSpacing * 1.55 + 8);
       lamp.sprite.setPosition(x, y);
+      if (tunnel) lamp.sprite.setVisible(!inTunnel);
       lamp.glow?.setPosition(x, y + 8);
-      lamp.glow?.setAlpha(showLights ? (run.isNight ? 0.55 : 0.32) : 0.12);
+      lamp.glow?.setAlpha(inTunnel ? 0.62 : showLights ? (run.isNight ? 0.55 : 0.32) : 0.12);
     }
 
     if (this.gantryObj) {
+      if (tunnel) this.gantryObj.setVisible(!inTunnel);
       const gy = this.gantryObj.y + scrollPxPerSec * 0.9 * dtSec;
       this.gantryObj.y = gy > h + 200 ? -90 : gy;
       this.gantryObj.x = w / 2 + this.curveAt(this.gantryObj.y);
@@ -643,7 +697,7 @@ export class AutobahnScene extends Phaser.Scene {
     if (clockHour >= 18 && clockHour < 20) darkness = ((clockHour - 18) / 2) * 0.5;
     else if (clockHour >= 20 || clockHour < 5.5) darkness = 0.55;
     else if (wet) darkness = 0.2;
-    this.nightOverlay.setAlpha(darkness);
+    this.nightOverlay.setAlpha(inTunnel ? 0.66 : darkness);
     if (this.playerReflection) {
       this.playerReflection.setPosition(this.playerCar.x + 3, playerY + 10);
       this.playerReflection.setRotation(playerRot);
@@ -656,7 +710,7 @@ export class AutobahnScene extends Phaser.Scene {
       this.playerHeadlight.setRotation(playerRot);
       const highBeam = this.highBeamSec > 0;
       this.playerHeadlight.setScale(highBeam ? 1.45 : 1);
-      this.playerHeadlight.setAlpha(highBeam ? 1 : showLights ? 0.7 : 0);
+      this.playerHeadlight.setAlpha(highBeam ? 1 : inTunnel ? 0.9 : showLights ? 0.7 : 0);
     }
     if (this.playerTaillight) {
       const fx = Math.sin(playerRot);
@@ -762,12 +816,22 @@ export class AutobahnScene extends Phaser.Scene {
     const stopKm = pendingStop ? pendingStop.progress * edge.distanceKm : Infinity;
     const workBoundaryKm = !zone || run.legProgressKm >= zone.endKm
       ? Infinity : inWork ? zone.endKm : zone.startKm;
-    const boundaryKm = Math.min(stopKm, section.endKm, workBoundaryKm);
-    const simMinPerRealSec = inWork ? 0.85 : this.bridge.timeScale === 15 ? 28 : this.bridge.timeScale === 5 ? 11 : 2.8;
+    const alpine = alpineLeg(this.bridge.level.id, edge, legSpec);
+    const pass = run.alpinePass?.legIndex !== run.currentLegIndex ? alpine?.pass : undefined;
+    const descent = alpine?.descent;
+    const descentState = run.alpineDescent?.legIndex === run.currentLegIndex ? run.alpineDescent : undefined;
+    const nextDescentKm = descent && !descentState ? Math.max(run.legProgressKm, descent.startKm) : Infinity;
+    const passKm = pass ? Math.max(run.legProgressKm, pass.entryKm) : Infinity;
+    const tunnelBoundaryKm = nearTunnel ? tunnel.startKm : inTunnel ? tunnel.endKm :
+      tunnel && run.legProgressKm < tunnel.approachKm ? tunnel.approachKm : Infinity;
+    const boundaryKm = Math.min(stopKm, section.endKm, workBoundaryKm, passKm, nextDescentKm, tunnelBoundaryKm);
+    const simMinPerRealSec = nearTunnel || inTunnel ? tunnel.simMinutesPerSecond :
+      inWork ? 0.85 : this.bridge.timeScale === 15 ? 28 : this.bridge.timeScale === 5 ? 11 : 2.8;
     const kmPerMinute = this.playerSpeedKmh / 60;
     const availableMinutes = simMinPerRealSec * dtSec;
     const remainingKm = Math.max(0, boundaryKm - run.legProgressKm);
     const deltaKm = Math.min(kmPerMinute * availableMinutes, remainingKm);
+    const beforeStopApproach = stopKm - run.legProgressKm > SKIP_PROMPT_KM;
     const simMinutes = remainingKm === 0 ? 0 : kmPerMinute > 0 ? deltaKm / kmPerMinute : availableMinutes;
     const elevGain = legSpec.reverse ? edge.elevationLossM : edge.elevationGainM;
     const elevLoss = legSpec.reverse ? edge.elevationGainM : edge.elevationLossM;
@@ -776,19 +840,28 @@ export class AutobahnScene extends Phaser.Scene {
       this.playerSpeedKmh,
       weather,
       elevGain,
-      elevLoss,
+      descent ? 0 : elevLoss,
       edge.distanceKm,
       this.bridge.level.trailerWeightKg || 0,
       !!run.plan.behindTruckMode
     );
-    const kwhBurned = (deltaKm / 100) * cons100;
+    const baseKwh = winterRoadEnergyKwh(
+      cons100, deltaKm, !!this.bridge.level.requiresWinterTires,
+      run.distanceDrivenKm, run.coldStart, run.snowploughUntilKm
+    );
+    const fromKm = run.legProgressKm;
     if (deltaKm > 0) {
-      run.legProgressKm = deltaKm === remainingKm ? boundaryKm : run.legProgressKm + deltaKm;
+      run.legProgressKm = deltaKm === remainingKm ? boundaryKm : fromKm + deltaKm;
     }
+    const downhill = descentState && alpineRoadEnergy(
+      descent, fromKm, run.legProgressKm, baseKwh, run.socPct, vehicle.batteryKwh, descentState.mode
+    );
+    const kwhBurned = downhill ? downhill.netKwh : baseKwh;
     run.distanceDrivenKm += deltaKm;
     run.energyUsedKwh += kwhBurned;
     run.socPct = Math.max(0, run.socPct - (kwhBurned / vehicle.batteryKwh) * 100);
     run.elapsedMinutes += simMinutes;
+    if (inTunnel && run.winterTunnel?.legIndex === run.currentLegIndex) run.winterTunnel.driveMinutes += simMinutes;
     run.bladderNeed = Math.min(100, run.bladderNeed + simMinutes * 0.35);
     run.hungerNeed = Math.min(100, (run.hungerNeed || 0) + simMinutes * 0.12);
 
@@ -815,10 +888,36 @@ export class AutobahnScene extends Phaser.Scene {
       return;
     }
 
+    if (descentState && downhill) descentState.recoveredKwh += downhill.recoveredKwh;
+    if (descentState && downhill && !descentState.overheated) {
+      descentState.brakeHeatM += downhill.brakeHeatM;
+      if (brakesOverheat(descentState.brakeHeatM)) {
+        descentState.overheated = true;
+        this.bridge.paused = true;
+        SoundFX.alert();
+        this.bridge.onAlpineEvent({ kind: 'overheat' });
+        return;
+      }
+    }
+
     if (pendingStop && run.legProgressKm >= stopKm) {
       this.bridge.paused = true;
       SoundFX.click();
       this.bridge.onTriggerChargerSegment(pendingStop.station);
+      return;
+    }
+
+    if (pass && run.legProgressKm >= passKm) {
+      this.bridge.paused = true;
+      SoundFX.alert();
+      this.bridge.onAlpineEvent({ kind: 'pass', name: pass.name });
+      return;
+    }
+
+    if (run.legProgressKm >= nextDescentKm) {
+      this.bridge.paused = true;
+      SoundFX.alert();
+      this.bridge.onAlpineEvent({ kind: 'descent' });
       return;
     }
 
@@ -828,7 +927,8 @@ export class AutobahnScene extends Phaser.Scene {
         run.paidTollLegIndices.push(run.currentLegIndex);
       }
       const preset = legSpec.citySegmentAtEnd;
-      if (preset === 'hannover_messe' || preset === 'aachen_finish' || preset === 'koeln_ring') {
+      if (preset === 'hannover_messe' || preset === 'aachen_finish' || preset === 'koeln_ring' ||
+          preset === 'innsbruck_finish' || preset === 'montpellier_finish') {
         this.bridge.paused = true;
         this.bridge.onTriggerCitySegment(preset);
         return;
@@ -842,13 +942,9 @@ export class AutobahnScene extends Phaser.Scene {
         this.bridge.onDynamicEventTrigger('evt_hotel_overnight');
         return;
       }
-      const arrivalId = `evt_south_arrival@${run.currentLegIndex}`;
-      if (legSpec.destinationAtEnd && !run.triggeredEventIds.includes(arrivalId)) {
-        run.triggeredEventIds.push(arrivalId);
-        this.eventCooldownSec = 4;
+      if (legSpec.destinationAtEnd) {
         this.bridge.paused = true;
-        SoundFX.alert();
-        this.bridge.onDynamicEventTrigger('evt_south_arrival');
+        this.bridge.onDestinationArrival();
         return;
       }
       if (run.currentLegIndex < activeLegs.length - 1) {
@@ -864,6 +960,15 @@ export class AutobahnScene extends Phaser.Scene {
         return;
       }
       this.bridge.onAutobahnHudTick(run);
+      return;
+    }
+
+    const winterEvent = nextWinterRoadEvent(this.bridge.level, run, edge);
+    if (winterEvent) {
+      run.triggeredEventIds.push(winterEvent);
+      this.bridge.paused = true;
+      SoundFX.alert();
+      this.bridge.onDynamicEventTrigger(winterEvent);
       return;
     }
 
@@ -981,7 +1086,8 @@ export class AutobahnScene extends Phaser.Scene {
     }
 
     this.hudTickAccum += dtSec;
-    if (this.hudTickAccum >= 0.12) this.updateHud(run, tailgateLead);
+    const enteredStopApproach = beforeStopApproach && stopKm - run.legProgressKm <= SKIP_PROMPT_KM;
+    if (enteredStopApproach || this.hudTickAccum >= 0.12) this.updateHud(run, tailgateLead);
   }
 
   private updateHud(run: RunState, tailgateLead: HighwayCar | null): void {

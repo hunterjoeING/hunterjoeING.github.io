@@ -1,8 +1,14 @@
 import { GameEventDef, WifeDialogueDef } from '../types';
+import { WINTER_EVENTS } from './winterEvents';
+import { SECTION_CONTROL_EVENT_ID, WINTER_TUNNEL } from '../sim/WinterTunnel';
 
-export const HOTEL_AC = { maxKw: 11, stayMinutes: 480, targetSocPct: 95, lodgingEur: 289 };
+export const HOTEL_AC = { maxKw: 11, stayMinutes: 960, targetSocPct: 95, lodgingEur: 289 };
+export const REST_AREA_STAY_MINUTES = 840;
+export const AUSTRIAN_VIGNETTE = { costEur: 11.5, minutes: 2 };
+const vignettePrice = `${AUSTRIAN_VIGNETTE.costEur.toFixed(2).replace('.', ',')} €`;
 
 export const GAME_EVENTS: Record<string, GameEventDef> = {
+  ...WINTER_EVENTS,
   evt_accident_help: {
     id: 'evt_accident_help',
     title: 'Auffahrunfall auf der Nebenspur',
@@ -205,22 +211,22 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
 
   evt_charger_defect: {
     id: 'evt_charger_defect',
-    title: 'Ladesäule defekt / blockiert!',
+    title: 'Ladesäule meldet eine Störung!',
     category: 'charger',
     icon: '🔌',
     description:
-      'Am angefahrenen Ladepark zeigt eine Säule „Störung – Kommunikation fehlgeschlagen“, und ein Verbrenner blockiert eine weitere Bucht.',
+      'Beim Anschließen meldet deine Ladesäule „Störung – Kommunikation fehlgeschlagen“. Die Hotline kann die Säule neu starten.',
     choices: [
       {
         id: 'wait_free_stall',
-        label: 'Auf freiwerdenden Nachbar-Stall warten & Hotline anrufen',
+        label: 'Hotline anrufen und auf Neustart warten',
         hint: '+11 Min Wartezeit · +6 Stress',
         timeDeltaMin: 11,
         socDeltaPct: 0,
         costDeltaEur: 0,
         stressDelta: 6,
         decisionPoints: 6,
-        resultText: 'Nach 11 Minuten fährt ein anderer E-Fahrer weg und du kannst anstecken.'
+        resultText: 'Nach 11 Minuten ist deine Ladesäule wieder bereit.'
       },
       {
         id: 'reroute_next_hub',
@@ -279,18 +285,18 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     category: 'toll',
     icon: '🎫',
     description:
-      'Vor der Landesgrenze benötigst du eine Autobahn-Vignette (11,50 €). Alternativ lockt eine mautfreie Passstraße.',
+      `Vor der Landesgrenze benötigst du eine Autobahn-Vignette (${vignettePrice}). Alternativ lockt eine mautfreie Passstraße.`,
     choices: [
       {
         id: 'buy_vignette',
-        label: 'Digitale Vignette kaufen (11,50 €)',
+        label: `Digitale Vignette kaufen (${vignettePrice})`,
         hint: 'Schnell & legal · keine Strafe',
-        timeDeltaMin: 2,
+        timeDeltaMin: AUSTRIAN_VIGNETTE.minutes,
         socDeltaPct: 0,
-        costDeltaEur: 11.5,
+        costDeltaEur: AUSTRIAN_VIGNETTE.costEur,
         stressDelta: -3,
         decisionPoints: 10,
-        resultText: 'Digital-Vignette in 2 Minuten aktiviert – freie Fahrt auf der Autobahn.'
+        resultText: `Digital-Vignette in ${AUSTRIAN_VIGNETTE.minutes} Minuten aktiviert – freie Fahrt auf der Autobahn.`
       },
       {
         id: 'skip_vignette',
@@ -431,13 +437,13 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     category: 'family',
     icon: '🏨',
     description:
-      'Der Fahrtag endet in {ORT}. Frau und Kinder wollen schlafen. Du wählst, wo die Nacht verbracht wird. Das sehr gute Hotel lädt das Auto über Nacht per AC auf.',
+      'Ihr macht in {ORT} über Nacht Halt. Wo wollt ihr schlafen? Im guten Hotel kann das Auto laden, während ihr euch im Spa und am Frühstücksbuffet erholt.',
     requiresFamily: true,
     choices: [
       {
         id: 'hotel_good',
-        label: 'Sehr gutes Hotel: AC über Nacht, Spa und Buffet',
-        hint: `${HOTEL_AC.lodgingEur} € · 8 Stunden · AC bis ${HOTEL_AC.maxKw} kW inklusive · Frühstück und Erholung`,
+        label: 'Sehr gutes Hotel mit AC, Spa und Buffet',
+        hint: `${HOTEL_AC.lodgingEur} € · ${HOTEL_AC.stayMinutes / 60} Stunden · AC bis ${HOTEL_AC.maxKw} kW inklusive · Spa und Frühstücksbuffet`,
         timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: 0,
         costDeltaEur: 0,
@@ -451,20 +457,20 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
       {
         id: 'hotel_budget',
         label: 'Budgethotel ohne Laden',
-        hint: '84 € · 8 Stunden · Stress neutral · Akku bleibt, wie er ist',
+        hint: `84 € · ${HOTEL_AC.stayMinutes / 60} Stunden · Stress neutral · Akku bleibt, wie er ist`,
         timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: 0,
         costDeltaEur: 0,
         lodgingDeltaEur: 84,
         stressDelta: 0,
         decisionPoints: 8,
-        resultText: 'Ein schlichtes Zimmer, ruhige Nacht, kein Spa und keine Wallbox. Die Stimmung bleibt, der Akku auch.'
+        resultText: 'Im schlichten Zimmer könnt ihr in Ruhe schlafen. Stimmung und Akkustand bleiben gleich.'
       },
       {
         id: 'sleep_car',
-        label: 'Im Auto an der Autobahn-Aire schlafen',
-        hint: '0 € · 8 Stunden · Stress steigt · 10 % Risiko auf Einbruch',
-        timeDeltaMin: HOTEL_AC.stayMinutes,
+        label: 'Im Auto am Rastplatz schlafen',
+        hint: `0 € · ${REST_AREA_STAY_MINUTES / 60} Stunden · Stress steigt · 10 % Risiko auf Einbruch`,
+        timeDeltaMin: REST_AREA_STAY_MINUTES,
         socDeltaPct: -2,
         costDeltaEur: 0,
         lodgingDeltaEur: 0,
@@ -473,7 +479,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         followUpEventId: 'evt_rest_area_robbery',
         followUpChance: 0.1,
         resultText:
-          'Kostenlos, aber eng und stickig. Frau und Kinder schlafen schlecht. Hoffentlich bleibt das Auto in der Nacht unangetastet.'
+          'Kostenlos, aber eng und stickig. Frau und Kinder schlafen schlecht. Hoffentlich bleibt das Auto während der Pause unangetastet.'
       }
     ]
   },
@@ -484,7 +490,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     category: 'police',
     icon: '🚨',
     description:
-      'Mitten in der Nacht: die Seitenscheibe ist eingeschlagen, die Geldbörse weg. Die Gendarmerie will ein Protokoll. Das kostet Geld, Nerven und Zeit.',
+      'Nach der Schlafpause ist die Seitenscheibe eingeschlagen und die Geldbörse weg. Die Gendarmerie will ein Protokoll. Das kostet Geld, Nerven und Zeit.',
     choices: [
       {
         id: 'file_report',
@@ -524,42 +530,6 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         decisionPoints: 4,
         resultText:
           'Hotline, Aktenzeichen, Gendarmerie. −500 € und zwei Stunden. Die Stimmung im Auto ist am Boden.'
-      }
-    ]
-  },
-
-  evt_south_arrival: {
-    id: 'evt_south_arrival',
-    title: 'Montpellier erreicht',
-    category: 'family',
-    icon: '🌊',
-    description:
-      'Das Mittelmeer ist da: Montpellier, Palmen, warmes Licht. Frau und Kinder wollen kurz raus, bevor die Rückfahrt nach Aachen beginnt.',
-    requiresFamily: true,
-    choices: [
-      {
-        id: 'promenade',
-        label: '20 Minuten ans Wasser mit der Familie',
-        hint: '+20 Min · Stress sinkt · dann Rückfahrt',
-        timeDeltaMin: 20,
-        socDeltaPct: 0,
-        costDeltaEur: 0,
-        pauseCostEur: 8,
-        hungerDelta: -20,
-        stressDelta: -14,
-        decisionPoints: 10,
-        resultText: 'Eis, ein Blick aufs Meer, kürzere Nerven. Danach geht es zurück Richtung Aachen.'
-      },
-      {
-        id: 'turn_now',
-        label: 'Sofort wenden und die Rückfahrt starten',
-        hint: '+3 Min · die Familie mault',
-        timeDeltaMin: 3,
-        socDeltaPct: 0,
-        costDeltaEur: 0,
-        stressDelta: 8,
-        decisionPoints: 2,
-        resultText: 'Kein Strand. Frau und Kinder sind enttäuscht, der Zeitplan bleibt straff.'
       }
     ]
   },
@@ -709,6 +679,33 @@ export function buildSpeedTrapEvent(ctx: { country: string; signKmh: number; act
         resultText: french ? 'Du lässt das Tempo stehen…' : 'Du hältst das Tempo…'
       }
     ]
+  };
+}
+
+export function buildSectionControlEvent(averageKmh: number): GameEventDef {
+  const { limitKmh } = WINTER_TUNNEL;
+  const { amountEur } = speedingFineEur('AT', averageKmh - limitKmh);
+  const average = Number(averageKmh.toFixed(1)) === limitKmh
+    ? `knapp über ${limitKmh}` : `bei ${averageKmh.toFixed(1).replace('.', ',')}`;
+  return {
+    id: SECTION_CONTROL_EVENT_ID,
+    title: 'Abschnittskontrolle im Tunnel',
+    category: 'police',
+    icon: '📸',
+    description: `Dein Schnitt im Tunnel lag ${average} km/h. Erlaubt sind ${limitKmh} km/h.`,
+    requiresSpeeding: true,
+    choices: [{
+      id: 'winter_section_control_ack',
+      label: 'Bußgeld bestätigen',
+      hint: `Bußgeld: ${amountEur} €`,
+      timeDeltaMin: 0,
+      socDeltaPct: 0,
+      costDeltaEur: 0,
+      fineDeltaEur: amountEur,
+      stressDelta: 8,
+      decisionPoints: -8,
+      resultText: `Die Abschnittskontrolle hat eine Überschreitung gemessen. Das Bußgeld beträgt ${amountEur} €.`
+    }]
   };
 }
 

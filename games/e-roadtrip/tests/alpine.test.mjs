@@ -1,0 +1,424 @@
+import assert from 'node:assert/strict';
+import { DomStub } from './dom-stub.mjs';
+import { createFixtures } from './fixtures.mjs';
+
+const graphicsNames = ['setDepth', 'fillStyle', 'fillRect', 'fillCircle', 'lineStyle', 'strokePoints', 'lineBetween', 'fillPoints', 'clear'];
+const graphics = Object.fromEntries(graphicsNames.map(name => [name, () => graphics]));
+const text = { setOrigin: () => text, setDepth: () => text };
+const painter = { add: { graphics: () => graphics, text: () => text } };
+
+export default function register(test, game) {
+  const {
+    alpineLeg, ALPINE_PASS_PRESET, chainCheckOccurs, CHAIN_CHECK_CHANCE,
+    BRAKE_COOLDOWN_MINUTES, BRAKE_OVERHEAT_STRESS, CHAIN_CHECK_FINE_EUR, CHAIN_CHECK_MINUTES, CHAIN_CHECK_STRESS,
+    CHAIN_FITTING_MINUTES, alpineRoadEnergy, brakesOverheat, downhillBraking, passGrip, passTravelHeading,
+    paintDrivingPlace, passRoadContains, passRoadPosition, passOnIce, passNavigation, vehicleCapsule, capsulesOverlap,
+    AlpinePassTraffic, buildPassRoad, passSample, passOffset, passVehiclePose, passOvertake, passFollowingCap,
+    getLevelById, WINTER_LEVEL_ID, getActiveRouteLegs, getEdgeById, createDefaultPlan, EventModal,
+    CityDriveScene, ERoadtripController, getChargerById, stopKey, predictLiveTripSoc, computeRouteSocBandSegments,
+    TRAFFIC_DEADLOCK_SEC
+  } = game;
+  const { mkRun, mkScene, carImage, near, route1, route2 } = createFixtures(game);
+  const level = getLevelById(WINTER_LEVEL_ID);
+  const routes = level.routeOptions.slice(1);
+  const mkPassRun = (route = routes[0], kind = 'pass') => {
+    const run = mkRun(level);
+    run.plan = createDefaultPlan(level, run.plan.vehicleId, route.id);
+    const legs = getActiveRouteLegs(level, run.plan);
+    run.currentLegIndex = Math.max(0, legs.findIndex(spec => alpineLeg(level.id, getEdgeById(spec.edgeId), spec)?.[kind]));
+    run.plan.plannedStops = [];
+    run.triggeredEventIds.push(...level.eventPoolIds);
+    run.activeWeather = 'snow';
+    const spec = legs[run.currentLegIndex];
+    const edge = getEdgeById(spec.edgeId);
+    return { run, spec, edge, ...alpineLeg(level.id, edge, spec) };
+  };
+
+  test('only Level 3 pass legs open the alpine preset and model large descents', () => {
+    for (const [i, name] of ['Fernpass', 'Jaufenpass'].entries()) {
+      const { edge, spec, pass } = mkPassRun(routes[i]);
+      assert.equal(pass.name, name);
+      assert.ok(pass.entryKm > 0 && pass.entryKm < edge.distanceKm);
+      const downhill = mkPassRun(routes[i], 'descent');
+      assert.ok(downhill.run.currentLegIndex > mkPassRun(routes[i]).run.currentLegIndex);
+      assert.ok(downhill.descent.endKm < downhill.edge.distanceKm);
+      assert.equal(downhill.descent.lossM, downhill.edge.elevationLossM);
+      assert.equal(alpineLeg(route1.id, edge, spec), undefined);
+      assert.equal(alpineLeg(route2.id, edge, spec), undefined);
+      const reversed = alpineLeg(level.id, edge, { ...spec, reverse: true });
+      assert.equal(reversed.pass, undefined);
+      assert.equal(reversed.descent?.lossM, i === 0 ? undefined : edge.elevationGainM);
+    }
+    const mainRoute = mkPassRun(level.routeOptions[0]);
+    assert.equal(mainRoute.pass, undefined);
+    assert.equal(mainRoute.descent, undefined);
+    const otherEdge = { ...mainRoute.edge, elevationLossM: 900 };
+    assert.equal(alpineLeg(level.id, otherEdge, mainRoute.spec).descent.lossM, 900);
+  });
+
+  test('both alpine layouts can be driven to the summit with the city vehicle and chain grip', () => {
+    for (const [i, name] of ['Fernpass', 'Jaufenpass'].entries()) {
+      const place = paintDrivingPlace(painter, { preset: ALPINE_PASS_PRESET, passName: name, mobile: !i, light: !!i });
+      const { spawn, targetZone, passRoad: road } = place;
+      assert.equal(place.passThrough, true);
+      assert.equal(place.zoneLabel, i ? 'Passausgang' : 'Passhöhe');
+      assert.equal(road.bends.length, i ? 5 : 3);
+      assert.equal(passOnIce(road, spawn), false);
+      assert.ok(road.ice.every(patch => passOnIce(road, patch.center)));
+
+      const scene = Object.assign(new CityDriveScene(), {
+        carSpeed: 130, player: carImage(spawn.x, spawn.y, spawn.rot), place,
+        worldW: place.worldW, worldH: place.worldH,
+        bridge: { paused: false, onPropertyDamage: assert.fail }
+      });
+      let seconds = 0;
+      const dt = 1 / 60;
+      for (; seconds < 90; seconds += dt) {
+        const { player } = scene;
+        if (player.x >= targetZone.left && player.x <= targetZone.right &&
+            player.y >= targetZone.top && player.y <= targetZone.bottom) break;
+        const { aim } = passNavigation(road, player);
+        const error = Math.atan2(aim.y - player.y, aim.x - player.x) + Math.PI / 2 - player.rotation;
+        const arc = Math.atan2(Math.sin(error), Math.cos(error));
+        const grip = passGrip(passOnIce(road, player), true);
+        const turn = Math.max(-2.75 * grip, Math.min(2.75 * grip, arc * 4));
+        assert.equal(scene.movePlayer(dt, turn, grip), true);
+      }
+      assert.ok(seconds >= 35 && seconds <= 90, `${name}: ${seconds} s`);
+      assert.ok(passRoadContains(road, vehicleCapsule(scene.player.x, scene.player.y, scene.player.rotation)));
+    }
+  });
+
+  test('Seeded black ice has irregular edges, and covers apexes, approaches and different lane widths', () => {
+    for (const name of ['Fernpass', 'Jaufenpass']) {
+      const road = buildPassRoad(name, 513);
+      assert.deepEqual(road, buildPassRoad(name, 513));
+      assert.notDeepEqual(road.ice, buildPassRoad(name, 174).ice);
+      for (const [entry, exit] of road.bends) {
+        assert.ok(road.ice.some(patch => patch.alongPx < entry && patch.alongPx > entry - 90));
+        assert.ok(road.ice.some(patch => Math.abs(patch.alongPx - (entry + exit) / 2) < (exit - entry) * 0.12));
+      }
+      const sizes = road.ice.map(({ vertices }) => {
+        const xs = vertices.map(p => p.x);
+        const ys = vertices.map(p => p.y);
+        return [Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)];
+      });
+      assert.ok(new Set(sizes.map(([w, h]) => Math.round(w / h * 10))).size >= 4);
+      assert.ok(new Set(road.ice.slice(1).map((p, i) => Math.round(p.alongPx - road.ice[i].alongPx))).size >= 5);
+      const laneContacts = road.ice.map(patch => [-33, 33].filter(side =>
+        passOnIce({ ice: [patch] }, passOffset(passSample(road, patch.alongPx), side))).length);
+      assert.ok(laneContacts.includes(1) && laneContacts.includes(2));
+      const patch = road.ice[0];
+      const extreme = patch.vertices.reduce((a, b) => a.x > b.x ? a : b);
+      assert.equal(passOnIce(road, patch.center), true);
+      assert.equal(passOnIce({ ice: [patch] }, { x: extreme.x + 0.2, y: extreme.y }), false);
+    }
+  });
+
+  test('The truck, oncoming traffic and warning triangle follow the pass seed and marked zones', () => {
+    const road = buildPassRoad('Jaufenpass', 51);
+    assert.deepEqual(road, buildPassRoad('Jaufenpass', 51));
+    const other = buildPassRoad('Jaufenpass', 195);
+    assert.notDeepEqual(road.truck, other.truck);
+    assert.notDeepEqual(road.oncoming, other.oncoming);
+    assert.notDeepEqual(road.breakdown, other.breakdown);
+    assert.ok(road.truck.speedKmh >= 25 && road.truck.speedKmh <= 35);
+    const truck = passVehiclePose(road, road.truck, 2);
+    assert.ok(truck.along > road.truck.startPx);
+    assert.equal(passFollowingCap(truck, truck.along - 85, 33), truck.speedPx);
+    assert.equal(passFollowingCap(truck, truck.along - 85, -33), Infinity);
+    assert.equal(passOvertake(road, truck.along, []).allowed, true);
+    assert.equal(passOvertake(road, road.bends[0][0] + 15, []).allowed, false);
+    const opposing = passVehiclePose(road, road.oncoming[0], 2);
+    assert.ok(opposing.along < road.oncoming[0].startPx);
+    assert.ok(passRoadPosition(road, opposing).side < -30);
+    assert.deepEqual(passOvertake(road, truck.along, [truck.along + 120]),
+      { inZone: true, conflict: true, allowed: false });
+    assert.equal(road.breakdown.speedKmh, 0);
+    assert.equal(road.breakdown.hazardLights, true);
+    assert.ok(road.breakdown.trianglePx < road.breakdown.startPx - 80);
+  });
+
+  test('The breakdown blocks the shoulder and uses the property damage rules', () => {
+    const place = paintDrivingPlace(painter, { preset: ALPINE_PASS_PRESET, passName: 'Jaufenpass', mobile: true });
+    const road = place.passRoad;
+    const car = passVehiclePose(road, road.breakdown, 0);
+    const sprite = Object.assign(carImage(), { setDepth() { return this; }, setTint() { return this; }, setVisible() { return this; } });
+    const passTraffic = new AlpinePassTraffic(road, { add: { graphics: () => graphics, image: () => sprite } });
+    const approaching = passSample(road, road.breakdown.startPx - 42);
+    const edge = passOffset(approaching, road.breakdown.sidePx - 3);
+    const damages = [];
+    const scene = Object.assign(new CityDriveScene(), {
+      place, passTraffic, worldW: place.worldW, worldH: place.worldH, carSpeed: 110,
+      player: carImage(edge.x, edge.y, car.rotation), physics: { world: { pause() {} } },
+      bridge: { paused: false, onPropertyDamage: damage => damages.push(damage) }
+    });
+    assert.equal(scene.movePlayer(1 / 60, 0), false);
+    assert.equal(damages[0].lossEur, 1300);
+    const bypass = passOffset(passSample(road, road.breakdown.startPx), 18);
+    scene.player.setPosition(bypass.x, bypass.y);
+    scene.bridge.paused = false;
+    scene.carSpeed = 40;
+    assert.equal(scene.movePlayer(1 / 60, 0), true);
+    assert.equal(damages.length, 1);
+  });
+
+  test('ice and missing chains reduce grip and the motion vector follows steering with a lag', () => {
+    assert.equal(passGrip(false, true), 1);
+    assert.ok(passGrip(true, false) < passGrip(false, false));
+    assert.ok(passGrip(true, false) < passGrip(true, true));
+    assert.ok(passGrip(true, true) < passGrip(false, true));
+    assert.ok(passGrip(false, false) < passGrip(false, true));
+    const icy = passTravelHeading(0, Math.PI / 2, passGrip(true, false), 1 / 60);
+    const chained = passTravelHeading(0, Math.PI / 2, passGrip(true, true), 1 / 60);
+    assert.ok(icy > 0 && icy < chained && chained < Math.PI / 2);
+    assert.ok(passTravelHeading(Math.PI - 0.05, -Math.PI + 0.05, 0.7, 0.1) > Math.PI - 0.05);
+  });
+
+  test('On both passes moving vehicles keep their progress through overlapping traffic and a breakdown', () => {
+    for (const name of ['Fernpass', 'Jaufenpass']) {
+      const road = buildPassRoad(name, 27);
+      const along = road.truck.startPx;
+      road.breakdown = { ...road.breakdown, startPx: along, sidePx: road.truck.sidePx };
+      road.oncoming = [{ ...road.oncoming[0], startPx: along, sidePx: road.truck.sidePx }];
+      const images = [];
+      const traffic = new AlpinePassTraffic(road, {
+        add: {
+          graphics: () => graphics,
+          image: () => {
+            const image = Object.assign(carImage(), {
+              setDepth() { return this; }, setTint() { return this; }, setVisible() { return this; }
+            });
+            images.push(image);
+            return image;
+          }
+        }
+      });
+      const [truck, opposing] = images;
+      const footprint = ({ x, y, rotation }) => vehicleCapsule(x, y, rotation);
+      assert.ok(capsulesOverlap(footprint(truck), footprint(opposing)));
+      assert.ok(capsulesOverlap(footprint(truck), traffic.parked));
+      for (let frame = 0; frame < TRAFFIC_DEADLOCK_SEC * 60; frame++) traffic.step(1 / 60);
+      assert.ok(!capsulesOverlap(footprint(truck), footprint(opposing)));
+      assert.ok(!capsulesOverlap(footprint(truck), traffic.parked));
+      assert.ok(!capsulesOverlap(footprint(opposing), traffic.parked));
+    }
+  });
+
+  test('guard rails use all static damage tiers and oncoming traffic uses accident handling', () => {
+    const place = paintDrivingPlace(painter, { preset: ALPINE_PASS_PRESET, mobile: true });
+    const notice = [];
+    const position = place.spawn;
+    const scene = Object.assign(new CityDriveScene(), {
+      player: carImage(position.x, position.y + 12.7, Math.PI), place,
+      bridge: { paused: false, onPropertyDamage: damage => notice.push(damage) },
+      physics: { world: { pause() {} } }
+    });
+    for (const [speed, euros] of [[59.99, 0], [60, 800], [110, 1300], [200, 5000]]) {
+      scene.bridge.paused = false;
+      scene.propertyContacts.clear();
+      scene.player.setPosition(position.x, position.y + 12.7).setRotation(Math.PI);
+      scene.carSpeed = speed;
+      assert.equal(scene.movePlayer(1 / 60, 0), false);
+      assert.equal(scene.carSpeed, 0);
+      if (euros) assert.equal(notice.at(-1).lossEur, euros);
+      else assert.equal(notice.length, 0);
+    }
+    assert.equal(notice.length, 3);
+
+    const run = mkRun(level);
+    scene.bridge = {
+      paused: false, runState: run, onPropertyDamage: assert.fail,
+      onCollisionEvent: info => assert.equal(info.kind, 'car')
+    };
+    scene.cameras = { main: { shake() {} } };
+    scene.player.setPosition(position.x, position.y).setRotation(position.rot);
+    scene.carSpeed = 110;
+    scene.trafficCars = [{ sprite: carImage(position.x + 30, position.y, -Math.PI / 2), route: {}, currentSpeed: 100 }];
+    assert.equal(scene.movePlayer(1 / 60, 0), false);
+    assert.equal(scene.bridge.paused, true);
+    assert.equal(run.collisionsCount, 1);
+  });
+
+  test('chain fitting takes two taps and reports completion once', () => {
+    const modal = new DomStub();
+    let fitted = 0;
+    new EventModal(modal).showChainFitting(CHAIN_FITTING_MINUTES, () => fitted++);
+    assert.match(modal.innerHTML, /Haltebucht · \+10 Min/);
+    const button = modal.querySelector('#chain-click');
+    button.click();
+    assert.match(button.textContent, /Rechte Kette/);
+    assert.equal(fitted, 0);
+    button.click();
+    button.click();
+    assert.equal(fitted, 1);
+  });
+
+  test('fitting costs 10 minutes and skipping can produce one fine, stress increase and delay', t => {
+    assert.equal(chainCheckOccurs(true, 0), false);
+    assert.equal(chainCheckOccurs(false, CHAIN_CHECK_CHANCE - 0.001), true);
+    assert.equal(chainCheckOccurs(false, CHAIN_CHECK_CHANCE), false);
+    const random = Math.random;
+    t.after(() => { Math.random = random; });
+    for (const [fit, checked] of [[true, false], [false, false], [false, true]]) {
+      Math.random = () => checked ? 0 : 1;
+      const { run, pass } = mkPassRun();
+      run.legProgressKm = pass.entryKm;
+      const drive = [];
+      let confirmFitting;
+      const controller = Object.assign(Object.create(ERoadtripController.prototype), {
+        level, bridge: { paused: true, runState: run },
+        drivingHUD: { clearTouchStates() {} },
+        enterCitySegment: preset => drive.push(preset),
+        enterAutobahn: () => drive.push('highway'),
+        eventModal: {
+          showDynamicEvent(event, choose, resume) {
+            if (event.id === 'evt_chain_requirement') choose(event.choices[Number(!fit)]);
+            else {
+              assert.equal(event.id, 'evt_chain_check');
+              assert.equal(checked, true);
+              choose(event.choices[0]);
+            }
+            resume();
+          },
+          showChainFitting(minutes, callback) {
+            near(minutes, 10);
+            confirmFitting = callback;
+          }
+        }
+      });
+      const initialStress = run.stress;
+      controller.handleAlpineEvent({ kind: 'pass', name: pass.name });
+      assert.equal(run.elapsedMinutes, 0);
+      if (fit) {
+        assert.deepEqual(drive, []);
+        confirmFitting();
+      }
+      assert.equal(run.alpinePass.chainsFitted, fit);
+      assert.deepEqual(drive, [ALPINE_PASS_PRESET]);
+      controller.handleCitySegmentComplete(ALPINE_PASS_PRESET, true);
+      controller.handleCitySegmentComplete(ALPINE_PASS_PRESET, true);
+      assert.deepEqual(drive, [ALPINE_PASS_PRESET, 'highway']);
+      assert.equal(run.incidentalCostEur, checked ? CHAIN_CHECK_FINE_EUR : 0);
+      assert.equal(run.elapsedMinutes, fit ? CHAIN_FITTING_MINUTES : checked ? CHAIN_CHECK_MINUTES : 0);
+      assert.equal(run.stress - initialStress, checked ? CHAIN_CHECK_STRESS : 0);
+      assert.equal(run.legProgressKm, pass.entryKm);
+    }
+  });
+
+  test('recuperation orders modes by strength, tapers at high SoC and sheds less brake heat with headroom', () => {
+    const lossM = 810;
+    const batteryKwh = 50.8;
+    const coast = downhillBraking(lossM, 40, batteryKwh, 'coast');
+    const normal = downhillBraking(lossM, 40, batteryKwh, 'normal');
+    const strong = downhillBraking(lossM, 40, batteryKwh, 'strong');
+    const nearFull = downhillBraking(lossM, 99, batteryKwh, 'strong');
+    assert.ok(strong.recoveredKwh > normal.recoveredKwh && normal.recoveredKwh > coast.recoveredKwh);
+    assert.ok(strong.brakeHeatM < normal.brakeHeatM && normal.brakeHeatM < coast.brakeHeatM);
+    assert.ok(nearFull.recoveredKwh < strong.recoveredKwh / 10);
+    assert.equal(downhillBraking(lossM, 100, batteryKwh, 'strong').recoveredKwh, 0);
+    assert.ok(downhillBraking(lossM, 99.9, 10, 'strong').recoveredKwh <= 0.01 + 1e-8);
+    assert.equal(brakesOverheat(coast.brakeHeatM), true);
+    assert.equal(brakesOverheat(normal.brakeHeatM), false);
+    assert.equal(brakesOverheat(nearFull.brakeHeatM), true);
+  });
+
+  test('grade recovery applies only within the descent and a depleted car cannot reach the downhill recovery', () => {
+    const { descent } = mkPassRun(routes[0], 'descent');
+    const { startKm, endKm } = descent;
+    const inDescent = alpineRoadEnergy(descent, startKm, endKm, 3, 40, 50.8, 'strong');
+    assert.ok(inDescent.netKwh < 0);
+    for (const [start, end, baseKwh, soc] of [
+      [0, startKm, 6, 50], [endKm, endKm + 2, 1, 50], [startKm - 10, endKm, 10, 2]
+    ]) {
+      const energy = alpineRoadEnergy(descent, start, end, baseKwh, soc, 50.8, 'strong');
+      assert.deepEqual(energy, { netKwh: baseKwh, recoveredKwh: 0, brakeHeatM: 0 });
+    }
+  });
+
+  test('At 15× the pass, descent and St. Leonhard exit trigger at exact route positions', () => {
+    const station = getChargerById('chg_passeier_ac');
+    const { run, pass } = mkPassRun(routes[1]);
+    const downhill = mkPassRun(routes[1], 'descent');
+    const { edge, descent } = downhill;
+    run.legProgressKm = pass.entryKm - 0.1;
+    let { scene, fired } = mkScene(level, run);
+    const modes = [];
+    const attachAlpine = () => {
+      scene.bridge.onAlpineEvent = event => { modes.push(event.kind); };
+    };
+    attachAlpine();
+    scene.update(50, 50);
+    assert.deepEqual(modes, ['pass']);
+    assert.equal(run.legProgressKm, pass.entryKm);
+    run.alpinePass = { legIndex: run.currentLegIndex, name: pass.name, chainsFitted: true, complete: true };
+    run.currentLegIndex = downhill.run.currentLegIndex;
+    run.plan.plannedStops.push({ chargerId: station.id, legIndex: run.currentLegIndex, targetSocPct: 95 });
+    run.legProgressKm = descent.startKm;
+    ({ scene, fired } = mkScene(level, run));
+    attachAlpine();
+    scene.update(100, 50);
+    assert.deepEqual(modes, ['pass', 'descent']);
+    assert.equal(run.legProgressKm, descent.startKm);
+    run.alpineDescent = { legIndex: run.currentLegIndex, mode: 'normal', recoveredKwh: 0, brakeHeatM: 0, overheated: false };
+    const descentState = run.alpineDescent;
+    scene.bridge.paused = false;
+    for (let i = 0; i < 50 && !scene.bridge.paused; i++) scene.update(150 + i * 50, 50);
+    assert.deepEqual(fired, [station.id]);
+    assert.equal(run.legProgressKm, edge.distanceKm * station.edgeProgress);
+    const previousHeat = descentState.brakeHeatM;
+    const previousRecovery = descentState.recoveredKwh;
+    assert.ok(previousHeat > 0 && previousRecovery > 0);
+
+    run.completedStopKeys.push(stopKey(run.currentLegIndex, station.id));
+    run.socPct = 95;
+    ({ scene, fired } = mkScene(level, run));
+    const controller = Object.assign(Object.create(ERoadtripController.prototype), {
+      bridge: scene.bridge, level,
+      drivingHUD: { clearTouchStates() {} },
+      eventModal: { showDynamicEvent(event, choose, resume) {
+        assert.equal(event.id, 'evt_brake_overheat');
+        const before = [run.elapsedMinutes, run.stress];
+        choose(event.choices[0]);
+        near(run.elapsedMinutes - before[0], BRAKE_COOLDOWN_MINUTES);
+        near(run.stress - before[1], BRAKE_OVERHEAT_STRESS);
+        resume();
+      } }
+    });
+    scene.bridge.onAlpineEvent = event => {
+      modes.push(event.kind);
+      controller.handleAlpineEvent(event);
+    };
+    const descentLegIndex = run.currentLegIndex;
+    for (let i = 0; i < 80 && run.currentLegIndex === descentLegIndex && !scene.bridge.paused; i++) {
+      scene.update(1150 + i * 50, 50);
+    }
+    assert.deepEqual(modes, ['pass', 'descent', 'overheat']);
+    assert.equal(descentState, run.alpineDescent);
+    assert.equal(descentState.overheated, true);
+    assert.ok(descentState.brakeHeatM > previousHeat && descentState.recoveredKwh > previousRecovery);
+    assert.equal(run.currentLegIndex, descentLegIndex + 1);
+    assert.deepEqual(fired, []);
+  });
+
+  test('live reserve uses Segeln before choice and reflects the chosen mode afterwards', () => {
+    const { run, descent } = mkPassRun(routes[1], 'descent');
+    run.legProgressKm = descent.startKm;
+    const stop = getChargerById('chg_passeier_ac');
+    run.plan.plannedStops.push({ chargerId: stop.id, legIndex: run.currentLegIndex, targetSocPct: 90 });
+    const conservative = predictLiveTripSoc(level, run).exactArrivalNextSocPct;
+    run.alpineDescent = { legIndex: run.currentLegIndex, mode: 'coast' };
+    assert.equal(predictLiveTripSoc(level, run).exactArrivalNextSocPct, conservative);
+    run.alpineDescent.mode = 'strong';
+    assert.ok(predictLiveTripSoc(level, run).exactArrivalNextSocPct > conservative);
+  });
+
+  test('the planning SoC band clips the route correctly as the battery recovers downhill', () => {
+    const { edge } = mkPassRun();
+    const sections = [{ startSocPct: 7, endSocPct: 20, fromProgress: 0.5, toProgress: 0.75, reachableStart: true }];
+    const [segment] = computeRouteSocBandSegments(edge, false, sections, 15, 10);
+    assert.equal(segment.startSocPct, 10);
+    assert.equal(segment.endSocPct, 15);
+    assert.ok(segment.points.length >= 2);
+  });
+}
