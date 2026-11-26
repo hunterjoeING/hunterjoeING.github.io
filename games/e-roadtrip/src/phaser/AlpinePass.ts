@@ -4,6 +4,7 @@ import type { Capsule, Point } from './CityCollision';
 import type { PlacePaint } from './PlacePainter';
 import { buildPassRoad, passOvertake, type PassLayout } from '../sim/AlpineHazards';
 import { PASS_HALF_WIDTH, PASS_LANE_OFFSET, passOffset, passRoadPosition, passSample } from '../sim/AlpineRoad';
+import { cityTravelLaneSpans, placeOnTravelLane } from '../sim/MappedCity';
 
 export type PassRoad = PassLayout;
 
@@ -77,6 +78,7 @@ export function paintAlpinePass(scene: Phaser.Scene, name: PassName, light: bool
 
   const start = path[4];
   const finish = path[path.length - 4];
+  const travelLanes = cityTravelLaneSpans([{ points: path }], false, PASS_LANE_OFFSET);
   if (road.summitPx !== undefined) {
     const summit = passOffset(passSample(road, road.summitPx), -90);
     scene.add.text(summit.x, summit.y, 'Jaufenpass · 2.094 m', {
@@ -94,7 +96,8 @@ export function paintAlpinePass(scene: Phaser.Scene, name: PassName, light: bool
   return {
     worldW, worldH, cityId: 'alpine_pass', autohof: false, passThrough: true, passRoad: road,
     grass: [], asphalt: [], buildings: [], trees, lamps: [], neons: [], zebras: [],
-    spawn: { ...passOffset(start, PASS_LANE_OFFSET), rot: Math.atan2(start.dy, start.dx) + Math.PI / 2 },
+    spawn: placeOnTravelLane({ ...start, rot: Math.atan2(start.dx, -start.dy) }, travelLanes),
+    travelLanes,
     targetZone: new Phaser.Geom.Rectangle(finish.x - 24, finish.y - PASS_HALF_WIDTH, 48, PASS_HALF_WIDTH * 2),
     zoneLabel: name === 'Jaufenpass' ? 'Passausgang' : 'Passhöhe', zoneColor: 0x4ade80, spinners: [], traffic: [], trafficJunctions: []
   };

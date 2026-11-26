@@ -79,6 +79,10 @@ class SoundFXManager {
     setTimeout(() => this.beep(520, 0.14, 'triangle', 0.09), 110);
   }
 
+  indicatorTick(): void {
+    this.beep(980, 0.03, 'square', 0.016);
+  }
+
   click(): void {
     if (window.ArcadeAudio) window.ArcadeAudio.click();
     else this.beep(560, 0.04, 'triangle', 0.07);

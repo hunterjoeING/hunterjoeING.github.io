@@ -1,6 +1,9 @@
 import * as Phaser from 'phaser';
 import type { CityLandmark, CityPoint, CityRect, MappedCityLayout } from '../data/cityLayouts/types';
-import { mappedCityLane, mappedCityWater, mappedCrosswalk, mappedRoadContains, mappedRoadSpans, type MappedRoadSpan } from '../sim/MappedCity';
+import {
+  cityTravelLaneSpans, laneSideOffset, MAPPED_CITY_LANE_OFFSET, mappedCityLane, mappedCityWater,
+  mappedCrosswalk, mappedRoadContains, mappedRoadSpans, type MappedRoadSpan
+} from '../sim/MappedCity';
 import { cityRectsOverlap, pointInCityRect } from '../sim/WinterCity';
 import { trafficRoute } from './CityLanes';
 import type { PlacePaint } from './PlacePainter';
@@ -194,8 +197,9 @@ export function paintMappedCity(
   scene: Phaser.Scene, layout: MappedCityLayout, art: LandmarkArt,
   options: { light: boolean; mobile: boolean; night: boolean; signedExit?: CityPoint; signLabel?: string; style?: MappedCityStyle }
 ): Pick<PlacePaint, 'worldW' | 'worldH' | 'cityId' | 'grass' | 'asphalt' | 'roadSurface' | 'buildings' |
-  'water' | 'slowZone' | 'trees' | 'lamps' | 'neons' | 'traffic' | 'trafficJunctions' | 'zebras' | 'signals' | 'litePeds' | 'cityMinimap'> {
-  const { width, height, landmarks, plazas, parks } = layout;
+  'water' | 'slowZone' | 'trees' | 'lamps' | 'neons' | 'traffic' | 'trafficJunctions' | 'zebras' | 'signals' | 'litePeds' |
+  'cityMinimap' | 'travelLanes'> {
+  const { width, height, landmarks, plazas, parks, drivesOnLeft } = layout;
   const { light, mobile, night, style } = options;
   const spans = mappedRoadSpans(layout.roads);
   const cobbledSpans = spans.filter(span => span.road.cobbled);
@@ -273,6 +277,7 @@ export function paintMappedCity(
 
   return {
     worldW: width, worldH: height, cityId: layout.id, grass: [ground], asphalt: plazas,
+    travelLanes: cityTravelLaneSpans(layout.roads, drivesOnLeft),
     roadSurface: point => mappedRoadContains(spans, point),
     slowZone: point => mappedRoadContains(cobbledSpans, point),
     cityMinimap: layout.roads, signals: layout.signals, water: mappedCityWater(layout, spans),
@@ -281,7 +286,8 @@ export function paintMappedCity(
       x, y, phase, color: nightGlow.color, roadX: nightGlow.reflection.x, roadY: nightGlow.reflection.y
     }] : []) : [],
     traffic: layout.traffic.map(({ path, speed, tex, cyclist, police }) =>
-      trafficRoute(tex, speed, mappedCityLane(path, cyclist ? 21 : 19), { isCyclist: cyclist, isPolice: police })),
+      trafficRoute(tex, speed, mappedCityLane(path, laneSideOffset(cyclist ? 21 : MAPPED_CITY_LANE_OFFSET, drivesOnLeft)),
+        { isCyclist: cyclist, isPolice: police })),
     litePeds: [...layout.peds, ...crossings.map(({ walk, sideA, sideB, sidewalkPathA, sidewalkPathB }) => ({
       tex: walk.tex, speed: 32, wps: sidewalkPathA,
       zebraLink: { zebraId: walk.id, sideA, sideB, sidewalkPathA, sidewalkPathB, onSideA: true, crossCooldownSec: 4 }

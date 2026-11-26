@@ -5,6 +5,7 @@ import {
   winterCityDrive, winterCityNavigator, winterCityWater
 } from '../sim/WinterCity';
 import { trafficRoute } from './CityLanes';
+import { cityTravelLaneSpans, laneSideOffset, placeOnTravelLane } from '../sim/MappedCity';
 import type { PlacePaint } from './PlacePainter';
 import { drawWinterLandmark } from './WinterCityLandmarks';
 
@@ -115,8 +116,10 @@ function paintBlocks(
   return { buildings, trees };
 }
 
-function paintTraffic({ path, speed, tex, cyclist }: CityTrafficSpec) {
-  const lane = cyclist ? 34 : 22;
+const WINTER_CITY_LANE_OFFSET = 22;
+
+function paintTraffic({ path, speed, tex, cyclist }: CityTrafficSpec, drivesOnLeft?: boolean) {
+  const lane = laneSideOffset(cyclist ? 34 : WINTER_CITY_LANE_OFFSET, drivesOnLeft);
   const offset = (from: CityPoint, to: CityPoint) => ({
     x: -Math.sign(to.y - from.y) * lane,
     y: Math.sign(to.x - from.x) * lane
@@ -136,6 +139,7 @@ export function paintWinterCity(
   const { layout } = drive;
   const { width, height } = layout;
   const spans = cityRoadSpans(layout.roads);
+  const travelLanes = cityTravelLaneSpans(layout.roads, layout.drivesOnLeft, WINTER_CITY_LANE_OFFSET);
   const streets = spans.map(cityRoadBounds);
   const asphalt = [...streets, drive.target];
   const canvas = rect(0, 0, width, height);
@@ -193,7 +197,8 @@ export function paintWinterCity(
       drive.target.x, drive.target.y, drive.target.w, drive.target.h
     ),
     zoneLabel: drive.label.replace(' · ', '\n'), zoneColor: 0x86efac, passThrough: drive.passThrough,
-    spawn: drive.spawn, spinners: [], traffic: layout.traffic.map(paintTraffic), trafficJunctions: [],
+    spawn: placeOnTravelLane(drive.spawn, travelLanes), travelLanes, spinners: [],
+    traffic: layout.traffic.map(spec => paintTraffic(spec, layout.drivesOnLeft)), trafficJunctions: [],
     litePeds: layout.peds,
     cityGuide: {
       snow: true, completionLabel: 'Auffahrt erreicht · Gute Fahrt!',

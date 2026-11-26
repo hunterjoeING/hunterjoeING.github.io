@@ -2,6 +2,27 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Ladeplanung ohne Vorauswahl
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `d2bddba`. `036d0ef`. Push ausstehend, Ziel ist der Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Die Ladeplanung startet auf allen Routen leer. Routenwechsel und „Neu“ löschen eingeplante Ladestopps. Die geladenen MG4-Referenzpläne für Level 3 ergeben weiterhin 402, 504 und 480 Minuten bei jeweils 30 % Ziel-SoC. Das Level-3-Ziel bleibt bei 564 Minuten. Bundle-Revision 13.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle und geänderte Tests, `npm test` (152/152), `git diff --check` und Versionsprüfung gegen `279202c`. Abgedeckt sind die leeren Pläne, „Neu“ mit Planungsanzeige und Kartenprognose, die Level-1/2-Vergleichswerte sowie Level-3-Warteschlange, Referenzwerte und Worker-Grenzen. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Fork-Spieltest für Ladeplanung und Kartenmarker bei 320 und 390 px in beiden Themes. Der lokale Browserstart wurde von der Sandbox blockiert. Commit, Push und Upstream-Merge folgen durch den Orchestrator.
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Winter-Alpenüberquerung bis Sirmione
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `1097f21`. SHA `bd76e26`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · München → Sirmione über Brenner, Fernpass/Reschen oder Jaufenpass. Drei erreichbare MG4-Standardpläne mit 402, 504 und 480 Minuten. Der Jaufenpass fährt beide Rampen, der Fernpass ist kürzer. Glatteis, Lkw, Gegenverkehr und eine Panne sind je Lauf reproduzierbar. An der Scaligerburg folgt die stressabhängige Ankunftsszene. Innsbrucker Layout, Wahrzeichen und Finale bleiben für später erhalten. Die Europakarte enthält den Gardasee mit trockener Halbinsel. Bundle-Revision 12.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für geänderte JavaScript-Dateien einschließlich Bundle, `npm test` (149/149; Orchestrator: 150/150 nach dem Badge-Fix), reproduzierbare Geodaten und Bundle, `git diff --check` und Versionsprüfung gegen `279202c`. Abgedeckt sind die unveränderten Level-1- und Level-2-Prognosen, die drei Level-3-Routen, Überholen über die Touch-Steuerung, die Finale-Eingaben bei 390 px und Desktop in Szenentests und die Worker-Grenzwerte. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen. Orchestrator: Beim Browser-Test fiel ein Start-Absturz auf (Provider-Badge `A2` ohne Ziffer-Glyph in `ChargerBadges.ts`); behoben, Test `charger-badges.test.mjs` ergänzt. Browser-Stichprobe (1280 und 390 px): Planungskarte, Kehren mit Glatteis, Lkw/Überholzone, Panne mit Warndreieck, Finale Sirmione.
+- **Offen** · Spieltest von Passfahrt und Finale im Fork in beiden Themes (hell/dunkel noch nicht getrennt geprüft). Beim Go-live wird der Worker mit dem Level-3-Ziel von 564 Minuten automatisch beim Merge nach `main` ausgerollt. Joe darüber informieren.
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Europakarte
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `eede53a`. SHA `dab304f`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Natural-Earth-Karte von Island und Gibraltar bis zum Schwarzen Meer und Ural. Planungs- und Live-Karte, Europa-Ansicht, Routen und Ladestationsmarker nutzen dieselbe Projektion. Stadtbeschriftungen weichen einander bei Zoom und Verschieben aus. Die North Coast 500 ist als Rundkurs eingezeichnet. Die Quelldaten der Stopps sind erhalten. Fünf küstennahe Kartenanker liegen leicht landeinwärts. Bundle-Revision 11.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Release-Datei, Generator und geänderte Tests, `npm test` (142/142), reproduzierbare Geodaten und Bundle, `git diff --check` und Versionsprüfung gegen `279202c`. Alle neun Fahrprognosen für Level 1–3 stimmen mit `eede53a` überein, einschließlich Distanz, Zeit, Maut und Energie. Karten- und Label-Tests laufen offline. Die Geodatei misst 80.748 Bytes, das Bundle 3.077.865 Bytes (gzip 802.863 Bytes). Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen. Orchestrator: Browser-Screenshots der Planungskarte (Level 1–3, 1280 und 390 px) und Schottland mit der North Coast 500 (1280 px) geprüft.
+- **Offen** · Spieltest der Karte auf dem Fork, insbesondere Schottland bei 390 px und beide Themes. Upstream-Merge nach Freigabe.
+
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Korrekturen aus dem Spieltest
 
 - **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `1ae937d`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)

@@ -964,6 +964,11 @@ class ERoadtripController {
       if (!station || !this.bridge.runState) return;
       this.bridge.runState.activeCityChargerId = station.id;
       this.enterCitySegment('charger_park', station.id);
+    } else if (kind === 'autohof-uk') {
+      const station = getChargerById('chg_cumbria_ac');
+      if (!station || !this.bridge.runState) return;
+      this.bridge.runState.activeCityChargerId = station.id;
+      this.enterCitySegment('charger_park', station.id);
     } else if (kind === 'autobahn') {
       this.enterAutobahn({ previewWeather: 'rain', previewRisk: 0.55, forceWorkZone: true });
     } else if (kind === 'traffic') {

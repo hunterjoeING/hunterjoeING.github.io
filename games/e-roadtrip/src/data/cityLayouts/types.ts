@@ -35,6 +35,7 @@ export interface CityTrafficSpec {
 
 export interface CityLayout {
   id: string;
+  drivesOnLeft?: boolean;
   width: number;
   height: number;
   roads: CityRoad[];

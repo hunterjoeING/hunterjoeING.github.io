@@ -6,7 +6,12 @@ import { aachenCityDrive, isAachenCity } from '../sim/AachenCity';
 import { isRegionalCity, regionalCityDrive } from '../sim/RegionalCity';
 import { regionalLandmarkArt } from './RegionalCityLandmarks';
 import { montpellierCityStyle, montpellierLandmarkArt } from './MontpellierLandmarks';
-import { mappedCityNavigator, mappedRoadSpans } from '../sim/MappedCity';
+import {
+  cityTravelLaneSpans, laneSideOffset, mappedCityNavigator, mappedRoadSpans, placeOnTravelLane,
+  type CityRoadPose, type TravelLaneSpan
+} from '../sim/MappedCity';
+import { getEdgeById } from '../data/europeMap';
+import { highwaySection } from '../sim/RoutePlanner';
 import { aachenLandmarkFootprint, drawAachenLandmark } from './AachenLandmarks';
 import { paintMappedCity } from './MappedCityPainter';
 import { isWinterCity } from '../sim/WinterCity';
@@ -75,12 +80,13 @@ export interface PlacePaint {
   chargingBays?: PaintedChargingBay[];
   arrivalBay?: ChargingBay;
   parkedVehicles?: Rect[];
-  spawn: { x: number; y: number; rot: number };
+  spawn: CityRoadPose;
+  travelLanes: TravelLaneSpan[];
   spinners: Phaser.GameObjects.Image[];
   traffic: TrafficRoute[];
   trafficJunctions: Rect[];
   litePeds?: LitePedestrian[];
-  previewPoint?: { x: number; y: number; rot: number };
+  previewPoint?: CityRoadPose;
 }
 
 export interface PaintedChargingBay extends ChargingBay {
@@ -120,7 +126,8 @@ export function paintDrivingPlace(
     }
     const { x, y, w, h } = drive.target;
     return {
-      ...place, autohof: false, passThrough: drive.passThrough, spawn: drive.spawn, spinners: [],
+      ...place, autohof: false, passThrough: drive.passThrough,
+      spawn: placeOnTravelLane(drive.spawn, place.travelLanes), spinners: [],
       targetZone: new Phaser.Geom.Rectangle(x, y, w, h),
       zoneLabel: aachen ? (aachen.passThrough ? aachen.motorway : 'Zuhause') : regional?.zoneLabel,
       zoneColor: regional?.zoneColor ?? 0x86efac,
@@ -426,12 +433,24 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
   for (let x = aisle.x + spur.w + 12; x < aisle.x + aisle.w - 34; x += 38) {
     g.fillRect(x, aisle.y + aisle.h / 2, 18, 2);
   }
-  const inboundX = laneCenter(spur, 'ns', 1);
-  const outboundX = laneCenter(spur, 'ns', -1);
-  const eastbound = laneCenter(motorway, 'ew', 1);
-  const westbound = laneCenter(motorway, 'ew', -1);
-  const aisleEast = laneCenter(aisle, 'ew', 1);
-  const aisleWest = laneCenter(aisle, 'ew', -1);
+  const edge = getEdgeById(station.edgeId);
+  const drivesOnLeft = highwaySection(edge, false, station.edgeProgress * edge.distanceKm).country === 'UK';
+  const laneFraction = 0.25;
+  const signedFraction = laneSideOffset(laneFraction, drivesOnLeft);
+  const inboundX = laneCenter(spur, 'ns', 1, signedFraction);
+  const outboundX = laneCenter(spur, 'ns', -1, signedFraction);
+  const eastbound = laneCenter(motorway, 'ew', 1, signedFraction);
+  const westbound = laneCenter(motorway, 'ew', -1, signedFraction);
+  const aisleEast = laneCenter(aisle, 'ew', 1, signedFraction);
+  const aisleWest = laneCenter(aisle, 'ew', -1, signedFraction);
+  const spurX = spur.x + spur.w / 2;
+  const motorwayY = motorway.y + motorway.h / 2;
+  const aisleY = aisle.y + aisle.h / 2;
+  const travelLanes = cityTravelLaneSpans([
+    { points: [{ x: motorway.x, y: motorwayY }, { x: motorway.x + motorway.w, y: motorwayY }], laneOffset: motorway.h * laneFraction },
+    { points: [{ x: spurX, y: motorwayY }, { x: spurX, y: aisleY }], laneOffset: spur.w * laneFraction },
+    { points: [{ x: spurX, y: aisleY }, { x: aisle.x + aisle.w, y: aisleY }], laneOffset: aisle.h * laneFraction }
+  ], drivesOnLeft);
   const traffic = [trafficRoute('npc_compact_green', 78, [
     { x: worldW + 60, y: westbound }, { x: worldW - 80, y: westbound, spawn: true },
     { x: -60, y: westbound }
@@ -505,11 +524,12 @@ function paintAutohof(scene: Phaser.Scene, station: ChargerStation, mobile: bool
     passThrough: false,
     chargingBays,
     parkedVehicles,
-    spawn: { x: apron.x + 130, y: apron.y + 52, rot: Math.PI },
+    spawn: placeOnTravelLane({ x: spurX, y: apron.y - 22, rot: Math.PI }, travelLanes),
+    travelLanes,
     spinners,
     traffic,
     trafficJunctions,
     litePeds,
-    previewPoint: { x: 48, y: apron.y + apron.h - 78, rot: Math.PI / 2 }
+    previewPoint: placeOnTravelLane({ x: spurX, y: apron.y - 34, rot: Math.PI }, travelLanes)
   };
 }

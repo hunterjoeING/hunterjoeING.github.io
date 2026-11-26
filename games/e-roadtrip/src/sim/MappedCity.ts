@@ -23,7 +23,7 @@ export function mappedCityWater(layout: MappedCityLayout, spans: MappedRoadSpan[
     })), layout.water);
 }
 
-export function projectToCityRoad(point: CityPoint, { a, b, length }: MappedRoadSpan) {
+export function projectToCityRoad(point: CityPoint, { a, b, length }: Pick<MappedRoadSpan, 'a' | 'b' | 'length'>) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / (length * length)));
@@ -113,7 +113,13 @@ export function mappedCityNavigator(spans: MappedRoadSpan[], goal: CityPoint) {
   };
 }
 
-/** Offset a lane in right-hand traffic, keeping adjacent corner offsets joined. */
+export const MAPPED_CITY_LANE_OFFSET = 19;
+
+export function laneSideOffset(offset: number, drivesOnLeft?: boolean): number {
+  return drivesOnLeft ? -offset : offset;
+}
+
+/** Positive offsets keep right, negative offsets keep left. Adjacent corners are joined. */
 export function mappedCityLane(path: CityPoint[], lane: number): CityPoint[] {
   const normal = (from: CityPoint, to: CityPoint) => {
     const x = to.x - from.x;
@@ -132,6 +138,66 @@ export function mappedCityLane(path: CityPoint[], lane: number): CityPoint[] {
     const miter = lane / Math.max(0.65, 1 + a.x * b.x + a.y * b.y);
     return { x: point.x + (a.x + b.x) * miter, y: point.y + (a.y + b.y) * miter };
   });
+}
+
+export interface CityRoadPose extends CityPoint { rot: number }
+
+export interface TravelLaneSpan {
+  a: CityPoint;
+  b: CityPoint;
+  length: number;
+  offset: number;
+  oneWay?: boolean;
+}
+
+export function cityTravelLaneSpans(
+  roads: { points: CityPoint[]; oneWay?: boolean; laneOffset?: number }[],
+  drivesOnLeft?: boolean, laneOffset = MAPPED_CITY_LANE_OFFSET
+): TravelLaneSpan[] {
+  return roads.flatMap(road => road.points.slice(1).flatMap((b, index) => {
+    const a = road.points[index];
+    const length = Math.hypot(b.x - a.x, b.y - a.y);
+    const offset = laneSideOffset(road.laneOffset ?? laneOffset, drivesOnLeft);
+    return length ? [{ a, b, length, offset, oneWay: road.oneWay }] : [];
+  }));
+}
+
+export function orientTravelLane(span: TravelLaneSpan, heading: number) {
+  const { a, b, length, offset, oneWay } = span;
+  const dx = (b.x - a.x) / length;
+  const dy = (b.y - a.y) / length;
+  const alignment = dx * Math.sin(heading) - dy * Math.cos(heading);
+  const forward = oneWay || alignment >= 0;
+  const [start, end] = forward ? [a, b] : [b, a];
+  const [laneStart, laneEnd] = mappedCityLane([start, end], offset);
+  return {
+    a: laneStart, b: laneEnd, length,
+    rot: Math.atan2(end.x - start.x, start.y - end.y),
+    alignment: forward ? alignment : -alignment
+  };
+}
+
+export function travelLanePoint(lane: ReturnType<typeof orientTravelLane>, along: number): CityRoadPose {
+  const t = along / lane.length;
+  return { x: lane.a.x + (lane.b.x - lane.a.x) * t, y: lane.a.y + (lane.b.y - lane.a.y) * t, rot: lane.rot };
+}
+
+const HEADING_PREFERENCE_PX = 32;
+
+/** Use the road axis nearest the anchor, favouring the intended heading at junctions. */
+export function placeOnTravelLane(spot: CityRoadPose, spans: TravelLaneSpan[]): CityRoadPose {
+  let pose = spot;
+  let best = Infinity;
+  for (const span of spans) {
+    const { offset } = projectToCityRoad(spot, span);
+    if (offset >= best) continue;
+    const lane = orientTravelLane(span, spot.rot);
+    const score = offset + (1 - lane.alignment) * HEADING_PREFERENCE_PX;
+    if (score >= best) continue;
+    pose = travelLanePoint(lane, projectToCityRoad(spot, lane).along);
+    best = score;
+  }
+  return pose;
 }
 
 export function mappedCrosswalk({ x, y, axis, width }: CityCrosswalk) {

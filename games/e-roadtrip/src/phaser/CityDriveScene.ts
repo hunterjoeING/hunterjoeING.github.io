@@ -32,7 +32,7 @@ import {
   vehicleCapsule
 } from './CityCollision';
 import {
-  capsuleOnRoad, COLLISION_GRACE_SEC, findCollisionRecoveryPoint, TRAFFIC_RECOVERY_RADIUS_PX
+  capsuleOnRoad, COLLISION_GRACE_SEC, findCollisionRecoveryPoint, RECOVERY_TRAFFIC_CLEARANCE_PX, TRAFFIC_RECOVERY_RADIUS_PX
 } from './CityCollisionRecovery';
 import { Rect } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
@@ -40,6 +40,9 @@ import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } fro
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
 
 type PropertyContact = Rect | Capsule | 'worldEdge' | 'passEdge' | 'water';
+type TurnSignal = -1 | 0 | 1;
+export const CITY_STOP_SPEED_PX_PER_SEC = 8;
+export const CITY_TURN_SIGNAL_HZ = 1.5;
 const CITY_PARKING_DWELL_SEC = 0.6;
 const SIGNAL_COLOR: Record<SignalPhase, number> = { green: 0x22c55e, amber: 0xfacc15, red: 0xef4444 };
 
@@ -49,6 +52,9 @@ export class CityDriveScene extends Phaser.Scene {
   private station?: ChargerStation;
 
   private player!: Phaser.GameObjects.Image;
+  private turnLamps?: { left: Phaser.GameObjects.Graphics; right: Phaser.GameObjects.Graphics };
+  private turnSignal: TurnSignal = 0;
+  private turnSignalPhase = 0;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private wasd!: Record<'W' | 'A' | 'S' | 'D' | 'SPACE' | 'H', Phaser.Input.Keyboard.Key>;
 
@@ -169,6 +175,9 @@ export class CityDriveScene extends Phaser.Scene {
     this.cityApproachReached = false;
     this.spinners = [];
     this.carSpeed = 0;
+    this.turnSignal = 0;
+    this.turnSignalPhase = 0;
+    this.turnLamps = undefined;
     this.travelHeading = undefined;
     this.dwellInTargetSec = 0;
     this.collisionGraceSec = 0;
@@ -240,6 +249,11 @@ export class CityDriveScene extends Phaser.Scene {
         x: this.player?.x || 0,
         y: this.player?.y || 0
       });
+      (debugWindow as Window & { __erZoom?: (zoom: number) => void }).__erZoom = (zoom: number) => {
+        this.previewLock = false;
+        this.cameras.main.startFollow(this.player, true, 1, 1);
+        this.cameras.main.setZoom(zoom);
+      };
     }
     this.targetZone = this.place.targetZone;
 
@@ -459,6 +473,29 @@ export class CityDriveScene extends Phaser.Scene {
   private spawnPlayer(): void {
     const spot = this.previewFx && this.place.previewPoint ? this.place.previewPoint : this.place.spawn;
     this.player = this.add.image(spot.x, spot.y, `car_${this.bridge.plan.vehicleId}`).setDepth(10).setRotation(spot.rot);
+    const lamps = (side: -1 | 1) => {
+      const x = side < 0 ? -12 : 7;
+      return this.add.graphics().setDepth(10.1).setVisible(false)
+        .fillStyle(0xf97316).fillRect(x, -23, 5, 4).fillRect(x, 19, 5, 4)
+        .fillStyle(0xffc15a).fillRect(x + 1, -22, 3, 2).fillRect(x + 1, 20, 3, 2);
+    };
+    this.turnLamps = { left: lamps(-1), right: lamps(1) };
+  }
+
+  private updateTurnSignal(signal: TurnSignal, dt: number): void {
+    const wasLit = !!this.turnSignal && this.turnSignalPhase < 0.5;
+    this.turnSignalPhase = signal && signal === this.turnSignal
+      ? (this.turnSignalPhase + dt * CITY_TURN_SIGNAL_HZ) % 1 : 0;
+    this.turnSignal = signal;
+    if (!this.turnLamps) return;
+    const lit = this.turnSignalPhase < 0.5;
+    this.turnLamps.left.setVisible(lit && signal === -1);
+    this.turnLamps.right.setVisible(lit && signal === 1);
+    if (lit && signal) {
+      const lamp = signal < 0 ? this.turnLamps.left : this.turnLamps.right;
+      lamp.setPosition(this.player.x, this.player.y).setRotation(this.player.rotation);
+      if (!wasLit) SoundFX.indicatorTick();
+    }
   }
 
   private hitsObstacle(shape: Capsule): boolean {
@@ -537,7 +574,7 @@ export class CityDriveScene extends Phaser.Scene {
     if (heading !== undefined) {
       this.collisionRecoveryHeading = undefined;
       this.collisionGraceSec = COLLISION_GRACE_SEC;
-      const origin = { x: this.player.x, y: this.player.y, rotation: this.player.rotation };
+      const origin = { x: this.player.x, y: this.player.y };
       const traffic = this.trafficCars.map(trafficShape);
       const pedestrians = this.pedestrians.map(ped => this.pedestrianShape(ped));
       const stopBoxes = [
@@ -545,17 +582,18 @@ export class CityDriveScene extends Phaser.Scene {
         ...this.place.trafficJunctions
       ];
       const { passRoad, roadSurface, asphalt } = this.place;
-      const point = findCollisionRecoveryPoint(origin, heading, Math.hypot(this.worldW, this.worldH), stopBoxes, shape => {
+      const point = findCollisionRecoveryPoint(origin, heading, this.place.travelLanes, stopBoxes, shape => {
         if (!capsuleInsideWorld(shape, this.worldW, this.worldH)) return false;
         const onRoad = passRoad ? passRoadContains(passRoad, shape) :
           capsuleOnRoad(shape, spot => !!roadSurface?.(spot) || asphalt.some(rect => pointInCityRect(spot, rect)));
-        return onRoad && !this.hitsObstacle(shape) && !this.passTraffic?.obstructs(shape) &&
-          !traffic.some(other => capsulesOverlap(shape, other)) &&
+        const trafficClearance = { ...shape, radius: shape.radius + RECOVERY_TRAFFIC_CLEARANCE_PX };
+        return onRoad && !this.hitsObstacle(shape) && !this.passTraffic?.obstructs(trafficClearance) &&
+          !traffic.some(other => capsulesOverlap(trafficClearance, other)) &&
           !pedestrians.some(rect => rect && capsuleOverlapsRect(shape, rect));
       });
       if (point) {
-        this.player.setPosition(point.x, point.y);
-        this.releasePropertyContacts(vehicleCapsule(point.x, point.y, origin.rotation));
+        this.player.setPosition(point.x, point.y).setRotation(point.rot);
+        this.releasePropertyContacts(vehicleCapsule(point.x, point.y, point.rot));
       }
       for (const car of this.trafficCars) {
         const nearby = [origin, this.player].some(({ x, y }) =>
@@ -1146,7 +1184,11 @@ export class CityDriveScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     const dt = Math.min(0.05, delta / 1000);
-    if (dt <= 0 || this.bridge.paused || this.completed) return;
+    if (this.bridge.paused || this.completed) {
+      this.updateTurnSignal(0, 0);
+      return;
+    }
+    if (dt <= 0) return;
     this.updateCollisionRecovery(dt);
     this.bumpFeedbackSec = Math.max(0, this.bumpFeedbackSec - dt);
     this.violationCooldownSec = Math.max(0, this.violationCooldownSec - dt);
@@ -1224,7 +1266,7 @@ export class CityDriveScene extends Phaser.Scene {
       const decel = (brake ? 1050 : 640) * grip * dt;
       this.carSpeed = this.carSpeed > 0 ? Math.max(0, this.carSpeed - decel) : Math.min(0, this.carSpeed + decel);
     }
-    if (Math.abs(this.carSpeed) < 8 && (brake || (!up && !down))) this.carSpeed = 0;
+    if (Math.abs(this.carSpeed) < CITY_STOP_SPEED_PX_PER_SEC && (brake || (!up && !down))) this.carSpeed = 0;
 
     if (passSituation && run) {
       const { cap, unsafe } = passSituation;
@@ -1239,19 +1281,27 @@ export class CityDriveScene extends Phaser.Scene {
       this.passUnsafeLane = unsafe;
     }
 
-    const steerFactor = Math.min(1, Math.abs(this.carSpeed) / 62);
+    const absSpeed = Math.abs(this.carSpeed);
+    const steerFactor = absSpeed < CITY_STOP_SPEED_PX_PER_SEC ? 0 : Math.min(1, absSpeed / 62);
     const dirSign = this.carSpeed >= -1 ? 1 : -1;
-    const turn = 2.75 * steerFactor * grip * dirSign * (Number(right) - Number(left));
+    const steering: TurnSignal = left === right ? 0 : left ? -1 : 1;
+    const turn = 2.75 * steerFactor * grip * dirSign * steering;
     // Begrenzte Teilschritte prüfen auch die gedrehte Karosserie an schmalen Hindernissen.
     const substeps = Math.ceil(dt * 60);
     const step = dt / substeps;
     let playerCanMove = true;
     for (let i = 0; i < substeps; i++) {
       if (playerCanMove) playerCanMove = this.movePlayer(step, turn, grip);
-      if (this.bridge.paused) return;
+      if (this.bridge.paused) {
+        this.updateTurnSignal(0, 0);
+        return;
+      }
       this.stepTraffic(step);
       this.passTraffic?.step(step);
-      if (this.bridge.paused) return;
+      if (this.bridge.paused) {
+        this.updateTurnSignal(0, 0);
+        return;
+      }
     }
 
     for (const spin of this.spinners) spin.rotation += dt * 1.7;
@@ -1280,6 +1330,7 @@ export class CityDriveScene extends Phaser.Scene {
     );
     if (violation) {
       this.triggerPoliceStop(violation);
+      this.updateTurnSignal(0, 0);
       return;
     }
 
@@ -1385,6 +1436,8 @@ export class CityDriveScene extends Phaser.Scene {
 
     this.updateCoastalLight?.(this.trafficTimer);
     this.updateNavigationAndArrival(dt, onIce);
+    const stopped = Math.abs(this.carSpeed) < CITY_STOP_SPEED_PX_PER_SEC;
+    this.updateTurnSignal(stopped && !this.completed && !this.bridge.paused && !this.previewFx ? steering : 0, dt);
   }
 
   private updateNavigationAndArrival(dt: number, onIce: boolean): void {
