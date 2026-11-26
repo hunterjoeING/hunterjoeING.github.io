@@ -5,7 +5,7 @@ import { alpineLeg } from '../sim/AlpineDriving';
 import { REGEN_MODES } from '../sim/AlpineDescent';
 import { buildRemainingRoute } from '../sim/RouteNavigation';
 import { getActiveRouteLegs, highwaySection, predictLiveTripSoc, snapSpeedKmh } from '../sim/RoutePlanner';
-import { formatClock, formatDrivingCosts } from './DrivingStatus';
+import { formatClock, formatConsumption, formatDrivingCosts } from './DrivingStatus';
 import { StopSkipCard, stopSkipCardHtml } from './StopSkipCard';
 import { speedSignHtml } from './speedSign';
 import {
@@ -299,7 +299,7 @@ export class DrivingHUD {
         speedSlider.value = String(chosen);
       }
     }
-    this.setHtml('soc', `<strong>${socRound}%</strong> (~${rangeEstKm} km · ${pred.consumptionKwh100.toFixed(1)} kWh/100)`);
+    this.setHtml('soc', `<strong>${socRound}%</strong> (~${rangeEstKm} km · ${formatConsumption(pred.consumptionKwh100, 'kWh/100')})`);
     this.setHtml(
       'pred',
       `<span>${pred.nextStopName} (${pred.distanceToNextKm} km):</span> <strong>Ankunft ${pred.predictedArrivalNextSocPct}%</strong>${

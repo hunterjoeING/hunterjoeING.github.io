@@ -25,7 +25,7 @@ import {
   snapSpeedKmh
 } from '../sim/RoutePlanner';
 import { speedSignHtml } from './speedSign';
-import { formatClock } from './DrivingStatus';
+import { formatClock, formatConsumption } from './DrivingStatus';
 import { getBestPriceForStation } from '../sim/EnergyModel';
 import { isProviderSubscribed } from '../phaser/MapLayout';
 import { SoundFX } from '../phaser/SoundFX';
@@ -346,7 +346,7 @@ export class PlanningUI {
       ${
         f.warnings.length > 0
           ? `<div class="forecast-warnings">${f.warnings.map(w => `<div>⚠️ ${w}</div>`).join('')}</div>`
-          : `<div class="forecast-ok">✅ Planung stabil · Min. SoC ${f.minSocEncountered}% · Schnitt ${f.avgConsumptionKwh100} kWh/100km</div>`
+          : `<div class="forecast-ok">✅ Planung stabil · Min. SoC ${f.minSocEncountered}% · Schnitt ${formatConsumption(f.avgConsumptionKwh100)}</div>`
       }
     `;
   }
@@ -434,7 +434,7 @@ export class PlanningUI {
               </div>
               <div class="vc-mid">
                 <div class="vc-stats">
-                  <span>⚡ ${v.baseConsumption100} kWh/100</span>
+                  <span>⚡ ${formatConsumption(v.baseConsumption100, 'kWh/100')}</span>
                   <span>🔌 AC ${v.acMaxKw} kW</span>
                   <span>🪝 ${v.towingCapacityKg > 0 ? v.towingCapacityKg + ' kg' : 'Kein Haken'}</span>
                   ${
@@ -579,7 +579,7 @@ export class PlanningUI {
                 </div>
               </div>
               <div class="leg-controls">
-                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> (max. ${sliderMax}) · Ø ${lf.cruiseKmh} km/h im Verkehr (${lf.consumptionKwh100} kWh/100km)</label>
+                <label>Zieltempo: <strong class="${overLimit ? 'speed-over-limit' : ''}" data-speed-readout="${lf.legIndex}"${overLimit ? ' title="über dem Temposchild"' : ''}>${speedVal} km/h</strong> (max. ${sliderMax}) · Ø ${lf.cruiseKmh} km/h im Verkehr (${formatConsumption(lf.consumptionKwh100)})</label>
                 <input type="range" class="leg-speed-slider${overLimit ? ' over-limit' : ''}" data-leg="${lf.legIndex}" data-sign="${signKmh}" min="${sliderMin}" max="${sliderMax}" step="5" value="${speedVal}"${overLimit ? ' title="über dem Temposchild"' : ''} />
                 ${riskBadge}
               </div>

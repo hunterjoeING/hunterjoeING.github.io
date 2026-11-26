@@ -8,6 +8,13 @@ export function formatClock(level: LevelConfig, elapsedMin: number): string {
   return `${hh}:${mm}`;
 }
 
+
+/** Consumption is always shown with one decimal and a point, as in the rest of the kWh UI. */
+export function formatConsumption(kwhPer100km: number, unit = 'kWh/100km'): string {
+  const value = Number.isFinite(kwhPer100km) ? kwhPer100km : 0;
+  return `${value.toFixed(1)} ${unit}`;
+}
+
 export function formatDrivingCosts(run: RunState): string {
   return totalRunCost(run).toFixed(2) + ' €';
 }

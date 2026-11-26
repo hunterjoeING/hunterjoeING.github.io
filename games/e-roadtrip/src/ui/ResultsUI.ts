@@ -4,6 +4,7 @@ import { LEVELS } from '../data/levels';
 import { getResaleValue } from '../sim/SaveState';
 import { shouldSubmit, SubmissionResult } from '../sim/Leaderboard';
 import { SoundFX } from '../phaser/SoundFX';
+import { formatConsumption } from './DrivingStatus';
 
 export interface ResultsCallbacks {
   onKeepCarAndReplay: (nextLevelId: string) => void;
@@ -70,7 +71,7 @@ export class ResultsUI {
             <p class="res-summary-line">
               ⏱️ Gesamtzeit: <strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong> (Ziel ${tHrs}h ${String(tMins).padStart(2, '0')}m) ·
               💶 Kosten: <strong>${result.totalCostEur.toFixed(2)} €</strong> ·
-              ⚡ Verbrauch: <strong>${result.avgConsumptionKwh100} kWh/100km</strong> ·
+              ⚡ Verbrauch: <strong>${formatConsumption(result.avgConsumptionKwh100)}</strong> ·
               😰 Stress-Peak: <strong>${result.peakStress}%</strong>
             </p>
             <p class="res-summary-line">

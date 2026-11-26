@@ -69,7 +69,7 @@ import { SirmioneFinaleScene } from './phaser/SirmioneFinaleScene';
 import { type AlpineEvent, ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI, DEFAULT_SHOW_ALL_CHARGERS } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
-import { formatClock, renderDriveStatus } from './ui/DrivingStatus';
+import { formatClock, formatConsumption, renderDriveStatus } from './ui/DrivingStatus';
 import { ChargingCompletePayload, EventModal } from './ui/EventModal';
 import { ResultsUI } from './ui/ResultsUI';
 import { SoundFX } from './phaser/SoundFX';
@@ -1423,7 +1423,7 @@ class ERoadtripController {
       <p><b>🏁 Prognose Endziel:</b> <strong>${livePred.predictedFinalSocPct}% SoC</strong></p>
       ${finalSocWithoutMesse === undefined ? '' : `<p><b>Bei belegtem Messeparkplatz:</b> ${finalSocWithoutMesse > 0 ? `${finalSocWithoutMesse}% SoC am Ziel` : 'Reichweite reicht nicht bis zum Ziel.'}</p>`}
       <p><b>Geplante verbleibende Ladestopps:</b> ${upcoming.length > 0 ? upcoming.join(', ') : 'Keine mehr bis zum Ziel'}</p>
-      <p><b>Prognose Schnittverbrauch:</b> ~${forecast.avgConsumptionKwh100} kWh/100km</p>
+      <p><b>Prognose Schnittverbrauch:</b> ~${formatConsumption(forecast.avgConsumptionKwh100)}</p>
     `;
     this.eventModal.showMapPeek(html, () => {
       this.bridge.paused = false;
