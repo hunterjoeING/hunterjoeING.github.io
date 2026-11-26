@@ -5,7 +5,7 @@ import { DomStub } from './dom-stub.mjs';
 
 export default function register(test, game) {
   const {
-    ERoadtripController, EventModal, ResultsUI, MontpellierFinaleScene, FINALE_DURATION_MS,
+    ERoadtripController, EventModal, ResultsUI, MontpellierFinaleScene, InnsbruckFinaleScene, FINALE_DURATION_MS,
     calculateOverallStress, hasRelaxedBeachFinale, evaluatePropertyDamage, evaluateRun, buildSubmission
   } = game;
   const { route1, route2, mkRun } = createFixtures(game);
@@ -25,6 +25,7 @@ export default function register(test, game) {
     const finished = [];
     let finale;
     const controller = Object.assign(Object.create(ERoadtripController.prototype), {
+      level: route2,
       bridge: { runState: run, paused: true, isLightTheme: () => true },
       drivingHUD: { setMode: mode => modes.push(mode) },
       stageWrapEl: new DomStub(),
@@ -47,11 +48,16 @@ export default function register(test, game) {
     assert.equal(finished.length, 1);
   });
 
-  test('The pixel finale fits both orientations, draws both branches, and finishes once by timer, key, or tap', () => {
-    for (const [relaxed, start, trigger] of [
-      [true, [320, 600], 'timer'], [false, [800, 260], 'tap'], [true, [390, 640], 'key']
+  test('The pixel finales fit both orientations and finish once by timer, key, or tap', () => {
+    for (const [Finale, light, start, trigger, expectedTitle] of [
+      [MontpellierFinaleScene, true, [320, 600], 'timer', 'MONTPELLIER'],
+      [MontpellierFinaleScene, false, [800, 260], 'tap', 'MONTPELLIER'],
+      [MontpellierFinaleScene, true, [390, 640], 'key', 'MONTPELLIER'],
+      [InnsbruckFinaleScene, true, [320, 600], 'tap', 'INNSBRUCK'],
+      [InnsbruckFinaleScene, false, [800, 260], 'key', 'INNSBRUCK'],
+      [InnsbruckFinaleScene, false, [390, 640], 'timer', 'INNSBRUCK']
     ]) {
-      const scene = new MontpellierFinaleScene();
+      const scene = new Finale();
       const frame = {
         setPosition(x, y) { Object.assign(this, { x, y }); },
         setScale(zoom) { this.zoom = zoom; }
@@ -65,23 +71,34 @@ export default function register(test, game) {
       let timeout;
       let finished = 0;
       const sky = [];
+      const labels = [];
       const scale = Object.assign(new EventEmitter(), { width: start[0], height: start[1] });
       const input = Object.assign(new EventEmitter(), { keyboard: new EventEmitter() });
       Object.assign(scene, {
-        add: { graphics, container: () => frame, text: () => ({ setOrigin() {} }) },
+        add: { graphics, container: () => frame, text(_x, _y, text) {
+          labels.push(text);
+          return { setOrigin() {} };
+        } },
         scale, input, events: new EventEmitter(),
         time: { delayedCall(ms, callback) { assert.equal(ms, FINALE_DURATION_MS); timeout = callback; } },
         cameras: { main: { setBackgroundColor: color => sky.push(color) } }
       });
-      scene.init({ relaxed, isLightTheme: () => relaxed, onComplete: () => { finished++; } });
+      scene.init({ relaxed: light, isLightTheme: () => light, onComplete: () => { finished++; } });
       scene.create();
+      assert.equal(labels[0], expectedTitle);
+      assert.match(labels[1], /Überspringen/);
       assert.equal(frame.zoom, Math.min(scale.width / 192, scale.height / 108));
       [scale.width, scale.height] = [scale.height, scale.width];
       scale.emit('resize');
       assert.equal(frame.zoom, Math.min(scale.width / 192, scale.height / 108));
       scene.update(0, 4200);
-      assert.equal(palette.includes(0xd94365), relaxed);
-      assert.equal(sky.at(-1), relaxed ? 0xead69f : 0x253550);
+      if (Finale === MontpellierFinaleScene) {
+        assert.equal(palette.includes(0xd94365), light);
+        assert.equal(sky.at(-1), light ? 0xead69f : 0x253550);
+      } else {
+        assert.ok(palette.includes(0xffe1a0));
+        assert.equal(sky.at(-1), light ? 0xb8d5e9 : 0x22334b);
+      }
       input.keyboard.emit('keydown', { key: 'Tab' });
       input.keyboard.emit('keydown', { key: 'Enter', repeat: true });
       assert.equal(finished, 0);

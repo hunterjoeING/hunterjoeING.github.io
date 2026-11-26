@@ -396,6 +396,7 @@ export interface RunState {
   snowploughUntilKm?: number;
   alpinePass?: { legIndex: number; name: PassName; chainsFitted: boolean; complete: boolean };
   alpineDescent?: { legIndex: number; mode: RegenMode; recoveredKwh: number; brakeHeatM: number; overheated: boolean };
+  winterTunnel?: { legIndex: number; driveMinutes: number; averageKmh?: number };
   chargingCostEur: number;
   subscriptionCostEur: number;
   tollsEur: number;
@@ -430,7 +431,7 @@ export interface RunState {
   speedTrap?: { country: string; signKmh: number; actualKmh: number };
   /** Temporary limit (Baustelle or French rain). Chosen cruise stays on the leg plan. */
   speedCapKmh?: number;
-  /** HUD label for speedCapKmh, e.g. Baustelle or Regen. */
+  /** HUD notice for a temporary road restriction or an upcoming tunnel. */
   speedCapLabel?: string;
   /** Transient: ein Pkw bremst das eigene Fahrzeug auf derselben linken Spur aus. */
   tailgateReady?: boolean;

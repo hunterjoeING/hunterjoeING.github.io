@@ -1,4 +1,5 @@
 import { LevelConfig, ScoringWeights } from '../types';
+import { TUNNEL_CLOSURE_EVENT_ID } from '../sim/WinterTunnel';
 
 export const DEFAULT_SCORING_WEIGHTS: ScoringWeights = {
   time: 0.30,
@@ -287,7 +288,7 @@ export const LEVELS: LevelConfig[] = [
         name: 'Route A · Inntal-Autobahn (A8 → A93 → A12)',
         shortLabel: 'Inntal A8/A12',
         highwaySummary: 'A8 Irschenberg → Kufstein → A12',
-        description: 'Gute EnBW- & IONITY-Dichte, aber Ski-Urlauberstau am Inntaldreieck + AT-Vignette.',
+        description: 'Viele Schnelllader, aber dichter Skiverkehr. Auf der A12 gilt die österreichische Vignettenpflicht.',
         elevationProfile: 'Hügelig',
         trafficRisk: 'Hoch',
         chargingDensity: 'Sehr dicht',
@@ -337,12 +338,17 @@ export const LEVELS: LevelConfig[] = [
     requiresWinterTires: true,
     scoringWeights: { time: 0.25, cost: 0.20, stress: 0.25, efficiency: 0.20, decisions: 0.10 },
     specialRulesSummary: [
-      'Schnee und Steigungen erhöhen den Verbrauch',
-      'Skiurlauber können Ladestopps verzögern'
+      'Vorwärmen kostet Zeit und Akku. Beim Kaltstart steigt zunächst der Verbrauch, und die Familie friert.',
+      'Bei Kettenpflicht kannst du vor den Kehren in der Bucht Schneeketten anlegen. Ohne Ketten droht eine Kontrolle.',
+      'Achte am Pass auf Glatteis und Gegenverkehr. Rempler am Schneerand können das Auto beschädigen.',
+      'Bergab bestimmst du die Rekuperation. Ein voller Akku nimmt wenig Energie auf, und die Bremsen können heiß werden.',
+      'Am Berglader kannst du bei einer Schlange warten, weiterfahren oder einen langsameren Ladepunkt wählen.',
+      'Die Abschnittskontrolle im Inntal-Tunnel misst das Durchschnittstempo. Bei Sperrung kannst du warten oder ausweichen.',
+      'Stau, Schneepflüge und Lawinensperren können die Route verzögern. Für die Inntal-Autobahn brauchst du eine Vignette.'
     ],
     briefingText:
-      'Ihr startet um 06:00 Uhr bei −8 °C am Marienplatz. Wähle die Inntal-Autobahn oder eine Passstraße zum Altstadt-Hotel in Innsbruck.',
-    eventPoolIds: ['evt_child_cold', 'evt_inntal_ski_jam', 'evt_vignette_check', 'evt_snowplough_convoy', 'evt_avalanche_closure'],
+      'Ihr startet um 06:00 Uhr bei −8 °C am Marienplatz. Schnee und Steigungen erhöhen den Verbrauch. Wähle die Inntal-Autobahn oder eine Passstraße. Parke am Altstadt-Hotel in Innsbruck. Danach folgen die Ankunftsszene und die Wertung.',
+    eventPoolIds: ['evt_child_cold', 'evt_inntal_ski_jam', 'evt_vignette_check', 'evt_snowplough_convoy', 'evt_avalanche_closure', TUNNEL_CLOSURE_EVENT_ID],
     wifeDialogueIds: ['dlg_diesel_remark']
   },
 

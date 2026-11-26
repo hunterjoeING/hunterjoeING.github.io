@@ -1,5 +1,6 @@
 import { GameEventDef, WifeDialogueDef } from '../types';
 import { WINTER_EVENTS } from './winterEvents';
+import { SECTION_CONTROL_EVENT_ID, WINTER_TUNNEL } from '../sim/WinterTunnel';
 
 export const HOTEL_AC = { maxKw: 11, stayMinutes: 480, targetSocPct: 95, lodgingEur: 289 };
 export const AUSTRIAN_VIGNETTE = { costEur: 11.5, minutes: 2 };
@@ -677,6 +678,33 @@ export function buildSpeedTrapEvent(ctx: { country: string; signKmh: number; act
         resultText: french ? 'Du lässt das Tempo stehen…' : 'Du hältst das Tempo…'
       }
     ]
+  };
+}
+
+export function buildSectionControlEvent(averageKmh: number): GameEventDef {
+  const { limitKmh } = WINTER_TUNNEL;
+  const { amountEur } = speedingFineEur('AT', averageKmh - limitKmh);
+  const average = Number(averageKmh.toFixed(1)) === limitKmh
+    ? `knapp über ${limitKmh}` : `bei ${averageKmh.toFixed(1).replace('.', ',')}`;
+  return {
+    id: SECTION_CONTROL_EVENT_ID,
+    title: 'Abschnittskontrolle im Tunnel',
+    category: 'police',
+    icon: '📸',
+    description: `Dein Schnitt im Tunnel lag ${average} km/h. Erlaubt sind ${limitKmh} km/h.`,
+    requiresSpeeding: true,
+    choices: [{
+      id: 'winter_section_control_ack',
+      label: 'Bußgeld bestätigen',
+      hint: `Bußgeld: ${amountEur} €`,
+      timeDeltaMin: 0,
+      socDeltaPct: 0,
+      costDeltaEur: 0,
+      fineDeltaEur: amountEur,
+      stressDelta: 8,
+      decisionPoints: -8,
+      resultText: `Die Abschnittskontrolle hat eine Überschreitung gemessen. Das Bußgeld beträgt ${amountEur} €.`
+    }]
   };
 }
 

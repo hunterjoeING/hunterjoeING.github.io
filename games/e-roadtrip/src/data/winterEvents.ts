@@ -2,6 +2,7 @@ import type { ChargerStation, EventChoice, GameEventDef } from '../types';
 import {
   COLD_START_KM, QUEUE_MINUTES_PER_CAR, SNOWPLOUGH_SPEED_KMH, winterStartEffects
 } from '../sim/WinterDriving';
+import { TUNNEL_CLOSURE_EVENT_ID, TUNNEL_DETOUR_CHOICE_ID } from '../sim/WinterTunnel';
 
 const precondition = winterStartEffects(true);
 
@@ -67,6 +68,19 @@ export const WINTER_EVENTS: Record<string, GameEventDef> = {
       choice('winter_avalanche_wait', 'Auf die Freigabe warten', '+25 Min · kein Mehrverbrauch',
         'Nach 25 Minuten gibt der Räumdienst die Passstraße wieder frei.',
         { timeDeltaMin: 25, stressDelta: 1, decisionPoints: 4 })
+    ]
+  },
+  [TUNNEL_CLOSURE_EVENT_ID]: {
+    id: TUNNEL_CLOSURE_EVENT_ID,
+    title: 'Tunnelsperrung im Inntal',
+    icon: '🚧',
+    category: 'traffic',
+    description: 'Die Ampel am Tunnelportal steht auf Rot. Ihr könnt auf die Freigabe warten oder über die Landstraße fahren.',
+    choices: [
+      choice('winter_tunnel_wait', 'Auf die Freigabe warten', '+18 Min Wartezeit',
+        'Nach 18 Minuten springt die Ampel auf Grün.', { timeDeltaMin: 18, stressDelta: 2 }),
+      choice(TUNNEL_DETOUR_CHOICE_ID, 'Der Umleitung folgen', '9 km Landstraße · 12 Min · braucht Akku',
+        'Hinter dem Tunnel fahrt ihr wieder auf die Autobahn.', { timeDeltaMin: 12, winterDetourKm: 9, stressDelta: 3 })
     ]
   }
 };

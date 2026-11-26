@@ -15,6 +15,7 @@ const modules = [
   'sim/ChargingBay', 'sim/RouteNavigation', 'sim/PropertyDamage',
   'sim/AlpineDriving', 'sim/AlpineDescent', 'data/alpineEvents', 'phaser/AlpinePass',
   'sim/WinterDriving', 'sim/WinterCharging', 'data/winterEvents',
+  'sim/WinterTunnel', 'phaser/DestinationFinale', 'phaser/InnsbruckFinaleScene',
   'sim/WinterCity', 'data/cityLayouts/muenchen', 'data/cityLayouts/innsbruck', 'phaser/CityTraffic',
   'phaser/CityCollision', 'phaser/MapLayout', 'phaser/AutobahnTraffic',
   'phaser/CityDriveScene', 'phaser/PlacePainter', 'phaser/AutobahnScene', 'phaser/MontpellierFinaleScene',
@@ -63,7 +64,7 @@ try {
   });
 
   const game = await import(pathToFileURL(bundle).href);
-  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'finale', 'winter', 'winter-city', 'alpine', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
+  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'finale', 'winter', 'winter-city', 'winter-tunnel', 'alpine', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
     const { default: register } = await import(`./${name}.test.mjs`);
     register(test, game);
   }

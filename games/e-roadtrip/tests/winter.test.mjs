@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import { DomStub } from './dom-stub.mjs';
 import { createFixtures } from './fixtures.mjs';
+import { validateEroadtripScore } from '../../../cloudflare-worker/worker.js';
 
 export default function register(test, game) {
   const {
-    buildSubmission, buildWinterQueueEvent, COLD_START_KM, createDefaultPlan, ERoadtripController,
-    evaluateRun, evaluateStopSkip, evaluateTripPlan, findWinterQueueAlternative, getActiveRouteLegs,
+    buildSubmission, buildWinterQueueEvent, chainFittingChoice, COLD_START_KM, createDefaultPlan, ERoadtripController,
+    evaluateStopSkip, evaluateTripPlan, findWinterQueueAlternative, getActiveRouteLegs,
     getChargerById, getEdgeById, getEventById, getLevelById, getVehicleById, getWifeDialogueById,
     nextWinterRoadEvent, PlanningUI, predictLiveTripSoc, SNOWPLOUGH_SPEED_KMH, stopKey, winterQueueCars,
     winterRoadEnergyKwh, winterStartEffects, WINTER_CITY_MINUTES, WINTER_LEVEL_ID, WINTER_START_EVENT
@@ -219,9 +220,13 @@ export default function register(test, game) {
     }
   });
 
-  test('all three winter routes forecast and finish with the starter EV and produce valid scores', () => {
+  test('all three default winter plans reach the Innsbruck finale and score within the worker bounds', t => {
+    t.mock.method(Math, 'random', () => 0.9);
+    window.requestAnimationFrame = callback => callback();
+    t.after(() => { delete window.requestAnimationFrame; });
     const scores = [];
-    for (const [index, route] of level.routeOptions.entries()) {
+    for (const [index, slowForTunnel] of [[0, true], [0, false], [1, false], [2, false]]) {
+      const route = level.routeOptions[index];
       const plan = createDefaultPlan(level, car, route.id);
       const legs = getActiveRouteLegs(level, plan);
       const forecast = evaluateTripPlan(level, plan);
@@ -246,14 +251,31 @@ export default function register(test, game) {
         hungerNeed: 22, bladderNeed: 10, currentSpeedKmh: plan.legPlans[0].targetSpeedKmh
       };
       const { scene, fired } = mkScene(level, run);
-      const controller = controllerWithRun(run);
-      controller.playDestinationFinale = assert.fail;
-      controller.finishLevel = clean => { assert.equal(clean, true); fired.push('innsbruck'); };
+      let finale;
+      let result;
+      const controller = Object.assign(controllerWithRun(run), {
+        save: { cashEur: 26000, unlockedLevelOrder: 3, completedLevels: {} },
+        eventModal: {
+          close() {},
+          showDynamicEvent(event, choose, resume) {
+            choose(event.choices[0]);
+            resume();
+          }
+        },
+        stageWrapEl: new DomStub(),
+        drivingHUD: { setMode() {}, clearTouchStates() {} }, stopAllGameplayScenes() {},
+        game: { scale: { refresh() {} }, scene: { start(key, data) { finale = { key, ...data }; } } },
+        resultsUI: { show(_level, _run, value) { result = value; } }
+      });
+      controller.bridge = scene.bridge;
+      controller.bridge.isLightTheme = () => false;
       controller.enterAutobahn = () => {};
       controller.handleCitySegmentComplete('muenchen_start', true);
       scene.bridge.onAlpineEvent = event => {
         fired.push(event.kind);
         if (event.kind === 'pass') {
+          const fitting = chainFittingChoice();
+          controller.applyEventChoice('Schneeketten', fitting);
           run.alpinePass = { legIndex: run.currentLegIndex, name: event.name, chainsFitted: true, complete: true };
         } else if (event.kind === 'descent') {
           run.alpineDescent = { legIndex: run.currentLegIndex, mode: 'strong', recoveredKwh: 0, brakeHeatM: 0, overheated: false };
@@ -265,27 +287,48 @@ export default function register(test, game) {
       scene.bridge.onDestinationArrival = assert.fail;
       scene.bridge.onDynamicEventTrigger = id => {
         fired.push(id);
+        if (id === game.SECTION_CONTROL_EVENT_ID) {
+          controller.handleDynamicEvent(id);
+          return;
+        }
         const event = getEventById(id);
         const choice = event.choices[index === 1 && id === 'evt_avalanche_closure' ? 1 : 0];
         controller.applyEventChoice(event.title, choice);
         scene.bridge.paused = false;
       };
-      for (let tick = 0; tick < 350 && !scene.bridge.paused; tick++) scene.update(tick * 50, 50);
+      for (let tick = 0; tick < 800 && !scene.bridge.paused; tick++) {
+        scene.update(tick * 50, 50);
+        if (slowForTunnel && run.speedCapLabel?.startsWith('Tunnel voraus')) {
+          plan.legPlans[0].targetSpeedKmh = game.WINTER_TUNNEL.limitKmh;
+        }
+      }
       assert.equal(fired.at(-1), 'innsbruck_finish', fired.join(', '));
       const arrivalMinutes = run.elapsedMinutes;
       controller.handleCitySegmentComplete('innsbruck_finish', true);
       assert.equal(run.elapsedMinutes, arrivalMinutes + WINTER_CITY_MINUTES.innsbruck_finish);
-      assert.equal(fired.at(-1), 'innsbruck', fired.join(', '));
+      assert.equal(finale.key, 'InnsbruckFinaleScene');
+      assert.equal(run.completed, undefined);
+      assert.equal(result, undefined);
+      finale.onComplete();
+      assert.equal(run.completed, true);
+      assert.equal(result.cleanArrival, true);
       assert.ok(!fired.includes('aachen_finish') && !fired.includes('leer'));
       assert.equal(run.tollsEur, forecast.tollsEur);
       assert.ok(index === 0 ? fired.includes('evt_vignette_check') : fired.includes('evt_avalanche_closure'));
       assert.equal(fired.includes('evt_child_cold'), index === 0);
+      assert.equal(fired.includes(game.SECTION_CONTROL_EVENT_ID), index === 0 && !slowForTunnel);
       assert.deepEqual(fired.filter(id => id === 'pass' || id === 'descent'), index === 0 ? [] : ['pass', 'descent']);
       assert.ok(run.socPct > 0);
       assert.ok(run.energyUsedKwh < getVehicleById(car).batteryKwh);
-      const result = evaluateRun(level, run, true);
-      assert.ok(buildSubmission(level, run, result));
-      scores.push(result.totalScore);
+      assert.ok(result.totalScore >= 0 && result.totalScore <= 1000);
+      assert.ok(result.totalMinutes >= 0.75 * level.targetArrivalMinutes &&
+        result.totalMinutes <= 1.25 * level.targetArrivalMinutes, `${route.id}: ${result.totalMinutes} min`);
+      const submission = buildSubmission(level, run, result);
+      assert.ok(submission);
+      assert.equal(validateEroadtripScore(level.boardId, submission), null);
+      assert.equal(validateEroadtripScore('eroadtrip', submission), null);
+      t.diagnostic(`${route.shortLabel}${slowForTunnel ? ' (80 km/h at tunnel approach)' : ''}: ${result.totalMinutes} min, ${result.totalScore} points`);
+      if (index !== 0 || slowForTunnel) scores.push(result.totalScore);
     }
     assert.ok(Math.max(...scores) - Math.min(...scores) <= 100, scores.join(', '));
   });

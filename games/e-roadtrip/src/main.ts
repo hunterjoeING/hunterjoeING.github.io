@@ -18,13 +18,16 @@ import {
 import { getLevelById } from './data/levels';
 import { getVehicleById } from './data/vehicles';
 import { getChargerById, getCityById, getEdgeById } from './data/europeMap';
-import { buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
+import { buildSectionControlEvent, buildSpeedTrapEvent, buildTailgateEvent, getEventById, getWifeDialogueById, randomMesseReport } from './data/events';
 import { BRAKE_OVERHEAT_EVENT, buildChainRequirement, CHAIN_CHECK_EVENT, chainFittingChoice, REGEN_EVENT } from './data/alpineEvents';
 import { ALPINE_PASS_PRESET, chainCheckOccurs } from './sim/AlpineDriving';
 import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
 import { isWinterCity, winterCityDrive, WINTER_CITY_MINUTES } from './sim/WinterCity';
+import {
+  SECTION_CONTROL_EVENT_ID, TUNNEL_CLOSURE_EVENT_ID, TUNNEL_DETOUR_CHOICE_ID, WINTER_TUNNEL
+} from './sim/WinterTunnel';
 import { findWinterQueueAlternative } from './sim/WinterCharging';
 import { newRunId, submitRun } from './sim/Leaderboard';
 import { applyPause, applyStress } from './sim/PauseEffects';
@@ -57,6 +60,7 @@ import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
 import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
+import { InnsbruckFinaleScene } from './phaser/InnsbruckFinaleScene';
 import { type AlpineEvent, ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI, DEFAULT_SHOW_ALL_CHARGERS } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
@@ -370,7 +374,7 @@ class ERoadtripController {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene, MontpellierFinaleScene]
+      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene, MontpellierFinaleScene, InnsbruckFinaleScene]
     };
 
     this.game = new Phaser.Game(config);
@@ -510,7 +514,7 @@ class ERoadtripController {
   }
 
   private stopAllGameplayScenes(): void {
-    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene', 'MontpellierFinaleScene'].forEach(k => {
+    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene', 'MontpellierFinaleScene', 'InnsbruckFinaleScene'].forEach(k => {
       const sc = this.game.scene.getScene(k);
       if (
         sc &&
@@ -1096,7 +1100,10 @@ class ERoadtripController {
   }
 
   private handleDynamicEvent(eventId: string): void {
-    const evt = getEventById(eventId);
+    const run = this.bridge.runState;
+    const average = run?.winterTunnel?.averageKmh;
+    const evt = eventId === SECTION_CONTROL_EVENT_ID && average !== undefined
+      ? buildSectionControlEvent(average) : getEventById(eventId);
     if (!evt) {
       this.bridge.paused = false;
       return;
@@ -1104,7 +1111,6 @@ class ERoadtripController {
     const trap = eventId === 'evt_speed_trap' ? this.bridge.runState?.speedTrap : undefined;
     const nudge = eventId === 'evt_tailgate' ? this.bridge.runState?.tailgateCase : undefined;
     const baseEvt = trap ? buildSpeedTrapEvent(trap) : nudge ? buildTailgateEvent(nudge.country, nudge.amountEur) : evt;
-    const run = this.bridge.runState;
     const hotelCharge = eventId === 'evt_hotel_overnight' && run
       ? estimateHotelCharge(getVehicleById(run.plan.vehicleId), run.socPct) : undefined;
     const place = eventId === 'evt_hotel_overnight' ? this.legArrivalCityName() : '';
@@ -1125,6 +1131,9 @@ class ERoadtripController {
       shown,
       choice => {
         const text = this.applyEventChoice(shown.title, choice);
+        if (eventId === TUNNEL_CLOSURE_EVENT_ID && run && choice.id === TUNNEL_DETOUR_CHOICE_ID) {
+          run.legProgressKm = WINTER_TUNNEL.endKm;
+        }
         if (eventId === 'evt_rest_area_robbery' && choice.fineDeltaEur && run?.overnightNote) {
           run.overnightNote += ` · Einbruch −${choice.fineDeltaEur.toFixed(0)} €, +${choice.timeDeltaMin / 60} h Polizei`;
         }
@@ -1370,25 +1379,22 @@ class ERoadtripController {
   }
 
   private handleDestinationArrival(cleanArrival = true): void {
-    if (this.level.id === WINTER_LEVEL_ID) {
-      this.finishLevel(cleanArrival);
-      return;
-    }
-    this.playDestinationFinale();
+    this.playDestinationFinale(cleanArrival);
   }
 
-  private playDestinationFinale(): void {
+  private playDestinationFinale(cleanArrival = true): void {
     const run = this.bridge.runState;
     if (!run || run.completed) return;
+    const winter = this.level.id === WINTER_LEVEL_ID;
     this.drivingHUD.setMode('hidden');
     resetTouchInput();
     this.stopAllGameplayScenes();
     this.stageWrapEl.classList.add('finale-active');
-    this.game.scene.start('MontpellierFinaleScene', {
-      relaxed: hasRelaxedBeachFinale(run),
+    this.game.scene.start(winter ? 'InnsbruckFinaleScene' : 'MontpellierFinaleScene', {
+      ...(winter ? {} : { relaxed: hasRelaxedBeachFinale(run) }),
       isLightTheme: this.bridge.isLightTheme,
       onComplete: () => {
-        if (this.bridge.runState === run) this.finishLevel(true);
+        if (this.bridge.runState === run) this.finishLevel(cleanArrival);
       }
     });
     window.requestAnimationFrame(() => this.game.scale.refresh());

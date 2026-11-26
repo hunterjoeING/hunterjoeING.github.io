@@ -82,7 +82,7 @@ const arcadeReleases = {
       app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Winterfahrt nach Innsbruck",
       author: "Michi", model: "Sol 6.2",
       highlights: [
-        "Neues Level 3: Winter-Alpenüberquerung mit Stadtfahrten durch München und Innsbruck, drei Routen und Hotelparkplatz am Ziel",
+        "Neues Level 3: Winter-Alpenüberquerung mit drei Routen, Passkehren, Tunnelfahrt und einem Finale in Innsbruck",
         "Level 2 endet nach der Hinfahrt mit einem neuen Finale in Montpellier",
         "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen. Rempler an Gebäuden und Säulen verursachen Wertverlust.",
         "Aufgeräumte Planungskarte, abgedunkelte Dialoge und ein Navi mit allen Straßen bis zum nächsten Halt. Unnötige Ladestopps lassen sich auslassen.",

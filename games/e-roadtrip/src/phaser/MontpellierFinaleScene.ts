@@ -1,17 +1,14 @@
 import * as Phaser from 'phaser';
+import {
+  type FinaleData, FINALE_WIDTH as WIDTH, FINALE_HEIGHT as HEIGHT, mountFinale
+} from './DestinationFinale';
 
-export const FINALE_DURATION_MS = 6500;
-const WIDTH = 192;
-const HEIGHT = 108;
-
-interface FinaleData {
+interface BeachFinaleData extends FinaleData {
   relaxed: boolean;
-  isLightTheme: () => boolean;
-  onComplete: () => void;
 }
 
 export class MontpellierFinaleScene extends Phaser.Scene {
-  private dataForFinale!: FinaleData;
+  private dataForFinale!: BeachFinaleData;
   private beach!: Phaser.GameObjects.Graphics;
   private actors!: Phaser.GameObjects.Graphics;
   private elapsed = 0;
@@ -21,7 +18,7 @@ export class MontpellierFinaleScene extends Phaser.Scene {
     super({ key: 'MontpellierFinaleScene' });
   }
 
-  init(data: FinaleData): void {
+  init(data: BeachFinaleData): void {
     this.dataForFinale = data;
     this.elapsed = 0;
     this.finished = false;
@@ -30,37 +27,9 @@ export class MontpellierFinaleScene extends Phaser.Scene {
   create(): void {
     this.beach = this.add.graphics();
     this.actors = this.add.graphics();
-    const title = this.add.text(96, 9, 'MONTPELLIER', {
-      fontFamily: 'monospace', fontSize: '10px', fontStyle: 'bold', color: '#fff9e8',
-      stroke: '#263756', strokeThickness: 2
-    }).setOrigin(0.5);
-    const skip = this.add.text(96, 101, 'Tippen oder Taste drücken · Überspringen', {
-      fontFamily: 'monospace', fontSize: '7px', color: '#fff9e8', backgroundColor: '#263756',
-      padding: { x: 3, y: 1 }
-    }).setOrigin(0.5);
-    const frame = this.add.container(0, 0, [this.beach, this.actors, title, skip]);
-    const layout = () => {
-      const { width, height } = this.scale;
-      const zoom = Math.min(width / WIDTH, height / HEIGHT);
-      frame.setPosition(Math.round((width - WIDTH * zoom) / 2), Math.round((height - HEIGHT * zoom) / 2));
-      frame.setScale(zoom);
-    };
-    layout();
-    this.scale.on('resize', layout);
-
-    const finish = (event?: KeyboardEvent) => {
-      if (this.finished || event?.repeat || event?.key === 'Tab') return;
+    mountFinale(this, 'MONTPELLIER', [this.beach, this.actors], () => {
       this.finished = true;
       this.dataForFinale.onComplete();
-    };
-    const tap = () => finish();
-    this.input.on('pointerup', tap);
-    this.input.keyboard?.on('keydown', finish);
-    this.time.delayedCall(FINALE_DURATION_MS, finish);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      this.scale.off('resize', layout);
-      this.input.off('pointerup', tap);
-      this.input.keyboard?.off('keydown', finish);
     });
     this.update(0, 0);
   }
