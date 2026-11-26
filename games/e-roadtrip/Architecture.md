@@ -448,4 +448,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-26** · `codex/eroadtrip-v0.6` · Level 3 Run C · `82abb4f` · Added the Innsbruck hotel finale and the Inntal tunnel with section control and closures. Updated the briefing and fork cache revisions and verified all three default routes against the worker score contract.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `b21ad68` · Aachen city rebuild with a shared north-up map, route-specific motorway exits and night parking in the Pontviertel.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `4ea71cd` · Replaced the remaining city grids with Hannover Messe, Köln and Hirtshals maps, including route-specific motorway guidance and the original parking and check-in triggers.
-- **2026-11-26** · `codex/eroadtrip-v0.6` · SHA: (folgt) · Removed the Level 1 Köln city drive. The north-up Köln map is kept for the Level 5 start.
+- **2026-11-26** · `codex/eroadtrip-v0.6` · `e130a68` · Removed the Level 1 Köln city drive. The north-up Köln map is kept for the Level 5 start.
