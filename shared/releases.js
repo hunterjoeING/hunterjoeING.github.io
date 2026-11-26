@@ -54,7 +54,7 @@ const arcadeReleases = {
     },
     {
       app: "arcade", version: "0.4.0", date: "2026-11-25", type: "feature", title: "Zwei interaktive 3D-Technik-Explainer",
-      author: "Joe",
+      author: "Joe", model: "Neon",
       highlights: [
         "Neuer 3D-Explainer „Windkraftanlage 3D“ unter Games mit Cutaway, X-Ray, Explosionsansicht und Leistungskurve",
         "Neuer 3D-Explainer „Verbrennungsmotor 3D“ mit 4-Takt-Kinematik, Prüfstandskurve und Schritt-für-Schritt-Tour",
@@ -63,7 +63,7 @@ const arcadeReleases = {
     },
     {
       app: "wind_turbine", version: "0.1.1", date: "2026-11-25", type: "patch", title: "Drehachse im Triebstrang & mobiles Menü",
-      author: "Joe",
+      author: "Joe", model: "Neon",
       highlights: [
         "Rotationsachse von Bremsscheibe, schneller Welle und Kupplung sowie Verzahnung im Getriebe und Blattausrichtung korrigiert",
         "Mobiles Steuerungsmenü hat jetzt einen festen Schließen-Knopf und schließt beim Tippen außerhalb",
@@ -71,7 +71,7 @@ const arcadeReleases = {
     },
     {
       app: "wind_turbine", version: "0.1.0", date: "2026-11-25", type: "feature", title: "Erste Version",
-      author: "Joe",
+      author: "Joe", model: "Neon",
       highlights: [
         "Interaktive 3,6-MW-Windkraftanlage in 3D mit Cutaway-Aufschnitt, X-Ray-Röntgenblick und Explosionsansicht mit 12 beschrifteten Baugruppen",
         "Windgeschwindigkeits-Regler (0–28 m/s) mit aktiver Pitch-Blattverstellung, verzahntem Getriebe und Sturmabschaltung",
@@ -80,14 +80,14 @@ const arcadeReleases = {
     },
     {
       app: "combustion_engine", version: "0.1.1", date: "2026-11-25", type: "patch", title: "Mobiles Steuerungsmenü schließen",
-      author: "Joe",
+      author: "Joe", model: "Neon",
       highlights: [
         "Mobiles Steuerungsmenü hat jetzt einen festen „Zurück zu 3D“-Knopf und schließt beim Tippen auf den Hintergrund oder per Escape",
       ],
     },
     {
       app: "combustion_engine", version: "0.1.0", date: "2026-11-25", type: "feature", title: "Erste Version",
-      author: "Joe",
+      author: "Joe", model: "Neon",
       highlights: [
         "Interaktiver 2,0-Liter-4-Takt-Reihenvierzylinder (DOHC 16V, Zündfolge 1-3-4-2) mit Cutaway, X-Ray und Explosionsansicht mit 12 Baugruppen",
         "Drehzahl- und Zeitlupensteuerung mit synchronen Kolben, Pleueln, 16 Ventilen, Zündfunken und volumetrischen Brennräumen",
