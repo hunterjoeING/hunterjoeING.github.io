@@ -21,13 +21,20 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2 mit Montpellier, Level 3, Stadtkarten, Nachtstart und Abendsonne, Spieltest-Korrekturen, Europakarte | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `dab304f` · kein PR | 🟡 Unveröffentlicht · Europakarte geprüft · Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Level 1 mit Stadtfahrten und Ladeplanung, Level 2 mit Montpellier und Nachtstart, Level 3 bis Sirmione, Europakarte und Spieltest-Korrekturen | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · letzter bekannter Fork-Stand `1097f21` · kein PR | 🟡 Unveröffentlicht · Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Winter-Alpenüberquerung bis Sirmione
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `1097f21`. SHA: (folgt). Änderungen im Arbeitsbaum. Push nein. Ziel ist der Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · München → Sirmione über Brenner, Fernpass/Reschen oder Jaufenpass. Drei erreichbare MG4-Standardpläne mit 402, 504 und 480 Minuten. Der Jaufenpass fährt beide Rampen, der Fernpass ist kürzer. Glatteis, Lkw, Gegenverkehr und eine Panne sind je Lauf reproduzierbar. An der Scaligerburg folgt die stressabhängige Ankunftsszene. Innsbrucker Layout, Wahrzeichen und Finale bleiben für später erhalten. Die Europakarte enthält den Gardasee mit trockener Halbinsel. Bundle-Revision 12.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für geänderte JavaScript-Dateien einschließlich Bundle, `npm test` (149/149), reproduzierbare Geodaten und Bundle, `git diff --check` und Versionsprüfung gegen `279202c`. Abgedeckt sind die unveränderten Level-1- und Level-2-Prognosen, die drei Level-3-Routen, Überholen über die Touch-Steuerung, die Finale-Eingaben bei 390 px und Desktop in Szenentests und die Worker-Grenzwerte. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Die Sandbox verhindert den lokalen Browserstart. Kartenansicht, Passfahrt und Finale im Fork bei 390 px und auf Desktop in beiden Themes spielen. Beim Go-live wird der Worker mit dem Level-3-Ziel von 564 Minuten automatisch beim Merge nach `main` ausgerollt. Joe darüber informieren.
 
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Europakarte
 
@@ -57,13 +64,5 @@
 - **Erledigt** · Level 2 startet nachts. Die Schlafpause liegt morgens nach Etappe 3, die weitere Fahrt am Nachmittag. Die Planung zeigt die Startzeit und bei erreichbarem Ladeplan die geschätzte Ankunft. Montpellier bleibt in der Stadtfahrt und beiden Strandszenen trocken und goldfarben. Beide Ankunftsvorschauen starten bei klarem Wetter. Die Lichter auf der Autobahn folgen weiter der Fahrzeit.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` auf Bundle und Tests, `npm test` (130/130), Versionsprüfung gegen `279202c`, `git diff --check`. Alle drei Standardprognosen liegen im Zeitfenster des unveränderten Workers. Acht erreichbare Ladepläne mit Abweichungen ergeben 17:11–20:30 Uhr. Vergleichsfahrten mit dem MG4 über Paris und hohen Ladezielen können später ankommen. Keine Anfrage an die Live-Wertung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen.
 - **Offen** · In beiden Themes bei 390 px Aachen bei Nacht und beide Montpellier-Anfahrten samt Parken und Strandszenen spielen.
-
-### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Stadtfahrt Montpellier
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `03f6c0f`. SHA `b47c48f`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Fork-Bundle nach dem Push geprüft, Issue/PR-Check: 0 offen. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Alle drei Level-2-Routen führen zum Strandhotel in Palavas. Route A nutzt Montpellier-Est über D66 und Carnon, Mitte und B kommen über A750, Montpellier-Sud und Lattes. Nach dem rückwärtigen Parken zeigt eine überspringbare Pixelszene die Familie am Strand. Danach folgen das bestehende Finale und die Level-2-Bestenliste. Verkehr, Schadensregeln, Navi und Beleuchtung nutzen die vorhandenen Systeme.
-- **Geprüft** · Typecheck, zwei bytegleiche Builds, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (126/126), `git diff --check` und Versionsprüfung gegen `279202c`. MG4-Standardpläne für A/Mitte/B: 1.049/1.073/1.139 Min, innerhalb der Worker-Grenzen bei 1.100 Min. Zielzeit und Worker bleiben gleich. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Nachbesserung Orchestrator** · Handy-Ansicht: Nach dem Wechsel von der Autobahn in eine Stadtfahrt blieb die Spielfläche auf der alten Höhe stehen (390 px: 338 statt 489 px, dunkle Balken oben und unten). Ursache: Phasers `refresh()` nutzt die zwischengespeicherte Elterngröße und liest sie danach still neu ein, dadurch erkennt die eigene Abfrage die Änderung nie. `main.ts` liest jetzt vor jedem Refresh die Bühnengröße neu ein (`refreshStageSize()`). Der Fehler bestand schon vorher, fiel bei Montpellier aber stärker auf. Bundle-Rev 8, SHA `e220286`.
-- **Offen** · Desktop- und Handy-Spieltest für beide Anfahrten, Parken und beide separat überspringbaren Szenen.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

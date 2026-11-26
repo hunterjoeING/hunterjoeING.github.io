@@ -5,7 +5,7 @@ import { DomStub } from './dom-stub.mjs';
 
 export default function register(test, game) {
   const {
-    ERoadtripController, EventModal, ResultsUI, MontpellierFinaleScene, InnsbruckFinaleScene, FINALE_DURATION_MS,
+    ERoadtripController, EventModal, ResultsUI, MontpellierFinaleScene, InnsbruckFinaleScene, SirmioneFinaleScene, FINALE_DURATION_MS,
     calculateOverallStress, hasRelaxedBeachFinale, evaluatePropertyDamage, evaluateRun, buildSubmission
   } = game;
   const { route1, route2, mkRun } = createFixtures(game);
@@ -55,7 +55,9 @@ export default function register(test, game) {
       [MontpellierFinaleScene, true, [390, 640], 'key', 'MONTPELLIER'],
       [InnsbruckFinaleScene, true, [320, 600], 'tap', 'INNSBRUCK'],
       [InnsbruckFinaleScene, false, [800, 260], 'key', 'INNSBRUCK'],
-      [InnsbruckFinaleScene, false, [390, 640], 'timer', 'INNSBRUCK']
+      [InnsbruckFinaleScene, false, [390, 640], 'timer', 'INNSBRUCK'],
+      ...[[390, 640], [1280, 720]].flatMap((size, i) => ['tap', 'key', 'timer'].map(trigger =>
+        [SirmioneFinaleScene, i === 0, size, trigger, 'SIRMIONE · GARDASEE']))
     ]) {
       const scene = new Finale();
       const frame = {
@@ -101,7 +103,7 @@ export default function register(test, game) {
         time: { delayedCall(ms, callback) { assert.equal(ms, FINALE_DURATION_MS); timeout = callback; } },
         cameras: { main: { setBackgroundColor: color => sky.push(color) } }
       });
-      scene.init({ relaxed: light, isLightTheme: () => light, onComplete: () => { finished++; } });
+      scene.init({ relaxed: light, carColor: 0x3980b5, isLightTheme: () => light, onComplete: () => { finished++; } });
       scene.create();
       assert.equal(labels[0], expectedTitle);
       assert.match(labels[1], /Überspringen/);
@@ -118,6 +120,11 @@ export default function register(test, game) {
         assert.ok(baked[0].includes(0xffecac));
         assert.equal(sparkles.length, start[0] < 640 ? 16 : 30);
         assert.notDeepEqual(sparkles.map(sprite => sprite.alpha), firstGlitter);
+      } else if (Finale === SirmioneFinaleScene) {
+        assert.ok(palette.includes(0xffe4a1));
+        assert.ok(palette.includes(0x3980b5));
+        assert.equal(palette.includes(0xbf4b48), true);
+        assert.equal(sky.at(-1), light ? 0xc9e5ec : 0x233e53);
       } else {
         assert.ok(palette.includes(0xffe1a0));
         assert.equal(sky.at(-1), light ? 0xb8d5e9 : 0x22334b);

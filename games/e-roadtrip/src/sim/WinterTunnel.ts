@@ -2,10 +2,10 @@ import type { LevelRouteLegSpec } from '../types';
 import { WINTER_LEVEL_ID } from './WinterDriving';
 
 export const WINTER_TUNNEL = {
-  edgeId: 'edge_muenchen_innsbruck',
-  approachKm: 135,
-  startKm: 138,
-  endKm: 143,
+  edgeId: 'edge_kufstein_innsbruck',
+  approachKm: 42,
+  startKm: 45,
+  endKm: 50,
   limitKmh: 80,
   simMinutesPerSecond: 0.6,
   closureChance: 0.12

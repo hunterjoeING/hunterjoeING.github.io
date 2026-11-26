@@ -57,9 +57,11 @@ export function nextWinterRoadEvent(level: LevelConfig, run: RunState, edge: Hig
   if (run.coldStart && level.passengers.childrenCount > 0 && run.distanceDrivenKm >= 10 && eligible(events.childCold)) {
     return events.childCold;
   }
-  if (edge.id === 'edge_muenchen_innsbruck') {
-    if (ratio >= 0.53 && eligible(events.vignette)) return events.vignette;
-    if (ratio >= 0.42 && eligible(events.inntalJam)) return events.inntalJam;
+  if (edge.id === 'edge_muenchen_inntaldreieck' && ratio >= 0.85 && eligible(events.inntalJam)) {
+    return events.inntalJam;
+  }
+  if (edge.id === 'edge_inntaldreieck_kufstein' && ratio >= 0.8 && eligible(events.vignette)) {
+    return events.vignette;
   }
   if (edge.isPassOption) {
     if (ratio >= 0.68 && eligible(events.avalanche)) return events.avalanche;

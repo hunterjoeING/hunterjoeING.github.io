@@ -624,7 +624,9 @@ export const LAKE_POLYGONS: number[][][] = [
   ["sLUC2FQ7UO8BTxQnjAEn"],
   ["sL8C1E0UoAFjdyifATtjFLMBZJgC"],
   ["mJ4E+JEBO68EjAGMAQDMAydk"],
-  ["sNsBkJkBPKsCFCg7uAMU3AEnABOfAU9P"]
+  ["sNsBkJkBPKsCFCg7uAMU3AEnABOfAU9P"],
+  ["1r0BqssCBRZlUAUqBkIRIF1ALTQFIg40ARwJEicaBRQsUgkEHR8XRxQlDC8FGSkpFzsMBTYUOh1qbQc9DikYGUIrJAc="],
+  ["js0Brs8CChgHPA8iiQHGAQkaGWwUBQIWCjYEDiFiLREXCxEVAR8HIBMMFwMTDwoHBwUHAxMBAAk8LwYLDy8UBQURCQkfBVArhgF3Jk1ATRY5"]
 ].map(polygon => polygon.map(decodeMapPath));
 
 export const RIVER_PATHS: number[][] = [

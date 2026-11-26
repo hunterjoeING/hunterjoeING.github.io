@@ -15,7 +15,9 @@ export const PROVIDER_ROAMING_EUR_PER_KWH: Record<ChargerNetwork, number> = {
   totalenergies: 0.75,
   ac_dorfladen: 0.29,
   atlante: 0.69,
-  vianeo: 0.72
+  vianeo: 0.72,
+  a22: 0.75,
+  neogy: 0.76
 };
 
 export function roamingPriceForProvider(provider: SubscriptionSpec['provider']): number | null {

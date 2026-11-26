@@ -3,6 +3,7 @@ import { CITY_COORDINATES } from './europeCityCoordinates';
 import { ROAD_COORDINATES } from './europeRoadCoordinates';
 import { projectMapPoint } from './europeGeography';
 import { getPointAlongEdge } from './europeMapPath';
+import { ALPS_TO_GARDA_CHARGERS, ALPS_TO_GARDA_EDGES, ALPS_TO_GARDA_STOPS } from './routes/alpsToGarda';
 
 const cityData: Omit<CityNode, 'mapX' | 'mapY'>[] = [
   // Core Germany & NRW / Niedersachsen
@@ -59,7 +60,7 @@ const cityData: Omit<CityNode, 'mapX' | 'mapY'>[] = [
   { id: 'basel', name: 'Basel', country: 'CH' },
   { id: 'gotthard', name: 'Gotthard', country: 'CH', isJunction: true },
   { id: 'reschen', name: 'Reschenpass', country: 'AT', isJunction: true },
-  { id: 'innsbruck', name: 'Innsbruck / Brenner', country: 'AT', landmark: 'alps', isMajor: true },
+  { id: 'innsbruck', name: 'Innsbruck', country: 'AT', landmark: 'alps', isMajor: true },
   { id: 'mailand', name: 'Mailand', country: 'IT', isMajor: true },
   { id: 'bozen', name: 'Bozen', country: 'IT' },
   { id: 'verona', name: 'Verona', country: 'IT' },
@@ -67,6 +68,8 @@ const cityData: Omit<CityNode, 'mapX' | 'mapY'>[] = [
   { id: 'bologna', name: 'Bologna', country: 'IT' },
   { id: 'florenz', name: 'Florenz', country: 'IT' },
   { id: 'rom', name: 'Rom', country: 'IT', landmark: 'colosseum', isMajor: true },
+
+  ...ALPS_TO_GARDA_STOPS,
 
   // Denmark & Scandinavia
   { id: 'esbjerg', name: 'Esbjerg', country: 'DK' },
@@ -470,71 +473,7 @@ const edgeData: Omit<HighwayEdge, 'waypoints'>[] = [
     defaultWeather: 'clear'
   },
 
-  // === LEVEL 3 (München -> Innsbruck / Brenner) ===
-  {
-    id: 'edge_muenchen_innsbruck',
-    fromCityId: 'muenchen',
-    toCityId: 'innsbruck',
-    highwayName: 'A8 / A93 / A12',
-    distanceKm: 165,
-    speedLimitKmh: 100,
-    roadSections: [
-      { fromKm: 0, country: 'DE', speedLimitKmh: 100 },
-      { fromKm: 93, country: 'AT', speedLimitKmh: 100 }
-    ],
-    elevationGainM: 780,
-    elevationLossM: 420,
-    baseTrafficRisk: 0.56,
-    policeRiskBase: 0.42,
-    tollEur: 12,
-    vignetteRequired: 'AT Vignette',
-    isTunnelOption: true,
-    defaultWeather: 'snow'
-  },
-  {
-    id: 'edge_muenchen_garmisch',
-    fromCityId: 'muenchen',
-    toCityId: 'garmisch',
-    highwayName: 'A95',
-    distanceKm: 92,
-    speedLimitKmh: 0,
-    elevationGainM: 480,
-    elevationLossM: 260,
-    baseTrafficRisk: 0.22,
-    policeRiskBase: 0.20,
-    tollEur: 0,
-    defaultWeather: 'snow'
-  },
-  {
-    id: 'edge_garmisch_innsbruck',
-    fromCityId: 'garmisch',
-    toCityId: 'innsbruck',
-    highwayName: 'B177 Zirler Berg',
-    distanceKm: 62,
-    speedLimitKmh: 80,
-    elevationGainM: 1180,
-    elevationLossM: 1290,
-    baseTrafficRisk: 0.16,
-    policeRiskBase: 0.30,
-    tollEur: 0,
-    isPassOption: true,
-    defaultWeather: 'snow'
-  },
-  {
-    id: 'edge_muenchen_achenpass_innsbruck',
-    fromCityId: 'muenchen',
-    toCityId: 'innsbruck',
-    highwayName: 'A8 / B307 Achenpass',
-    distanceKm: 148,
-    speedLimitKmh: 90,
-    elevationGainM: 940,
-    elevationLossM: 810,
-    baseTrafficRisk: 0.30,
-    policeRiskBase: 0.26,
-    tollEur: 0,
-    isPassOption: true,
-    defaultWeather: 'snow'
-  },
+  ...ALPS_TO_GARDA_EDGES,
 
   // === LEVEL 4 (Amsterdam -> Edinburgh / Highlands) ===
   {
@@ -2017,94 +1956,7 @@ const chargerData: Omit<ChargerStation, 'mapX' | 'mapY'>[] = [
     hasRestroom: true
   },
 
-  // === LEVEL 3 (Alps Winter) ===
-  {
-    id: 'chg_irschenberg_enbw',
-    name: 'EnBW HyperNetz Irschenberg',
-    cityHint: 'A8 Rosenheim / Inntal',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.42,
-    network: 'enbw',
-    stalls: 16,
-    maxKw: 300,
-    baseAdhocEurPerKwh: 0.72,
-    occupancyRisk: 0.35,
-    defectRisk: 0.05,
-    hasMcDonalds: true,
-    hasRestroom: true
-  },
-  {
-    id: 'chg_kufstein_ionity',
-    name: 'IONITY Angath / Kufstein',
-    cityHint: 'A12 Inntal (AT)',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.76,
-    network: 'ionity',
-    stalls: 6,
-    maxKw: 350,
-    baseAdhocEurPerKwh: 0.79,
-    occupancyRisk: 0.32,
-    defectRisk: 0.08,
-    winterQueue: true,
-    hasRestroom: true
-  },
-  {
-    id: 'chg_kufstein_ac',
-    name: 'AC-Ladepunkt Angath / Kufstein',
-    cityHint: 'A12 Inntal (AT)',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.77,
-    network: 'ac_village',
-    stalls: 4,
-    maxKw: 22,
-    baseAdhocEurPerKwh: 0.42,
-    occupancyRisk: 0.12,
-    defectRisk: 0.02,
-    isAcOnly: true
-  },
-  {
-    id: 'chg_mittenwald_ac',
-    name: 'Alpen-Dorflader Mittenwald AC',
-    cityHint: 'Zirler Berg Passstraße',
-    edgeId: 'edge_garmisch_innsbruck',
-    edgeProgress: 0.48,
-    network: 'ac_village',
-    stalls: 2,
-    maxKw: 22,
-    baseAdhocEurPerKwh: 0.65,
-    occupancyRisk: 0.25,
-    defectRisk: 0.12,
-    isAcOnly: true
-  },
-  {
-    id: 'chg_achenkirch_enbw',
-    name: 'EnBW / TIWAG Achenkirch',
-    cityHint: 'Achenpass B307',
-    edgeId: 'edge_muenchen_achenpass_innsbruck',
-    edgeProgress: 0.62,
-    network: 'enbw',
-    stalls: 4,
-    maxKw: 150,
-    baseAdhocEurPerKwh: 0.72,
-    occupancyRisk: 0.20,
-    defectRisk: 0.08,
-    winterQueue: true,
-    hasRestroom: true
-  },
-  {
-    id: 'chg_achenkirch_ac',
-    name: 'AC-Ladepunkt Achenkirch Dorf',
-    cityHint: 'Achenpass B307',
-    edgeId: 'edge_muenchen_achenpass_innsbruck',
-    edgeProgress: 0.63,
-    network: 'ac_village',
-    stalls: 4,
-    maxKw: 22,
-    baseAdhocEurPerKwh: 0.42,
-    occupancyRisk: 0.12,
-    defectRisk: 0.02,
-    isAcOnly: true
-  },
+  ...ALPS_TO_GARDA_CHARGERS,
 
   // === LEVEL 4 (Scotland Highlands) ===
   {
@@ -2686,34 +2538,6 @@ const chargerData: Omit<ChargerStation, 'mapX' | 'mapY'>[] = [
     hasRestroom: true
   },
   {
-    id: 'chg_holzkirchen_tesla',
-    name: 'Tesla Supercharger Weyarn / Holzkirchen',
-    cityHint: 'A8 Oberbayern',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.24,
-    network: 'tesla',
-    stalls: 16,
-    maxKw: 250,
-    baseAdhocEurPerKwh: 0.66,
-    occupancyRisk: 0.12,
-    defectRisk: 0.02,
-    hasRestroom: true
-  },
-  {
-    id: 'chg_brenner_tesla',
-    name: 'Tesla Supercharger Innsbruck / Brenner-Nord',
-    cityHint: 'A12 / A13 Inntal (AT)',
-    edgeId: 'edge_muenchen_innsbruck',
-    edgeProgress: 0.90,
-    network: 'tesla',
-    stalls: 16,
-    maxKw: 250,
-    baseAdhocEurPerKwh: 0.64,
-    occupancyRisk: 0.14,
-    defectRisk: 0.02,
-    hasRestroom: true
-  },
-  {
     id: 'chg_montabaur_tesla',
     name: 'Tesla Supercharger Mogendorf / Montabaur',
     cityHint: 'A3 Westerwald',
@@ -2924,7 +2748,7 @@ const chargerData: Omit<ChargerStation, 'mapX' | 'mapY'>[] = [
 export const CHARGERS: ChargerStation[] = chargerData.map(station => {
   const { x, y, angleRad } = getPointAlongEdge(getEdgeById(station.edgeId), station.edgeProgress);
   // Place a nearby AC alternative beside the main road so the two pins remain distinguishable.
-  const offset = station.id === 'chg_kufstein_ac' || station.id === 'chg_achenkirch_ac' ? 6 : 0;
+  const offset = station.id === 'chg_kufstein_ac' ? 6 : 0;
   return { ...station, mapX: x - Math.sin(angleRad) * offset, mapY: y + Math.cos(angleRad) * offset };
 });
 

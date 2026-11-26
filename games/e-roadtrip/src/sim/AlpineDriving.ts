@@ -13,9 +13,14 @@ export const PASS_GRIP = {
   ice: { fitted: 0.78, bare: 0.34 }
 } as const;
 
-const PASSES: Partial<Record<string, { name: PassName; climb: number; descent: [number, number] }>> = {
-  edge_garmisch_innsbruck: { name: 'Zirler Berg', climb: 0.55, descent: [0.73, 0.93] },
-  edge_muenchen_achenpass_innsbruck: { name: 'Achenpass', climb: 0.45, descent: [0.58, 0.70] }
+const PASSES: Partial<Record<string, { name: PassName; climb: number }>> = {
+  edge_garmisch_fernpass: { name: 'Fernpass', climb: 0.68 },
+  edge_sterzing_jaufenpass: { name: 'Jaufenpass', climb: 0.72 }
+};
+
+const DESCENT_WINDOWS: Partial<Record<string, [number, number]>> = {
+  edge_jaufenpass_meran: [0, 0.62],
+  edge_reschenpass_meran: [0.18, 0.82]
 };
 
 export const ALPINE_DESCENT_MIN_LOSS_M = 800;
@@ -30,7 +35,7 @@ export function alpineLeg(levelId: string, edge: HighwayEdge, spec: LevelRouteLe
   if (levelId !== WINTER_LEVEL_ID) return;
   const pass = spec.reverse ? undefined : PASSES[edge.id];
   const lossM = spec.reverse ? edge.elevationGainM : edge.elevationLossM;
-  const [start, end] = pass?.descent ?? [0.55, 0.85];
+  const [start, end] = (!spec.reverse && DESCENT_WINDOWS[edge.id]) || [0.55, 0.85];
   const descent: DescentProfile | undefined = lossM < ALPINE_DESCENT_MIN_LOSS_M ? undefined : {
     startKm: start * edge.distanceKm,
     endKm: end * edge.distanceKm,

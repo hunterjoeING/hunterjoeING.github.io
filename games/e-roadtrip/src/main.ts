@@ -65,7 +65,7 @@ import { CityDriveScene } from './phaser/CityDriveScene';
 import { computeCityLightingProfile } from './phaser/CityTraffic';
 import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
 import { MontpellierBeachArrivalScene } from './phaser/MontpellierBeachArrivalScene';
-import { InnsbruckFinaleScene } from './phaser/InnsbruckFinaleScene';
+import { SirmioneFinaleScene } from './phaser/SirmioneFinaleScene';
 import { type AlpineEvent, ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI, DEFAULT_SHOW_ALL_CHARGERS } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
@@ -86,7 +86,9 @@ function createDefaultProviderFilter(): ProviderFilterMap {
     totalenergies: true,
     ac_dorfladen: true,
     atlante: true,
-    vianeo: true
+    vianeo: true,
+    a22: true,
+    neogy: true
   };
 }
 
@@ -382,7 +384,7 @@ class ERoadtripController {
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
       scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene, MontpellierBeachArrivalScene,
-        MontpellierFinaleScene, InnsbruckFinaleScene]
+        MontpellierFinaleScene, SirmioneFinaleScene]
     };
 
     this.game = new Phaser.Game(config);
@@ -530,7 +532,7 @@ class ERoadtripController {
 
   private stopAllGameplayScenes(): void {
     ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene', 'MontpellierBeachArrivalScene',
-      'MontpellierFinaleScene', 'InnsbruckFinaleScene'].forEach(k => {
+      'MontpellierFinaleScene', 'SirmioneFinaleScene'].forEach(k => {
       const sc = this.game.scene.getScene(k);
       if (
         sc &&
@@ -548,7 +550,7 @@ class ERoadtripController {
     this.drivingHUD.setMode('city');
     const titleMap = {
       charger_park: 'Ladepark → Freie Ladebucht',
-      alpine_pass: `${this.bridge.runState?.alpinePass?.name ?? 'Alpenpass'} → Passhöhe`
+      alpine_pass: this.bridge.runState?.alpinePass?.name ?? 'Alpenpass'
     };
     const run = this.bridge.runState;
     if (run) {
@@ -699,10 +701,11 @@ class ERoadtripController {
       const pass = run.alpinePass;
       if (!pass || pass.complete) return;
       pass.complete = true;
+      const landmark = pass.name === 'Jaufenpass' ? 'Passausgang' : 'Passhöhe';
       run.incidentLog.push({
         timeStr: formatClock(this.level, run.elapsedMinutes),
-        title: `${pass.name} · Passhöhe`,
-        detail: cleanArrival ? 'Passhöhe erreicht.' : 'Passhöhe nach einem Zwischenfall erreicht.',
+        title: `${pass.name} · ${landmark}`,
+        detail: cleanArrival ? `${landmark} erreicht.` : `${landmark} nach einem Zwischenfall erreicht.`,
         impact: cleanArrival ? 'positive' : 'negative'
       });
       if (chainCheckOccurs(pass.chainsFitted, Math.random())) {
@@ -1441,7 +1444,7 @@ class ERoadtripController {
     this.stopAllGameplayScenes();
     this.stageWrapEl.classList.add('finale-active');
     const finale = {
-      ...(winter ? {} : { relaxed: hasRelaxedBeachFinale(run) }),
+      relaxed: hasRelaxedBeachFinale(run),
       isLightTheme: this.bridge.isLightTheme,
       onComplete: () => {
         if (this.bridge.runState === run) this.finishLevel(cleanArrival);
@@ -1457,8 +1460,12 @@ class ERoadtripController {
           this.game.scene.start('MontpellierFinaleScene', finale);
         }
       });
+    } else if (winter) {
+      this.game.scene.start('SirmioneFinaleScene', {
+        ...finale, carColor: getVehicleById(run.plan.vehicleId).primaryColor
+      });
     } else {
-      this.game.scene.start(winter ? 'InnsbruckFinaleScene' : 'MontpellierFinaleScene', finale);
+      this.game.scene.start('MontpellierFinaleScene', finale);
     }
     window.requestAnimationFrame(() => this.refreshStageSize());
   }

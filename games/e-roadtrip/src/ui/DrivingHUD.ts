@@ -217,7 +217,8 @@ export class DrivingHUD {
       : highwaySection(edge, !!leg.reverse, run.legProgressKm, run.activeWeather, run.countryLimitKmh).signKmh;
     const catalog = [70, 80, 100, 110, 120, 130, 150, 175];
     const speeds = [...catalog.filter(s => s < sliderMax), sliderMax];
-    const shellKey = `${this.mode}|${sliderMax}`;
+    const onPass = this.mode === 'city' && run.alpinePass && !run.alpinePass.complete;
+    const shellKey = `${onPass ? 'pass' : this.mode}|${sliderMax}`;
     if (this.shellKey !== shellKey) {
       this.shellKey = shellKey;
       const speedButtons = speeds
@@ -276,7 +277,8 @@ export class DrivingHUD {
       </div>
       <div class="dhud-controls">
         <div class="dhud-city-hint">
-          🎮 Stadtfahrt: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b>&nbsp;hupen · Ampeln, Radler &amp; Kinder beachten!
+          🎮 ${onPass ? 'Passfahrt' : 'Stadtfahrt'}: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b>&nbsp;hupen
+          · ${onPass ? 'Gestrichelte Linie zum Überholen beachten!' : 'Ampeln, Radler &amp; Kinder beachten!'}
         </div>
       </div>`;
       const stopCard = this.mode === 'autobahn' ? this.hudEl.querySelector<HTMLElement>('.dhud-stop-card') : null;

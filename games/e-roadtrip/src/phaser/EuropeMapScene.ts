@@ -68,7 +68,9 @@ const NET_COLORS: Record<string, number> = {
   totalenergies: 0xe10600,
   ac_dorfladen: 0xd97706,
   atlante: 0x0f766e,
-  vianeo: 0x0284c7
+  vianeo: 0x0284c7,
+  a22: 0x147d83,
+  neogy: 0x638a24
 };
 
 const NET_SHORT: Record<string, string> = {
@@ -82,7 +84,9 @@ const NET_SHORT: Record<string, string> = {
   totalenergies: 'TotalEnergies',
   ac_dorfladen: 'AC-Dorfladen',
   atlante: 'Atlante',
-  vianeo: 'Vianeo'
+  vianeo: 'Vianeo',
+  a22: 'Autobrennero',
+  neogy: 'Neogy'
 };
 
 export class EuropeMapScene extends Phaser.Scene {

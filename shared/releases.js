@@ -79,11 +79,11 @@ const arcadeReleases = {
       ],
     },
     {
-      app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Winterfahrt nach Innsbruck",
+      app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Winterfahrt an den Gardasee",
       author: "Michi", model: "Sol 6.2",
       highlights: [
-        "Neues Level 3 mit drei Winterrouten, Passkehren und Tunnelfahrt. Level 2 endet in Montpellier.",
-        "Stadtfahrten in Aachen, Hannover, Montpellier, München und Innsbruck nach echten Stadtplänen",
+        "Neues Level 3 mit drei Winterrouten von München nach Sirmione, Glatteis in den Passkehren und Hindernissen. Level 2 endet in Montpellier.",
+        "Stadtfahrten in Aachen, Hannover, Montpellier und München nach echten Stadtplänen",
         "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen. Rempler an Gebäuden und Säulen verursachen Wertverlust.",
         "Planungskarte mit echten Küstenlinien und mehr Städten, abgedunkelte Dialoge und ein Navi mit allen Straßen bis zum nächsten Halt. Unnötige Ladestopps lassen sich auslassen.",
         "Restakku am Ziel kann Punkte kosten. Essen in der Ladepause kostet 20 €.",

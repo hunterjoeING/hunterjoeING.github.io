@@ -1,4 +1,5 @@
 import type { GeoCoordinate } from './europeProjection';
+import { ALPS_TO_GARDA_BENDS } from './routes/alpsToGarda';
 
 // Intermediate road, terminal and bridge anchors, ordered from each edge's start.
 export const ROAD_COORDINATES: Readonly<Record<string, readonly GeoCoordinate[]>> = {
@@ -26,10 +27,7 @@ export const ROAD_COORDINATES: Readonly<Record<string, readonly GeoCoordinate[]>
   edge_lyon_montpellier: [[45.53, 4.84], [45.16, 4.82], [44.71, 4.79], [44.20, 4.82], [43.91, 4.64], [43.78, 4.32], [43.64, 4.03]],
   edge_paris_clermont: [[48.69, 2.20], [48.08, 1.88], [47.82, 1.91], [47.33, 2.03], [46.91, 2.31], [46.44, 2.69], [45.99, 3.11]],
   edge_clermont_montpellier: [[45.54, 3.25], [45.04, 3.17], [44.61, 3.16], [44.31, 3.02], [44.06, 3.04], [43.77, 3.33], [43.65, 3.47]],
-  edge_muenchen_innsbruck: [[48.02, 11.71], [47.84, 12.10], [47.71, 12.16], [47.58, 12.16], [47.48, 12.05], [47.39, 11.83], [47.29, 11.60]],
-  edge_muenchen_garmisch: [[48.10, 11.48], [47.93, 11.33], [47.70, 11.25], [47.56, 11.12]],
-  edge_garmisch_innsbruck: [[47.47, 11.17], [47.44, 11.27], [47.35, 11.25], [47.28, 11.24]],
-  edge_muenchen_achenpass_innsbruck: [[48.02, 11.71], [47.87, 11.84], [47.72, 11.75], [47.62, 11.74], [47.59, 11.65], [47.53, 11.70], [47.43, 11.74], [47.32, 11.76], [47.28, 11.54]],
+  ...ALPS_TO_GARDA_BENDS,
   edge_amsterdam_calais: [[52.16, 4.57], [52.00, 4.46], [51.72, 4.50], [51.24, 4.45], [51.09, 3.76], [51.17, 3.31], [51.14, 2.73], [51.00, 2.36], [50.93, 1.96]],
   edge_calais_london: [[51.095, 1.125], [51.17, 0.88], [51.29, 0.49]],
   edge_london_york: [[51.74, -0.23], [52.28, -0.28], [52.58, -0.47], [53.22, -0.79], [53.71, -1.21]],

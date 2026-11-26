@@ -5,10 +5,10 @@ export default function register(test, game) {
   const {
     MUENCHEN, INNSBRUCK, INNSBRUCK_HOTEL, MARIENPLATZ_SPAWN, buildRemainingRoute, createDefaultPlan,
     winterCityRoute, winterCityDrive, winterCityNavigator, cityRoadSpans, cityRoadBounds, winterCityWater,
-    pointInCityRect, getActiveRouteLegs, getEdgeById, getLevelById, computeCityLightingProfile, WINTER_CITY_MINUTES
+    pointInCityRect, getActiveRouteLegs, getEdgeById, getLevelById, computeCityLightingProfile
   } = game;
   const level = getLevelById('level_3_alps_winter');
-  const { mkRun, near } = createFixtures(game);
+  const { mkRun } = createFixtures(game);
 
   test('München is north-up with the Isar, three rings and correctly placed motorway ramps', () => {
     const landmarks = MUENCHEN.landmarks;
@@ -66,38 +66,40 @@ export default function register(test, game) {
     assert.ok(INNSBRUCK_HOTEL.x > annasaeule.x && INNSBRUCK_HOTEL.y < triumphPforte.y);
   });
 
-  test('Winter route presets choose the correct motorway, arrival approach and live Navi endpoint', () => {
-    const expected = [['a8Salzburg', 'ost'], ['a95', 'west'], ['a8Salzburg', 'ost']];
+  test('Winter routes choose the Munich motorway and guide to Sirmione', () => {
+    const exits = ['a8Salzburg', 'a95', 'a8Salzburg'];
     for (const [index, option] of level.routeOptions.entries()) {
-      const route = winterCityRoute(option.id);
-      assert.deepEqual([route.munichExit, route.innExit], expected[index]);
+      assert.equal(winterCityRoute(option.id).munichExit, exits[index]);
       const start = winterCityDrive('muenchen_start', option.id);
-      assert.equal(start.goal, MUENCHEN.signs[expected[index][0]]);
+      assert.equal(start.goal, MUENCHEN.signs[exits[index]]);
       assert.equal(start.wrongExits.length, 7);
       assert.ok(start.wrongExits.every(sign => !pointInCityRect(start.goal, sign.zone)));
-      if (index === 2) assert.equal(start.label, 'A8 Salzburg · Ausfahrt Holzkirchen folgen');
-      const finish = winterCityDrive('innsbruck_finish', option.id);
-      assert.equal(finish.via.x, INNSBRUCK.signs[expected[index][1]].x);
-      assert.ok(index === 1 ? finish.spawn.x < finish.via.x : finish.spawn.x > finish.via.x);
-      assert.ok(finish.spawn.x !== finish.goal.x && finish.target === INNSBRUCK_HOTEL);
 
       const run = { ...mkRun(level), plan: createDefaultPlan(level, 'mg4_standard', option.id) };
       const legs = getActiveRouteLegs(level, run.plan);
       assert.equal(legs[0].citySegmentAtStart, 'muenchen_start');
-      assert.equal(legs.at(-1).citySegmentAtEnd, 'innsbruck_finish');
+      assert.equal(legs.at(-1).citySegmentAtEnd, undefined);
       run.currentLegIndex = legs.length - 1;
-      run.legProgressKm = getEdgeById(legs.at(-1).edgeId).distanceKm;
+      run.legProgressKm = getEdgeById(legs.at(-1).edgeId).distanceKm - 1;
       const nav = buildRemainingRoute(level, run);
-      assert.match(nav.destination, /Innsbruck.*Hotel/);
-      assert.equal(nav.segments.at(-1).to, finish.spawn.label);
-      near(nav.etaMinutes, WINTER_CITY_MINUTES.innsbruck_finish);
+      assert.equal(nav.destination, 'Sirmione');
+      assert.equal(nav.segments.at(-1).to, 'Sirmione');
+    }
+  });
+
+  test('The reserved Innsbruck preset exposes both approaches and the hotel goal directly', () => {
+    for (const [routeId, exit] of [['l3_route_a_inntal', 'ost'], ['l3_route_b_fernpass_reschen', 'west']]) {
+      const finish = winterCityDrive('innsbruck_finish', routeId);
+      assert.equal(finish.via.x, INNSBRUCK.signs[exit].x);
+      assert.ok(exit === 'west' ? finish.spawn.x < finish.via.x : finish.spawn.x > finish.via.x);
+      assert.ok(finish.spawn.x !== finish.goal.x && finish.target === INNSBRUCK_HOTEL);
     }
   });
 
   test('City guidance reaches both exit sides and the hotel by roads that bridge the waterways', () => {
-    for (const option of level.routeOptions) {
-      for (const preset of ['muenchen_start', 'innsbruck_finish']) {
-        const { layout, spawn, goal, via } = winterCityDrive(preset, option.id);
+    for (const preset of ['muenchen_start', 'innsbruck_finish']) {
+      for (const routeId of ['l3_route_a_inntal', 'l3_route_b_fernpass_reschen']) {
+        const { layout, spawn, goal, via } = winterCityDrive(preset, routeId);
         const spans = cityRoadSpans(layout.roads);
         const asphalt = spans.map(cityRoadBounds);
         const water = winterCityWater(layout, asphalt);
@@ -119,13 +121,13 @@ export default function register(test, game) {
             assert.ok(water.every(channel => !pointInCityRect(position, channel)));
           }
           assert.ok(Math.hypot(position.x - target.x, position.y - target.y) <= 6,
-            `${preset} ${option.id} failed to reach ${JSON.stringify(target)} from ${JSON.stringify(position)}`);
+            `${preset} ${routeId} failed to reach ${JSON.stringify(target)} from ${JSON.stringify(position)}`);
         }
       }
     }
   });
 
-  test('München at 06:00 uses dawn lighting, headlights and snow after either departure choice', () => {
+  test('München at 06:30 uses dawn lighting, headlights and snow after either departure choice', () => {
     for (const elapsed of [0, 8]) {
       const lighting = computeCityLightingProfile(level.departureTimeHour, elapsed, 'muenchen_start', 'snow');
       assert.equal(lighting.isDuskOrDawn, true);

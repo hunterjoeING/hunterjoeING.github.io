@@ -97,7 +97,15 @@ const land = [
 const searchableLand = land.map(rings => ({ box: boundsOf(rings[0]), rings }));
 const onLand = p => searchableLand.some(({ box, rings: [outer, ...holes] }) =>
   contains(p, box) && inRing(p, outer) && !holes.some(h => inRing(p, h)));
-const lakes = buildPolygons(features('50m_lakes'), () => 1.35, 7);
+const baseLakes = features('50m_lakes');
+const alpineLakeBox = [8.4, 45.43, 11.0, 46.24];
+const alpineLakes = features('10m_lakes').filter(feature => polygons(feature.geometry)
+  .some(([outer]) => intersects(boundsOf(outer), alpineLakeBox) &&
+    !baseLakes.some(base => polygons(base.geometry).some(([coarse]) => inRing(outer[0], coarse)))));
+const lakes = [
+  ...buildPolygons(baseLakes, () => 1.35, 7),
+  ...buildPolygons(alpineLakes, p => nearStop(p) ? 0.035 : 0.25, 0.6, 0.6, () => 10)
+];
 const rivers = buildLines(features('50m_rivers_lake_centerlines')
   .filter(f => f.properties.featurecla !== 'Lake Centerline' && f.properties.scalerank <= 6)
   .flatMap(f => lines(f.geometry)), 1.5, 9);

@@ -60,7 +60,9 @@ const NET_LABEL: Record<string, string> = {
   totalenergies: 'TotalEnergies',
   ac_dorfladen: 'AC-Dorfladen',
   atlante: 'Atlante',
-  vianeo: 'ENGIE Vianeo'
+  vianeo: 'ENGIE Vianeo',
+  a22: 'Autobrennero',
+  neogy: 'Neogy'
 };
 
 const NET_HEX: Record<ChargerNetwork, string> = {
@@ -74,7 +76,9 @@ const NET_HEX: Record<ChargerNetwork, string> = {
   totalenergies: '#e10600',
   ac_dorfladen: '#d97706',
   atlante: '#0f766e',
-  vianeo: '#0284c7'
+  vianeo: '#0284c7',
+  a22: '#147d83',
+  neogy: '#638a24'
 };
 
 const BASE_FILTER_NETWORKS: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
@@ -82,7 +86,7 @@ const BASE_FILTER_NETWORKS: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'elect
 function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
   const edgeIds = new Set(level.routeOptions.flatMap(route => route.legs.map(leg => leg.edgeId)));
   const present = new Set(CHARGERS.filter(station => edgeIds.has(station.edgeId)).map(station => station.network));
-  const extras = (['fastned', 'totalenergies', 'ac_dorfladen'] as ChargerNetwork[]).filter(net => present.has(net));
+  const extras = (['fastned', 'totalenergies', 'ac_dorfladen', 'a22', 'neogy'] as ChargerNetwork[]).filter(net => present.has(net));
   if (level.id === 'level_2_family_summer') {
     const french: ChargerNetwork[] = ['tesla', 'electra', 'ionity', 'atlante', 'vianeo'];
     if (present.has('ac_dorfladen')) french.push('ac_dorfladen');
@@ -388,6 +392,7 @@ export class PlanningUI {
         <div class="route-compare-grid">
           ${this.renderRouteOptionCards(level, 'out', outbound.id)}
         </div>
+        ${level.id === 'level_3_alps_winter' ? `<p class="plan-briefing">${outbound.description} Die vorgeschlagenen Ladestopps kannst du ändern.</p>` : ''}
         ${
           hasReturn && inbound
             ? `

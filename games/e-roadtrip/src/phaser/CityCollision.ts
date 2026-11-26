@@ -43,8 +43,11 @@ export function spriteFootprint(
 }
 
 export function vehicleCapsule(x: number, y: number, rotation: number, cyclist = false): Capsule {
-  const radius = cyclist ? 5 : CAR_FOOTPRINT.w / 2;
-  const halfSpine = (cyclist ? 11 : CAR_FOOTPRINT.h / 2) - radius;
+  return orientedCapsule(x, y, rotation, cyclist ? 5 : CAR_FOOTPRINT.w / 2, cyclist ? 11 : CAR_FOOTPRINT.h / 2);
+}
+
+export function orientedCapsule(x: number, y: number, rotation: number, radius: number, halfLength: number): Capsule {
+  const halfSpine = halfLength - radius;
   const dx = Math.sin(rotation) * halfSpine;
   const dy = -Math.cos(rotation) * halfSpine;
   return { a: { x: x - dx, y: y - dy }, b: { x: x + dx, y: y + dy }, radius };

@@ -11,16 +11,14 @@ const INNSBRUCK_HOTEL_POINT = {
 };
 
 export function winterCityRoute(routeId: string) {
-  const isZirler = routeId === 'l3_route_b_zirler';
-  const munichExit = isZirler ? 'a95' : 'a8Salzburg';
-  const innExit = isZirler ? 'west' : 'ost';
+  const isFernpass = routeId === 'l3_route_b_fernpass_reschen';
+  const munichExit = isFernpass ? 'a95' : 'a8Salzburg';
+  const innExit = isFernpass ? 'west' : 'ost';
   return {
     munichExit,
-    munichLabel: routeId === 'l3_route_c_achenpass'
-      ? 'A8 Salzburg · Ausfahrt Holzkirchen folgen'
-      : MUENCHEN.signs[munichExit].label,
+    munichLabel: MUENCHEN.signs[munichExit].label,
     innExit,
-    innsbruckApproach: isZirler ? INNSBRUCK_APPROACHES.west : INNSBRUCK_APPROACHES.east,
+    innsbruckApproach: innExit === 'west' ? INNSBRUCK_APPROACHES.west : INNSBRUCK_APPROACHES.east,
     innRamp: { x: INNSBRUCK.signs[innExit].x, y: 1040 }
   } as const;
 }

@@ -40,6 +40,11 @@ export default function register(test, game) {
 
   test('worker validates Level 3 on its own and overall boards at the exact time and score bounds', () => {
     const { boardId, id, targetArrivalMinutes } = game.getLevelById('level_3_alps_winter');
+    const level = game.getLevelById(id);
+    const totals = level.routeOptions.map(({ id }) =>
+      game.evaluateTripPlan(level, game.createDefaultPlan(level, 'mg4_standard', id)).totalMinutes);
+    assert.ok(totals[0] < totals[2] && totals[2] < totals[1]);
+    assert.equal(targetArrivalMinutes, Math.round(Math.max(...totals) * 1.12));
     const meta = { levelId: id, board: boardId, costEur: 0 };
     for (const board of [boardId, 'eroadtrip']) {
       for (const [score, minutes] of [[0, targetArrivalMinutes / 2], [1000, 20 * targetArrivalMinutes]]) {

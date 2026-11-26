@@ -6,7 +6,7 @@ import { NORTH_COAST_500_NAME, NORTH_COAST_500_STOPS } from '../data/routes/nort
 import type { CityNode } from '../types';
 import { getMapThemePalette } from './EuropePixelMap';
 import {
-  CITY_LABEL_ANCHORS, KOELN_LABEL_ANCHORS, cityLabelScale, layoutMapLabels, mapScreenPoint,
+  CITY_LABEL_ANCHORS, KOELN_LABEL_ANCHORS, SIRMIONE_LABEL_ANCHORS, cityLabelScale, layoutMapLabels, mapScreenPoint,
   type MapLabelAnchor, type MapLabelCandidate, type MapLabelViewport
 } from './EuropeMapLabelLayout';
 import type { BoxRect } from './MapLayout';
@@ -69,11 +69,12 @@ export class EuropeMapLabels {
 
   addGraphCity(city: CityNode, active: boolean, radius: number): void {
     const scenicStart = city.id === 'inverness';
+    const gardaArrival = active && city.id === 'sirmione';
     this.addLabel({
       id: city.id, x: city.mapX, y: city.mapY, graphRadius: radius,
-      priority: active ? 500 : city.isMajor ? 400 : scenicStart ? 390 : 380,
+      priority: gardaArrival ? 540 : active ? 500 : city.isMajor ? 400 : scenicStart ? 390 : 380,
       minZoom: active || city.isMajor ? 0 : scenicStart ? SCENIC_LABEL_ZOOM : 0.73,
-      anchors: city.id === 'koeln' ? KOELN_LABEL_ANCHORS : CITY_LABEL_ANCHORS,
+      anchors: gardaArrival ? SIRMIONE_LABEL_ANCHORS : city.id === 'koeln' ? KOELN_LABEL_ANCHORS : CITY_LABEL_ANCHORS,
       kind: active ? 'active' : 'graph'
     }, city.name, active ? '11.5px' : city.isMajor ? '10px' : '9px', active || city.isMajor ? 'bold' : 'normal');
   }

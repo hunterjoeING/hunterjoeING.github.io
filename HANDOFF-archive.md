@@ -2,6 +2,14 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Stadtfahrt Montpellier
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `03f6c0f`. SHA `b47c48f`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Fork-Bundle nach dem Push geprüft, Issue/PR-Check: 0 offen. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Alle drei Level-2-Routen führen zum Strandhotel in Palavas. Route A nutzt Montpellier-Est über D66 und Carnon, Mitte und B kommen über A750, Montpellier-Sud und Lattes. Nach dem rückwärtigen Parken zeigt eine überspringbare Pixelszene die Familie am Strand. Danach folgen das bestehende Finale und die Level-2-Bestenliste. Verkehr, Schadensregeln, Navi und Beleuchtung nutzen die vorhandenen Systeme.
+- **Geprüft** · Typecheck, zwei bytegleiche Builds, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (126/126), `git diff --check` und Versionsprüfung gegen `279202c`. MG4-Standardpläne für A/Mitte/B: 1.049/1.073/1.139 Min, innerhalb der Worker-Grenzen bei 1.100 Min. Zielzeit und Worker bleiben gleich. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
+- **Nachbesserung Orchestrator** · Handy-Ansicht: Nach dem Wechsel von der Autobahn in eine Stadtfahrt blieb die Spielfläche auf der alten Höhe stehen (390 px: 338 statt 489 px, dunkle Balken oben und unten). Ursache: Phasers `refresh()` nutzt die zwischengespeicherte Elterngröße und liest sie danach still neu ein, dadurch erkennt die eigene Abfrage die Änderung nie. `main.ts` liest jetzt vor jedem Refresh die Bühnengröße neu ein (`refreshStageSize()`). Der Fehler bestand schon vorher, fiel bei Montpellier aber stärker auf. Bundle-Rev 8, SHA `e220286`.
+- **Offen** · Desktop- und Handy-Spieltest für beide Anfahrten, Parken und beide separat überspringbaren Szenen.
+
 ### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Köln-Stadtfahrt in Level 1 entfernt
 
 - **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `ce16a28`. SHA `e130a68`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)

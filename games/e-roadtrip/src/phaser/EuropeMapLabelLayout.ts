@@ -1,8 +1,9 @@
 import type { MapPoint } from '../data/europeProjection';
 import type { BoxRect } from './MapLayout';
 
-export type MapLabelAnchor = 'below' | 'above' | 'left' | 'right' | 'centre' | 'lowerRight' | 'upperRight';
+export type MapLabelAnchor = 'below' | 'above' | 'left' | 'right' | 'centre' | 'lowerRight' | 'upperRight' | 'lowerLeft';
 export const CITY_LABEL_ANCHORS: readonly MapLabelAnchor[] = ['below', 'right', 'left', 'above'];
+export const SIRMIONE_LABEL_ANCHORS: readonly MapLabelAnchor[] = ['lowerLeft', ...CITY_LABEL_ANCHORS];
 export const KOELN_LABEL_ANCHORS: readonly MapLabelAnchor[] = ['right', 'lowerRight', 'upperRight'];
 
 export interface MapLabelCandidate extends MapPoint {
@@ -51,6 +52,7 @@ function placeBox(anchor: MapLabelAnchor, p: MapPoint, w: number, h: number, gap
     case 'left': return { x: p.x - gap - w / 2, y: p.y, w, h };
     case 'right': return { x: right, y: p.y, w, h };
     case 'lowerRight': return { x: right, y: below, w, h };
+    case 'lowerLeft': return { x: p.x - gap - w / 2, y: below, w, h };
     case 'upperRight': return { x: right, y: above, w, h };
     case 'centre': return { ...p, w, h };
   }

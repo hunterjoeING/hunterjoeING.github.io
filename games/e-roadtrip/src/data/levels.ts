@@ -1,4 +1,5 @@
 import { LevelConfig, ScoringWeights } from '../types';
+import { ALPS_TO_GARDA_ROUTES } from './routes/alpsToGarda';
 import { TUNNEL_CLOSURE_EVENT_ID } from '../sim/WinterTunnel';
 
 export const DEFAULT_SCORING_WEIGHTS: ScoringWeights = {
@@ -270,65 +271,22 @@ export const LEVELS: LevelConfig[] = [
     boardId: 'eroadtrip_l3',
     order: 3,
     title: 'Level 3: Winter-Alpenüberquerung',
-    subtitle: 'Inntal oder Passstraße · Schneefahrt nach Innsbruck',
-    badge: 'Spielbar · Winter-Skiurlaub',
+    subtitle: 'München → Sirmione (3 Alpenrouten)',
+    badge: 'Spielbar · Winterfahrt an den Gardasee',
     playable: true,
-    regionLabel: 'München → Innsbruck (3 Alpenrouten)',
+    regionLabel: 'München → Sirmione (3 Alpenrouten)',
     startBudgetEur: 38000,
     rewardBaseEur: 9500,
-    departureTimeHour: 6.0,
-    targetArrivalMinutes: 165,
+    departureTimeHour: 6.5,
+    targetArrivalMinutes: 564,
     costBenchmarkEurPerKm: 0.28,
     startCityId: 'muenchen',
-    destinationCityId: 'innsbruck',
-    defaultRouteId: 'l3_route_a_inntal',
-    routeOptions: [
-      {
-        id: 'l3_route_a_inntal',
-        name: 'Route A · Inntal-Autobahn (A8 → A93 → A12)',
-        shortLabel: 'Inntal A8/A12',
-        highwaySummary: 'A8 Irschenberg → Kufstein → A12',
-        description: 'Viele Schnelllader, aber dichter Skiverkehr. Auf der A12 gilt die österreichische Vignettenpflicht.',
-        elevationProfile: 'Hügelig',
-        trafficRisk: 'Hoch',
-        chargingDensity: 'Sehr dicht',
-        colorHex: 0x3b82f6,
-        legs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }],
-        defaultPlannedStops: []
-      },
-      {
-        id: 'l3_route_b_zirler',
-        name: 'Route B · Garmisch & Zirler Berg Pass (A95 → B177)',
-        shortLabel: 'Zirler Berg Pass',
-        highwaySummary: 'A95 Garmisch → Mittenwald → Zirler Berg',
-        description: 'Steiler Alpenpass mit einem 22-kW-Dorflader unterwegs. Die Strecke ist mautfrei.',
-        elevationProfile: 'Bergig / Pässe',
-        trafficRisk: 'Niedrig',
-        chargingDensity: 'Dünn / Anspruchsvoll',
-        colorHex: 0xf59e0b,
-        legs: [
-          { edgeId: 'edge_muenchen_garmisch', defaultTargetSpeedKmh: 110, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start' },
-          { edgeId: 'edge_garmisch_innsbruck', defaultTargetSpeedKmh: 70, weatherOverride: 'snow', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }
-        ],
-        defaultPlannedStops: []
-      },
-      {
-        id: 'l3_route_c_achenpass',
-        name: 'Route C · Achenpass & Tegernsee (A8 → B307)',
-        shortLabel: 'Achenpass',
-        highwaySummary: 'Holzkirchen → Achenpass → Inntal',
-        description: 'Bergstrecke mit mäßigem Verkehr und zwei Ladeoptionen in Achenkirch.',
-        elevationProfile: 'Bergig / Pässe',
-        trafficRisk: 'Mittel',
-        chargingDensity: 'Ausgewogen',
-        colorHex: 0x10b981,
-        legs: [{ edgeId: 'edge_muenchen_achenpass_innsbruck', defaultTargetSpeedKmh: 85, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }],
-        defaultPlannedStops: []
-      }
-    ],
-    routeLegs: [{ edgeId: 'edge_muenchen_innsbruck', defaultTargetSpeedKmh: 100, weatherOverride: 'snow', citySegmentAtStart: 'muenchen_start', citySegmentAtEnd: 'innsbruck_finish', destinationAtEnd: true }],
+    destinationCityId: 'sirmione',
+    defaultRouteId: ALPS_TO_GARDA_ROUTES[0].id,
+    routeOptions: ALPS_TO_GARDA_ROUTES,
+    routeLegs: ALPS_TO_GARDA_ROUTES[0].legs,
     passengers: {
-      label: 'Winter-Skiurlaub Crew',
+      label: 'Familienausflug an den Gardasee',
       hasWife: true,
       childrenCount: 1,
       hasDog: false,
@@ -340,14 +298,14 @@ export const LEVELS: LevelConfig[] = [
     specialRulesSummary: [
       'Vorwärmen kostet Zeit und Akku. Beim Kaltstart steigt zunächst der Verbrauch, und die Familie friert.',
       'Bei Kettenpflicht kannst du vor den Kehren in der Bucht Schneeketten anlegen. Ohne Ketten droht eine Kontrolle.',
-      'Achte am Pass auf Glatteis und Gegenverkehr. Rempler am Schneerand können das Auto beschädigen.',
+      'Glatteis liegt auch in den Kehren. Überhole Lkw nur bei freier Sicht und gestrichelter Mittellinie. Achte auf Warndreiecke.',
       'Bergab bestimmst du die Rekuperation. Ein voller Akku nimmt wenig Energie auf, und die Bremsen können heiß werden.',
       'Am Berglader kannst du bei einer Schlange warten, weiterfahren oder einen langsameren Ladepunkt wählen.',
       'Die Abschnittskontrolle im Inntal-Tunnel misst das Durchschnittstempo. Bei Sperrung kannst du warten oder ausweichen.',
       'Stau, Schneepflüge und Lawinensperren können die Route verzögern. Für die Inntal-Autobahn brauchst du eine Vignette.'
     ],
     briefingText:
-      'Ihr startet um 06:00 Uhr bei −8 °C am Marienplatz. Schnee und Steigungen erhöhen den Verbrauch. Wähle die Inntal-Autobahn oder eine Passstraße. Parke am Altstadt-Hotel in Innsbruck. Danach folgen die Ankunftsszene und die Wertung.',
+      'Um 06:30 Uhr startet ihr bei −8 °C am Marienplatz. Fahrt über den Brenner, über Fernpass und Reschen oder über den Jaufenpass. Oben warten Schnee und Kehren, unten die Wintersonne am Gardasee. Euer Ziel ist die Scaligerburg in Sirmione.',
     eventPoolIds: ['evt_child_cold', 'evt_inntal_ski_jam', 'evt_vignette_check', 'evt_snowplough_convoy', 'evt_avalanche_closure', TUNNEL_CLOSURE_EVENT_ID],
     wifeDialogueIds: ['dlg_diesel_remark']
   },

@@ -120,6 +120,36 @@ export default function register(test, m) {
     }
   });
 
+  test('The Garda peninsula is dry and the new Alpine routes follow the land around the lakes', () => {
+    const lakes = m.LAKE_POLYGONS.map(polygon => polygon.map(unpack));
+    const lakeAt = p => lakes.find(([outer, ...holes]) => inRing(p, outer) && !holes.some(h => inRing(p, h)));
+    const garda = lakeAt(project([45.64, 10.67]));
+    assert.ok(garda, 'Garda is in the rendered lake layer');
+    assert.ok(lakeAt(project([46.047, 8.735])), 'The western alpine lake is in the lake layer');
+    const sirmione = project(m.CITY_COORDINATES.sirmione);
+    const shore = garda[0];
+    const shoreDistance = Math.min(...shore.map((vertex, i) =>
+      segmentDistanceSq(sirmione, vertex, shore[(i + 1) % shore.length])));
+    assert.ok(shoreDistance < 1, 'The castle is on the southern peninsula');
+    for (const { id } of m.ALPS_TO_GARDA_STOPS) {
+      const point = project(m.CITY_COORDINATES[id]);
+      assert.ok(landAt(point) && !lakeAt(point), id);
+    }
+    for (const { id } of m.ALPS_TO_GARDA_EDGES) {
+      const { waypoints } = m.getEdgeById(id);
+      for (let i = 1; i < waypoints.length; i++) {
+        const a = waypoints[i - 1];
+        const b = waypoints[i];
+        const steps = Math.max(1, Math.ceil(Math.hypot(a.x - b.x, a.y - b.y) * 10));
+        for (let step = 0; step <= steps; step++) {
+          const fraction = step / steps;
+          const point = [a.x + (b.x - a.x) * fraction, a.y + (b.y - a.y) * fraction];
+          assert.ok(landAt(point) && !lakeAt(point), `${id} segment ${i} at ${point}`);
+        }
+      }
+    }
+  });
+
   test('Graph edges meet their projected city markers and charger progress stays on the same edge', () => {
     const marker = ({ mapX, mapY }) => ({ x: mapX, y: mapY });
     for (const edge of m.HIGHWAY_EDGES) {
@@ -132,8 +162,8 @@ export default function register(test, m) {
     }
   });
 
-  test('Level 1–3 route predictions retain their pre-projection gameplay values', () => {
-    // [distance km, drive min, total min, toll €, kWh/100 km, arrival SoC %, target min] at eede53a.
+  test('Level 1–2 forecasts stay pinned and Level 3 forecasts match the Garda routes', () => {
+    // [distance km, drive min, total min, toll €, kWh/100 km, arrival SoC %, target min] at eede53a for Levels 1–2.
     const expected = {
       l1_route_a_ruhr: [716, 473, 713, 0, 17.2, -146, 797],
       l1_route_b_nord: [748, 427, 667, 0, 18, -170, 797],
@@ -141,9 +171,9 @@ export default function register(test, m) {
       l2_route_a_lyon: [994, 569, 1049, 75, 17.9, -254, 1100],
       l2_route_mid_reims: [1096, 593, 1073, 94, 19.1, -316, 1100],
       l2_route_b_clermont: [1169, 659, 1139, 103.5, 18, -319, 1100],
-      l3_route_a_inntal: [165, 155, 165, 23.5, 22.9, 22, 165],
-      l3_route_b_zirler: [154, 128, 146, 0, 24.3, 22, 165],
-      l3_route_c_achenpass: [148, 138, 156, 0, 22.9, 29, 165]
+      l3_route_a_inntal: [450, 347, 402, 47.5, 19.2, 30, 564],
+      l3_route_b_fernpass_reschen: [483, 438, 504, 17, 18.9, 30, 564],
+      l3_route_c_jaufenpass: [477, 405, 480, 42.5, 20, 30, 564]
     };
     const actual = {};
     for (const level of m.LEVELS.slice(0, 3)) {
@@ -161,8 +191,11 @@ export default function register(test, m) {
 
   test('Mobile planning labels fit without overlaps and keep Köln to the right', () => {
     const width = 390, height = 370;
-    for (const level of m.LEVELS.slice(0, 3)) {
-      const plan = m.createDefaultPlan(level, 'mg4_standard');
+    const scenarios = m.LEVELS.slice(0, 3).flatMap(level =>
+      (level.order === 3 ? level.routeOptions.map(route => route.id) : [level.defaultRouteId])
+        .map(routeId => ({ level, routeId })));
+    for (const { level, routeId } of scenarios) {
+      const plan = m.createDefaultPlan(level, 'mg4_standard', routeId);
       const points = m.getActiveRouteLegs(level, plan).flatMap(l => m.getEdgeById(l.edgeId).waypoints);
       const fit = m.routeMapView(points, width, height);
       const viewport = { width, height, zoom: fit.zoom, scrollX: fit.x - width / 2, scrollY: fit.y - height / 2 };
@@ -173,8 +206,9 @@ export default function register(test, m) {
       })));
       const graphLabels = m.CITIES.filter(c => active.has(c.id) || c.isMajor).map(city => ({
         id: city.id, x: city.mapX, y: city.mapY, width: (city.name.length * 7 + 6) * scale, height: 15 * scale,
-        priority: active.has(city.id) ? 500 : 400, distance: 8 * fit.zoom,
-        anchors: city.id === 'koeln' ? m.KOELN_LABEL_ANCHORS : m.CITY_LABEL_ANCHORS
+        priority: city.id === 'sirmione' && active.has(city.id) ? 540 : active.has(city.id) ? 500 : 400, distance: 8 * fit.zoom,
+        anchors: city.id === 'sirmione' && active.has(city.id) ? m.SIRMIONE_LABEL_ANCHORS
+          : city.id === 'koeln' ? m.KOELN_LABEL_ANCHORS : m.CITY_LABEL_ANCHORS
       }));
       const referenceLabels = m.MAJOR_CITIES.map(([name, x, y, capital, population]) => ({
         id: name, x, y, width: (name.length * 5.8 + 8) * scale, height: 13 * scale, radius: 2.5 * scale,
@@ -188,6 +222,10 @@ export default function register(test, m) {
       assert.ok(placed.some(l => referenceLabels.some(a => a.id === l.id)), level.id);
       for (const [i, a] of placed.entries()) {
         for (const b of placed.slice(i + 1)) assert.ok(!overlap(a.box, b.box), `${a.id} / ${b.id}`);
+      }
+      if (level.order === 3) {
+        assert.ok(placed.some(l => l.id === 'muenchen'), routeId);
+        assert.ok(placed.some(l => l.id === 'sirmione'), routeId);
       }
       if (level.order === 1) {
         assert.ok(placed.some(l => l.id === 'aachen'));

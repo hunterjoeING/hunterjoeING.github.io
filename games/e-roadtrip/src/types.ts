@@ -54,7 +54,9 @@ export type ChargerNetwork =
   | 'totalenergies'
   | 'ac_dorfladen'
   | 'atlante'
-  | 'vianeo';
+  | 'vianeo'
+  | 'a22'
+  | 'neogy';
 
 export interface SubscriptionSpec {
   id: string;
@@ -267,7 +269,7 @@ export interface LevelRouteLegSpec {
   destinationAtEnd?: boolean;
 }
 
-export type PassName = 'Zirler Berg' | 'Achenpass';
+export type PassName = 'Fernpass' | 'Jaufenpass';
 export type RegenMode = 'coast' | 'normal' | 'strong';
 
 export type CityDrivePreset =

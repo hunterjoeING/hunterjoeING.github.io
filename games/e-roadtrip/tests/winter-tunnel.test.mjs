@@ -16,7 +16,9 @@ export default function register(test, game) {
       ...mkRun(level), legProgressKm: progress, distanceDrivenKm: progress, elapsedMinutes: 90,
       triggeredEventIds: ['evt_inntal_ski_jam', 'evt_vignette_check'], wifeDialogueTriggered: true
     };
-    run.plan.legPlans[0].targetSpeedKmh = speed;
+    run.currentLegIndex = level.routeOptions[0].legs.findIndex(leg => leg.edgeId === WINTER_TUNNEL.edgeId);
+    run.plan.legPlans[run.currentLegIndex].targetSpeedKmh = speed;
+    run.plan.plannedStops = [];
     return { run, ...mkScene(level, run) };
   }
 
@@ -72,7 +74,7 @@ export default function register(test, game) {
     assert.equal(run.incidentLog.at(-1).title, 'Abschnittskontrolle im Tunnel');
     scene.update(50_050, 50);
     assert.deepEqual(fired, [SECTION_CONTROL_EVENT_ID]);
-    assert.equal(run.highwaySignKmh, 100);
+    assert.equal(run.highwaySignKmh, 110);
     assert.equal(run.speedCapLabel, undefined);
     assert.equal(scene.nightOverlay.alpha, 0);
   });

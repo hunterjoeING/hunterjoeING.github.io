@@ -1,7 +1,10 @@
 import * as Phaser from 'phaser';
 import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
 import { passGrip, passTravelHeading } from '../sim/AlpineDriving';
-import { passNavigation, passOnIce, passRoadContains } from './AlpinePass';
+import { PASS_FOLLOW_MIN_PER_SECOND, PASS_NEAR_MISS_STRESS, passOnIce } from '../sim/AlpineHazards';
+import { applyStress } from '../sim/PauseEffects';
+import { AlpinePassTraffic } from './AlpinePassTraffic';
+import { passNavigation, passRoadContains } from './AlpinePass';
 import { getChargerById } from '../data/europeMap';
 import { MONTPELLIER_HOTEL_GOAL, MONTPELLIER_SEA } from '../data/cityLayouts/montpellier';
 import { isRearParked } from '../sim/ChargingBay';
@@ -120,6 +123,8 @@ export class CityDriveScene extends Phaser.Scene {
   private place!: PlacePaint;
   private surface!: SurfaceFx;
   private passThrough = false;
+  private passTraffic?: AlpinePassTraffic;
+  private passUnsafeLane = false;
   private cityApproachReached = false;
   private spinners: Phaser.GameObjects.Image[] = [];
   private roadWet = false;
@@ -152,6 +157,8 @@ export class CityDriveScene extends Phaser.Scene {
     this.roadWet = false;
     this.updateCoastalLight = undefined;
     this.passThrough = false;
+    this.passTraffic = undefined;
+    this.passUnsafeLane = false;
     this.cityApproachReached = false;
     this.spinners = [];
     this.carSpeed = 0;
@@ -203,6 +210,7 @@ export class CityDriveScene extends Phaser.Scene {
       station: this.station,
       mobile: this.isMobilePerf,
       passName: run?.alpinePass?.name,
+      passSeed: run?.leaderboardRunId ?? run?.plan.selectedRouteId,
       light: this.bridge.isLightTheme(),
       night: lighting.isNight
     });
@@ -236,6 +244,7 @@ export class CityDriveScene extends Phaser.Scene {
     }
     this.spawnEnvironmentAndProps();
     this.spawnTrafficAndPedestrians();
+    if (this.place.passRoad) this.passTraffic = new AlpinePassTraffic(this.place.passRoad, this);
     this.spawnPlayer();
     this.setupLightingAndWeather();
     this.setupNavIndicator();
@@ -465,7 +474,7 @@ export class CityDriveScene extends Phaser.Scene {
     const damage = evaluatePropertyDamage(impactSpeed);
     if (!damage) return;
     this.propertyContacts.add(contact);
-    if (contact === 'passEdge' || this.place.cityGuide) this.cleanRun = false;
+    if (this.place.passRoad || this.place.cityGuide) this.cleanRun = false;
     SoundFX.bump();
     this.bridge.paused = true;
     this.physics.world.pause();
@@ -528,7 +537,8 @@ export class CityDriveScene extends Phaser.Scene {
         return false;
       }
       const contact = this.obstacleRects.find(rect => capsuleOverlapsRect(shape, rect)) ??
-        this.obstacleCircles.find(circle => capsulesOverlap(shape, circle));
+        this.obstacleCircles.find(circle => capsulesOverlap(shape, circle)) ??
+        (this.passTraffic && capsulesOverlap(shape, this.passTraffic.parked) ? this.passTraffic.parked : undefined);
       if (contact) {
         this.hitProperty(contact);
         return false;
@@ -541,6 +551,11 @@ export class CityDriveScene extends Phaser.Scene {
         this.handleCollision('obstacle', x, y, 0);
         return false;
       }
+    }
+    const passCollision = this.passTraffic?.collision(shape);
+    if (passCollision) {
+      this.handleCollision('car', passCollision.x, passCollision.y, passCollision.speedPx);
+      return false;
     }
     for (const car of this.trafficCars) {
       if (!capsulesOverlap(shape, this.trafficShape(car))) continue;
@@ -1166,6 +1181,7 @@ export class CityDriveScene extends Phaser.Scene {
     const road = this.place.passRoad;
     const onIce = road ? passOnIce(road, this.player) : false;
     const grip = road ? passGrip(onIce, !!this.bridge.runState?.alpinePass?.chainsFitted) : 1;
+    const passSituation = this.passTraffic?.situation(this.player);
     const maxFwd = this.place.slowZone?.(this.player) ? 125 : 230;
     const maxRev = -115;
     if (!brake && up) {
@@ -1180,6 +1196,19 @@ export class CityDriveScene extends Phaser.Scene {
     }
     if (Math.abs(this.carSpeed) < 8 && (brake || (!up && !down))) this.carSpeed = 0;
 
+    if (passSituation && run) {
+      const { cap, unsafe } = passSituation;
+      if (up && !brake && this.carSpeed > cap) {
+        this.carSpeed = cap;
+        run.elapsedMinutes += dt * PASS_FOLLOW_MIN_PER_SECOND * Math.max(0, 1 - cap / 155);
+      }
+      if (unsafe && !this.passUnsafeLane && this.carSpeed > 0) {
+        applyStress(run, PASS_NEAR_MISS_STRESS);
+        this.bridge.onCityStressChanged(run);
+      }
+      this.passUnsafeLane = unsafe;
+    }
+
     const steerFactor = Math.min(1, Math.abs(this.carSpeed) / 62);
     const dirSign = this.carSpeed >= -1 ? 1 : -1;
     const turn = 2.75 * steerFactor * grip * dirSign * (Number(right) - Number(left));
@@ -1191,6 +1220,7 @@ export class CityDriveScene extends Phaser.Scene {
       if (playerCanMove) playerCanMove = this.movePlayer(step, turn, grip);
       if (this.bridge.paused) return;
       this.stepTraffic(step);
+      this.passTraffic?.step(step);
       if (this.bridge.paused) return;
     }
 
@@ -1373,8 +1403,9 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     if (this.passThrough) {
-      const rampLabel = cityGuide?.label ?? 'Zur Passhöhe';
-      const doneLabel = cityGuide?.completionLabel ?? 'Passhöhe erreicht';
+      const descending = road?.summitPx !== undefined && passNav && passNav.along >= road.summitPx;
+      const rampLabel = cityGuide?.label ?? (descending ? 'Zum Passausgang' : 'Zur Passhöhe');
+      const doneLabel = cityGuide?.completionLabel ?? `${this.place.zoneLabel} erreicht`;
       if (inZone) {
         this.completed = true;
         this.reverseHintText.setVisible(false);
@@ -1383,7 +1414,9 @@ export class CityDriveScene extends Phaser.Scene {
       } else {
         const remaining = passNav?.distance ?? cityNav?.distance ?? distToTarget;
         this.distText.setText(`${rampLabel} · ${Math.max(0, Math.round(remaining / 6))} m`);
-        if (onIce) this.reverseHintText.setText('Glatteis').setVisible(true);
+        const hint = this.passTraffic?.situation(this.player).hint;
+        if (onIce || hint) this.reverseHintText.setText([onIce ? 'Glatteis' : '', hint].filter(Boolean).join(' · '))
+          .setVisible(true);
       }
     } else if (parked) {
       this.completed = true;

@@ -24,7 +24,9 @@ export default function register(test, game) {
     CityDriveScene, paintDrivingPlace, getLevelById, createDefaultPlan, getActiveRouteLegs,
     getChargerById, getChargersForEdge, getEdgeById, evaluateTripPlan, computeRouteSocBandSegments,
     HIGHWAY_PX_PER_KM, stepHighwayTraffic, countSpriteOverlaps, CHARGERS,
-    capsuleOverlapsRect, circleAt, vehicleCapsule, evaluatePropertyDamage, evaluateRun
+    capsuleOverlapsRect, circleAt, vehicleCapsule, evaluatePropertyDamage, evaluateRun,
+    AlpinePassTraffic, passOffset, passRoadPosition, passSample, PASS_NEAR_MISS_STRESS,
+    TouchInput, pressTouchPointer, releaseTouchPointer, releaseAllTouchPointers
   } = game;
   const dt = 1 / 60;
   const { mkRun, route1 } = createFixtures(game);
@@ -416,7 +418,7 @@ export default function register(test, game) {
   test('München and Innsbruck cars and cyclists complete their routes in both themes', () => {
     for (const preset of ['muenchen_start', 'innsbruck_finish']) {
       for (const light of [true, false]) {
-        const routeId = light ? 'l3_route_b_zirler' : 'l3_route_c_achenpass';
+        const routeId = light ? 'l3_route_b_fernpass_reschen' : 'l3_route_c_jaufenpass';
         const { city } = createCity(preset, undefined, light, routeId, light);
         assert.ok(city.trafficCars.some(car => car.route.isCyclist));
         assert.ok(city.pedestrians.length > 0 && city.cones.length > 0);
@@ -433,6 +435,61 @@ export default function register(test, game) {
     }
   });
 
+  test('Pass touch steering can overtake and unsafe lane changes add stress only once', t => {
+    const level = getLevelById('level_3_alps_winter');
+    const { city } = createCity('alpine_pass', undefined, true, level.defaultRouteId, true);
+    prepareCityUpdate(city, 'alpine_pass', level);
+    const run = mkRun(level);
+    run.alpinePass = { legIndex: 0, name: 'Fernpass', chainsFitted: true, complete: false };
+    const road = city.place.passRoad;
+    const traffic = new AlpinePassTraffic(road, city);
+    const stressUpdates = [];
+    city.passTraffic = traffic;
+    Object.assign(city.bridge, { runState: run, touch: TouchInput, onCityStressChanged: state => stressUpdates.push(state.stress) });
+    t.after(releaseAllTouchPointers);
+
+    const placePlayer = (along, side) => {
+      const sample = passSample(road, along);
+      const { x, y } = passOffset(sample, side);
+      city.player.setPosition(x, y).setRotation(Math.atan2(sample.dy, sample.dx) + Math.PI / 2);
+      city.travelHeading = undefined;
+    };
+    const start = road.truck.startPx - 85;
+    placePlayer(start, 33);
+    city.carSpeed = 150;
+    pressTouchPointer(1, 'up');
+    city.update(0, 16);
+    assert.ok(city.carSpeed < 110 && run.elapsedMinutes > 0);
+    assert.match(city.reverseHintText.text, /Überholen möglich/);
+    const steerAlongStraight = (lane, until) => {
+      for (let i = 0; i < 200 && !until(); i++) {
+        const player = city.player;
+        const goalY = road.path[0].y + lane;
+        const heading = Math.atan2(goalY - player.y, 65) + Math.PI / 2;
+        const error = heading - player.rotation;
+        if (Math.abs(error) > 0.06) pressTouchPointer(2, error < 0 ? 'left' : 'right');
+        else releaseTouchPointer(2);
+        city.update(16 * (i + 1), 16);
+      }
+      releaseTouchPointer(2);
+      assert.ok(until(), 'the touch-controlled car reached the next phase of the overtake');
+    };
+    steerAlongStraight(-33, () => passRoadPosition(road, city.player).along > traffic.truckPose.along + 65);
+    steerAlongStraight(33, () => passRoadPosition(road, city.player).side > 26);
+    assert.equal(city.lastCollision, undefined);
+    assert.deepEqual(stressUpdates, []);
+
+    const bend = (road.bends[0][0] + road.bends[0][1]) / 2;
+    placePlayer(bend, -26);
+    city.carSpeed = 30;
+    const initialStress = run.stress;
+    city.update(500, 16);
+    city.update(516, 16);
+    assert.deepEqual(stressUpdates, [initialStress + PASS_NEAR_MISS_STRESS]);
+    assert.equal(run.peakStress, run.stress);
+    releaseTouchPointer(1);
+  });
+
   test('Only the selected München ramp completes departure and Innsbruck finishes once after parking', () => {
     const level = getLevelById('level_3_alps_winter');
     const start = createCity('muenchen_start', undefined, true, level.routeOptions[2].id, true).city;
@@ -444,7 +501,7 @@ export default function register(test, game) {
     start.update(0, 50);
     assert.equal(start.reverseHintText.visible, true);
     assert.match(start.reverseHintText.text, /Falsche Auffahrt/);
-    assert.match(start.distText.text, /Ausfahrt Holzkirchen/);
+    assert.match(start.distText.text, /A8 Salzburg/);
     assert.equal(start.cleanRun, true);
     assert.deepEqual(completed, []);
     start.player.setPosition(start.targetZone.centerX, start.targetZone.centerY);
@@ -452,7 +509,7 @@ export default function register(test, game) {
     assert.equal(start.reverseHintText.visible, false);
     assert.deepEqual(completed, [['muenchen_start', true]]);
 
-    const finish = createCity('innsbruck_finish', undefined, true, level.routeOptions[1].id, false).city;
+    const finish = createCity('innsbruck_finish', undefined, true, 'l3_route_b_fernpass_reschen', false).city;
     prepareCityUpdate(finish, 'innsbruck_finish', level);
     finish.bridge.onCitySegmentComplete = (...args) => completed.push(args);
     finish.update(0, 50);
@@ -470,7 +527,7 @@ export default function register(test, game) {
 
   test('City steering follows both roads out of München and both ramps into Innsbruck', () => {
     for (const preset of ['muenchen_start', 'innsbruck_finish']) {
-      for (const routeId of ['l3_route_b_zirler', 'l3_route_c_achenpass']) {
+      for (const routeId of ['l3_route_b_fernpass_reschen', 'l3_route_c_jaufenpass']) {
         const { city } = createCity(preset, undefined, false, routeId, false);
         city.trafficCars = [];
         city.pedestrians = [];

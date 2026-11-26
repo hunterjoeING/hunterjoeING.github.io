@@ -13,10 +13,10 @@ const choice = (id: string, label: string, hint: string, resultText: string, eff
 
 export const WINTER_START_EVENT: GameEventDef = {
   id: 'evt_winter_start',
-  title: 'Kaltstart in München · 06:00 Uhr · −8 °C',
+  title: 'Kaltstart in München · 06:30 Uhr · −8 °C',
   icon: '❄️',
   category: 'family',
-  description: 'Innsbruck wartet. Vor der Abfahrt kannst du Akku und Innenraum vorwärmen.',
+  description: 'Die Winterfahrt an den Gardasee beginnt. Vor der Abfahrt kannst du Akku und Innenraum vorwärmen.',
   choices: [
     choice('winter_precondition', 'Vorkonditionieren', `+${precondition.timeDeltaMin} Min · ${precondition.socDeltaPct} % Akku · warmer Innenraum`,
       'Akku und Innenraum sind warm. Ihr fahrt entspannt los.', precondition),

@@ -365,7 +365,9 @@ function rebuildLegPlans(level: LevelConfig, plan: TripPlan): TripPlan {
         : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
     };
   });
-  plan.plannedStops = [];
+  plan.plannedStops = level.id === WINTER_LEVEL_ID
+    ? (getActiveRouteOption(level, plan)?.defaultPlannedStops ?? []).map(stop => ({ ...stop }))
+    : [];
   return plan;
 }
 

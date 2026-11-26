@@ -103,7 +103,7 @@ const GAMES_META = {
 const EROADTRIP_LEVEL_TARGETS = {
   eroadtrip_l1: { levelId: 'level_1_aachen_hannover', targetMinutes: 797 },
   eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 1100, legacyMaxMinutes: 40800 },
-  eroadtrip_l3: { levelId: 'level_3_alps_winter', targetMinutes: 165 }
+  eroadtrip_l3: { levelId: 'level_3_alps_winter', targetMinutes: 564 }
 };
 
 function isEroadtripBoard(gid) {

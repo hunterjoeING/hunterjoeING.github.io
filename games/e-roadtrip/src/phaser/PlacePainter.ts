@@ -97,7 +97,7 @@ export function setBayOccupied(bay: PaintedChargingBay, occupied: boolean): void
 
 export function paintDrivingPlace(
   scene: Phaser.Scene,
-  opts: { preset: CityDrivePreset; station?: ChargerStation; mobile: boolean; passName?: PassName; light?: boolean; routeId?: string; levelOrder?: number; night?: boolean }
+  opts: { preset: CityDrivePreset; station?: ChargerStation; mobile: boolean; passName?: PassName; passSeed?: string; light?: boolean; routeId?: string; levelOrder?: number; night?: boolean }
 ): PlacePaint {
   const routeId = opts.routeId ?? '';
   const aachen = isAachenCity(opts.preset) ? aachenCityDrive(opts.preset, opts.levelOrder ?? 1, routeId) : undefined;
@@ -134,7 +134,7 @@ export function paintDrivingPlace(
     };
   }
   if (isWinterCity(opts.preset)) return paintWinterCity(scene, opts.preset, routeId, !!opts.light, opts.mobile);
-  if (opts.preset === ALPINE_PASS_PRESET) return paintAlpinePass(scene, opts.passName ?? 'Zirler Berg', !!opts.light);
+  if (opts.preset === ALPINE_PASS_PRESET) return paintAlpinePass(scene, opts.passName ?? 'Fernpass', !!opts.light, hashString(opts.passSeed ?? ''));
   if (opts.preset === 'charger_park' && opts.station) return paintAutohof(scene, opts.station, opts.mobile);
   throw new Error(`Missing driving layout or charging station for ${opts.preset}`);
 }

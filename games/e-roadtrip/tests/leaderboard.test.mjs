@@ -23,7 +23,7 @@ export default function register(test, game) {
   });
 
   test('leaderboard payloads carry the short label and validate on the level and overall worker boards', () => {
-    const durations = ['13h17m', '18h20m', '2h45m'];
+    const durations = ['13h17m', '18h20m', '9h24m'];
     for (const level of LEVELS.filter(level => level.playable)) {
       const run = mockRun(level);
       const result = mockResult(level, run);

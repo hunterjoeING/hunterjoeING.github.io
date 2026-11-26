@@ -11,19 +11,19 @@ const tempDir = await mkdtemp(join(tmpdir(), 'e-roadtrip-tests-'));
 const bundle = join(tempDir, 'game.mjs');
 const modules = [
   'main', 'data/events', 'data/europeMap', 'data/levels', 'data/vehicles',
-  'data/europeCityCoordinates', 'data/europeGeoData.generated', 'data/europeGeography', 'data/routes/northCoast500',
+  'data/europeCityCoordinates', 'data/europeGeoData.generated', 'data/europeGeography', 'data/routes/northCoast500', 'data/routes/alpsToGarda',
   'phaser/EuropeMapLabelLayout', 'phaser/EuropeMapLabels', 'phaser/EuropePixelMap',
   'sim/RoutePlanner', 'sim/EnergyModel', 'sim/ScoringEngine', 'sim/Leaderboard',
   'sim/ChargingBay', 'sim/RouteNavigation', 'sim/PropertyDamage',
-  'sim/AlpineDriving', 'sim/AlpineDescent', 'data/alpineEvents', 'phaser/AlpinePass',
+  'sim/AlpineDriving', 'sim/AlpineDescent', 'data/alpineEvents', 'phaser/AlpinePass', 'sim/AlpineRoad', 'sim/AlpineHazards',
   'sim/WinterDriving', 'sim/WinterCharging', 'data/winterEvents',
-  'sim/WinterTunnel', 'phaser/DestinationFinale', 'phaser/InnsbruckFinaleScene',
+  'sim/WinterTunnel', 'phaser/DestinationFinale', 'phaser/InnsbruckFinaleScene', 'phaser/SirmioneFinaleScene', 'phaser/AlpinePassTraffic',
   'sim/WinterCity', 'data/cityLayouts/muenchen', 'data/cityLayouts/innsbruck', 'phaser/CityTraffic',
   'sim/AachenCity', 'sim/MappedCity', 'data/cityLayouts/aachen', 'phaser/AachenLandmarks',
   'sim/RegionalCity', 'data/cityLayouts/hannover', 'data/cityLayouts/koeln', 'data/cityLayouts/hirtshals',
   'data/cityLayouts/montpellier', 'sim/BeachArrival', 'phaser/MontpellierBeachArrivalScene',
-  'phaser/CityCollision', 'phaser/MapLayout', 'phaser/AutobahnTraffic',
-  'phaser/CityDriveScene', 'phaser/PlacePainter', 'phaser/AutobahnScene', 'phaser/MontpellierFinaleScene',
+  'phaser/GameBridge', 'phaser/CityCollision', 'phaser/MapLayout', 'phaser/AutobahnTraffic',
+  'phaser/ChargerBadges', 'phaser/CityDriveScene', 'phaser/PlacePainter', 'phaser/AutobahnScene', 'phaser/MontpellierFinaleScene',
   'ui/EventModal', 'ui/DrivingHUD', 'ui/DrivingStatus', 'ui/PlanningUI', 'ui/ResultsUI'
 ];
 
@@ -70,7 +70,7 @@ try {
 
   const game = await import(pathToFileURL(bundle).href);
   for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'finale', 'winter', 'winter-city', 'aachen-city',
-    'regional-city', 'montpellier', 'winter-tunnel', 'alpine', 'europe-map', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
+    'regional-city', 'montpellier', 'winter-tunnel', 'alpine', 'europe-map', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard', 'charger-badges']) {
     const { default: register } = await import(`./${name}.test.mjs`);
     register(test, game);
   }
