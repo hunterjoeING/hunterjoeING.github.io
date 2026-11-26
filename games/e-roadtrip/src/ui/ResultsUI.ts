@@ -80,7 +80,7 @@ export class ResultsUI {
             ${run.propertyDamageEur > 0 ? `<p class="res-summary-line">Wertverlust Auto <strong>${run.propertyDamageEur.toFixed(2)} €</strong></p>` : ''}
             ${
               run.overnightNote
-                ? `<p class="res-overnight">🏨 Übernachtung: ${run.overnightNote}${
+                ? `<p class="res-overnight">🏨 Schlafpause: ${run.overnightNote}${
                     run.lodgingCostEur > 0 ? ` · Unterkunft ${run.lodgingCostEur.toFixed(2)} €` : ' · Unterkunft 0,00 €'
                   }</p>`
                 : ''

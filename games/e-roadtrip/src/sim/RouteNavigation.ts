@@ -29,7 +29,7 @@ function stageDestination(run: RunState, leg: LevelRouteLegSpec, index: number, 
   if (leg.citySegmentAtEnd === 'hannover_messe') return 'Hannover Messe';
   if (leg.citySegmentAtEnd === 'innsbruck_finish') return `Innsbruck · ${INNSBRUCK_HOTEL_LABEL}`;
   if (leg.citySegmentAtEnd === 'montpellier_finish') return MONTPELLIER_HOTEL_LABEL;
-  if (leg.overnightAtEnd && !run.triggeredEventIds.includes(`evt_hotel_overnight@${index}`)) return `Übernachtung · ${city}`;
+  if (leg.overnightAtEnd && !run.triggeredEventIds.includes(`evt_hotel_overnight@${index}`)) return `Schlafpause · ${city}`;
   if (leg.destinationAtEnd) return city;
   if (leg.citySegmentAtEnd === 'ferry_denmark') return `Fährterminal · ${city}`;
   if (leg.citySegmentAtEnd === 'aachen_finish') return city;

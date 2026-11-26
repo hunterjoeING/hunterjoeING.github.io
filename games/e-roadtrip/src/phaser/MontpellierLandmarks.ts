@@ -1,7 +1,8 @@
 import type { GameObjects } from 'phaser';
 import { MONTPELLIER_SAND, MONTPELLIER_SEA } from '../data/cityLayouts/montpellier';
-import type { CityLandmark } from '../data/cityLayouts/types';
+import type { CityLandmark, CityRect } from '../data/cityLayouts/types';
 import type { MappedCityStyle } from './MappedCityPainter';
+import { drawCoastalShadow } from './CoastalEffects';
 
 type Graphics = GameObjects.Graphics;
 
@@ -27,7 +28,11 @@ function footprint({ x, y, art }: CityLandmark) {
   return size ? { x: x - size.w / 2, y: y - size.h / 2, w: size.w, h: size.h } : undefined;
 }
 
-function draw(g: Graphics, feature: CityLandmark, night: boolean): void {
+function buildingShadow(g: Graphics, box: CityRect, length = box.h * 1.3): void {
+  drawCoastalShadow(g, box.x + box.w / 2, box.y + box.h * 0.72, Math.min(box.w, box.h), length);
+}
+
+function draw(g: Graphics, feature: CityLandmark): void {
   const { x, y, art } = feature;
   const box = footprint(feature);
   if (art === 'fountain') {
@@ -45,13 +50,14 @@ function draw(g: Graphics, feature: CityLandmark, night: boolean): void {
 
   const { w, h } = box;
   const { wall, roof } = facades[art];
-  g.fillStyle(0x594939, 0.27).fillRect(box.x + 7, box.y + 8, w, h);
+  buildingShadow(g, box, art === 'phare' ? 112 : h * 1.3);
   g.fillStyle(wall).fillRect(box.x, box.y, w, h);
   g.fillStyle(roof).fillRect(box.x, box.y, w, h * 0.48);
   g.fillStyle(0xffebbd, 0.48).fillRect(box.x + 3, box.y + 4, w - 6, 3);
+  g.fillStyle(0xffe2a8, 0.72).fillRect(box.x, y, 4, h / 2);
   g.fillStyle(0x674c45, 0.38).fillRect(box.x, box.y + h - 5, w, 5);
   for (let dx = 9; dx < w - 6; dx += 13) {
-    g.fillStyle(night ? 0xffcf88 : 0x766757).fillRect(box.x + dx, y + 3, 5, 8);
+    g.fillStyle(0x766757).fillRect(box.x + dx, y + 3, 5, 8);
     g.fillStyle(0xf7e9c7, 0.64).fillRect(box.x + dx - 1, y + 11, 7, 2);
   }
 
@@ -60,7 +66,7 @@ function draw(g: Graphics, feature: CityLandmark, night: boolean): void {
     g.fillStyle(0xc69e81).fillRect(x + 7, y - 56, 5, 64);
     g.fillStyle(roof).fillRect(x - 26, y - 68, 52, 13);
     g.fillStyle(0xf9dfac).fillRect(x - 30, y - 64, 60, 4);
-    g.fillStyle(night ? 0xffde9b : 0x678c93).fillRect(x - 21, y - 60, 42, 6);
+    g.fillStyle(0x678c93).fillRect(x - 21, y - 60, 42, 6);
   } else if (art === 'arch' || art === 'aqueduct') {
     for (const dx of art === 'arch' ? [0] : [-28, 0, 28]) {
       g.fillStyle(0x755d4b).fillRect(x + dx - 7, y + 1, 14, h / 2 - 1);
@@ -77,7 +83,7 @@ function draw(g: Graphics, feature: CityLandmark, night: boolean): void {
 }
 
 function palm(g: Graphics, x: number, y: number): void {
-  g.fillStyle(0x574736, 0.22).fillRect(x - 3, y + 1, 25, 6);
+  drawCoastalShadow(g, x, y + 2, 13, 68);
   g.fillStyle(0x976145).fillRect(x - 3, y - 26, 6, 31).fillRect(x - 5, y - 33, 6, 9);
   g.fillStyle(0x336c48).fillRect(x - 20, y - 35, 30, 6).fillRect(x - 9, y - 46, 12, 13);
   g.fillStyle(0x408855).fillRect(x - 27, y - 31, 12, 5).fillRect(x + 1, y - 38, 17, 6);
@@ -96,7 +102,7 @@ function drawDetails(g: Graphics, mobile: boolean): void {
     if (index === 0) continue;
     for (let x = sand.x + 34; x < sand.x + sand.w - 27; x += mobile ? 104 : 67) {
       const y = sand.y + sand.h - 29 - x % 14;
-      g.fillStyle(0x8d664c, 0.4).fillRect(x - 9, y + 3, 23, 8);
+      drawCoastalShadow(g, x, y + 2, 22, 35);
       g.fillStyle(umbrellas[Math.floor(x / 37) % umbrellas.length]).fillRect(x - 12, y - 5, 24, 11)
         .fillRect(x - 7, y - 9, 14, 18);
       g.fillStyle(0xffebc4).fillRect(x - 1, y - 5, 3, 10).fillRect(x + 19, y - 5, 6, 15);
@@ -107,14 +113,11 @@ function drawDetails(g: Graphics, mobile: boolean): void {
 
 export const montpellierLandmarkArt = { footprint, draw };
 
-export function montpellierCityStyle(light: boolean): MappedCityStyle {
-  return {
-    ground: light ? 0xc8c395 : 0xb5ad84,
-    roofs: [0xb45b46, 0xbf6b46, 0xc97b56, 0xa95241, 0xc38757, 0xa96450],
-    waterColor: area => MONTPELLIER_SEA.includes(area)
-      ? (light ? 0x2da8af : 0x35949f)
-      : (light ? 0x6ba8a1 : 0x5d9192),
-    sand: MONTPELLIER_SAND,
-    drawDetails
-  };
-}
+export const montpellierCityStyle: MappedCityStyle = {
+  ground: 0xc8c395,
+  roofs: [0xb45b46, 0xbf6b46, 0xc97b56, 0xa95241, 0xc38757, 0xa96450],
+  waterColor: area => MONTPELLIER_SEA.includes(area) ? 0x2da8af : 0x6ba8a1,
+  sand: MONTPELLIER_SAND,
+  drawDetails,
+  drawBuildingShadow: buildingShadow
+};

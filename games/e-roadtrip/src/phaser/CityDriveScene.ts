@@ -3,10 +3,13 @@ import { ChargerStation, CityDrivePreset, PoliceViolationKind } from '../types';
 import { passGrip, passTravelHeading } from '../sim/AlpineDriving';
 import { passNavigation, passOnIce, passRoadContains } from './AlpinePass';
 import { getChargerById } from '../data/europeMap';
+import { MONTPELLIER_HOTEL_GOAL, MONTPELLIER_SEA } from '../data/cityLayouts/montpellier';
 import { isRearParked } from '../sim/ChargingBay';
+import { applyMontpellierWeather, MONTPELLIER_LIGHTING } from '../sim/CoastalLight';
 import { evaluatePropertyDamage, recordConeHit, STATIC_CONTACT_CLEARANCE_PX } from '../sim/PropertyDamage';
 import { pointInCityRect } from '../sim/WinterCity';
 import { createCityMinimap } from './MappedCityPainter';
+import { COASTAL_BACKGROUND, createSeaGlitter, followCoastalShadow } from './CoastalEffects';
 import { ERoadtripBridge, ensureTouchHoldsMatchPointers } from './GameBridge';
 import {
   CityLightingProfile,
@@ -52,8 +55,8 @@ export class CityDriveScene extends Phaser.Scene {
     interId: string;
     axis: 'ew' | 'ns';
     sprite: Phaser.GameObjects.Image;
-    halo: Phaser.GameObjects.Image;
-    shimmer: Phaser.GameObjects.Image;
+    halo?: Phaser.GameObjects.Image;
+    shimmer?: Phaser.GameObjects.Image;
   }> = [];
   private zebras: ZebraCrosswalk[] = [];
   private wasInInter = new Set<string>();
@@ -120,6 +123,7 @@ export class CityDriveScene extends Phaser.Scene {
   private cityApproachReached = false;
   private spinners: Phaser.GameObjects.Image[] = [];
   private roadWet = false;
+  private updateCoastalLight?: (time: number) => void;
   private previewFx = false;
   private previewDriveSec = 0;
   private previewLock = false;
@@ -141,10 +145,12 @@ export class CityDriveScene extends Phaser.Scene {
   init(data: { bridge: ERoadtripBridge; preset: CityDrivePreset; chargerId?: string; previewFx?: boolean }): void {
     this.bridge = data.bridge;
     this.preset = data.preset;
+    if (this.preset === 'montpellier_finish' && this.bridge.runState) applyMontpellierWeather(this.bridge.runState);
     this.station = data.chargerId ? getChargerById(data.chargerId) : undefined;
     this.previewFx = !!data.previewFx;
     this.previewDriveSec = 0;
     this.roadWet = false;
+    this.updateCoastalLight = undefined;
     this.passThrough = false;
     this.cityApproachReached = false;
     this.spinners = [];
@@ -222,7 +228,8 @@ export class CityDriveScene extends Phaser.Scene {
 
     this.physics.world.setBounds(0, 0, this.worldW, this.worldH);
     this.cameras.main.setBounds(0, 0, this.worldW, this.worldH);
-    this.cameras.main.setBackgroundColor(this.place.autohof ? 0x14532d : 0x10281c);
+    this.cameras.main.setBackgroundColor(this.preset === 'montpellier_finish'
+      ? COASTAL_BACKGROUND : this.place.autohof ? 0x14532d : 0x10281c);
 
     if (this.place.zoneLabel && this.place.zoneColor !== undefined) {
       this.drawZoneMarker(this.place.zoneLabel, this.place.zoneColor);
@@ -254,7 +261,7 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Optional subtle Bloom PostFX on WebGL desktop; degrades gracefully on Canvas2D / mobile
     const isWebGL = this.game.renderer.type === Phaser.WEBGL;
-    if (isWebGL && !this.isMobilePerf && this.cameras.main.postFX) {
+    if (this.preset !== 'montpellier_finish' && isWebGL && !this.isMobilePerf && this.cameras.main.postFX) {
       try {
         this.cameras.main.postFX.addBloom(0xffffff, 1, 1, 1.12, 0.32, 2);
       } catch {
@@ -380,15 +387,16 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private spawnSignalVisuals(): void {
+    const coast = this.preset === 'montpellier_finish';
     const addLightVisual = (interId: string, axis: 'ew' | 'ns', x: number, y: number) => {
-      const shimmer = this.add
+      const shimmer = coast ? undefined : this.add
         .image(x, y + 22, 'wet_shimmer')
         .setTint(0x22c55e)
         .setScale(0.52, 0.55)
         .setAlpha(0.28)
         .setBlendMode(Phaser.BlendModes.ADD)
         .setDepth(2.5);
-      const halo = this.add
+      const halo = coast ? undefined : this.add
         .image(x, y, 'light_glow_soft')
         .setTint(0x22c55e)
         .setScale(0.42)
@@ -680,8 +688,12 @@ export class CityDriveScene extends Phaser.Scene {
 
   private setupLightingAndWeather(): void {
     this.cableGfx = this.add.graphics().setDepth(13);
+    if (this.preset === 'montpellier_finish') {
+      this.setupCoastalLight();
+      return;
+    }
 
-    // Ambient GTA-2 twilight/night overlay BELOW additive light sprites so lights cut through darkness
+    // Place the ambient overlay below additive lights so their beams stay visible.
     this.nightOverlay = this.add
       .rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, 0x020617, 0)
       .setDepth(12);
@@ -826,6 +838,26 @@ export class CityDriveScene extends Phaser.Scene {
     }
   }
 
+  private setupCoastalLight(): void {
+    const { ambientColor, ambientAlpha } = MONTPELLIER_LIGHTING;
+    this.add.rectangle(this.worldW / 2, this.worldH / 2, this.worldW, this.worldH, ambientColor, ambientAlpha)
+      .setDepth(12);
+    const densities = this.isMobilePerf ? [30, 9, 5] : [62, 16, 10];
+    const glitter = MONTPELLIER_SEA.map(({ x, y, w, h }, index) =>
+      createSeaGlitter(this, { x: x + 12, y: y + 4, w: w - 24, h: h - 8 }, densities[index], 2,
+        index === 0 ? MONTPELLIER_HOTEL_GOAL.x - 115 : undefined));
+    const shadows = [
+      followCoastalShadow(this, this.player, 57, 23),
+      ...this.trafficCars.map(({ sprite, route }) =>
+        followCoastalShadow(this, sprite, route.isCyclist ? 25 : 49, route.isCyclist ? 9 : 20)),
+      ...this.pedestrians.map(({ sprite }) => followCoastalShadow(this, sprite, 27, 7))
+    ];
+    this.updateCoastalLight = time => {
+      glitter.forEach(pool => pool.update(time));
+      shadows.forEach(update => update());
+    };
+  }
+
   private setupNavIndicator(): void {
     this.moveMinimap = this.place.cityMinimap && createCityMinimap(this, this.place.cityMinimap, this.worldW, this.worldH, {
       x: this.targetZone.centerX, y: this.targetZone.centerY
@@ -864,9 +896,10 @@ export class CityDriveScene extends Phaser.Scene {
 
   private updateLightingVisuals(dt: number, profile: CityLightingProfile): void {
     const t = this.trafficTimer;
-    // GTA-2 urban neo-noir twilight mood floor so additive lights, neon & wet reflections pop
+    // Keep additive lights and street reflections visible in the ambient palette.
+    const aachenDeparture = this.preset === 'aachen_start' && this.bridge.level.order === 2 && !profile.isRain;
     const visualAmbientAlpha = profile.isNight
-      ? Math.max(0.56, profile.ambientAlpha)
+      ? aachenDeparture ? 0.44 : Math.max(0.56, profile.ambientAlpha)
       : profile.isDuskOrDawn
         ? Math.max(0.32, profile.ambientAlpha + 0.14)
         : profile.isRain || profile.isStorm
@@ -881,12 +914,7 @@ export class CityDriveScene extends Phaser.Scene {
             ? profile.ambientColor
             : 0x0b1528;
 
-    const coastalLight = this.preset === 'montpellier_finish' &&
-      !profile.isNight && !profile.isRain && !profile.isFog && !profile.isSnow;
-    this.nightOverlay.setFillStyle(
-      coastalLight ? profile.ambientColor : visualAmbientColor,
-      coastalLight ? profile.ambientAlpha : visualAmbientAlpha
-    );
+    this.nightOverlay.setFillStyle(visualAmbientColor, visualAmbientAlpha);
     this.fogOverlay.setAlpha(profile.isFog ? 0.22 + Math.sin(t * 0.8) * 0.05 : 0);
 
     // Wetness drives wet-asphalt reflections & shimmer (strongest in rain/storm, damp neo-noir sheen otherwise)
@@ -999,7 +1027,7 @@ export class CityDriveScene extends Phaser.Scene {
       }
     }
 
-    // Rain / atmospheric GTA-2 drizzle / Snow particle fall (wrapped inside active camera view for density + mobile perf)
+    // Wrap rain, drizzle and snow inside the camera view to preserve density.
     const camView = this.cameras.main.worldView;
     const minX = camView.x - 40;
     const maxX = camView.right + 40;
@@ -1107,18 +1135,16 @@ export class CityDriveScene extends Phaser.Scene {
       const phase = sv.axis === 'ew' ? inter.ewPhase : inter.nsPhase;
       const col = phase === 'green' ? 0x22c55e : phase === 'amber' ? 0xfacc15 : 0xef4444;
       sv.sprite.setTexture(`tlight_${phase}`);
-      sv.halo.setTint(col);
-      sv.shimmer.setTint(col);
+      sv.halo?.setTint(col);
+      sv.shimmer?.setTint(col);
     });
 
+    const run = this.bridge.runState;
     const profile = computeCityLightingProfile(
-      this.bridge.level.departureTimeHour,
-      this.bridge.runState?.elapsedMinutes || 0,
-      this.preset,
-      this.bridge.runState?.activeWeather || 'clear',
-      this.bridge.runState?.isNight
+      this.bridge.level.departureTimeHour, run?.elapsedMinutes ?? 0, this.preset,
+      run?.activeWeather ?? 'clear', run?.isNight
     );
-    this.updateLightingVisuals(dt, profile);
+    if (!this.updateCoastalLight) this.updateLightingVisuals(dt, profile);
 
     // Keyboard and shared touch controls
     ensureTouchHoldsMatchPointers();
@@ -1296,6 +1322,7 @@ export class CityDriveScene extends Phaser.Scene {
       pd.sprite.setVelocity(Math.cos(ang) * pd.speed, Math.sin(ang) * pd.speed);
     }
 
+    this.updateCoastalLight?.(this.trafficTimer);
     this.updateNavigationAndArrival(dt, onIce);
   }
 

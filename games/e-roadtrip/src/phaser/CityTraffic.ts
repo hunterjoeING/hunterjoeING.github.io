@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { CityDrivePreset, PoliceViolationKind, WeatherKind } from '../types';
+import { MONTPELLIER_LIGHTING } from '../sim/CoastalLight';
 import type { Point } from './CityCollision';
 import type { TrafficRoute } from './CityLanes';
 
@@ -99,6 +100,8 @@ export function computeCityLightingProfile(
   weather: WeatherKind,
   forceNight?: boolean
 ): CityLightingProfile {
+  if (preset === 'montpellier_finish') return MONTPELLIER_LIGHTING;
+
   const clockHour = (departureHour + elapsedMinutes / 60) % 24;
   const isNight = !!forceNight || preset === 'aachen_finish' || clockHour >= 19.5 || clockHour < 5.75;
   const isDusk = !isNight && clockHour >= 17.5 && clockHour < 19.5;
@@ -116,7 +119,7 @@ export function computeCityLightingProfile(
     ambientAlpha = isRain ? 0.64 : 0.58;
   } else if (isDusk) {
     const t = (clockHour - 17.5) / 2.0;
-    ambientColor = preset === 'montpellier_finish' ? 0xa34a2b : 0x311042;
+    ambientColor = 0x311042;
     ambientAlpha = 0.16 + t * 0.32;
   } else if (isDawn) {
     const t = 1 - (clockHour - 5.75) / 1.5;

@@ -25,6 +25,7 @@ import {
   snapSpeedKmh
 } from '../sim/RoutePlanner';
 import { speedSignHtml } from './speedSign';
+import { formatClock } from './DrivingStatus';
 import { getBestPriceForStation } from '../sim/EnergyModel';
 import { isProviderSubscribed } from '../phaser/MapLayout';
 import { SoundFX } from '../phaser/SoundFX';
@@ -316,7 +317,13 @@ export class PlanningUI {
     return `
       <div class="forecast-strip">
         <div class="fc-metric"><span>Distanz</span><strong>${f.totalDistanceKm} km</strong></div>
-        <div class="fc-metric"><span>Dauer (Ziel ${Math.floor(level.targetArrivalMinutes / 60)}h${String(level.targetArrivalMinutes % 60).padStart(2, '0')})</span><strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong></div>
+        <div class="fc-metric">
+          <span>Dauer (Ziel ${Math.floor(level.targetArrivalMinutes / 60)}h${String(level.targetArrivalMinutes % 60).padStart(2, '0')})</span>
+          <strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong>
+          ${level.id === 'level_2_family_summer'
+            ? `<span>Abfahrt ${formatClock(level, 0)}${f.valid ? ` · Ankunft ca. ${formatClock(level, f.totalMinutes)}` : ''}</span>`
+            : ''}
+        </div>
         <div class="fc-metric">
           <span>Strom + Abos</span><strong>${(f.estimatedChargingCostEur + f.subscriptionCostEur).toFixed(2)} €</strong>
           ${f.tollsEur > 0 ? `<span>Maut ${f.tollsEur.toFixed(2)} €</span><span>Gesamt ${f.estimatedTotalCostEur.toFixed(2)} €</span>` : ''}
@@ -510,7 +517,7 @@ export class PlanningUI {
       </div>
       ${
         overnightCity
-          ? `<div class="overnight-plan-note">🏨 Übernachtung auf dem Hinweg in <b>${overnightCity}</b> (Etappe ${overnightIdx + 1}, am Etappenende). Unterwegs wählst du: gutes Hotel mit AC, Budgethotel oder Schlaf im Auto an der Aire. Kosten 0–289 €, etwa 8 Stunden, fließen in die Abrechnung ein.</div>`
+          ? `<div class="overnight-plan-note">🏨 Schlafpause am Morgen in <b>${overnightCity}</b> nach Etappe ${overnightIdx + 1}. Du wählst unterwegs zwischen Hotel mit AC, Budgethotel und Schlaf im Auto an der Aire. Dauer: ${HOTEL_AC.stayMinutes / 60} Stunden. Kosten: 0–${HOTEL_AC.lodgingEur} €.</div>`
           : ''
       }
 
@@ -547,11 +554,11 @@ export class PlanningUI {
               : '';
             const hotelAc = forecast.hotelAc;
             const overnightNote = spec?.overnightAtEnd
-              ? `<div class="leg-overnight">🏨 Übernachtung (8 Std.). Hotel mit AC und Frühstück: ${HOTEL_AC.lodgingEur}&nbsp;€.
+              ? `<div class="leg-overnight">🏨 Schlafpause nach der Nachtfahrt (${HOTEL_AC.stayMinutes / 60} Std.). Hotel mit AC und Frühstück: ${HOTEL_AC.lodgingEur}&nbsp;€.
                 ${hotelAc?.legIndex === lf.legIndex
                   ? `Akku ${Math.round(hotelAc.arriveSoc)} → ${Math.round(hotelAc.departSoc)}&nbsp;% (${hotelAc.minutes} Min. Ladezeit). ${hotelAc.reachable ? `Am Reiseziel: ${Math.round(hotelAc.finalSocPct)}&nbsp;%.` : 'Die Reichweite reicht auch mit Hotel-AC nicht bis ans Ziel.'}`
                   : 'Das Hotel ist mit dem aktuellen Ladeplan nicht erreichbar.'}
-                Die Hauptprognose rechnet mit der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Übernachten im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
+                Die Hauptprognose rechnet mit der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Schlafen im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
               : '';
             return `
             ${directionHeader}

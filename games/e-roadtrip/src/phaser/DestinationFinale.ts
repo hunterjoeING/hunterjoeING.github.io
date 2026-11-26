@@ -10,7 +10,7 @@ export interface FinaleData {
 }
 
 export function mountFinale(
-  scene: Phaser.Scene, titleText: string, art: Phaser.GameObjects.Graphics[], onComplete: () => void,
+  scene: Phaser.Scene, titleText: string, art: Phaser.GameObjects.GameObject[], onComplete: () => void,
   durationMs = FINALE_DURATION_MS
 ): void {
   const title = scene.add.text(FINALE_WIDTH / 2, 9, titleText, {

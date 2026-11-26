@@ -25,6 +25,7 @@ import { buildWinterQueueEvent, WINTER_START_EVENT } from './data/winterEvents';
 import { computeSubscriptionTripCost } from './sim/EnergyModel';
 import { WINTER_LEVEL_ID, winterDetourEnergyKwh, winterQueueCars } from './sim/WinterDriving';
 import { aachenCityDrive, isAachenCity } from './sim/AachenCity';
+import { applyMontpellierWeather, MONTPELLIER_PREVIEW_HOUR } from './sim/CoastalLight';
 import { isRegionalCity, koelnMotorway, regionalCityDrive } from './sim/RegionalCity';
 import { isWinterCity, winterCityDrive, WINTER_CITY_MINUTES } from './sim/WinterCity';
 import {
@@ -61,6 +62,7 @@ import { BootScene } from './phaser/BootScene';
 import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
+import { computeCityLightingProfile } from './phaser/CityTraffic';
 import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
 import { MontpellierBeachArrivalScene } from './phaser/MontpellierBeachArrivalScene';
 import { InnsbruckFinaleScene } from './phaser/InnsbruckFinaleScene';
@@ -548,6 +550,12 @@ class ERoadtripController {
     };
     const run = this.bridge.runState;
     if (run) {
+      if (preset === 'montpellier_finish') applyMontpellierWeather(run);
+      if (preset === 'aachen_start' && this.level.id === 'level_2_family_summer') {
+        run.isNight = computeCityLightingProfile(
+          this.level.departureTimeHour, run.elapsedMinutes, preset, run.activeWeather
+        ).isNight;
+      }
       const routeId = preset === 'aachen_finish' ? run.plan.returnRouteId : run.plan.selectedRouteId;
       const title = isAachenCity(preset) ? aachenCityDrive(preset, this.level.order, routeId).title
         : isWinterCity(preset) ? winterCityDrive(preset, routeId).title
@@ -908,6 +916,19 @@ class ERoadtripController {
         run.currentLegIndex = Math.max(0, idx);
         run.legProgressKm =
           kind === 'level2rain' ? 12 : kind === 'level2wc' ? edge.distanceKm * 0.55 : Math.max(0, edge.distanceKm - 1.1);
+        if (kind === 'level2arrival') {
+          run.elapsedMinutes = ((24 + MONTPELLIER_PREVIEW_HOUR - this.level.departureTimeHour) % 24) * 60;
+          applyMontpellierWeather(run);
+        } else {
+          const forecast = evaluateTripPlan(this.level, clonedPlan);
+          const leg = forecast.legForecasts[run.currentLegIndex];
+          const elapsed = forecast.legForecasts.slice(0, run.currentLegIndex)
+            .reduce((total, stage) => total + stage.driveMinutes + stage.chargeMinutes, 0);
+          run.elapsedMinutes = elapsed + Math.round(leg.driveMinutes * run.legProgressKm / edge.distanceKm);
+          run.isNight = computeCityLightingProfile(
+            this.level.departureTimeHour, run.elapsedMinutes, 'charger_park', run.activeWeather
+          ).isNight;
+        }
         run.triggeredEventIds = kind === 'level2wc' ? [] : ['evt_dirty_toilets'];
         if (stressedArrival) {
           run.stress = 75;
@@ -921,7 +942,7 @@ class ERoadtripController {
         }
       }
       this.bridge.timeScale = kind === 'level2rain' || kind === 'level2wc' ? 1 : 15;
-      this.enterAutobahn();
+      this.enterAutobahn(kind === 'level2rain' ? { previewWeather: 'rain' } : undefined);
       return;
     }
 
@@ -1411,6 +1432,7 @@ class ERoadtripController {
     const run = this.bridge.runState;
     if (!run || run.completed) return;
     const winter = this.level.id === WINTER_LEVEL_ID;
+    if (!winter) applyMontpellierWeather(run);
     this.drivingHUD.setMode('hidden');
     resetTouchInput();
     this.stopAllGameplayScenes();
@@ -1425,9 +1447,9 @@ class ERoadtripController {
     if (beachArrival) {
       this.game.scene.start('MontpellierBeachArrivalScene', {
         carColor: getVehicleById(run.plan.vehicleId).primaryColor,
-        isLightTheme: this.bridge.isLightTheme,
         onComplete: () => {
           if (this.bridge.runState !== run || run.completed) return;
+          applyMontpellierWeather(run);
           this.game.scene.stop('MontpellierBeachArrivalScene');
           this.game.scene.start('MontpellierFinaleScene', finale);
         }

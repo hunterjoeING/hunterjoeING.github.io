@@ -108,9 +108,9 @@ export function paintDrivingPlace(
     const art = aachen ? { footprint: aachenLandmarkFootprint, draw: drawAachenLandmark }
       : coast ? montpellierLandmarkArt : regionalLandmarkArt;
     const place = paintMappedCity(scene, drive.layout, art, {
-      light: !!opts.light, mobile: opts.mobile, night: !!opts.night || opts.preset === 'aachen_finish',
+      light: coast || !!opts.light, mobile: opts.mobile, night: !coast && (!!opts.night || opts.preset === 'aachen_finish'),
       signedExit: drive.exitPoint, signLabel: drive.signLabel,
-      style: coast ? montpellierCityStyle(!!opts.light) : undefined
+      style: coast ? montpellierCityStyle : undefined
     });
     const arrivalBay = regional?.arrivalBay;
     if (arrivalBay) {

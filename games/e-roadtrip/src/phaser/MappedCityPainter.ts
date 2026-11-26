@@ -18,6 +18,7 @@ export interface MappedCityStyle {
   waterColor(area: CityRect): number;
   sand: CityRect[];
   drawDetails(g: Graphics, mobile: boolean): void;
+  drawBuildingShadow?(g: Graphics, box: CityRect): void;
 }
 
 const rectangle = (x: number, y: number, w: number, h: number) => new Phaser.Geom.Rectangle(x, y, w, h);
@@ -142,7 +143,8 @@ function paintPlots(
         continue;
       }
       buildings.push(plot);
-      fill(g, { ...plot, x: plot.x + 5, y: plot.y + 7 }, 0x40312e, 0.4);
+      if (style?.drawBuildingShadow) style.drawBuildingShadow(g, plot);
+      else fill(g, { ...plot, x: plot.x + 5, y: plot.y + 7 }, 0x40312e, 0.4);
       fill(g, plot, roofs[seed % roofs.length]);
       fill(g, { ...plot, h: h / 2 }, 0xd3b199, 0.28);
       fill(g, { x: plot.x, y: plot.y + h - 9, w, h: 9 }, style ? 0xf0c595 : 0x635951, 0.68);

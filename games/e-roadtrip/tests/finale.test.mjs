@@ -66,19 +66,37 @@ export default function register(test, game) {
       const graphics = () => ({
         clear() { return this; },
         fillStyle(color) { palette.push(color); return this; },
-        fillRect() { return this; }
+        fillRect() { return this; },
+        fillPoints() { return this; },
+        destroy() {}
       });
       let timeout;
       let finished = 0;
       const sky = [];
       const labels = [];
+      const baked = [];
+      const sparkles = [];
       const scale = Object.assign(new EventEmitter(), { width: start[0], height: start[1] });
       const input = Object.assign(new EventEmitter(), { keyboard: new EventEmitter() });
       Object.assign(scene, {
-        add: { graphics, container: () => frame, text(_x, _y, text) {
-          labels.push(text);
-          return { setOrigin() {} };
-        } },
+        add: {
+          graphics, container: () => frame, text(_x, _y, text) {
+            labels.push(text);
+            return { setOrigin() {} };
+          },
+          renderTexture() {
+            return {
+              setOrigin() { return this; },
+              draw() { baked.push(palette.slice()); return this; },
+              texture: { setFilter() {} }
+            };
+          },
+          rectangle() {
+            const sprite = { setDepth() { return this; }, setAlpha(alpha) { this.alpha = alpha; } };
+            sparkles.push(sprite);
+            return sprite;
+          }
+        },
         scale, input, events: new EventEmitter(),
         time: { delayedCall(ms, callback) { assert.equal(ms, FINALE_DURATION_MS); timeout = callback; } },
         cameras: { main: { setBackgroundColor: color => sky.push(color) } }
@@ -91,10 +109,15 @@ export default function register(test, game) {
       [scale.width, scale.height] = [scale.height, scale.width];
       scale.emit('resize');
       assert.equal(frame.zoom, Math.min(scale.width / 192, scale.height / 108));
+      const firstGlitter = sparkles.map(sprite => sprite.alpha);
       scene.update(0, 4200);
       if (Finale === MontpellierFinaleScene) {
         assert.equal(palette.includes(0xd94365), light);
-        assert.equal(sky.at(-1), light ? 0xead69f : 0x253550);
+        assert.deepEqual(sky, [0xc89162]);
+        assert.equal(baked.length, 1);
+        assert.ok(baked[0].includes(0xffecac));
+        assert.equal(sparkles.length, start[0] < 640 ? 16 : 30);
+        assert.notDeepEqual(sparkles.map(sprite => sprite.alpha), firstGlitter);
       } else {
         assert.ok(palette.includes(0xffe1a0));
         assert.equal(sky.at(-1), light ? 0xb8d5e9 : 0x22334b);

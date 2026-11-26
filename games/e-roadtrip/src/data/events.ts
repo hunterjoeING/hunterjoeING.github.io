@@ -432,16 +432,16 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
 
   evt_hotel_overnight: {
     id: 'evt_hotel_overnight',
-    title: 'Übernachtung in {ORT}',
+    title: 'Schlafpause in {ORT}',
     category: 'family',
     icon: '🏨',
     description:
-      'Der Fahrtag endet in {ORT}. Frau und Kinder wollen schlafen. Du wählst, wo die Nacht verbracht wird. Das sehr gute Hotel lädt das Auto über Nacht per AC auf.',
+      'Nach der Nachtfahrt macht ihr in {ORT} acht Stunden Pause. Wo wollt ihr schlafen? Im guten Hotel kann das Auto während der Pause per AC laden.',
     requiresFamily: true,
     choices: [
       {
         id: 'hotel_good',
-        label: 'Sehr gutes Hotel: AC über Nacht, Spa und Buffet',
+        label: 'Sehr gutes Hotel mit AC, Spa und Buffet',
         hint: `${HOTEL_AC.lodgingEur} € · 8 Stunden · AC bis ${HOTEL_AC.maxKw} kW inklusive · Frühstück und Erholung`,
         timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: 0,
@@ -463,7 +463,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         lodgingDeltaEur: 84,
         stressDelta: 0,
         decisionPoints: 8,
-        resultText: 'Ein schlichtes Zimmer, ruhige Nacht, kein Spa und keine Wallbox. Die Stimmung bleibt, der Akku auch.'
+        resultText: 'Im schlichten Zimmer könnt ihr in Ruhe schlafen. Stimmung und Akkustand bleiben gleich.'
       },
       {
         id: 'sleep_car',
@@ -478,7 +478,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
         followUpEventId: 'evt_rest_area_robbery',
         followUpChance: 0.1,
         resultText:
-          'Kostenlos, aber eng und stickig. Frau und Kinder schlafen schlecht. Hoffentlich bleibt das Auto in der Nacht unangetastet.'
+          'Kostenlos, aber eng und stickig. Frau und Kinder schlafen schlecht. Hoffentlich bleibt das Auto während der Pause unangetastet.'
       }
     ]
   },
@@ -489,7 +489,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
     category: 'police',
     icon: '🚨',
     description:
-      'Mitten in der Nacht: die Seitenscheibe ist eingeschlagen, die Geldbörse weg. Die Gendarmerie will ein Protokoll. Das kostet Geld, Nerven und Zeit.',
+      'Nach der Schlafpause ist die Seitenscheibe eingeschlagen und die Geldbörse weg. Die Gendarmerie will ein Protokoll. Das kostet Geld, Nerven und Zeit.',
     choices: [
       {
         id: 'file_report',

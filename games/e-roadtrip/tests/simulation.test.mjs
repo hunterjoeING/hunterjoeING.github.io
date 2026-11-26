@@ -103,7 +103,7 @@ export default function register(test, game) {
     const legs = getActiveRouteLegs(l2, hotelRun.plan);
     hotelRun.currentLegIndex = legs.findIndex(leg => leg.overnightAtEnd);
     hotelRun.legProgressKm = getEdgeById(legs[hotelRun.currentLegIndex].edgeId).distanceKm - 1;
-    assert.match(buildRemainingRoute(l2, hotelRun).destination, /^Übernachtung · /);
+    assert.match(buildRemainingRoute(l2, hotelRun).destination, /^Schlafpause · /);
     assert.equal(getApproachingRoadStop(l2, hotelRun), undefined);
     assert.equal(evaluateStopSkip(l2, hotelRun, {
       legIndex: hotelRun.currentLegIndex, chargerId: 'evt_hotel_overnight', targetSocPct: 95
@@ -160,7 +160,7 @@ export default function register(test, game) {
     const legs = getActiveRouteLegs(l2, run.plan);
     const overnightIndex = legs.findIndex(leg => leg.overnightAtEnd);
     const night = buildRemainingRoute(l2, run);
-    assert.equal(night.destination, 'Übernachtung · Lyon');
+    assert.equal(night.destination, 'Schlafpause · Lyon');
     assert.equal(night.segments.length, overnightIndex + 1);
     run.currentLegIndex = overnightIndex;
     run.legProgressKm = getEdgeById(legs[overnightIndex].edgeId).distanceKm;

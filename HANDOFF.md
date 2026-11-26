@@ -21,13 +21,20 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Level 3 und Stadtfahrten bis Montpellier | Michi | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `e220286` · kein PR | 🟡 Montpellier im Fork · Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Nachtfahrt und Abendsonne in Montpellier | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Änderungen lokal · kein PR | 🟡 Umsetzung geprüft · Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-26 – Michi / Codex (GPT-6) – v0.6.0 · Nachtfahrt und Abendsonne in Montpellier
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `95ef368`. SHA: (folgt). Änderungen im Arbeitsbaum. Push: nein, vorgesehen für den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Level 2 startet nachts. Die Schlafpause liegt morgens nach Etappe 3, die weitere Fahrt am Nachmittag. Die Planung zeigt die Startzeit und bei erreichbarem Ladeplan die geschätzte Ankunft. Montpellier bleibt in der Stadtfahrt und beiden Strandszenen trocken und goldfarben. Beide Ankunftsvorschauen starten bei klarem Wetter. Die Lichter auf der Autobahn folgen weiter der Fahrzeit.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` auf Bundle und Tests, `npm test` (130/130), Versionsprüfung gegen `279202c`, `git diff --check`. Alle drei Standardprognosen liegen im Zeitfenster des unveränderten Workers. Acht erreichbare Ladepläne mit Abweichungen ergeben 17:11–20:30 Uhr. Vergleichsfahrten mit dem MG4 über Paris und hohen Ladezielen können später ankommen. Keine Anfrage an die Live-Wertung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
+- **Offen** · In beiden Themes bei 390 px Aachen bei Nacht und beide Montpellier-Anfahrten samt Parken und Strandszenen spielen. Browserstart und lokaler HTTP-Server scheitern an der Sandbox. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
 
 ### 2026-11-26 – Michi / Codex (Sol 6.2) – v0.6.0 · Stadtfahrt Montpellier
 
@@ -58,12 +65,5 @@
 - **Erledigt** · Gemeinsame Aachen-Karte für Abfahrt und Heimkehr. Level 1 fährt über den Europaplatz zur A544, Level 2 über den Kaiserplatz nach Aachen-Brand. Nachts führt das Navi über den Alleenring nach Hause ins Pontviertel. Abfahrtspauschale von sieben auf neun Minuten erhöht, da die empfohlenen Stadtstrecken länger sind.
 - **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` für Bundle und geänderte Skripte, `npm test` (109/109), `git diff --check` und Versionsprüfung gegen `279202c`. Alle Standardprognosen der Level 1–3 liegen im Zeitfenster des Workers. Für alle sechs Routen der Level 1–2 sind erreichbare Ladepläne belegt, Level 3 läuft weiter durch den bestehenden Abschlusstest. Keine Live-Wertungsanfragen.. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Die Überarbeitung gehört zu v0.6.0. Die öffentlichen Stichpunkte werden im nächsten Stadtszenen-Lauf gesammelt aktualisiert.
 - **Offen** · Spieltest auf Desktop und bei 320/390 px in beiden Themes. Lokaler Browserstart durch die Sandbox blockiert. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
-
-### 2026-11-26 – Michi / Codex (GPT-6) – Level 3 Run C – Tunnel und Ankunft
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `82abb4f`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Nach dem Parken am Innsbrucker Hotel folgt auf allen drei Routen eine überspringbare Pixelszene mit Familie und Schneefall, danach Ergebnis und Level-3-Bestenliste. Route A hat einen Tunnel mit Vorwarnung, Scheinwerfern, 80-km/h-Schild, Abschnittskontrolle und gelegentlicher Sperrung mit Warte- oder Umleitungswahl. Das Briefing fasst die Winterregeln zusammen.
-- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` auf Bundle, Release-Datei und geänderten Tests, `npm test` (101/101), Versionsprüfung gegen `279202c`, `git diff --check`. Die drei Standardpläne mit dem MG4 erreichen Innsbruck in 131–154 Min und liefern gültige Ergebnisse für beide Bestenlisten. Spiel und Worker verwenden 165 Min. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Keine Anfrage an die Live-Wertung.
-- **Offen** · Tunnel, Sperrungsdialog und Finale auf dem Handy und Desktop in beiden Themes spielen. Chrome und Chromium scheitern lokal beim Start an der Sandbox. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
