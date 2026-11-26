@@ -23,12 +23,23 @@
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
 | 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity · Neon high | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
 | E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` (`0ddbc5e`, Upstream-Merge `5e751d6`) · [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) (Merge `2aebc51`) | ✅ Gemerged, Worker deployt und live (e-Roadtrip v0.6.0, Arcade v0.4.1) |
+| Verbrennungsmotor 3D v0.2.0 · Gaspedal, lastabhängige Telemetrie, Muschelkurve und gekoppelte Voreinstellungen | Michi / Codex CLI · gpt-6.2-sol high | `codex/combustion-load-map` ab `upstream/main`, SHA: (folgt), kein PR | 🟡 Fork-Test ausstehend |
 
 **Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Verbrennungsmotor 3D v0.2.0
+
+- **Branch / PR** · `codex/combustion-load-map` ab `upstream/main` (`a70eacc`), SHA: (folgt), Push: folgt auf den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages-Test-URL folgt.
+- **Erledigt** · Gaspedal, lastabhängiges Nutzmoment und Beispielkennfeld für Wirkungsgrad und spezifischen Verbrauch. Die Muschelkurve zeigt den verschiebbaren Betriebspunkt, sechs Isolinien, die Volllastgrenze und den Fahrwiderstand. Das Prüfstandsdiagramm zeigt weiterhin Volllast. Voreinstellungen und Tour setzen Drehzahl und Last gemeinsam.
+- **Geprüft** · `node --check` für Daten-, UI-, Modell-, Release- und Testdatei, HTML-Tags, Label-Verweise, JSON-LD, Importmap, Inline-JavaScript und `git diff --check`. Alle 8 Kennfeldtests bestanden mit Dateiglob und `--test-isolation=none`. Node 24 behandelt das direkt übergebene Testverzeichnis als Einstiegspunkt und beendet den Verzeichnisaufruf mit `MODULE_NOT_FOUND`. `node scripts/check-release-bump.mjs upstream/main` lief ohne releasepflichtigen Commit-Diff. Die ergänzende Prüfung desselben Skripts gegen den Arbeitsbaum bestätigt `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich.
+- **Diagramme** · Volllastmoment und Leistung bei 7.101 Drehzahlen exakt wie auf `upstream/main`. SVG-Erzeugung, Lastwechsel, Marker und Diagrammsteuerung mit simulierten Pointer-Events geprüft.
+- **GitHub** · Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen. Die vier Aufrufe für Upstream und Fork konnten `api.github.com` nicht erreichen.
+- **Offen** · Browserprüfung auf Fork-Pages durch den Orchestrator, einschließlich 390 px, Touch und beider Themes. Commit und Push folgen durch den Orchestrator.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 ### 2026-11-26 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live e-Roadtrip v0.6.0
 
@@ -53,26 +64,5 @@
 
 - **Erledigt** · Autobrennero (3 Säulen) und Neogy (4 Säulen) bleiben in Level 3, mit sichtbarem Filter und Säulen auf jeder Route. Ein Filter erscheint nur noch, wenn das Level eine Säule des Anbieters hat (Level 3 zeigt keinen EWE-Go-Filter mehr). Das Tesla-Abo gilt nur noch an Tesla-Säulen. Anbieter ohne eigenes Abo (Autobrennero, Neogy, Fastned, TotalEnergies, AC-Dorfladen) berechnen den eigenen Ad-hoc-Preis: Autobrennero 0,75, Neogy 0,76 €/kWh an den Schnellladern. Ladezeiten, Referenzpläne (402/504/480 Min.) und Ziel 564 bleiben gleich, nur die Kosten ändern sich. Der Satz „Die vorgeschlagenen Ladestopps kannst du ändern.“ im Level-3-Briefing ist entfernt. Beim Öffnen der Planung steht in allen Levels kein „Eingeplant“.
 - **Doku** · `Architecture.md` (Filter, Preislogik, Changelog) ergänzt. Branch `codex/eroadtrip-v0.6`, `036d0ef`.
-
-### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high · Orchestrator – v0.6.0 · Level-2-Zeitablauf
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `d2bddba`. `036d0ef`. Push ausstehend, Ziel ist der Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Level 2 startet um 12:00. Die Hotelnacht dauert 16 Stunden (Spa und Frühstücksbuffet), der Rastplatz 14 Stunden. Leere MG4-Hotelpläne: A Lyon 18:24–10:24, Ankunft 13:29 (1529 Min.); Mitte Clermont 18:55–10:55, 13:53 (1553); B Clermont 20:01–12:01, 14:59 (1619). Rastplatz-Ankünfte 11:29, 11:53 und 12:59. Das Level-2-Ziel steigt von 1100 auf 1882 Minuten (112 % des langsamsten geladenen MG4-Referenzplans). Worker `eroadtrip_l2` ist angeglichen, `legacyMaxMinutes` bleibt 40800 (20 × 1882 = 37640). Montpellier bleibt trocken und klar mit früher Nachmittagssonne statt goldener Abendsonne. Keine vorausgewählten Ladestopps.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Worker und Release-Datei, `npm test` (159/159), `git diff --check`. Codex CLI hat Abfahrt, Pausenlängen, Texte und das Worker-Ziel 1882 gesetzt und ist an der 5-Stunden-Grenze stehengeblieben. Der Orchestrator hat Beleuchtung, Tests, Architecture und Handoff fertiggestellt und die 112-%-Regel sowie `legacyMaxMinutes` 40800 geprüft (20 × 1882 = 37640). Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
-- **Offen** · Fork-Spieltest: Planungsuhren bei 390 px, Aachen bei Tageslicht, Montpellier am Nachmittag, Hotel- und Rastplatzdialog. Punkt 2 (`legacyMaxMinutes`) bleibt offen. Commit, Push und Upstream-Merge folgen durch den Orchestrator.
-
-### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Ampeln, Verkehr und Schäden
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `d2bddba`. `036d0ef`. Push ausstehend, Ziel ist der Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Die Ampeln zeigen an jeder Seite die Phase, die für diese Einfahrt gilt, auch bei schräger Zufahrt. Nach dem Kollisionsdialog steht der Wagen auf freier Fahrbahn, blinkt zwei Sekunden und kann sich vom Verkehr lösen. Blockierte Stadtfahrzeuge werden nach 2,5 Sekunden durchlässig. Auf beiden Pässen fährt der Verkehr entlang seiner Spur weiter. Kontakte unter 60 px/s geben nur kurzes Feedback. Kratzer beginnen bei 60, Beulen bei 110 und Airbags bei 200 px/s. Bundle-Revision 13.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (158/158), `git diff --check` und Versionsprüfung gegen `279202c`. Die Tests decken alle mitgelieferten Ampelkreuzungen, Schutzzeit und Verkehrsauflösung in Stadt und Pass sowie die Impaktgrenzen ab. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
-- **Offen** · Fork-Spieltest durch den Orchestrator auf Desktop und bei 320/390 px in beiden Themes. Hansemannplatz von der Krefelder Straße bei Grün anfahren, nach einer Kollision im Stau weiterfahren und beim Öffnen der Planung null Ladestopps prüfen. Commit, Push und Upstream-Merge folgen durch den Orchestrator.
-
-### 2026-11-25 – Joe / Antigravity – Zwei interaktive 3D-Explainer (Windkraftanlage & Verbrennungsmotor)
-
-- **Branch / PR** · `main`, Commits `8c0fce8`, `098402a` + Patch `v0.1.1`, Push: ja, Ziel: Upstream `hunterjoeING/hunterjoeING.github.io`, kein PR. Live-URLs: https://hunterjoeing.github.io/games/wind-turbine/ und https://hunterjoeing.github.io/games/combustion-engine/.
-- **Erledigt** · Zwei eigenständige Three.js-3D-Explainer unter `games/wind-turbine/` (`v0.1.1`) und `games/combustion-engine/` (`v0.1.1`) umgesetzt und im Hub (`index.html`), im Burger-Menü (`shared/burger-menu.js`), in `shared/arcade.js`, in `sitemap.xml` sowie in `shared/releases.js` (`arcade` v0.4.0, beide Apps v0.1.1, Regel 10 geprüft) integriert. Patch `v0.1.1`: Rotationsachse von Bremsscheibe, schneller Welle & Kupplung (`rotateX(Math.PI / 2)` auf Geometrie vorgekippt), Getriebe-Verzahnung (24:13 / 22:11) und Rotorblatt-Anströmung korrigiert sowie mobiles Steuerungsmenü in beiden Explainern mit sticky „✕ Zurück zu 3D“-Kopfzeile, Backdrop-Tap-Close und Escape-Taste versehen.
-- **Geprüft** · `node --check` auf alle geänderten/neuen JS-Dateien, `games/e-roadtrip/tests/releases.test.mjs` (6/6 bestanden), `node scripts/check-release-bump.mjs origin/main`, Headless-Chrome-WebGL-Verifikation (1280×800 und 390×844, Hell & Dunkel, Normal/Cutaway/X-Ray/Exploded/Tour, mobiles Drawer-Öffnen/Schließen per Button und Backdrop, 0 Fehler, kein horizontales Scrollen). Issue-/PR-Check (25.11., `gh issue list` / `gh pr list`): 0 offene Issues, 0 offene PRs im Upstream.
-- **Offen** · Keine offenen Punkte.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

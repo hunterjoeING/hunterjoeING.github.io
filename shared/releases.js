@@ -79,6 +79,16 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.2.0", date: "2026-11-27", type: "feature", title: "Gaspedal und Muschelkurve",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Mit dem Gaspedal stellst du die Motorlast ein.",
+        "Ein Beispielkennfeld liefert Wirkungsgrad und spezifischen Verbrauch für den gewählten Betriebspunkt. Im Leerlauf bei 0 % Last zeigt die Anzeige 0 % Wirkungsgrad.",
+        "In der interaktiven Muschelkurve siehst und verschiebst du den aktuellen Betriebspunkt.",
+        "Die Voreinstellungen setzen Drehzahl und Last gemeinsam.",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.1.1", date: "2026-11-25", type: "patch", title: "Mobiles Steuerungsmenü schließen",
       author: "Joe", model: "Neon",
       highlights: [

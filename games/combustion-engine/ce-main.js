@@ -5,9 +5,13 @@ import {
   ENGINE_SPECS,
   ENGINE_PARTS,
   ENGINE_TOUR_STEPS,
-  computeEngineTelemetry
-} from './ce-data.js';
-import { createCombustionEngineModel } from './ce-model.js';
+  TORQUE_NM_PER_BAR,
+  computeEngineTelemetry,
+  computeBsfcContours,
+  fullTorqueNm,
+  roadLoadTorqueNm
+} from './ce-data.js?v=0.2.0';
+import { createCombustionEngineModel } from './ce-model.js?v=0.2.0';
 
 const DEFAULT_CAMERA = {
   normal: { pos: [7.8, 2.5, 8.6], target: [0.0, 0.5, 0.0] },
@@ -119,6 +123,7 @@ function init() {
   const appState = {
     viewMode: 'cutaway',
     rpm: 2400,
+    load: 0.30,
     timeScale: 0.16,
     labelsVisible: false,
     flowVisible: true,
@@ -127,7 +132,7 @@ function init() {
     tourIndex: 0
   };
 
-  let telemetry = computeEngineTelemetry(appState.rpm);
+  let telemetry = computeEngineTelemetry(appState.rpm, appState.load);
 
   // =========================================================================
   // 3D-LABELS (PROJEKTION)
@@ -299,9 +304,10 @@ function init() {
   }
 
   function updateDynoMarkers() {
-    const cx = xForRpm(telemetry.rpm).toFixed(1);
-    const yp = yForPower(telemetry.powerKW).toFixed(1);
-    const yt = yForTorque(telemetry.torqueNm).toFixed(1);
+    const fullLoad = computeEngineTelemetry(telemetry.rpm);
+    const cx = xForRpm(fullLoad.rpm).toFixed(1);
+    const yp = yForPower(fullLoad.powerKW).toFixed(1);
+    const yt = yForTorque(fullLoad.torqueNm).toFixed(1);
     const vline = document.getElementById('ce-chart-vline');
     const dotP = document.getElementById('ce-dot-power');
     const dotT = document.getElementById('ce-dot-torque');
@@ -319,16 +325,138 @@ function init() {
     }
   }
 
+  // 05b · Muschelkurve
+  const mapSvg = document.getElementById('ce-bsfc-map');
+  const mapTop = 22;
+  const mapBottom = 172;
+  const mapPlotH = mapBottom - mapTop;
+  const mapTorqueMax = 300;
+  let mapMarker;
+
+  function yForMapTorque(torqueNm) {
+    return mapBottom - torqueNm / mapTorqueMax * mapPlotH;
+  }
+
+  function mapPath(points) {
+    return points.map(({ rpm, torqueNm }, i) => {
+      return `${i === 0 ? 'M' : 'L'}${xForRpm(rpm).toFixed(2)},${yForMapTorque(torqueNm).toFixed(2)}`;
+    }).join(' ');
+  }
+
+  function buildBsfcMap() {
+    if (!mapSvg) return;
+    const { maxRpm, minRunningRpm, redlineRpm } = ENGINE_SPECS;
+    const { contours, optimum } = computeBsfcContours();
+    const fullLoad = [{ rpm: minRunningRpm, torqueNm: 0 }];
+    const roadLoad = [];
+    const rpmStep = 50;
+    for (let rpm = minRunningRpm; rpm <= maxRpm; rpm += rpmStep) {
+      const torqueNm = fullTorqueNm(rpm);
+      fullLoad.push({ rpm, torqueNm });
+      const roadTorqueNm = roadLoadTorqueNm(rpm);
+      if (roadTorqueNm <= torqueNm) roadLoad.push({ rpm, torqueNm: roadTorqueNm });
+    }
+    let roadEnd = roadLoad.at(-1).rpm;
+    let aboveLimit = roadEnd + rpmStep;
+    while (aboveLimit - roadEnd > 0.01) {
+      const rpm = (roadEnd + aboveLimit) / 2;
+      if (roadLoadTorqueNm(rpm) <= fullTorqueNm(rpm)) roadEnd = rpm;
+      else aboveLimit = rpm;
+    }
+    roadLoad.push({ rpm: roadEnd, torqueNm: roadLoadTorqueNm(roadEnd) });
+
+    const fullLoadPath = mapPath(fullLoad);
+    const right = xForRpm(maxRpm);
+    const left = xForRpm(0);
+    const redline = xForRpm(redlineRpm);
+    const areaPath = `${fullLoadPath} L${right},${mapBottom} Z`;
+    const labels = [];
+    const labelRpms = [3675, 1850, 3900, 4850, 5800, 3450];
+    const contourPaths = contours.map(({ level, polylines }, i) => {
+      const labelRpm = labelRpms[i];
+      const point = polylines.flat().reduce((closest, point) => {
+        return !closest || Math.abs(point.rpm - labelRpm) < Math.abs(closest.rpm - labelRpm) ? point : closest;
+      }, null);
+      if (point) {
+        labels.push(`<text x="${xForRpm(point.rpm)}" y="${yForMapTorque(point.torqueNm) - 3}" class="chart-map-label" text-anchor="middle">${level}</text>`);
+      }
+      return polylines.map(line => `<path d="${mapPath(line)}" class="chart-contour-line" />`).join('');
+    }).join('');
+    const optimumX = xForRpm(optimum.rpm);
+    const optimumY = yForMapTorque(optimum.torqueNm);
+
+    mapSvg.innerHTML = `
+      <defs><clipPath id="ce-map-limits"><path d="${areaPath}" /></clipPath></defs>
+      <rect x="${redline}" y="${mapTop}" width="${right - redline}" height="${mapPlotH}" class="chart-zone-redline" />
+      <path d="${areaPath}" class="chart-map-area" />
+      ${[0, 100, 200, 300].map(nm => {
+        const y = yForMapTorque(nm);
+        return `<line x1="${left}" y1="${y}" x2="${right}" y2="${y}" class="chart-grid" />
+          <text x="${left - 5}" y="${y + 3.5}" text-anchor="end" class="chart-axis-text">${nm}</text>`;
+      }).join('')}
+      ${[0, 5, 10, 15].map(bar => {
+        const y = yForMapTorque(bar * TORQUE_NM_PER_BAR);
+        return `<line x1="${right}" x2="${right + 4}" y1="${y}" y2="${y}" class="chart-grid" />
+          <text x="${right + 6}" y="${y + 3.5}" class="chart-axis-text">${bar}</text>`;
+      }).join('')}
+      <path d="M${left},${mapTop} V${mapBottom} H${right} V${mapTop}" class="chart-grid" fill="none" />
+      <line x1="${redline}" x2="${redline}" y1="${mapTop}" y2="${mapBottom}" class="chart-marker-line danger" />
+      ${[0, 1, 2, 3, 4, 5, 6, 7].map(k =>
+        `<text x="${xForRpm(k * 1000)}" y="186" text-anchor="middle" class="chart-axis-text">${k}k</text>`
+      ).join('')}
+      <text x="${chartW / 2}" y="198" text-anchor="middle" class="chart-axis-text">Drehzahl (U/min)</text>
+      <text x="${left - 5}" y="13" text-anchor="end" class="chart-axis-text">Nm</text>
+      <text x="${right + 6}" y="13" class="chart-axis-text">bar</text>
+      <g clip-path="url(#ce-map-limits)">${contourPaths}</g>
+      <path d="${fullLoadPath}" class="chart-map-limit" />
+      <path d="${mapPath(roadLoad)}" class="chart-road-load" />
+      ${labels.join('')}
+      <path d="M${optimumX},${optimumY - 4} l4,7 h-8 Z" class="chart-map-optimum" />
+      <text x="${optimumX - 43}" y="${optimumY - 17}" text-anchor="middle" class="chart-map-label">Optimum ~${contours[0].level}</text>
+      <g id="ce-map-marker">
+        <circle r="8" class="chart-map-halo" />
+        <circle r="4.4" class="chart-map-dot" />
+      </g>
+    `;
+    mapMarker = mapSvg.querySelector('#ce-map-marker');
+
+    function scrubMap(e) {
+      const matrix = mapSvg.getScreenCTM();
+      if (!matrix) return;
+      const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(matrix.inverse());
+      const ratio = THREE.MathUtils.clamp((point.x - left) / plotW, 0, 1);
+      const rpm = Math.round(ratio * maxRpm / rpmStep) * rpmStep;
+      const torqueNm = (mapBottom - point.y) / mapPlotH * mapTorqueMax;
+      const fullTorque = fullTorqueNm(rpm);
+      setRpm(rpm, fullTorque ? torqueNm / fullTorque : 0);
+    }
+
+    mapSvg.addEventListener('pointerdown', e => {
+      if (!e.isPrimary || e.button !== 0) return;
+      mapSvg.setPointerCapture(e.pointerId);
+      scrubMap(e);
+    });
+    mapSvg.addEventListener('pointermove', e => {
+      if (mapSvg.hasPointerCapture(e.pointerId)) scrubMap(e);
+    });
+  }
+
   // =========================================================================
   // UI-UPDATES & STEUERUNG
   // =========================================================================
   const elRpmSlider = document.getElementById('ce-rpm-slider');
   const elRpmVal = document.getElementById('ce-rpm-val');
+  const elLoadSlider = document.getElementById('ce-load-slider');
+  const elLoadVal = document.getElementById('ce-load-val');
   const elStatusBadge = document.getElementById('ce-status-badge');
   const elTelPower = document.getElementById('ce-tel-power');
   const elTelTorque = document.getElementById('ce-tel-torque');
   const elTelIgn = document.getElementById('ce-tel-ign');
   const elTelEff = document.getElementById('ce-tel-eff');
+  const elTelEffNote = document.getElementById('ce-tel-eff-note');
+  const elTelBsfc = document.getElementById('ce-tel-bsfc');
+  const elMapEff = document.getElementById('ce-map-eff');
+  const elMapBsfc = document.getElementById('ce-map-bsfc');
   const elInspector = document.getElementById('ce-inspector');
   const elTourCard = document.getElementById('ce-tour-card');
   const elTourStartBtn = document.getElementById('ce-btn-tour');
@@ -339,11 +467,18 @@ function init() {
   const cylStrokeEls = [0, 1, 2, 3].map(i => document.getElementById(`ce-cyl-badge-${i}`));
 
   function updateTelemetryUI() {
-    telemetry = computeEngineTelemetry(appState.rpm);
+    telemetry = computeEngineTelemetry(appState.rpm, appState.load);
     if (elRpmSlider && Number(elRpmSlider.value) !== appState.rpm) {
       elRpmSlider.value = String(appState.rpm);
     }
     if (elRpmVal) elRpmVal.textContent = `${Math.round(telemetry.rpm).toLocaleString('de-DE')} U/min`;
+    const loadPercent = Math.round(telemetry.load * 100);
+    const loadText = `${loadPercent} %`;
+    if (elLoadSlider) {
+      elLoadSlider.value = String(loadPercent);
+      elLoadSlider.setAttribute('aria-valuetext', loadText);
+    }
+    if (elLoadVal) elLoadVal.textContent = loadText;
     if (elStatusBadge) {
       elStatusBadge.textContent = telemetry.statusLabel;
       elStatusBadge.dataset.status = telemetry.status;
@@ -351,17 +486,31 @@ function init() {
     if (elTelPower) elTelPower.textContent = `${Math.round(telemetry.powerKW)} kW (${Math.round(telemetry.powerPS)} PS)`;
     if (elTelTorque) elTelTorque.textContent = `${Math.round(telemetry.torqueNm)} Nm`;
     if (elTelIgn) elTelIgn.textContent = `${Math.round(telemetry.ignitionsPerSec)} / s`;
-    if (elTelEff) elTelEff.textContent = `${Math.round(telemetry.thermalEff * 100)} %`;
+    const effText = `${Math.round(telemetry.thermalEff * 100)} %`;
+    const bsfcText = telemetry.noUsefulPower ? '–' : `${Math.round(telemetry.bsfc).toLocaleString('de-DE')} g/kWh`;
+    if (elTelEff) elTelEff.textContent = effText;
+    if (elTelEffNote) elTelEffNote.hidden = !telemetry.noUsefulPower;
+    if (elTelBsfc) elTelBsfc.textContent = bsfcText;
+    if (elMapEff) elMapEff.textContent = effText;
+    if (elMapBsfc) elMapBsfc.textContent = bsfcText;
 
     document.querySelectorAll('.ce-preset-btn').forEach(b => {
-      const target = Number(b.dataset.rpm);
-      b.classList.toggle('active', Math.abs(target - telemetry.rpm) < 120);
+      const active = Math.abs(Number(b.dataset.rpm) - telemetry.rpm) <= 120
+        && Math.abs(Number(b.dataset.load) - loadPercent) <= 3;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-pressed', String(active));
     });
     updateDynoMarkers();
+    mapMarker?.setAttribute('transform', `translate(${xForRpm(telemetry.rpm)} ${yForMapTorque(telemetry.torqueNm)})`);
   }
 
-  function setRpm(val) {
+  function setRpm(val, load = appState.load) {
     appState.rpm = Math.max(0, Math.min(ENGINE_SPECS.maxRpm, Number(val) || 0));
+    setLoad(load);
+  }
+
+  function setLoad(val) {
+    appState.load = Math.round(THREE.MathUtils.clamp(Number(val) || 0, 0, 1) * 100) / 100;
     updateTelemetryUI();
   }
 
@@ -451,7 +600,7 @@ function init() {
     `;
 
     setViewMode(step.viewMode, false);
-    setRpm(step.demoRpm);
+    setRpm(step.demoRpm, step.demoLoad ?? 0.6);
     setTimeScale(step.demoTimeScale);
     selectPart(step.focusPart, false);
     flyCamera(step.cameraPos, step.cameraTarget, 0.95);
@@ -498,10 +647,11 @@ function init() {
   });
 
   elRpmSlider?.addEventListener('input', e => setRpm(e.target.value));
+  elLoadSlider?.addEventListener('input', e => setLoad(Number(e.target.value) / 100));
 
   document.querySelectorAll('.ce-preset-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      setRpm(Number(btn.dataset.rpm));
+      setRpm(Number(btn.dataset.rpm), Number(btn.dataset.load) / 100);
       if (window.ArcadeAudio) window.ArcadeAudio.click();
     });
   });
@@ -583,6 +733,7 @@ function init() {
 
   // Initialisieren (Standard: 01 Cutaway)
   buildDynoChart();
+  buildBsfcMap();
   updateTelemetryUI();
   setTimeScale(appState.timeScale);
   selectPart(null, false);

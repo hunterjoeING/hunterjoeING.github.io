@@ -6,6 +6,7 @@ export const ENGINE_SPECS = {
   compressionRatio: '11,0 : 1',
   firingOrder: '1 – 3 – 4 – 2',
   idleRpm: 850,
+  minRunningRpm: 200,
   redlineRpm: 6500,
   maxRpm: 7000,
   maxTorqueNm: 265,
@@ -17,73 +18,188 @@ export const ENGINE_SPECS = {
 // Zyl 1 & 4 laufen im Gleichtakt (0°/360°), Zyl 2 & 3 um 180° versetzt (180°/540°).
 export const CYLINDER_PHASE_OFFSETS = [0, 180, 540, 360];
 
-/**
- * Berechnet Drehmoment (Nm), Leistung (kW / PS), Wirkungsgrad und Kraftstoffdurchsatz
- * eines modernen 2,0-Liter-Vierzylinder-Ottomotors über die Drehzahl n (U/min).
- */
-export function computeEngineTelemetry(rpmInput) {
-  const rpm = Math.max(0, Math.min(ENGINE_SPECS.maxRpm, Number(rpmInput) || 0));
+export const TORQUE_NM_PER_BAR = 15.915;
+const FUEL_HEATING_VALUE = 42.7; // Unterer Heizwert in MJ/kg
 
-  let torqueNm = 0;
-  let status = 'off';
-  let statusLabel = 'Motor aus';
+function clamp(value, max) {
+  return Math.max(0, Math.min(max, Number(value) || 0));
+}
 
-  if (rpm < 200) {
-    torqueNm = 0;
-    status = 'off';
-    statusLabel = 'Motor aus';
-  } else {
-    // Realistische Drehmoment-Kurve (breites Plateau zwischen 2.500 und 5.200 U/min)
-    const x = rpm / 1000; // in Tsd. U/min
-    const lowRise = 1 / (1 + Math.exp(-(x - 1.35) * 2.2));
-    const peakBell = Math.exp(-Math.pow((x - 4.15) / 2.65, 2));
-    const highDrop = rpm > 5600 ? Math.max(0.58, 1 - Math.pow((x - 5.6) / 2.2, 2) * 0.42) : 1;
-    torqueNm = (128 + 137 * peakBell) * (0.62 + 0.38 * lowRise) * highDrop;
+function smoothstep(a, b, value) {
+  const t = clamp((value - a) / (b - a), 1);
+  return t * t * (3 - 2 * t);
+}
 
-    if (rpm > ENGINE_SPECS.redlineRpm) {
-      // Begrenzer-Abfall jenseits 6.500 U/min
-      const over = (rpm - ENGINE_SPECS.redlineRpm) / 500;
-      torqueNm *= Math.max(0.45, 1 - over * 0.48);
-      status = 'redline';
-      statusLabel = 'Drehzahlbegrenzer (> 6.500)';
-    } else if (rpm < 1200) {
-      torqueNm *= 0.45 + 0.55 * ((rpm - 200) / 1000);
-      status = 'idle';
-      statusLabel = 'Leerlauf';
-    } else if (rpm >= 3400 && rpm <= 5000) {
-      status = 'peakTorque';
-      statusLabel = 'Max. Drehmoment-Bereich';
-    } else if (rpm >= 5500) {
-      status = 'peakPower';
-      statusLabel = 'Nennleistungs-Bereich';
-    } else {
-      status = 'cruise';
-      statusLabel = 'Teillast / Effizienzbereich';
-    }
+export function fullTorqueNm(rpmInput) {
+  const { minRunningRpm, redlineRpm, maxRpm } = ENGINE_SPECS;
+  const rpm = clamp(rpmInput, maxRpm);
+  if (rpm < minRunningRpm) return 0;
+
+  const x = rpm / 1000;
+  const lowRise = 1 / (1 + Math.exp(-(x - 1.35) * 2.2));
+  const peakBell = Math.exp(-Math.pow((x - 4.15) / 2.65, 2));
+  const highDrop = rpm > 5600 ? Math.max(0.58, 1 - Math.pow((x - 5.6) / 2.2, 2) * 0.42) : 1;
+  const torqueNm = (128 + 137 * peakBell) * (0.62 + 0.38 * lowRise) * highDrop;
+
+  if (rpm > redlineRpm) {
+    const over = (rpm - redlineRpm) / 500;
+    return torqueNm * Math.max(0.45, 1 - over * 0.48);
   }
+  if (rpm < 1200) return torqueNm * (0.45 + 0.55 * ((rpm - minRunningRpm) / 1000));
+  return torqueNm;
+}
 
-  // P [kW] = M [Nm] * 2 * pi * n [U/min] / 60000
+// BSFC für einen 2,0-Liter-Turbo-Benziner: vereinfachtes Beispielkennfeld, keine Messdaten.
+export function bsfcMap(rpmInput, loadInput) {
+  const rpm = clamp(rpmInput, ENGINE_SPECS.maxRpm);
+  const load = clamp(loadInput, 1);
+  const bmep = load * fullTorqueNm(rpm) / TORQUE_NM_PER_BAR;
+  if (bmep <= 0) return null;
+
+  const x = rpm / 1000;
+  const fmep = 0.7 + 0.10 * x + 0.010 * x ** 2;
+  const pmep = 1.7 * (1 - load) ** 1.6;
+  const etaI = 0.398 - 0.030 * ((x - 2.6) / 3.2) ** 2;
+  const knock = 1 - 0.07 * smoothstep(0.82, 1, load)
+    - 0.012 * smoothstep(4.8, 6.4, x) * smoothstep(0.6, 1, load);
+  const eta = etaI * knock * bmep / (bmep + fmep + pmep);
+  return 3600 / (eta * FUEL_HEATING_VALUE);
+}
+
+export function thermalEfficiencyFromBsfc(bsfc) {
+  return bsfc > 0 ? Math.min(0.40, 3600 / (bsfc * FUEL_HEATING_VALUE)) : 0;
+}
+
+function operatingStatus(rpm, load) {
+  if (rpm < ENGINE_SPECS.minRunningRpm) return ['off', 'Motor aus'];
+  if (rpm > ENGINE_SPECS.redlineRpm) return ['redline', 'Drehzahlbegrenzer (> 6.500)'];
+  if (load < 0.03) {
+    return ['idle', rpm < 1200 ? 'Leerlauf · keine Nutzleistung' : 'Schubbetrieb · keine Nutzleistung'];
+  }
+  if (rpm < 1200) return ['idle', 'Niedrige Drehzahl'];
+  if (load < 0.9) return ['cruise', 'Teillast'];
+  if (rpm >= 3400 && rpm <= 5000) return ['peakTorque', 'Volllast · max. Drehmoment-Bereich'];
+  if (rpm >= 5500) return ['peakPower', 'Volllast · Nennleistungs-Bereich'];
+  return ['cruise', 'Volllast'];
+}
+
+export function computeEngineTelemetry(rpmInput, loadInput = 1) {
+  const rpm = clamp(rpmInput, ENGINE_SPECS.maxRpm);
+  const load = clamp(loadInput, 1);
+  const torqueNm = load * fullTorqueNm(rpm);
   const powerKW = (torqueNm * 2 * Math.PI * rpm) / 60000;
-  const powerPS = powerKW * 1.35962;
-  const ignitionsPerSec = (rpm / 60) * 2; // 4-Takt Vierzylinder: 2 Zündungen pro Kurbelwellenumdrehung
-
-  // Thermischer Wirkungsgrad (typisch 20% im Leerlauf bis ~38% im optimalen Betriebspunkt)
-  let thermalEff = 0;
-  if (rpm >= 200) {
-    const effCurve = 0.38 - 0.14 * Math.pow((rpm - 3100) / 3600, 2);
-    thermalEff = Math.max(0.18, Math.min(0.39, effCurve));
-  }
+  const bsfc = bsfcMap(rpm, load);
+  const [status, statusLabel] = operatingStatus(rpm, load);
 
   return {
     rpm,
+    load,
     torqueNm,
     powerKW,
-    powerPS,
-    ignitionsPerSec,
-    thermalEff,
+    powerPS: powerKW * 1.35962,
+    // 4-Takt-Vierzylinder: zwei Zündungen pro Kurbelwellenumdrehung.
+    ignitionsPerSec: status === 'off' ? 0 : (rpm / 60) * 2,
+    bmepBar: torqueNm / TORQUE_NM_PER_BAR,
+    bsfc,
+    thermalEff: thermalEfficiencyFromBsfc(bsfc),
+    noUsefulPower: powerKW === 0,
     status,
     statusLabel
   };
+}
+
+export function roadLoadTorqueNm(rpm) {
+  return 28 + 7.3 * (rpm / 1000) ** 2;
+}
+
+function traceContourLines(nodes) {
+  const lines = [];
+  const endpoints = nodes.filter(node => node.neighbors.length === 1);
+  const visited = new Set();
+  for (const start of [...endpoints, ...nodes]) {
+    if (visited.has(start)) continue;
+    const line = [];
+    let previous;
+    let node = start;
+    while (node && !visited.has(node)) {
+      visited.add(node);
+      line.push(node.point);
+      const next = node.neighbors.find(neighbor => neighbor !== previous);
+      previous = node;
+      node = next;
+    }
+    if (node === start) line.push(start.point);
+    lines.push(line);
+  }
+  return lines;
+}
+
+export function computeBsfcContours(levels = [235, 250, 270, 300, 350, 450]) {
+  const rpmStep = 100;
+  const loadCells = 50;
+  const { minRunningRpm, maxRpm } = ENGINE_SPECS;
+  const rpmCells = (maxRpm - minRunningRpm) / rpmStep;
+  let optimum = { bsfc: Infinity };
+  const grid = Array.from({ length: rpmCells + 1 }, (_, i) => {
+    const rpm = minRunningRpm + i * rpmStep;
+    return Array.from({ length: loadCells + 1 }, (_, j) => {
+      const load = j / loadCells;
+      const bsfc = bsfcMap(rpm, load);
+      if (bsfc !== null && bsfc < optimum.bsfc) {
+        optimum = { rpm, load, torqueNm: load * fullTorqueNm(rpm), bsfc };
+      }
+      return { rpm, load, efficiency: thermalEfficiencyFromBsfc(bsfc), id: i * (loadCells + 1) + j };
+    });
+  });
+
+  const contours = levels.map(level => {
+    const threshold = thermalEfficiencyFromBsfc(level);
+    const nodes = new Map();
+    function crossing(a, b) {
+      if ((a.efficiency >= threshold) === (b.efficiency >= threshold)) return null;
+      const key = Math.min(a.id, b.id) + ':' + Math.max(a.id, b.id);
+      if (!nodes.has(key)) {
+        // In η interpolieren, damit die Nulllastkante einen endlichen Rasterwert hat.
+        const fraction = (threshold - a.efficiency) / (b.efficiency - a.efficiency);
+        const rpm = a.rpm + fraction * (b.rpm - a.rpm);
+        const load = a.load + fraction * (b.load - a.load);
+        nodes.set(key, { point: { rpm, torqueNm: load * fullTorqueNm(rpm) }, neighbors: [] });
+      }
+      return nodes.get(key);
+    }
+
+    function connect(a, b) {
+      a.neighbors.push(b);
+      b.neighbors.push(a);
+    }
+
+    for (let i = 0; i < rpmCells; i++) {
+      for (let j = 0; j < loadCells; j++) {
+        const a = grid[i][j];
+        const b = grid[i + 1][j];
+        const c = grid[i + 1][j + 1];
+        const d = grid[i][j + 1];
+        const edges = [crossing(a, b), crossing(b, c), crossing(c, d), crossing(d, a)].filter(Boolean);
+        if (edges.length === 2) {
+          connect(edges[0], edges[1]);
+        } else if (edges.length === 4) {
+          // Marching Squares: Der Zellmittelpunkt entscheidet die Paarung im Sattelfall.
+          const center = bsfcMap((a.rpm + c.rpm) / 2, (a.load + c.load) / 2);
+          const centerInside = thermalEfficiencyFromBsfc(center) >= threshold;
+          if (centerInside === (a.efficiency >= threshold)) {
+            connect(edges[0], edges[1]);
+            connect(edges[2], edges[3]);
+          } else {
+            connect(edges[0], edges[3]);
+            connect(edges[1], edges[2]);
+          }
+        }
+      }
+    }
+
+    return { level, polylines: traceContourLines([...nodes.values()]) };
+  });
+  return { contours, optimum };
 }
 
 /**
@@ -416,6 +532,7 @@ export const ENGINE_TOUR_STEPS = [
     viewMode: 'exploded',
     focusPart: 'crankshaft',
     demoRpm: 4200,
+    demoLoad: 1.0,
     demoTimeScale: 0.18,
     cameraPos: [10.8, 3.2, 11.8],
     cameraTarget: [0.0, 0.8, 0.0],

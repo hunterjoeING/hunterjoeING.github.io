@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade</title>
-  <meta name="description" content="Interaktiver 3D-Explainer eines 4-Takt-Reihenvierzylinder-Ottomotors (DOHC 16V): Cutaway-Aufschnitt, X-Ray-Röntgenblick, Explosionsansicht mit 12 beschrifteten Baugruppen, Drehzahl-Regler, Drehmoment-/Leistungskurve &amp; 6-Schritte-Tour." />
+  <meta name="description" content="Interaktiver 3D-Explainer eines 4-Takt-Reihenvierzylinder-Ottomotors (DOHC 16V): Cutaway, X-Ray, Explosionsansicht, Drehzahl-Regler, Gaspedal (Last), Drehmoment-/Leistungskurve, Muschelkurve &amp; 6-Schritte-Tour." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/combustion-engine/" />
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
   <meta property="og:title" content="Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade" />
-  <meta property="og:description" content="Erlebe in echtem 3D, wie ein 4-Takt-Verbrennungsmotor Kraftstoff in Drehmoment verwandelt: Cutaway, X-Ray, Explosionsansicht, Drehzahl-Regler, Prüfstandskurve &amp; geführte Tour." />
+  <meta property="og:description" content="Erkunde den Viertaktmotor in der 3D-Schnittansicht und in der geführten Tour. Entdecke mit Drehzahlregler, Gaspedal und Muschelkurve, wie sich die Last auf den Wirkungsgrad auswirkt." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/combustion-engine/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
@@ -26,7 +26,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Verbrennungsmotor 3D – Interaktiver Explainer",
-    "description": "Interaktiver 3D-Explainer eines 2,0-Liter-4-Takt-Reihenvierzylinder-Ottomotors mit Cutaway, X-Ray, Explosionsansicht, Drehzahl-Regler, Drehmoment-/Leistungskurve und 6-Schritte-Tour.",
+    "description": "Interaktiver 3D-Explainer eines 2,0-Liter-Viertakt-Ottomotors mit Schnittansicht und geführter Tour. Drehzahlregler und Gaspedal steuern den Betriebspunkt in der Muschelkurve. Das Prüfstandsdiagramm zeigt Drehmoment und Leistung bei Volllast.",
     "url": "https://hunterjoeing.github.io/games/combustion-engine/",
     "inLanguage": "de",
     "isAccessibleForFree": true,
@@ -45,14 +45,14 @@
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.1.1" />
+  <link rel="stylesheet" href="./styles.css?v=0.2.0" />
 </head>
 <body>
   <header class="arcade-topbar ce-topbar">
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
       <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
-      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.1.1</button>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.2.0</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
@@ -85,7 +85,7 @@
 
       <div class="ce-bottom-bar">
         <button type="button" class="ce-tour-launcher" id="ce-btn-tour">🧭 06 Schritt-für-Schritt-Tour</button>
-        <button type="button" class="ce-mobile-toggle" id="ce-mobile-panel-toggle" aria-expanded="false">⚙️ Drehzahl, Dyno &amp; Details</button>
+        <button type="button" class="ce-mobile-toggle" id="ce-mobile-panel-toggle" aria-expanded="false">⚙️ Drehzahl, Last &amp; Diagramme</button>
         <div class="ce-orbit-hint">Ziehen: Drehen · Scroll/Pinch: Zoom · Klick: Bauteil prüfen</div>
       </div>
     </section>
@@ -93,11 +93,11 @@
     <div class="ce-drawer-backdrop" id="ce-drawer-backdrop" aria-hidden="true"></div>
 
     <!-- Right Engineering Sidebar -->
-    <aside class="ce-side-panel" id="ce-side-panel" aria-label="Drehzahlsteuerung, Prüfstandskurve &amp; Bauteil-Inspektor">
+    <aside class="ce-side-panel" id="ce-side-panel" aria-label="Drehzahl, Last, Diagramme und Bauteil-Inspektor">
       <div class="ce-drawer-header">
         <span class="ce-drawer-handle" aria-hidden="true"></span>
         <div class="ce-drawer-header-row">
-          <span class="ce-drawer-title">⚙️ Drehzahl, Dyno &amp; Details</span>
+          <span class="ce-drawer-title">⚙️ Drehzahl, Last &amp; Diagramme</span>
           <button type="button" class="ce-drawer-close" id="ce-drawer-close" aria-label="Zurück zur 3D-Ansicht">✕ Zurück zu 3D</button>
         </div>
       </div>
@@ -109,11 +109,16 @@
           <span class="ce-rpm-readout" id="ce-rpm-val">2.400 U/min</span>
         </div>
         <input type="range" class="ce-slider" id="ce-rpm-slider" min="0" max="7000" step="50" value="2400" />
+        <div class="ce-section-head">
+          <label class="ce-section-label" for="ce-load-slider">04b · Gaspedal (Last)</label>
+          <span class="ce-rpm-readout" id="ce-load-val">30 %</span>
+        </div>
+        <input type="range" class="ce-slider ce-load-slider" id="ce-load-slider" min="0" max="100" step="1" value="30" aria-label="Gaspedal (Last)" aria-valuetext="30 %" />
         <div class="ce-preset-row">
-          <button type="button" class="ce-preset-btn" data-rpm="850">Leerlauf</button>
-          <button type="button" class="ce-preset-btn" data-rpm="2400">Cruise</button>
-          <button type="button" class="ce-preset-btn" data-rpm="4200">Max Nm</button>
-          <button type="button" class="ce-preset-btn" data-rpm="6200">Max kW</button>
+          <button type="button" class="ce-preset-btn" data-rpm="850" data-load="0" aria-pressed="false">Leerlauf</button>
+          <button type="button" class="ce-preset-btn active" data-rpm="2400" data-load="30" aria-pressed="true">Cruise</button>
+          <button type="button" class="ce-preset-btn" data-rpm="4200" data-load="100" aria-pressed="false">Max Nm</button>
+          <button type="button" class="ce-preset-btn" data-rpm="6200" data-load="100" aria-pressed="false">Max kW</button>
         </div>
         <div class="ce-speed-wrap">
           <div class="ce-sub-label">Darstellungs-Tempo (Zeitlupe für 4-Takt-Analyse)</div>
@@ -124,7 +129,7 @@
             <button type="button" class="ce-speed-btn" data-scale="0.38">0,38×</button>
           </div>
         </div>
-        <div class="ce-status-pill" id="ce-status-badge" data-status="cruise">Teillast / Effizienzbereich</div>
+        <div class="ce-status-pill" id="ce-status-badge" data-status="cruise">Teillast</div>
       </div>
 
       <!-- Live 4-Cylinder Firing Order (1-3-4-2) -->
@@ -144,12 +149,12 @@
       <!-- Live Telemetry -->
       <div class="ce-telemetry-grid" aria-label="Live-Telemetrie">
         <div class="ce-metric">
-          <div class="ce-metric-label">Leistung P(n)</div>
-          <div class="ce-metric-val power" id="ce-tel-power">55 kW (75 PS)</div>
+          <div class="ce-metric-label">Leistung</div>
+          <div class="ce-metric-val power" id="ce-tel-power">16 kW (21 PS)</div>
         </div>
         <div class="ce-metric">
-          <div class="ce-metric-label">Drehmoment M(n)</div>
-          <div class="ce-metric-val torque" id="ce-tel-torque">218 Nm</div>
+          <div class="ce-metric-label">Drehmoment</div>
+          <div class="ce-metric-val torque" id="ce-tel-torque">63 Nm</div>
         </div>
         <div class="ce-metric">
           <div class="ce-metric-label">Zündungen / Sek.</div>
@@ -157,7 +162,12 @@
         </div>
         <div class="ce-metric">
           <div class="ce-metric-label">Wirkungsgrad η</div>
-          <div class="ce-metric-val" id="ce-tel-eff">37 %</div>
+          <div class="ce-metric-val" id="ce-tel-eff">27 %</div>
+          <div class="ce-metric-label" id="ce-tel-eff-note" hidden>keine Nutzleistung</div>
+        </div>
+        <div class="ce-metric ce-metric-wide">
+          <div class="ce-metric-label">Spez. Verbrauch</div>
+          <div class="ce-metric-val" id="ce-tel-bsfc">317 g/kWh</div>
         </div>
       </div>
 
@@ -168,12 +178,31 @@
           <span style="font-size:11px;color:var(--text-subtle);">Prüfstand</span>
         </div>
         <div class="ce-chart-wrap">
-          <svg id="ce-dyno-chart" viewBox="0 0 320 158" role="img" aria-label="Leistungs- und Drehmomentkurve über Motordrehzahl"></svg>
+          <svg id="ce-dyno-chart" viewBox="0 0 320 158" role="img" aria-label="Leistung und Drehmoment bei Volllast über der Motordrehzahl"></svg>
         </div>
         <div class="ce-chart-legend">
-          <span><strong style="color:#2563eb;">━</strong> Leistung (kW) · <strong style="color:#ea580c;">┄</strong> Drehmoment (Nm)</span>
-          <span>Ziehen = RPM</span>
+          <span><strong style="color:#2563eb;">━</strong> Leistung (kW) · <strong style="color:#ea580c;">┄</strong> Drehmoment (Nm) · Volllast</span>
+          <span>Ziehen ändert die Drehzahl</span>
         </div>
+      </div>
+
+      <div class="ce-panel-section">
+        <div class="ce-section-head">
+          <span class="ce-section-label">05b · Muschelkurve (Wirkungsgradkennfeld)</span>
+        </div>
+        <div class="ce-chart-wrap">
+          <svg id="ce-bsfc-map" viewBox="0 0 320 200" role="img" aria-label="Wirkungsgradkennfeld mit Drehzahl, Nutzmoment und effektivem Mitteldruck" aria-describedby="ce-map-help ce-map-note"></svg>
+        </div>
+        <div class="ce-chart-legend ce-map-legend">
+          <span class="ce-map-legend-item"><i class="ce-map-key" aria-hidden="true"></i> Volllast</span>
+          <span class="ce-map-legend-item"><i class="ce-map-key road" aria-hidden="true"></i> Fahrwiderstand (hoher Gang, konstante Fahrt)</span>
+        </div>
+        <p class="ce-map-help" id="ce-map-help">Muschellinien in g/kWh. Tippen oder Ziehen setzt Drehzahl und Last.</p>
+        <div class="ce-map-readout">
+          <span>η <strong id="ce-map-eff">27 %</strong></span>
+          <span>Spez. Verbrauch <strong id="ce-map-bsfc">317 g/kWh</strong></span>
+        </div>
+        <p class="ce-map-help" id="ce-map-note">Vereinfachtes Beispielkennfeld für einen modernen 2,0-l-Turbo-Benziner, keine Messdaten.</p>
       </div>
 
       <!-- Selected Part Inspector -->
@@ -182,9 +211,9 @@
   </main>
 
   <script src="../../shared/arcade.js?v=0.4.0"></script>
-  <script src="../../shared/releases.js?v=0.4.1"></script>
+  <script src="../../shared/releases.js?v=0.4.1&amp;rev=2"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
   <script src="../../shared/burger-menu.js?v=0.4.0"></script>
-  <script type="module" src="./ce-main.js?v=0.1.1"></script>
+  <script type="module" src="./ce-main.js?v=0.2.0"></script>
 </body>
 </html>

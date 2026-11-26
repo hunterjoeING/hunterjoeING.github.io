@@ -477,6 +477,12 @@ html[data-theme="dark"] .ce-rpm-readout {
   margin: 4px 0 9px;
 }
 
+.ce-load-slider {
+  display: block;
+  height: 32px;
+  margin: -4px 0 8px;
+}
+
 .ce-preset-row,
 .ce-speed-row {
   display: grid;
@@ -652,6 +658,10 @@ html[data-theme="dark"] .ce-cyl-pill[data-stroke="power"] .ce-cyl-stroke {
   border: 1px solid var(--border-hairline);
 }
 
+.ce-metric-wide {
+  grid-column: 1 / -1;
+}
+
 .ce-metric-label {
   font-size: 10.5px;
   color: var(--text-subtle);
@@ -682,7 +692,7 @@ html[data-theme="dark"] .ce-metric-val.torque {
   color: #fb923c;
 }
 
-/* Interactive Dyno SVG Chart */
+/* Interaktive SVG-Diagramme */
 .ce-chart-wrap {
   width: 100%;
   border-radius: 10px;
@@ -692,11 +702,20 @@ html[data-theme="dark"] .ce-metric-val.torque {
   touch-action: none;
 }
 
-#ce-dyno-chart {
+#ce-dyno-chart,
+#ce-bsfc-map {
   display: block;
   width: 100%;
   height: auto;
+}
+
+#ce-dyno-chart {
   cursor: ew-resize;
+}
+
+#ce-bsfc-map {
+  cursor: crosshair;
+  user-select: none;
 }
 
 .chart-grid {
@@ -785,9 +804,126 @@ html[data-theme="dark"] .chart-unit-text.torque {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 3px 8px;
   margin-top: 6px;
   font-size: 11px;
   color: var(--text-subtle);
+}
+
+#ce-bsfc-map .chart-axis-text,
+.chart-map-label {
+  font-size: 10px;
+}
+
+#ce-bsfc-map .chart-axis-text {
+  fill: var(--text-muted);
+}
+
+.chart-map-area {
+  fill: var(--accent-primary);
+  fill-opacity: 0.08;
+}
+
+.chart-map-limit,
+.chart-contour-line,
+.chart-road-load {
+  fill: none;
+  stroke-linejoin: round;
+}
+
+.chart-map-limit {
+  stroke: var(--text-muted);
+  stroke-width: 1.4;
+}
+
+.chart-contour-line {
+  stroke: var(--accent-primary);
+  stroke-width: 1.1;
+}
+
+.chart-road-load {
+  stroke: var(--text-muted);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 3;
+}
+
+.chart-map-label {
+  fill: var(--text-main);
+  stroke: var(--bg-surface);
+  stroke-width: 2.5;
+  paint-order: stroke;
+  font-family: var(--font-ui);
+  font-weight: 700;
+}
+
+.chart-map-optimum {
+  fill: var(--text-main);
+  stroke: var(--bg-surface);
+  stroke-width: 1;
+}
+
+.chart-map-halo,
+.chart-map-dot {
+  fill: var(--accent-gold);
+}
+
+.chart-map-halo {
+  opacity: 0.28;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ce-map-pulse 1.9s ease-out infinite;
+}
+
+.chart-map-dot {
+  stroke: var(--bg-surface);
+  stroke-width: 1.5;
+}
+
+@keyframes ce-map-pulse {
+  from { opacity: 0.45; transform: scale(0.8); }
+  to { opacity: 0; transform: scale(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-map-halo {
+    animation: none;
+  }
+}
+
+.ce-map-legend {
+  justify-content: flex-start;
+}
+
+.ce-map-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ce-map-key {
+  flex: 0 0 16px;
+  border-top: 2px solid var(--text-muted);
+}
+
+.ce-map-key.road {
+  border-top-style: dashed;
+}
+
+.ce-map-help {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.ce-map-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  color: var(--text-main);
+  font-size: 12px;
 }
 
 /* Part Inspector */
