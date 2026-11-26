@@ -113,8 +113,6 @@ export class EuropeMapScene extends Phaser.Scene {
   private pinObjects: ChargerPinNode[] = [];
   private cityLabels: Array<{
     text: Phaser.GameObjects.Text;
-    x: number;
-    y: number;
     isMajor: boolean;
     isActive: boolean;
   }> = [];
@@ -574,7 +572,9 @@ export class EuropeMapScene extends Phaser.Scene {
         this.worldLayer.add(lm);
       }
 
-      const label = this.add.text(city.mapX, city.mapY + 8, city.name, {
+      // Put Köln beside its marker to separate it from Aachen's label below its marker.
+      const labelBesideDot = city.id === 'koeln';
+      const label = this.add.text(city.mapX + (labelBesideDot ? 12 : 0), city.mapY + (labelBesideDot ? 0 : 8), city.name, {
         fontFamily: 'Plus Jakarta Sans, sans-serif',
         fontSize: isInLevel ? '11.5px' : city.isMajor ? '10px' : '9px',
         fontStyle: isInLevel || city.isMajor ? 'bold' : 'normal',
@@ -583,13 +583,11 @@ export class EuropeMapScene extends Phaser.Scene {
         padding: { x: 4, y: 1.5 },
         resolution: 4
       });
-      label.setOrigin(0.5, 0);
+      label.setOrigin(labelBesideDot ? 0 : 0.5, labelBesideDot ? 0.5 : 0);
       label.setDepth(9);
       this.worldLayer.add(label);
       this.cityLabels.push({
         text: label,
-        x: city.mapX,
-        y: city.mapY + 8,
         isMajor: !!city.isMajor,
         isActive: isInLevel
       });
@@ -1041,10 +1039,11 @@ export class EuropeMapScene extends Phaser.Scene {
       const show = item.isActive || (tier >= 1 && item.isMajor) || tier >= 2;
       item.text.setVisible(show);
       if (show) {
+        const { x, y, originX, originY, width } = item.text;
         fixedObstacles.push({
-          x: item.x,
-          y: item.y + 8 * labelScale,
-          w: Math.max(46, item.text.width * labelScale),
+          x: x + (0.5 - originX) * width * labelScale,
+          y: y + (0.5 - originY) * 16 * labelScale,
+          w: Math.max(46, width * labelScale),
           h: 16 * labelScale
         });
       }

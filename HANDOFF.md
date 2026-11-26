@@ -21,13 +21,20 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2 mit Montpellier, Level 3, Stadtkarten, Nachtstart und Abendsonne | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `f30acf3` · kein PR | 🟡 Doku-Abgleich erledigt · Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2-Nachtfahrt mit Montpellier, Level 3, Stadtkarten und Spieltest-Korrekturen | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · lokaler HEAD und Fork-Tracking-Stand `08dcb98` · SHA: (folgt) · kein PR | 🟡 Unveröffentlicht · Korrekturen geprüft · erneuter Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Korrekturen aus dem Spieltest
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), HEAD `08dcb98`. SHA: (folgt). Änderungen im Arbeitsbaum. Push: nein. Ziel nach Freigabe: Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Stadt-HUD aktualisiert Stress und Bedürfnisse bei Sachschäden und beim ersten Treffer pro Pylon. Airbag-Abbruch zeigt den Hinweis, 0 Punkte, Kosten und Fahrtbuch. Detailbalken und Restakku-Abzug stehen bei gewerteten Zieleinläufen. „H hupen“ bleibt beim Umbruch zusammen. Das Köln-Label sitzt neben seinem Kartenpunkt. Bundle-Revision 10 lädt den neuen Stand.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle und geänderte Tests, `npm test` (131/131), `git diff --check` und Versionsprüfung gegen `279202c`. Offline-Abgleich der Label-Flächen über alle Level und Zoomstufen ohne neue Überlappungen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Sichtprüfung bei 390 px in beiden Themes für Stress-Pille, Stadthinweis, Airbag-Ergebnis und die Aachen/Köln-Labels. Lokaler Chromium-Start an der Sandbox gescheitert. Punkt 2 (`legacyMaxMinutes` für Level 2 im Worker) bleibt offen.
 
 ### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Doku-Abgleich
 
@@ -57,13 +64,5 @@
 - **Erledigt** · In Level 1 entfällt die Stadtfahrt `koeln_ring` auf allen Routen (Aachen–Köln bleibt Autobahn am Kreuz Köln-West). Die 6-Minuten-Stadtpauschale gilt in den spielbaren Levels nicht mehr. Layout, `koelnMotorway()` und die RegionalCity-Führung bleiben für den späteren Start in Level 5 (Köln → München). Changelog-Highlight ohne „Köln“. Selbst umgesetzt, kein neues Modell.
 - **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check`, `npm test` (119/119), `git diff --check`. Level-1-Standardpläne: Route A 473 Fahr-/713 Gesamtminuten, Route B 427/667, Route C 463/703 (A und C jeweils 6 Minuten kürzer). Alle liegen im Worker-Fenster zu Ziel 797 Min. (0,5×–20×). Issue-/PR-Check: 0 offen.
 - **Offen** · Spieltest und Upstream-Merge. Konflikte mit `upstream/main` (`0e73752`) beim Merge auflösen.
-
-### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Stadtszenen Hannover/Köln/Hirtshals
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `b21ad68`. SHA `4ea71cd`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Nordausgerichtete Karten für Hannover, Köln und Hirtshals. Hannover A/B fahren über Messe-Nord, C über Messe-Süd. Beide Zufahrten führen zum E-Parkplatz mit dem bestehenden Besuch und AC-Angebot. Köln A fährt auf die A1 nach Norden, C über die Rodenkirchener Brücke auf die A4 Richtung Olpe. Über die Ringe sind Dom und Deutz erreichbar. Hirtshals führt über die E39 zur Fährabfertigung und bleibt Teil der Level-7-Vorschau. Das generische Straßengitter ist entfernt. Der gemeinsame Renderer nutzt statische Kartenkacheln, Gewässer, Brücken und reduzierte Details auf Mobilgeräten.
-- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (117/117; nach Orchestrator-Nachbesserung 118/118), `git diff --check` und Versionsprüfung gegen `279202c`. Alle Standardprognosen der Level 1–3 liegen im Zeitfenster des Workers. Ladepläne für Level 1–2 und die Level-3-Abschlussfahrten sind durch Tests belegt. Zeitpauschalen bleiben bei den bisherigen Werten. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Nachbesserung Orchestrator** · Köln: Der blaue A1-Verkehrswagen startete genau auf dem Spawnpunkt und fuhr dem Spieler sofort auf (Kollisionsdialog nach 0 s). Startpunkt `einfahrt` aus dem Pfad entfernt (`cityLayouts/koeln.ts`), neuer Test „City traffic never starts on top of the player spawn“. Headless-Screenshots aller drei Städte geprüft, Issue/PR-Check: 0 offen.
-- **Offen** · Spieltest auf Desktop und bei 320/390 px in beiden Themes.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

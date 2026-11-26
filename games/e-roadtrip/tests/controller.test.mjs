@@ -4,10 +4,34 @@ import { createFixtures } from './fixtures.mjs';
 
 export default function register(test, game) {
   const {
-    ERoadtripController, EventModal, PlanningUI, getVehicleById, createDefaultPlan,
+    ERoadtripController, DrivingHUD, EventModal, PlanningUI, evaluatePropertyDamage, getVehicleById, createDefaultPlan,
     getActiveRouteLegs, getChargerById, getEdgeById, stopKey, getApproachingRoadStop, buildRemainingRoute, DEFAULT_SHOW_ALL_CHARGERS
   } = game;
   const { route1: level, route2: l2, mkRun, mkScene } = createFixtures(game);
+
+  test('City property damage refreshes the stress pill while the notice pauses the drive', () => {
+    const run = mkRun(level);
+    const hudRoot = new DomStub();
+    const modalRoot = new DomStub();
+    const hud = new DrivingHUD(hudRoot, new DomStub(), {});
+    const controller = Object.assign(Object.create(ERoadtripController.prototype), {
+      level, bridge: { runState: run, paused: true }, drivingHUD: hud, eventModal: new EventModal(modalRoot)
+    });
+    hud.setMode('city');
+    hud.update(level, run, 1, 'Stadtfahrt Aachen');
+    const stress = hudRoot.querySelector('[data-field="stress"]');
+    assert.match(stress.innerHTML, /😌 Stress: <strong>20%/);
+
+    controller.handlePropertyDamage(evaluatePropertyDamage(50));
+
+    assert.match(stress.innerHTML, /😐 Stress: <strong>30%<\/strong> · 🚻 70% · Hunger 90%/);
+    assert.equal(hudRoot.querySelector('[data-field="route"]').textContent, 'Stadtfahrt Aachen');
+    assert.match(hudRoot.innerHTML, /<b>H<\/b>&nbsp;hupen/);
+    assert.match(modalRoot.innerHTML, /Ein paar Kratzer am Auto/);
+    assert.equal(controller.bridge.paused, true);
+    modalRoot.querySelector('#er-damage-ok').click();
+    assert.equal(controller.bridge.paused, false);
+  });
 
   test('The Messe dialog respects the plan, opt-in, and occupancy and settles once', (t) => {
     for (const [planned, optIn, occupancyRoll, expectedSoc, expectedCost, expectedDone] of [

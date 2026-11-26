@@ -2,6 +2,14 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Stadtszenen Hannover/Köln/Hirtshals
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `b21ad68`. SHA `4ea71cd`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Nordausgerichtete Karten für Hannover, Köln und Hirtshals. Hannover A/B fahren über Messe-Nord, C über Messe-Süd. Beide Zufahrten führen zum E-Parkplatz mit dem bestehenden Besuch und AC-Angebot. Köln A fährt auf die A1 nach Norden, C über die Rodenkirchener Brücke auf die A4 Richtung Olpe. Über die Ringe sind Dom und Deutz erreichbar. Hirtshals führt über die E39 zur Fährabfertigung und bleibt Teil der Level-7-Vorschau. Das generische Straßengitter ist entfernt. Der gemeinsame Renderer nutzt statische Kartenkacheln, Gewässer, Brücken und reduzierte Details auf Mobilgeräten.
+- **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (117/117; nach Orchestrator-Nachbesserung 118/118), `git diff --check` und Versionsprüfung gegen `279202c`. Alle Standardprognosen der Level 1–3 liegen im Zeitfenster des Workers. Ladepläne für Level 1–2 und die Level-3-Abschlussfahrten sind durch Tests belegt. Zeitpauschalen bleiben bei den bisherigen Werten. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
+- **Nachbesserung Orchestrator** · Köln: Der blaue A1-Verkehrswagen startete genau auf dem Spawnpunkt und fuhr dem Spieler sofort auf (Kollisionsdialog nach 0 s). Startpunkt `einfahrt` aus dem Pfad entfernt (`cityLayouts/koeln.ts`), neuer Test „City traffic never starts on top of the player spawn“. Headless-Screenshots aller drei Städte geprüft, Issue/PR-Check: 0 offen.
+- **Offen** · Spieltest auf Desktop und bei 320/390 px in beiden Themes.
+
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Stadtszenen Aachen
 
 - **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), vorheriger Stand `44f3815`. SHA `b21ad68`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)

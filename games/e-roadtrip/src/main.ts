@@ -156,6 +156,8 @@ class ERoadtripController {
         this.drivingHUD.update(this.level, run, this.bridge.timeScale);
       },
 
+      onCityStressChanged: run => this.drivingHUD.updateStress(run),
+
       onTriggerChargerSegment: (station: ChargerStation) => {
         this.handleRoadChargerArrival(station);
       },
@@ -1279,6 +1281,7 @@ class ERoadtripController {
     const gameOver = damage.tier === 'airbag';
     run.propertyDamageEur += damage.lossEur;
     applyStress(run, damage.stressDelta);
+    this.drivingHUD.updateStress(run);
     const detail = `Wertverlust Auto: ${damage.lossEur.toLocaleString('de-DE')} €` +
       (damage.stressDelta ? ` · +${damage.stressDelta} Stress` : '');
     run.incidentLog.push({

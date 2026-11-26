@@ -208,8 +208,6 @@ export class DrivingHUD {
           ? 'warn'
           : 'ok';
 
-    const moodEmoji =
-      run.stress < 25 ? '😌' : run.stress < 50 ? '😐' : run.stress < 75 ? '😟' : '😤';
     const weatherBadge =
       run.activeWeather === 'rain' ? '🌧️ Regen' : run.activeWeather === 'snow' ? '❄️ Schnee' : run.isNight ? '🌙 Nacht' : '☀️ Klar';
 
@@ -278,7 +276,7 @@ export class DrivingHUD {
       </div>
       <div class="dhud-controls">
         <div class="dhud-city-hint">
-          🎮 Stadtfahrt: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b> hupen · Ampeln, Radler &amp; Kinder beachten!
+          🎮 Stadtfahrt: <b>WASD / Pfeile</b> fahren · <b>Leertaste</b> bremsen · <b>H</b>&nbsp;hupen · Ampeln, Radler &amp; Kinder beachten!
         </div>
       </div>`;
       const stopCard = this.mode === 'autobahn' ? this.hudEl.querySelector<HTMLElement>('.dhud-stop-card') : null;
@@ -311,10 +309,7 @@ export class DrivingHUD {
       citySubtitle || `${from.name} → ${to.name} (${Math.round(run.legProgressKm)}/${edge.distanceKm} km)`
     );
     this.setText('clock', `${formatClock(level, run.elapsedMinutes)} · ${weatherBadge}`);
-    this.setHtml(
-      'stress',
-      `${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}% · Hunger ${Math.round(run.hungerNeed)}%`
-    );
+    this.updateStress(run);
     this.setText('cost', formatDrivingCosts(run));
     this.setText('replan-feedback', this.replanFeedback);
     this.setHtml('speed-sign', speedSignHtml(signLimit));
@@ -325,7 +320,6 @@ export class DrivingHUD {
       ? `${REGEN_MODES[regen.mode].label} · +${regen.recoveredKwh.toFixed(1)} kWh` : '';
     this.setText('tempo-cap', [run.speedCapLabel, regenLabel].filter(Boolean).join(' · '));
     this.hudEl.querySelector('[data-pill="soc"]')?.classList.toggle('low', socRound < 15);
-    this.hudEl.querySelector('[data-pill="stress"]')?.classList.toggle('warn', run.stress > 60);
     const predPill = this.hudEl.querySelector('[data-pill="pred"]');
     predPill?.classList.remove('low', 'warn', 'ok');
     predPill?.classList.add(nextSocClass);
@@ -350,6 +344,16 @@ export class DrivingHUD {
       const progress = Math.max(0, Math.min(1, run.legProgressKm / Math.max(1, edge.distanceKm)));
       computer.innerHTML = renderStageComputer(edge, progress, !!leg.reverse, run.tollsEur, run.pauseCostEur);
     }
+  }
+
+  public updateStress(run: RunState): void {
+    const moodEmoji =
+      run.stress < 25 ? '😌' : run.stress < 50 ? '😐' : run.stress < 75 ? '😟' : '😤';
+    this.setHtml(
+      'stress',
+      `${moodEmoji} Stress: <strong>${Math.round(run.stress)}%</strong> · 🚻 ${Math.round(run.bladderNeed)}% · Hunger ${Math.round(run.hungerNeed)}%`
+    );
+    this.hudEl.querySelector('[data-pill="stress"]')?.classList.toggle('warn', run.stress > 60);
   }
 
   private setText(field: string, text: string): void {

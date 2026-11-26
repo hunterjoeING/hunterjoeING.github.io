@@ -66,7 +66,7 @@ export class ResultsUI {
           </div>
           <div>
             <div class="res-kicker">${level.title} ${result.gameOver ? 'abgebrochen' : 'abgeschlossen!'}</div>
-            <h2>${result.gradeLabel}</h2>
+            <h2>${result.gradeLabel}${result.gameOver ? ' · Airbag ausgelöst' : ''}</h2>
             <p class="res-summary-line">
               ⏱️ Gesamtzeit: <strong>${hrs}h ${String(mins).padStart(2, '0')}m</strong> (Ziel ${tHrs}h ${String(tMins).padStart(2, '0')}m) ·
               💶 Kosten: <strong>${result.totalCostEur.toFixed(2)} €</strong> ·
@@ -93,19 +93,21 @@ export class ResultsUI {
           </div>
         </div>
 
-        <div class="res-columns">
-          <div class="res-panel">
-            <h3>📊 Detail-Auswertung</h3>
-            ${renderBar('Zeit-Performance', result.subScores.time, result.weights.time)}
-            ${renderBar('Gesamtkosten', result.subScores.cost, result.weights.cost)}
-            ${renderBar('Beifahrer-Stress & Peaks', result.subScores.stress, result.weights.stress)}
-            ${renderBar('Effizienz & Ladekurve', result.subScores.efficiency, result.weights.efficiency)}
-            ${renderBar('Dynamische Entscheidungen & Parken', result.subScores.decisions, result.weights.decisions)}
-            <div class="res-bar-head">
-              <span>Rest-Akku ${finalSoc} %</span>
-              <strong>${result.finalSocPenalty === 0 ? '0' : `−${result.finalSocPenalty}`} Pkt</strong>
+        <div${result.gameOver ? '' : ' class="res-columns"'}>
+          ${result.gameOver ? '' : `
+            <div class="res-panel">
+              <h3>📊 Detail-Auswertung</h3>
+              ${renderBar('Zeit-Performance', result.subScores.time, result.weights.time)}
+              ${renderBar('Gesamtkosten', result.subScores.cost, result.weights.cost)}
+              ${renderBar('Beifahrer-Stress & Peaks', result.subScores.stress, result.weights.stress)}
+              ${renderBar('Effizienz & Ladekurve', result.subScores.efficiency, result.weights.efficiency)}
+              ${renderBar('Dynamische Entscheidungen & Parken', result.subScores.decisions, result.weights.decisions)}
+              <div class="res-bar-head">
+                <span>Rest-Akku ${finalSoc} %</span>
+                <strong>${result.finalSocPenalty === 0 ? '0' : `−${result.finalSocPenalty}`} Pkt</strong>
+              </div>
             </div>
-          </div>
+          `}
 
           <div class="res-panel">
             <h3>📝 Fahrtbuch &amp; Ereignisse</h3>

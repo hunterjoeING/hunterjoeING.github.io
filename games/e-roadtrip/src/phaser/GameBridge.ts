@@ -43,6 +43,7 @@ export interface ERoadtripBridge {
   onMapSelectRoute: (routeId: string) => void;
   onMapSelectLeg: (legIndex: number) => void;
   onAutobahnHudTick: (run: RunState) => void;
+  onCityStressChanged: (run: RunState) => void;
   onTriggerChargerSegment: (station: ChargerStation) => void;
   onTriggerCitySegment: (preset: CityDrivePreset) => void;
   onCitySegmentComplete: (preset: CityDrivePreset, cleanArrival: boolean) => void;

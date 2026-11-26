@@ -600,6 +600,8 @@ export default function register(test, game) {
     const run = mkRun(route1);
     run.completed = false;
     city.bridge.runState = run;
+    const hudStressUpdates = [];
+    city.bridge.onCityStressChanged = current => hudStressUpdates.push(current.stress);
     city.trafficCars = [];
     city.pedestrians = [];
     const flung = [];
@@ -619,6 +621,7 @@ export default function register(test, game) {
     assert.deepEqual(run, { ...original, stress: 21, peakStress: 21 });
     hit(second);
     assert.deepEqual(run, { ...original, stress: 22, peakStress: 22 });
+    assert.deepEqual(hudStressUpdates, [21, 22]);
     assert.deepEqual(flung.map(tween => tween.targets), [first, second]);
     assert(flung.every(tween => tween.x !== tween.targets.x));
     assert.equal(directScoring(run), directScoring(original));

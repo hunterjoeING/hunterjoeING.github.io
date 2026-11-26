@@ -491,6 +491,7 @@ export class CityDriveScene extends Phaser.Scene {
       if (this.hitCones.has(id) || !capsuleOverlapsRect(shape, bounds) ||
           !recordConeHit(run, this.hitCones, id)) return;
 
+      this.bridge.onCityStressChanged(run);
       const direction = Math.sign(this.carSpeed);
       const side = sprite.x < x ? -1 : 1;
       this.tweens.add({

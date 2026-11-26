@@ -149,7 +149,7 @@ export default function register(test, game) {
     const controller = Object.assign(Object.create(ERoadtripController.prototype), {
       bridge: { runState: run, paused: true }, level: route1, save: campaign,
       eventModal: new EventModal(modalRoot), stageWrapEl: new DomStub(),
-      drivingHUD: { setMode() {}, clearTouchStates() {} },
+      drivingHUD: { setMode() {}, clearTouchStates() {}, updateStress() {} },
       stopAllGameplayScenes() {},
       resultsUI: { show(...args) { show.push(args); resultsUI.show(...args); } }
     });
@@ -182,8 +182,11 @@ export default function register(test, game) {
     assert.equal(result.prizeMoneyEur, 0);
     assert.equal(submission, undefined);
     assert.equal(buildSubmission(route1, run, result), null);
-    assert.doesNotMatch(resultsRoot.innerHTML, /Prämie erhalten|Speichere dein Ergebnis/);
+    assert.match(resultsRoot.innerHTML, /<h2>Fahrt abgebrochen · Airbag ausgelöst<\/h2>/);
+    assert.match(resultsRoot.innerHTML, /class="res-score-num">0<\/div>/);
+    assert.doesNotMatch(resultsRoot.innerHTML, /Detail-Auswertung|res-bar-|Rest-Akku|Prämie erhalten|res-leaderboard/);
     assert.match(resultsRoot.innerHTML, /Wertverlust Auto <strong>7100\.00 €/);
+    assert.match(resultsRoot.innerHTML, /Fahrtbuch[\s\S]*Airbag geöffnet/);
     assert.deepEqual(campaign, { cashEur: 26000, unlockedLevelOrder: 1, completedLevels: {} });
     assert.equal(run.decisionScoreAccum, 0);
     controller.finishLevel(true);
@@ -196,6 +199,7 @@ export default function register(test, game) {
     const results = new ResultsUI(root, {});
     results.show({ ...route2, boardId: undefined }, run, evaluateRun(route2, run, true),
       { cashEur: 26000, unlockedLevelOrder: 2, completedLevels: {} });
+    assert.equal([...root.innerHTML.matchAll(/class="res-bar-row"/g)].length, 5);
     assert.match(root.innerHTML, /Rest-Akku 12 %[\s\S]*?−75 Pkt/);
   });
 }
