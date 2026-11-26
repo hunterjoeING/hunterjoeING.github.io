@@ -19,6 +19,7 @@ const modules = [
   'sim/WinterCity', 'data/cityLayouts/muenchen', 'data/cityLayouts/innsbruck', 'phaser/CityTraffic',
   'sim/AachenCity', 'sim/MappedCity', 'data/cityLayouts/aachen', 'phaser/AachenLandmarks',
   'sim/RegionalCity', 'data/cityLayouts/hannover', 'data/cityLayouts/koeln', 'data/cityLayouts/hirtshals',
+  'data/cityLayouts/montpellier', 'sim/BeachArrival', 'phaser/MontpellierBeachArrivalScene',
   'phaser/CityCollision', 'phaser/MapLayout', 'phaser/AutobahnTraffic',
   'phaser/CityDriveScene', 'phaser/PlacePainter', 'phaser/AutobahnScene', 'phaser/MontpellierFinaleScene',
   'ui/EventModal', 'ui/DrivingHUD', 'ui/DrivingStatus', 'ui/PlanningUI', 'ui/ResultsUI'
@@ -66,7 +67,8 @@ try {
   });
 
   const game = await import(pathToFileURL(bundle).href);
-  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'finale', 'winter', 'winter-city', 'aachen-city', 'regional-city', 'winter-tunnel', 'alpine', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
+  for (const name of ['simulation', 'traffic', 'controller', 'interactions', 'finale', 'winter', 'winter-city', 'aachen-city',
+    'regional-city', 'montpellier', 'winter-tunnel', 'alpine', 'releases', 'worker-validation', 'arcade-scores', 'leaderboard']) {
     const { default: register } = await import(`./${name}.test.mjs`);
     register(test, game);
   }

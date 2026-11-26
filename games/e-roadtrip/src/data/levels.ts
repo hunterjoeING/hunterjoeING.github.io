@@ -184,7 +184,7 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_luxemburg', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_luxemburg_dijon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
           { edgeId: 'edge_dijon_lyon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-          { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true }
+          { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_nancy_tesla', legIndex: 1, targetSocPct: 80 },
@@ -206,7 +206,7 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_reims', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_reims_nevers', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
           { edgeId: 'edge_nevers_clermont', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true }
+          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_troyes_vianeo', legIndex: 1, targetSocPct: 75 },
@@ -227,7 +227,7 @@ export const LEVELS: LevelConfig[] = [
           { edgeId: 'edge_aachen_luettich', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
           { edgeId: 'edge_luettich_paris', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
           { edgeId: 'edge_paris_clermont', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true }
+          { edgeId: 'edge_clermont_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
         ],
         defaultPlannedStops: [
           { chargerId: 'chg_orleans_tesla', legIndex: 2, targetSocPct: 80 },
@@ -239,7 +239,7 @@ export const LEVELS: LevelConfig[] = [
       { edgeId: 'edge_aachen_luxemburg', defaultTargetSpeedKmh: 120, weatherOverride: 'clear', citySegmentAtStart: 'aachen_start' },
       { edgeId: 'edge_luxemburg_dijon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear' },
       { edgeId: 'edge_dijon_lyon', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', overnightAtEnd: true },
-      { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', destinationAtEnd: true }
+      { edgeId: 'edge_lyon_montpellier', defaultTargetSpeedKmh: 130, weatherOverride: 'clear', citySegmentAtEnd: 'montpellier_finish', destinationAtEnd: true }
     ],
     passengers: {
       label: 'Ehefrau + 2 kleine Kinder + Hund',

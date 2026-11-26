@@ -166,7 +166,7 @@ export default function register(test, game) {
     run.legProgressKm = getEdgeById(legs[overnightIndex].edgeId).distanceKm;
     run.triggeredEventIds.push(`evt_hotel_overnight@${overnightIndex}`);
     const morning = buildRemainingRoute(l2, run);
-    assert.equal(morning.destination, 'Montpellier');
+    assert.equal(morning.destination, 'Hôtel de la Plage · Palavas-les-Flots');
     assert.equal(morning.segments.length, 1);
     assert.equal(morning.segments[0].from, 'Lyon');
     assert.equal(predictLiveTripSoc(l2, { ...run, currentLegIndex: overnightIndex + 1, legProgressKm: 0 }).nextStopKind, 'destination');

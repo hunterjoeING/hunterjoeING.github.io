@@ -277,6 +277,7 @@ export type CityDrivePreset =
   | 'aachen_finish'
   | 'ferry_denmark'
   | 'koeln_ring'
+  | 'montpellier_finish'
   | 'muenchen_start'
   | 'innsbruck_finish'
   | 'alpine_pass';

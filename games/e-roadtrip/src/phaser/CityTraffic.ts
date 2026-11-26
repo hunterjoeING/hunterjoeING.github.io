@@ -116,7 +116,7 @@ export function computeCityLightingProfile(
     ambientAlpha = isRain ? 0.64 : 0.58;
   } else if (isDusk) {
     const t = (clockHour - 17.5) / 2.0;
-    ambientColor = 0x311042; // warm twilight violet
+    ambientColor = preset === 'montpellier_finish' ? 0xa34a2b : 0x311042;
     ambientAlpha = 0.16 + t * 0.32;
   } else if (isDawn) {
     const t = 1 - (clockHour - 5.75) / 1.5;

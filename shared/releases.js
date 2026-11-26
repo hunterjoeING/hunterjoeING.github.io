@@ -83,7 +83,7 @@ const arcadeReleases = {
       author: "Michi", model: "Sol 6.2",
       highlights: [
         "Neues Level 3 mit drei Winterrouten, Passkehren und Tunnelfahrt. Level 2 endet in Montpellier.",
-        "Stadtfahrten in Aachen, Hannover, München und Innsbruck nach echten Stadtplänen",
+        "Stadtfahrten in Aachen, Hannover, Montpellier, München und Innsbruck nach echten Stadtplänen",
         "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen. Rempler an Gebäuden und Säulen verursachen Wertverlust.",
         "Aufgeräumte Planungskarte, abgedunkelte Dialoge und ein Navi mit allen Straßen bis zum nächsten Halt. Unnötige Ladestopps lassen sich auslassen.",
         "Restakku am Ziel kann Punkte kosten. Essen in der Ladepause kostet 20 €.",

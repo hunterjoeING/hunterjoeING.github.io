@@ -10,7 +10,8 @@ export interface FinaleData {
 }
 
 export function mountFinale(
-  scene: Phaser.Scene, titleText: string, art: Phaser.GameObjects.Graphics[], onComplete: () => void
+  scene: Phaser.Scene, titleText: string, art: Phaser.GameObjects.Graphics[], onComplete: () => void,
+  durationMs = FINALE_DURATION_MS
 ): void {
   const title = scene.add.text(FINALE_WIDTH / 2, 9, titleText, {
     fontFamily: 'monospace', fontSize: '10px', fontStyle: 'bold', color: '#fff9e8',
@@ -41,7 +42,7 @@ export function mountFinale(
   const tap = () => finish();
   scene.input.on('pointerup', tap);
   scene.input.keyboard?.on('keydown', finish);
-  scene.time.delayedCall(FINALE_DURATION_MS, finish);
+  scene.time.delayedCall(durationMs, finish);
   scene.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
     scene.scale.off('resize', layout);
     scene.input.off('pointerup', tap);

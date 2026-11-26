@@ -30,6 +30,7 @@ import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } fro
 import { isGrassSurface, SurfaceFx } from './SurfaceFx';
 
 type PropertyContact = Rect | Capsule | 'worldEdge' | 'passEdge' | 'water';
+const CITY_PARKING_DWELL_SEC = 0.6;
 
 export class CityDriveScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
@@ -880,7 +881,12 @@ export class CityDriveScene extends Phaser.Scene {
             ? profile.ambientColor
             : 0x0b1528;
 
-    this.nightOverlay.setFillStyle(visualAmbientColor, visualAmbientAlpha);
+    const coastalLight = this.preset === 'montpellier_finish' &&
+      !profile.isNight && !profile.isRain && !profile.isFog && !profile.isSnow;
+    this.nightOverlay.setFillStyle(
+      coastalLight ? profile.ambientColor : visualAmbientColor,
+      coastalLight ? profile.ambientAlpha : visualAmbientAlpha
+    );
     this.fogOverlay.setAlpha(profile.isFog ? 0.22 + Math.sin(t * 0.8) * 0.05 : 0);
 
     // Wetness drives wet-asphalt reflections & shimmer (strongest in rain/storm, damp neo-noir sheen otherwise)
@@ -1290,6 +1296,11 @@ export class CityDriveScene extends Phaser.Scene {
       pd.sprite.setVelocity(Math.cos(ang) * pd.speed, Math.sin(ang) * pd.speed);
     }
 
+    this.updateNavigationAndArrival(dt, onIce);
+  }
+
+  private updateNavigationAndArrival(dt: number, onIce: boolean): void {
+    const road = this.place.passRoad;
     const chargingBay = this.preset === 'charger_park';
     const { parked, nearest } = chargingBay ? this.updateChargingBays() : {};
     const targetBay = (parked ?? nearest)?.bounds;
@@ -1317,10 +1328,17 @@ export class CityDriveScene extends Phaser.Scene {
 
     // Parking / Completion Check
     const inZone = Phaser.Geom.Rectangle.Contains(this.targetZone, this.player.x, this.player.y);
-    const parkingReady = !chargingBay && inZone && Math.abs(this.carSpeed) < 30;
+    const arrivalBay = this.place.arrivalBay;
+    const { x, y, rotation } = this.player;
+    const parkingReady = arrivalBay
+      ? isRearParked(arrivalBay, { x, y, rotation, speed: this.carSpeed, footprint: rotatedCarBounds(x, y, rotation) })
+      : !chargingBay && inZone && Math.abs(this.carSpeed) < 30;
 
     if (nearest && distToTarget < 190 && !parked) {
       this.reverseHintText.setText('In einer grünen Bucht mit dem Heck zur Säule halten');
+      this.reverseHintText.setVisible(true);
+    } else if (arrivalBay && distToTarget < 190 && !parkingReady) {
+      this.reverseHintText.setText('In der grünen Bucht mit dem Heck zur Säule halten');
       this.reverseHintText.setVisible(true);
     } else {
       this.reverseHintText.setVisible(false);
@@ -1345,8 +1363,9 @@ export class CityDriveScene extends Phaser.Scene {
       this.playDriverPlugInSequence(parked.pillar);
     } else if (parkingReady) {
       this.dwellInTargetSec += dt;
-      this.distText.setText(`✓ Perfekt! Halten… (${Math.min(100, Math.round((this.dwellInTargetSec / 0.6) * 100))}%)`);
-      if (this.dwellInTargetSec >= 0.6) {
+      const holdPct = Math.min(100, Math.round(this.dwellInTargetSec / CITY_PARKING_DWELL_SEC * 100));
+      this.distText.setText(`✓ Perfekt! Halten… (${holdPct}%)`);
+      if (this.dwellInTargetSec >= CITY_PARKING_DWELL_SEC) {
         this.completed = true;
         this.reverseHintText.setVisible(false);
         if (this.preset === 'aachen_finish') {
@@ -1366,7 +1385,7 @@ export class CityDriveScene extends Phaser.Scene {
     }
 
     if (!this.completed && cityGuide?.wrongExits.some(exit => pointInCityRect(this.player, exit.zone))) {
-      this.reverseHintText.setText('Falsche Auffahrt · bitte wenden').setVisible(true);
+      this.reverseHintText.setText(cityGuide.wrongExitHint ?? 'Falsche Auffahrt · bitte wenden').setVisible(true);
     }
   }
 

@@ -12,6 +12,14 @@ interface LandmarkArt {
   draw(g: Graphics, feature: CityLandmark, night: boolean): void;
 }
 
+export interface MappedCityStyle {
+  ground: number;
+  roofs: number[];
+  waterColor(area: CityRect): number;
+  sand: CityRect[];
+  drawDetails(g: Graphics, mobile: boolean): void;
+}
+
 const rectangle = (x: number, y: number, w: number, h: number) => new Phaser.Geom.Rectangle(x, y, w, h);
 const fill = (g: Graphics, { x, y, w, h }: CityRect, color: number, alpha = 1) =>
   g.fillStyle(color, alpha).fillRect(x, y, w, h);
@@ -77,9 +85,9 @@ function paintRoads(g: Graphics, spans: MappedRoadSpan[], mobile: boolean) {
   }
 }
 
-function paintWater(g: Graphics, areas: CityRect[], light: boolean, mobile: boolean): void {
+function paintWater(g: Graphics, areas: CityRect[], light: boolean, mobile: boolean, style?: MappedCityStyle): void {
   for (const area of areas) {
-    fill(g, area, light ? 0x659ca7 : 0x47788b);
+    fill(g, area, style?.waterColor(area) ?? (light ? 0x659ca7 : 0x47788b));
     const step = mobile ? 110 : 66;
     for (let y = area.y + 4; y + 4 < area.y + area.h; y += 25) {
       for (let x = area.x + 9 + (y * 3 % 43); x + 18 < area.x + area.w; x += step) {
@@ -108,10 +116,10 @@ function paintBridges(g: Graphics, spans: MappedRoadSpan[], water: CityRect[]): 
 
 function paintPlots(
   g: Graphics, layout: MappedCityLayout, spans: MappedRoadSpan[], reserved: CityRect[],
-  mobile: boolean, night: boolean
+  mobile: boolean, night: boolean, style?: MappedCityStyle
 ): CityRect[] {
   const buildings: CityRect[] = [];
-  const roofs = [0xa56453, 0x7a6160, 0xb78362, 0x766f6b, 0xb19a7e, 0x96695a];
+  const roofs = style?.roofs ?? [0xa56453, 0x7a6160, 0xb78362, 0x766f6b, 0xb19a7e, 0x96695a];
   for (let y = 165; y < layout.height - 120; y += 85) {
     for (let x = 130; x < layout.width - 100; x += 96) {
       const seed = (x * 7 + y * 13) % 101;
@@ -137,7 +145,7 @@ function paintPlots(
       fill(g, { ...plot, x: plot.x + 5, y: plot.y + 7 }, 0x40312e, 0.4);
       fill(g, plot, roofs[seed % roofs.length]);
       fill(g, { ...plot, h: h / 2 }, 0xd3b199, 0.28);
-      fill(g, { x: plot.x, y: plot.y + h - 9, w, h: 9 }, 0x635951, 0.68);
+      fill(g, { x: plot.x, y: plot.y + h - 9, w, h: 9 }, style ? 0xf0c595 : 0x635951, 0.68);
       for (let i = 7; i < w - 7; i += mobile ? 18 : 12) {
         g.fillStyle(night && (seed + i) % 4 !== 0 ? 0xffd48c : 0x574c48)
           .fillRect(plot.x + i, plot.y + h - 6, 4, 3);
@@ -182,16 +190,17 @@ function bakeCityGround(scene: Phaser.Scene, g: Graphics, width: number, height:
 
 export function paintMappedCity(
   scene: Phaser.Scene, layout: MappedCityLayout, art: LandmarkArt,
-  options: { light: boolean; mobile: boolean; night: boolean; signedExit?: CityPoint; signLabel?: string }
+  options: { light: boolean; mobile: boolean; night: boolean; signedExit?: CityPoint; signLabel?: string; style?: MappedCityStyle }
 ): Pick<PlacePaint, 'worldW' | 'worldH' | 'cityId' | 'grass' | 'asphalt' | 'roadSurface' | 'buildings' |
   'water' | 'slowZone' | 'trees' | 'lamps' | 'neons' | 'traffic' | 'trafficJunctions' | 'zebras' | 'signals' | 'litePeds' | 'cityMinimap'> {
   const { width, height, landmarks, plazas, parks } = layout;
-  const { light, mobile, night } = options;
+  const { light, mobile, night, style } = options;
   const spans = mappedRoadSpans(layout.roads);
   const cobbledSpans = spans.filter(span => span.road.cobbled);
   const ground = { x: 0, y: 0, w: width, h: height };
   const g = scene.add.graphics().setDepth(0);
-  fill(g, ground, light ? 0xb7b58b : 0x8f9872);
+  fill(g, ground, style?.ground ?? (light ? 0xb7b58b : 0x8f9872));
+  for (const sand of style?.sand ?? []) fill(g, sand, 0xf3d18e);
   for (const park of parks) {
     g.fillStyle(light ? 0x8ca66c : 0x6e8e5d)
       .fillRoundedRect(park.x, park.y, park.w, park.h, 43);
@@ -206,12 +215,12 @@ export function paintMappedCity(
       g.lineStyle(1, 0xd1c1af, 0.7).lineBetween(plaza.x, y, plaza.x + plaza.w, y);
     }
   }
-  paintWater(g, layout.water, light, mobile);
+  paintWater(g, layout.water, light, mobile, style);
   paintRoads(g, spans, mobile);
   paintBridges(g, spans, layout.water);
 
   const landmarkBounds = Object.values(landmarks).flatMap(spot => art.footprint(spot) ?? []);
-  const reserved = [...plazas, ...landmarkBounds, ...layout.water,
+  const reserved = [...plazas, ...landmarkBounds, ...layout.water, ...(style?.sand ?? []),
     ...layout.roundaboutIslands.map(({ x, y }) => ({ x: x - 120, y: y - 120, w: 240, h: 240 })),
     ...layout.peds.flatMap(({ wps }) => wps.map(({ x, y }) => ({ x: x - 32, y: y - 32, w: 64, h: 64 })))
   ];
@@ -219,8 +228,9 @@ export function paintMappedCity(
   for (const { sidewalkPathA, sidewalkPathB } of crossings) {
     for (const { x, y } of [...sidewalkPathA, ...sidewalkPathB]) reserved.push({ x: x - 14, y: y - 14, w: 28, h: 28 });
   }
-  const buildings = paintPlots(g, layout, spans, reserved, mobile, night);
+  const buildings = paintPlots(g, layout, spans, reserved, mobile, night, style);
   buildings.push(...landmarkBounds);
+  style?.drawDetails(g, mobile);
 
   for (const { x, y } of layout.roundaboutIslands) {
     g.fillStyle(0xc8b89d).fillCircle(x, y, 80);

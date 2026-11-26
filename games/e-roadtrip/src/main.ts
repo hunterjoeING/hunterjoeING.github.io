@@ -62,6 +62,7 @@ import { EuropeMapScene } from './phaser/EuropeMapScene';
 import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
 import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
+import { MontpellierBeachArrivalScene } from './phaser/MontpellierBeachArrivalScene';
 import { InnsbruckFinaleScene } from './phaser/InnsbruckFinaleScene';
 import { type AlpineEvent, ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
 import { PlanningUI, DEFAULT_SHOW_ALL_CHARGERS } from './ui/PlanningUI';
@@ -376,7 +377,8 @@ class ERoadtripController {
         mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
       },
-      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene, MontpellierFinaleScene, InnsbruckFinaleScene]
+      scene: [BootScene, EuropeMapScene, AutobahnScene, CityDriveScene, MontpellierBeachArrivalScene,
+        MontpellierFinaleScene, InnsbruckFinaleScene]
     };
 
     this.game = new Phaser.Game(config);
@@ -516,7 +518,8 @@ class ERoadtripController {
   }
 
   private stopAllGameplayScenes(): void {
-    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene', 'MontpellierFinaleScene', 'InnsbruckFinaleScene'].forEach(k => {
+    ['EuropeMapScene', 'AutobahnScene', 'CityDriveScene', 'MontpellierBeachArrivalScene',
+      'MontpellierFinaleScene', 'InnsbruckFinaleScene'].forEach(k => {
       const sc = this.game.scene.getScene(k);
       if (
         sc &&
@@ -647,6 +650,19 @@ class ERoadtripController {
   private handleCitySegmentComplete(preset: CityDrivePreset, cleanArrival: boolean): void {
     const run = this.bridge.runState;
     if (!run) return;
+
+    if (preset === 'montpellier_finish') {
+      const city = regionalCityDrive(preset, run.plan.selectedRouteId);
+      run.elapsedMinutes += CITY_TRANSITION_MINUTES[preset] ?? 0;
+      run.incidentLog.push({
+        timeStr: formatClock(this.level, run.elapsedMinutes),
+        title: city.title,
+        detail: cleanArrival ? city.completionLabel : 'Strandhotel nach einem Zwischenfall erreicht.',
+        impact: cleanArrival ? 'positive' : 'negative'
+      });
+      this.handleDestinationArrival(cleanArrival, true);
+      return;
+    }
 
     if (isWinterCity(preset)) {
       const city = winterCityDrive(preset, run.plan.selectedRouteId);
@@ -1380,11 +1396,11 @@ class ERoadtripController {
     });
   }
 
-  private handleDestinationArrival(cleanArrival = true): void {
-    this.playDestinationFinale(cleanArrival);
+  private handleDestinationArrival(cleanArrival = true, beachArrival = false): void {
+    this.playDestinationFinale(cleanArrival, beachArrival);
   }
 
-  private playDestinationFinale(cleanArrival = true): void {
+  private playDestinationFinale(cleanArrival = true, beachArrival = false): void {
     const run = this.bridge.runState;
     if (!run || run.completed) return;
     const winter = this.level.id === WINTER_LEVEL_ID;
@@ -1392,13 +1408,26 @@ class ERoadtripController {
     resetTouchInput();
     this.stopAllGameplayScenes();
     this.stageWrapEl.classList.add('finale-active');
-    this.game.scene.start(winter ? 'InnsbruckFinaleScene' : 'MontpellierFinaleScene', {
+    const finale = {
       ...(winter ? {} : { relaxed: hasRelaxedBeachFinale(run) }),
       isLightTheme: this.bridge.isLightTheme,
       onComplete: () => {
         if (this.bridge.runState === run) this.finishLevel(cleanArrival);
       }
-    });
+    };
+    if (beachArrival) {
+      this.game.scene.start('MontpellierBeachArrivalScene', {
+        carColor: getVehicleById(run.plan.vehicleId).primaryColor,
+        isLightTheme: this.bridge.isLightTheme,
+        onComplete: () => {
+          if (this.bridge.runState !== run || run.completed) return;
+          this.game.scene.stop('MontpellierBeachArrivalScene');
+          this.game.scene.start('MontpellierFinaleScene', finale);
+        }
+      });
+    } else {
+      this.game.scene.start(winter ? 'InnsbruckFinaleScene' : 'MontpellierFinaleScene', finale);
+    }
     window.requestAnimationFrame(() => this.game.scale.refresh());
   }
 

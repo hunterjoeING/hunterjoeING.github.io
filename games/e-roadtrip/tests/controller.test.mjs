@@ -75,7 +75,7 @@ export default function register(test, game) {
     assert.deepEqual(plan.subscriptionIds, ['tesla_suc']);
   });
 
-  test('Level 2 charges each toll once and hands the final stage to the finale', t => {
+  test('Level 2 charges each toll once and hands the final stage to the Montpellier drive', t => {
     t.mock.method(Math, 'random', () => 0.5);
     const run = mkRun(l2);
     const legs = getActiveRouteLegs(l2, run.plan);
@@ -97,14 +97,14 @@ export default function register(test, game) {
     const destination = getEdgeById(lastStage.edgeId);
     run.legProgressKm = destination.distanceKm - 0.01;
     scene.update(1032, 16);
-    assert.deepEqual(fired, ['evt_hotel_overnight', 'destination']);
+    assert.deepEqual(fired, ['evt_hotel_overnight', 'montpellier_finish']);
     assert.equal(run.currentLegIndex, legs.length - 1);
     assert.equal(run.legProgressKm, destination.distanceKm);
     assert.equal(run.tollsEur, 18 + destination.tollEur);
     assert.deepEqual(run.paidTollLegIndices, [overnight, legs.length - 1]);
     assert.equal(scene.bridge.paused, true);
     scene.update(1048, 16);
-    assert.deepEqual(fired, ['evt_hotel_overnight', 'destination']);
+    assert.deepEqual(fired, ['evt_hotel_overnight', 'montpellier_finish']);
   });
 
   test('The highway triggers the return Eschweiler stop despite the outbound status', t => {

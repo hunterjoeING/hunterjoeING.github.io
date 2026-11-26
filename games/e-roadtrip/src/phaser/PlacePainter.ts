@@ -5,6 +5,7 @@ import { paintAlpinePass, type PassRoad } from './AlpinePass';
 import { aachenCityDrive, isAachenCity } from '../sim/AachenCity';
 import { isRegionalCity, regionalCityDrive } from '../sim/RegionalCity';
 import { regionalLandmarkArt } from './RegionalCityLandmarks';
+import { montpellierCityStyle, montpellierLandmarkArt } from './MontpellierLandmarks';
 import { mappedCityNavigator, mappedRoadSpans } from '../sim/MappedCity';
 import { aachenLandmarkFootprint, drawAachenLandmark } from './AachenLandmarks';
 import { paintMappedCity } from './MappedCityPainter';
@@ -63,6 +64,7 @@ export interface PlacePaint {
     snow?: boolean;
     cones: CityPoint[];
     wrongExits: Array<CityPoint & { label: string; zone: CityRect }>;
+    wrongExitHint?: string;
     navigate: CityNavigator;
     approach?: { goal: CityPoint; label: string; navigate: CityNavigator };
   };
@@ -71,6 +73,7 @@ export interface PlacePaint {
   roadSurface?: (point: CityPoint) => boolean;
   slowZone?: (point: CityPoint) => boolean;
   chargingBays?: PaintedChargingBay[];
+  arrivalBay?: ChargingBay;
   parkedVehicles?: Rect[];
   spawn: { x: number; y: number; rot: number };
   spinners: Phaser.GameObjects.Image[];
@@ -101,20 +104,31 @@ export function paintDrivingPlace(
   const regional = isRegionalCity(opts.preset) ? regionalCityDrive(opts.preset, routeId) : undefined;
   const drive = aachen ?? regional;
   if (drive) {
-    const art = aachen ? { footprint: aachenLandmarkFootprint, draw: drawAachenLandmark } : regionalLandmarkArt;
+    const coast = opts.preset === 'montpellier_finish';
+    const art = aachen ? { footprint: aachenLandmarkFootprint, draw: drawAachenLandmark }
+      : coast ? montpellierLandmarkArt : regionalLandmarkArt;
     const place = paintMappedCity(scene, drive.layout, art, {
       light: !!opts.light, mobile: opts.mobile, night: !!opts.night || opts.preset === 'aachen_finish',
-      signedExit: drive.exitPoint, signLabel: drive.signLabel
+      signedExit: drive.exitPoint, signLabel: drive.signLabel,
+      style: coast ? montpellierCityStyle(!!opts.light) : undefined
     });
+    const arrivalBay = regional?.arrivalBay;
+    if (arrivalBay) {
+      const { x, y } = arrivalBay.pillar;
+      scene.add.image(x, y, 'charger_ac_village').setScale(1.12).setDepth(5);
+      place.buildings.push(spriteFootprint(x, y, CHARGER_SIZE, CHARGER_FOOTPRINT, 1.12));
+    }
     const { x, y, w, h } = drive.target;
     return {
       ...place, autohof: false, passThrough: drive.passThrough, spawn: drive.spawn, spinners: [],
       targetZone: new Phaser.Geom.Rectangle(x, y, w, h),
       zoneLabel: aachen ? (aachen.passThrough ? aachen.motorway : 'Zuhause') : regional?.zoneLabel,
       zoneColor: regional?.zoneColor ?? 0x86efac,
+      arrivalBay,
       cityGuide: {
         label: drive.navLabel, completionLabel: drive.completionLabel,
         cones: drive.layout.cones, wrongExits: drive.wrongExits,
+        wrongExitHint: regional?.wrongExitHint,
         navigate: mappedCityNavigator(mappedRoadSpans(drive.layout.roads), drive.goal)
       }
     };
