@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI (gpt-6.2-sol high) | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Runs A–C und Level 3 Runs A–D | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand mit Level 3 Run D (`015af8d`), Run C lokal (SHA: (folgt)), kein PR | 🟡 Level 3 Run C umgesetzt · Push, Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Runs A–C und Level 3 Runs A–D | Michi / Codex | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand mit Level 3 Run D (`015af8d`) und Run C (`82abb4f`), kein PR | 🟡 Level 3 komplett im Fork · Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -33,7 +33,7 @@
 
 ### 2026-11-26 – Michi / Codex (GPT-6) – Level 3 Run C – Tunnel und Ankunft
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA: (folgt). Push nein, Ziel Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `82abb4f`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
 - **Erledigt** · Nach dem Parken am Innsbrucker Hotel folgt auf allen drei Routen eine überspringbare Pixelszene mit Familie und Schneefall, danach Ergebnis und Level-3-Bestenliste. Route A hat einen Tunnel mit Vorwarnung, Scheinwerfern, 80-km/h-Schild, Abschnittskontrolle und gelegentlicher Sperrung mit Warte- oder Umleitungswahl. Das Briefing fasst die Winterregeln zusammen.
 - **Geprüft** · `npm run typecheck`, zwei bytegleiche Builds, `node --check` auf Bundle, Release-Datei und geänderten Tests, `npm test` (101/101), Versionsprüfung gegen `279202c`, `git diff --check`. Die drei Standardpläne mit dem MG4 erreichen Innsbruck in 131–154 Min und liefern gültige Ergebnisse für beide Bestenlisten. Spiel und Worker verwenden 165 Min. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Keine Anfrage an die Live-Wertung.
 - **Offen** · Tunnel, Sperrungsdialog und Finale auf dem Handy und Desktop in beiden Themes spielen. Chrome und Chromium scheitern lokal beim Start an der Sandbox. Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
