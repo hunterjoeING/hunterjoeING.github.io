@@ -21,9 +21,10 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
+| 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
 | E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `c1d1f29` · kein PR | 🟡 Unveröffentlicht · Fork-Spieltest und Upstream-Merge offen |
 
-**Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
+**Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
 
 ---
 
@@ -59,5 +60,12 @@
 - **Erledigt** · Die Ampeln zeigen an jeder Seite die Phase, die für diese Einfahrt gilt, auch bei schräger Zufahrt. Nach dem Kollisionsdialog steht der Wagen auf freier Fahrbahn, blinkt zwei Sekunden und kann sich vom Verkehr lösen. Blockierte Stadtfahrzeuge werden nach 2,5 Sekunden durchlässig. Auf beiden Pässen fährt der Verkehr entlang seiner Spur weiter. Kontakte unter 60 px/s geben nur kurzes Feedback. Kratzer beginnen bei 60, Beulen bei 110 und Airbags bei 200 px/s. Bundle-Revision 13.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (158/158), `git diff --check` und Versionsprüfung gegen `279202c`. Die Tests decken alle mitgelieferten Ampelkreuzungen, Schutzzeit und Verkehrsauflösung in Stadt und Pass sowie die Impaktgrenzen ab. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
 - **Offen** · Fork-Spieltest durch den Orchestrator auf Desktop und bei 320/390 px in beiden Themes. Hansemannplatz von der Krefelder Straße bei Grün anfahren, nach einer Kollision im Stau weiterfahren und beim Öffnen der Planung null Ladestopps prüfen. Commit, Push und Upstream-Merge folgen durch den Orchestrator.
+
+### 2026-11-25 – Joe / Antigravity – Zwei interaktive 3D-Explainer (Windkraftanlage & Verbrennungsmotor)
+
+- **Branch / PR** · `main`, Commits `8c0fce8`, `098402a` + Patch `v0.1.1`, Push: ja, Ziel: Upstream `hunterjoeING/hunterjoeING.github.io`, kein PR. Live-URLs: https://hunterjoeing.github.io/games/wind-turbine/ und https://hunterjoeing.github.io/games/combustion-engine/.
+- **Erledigt** · Zwei eigenständige Three.js-3D-Explainer unter `games/wind-turbine/` (`v0.1.1`) und `games/combustion-engine/` (`v0.1.1`) umgesetzt und im Hub (`index.html`), im Burger-Menü (`shared/burger-menu.js`), in `shared/arcade.js`, in `sitemap.xml` sowie in `shared/releases.js` (`arcade` v0.4.0, beide Apps v0.1.1, Regel 10 geprüft) integriert. Patch `v0.1.1`: Rotationsachse von Bremsscheibe, schneller Welle & Kupplung (`rotateX(Math.PI / 2)` auf Geometrie vorgekippt), Getriebe-Verzahnung (24:13 / 22:11) und Rotorblatt-Anströmung korrigiert sowie mobiles Steuerungsmenü in beiden Explainern mit sticky „✕ Zurück zu 3D“-Kopfzeile, Backdrop-Tap-Close und Escape-Taste versehen.
+- **Geprüft** · `node --check` auf alle geänderten/neuen JS-Dateien, `games/e-roadtrip/tests/releases.test.mjs` (6/6 bestanden), `node scripts/check-release-bump.mjs origin/main`, Headless-Chrome-WebGL-Verifikation (1280×800 und 390×844, Hell & Dunkel, Normal/Cutaway/X-Ray/Exploded/Tour, mobiles Drawer-Öffnen/Schließen per Button und Backdrop, 0 Fehler, kein horizontales Scrollen). Issue-/PR-Check (25.11., `gh issue list` / `gh pr list`): 0 offene Issues, 0 offene PRs im Upstream.
+- **Offen** · Keine offenen Punkte.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
