@@ -470,4 +470,4 @@ Each DC curve lists its control points as SoC % → kW. The station cap applies 
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `e220286` · Re-read the stage size before every Phaser scale refresh so the canvas follows the driving HUD after scene changes on phones.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `74c9836` · Scheduled Level 2 as a night drive with a morning rest stop and evening arrival. Montpellier’s city drive and both beach scenes now share fixed dry golden-hour lighting.
 - **2026-11-26** · `codex/eroadtrip-v0.6` · `f30acf3` · Documented city world bounds, the phone stage-size refresh, cone stress, the Level 2 night departure, and Arcade v0.3.1.
-- **2026-11-26** · `codex/eroadtrip-v0.6` · SHA: (folgt) · Refreshed city stress on impact, clarified airbag results, kept “H hupen” together, and separated the Aachen and Köln map labels.
+- **2026-11-26** · `codex/eroadtrip-v0.6` · `1ae937d` · Refreshed city stress on impact, clarified airbag results, kept “H hupen” together, and separated the Aachen and Köln map labels.

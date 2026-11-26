@@ -21,7 +21,7 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2-Nachtfahrt mit Montpellier, Level 3, Stadtkarten und Spieltest-Korrekturen | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · lokaler HEAD und Fork-Tracking-Stand `08dcb98` · SHA: (folgt) · kein PR | 🟡 Unveröffentlicht · Korrekturen geprüft · erneuter Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · L1-Verbesserungen, L2 mit Montpellier, Level 3, Stadtkarten, Nachtstart und Abendsonne, Spieltest-Korrekturen | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `1ae937d` · kein PR | 🟡 Unveröffentlicht · Korrekturen geprüft · Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
@@ -31,10 +31,11 @@
 
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Korrekturen aus dem Spieltest
 
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), HEAD `08dcb98`. SHA: (folgt). Änderungen im Arbeitsbaum. Push: nein. Ziel nach Freigabe: Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `1ae937d`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
 - **Erledigt** · Stadt-HUD aktualisiert Stress und Bedürfnisse bei Sachschäden und beim ersten Treffer pro Pylon. Airbag-Abbruch zeigt den Hinweis, 0 Punkte, Kosten und Fahrtbuch. Detailbalken und Restakku-Abzug stehen bei gewerteten Zieleinläufen. „H hupen“ bleibt beim Umbruch zusammen. Das Köln-Label sitzt neben seinem Kartenpunkt. Bundle-Revision 10 lädt den neuen Stand.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle und geänderte Tests, `npm test` (131/131), `git diff --check` und Versionsprüfung gegen `279202c`. Offline-Abgleich der Label-Flächen über alle Level und Zoomstufen ohne neue Überlappungen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
-- **Offen** · Sichtprüfung bei 390 px in beiden Themes für Stress-Pille, Stadthinweis, Airbag-Ergebnis und die Aachen/Köln-Labels. Lokaler Chromium-Start an der Sandbox gescheitert. Punkt 2 (`legacyMaxMinutes` für Level 2 im Worker) bleibt offen.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle und geänderte Tests, `npm test` (131/131), `git diff --check` und Versionsprüfung gegen `279202c`. Offline-Abgleich der Label-Flächen über alle Level und Zoomstufen ohne neue Überlappungen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen.
+- **Nachbesserung Orchestrator** · Sichtprüfung bei 390 px: Stress-Pille stieg während des Beulen-Dialogs von 14 % auf 34 %, „H hupen“ bleibt in einer Zeile. Aachen- und Köln-Labels auf der Planungskarte getrennt. Airbag-Auswertung über Tests geprüft. Codex-Doku-Diff gesichert unter `/home/box/projects/v06-qafix-codex-docdiff.patch`.
+- **Offen** · Punkt 2 (`legacyMaxMinutes` für Level 2 im Worker) bleibt offen. Upstream-Merge erst auf ausdrückliche Freigabe.
 
 ### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Doku-Abgleich
 
