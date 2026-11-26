@@ -81,7 +81,7 @@ const arcadeReleases = {
       app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Neues Finale in Montpellier",
       author: "Michi", model: "Sol 6.2",
       highlights: [
-        "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen",
+        "Leichter rückwärts in jeder freien Ladebucht einparken, Anbieter an den Säulen erkennen und eine aufgeräumte Planungskarte",
         "Dialoge dunkeln die Fahrt ab. Das Navi zeigt alle verbleibenden Straßen bis zum nächsten Halt und lässt unnötige Ladestopps auslassen.",
         "Level 2 endet nach der Hinfahrt mit einem neuen Finale in Montpellier",
         "Restakku am Ziel kann Punkte kosten, Essen in der Ladepause kostet 20 €",

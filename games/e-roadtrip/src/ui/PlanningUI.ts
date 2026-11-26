@@ -28,6 +28,9 @@ import { getBestPriceForStation } from '../sim/EnergyModel';
 import { isProviderSubscribed } from '../phaser/MapLayout';
 import { SoundFX } from '../phaser/SoundFX';
 
+/** Map filter "Alle Ladestationen" starts off so the planning map stays uncluttered. */
+export const DEFAULT_SHOW_ALL_CHARGERS = false;
+
 export interface PlanningCallbacks {
   onPlanChanged: () => void;
   onSelectRoute: (routeId: string) => void;
@@ -162,7 +165,7 @@ export class PlanningUI {
     forecast: PlanForecast,
     selectedLegIndex = 0,
     providerFilter?: ProviderFilterMap,
-    showChargerStations = true
+    showChargerStations = DEFAULT_SHOW_ALL_CHARGERS
   ): void {
     const selectedVehicle = getVehicleById(plan.vehicleId);
     const activeRoute = getActiveRouteOption(level, plan);
@@ -262,8 +265,8 @@ export class PlanningUI {
     const networks = filterNetworksForLevel(level);
     this.filterBarEl.innerHTML = `
       <div class="mfb-row">
-        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" title="Einblenden: Symbole entlang der geplanten Route, farbig mit Abo und grau bei Ad-hoc. Aktive Anbieterchips zeigen zusätzlich die Detailkacheln der aktuellen Etappe. Ausblenden: keine Symbole, außer die angehakten Anbieter auf der aktuellen Etappe.">
-          ${showChargerStations ? '🔌 Ladestationen einblenden' : '🔌 Ladestationen ausblenden'}
+        <button type="button" class="mfb-mode-btn ${showChargerStations ? 'active' : ''}" id="btn-toggle-show-chargers" aria-pressed="${showChargerStations ? 'true' : 'false'}" title="An: alle Ladestationen entlang der gewählten Route, farbig mit Abo und grau bei Ad-hoc. Aus (Standard): nur die angehakten Anbieter auf der aktuellen Etappe und deine geplanten Stopps.">
+          🔌 Alle Ladestationen
         </button>
         ${networks
           .map(net => {
@@ -655,7 +658,7 @@ export class PlanningUI {
     forecast: PlanForecast,
     selectedLegIndex: number,
     providerFilter?: ProviderFilterMap,
-    showChargerStations = true
+    showChargerStations = DEFAULT_SHOW_ALL_CHARGERS
   ): void {
     this.root.querySelector('#er-level-select')?.addEventListener('change', e => {
       SoundFX.click();

@@ -5,7 +5,7 @@ import { createFixtures } from './fixtures.mjs';
 export default function register(test, game) {
   const {
     ERoadtripController, EventModal, PlanningUI, getVehicleById, createDefaultPlan,
-    getActiveRouteLegs, getChargerById, getEdgeById, stopKey, getApproachingRoadStop, buildRemainingRoute
+    getActiveRouteLegs, getChargerById, getEdgeById, stopKey, getApproachingRoadStop, buildRemainingRoute, DEFAULT_SHOW_ALL_CHARGERS
   } = game;
   const { route1: level, route2: l2, mkRun, mkScene } = createFixtures(game);
 
@@ -203,5 +203,22 @@ export default function register(test, game) {
     assert.match(buildRemainingRoute(level, run).destination, /Aachener Land/);
     controller.changeRoadStopSkip(key, 'undo');
     assert.deepEqual(run.skippedStopKeys, [key]);
+  });
+
+  test('Map filter "Alle Ladestationen" is off by default and keeps its label in both states', () => {
+    assert.equal(DEFAULT_SHOW_ALL_CHARGERS, false);
+    const plan = createDefaultPlan(level, 'mg4_standard');
+    const car = getVehicleById('mg4_standard');
+    for (const on of [false, true]) {
+      const ui = Object.create(PlanningUI.prototype);
+      const bar = new DomStub();
+      bar.querySelector = () => null;
+      bar.querySelectorAll = () => [];
+      Object.assign(ui, { filterBarEl: bar, cb: {} });
+      ui.renderMapFilterBar(level, plan, car, {}, on);
+      assert.match(bar.innerHTML, /🔌 Alle Ladestationen/);
+      assert.doesNotMatch(bar.innerHTML, /Ladestationen (ein|aus)blenden|anzeigen/);
+      assert.match(bar.innerHTML, new RegExp(`aria-pressed="${on}"`));
+    }
   });
 }

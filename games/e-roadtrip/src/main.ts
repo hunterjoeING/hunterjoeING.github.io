@@ -51,7 +51,7 @@ import { AutobahnScene } from './phaser/AutobahnScene';
 import { CityDriveScene } from './phaser/CityDriveScene';
 import { MontpellierFinaleScene } from './phaser/MontpellierFinaleScene';
 import { ERoadtripBridge, TouchInput, resetTouchInput, touchPointerCount } from './phaser/GameBridge';
-import { PlanningUI } from './ui/PlanningUI';
+import { PlanningUI, DEFAULT_SHOW_ALL_CHARGERS } from './ui/PlanningUI';
 import { DrivingHUD } from './ui/DrivingHUD';
 import { formatClock, renderDriveStatus } from './ui/DrivingStatus';
 import { ChargingCompletePayload, EventModal } from './ui/EventModal';
@@ -113,7 +113,7 @@ class ERoadtripController {
       runState: null,
       selectedLegIndex: 0,
       providerFilter: createDefaultProviderFilter(),
-      showChargerStations: true,
+      showChargerStations: DEFAULT_SHOW_ALL_CHARGERS,
       timeScale: 5,
       paused: false,
       touch: TouchInput,

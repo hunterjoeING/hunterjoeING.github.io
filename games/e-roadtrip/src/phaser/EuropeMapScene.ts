@@ -917,8 +917,8 @@ export class EuropeMapScene extends Phaser.Scene {
     });
 
     // 3. Charger icons. Colour follows the subscription, not the provider chip.
-    //    Ausblenden: nothing, unless a chip is on — then only that provider on the active stage.
-    //    Einblenden: every charger on the chosen Hin- and Rückweg. Chips add detail tiles (layoutChargerCards).
+    //    Off (default): planned stops plus, for chips that are on, that provider on the active stage.
+    //    "Alle Ladestationen" on: every charger on the chosen route. Chips add detail tiles (layoutChargerCards).
     const vehicle = getVehicleById(this.bridge.plan.vehicleId);
     const selectedKeys = new Set(this.bridge.plan.plannedStops.map(s => stopKey(s.legIndex, s.chargerId)));
     const showStations = this.bridge.showChargerStations;
@@ -939,7 +939,7 @@ export class EuropeMapScene extends Phaser.Scene {
 
       const visible = showStations
         ? node.onActiveRoute || isSelected
-        : node.onSelectedStage && isFilteredOn;
+        : (node.onSelectedStage && isFilteredOn) || isSelected;
       node.compactIcon = !node.onSelectedStage;
       node.grayIcon = !isSub;
       node.isFilteredVisible = visible;
