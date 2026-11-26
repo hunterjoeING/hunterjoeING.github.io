@@ -1,9 +1,9 @@
 import type { RunState } from '../types';
 
-export const MONTPELLIER_PREVIEW_HOUR = 18;
+export const MONTPELLIER_PREVIEW_HOUR = 14;
 export const MONTPELLIER_LIGHTING = Object.freeze({
-  ambientColor: 0xffb96c,
-  ambientAlpha: 0.13,
+  ambientColor: 0xffe3a6,
+  ambientAlpha: 0.07,
   headlightsOn: false,
   headlightAlpha: 0,
   streetlampsOn: false,

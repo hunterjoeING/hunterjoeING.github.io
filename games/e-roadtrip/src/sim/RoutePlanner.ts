@@ -365,9 +365,7 @@ function rebuildLegPlans(level: LevelConfig, plan: TripPlan): TripPlan {
         : defaultLegSpeedKmh(edge, vehicle.maxSpeedKmh, weather)
     };
   });
-  plan.plannedStops = level.id === WINTER_LEVEL_ID
-    ? (getActiveRouteOption(level, plan)?.defaultPlannedStops ?? []).map(stop => ({ ...stop }))
-    : [];
+  plan.plannedStops = [];
   return plan;
 }
 
@@ -385,6 +383,14 @@ export function createDefaultPlan(level: LevelConfig, vehicleId: string, routeId
     plannedStops: []
   };
   return rebuildLegPlans(level, plan);
+}
+
+/** Route data supplies the charging stops for internal benchmarks. */
+export function createReferencePlan(level: LevelConfig, vehicleId: string, routeId?: string): TripPlan {
+  const plan = createDefaultPlan(level, vehicleId, routeId);
+  const route = getActiveRouteOption(level, plan);
+  plan.plannedStops = (route?.defaultPlannedStops ?? []).map(stop => ({ ...stop }));
+  return plan;
 }
 
 export function switchRouteInPlan(level: LevelConfig, plan: TripPlan, routeId: string): TripPlan {

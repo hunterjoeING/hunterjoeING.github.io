@@ -14,7 +14,7 @@ const modules = [
   'data/europeCityCoordinates', 'data/europeGeoData.generated', 'data/europeGeography', 'data/routes/northCoast500', 'data/routes/alpsToGarda',
   'phaser/EuropeMapLabelLayout', 'phaser/EuropeMapLabels', 'phaser/EuropePixelMap',
   'sim/RoutePlanner', 'sim/EnergyModel', 'sim/ScoringEngine', 'sim/Leaderboard',
-  'sim/ChargingBay', 'sim/RouteNavigation', 'sim/PropertyDamage',
+  'sim/ChargingBay', 'sim/RouteNavigation', 'sim/PropertyDamage', 'sim/CoastalLight',
   'sim/AlpineDriving', 'sim/AlpineDescent', 'data/alpineEvents', 'phaser/AlpinePass', 'sim/AlpineRoad', 'sim/AlpineHazards',
   'sim/WinterDriving', 'sim/WinterCharging', 'data/winterEvents',
   'sim/WinterTunnel', 'phaser/DestinationFinale', 'phaser/InnsbruckFinaleScene', 'phaser/SirmioneFinaleScene', 'phaser/AlpinePassTraffic',
@@ -22,7 +22,7 @@ const modules = [
   'sim/AachenCity', 'sim/MappedCity', 'data/cityLayouts/aachen', 'phaser/AachenLandmarks',
   'sim/RegionalCity', 'data/cityLayouts/hannover', 'data/cityLayouts/koeln', 'data/cityLayouts/hirtshals',
   'data/cityLayouts/montpellier', 'sim/BeachArrival', 'phaser/MontpellierBeachArrivalScene',
-  'phaser/GameBridge', 'phaser/CityCollision', 'phaser/MapLayout', 'phaser/AutobahnTraffic',
+  'phaser/GameBridge', 'phaser/CityCollision', 'phaser/CityCollisionRecovery', 'phaser/MapLayout', 'phaser/AutobahnTraffic',
   'phaser/ChargerBadges', 'phaser/CityDriveScene', 'phaser/PlacePainter', 'phaser/AutobahnScene', 'phaser/MontpellierFinaleScene',
   'ui/EventModal', 'ui/DrivingHUD', 'ui/DrivingStatus', 'ui/PlanningUI', 'ui/ResultsUI'
 ];

@@ -4,7 +4,7 @@ import { createFixtures } from './fixtures.mjs';
 export default function register(test, game) {
   const {
     getLevelById, getVehicleById, getChargerById, getEdgeById, getChargersForEdge,
-    createDefaultPlan, getActiveRouteLegs, getMapChargerLegIndex, evaluateTripPlan,
+    createDefaultPlan, switchRouteInPlan, switchReturnRouteInPlan, getActiveRouteLegs, getMapChargerLegIndex, evaluateTripPlan,
     stopKey, isPendingStop, predictLiveTripSoc, plannedRoadStopsOnLeg, getMesseChargerForVisit,
     estimateMesseCharge, evaluateRun, findReachableAdditionalStop, getBestPriceForStation,
     computeSubscriptionTripCost, buildRemainingRoute, levelHasReturnRoutes, LEVELS, finalSocPenalty,
@@ -24,6 +24,35 @@ export default function register(test, game) {
     completedStopKeys: [],
     skippedStopKeys: [],
     triggeredEventIds: []
+  });
+
+  test('Player plans open empty and clear manually added charges on route changes and restart', () => {
+    for (const level of LEVELS) {
+      assert.equal(createDefaultPlan(level, mg.id).plannedStops.length, 0, level.id);
+      for (const route of level.routeOptions) {
+        const plan = createDefaultPlan(level, mg.id, route.id);
+        assert.equal(plan.plannedStops.length, 0, route.id);
+        const chosenStop = { ...route.defaultPlannedStops[0] };
+        plan.plannedStops.push(chosenStop);
+        assert.equal(createDefaultPlan(level, mg.id, route.id).plannedStops.length, 0, route.id);
+
+        for (const next of level.routeOptions.filter(option => option !== route)) {
+          const routeChange = createDefaultPlan(level, mg.id, route.id);
+          routeChange.plannedStops.push(chosenStop);
+          switchRouteInPlan(level, routeChange, next.id);
+          assert.equal(routeChange.selectedRouteId, next.id);
+          assert.equal(routeChange.plannedStops.length, 0, `${route.id} → ${next.id}`);
+
+          if (levelHasReturnRoutes(level)) {
+            const returnChange = createDefaultPlan(level, mg.id, route.id);
+            returnChange.plannedStops.push(chosenStop);
+            switchReturnRouteInPlan(level, returnChange, next.id);
+            assert.equal(returnChange.returnRouteId, next.id);
+            assert.equal(returnChange.plannedStops.length, 0, `${route.id} ← ${next.id}`);
+          }
+        }
+      }
+    }
   });
 
   test('Final SoC penalties use the unrounded end-of-run percentage and half-open tiers', () => {

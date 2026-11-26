@@ -12,7 +12,7 @@ import { SUBSCRIPTIONS, roamingPriceForProvider } from '../data/subscriptions';
 import { CHARGERS, getCityById, getEdgeById } from '../data/europeMap';
 import { LEVELS } from '../data/levels';
 import { alpineLeg } from '../sim/AlpineDriving';
-import { HOTEL_AC } from '../data/events';
+import { HOTEL_AC, REST_AREA_STAY_MINUTES } from '../data/events';
 import {
   getActiveRouteLegs,
   getActiveRouteOption,
@@ -83,7 +83,7 @@ const NET_HEX: Record<ChargerNetwork, string> = {
 
 const BASE_FILTER_NETWORKS: ChargerNetwork[] = ['tesla', 'enbw', 'ewego', 'electra', 'ionity', 'ac_village'];
 
-function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
+export function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
   const edgeIds = new Set(level.routeOptions.flatMap(route => route.legs.map(leg => leg.edgeId)));
   const present = new Set(CHARGERS.filter(station => edgeIds.has(station.edgeId)).map(station => station.network));
   const extras = (['fastned', 'totalenergies', 'ac_dorfladen', 'a22', 'neogy'] as ChargerNetwork[]).filter(net => present.has(net));
@@ -92,7 +92,7 @@ function filterNetworksForLevel(level: LevelConfig): ChargerNetwork[] {
     if (present.has('ac_dorfladen')) french.push('ac_dorfladen');
     return french;
   }
-  return [...BASE_FILTER_NETWORKS, ...extras];
+  return [...BASE_FILTER_NETWORKS.filter(net => present.has(net)), ...extras];
 }
 
 function subscriptionsForLevel(level: LevelConfig): typeof SUBSCRIPTIONS {
@@ -392,7 +392,7 @@ export class PlanningUI {
         <div class="route-compare-grid">
           ${this.renderRouteOptionCards(level, 'out', outbound.id)}
         </div>
-        ${level.id === 'level_3_alps_winter' ? `<p class="plan-briefing">${outbound.description} Die vorgeschlagenen Ladestopps kannst du ändern.</p>` : ''}
+        ${level.id === 'level_3_alps_winter' ? `<p class="plan-briefing">${outbound.description}</p>` : ''}
         ${
           hasReturn && inbound
             ? `
@@ -522,7 +522,7 @@ export class PlanningUI {
       </div>
       ${
         overnightCity
-          ? `<div class="overnight-plan-note">🏨 Schlafpause am Morgen in <b>${overnightCity}</b> nach Etappe ${overnightIdx + 1}. Du wählst unterwegs zwischen Hotel mit AC, Budgethotel und Schlaf im Auto an der Aire. Dauer: ${HOTEL_AC.stayMinutes / 60} Stunden. Kosten: 0–${HOTEL_AC.lodgingEur} €.</div>`
+          ? `<div class="overnight-plan-note">🏨 Übernachtung in <b>${overnightCity}</b> nach Etappe ${overnightIdx + 1}. Im Hotel mit AC oder im Budgethotel bleibst du ${HOTEL_AC.stayMinutes / 60} Stunden, im Auto am Rastplatz ${REST_AREA_STAY_MINUTES / 60} Stunden. Kosten: 0–${HOTEL_AC.lodgingEur} €.</div>`
           : ''
       }
 
@@ -559,11 +559,11 @@ export class PlanningUI {
               : '';
             const hotelAc = forecast.hotelAc;
             const overnightNote = spec?.overnightAtEnd
-              ? `<div class="leg-overnight">🏨 Schlafpause nach der Nachtfahrt (${HOTEL_AC.stayMinutes / 60} Std.). Hotel mit AC und Frühstück: ${HOTEL_AC.lodgingEur}&nbsp;€.
+              ? `<div class="leg-overnight">🏨 Abends Übernachtung. Hotel mit AC, Spa und Frühstücksbuffet: ${HOTEL_AC.lodgingEur}&nbsp;€.
                 ${hotelAc?.legIndex === lf.legIndex
                   ? `Akku ${Math.round(hotelAc.arriveSoc)} → ${Math.round(hotelAc.departSoc)}&nbsp;% (${hotelAc.minutes} Min. Ladezeit). ${hotelAc.reachable ? `Am Reiseziel: ${Math.round(hotelAc.finalSocPct)}&nbsp;%.` : 'Die Reichweite reicht auch mit Hotel-AC nicht bis ans Ziel.'}`
                   : 'Das Hotel ist mit dem aktuellen Ladeplan nicht erreichbar.'}
-                Die Hauptprognose rechnet mit der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Schlafen im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
+                Die Hauptprognose rechnet mit der Hotelnacht und der Akkuladung bei Ankunft, wie im Budgethotel ohne AC. Schlafen im Auto kostet 2&nbsp;% Akku und birgt ein Einbruchrisiko von 10&nbsp;%.</div>`
               : '';
             return `
             ${directionHeader}

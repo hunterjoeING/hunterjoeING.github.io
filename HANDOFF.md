@@ -21,13 +21,39 @@
 | Arcade-Versionierung, Update-Hinweise und Changelogs | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-versioning` · [Upstream-PR #6](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/6) (Merge `f58b077`) | ✅ Gemerged und live (Arcade v0.2.0) |
 | Arcade: Level-Bestenlisten (Teil a: Worker + arcade.js + Hub) | Michael / Codex CLI · gpt-6.2-sol high | `codex/arcade-leaderboard-groups` · [Upstream-PR #7](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/7) (Merge `116a458`) | ✅ Gemerged, Worker deployt und live (Arcade v0.3.0) |
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
-| E-Roadtrip v0.6.0 · Level 1 mit Stadtfahrten und Ladeplanung, Level 2 mit Montpellier und Nachtstart, Level 3 bis Sirmione, Europakarte und Spieltest-Korrekturen | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `bd76e26` · kein PR | 🟡 Unveröffentlicht · Fork-Spieltest und Upstream-Merge offen |
+| E-Roadtrip v0.6.0 · Level 1 mit Stadtfahrten, Level 2 mit Montpellier und Mittagsstart, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`) · Fork-Stand `d2bddba` · kein PR | 🟡 Unveröffentlicht · Fork-Spieltest und Upstream-Merge offen |
 
 **Versionen im Arbeitsstand** · `eroadtrip` v0.6.0 · `arcade` v0.3.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high · Orchestrator – v0.6.0 · Lokale Anbieter und Preislogik
+
+- **Erledigt** · Autobrennero (3 Säulen) und Neogy (4 Säulen) bleiben in Level 3, mit sichtbarem Filter und Säulen auf jeder Route. Ein Filter erscheint nur noch, wenn das Level eine Säule des Anbieters hat (Level 3 zeigt keinen EWE-Go-Filter mehr). Das Tesla-Abo gilt nur noch an Tesla-Säulen. Anbieter ohne eigenes Abo (Autobrennero, Neogy, Fastned, TotalEnergies, AC-Dorfladen) berechnen den eigenen Ad-hoc-Preis: Autobrennero 0,75, Neogy 0,76 €/kWh an den Schnellladern. Ladezeiten, Referenzpläne (402/504/480 Min.) und Ziel 564 bleiben gleich, nur die Kosten ändern sich. Der Satz „Die vorgeschlagenen Ladestopps kannst du ändern.“ im Level-3-Briefing ist entfernt. Beim Öffnen der Planung steht in allen Levels kein „Eingeplant“.
+- **Doku** · `Architecture.md` (Filter, Preislogik, Changelog) ergänzt. Branch `codex/eroadtrip-v0.6`, SHA: (folgt).
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high · Orchestrator – v0.6.0 · Level-2-Zeitablauf
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `d2bddba`. SHA: (folgt). Push ausstehend, Ziel ist der Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Level 2 startet um 12:00. Die Hotelnacht dauert 16 Stunden (Spa und Frühstücksbuffet), der Rastplatz 14 Stunden. Leere MG4-Hotelpläne: A Lyon 18:24–10:24, Ankunft 13:29 (1529 Min.); Mitte Clermont 18:55–10:55, 13:53 (1553); B Clermont 20:01–12:01, 14:59 (1619). Rastplatz-Ankünfte 11:29, 11:53 und 12:59. Das Level-2-Ziel steigt von 1100 auf 1882 Minuten (112 % des langsamsten geladenen MG4-Referenzplans). Worker `eroadtrip_l2` ist angeglichen, `legacyMaxMinutes` bleibt 40800 (20 × 1882 = 37640). Montpellier bleibt trocken und klar mit früher Nachmittagssonne statt goldener Abendsonne. Keine vorausgewählten Ladestopps.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Worker und Release-Datei, `npm test` (159/159), `git diff --check`. Codex CLI hat Abfahrt, Pausenlängen, Texte und das Worker-Ziel 1882 gesetzt und ist an der 5-Stunden-Grenze stehengeblieben. Der Orchestrator hat Beleuchtung, Tests, Architecture und Handoff fertiggestellt und die 112-%-Regel sowie `legacyMaxMinutes` 40800 geprüft (20 × 1882 = 37640). Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Fork-Spieltest: Planungsuhren bei 390 px, Aachen bei Tageslicht, Montpellier am Nachmittag, Hotel- und Rastplatzdialog. Punkt 2 (`legacyMaxMinutes`) bleibt offen. Commit, Push und Upstream-Merge folgen durch den Orchestrator.
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Ampeln, Verkehr und Schäden
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `d2bddba`. SHA: (folgt). Push ausstehend, Ziel ist der Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Die Ampeln zeigen an jeder Seite die Phase, die für diese Einfahrt gilt, auch bei schräger Zufahrt. Nach dem Kollisionsdialog steht der Wagen auf freier Fahrbahn, blinkt zwei Sekunden und kann sich vom Verkehr lösen. Blockierte Stadtfahrzeuge werden nach 2,5 Sekunden durchlässig. Auf beiden Pässen fährt der Verkehr entlang seiner Spur weiter. Kontakte unter 60 px/s geben nur kurzes Feedback. Kratzer beginnen bei 60, Beulen bei 110 und Airbags bei 200 px/s. Bundle-Revision 13.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Release-Datei und geänderte Tests, `npm test` (158/158), `git diff --check` und Versionsprüfung gegen `279202c`. Die Tests decken alle mitgelieferten Ampelkreuzungen, Schutzzeit und Verkehrsauflösung in Stadt und Pass sowie die Impaktgrenzen ab. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Fork-Spieltest durch den Orchestrator auf Desktop und bei 320/390 px in beiden Themes. Hansemannplatz von der Krefelder Straße bei Grün anfahren, nach einer Kollision im Stau weiterfahren und beim Öffnen der Planung null Ladestopps prüfen. Commit, Push und Upstream-Merge folgen durch den Orchestrator.
+
+### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Ladeplanung ohne Vorauswahl
+
+- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `d2bddba`. SHA: (folgt). Push ausstehend, Ziel ist der Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
+- **Erledigt** · Die Ladeplanung startet auf allen Routen leer. Routenwechsel und „Neu“ löschen eingeplante Ladestopps. Die geladenen MG4-Referenzpläne für Level 3 ergeben weiterhin 402, 504 und 480 Minuten bei jeweils 30 % Ziel-SoC. Das Level-3-Ziel bleibt bei 564 Minuten. Bundle-Revision 13.
+- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle und geänderte Tests, `npm test` (152/152), `git diff --check` und Versionsprüfung gegen `279202c`. Abgedeckt sind die leeren Pläne, „Neu“ mit Planungsanzeige und Kartenprognose, die Level-1/2-Vergleichswerte sowie Level-3-Warteschlange, Referenzwerte und Worker-Grenzen. Keine Live-Wertungsanfragen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen.
+- **Offen** · Fork-Spieltest für Ladeplanung und Kartenmarker bei 320 und 390 px in beiden Themes. Der lokale Browserstart wurde von der Sandbox blockiert. Commit, Push und Upstream-Merge folgen durch den Orchestrator.
 
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Winter-Alpenüberquerung bis Sirmione
 
@@ -42,27 +68,5 @@
 - **Erledigt** · Natural-Earth-Karte von Island und Gibraltar bis zum Schwarzen Meer und Ural. Planungs- und Live-Karte, Europa-Ansicht, Routen und Ladestationsmarker nutzen dieselbe Projektion. Stadtbeschriftungen weichen einander bei Zoom und Verschieben aus. Die North Coast 500 ist als Rundkurs eingezeichnet. Die Quelldaten der Stopps sind erhalten. Fünf küstennahe Kartenanker liegen leicht landeinwärts. Bundle-Revision 11.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle, Release-Datei, Generator und geänderte Tests, `npm test` (142/142), reproduzierbare Geodaten und Bundle, `git diff --check` und Versionsprüfung gegen `279202c`. Alle neun Fahrprognosen für Level 1–3 stimmen mit `eede53a` überein, einschließlich Distanz, Zeit, Maut und Energie. Karten- und Label-Tests laufen offline. Die Geodatei misst 80.748 Bytes, das Bundle 3.077.865 Bytes (gzip 802.863 Bytes). Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen. Orchestrator: Browser-Screenshots der Planungskarte (Level 1–3, 1280 und 390 px) und Schottland mit der North Coast 500 (1280 px) geprüft.
 - **Offen** · Spieltest der Karte auf dem Fork, insbesondere Schottland bei 390 px und beide Themes. Upstream-Merge nach Freigabe.
-
-### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Korrekturen aus dem Spieltest
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `1ae937d`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Stadt-HUD aktualisiert Stress und Bedürfnisse bei Sachschäden und beim ersten Treffer pro Pylon. Airbag-Abbruch zeigt den Hinweis, 0 Punkte, Kosten und Fahrtbuch. Detailbalken und Restakku-Abzug stehen bei gewerteten Zieleinläufen. „H hupen“ bleibt beim Umbruch zusammen. Das Köln-Label sitzt neben seinem Kartenpunkt. Bundle-Revision 10 lädt den neuen Stand.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` für Bundle und geänderte Tests, `npm test` (131/131), `git diff --check` und Versionsprüfung gegen `279202c`. Offline-Abgleich der Label-Flächen über alle Level und Zoomstufen ohne neue Überlappungen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen.
-- **Nachbesserung Orchestrator** · Sichtprüfung bei 390 px: Stress-Pille stieg während des Beulen-Dialogs von 14 % auf 34 %, „H hupen“ bleibt in einer Zeile. Aachen- und Köln-Labels auf der Planungskarte getrennt. Airbag-Auswertung über Tests geprüft. Codex-Doku-Diff gesichert unter `/home/box/projects/v06-qafix-codex-docdiff.patch`.
-- **Offen** · Punkt 2 (`legacyMaxMinutes` für Level 2 im Worker) bleibt offen. Upstream-Merge erst auf ausdrückliche Freigabe.
-
-### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Doku-Abgleich
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`). SHA `f30acf3`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Lücken aus dem Doku-Abgleich geschlossen: Weltgrößen von München, Innsbruck und Montpellier, `refreshStageSize()` in der Modulübersicht und in §9, Pylonen-Stress in der Stellschrauben-Tabelle, geschärfte Nachtfahrt-Formulierung, Arcade v0.3.1, Nachtstart in der L2-Checkliste. Statuszeile wieder auf die gesamte v0.6.0 bezogen, Modellnamen vereinheitlicht, erledigte Issue-/PR-Check-Sätze entfernt. Die Codex-Checkliste um Tabellenpflege, Altlasten-Suche, Branch-Statuszeile, festen Modellnamen und Orchestrator-Nacharbeit ergänzt. Selbst umgesetzt, ohne Codex. Kein Versionssprung.
-- **Geprüft** · `npm test` und Build in `games/e-roadtrip` (Docs only). Issue-/PR-Check: 0 offen. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-- **Offen** · Fork-Spieltest und Upstream-Merge.
-
-### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high – v0.6.0 · Nachtfahrt und Abendsonne in Montpellier
-
-- **Branch / PR** · `codex/eroadtrip-v0.6` ab `upstream/main` (`279202c`), Ausgangsstand `95ef368`. SHA `74c9836`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages für den Spieltest nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/e-roadtrip/)
-- **Erledigt** · Level 2 startet nachts. Die Schlafpause liegt morgens nach Etappe 3, die weitere Fahrt am Nachmittag. Die Planung zeigt die Startzeit und bei erreichbarem Ladeplan die geschätzte Ankunft. Montpellier bleibt in der Stadtfahrt und beiden Strandszenen trocken und goldfarben. Beide Ankunftsvorschauen starten bei klarem Wetter. Die Lichter auf der Autobahn folgen weiter der Fahrzeit.
-- **Geprüft** · `npm run typecheck`, `npm run build`, `node --check` auf Bundle und Tests, `npm test` (130/130), Versionsprüfung gegen `279202c`, `git diff --check`. Alle drei Standardprognosen liegen im Zeitfenster des unveränderten Workers. Acht erreichbare Ladepläne mit Abweichungen ergeben 17:11–20:30 Uhr. Vergleichsfahrten mit dem MG4 über Paris und hohen Ladezielen können später ankommen. Keine Anfrage an die Live-Wertung. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offen.
-- **Offen** · In beiden Themes bei 390 px Aachen bei Nacht und beide Montpellier-Anfahrten samt Parken und Strandszenen spielen.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

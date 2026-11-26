@@ -113,10 +113,10 @@ export const ALPS_TO_GARDA_CHARGERS: Station[] = [
   charger('innsbruck_tesla', 'Tesla Supercharger Innsbruck', 'Inntal (AT)', 'edge_kufstein_innsbruck', 0.93, 'tesla', [12, 250, 0.64]),
   charger('brennero_ionity', 'IONITY Brenner Outlet', 'Brenner / Brennero', 'edge_brenner_sterzing', 0.05, 'ionity', [6, 350, 0.79]),
   charger('brennero_tesla', 'Tesla Supercharger Brennero', 'Brenner / Brennero', 'edge_brenner_sterzing', 0.07, 'tesla', [5, 150, 0.62]),
-  charger('sterzing_neogy', 'Neogy Sterzing', 'Sterzing / Vipiteno', 'edge_brenner_sterzing', 0.93, 'neogy', [2, 100, 0.66]),
-  charger('schlern_a22', 'Autobrennero Schlern West', 'A22 Eisacktal', 'edge_sterzing_bozen', 0.81, 'a22', [2, 150, 0.65]),
-  charger('bozen_a22', 'Autobrennero Bozen Süd', 'A22 Bozen / Bolzano', 'edge_bozen_trento', 0.06, 'a22', [2, 180, 0.65]),
-  charger('paganella_a22', 'Autobrennero Paganella West', 'A22 Lavis', 'edge_bozen_trento', 0.82, 'a22', [2, 150, 0.65]),
+  charger('sterzing_neogy', 'Neogy Sterzing', 'Sterzing / Vipiteno', 'edge_brenner_sterzing', 0.93, 'neogy', [2, 100, 0.76]),
+  charger('schlern_a22', 'Autobrennero Schlern West', 'A22 Eisacktal', 'edge_sterzing_bozen', 0.81, 'a22', [2, 150, 0.75]),
+  charger('bozen_a22', 'Autobrennero Bozen Süd', 'A22 Bozen / Bolzano', 'edge_bozen_trento', 0.06, 'a22', [2, 180, 0.75]),
+  charger('paganella_a22', 'Autobrennero Paganella West', 'A22 Lavis', 'edge_bozen_trento', 0.82, 'a22', [2, 150, 0.75]),
   charger('trento_ionity', 'IONITY Trento', 'A22 Trento', 'edge_bozen_trento', 0.93, 'ionity', [6, 350, 0.79]),
   charger('trento_tesla', 'Tesla Supercharger Trento', 'A22 Trento', 'edge_bozen_trento', 0.95, 'tesla', [12, 250, 0.62]),
   charger('affi_ionity', 'IONITY Affi', 'A22 Affi · Lago di Garda Sud', 'edge_trento_affi', 0.98, 'ionity', [18, 350, 0.79]),
@@ -126,8 +126,8 @@ export const ALPS_TO_GARDA_CHARGERS: Station[] = [
   charger('lermoos_ac', 'TIWAG Lermoos Dorf', 'B187 Lermoos / Ehrwald', 'edge_garmisch_fernpass', 0.76, 'ac_village', [2, 22, 0.42]),
   charger('imst_tesla', 'Tesla Supercharger Imst', 'B189 Imst / Landeck', 'edge_fernpass_landeck', 0.58, 'tesla', [12, 250, 0.64]),
   charger('nauders_ac', 'TIWAG Nauders Dorf', 'B180 Nauders / Reschen', 'edge_landeck_reschenpass', 0.88, 'ac_village', [2, 22, 0.42]),
-  charger('schlanders_neogy', 'Neogy Schlanders', 'SS38 Vinschgau', 'edge_reschenpass_meran', 0.56, 'neogy', [2, 100, 0.66]),
-  charger('meran_neogy', 'Neogy Meran Süd', 'SS38 MeBo', 'edge_meran_bozen', 0.10, 'neogy', [4, 150, 0.66]),
+  charger('schlanders_neogy', 'Neogy Schlanders', 'SS38 Vinschgau', 'edge_reschenpass_meran', 0.56, 'neogy', [2, 100, 0.76]),
+  charger('meran_neogy', 'Neogy Meran Süd', 'SS38 MeBo', 'edge_meran_bozen', 0.10, 'neogy', [4, 150, 0.76]),
   charger('passeier_ac', 'Neogy St. Leonhard AC', 'SS44 Passeiertal', 'edge_jaufenpass_meran', 0.43, 'neogy', [2, 22, 0.45])
 ];
 

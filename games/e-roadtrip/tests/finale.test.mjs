@@ -160,7 +160,7 @@ export default function register(test, game) {
       stopAllGameplayScenes() {},
       resultsUI: { show(...args) { show.push(args); resultsUI.show(...args); } }
     });
-    controller.handlePropertyDamage(evaluatePropertyDamage(74.99));
+    controller.handlePropertyDamage(evaluatePropertyDamage(109.99));
     assert.match(modalRoot.innerHTML, /Ein paar Kratzer am Auto/);
     assert.doesNotMatch(modalRoot.innerHTML, /er-choice-btn/);
     assert.equal(run.stress, 30);
@@ -171,14 +171,14 @@ export default function register(test, game) {
     assert.equal(controller.bridge.paused, false);
 
     controller.bridge.paused = true;
-    controller.handlePropertyDamage(evaluatePropertyDamage(75));
+    controller.handlePropertyDamage(evaluatePropertyDamage(199.99));
     assert.match(modalRoot.innerHTML, /Eine Beule im Auto/);
     assert.equal(run.propertyDamageEur, 2100);
     assert.equal(run.stress, 50);
     modalRoot.querySelector('#er-damage-ok').click();
 
     controller.bridge.paused = true;
-    controller.handlePropertyDamage(evaluatePropertyDamage(165));
+    controller.handlePropertyDamage(evaluatePropertyDamage(200));
     assert.match(modalRoot.innerHTML, /Airbag geöffnet – Reise zu Ende/);
     assert.equal(show.length, 0);
     modalRoot.querySelector('#er-damage-ok').click();

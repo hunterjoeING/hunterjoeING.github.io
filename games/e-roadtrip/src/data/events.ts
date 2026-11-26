@@ -2,7 +2,8 @@ import { GameEventDef, WifeDialogueDef } from '../types';
 import { WINTER_EVENTS } from './winterEvents';
 import { SECTION_CONTROL_EVENT_ID, WINTER_TUNNEL } from '../sim/WinterTunnel';
 
-export const HOTEL_AC = { maxKw: 11, stayMinutes: 480, targetSocPct: 95, lodgingEur: 289 };
+export const HOTEL_AC = { maxKw: 11, stayMinutes: 960, targetSocPct: 95, lodgingEur: 289 };
+export const REST_AREA_STAY_MINUTES = 840;
 export const AUSTRIAN_VIGNETTE = { costEur: 11.5, minutes: 2 };
 const vignettePrice = `${AUSTRIAN_VIGNETTE.costEur.toFixed(2).replace('.', ',')} €`;
 
@@ -432,17 +433,17 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
 
   evt_hotel_overnight: {
     id: 'evt_hotel_overnight',
-    title: 'Schlafpause in {ORT}',
+    title: 'Übernachtung in {ORT}',
     category: 'family',
     icon: '🏨',
     description:
-      'Nach der Nachtfahrt macht ihr in {ORT} acht Stunden Pause. Wo wollt ihr schlafen? Im guten Hotel kann das Auto während der Pause per AC laden.',
+      'Ihr macht in {ORT} über Nacht Halt. Wo wollt ihr schlafen? Im guten Hotel kann das Auto laden, während ihr euch im Spa und am Frühstücksbuffet erholt.',
     requiresFamily: true,
     choices: [
       {
         id: 'hotel_good',
         label: 'Sehr gutes Hotel mit AC, Spa und Buffet',
-        hint: `${HOTEL_AC.lodgingEur} € · 8 Stunden · AC bis ${HOTEL_AC.maxKw} kW inklusive · Frühstück und Erholung`,
+        hint: `${HOTEL_AC.lodgingEur} € · ${HOTEL_AC.stayMinutes / 60} Stunden · AC bis ${HOTEL_AC.maxKw} kW inklusive · Spa und Frühstücksbuffet`,
         timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: 0,
         costDeltaEur: 0,
@@ -456,7 +457,7 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
       {
         id: 'hotel_budget',
         label: 'Budgethotel ohne Laden',
-        hint: '84 € · 8 Stunden · Stress neutral · Akku bleibt, wie er ist',
+        hint: `84 € · ${HOTEL_AC.stayMinutes / 60} Stunden · Stress neutral · Akku bleibt, wie er ist`,
         timeDeltaMin: HOTEL_AC.stayMinutes,
         socDeltaPct: 0,
         costDeltaEur: 0,
@@ -467,9 +468,9 @@ export const GAME_EVENTS: Record<string, GameEventDef> = {
       },
       {
         id: 'sleep_car',
-        label: 'Im Auto an der Autobahn-Aire schlafen',
-        hint: '0 € · 8 Stunden · Stress steigt · 10 % Risiko auf Einbruch',
-        timeDeltaMin: HOTEL_AC.stayMinutes,
+        label: 'Im Auto am Rastplatz schlafen',
+        hint: `0 € · ${REST_AREA_STAY_MINUTES / 60} Stunden · Stress steigt · 10 % Risiko auf Einbruch`,
+        timeDeltaMin: REST_AREA_STAY_MINUTES,
         socDeltaPct: -2,
         costDeltaEur: 0,
         lodgingDeltaEur: 0,

@@ -102,7 +102,7 @@ const GAMES_META = {
 // Keep target minutes and level IDs in sync with games/e-roadtrip/src/data/levels.ts.
 const EROADTRIP_LEVEL_TARGETS = {
   eroadtrip_l1: { levelId: 'level_1_aachen_hannover', targetMinutes: 797 },
-  eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 1100, legacyMaxMinutes: 40800 },
+  eroadtrip_l2: { levelId: 'level_2_family_summer', targetMinutes: 1882, legacyMaxMinutes: 40800 },
   eroadtrip_l3: { levelId: 'level_3_alps_winter', targetMinutes: 564 }
 };
 

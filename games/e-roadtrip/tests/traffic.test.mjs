@@ -6,6 +6,8 @@ function sprite(x = 0, y = 0, texture = '') {
     x, y, angle: 0, rotation: 0, scale: 1, texture: { key: texture },
     body: { x: x - 8, y: y - 8, width: 16, height: 16 },
     setText(text) { this.text = text; return this; },
+    setTexture(key) { this.texture.key = key; return this; },
+    setAlpha(alpha) { this.alpha = alpha; return this; },
     setVisible(visible) { this.visible = visible; return this; },
     setRotation(rotation) { this.rotation = rotation; return this; },
     setPosition(x, y) { Object.assign(this, { x, y }); return this; },
@@ -24,8 +26,9 @@ export default function register(test, game) {
     CityDriveScene, paintDrivingPlace, getLevelById, createDefaultPlan, getActiveRouteLegs,
     getChargerById, getChargersForEdge, getEdgeById, evaluateTripPlan, computeRouteSocBandSegments,
     HIGHWAY_PX_PER_KM, stepHighwayTraffic, countSpriteOverlaps, CHARGERS,
-    capsuleOverlapsRect, circleAt, vehicleCapsule, evaluatePropertyDamage, evaluateRun,
-    AlpinePassTraffic, passOffset, passRoadPosition, passSample, PASS_NEAR_MISS_STRESS,
+    capsuleOverlapsRect, capsulesOverlap, circleAt, vehicleCapsule, evaluatePropertyDamage, evaluateRun,
+    detectPlayerTrafficViolation, npcMustYield, trafficShape, COLLISION_GRACE_SEC, TRAFFIC_DEADLOCK_SEC, capsuleOnRoad,
+    AlpinePassTraffic, passOffset, passRoadContains, passRoadPosition, passSample, passVehiclePose, PASS_NEAR_MISS_STRESS,
     TouchInput, pressTouchPointer, releaseTouchPointer, releaseAllTouchPointers
   } = game;
   const dt = 1 / 60;
@@ -33,6 +36,7 @@ export default function register(test, game) {
 
   function createCity(preset, station, mobile, routeId, light, levelOrder) {
     const city = new CityDriveScene();
+    city.preset = preset;
     const images = [];
     city.add = {
       rectangle: () => sprite(),
@@ -310,6 +314,85 @@ export default function register(test, game) {
     }
   });
 
+  test('Every signal uses its visible side lamp for player entry and NPC yield', () => {
+    const presets = [
+      ['aachen_start', 2], ['aachen_finish', 2], ['hannover_messe', 1], ['montpellier_finish', 1],
+      ['muenchen_start', 0], ['innsbruck_finish', 0], ['koeln_ring', 1], ['ferry_denmark', 1]
+    ];
+    const cardinal = [
+      ['ns', 0, 1], ['ns', 0, -1], ['ew', 1, 0], ['ew', -1, 0]
+    ];
+    for (const [preset, signalCount] of presets) {
+      const { city } = createCity(preset);
+      assert.equal(city.intersections.length, signalCount, preset);
+      assert.equal(city.signalVisuals.length, 4 * signalCount, preset);
+      if (!signalCount) continue;
+      prepareCityUpdate(city, preset, route1);
+      city.trafficCars = [];
+      for (const elapsed of [0, 8]) {
+        city.trafficTimer = elapsed;
+        city.update(0, 16);
+        for (const [index, signal] of city.intersections.entries()) {
+          const { centerX: x, centerY: y, box } = signal;
+          const context = `${preset} ${signal.id}`;
+          assert.equal(signal.ewPhase, (elapsed === 0) === (index === 0) ? 'green' : 'red', context);
+          const lamps = city.signalVisuals.filter(visual => visual.interId === signal.id);
+          const checkApproach = (before, entering, fx, fy, expectedAxis) => {
+            const [lamp] = lamps.slice().sort((a, b) => {
+              const distance = ({ sprite }) => Math.hypot(sprite.x - entering.x, sprite.y - entering.y);
+              return distance(a) - distance(b);
+            });
+            if (expectedAxis) assert.equal(lamp.axis, expectedAxis, context);
+            const rotation = Math.atan2(fx, -fy);
+            const phase = lamp.axis === 'ew' ? signal.ewPhase : signal.nsPhase;
+            assert.equal(lamp.sprite.texture.key, `tlight_${phase}`, context);
+            const history = new Set();
+            const detect = ({ x, y }) => detectPlayerTrafficViolation(
+              x, y, 85, rotation, city.intersections, [], [], history, new Set()
+            );
+            assert.equal(detect(before), null, context);
+            assert.equal(detect(entering), phase === 'red' ? 'red_light' : null, context);
+            assert.equal(detect(entering), null, context);
+            assert.equal(npcMustYield({ sprite: before }, [], city.intersections, [], fx, fy), phase === 'red', context);
+          };
+          for (const [axis, fx, fy] of cardinal) {
+            const radius = fx ? box.width / 2 : box.height / 2;
+            const near = distance => ({ x: x - fx * distance, y: y - fy * distance });
+            assert.ok(lamps.some(({ sprite, axis: lampAxis }) =>
+              lampAxis === axis && sprite.x === near(radius + 8).x && sprite.y === near(radius + 8).y), context);
+            checkApproach(near(radius + 34), near(radius - 0.1), fx, fy, axis);
+          }
+          // Follow each connected street in both the centre and the offset travel lanes.
+          for (const { points } of city.place.cityMinimap) {
+            const neighbors = points.flatMap((point, i) => point.x === x && point.y === y
+              ? [points[i - 1], points[i + 1]].filter(Boolean) : []);
+            for (const from of neighbors) {
+              const length = Math.hypot(x - from.x, y - from.y);
+              const fx = (x - from.x) / length;
+              const fy = (y - from.y) / length;
+              for (const offset of [-19, 0, 19]) {
+                const near = distance => ({ x: x - fy * offset - fx * distance, y: y + fx * offset - fy * distance });
+                const inside = point => point.x >= box.left && point.x <= box.right &&
+                  point.y >= box.top && point.y <= box.bottom;
+                let distance = box.width;
+                while (distance > 0 && !inside(near(distance))) distance -= 0.05;
+                assert.ok(distance > 0, `missing road entry at ${context}`);
+                checkApproach(near(distance + 34), near(distance), fx, fy);
+              }
+            }
+          }
+          if (signal.id === 'hansemannplatz') {
+            // The right-hand lane from Krefelder Straße is angled southwest into the north edge.
+            const before = { x: 2789, y: 1146 };
+            const entering = { x: 2778, y: box.top + 0.1 };
+            const length = Math.hypot(entering.x - before.x, entering.y - before.y);
+            checkApproach(before, entering, (entering.x - before.x) / length, (entering.y - before.y) / length, 'ns');
+          }
+        }
+      }
+    }
+  });
+
   test('Aachen roads can be driven to each motorway and the home parking lot', () => {
     for (const [preset, order] of [['aachen_start', 1], ['aachen_start', 2], ['aachen_finish', 1]]) {
       const { city } = createCity(preset, undefined, true, undefined, false, order);
@@ -554,10 +637,10 @@ export default function register(test, game) {
     const scratch = { tier: 'scratch', lossEur: 800, stressDelta: 10 };
     const dent = { tier: 'dent', lossEur: 1300, stressDelta: 20 };
     const airbag = { tier: 'airbag', lossEur: 5000, stressDelta: 0 };
-    for (const speed of [0, 16, -29.99]) assert.equal(evaluatePropertyDamage(speed), null, 'gentle touch only stops the car');
-    for (const speed of [30, -30, 74.99]) assert.deepEqual(evaluatePropertyDamage(speed), scratch);
-    for (const speed of [75, -115, 164.99]) assert.deepEqual(evaluatePropertyDamage(speed), dent);
-    for (const speed of [165, -165, 230]) assert.deepEqual(evaluatePropertyDamage(speed), airbag);
+    for (const speed of [0, 16, 59.99, -59.99]) assert.equal(evaluatePropertyDamage(speed), null);
+    for (const speed of [60, -60, 109.99]) assert.deepEqual(evaluatePropertyDamage(speed), scratch);
+    for (const speed of [110, -115, 199.99]) assert.deepEqual(evaluatePropertyDamage(speed), dent);
+    for (const speed of [200, -200, 230]) assert.deepEqual(evaluatePropertyDamage(speed), airbag);
   });
 
   test('Charger posts trigger property damage before the car bumper reaches the post', t => {
@@ -595,16 +678,20 @@ export default function register(test, game) {
       for (let i = 0; i < steps; i++) if (!city.movePlayer(dt, 0)) return false;
       return true;
     };
-    assert.equal(drive(90, 1), false);
-    assert.equal(drive(90, 1), false);
+    assert.equal(drive(110, 1), false);
+    assert.equal(drive(110, 1), false);
     assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent']);
     assert.equal(drive(-100, 10), true);
-    assert.equal(drive(53, 30), false);
+    assert.equal(drive(60, 30), false);
     assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent', 'scratch']);
 
+    city.player.setPosition(24, 120).setRotation(Math.PI / 2);
+    assert.equal(drive(-115, 2), false);
+    assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent', 'scratch', 'dent']);
+    assert.equal(drive(60, 20), true);
     city.player.setPosition(24, 120).setRotation(-Math.PI / 2);
     assert.equal(drive(230, 1), false);
-    assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent', 'scratch', 'airbag']);
+    assert.deepEqual(city.damageEvents.map(damage => damage.tier), ['dent', 'scratch', 'dent', 'airbag']);
   });
 
   test('Parked and moving traffic still go through the opponent collision flow', t => {
@@ -627,8 +714,9 @@ export default function register(test, game) {
   });
 
   test('Cars, cyclists and pedestrians keep their fault handling and scoring path', () => {
-    for (const [kind, speed, atFault] of [
-      ['car', 0, false], ['car', 120, true], ['cyclist', 120, true], ['pedestrian', 120, true]
+    for (const [kind, speed, otherY, otherSpeed, atFault] of [
+      ['car', 60, 115, 120, false], ['car', 230, 85, 10, true],
+      ['cyclist', 60, 85, 10, true], ['pedestrian', 120, 85, 10, true]
     ]) {
       const city = new CityDriveScene();
       const run = mkRun();
@@ -641,13 +729,187 @@ export default function register(test, game) {
       city.cameras = { main: { shake() {} } };
       city.physics = { world: { pause() {} } };
       city.carSpeed = speed;
-      city.handleCollision(kind, 100, 85, 10);
+      city.handleCollision(kind, 100, otherY, otherSpeed);
       assert.equal(collision.kind, kind);
       assert.equal(collision.playerAtFault, atFault);
       assert.equal(city.bridge.paused, true);
       assert.equal(city.carSpeed, 0);
       assert.equal(run.collisionsCount, Number(atFault));
       assert.equal(run.propertyDamageEur, 0);
+    }
+  });
+
+  test('A city collision dialog resumes on free roadway with blinking grace and moving traffic', () => {
+    const { city } = createCity('aachen_start');
+    prepareCityUpdate(city, 'aachen_start', route1);
+    const run = mkRun(route1);
+    const collisions = [];
+    Object.assign(city.bridge, { runState: run, onCollisionEvent: info => collisions.push(info) });
+    city.cameras = { main: { shake() {} } };
+    delete city.handleCollision;
+
+    const hitAt = { x: 2720, y: 1240 };
+    city.player.setPosition(hitAt.x, hitAt.y).setRotation(Math.PI / 2);
+    const [first, second] = city.trafficCars;
+    city.trafficCars = [first, second];
+    for (const [car, x] of [[first, 2764], [second, 2808]]) {
+      car.sprite.setPosition(x, hitAt.y).setRotation(Math.PI / 2);
+      car.route = { path: [{ x, y: hitAt.y }, { x: 3100, y: hitAt.y }], speed: 90 };
+      car.wpIndex = 1;
+    }
+    city.carSpeed = 100;
+    assert.equal(city.movePlayer(dt, 0), false);
+    assert.equal(run.collisionsCount, 1);
+    assert.equal(collisions.length, 1);
+    assert.equal(collisions[0].playerAtFault, true);
+    for (let frame = 0; frame < 180; frame++) city.update(frame * 50, 50);
+    assert.equal(city.player.x, hitAt.x);
+    assert.equal(city.collisionGraceSec, 0);
+
+    city.bridge.paused = false;
+    city.update(0, 50);
+    const relocated = vehicleCapsule(city.player.x, city.player.y, city.player.rotation);
+    assert.ok(city.player.x > hitAt.x);
+    assert.ok(capsuleOnRoad(relocated, city.place.roadSurface));
+    assert.ok(!city.hitsObstacle(relocated));
+    const { box } = city.intersections[0];
+    assert.ok(!capsuleOverlapsRect(relocated, { x: box.x, y: box.y, w: box.width, h: box.height }));
+    assert.ok(city.trafficCars.every(car => !capsulesOverlap(relocated, trafficShape(car)) && car.ghostSec > 0));
+    assert.ok(first.sprite.x > 2764 && second.sprite.x > 2808);
+    assert.equal(city.collisionGraceSec, COLLISION_GRACE_SEC);
+    assert.equal(city.player.alpha, 0.45);
+
+    const trafficPosition = { x: first.sprite.x, y: first.sprite.y };
+    first.sprite.setPosition(city.player.x + 38, city.player.y);
+    city.carSpeed = 230;
+    assert.equal(city.movePlayer(dt, 0), true, 'grace ignores moving traffic');
+    city.hitProperty({ x: city.player.x, y: city.player.y, w: 15, h: 15 });
+    assert.deepEqual(city.damageEvents, []);
+    assert.equal(run.collisionsCount, 1);
+    assert.equal(collisions.length, 1);
+    assert.equal(city.bridge.paused, false);
+    first.sprite.setPosition(trafficPosition.x, trafficPosition.y);
+    for (let frame = 0; frame < 42; frame++) city.update(frame * 50, 50);
+    assert.equal(city.collisionGraceSec, 0);
+    assert.equal(city.player.alpha, 1);
+    assert.equal(first.ghostSec, 0);
+    assert.ok(second.sprite.x > 2808 + 2 * second.route.speed);
+    first.sprite.setPosition(city.player.x + 44, city.player.y);
+    city.carSpeed = 100;
+    assert.equal(city.movePlayer(dt, 0), false);
+    assert.equal(run.collisionsCount, 2);
+    assert.equal(collisions.length, 2);
+  });
+
+  test('Blocked city traffic ghosts through other cars and static footprints after the deadlock timeout', () => {
+    const { city } = createCity('aachen_start');
+    city.intersections = city.pedestrians = city.obstacleRects = city.obstacleCircles = [];
+    city.player.setPosition(500, 300);
+    const [east, west] = city.trafficCars;
+    city.trafficCars = [east, west];
+    const route = (car, x, target) => {
+      car.sprite.setPosition(x, 300).setRotation(Math.sign(target - x) * Math.PI / 2);
+      car.route = { path: [{ x, y: 300 }, { x: target, y: 300 }], speed: 100 };
+      car.wpIndex = 1;
+      car.blockedSec = car.ghostSec = 0;
+    };
+    route(east, 700, 950);
+    route(west, 744, 550);
+    const runUntilTimeout = () => {
+      for (let frame = 0; frame < Math.ceil(TRAFFIC_DEADLOCK_SEC / dt) - 1; frame++) city.stepTraffic(dt);
+      assert.equal(east.sprite.x, 700);
+      assert.equal(east.ghostSec, 0);
+      for (let frame = 0; frame < 2; frame++) city.stepTraffic(dt);
+      assert.ok(east.ghostSec > 0 && east.sprite.x > 700);
+    };
+    runUntilTimeout();
+    for (let frame = 0; frame < 45; frame++) city.stepTraffic(dt);
+    assert.ok(east.sprite.x > west.sprite.x);
+    assert.ok(!capsulesOverlap(trafficShape(east), trafficShape(west)));
+
+    city.trafficCars = [east];
+    city.obstacleRects = [{ x: 722, y: 270, w: 80, h: 60 }];
+    route(east, 700, 950);
+    runUntilTimeout();
+    for (let frame = 0; frame < 85; frame++) city.stepTraffic(dt);
+    assert.ok(east.sprite.x > 824 && !city.hitsObstacle(trafficShape(east)));
+  });
+
+  test('Pass collisions resume on a free road capsule while the truck and oncoming cars keep moving', () => {
+    const level = getLevelById('level_3_alps_winter');
+    const { city } = createCity('alpine_pass', undefined, true, level.defaultRouteId, true);
+    prepareCityUpdate(city, 'alpine_pass', level);
+    const run = mkRun(level);
+    const hits = [];
+    Object.assign(city.bridge, { runState: run, onCollisionEvent: info => hits.push(info) });
+    city.cameras = { main: { shake() {} } };
+    delete city.handleCollision;
+    const road = city.place.passRoad;
+    const traffic = new AlpinePassTraffic(road, city);
+    city.passTraffic = traffic;
+    const playerAtTruck = gap => {
+      const truck = passVehiclePose(road, road.truck, traffic.elapsed);
+      const { x, y } = passOffset(passSample(road, truck.along - gap), road.truck.sidePx);
+      city.player.setPosition(x, y).setRotation(truck.rotation);
+    };
+    playerAtTruck(56);
+    city.carSpeed = 230;
+    assert.equal(city.movePlayer(dt, 0), false);
+    assert.equal(hits.length, 1);
+    assert.equal(run.collisionsCount, 1);
+    assert.equal(city.bridge.paused, true);
+    city.update(5000, 50);
+    assert.equal(traffic.elapsed, 0);
+
+    city.bridge.paused = false;
+    city.update(0, 50);
+    const { x, y, rotation } = city.player;
+    const relocated = vehicleCapsule(x, y, rotation);
+    assert.ok(passRoadContains(road, relocated));
+    assert.equal(traffic.obstructs(relocated), false);
+    assert.equal(city.collisionGraceSec, COLLISION_GRACE_SEC);
+    assert.ok(traffic.elapsed > 0);
+
+    playerAtTruck(0);
+    city.carSpeed = 200;
+    assert.equal(city.movePlayer(dt, 0), true);
+    assert.equal(hits.length, 1);
+    assert.equal(run.collisionsCount, 1);
+    city.player.setPosition(x, y).setRotation(rotation);
+    city.carSpeed = 0;
+    for (let frame = 0; frame < 42; frame++) city.update(frame * 50, 50);
+    assert.equal(city.collisionGraceSec, 0);
+    playerAtTruck(56);
+    city.carSpeed = 230;
+    assert.equal(city.movePlayer(dt, 0), false);
+    assert.equal(hits.length, 2);
+    assert.equal(run.collisionsCount, 2);
+  });
+
+  test('Low-speed contacts in city and pass scenes give feedback without a penalty or recovery', () => {
+    for (const preset of ['aachen_start', 'alpine_pass']) {
+      const { city } = createCity(preset);
+      delete city.handleCollision;
+      const run = mkRun(route1);
+      const before = structuredClone(run);
+      Object.assign(city.bridge, { runState: run, onCollisionEvent: assert.fail, onPropertyDamage: assert.fail });
+      const originalPose = { x: city.player.x, y: city.player.y };
+      let bumps = 0;
+      city.cameras = { main: { shake() { bumps++; } } };
+      for (const kind of ['car', 'cyclist', 'pedestrian', 'obstacle', 'property']) {
+        city.bumpFeedbackSec = 0;
+        city.carSpeed = 59.99;
+        if (kind === 'property') city.hitProperty('worldEdge');
+        else city.handleCollision(kind, originalPose.x, originalPose.y, 10);
+        assert.equal(city.carSpeed, kind === 'obstacle' ? -59.99 * 0.4 : 0);
+        assert.deepEqual(run, before);
+        assert.equal(city.bridge.paused, false);
+        assert.equal(city.collisionGraceSec, 0);
+        assert.equal(city.collisionRecoveryHeading, undefined);
+        assert.equal(city.player.x, originalPose.x);
+        assert.equal(city.player.y, originalPose.y);
+      }
+      assert.equal(bumps, 5);
     }
   });
 

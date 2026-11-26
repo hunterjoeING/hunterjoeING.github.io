@@ -5,9 +5,52 @@ import { createFixtures } from './fixtures.mjs';
 export default function register(test, game) {
   const {
     ERoadtripController, DrivingHUD, EventModal, PlanningUI, evaluatePropertyDamage, getVehicleById, createDefaultPlan,
-    getActiveRouteLegs, getChargerById, getEdgeById, stopKey, getApproachingRoadStop, buildRemainingRoute, DEFAULT_SHOW_ALL_CHARGERS
+    getActiveRouteLegs, getChargerById, getEdgeById, getLevelById, stopKey, getApproachingRoadStop, buildRemainingRoute,
+    DEFAULT_SHOW_ALL_CHARGERS, WINTER_LEVEL_ID
   } = game;
   const { route1: level, route2: l2, mkRun, mkScene } = createFixtures(game);
+
+  test('Neu clears Level 3 charges from the planner and the forecast sent to the map', t => {
+    const winter = getLevelById(WINTER_LEVEL_ID);
+    const plan = createDefaultPlan(winter, 'mg4_standard');
+    const route = winter.routeOptions.find(option => option.id === plan.selectedRouteId);
+    plan.plannedStops.push({ ...route.defaultPlannedStops[0] });
+    const reset = new DomStub();
+    const root = new DomStub();
+    const getElementById = document.getElementById;
+    const requestAnimationFrame = window.requestAnimationFrame;
+    document.getElementById = id => id === 'btn-reset-campaign' ? reset : null;
+    window.requestAnimationFrame = () => {};
+    t.after(() => {
+      document.getElementById = getElementById;
+      window.requestAnimationFrame = requestAnimationFrame;
+    });
+
+    const bridge = { plan, level: winter };
+    let mapForecast;
+    const map = { scene: { isActive: () => true }, refreshDynamicState(forecast) { mapForecast = forecast; } };
+    const planner = new PlanningUI(root, {});
+    planner.activeTab = 'route';
+    const controller = Object.assign(Object.create(ERoadtripController.prototype), {
+      level: winter, plan, bridge, save: { cashEur: 26000, ownedVehicleId: plan.vehicleId, unlockedLevelOrder: 3 },
+      eventModal: { close() {} }, resultsUI: { hide() {} }, drivingHUD: { setMode() {} },
+      stageWrapEl: new DomStub(), plannerEl: root, planningUI: planner, stopAllGameplayScenes() {},
+      game: { scene: { getScene: () => map, start() {} } }
+    });
+    controller.bindTopbarButtons();
+    controller.renderPlanning();
+    assert.match(root.innerHTML, /class="planned-stop-pill"/);
+    const arrivalWithCharge = mapForecast.finalArrivalSocPct;
+
+    reset.click();
+
+    assert.equal(bridge.level, winter);
+    assert.equal(bridge.plan, controller.plan);
+    assert.deepEqual(bridge.plan.plannedStops, []);
+    assert.doesNotMatch(root.innerHTML, /class="planned-stop-pill"/);
+    assert.ok(mapForecast.finalArrivalSocPct < Math.min(0, arrivalWithCharge));
+    assert.match(root.innerHTML, new RegExp(`Ziel-SoC / Budget</span>\\s*<strong>${mapForecast.finalArrivalSocPct}%`));
+  });
 
   test('City property damage refreshes the stress pill while the notice pauses the drive', () => {
     const run = mkRun(level);
@@ -22,7 +65,8 @@ export default function register(test, game) {
     const stress = hudRoot.querySelector('[data-field="stress"]');
     assert.match(stress.innerHTML, /😌 Stress: <strong>20%/);
 
-    controller.handlePropertyDamage(evaluatePropertyDamage(50));
+    assert.equal(evaluatePropertyDamage(50), null);
+    controller.handlePropertyDamage(evaluatePropertyDamage(60));
 
     assert.match(stress.innerHTML, /😐 Stress: <strong>30%<\/strong> · 🚻 70% · Hunger 90%/);
     assert.equal(hudRoot.querySelector('[data-field="route"]').textContent, 'Stadtfahrt Aachen');

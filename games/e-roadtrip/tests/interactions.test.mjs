@@ -240,7 +240,7 @@ export default function register(test, game) {
     currentModal.choose(currentModal.event.choices[0]);
     near(run.socPct, 96.7);
     assert.equal(run.hungerNeed, 20);
-    assert.equal(run.elapsedMinutes, 480);
+    assert.equal(run.elapsedMinutes, 960);
     const summary = run.overnightNote;
     controller.handleDynamicEvent('evt_tailgate');
     currentModal.choose(currentModal.event.choices[0]);
@@ -250,8 +250,8 @@ export default function register(test, game) {
     assert.match(run.overnightNote, /Einbruch −500 €, \+2 h/);
     const taycan = m.getVehicleById('porsche_taycan');
     const sim = m.estimateHotelCharge(taycan, 0.25);
-    assert.ok(sim.departSoc < 95 && sim.departSoc > 90);
-    assert.equal(sim.durationMinutes, 480);
+    assert.ok(sim.departSoc >= 94.5 && sim.departSoc <= 95);
+    assert.ok(sim.durationMinutes > 480 && sim.durationMinutes <= 960);
 
     const routePlan = m.createDefaultPlan(route2, 'tesla_model_s_2015');
     m.getActiveRouteLegs(route2, routePlan).forEach((leg, legIndex) => {

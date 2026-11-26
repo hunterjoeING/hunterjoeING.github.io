@@ -12,10 +12,11 @@ export default function register(test, game) {
     alpineLeg, ALPINE_PASS_PRESET, chainCheckOccurs, CHAIN_CHECK_CHANCE,
     BRAKE_COOLDOWN_MINUTES, BRAKE_OVERHEAT_STRESS, CHAIN_CHECK_FINE_EUR, CHAIN_CHECK_MINUTES, CHAIN_CHECK_STRESS,
     CHAIN_FITTING_MINUTES, alpineRoadEnergy, brakesOverheat, downhillBraking, passGrip, passTravelHeading,
-    paintDrivingPlace, passRoadContains, passRoadPosition, passOnIce, passNavigation, vehicleCapsule,
+    paintDrivingPlace, passRoadContains, passRoadPosition, passOnIce, passNavigation, vehicleCapsule, capsulesOverlap,
     AlpinePassTraffic, buildPassRoad, passSample, passOffset, passVehiclePose, passOvertake, passFollowingCap,
     getLevelById, WINTER_LEVEL_ID, getActiveRouteLegs, getEdgeById, createDefaultPlan, EventModal,
-    CityDriveScene, ERoadtripController, getChargerById, stopKey, predictLiveTripSoc, computeRouteSocBandSegments
+    CityDriveScene, ERoadtripController, getChargerById, stopKey, predictLiveTripSoc, computeRouteSocBandSegments,
+    TRAFFIC_DEADLOCK_SEC
   } = game;
   const { mkRun, mkScene, carImage, near, route1, route2 } = createFixtures(game);
   const level = getLevelById(WINTER_LEVEL_ID);
@@ -148,7 +149,7 @@ export default function register(test, game) {
     const edge = passOffset(approaching, road.breakdown.sidePx - 3);
     const damages = [];
     const scene = Object.assign(new CityDriveScene(), {
-      place, passTraffic, worldW: place.worldW, worldH: place.worldH, carSpeed: 77,
+      place, passTraffic, worldW: place.worldW, worldH: place.worldH, carSpeed: 110,
       player: carImage(edge.x, edge.y, car.rotation), physics: { world: { pause() {} } },
       bridge: { paused: false, onPropertyDamage: damage => damages.push(damage) }
     });
@@ -174,6 +175,36 @@ export default function register(test, game) {
     assert.ok(passTravelHeading(Math.PI - 0.05, -Math.PI + 0.05, 0.7, 0.1) > Math.PI - 0.05);
   });
 
+  test('On both passes moving vehicles keep their progress through overlapping traffic and a breakdown', () => {
+    for (const name of ['Fernpass', 'Jaufenpass']) {
+      const road = buildPassRoad(name, 27);
+      const along = road.truck.startPx;
+      road.breakdown = { ...road.breakdown, startPx: along, sidePx: road.truck.sidePx };
+      road.oncoming = [{ ...road.oncoming[0], startPx: along, sidePx: road.truck.sidePx }];
+      const images = [];
+      const traffic = new AlpinePassTraffic(road, {
+        add: {
+          graphics: () => graphics,
+          image: () => {
+            const image = Object.assign(carImage(), {
+              setDepth() { return this; }, setTint() { return this; }, setVisible() { return this; }
+            });
+            images.push(image);
+            return image;
+          }
+        }
+      });
+      const [truck, opposing] = images;
+      const footprint = ({ x, y, rotation }) => vehicleCapsule(x, y, rotation);
+      assert.ok(capsulesOverlap(footprint(truck), footprint(opposing)));
+      assert.ok(capsulesOverlap(footprint(truck), traffic.parked));
+      for (let frame = 0; frame < TRAFFIC_DEADLOCK_SEC * 60; frame++) traffic.step(1 / 60);
+      assert.ok(!capsulesOverlap(footprint(truck), footprint(opposing)));
+      assert.ok(!capsulesOverlap(footprint(truck), traffic.parked));
+      assert.ok(!capsulesOverlap(footprint(opposing), traffic.parked));
+    }
+  });
+
   test('guard rails use all static damage tiers and oncoming traffic uses accident handling', () => {
     const place = paintDrivingPlace(painter, { preset: ALPINE_PASS_PRESET, mobile: true });
     const notice = [];
@@ -183,7 +214,7 @@ export default function register(test, game) {
       bridge: { paused: false, onPropertyDamage: damage => notice.push(damage) },
       physics: { world: { pause() {} } }
     });
-    for (const [speed, euros] of [[29, 0], [30, 800], [75, 1300], [165, 5000]]) {
+    for (const [speed, euros] of [[59.99, 0], [60, 800], [110, 1300], [200, 5000]]) {
       scene.bridge.paused = false;
       scene.propertyContacts.clear();
       scene.player.setPosition(position.x, position.y + 12.7).setRotation(Math.PI);

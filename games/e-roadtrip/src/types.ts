@@ -299,6 +299,7 @@ export interface RouteOption {
   chargingDensity: ChargingDensityKind;
   colorHex: number;
   legs: LevelRouteLegSpec[];
+  /** Charging stops for an internal reference plan. */
   defaultPlannedStops?: PlannedStop[];
 }
 

@@ -162,23 +162,24 @@ export default function register(test, m) {
     }
   });
 
-  test('Level 1–2 forecasts stay pinned and Level 3 forecasts match the Garda routes', () => {
+  test('Level 1–2 player forecasts and Level 3 charged reference forecasts stay pinned', () => {
     // [distance km, drive min, total min, toll €, kWh/100 km, arrival SoC %, target min] at eede53a for Levels 1–2.
     const expected = {
       l1_route_a_ruhr: [716, 473, 713, 0, 17.2, -146, 797],
       l1_route_b_nord: [748, 427, 667, 0, 18, -170, 797],
       l1_route_c_sauerland: [772, 463, 703, 0, 19, -193, 797],
-      l2_route_a_lyon: [994, 569, 1049, 75, 17.9, -254, 1100],
-      l2_route_mid_reims: [1096, 593, 1073, 94, 19.1, -316, 1100],
-      l2_route_b_clermont: [1169, 659, 1139, 103.5, 18, -319, 1100],
+      l2_route_a_lyon: [994, 569, 1529, 75, 17.9, -254, 1882],
+      l2_route_mid_reims: [1096, 593, 1553, 94, 19.1, -316, 1882],
+      l2_route_b_clermont: [1169, 659, 1619, 103.5, 18, -319, 1882],
       l3_route_a_inntal: [450, 347, 402, 47.5, 19.2, 30, 564],
       l3_route_b_fernpass_reschen: [483, 438, 504, 17, 18.9, 30, 564],
       l3_route_c_jaufenpass: [477, 405, 480, 42.5, 20, 30, 564]
     };
     const actual = {};
     for (const level of m.LEVELS.slice(0, 3)) {
+      const createPlan = level.order === 3 ? m.createReferencePlan : m.createDefaultPlan;
       for (const route of level.routeOptions) {
-        const plan = m.createDefaultPlan(level, 'mg4_standard', route.id);
+        const plan = createPlan(level, 'mg4_standard', route.id);
         const f = m.evaluateTripPlan(level, plan);
         actual[route.id] = [f.totalDistanceKm, f.totalDriveMinutes, f.totalMinutes, f.tollsEur,
           f.avgConsumptionKwh100, f.finalArrivalSocPct, level.targetArrivalMinutes];

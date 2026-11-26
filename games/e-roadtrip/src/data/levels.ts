@@ -1,4 +1,5 @@
 import { LevelConfig, ScoringWeights } from '../types';
+import { HOTEL_AC, REST_AREA_STAY_MINUTES } from './events';
 import { ALPS_TO_GARDA_ROUTES } from './routes/alpsToGarda';
 import { TUNNEL_CLOSURE_EVENT_ID } from '../sim/WinterTunnel';
 
@@ -164,8 +165,8 @@ export const LEVELS: LevelConfig[] = [
     regionLabel: 'Aachen → Montpellier (3 Korridore)',
     startBudgetEur: 32000,
     rewardBaseEur: 8000,
-    departureTimeHour: 23 + 35 / 60,
-    targetArrivalMinutes: 1100,
+    departureTimeHour: 12,
+    targetArrivalMinutes: 1882,
     costBenchmarkEurPerKm: 0.3,
     startCityId: 'aachen',
     destinationCityId: 'montpellier',
@@ -176,7 +177,7 @@ export const LEVELS: LevelConfig[] = [
         name: 'Route A · Luxemburg & Lyon (A31 → A6 → A7/A9)',
         shortLabel: 'Lux–Lyon',
         highwaySummary: 'Luxemburg → Dijon → Lyon → Montpellier',
-        description: 'Nachts durch Lothringen und das Rhonetal. Morgens Hotelpause in Lyon, danach über A7 und A9 ans Mittelmeer. Maut etwa 75 €.',
+        description: 'Durch Lothringen und das Rhonetal bis Lyon. Abends übernachten, am nächsten Morgen über A7 und A9 ans Mittelmeer. Maut etwa 75 €.',
         elevationProfile: 'Hügelig',
         trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
@@ -198,7 +199,7 @@ export const LEVELS: LevelConfig[] = [
         shortLabel: 'Reims–Nevers',
         highwaySummary: 'Reims → Nevers → Clermont-Ferrand → Millau → Montpellier',
         description:
-          'Zwischen Luxemburg und Paris. Über Reims und Nevers auf die A71, morgens Hotelpause in Clermont-Ferrand. Danach über die A75 ans Meer. Tempolimit 130, bei Regen 110. Maut etwa 90 €.',
+          'Zwischen Luxemburg und Paris. Über Reims und Nevers auf die A71, abends Übernachtung in Clermont-Ferrand. Am nächsten Morgen über die A75 ans Meer. Tempolimit 130, bei Regen 110. Maut etwa 90 €.',
         elevationProfile: 'Hügelig',
         trafficRisk: 'Niedrig',
         chargingDensity: 'Ausgewogen',
@@ -219,7 +220,7 @@ export const LEVELS: LevelConfig[] = [
         name: 'Route B · Paris & Clermont-Ferrand (A1 → A71 → A75)',
         shortLabel: 'Paris–Clermont',
         highwaySummary: 'Lüttich → Paris → Clermont → Millau → Montpellier',
-        description: 'Nachts über die A1 nach Paris, dann quer durch die Auvergne. Morgens Hotelpause in Clermont-Ferrand, nachmittags über das Millau-Viadukt. Maut etwa 100 €.',
+        description: 'Über die A1 nach Paris, dann quer durch die Auvergne. Abends übernachtet ihr in Clermont-Ferrand, am nächsten Tag geht es über das Millau-Viadukt ans Meer. Maut etwa 100 €.',
         elevationProfile: 'Bergig / Pässe',
         trafficRisk: 'Mittel',
         chargingDensity: 'Ausgewogen',
@@ -257,11 +258,11 @@ export const LEVELS: LevelConfig[] = [
       'In Frankreich: Atlante und ENGIE Vianeo statt EnBW und EWE Go',
       'Frankreich: 130 km/h, bei Regen 110. Maut auf den Autoroutes',
       'Blitzer nach dem gefahrenen Tempo gegen das Schild. In Frankreich: Radar automatique',
-      '8 Stunden Schlafpause nach der Nachtfahrt: Hotel mit AC-Laden, Budgethotel oder Schlaf im Auto',
+      `Übernachtung nach Etappe 3: ${HOTEL_AC.stayMinutes / 60} Stunden im Hotel, ${REST_AREA_STAY_MINUTES / 60} Stunden am Rastplatz im Auto`,
       'AC-Dorfladen: 0,29 €/kWh Atomstrom, aber nur 22 kW'
     ],
     briefingText:
-      'Mit Frau, zwei Kindern und Hund geht es von Aachen ans Mittelmeer. Ihr fahrt spätabends los und macht morgens eine Schlafpause. Plant die Route so, dass ihr Montpellier zur Abendsonne erreicht.',
+      'Mit Frau, zwei Kindern und Hund geht es von Aachen ans Mittelmeer. Ihr fahrt mittags los und übernachtet unterwegs. Nach der Hotelnacht erreicht ihr Montpellier am frühen Nachmittag. Wer am Rastplatz im Auto schläft, kommt schon um die Mittagszeit an.',
     eventPoolIds: ['evt_dirty_toilets', 'evt_hotel_overnight', 'evt_rest_area_robbery', 'evt_charger_defect', 'evt_speed_trap'],
     wifeDialogueIds: ['dlg_diesel_remark', 'dlg_tight_buffer']
   },

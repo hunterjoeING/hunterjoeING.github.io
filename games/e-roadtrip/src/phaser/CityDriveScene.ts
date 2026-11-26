@@ -9,7 +9,7 @@ import { getChargerById } from '../data/europeMap';
 import { MONTPELLIER_HOTEL_GOAL, MONTPELLIER_SEA } from '../data/cityLayouts/montpellier';
 import { isRearParked } from '../sim/ChargingBay';
 import { applyMontpellierWeather, MONTPELLIER_LIGHTING } from '../sim/CoastalLight';
-import { evaluatePropertyDamage, recordConeHit, STATIC_CONTACT_CLEARANCE_PX } from '../sim/PropertyDamage';
+import { evaluatePropertyDamage, MIN_DAMAGE_IMPACT_PX_PER_SEC, recordConeHit, STATIC_CONTACT_CLEARANCE_PX } from '../sim/PropertyDamage';
 import { pointInCityRect } from '../sim/WinterCity';
 import { createCityMinimap } from './MappedCityPainter';
 import { COASTAL_BACKGROUND, createSeaGlitter, followCoastalShadow } from './CoastalEffects';
@@ -18,18 +18,22 @@ import {
   CityLightingProfile,
   PedestrianAgent,
   SignalIntersection,
+  SignalPhase,
   TrafficCarAgent,
   ZebraCrosswalk,
   computeCityLightingProfile,
   detectPlayerTrafficViolation,
   evaluateCollisionFault,
-  nextTrafficPose,
-  shouldNpcYield
+  stepCityTraffic,
+  trafficShape
 } from './CityTraffic';
 import {
   CAR_FOOTPRINT, Capsule, capsuleInsideWorld, capsuleOverlapsRect, capsulesOverlap, circleAt, rotatedCarBounds,
   vehicleCapsule
 } from './CityCollision';
+import {
+  capsuleOnRoad, COLLISION_GRACE_SEC, findCollisionRecoveryPoint, TRAFFIC_RECOVERY_RADIUS_PX
+} from './CityCollisionRecovery';
 import { Rect } from './PlaceStyles';
 import { SoundFX } from './SoundFX';
 import { paintDrivingPlace, PaintedChargingBay, PlacePaint, setBayOccupied } from './PlacePainter';
@@ -37,6 +41,7 @@ import { isGrassSurface, SurfaceFx } from './SurfaceFx';
 
 type PropertyContact = Rect | Capsule | 'worldEdge' | 'passEdge' | 'water';
 const CITY_PARKING_DWELL_SEC = 0.6;
+const SIGNAL_COLOR: Record<SignalPhase, number> = { green: 0x22c55e, amber: 0xfacc15, red: 0xef4444 };
 
 export class CityDriveScene extends Phaser.Scene {
   private bridge!: ERoadtripBridge;
@@ -134,7 +139,9 @@ export class CityDriveScene extends Phaser.Scene {
   private previewLock = false;
 
   private dwellInTargetSec = 0;
-  private collisionCooldownSec = 0;
+  private collisionGraceSec = 0;
+  private collisionRecoveryHeading?: number;
+  private bumpFeedbackSec = 0;
   private violationCooldownSec = 0;
   private stormFlashTimer = 4;
   private completed = false;
@@ -164,7 +171,9 @@ export class CityDriveScene extends Phaser.Scene {
     this.carSpeed = 0;
     this.travelHeading = undefined;
     this.dwellInTargetSec = 0;
-    this.collisionCooldownSec = 0;
+    this.collisionGraceSec = 0;
+    this.collisionRecoveryHeading = undefined;
+    this.bumpFeedbackSec = 0;
     this.propertyContacts.clear();
     this.cones = [];
     this.hitCones.clear();
@@ -397,32 +406,32 @@ export class CityDriveScene extends Phaser.Scene {
 
   private spawnSignalVisuals(): void {
     const coast = this.preset === 'montpellier_finish';
-    const addLightVisual = (interId: string, axis: 'ew' | 'ns', x: number, y: number) => {
+    const addLightVisual = (interId: string, axis: 'ew' | 'ns', x: number, y: number, phase: SignalPhase) => {
       const shimmer = coast ? undefined : this.add
         .image(x, y + 22, 'wet_shimmer')
-        .setTint(0x22c55e)
+        .setTint(SIGNAL_COLOR[phase])
         .setScale(0.52, 0.55)
         .setAlpha(0.28)
         .setBlendMode(Phaser.BlendModes.ADD)
         .setDepth(2.5);
       const halo = coast ? undefined : this.add
         .image(x, y, 'light_glow_soft')
-        .setTint(0x22c55e)
+        .setTint(SIGNAL_COLOR[phase])
         .setScale(0.42)
         .setAlpha(0.55)
         .setBlendMode(Phaser.BlendModes.ADD)
         .setDepth(14.6);
-      const sprite = this.add.image(x, y, 'tlight_green').setDepth(14.5);
+      const sprite = this.add.image(x, y, `tlight_${phase}`).setDepth(14.5);
       this.signalVisuals.push({ interId, axis, sprite, halo, shimmer });
     };
 
-    for (const { id, centerX: x, centerY: y, box } of this.intersections) {
-      const dx = box.width / 2 + 18;
+    for (const { id, centerX: x, centerY: y, box, ewPhase, nsPhase } of this.intersections) {
+      const dx = box.width / 2 + 8;
       const dy = box.height / 2 + 8;
-      addLightVisual(id, 'ew', x - dx, y + dy);
-      addLightVisual(id, 'ew', x + dx, y - dy);
-      addLightVisual(id, 'ns', x - dx, y - dy);
-      addLightVisual(id, 'ns', x + dx, y + dy);
+      addLightVisual(id, 'ew', x - dx, y, ewPhase);
+      addLightVisual(id, 'ew', x + dx, y, ewPhase);
+      addLightVisual(id, 'ns', x, y - dy, nsPhase);
+      addLightVisual(id, 'ns', x, y + dy, nsPhase);
     }
   }
 
@@ -433,7 +442,7 @@ export class CityDriveScene extends Phaser.Scene {
       const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
       const sprite = this.add.image(start.x, start.y, route.tex).setDepth(7).setRotation(rotation);
       this.trafficCars.push({
-        sprite, route, wpIndex: route.startIndex + 1, currentSpeed: 0, holdLeft: 0, vx: 0, vy: 0
+        sprite, route, wpIndex: route.startIndex + 1, currentSpeed: 0, holdLeft: 0, blockedSec: 0, ghostSec: 0, vx: 0, vy: 0
       });
     }
 
@@ -469,10 +478,13 @@ export class CityDriveScene extends Phaser.Scene {
   private hitProperty(contact: PropertyContact): void {
     const impactSpeed = Math.abs(this.carSpeed);
     this.carSpeed = 0;
-    if (this.propertyContacts.has(contact) || this.completed || this.bridge.paused) return;
+    if (this.propertyContacts.has(contact) || this.collisionGraceSec > 0 || this.completed || this.bridge.paused) return;
 
     const damage = evaluatePropertyDamage(impactSpeed);
-    if (!damage) return;
+    if (!damage) {
+      if (impactSpeed > 0) this.bumpFeedback();
+      return;
+    }
     this.propertyContacts.add(contact);
     if (this.place.passRoad || this.place.cityGuide) this.cleanRun = false;
     SoundFX.bump();
@@ -514,9 +526,47 @@ export class CityDriveScene extends Phaser.Scene {
     });
   }
 
-  private trafficShape(car: TrafficCarAgent): Capsule {
-    const { x, y, rotation } = car.sprite;
-    return vehicleCapsule(x, y, rotation, car.route.isCyclist);
+  private pedestrianShape(ped: PedestrianAgent): Rect | undefined {
+    const body = ped.sprite.body;
+    if (body) return { x: body.x, y: body.y, w: body.width, h: body.height };
+  }
+
+  private updateCollisionRecovery(dt: number): void {
+    const heading = this.collisionRecoveryHeading;
+    if (heading === undefined && this.collisionGraceSec <= 0) return;
+    if (heading !== undefined) {
+      this.collisionRecoveryHeading = undefined;
+      this.collisionGraceSec = COLLISION_GRACE_SEC;
+      const origin = { x: this.player.x, y: this.player.y, rotation: this.player.rotation };
+      const traffic = this.trafficCars.map(trafficShape);
+      const pedestrians = this.pedestrians.map(ped => this.pedestrianShape(ped));
+      const stopBoxes = [
+        ...this.intersections.map(({ box }) => ({ x: box.x, y: box.y, w: box.width, h: box.height })),
+        ...this.place.trafficJunctions
+      ];
+      const { passRoad, roadSurface, asphalt } = this.place;
+      const point = findCollisionRecoveryPoint(origin, heading, Math.hypot(this.worldW, this.worldH), stopBoxes, shape => {
+        if (!capsuleInsideWorld(shape, this.worldW, this.worldH)) return false;
+        const onRoad = passRoad ? passRoadContains(passRoad, shape) :
+          capsuleOnRoad(shape, spot => !!roadSurface?.(spot) || asphalt.some(rect => pointInCityRect(spot, rect)));
+        return onRoad && !this.hitsObstacle(shape) && !this.passTraffic?.obstructs(shape) &&
+          !traffic.some(other => capsulesOverlap(shape, other)) &&
+          !pedestrians.some(rect => rect && capsuleOverlapsRect(shape, rect));
+      });
+      if (point) {
+        this.player.setPosition(point.x, point.y);
+        this.releasePropertyContacts(vehicleCapsule(point.x, point.y, origin.rotation));
+      }
+      for (const car of this.trafficCars) {
+        const nearby = [origin, this.player].some(({ x, y }) =>
+          Math.hypot(car.sprite.x - x, car.sprite.y - y) <= TRAFFIC_RECOVERY_RADIUS_PX);
+        if (nearby) car.ghostSec = COLLISION_GRACE_SEC;
+      }
+    } else {
+      this.collisionGraceSec = Math.max(0, this.collisionGraceSec - dt);
+    }
+    const dim = this.collisionGraceSec > 0 && Math.floor(this.collisionGraceSec * 10) % 2 === 0;
+    this.player.setAlpha(dim ? 0.45 : 1);
   }
 
   private movePlayer(dt: number, turn: number, grip = 1): boolean {
@@ -548,25 +598,27 @@ export class CityDriveScene extends Phaser.Scene {
         return false;
       }
       if (this.hitsParkedVehicle(shape)) {
-        this.handleCollision('obstacle', x, y, 0);
+        this.handleCollision('obstacle', x, y, 0, travel);
         return false;
       }
     }
-    const passCollision = this.passTraffic?.collision(shape);
-    if (passCollision) {
-      this.handleCollision('car', passCollision.x, passCollision.y, passCollision.speedPx);
-      return false;
-    }
-    for (const car of this.trafficCars) {
-      if (!capsulesOverlap(shape, this.trafficShape(car))) continue;
-      this.handleCollision(car.route.isCyclist ? 'cyclist' : 'car', car.sprite.x, car.sprite.y, car.currentSpeed);
-      return false;
-    }
-    for (const ped of this.pedestrians) {
-      const body = ped.sprite.body;
-      if (!body || !capsuleOverlapsRect(shape, { x: body.x, y: body.y, w: body.width, h: body.height })) continue;
-      this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed);
-      return false;
+    if (this.collisionGraceSec <= 0) {
+      const passCollision = this.passTraffic?.collision(shape);
+      if (passCollision) {
+        this.handleCollision('car', passCollision.x, passCollision.y, passCollision.speedPx, travel);
+        return false;
+      }
+      for (const car of this.trafficCars) {
+        if (car.ghostSec > 0 || !capsulesOverlap(shape, trafficShape(car))) continue;
+        this.handleCollision(car.route.isCyclist ? 'cyclist' : 'car', car.sprite.x, car.sprite.y, car.currentSpeed, travel);
+        return false;
+      }
+      for (const ped of this.pedestrians) {
+        const body = this.pedestrianShape(ped);
+        if (!body || !capsuleOverlapsRect(shape, body)) continue;
+        this.handleCollision('pedestrian', ped.sprite.x, ped.sprite.y, ped.speed, travel);
+        return false;
+      }
     }
     if (moving) {
       this.knockAwayCones(shape, x, rotation);
@@ -580,7 +632,7 @@ export class CityDriveScene extends Phaser.Scene {
   private updateChargingBays(): { parked?: PaintedChargingBay; nearest?: PaintedChargingBay } {
     const { x, y, rotation } = this.player;
     const car = { x, y, rotation, speed: this.carSpeed, footprint: rotatedCarBounds(x, y, rotation) };
-    const traffic = this.trafficCars.map(agent => this.trafficShape(agent));
+    const traffic = this.trafficCars.map(trafficShape);
     let parked: PaintedChargingBay | undefined;
     let nearest: PaintedChargingBay | undefined;
     let nearestDistance = Infinity;
@@ -599,63 +651,33 @@ export class CityDriveScene extends Phaser.Scene {
   }
 
   private stepTraffic(dt: number): void {
-    const playerShape = vehicleCapsule(this.player.x, this.player.y, this.player.rotation);
-    for (const car of this.trafficCars) {
-      const { sprite, route } = car;
-      car.currentSpeed = car.vx = car.vy = 0;
-      if (car.holdLeft > 0) {
-        car.holdLeft = Math.max(0, car.holdLeft - dt);
-        continue;
-      }
-      const others = this.trafficCars.filter(other => other !== car);
-      const otherShapes = others.map(other => this.trafficShape(other));
-      if (car.wpIndex === route.path.length) {
-        const [start, next] = route.path;
-        const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
-        const shape = vehicleCapsule(start.x, start.y, rotation, route.isCyclist);
-        if (!otherShapes.some(other => capsulesOverlap(shape, other)) &&
-            (!this.place.cityGuide || !capsulesOverlap(shape, playerShape))) {
-          sprite.setPosition(start.x, start.y).setRotation(rotation);
-          car.wpIndex = 1;
-        }
-        continue;
-      }
-
-      const next = nextTrafficPose(car, dt);
-      const angle = Math.atan2(next.y - sprite.y, next.x - sprite.x);
-      if (shouldNpcYield(car, others, this.pedestrians, this.intersections, this.zebras, angle, this.player)) continue;
-
-      const shape = vehicleCapsule(next.x, next.y, next.rotation, route.isCyclist);
-      const currentShape = this.trafficShape(car);
-      const occupied = this.place.trafficJunctions.some(junction =>
-        capsuleOverlapsRect(shape, junction) && !capsuleOverlapsRect(currentShape, junction) &&
-        (capsuleOverlapsRect(playerShape, junction) || otherShapes.some(other => capsuleOverlapsRect(other, junction)))
-      );
-      if (occupied || this.hitsObstacle(shape) || otherShapes.some(other => capsulesOverlap(shape, other))) continue;
-      if (capsulesOverlap(shape, playerShape)) {
+    stepCityTraffic(dt, {
+      cars: this.trafficCars,
+      pedestrians: this.pedestrians,
+      intersections: this.intersections,
+      zebras: this.zebras,
+      junctions: this.place.trafficJunctions,
+      player: this.player,
+      playerInGrace: this.collisionGraceSec > 0,
+      hitsObstacle: shape => this.hitsObstacle(shape),
+      onPlayerContact: ({ route, sprite }) => {
         this.handleCollision(route.isCyclist ? 'cyclist' : 'car', sprite.x, sprite.y, route.speed);
-        if (this.bridge.paused) return;
-        continue;
+        return this.bridge.paused;
       }
-
-      car.vx = (next.x - sprite.x) / dt;
-      car.vy = (next.y - sprite.y) / dt;
-      car.currentSpeed = Math.hypot(car.vx, car.vy);
-      car.wpIndex = next.wpIndex;
-      if (next.parked) car.holdLeft = route.holdSec ?? 0;
-      sprite.setPosition(next.x, next.y).setRotation(next.rotation);
-    }
+    });
   }
 
   private handleCollision(
     kind: 'car' | 'pedestrian' | 'cyclist' | 'obstacle',
     otherX: number,
     otherY: number,
-    otherSpeed: number
+    otherSpeed: number,
+    travel = this.travelHeading ?? this.player.rotation
   ): void {
-    if (this.collisionCooldownSec > 0 || this.completed || this.bridge.paused) return;
-    if (Math.abs(this.carSpeed) < 26 && kind === 'obstacle') {
-      this.carSpeed = -this.carSpeed * 0.4;
+    if (this.collisionGraceSec > 0 || this.completed || this.bridge.paused) return;
+    if (Math.abs(this.carSpeed) < MIN_DAMAGE_IMPACT_PX_PER_SEC) {
+      if (this.carSpeed !== 0) this.bumpFeedback();
+      this.carSpeed = kind === 'obstacle' ? -this.carSpeed * 0.4 : 0;
       return;
     }
 
@@ -670,7 +692,7 @@ export class CityDriveScene extends Phaser.Scene {
       otherSpeed
     );
 
-    this.collisionCooldownSec = 2.6;
+    this.collisionRecoveryHeading = this.carSpeed < 0 ? travel + Math.PI : travel;
     this.carSpeed = 0;
     this.travelHeading = undefined;
     if (fault.playerAtFault) {
@@ -688,6 +710,13 @@ export class CityDriveScene extends Phaser.Scene {
       playerAtFault: fault.playerAtFault,
       reason: fault.reason
     });
+  }
+
+  private bumpFeedback(): void {
+    if (this.bumpFeedbackSec > 0) return;
+    this.bumpFeedbackSec = 0.22;
+    SoundFX.bump();
+    this.cameras?.main?.shake(90, 0.002);
   }
 
   private triggerPoliceStop(kind: PoliceViolationKind): void {
@@ -1118,7 +1147,8 @@ export class CityDriveScene extends Phaser.Scene {
   update(_time: number, delta: number): void {
     const dt = Math.min(0.05, delta / 1000);
     if (dt <= 0 || this.bridge.paused || this.completed) return;
-    this.collisionCooldownSec = Math.max(0, this.collisionCooldownSec - dt);
+    this.updateCollisionRecovery(dt);
+    this.bumpFeedbackSec = Math.max(0, this.bumpFeedbackSec - dt);
     this.violationCooldownSec = Math.max(0, this.violationCooldownSec - dt);
 
     // Update paired perpendicular traffic light phases
@@ -1149,7 +1179,7 @@ export class CityDriveScene extends Phaser.Scene {
       const inter = this.intersections.find(x => x.id === sv.interId);
       if (!inter) return;
       const phase = sv.axis === 'ew' ? inter.ewPhase : inter.nsPhase;
-      const col = phase === 'green' ? 0x22c55e : phase === 'amber' ? 0xfacc15 : 0xef4444;
+      const col = SIGNAL_COLOR[phase];
       sv.sprite.setTexture(`tlight_${phase}`);
       sv.halo?.setTint(col);
       sv.shimmer?.setTint(col);
@@ -1198,7 +1228,7 @@ export class CityDriveScene extends Phaser.Scene {
 
     if (passSituation && run) {
       const { cap, unsafe } = passSituation;
-      if (up && !brake && this.carSpeed > cap) {
+      if (this.collisionGraceSec <= 0 && up && !brake && this.carSpeed > cap) {
         this.carSpeed = cap;
         run.elapsedMinutes += dt * PASS_FOLLOW_MIN_PER_SECOND * Math.max(0, 1 - cap / 155);
       }

@@ -8,7 +8,7 @@ const level1 = {
 };
 const level2 = {
   score: '790',
-  meta: { levelId: 'level_2_family_summer', minutes: 1100, costEur: 0 }
+  meta: { levelId: 'level_2_family_summer', minutes: 1882, costEur: 0 }
 };
 
 export default function register(test, game) {
@@ -16,13 +16,13 @@ export default function register(test, game) {
     assert.equal(validateEroadtripScore('eroadtrip_l1', level1), null);
     assert.equal(validateEroadtripScore('eroadtrip_l2', level2), null);
     assert.equal(validateEroadtripScore('eroadtrip_l2', {
-      score: 0, meta: { ...level2.meta, minutes: 850 }
+      score: 0, meta: { ...level2.meta, minutes: 1500 }
     }), null);
     assert.equal(validateEroadtripScore('eroadtrip_l2', {
-      score: 1, meta: { ...level2.meta, minutes: 550 }
+      score: 1, meta: { ...level2.meta, minutes: 941 }
     }), null);
     assert.match(validateEroadtripScore('eroadtrip_l2', {
-      score: 0, meta: { ...level2.meta, minutes: 549 }
+      score: 0, meta: { ...level2.meta, minutes: 940 }
     }), /minutes/);
     assert.equal(validateEroadtripScore('eroadtrip', {
       ...level1, meta: { ...level1.meta, board: 'eroadtrip_l1' }
@@ -38,11 +38,26 @@ export default function register(test, game) {
     }), null);
   });
 
+  test('worker and game share the Level 2 target at 112% of the slowest charged MG4 reference plan', () => {
+    const { boardId, id, targetArrivalMinutes } = game.getLevelById('level_2_family_summer');
+    const level = game.getLevelById(id);
+    const totals = level.routeOptions.map(({ id }) =>
+      game.evaluateTripPlan(level, game.createReferencePlan(level, 'mg4_standard', id)).totalMinutes);
+    assert.equal(targetArrivalMinutes, Math.round(Math.max(...totals) * 1.12));
+    assert.equal(targetArrivalMinutes, 1882);
+    assert.ok(20 * targetArrivalMinutes <= 40800);
+    const meta = { levelId: id, board: boardId, costEur: 0 };
+    assert.equal(validateEroadtripScore(boardId, { score: 0, meta: { ...meta, minutes: targetArrivalMinutes / 2 } }), null);
+    assert.match(validateEroadtripScore(boardId, { score: 0, meta: { ...meta, minutes: targetArrivalMinutes / 2 - 0.01 } }), /minutes/);
+    assert.equal(validateEroadtripScore(boardId, { score: 1000, meta: { ...meta, minutes: 40800 } }), null);
+    assert.match(validateEroadtripScore(boardId, { score: 1000, meta: { ...meta, minutes: 40800.01 } }), /minutes/);
+  });
+
   test('worker validates Level 3 on its own and overall boards at the exact time and score bounds', () => {
     const { boardId, id, targetArrivalMinutes } = game.getLevelById('level_3_alps_winter');
     const level = game.getLevelById(id);
     const totals = level.routeOptions.map(({ id }) =>
-      game.evaluateTripPlan(level, game.createDefaultPlan(level, 'mg4_standard', id)).totalMinutes);
+      game.evaluateTripPlan(level, game.createReferencePlan(level, 'mg4_standard', id)).totalMinutes);
     assert.ok(totals[0] < totals[2] && totals[2] < totals[1]);
     assert.equal(targetArrivalMinutes, Math.round(Math.max(...totals) * 1.12));
     const meta = { levelId: id, board: boardId, costEur: 0 };
@@ -62,13 +77,16 @@ export default function register(test, game) {
     }
   });
 
-  test('Aachen city minutes keep every default forecast within score bounds and Levels 1 and 2 reachable with charging', t => {
+  test('Playable route benchmarks stay within score bounds and Aachen routes stay reachable with charging', t => {
     const { mkRun, route1, route2 } = createFixtures(game);
-    const { CITY_TRANSITION_MINUTES, getLevelById, createDefaultPlan, evaluateTripPlan, evaluateRun, buildSubmission } = game;
+    const {
+      CITY_TRANSITION_MINUTES, getLevelById, createDefaultPlan, createReferencePlan, evaluateTripPlan, evaluateRun, buildSubmission
+    } = game;
     const winter = getLevelById('level_3_alps_winter');
     for (const level of [route1, route2, winter]) {
+      const createPlan = level === winter ? createReferencePlan : createDefaultPlan;
       const minutes = level.routeOptions.map(route => {
-        const plan = createDefaultPlan(level, 'mg4_standard', route.id);
+        const plan = createPlan(level, 'mg4_standard', route.id);
         const forecast = evaluateTripPlan(level, plan);
         const meta = { board: level.boardId, levelId: level.id, minutes: Math.round(forecast.totalMinutes),
           costEur: forecast.estimatedTotalCostEur };
@@ -77,7 +95,7 @@ export default function register(test, game) {
         }
         return meta.minutes;
       });
-      t.diagnostic(`Level ${level.order} default forecasts: ${minutes.join(', ')} min`);
+      t.diagnostic(`Level ${level.order} ${level === winter ? 'charged reference' : 'empty player'} forecasts: ${minutes.join(', ')} min`);
     }
 
     const scenarios = [

@@ -1,10 +1,10 @@
 import type { RunState } from '../types';
 import { applyStress } from './PauseEffects';
 
-/** Below this impact speed a static contact (e.g. gently touching a charger post while parking) only stops the car. */
-export const MIN_DAMAGE_IMPACT_PX_PER_SEC = 30;
-export const DENT_IMPACT_PX_PER_SEC = 75;
-export const AIRBAG_IMPACT_PX_PER_SEC = 165;
+/** Below this speed, city and pass contacts only give bump feedback. */
+export const MIN_DAMAGE_IMPACT_PX_PER_SEC = 60;
+export const DENT_IMPACT_PX_PER_SEC = 110;
+export const AIRBAG_IMPACT_PX_PER_SEC = 200;
 export const STATIC_CONTACT_CLEARANCE_PX = 6;
 
 const SCRATCH = { tier: 'scratch', lossEur: 800, stressDelta: 10 } as const;

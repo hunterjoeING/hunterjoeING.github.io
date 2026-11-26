@@ -33,6 +33,7 @@ export class AlpinePassTraffic {
   }
 
   step(dt: number): void {
+    // Vehicles advance on their paths even when their footprints intersect traffic or scenery.
     this.elapsed += dt;
     this.lamps.clear();
     const position = (sprite: Phaser.GameObjects.Image, pose: Pose | undefined) => {
@@ -71,6 +72,10 @@ export class AlpinePassTraffic {
       return truck;
     }
     return this.opposing.find(car => capsulesOverlap(shape, vehicleCapsule(car.x, car.y, car.rotation)));
+  }
+
+  obstructs(shape: Capsule): boolean {
+    return capsulesOverlap(shape, this.parked) || !!this.collision(shape);
   }
 
   situation(point: Point) {

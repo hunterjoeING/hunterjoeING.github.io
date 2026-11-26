@@ -37,7 +37,8 @@ export default function register(test, game) {
     vehicleCapsule, capsulesOverlap, capsuleOverlapsRect, isRearParked, rotatedCarBounds,
     createDefaultPlan, getActiveRouteLegs, evaluateTripPlan, buildRemainingRoute, getEdgeById, CITY_TRANSITION_MINUTES,
     computeCityLightingProfile, ERoadtripController, CityDriveScene, MontpellierBeachArrivalScene, DrivingHUD, formatClock,
-    MontpellierFinaleScene, BEACH_ARRIVAL_DURATION_MS, BEACH_ARRIVAL_STAGE, beachArrivalFrame, FINALE_DURATION_MS, HOTEL_AC
+    MontpellierFinaleScene, BEACH_ARRIVAL_DURATION_MS, BEACH_ARRIVAL_STAGE, beachArrivalFrame, FINALE_DURATION_MS, HOTEL_AC,
+    REST_AREA_STAY_MINUTES, MONTPELLIER_LIGHTING, MONTPELLIER_PREVIEW_HOUR
   } = game;
   const { route2: level, mkRun, mkScene, near } = createFixtures(game);
   const [routeA, mid, routeB] = level.routeOptions;
@@ -298,11 +299,13 @@ export default function register(test, game) {
     assert.deepEqual(beachArrivalFrame(BEACH_ARRIVAL_DURATION_MS * 2), end);
   });
 
-  test('All three default Level 2 forecasts reach Palavas in the evening within the worker score window', t => {
-    const baseline = [1042, 1066, 1132];
+  test('All three default Level 2 forecasts reach Palavas in the early afternoon within the worker score window', t => {
+    const baseline = [1522, 1546, 1612];
     const minutes = CITY_TRANSITION_MINUTES.montpellier_finish;
     assert.equal(minutes, 7);
-    assert.equal(level.targetArrivalMinutes, 1100);
+    assert.equal(level.targetArrivalMinutes, 1882);
+    assert.equal(HOTEL_AC.stayMinutes, 960);
+    assert.equal(REST_AREA_STAY_MINUTES, 840);
     const earlier = {
       ...level, routeOptions: level.routeOptions.map(route => ({
         ...route, legs: route.legs.map(leg => leg.destinationAtEnd ? { ...leg, citySegmentAtEnd: undefined } : leg)
@@ -325,18 +328,21 @@ export default function register(test, game) {
       assert.ok(legs.every(leg => leg.weatherOverride === 'clear' && !leg.isNightLeg));
       const hotelArrival = forecast.legForecasts.slice(0, hotelLeg + 1)
         .reduce((elapsed, leg) => elapsed + leg.driveMinutes + leg.chargeMinutes, 0);
-      assert.ok(clock(hotelArrival) >= 5 * 60 && clock(hotelArrival) <= 11 * 60);
-      assert.ok(clock(forecast.totalMinutes) >= 17 * 60 && clock(forecast.totalMinutes) <= 19.5 * 60);
+      assert.ok(clock(hotelArrival) >= 18 * 60 && clock(hotelArrival) <= 21 * 60);
+      assert.ok(clock(forecast.totalMinutes) >= 13 * 60 && clock(forecast.totalMinutes) <= 15 * 60);
+      const restArrival = forecast.totalMinutes - HOTEL_AC.stayMinutes + REST_AREA_STAY_MINUTES;
+      assert.ok(clock(restArrival) >= 11 * 60 && clock(restArrival) <= 13 * 60);
       const meta = { board: level.boardId, levelId: level.id, minutes: forecast.totalMinutes, costEur: forecast.estimatedTotalCostEur };
       for (const board of [level.boardId, 'eroadtrip']) {
         assert.equal(validateEroadtripScore(board, { score: 0, meta }), null, route.id);
+        assert.equal(validateEroadtripScore(board, { score: 0, meta: { ...meta, minutes: restArrival } }), null, route.id);
       }
-      assert.ok(meta.minutes >= 550 && meta.minutes <= 22000);
-      t.diagnostic(`${route.id}: hotel ${formatClock(level, hotelArrival)}–${formatClock(level, hotelArrival + HOTEL_AC.stayMinutes)}, destination ${formatClock(level, forecast.totalMinutes)} (${forecast.totalMinutes} min)`);
+      assert.ok(meta.minutes >= 941 && meta.minutes <= 40800);
+      t.diagnostic(`${route.id}: hotel ${formatClock(level, hotelArrival)}–${formatClock(level, hotelArrival + HOTEL_AC.stayMinutes)}, arrive ${formatClock(level, forecast.totalMinutes)} (${forecast.totalMinutes} min); rest area ${formatClock(level, hotelArrival)}–${formatClock(level, hotelArrival + REST_AREA_STAY_MINUTES)}, arrive ${formatClock(level, restArrival)} (${restArrival} min)`);
     }
   });
 
-  test('Reachable charge plans with varied speed, vehicles, stops and incident delays still target the evening', t => {
+  test('Reachable charge plans with varied speed, vehicles, stops and incident delays still arrive in the afternoon', t => {
     const scenarios = [
       [routeA, 'vw_id7_tourer', 10, 80, 0, ['nancy_tesla', 'macon_electra']],
       [routeA, 'vw_id7_tourer', -10, 80, 6, ['lux_ionity', 'arlon_tesla', 'nancy_tesla', 'macon_electra']],
@@ -357,36 +363,44 @@ export default function register(test, game) {
       const forecast = evaluateTripPlan(level, plan);
       const arrival = (level.departureTimeHour * 60 + forecast.totalMinutes + delay) % (24 * 60);
       assert.ok(forecast.valid && forecast.minSocEncountered >= 3, `${route.id} ${vehicle}`);
-      assert.ok(arrival >= 17 * 60 && arrival <= 20.5 * 60, formatClock(level, forecast.totalMinutes + delay));
+      assert.ok(arrival >= 12 * 60 && arrival <= 17.5 * 60, formatClock(level, forecast.totalMinutes + delay));
       const forecastHtml = game.PlanningUI.prototype.renderForecastBanner(level, forecast, 0);
-      assert.ok(forecastHtml.includes(`Abfahrt 23:35 · Ankunft ca. ${formatClock(level, forecast.totalMinutes)}`));
+      assert.ok(forecastHtml.includes(`Abfahrt 12:00 · Ankunft ca. ${formatClock(level, forecast.totalMinutes)}`));
       t.diagnostic(`${route.shortLabel} ${vehicle} ${speedDelta} km/h, ${stationIds.length} stops at ${targetSocPct}% + ${delay} min: ${formatClock(level, forecast.totalMinutes + delay)}`);
     }
-    assert.ok(game.getEventById('evt_hotel_overnight').choices.every(choice => choice.timeDeltaMin === HOTEL_AC.stayMinutes));
+    const overnight = game.getEventById('evt_hotel_overnight').choices;
+    assert.equal(overnight.find(choice => choice.id === 'hotel_good').timeDeltaMin, HOTEL_AC.stayMinutes);
+    assert.equal(overnight.find(choice => choice.id === 'hotel_budget').timeDeltaMin, HOTEL_AC.stayMinutes);
+    assert.equal(overnight.find(choice => choice.id === 'sleep_car').timeDeltaMin, REST_AREA_STAY_MINUTES);
   });
 
-  test('Montpellier stays golden and dry for every clock and weather input without changing other city profiles', () => {
-    const golden = computeCityLightingProfile(18, 0, 'montpellier_finish', 'clear');
-    assert.deepEqual(golden, {
-      ambientColor: 0xffb96c, ambientAlpha: 0.13, headlightsOn: false, headlightAlpha: 0,
+  test('Montpellier stays sunny and dry for every clock and weather input without changing other city profiles', () => {
+    const afternoon = computeCityLightingProfile(14, 0, 'montpellier_finish', 'clear');
+    assert.deepEqual(afternoon, {
+      ambientColor: 0xffe3a6, ambientAlpha: 0.07, headlightsOn: false, headlightAlpha: 0,
       streetlampsOn: false, lampGlowAlpha: 0, isNight: false, isDuskOrDawn: false,
       isRain: false, isStorm: false, isFog: false, isSnow: false
     });
+    assert.deepEqual(afternoon, MONTPELLIER_LIGHTING);
+    assert.equal(MONTPELLIER_PREVIEW_HOUR, 14);
     for (const weather of ['clear', 'rain', 'storm', 'fog', 'snow']) {
       for (let hour = 0; hour <= 24; hour += 0.25) {
         for (const forceNight of [true, false]) {
-          assert.deepEqual(computeCityLightingProfile(hour, 0, 'montpellier_finish', weather, forceNight), golden);
-          assert.deepEqual(computeCityLightingProfile(level.departureTimeHour, hour * 60, 'montpellier_finish', weather, forceNight), golden);
+          assert.deepEqual(computeCityLightingProfile(hour, 0, 'montpellier_finish', weather, forceNight), afternoon);
+          assert.deepEqual(computeCityLightingProfile(level.departureTimeHour, hour * 60, 'montpellier_finish', weather, forceNight), afternoon);
         }
       }
     }
-    const nightStart = computeCityLightingProfile(level.departureTimeHour, 0, 'aachen_start', 'clear');
-    assert.ok(nightStart.isNight && nightStart.headlightsOn && nightStart.streetlampsOn);
-    assert.equal(nightStart.ambientAlpha, 0.58);
+    const noonStart = computeCityLightingProfile(level.departureTimeHour, 0, 'aachen_start', 'clear');
+    assert.equal(noonStart.isNight, false);
+    assert.equal(noonStart.headlightsOn, false);
+    assert.equal(noonStart.streetlampsOn, false);
+    assert.equal(noonStart.ambientAlpha, 0);
     assert.deepEqual(computeCityLightingProfile(24, 0, 'aachen_start', 'clear'),
       computeCityLightingProfile(0, 0, 'aachen_start', 'clear'));
     assert.equal(formatClock({ departureTimeHour: 0 }, 0), '00:00');
-    assert.equal(formatClock(level, 25), '00:00');
+    assert.equal(formatClock({ departureTimeHour: 23 + 35 / 60 }, 25), '00:00');
+    assert.equal(formatClock(level, 0), '12:00');
     assert.ok(computeCityLightingProfile(12, 0, 'aachen_finish', 'clear').isNight);
     const hannover = computeCityLightingProfile(18, 0, 'hannover_messe', 'rain');
     assert.ok(hannover.isRain && hannover.isDuskOrDawn && hannover.headlightsOn && hannover.streetlampsOn);
@@ -425,11 +439,11 @@ export default function register(test, game) {
     assert.equal(scene.roadWet, false);
     scene.updateCoastalLight(1.5);
     controller.enterCitySegment('aachen_start');
-    assert.equal(run.isNight, true);
-    assert.match(root.querySelector('[data-field="clock"]').textContent, /🌙 Nacht/);
+    assert.equal(run.isNight, false);
+    assert.match(root.querySelector('[data-field="clock"]').textContent, /☀️ Klar/);
   });
 
-  test('Level 2 previews use the night itinerary, with both arrival variants clear at 18:00', t => {
+  test('Level 2 previews use the midday itinerary, with both arrival variants clear at 14:00', t => {
     const previousSearch = window.location.search;
     window.requestAnimationFrame = () => {};
     t.after(() => {
@@ -449,15 +463,15 @@ export default function register(test, game) {
       assert.equal(leg.weatherOverride, 'clear');
       if (preview.startsWith('level2arrival')) {
         assert.equal(leg.citySegmentAtEnd, 'montpellier_finish');
-        assert.equal(formatClock(level, run.elapsedMinutes), '18:00');
+        assert.equal(formatClock(level, run.elapsedMinutes), '14:00');
         assert.equal(run.activeWeather, 'clear');
         assert.equal(run.isNight, false);
         assert.equal(run.stress >= 60, preview.endsWith('-stress'));
       } else if (preview === 'level2hotel') {
         assert.equal(leg.overnightAtEnd, true);
-        assert.match(formatClock(level, run.elapsedMinutes), /^0[5-8]:/);
+        assert.match(formatClock(level, run.elapsedMinutes), /^(18|19|20):/);
       } else {
-        assert.ok(run.elapsedMinutes > 0 && run.isNight);
+        assert.ok(run.elapsedMinutes > 0);
         if (preview === 'level2rain') {
           assert.equal(run.activeWeather, 'rain');
           assert.equal(autobahnOptions.previewWeather, 'rain');

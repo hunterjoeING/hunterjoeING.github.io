@@ -5,7 +5,7 @@ import { validateEroadtripScore } from '../../../cloudflare-worker/worker.js';
 
 export default function register(test, game) {
   const {
-    buildSubmission, buildWinterQueueEvent, chainFittingChoice, COLD_START_KM, createDefaultPlan, ERoadtripController,
+    buildSubmission, buildWinterQueueEvent, chainFittingChoice, COLD_START_KM, createDefaultPlan, createReferencePlan, ERoadtripController,
     estimateChargeSession, evaluateStopSkip, evaluateTripPlan, findWinterQueueAlternative, getActiveRouteLegs,
     getChargerById, getEdgeById, getEventById, getLevelById, getVehicleById, getWifeDialogueById,
     nextWinterRoadEvent, PlanningUI, predictLiveTripSoc, SNOWPLOUGH_SPEED_KMH, stopKey, winterQueueCars,
@@ -160,7 +160,7 @@ export default function register(test, game) {
       const alternativeId = 'chg_kufstein_ac';
       const station = getChargerById('chg_kufstein_ionity');
       const run = { ...mkRun(level), activeWeather: 'snow', currentSpeedKmh: 85 };
-      run.plan = createDefaultPlan(level, car, route.id);
+      run.plan = createReferencePlan(level, car, route.id);
       run.currentLegIndex = route.legs.findIndex(leg => leg.edgeId === station.edgeId);
       run.legProgressKm = station.edgeProgress * getEdgeById(station.edgeId).distanceKm;
       run.distanceDrivenKm = run.legProgressKm;
@@ -176,7 +176,7 @@ export default function register(test, game) {
       const queue = buildWinterQueueEvent(station, 4, false, alternative.station);
       assert.deepEqual(queue.choices.map(choice => choice.id), ['winter_queue_wait', 'winter_queue_alternative']);
       assert.equal(queue.choices[0].timeDeltaMin, 24);
-      assert.equal(run.plan.plannedStops.length, route.defaultPlannedStops.length + 1);
+      assert.deepEqual(run.plan.plannedStops, [...route.defaultPlannedStops, stop]);
 
       run.socPct = 2;
       assert.equal(findWinterQueueAlternative(level, run, stop, station), undefined);
@@ -191,6 +191,7 @@ export default function register(test, game) {
       { action: 'wait' }, { action: 'skip' }, { action: 'alternative' }, { action: 'alternative', alreadyPlanned: true }
     ]) {
       const run = { ...mkRun(level), activeWeather: 'snow', currentSpeedKmh: 100, leaderboardRunId: 'queue-resume' };
+      run.plan = createReferencePlan(level, car);
       run.legProgressKm = station.edgeProgress * getEdgeById(station.edgeId).distanceKm;
       run.distanceDrivenKm = run.legProgressKm;
       run.currentLegIndex = legIndex;
@@ -222,10 +223,10 @@ export default function register(test, game) {
     }
   });
 
-  test('all three winter routes cross the Alps with reachable default charges and a daylight arrival', () => {
+  test('all three winter routes cross the Alps with reachable reference charges and a daylight arrival', () => {
     assert.equal(level.routeOptions.length, 3);
     for (const [index, route] of level.routeOptions.entries()) {
-      const plan = createDefaultPlan(level, car, route.id);
+      const plan = createReferencePlan(level, car, route.id);
       const legs = getActiveRouteLegs(level, plan);
       const edges = legs.map(leg => getEdgeById(leg.edgeId));
       assert.equal(edges[0].fromCityId, 'muenchen');
@@ -260,14 +261,14 @@ export default function register(test, game) {
     assert.equal(getChargerById('chg_brennero_tesla').stalls, 5);
   });
 
-  test('all three default winter plans reach the Sirmione finale and score within the worker bounds', t => {
+  test('all three winter reference plans reach the Sirmione finale and score within the worker bounds', t => {
     t.mock.method(Math, 'random', () => 0.9);
     window.requestAnimationFrame = callback => callback();
     t.after(() => { delete window.requestAnimationFrame; });
     const scores = [];
     for (const [index, slowForTunnel] of [[0, true], [0, false], [1, false], [2, false]]) {
       const route = level.routeOptions[index];
-      const plan = createDefaultPlan(level, car, route.id);
+      const plan = createReferencePlan(level, car, route.id);
       const legs = getActiveRouteLegs(level, plan);
       const forecast = evaluateTripPlan(level, plan);
       assert.equal(legs.filter(leg => leg.destinationAtEnd).length, 1);

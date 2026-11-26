@@ -1,8 +1,12 @@
 import * as Phaser from 'phaser';
 import { CityDrivePreset, PoliceViolationKind, WeatherKind } from '../types';
 import { MONTPELLIER_LIGHTING } from '../sim/CoastalLight';
-import type { Point } from './CityCollision';
+import { capsuleOverlapsRect, capsulesOverlap, vehicleCapsule, type Capsule, type Point } from './CityCollision';
 import type { TrafficRoute } from './CityLanes';
+import type { Rect } from './PlaceStyles';
+
+export const TRAFFIC_DEADLOCK_SEC = 2.5;
+const TRAFFIC_ESCAPE_SEC = 1;
 
 export interface TrafficCarAgent {
   sprite: Phaser.GameObjects.Image;
@@ -10,11 +14,13 @@ export interface TrafficCarAgent {
   wpIndex: number;
   currentSpeed: number;
   holdLeft: number;
+  blockedSec: number;
+  ghostSec: number;
   vx: number;
   vy: number;
 }
 
-export function nextTrafficPose(npc: TrafficCarAgent, dt: number) {
+function nextTrafficPose(npc: TrafficCarAgent, dt: number) {
   let { x, y, rotation } = npc.sprite;
   let { wpIndex } = npc;
   let parked = false;
@@ -40,6 +46,98 @@ export function nextTrafficPose(npc: TrafficCarAgent, dt: number) {
     }
   }
   return { x, y, rotation, wpIndex, parked };
+}
+
+export function trafficShape(car: TrafficCarAgent): Capsule {
+  const { x, y, rotation } = car.sprite;
+  return vehicleCapsule(x, y, rotation, car.route.isCyclist);
+}
+
+interface CityTrafficStep {
+  cars: TrafficCarAgent[];
+  pedestrians: PedestrianAgent[];
+  intersections: SignalIntersection[];
+  zebras: ZebraCrosswalk[];
+  junctions: Rect[];
+  player: Point & { rotation: number };
+  playerInGrace: boolean;
+  hitsObstacle: (shape: Capsule) => boolean;
+  onPlayerContact: (car: TrafficCarAgent) => boolean;
+}
+
+function waitOrGhost(car: TrafficCarAgent, dt: number): boolean {
+  car.blockedSec += dt;
+  if (car.blockedSec < TRAFFIC_DEADLOCK_SEC) return true;
+  car.ghostSec = TRAFFIC_ESCAPE_SEC;
+  car.blockedSec = 0;
+  return false;
+}
+
+export function stepCityTraffic(dt: number, {
+  cars, pedestrians, intersections, zebras, junctions, player, playerInGrace, hitsObstacle, onPlayerContact
+}: CityTrafficStep): void {
+  const playerFootprint = vehicleCapsule(player.x, player.y, player.rotation);
+  const solidPlayer = playerInGrace ? undefined : playerFootprint;
+  for (const car of cars) {
+    const { sprite, route } = car;
+    car.currentSpeed = car.vx = car.vy = 0;
+    const others = cars.filter(other => other !== car && other.ghostSec <= 0);
+    const otherShapes = others.map(trafficShape);
+    const overlapsTraffic = (shape: Capsule) => otherShapes.some(other => capsulesOverlap(shape, other));
+    if (car.ghostSec > 0) {
+      car.ghostSec = Math.max(0, car.ghostSec - dt);
+      const current = trafficShape(car);
+      if (car.ghostSec === 0 && (capsulesOverlap(current, playerFootprint) ||
+          overlapsTraffic(current) || hitsObstacle(current))) car.ghostSec = dt;
+    }
+    if (car.holdLeft > 0) {
+      car.holdLeft = Math.max(0, car.holdLeft - dt);
+      continue;
+    }
+    if (car.wpIndex === route.path.length) {
+      const [start, next] = route.path;
+      const rotation = Math.atan2(next.y - start.y, next.x - start.x) + Math.PI / 2;
+      const shape = vehicleCapsule(start.x, start.y, rotation, route.isCyclist);
+      const blocked = overlapsTraffic(shape) || (solidPlayer && capsulesOverlap(shape, solidPlayer)) || hitsObstacle(shape);
+      if (car.ghostSec <= 0 && blocked && waitOrGhost(car, dt)) continue;
+      sprite.setPosition(start.x, start.y).setRotation(rotation);
+      car.wpIndex = 1;
+      car.blockedSec = 0;
+      continue;
+    }
+
+    const next = nextTrafficPose(car, dt);
+    const angle = Math.atan2(next.y - sprite.y, next.x - sprite.x);
+    const fx = Math.cos(angle);
+    const fy = Math.sin(angle);
+    if (npcMustYield(car, pedestrians, intersections, zebras, fx, fy)) {
+      car.blockedSec = 0;
+      continue;
+    }
+    if (car.ghostSec <= 0) {
+      const shape = vehicleCapsule(next.x, next.y, next.rotation, route.isCyclist);
+      const occupied = junctions.some(junction =>
+        capsuleOverlapsRect(shape, junction) && !capsuleOverlapsRect(trafficShape(car), junction) &&
+        ((solidPlayer && capsuleOverlapsRect(solidPlayer, junction)) ||
+          otherShapes.some(other => capsuleOverlapsRect(other, junction)))
+      );
+      const playerContact = solidPlayer && capsulesOverlap(shape, solidPlayer);
+      const blocked = occupied || hitsObstacle(shape) || overlapsTraffic(shape) ||
+        vehicleAhead(car, others, playerInGrace ? undefined : player, fx, fy);
+      if ((blocked || playerContact) && waitOrGhost(car, dt)) {
+        if (!blocked && playerContact && onPlayerContact(car)) return;
+        continue;
+      }
+    }
+
+    car.blockedSec = 0;
+    car.vx = (next.x - sprite.x) / dt;
+    car.vy = (next.y - sprite.y) / dt;
+    car.currentSpeed = Math.hypot(car.vx, car.vy);
+    car.wpIndex = next.wpIndex;
+    if (next.parked) car.holdLeft = route.holdSec ?? 0;
+    sprite.setPosition(next.x, next.y).setRotation(next.rotation);
+  }
 }
 
 export interface PedestrianZebraLink {
@@ -70,6 +168,16 @@ export interface SignalIntersection {
   box: Phaser.Geom.Rectangle;
   ewPhase: 'green' | 'amber' | 'red';
   nsPhase: 'green' | 'amber' | 'red';
+}
+
+export type SignalPhase = SignalIntersection['ewPhase'];
+
+/** Trace back to the side the driver entered, including lanes that approach a corner diagonally. */
+function entrySignalPhase({ box, ewPhase, nsPhase }: SignalIntersection, x: number, y: number, fx: number, fy: number): SignalPhase {
+  const toWestOrEast = fx === 0 ? Infinity : (x - (fx > 0 ? box.left : box.right)) / fx;
+  const toNorthOrSouth = fy === 0 ? Infinity : (y - (fy > 0 ? box.top : box.bottom)) / fy;
+  const acrossEastWest = toWestOrEast === toNorthOrSouth ? Math.abs(fx) >= Math.abs(fy) : toWestOrEast < toNorthOrSouth;
+  return acrossEastWest ? ewPhase : nsPhase;
 }
 
 export interface ZebraCrosswalk {
@@ -160,31 +268,23 @@ export function computeCityLightingProfile(
   };
 }
 
-export function shouldNpcYield(
+export function npcMustYield(
   npc: TrafficCarAgent,
-  allNpcs: TrafficCarAgent[],
   pedestrians: PedestrianAgent[],
   intersections: SignalIntersection[],
   zebras: ZebraCrosswalk[],
-  moveAngle: number,
-  player: Point
+  fx: number,
+  fy: number
 ): boolean {
-  const fx = Math.cos(moveAngle);
-  const fy = Math.sin(moveAngle);
-  const horizontal = Math.abs(fx) >= Math.abs(fy);
-
-  // Look ahead 48..88 px
+  // Look ahead 66 px.
   const probeX = npc.sprite.x + fx * 66;
   const probeY = npc.sprite.y + fy * 66;
 
   // 1. Check signalized intersection stop
   for (const inter of intersections) {
-    const phase = horizontal ? inter.ewPhase : inter.nsPhase;
-    if (phase === 'red' || phase === 'amber') {
-      const alreadyInside = Phaser.Geom.Rectangle.Contains(inter.box, npc.sprite.x, npc.sprite.y);
-      const aboutToEnter = Phaser.Geom.Rectangle.Contains(inter.box, probeX, probeY);
-      if (!alreadyInside && aboutToEnter) return true;
-    }
+    const alreadyInside = Phaser.Geom.Rectangle.Contains(inter.box, npc.sprite.x, npc.sprite.y);
+    const aboutToEnter = Phaser.Geom.Rectangle.Contains(inter.box, probeX, probeY);
+    if (!alreadyInside && aboutToEnter && entrySignalPhase(inter, probeX, probeY, fx, fy) !== 'green') return true;
   }
 
   // 2. Yield to pedestrians actively crossing a zebra crosswalk ahead
@@ -200,13 +300,13 @@ export function shouldNpcYield(
     }
   }
 
-  return vehicleAhead(npc, allNpcs, player, fx, fy);
+  return false;
 }
 
 function vehicleAhead(
   npc: TrafficCarAgent,
   allNpcs: TrafficCarAgent[],
-  player: Point,
+  player: Point | undefined,
   fx: number,
   fy: number
 ): boolean {
@@ -224,7 +324,7 @@ function vehicleAhead(
     const parallel = Math.abs(fx * Math.sin(other.sprite.rotation) - fy * Math.cos(other.sprite.rotation));
     if (parallel > 0.8 && blocked(other.sprite.x, other.sprite.y, other.route.isCyclist ? 5 : 14)) return true;
   }
-  return blocked(player.x, player.y, 14);
+  return !!player && blocked(player.x, player.y, 14);
 }
 
 export function detectPlayerTrafficViolation(
@@ -241,7 +341,6 @@ export function detectPlayerTrafficViolation(
   const movingFast = Math.abs(playerSpeed) > 36;
   const fx = Math.sin(playerRot) * (playerSpeed >= 0 ? 1 : -1);
   const fy = -Math.cos(playerRot) * (playerSpeed >= 0 ? 1 : -1);
-  const horizontal = Math.abs(fx) >= Math.abs(fy);
 
   // Check red light entry (crossing into intersection box when player's axis is RED)
   for (const inter of intersections) {
@@ -251,7 +350,7 @@ export function detectPlayerTrafficViolation(
     else wasInIntersections.delete(inter.id);
 
     if (inside && !wasInside && movingFast) {
-      const axisPhase = horizontal ? inter.ewPhase : inter.nsPhase;
+      const axisPhase = entrySignalPhase(inter, px, py, fx, fy);
       if (axisPhase === 'red') {
         return 'red_light';
       }

@@ -13,7 +13,7 @@ import {
   getMapThemePalette
 } from './EuropePixelMap';
 import { ChargerStation } from '../types';
-import { getBestPriceForStation } from '../sim/EnergyModel';
+import { getBestPriceForStation, networkHasSubscription } from '../sim/EnergyModel';
 import {
   evaluateTripPlan,
   getActiveRouteLegs,
@@ -980,7 +980,7 @@ export class EuropeMapScene extends Phaser.Scene {
       if (tariff.hasSubscriptionDiscount && isSub) {
         node.noSubText.setText(`ohne Abo: ${tariff.pricePerKwhWithoutSub.toFixed(2)} €/kWh`);
       } else if (priceIsRoaming) {
-        node.noSubText.setText('Roaming / Ad-hoc');
+        node.noSubText.setText(networkHasSubscription(station.network) ? 'Roaming / Ad-hoc' : 'Ad-hoc');
       } else {
         node.noSubText.setText(station.cityHint.slice(0, 22));
       }

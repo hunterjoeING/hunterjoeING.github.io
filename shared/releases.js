@@ -82,9 +82,9 @@ const arcadeReleases = {
       app: "eroadtrip", version: "0.6.0", date: "2026-11-25", type: "feature", title: "Winterfahrt an den Gardasee",
       author: "Michi", model: "Sol 6.2",
       highlights: [
-        "Neues Level 3 mit drei Winterrouten von München nach Sirmione, Glatteis in den Passkehren und Hindernissen. Level 2 endet in Montpellier.",
+        "Neues Level 3 mit drei Winterrouten von München nach Sirmione, Glatteis in den Passkehren und Hindernissen. Level 2 startet mittags und endet nach einer langen Hotelnacht am frühen Nachmittag in Montpellier.",
         "Stadtfahrten in Aachen, Hannover, Montpellier und München nach echten Stadtplänen",
-        "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen. Rempler an Gebäuden und Säulen verursachen Wertverlust.",
+        "Leichter rückwärts in jeder freien Ladebucht einparken und Anbieter an den Säulen erkennen. Rempler an Gebäuden und Säulen verursachen Wertverlust. Sehr langsame Rempler bleiben folgenlos. Der Airbag öffnet sich erst bei einem sehr schnellen Aufprall.",
         "Planungskarte mit echten Küstenlinien und mehr Städten, abgedunkelte Dialoge und ein Navi mit allen Straßen bis zum nächsten Halt. Unnötige Ladestopps lassen sich auslassen.",
         "Restakku am Ziel kann Punkte kosten. Essen in der Ladepause kostet 20 €.",
       ],
