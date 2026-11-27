@@ -1,6 +1,7 @@
 import * as THREE from 'three';
-import { volute } from './ce-volute.js?v=0.5.0';
-import { junctionGeometry } from './ce-junctions.js?v=0.5.0';
+import { volute } from './ce-volute.js?v=0.5.1';
+import { junctionGeometry } from './ce-junctions.js?v=0.5.1';
+import { DISC_RADIUS, DISC_THICKNESS, DUCT_SIDES as SIDES } from './ce-throttle.js?v=0.5.1';
 
 // Fillet the design polyline without spline overshoot. Both the wall and the
 // tracer lookup use these same equally spaced cross sections.
@@ -26,8 +27,6 @@ function sections(edge) {
   const frames = curve.computeFrenetFrames(count, false);
   return { centers, ...frames, length, count };
 }
-
-const SIDES = 12;
 
 function ringPoints(edge, j, joint) {
   const axis = joint?.axis || edge.tangents[j];
@@ -185,11 +184,14 @@ export function installDucts(graph, getGroup, getMat, ghost, impeller) {
       pivot.position.copy(end);
       pivot.quaternion.setFromUnitVectors(up, dir);
       getGroup(d.part).add(pivot);
-      const disc = new THREE.Mesh(new THREE.CylinderGeometry(d.size * 0.87, d.size * 0.87, 0.024, 18),
+      const isThrottle = d.type === 'throttle';
+      const radius = isThrottle ? DISC_RADIUS : d.size * 0.87;
+      const disc = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, isThrottle ? DISC_THICKNESS : 0.024, 18),
         getMat(d.part, 'chainGold'));
+      if (isThrottle) disc.name = 'throttlePlate';
       pivot.add(disc);
       moving[d.type === 'throttle' ? 'throttle' : d.part] = disc;
-      ring(d.part, end, dir, d.size + 0.015);
+      ring(d.part, end, dir, d.size + (isThrottle ? 0.024 : 0.015));
     } else {
       const r = d.size;
       const round = d.type === 'filterDPF';

@@ -21,7 +21,6 @@ export const ENGINE_LAYOUTS = {
     ],
     cameraScale: 1.0,
     crankLength: 6.45,
-    timingX: -3.16,
     flywheelX: 3.32
   },
   boxer4: {
@@ -46,7 +45,6 @@ export const ENGINE_LAYOUTS = {
     ],
     cameraScale: 1.18,
     crankLength: 5.2,
-    timingX: -2.55,
     flywheelX: 2.7
   },
   v6: {
@@ -72,7 +70,6 @@ export const ENGINE_LAYOUTS = {
     ],
     cameraScale: 1.14,
     crankLength: 5.65,
-    timingX: -2.78,
     flywheelX: 2.95
   },
   v8: {
@@ -100,7 +97,6 @@ export const ENGINE_LAYOUTS = {
     ],
     cameraScale: 1.24,
     crankLength: 6.7,
-    timingX: -3.32,
     flywheelX: 3.48
   }
 };
@@ -116,8 +112,8 @@ export const ENGINE_CONCEPTS = {
     hasSparkPlugs: true,
     directInjection: false,
     compressionRatio: '11,0 : 1',
-    idleRpm: 850,
-    minRunningRpm: 200,
+    idleRpm: { r4: 800, boxer4: 750, v6: 700, v8: 650 },
+    ignitionStartDeg: 348,
     redlineRpm: 6500,
     maxRpm: 7000,
     fuelHeatingValueMJkg: 42.7,
@@ -139,8 +135,8 @@ export const ENGINE_CONCEPTS = {
     hasSparkPlugs: false,
     directInjection: true,
     compressionRatio: '16,5 : 1',
-    idleRpm: 750,
-    minRunningRpm: 200,
+    idleRpm: { r4: 750, boxer4: 750, v6: 700, v8: 600 },
+    ignitionStartDeg: 356,
     redlineRpm: 4500,
     maxRpm: 5000,
     fuelHeatingValueMJkg: 42.6,
@@ -168,11 +164,11 @@ function smoothstep(a, b, value) {
 /**
  * Erzeugt ein vollständiges physikalisches Motorprofil für jede Kombination
  * aus Bauform (r4, boxer4, v6, v8) und Antriebskonzept (otto, diesel).
- * Für den Standardfall (r4 + otto) sind sämtliche Kennwerte bitgenau identisch zu v0.3.1.
  */
 export function buildEngineProfile(layoutId = 'r4', conceptId = 'otto') {
   const layout = ENGINE_LAYOUTS[layoutId] || ENGINE_LAYOUTS.r4;
   const concept = ENGINE_CONCEPTS[conceptId] || ENGINE_CONCEPTS.otto;
+  const idleRpm = concept.idleRpm[layout.id];
   const dispScale = layout.displacementL / 2.0;
   const isDefaultR4Otto = layout.id === 'r4' && concept.id === 'otto';
 
@@ -183,11 +179,10 @@ export function buildEngineProfile(layoutId = 'r4', conceptId = 'otto') {
   // Volllast-Drehmomentkurve
   function fullTorqueNmForProfile(rpmInput) {
     const rpm = Math.max(0, Math.min(concept.maxRpm, Number(rpmInput) || 0));
-    if (rpm < concept.minRunningRpm) return 0;
     const x = rpm / 1000;
 
     if (concept.id === 'otto') {
-      const lowRise = smoothstep(concept.minRunningRpm, 2000, rpm);
+      const lowRise = smoothstep(200, 2000, rpm);
       const peakOffset = (x - 4.25) / 2.65;
       const baseTorque = (125 + 75 * Math.exp(-(peakOffset ** 2))) * dispScale * boxerBonus;
       const highDrop = 1 - 0.12 * smoothstep(5900, 7200, rpm);
@@ -198,7 +193,7 @@ export function buildEngineProfile(layoutId = 'r4', conceptId = 'otto') {
     // Turbodiesel (Common-Rail + VTG-Turbolader):
     // Deutliches Turboloch unter 1.250 U/min, starkes Plateau 1.750–2.800 U/min (~380 Nm @ 2,0 l),
     // sanfter Abfall ab 3.200 U/min, Begrenzer ab 4.500 U/min.
-    const lowRise = smoothstep(concept.minRunningRpm, 1150, rpm);
+    const lowRise = smoothstep(200, 1150, rpm);
     const turboSpool = 0.46 + 0.54 * smoothstep(1050, 1850, rpm);
     const plateau = 0.86 + 0.14 * Math.exp(-(((x - 2.25) / 1.15) ** 2));
     const topFade = 1 - 0.34 * smoothstep(2850, 4650, rpm);
@@ -233,7 +228,6 @@ export function buildEngineProfile(layoutId = 'r4', conceptId = 'otto') {
     if (!concept.hasTurbo) return 0;
     const rpm = Math.max(0, Math.min(concept.maxRpm, Number(rpmInput) || 0));
     const load = clamp01(loadInput);
-    if (rpm < concept.minRunningRpm) return 0;
     const spool = smoothstep(900, 1950, rpm);
     const highDrop = 1 - 0.14 * smoothstep(3800, 4900, rpm);
     const maxBoost = layout.cylinders >= 6 ? 1.85 : 1.65;
@@ -245,7 +239,7 @@ export function buildEngineProfile(layoutId = 'r4', conceptId = 'otto') {
   let peakTorqueRpm = 0;
   let maxPowerKW = 0;
   let peakPowerRpm = 0;
-  for (let r = concept.minRunningRpm; r <= concept.maxRpm; r += 25) {
+  for (let r = idleRpm; r <= concept.maxRpm; r += 25) {
     const t = fullTorqueNmForProfile(r);
     const p = (t * 2 * Math.PI * r) / 60000;
     if (t > maxTorqueNm) { maxTorqueNm = t; peakTorqueRpm = r; }
@@ -275,8 +269,7 @@ export function buildEngineProfile(layoutId = 'r4', conceptId = 'otto') {
       valves: layout.valves,
       compressionRatio: concept.compressionRatio,
       firingOrder: layout.firingOrder,
-      idleRpm: concept.idleRpm,
-      minRunningRpm: concept.minRunningRpm,
+      idleRpm,
       redlineRpm: concept.redlineRpm,
       maxRpm: concept.maxRpm,
       maxTorqueNm: roundedMaxTorque,
@@ -290,7 +283,7 @@ export function buildEngineProfile(layoutId = 'r4', conceptId = 'otto') {
     contourLevels: concept.contourLevels,
     contourLabelRpms: concept.contourLabelRpms,
     presets: [
-      { label: 'Leerlauf', rpm: concept.idleRpm, load: 0 },
+      { label: 'Leerlauf', rpm: idleRpm, load: 0 },
       { label: 'Cruise', rpm: cruiseRpm, load: Math.round(cruiseLoad * 100) },
       { label: 'Max Nm', rpm: presetPeakTorqueRpm, load: 100 },
       { label: 'Max kW', rpm: presetPeakPowerRpm, load: 100 }

@@ -11,6 +11,7 @@ import {
   ENGINE_TOUR_STEPS,
   TORQUE_NM_PER_BAR,
   buildEngineProfile,
+  clampOperatingRpm,
   computeEngineTelemetry,
   computeBsfcContours,
   computeDriveTourDemos,
@@ -19,8 +20,8 @@ import {
   getTourStepsForProfile,
   roadLoadTorqueNm,
   speedKmh
-} from './ce-data.js?v=0.5.0';
-import { createCombustionEngineModel } from './ce-model.js?v=0.5.0';
+} from './ce-data.js?v=0.5.1';
+import { createCombustionEngineModel } from './ce-model.js?v=0.5.1';
 
 const DEFAULT_CAMERA = {
   normal: { pos: [-8.2, 4.5, 9.6], target: [0.85, 0.55, 0.30] },
@@ -279,7 +280,22 @@ function init() {
   computeChartScales();
 
   function xForRpm(rpm) {
-    return pad.left + (rpm / activeProfile.specs.maxRpm) * plotW;
+    const { idleRpm, maxRpm } = activeProfile.specs;
+    return pad.left + (rpm - idleRpm) / (maxRpm - idleRpm) * plotW;
+  }
+  function rpmAtPlotX(x) {
+    const { idleRpm, maxRpm } = activeProfile.specs;
+    const fraction = THREE.MathUtils.clamp((x - pad.left) / plotW, 0, 1);
+    return Math.round((idleRpm + fraction * (maxRpm - idleRpm)) / 50) * 50;
+  }
+  function rpmTickLabels(y) {
+    const { idleRpm, maxRpm } = activeProfile.specs;
+    const ticks = [idleRpm];
+    for (let rpm = 2000; rpm <= maxRpm; rpm += 1000) ticks.push(rpm);
+    return ticks.map(rpm => {
+      const label = rpm === idleRpm ? rpm : rpm / 1000 + 'k';
+      return `<text x="${xForRpm(rpm).toFixed(1)}" y="${y}" text-anchor="middle" class="chart-axis-text">${label}</text>`;
+    }).join('');
   }
   function yForPower(kw) {
     return pad.top + plotH - (kw / powerTicks.at(-1)) * plotH;
@@ -292,9 +308,9 @@ function init() {
   function buildDynoChart() {
     if (!chartSvg) return;
     computeChartScales();
-    const { maxRpm, redlineRpm } = activeProfile.specs;
+    const { idleRpm, maxRpm, redlineRpm } = activeProfile.specs;
     const samples = [];
-    for (let rpm = 0; rpm <= maxRpm; rpm += 100) {
+    for (let rpm = idleRpm; rpm <= maxRpm; rpm += 50) {
       const t = computeEngineTelemetry(rpm, 1, undefined, activeProfile);
       samples.push({ rpm, kw: t.powerKW, nm: t.torqueNm });
     }
@@ -306,11 +322,9 @@ function init() {
       .join(' ');
     const areaPath =
       `${powerPath} L${xForRpm(maxRpm).toFixed(1)},${yForPower(0).toFixed(1)} ` +
-      `L${xForRpm(0).toFixed(1)},${yForPower(0).toFixed(1)} Z`;
+      `L${xForRpm(idleRpm).toFixed(1)},${yForPower(0).toFixed(1)} Z`;
 
     const xRedline = xForRpm(redlineRpm);
-    const kMax = Math.floor(maxRpm / 1000);
-    const rpmTickKs = Array.from({ length: kMax + 1 }, (_, k) => k);
 
     chartSvg.innerHTML = `
       <defs>
@@ -341,9 +355,7 @@ function init() {
       <path d="${torquePath}" fill="none" class="chart-torque-line" />
       <path d="${powerPath}" fill="none" class="chart-power-line" />
       <!-- X-Achse (Tsd. U/min) -->
-      ${rpmTickKs
-        .map(k => `<text x="${xForRpm(k * 1000).toFixed(1)}" y="${chartH - 7}" text-anchor="middle" class="chart-axis-text">${k}k</text>`)
-        .join('')}
+      ${rpmTickLabels(chartH - 7)}
       <text x="${pad.left + 2}" y="${pad.top + 9}" class="chart-unit-text power">kW</text>
       <text x="${chartW - pad.right - 2}" y="${pad.top + 9}" text-anchor="end" class="chart-unit-text torque">Nm</text>
       <!-- Live-Marker auf beiden Kurven -->
@@ -358,8 +370,7 @@ function init() {
       function scrub(e) {
         const rect = chartSvg.getBoundingClientRect();
         const relX = ((e.clientX - rect.left) / rect.width) * chartW;
-        const ratio = Math.max(0, Math.min(1, (relX - pad.left) / plotW));
-        setRpm(Math.round((ratio * activeProfile.specs.maxRpm) / 50) * 50);
+        setRpm(rpmAtPlotX(relX));
       }
       chartSvg.addEventListener('pointerdown', e => {
         dragging = true;
@@ -421,7 +432,7 @@ function init() {
   function mapRoadLoadCurve(gear, rpmStep) {
     const { minCruiseKmh, maxSpeedKmh } = DRIVETRAIN_EXAMPLE;
     const speedPerRpm = speedKmh(1, gear, activeProfile);
-    const start = Math.max(activeProfile.specs.minRunningRpm, minCruiseKmh / speedPerRpm);
+    const start = Math.max(activeProfile.specs.idleRpm, minCruiseKmh / speedPerRpm);
     const end = Math.min(activeProfile.specs.redlineRpm, maxSpeedKmh / speedPerRpm);
     const torqueAt = rpm => roadLoadTorqueNm(rpm, gear, activeProfile);
     const canCruise = rpm => torqueAt(rpm) <= fullTorqueNm(rpm, activeProfile);
@@ -460,20 +471,20 @@ function init() {
 
   function buildBsfcMap() {
     if (!mapSvg) return;
-    const { maxRpm, minRunningRpm, redlineRpm } = activeProfile.specs;
+    const { maxRpm, idleRpm, redlineRpm } = activeProfile.specs;
     const { contours, optimum } = computeBsfcContours(undefined, activeProfile);
     mapOptimum = optimum;
     const fullLoad = [];
     const rpmStep = 50;
-    for (let rpm = minRunningRpm; rpm <= maxRpm; rpm += rpmStep) {
+    for (let rpm = idleRpm; rpm <= maxRpm; rpm += rpmStep) {
       fullLoad.push({ rpm, torqueNm: fullTorqueNm(rpm, activeProfile) });
     }
 
     const fullLoadPath = mapPath(fullLoad);
     const right = xForRpm(maxRpm);
-    const left = xForRpm(0);
+    const left = xForRpm(idleRpm);
     const redline = xForRpm(redlineRpm);
-    const areaPath = `${fullLoadPath} L${right},${mapBottom} Z`;
+    const areaPath = `${fullLoadPath} L${right},${mapBottom} L${left},${mapBottom} Z`;
     const labels = [];
     const labelRpms = activeProfile.contourLabelRpms;
     const contourPaths = contours.map(({ level, polylines }, i) => {
@@ -492,8 +503,6 @@ function init() {
     const maxBar = torqueAxisMax / nmPerBar;
     const barStep = maxBar > 22 ? 10 : 5;
     const barTicks = Array.from({ length: Math.floor(maxBar / barStep) + 1 }, (_, i) => i * barStep);
-    const kMax = Math.floor(maxRpm / 1000);
-    const rpmTickKs = Array.from({ length: kMax + 1 }, (_, k) => k);
     const optLabelX = Math.max(left + 32, Math.min(right - 36, optimumX - (activeProfile.isDefaultR4Otto ? 43 : 10)));
 
     mapSvg.innerHTML = `
@@ -512,9 +521,7 @@ function init() {
       }).join('')}
       <path d="M${left},${mapTop} V${mapBottom} H${right} V${mapTop}" class="chart-grid" fill="none" />
       <line x1="${redline}" x2="${redline}" y1="${mapTop}" y2="${mapBottom}" class="chart-marker-line danger" />
-      ${rpmTickKs.map(k =>
-        `<text x="${xForRpm(k * 1000)}" y="186" text-anchor="middle" class="chart-axis-text">${k}k</text>`
-      ).join('')}
+      ${rpmTickLabels(186)}
       <text x="${chartW / 2}" y="198" text-anchor="middle" class="chart-axis-text">Drehzahl (U/min)</text>
       <text x="${left - 5}" y="13" text-anchor="end" class="chart-axis-text">Nm</text>
       <text x="${right + 6}" y="13" class="chart-axis-text">bar</text>
@@ -538,10 +545,7 @@ function init() {
         const matrix = mapSvg.getScreenCTM();
         if (!matrix) return;
         const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(matrix.inverse());
-        const curLeft = xForRpm(0);
-        const curMaxRpm = activeProfile.specs.maxRpm;
-        const ratio = THREE.MathUtils.clamp((point.x - curLeft) / plotW, 0, 1);
-        const rpm = Math.round(ratio * curMaxRpm / rpmStep) * rpmStep;
+        const rpm = rpmAtPlotX(point.x);
         const torqueNm = (mapBottom - point.y) / mapPlotH * torqueAxisMax;
         const fullTorque = fullTorqueNm(rpm, activeProfile);
         setRpm(rpm, fullTorque ? torqueNm / fullTorque : 0);
@@ -660,6 +664,7 @@ function init() {
       elDrivetrainNote.textContent = `Beispielwerte: 6-Gang-Automatik (4,04 … 0,69), Achsantrieb ${axle}, Reifen 225/45 R17, Kompaktklasse 1500 kg, cw·A 0,65 m².`;
     }
     if (elRpmSlider) {
+      elRpmSlider.setAttribute('min', String(activeProfile.specs.idleRpm));
       elRpmSlider.setAttribute('max', String(activeProfile.specs.maxRpm));
     }
     activeProfile.presets.forEach((p, idx) => {
@@ -679,13 +684,13 @@ function init() {
 
     appState.layout = nextLayout;
     appState.concept = nextConcept;
+    const wasIdle = appState.rpm === activeProfile.specs.idleRpm && appState.load === 0;
     activeProfile = buildEngineProfile(nextLayout, nextConcept);
     activeParts = getEnginePartsForProfile(activeProfile);
     activeTourSteps = getTourStepsForProfile(activeProfile);
     tourDemos = undefined;
 
-    appState.rpm = activeProfile.cruiseRpm;
-    appState.load = activeProfile.cruiseLoad;
+    appState.rpm = wasIdle ? activeProfile.specs.idleRpm : clampOperatingRpm(appState.rpm, activeProfile);
 
     engine.setProfile?.(activeProfile);
     syncVariantButtons();
@@ -759,8 +764,7 @@ function init() {
     const fuelText = fuelL100Instant === null ? hourlyFuel : `${fuelFormat.format(fuelL100Instant)} l/100km`;
     if (elTelFuel) elTelFuel.textContent = fuelText;
     if (elTelFuelNote) {
-      const neutralLabel = telemetry.status === 'off' ? telemetry.statusLabel : 'Leerlauf';
-      elTelFuelNote.textContent = fuelL100Instant === null ? neutralLabel
+      elTelFuelNote.textContent = fuelL100Instant === null ? 'Leerlauf'
         : driveMode === 'cruise' ? hourlyFuel : `momentan, ${driveModeLabel} · ${hourlyFuel}`;
     }
     if (elTourLive) elTourLive.textContent = `${speedText} · ${gearLabel} · ${driveModeLabel} · ${fuelText}`;
@@ -782,7 +786,7 @@ function init() {
 
   function setRpm(val, load = appState.load) {
     if (appState.explosionPhase !== 'idle') repairEngine(false);
-    appState.rpm = Math.max(0, Math.min(activeProfile.specs.maxRpm, Number(val) || 0));
+    appState.rpm = clampOperatingRpm(val, activeProfile);
     setLoad(load);
   }
 
@@ -938,7 +942,7 @@ function init() {
 
   function showTourFrame(frame) {
     tourFrame = frame;
-    appState.rpm = frame.rpm;
+    appState.rpm = clampOperatingRpm(frame.rpm, activeProfile);
     appState.load = frame.load;
     updateTelemetryUI();
   }
@@ -951,7 +955,7 @@ function init() {
     if (elapsedS >= demo.playbackS + (demo.holdS ?? 0)) {
       const frame = demo.resetOnFinish ? demo.frames[0] : demo.frames.at(-1);
       clearTourPlayback();
-      appState.rpm = frame.rpm;
+      appState.rpm = clampOperatingRpm(frame.rpm, activeProfile);
       appState.load = frame.load;
       updateTelemetryUI();
     } else if (demo.frames[index] !== tourFrame) {
@@ -1262,7 +1266,7 @@ function init() {
 
     // Zylinder-Taktanzeige nur bei Zustandswechsel im DOM anfassen
     const cylCount = sim.strokes.length;
-    const stopped = telemetry.rpm < activeProfile.specs.minRunningRpm || appState.explosionPhase === 'blown';
+    const stopped = appState.explosionPhase === 'blown';
     for (let i = 0; i < cylCount; i++) {
       const st = sim.strokes[i];
       const key = stopped ? 'off' : st.key;
@@ -1272,7 +1276,7 @@ function init() {
         if (el) {
           el.dataset.stroke = key;
           const labelSpan = el.querySelector('.ce-cyl-stroke');
-          if (labelSpan) labelSpan.textContent = stopped ? (appState.explosionPhase === 'blown' ? 'Defekt' : 'Aus') : st.short;
+          if (labelSpan) labelSpan.textContent = stopped ? 'Defekt' : st.short;
         }
       }
     }

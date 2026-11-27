@@ -3,16 +3,20 @@ import {
   DEFAULT_PROFILE,
   getEnginePartsForProfile,
   getCylinderStroke
-} from './ce-data.js?v=0.5.0';
-import { createExplosionSystem } from './ce-explosion.js?v=0.5.0';
+} from './ce-data.js?v=0.5.1';
+import { createExplosionSystem } from './ce-explosion.js?v=0.5.1';
 
 import { BASE_RADIUS, BUCKET_TOP, CAM_Y, CAM_Z, MAX_LIFT, SEAT_Y as LOCAL_Y_ROOF,
   CRANK_RADIUS as R_CRANK, ROD_LENGTH as L_ROD, CROWN_OFFSET as PISTON_CROWN_OFFSET,
-  camOutline, intakeSign } from './ce-mechanics.js?v=0.5.0';
-import { installBelts } from './ce-belt.js?v=0.5.0';
-import { buildPlumbing } from './ce-plumbing.js?v=0.5.0';
-import { installDucts } from './ce-ducts.js?v=0.5.0';
-import { createTracers } from './ce-tracers.js?v=0.5.0';
+  BLOCK_END_MARGIN, CAM_OVERHANG, END_WALL_WIDTH, NOSE_RADIUS, WHEEL_WIDTH,
+  WRIST_PIN_RADIUS, camOutline, displayCrankSpeed, intakeSign, timingMounts } from './ce-mechanics.js?v=0.5.1';
+import { buildConrods, installCrankshaft } from './ce-crankshaft.js?v=0.5.1';
+import { createIgnitionKernel, updateIgnition } from './ce-ignition.js?v=0.5.1';
+import { installBelts } from './ce-belt.js?v=0.5.1';
+import { buildPlumbing } from './ce-plumbing.js?v=0.5.1';
+import { installDucts } from './ce-ducts.js?v=0.5.1';
+import { createTracers } from './ce-tracers.js?v=0.5.1';
+import { throttleAngle } from './ce-throttle.js?v=0.5.1';
 
 const R_BORE = 0.54;
 
@@ -349,19 +353,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     const xMin = Math.min(...cylSpecs.map(c => c.x));
     const xMax = Math.max(...cylSpecs.map(c => c.x));
-    const blockSpanX = (xMax - xMin) + 1.55;
-
-    // Zentrales Kurbelgehäuse (Hauptlagerböcke entlang X)
-    const bearingCount = layout.id === 'v6' ? 4 : 5;
-    for (let b = 0; b < bearingCount; b++) {
-      const bx = xMin - 0.68 + (b / (bearingCount - 1)) * (blockSpanX - 0.18);
-      const web = new THREE.Mesh(
-        new THREE.BoxGeometry(0.20, isBoxer ? 1.35 : 1.15, isBoxer ? 1.75 : 1.48),
-        getPartMat('block', 'darkMetal')
-      );
-      web.position.set(bx, yCrank + 0.1, isBoxer ? 0 : -0.05);
-      blockGroup.add(web);
-    }
+    const blockSpanX = (xMax - xMin) + 2 * BLOCK_END_MARGIN;
 
     // Pro Zylinderbank: Blockwände + gehonte Laufbuchsen (Rückseite fest, Cutaway-Seite öffnet!)
     layout.bankAnglesDeg.forEach((bankDeg, bankIdx) => {
@@ -369,7 +361,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       const bankCyls = cylSpecs.filter(c => c.bankIndex === bankIdx);
       const bxMin = Math.min(...bankCyls.map(c => c.x));
       const bxMax = Math.max(...bankCyls.map(c => c.x));
-      const bLen = (bxMax - bxMin) + 1.55;
+      const bLen = (bxMax - bxMin) + 2 * BLOCK_END_MARGIN;
       const bCenter = (bxMin + bxMax) * 0.5;
       const cutSign = cutawaySideForBank(bankDeg); // +1 oder -1 in lokalem Z
       const solidSign = -cutSign;
@@ -382,7 +374,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
       // Linke & rechte Stirnwand der Bank
       [-1, 1].forEach(side => {
-        const endW = new THREE.Mesh(new THREE.BoxGeometry(0.28, 2.55, 1.66), getPartMat('block', 'castAlu').clone());
+        const endW = new THREE.Mesh(new THREE.BoxGeometry(END_WALL_WIDTH, 2.55, 1.66), getPartMat('block', 'castAlu').clone());
         endW.position.set(bCenter + side * (bLen * 0.5), 2.0, 0);
         bf.add(endW);
         registerXrayShell(endW);
@@ -449,8 +441,8 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const chamberGeo = new THREE.CylinderGeometry(R_BORE - 0.03, R_BORE - 0.03, 1.0, 22);
     const pistonBodyGeo = new THREE.CylinderGeometry(R_BORE - 0.025, R_BORE - 0.03, 0.76, 26);
     const pistonRingGeo = new THREE.TorusGeometry(R_BORE - 0.015, 0.018, 8, 24);
-    const pistonPinGeo = new THREE.CylinderGeometry(0.10, 0.10, 0.82, 14);
-    const ignitionGeo = isDiesel ? new THREE.ConeGeometry(0.14, 0.20, 16, 1, true) : new THREE.SphereGeometry(0.048, 10, 8);
+    const pistonPinGeo = new THREE.CylinderGeometry(WRIST_PIN_RADIUS, WRIST_PIN_RADIUS, 0.82, 14);
+    const kernel = createIgnitionKernel(isDiesel);
 
     cylSpecs.forEach(spec => {
       const bf = pistonBankFrames[spec.bankIndex];
@@ -482,6 +474,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       });
 
       const pin = new THREE.Mesh(pistonPinGeo, getPartMat('pistons', 'machinedSteel'));
+      pin.name = 'wristPin';
       pin.rotation.z = Math.PI / 2;
       pNode.add(pin);
 
@@ -500,9 +493,9 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       gf.add(gasMesh);
       gasMeshes.push({ mesh: gasMesh, mat: gasMat, spec });
 
-      const flash = new THREE.Mesh(ignitionGeo, new THREE.MeshBasicMaterial({
-        color: isDiesel ? 0xff8b32 : 0xdcf4ff, transparent: true, depthWrite: false, side: THREE.DoubleSide
-      }));
+      const flash = new THREE.Mesh(kernel.geometry, kernel.material);
+      flash.position.x = spec.x;
+      flash.renderOrder = 1;
       flash.name = isDiesel ? 'sprayIgnition' : 'spark';
       flash.visible = false;
       gf.add(flash);
@@ -514,33 +507,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     // =========================================================================
     const conrodsGroup = registerPartGroup('conrods', new THREE.Group(), isBoxer ? [-0.35, -0.35, 1.05] : [-0.35, -0.35, 0.15]);
     const conrodBankFrames = createBankFrames(conrodsGroup);
-    const conrodNodes = [];
-
-    const bigEndGeo = new THREE.CylinderGeometry(0.23, 0.23, 0.26, 18);
-    const beamGeo = new THREE.BoxGeometry(0.13, L_ROD - 0.26, 0.17);
-    const smallEndGeo = new THREE.CylinderGeometry(0.145, 0.145, 0.24, 16);
-
-    cylSpecs.forEach(spec => {
-      const bf = conrodBankFrames[spec.bankIndex];
-      const rod = new THREE.Group();
-      rod.position.set(spec.x, 0, 0);
-
-      const bigEnd = new THREE.Mesh(bigEndGeo, getPartMat('conrods', 'conrodBronze'));
-      bigEnd.rotation.z = Math.PI / 2;
-      rod.add(bigEnd);
-
-      const beam = new THREE.Mesh(beamGeo, getPartMat('conrods', 'conrodBronze'));
-      beam.position.y = L_ROD * 0.5;
-      rod.add(beam);
-
-      const smallEnd = new THREE.Mesh(smallEndGeo, getPartMat('conrods', 'machinedSteel'));
-      smallEnd.rotation.z = Math.PI / 2;
-      smallEnd.position.y = L_ROD;
-      rod.add(smallEnd);
-
-      bf.add(rod);
-      conrodNodes.push(rod);
-    });
+    const conrodNodes = buildConrods(cylSpecs, conrodBankFrames, getPartMat);
 
     // =========================================================================
     // 4. KURBELWELLE & GEGENGEWICHTE (EXAKTE HUBZAPFENWINKEL JE BAUFORM)
@@ -550,74 +517,18 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const crankSpin = new THREE.Group();
     crankGroup.add(crankSpin);
 
-    const mainAxis = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.17, 0.17, layout.crankLength, 22),
+    installCrankshaft(layout, crankSpin, blockGroup, yCrank, getPartMat);
+    const mounts = timingMounts(layout);
+    const noseStart = mounts.at(-1).x - WHEEL_WIDTH / 2;
+    const crankFace = mounts[0].crankFace;
+    const nose = new THREE.Mesh(
+      new THREE.CylinderGeometry(NOSE_RADIUS, NOSE_RADIUS, crankFace - noseStart, 16),
       getPartMat('crankshaft', 'machinedSteel')
     );
-    mainAxis.rotation.z = Math.PI / 2;
-    crankSpin.add(mainAxis);
-
-    // Hubzapfen + Kurbelwangen + Gegengewichte (für V8 gemeinsame Hubzapfen je Paar!)
-    if (layout.id === 'v8') {
-      for (let p = 0; p < 4; p++) {
-        const cA = cylSpecs[p * 2];
-        const cB = cylSpecs[p * 2 + 1];
-        const midX = (cA.x + cB.x) * 0.5;
-        const pinRad = THREE.MathUtils.degToRad(cA.crankPinAngleDeg);
-        const throwHolder = new THREE.Group();
-        throwHolder.position.set(midX, 0, 0);
-        throwHolder.rotation.x = pinRad;
-
-        const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.72, 18), getPartMat('crankshaft', 'machinedSteel'));
-        pin.rotation.z = Math.PI / 2;
-        pin.position.set(0, R_CRANK, 0);
-        throwHolder.add(pin);
-
-        [-0.42, 0.42].forEach(dx => {
-          const web = new THREE.Mesh(new THREE.BoxGeometry(0.13, R_CRANK + 0.34, 0.42), getPartMat('crankshaft', 'crankSteel'));
-          web.position.set(dx, R_CRANK * 0.45, 0);
-          throwHolder.add(web);
-
-          const cw = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.45, 0.45, 0.14, 16, 1, false, 0, Math.PI),
-            getPartMat('crankshaft', 'darkMetal')
-          );
-          cw.rotation.z = Math.PI / 2;
-          cw.rotation.x = Math.PI;
-          cw.position.set(dx, -0.14, 0);
-          throwHolder.add(cw);
-        });
-        crankSpin.add(throwHolder);
-      }
-    } else {
-      cylSpecs.forEach(spec => {
-        const pinRad = THREE.MathUtils.degToRad(spec.crankPinAngleDeg);
-        const throwHolder = new THREE.Group();
-        throwHolder.position.set(spec.x, 0, 0);
-        throwHolder.rotation.x = pinRad;
-
-        const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.40, 18), getPartMat('crankshaft', 'machinedSteel'));
-        pin.rotation.z = Math.PI / 2;
-        pin.position.set(0, R_CRANK, 0);
-        throwHolder.add(pin);
-
-        [-0.24, 0.24].forEach(dx => {
-          const web = new THREE.Mesh(new THREE.BoxGeometry(0.12, R_CRANK + 0.34, 0.40), getPartMat('crankshaft', 'crankSteel'));
-          web.position.set(dx, R_CRANK * 0.45, 0);
-          throwHolder.add(web);
-
-          const cw = new THREE.Mesh(
-            new THREE.CylinderGeometry(0.44, 0.44, 0.13, 16, 1, false, 0, Math.PI),
-            getPartMat('crankshaft', 'darkMetal')
-          );
-          cw.rotation.z = Math.PI / 2;
-          cw.rotation.x = Math.PI;
-          cw.position.set(dx, -0.14, 0);
-          throwHolder.add(cw);
-        });
-        crankSpin.add(throwHolder);
-      });
-    }
+    nose.name = 'crankNose';
+    nose.rotation.z = Math.PI / 2;
+    nose.position.x = (noseStart + crankFace) / 2;
+    crankSpin.add(nose);
 
     // =========================================================================
     // 5. DOHC-ZYLINDERKÖPFE & VENTILDECKEL (PRO BANK)
@@ -674,7 +585,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       const bankCyls = cylSpecs.filter(c => c.bankIndex === bankIdx);
       const bxMin = Math.min(...bankCyls.map(c => c.x));
       const bxMax = Math.max(...bankCyls.map(c => c.x));
-      const camLen = (bxMax - bxMin) + 2.05;
+      const camLen = (bxMax - bxMin) + 2 * CAM_OVERHANG;
       const bCenter = (bxMin + bxMax) * 0.5;
       // Bei V-Motoren liegt der Einlass innen im V!
       const intakeSideZ = intakeSign(bankDeg) * CAM_Z;
@@ -826,8 +737,8 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     }
     if (isDiesel) partAnchors.set('commonRail', new THREE.Vector3(...plumbing.nodes.rail0));
     const moving = installDucts(plumbing, id => partGroups.get(id), getPartMat, cutawayGhostMeshes, createImpellerGroup);
-    const timingGroup = registerPartGroup('timingDrive', new THREE.Group(), [layout.timingX, yCrank + 1.8, 0]);
-    const belts = installBelts(createBankFrames(timingGroup), layout, key => getPartMat('timingDrive', key), createSprocketGeometry);
+    const timingGroup = registerPartGroup('timingDrive', new THREE.Group(), [mounts[0].x, yCrank + 1.8, 0]);
+    const belts = installBelts(createBankFrames(timingGroup), mounts, key => getPartMat('timingDrive', key), createSprocketGeometry);
     // =========================================================================
     // 12. SCHWUNGRAD & ÖLWANNE
     // =========================================================================
@@ -1067,18 +978,18 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     }
     built.cutEdgeMat.opacity = state.cutawayCurrent * (1 - state.xrayCurrent);
 
-    // 2) Effektive Drehzahl (bei Motor aus = 0, bei Overrev = eskalierend, bei Motorschaden = blockiert!)
+    // 2) Blick auf den laufenden Motor bzw. den internen Überdrehzahlablauf.
     const isBlown = explosion.phase === 'blown';
     const isOverrev = explosion.phase === 'overrev';
     const effectiveRpm = isBlown
       ? 0
       : isOverrev
         ? explosion.rpm
-        : (telemetry.rpm < state.profile.specs.minRunningRpm ? 0 : telemetry.rpm);
+        : telemetry.rpm;
 
     const effectiveScale = isOverrev ? Math.max(0.42, timeScale * 2.6) : timeScale;
     const visualDegPerSec = (effectiveRpm / 60) * 360 * 0.045 * (effectiveScale / 0.16);
-    state.crankClock += visualDegPerSec * clampedDt;
+    state.crankClock += (isOverrev ? visualDegPerSec : displayCrankSpeed(visualDegPerSec)) * clampedDt;
     state.crankDeg = state.crankClock % 720;
     const crankRad = THREE.MathUtils.degToRad(state.crankDeg);
 
@@ -1088,7 +999,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     built.belts.update(crankRad);
     for (const cam of built.camSpins) cam.rotation.x = crankRad * 0.5;
     const { throttle, compressor, turbine, hpEgr, lpEgr } = built.moving;
-    if (throttle) throttle.rotation.x = (0.09 + 0.91 * telemetry.load) * Math.PI / 2;
+    if (throttle) throttle.rotation.x = throttleAngle(telemetry.load);
     if (compressor && turbine && !isBlown) {
       const speed = effectiveRpm > 0 ? 6 + telemetry.boostBar * 18 : 0;
       state.turboSpinRad = (state.turboSpinRad + speed * clampedDt * effectiveScale / 0.16) % (Math.PI * 2);
@@ -1107,7 +1018,6 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     // 3) Exakte 4-Takt-Kinematik pro Zylinder in Bank-Koordinaten
     const strokes = built.strokes;
-    const engineRunning = effectiveRpm >= state.profile.specs.minRunningRpm;
 
     for (let i = 0; i < built.cylSpecs.length; i++) {
       const spec = built.cylSpecs[i];
@@ -1140,9 +1050,9 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       const gm = built.gasMeshes[i];
       gm.mesh.position.set(spec.x, crownY + chamberH * 0.5, 0);
       gm.mesh.scale.set(1, chamberH, 1);
-      gm.mesh.visible = engineRunning && !isBlown;
+      gm.mesh.visible = !isBlown;
 
-      if (engineRunning && !isBlown) {
+      if (!isBlown) {
         if (stroke.key === 'intake') {
           gm.mat.color.copy(colorIntake);
           gm.mat.opacity = 0.025 + stroke.intakeMist * 0.045;
@@ -1161,17 +1071,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         }
       }
 
-      const flash = built.ignition[i];
-      const intensity = built.isDiesel
-        ? stroke.injectionIntensity * Math.min(1, Math.max(0, (stroke.cycle - 351) / 9))
-        : stroke.sparkIntensity;
-      flash.visible = engineRunning && !isBlown && intensity > 0.02;
-      if (flash.visible) {
-        const scale = 0.3 + intensity * 0.9;
-        flash.position.set(spec.x, LOCAL_Y_ROOF - 0.024 - (built.isDiesel ? 0.10 * scale : 0), 0);
-        flash.scale.setScalar(scale);
-        flash.material.opacity = intensity * (built.isDiesel ? 0.55 : 1);
-      }
+      updateIgnition(built.ignition[i], stroke, built.isDiesel, crownY, rpmNorm, !isBlown);
     }
 
     built.flowGroup.visible = state.showFlow && !isBlown;

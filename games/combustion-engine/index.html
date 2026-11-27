@@ -47,14 +47,14 @@
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.5.0" />
+  <link rel="stylesheet" href="./styles.css?v=0.5.1" />
 </head>
 <body>
   <header class="arcade-topbar ce-topbar">
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
       <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
-      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.5.0</button>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.5.1</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
@@ -133,7 +133,7 @@
           <label class="ce-section-label" for="ce-rpm-slider">04 · Motordrehzahl (RPM)</label>
           <span class="ce-rpm-readout" id="ce-rpm-val">2.400 U/min</span>
         </div>
-        <input type="range" class="ce-slider" id="ce-rpm-slider" min="0" max="7000" step="50" value="2400" />
+        <input type="range" class="ce-slider" id="ce-rpm-slider" min="800" max="7000" step="50" value="2400" />
         <div class="ce-section-head">
           <label class="ce-section-label" for="ce-load-slider">04b · Gaspedal (Last)</label>
           <span class="ce-rpm-readout" id="ce-load-val">38 %</span>
@@ -151,7 +151,7 @@
         </div>
         <p class="ce-gear-info" id="ce-gear-info">5. Gang · i = 0,85 · Achse 3,2 · Konstantfahrt</p>
         <div class="ce-preset-row">
-          <button type="button" class="ce-preset-btn" data-rpm="850" data-load="0" aria-pressed="false">Leerlauf</button>
+          <button type="button" class="ce-preset-btn" data-rpm="800" data-load="0" aria-pressed="false">Leerlauf</button>
           <button type="button" class="ce-preset-btn active" data-rpm="2400" data-load="38" aria-pressed="true">Cruise</button>
           <button type="button" class="ce-preset-btn" data-rpm="4250" data-load="100" aria-pressed="false">Max Nm</button>
           <button type="button" class="ce-preset-btn" data-rpm="5950" data-load="100" aria-pressed="false">Max kW</button>
@@ -267,9 +267,9 @@
   </main>
 
   <script src="../../shared/arcade.js?v=0.4.1"></script>
-  <script src="../../shared/releases.js?v=0.5.0"></script>
+  <script src="../../shared/releases.js?v=0.5.1"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
   <script src="../../shared/burger-menu.js?v=0.4.0"></script>
-  <script type="module" src="./ce-main.js?v=0.5.0"></script>
+  <script type="module" src="./ce-main.js?v=0.5.1"></script>
 </body>
 </html>

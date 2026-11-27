@@ -173,6 +173,7 @@ test('UI schaltet auf Turbodiesel, Boxer/V6/V8 um und steuert das Explosions-Eas
     setPointerCapture(id) { this.capturedPointer = id; }
     hasPointerCapture(id) { return this.capturedPointer === id; }
     getScreenCTM() { return { inverse: () => null }; }
+    getBoundingClientRect() { return { left: 0, width: 320 }; }
     get innerHTML() { return this.markup; }
     set innerHTML(markup) {
       this.markup = markup;
@@ -288,6 +289,47 @@ test('UI schaltet auf Turbodiesel, Boxer/V6/V8 um und steuert das Explosions-Eas
 
   // Standard: Otto -> Boost-Kachel versteckt
   assert.equal(byId('ce-metric-boost').hidden, true);
+
+  const slider = byId('ce-rpm-slider');
+  const idlePreset = page.querySelectorAll('.ce-preset-btn')[0];
+  for (const [concept, idleSpeeds] of [['otto', [800, 750, 700, 650]], ['diesel', [750, 750, 700, 600]]]) {
+    page.querySelector(`[data-concept="${concept}"]`).emit('click');
+    for (const [i, layout] of ['r4', 'boxer4', 'v6', 'v8'].entries()) {
+      page.querySelector(`[data-layout="${layout}"]`).emit('click');
+      const idle = idleSpeeds[i];
+      assert.equal(currentProfile.specs.idleRpm, idle);
+      assert.ok(idle >= 600 && idle <= 800);
+      assert.equal(Number(slider.getAttribute('min')), idle);
+      assert.equal(Number(idlePreset.dataset.rpm), idle);
+      idlePreset.emit('click');
+      for (const input of ['0', String(idle - 50)]) {
+        slider.value = input;
+        slider.emit('input');
+        assert.equal(Number(slider.value), idle);
+        assert.equal(byId('ce-rpm-val').textContent, idle + ' U/min');
+        assert.equal(byId('ce-status-badge').dataset.status, 'idle');
+      }
+      const leftEdge = { clientX: -20, clientY: 172, isPrimary: true, button: 0, pointerId: 1 };
+      for (const id of ['ce-dyno-chart', 'ce-bsfc-map']) {
+        slider.value = '2400';
+        slider.emit('input');
+        byId(id).emit('pointerdown', leftEdge);
+        assert.equal(Number(slider.value), idle);
+      }
+      const point = computeEngineTelemetry(-1, 0, undefined, currentProfile);
+      assert.equal(point.rpm, idle);
+      assert.ok(point.ignitionsPerSec > 0 && point.fuelLph > 0);
+    }
+  }
+  // Keep an ordinary operating point, clamping only when a new limit requires it.
+  slider.value = '650';
+  slider.emit('input');
+  page.querySelector('[data-layout="r4"]').emit('click');
+  assert.equal(slider.value, '750');
+  slider.value = '3000';
+  slider.emit('input');
+  page.querySelector('[data-concept="otto"]').emit('click');
+  assert.equal(slider.value, '3000');
 
   // Wechsel auf Turbodiesel
   page.querySelector('[data-concept="diesel"]').emit('click');

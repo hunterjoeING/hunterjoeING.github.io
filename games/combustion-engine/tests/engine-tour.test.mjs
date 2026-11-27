@@ -29,7 +29,7 @@ test('Momentanverbrauch in allen Fahrmodi, l/100km für die Konstantfahrt bleibt
   }
   const cruise = computeEngineTelemetry(DRIVE_TOUR_EXAMPLE.cruiseRpm, DRIVE_TOUR_EXAMPLE.cruiseLoad);
   assert.equal(cruise.fuelL100Instant, cruise.fuelL100);
-  assert.equal(computeEngineTelemetry(850, 0).fuelL100Instant, null);
+  assert.equal(computeEngineTelemetry(ENGINE_SPECS.idleRpm, 0).fuelL100Instant, null);
   assert.equal(computeEngineTelemetry(3000, 0).fuelL100Instant, 0);
   const coast = computeEngineTelemetry(6500, 0.03);
   near(coast.fuelL100Instant, coast.fuelLph * 100 / coast.speedKmh);
@@ -326,18 +326,20 @@ test('Die Muschelkurve beschriftet das Modelloptimum und zeichnet die Fahrwiders
   assert.match(svg, new RegExp(`>Optimum ${Math.round(computeBsfcContours([]).optimum.bsfc)}<`));
   const roads = [...svg.matchAll(/data-road-gear="(\d)">\s*<path d="([^"]+)"/g)];
   assert.deepEqual(roads.map(([, gear]) => Number(gear)), [4, 5, 6]);
+  const rpmAtX = x => ENGINE_SPECS.idleRpm + (Number(x) - 34) / 254 * (ENGINE_SPECS.maxRpm - ENGINE_SPECS.idleRpm);
   for (const [, gear, path] of roads) {
     const points = [...path.matchAll(/[ML]([\d.]+),([\d.]+)/g)];
     assert.ok(points.length > 1);
     for (const [, x, y] of points) {
-      const rpm = (Number(x) - 34) / 254 * ENGINE_SPECS.maxRpm;
+      const rpm = rpmAtX(x);
       const torqueNm = (172 - Number(y)) / 150 * 250;
       assert.ok(Math.abs(roadLoadTorqueNm(rpm, Number(gear)) - torqueNm) < 0.05);
       assert.ok(torqueNm <= fullTorqueNm(rpm) + 0.05);
       assert.ok(rpm <= ENGINE_SPECS.redlineRpm + 0.2);
     }
-    const firstRpm = (Number(points[0][1]) - 34) / 254 * ENGINE_SPECS.maxRpm;
-    assert.ok(Math.abs(roadLoadTorqueNm(firstRpm, Number(gear)) - fullTorqueNm(firstRpm)) < 0.05);
+    const firstRpm = rpmAtX(points[0][1]);
+    assert.ok(firstRpm === ENGINE_SPECS.idleRpm ||
+      Math.abs(roadLoadTorqueNm(firstRpm, Number(gear)) - fullTorqueNm(firstRpm)) < 0.05);
   }
 });
 
@@ -345,7 +347,7 @@ test('Regler und Voreinstellungen setzen Gangmarkierung, Übersetzung und Verbra
   const { byId, positions, preset } = explainerUI();
   for (const [rpm, gear, gearInfo, fuel, fuelNote] of [
     [2400, 5, '5. Gang · i = 0,85 · Achse 3,2 · Konstantfahrt', '6,7 l/100km', '7,1 l/h'],
-    [850, 0, 'N · Stillstand', '1,0 l/h', 'Leerlauf'],
+    [800, 0, 'N · Stillstand', '0,9 l/h', 'Leerlauf'],
     [4250, 1, '1. Gang · i = 4,04 · Achse 3,2 · beschleunigt', '77,6 l/100km', 'momentan, beschleunigt · 30,8 l/h'],
     [5950, 1, '1. Gang · i = 4,04 · Achse 3,2 · beschleunigt', '77,4 l/100km', 'momentan, beschleunigt · 43,0 l/h']
   ]) {
@@ -434,7 +436,7 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   assert.equal(rpm.value, manualRpm);
   assert.notEqual(byId('ce-tel-speed').textContent, '50 km/h');
   dot(demoStep('equilibrium')).emit('click');
-  preset(850).emit('click');
+  preset(800).emit('click');
   advance(10000);
   assert.equal(byId('ce-tel-gear').textContent, 'N');
   dot(demoStep('equilibrium')).emit('click');
@@ -451,8 +453,11 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   }
 });
 
-test('Der Patch v0.4.1 und das Feature v0.4.0 stehen vor den unveränderten Einträgen für v0.3.1, v0.3.0 und v0.2.0', () => {
-  const [flow, patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+test('v0.5.1 ist als Patch vor den bisherigen Releases eingetragen', () => {
+  const [patch51, flow, patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  assert.deepEqual([patch51.version, patch51.type, patch51.date, patch51.author, patch51.model],
+    ['0.5.1', 'patch', '2026-11-27', 'Michi', 'Astra 6.2']);
+  assert.ok(patch51.highlights.length >= 1 && patch51.highlights.length <= 3);
   assert.deepEqual([flow.version, flow.type, flow.date, flow.author, flow.model], ['0.5.0', 'feature', '2026-11-27', 'Michi', 'Astra 6.2']);
   assert.notEqual(flow.banner, false);
   assert.ok(flow.highlights.length >= 3 && flow.highlights.length <= 5);
@@ -468,9 +473,9 @@ test('Der Patch v0.4.1 und das Feature v0.4.0 stehen vor den unveränderten Eint
   assert.equal(latest.author, 'Joe');
   assert.equal(latest.model, 'Neon');
   assert.ok(latest.highlights.length >= 3 && latest.highlights.length <= 5);
-  assert.doesNotMatch([flow.title, ...flow.highlights, patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
+  assert.doesNotMatch([patch51.title, ...patch51.highlights, flow.title, ...flow.highlights, patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
     /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?|easter|motorschaden|explodier|überdreh)\b/i);
-  assert.match(html, /id="ce-version-btn"[^>]*>v0\.5\.0</);
+  assert.match(html, /id="ce-version-btn"[^>]*>v0\.5\.1</);
 
   assert.equal(patch31.version, '0.3.1');
   assert.equal(patch31.date, '2026-11-27');

@@ -17,8 +17,8 @@ function near(actual, expected, tolerance) {
   assert.ok(Math.abs(actual - expected) <= tolerance, `Erwartet ${expected} ± ${tolerance}, erhalten ${actual}`);
 }
 
-test('Leerlauf und ausgeschalteter Motor liefern keine Nutzleistung', () => {
-  const idle = computeEngineTelemetry(850, 0);
+test('Leerlauf ohne Pedal liefert keine Nutzleistung und bleibt die Untergrenze', () => {
+  const idle = computeEngineTelemetry(ENGINE_SPECS.idleRpm, 0);
   assert.equal(idle.load, 0);
   assert.equal(idle.torqueNm, 0);
   assert.equal(idle.powerKW, 0);
@@ -30,22 +30,18 @@ test('Leerlauf und ausgeschalteter Motor liefern keine Nutzleistung', () => {
   assert.match(idle.statusLabel, /keine Nutzleistung/);
   assert.ok(idle.ignitionsPerSec > 0);
 
-  const off = computeEngineTelemetry(199, 1);
-  assert.equal(off.status, 'off');
-  assert.equal(off.statusLabel, 'Motor aus');
-  assert.equal(off.ignitionsPerSec, 0);
-  for (const key of ['torqueNm', 'powerKW', 'powerPS', 'bmepBar', 'thermalEff']) {
-    assert.equal(off[key], 0, key);
+  for (const invalid of [0, 199, -100, NaN, undefined]) {
+    assert.deepEqual(computeEngineTelemetry(invalid, 0), idle);
+    assert.deepEqual(computeEngineTelemetry(invalid, 1), computeEngineTelemetry(ENGINE_SPECS.idleRpm, 1));
   }
-  assert.equal(off.bsfc, null);
-  assert.equal(off.noUsefulPower, true);
 });
 
 test('Statusmeldungen folgen den Drehzahl- und Lastgrenzen', () => {
   const cases = [
-    [850, 0.02, 'idle', 'Leerlauf · keine Nutzleistung'],
-    [1199, 0.03, 'idle', 'Niedrige Drehzahl'],
-    [1200, 0.02, 'idle', 'Schubbetrieb · keine Nutzleistung'],
+    [800, 0, 'idle', 'Leerlauf · keine Nutzleistung'],
+    [850, 0.02, 'idle', 'Leerlauf'],
+    [1199, 0.03, 'lowRpm', 'Niedrige Drehzahl'],
+    [1200, 0.02, 'coast', 'Schubbetrieb'],
     [2400, 0.38, 'cruise', 'Teillast'],
     [4250, 0.89, 'cruise', 'Teillast'],
     [5950, 0.89, 'cruise', 'Teillast'],
@@ -70,7 +66,7 @@ test('Statusmeldungen folgen den Drehzahl- und Lastgrenzen', () => {
 });
 
 test('Nutzmoment und Leistung skalieren mit begrenzter Last, Zündfrequenz mit Drehzahl', () => {
-  for (const rpm of [200, 850, 2400, 4250, 5950, 7000]) {
+  for (const rpm of [800, 850, 2400, 4250, 5950, 7000]) {
     const fullLoad = computeEngineTelemetry(rpm);
     assert.equal(fullLoad.torqueNm, fullTorqueNm(rpm));
     assert.equal(fullLoad.load, 1);
@@ -83,7 +79,7 @@ test('Nutzmoment und Leistung skalieren mit begrenzter Last, Zündfrequenz mit D
       near(point.powerPS, point.powerKW * 1.35962, 1e-9);
       near(point.bmepBar, torque / 15.915, 1e-9);
       assert.equal(point.ignitionsPerSec, fullLoad.ignitionsPerSec);
-      assert.equal(point.noUsefulPower, expectedLoad === 0 || rpm === ENGINE_SPECS.minRunningRpm);
+      assert.equal(point.noUsefulPower, expectedLoad === 0);
     }
   }
   assert.ok(fullTorqueNm(7000) < fullTorqueNm(6500));
@@ -111,7 +107,7 @@ test('Die glatte Volllastkurve trifft die Zielbereiche und die gerundeten Motors
       assert.ok(point.rpm <= peak.rpm ? point[key] >= previous : point[key] <= previous, `${key} bei ${point.rpm} U/min`);
     }
   }
-  for (const rpm of [ENGINE_SPECS.minRunningRpm, 1200, ENGINE_SPECS.redlineRpm]) {
+  for (const rpm of [ENGINE_SPECS.idleRpm, 1200, ENGINE_SPECS.redlineRpm]) {
     near(fullTorqueNm(rpm - 1), fullTorqueNm(rpm + 1), 0.5);
   }
 });
@@ -175,13 +171,13 @@ test('Muschellinien bilden zusammen mit der Kennfeldgrenze wachsende Verbrauchsb
     const points = polylines.flat();
     for (const { rpm, torqueNm } of points) {
       const fullTorque = fullTorqueNm(rpm);
-      assert.ok(rpm >= 0 && rpm <= 7000);
+      assert.ok(rpm >= ENGINE_SPECS.idleRpm && rpm <= 7000);
       assert.ok(torqueNm >= 0 && torqueNm <= fullTorque + 2);
       near(bsfcMap(rpm, torqueNm / fullTorque), level, 1);
     }
 
     // Offene Isolinien schließen den Bereich bis zur Volllastgrenze ein.
-    for (let rpm = 200; rpm <= 7000; rpm += 10) {
+    for (let rpm = ENGINE_SPECS.idleRpm; rpm <= 7000; rpm += 10) {
       const bsfc = bsfcMap(rpm, 1);
       if (bsfc !== null && bsfc <= level) points.push({ rpm, torqueNm: fullTorqueNm(rpm) });
     }
@@ -202,7 +198,7 @@ test('Die vier HTML-Voreinstellungen setzen die vorgesehenen Paare aus Drehzahl 
       Number(attributes.match(/\bdata-load="(\d+)"/)?.[1])
     ]);
   assert.deepEqual(presets, [
-    ['Leerlauf', 850, 0], ['Cruise', 2400, 38], ['Max Nm', 4250, 100], ['Max kW', 5950, 100]
+    ['Leerlauf', 800, 0], ['Cruise', 2400, 38], ['Max Nm', 4250, 100], ['Max kW', 5950, 100]
   ]);
   assert.deepEqual(presets[1].slice(1), [DRIVE_TOUR_EXAMPLE.cruiseRpm, DRIVE_TOUR_EXAMPLE.cruiseLoad * 100]);
   for (const [id, value] of [['rpm', 2400], ['load', 38]]) {

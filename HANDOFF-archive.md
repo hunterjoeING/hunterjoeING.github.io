@@ -2,6 +2,15 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Joe / Antigravity · Neon – Verbrennungsmotor 3D v0.4.0 (Turbodiesel, Bauformen & Explosions-Easter-Egg)
+
+- **Branch / PR** · `main` ab `093f55e` (nach Merge von Upstream-PR #12 & #13), Commit `9ed0fd1`, kein PR, Push auf Upstream `hunterjoeING/hunterjoeING.github.io` (`main`). Live: https://hunterjoeing.github.io/games/combustion-engine/
+- **Erledigt** · Motor-Auswahl in `00 · Motor & Bauform` sowie Viewport-Chip ergänzt: Umschaltung zwischen **Otto-Saugmotor** (Saugrohreinspritzung) und **Common-Rail-Turbodiesel** (Direkteinspritzung + animierter 3D-VTG-Turbolader mit drehendem Verdichter-/Turbinenrad, Ladeluftrohr, Einspritzkegel, eigenem BSFC-Kennfeld ~198 g/kWh und Ladedruck-Kachel). Parametrischer Multi-Bank-3D-Generator in `ce-model.js` und `ce-variants.js` für **R4** (`1–3–4–2`), **180°-Boxer B4** (`1–3–2–4`, echte gegenläufige Box-Bewegung mit getrennten 180°-Hubzapfen), **60°-V6** (`1–2–3–4–5–6`) und **90°-Crossplane-V8** (`1–8–4–3–6–5–7–2`) mit dynamischen SVG-Diagrammen, Presets, Zylinder-Taktanzeigen und Tour-Texten. Modus `03 Explosionsansicht` als Überdrehzahl-/Motorschaden-Easter-Egg (`ce-explosion.js`, 3D-Trümmerballistik, Rauch, WebAudio & Reparatur-Reset; gemäß Regel 10 nicht im öffentlichen Changelog erwähnt). Nockenwellen-Phasen auf Zylinder 2 & 3 sowie isolierte Baugruppen-Materialien für Highlighting korrigiert.
+- **Geprüft** · `node --check` auf alle `ce-*.js`, `shared/releases.js` und `shared/update-banner.js`; alle 38/38 Explainer-Unit-Tests (`node --test games/combustion-engine/tests/*.test.mjs`, inkl. neuer `tests/engine-variants.test.mjs`); vollständige 3D-Build-/Update-/Explosions-Prüfung aller 8 Motorkombinationen in Node; `node scripts/check-release-bump.mjs origin/main` für `combustion_engine`.
+- **GitHub** · Issue-/PR-Check (`gh pr list`, `gh issue list`): 0 offene Issues und 0 offene PRs in Upstream nach Merge von PR #12 & #13 (`093f55e`).
+- **Offen** · Live-Spieltest auf Handy & Desktop (u. a. Boxer/V6/V8, Turbolader-Animation und Explosions-Easter-Egg).
+- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `v0.4.0` spoilerfrei)
+
 ### 2026-11-27 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live Verbrennungsmotor 3D v0.3.1
 
 - **Branch / PR** · `upstream/main` war unverändert bei `a70eacc`. [Upstream-PR #12](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/12) aus dem Fork-Branch `codex/combustion-load-map` (`ff917ae`), gemergt von `mic4rd` (Merge `84636bc`, 08:35 Uhr Europe/Berlin). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-27`).
