@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- (keine)
+- 🔒 in Arbeit: 3D-Explainer 2-Etagen-Gondelstation (`games/gondola-station/`, Hub/Catalog/Releases) · Joe / Antigravity · `feat/gondola-station-3d` · 2026-11-27
 
 ---
 
