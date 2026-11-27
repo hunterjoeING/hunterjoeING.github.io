@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- 🔒 in Arbeit: games/combustion-engine/ (3D-Modell, Gasströmung, Tour) · Michi / Codex (Astra 6.2) · codex/combustion-3d-v0.5 · 2026-11-27
+- (keine)
 
 ---
 
@@ -40,13 +40,24 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 | Verbrennungsmotor 3D v0.4.0 · Common-Rail-Turbodiesel mit 3D-VTG-Turbolader, vier Bauformen (R4, Boxer B4, V6, V8), Explosions-Easter-Egg, Nockenwellen- & Highlight-Fix | Joe / Antigravity · Neon | `main` (`9ed0fd1`, `0f4f5f1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Verbrennungsmotor v0.4.0) |
 | Website-weites Security-Hardening & Bugfix-Release (Worker, Workflows, Hub, 24 Quizzes, 10 Games, Doku) | Joe / Antigravity · Neon | `main` (`bcd6deb`, `0d963b1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.2, Windkraftanlage v0.1.2, 32 weitere Apps v0.1.1) |
 | Abschluss Security-Audit ARC-01..22 (Score-Grenzen, `adminSecret` raus, `wrangler` & Action-SHAs gepinnt, lokales Three.js-Vendoring, Meta-CSP, Quiz-`textContent`, `callback.html`, Server-CAPTCHA) | Joe / Antigravity · Neon | `main` (`231d7c3`, `1888b52`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.4, Verbrennungsmotor v0.4.1, Windkraftanlage v0.1.3, 37 weitere Apps gepatcht) |
-| Lock-Hinweis in `HANDOFF.md` gegen paralleles Arbeiten (AGENTS.md Regel 4 und 7) | Michi / Grok Bot (Orchestrator) | `docs/handoff-lock-rule` · [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14) | 🟡 Offen, kein Merge ohne Go |
+| Lock-Hinweis in `HANDOFF.md` gegen paralleles Arbeiten (AGENTS.md Regel 4 und 7) | Michi / Grok Bot (Orchestrator) | `docs/handoff-lock-rule` · [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14) | ✅ Gemergt in Upstream (`3c566dc`) |
+| Verbrennungsmotor 3D v0.5.0 · Steuertrieb, Ventile, Zündung, Gas- und Kraftstoffwege, Turbolader, Ladeluftkühler, DPF, HD-/ND-AGR und Tour für Otto/Diesel in vier Bauformen | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-3d-v0.5` ab `upstream/main` (`046ea4d`), SHA: (folgt), kein PR | 🟡 Lokal umgesetzt und getestet, ausstehender Push und Upstream-Merge |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.4 · `wind_turbine` v0.1.3 · `combustion_engine` v0.4.1
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.4 · `wind_turbine` v0.1.3 · `combustion_engine` v0.4.1 live, v0.5.0 auf dem Arbeitsbranch
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Michi / Codex CLI · Astra 6.2 xhigh (Fast) – Verbrennungsmotor 3D v0.5.0
+
+- **Branch** · `codex/combustion-3d-v0.5`, Basis `upstream/main` bei `046ea4d`. SHA: (folgt). Kein Commit, kein Push auf Fork oder Upstream, kein PR. Keine Fork-Pages-Test-URL für diesen Stand.
+- **Erledigt** · Otto-Saugrohreinspritzung und Diesel-Direkteinspritzung mit geneigter Glühkerze. Zahnriemen je Bank mit Spannrolle, synchronen Nocken, Ventiltellern und Tassenstößeln. Gemeinsame Rohr- und Partikelpfade bis zum Auspuff mit Turboflanschen, Ladeluftkühler, DPF und beiden AGR-Strecken. Tour mit 11 Otto- bzw. 16 Diesel-Stationen. Arbeits-Hinweis auf diesem Branch entfernt.
+- **Explainer geprüft** · 74/74 Node-Tests mit allen acht Motorkombinationen, einschließlich Port- und Flanschanschlüssen, Verzweigungsrändern, Rohrabständen, Riemenschluss, Nockenkontakt, Kolbenfreigang, Partikelübergängen, Farben und Tour. `node --check` für geänderte und neue JS-/MJS-Dateien sowie `git diff --check` bestanden.
+- **Version und Regression** · `node scripts/check-release-bump.mjs upstream/main` ausgeführt. Der Vergleich bis HEAD erfasst den uncommitteten Stand nicht. Direkter Katalogvergleich für `combustion_engine` gegen `upstream/main` bestätigt 0.4.1 → 0.5.0. e-Roadtrip: Typecheck, Build in temporärer Kopie, Bundle bytegleich, `node --check dist/e-roadtrip.js` und 167/167 Tests bestanden.
+- **GitHub** · Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen. Alle vier Abfragen für Fork und Upstream scheiterten an der Verbindung zu GitHub.
+- **Offen** · Headless-Chrome brach beim Start an einer gesperrten Socket-Operation ab. WebGL-Sichtprüfung mit Transparenz und Bauteilfokus sowie Bildrate auf Mobilgeräten stehen aus. Nach Commit und Push ergänzt der Orchestrator SHAs, Push-Status und Test-URL.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 
 ### 2026-11-27 – Michi / Grok Bot (Orchestrator) · kein Codex-Lauf / manuell – Lock-Hinweis in HANDOFF.md
 
@@ -91,13 +102,5 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 - **GitHub** · Issue-/PR-Check (`gh pr list`, `gh issue list`): 0 offene Issues und 0 offene PRs in Upstream nach Merge von PR #12 & #13 (`093f55e`).
 - **Offen** · Live-Spieltest auf Handy & Desktop (u. a. Boxer/V6/V8, Turbolader-Animation und Explosions-Easter-Egg).
 - Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `v0.4.0` spoilerfrei)
-
-### 2026-11-27 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live Verbrennungsmotor 3D v0.3.1
-
-- **Branch / PR** · `upstream/main` war unverändert bei `a70eacc`. [Upstream-PR #12](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/12) aus dem Fork-Branch `codex/combustion-load-map` (`ff917ae`), gemergt von `mic4rd` (Merge `84636bc`, 08:35 Uhr Europe/Berlin). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-27`).
-- **Konflikte** · Keine. Upstream/main ist seit `a70eacc` nicht weitergelaufen, kein Rebase nötig.
-- **Geprüft** · Vor dem Merge: Explainer-Tests 32/32, `node --check`, `git diff --check`, `node scripts/check-release-bump.mjs upstream/main` (combustion_engine), e-Roadtrip Typecheck, Build (Bundle unverändert) und `npm test` (167/167). CI auf PR #12: `check-versioning` grün. Nach dem Merge: Workflow „pages build and deployment“ auf `84636bc` grün. Live-Seite https://hunterjoeing.github.io/games/combustion-engine/ zeigt v0.3.1 und „Saugbenziner“. Hub und e-Roadtrip v0.6.0 bleiben erreichbar. Headless-Chrome-Stichprobe ohne Konsolenfehler, 0 POSTs. Screenshot `/home/box/projects/shot/ce-live-v031.png`.
-- **Offen** · Der Hilfsbranch `audit/upstream-main-a70eacc` auf dem Fork bleibt. Issue-/PR-Check nach dem Merge: Upstream 0 offene Issues und PRs (dieser Doku-PR ausgenommen), Fork 0 offene PRs.
-- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

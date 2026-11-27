@@ -332,10 +332,11 @@ export function createExplosionSystem(parentGroup) {
     partPhysics.clear();
   }
 
+  const idleFrame = { phase: 'idle', rpm: null, shake: state.shakeVec, justBlown: false };
   function update(dt) {
     if (state.phase === 'idle') {
       state.shakeVec.set(0, 0, 0);
-      return { phase: 'idle', rpm: null, shake: state.shakeVec, justBlown: false };
+      return idleFrame;
     }
 
     state.elapsed += dt;

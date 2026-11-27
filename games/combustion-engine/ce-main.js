@@ -19,26 +19,27 @@ import {
   getTourStepsForProfile,
   roadLoadTorqueNm,
   speedKmh
-} from './ce-data.js?v=0.4.0';
-import { createCombustionEngineModel } from './ce-model.js?v=0.4.0';
+} from './ce-data.js?v=0.5.0';
+import { createCombustionEngineModel } from './ce-model.js?v=0.5.0';
 
 const DEFAULT_CAMERA = {
-  normal: { pos: [7.8, 2.5, 8.6], target: [0.0, 0.5, 0.0] },
-  cutaway: { pos: [6.2, 2.0, 7.6], target: [0.0, 0.7, 0.0] },
-  xray: { pos: [7.2, 2.4, 8.0], target: [0.0, 0.7, 0.0] },
+  normal: { pos: [-8.2, 4.5, 9.6], target: [0.85, 0.55, 0.30] },
+  cutaway: { pos: [-7.1, 3.8, 8.6], target: [0.80, 0.65, 0.30] },
+  xray: { pos: [-7.6, 3.8, 8.8], target: [0.80, 0.65, 0.30] },
   exploded: { pos: [7.8, 2.8, 9.6], target: [0.0, 0.7, 0.0] }
 };
 
-function cameraForLayout(mode, profile) {
+function cameraForLayout(mode, profile, aspect) {
   const base = DEFAULT_CAMERA[mode] || DEFAULT_CAMERA.cutaway;
+  const portrait = Math.max(1, 0.98 / (aspect || 1));
   if (profile.layout.id === 'boxer4') {
-    const scale = mode === 'exploded' ? 1.15 : 1.0;
+    const scale = portrait * (mode === 'exploded' ? 1.15 : 1.0);
     return {
-      pos: [6.4 * scale, 5.4 * scale, 6.8 * scale],
-      target: [0.0, -0.1, 0.0]
+      pos: [-8.2 * scale, 7.4 * scale, 9.2 * scale],
+      target: [0.85, 0.1, 0.12]
     };
   }
-  const s = profile.layout.cameraScale || 1;
+  const s = (profile.layout.cameraScale || 1) * portrait;
   return {
     pos: base.pos.map(v => Number((v * s).toFixed(2))),
     target: [...base.target]
@@ -693,9 +694,9 @@ function init() {
     buildDynoChart();
     buildBsfcMap();
     updateTelemetryUI();
-    selectPart(appState.selectedPart, false);
+    selectPart(activeParts.some(p => p.id === appState.selectedPart) ? appState.selectedPart : null, false);
 
-    const cam = cameraForLayout(appState.viewMode, activeProfile);
+    const cam = cameraForLayout(appState.viewMode, activeProfile, camera.aspect);
     flyCamera(cam.pos, cam.target, 0.9);
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   }
@@ -843,7 +844,7 @@ function init() {
     appState.load = activeProfile.cruiseLoad;
     updateTelemetryUI();
     if (shouldFly) {
-      const cam = cameraForLayout('cutaway', activeProfile);
+      const cam = cameraForLayout('cutaway', activeProfile, camera.aspect);
       flyCamera(cam.pos, cam.target, 0.85);
     }
     if (window.ArcadeAudio) window.ArcadeAudio.click();
@@ -858,7 +859,7 @@ function init() {
       btn.classList.toggle('active', btn.dataset.viewMode === 'exploded');
     });
     engine.triggerExplosion?.(appState.rpm);
-    const cam = cameraForLayout('exploded', activeProfile);
+    const cam = cameraForLayout('exploded', activeProfile, camera.aspect);
     flyCamera(cam.pos, cam.target, 0.7);
     showOverrevBanner(Math.max(appState.rpm, activeProfile.specs.redlineRpm));
     if (elStatusBadge) {
@@ -887,7 +888,7 @@ function init() {
       btn.classList.toggle('active', btn.dataset.viewMode === mode);
     });
     if (shouldFly && DEFAULT_CAMERA[mode]) {
-      const cam = cameraForLayout(mode, activeProfile);
+      const cam = cameraForLayout(mode, activeProfile, camera.aspect);
       flyCamera(cam.pos, cam.target);
     }
     if (window.ArcadeAudio) window.ArcadeAudio.click();
@@ -901,7 +902,7 @@ function init() {
     if (!part) {
       elInspector.innerHTML = `
         <div class="ce-inspector-empty">
-          Klicke ein Bauteil im 3D-Motor oder aktiviere <strong>Labels</strong>, um alle 12 Baugruppen im Detail zu erkunden.
+          Klicke ein Bauteil im 3D-Motor oder aktiviere <strong>Labels</strong>, um die Baugruppen im Detail zu erkunden.
         </div>`;
       return;
     }
@@ -978,6 +979,7 @@ function init() {
         <button type="button" class="ce-tour-close" id="ce-tour-end" aria-label="Tour beenden">✕</button>
       </div>
       <h3 class="ce-tour-title">${step.title}</h3>
+      ${step.id === 'legend' ? '<div class="ce-flow-key" aria-hidden="true"><span>Luft</span><span>Kraftstoff</span><span>Abgas</span></div>' : ''}
       <p class="ce-tour-body">${demo?.body ?? step.body}</p>
       ${demo ? '<p class="ce-tour-live" id="ce-tour-live"></p>' : ''}
       <div class="ce-tour-footer">
@@ -1033,10 +1035,11 @@ function init() {
     if (appState.explosionPhase !== 'idle') repairEngine(false);
     const { rpm, load, timeScale, viewMode, labelsVisible, selectedPart } = appState;
     tourStartState = {
-      rpm, load, timeScale, viewMode, labelsVisible, selectedPart,
+      rpm, load, timeScale, viewMode, labelsVisible, selectedPart, flowVisible: appState.flowVisible,
       position: camera.position.clone(), target: controls.target.clone(),
       panelScrollTop: elPanelDrawer?.scrollTop
     };
+    setFlow(true);
     appState.tourActive = true;
     appState.tourIndex = index;
     elTourStartBtn?.classList.add('active');
@@ -1052,6 +1055,7 @@ function init() {
     elPanelDrawer?.classList.remove('ce-drive-tour');
     const { rpm, load, timeScale, viewMode, labelsVisible, selectedPart, position, target, panelScrollTop } =
       tourStartState;
+    setFlow(tourStartState.flowVisible);
     tourStartState = undefined;
     setRpm(rpm, load);
     setTimeScale(timeScale);
@@ -1123,10 +1127,14 @@ function init() {
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   });
 
-  elFlowToggle?.addEventListener('click', () => {
-    appState.flowVisible = !appState.flowVisible;
+  function setFlow(visible) {
+    appState.flowVisible = visible;
     engine.setFlowVisible(appState.flowVisible);
-    elFlowToggle.classList.toggle('active', appState.flowVisible);
+    elFlowToggle?.classList.toggle('active', appState.flowVisible);
+  }
+
+  elFlowToggle?.addEventListener('click', () => {
+    setFlow(!appState.flowVisible);
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   });
 
@@ -1135,7 +1143,7 @@ function init() {
       repairEngine(true);
       return;
     }
-    const cam = cameraForLayout(appState.viewMode, activeProfile);
+    const cam = cameraForLayout(appState.viewMode, activeProfile, camera.aspect);
     flyCamera(cam.pos, cam.target);
     if (window.ArcadeAudio) window.ArcadeAudio.click();
   });
@@ -1206,6 +1214,9 @@ function init() {
     renderer.setSize(w, h, false);
   }
   handleResize();
+  const initialView = cameraForLayout('cutaway', activeProfile, camera.aspect);
+  camera.position.set(...initialView.pos);
+  controls.target.set(...initialView.target);
   const resizeObs = new ResizeObserver(handleResize);
   resizeObs.observe(viewport);
 

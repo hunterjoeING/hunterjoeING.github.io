@@ -2,6 +2,14 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live Verbrennungsmotor 3D v0.3.1
+
+- **Branch / PR** · `upstream/main` war unverändert bei `a70eacc`. [Upstream-PR #12](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/12) aus dem Fork-Branch `codex/combustion-load-map` (`ff917ae`), gemergt von `mic4rd` (Merge `84636bc`, 08:35 Uhr Europe/Berlin). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-27`).
+- **Konflikte** · Keine. Upstream/main ist seit `a70eacc` nicht weitergelaufen, kein Rebase nötig.
+- **Geprüft** · Vor dem Merge: Explainer-Tests 32/32, `node --check`, `git diff --check`, `node scripts/check-release-bump.mjs upstream/main` (combustion_engine), e-Roadtrip Typecheck, Build (Bundle unverändert) und `npm test` (167/167). CI auf PR #12: `check-versioning` grün. Nach dem Merge: Workflow „pages build and deployment“ auf `84636bc` grün. Live-Seite https://hunterjoeing.github.io/games/combustion-engine/ zeigt v0.3.1 und „Saugbenziner“. Hub und e-Roadtrip v0.6.0 bleiben erreichbar. Headless-Chrome-Stichprobe ohne Konsolenfehler, 0 POSTs. Screenshot `/home/box/projects/shot/ce-live-v031.png`.
+- **Offen** · Der Hilfsbranch `audit/upstream-main-a70eacc` auf dem Fork bleibt. Issue-/PR-Check nach dem Merge: Upstream 0 offene Issues und PRs (dieser Doku-PR ausgenommen), Fork 0 offene PRs.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
+
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol xhigh – Verbrennungsmotor 3D v0.3.1
 
 - **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand und Fork-Stand `ce28826`. Commit `66a8667` (+ Doku-Commit), gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/)
