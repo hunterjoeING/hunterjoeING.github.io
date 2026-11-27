@@ -23,13 +23,22 @@
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
 | 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity · Neon high | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
 | E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` (`0ddbc5e`, Upstream-Merge `5e751d6`) · [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) (Merge `2aebc51`) | ✅ Gemerged, Worker deployt und live (e-Roadtrip v0.6.0, Arcade v0.4.1) |
-| Verbrennungsmotor 3D v0.2.0 · Gaspedal, Lastkennfeld und gekoppelte Voreinstellungen, Beispielautomatik mit Gang, Tempo und Verbrauch, Muschelkurve mit Fahrwiderstand je Gang | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/combustion-load-map` ab `upstream/main` (`a70eacc`) · Fork-Stand `add54de` (+ Doku-Commit) · kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Fork-Test läuft, Upstream-Merge wartet auf Michis Go und Joes Ansicht |
+| Verbrennungsmotor 3D v0.2.0 + v0.3.0 · Gaspedal, interaktives Lastkennfeld mit Fahrwiderstand, gekoppelte Voreinstellungen und Beispielautomatik. Dazu Gangwahlanzeige, Momentanverbrauch und Tour mit Live-Fahrbeispielen | Michi / Codex CLI · gpt-6.2-sol xhigh · Orchestrator | `codex/combustion-load-map` ab `upstream/main` (`a70eacc`) · Fork-Stand `83f03bd` (v0.2.0) · `0add518` (v0.3.0, + Doku-Commit) · kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Upstream unveröffentlicht. Browser-Test für v0.3.0 und Michis Go für Upstream offen |
 
 **Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol xhigh – Verbrennungsmotor 3D v0.3.0
+
+- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `83f03bd`. Commit `0add518` (+ Doku-Commit), gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages-Test-URL für v0.3.0 nach dem Push: https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
+- **Erledigt** · Die Gangwahlanzeige zeigt Gang, Übersetzung und Fahrmodus unter dem Gaspedal. Die Verbrauchskachel zeigt auch beim Beschleunigen und im Schub l/100km. Die neunstufige Tour ergänzt Live-Beispiele zu Drosselklappe, Fahrwiderstand, Getriebe und Muschelkurve. Die Referenzfahrt schaltet hoch und endet bei rund 176 km/h im 6. Gang. Beim Schließen kehren Regler, Zeitlupe, Ansicht und Kamera zum Ausgangszustand zurück.
+- **Geprüft** · `node --check` für alle `ce-*.js`, `shared/releases.js` und die drei Explainer-Testdateien. Explainer-Tests 27/27 einschließlich UI-Ereignissen im simulierten DOM. Die bisherigen Telemetriefelder stimmen auf 14.241 Betriebspunkten mit `HEAD` überein. HTML-Tags, ID-Verweise, Titel, JSON-LD, Importmap, Inline-Skript, Asset-Versionen, CSS und `git diff --check` geprüft. `node scripts/check-release-bump.mjs upstream/main` bestanden für `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js` und `npm test` (167/167), Bundle bytegleich.
+- **GitHub** · Issue-/PR-Check durch den Orchestrator: 0 offene Issues und PRs in Upstream, 0 PRs im Fork.
+- **Offen** · Fork-Spieltest durch Michi. Kein Upstream-Merge ohne ausdrückliches Go; Joe soll den Explainer vorher sehen. Browser-Test durch den Orchestrator: 1280 und 390 px, Tour-Schritte 6–9 live, Escape stellt den Zustand vor der Tour wieder her, 0 POSTs, keine Konsolenfehler (Screenshots `/home/box/projects/shot/ce-v03-*.png`).
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Gang, Geschwindigkeit und Verbrauch für Verbrennungsmotor 3D v0.2.0
 
@@ -65,10 +74,5 @@
 - **Erledigt** · A/D, Pfeile und Touch schalten im Stand den orangefarbenen Blinker vorne und hinten auf der gehaltenen Seite ein (1,5 Hz). Das Restlenken im Stand hatte keine eigene Spielmechanik und entfällt. Der Blinker ändert weder Strafen noch Scoring. Start, Vorschau und Kollisionsversetzen nutzen die Fahrspur in Fahrtrichtung; Linksverkehr über `drivesOnLeft` und das Land am Autohof. Schottland hat noch keine Stadt-Szene (`level_4_scotland_highlands` ist nicht spielbar); die Regel ist per synthetischem Layout und am britischen Autohof Highland Village AC Moffat / Tebay (A74(M), Schottland-Grenze) geprüft. Der Orchestrator hat ein leises SoundFX-Tick, die Preview-Hooks und Bundle-Revision 16 ergänzt.
 - **Geprüft** · `npm run typecheck`, `npm run build`, `node --check`, `npm test` (167/167). Browser-Stichproben mit 0 POSTs: `/home/box/projects/shot/blinker-aachen-left.png`, `blinker-aachen-right.png`, `startlane-aachen.png`, `startlane-scotland-moffat.png`. Version/Release-Eintrag geprüft (shared/releases.js, Regel 10). Issue-/PR-Check: 0 offene Issues und PRs in Upstream; Fork-Issues sind deaktiviert; 0 offene Fork-PRs.
 - **Offen** · Fork-Spieltest. Kein Upstream-Merge ohne ausdrückliches Go. Punkt 2 (`legacyMaxMinutes`) bleibt offen.
-
-### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Verbrauchsanzeige eine Nachkommastelle
-
-- **Erledigt** · Der Verbrauch auf der Planungs-Etappenkarte (und in Banner, Garage, HUD, Auswertung und Live-Briefing) wird fest mit einer Nachkommastelle und Punkt angezeigt, z. B. `25.7 kWh/100km`. Zentraler Formatter: `formatConsumption()` in `src/ui/DrivingStatus.ts`. Ursache war der ungerundete Wert `legEnergyKwh / edge.distanceKm * 100` auf Gefälle-Etappen. Keine Wh/km-Anzeige vorhanden. Euro (2 Stellen), geladene kWh (1 Stelle) sowie km, Minuten und SoC (ganze Zahlen) waren bereits gerundet. Test in `tests/formatting.test.mjs`. Bundle `rev=15`. Fix vom Orchestrator, ohne Codex.
-- **Doku** · `Architecture.md` §3.3 und Tuning-Tabelle. `3d5f243`.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

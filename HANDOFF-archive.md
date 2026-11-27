@@ -2,6 +2,11 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-26 – Michi / Orchestrator – v0.6.0 · Verbrauchsanzeige eine Nachkommastelle
+
+- **Erledigt** · Der Verbrauch auf der Planungs-Etappenkarte (und in Banner, Garage, HUD, Auswertung und Live-Briefing) wird fest mit einer Nachkommastelle und Punkt angezeigt, z. B. `25.7 kWh/100km`. Zentraler Formatter: `formatConsumption()` in `src/ui/DrivingStatus.ts`. Ursache war der ungerundete Wert `legEnergyKwh / edge.distanceKm * 100` auf Gefälle-Etappen. Keine Wh/km-Anzeige vorhanden. Euro (2 Stellen), geladene kWh (1 Stelle) sowie km, Minuten und SoC (ganze Zahlen) waren bereits gerundet. Test in `tests/formatting.test.mjs`. Bundle `rev=15`. Fix vom Orchestrator, ohne Codex.
+- **Doku** · `Architecture.md` §3.3 und Tuning-Tabelle. `3d5f243`.
+
 ### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high · Orchestrator – v0.6.0 · Lokale Anbieter und Preislogik
 
 - **Erledigt** · Autobrennero (3 Säulen) und Neogy (4 Säulen) bleiben in Level 3, mit sichtbarem Filter und Säulen auf jeder Route. Ein Filter erscheint nur noch, wenn das Level eine Säule des Anbieters hat (Level 3 zeigt keinen EWE-Go-Filter mehr). Das Tesla-Abo gilt nur noch an Tesla-Säulen. Anbieter ohne eigenes Abo (Autobrennero, Neogy, Fastned, TotalEnergies, AC-Dorfladen) berechnen den eigenen Ad-hoc-Preis: Autobrennero 0,75, Neogy 0,76 €/kWh an den Schnellladern. Ladezeiten, Referenzpläne (402/504/480 Min.) und Ziel 564 bleiben gleich, nur die Kosten ändern sich. Der Satz „Die vorgeschlagenen Ladestopps kannst du ändern.“ im Level-3-Briefing ist entfernt. Beim Öffnen der Planung steht in allen Levels kein „Eingeplant“.
