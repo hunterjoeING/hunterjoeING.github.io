@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- 🔒 in Arbeit: `games/pistenbully-800w/`, Hub/Navigation/Releases (`index.html`, `shared/arcade.js`, `shared/burger-menu.js`, `shared/releases.js`, `cloudflare-worker/worker.js`, `sitemap.xml`) · Joe / Antigravity · `feat/pistenbully-800w` · 2026-11-27
+- (keine)
 
 ---
 
@@ -45,12 +45,22 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 | Verbrennungsmotor 3D v0.5.1 · Gekröpfte Kurbelwelle mit freigängigen Pleueln und Zahnriemenrad, Leerlauf je Variante, dichtere Gaspartikel, Luftdosierung am Otto-Klappenspalt und sichtbare Zündung | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.1` · [Upstream-PR #16](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/16) | ✅ Gemergt (`36cf0a4`, 2026-11-27 17:16 Uhr) und live |
 | Verbrennungsmotor 3D v0.5.2 · Breite Partikelströme an Verzweigungen, Flammenfront für Otto und Diesel, Otto-Funken, Grafikmenü für Kontaktschatten, Schatten, Gasdichte und FPS, rauchgrauer Röntgenblick und bewegtes Motoröl | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.2` · [Upstream-PR #17](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/17) | ✅ Gemergt (`d1ec7cd`) und live |
 | 3D-Explainer: Union Pacific Big Boy 4014 (`games/big-boy/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/big-boy-3d`, `913f4a3`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Big Boy v0.1.0, Arcade v0.5.0) |
+| 3D-Explainer: Kässbohrer PistenBully 800 W (`games/pistenbully-800w/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/pistenbully-800w`, `080e08b`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (PistenBully 800 W v0.1.0, Arcade v0.6.0) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.5.0 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.2 · `big_boy` v0.1.0
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.6.0 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.2 · `big_boy` v0.1.0 · `pistenbully_800w` v0.1.0
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Joe / Antigravity · Neon – Kässbohrer PistenBully 800 W 3D v0.1.0 (Arcade v0.6.0)
+
+- **Branch / PR** · `feat/pistenbully-800w` ab `main` (`09109ad`, Lock-Commit), Code-Commit `080e08b` (+ Doku-/Merge-Commit), nach ausdrücklicher Freigabe von Joe direkt in `main` gemergt und auf Upstream `hunterjoeING/hunterjoeING.github.io` gepusht (kein PR). Live: https://hunterjoeing.github.io/games/pistenbully-800w/
+- **Erledigt** · Komplett prozedurale Three.js-0.170.0-3D-Steilhang-Simulation des **Kässbohrer PistenBully 800 W** (0°–45° / 100 % Steigung) unter `games/pistenbully-800w/` (`specs.js`, `pb-kinematics.js`, `pb-physics.js`, `pb-textures.js`, `pb-model-chassis.js`, `pb-model-implements.js`, `pb-particles.js`, `pb-diagnostics.js`, `pb-audio.js`, `pb-data.js`, `pb-main.js`, `index.html`, `styles.css`, `Architecture.md`, `tests/pistenbully.test.mjs`). Prozedurale Offscreen-Canvas-PBR-Texturen (Karminrot mit `PistenBully 800 W`-Livery & Frostkante, gebürstete Alukettenstege, zerkratzter Schildstahl mit blanker Schürfleiste, signalgelber gerippter Polyurethan-Finisher, SNOWsat-Cockpit-Display), dynamischer Schnee-Shader (zerfahrene Buckel vor dem Schild, Kettenabdrücke/Schlupf unter der Raupe, rasiermesserscharfe Cord-Rillen exakt hinter dem gelben Finisher, Mikro-Glitzern & SNOWsat-Schneehöhen-Heatmap), analytische Ketten-Spline mit exaktem 13-Zahn-Sternrad-Eingriff, 12-Wege-Räumschild mit 8 exakten 2-Punkt-Hydraulikzylindern, AlpinFlexFräse + elastischer 6,3-m-Finisher mit Klappflügeln, aktive 360°-4,7-t-Seilwinde mit Kettenlinie, 450-bar-Hydraulik-X-Ray (MAN D3876, Axialkolbenpumpen, pulsierende Hoch-/Niederdruck-Kreise), Fräsen-/Sinter-Längsschnitt („Schnee-Mikroskop“), 3D-Kraftvektoren, Beleuchtungswechsel (Blaue Stunde / Nachtpräparierung vs. Alpiner Sonnentag), 3-Tab-SVG-Diagnostik (Hangphysik, Hydraulik 400 kW, Bodendruck), Web-Audio und geführte 8-Stationen-Tour. Nahtlos integriert in `index.html` (42 Module / 14 Spiele), `shared/arcade.js`, `shared/burger-menu.js`, `shared/releases.js`, `cloudflare-worker/worker.js` und `sitemap.xml`. Lock-Hinweis entfernt; ältester Session-Eintrag (`Lock-Hinweis in HANDOFF.md`) nach `HANDOFF-archive.md` verschoben.
+- **Geprüft** · `node --check` auf allen neuen/geänderten JS-/MJS-Dateien; `node --test games/pistenbully-800w/tests/pistenbully.test.mjs` (7/7 PASS: Ketten-Spline-Schluss, 13-Zahn-Sternrad-Synchronität, 8 Schild-Zylinder über Extremstellungen, Finisher-Schneekontakt & 6,3→4,3 m Klappflügel, Winden-Kettenlinie, Steilhang-Schlupf Winde Aus vs. Ein, 400 kW / 450 bar / ~60–70 g/cm² Bodendruck); `big-boy.test.mjs` (7/7 PASS); `releases.test.mjs` + `arcade-scores.test.mjs` (PASS); `games/combustion-engine/tests/index.js` (141/141 PASS); `node scripts/check-release-bump.mjs origin/main` („Versionsprüfung bestanden: pistenbully_800w, arcade“); `git diff --check`; zweistufige Headless-Chrome-/Playwright-WebGL-Sichtprüfung (Desktop 1280×780 Nachtpräparierung, Alpiner Tag/Light-UI, Hydraulik-X-Ray, Fräsen-/Sinter-Schnitt, 38°-Kraftvektoren+SNOWsat, Tour/Corduroy sowie Mobile 390×844 & Hub-Check mit 0 Page-Errors) inkl. Nachbesserung von LED-Spotlights/Bloom-Schwelle, Schnee-Untergrund, Seiten-Livery, Alpenpanorama, neutralem X-Ray, SVG-Textabstand und Mobile-Portrait-Kamera.
+- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues und 0 offene PRs in Upstream.
+- **Offen** · Sicht- und Performance-Probe auf echtem Mobilgerät sowie ggf. Feinschliff nach erstem Live-Feedback.
+- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `pistenbully_800w` `v0.1.0` & `arcade` `v0.6.0`, Autor `Joe · Neon`, spoilerfrei).
 
 ### 2026-11-27 – Joe / Antigravity · Neon – Union Pacific Big Boy 4014 3D v0.1.0 (Arcade v0.5.0)
 
@@ -100,14 +110,5 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 - **GitHub** · Issue-/PR-Check (Orchestrator): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs (Issues im Fork deaktiviert).
 - **Offen** · Sichtprüfung auf echten Geräten (Bildrate mobil, Transparenz-Sortierung). Kein Upstream-Merge ohne Go.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-
-### 2026-11-27 – Michi / Grok Bot (Orchestrator) · kein Codex-Lauf / manuell – Lock-Hinweis in HANDOFF.md
-
-- **Branch / PR** · `docs/handoff-lock-rule` ab `upstream/main` (`7415dd3`). Commit `38096b2` (+ dieser Doku-Commit). Push auf Fork `mic4rd/hunterjoeING.github.io`. [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14). Kein Lock-Hinweis gesetzt (reine Doku, sehr klein; diese PR führt die Regel erst ein).
-- **Erledigt** · Regel 7 um Arbeits-Hinweis (Lock) in `HANDOFF.md` ergänzt, Ausnahme in Regel 4, Abschnitt „Aktive Arbeits-Hinweise (🔒)“ in `HANDOFF.md` angelegt. Intro und Bullet „Aufgaben & Rückfragen“ an die neue Aufteilung angepasst (Issues nur für größere Vorhaben). Ältesten Session-Eintrag (Verbrennungsmotor 3D v0.3.1) nach `HANDOFF-archive.md` verschoben, damit §2 bei fünf Einträgen bleibt.
-- **Geprüft** · `git diff --check`. `node scripts/check-release-bump.mjs upstream/main`: „Keine releasepflichtigen Dateien geändert.“ E-Roadtrip `npm test` 167/167 (keine Codeänderung; der CI-Workflow führt die Suite trotzdem aus). Keine JS- oder Release-Änderung (reine Doku, `[no-release]`).
-- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues in Upstream, dieser Doku-PR #14, 0 weitere offene PRs in Upstream, 0 PRs im Fork (außer dem Head dieses PRs).
-- **Offen** · Kein Upstream-Merge ohne ausdrückliches Go.
-- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10) — keine Versionserhöhung (reine Doku, `[no-release]`).
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

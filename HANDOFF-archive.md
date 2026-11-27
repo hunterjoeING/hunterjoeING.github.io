@@ -2,6 +2,15 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Michi / Grok Bot (Orchestrator) · kein Codex-Lauf / manuell – Lock-Hinweis in HANDOFF.md
+
+- **Branch / PR** · `docs/handoff-lock-rule` ab `upstream/main` (`7415dd3`). Commit `38096b2` (+ dieser Doku-Commit). Push auf Fork `mic4rd/hunterjoeING.github.io`. [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14). Kein Lock-Hinweis gesetzt (reine Doku, sehr klein; diese PR führt die Regel erst ein).
+- **Erledigt** · Regel 7 um Arbeits-Hinweis (Lock) in `HANDOFF.md` ergänzt, Ausnahme in Regel 4, Abschnitt „Aktive Arbeits-Hinweise (🔒)“ in `HANDOFF.md` angelegt. Intro und Bullet „Aufgaben & Rückfragen“ an die neue Aufteilung angepasst (Issues nur für größere Vorhaben). Ältesten Session-Eintrag (Verbrennungsmotor 3D v0.3.1) nach `HANDOFF-archive.md` verschoben, damit §2 bei fünf Einträgen bleibt.
+- **Geprüft** · `git diff --check`. `node scripts/check-release-bump.mjs upstream/main`: „Keine releasepflichtigen Dateien geändert.“ E-Roadtrip `npm test` 167/167 (keine Codeänderung; der CI-Workflow führt die Suite trotzdem aus). Keine JS- oder Release-Änderung (reine Doku, `[no-release]`).
+- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues in Upstream, dieser Doku-PR #14, 0 weitere offene PRs in Upstream, 0 PRs im Fork (außer dem Head dieses PRs).
+- **Offen** · Kein Upstream-Merge ohne ausdrückliches Go.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10) — keine Versionserhöhung (reine Doku, `[no-release]`).
+
 ### 2026-11-27 – Joe / Antigravity · Neon – Security-Audit-Abschluss ARC-01..22 & Server-CAPTCHA (Arcade v0.4.4)
 
 - **Branch / PR** · `main` ab `0d963b1`, Commits `231d7c3`, `2eb9e2a`, `1888b52` (+ Doku-Commit), kein PR, Push auf Upstream `hunterjoeING/hunterjoeING.github.io` (`main`). Live: https://hunterjoeing.github.io/

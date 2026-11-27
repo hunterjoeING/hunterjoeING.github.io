@@ -38,4 +38,4 @@ Interaktive Three.js-3D-Simulation und Technik-Visualisierung des **Kässbohrer 
 
 ## Changelog
 
-- **2026-11-27** (`feat/pistenbully-800w`) – Erstversion `v0.1.0`: Vollständige interaktive 3D-Steilhang-Simulation & Technik-Visualisierung des Kässbohrer PistenBully 800 W mit prozeduralen PBR-Texturen, dynamischem Schnee-/Corduroy-/SNOWsat-Shader, 450-bar-Hydrostatik-X-Ray, Fräsen-/Sinter-Schnitt („Schnee-Mikroskop“), 3D-Kraftvektoren, 12-Wege-Räumschild (8 Zylinder), 4,7-t-Seilwinde, Live-Diagnostik, Web-Audio und 8-Stationen-Tour.
+- **2026-11-27** (`main`, `080e08b`) – Erstversion `v0.1.0`: Vollständige interaktive 3D-Steilhang-Simulation & Technik-Visualisierung des Kässbohrer PistenBully 800 W mit prozeduralen PBR-Texturen, dynamischem Schnee-/Corduroy-/SNOWsat-Shader, 450-bar-Hydrostatik-X-Ray, Fräsen-/Sinter-Schnitt („Schnee-Mikroskop“), 3D-Kraftvektoren, 12-Wege-Räumschild (8 Zylinder), 4,7-t-Seilwinde, Live-Diagnostik, Web-Audio und 8-Stationen-Tour.
