@@ -79,6 +79,15 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.3.1", date: "2026-11-27", type: "patch", title: "Kennfeld eines Saugmotors",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Das Beispielkennfeld beschreibt jetzt einen klassischen 2,0-l-Saugmotor mit Saugrohreinspritzung.",
+        "Drehmoment, Leistung, Verbrauch, Voreinstellungen und Tour-Beispiele passen zum neuen Kennfeld.",
+        "Im 3D-Modell siehst du die Kraftstoffleiste und die vier Einspritzventile am Ansaugkrümmer.",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.3.0", date: "2026-11-27", type: "feature", title: "Getriebe und Tour zur Fahrlogik",
       author: "Michi", model: "Sol 6.2",
       highlights: [

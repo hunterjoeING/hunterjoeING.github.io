@@ -14,8 +14,8 @@ import {
   fullTorqueNm,
   roadLoadTorqueNm,
   speedKmh
-} from './ce-data.js?v=0.3.0';
-import { createCombustionEngineModel } from './ce-model.js?v=0.3.0';
+} from './ce-data.js?v=0.3.1';
+import { createCombustionEngineModel } from './ce-model.js?v=0.3.1';
 
 const DEFAULT_CAMERA = {
   normal: { pos: [7.8, 2.5, 8.6], target: [0.0, 0.5, 0.0] },
@@ -217,15 +217,20 @@ function init() {
   const pad = { left: 34, right: 32, top: 14, bottom: 26 };
   const plotW = chartW - pad.left - pad.right;
   const plotH = chartH - pad.top - pad.bottom;
+  const powerStep = 30;
+  const powerTicks = Array.from({ length: Math.floor(ENGINE_SPECS.maxPowerKW / powerStep) + 2 }, (_, i) => i * powerStep);
+  const torqueStep = 50;
+  const torqueTicks = Array.from({ length: Math.floor(ENGINE_SPECS.maxTorqueNm / torqueStep) + 2 }, (_, i) => i * torqueStep);
+  const torqueAxisMax = torqueTicks.at(-1);
 
   function xForRpm(rpm) {
     return pad.left + (rpm / ENGINE_SPECS.maxRpm) * plotW;
   }
   function yForPower(kw) {
-    return pad.top + plotH - (kw / 165) * plotH;
+    return pad.top + plotH - (kw / powerTicks.at(-1)) * plotH;
   }
   function yForTorque(nm) {
-    return pad.top + plotH - (nm / 300) * plotH;
+    return pad.top + plotH - (nm / torqueAxisMax) * plotH;
   }
 
   function buildDynoChart() {
@@ -257,14 +262,14 @@ function init() {
       <!-- Roter Drehzahlbereich -->
       <rect x="${xRedline.toFixed(1)}" y="${pad.top}" width="${(xForRpm(7000) - xRedline).toFixed(1)}" height="${plotH}" class="chart-zone-redline" />
       <!-- Hilfslinien -->
-      ${[0, 50, 100, 150]
+      ${powerTicks
         .map(kw => {
           const y = yForPower(kw).toFixed(1);
           return `<line x1="${pad.left}" y1="${y}" x2="${chartW - pad.right}" y2="${y}" class="chart-grid" />
             <text x="${pad.left - 5}" y="${Number(y) + 3.5}" text-anchor="end" class="chart-axis-text power">${kw}</text>`;
         })
         .join('')}
-      ${[0, 100, 200, 300]
+      ${torqueTicks
         .map(nm => {
           const y = yForTorque(nm).toFixed(1);
           return `<text x="${chartW - pad.right + 5}" y="${Number(y) + 3.5}" text-anchor="start" class="chart-axis-text torque">${nm}</text>`;
@@ -334,13 +339,12 @@ function init() {
   const mapTop = 22;
   const mapBottom = 172;
   const mapPlotH = mapBottom - mapTop;
-  const mapTorqueMax = 300;
   let mapMarker;
   let mapRoadLoads = [];
   let mapOptimum;
 
   function yForMapTorque(torqueNm) {
-    return mapBottom - torqueNm / mapTorqueMax * mapPlotH;
+    return mapBottom - torqueNm / torqueAxisMax * mapPlotH;
   }
 
   function mapPath(points) {
@@ -353,22 +357,31 @@ function init() {
     const { minCruiseKmh, maxSpeedKmh } = DRIVETRAIN_EXAMPLE;
     const speedPerRpm = speedKmh(1, gear);
     const start = Math.max(ENGINE_SPECS.minRunningRpm, minCruiseKmh / speedPerRpm);
-    const end = Math.min(ENGINE_SPECS.maxRpm, maxSpeedKmh / speedPerRpm);
+    const end = Math.min(ENGINE_SPECS.redlineRpm, maxSpeedKmh / speedPerRpm);
     const torqueAt = rpm => roadLoadTorqueNm(rpm, gear);
-    if (start >= end || torqueAt(start) > fullTorqueNm(start)) return '';
+    const canCruise = rpm => torqueAt(rpm) <= fullTorqueNm(rpm);
 
-    const points = [{ rpm: start, torqueNm: torqueAt(start) }];
-    let lastRpm = start;
+    // Beide Schnittpunkte mit der Volllastgrenze auf der fahrbaren Seite verfeinern.
+    function boundary(feasibleRpm, outsideRpm) {
+      while (Math.abs(outsideRpm - feasibleRpm) > 0.01) {
+        const middle = (feasibleRpm + outsideRpm) / 2;
+        if (canCruise(middle)) feasibleRpm = middle;
+        else outsideRpm = middle;
+      }
+      return feasibleRpm;
+    }
+
+    let firstRpm = start;
+    while (firstRpm < end && !canCruise(firstRpm)) firstRpm = Math.min(firstRpm + rpmStep, end);
+    if (firstRpm >= end) return '';
+    if (firstRpm > start) firstRpm = boundary(firstRpm, firstRpm - rpmStep);
+    const points = [{ rpm: firstRpm, torqueNm: torqueAt(firstRpm) }];
+    let lastRpm = firstRpm;
     while (lastRpm < end) {
-      let nextRpm = Math.min(lastRpm + rpmStep, end);
-      if (torqueAt(nextRpm) > fullTorqueNm(nextRpm)) {
-        // Schnittpunkt der Fahrwiderstandskurve mit der Volllastgrenze verfeinern.
-        while (nextRpm - lastRpm > 0.01) {
-          const middle = (lastRpm + nextRpm) / 2;
-          if (torqueAt(middle) <= fullTorqueNm(middle)) lastRpm = middle;
-          else nextRpm = middle;
-        }
-        points.push({ rpm: lastRpm, torqueNm: torqueAt(lastRpm) });
+      const nextRpm = Math.min(lastRpm + rpmStep, end);
+      if (!canCruise(nextRpm)) {
+        const finalRpm = boundary(lastRpm, nextRpm);
+        points.push({ rpm: finalRpm, torqueNm: torqueAt(finalRpm) });
         break;
       }
       lastRpm = nextRpm;
@@ -386,7 +399,7 @@ function init() {
     const { maxRpm, minRunningRpm, redlineRpm } = ENGINE_SPECS;
     const { contours, optimum } = computeBsfcContours();
     mapOptimum = optimum;
-    const fullLoad = [{ rpm: minRunningRpm, torqueNm: 0 }];
+    const fullLoad = [];
     const rpmStep = 50;
     for (let rpm = minRunningRpm; rpm <= maxRpm; rpm += rpmStep) {
       fullLoad.push({ rpm, torqueNm: fullTorqueNm(rpm) });
@@ -398,7 +411,7 @@ function init() {
     const redline = xForRpm(redlineRpm);
     const areaPath = `${fullLoadPath} L${right},${mapBottom} Z`;
     const labels = [];
-    const labelRpms = [3675, 1850, 3900, 4850, 5800, 3450];
+    const labelRpms = [3675, 1850, 3900, 4850, 5800, 5100];
     const contourPaths = contours.map(({ level, polylines }, i) => {
       const labelRpm = labelRpms[i];
       const point = polylines.flat().reduce((closest, point) => {
@@ -411,17 +424,20 @@ function init() {
     }).join('');
     const optimumX = xForRpm(optimum.rpm);
     const optimumY = yForMapTorque(optimum.torqueNm);
+    const barStep = 5;
+    const barTicks = Array.from({ length: Math.floor(torqueAxisMax / (TORQUE_NM_PER_BAR * barStep)) + 1 },
+      (_, i) => i * barStep);
 
     mapSvg.innerHTML = `
       <defs><clipPath id="ce-map-limits"><path d="${areaPath}" /></clipPath></defs>
       <rect x="${redline}" y="${mapTop}" width="${right - redline}" height="${mapPlotH}" class="chart-zone-redline" />
       <path d="${areaPath}" class="chart-map-area" />
-      ${[0, 100, 200, 300].map(nm => {
+      ${torqueTicks.map(nm => {
         const y = yForMapTorque(nm);
         return `<line x1="${left}" y1="${y}" x2="${right}" y2="${y}" class="chart-grid" />
           <text x="${left - 5}" y="${y + 3.5}" text-anchor="end" class="chart-axis-text">${nm}</text>`;
       }).join('')}
-      ${[0, 5, 10, 15].map(bar => {
+      ${barTicks.map(bar => {
         const y = yForMapTorque(bar * TORQUE_NM_PER_BAR);
         return `<line x1="${right}" x2="${right + 4}" y1="${y}" y2="${y}" class="chart-grid" />
           <text x="${right + 6}" y="${y + 3.5}" class="chart-axis-text">${bar}</text>`;
@@ -439,7 +455,7 @@ function init() {
       ${[4, 5, 6].map(gear => mapRoadLoadCurve(gear, rpmStep)).join('')}
       ${labels.join('')}
       <path d="M${optimumX},${optimumY - 4} l4,7 h-8 Z" class="chart-map-optimum" />
-      <text x="${optimumX - 43}" y="${optimumY - 17}" text-anchor="middle" class="chart-map-label">Optimum ~${contours[0].level}</text>
+      <text x="${optimumX - 43}" y="${optimumY - 17}" text-anchor="middle" class="chart-map-label">Optimum ${Math.round(optimum.bsfc)}</text>
       <g id="ce-map-marker">
         <circle r="8" class="chart-map-halo" />
         <circle r="4.4" class="chart-map-dot" />
@@ -454,7 +470,7 @@ function init() {
       const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(matrix.inverse());
       const ratio = THREE.MathUtils.clamp((point.x - left) / plotW, 0, 1);
       const rpm = Math.round(ratio * maxRpm / rpmStep) * rpmStep;
-      const torqueNm = (mapBottom - point.y) / mapPlotH * mapTorqueMax;
+      const torqueNm = (mapBottom - point.y) / mapPlotH * torqueAxisMax;
       const fullTorque = fullTorqueNm(rpm);
       setRpm(rpm, fullTorque ? torqueNm / fullTorque : 0);
     }

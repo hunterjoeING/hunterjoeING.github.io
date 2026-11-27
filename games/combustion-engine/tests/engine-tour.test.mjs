@@ -8,7 +8,7 @@ import releaseCatalog from '../../../shared/releases.js';
 const {
   DRIVETRAIN_EXAMPLE, DRIVE_SEQUENCE_EXAMPLE, DRIVE_TOUR_EXAMPLE, ENGINE_SPECS, ENGINE_TOUR_STEPS,
   computeBsfcContours, computeDriveTourDemos, computeDrivetrain, computeEngineTelemetry,
-  constantSpeedPoint, fullTorqueNm, simulateDriveSequence, speedKmh
+  constantSpeedPoint, fullTorqueNm, roadLoadTorqueNm, simulateDriveSequence, speedKmh
 } = engine;
 const read = path => readFileSync(new URL(path, import.meta.url), 'utf8');
 const html = read('../index.html');
@@ -21,13 +21,13 @@ function near(actual, expected) {
 }
 
 test('Momentanverbrauch in allen Fahrmodi, l/100km für die Konstantfahrt bleibt erhalten', () => {
-  for (const rpm of [4200, 6200]) {
+  for (const rpm of [4250, 5950]) {
     const point = computeEngineTelemetry(rpm, 1);
     assert.ok(point.fuelL100Instant > 0);
     near(point.fuelL100Instant, point.fuelLph * 100 / point.speedKmh);
     assert.equal(point.fuelL100, null);
   }
-  const cruise = computeEngineTelemetry(2400, 0.30);
+  const cruise = computeEngineTelemetry(DRIVE_TOUR_EXAMPLE.cruiseRpm, DRIVE_TOUR_EXAMPLE.cruiseLoad);
   assert.equal(cruise.fuelL100Instant, cruise.fuelL100);
   assert.equal(computeEngineTelemetry(850, 0).fuelL100Instant, null);
   assert.equal(computeEngineTelemetry(3000, 0).fuelL100Instant, 0);
@@ -42,7 +42,7 @@ test('Die Gangwahlanzeige steht direkt nach dem Gaspedal und vor den Voreinstell
   const positions = [...selector[1].matchAll(/<span data-gear="(\d)"[^>]*>([^<]+)<\/span>/g)];
   assert.deepEqual(positions.map(([, gear, label]) => [gear, label]),
     ['N', '1', '2', '3', '4', '5', '6'].map((label, gear) => [String(gear), label]));
-  assert.match(html, /Gaspedal ≈ Drosselklappenöffnung beim Ottomotor, entspricht hier der Last\./);
+  assert.match(html, /Das Pedal öffnet die Drosselklappe und stellt hier zugleich die Motorlast ein\./);
   assert.match(selector[1], /data-gear="5" class="active" aria-current="true"/);
 });
 
@@ -50,7 +50,7 @@ test('Die Referenzfahrt startet beim Cruise-Preset, schaltet hoch und erreicht i
   const frames = demos.equilibrium.frames;
   const start = frames[0];
   const end = frames.at(-1);
-  const cruise = computeEngineTelemetry(2400, 0.30);
+  const cruise = computeEngineTelemetry(DRIVE_TOUR_EXAMPLE.cruiseRpm, DRIVE_TOUR_EXAMPLE.cruiseLoad);
   assert.equal(start.rpm, cruise.rpm);
   assert.equal(start.load, cruise.load);
   assert.equal(start.speedKmh, cruise.speedKmh);
@@ -58,9 +58,13 @@ test('Die Referenzfahrt startet beim Cruise-Preset, schaltet hoch und erreicht i
   assert.equal(start.driveMode, 'cruise');
   assert.equal(frames[1].driveMode, 'accelerate');
   const rampEnd = frames.find(frame => frame.t >= DRIVE_SEQUENCE_EXAMPLE.loadRampS);
-  assert.equal(rampEnd.load, 0.7);
+  assert.equal(rampEnd.load, 0.75);
+  assert.equal(rampEnd.gear, 5);
+  assert.ok(rampEnd.powerKw > 1.8 * rampEnd.roadLoadKw);
+  assert.ok(demos.pedal.frames.at(-1).speedKmh > start.speedKmh + 3);
   assert.equal(end.gear, 6);
   assert.equal(end.driveMode, 'cruise');
+  assert.equal(Math.round(end.speedKmh), 152);
   assert.ok(Math.abs(end.powerKw - end.roadLoadKw) / end.roadLoadKw < 0.03);
   assert.equal(end.t, DRIVE_TOUR_EXAMPLE.durationS);
   const regular = computeDrivetrain(end.rpm, end.load, end.powerKw);
@@ -86,7 +90,8 @@ test('Die Referenzfahrt startet beim Cruise-Preset, schaltet hoch und erreicht i
 
 test('Die Kräftebilanz reagiert auf Gaswegnahme und respektiert Drehzahl- und Tempogrenzen', () => {
   const coast = simulateDriveSequence({
-    startSpeedKmh: speedKmh(2400, 5), startGear: 5, startLoad: 0.3, targetLoad: 0, durationS: 4, dtS: 0.1
+    startSpeedKmh: speedKmh(DRIVE_TOUR_EXAMPLE.cruiseRpm, 5), startGear: 5,
+    startLoad: DRIVE_TOUR_EXAMPLE.cruiseLoad, targetLoad: 0, durationS: 4, dtS: 0.1
   });
   assert.equal(coast.at(-1).driveMode, 'coast');
   assert.ok(coast.at(-1).speedKmh < coast[0].speedKmh);
@@ -102,8 +107,22 @@ test('Die Kräftebilanz reagiert auf Gaswegnahme und respektiert Drehzahl- und T
   }
 });
 
+test('Volllast beschleunigt in Gang eins und zwei und erreicht die Höchstgeschwindigkeit im fünften Gang', () => {
+  const frames = simulateDriveSequence({
+    startSpeedKmh: 20, startGear: 1, startLoad: 1, targetLoad: 1, durationS: 600, dtS: 0.1
+  });
+  assert.equal(frames[0].driveMode, 'accelerate');
+  assert.equal(frames.find(frame => frame.gear === 2)?.driveMode, 'accelerate');
+  const end = frames.at(-1);
+  assert.equal(end.gear, 5);
+  assert.equal(end.driveMode, 'cruise');
+  assert.ok(end.speedKmh >= 200 && end.speedKmh <= 220);
+  assert.ok(Math.abs(end.powerKw - end.roadLoadKw) < 0.01);
+});
+
 test('Bei 130 km/h sinken Drehzahl, BSFC und Streckenverbrauch mit höherem Gang', () => {
   const points = [3, 4, 5, 6].map(gear => constantSpeedPoint(130, gear));
+  assert.deepEqual(demos.gearing.frames, points);
   for (const [i, point] of points.entries()) {
     assert.ok(point.load > 0 && point.load <= 1);
     near(point.powerKw, point.roadLoadKw);
@@ -139,7 +158,7 @@ test('Die Tour hat neun Schritte und die Fahrbeispiele beziehen ihre Zahlen aus 
   for (const frame of demos.map.frames) {
     const point = computeEngineTelemetry(frame.rpm, frame.load, frame);
     for (const value of [
-      `${whole.format(point.bsfc)} g/kWh`, `η ${whole.format(point.thermalEff * 100)} %`,
+      `${whole.format(point.bsfc)} g/kWh`, `η ${decimal.format(point.thermalEff * 100)} %`,
       `${decimal.format(point.powerKW)} kW`, `${decimal.format(point.fuelL100Instant)} l/100km`
     ]) {
       assert.ok(demos.map.body.includes(value), value);
@@ -148,6 +167,19 @@ test('Die Tour hat neun Schritte und die Fahrbeispiele beziehen ihre Zahlen aus 
       near(point.fuelL100Instant, point.bsfc * point.powerKW / DRIVETRAIN_EXAMPLE.fuelDensityGL * 100 / frame.speedKmh);
     }
   }
+});
+
+test('Der Betriebspunkt bei 50 km/h braucht am wenigsten Kraftstoff pro Strecke und hat den niedrigsten Wirkungsgrad', () => {
+  const [optimum, lowSpeed, end] = demos.map.frames.map(frame => computeEngineTelemetry(frame.rpm, frame.load, frame));
+  assert.equal(lowSpeed.speedKmh, 50);
+  assert.equal(lowSpeed.driveMode, 'cruise');
+  assert.ok(lowSpeed.load < 0.2);
+  assert.ok(optimum.load >= 0.75);
+  for (const other of [optimum, end]) {
+    assert.ok(lowSpeed.bsfc > other.bsfc && lowSpeed.thermalEff < other.thermalEff);
+    assert.ok(lowSpeed.powerKW < other.powerKW && lowSpeed.fuelL100Instant < other.fuelL100Instant);
+  }
+  assert.ok(optimum.bsfc < end.bsfc && optimum.thermalEff > end.thermalEff);
 });
 
 // Kleines DOM mit Ereignissen und einer steuerbaren Render-Uhr für die echte ce-main.js.
@@ -191,7 +223,11 @@ function explainerUI() {
     setPointerCapture(id) { this.capturedPointer = id; }
     hasPointerCapture(id) { return this.capturedPointer === id; }
     getScreenCTM() { return { inverse: () => null }; }
-    set innerHTML(markup) { this.children = elements(markup); }
+    get innerHTML() { return this.markup; }
+    set innerHTML(markup) {
+      this.markup = markup;
+      this.children = elements(markup);
+    }
     querySelectorAll(selector) { return this.children.filter(el => matches(el, selector)); }
     querySelector(selector) { return this.querySelectorAll(selector)[0] ?? null; }
   }
@@ -285,13 +321,33 @@ function explainerUI() {
   };
 }
 
+test('Die Muschelkurve beschriftet das Modelloptimum und zeichnet die Fahrwiderstandslinien im fahrbaren Bereich', () => {
+  const svg = explainerUI().byId('ce-bsfc-map').innerHTML;
+  assert.match(svg, new RegExp(`>Optimum ${Math.round(computeBsfcContours([]).optimum.bsfc)}<`));
+  const roads = [...svg.matchAll(/data-road-gear="(\d)">\s*<path d="([^"]+)"/g)];
+  assert.deepEqual(roads.map(([, gear]) => Number(gear)), [4, 5, 6]);
+  for (const [, gear, path] of roads) {
+    const points = [...path.matchAll(/[ML]([\d.]+),([\d.]+)/g)];
+    assert.ok(points.length > 1);
+    for (const [, x, y] of points) {
+      const rpm = (Number(x) - 34) / 254 * ENGINE_SPECS.maxRpm;
+      const torqueNm = (172 - Number(y)) / 150 * 250;
+      assert.ok(Math.abs(roadLoadTorqueNm(rpm, Number(gear)) - torqueNm) < 0.05);
+      assert.ok(torqueNm <= fullTorqueNm(rpm) + 0.05);
+      assert.ok(rpm <= ENGINE_SPECS.redlineRpm + 0.2);
+    }
+    const firstRpm = (Number(points[0][1]) - 34) / 254 * ENGINE_SPECS.maxRpm;
+    assert.ok(Math.abs(roadLoadTorqueNm(firstRpm, Number(gear)) - fullTorqueNm(firstRpm)) < 0.05);
+  }
+});
+
 test('Regler und Voreinstellungen setzen Gangmarkierung, Übersetzung und Verbrauchstexte', () => {
   const { byId, positions, preset } = explainerUI();
   for (const [rpm, gear, gearInfo, fuel, fuelNote] of [
-    [2400, 5, '5. Gang · i = 0,85 · Achse 3,2 · Konstantfahrt', '6,3 l/100km', '6,7 l/h'],
+    [2400, 5, '5. Gang · i = 0,85 · Achse 3,2 · Konstantfahrt', '6,7 l/100km', '7,1 l/h'],
     [850, 0, 'N · Stillstand', '1,0 l/h', 'Leerlauf'],
-    [4200, 1, '1. Gang · i = 4,04 · Achse 3,2 · beschleunigt', '99,8 l/100km', 'momentan, beschleunigt · 39,1 l/h'],
-    [6200, 1, '1. Gang · i = 4,04 · Achse 3,2 · beschleunigt', '86,1 l/100km', 'momentan, beschleunigt · 49,8 l/h']
+    [4250, 1, '1. Gang · i = 4,04 · Achse 3,2 · beschleunigt', '77,6 l/100km', 'momentan, beschleunigt · 30,8 l/h'],
+    [5950, 1, '1. Gang · i = 4,04 · Achse 3,2 · beschleunigt', '77,4 l/100km', 'momentan, beschleunigt · 43,0 l/h']
   ]) {
     preset(rpm).emit('click');
     assert.equal(byId('ce-gear-info').textContent, gearInfo);
@@ -316,7 +372,7 @@ test('Regler und Voreinstellungen setzen Gangmarkierung, Übersetzung und Verbra
 
 test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigation und Beenden die Kontrolle zurück', () => {
   const { byId, dot, preset, view, scale, window, advance } = explainerUI();
-  preset(4200).emit('click');
+  preset(4250).emit('click');
   view('normal').emit('click');
   scale(0.38).emit('click');
   const rpm = byId('ce-rpm-slider');
@@ -326,7 +382,7 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   const checkRestored = () => {
     advance(10000);
     assert.ok(byId('ce-tour-card').classList.contains('hidden'));
-    assert.equal(rpm.value, '4200');
+    assert.equal(rpm.value, '4250');
     assert.equal(load.value, '100');
     assert.ok(view('normal').classList.contains('active'));
     assert.ok(scale(0.38).classList.contains('active'));
@@ -337,7 +393,7 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   dot(6).emit('click');
   const startMarker = marker.getAttribute('transform');
   advance(1200);
-  assert.equal(load.value, '70');
+  assert.equal(load.value, '75');
   assert.equal(byId('ce-tel-gear').textContent, '5. Gang');
   assert.equal(byId('ce-tel-gear-note').textContent, 'beschleunigt');
   assert.notEqual(marker.getAttribute('transform'), startMarker);
@@ -346,7 +402,7 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   rpm.emit('input');
   advance(9000);
   assert.equal(rpm.value, '2800');
-  assert.equal(byId('ce-tel-gear').textContent, computeEngineTelemetry(2800, 0.7).gearLabel);
+  assert.equal(byId('ce-tel-gear').textContent, computeEngineTelemetry(2800, 0.75).gearLabel);
 
   byId('ce-tour-next').emit('click');
   assert.equal(byId('ce-tel-gear').textContent, '5. Gang');
@@ -356,7 +412,7 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   assert.equal(byId('ce-tel-gear-note').textContent, 'Konstantfahrt');
   assert.ok(byId('ce-tour-live').textContent.startsWith(`${whole.format(demos.equilibrium.frames.at(-1).speedKmh)} km/h`));
   byId('ce-tour-prev').emit('click');
-  assert.equal(load.value, '30');
+  assert.equal(load.value, '38');
 
   dot(8).emit('click');
   assert.equal(byId('ce-tel-gear').textContent, '3. Gang');
@@ -394,16 +450,27 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   }
 });
 
-test('Der öffentliche Release v0.3.0 steht vor dem unveränderten Eintrag für v0.2.0', () => {
-  const [release, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
-  assert.equal(release.version, '0.3.0');
+test('Der öffentliche Patch v0.3.1 steht vor den unveränderten Einträgen für v0.3.0 und v0.2.0', () => {
+  const [release, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  assert.equal(release.version, '0.3.1');
   assert.equal(release.date, '2026-11-27');
-  assert.equal(release.type, 'feature');
+  assert.equal(release.type, 'patch');
   assert.equal(release.author, 'Michi');
   assert.equal(release.model, 'Sol 6.2');
-  assert.ok(release.highlights.length >= 3 && release.highlights.length <= 5);
+  assert.ok(release.highlights.length >= 2 && release.highlights.length <= 3);
   assert.doesNotMatch([release.title, release.author, release.model, ...release.highlights].join(' '),
     /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?)\b/i);
+  assert.deepEqual(feature, {
+    app: 'combustion_engine', version: '0.3.0', date: '2026-11-27', type: 'feature', title: 'Getriebe und Tour zur Fahrlogik',
+    author: 'Michi', model: 'Sol 6.2',
+    highlights: [
+      'Die Gangwahlanzeige unter dem Gaspedal zeigt den aktiven Gang und seine Übersetzung.',
+      'Der Momentanverbrauch erscheint auch beim Beschleunigen und im Schub in l/100km.',
+      'Die Tour zeigt live, wie sich Gaspedal, Fahrwiderstand und Hochschalten auf die Fahrt auswirken.',
+      'Vergleiche verschiedene Gänge bei gleichem Tempo und lerne, die Muschelkurve zu lesen.'
+    ]
+  });
+  assert.match(html, /id="ce-version-btn"[^>]*>v0\.3\.1</);
   assert.equal(previous.version, '0.2.0');
   assert.deepEqual(previous.highlights, [
     'Mit dem Gaspedal stellst du die Motorlast ein.',

@@ -9,8 +9,8 @@ export const ENGINE_SPECS = {
   minRunningRpm: 200,
   redlineRpm: 6500,
   maxRpm: 7000,
-  maxTorqueNm: 265,
-  maxPowerKW: 150
+  maxTorqueNm: 200,
+  maxPowerKW: 109
 };
 
 // Beispielwerte einer 6-Gang-Wandlerautomatik und eines Kompaktwagens.
@@ -47,8 +47,8 @@ export const DRIVE_SEQUENCE_EXAMPLE = {
 
 export const DRIVE_TOUR_EXAMPLE = {
   cruiseRpm: 2400,
-  cruiseLoad: 0.30,
-  targetLoad: 0.70,
+  cruiseLoad: 0.38,
+  targetLoad: 0.75,
   durationS: 260,
   dtS: 0.05,
   pedalDriveS: 3.5,
@@ -86,30 +86,26 @@ export function fullTorqueNm(rpmInput) {
   if (rpm < minRunningRpm) return 0;
 
   const x = rpm / 1000;
-  const lowRise = 1 / (1 + Math.exp(-(x - 1.35) * 2.2));
-  const peakBell = Math.exp(-Math.pow((x - 4.15) / 2.65, 2));
-  const highDrop = rpm > 5600 ? Math.max(0.58, 1 - Math.pow((x - 5.6) / 2.2, 2) * 0.42) : 1;
-  const torqueNm = (128 + 137 * peakBell) * (0.62 + 0.38 * lowRise) * highDrop;
-
-  if (rpm > redlineRpm) {
-    const over = (rpm - redlineRpm) / 500;
-    return torqueNm * Math.max(0.45, 1 - over * 0.48);
-  }
-  if (rpm < 1200) return torqueNm * (0.45 + 0.55 * ((rpm - minRunningRpm) / 1000));
-  return torqueNm;
+  const lowRise = smoothstep(minRunningRpm, 2000, rpm);
+  const peakOffset = (x - 4.25) / 2.65;
+  const torqueNm = 125 + 75 * Math.exp(-(peakOffset ** 2));
+  const highDrop = 1 - 0.12 * smoothstep(5900, 7200, rpm);
+  const limiter = 1 - 0.48 * smoothstep(redlineRpm, maxRpm, rpm);
+  return torqueNm * lowRise * highDrop * limiter;
 }
 
 function fuelModel(rpm, load, bmep) {
   const x = rpm / 1000;
-  const fmep = 0.7 + 0.10 * x + 0.010 * x ** 2;
-  const pmep = 1.7 * (1 - load) ** 1.6;
-  const etaI = 0.398 - 0.030 * ((x - 2.6) / 3.2) ** 2;
-  const knock = 1 - 0.07 * smoothstep(0.82, 1, load)
-    - 0.012 * smoothstep(4.8, 6.4, x) * smoothstep(0.6, 1, load);
+  const fmep = 0.78 + 0.08 * x + 0.014 * x ** 2;
+  const pmep = 1.53 * (1 - load ** 1.7);
+  const etaI = 0.404 - 0.030 * ((x - 2.7) / 3.2) ** 2;
+  // Zündwinkelrücknahme bei hoher Last, zusätzlich Anfettung bei hoher Drehzahl und Last.
+  const knock = 1 - 0.085 * smoothstep(0.78, 1, load)
+    - 0.035 * smoothstep(5, 6.5, x) * smoothstep(0.8, 1, load);
   return { totalPressureBar: bmep + fmep + pmep, indicatedEfficiency: etaI * knock };
 }
 
-// BSFC für einen 2,0-Liter-Turbo-Benziner: vereinfachtes Beispielkennfeld, keine Messdaten.
+// BSFC für einen 2,0-Liter-Saugbenziner mit Saugrohreinspritzung: vereinfachtes Beispielkennfeld, keine Messdaten.
 export function bsfcMap(rpmInput, loadInput) {
   const rpm = clamp(rpmInput, ENGINE_SPECS.maxRpm);
   const load = clamp(loadInput, 1);
@@ -133,8 +129,8 @@ function operatingStatus(rpm, load) {
   }
   if (rpm < 1200) return ['idle', 'Niedrige Drehzahl'];
   if (load < 0.9) return ['cruise', 'Teillast'];
-  if (rpm >= 3400 && rpm <= 5000) return ['peakTorque', 'Volllast · max. Drehmoment-Bereich'];
-  if (rpm >= 5500) return ['peakPower', 'Volllast · Nennleistungs-Bereich'];
+  if (rpm >= 3800 && rpm <= 4700) return ['peakTorque', 'Volllast · max. Drehmoment-Bereich'];
+  if (rpm >= 5700) return ['peakPower', 'Volllast · Nennleistungs-Bereich'];
   return ['cruise', 'Volllast'];
 }
 
@@ -349,8 +345,8 @@ function traceContourLines(nodes) {
   return lines;
 }
 
-export function computeBsfcContours(levels = [235, 250, 270, 300, 350, 450]) {
-  const rpmStep = 100;
+export function computeBsfcContours(levels = [250, 260, 280, 300, 350, 450]) {
+  const rpmStep = 25;
   const loadCells = 50;
   const { minRunningRpm, maxRpm } = ENGINE_SPECS;
   const rpmCells = (maxRpm - minRunningRpm) / rpmStep;
@@ -447,7 +443,7 @@ export function computeDriveTourDemos(optimum = computeBsfcContours([]).optimum)
   const fuel = value => `${decimal.format(value)} l/100km`;
   const bsfc = value => `${whole.format(value)} g/kWh`;
   const metrics = ({ bsfc: specific, thermalEff, powerKW, fuelL100Instant }) =>
-    `${bsfc(specific)}, η ${load(thermalEff)}, ${power(powerKW)}, ${fuel(fuelL100Instant)}`;
+    `${bsfc(specific)}, η ${decimal.format(thermalEff * 100)} %, ${power(powerKW)}, ${fuel(fuelL100Instant)}`;
   const endPoint = computeEngineTelemetry(end.rpm, end.load, end);
   const lowPoint = computeEngineTelemetry(lowSpeed.rpm, lowSpeed.load, lowSpeed);
   const first = comparisons[0];
@@ -457,7 +453,7 @@ export function computeDriveTourDemos(optimum = computeBsfcContours([]).optimum)
     pedal: {
       frames: pedalFrames, playbackS: pedalDriveS, leadInS: pedalLeadInS, holdS: pedalHoldS,
       resetOnFinish: true,
-      body: `Das Pedal geht von ${load(start.load)} auf ${load(rampEnd.load)}. Die Drosselklappe öffnet, mehr Luft und Kraftstoff gelangen in die Zylinder. Das Nutzmoment steigt von ${torque(start.torqueNm)} auf ${torque(rampEnd.load * fullTorqueNm(rampEnd.rpm))}. Bei ${power(rampEnd.powerKw)} Nutzleistung und ${power(rampEnd.roadLoadKw)} Fahrwiderstand beschleunigt das Auto.`
+      body: `Das Pedal geht von ${load(start.load)} auf ${load(rampEnd.load)}. Die Drosselklappe lässt mehr Luft durch, und die Saugrohreinspritzung dosiert mehr Kraftstoff. Das Nutzmoment steigt von ${torque(start.torqueNm)} auf ${torque(rampEnd.load * fullTorqueNm(rampEnd.rpm))}. Bei ${power(rampEnd.powerKw)} Nutzleistung und ${power(rampEnd.roadLoadKw)} Fahrwiderstand beschleunigt das Auto.`
     },
     equilibrium: {
       frames, playbackS: drivePlaybackS, timeExponent: drivePlaybackExponent,
@@ -469,7 +465,7 @@ export function computeDriveTourDemos(optimum = computeBsfcContours([]).optimum)
     },
     map: {
       frames: [optimumFrame, lowSpeed, end], playbackS: 3 * comparisonPointS,
-      body: `Im Optimum ist die Last hoch und der spezifische Verbrauch gering (${metrics(optimumPoint)} momentan). Bei ${speed(lowSpeed.speedKmh)} ist der Wirkungsgrad geringer (${metrics(lowPoint)}). Weil nur wenig Leistung nötig ist, sinkt der Streckenverbrauch. Zum Vergleich die Konstantfahrt bei ${speed(end.speedKmh)} (${metrics(endPoint)}).`
+      body: `Im Optimum ist die Last hoch und der spezifische Verbrauch am niedrigsten (${metrics(optimumPoint)} momentan). Bei ${speed(lowSpeed.speedKmh)} ist die Drosselklappe nur wenig geöffnet und der Wirkungsgrad geringer (${metrics(lowPoint)}). Weil die Fahrt dort so wenig Leistung erfordert, ist der Streckenverbrauch von den drei Betriebspunkten am niedrigsten. Zum Vergleich die Konstantfahrt bei ${speed(end.speedKmh)} (${metrics(endPoint)}).`
     }
   };
 }
@@ -676,9 +672,9 @@ export const ENGINE_PARTS = [
     shortLabel: 'Ansaugtrakt',
     category: 'Gaswechsel',
     energyStage: 'Frischluft + Kraftstoff-Gemisch',
-    spec: '4 Schwingrohre · Drosselklappe · Einspritzdüsen',
+    spec: '4 Schwingrohre · Drosselklappe · Saugrohreinspritzung',
     description:
-      'Über den Ansaugtrakt strömt kühle Luft – dosiert durch die Drosselklappe – gleichmäßig zu allen vier Zylindern und mischt sich mit fein zerstäubtem Kraftstoff zu einem zündfähigen Gemisch.',
+      'Die Drosselklappe dosiert die Luft, die über das Sammelrohr in die vier Ansaugkanäle strömt. Eine gemeinsame Kraftstoffleiste versorgt vier Einspritzventile. Sie spritzen Benzin vor den Einlassventilen in die Ansaugkanäle, wo es sich mit der Luft mischt.',
     anchor: [0.0, 2.25, -1.75],
     explodeOffset: [0, 2.1, -2.55],
     cameraPos: [-5.8, 3.8, -6.5],
@@ -743,7 +739,7 @@ export const ENGINE_TOUR_STEPS = [
     cameraPos: [5.4, 2.4, 6.8],
     cameraTarget: [-0.8, 1.2, 0.0],
     body:
-      'Die blauen Einlassventile werden von der Nockenwelle geöffnet, während sich der Kolben abwärts bewegt. Durch den Unterdruck strömt kühles Luft-Kraftstoff-Gemisch (blau) in den wachsenden Zylinderraum ein.'
+      'Die Nockenwelle öffnet die blauen Einlassventile, während der Kolben abwärtsläuft. Der dabei entstehende Unterdruck saugt das Luft-Kraftstoff-Gemisch (blau) aus dem Ansaugkanal in den Zylinder.'
   },
   {
     step: 2,

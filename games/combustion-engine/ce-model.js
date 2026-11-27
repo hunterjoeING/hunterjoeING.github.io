@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ENGINE_PARTS, CYLINDER_PHASE_OFFSETS, getCylinderStroke } from './ce-data.js?v=0.3.0';
+import { ENGINE_PARTS, CYLINDER_PHASE_OFFSETS, getCylinderStroke } from './ce-data.js?v=0.3.1';
 
 const CYL_X = [-2.1, -0.7, 0.7, 2.1];
 const Y_CRANK = -1.45;
@@ -628,7 +628,7 @@ export function createCombustionEngineModel() {
   });
 
   // =========================================================================
-  // 9. ANSAUGKRÜMMER & DROSSELKLAPPE (-Z SEITE)
+  // 9. ANSAUGKRÜMMER, DROSSELKLAPPE & SAUGROHREINSPRITZUNG (-Z SEITE)
   // =========================================================================
   const intakeGroup = registerPartGroup('intakeManifold', new THREE.Group());
 
@@ -651,6 +651,16 @@ export function createCombustionEngineModel() {
   throttlePlate.position.copy(throttleBody.position);
   intakeGroup.add(throttlePlate);
 
+  // Gemeinsame Kraftstoffleiste und je ein Einspritzventil vor dem Einlasskanal im Kopf.
+  const fuelRail = new THREE.Mesh(
+    new THREE.BoxGeometry(CYL_X.at(-1) - CYL_X[0] + 0.36, 0.14, 0.18),
+    mats.machinedSteel.clone()
+  );
+  fuelRail.position.set(0, 2.89, -1.32);
+  intakeGroup.add(fuelRail);
+  const injectorGeometry = new THREE.CylinderGeometry(0.095, 0.055, 0.43, 12);
+  const injectorMaterial = mats.chainGold.clone();
+
   // 4 gebogene Ansaug-Schwingrohre
   CYL_X.forEach(cx => {
     const curve = new THREE.CatmullRomCurve3([
@@ -660,6 +670,11 @@ export function createCombustionEngineModel() {
     ]);
     const runner = new THREE.Mesh(new THREE.TubeGeometry(curve, 18, 0.18, 12, false), mats.intakeMat);
     intakeGroup.add(runner);
+
+    const injector = new THREE.Mesh(injectorGeometry, injectorMaterial);
+    injector.position.set(cx, 2.66, -1.25);
+    injector.rotation.x = -0.32;
+    intakeGroup.add(injector);
   });
 
   // =========================================================================

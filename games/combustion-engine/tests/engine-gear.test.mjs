@@ -4,6 +4,7 @@ import test from 'node:test';
 import {
   computeEngineTelemetry,
   DRIVETRAIN_EXAMPLE,
+  DRIVE_TOUR_EXAMPLE,
   roadLoadPowerKw,
   roadLoadTorqueNm,
   speedKmh
@@ -34,25 +35,27 @@ test('Fahrwiderstand am Motor ist als Leistung und als Moment konsistent', () =>
 });
 
 test('Cruise passt zum fünften Gang und der Verbrauch stimmt mit dem Kennfeld überein', () => {
-  const point = computeEngineTelemetry(2400, 0.30);
+  const point = computeEngineTelemetry(DRIVE_TOUR_EXAMPLE.cruiseRpm, DRIVE_TOUR_EXAMPLE.cruiseLoad);
   assert.equal(point.gear, 5);
   assert.equal(point.gearLabel, '5. Gang');
   assert.equal(point.driveMode, 'cruise');
   assert.equal(point.driveModeLabel, 'Konstantfahrt');
   near(point.speedKmh, 106.6, 0.5);
-  near(point.fuelL100, 6.3, 0.3);
-  near(point.fuelLph, 6.7, 0.3);
+  near(point.fuelL100, 6.7, 0.3);
+  near(point.fuelLph, 7.1, 0.3);
   near(point.fuelL100, point.bsfc * point.powerKW / (745 * point.speedKmh) * 100, 1e-6);
   near(point.roadLoadKw, roadLoadPowerKw(point.speedKmh / 3.6), 1e-9);
-  near(point.torqueNm, roadLoadTorqueNm(2400, 5), 2);
+  near(point.torqueNm, roadLoadTorqueNm(point.rpm, 5), 1);
 });
 
 test('Hohe Teillast bleibt mit Leistungsreserve im sechsten Gang', () => {
-  const point = computeEngineTelemetry(2800, 0.85);
+  const point = computeEngineTelemetry(2350, 0.85);
   assert.equal(point.gear, 6);
   assert.equal(point.driveMode, 'cruise');
-  near(point.speedKmh, 153, 1);
-  assert.equal(computeEngineTelemetry(2800, 0.89).driveMode, 'accelerate');
+  near(point.speedKmh, 128, 1);
+  const ratio = point.powerKW / point.roadLoadKw;
+  assert.ok(ratio > DRIVETRAIN_EXAMPLE.maxCruiseRatio && ratio <= DRIVETRAIN_EXAMPLE.topGearCruiseRatio);
+  assert.equal(computeEngineTelemetry(2350, 0.89).driveMode, 'accelerate');
 });
 
 test('Leerlauf verbraucht Kraftstoff im Stand, der ausgeschaltete Motor verbraucht nichts', () => {
@@ -65,14 +68,15 @@ test('Leerlauf verbraucht Kraftstoff im Stand, der ausgeschaltete Motor verbrauc
     assert.equal(point.fuelL100, null);
     assert.equal(point.roadLoadKw, null);
   }
-  near(computeEngineTelemetry(850, 0).fuelLph, 1, 0.3);
+  const idleFuel = computeEngineTelemetry(850, 0).fuelLph;
+  assert.ok(idleFuel >= 0.8 && idleFuel <= 1.0);
   assert.equal(computeEngineTelemetry(199, 1).fuelLph, 0);
   assert.equal(computeEngineTelemetry(1199, 0.029).driveMode, 'neutral');
   assert.equal(computeEngineTelemetry(1200, 0.029).driveMode, 'coast');
 });
 
 test('Volllast wählt den niedrigsten geeigneten Gang, beim Anfahren auch unter 10 km/h', () => {
-  for (const [rpm, speed, fuel] of [[4200, 39, 39], [6200, 58, 50]]) {
+  for (const [rpm, speed, fuel] of [[4250, 40, 30.8], [5950, 56, 43.0]]) {
     const point = computeEngineTelemetry(rpm, 1);
     assert.equal(point.driveMode, 'accelerate');
     assert.equal(point.driveModeLabel, 'beschleunigt');
@@ -85,6 +89,9 @@ test('Volllast wählt den niedrigsten geeigneten Gang, beim Anfahren auch unter 
   assert.equal(launch.driveMode, 'accelerate');
   assert.equal(launch.gear, 1);
   assert.ok(launch.speedKmh < 10);
+  const second = computeEngineTelemetry(1700, 1);
+  assert.equal(second.driveMode, 'accelerate');
+  assert.equal(second.gear, 2);
 });
 
 test('Schub wählt den höchsten geeigneten Gang und schaltet Kraftstoff nur unter 3 % ab', () => {
@@ -134,7 +141,7 @@ test('Die drei neuen Kacheln enthalten befüllte Telemetriefelder für den Start
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   for (const [id, value] of [
     ['gear', '5. Gang'], ['gear-note', 'Konstantfahrt'], ['speed', '106 km/h'],
-    ['fuel', '6,3 l/100km'], ['fuel-note', '6,7 l/h']
+    ['fuel', '6,7 l/100km'], ['fuel-note', '7,1 l/h']
   ]) {
     assert.ok(html.includes(`id="ce-tel-${id}">${value}</div>`), id);
   }
