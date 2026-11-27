@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- (keine)
+- 🔒 in Arbeit: 2-Etagen-Gondelstation v0.2.0 (Funitel-Doppelseil & 4 Vertikal-Riesenräder) · Joe / Antigravity · `feat/gondola-funitel-v0.2` · 2026-11-27
 
 ---
 
