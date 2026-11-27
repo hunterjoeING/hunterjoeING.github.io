@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- (keine)
+- 🔒 in Arbeit: `games/big-boy/`, Hub/Navigation/Releases (`index.html`, `shared/arcade.js`, `shared/burger-menu.js`, `shared/releases.js`, `cloudflare-worker/worker.js`, `sitemap.xml`) · Joe / Antigravity · `feat/big-boy-3d` · 2026-11-27
 
 ---
 
