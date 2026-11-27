@@ -4,10 +4,10 @@ import {
   ENGINE_CONCEPTS,
   DEFAULT_ENGINE_CONFIG,
   buildEngineProfile
-} from './ce-variants.js?v=0.5.1';
+} from './ce-variants.js?v=0.5.2';
 
-import { MAX_LIFT, camLift } from './ce-mechanics.js?v=0.5.1';
-import { flowParts, flowTour } from './ce-flow-guide.js?v=0.5.1';
+import { MAX_LIFT, camLift } from './ce-mechanics.js?v=0.5.2';
+import { flowParts, flowTour } from './ce-flow-guide.js?v=0.5.2';
 
 export { ENGINE_LAYOUTS, ENGINE_CONCEPTS, DEFAULT_ENGINE_CONFIG, buildEngineProfile };
 
@@ -480,6 +480,7 @@ export function computeDriveTourDemos(optimum, profile = DEFAULT_PROFILE) {
 
 export const IGNITION_WINDOW_DEG = 54;
 export const MIN_IGNITION_SECONDS = 0.19;
+export const SPARK_SECONDS = 0.080;
 
 export function ignitionWindow(speed, normalSpeed) {
   return Math.max(IGNITION_WINDOW_DEG, MIN_IGNITION_SECONDS * Math.max(speed, normalSpeed));
@@ -488,7 +489,7 @@ export function ignitionWindow(speed, normalSpeed) {
 /**
  * Liefert den exakten 4-Takt-Zustand für einen Zylinder bei Kurbelwinkel crankDeg.
  */
-export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE, out = {}, windowDeg = IGNITION_WINDOW_DEG, advanceDeg) {
+export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE, out = {}, windowDeg = IGNITION_WINDOW_DEG, advanceDeg, sparkWindowDeg = 12) {
   const spec = profile.layout.cylinderSpecs[cylIndex];
   const offset = spec ? spec.phaseDeg : (CYLINDER_PHASE_OFFSETS[cylIndex] || 0);
   const cycle = (((crankDeg + offset) % 720) + 720) % 720;
@@ -500,7 +501,6 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE,
   let key = 'intake';
   let intakeLift = 0;
   let exhaustLift = 0;
-  let sparkIntensity = 0;
   let injectionIntensity = 0;
   let flameIntensity = 0;
   let intakeMist = 0;
@@ -526,9 +526,6 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE,
       if (cycle > 344) {
         injectionIntensity = (cycle - 344) / 16;
       }
-    } else if (cycle > profile.concept.ignitionStartDeg) {
-      // Otto-Frühzündung kurz vor OT (ca. 350°–360°)
-      sparkIntensity = (cycle - profile.concept.ignitionStartDeg) / (360 - profile.concept.ignitionStartDeg);
     }
   } else if (cycle < 540) {
     index = 2;
@@ -540,8 +537,6 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE,
       if (cycle < 382) {
         injectionIntensity = 1 - (cycle - 360) / 22;
       }
-    } else if (cycle < 376) {
-      sparkIntensity = 1 - (cycle - 360) / 16;
     }
     // Intensive Explosionsflamme direkt nach OT, abklingend bei Expansion
     flameIntensity = Math.pow(Math.max(0, 1 - t * 1.15), 1.45);
@@ -563,7 +558,11 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE,
   out.short = short;
   out.intakeLift = intakeLift;
   out.exhaustLift = exhaustLift;
-  out.sparkIntensity = sparkIntensity;
+  const beforeFlame = profile.concept.ignitionStartDeg - cycle;
+  if (isDiesel || advanceDeg !== 0 || out.sparkIntensity === undefined) {
+    out.sparkIntensity = !isDiesel && beforeFlame > 0 && beforeFlame <= sparkWindowDeg
+      ? 0.60 + 0.40 * Math.sin(Math.PI * beforeFlame / sparkWindowDeg) : 0;
+  }
   out.injectionIntensity = injectionIntensity;
   const sinceIgnition = (cycle - profile.concept.ignitionStartDeg + 720) % 720;
   // Interpolate the frame that crosses ignition. During an ongoing burn integrate

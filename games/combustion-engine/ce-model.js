@@ -3,22 +3,22 @@ import {
   DEFAULT_PROFILE,
   getEnginePartsForProfile,
   getCylinderStroke,
-  ignitionWindow,
+  ignitionWindow, SPARK_SECONDS,
   IGNITION_WINDOW_DEG
-} from './ce-data.js?v=0.5.1';
-import { createExplosionSystem } from './ce-explosion.js?v=0.5.1';
+} from './ce-data.js?v=0.5.2';
+import { createExplosionSystem } from './ce-explosion.js?v=0.5.2';
 
 import { BASE_RADIUS, BUCKET_TOP, CAM_Y, CAM_Z, MAX_LIFT, SEAT_Y as LOCAL_Y_ROOF,
   CRANK_RADIUS as R_CRANK, ROD_LENGTH as L_ROD, CROWN_OFFSET as PISTON_CROWN_OFFSET,
   BLOCK_END_MARGIN, CAM_OVERHANG, END_WALL_WIDTH, NOSE_RADIUS, WHEEL_WIDTH,
-  WRIST_PIN_RADIUS, camOutline, displayCrankSpeed, intakeSign, timingMounts } from './ce-mechanics.js?v=0.5.1';
-import { buildConrods, installCrankshaft } from './ce-crankshaft.js?v=0.5.1';
-import { createIgnitionKernel, updateIgnition } from './ce-ignition.js?v=0.5.1';
-import { installBelts } from './ce-belt.js?v=0.5.1';
-import { buildPlumbing } from './ce-plumbing.js?v=0.5.1';
-import { installDucts } from './ce-ducts.js?v=0.5.1';
-import { createTracers } from './ce-tracers.js?v=0.5.1';
-import { throttleAngle } from './ce-throttle.js?v=0.5.1';
+  WRIST_PIN_RADIUS, camOutline, displayCrankSpeed, intakeSign, timingMounts } from './ce-mechanics.js?v=0.5.2';
+import { buildConrods, installCrankshaft } from './ce-crankshaft.js?v=0.5.2';
+import { createFlame, createSpark, PLUG_TIP_Y, updateIgnition, updateSpark } from './ce-ignition.js?v=0.5.2';
+import { installBelts } from './ce-belt.js?v=0.5.2';
+import { buildPlumbing, DIESEL_NOZZLE_Y } from './ce-plumbing.js?v=0.5.2';
+import { installDucts } from './ce-ducts.js?v=0.5.2';
+import { createTracers } from './ce-tracers.js?v=0.5.2';
+import { throttleAngle } from './ce-throttle.js?v=0.5.2';
 
 const R_BORE = 0.54;
 const BOWL_EDGE_RADIUS = 0.055;
@@ -440,14 +440,14 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     const pistonNodes = [];
     const gasMeshes = [];
-    const ignition = [];
+    const ignition = [], sparks = [];
 
     const chamberGeo = new THREE.CylinderGeometry(R_BORE - 0.03, R_BORE - 0.03, 1.0, 22);
     const pistonBodyGeo = new THREE.CylinderGeometry(R_BORE - 0.025, R_BORE - 0.03, 0.76, 26);
     const pistonRingGeo = new THREE.TorusGeometry(R_BORE - 0.015, 0.018, 8, 24);
     const pistonPinGeo = new THREE.CylinderGeometry(WRIST_PIN_RADIUS, WRIST_PIN_RADIUS, 0.82, 14);
-    const kernelGeometry = new THREE.SphereGeometry(1, 24, 14);
-    const ignitionLight = new THREE.PointLight(isDiesel ? 0xffce74 : 0xffab52, 0, 1.2, 1);
+    const flameGeometry = new THREE.CylinderGeometry(1, 1, 2, 32);
+    const ignitionLight = new THREE.PointLight(0xffffff, 0, 1.2, 1);
     ignitionLight.name = 'ignitionLight';
     assemblyRoot.add(ignitionLight);
 
@@ -500,10 +500,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       gf.add(gasMesh);
       gasMeshes.push({ mesh: gasMesh, mat: gasMat, spec });
 
-      const flash = createIgnitionKernel(kernelGeometry, isDiesel);
+      const flash = createFlame(flameGeometry, isDiesel);
       flash.position.x = spec.x;
       flash.renderOrder = 1;
-      flash.name = isDiesel ? 'sprayIgnition' : 'spark';
+      flash.name = isDiesel ? 'sprayIgnition' : 'petrolFlame';
+      flash.material.uniforms.seed.value = spec.index * 1.67;
       flash.visible = false;
       gf.add(flash);
       ignition.push(flash);
@@ -681,6 +682,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const ignitionPart = isDiesel ? 'commonRail' : 'sparkPlugs';
     const plugsGroup = registerPartGroup(ignitionPart, new THREE.Group(), plugAnchor);
     const plugBankFrames = createBankFrames(plugsGroup);
+    const sparkTemplate = isDiesel ? null : createSpark(getPartMat(ignitionPart, 'machinedSteel'));
 
     cylSpecs.forEach(spec => {
       const bf = plugBankFrames[spec.bankIndex];
@@ -701,7 +703,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
         const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.032, 0.56, 12), getPartMat(ignitionPart, 'chainGold', true));
         cutawayGhostMeshes.push(nozzle);
-        nozzle.position.y = -0.60;
+        nozzle.position.y = DIESEL_NOZZLE_Y - unit.position.y + 0.28;
         unit.add(nozzle);
 
         // Glühkerze leicht schräg daneben
@@ -725,8 +727,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         unit.add(thread);
 
         const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.16, 8), getPartMat(ignitionPart, 'chainGold'));
-        tip.position.y = -0.80;
-        unit.add(tip);
+        tip.position.y = PLUG_TIP_Y - unit.position.y + 0.08;
+        const electrode = sparkTemplate.clone();
+        electrode.position.y = PLUG_TIP_Y - unit.position.y;
+        sparks.push(electrode.getObjectByName('spark'));
+        unit.add(tip, electrode);
       }
       bf.add(unit);
     });
@@ -798,6 +803,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       tagPart(group, id);
     }
 
+    for (const spark of sparks) for (const effect of spark.children) {
+      effect.castShadow = false;
+      effect.raycast = () => {};
+    }
+
     built = {
       profile,
       assemblyRoot,
@@ -822,6 +832,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       gasMeshes,
       ignition,
       ignitionLight,
+      sparks,
       moving,
       flowGroup,
       tracers,
@@ -1000,6 +1011,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const visualDegPerSec = normalDegPerSec * (effectiveScale / 0.16);
     const crankSpeed = isOverrev ? visualDegPerSec : displayCrankSpeed(visualDegPerSec);
     const windowDeg = isOverrev ? IGNITION_WINDOW_DEG : ignitionWindow(crankSpeed, displayCrankSpeed(normalDegPerSec));
+    const sparkWindowDeg = SPARK_SECONDS * Math.max(crankSpeed, displayCrankSpeed(normalDegPerSec));
     const advanceDeg = crankSpeed * clampedDt;
     state.crankClock += advanceDeg;
     state.crankDeg = state.crankClock % 720;
@@ -1031,9 +1043,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     // 3) Exakte 4-Takt-Kinematik pro Zylinder in Bank-Koordinaten
     const strokes = built.strokes;
     built.ignitionLight.intensity = 0;
+    const revealGap = state.viewMode === 'cutaway' || state.viewMode === 'xray';
     for (let i = 0; i < built.cylSpecs.length; i++) {
       const spec = built.cylSpecs[i];
-      const stroke = getCylinderStroke(state.crankDeg, i, state.profile, strokes[i], windowDeg, advanceDeg);
+      const stroke = getCylinderStroke(state.crankDeg, i, state.profile, strokes[i], windowDeg, advanceDeg, sparkWindowDeg);
+      if (!built.isDiesel) updateSpark(built.sparks[i], isBlown ? 0 : stroke.sparkIntensity, revealGap, built.ignitionLight);
 
       const thetaLocal = THREE.MathUtils.degToRad(state.crankDeg + spec.crankPinAngleDeg - spec.bankAngleDeg);
       const localZc = R_CRANK * Math.sin(thetaLocal);
@@ -1074,7 +1088,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
           gm.mat.color.copy(tmpColor);
           gm.mat.opacity = 0.045 + t * 0.065;
         } else if (stroke.key === 'power') {
-          tmpColor.copy(built.isDiesel ? colorDieselFlame : colorFlame).lerp(colorCompress, 0.24);
+          tmpColor.copy(colorExhaust).lerp(built.isDiesel ? colorDieselFlame : colorFlame, stroke.flameIntensity);
           gm.mat.color.copy(tmpColor);
           gm.mat.opacity = 0.055 + stroke.flameIntensity * 0.24;
         } else {
@@ -1084,7 +1098,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       }
 
       const crownTop = built.isDiesel ? localYp + BOWL_EDGE_TOP : crownY;
-      updateIgnition(built.ignition[i], stroke, crownTop, R_BORE, !isBlown, built.ignitionLight);
+      updateIgnition(built.ignition[i], stroke, crownTop, R_BORE, built.isDiesel, !isBlown, built.ignitionLight);
     }
 
     built.flowGroup.visible = state.showFlow && !isBlown;

@@ -1,8 +1,9 @@
 import * as THREE from 'three';
+import { LANE_RADIUS } from './ce-lanes.js?v=0.5.2';
 
 // The boundary of a cast Y/tee fitting is the convex hull of its port rings
 // with the coplanar end caps omitted. Each port reuses the duct's actual rim.
-export function junctionGeometry(rings) {
+export function junctionGeometry(rings, ports = []) {
   const points = rings.flat();
   const n = rings[0].length;
   const tetra = [0, Math.floor(n / 3), Math.floor(2 * n / 3), n];
@@ -32,6 +33,22 @@ export function junctionGeometry(rings) {
       return false;
     });
     for (const [j, k] of horizon.values()) faces.push(face(j, k, i));
+  }
+  // A cubic lane leaves each trimmed port along its tangent. Clip the control
+  // disc against the full hull (including caps), once, before sampling any route.
+  for (const { edge, atStart } of ports) {
+    const j = atStart ? edge.first : edge.last;
+    const center = edge.centers[j], axis = edge.tangents[j];
+    let handle = 0.65 * center.distanceTo(atStart ? edge.centers[0] : edge.centers[edge.count]);
+    for (const plane of faces) {
+      const dot = plane.normal.dot(axis);
+      const rate = atStart ? -dot : dot;
+      if (rate < 1e-7) continue;
+      const support = (LANE_RADIUS + 0.01) * edge.radius * Math.sqrt(Math.max(0, 1 - dot * dot));
+      handle = Math.min(handle, (plane.dot - plane.normal.dot(center) - support) / rate);
+    }
+    if (atStart) edge.startHandle = Math.max(0, handle);
+    else edge.endHandle = Math.max(0, handle);
   }
   const indices = [];
   for (const f of faces) {

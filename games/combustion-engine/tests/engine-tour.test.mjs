@@ -292,6 +292,7 @@ function explainerUI() {
     MathUtils: { clamp: (value, min, max) => Math.max(min, Math.min(max, value)) }
   };
   runInNewContext(read('../ce-main.js').replace(/^import [\s\S]*?;\n/gm, ''), {
+    createEngineRenderer: () => ({ render() {}, resize() {} }),
     ...engine, document, window, THREE, OrbitControls: Controls, RoomEnvironment: SceneNode,
     MutationObserver: Observer, ResizeObserver: Observer,
     DOMPoint: class extends Vector { matrixTransform() { return this; } },
@@ -453,8 +454,11 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   }
 });
 
-test('v0.5.1 ist als Patch vor den bisherigen Releases eingetragen', () => {
-  const [patch51, flow, patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+test('v0.5.2 ist als Patch vor den bisherigen Releases eingetragen', () => {
+  const [patch52, patch51, flow, patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  assert.deepEqual([patch52.version, patch52.type, patch52.date, patch52.author, patch52.model, patch52.banner],
+    ['0.5.2', 'patch', '2026-11-27', 'Michi', 'Astra 6.2', false]);
+  assert.ok(patch52.highlights.length >= 1 && patch52.highlights.length <= 3);
   assert.deepEqual([patch51.version, patch51.type, patch51.date, patch51.author, patch51.model],
     ['0.5.1', 'patch', '2026-11-27', 'Michi', 'Astra 6.2']);
   assert.ok(patch51.highlights.length >= 1 && patch51.highlights.length <= 3);
@@ -473,9 +477,9 @@ test('v0.5.1 ist als Patch vor den bisherigen Releases eingetragen', () => {
   assert.equal(latest.author, 'Joe');
   assert.equal(latest.model, 'Neon');
   assert.ok(latest.highlights.length >= 3 && latest.highlights.length <= 5);
-  assert.doesNotMatch([patch51.title, ...patch51.highlights, flow.title, ...flow.highlights, patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
+  assert.doesNotMatch([patch52.title, ...patch52.highlights, patch51.title, ...patch51.highlights, flow.title, ...flow.highlights, patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
     /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?|easter|motorschaden|explodier|überdreh)\b/i);
-  assert.match(html, /id="ce-version-btn"[^>]*>v0\.5\.1</);
+  assert.match(html, /id="ce-version-btn"[^>]*>v0\.5\.2</);
 
   assert.equal(patch31.version, '0.3.1');
   assert.equal(patch31.date, '2026-11-27');

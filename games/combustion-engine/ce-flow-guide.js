@@ -1,5 +1,5 @@
-import { bankPoint, buildPlumbing } from './ce-plumbing.js?v=0.5.1';
-import { SEAT_Y } from './ce-mechanics.js?v=0.5.1';
+import { bankPoint, buildPlumbing } from './ce-plumbing.js?v=0.5.2';
+import { SEAT_Y } from './ce-mechanics.js?v=0.5.2';
 
 const topics = {
   legend: {

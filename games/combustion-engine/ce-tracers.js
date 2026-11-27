@@ -1,12 +1,14 @@
 import * as THREE from 'three';
-import { passage } from './ce-plumbing.js?v=0.5.1';
-import { SEAT_Y } from './ce-mechanics.js?v=0.5.1';
-import { TRACER_SIZE, passThrottle, setThrottleOpening } from './ce-throttle.js?v=0.5.1';
+import { passage } from './ce-plumbing.js?v=0.5.2';
+import { SEAT_Y } from './ce-mechanics.js?v=0.5.2';
+import { TRACER_SIZE, passThrottle, setThrottleOpening } from './ce-throttle.js?v=0.5.2';
+
+import { buildLanes, LANE_RADIUS, sampleLane } from './ce-lanes.js?v=0.5.2';
 
 const AIR = 0, FUEL = 1, BURNT = 2;
 const colors = [0x389cff, 0xf03137, 0x75422c].map(c => new THREE.Color(c));
 
-function timedRoute(edges, boost) {
+function timedRoute({ edges, lanes }, boost) {
   let duration = 0;
   let throttleTime = 0;
   const stops = edges.map(e => {
@@ -16,35 +18,43 @@ function timedRoute(edges, boost) {
     if (e.to === 'throttle') throttleTime = duration;
     return duration;
   });
-  return { edges, stops, duration, throttleFraction: throttleTime / duration };
+  return { edges, lanes, stops, duration, throttleFraction: throttleTime / duration };
 }
 
-function trace(route, fraction, p, out) {
+export function trace(route, fraction, p, out) {
   const time = Math.min(1, Math.max(0, fraction)) * route.duration;
   let i = 0;
   while (i < route.stops.length - 1 && time > route.stops[i]) i++;
   const e = route.edges[i];
   const start = i ? route.stops[i - 1] : 0;
   const u = (time - start) / (route.stops[i] - start);
-  const scaled = u * e.count, j = Math.min(e.count - 1, Math.floor(scaled));
-  const t = scaled - j;
-  out.lerpVectors(e.centers[j], e.centers[j + 1], t);
-  // Narrow the strand inside fittings. Shared nodes meet exactly, including
-  // branches whose cylindrical coordinate frames differ.
-  const width = e.radius * Math.min(1, u * e.length * 6, (1 - u) * e.length * 6);
-  out.addScaledVector(e.normals[j], p.laneX * width * (1 - t));
-  out.addScaledVector(e.normals[j + 1], p.laneX * width * t);
-  out.addScaledVector(e.binormals[j], p.laneZ * width * (1 - t));
-  out.addScaledVector(e.binormals[j + 1], p.laneZ * width * t);
+  sampleLane(route.lanes[i], Math.max(0, Math.min(1, u)) * e.count, p, out);
   if (e.throttle) passThrottle(e.throttle, p, out);
 }
 
+// Boost changes transit times only. Reuse the geometric lookup for every
+// parcel, load band and seat that follows the same passage.
+const preparedPaths = new WeakMap();
 export function routesForSeat(g, cyl, seat, boost) {
-  const run = (from, to, branch) => timedRoute(passage(g, from, to, branch), boost);
+  if (!preparedPaths.has(g)) preparedPaths.set(g, new Map());
+  const cache = preparedPaths.get(g);
+  function path(from, to, branch = '') {
+    const key = from + '>' + to + '/' + branch;
+    if (!cache.has(key)) {
+      const edges = passage(g, from, to, branch);
+      cache.set(key, { edges, lanes: buildLanes(edges) });
+    }
+    return cache.get(key);
+  }
+  // Petrol is metered at the nozzle. Keep the same transported lane across
+  // that timing boundary, from the rail through the fitting into the runner.
+  const fuel = path('pump', g.diesel ? cyl.nozzle : seat.enter);
+  const split = g.diesel ? fuel.edges.length : fuel.edges.findIndex(e => e.from === cyl.nozzle);
+  const run = (from, to, branch) => timedRoute(path(from, to, branch), boost);
   return {
     air: run('filterMouth', seat.enter),
-    fuel: run('pump', cyl.nozzle),
-    port: g.diesel ? null : run(cyl.nozzle, seat.enter),
+    fuel: timedRoute({ edges: fuel.edges.slice(0, split), lanes: fuel.lanes.slice(0, split) }, boost),
+    port: g.diesel ? null : timedRoute({ edges: fuel.edges.slice(split), lanes: fuel.lanes.slice(split) }, boost),
     tail: run(seat.leave, 'tail'),
     hp: g.diesel ? run(seat.leave, seat.enter, 'hpEgr') : null,
     lp: g.diesel ? run(seat.leave, seat.enter, 'lpEgr') : null,
@@ -185,7 +195,7 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
       meterRank: 0, metered: false, gate: 0, pointScale: 1,
       options: options[n][lane % 2], admit: 12 + rank * 152, release: 552 + rank * 153,
       burn: 360 + radius * 15,
-      laneX: 0.74 * radius * Math.cos(angle), laneZ: 0.74 * radius * Math.sin(angle)
+      laneX: LANE_RADIUS * radius * Math.cos(angle), laneZ: LANE_RADIUS * radius * Math.sin(angle)
     }));
   }
   let lastClock = -Infinity;
