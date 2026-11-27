@@ -6,6 +6,9 @@ import {
   buildEngineProfile
 } from './ce-variants.js';
 
+import { MAX_LIFT, camLift } from './ce-mechanics.js?v=0.5.0';
+import { flowParts, flowTour } from './ce-flow-guide.js?v=0.5.0';
+
 export { ENGINE_LAYOUTS, ENGINE_CONCEPTS, DEFAULT_ENGINE_CONFIG, buildEngineProfile };
 
 export const DEFAULT_PROFILE = buildEngineProfile(DEFAULT_ENGINE_CONFIG.layout, DEFAULT_ENGINE_CONFIG.concept);
@@ -488,7 +491,7 @@ export function computeDriveTourDemos(optimum, profile = DEFAULT_PROFILE) {
 /**
  * Liefert den exakten 4-Takt-Zustand für einen Zylinder bei Kurbelwinkel crankDeg.
  */
-export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE) {
+export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE, out = {}) {
   const spec = profile.layout.cylinderSpecs[cylIndex];
   const offset = spec ? spec.phaseDeg : (CYLINDER_PHASE_OFFSETS[cylIndex] || 0);
   const cycle = (((crankDeg + offset) % 720) + 720) % 720;
@@ -512,7 +515,7 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE)
     short = 'Ansaugen';
     key = 'intake';
     const t = cycle / 180;
-    intakeLift = Math.sin(t * Math.PI);
+    intakeLift = camLift((cycle - 90) * Math.PI / 360) / MAX_LIFT;
     intakeMist = 0.25 + 0.75 * Math.sin(t * Math.PI * 0.85);
   } else if (cycle < 360) {
     index = 1;
@@ -552,24 +555,23 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE)
     short = 'Ausstoßen';
     key = 'exhaust';
     const t = (cycle - 540) / 180;
-    exhaustLift = Math.sin(t * Math.PI);
+    exhaustLift = camLift((cycle - 630) * Math.PI / 360) / MAX_LIFT;
     exhaustGas = 0.85 * (1 - t * 0.65);
   }
 
-  return {
-    cycle,
-    index,
-    key,
-    name,
-    short,
-    intakeLift,
-    exhaustLift,
-    sparkIntensity,
-    injectionIntensity,
-    flameIntensity,
-    intakeMist,
-    exhaustGas
-  };
+  out.cycle = cycle;
+  out.index = index;
+  out.key = key;
+  out.name = name;
+  out.short = short;
+  out.intakeLift = intakeLift;
+  out.exhaustLift = exhaustLift;
+  out.sparkIntensity = sparkIntensity;
+  out.injectionIntensity = injectionIntensity;
+  out.flameIntensity = flameIntensity;
+  out.intakeMist = intakeMist;
+  out.exhaustGas = exhaustGas;
+  return out;
 }
 
 export const ENGINE_PARTS = [
@@ -726,13 +728,13 @@ export const ENGINE_PARTS = [
   {
     id: 'timingDrive',
     number: '11',
-    name: 'Steuerkette & Stirnräder (1:2)',
+    name: 'Zahnriemen und Spannrolle',
     shortLabel: 'Steuertrieb',
     category: 'Ventiltrieb',
     energyStage: 'Feste Synchronisation Kurbel ↔ Nocke',
-    spec: '2:1 Übersetzung · Spann- & Gleitschiene',
+    spec: '2:1 Übersetzung · Zwei Nockenwellenräder je Bank',
     description:
-      'Die Steuerkette koppelt Kurbelwelle und Nockenwellen mechanisch exakt im Verhältnis 2:1. Nur so öffnen die Ventile niemals gleichzeitig mit dem hochkommenden Kolben.',
+      'Der Zahnriemen treibt beide Nockenwellen einer Bank an. Ihre Räder haben doppelt so viele Zähne wie das Kurbelwellenrad. Die Spannrolle hält den Riemen auf Zug.',
     anchor: [-3.15, 0.85, 0.0],
     explodeOffset: [-2.4, 0.2, 0],
     cameraPos: [-8.2, 2.1, 4.8],
@@ -755,7 +757,7 @@ export const ENGINE_PARTS = [
   }
 ];
 
-export const ENGINE_TOUR_STEPS = [
+const STROKE_AND_DRIVE_STEPS = [
   {
     step: 1,
     title: '1. Takt: Ansaugen (Einlass öffnet)',
@@ -767,7 +769,7 @@ export const ENGINE_TOUR_STEPS = [
     cameraPos: [5.4, 2.4, 6.8],
     cameraTarget: [-0.8, 1.2, 0.0],
     body:
-      'Die Nockenwelle öffnet die blauen Einlassventile, während der Kolben abwärtsläuft. Der dabei entstehende Unterdruck saugt das Luft-Kraftstoff-Gemisch (blau) aus dem Ansaugkanal in den Zylinder.'
+      'Die Nockenwelle öffnet die blauen Einlassventile, während der Kolben abwärtsläuft. Der dabei entstehende Unterdruck saugt das Gemisch aus Luft (blau) und Benzin (rot) aus dem Ansaugkanal in den Zylinder.'
   },
   {
     step: 2,
@@ -793,7 +795,7 @@ export const ENGINE_TOUR_STEPS = [
     cameraPos: [4.8, 2.3, 6.0],
     cameraTarget: [0.0, 1.1, 0.0],
     body:
-      'Kurz vor dem oberen Totpunkt feuert die Zündkerze einen 30.000-Volt-Funken. Das Gemisch verbrennt explosionsartig (goldorange Flamme) und drückt den Kolben mit über 80 bar Druck kraftvoll nach unten!'
+      'Kurz vor dem oberen Totpunkt feuert die Zündkerze einen 30.000-Volt-Funken. Die Flamme breitet sich im Gemisch aus. Der steigende Gasdruck drückt den Kolben nach unten.'
   },
   {
     step: 4,
@@ -806,11 +808,11 @@ export const ENGINE_TOUR_STEPS = [
     cameraPos: [6.2, 2.3, 7.2],
     cameraTarget: [0.0, 1.5, 0.4],
     body:
-      'Im Röntgenblick siehst du den Gaswechsel durch den gesamten Motor: Die bronzefarbenen Auslassventile öffnen sich und der aufsteigende Kolben schiebt das heiße Abgas durch den 4-in-1-Fächerkrümmer hinaus.'
+      'Im Röntgenblick siehst du den Gaswechsel durch den gesamten Motor: Die bronzefarbenen Auslassventile öffnen sich und der aufsteigende Kolben schiebt das heiße Abgas durch den Krümmer in den Sammler.'
   },
   {
     step: 5,
-    title: 'DOHC-Ventiltrieb & 2:1-Steuerkette',
+    title: 'DOHC-Ventiltrieb & Zahnriemen',
     badge: 'Synchronisation · 16 Ventile',
     viewMode: 'cutaway',
     focusPart: 'timingDrive',
@@ -819,7 +821,7 @@ export const ENGINE_TOUR_STEPS = [
     cameraPos: [-7.4, 2.6, 5.8],
     cameraTarget: [-1.8, 1.3, 0.0],
     body:
-      'Vorne verbindet die Steuerkette die Kurbelwelle mit den beiden doppelt so großen Nockenwellenrädern (Übersetzung 2:1). Ein kompletter 4-Takt-Zyklus dauert genau zwei Kurbelwellenumdrehungen (720°).'
+      'Je Bank treibt ein Zahnriemen zwei Nockenwellen mit halber Kurbeldrehzahl an. Die Nocken drücken auf die Tassenstößel und öffnen die Ventile. Die Feder schließt den Ventilteller wieder am Kegelsitz.'
   },
   {
     step: 6,
@@ -923,6 +925,7 @@ export function getEnginePartsForProfile(profile = DEFAULT_PROFILE) {
       const bankCount = layout.bankAnglesDeg.length;
       copy.name = bankCount > 1 ? `DOHC-Zylinderköpfe (${bankCount} Bänke)` : 'DOHC-Zylinderkopf';
       copy.spec = `${bankCount}× Aluminium-Querstromkopf · 4 Ventile/Zylinder (${valves}V)`;
+      if (isDiesel) copy.description = 'Der Querstromkopf führt Einlass und Auslass getrennt. Zwischen den Ventilen sitzt der Injektor, seitlich davon die Glühkerze.';
     } else if (part.id === 'camshafts') {
       const camCount = layout.bankAnglesDeg.length * 2;
       copy.name = `Nockenwellen (${camCount}× DOHC)`;
@@ -932,27 +935,28 @@ export function getEnginePartsForProfile(profile = DEFAULT_PROFILE) {
       copy.shortLabel = `${valves} Ventile`;
       copy.spec = `${valves / 2} Einlass- + ${valves / 2} Auslassventile · Schraubenfedern`;
     } else if (part.id === 'sparkPlugs' && isDiesel) {
+      copy.id = 'commonRail';
       copy.name = `Common-Rail-Injektoren & Glühkerzen (${cyl}×)`;
       copy.shortLabel = 'DI-Injektoren';
       copy.category = 'Direkteinspritzung';
       copy.energyStage = 'Hochdruck-Einspritzung → Selbstzündung';
       copy.spec = `Bis 2.200 bar Common-Rail · Piezo-Injektoren · Zündfolge ${layout.firingOrder}`;
       copy.description =
-        'Der Diesel hat keine Zündkerzen! Stattdessen spritzen zentrale Hochdruck-Injektoren fein zerstäubten Kraftstoff knapp vor OT direkt in die über 700 °C heiße, hochverdichtete Luft – der Kraftstoff entzündet sich sofort selbst.';
+        'Die Hochdruckpumpe speist das Common Rail. Von dort gelangt Kraftstoff zu den zentralen Injektoren. In der verdichteten heißen Luft entzündet sich der eingespritzte Diesel nach kurzem Zündverzug. Seitliche Glühkerzen helfen beim Kaltstart.';
     } else if (part.id === 'sparkPlugs' && !isDiesel) {
       copy.name = `Zündkerzen & Hochspannung (${cyl}×)`;
       copy.spec = `30.000 V Zündspule · Iridium-Elektrode · Zündfolge ${layout.firingOrder}`;
     } else if (part.id === 'intakeManifold' && isDiesel) {
-      copy.name = 'Turbolader (Verdichter) & Ladelufttrakt';
-      copy.shortLabel = 'Turbolader';
+      copy.name = 'Saugrohr und Luftverteilung';
+      copy.shortLabel = 'Saugrohr';
       copy.category = 'Aufladung';
       copy.energyStage = 'Vorverdichtete Frischluft (bis +1,8 bar)';
       copy.spec = 'VTG-Turbolader · Verdichterrad · Ladeluftrohr · keine Drosselklappe';
       copy.description =
         'Das vom Abgas angetriebene Verdichterrad presst deutlich mehr Sauerstoff in die Zylinder als ein Saugmotor ansaugen könnte. Die Last wird ohne Drosselklappe rein über die eingespritzte Dieselmenge geregelt – das vermeidet Drosselverluste.';
     } else if (part.id === 'exhaustManifold' && isDiesel) {
-      copy.name = 'Abgaskrümmer & VTG-Abgasturbine';
-      copy.shortLabel = 'Abgas & Turbine';
+      copy.name = 'Abgaskrümmer und Sammler';
+      copy.shortLabel = 'Abgaskrümmer';
       copy.category = 'Aufladung';
       copy.energyStage = 'Abgasenergie → Turbolader-Antrieb';
       copy.spec = 'Krümmer + Abgasturbine mit variabler Geometrie (VTG)';
@@ -960,11 +964,11 @@ export function getEnginePartsForProfile(profile = DEFAULT_PROFILE) {
         'Die heißen Abgase treiben das Turbinenrad des Turboladers mit bis zu 200.000 U/min an. Über eine gemeinsame Welle treibt die Turbine das Verdichterrad auf der Frischluftseite an und nutzt so sonst verlorene Abgasenergie.';
     }
     return copy;
-  });
+  }).concat(flowParts(isDiesel));
 }
 
 /**
- * Passt die 9 Tour-Schritte dynamisch an Otto-Sauger vs. Turbodiesel & Bauform an.
+ * Viertakt, Stoffwege und Fahrbeispiele für das gewählte Konzept.
  */
 export function getTourStepsForProfile(profile = DEFAULT_PROFILE) {
   const { layout, concept } = profile;
@@ -972,20 +976,21 @@ export function getTourStepsForProfile(profile = DEFAULT_PROFILE) {
   const scale = layout.cameraScale;
   const scaledCam = pos => pos.map(v => Number((v * scale).toFixed(2)));
 
-  return ENGINE_TOUR_STEPS.map(step => {
+  const steps = STROKE_AND_DRIVE_STEPS.map(step => {
     const s = { ...step, cameraPos: scaledCam(step.cameraPos) };
     if (isDiesel) {
       if (step.step === 1) {
         s.badge = '0°–180° · Vorverdichtete Frischluft';
         s.demoRpm = 1400;
         s.body =
-          'Die blauen Einlassventile öffnen sich und der Turbolader drückt reine, vorverdichtete Frischluft (noch ohne Kraftstoff!) in den Zylinder. Da es keine Drosselklappe gibt, entstehen kaum Ansaugverluste.';
+          'Die blauen Einlassventile öffnen sich und die vorverdichtete Luft strömt in den Zylinder. Je nach Last enthält sie rückgeführtes Abgas. Der Kraftstoff folgt erst bei der Direkteinspritzung.';
       } else if (step.step === 2) {
         s.badge = `180°–360° · Hohe Verdichtung ${concept.compressionRatio}`;
         s.demoRpm = 1600;
         s.body =
-          `Alle Ventile sind geschlossen. Der Kolben verdichtet die reine Luft extrem stark (${concept.compressionRatio}) – dabei erhitzt sie sich auf über 700 °C, heiß genug für die Selbstzündung.`;
+          `Alle Ventile sind geschlossen. Der Kolben verdichtet die eingeschlossene Ladung (${concept.compressionRatio}) – dabei erhitzt sie sich auf über 700 °C, heiß genug für die Selbstzündung.`;
       } else if (step.step === 3) {
+        s.focusPart = 'commonRail';
         s.title = '3. Takt: Direkteinspritzung & Selbstzündung';
         s.badge = '360°–540° · Common-Rail bis 2.200 bar';
         s.demoRpm = 1900;
@@ -995,7 +1000,7 @@ export function getTourStepsForProfile(profile = DEFAULT_PROFILE) {
         s.badge = '540°–720° · Abgas treibt den Turbolader';
         s.demoRpm = 2400;
         s.body =
-          'Die Auslassventile öffnen und drücken das Abgas in den Krümmer – dort treibt der Gasstrom die rote Abgasturbine des Turboladers an, die wiederum neue Frischluft verdichtet.';
+          'Die Auslassventile öffnen. Der aufsteigende Kolben schiebt braunes Abgas in den Krümmer. Der Sammler führt es zur Turbine.';
       } else if (step.step === 5) {
         s.badge = `Synchronisation · ${layout.valves} Ventile · ${layout.shortName}`;
         s.demoRpm = 2000;
@@ -1008,4 +1013,7 @@ export function getTourStepsForProfile(profile = DEFAULT_PROFILE) {
     }
     return s;
   });
+  return flowTour(profile, steps);
 }
+
+export const ENGINE_TOUR_STEPS = getTourStepsForProfile();

@@ -113,9 +113,9 @@ test('Alle 8 Motorkombinationen erzeugen gültige Konturen, Tour-Beispiele und B
       assert.equal(demos.map.frames.length, 3, profile.key);
 
       const parts = getEnginePartsForProfile(profile);
-      assert.equal(parts.length, 12);
+      assert.equal(parts.length, conceptId === 'diesel' ? 17 : 13);
       const steps = getTourStepsForProfile(profile);
-      assert.equal(steps.length, 9);
+      assert.equal(steps.length, conceptId === 'diesel' ? 16 : 11);
 
       // Zündungen/Sek. skalieren mit Zylinderzahl
       const tel = computeEngineTelemetry(2400, 0.5, undefined, profile);

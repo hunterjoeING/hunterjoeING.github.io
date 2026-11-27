@@ -3,20 +3,24 @@ import {
   DEFAULT_PROFILE,
   getEnginePartsForProfile,
   getCylinderStroke
-} from './ce-data.js?v=0.4.0';
-import { createExplosionSystem } from './ce-explosion.js?v=0.4.0';
+} from './ce-data.js?v=0.5.0';
+import { createExplosionSystem } from './ce-explosion.js?v=0.5.0';
 
-const R_CRANK = 0.58;
-const L_ROD = 1.92;
-const PISTON_CROWN_OFFSET = 0.48;
-const LOCAL_Y_ROOF = 3.33; // entspricht Y_ROOF 1.88 bei Y_CRANK -1.45
+import { BASE_RADIUS, BUCKET_TOP, CAM_Y, CAM_Z, MAX_LIFT, SEAT_Y as LOCAL_Y_ROOF,
+  CRANK_RADIUS as R_CRANK, ROD_LENGTH as L_ROD, CROWN_OFFSET as PISTON_CROWN_OFFSET,
+  camOutline, intakeSign } from './ce-mechanics.js?v=0.5.0';
+import { installBelts } from './ce-belt.js?v=0.5.0';
+import { buildPlumbing } from './ce-plumbing.js?v=0.5.0';
+import { installDucts } from './ce-ducts.js?v=0.5.0';
+import { createTracers } from './ce-tracers.js?v=0.5.0';
+
 const R_BORE = 0.54;
 
 /**
  * Erzeugt ein prozedurales Stirnrad (Zahnrad) um die Z-Achse,
  * das anschließend um Y rotiert auf die X-Achse montiert wird.
  */
-function createSprocketGeometry(teeth, outerR, rootR, depth, boreR = 0.1) {
+function createSprocketGeometry(teeth, outerR, rootR, depth, boreR = 0.1, bevel = true) {
   const shape = new THREE.Shape();
   const step = (Math.PI * 2) / teeth;
   for (let i = 0; i < teeth; i++) {
@@ -40,7 +44,7 @@ function createSprocketGeometry(teeth, outerR, rootR, depth, boreR = 0.1) {
   }
   const geo = new THREE.ExtrudeGeometry(shape, {
     depth,
-    bevelEnabled: true,
+    bevelEnabled: bevel,
     bevelThickness: 0.018,
     bevelSize: 0.014,
     bevelSegments: 2,
@@ -54,30 +58,15 @@ function createSprocketGeometry(teeth, outerR, rootR, depth, boreR = 0.1) {
  * Erzeugt eine eiförmige Nocke (Cam Lobe) in der YZ-Ebene, extrudiert entlang X.
  * Nockenspitze zeigt bei rotX = 0 exakt nach unten (-Y, drückt das Ventil auf).
  */
-function createCamLobeGeometry(baseR = 0.14, noseR = 0.27, width = 0.14) {
+function createCamLobeGeometry(width) {
   const shape = new THREE.Shape();
-  const segs = 28;
-  for (let i = 0; i <= segs; i++) {
-    const a = (i / segs) * Math.PI * 2;
-    const diff = Math.cos(a + Math.PI / 2);
-    const lift = diff > 0 ? Math.pow(diff, 2.4) * (noseR - baseR) : 0;
-    const r = baseR + lift;
-    const x = Math.cos(a) * r;
-    const y = Math.sin(a) * r;
-    if (i === 0) shape.moveTo(x, y);
-    else shape.lineTo(x, y);
+  for (const [i, p] of camOutline().entries()) {
+    if (i === 0) shape.moveTo(-p.z, p.y);
+    else shape.lineTo(-p.z, p.y);
   }
   shape.closePath();
-  const geo = new THREE.ExtrudeGeometry(shape, {
-    depth: width,
-    bevelEnabled: true,
-    bevelThickness: 0.012,
-    bevelSize: 0.01,
-    bevelSegments: 2
-  });
-  geo.center();
-  geo.rotateY(Math.PI / 2);
-  return geo;
+  return new THREE.ExtrudeGeometry(shape, { depth: width, bevelEnabled: false })
+    .translate(0, 0, -width / 2).rotateY(Math.PI / 2);
 }
 
 /**
@@ -152,6 +141,7 @@ function disposeObjectTree(group) {
   const geometries = new Set();
   const materials = new Set();
   group.traverse(child => {
+    if (child.isInstancedMesh) child.dispose();
     if (child.geometry) geometries.add(child.geometry);
     if (child.material) {
       if (Array.isArray(child.material)) child.material.forEach(m => materials.add(m));
@@ -197,6 +187,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     xrayTarget: 0,
     xrayCurrent: 0,
     crankDeg: 25,
+    crankClock: 25,
     turboSpinRad: 0,
     selectedPart: null,
     showFlow: true,
@@ -208,6 +199,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
   function buildAssembly(profile) {
     if (built) {
       explosionSys.reset(built.partGroups, built.basePositions);
+      built.belts.texture.dispose();
       disposeObjectTree(built.assemblyRoot);
       engineHolder.remove(built.assemblyRoot);
     }
@@ -216,9 +208,9 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const isBoxer = layout.id === 'boxer4';
     const isV = layout.id === 'v6' || layout.id === 'v8';
     const isDiesel = concept.directInjection;
-    const yCrank = isBoxer ? -0.35 : -1.45;
+    const plumbing = buildPlumbing(profile);
+    const yCrank = plumbing.y0;
     const cylSpecs = layout.cylinderSpecs;
-    const bankCount = layout.bankAnglesDeg.length;
     const partsMeta = getEnginePartsForProfile(profile);
 
     const assemblyRoot = new THREE.Group();
@@ -263,18 +255,10 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         emissive: new THREE.Color(0x0284c7),
         emissiveIntensity: 0.08
       }),
+      exhaustPipe: new THREE.MeshStandardMaterial({ color: 0x96684f, metalness: 0.57, roughness: 0.42, emissive: 0xea580c, emissiveIntensity: 0.05 }),
+      fuelPipe: new THREE.MeshStandardMaterial({ color: 0xb78b55, metalness: 0.58, roughness: 0.40 }),
       chainGold: new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.32, metalness: 0.84 })
     };
-
-    const exhaustMat = new THREE.MeshStandardMaterial({
-      color: 0x9a6b4c,
-      roughness: 0.32,
-      metalness: 0.82,
-      emissive: new THREE.Color(0xea580c),
-      emissiveIntensity: 0.05,
-      transparent: true,
-      opacity: 1
-    });
 
     const cutEdgeMat = new THREE.MeshStandardMaterial({
       color: 0xf97316,
@@ -298,10 +282,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     // Pro Baugruppe eigener Material-Pool (verhindert Cross-Part-Highlight-Leaks!)
     const partMatCache = new Map();
-    function getPartMat(partId, templateKey) {
-      const key = `${partId}:${templateKey}`;
+    function getPartMat(partId, templateKey, shell = false) {
+      const key = `${partId}:${templateKey}:${shell}`;
       if (!partMatCache.has(key)) {
         const cloned = sharedTemplates[templateKey].clone();
+        if (shell) cloned.side = THREE.DoubleSide;
         partMatCache.set(key, cloned);
         if (!highlightableByPart.has(partId)) highlightableByPart.set(partId, []);
         highlightableByPart.get(partId).push({
@@ -459,15 +444,13 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     const pistonNodes = [];
     const gasMeshes = [];
-    const sparkFlashes = [];
-    const dieselSprays = [];
+    const ignition = [];
 
     const chamberGeo = new THREE.CylinderGeometry(R_BORE - 0.03, R_BORE - 0.03, 1.0, 22);
     const pistonBodyGeo = new THREE.CylinderGeometry(R_BORE - 0.025, R_BORE - 0.03, 0.76, 26);
     const pistonRingGeo = new THREE.TorusGeometry(R_BORE - 0.015, 0.018, 8, 24);
     const pistonPinGeo = new THREE.CylinderGeometry(0.10, 0.10, 0.82, 14);
-    const sparkBallGeo = new THREE.SphereGeometry(0.18, 12, 12);
-    const sprayConeGeo = new THREE.ConeGeometry(0.32, 0.58, 16, 1, true);
+    const ignitionGeo = isDiesel ? new THREE.ConeGeometry(0.14, 0.20, 16, 1, true) : new THREE.SphereGeometry(0.048, 10, 8);
 
     cylSpecs.forEach(spec => {
       const bf = pistonBankFrames[spec.bankIndex];
@@ -517,30 +500,13 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       gf.add(gasMesh);
       gasMeshes.push({ mesh: gasMesh, mat: gasMat, spec });
 
-      // Otto-Zündfunke
-      const sparkMat = new THREE.MeshBasicMaterial({
-        color: 0xe0f2fe,
-        transparent: true,
-        opacity: 0,
-        depthWrite: false
-      });
-      const sparkBall = new THREE.Mesh(sparkBallGeo, sparkMat);
-      sparkBall.position.set(spec.x, LOCAL_Y_ROOF - 0.1, 0);
-      gf.add(sparkBall);
-      sparkFlashes.push({ mesh: sparkBall, mat: sparkMat, spec });
-
-      // Diesel-Common-Rail-Einspritzkegel
-      const sprayMat = new THREE.MeshBasicMaterial({
-        color: 0xfde047,
-        transparent: true,
-        opacity: 0,
-        depthWrite: false,
-        side: THREE.DoubleSide
-      });
-      const sprayCone = new THREE.Mesh(sprayConeGeo, sprayMat);
-      sprayCone.position.set(spec.x, LOCAL_Y_ROOF - 0.32, 0);
-      gf.add(sprayCone);
-      dieselSprays.push({ mesh: sprayCone, mat: sprayMat, spec });
+      const flash = new THREE.Mesh(ignitionGeo, new THREE.MeshBasicMaterial({
+        color: isDiesel ? 0xff8b32 : 0xdcf4ff, transparent: true, depthWrite: false, side: THREE.DoubleSide
+      }));
+      flash.name = isDiesel ? 'sprayIgnition' : 'spark';
+      flash.visible = false;
+      gf.add(flash);
+      ignition.push(flash);
     });
 
     // =========================================================================
@@ -701,7 +667,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const camBankFrames = createBankFrames(camsGroup);
     const camSpins = [];
 
-    const lobeGeo = createCamLobeGeometry(0.13, 0.25, 0.12);
+    const lobeGeo = createCamLobeGeometry(0.12);
 
     layout.bankAnglesDeg.forEach((bankDeg, bankIdx) => {
       const bf = camBankFrames[bankIdx];
@@ -711,15 +677,15 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       const camLen = (bxMax - bxMin) + 2.05;
       const bCenter = (bxMin + bxMax) * 0.5;
       // Bei V-Motoren liegt der Einlass innen im V!
-      const intakeSideZ = isV ? (bankDeg > 0 ? -0.34 : 0.34) : -0.34;
+      const intakeSideZ = intakeSign(bankDeg) * CAM_Z;
       const exhaustSideZ = -intakeSideZ;
 
       const intakeCamSpin = new THREE.Group();
-      intakeCamSpin.position.set(bCenter, 4.77, intakeSideZ);
+      intakeCamSpin.position.set(bCenter, CAM_Y, intakeSideZ);
       bf.add(intakeCamSpin);
 
       const exhaustCamSpin = new THREE.Group();
-      exhaustCamSpin.position.set(bCenter, 4.77, exhaustSideZ);
+      exhaustCamSpin.position.set(bCenter, CAM_Y, exhaustSideZ);
       bf.add(exhaustCamSpin);
 
       const barGeo = new THREE.CylinderGeometry(0.095, 0.095, camLen, 16);
@@ -735,7 +701,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         const intakeLobeAngle = THREE.MathUtils.degToRad((phaseDeg - 90) * 0.5);
         const exhaustLobeAngle = THREE.MathUtils.degToRad((phaseDeg - 630) * 0.5);
 
-        [-0.22, 0.22].forEach(dx => {
+        [-0.20, 0.20].forEach(dx => {
           const iLobe = new THREE.Mesh(lobeGeo, getPartMat('camshafts', 'intakeValve'));
           iLobe.position.set(spec.x - bCenter + dx, 0, 0);
           iLobe.rotation.x = intakeLobeAngle;
@@ -758,381 +724,110 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const valvesGroup = registerPartGroup('valves', new THREE.Group(), valveAnchor);
     const valveBankFrames = createBankFrames(valvesGroup);
     const springGeo = createSpringGeometry(0.09, 0.42, 4.5, 0.015);
-    const valveStemGeo = new THREE.CylinderGeometry(0.028, 0.028, 0.96, 10);
-    const intakeHeadGeo = new THREE.CylinderGeometry(0.15, 0.18, 0.06, 14);
-    const exhaustHeadGeo = new THREE.CylinderGeometry(0.14, 0.165, 0.06, 14);
-    const valveAssemblies = [];
-
-    cylSpecs.forEach((spec, cylIdx) => {
+    const stemBase = LOCAL_Y_ROOF + 0.023;
+    const stemLength = BUCKET_TOP - 0.09 - stemBase;
+    const valveStemGeo = new THREE.CylinderGeometry(0.027, 0.027, stemLength, 10);
+    const bucketGeo = new THREE.CylinderGeometry(0.185, 0.185, 0.09, 20);
+    const valveHeadGeo = new THREE.CylinderGeometry(0.093, 0.132, 0.052, 20);
+    const valveAssemblies = cylSpecs.map(spec => {
       const bf = valveBankFrames[spec.bankIndex];
-      const bankDeg = spec.bankAngleDeg;
-      const intakeSideSign = isV ? (bankDeg > 0 ? -1 : 1) : -1;
-      const exhaustSideSign = -intakeSideSign;
-      const cylValves = { intake: [], exhaust: [] };
-
-      [-0.22, 0.22].forEach(dx => {
-        // Einlassventil (blau)
-        const iPivot = new THREE.Group();
-        iPivot.position.set(spec.x + dx, 3.77, intakeSideSign * 0.25);
-        iPivot.rotation.x = intakeSideSign * 0.18;
-
-        const iMov = new THREE.Group();
-        const iStem = new THREE.Mesh(valveStemGeo, getPartMat('valves', 'intakeValve'));
-        iStem.position.y = 0.22;
-        iMov.add(iStem);
-        const iHead = new THREE.Mesh(intakeHeadGeo, getPartMat('valves', 'intakeValve'));
-        iHead.position.y = -0.26;
-        iMov.add(iHead);
-        iPivot.add(iMov);
-
-        const iSpring = new THREE.Mesh(springGeo, getPartMat('valves', 'machinedSteel'));
-        iSpring.position.y = 0.24;
-        iPivot.add(iSpring);
-
-        bf.add(iPivot);
-        cylValves.intake.push({ mover: iMov, spring: iSpring });
-
-        // Auslassventil (bronze)
-        const ePivot = new THREE.Group();
-        ePivot.position.set(spec.x + dx, 3.77, exhaustSideSign * 0.25);
-        ePivot.rotation.x = exhaustSideSign * 0.18;
-
-        const eMov = new THREE.Group();
-        const eStem = new THREE.Mesh(valveStemGeo, getPartMat('valves', 'exhaustValve'));
-        eStem.position.y = 0.22;
-        eMov.add(eStem);
-        const eHead = new THREE.Mesh(exhaustHeadGeo, getPartMat('valves', 'exhaustValve'));
-        eHead.position.y = -0.26;
-        eMov.add(eHead);
-        ePivot.add(eMov);
-
-        const eSpring = new THREE.Mesh(springGeo, getPartMat('valves', 'machinedSteel'));
-        eSpring.position.y = 0.24;
-        ePivot.add(eSpring);
-
-        bf.add(ePivot);
-        cylValves.exhaust.push({ mover: eMov, spring: eSpring });
-      });
-      valveAssemblies[cylIdx] = cylValves;
+      const assembly = { intake: [], exhaust: [] };
+      for (const type of ['intake', 'exhaust']) {
+        const z = intakeSign(spec.bankAngleDeg) * CAM_Z * (type === 'intake' ? 1 : -1);
+        const mat = getPartMat('valves', type + 'Valve');
+        for (const dx of [-0.20, 0.20]) {
+          const pivot = new THREE.Group();
+          pivot.position.set(spec.x + dx, 0, z);
+          const mover = new THREE.Group();
+          const head = new THREE.Mesh(valveHeadGeo, mat);
+          head.position.y = LOCAL_Y_ROOF + 0.002;
+          const stem = new THREE.Mesh(valveStemGeo, mat);
+          stem.position.y = stemBase + stemLength / 2;
+          const bucket = new THREE.Mesh(bucketGeo, getPartMat('valves', 'machinedSteel'));
+          bucket.position.y = CAM_Y - BASE_RADIUS - 0.045;
+          mover.add(head, stem, bucket);
+          const spring = new THREE.Mesh(springGeo, getPartMat('valves', 'machinedSteel'));
+          spring.position.y = BUCKET_TOP - 0.09 - 0.42;
+          pivot.add(mover, spring);
+          bf.add(pivot);
+          assembly[type].push({ mover, spring });
+        }
+      }
+      return assembly;
     });
 
     // =========================================================================
     // 8. ZÜNDKERZEN (OTTO) ODER COMMON-RAIL-INJEKTOREN & GLÜHKERZEN (DIESEL)
     // =========================================================================
     const plugAnchor = isBoxer ? [1.1, 0.2, 4.45] : isV ? [1.1, 2.75, 2.2] : [1.1, 3.25, 0.0];
-    const plugsGroup = registerPartGroup('sparkPlugs', new THREE.Group(), plugAnchor);
+    const ignitionPart = isDiesel ? 'commonRail' : 'sparkPlugs';
+    const plugsGroup = registerPartGroup(ignitionPart, new THREE.Group(), plugAnchor);
     const plugBankFrames = createBankFrames(plugsGroup);
 
     cylSpecs.forEach(spec => {
       const bf = plugBankFrames[spec.bankIndex];
       const unit = new THREE.Group();
+      unit.name = isDiesel ? 'directInjector' : 'sparkPlug';
       unit.position.set(spec.x, 4.20, 0);
 
       if (isDiesel) {
         // Hochdruck-Piezo-Injektor + seitliche Glühkerze
-        const piezoHead = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.34, 0.22), getPartMat('sparkPlugs', 'darkMetal'));
+        const piezoHead = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.34, 0.22), getPartMat(ignitionPart, 'darkMetal'));
         piezoHead.position.y = 0.85;
         unit.add(piezoHead);
 
-        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 1.05, 14), getPartMat('sparkPlugs', 'machinedSteel'));
+        const body = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.075, 1.05, 14), getPartMat(ignitionPart, 'machinedSteel', true));
+        cutawayGhostMeshes.push(body);
         body.position.y = 0.18;
         unit.add(body);
 
-        const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.032, 0.56, 12), getPartMat('sparkPlugs', 'chainGold'));
+        const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.032, 0.56, 12), getPartMat(ignitionPart, 'chainGold', true));
+        cutawayGhostMeshes.push(nozzle);
         nozzle.position.y = -0.60;
         unit.add(nozzle);
 
         // Glühkerze leicht schräg daneben
-        const glow = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.028, 0.72, 10), getPartMat('sparkPlugs', 'exhaustValve'));
-        glow.position.set(0.18, -0.35, 0.14);
-        glow.rotation.z = 0.25;
+        const glow = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.028, 0.72, 10), getPartMat(ignitionPart, 'exhaustValve'));
+        glow.name = 'glowPlug';
+        glow.position.set(0.38, -0.54, 0.024);
+        glow.rotation.z = -0.38;
         unit.add(glow);
       } else {
         // Klassische Zündkerze + Stabzündspule
-        const coilCap = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.12, 0.42, 14), getPartMat('sparkPlugs', 'darkMetal'));
+        const coilCap = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.12, 0.42, 14), getPartMat(ignitionPart, 'darkMetal'));
         coilCap.position.y = 0.72;
         unit.add(coilCap);
 
-        const insulator = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.65, 14), getPartMat('sparkPlugs', 'ceramic'));
+        const insulator = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.65, 14), getPartMat(ignitionPart, 'ceramic'));
         insulator.position.y = 0.18;
         unit.add(insulator);
 
-        const thread = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.095, 0.56, 12), getPartMat('sparkPlugs', 'machinedSteel'));
+        const thread = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.095, 0.56, 12), getPartMat(ignitionPart, 'machinedSteel'));
         thread.position.y = -0.45;
         unit.add(thread);
 
-        const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.16, 8), getPartMat('sparkPlugs', 'chainGold'));
+        const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.16, 8), getPartMat(ignitionPart, 'chainGold'));
         tip.position.y = -0.80;
         unit.add(tip);
       }
       bf.add(unit);
     });
 
-    // Common-Rail-Hochdruckleitung je Bank beim Turbodiesel
-    if (isDiesel) {
-      layout.bankAnglesDeg.forEach((_, bankIdx) => {
-        const bf = plugBankFrames[bankIdx];
-        const bankCyls = cylSpecs.filter(c => c.bankIndex === bankIdx);
-        const bxMin = Math.min(...bankCyls.map(c => c.x));
-        const bxMax = Math.max(...bankCyls.map(c => c.x));
-        const rail = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.09, 0.09, (bxMax - bxMin) + 0.85, 16),
-          getPartMat('sparkPlugs', 'chainGold')
-        );
-        rail.rotation.z = Math.PI / 2;
-        rail.position.set((bxMin + bxMax) * 0.5, 5.22, -0.26);
-        bf.add(rail);
-      });
-    }
-
-    // =========================================================================
-    // 9. ANSAUGTRAKT (+ DROSSELKLAPPE OTTO ODER TURBOLADER-VERDICHTER DIESEL)
-    // =========================================================================
-    const intakeAnchor = isBoxer ? [0, 1.55, 0.0] : isV ? [0, 2.7, 0.0] : [0, 2.25, -1.75];
-    const intakeGroup = registerPartGroup('intakeManifold', new THREE.Group(), intakeAnchor);
-    let throttlePlate = null;
-    let compressorWheel = null;
-    let turbineWheel = null;
-
-    const plenumPos = isBoxer
-      ? new THREE.Vector3(0, 1.45, 0)
-      : isV
-        ? new THREE.Vector3(0, 2.55, 0)
-        : new THREE.Vector3(0, 1.85, -1.95);
-    const plenumLen = Math.max(3.6, blockSpanX - 0.65);
-
-    const plenum = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.36, 0.36, plenumLen, 20),
-      getPartMat('intakeManifold', 'intakeMat')
-    );
-    plenum.rotation.z = Math.PI / 2;
-    plenum.position.copy(plenumPos);
-    intakeGroup.add(plenum);
-
-    if (!isDiesel) {
-      // Otto: Drosselklappe am Einlassende + Kraftstoffleiste & Saugrohreinspritzventile
-      const throttleProfile = [
-        [0.23, -0.275], [0.28, -0.275], [0.28, 0.275], [0.23, 0.275], [0.23, -0.275]
-      ].map(([radius, height]) => new THREE.Vector2(radius, height));
-      const throttleBody = new THREE.Mesh(
-        new THREE.LatheGeometry(throttleProfile, 24),
-        getPartMat('intakeManifold', 'machinedSteel')
-      );
-      throttleBody.rotation.z = Math.PI / 2;
-      throttleBody.position.set(plenumPos.x - plenumLen * 0.5 - 0.27, plenumPos.y, plenumPos.z);
-      intakeGroup.add(throttleBody);
-
-      const throttlePlateGeo = new THREE.CylinderGeometry(0.225, 0.225, 0.025, 24).rotateZ(Math.PI / 2);
-      throttlePlate = new THREE.Mesh(throttlePlateGeo, getPartMat('intakeManifold', 'chainGold'));
-      throttlePlate.position.copy(throttleBody.position);
-      intakeGroup.add(throttlePlate);
-
-      // Kraftstoffleiste
-      const fuelRail = new THREE.Mesh(
-        new THREE.BoxGeometry(plenumLen * 0.9, 0.13, 0.16),
-        getPartMat('intakeManifold', 'machinedSteel')
-      );
-      fuelRail.position.set(0, plenumPos.y + 0.85, isBoxer || isV ? 0 : -1.32);
-      intakeGroup.add(fuelRail);
-    }
-
-    // Ansaugrohre vom Plenum zu jedem Zylinder (Weltkoordinaten aus Bankwinkel berechnet)
-    const intakeRunnerCurves = [];
-    const injectorGeo = new THREE.CylinderGeometry(0.085, 0.05, 0.38, 12);
-
-    cylSpecs.forEach(spec => {
-      const aRad = THREE.MathUtils.degToRad(spec.bankAngleDeg);
-      const localInZ = isV ? (spec.bankAngleDeg > 0 ? -0.82 : 0.82) : (isBoxer ? (spec.bankAngleDeg < 0 ? 0.55 : -0.55) : -0.88);
-      const localInY = 3.75;
-      // Weltpunkt des Einlasskanals am Zylinderkopf
-      const portY = yCrank + localInY * Math.cos(aRad) - localInZ * Math.sin(aRad);
-      const portZ = localInY * Math.sin(aRad) + localInZ * Math.cos(aRad);
-
-      const midY = (plenumPos.y + portY) * 0.5 + (isBoxer ? 0.55 : 0.45);
-      const midZ = (plenumPos.z + portZ) * 0.5 + (isBoxer || isV ? 0 : -0.2);
-
-      const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(spec.x * 0.88, plenumPos.y, plenumPos.z),
-        new THREE.Vector3(spec.x, midY, midZ),
-        new THREE.Vector3(spec.x, portY, portZ)
-      ]);
-      intakeRunnerCurves.push(curve);
-      const runner = new THREE.Mesh(
-        new THREE.TubeGeometry(curve, 16, 0.165, 10, false),
-        getPartMat('intakeManifold', 'intakeMat')
-      );
-      intakeGroup.add(runner);
-
-      if (!isDiesel) {
-        const pt = curve.getPoint(0.76);
-        const inj = new THREE.Mesh(injectorGeo, getPartMat('intakeManifold', 'chainGold'));
-        inj.position.set(pt.x, pt.y + 0.18, pt.z);
-        inj.rotation.x = -0.3;
-        intakeGroup.add(inj);
+    // The part anchors, housings, ducts and tracer strands share named ports.
+    const anchors = {
+      intakeManifold: 'in0', exhaustManifold: 'out0', portInjectors: 'nozzle0',
+      turbocharger: 'compressorOut', intercooler: 'coolerOut', dpf: 'dpfIn',
+      hpEgr: 'hpCoolOut', lpEgr: 'lpCoolOut'
+    };
+    for (const [part, port] of Object.entries(anchors)) {
+      if (plumbing.nodes[port] && !(part === 'portInjectors' && isDiesel)) {
+        registerPartGroup(part, new THREE.Group(), plumbing.nodes[port]);
       }
-    });
-
-    // =========================================================================
-    // 10. ABGASKRÜMMER (+ VTG-TURBOLADER BEIM DIESEL!)
-    // =========================================================================
-    const exhaustAnchor = isBoxer ? [0, -1.6, 2.2] : [0, 1.95, 2.1];
-    const exhaustGroup = registerPartGroup('exhaustManifold', new THREE.Group(), exhaustAnchor);
-    const exhaustRunnerCurves = [];
-
-    const turboPos = isBoxer
-      ? new THREE.Vector3(layout.flywheelX - 0.55, 1.15, 2.15)
-      : new THREE.Vector3(layout.flywheelX - 0.85, 0.75, 2.25);
-
-    cylSpecs.forEach(spec => {
-      const aRad = THREE.MathUtils.degToRad(spec.bankAngleDeg);
-      const localExZ = isV ? (spec.bankAngleDeg > 0 ? 0.86 : -0.86) : (isBoxer ? (spec.bankAngleDeg < 0 ? -0.68 : 0.68) : 0.88);
-      const localExY = 3.72;
-      const portY = yCrank + localExY * Math.cos(aRad) - localExZ * Math.sin(aRad);
-      const portZ = localExY * Math.sin(aRad) + localExZ * Math.cos(aRad);
-
-      const collectorTarget = isDiesel
-        ? new THREE.Vector3(turboPos.x - 0.55, turboPos.y - 0.05, turboPos.z)
-        : new THREE.Vector3(0, isBoxer ? -1.85 : 0.35, portZ >= 0 ? 2.2 : -2.2);
-
-      const outZ = portZ + Math.sign(portZ || 1) * 0.85;
-      const curve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(spec.x, portY, portZ),
-        new THREE.Vector3(spec.x, portY - (isBoxer ? 0.85 : 0.15), outZ),
-        new THREE.Vector3((spec.x + collectorTarget.x) * 0.5, (portY + collectorTarget.y) * 0.5 - 0.35, (outZ + collectorTarget.z) * 0.55),
-        collectorTarget
-      ]);
-      exhaustRunnerCurves.push(curve);
-      const pipe = new THREE.Mesh(new THREE.TubeGeometry(curve, 20, 0.145, 10, false), exhaustMat);
-      exhaustGroup.add(pipe);
-      cutawayGhostMeshes.push(pipe);
-      registerXrayShell(pipe);
-    });
-
-    if (isDiesel) {
-      // 3D-Turbolader: heiße Abgasturbine (exhaustGroup) + kalter Verdichter & Ladeluftrohr (intakeGroup)
-      const hotHousing = new THREE.Mesh(new THREE.TorusGeometry(0.46, 0.22, 14, 24), exhaustMat);
-      hotHousing.rotation.y = Math.PI / 2;
-      hotHousing.position.set(turboPos.x - 0.48, turboPos.y, turboPos.z);
-      exhaustGroup.add(hotHousing);
-
-      const hotDownpipe = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.22, 1.55, 16), exhaustMat);
-      hotDownpipe.position.set(turboPos.x - 0.82, turboPos.y - 0.88, turboPos.z);
-      exhaustGroup.add(hotDownpipe);
-
-      // Sichtbares Abgas-Turbinenrad
-      turbineWheel = createImpellerGroup(12, 0.36, 0.11, 0.22, getPartMat('exhaustManifold', 'exhaustValve'));
-      turbineWheel.position.set(turboPos.x - 0.48, turboPos.y, turboPos.z);
-      exhaustGroup.add(turbineWheel);
-
-      // Mittelgehäuse (Lagergehäuse / Welle)
-      const chra = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.18, 0.18, 0.62, 16),
-        getPartMat('intakeManifold', 'darkMetal')
-      );
-      chra.rotation.z = Math.PI / 2;
-      chra.position.set(turboPos.x - 0.12, turboPos.y, turboPos.z);
-      intakeGroup.add(chra);
-
-      // Kaltes Verdichtergehäuse (Alu-Schnecke)
-      const coldHousing = new THREE.Mesh(
-        new THREE.TorusGeometry(0.50, 0.24, 14, 24),
-        getPartMat('intakeManifold', 'turboColdMat')
-      );
-      coldHousing.rotation.y = Math.PI / 2;
-      coldHousing.position.set(turboPos.x + 0.28, turboPos.y, turboPos.z);
-      intakeGroup.add(coldHousing);
-
-      // Sichtbares Verdichterrad (dreht sich mit Ladedruck/Drehzahl!)
-      compressorWheel = createImpellerGroup(10, 0.39, 0.12, 0.24, getPartMat('intakeManifold', 'intakeValve'));
-      compressorWheel.position.set(turboPos.x + 0.34, turboPos.y, turboPos.z);
-      intakeGroup.add(compressorWheel);
-
-      // Ladeluftrohr (Charge Pipe) vom Verdichter ins Ansaugplenum
-      const chargeCurve = new THREE.CatmullRomCurve3([
-        new THREE.Vector3(turboPos.x + 0.28, turboPos.y + 0.55, turboPos.z),
-        new THREE.Vector3(turboPos.x + 0.35, plenumPos.y + 0.75, turboPos.z * 0.4),
-        new THREE.Vector3(plenumPos.x + plenumLen * 0.42, plenumPos.y + 0.32, plenumPos.z),
-        new THREE.Vector3(plenumPos.x + plenumLen * 0.35, plenumPos.y, plenumPos.z)
-      ]);
-      const chargePipe = new THREE.Mesh(
-        new THREE.TubeGeometry(chargeCurve, 24, 0.19, 12, false),
-        getPartMat('intakeManifold', 'chargePipeMat')
-      );
-      intakeGroup.add(chargePipe);
-    } else {
-      // Klassischer Sammler (1 Sammler bei R4, 2 bei V/Boxer)
-      const collectorZList = bankCount > 1 ? [2.2, -2.2] : [2.15];
-      collectorZList.forEach(cz => {
-        const collector = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.21, 1.25, 16), exhaustMat);
-        collector.position.set(0, isBoxer ? -2.35 : -0.35, cz);
-        exhaustGroup.add(collector);
-        cutawayGhostMeshes.push(collector);
-        registerXrayShell(collector);
-      });
     }
-
-    // =========================================================================
-    // 11. STEUERKETTE & STIRNRÄDER (1:2 ÜBERSETZUNG FÜR ALLE BÄNKE)
-    // =========================================================================
-    const tx = layout.timingX;
-    const timingGroup = registerPartGroup('timingDrive', new THREE.Group(), [tx, yCrank + 1.8, 0]);
-    const crankSprocket = new THREE.Mesh(
-      createSprocketGeometry(12, 0.36, 0.29, 0.16, 0.12),
-      getPartMat('timingDrive', 'chainGold')
-    );
-    crankSprocket.rotation.y = Math.PI / 2;
-    crankSprocket.position.set(tx, yCrank, 0);
-    timingGroup.add(crankSprocket);
-
-    const camGears = [];
-    layout.bankAnglesDeg.forEach(bankDeg => {
-      const aRad = THREE.MathUtils.degToRad(bankDeg);
-      const intakeSideZ = isV ? (bankDeg > 0 ? -0.38 : 0.38) : -0.38;
-      const exhaustSideZ = -intakeSideZ;
-
-      const worldCamPos = localZ => {
-        const ly = 4.77;
-        return new THREE.Vector3(
-          tx,
-          yCrank + ly * Math.cos(aRad) - localZ * Math.sin(aRad),
-          ly * Math.sin(aRad) + localZ * Math.cos(aRad)
-        );
-      };
-
-      const pIn = worldCamPos(intakeSideZ);
-      const pEx = worldCamPos(exhaustSideZ);
-
-      const gIn = new THREE.Mesh(createSprocketGeometry(24, 0.56, 0.48, 0.15, 0.11), getPartMat('timingDrive', 'intakeValve'));
-      gIn.rotation.y = Math.PI / 2;
-      gIn.position.copy(pIn);
-      timingGroup.add(gIn);
-      camGears.push(gIn);
-
-      const gEx = new THREE.Mesh(createSprocketGeometry(24, 0.56, 0.48, 0.15, 0.11), getPartMat('timingDrive', 'exhaustValve'));
-      gEx.rotation.y = Math.PI / 2;
-      gEx.position.copy(pEx);
-      timingGroup.add(gEx);
-      camGears.push(gEx);
-
-      // Geschlossene Steuerkette für diese Bank (Kurbel -> Einlassrad -> Auslassrad -> Kurbel)
-      const pCrank = new THREE.Vector3(tx, yCrank, 0);
-      const midIn = pCrank.clone().lerp(pIn, 0.5).add(new THREE.Vector3(0, 0, Math.sign(pIn.z - pEx.z || -1) * 0.42));
-      const midEx = pCrank.clone().lerp(pEx, 0.5).add(new THREE.Vector3(0, 0, Math.sign(pEx.z - pIn.z || 1) * 0.42));
-      const topOutIn = pIn.clone().add(new THREE.Vector3(0, 0.55 * Math.cos(aRad), 0.55 * Math.sin(aRad)));
-      const topOutEx = pEx.clone().add(new THREE.Vector3(0, 0.55 * Math.cos(aRad), 0.55 * Math.sin(aRad)));
-      const bottomCrank = new THREE.Vector3(tx, yCrank - 0.34, 0);
-
-      const chainCurve = new THREE.CatmullRomCurve3(
-        [bottomCrank, midEx, topOutEx, topOutIn, midIn],
-        true
-      );
-      const chainMesh = new THREE.Mesh(
-        new THREE.TubeGeometry(chainCurve, 64, 0.052, 8, true),
-        getPartMat('timingDrive', 'chainGold')
-      );
-      timingGroup.add(chainMesh);
-    });
-
+    if (isDiesel) partAnchors.set('commonRail', new THREE.Vector3(...plumbing.nodes.rail0));
+    const moving = installDucts(plumbing, id => partGroups.get(id), getPartMat, cutawayGhostMeshes, createImpellerGroup);
+    const timingGroup = registerPartGroup('timingDrive', new THREE.Group(), [layout.timingX, yCrank + 1.8, 0]);
+    const belts = installBelts(createBankFrames(timingGroup), layout, key => getPartMat('timingDrive', key), createSprocketGeometry);
     // =========================================================================
     // 12. SCHWUNGRAD & ÖLWANNE
     // =========================================================================
@@ -1175,26 +870,8 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     registerXrayShell(panFront);
 
     // =========================================================================
-    // ANIMIERTER GASFLUSS ENTLANG DER ECHTEN KRÜMMER-KURVEN
-    // =========================================================================
-    const flowGroup = new THREE.Group();
-    const particleGeo = new THREE.SphereGeometry(0.072, 9, 9);
-    const intakeParticles = [];
-    const exhaustParticles = [];
-
-    for (let c = 0; c < cylSpecs.length; c++) {
-      for (let k = 0; k < 3; k++) {
-        const iMat = new THREE.MeshBasicMaterial({ color: isDiesel ? 0x0ea5e9 : 0x38bdf8, transparent: true, opacity: 0.85 });
-        const im = new THREE.Mesh(particleGeo, iMat);
-        flowGroup.add(im);
-        intakeParticles.push({ mesh: im, mat: iMat, cyl: c, offset: k / 3, curve: intakeRunnerCurves[c] });
-
-        const eMat = new THREE.MeshBasicMaterial({ color: 0xf97316, transparent: true, opacity: 0.85 });
-        const em = new THREE.Mesh(particleGeo, eMat);
-        flowGroup.add(em);
-        exhaustParticles.push({ mesh: em, mat: eMat, cyl: c, offset: k / 3, curve: exhaustRunnerCurves[c] });
-      }
-    }
+    const tracers = createTracers(plumbing);
+    const flowGroup = tracers.cloud;
     assemblyRoot.add(flowGroup);
 
     // Tagging & Basispositionen
@@ -1214,26 +891,23 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       xrayRecords,
       xrayWireframes,
       highlightableByPart,
-      exhaustMat,
+      exhaustMat: getPartMat('exhaustManifold', 'exhaustPipe', true),
       cutEdgeMat,
       xrayShellMat,
       pistonNodes,
       conrodNodes,
       crankSpin,
       flywheelSpin,
-      crankSprocket,
+      belts,
       camSpins,
-      camGears,
       valveAssemblies,
       gasMeshes,
-      sparkFlashes,
-      dieselSprays,
-      throttlePlate,
-      compressorWheel,
-      turbineWheel,
+      ignition,
+      moving,
       flowGroup,
-      intakeParticles,
-      exhaustParticles,
+      tracers,
+      crowns: new Float32Array(cylSpecs.length),
+      strokes: cylSpecs.map(() => ({})),
       cylSpecs,
       isDiesel
     };
@@ -1333,9 +1007,10 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
   const colorCompress = new THREE.Color(0xfacc15);
   const colorFlame = new THREE.Color(0xff5500);
   const colorDieselFlame = new THREE.Color(0xff7b00);
-  const colorExhaust = new THREE.Color(0x94a3b8);
+  const colorExhaust = new THREE.Color(0x75422c);
   const tmpColor = new THREE.Color();
 
+  const frame = { crankDeg: 0, strokes: null, explosion: null };
   function update(dt, telemetry, timeScale = 0.16) {
     const viewDt = Math.min(0.25, dt);
     const clampedDt = Math.min(0.05, dt);
@@ -1378,15 +1053,15 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       }
     }
 
-    const exhaustCutOpacity = 1 - state.cutawayCurrent * 0.82;
+    const exhaustCutOpacity = 1 - state.cutawayCurrent * 0.84;
     for (const mesh of built.cutawayGhostMeshes) {
-      if (!useXray) {
-        const wantTrans = state.cutawayCurrent > 0.02;
+      if (mesh.material !== built.xrayShellMat) {
+        const wantTrans = useXray || state.cutawayCurrent > 0.02;
         if (mesh.material.transparent !== wantTrans) {
           mesh.material.transparent = wantTrans;
           mesh.material.needsUpdate = true;
         }
-        mesh.material.opacity = exhaustCutOpacity;
+        mesh.material.opacity = useXray ? 0.16 : exhaustCutOpacity;
         mesh.material.depthWrite = !wantTrans;
       }
     }
@@ -1403,27 +1078,23 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     const effectiveScale = isOverrev ? Math.max(0.42, timeScale * 2.6) : timeScale;
     const visualDegPerSec = (effectiveRpm / 60) * 360 * 0.045 * (effectiveScale / 0.16);
-    state.crankDeg = (state.crankDeg + visualDegPerSec * clampedDt) % 720;
+    state.crankClock += visualDegPerSec * clampedDt;
+    state.crankDeg = state.crankClock % 720;
     const crankRad = THREE.MathUtils.degToRad(state.crankDeg);
 
     // Kurbelwelle, Schwungrad, Steuertrieb & Nockenwellen
     built.crankSpin.rotation.x = crankRad;
     built.flywheelSpin.rotation.x = crankRad;
-    built.crankSprocket.rotation.x = crankRad;
+    built.belts.update(crankRad);
     for (const cam of built.camSpins) cam.rotation.x = crankRad * 0.5;
-    for (const gear of built.camGears) gear.rotation.x = crankRad * 0.5;
-    if (built.throttlePlate) {
-      built.throttlePlate.rotation.y = (isOverrev ? 1 : telemetry.load) * Math.PI / 2;
-    }
-
-    // Turbolader-Schaufelräder (drehen sich rasant mit Ladedruck & Drehzahl!)
-    if (built.compressorWheel && built.turbineWheel && !isBlown) {
-      const turboSpeed = effectiveRpm > 0
-        ? (6 + (telemetry.boostBar || 0) * 18 + (isOverrev ? 28 : 0))
-        : 0;
-      state.turboSpinRad = (state.turboSpinRad + turboSpeed * clampedDt) % (Math.PI * 2);
-      built.compressorWheel.rotation.x = state.turboSpinRad;
-      built.turbineWheel.rotation.x = state.turboSpinRad;
+    const { throttle, compressor, turbine, hpEgr, lpEgr } = built.moving;
+    if (throttle) throttle.rotation.x = (0.09 + 0.91 * telemetry.load) * Math.PI / 2;
+    if (compressor && turbine && !isBlown) {
+      const speed = effectiveRpm > 0 ? 6 + telemetry.boostBar * 18 : 0;
+      state.turboSpinRad = (state.turboSpinRad + speed * clampedDt * effectiveScale / 0.16) % (Math.PI * 2);
+      compressor.rotation.x = turbine.rotation.x = -state.turboSpinRad;
+      hpEgr.rotation.x = (1 - telemetry.load) * 1.35;
+      lpEgr.rotation.x = 0.35 + telemetry.load * 0.94;
     }
 
     // Abgaskrümmer-Glühen (bei Overrev glüht der Krümmer weiß-orange!)
@@ -1432,16 +1103,15 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       ? 0.45 + (explosion.progress || 0) * 1.45
       : isBlown
         ? 0.08
-        : 0.04 + Math.pow(rpmNorm, 2.1) * 0.58;
+        : (state.selectedPart === 'exhaustManifold' ? 0.36 : 0.04) + Math.pow(rpmNorm, 2.1) * 0.35;
 
     // 3) Exakte 4-Takt-Kinematik pro Zylinder in Bank-Koordinaten
-    const strokes = [];
+    const strokes = built.strokes;
     const engineRunning = effectiveRpm >= state.profile.specs.minRunningRpm;
 
     for (let i = 0; i < built.cylSpecs.length; i++) {
       const spec = built.cylSpecs[i];
-      const stroke = getCylinderStroke(state.crankDeg, i, state.profile);
-      strokes.push(stroke);
+      const stroke = getCylinderStroke(state.crankDeg, i, state.profile, strokes[i]);
 
       const thetaLocal = THREE.MathUtils.degToRad(state.crankDeg + spec.crankPinAngleDeg - spec.bankAngleDeg);
       const localZc = R_CRANK * Math.sin(thetaLocal);
@@ -1455,16 +1125,17 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
       const va = built.valveAssemblies[i];
       for (const iv of va.intake) {
-        iv.mover.position.y = -stroke.intakeLift * 0.24;
-        iv.spring.scale.y = 1 - stroke.intakeLift * 0.32;
+        iv.mover.position.y = -stroke.intakeLift * MAX_LIFT;
+        iv.spring.scale.y = 1 - stroke.intakeLift * MAX_LIFT / 0.42;
       }
       for (const ev of va.exhaust) {
-        ev.mover.position.y = -stroke.exhaustLift * 0.24;
-        ev.spring.scale.y = 1 - stroke.exhaustLift * 0.32;
+        ev.mover.position.y = -stroke.exhaustLift * MAX_LIFT;
+        ev.spring.scale.y = 1 - stroke.exhaustLift * MAX_LIFT / 0.42;
       }
 
       // Volumetrischer Brennraum
       const crownY = localYp + PISTON_CROWN_OFFSET;
+      built.crowns[i] = crownY;
       const chamberH = Math.max(0.14, LOCAL_Y_ROOF - crownY);
       const gm = built.gasMeshes[i];
       gm.mesh.position.set(spec.x, crownY + chamberH * 0.5, 0);
@@ -1474,72 +1145,44 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       if (engineRunning && !isBlown) {
         if (stroke.key === 'intake') {
           gm.mat.color.copy(colorIntake);
-          gm.mat.opacity = 0.16 + stroke.intakeMist * 0.28;
+          gm.mat.opacity = 0.025 + stroke.intakeMist * 0.045;
         } else if (stroke.key === 'compression') {
           const t = (stroke.cycle - 180) / 180;
           tmpColor.copy(colorIntake).lerp(colorCompress, t);
           gm.mat.color.copy(tmpColor);
-          gm.mat.opacity = 0.28 + t * 0.44;
+          gm.mat.opacity = 0.045 + t * 0.065;
         } else if (stroke.key === 'power') {
           tmpColor.copy(built.isDiesel ? colorDieselFlame : colorFlame).lerp(colorCompress, 0.24);
           gm.mat.color.copy(tmpColor);
-          gm.mat.opacity = 0.24 + stroke.flameIntensity * 0.72;
+          gm.mat.opacity = 0.055 + stroke.flameIntensity * 0.24;
         } else {
           gm.mat.color.copy(colorExhaust);
-          gm.mat.opacity = 0.15 + stroke.exhaustGas * 0.34;
+          gm.mat.opacity = 0.04 + stroke.exhaustGas * 0.08;
         }
       }
 
-      // Otto-Zündfunke
-      const sf = built.sparkFlashes[i];
-      const showSpark = engineRunning && !isBlown && !built.isDiesel && stroke.sparkIntensity > 0.05;
-      sf.mesh.visible = showSpark;
-      if (showSpark) {
-        sf.mesh.position.set(spec.x, LOCAL_Y_ROOF - 0.08, 0);
-        sf.mat.opacity = stroke.sparkIntensity;
-        sf.mesh.scale.setScalar(0.6 + stroke.sparkIntensity * 1.15);
-      }
-
-      // Diesel-Direkteinspritzkegel
-      const ds = built.dieselSprays[i];
-      const showSpray = engineRunning && !isBlown && built.isDiesel && stroke.injectionIntensity > 0.05;
-      ds.mesh.visible = showSpray;
-      if (showSpray) {
-        const s = 0.45 + stroke.injectionIntensity * 0.85;
-        ds.mesh.position.set(spec.x, LOCAL_Y_ROOF - 0.28 * s, 0);
-        ds.mesh.scale.set(s, s, s);
-        ds.mat.opacity = stroke.injectionIntensity * 0.88;
+      const flash = built.ignition[i];
+      const intensity = built.isDiesel
+        ? stroke.injectionIntensity * Math.min(1, Math.max(0, (stroke.cycle - 351) / 9))
+        : stroke.sparkIntensity;
+      flash.visible = engineRunning && !isBlown && intensity > 0.02;
+      if (flash.visible) {
+        const scale = 0.3 + intensity * 0.9;
+        flash.position.set(spec.x, LOCAL_Y_ROOF - 0.024 - (built.isDiesel ? 0.10 * scale : 0), 0);
+        flash.scale.setScalar(scale);
+        flash.material.opacity = intensity * (built.isDiesel ? 0.55 : 1);
       }
     }
 
-    // 4) Animierter Gasfluss entlang der realen Krümmer-Kurven
-    if (state.showFlow && engineRunning && !isBlown) {
-      built.flowGroup.visible = true;
-      for (const p of built.intakeParticles) {
-        const st = strokes[p.cyl];
-        const active = st.key === 'intake';
-        p.mesh.visible = active;
-        if (active) {
-          const t = ((st.cycle / 180) + p.offset) % 1;
-          p.curve.getPoint(t, p.mesh.position);
-          p.mat.opacity = Math.sin(t * Math.PI) * 0.85;
-        }
-      }
-      for (const p of built.exhaustParticles) {
-        const st = strokes[p.cyl];
-        const active = st.key === 'exhaust';
-        p.mesh.visible = active;
-        if (active) {
-          const t = (((st.cycle - 540) / 180) + p.offset) % 1;
-          p.curve.getPoint(t, p.mesh.position);
-          p.mat.opacity = Math.sin(t * Math.PI) * 0.85;
-        }
-      }
-    } else {
-      built.flowGroup.visible = false;
+    built.flowGroup.visible = state.showFlow && !isBlown;
+    if (built.flowGroup.visible) {
+      built.tracers.update(state.crankClock, built.crowns, telemetry.load, telemetry.boostBar || 0);
     }
 
-    return { crankDeg: state.crankDeg, strokes, explosion };
+    frame.crankDeg = state.crankDeg;
+    frame.strokes = strokes;
+    frame.explosion = explosion;
+    return frame;
   }
 
   return {

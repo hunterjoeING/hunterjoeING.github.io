@@ -1,53 +1,68 @@
-# Verbrennungsmotor 3D – Interaktiver Explainer (`games/combustion-engine/`)
+# Combustion Engine 3D – Interactive Explainer
 
-## Überblick
+## 1. Overview
 
-Interaktiver Three.js-3D-Explainer für Viertakt-Verbrennungsmotoren in vier Bauformen (**R4**, **180°-Boxer B4**, **60°-V6**, **90°-Crossplane-V8**) und zwei Antriebskonzepten (**Otto-Saugmotor mit Saugrohreinspritzung** sowie **Common-Rail-Turbodiesel mit VTG-Turbolader**) für HunterJoe Arcade. Visualisiert Ansaugen, Verdichten, Arbeiten und Ausstoßen mit mechanisch exakter Kurbeltrieb-Kinematik in Bank-Koordinaten, synchronem 1:2-Ventiltrieb, volumetrischen Brennräumen, Gaspedal, Volllast-Prüfstandsdiagramm, Muschelkurve und geführter Tour. Die Telemetrie verbindet den Motorbetriebspunkt mit einer beispielhaften Sechsgang-Wandlerautomatik.
+The German-language explainer covers four engine layouts. Each can run as a naturally aspirated petrol engine with port fuel injection (*Saugrohreinspritzung*) or as a common-rail *Turbodiesel*. The crank angle links the moving hardware, the four strokes and the illustrative gas paths. The operating map and six-speed automatic provide the separate driving examples.
 
-## Modulübersicht
+## 2. Modules
 
-| Datei | Aufgabe |
-| :--- | :--- |
-| `index.html` | Einstiegsseite, SEO/JSON-LD, Three.js-Importmap (`0.170.0`), Topbar, 3D-Viewport, Seitenpanel mit Motor-/Bauform-Auswahl, Reglern, Gangwahlanzeige, Voreinstellungen, Telemetrie (inkl. Ladedruck für Turbodiesel) und Diagrammen, dynamischer Zylinder-Taktanzeige, Tour-Container |
-| `styles.css` | Responsives Studio-Layout (Desktop-Sidebar + mobiler Drawer), Dark-/Light-Mode, 3D-Label-Pins, Motor-/Bauform-Buttons, SVG-Diagramme, animierte Gangmarkierung und Warn-/Reparatur-Banner |
-| `ce-variants.js` | Parametrische Definitionen der vier Bauformen (`r4`, `boxer4`, `v6`, `v8`) inkl. Bankwinkel, Hubzapfenwinkel und Zündfolgen sowie der zwei Konzepte (`otto`, `diesel`) mit Volllastkurven, BSFC-Modellen und Ladedruck-Berechnung |
-| `ce-data.js` | Profilfähige Motor- und Antriebstelemetrie, Verbrauchskennfeld mit Konturen und Optimum, Fahrwiderstand, reine Fahrsequenz und Konstantfahrt-Vergleiche, 720°-Takt-Helfer (inkl. Diesel-Direkteinspritzung), profilabhängige Baugruppen- und Tour-Texte |
-| `ce-model.js` | Parametrischer Multi-Bank-3D-Motorgenerator (R4, Boxer B4, V6 60°, V8 90°) mit Cutaway-Wänden, Laufbuchsen, Kolben (mit Diesel-Mulde), exakten Slider-Crank-Pleueln, Bauform-Kurbelwellen, DOHC-Köpfen, korrigierten 1:2-Nockenwellen, 16V/24V/32V-Ventiltrieb, Zündkerzen bzw. Common-Rail-Injektoren + Einspritzkegel, Ansaugtrakt (Drosselklappe vs. 3D-VTG-Turbolader mit drehendem Verdichter- und Turbinenrad), Fächerkrümmer, 1:2-Steuertrieb je Bank, Schwungrad, Ölwanne und isolierten Baugruppen-Materialien |
-| `ce-explosion.js` | Überdrehzahl- und Motorschaden-Easter-Egg für Modus `03 Explosionsansicht` (eskalierende Überdrehzahl, WebAudio-Synthese, 3D-Ballistik mit Bodenabprallern für Baugruppen/Trümmer, Feuerball- und Rauchpartikel sowie Reparatur-Reset) |
-| `ce-main.js` | WebGLRenderer, Beleuchtung, Kamerasteuerung je Bauform, 3D-Label-Projektion und Raycasting, Motor-/Bauform-Umschaltung, Regler und Telemetrie, Tour mit Live-Fahrbeispielen sowie dynamisch skalierende SVG-Diagramme |
-| `tests/engine-map.test.mjs` | Node-Tests für Standard-R4-Otto-Telemetrie, Volllastkurve, Kennfeld, Konturen, HTML-Voreinstellungen und Release-Metadaten |
-| `tests/engine-gear.test.mjs` | Node-Tests für Gangwahl, Geschwindigkeit, Fahrwiderstand, Verbrauch, Ganggrenzen, HTML-Kacheln und Release-Text |
-| `tests/engine-tour.test.mjs` | Node-Tests für Momentanverbrauch, Fahrsequenz und Gangvergleich, modellbasierte Tour-Texte, Release und UI-Ereignisse mit simuliertem DOM und steuerbarer Render-Uhr |
-| `tests/engine-variants.test.mjs` | Node-Tests für alle 4 Bauformen (R4, Boxer, V6, V8) und beide Konzepte (Otto-Sauger vs. Turbodiesel), exakte Kurbelwellen-Phasenmathematik, Ladedruck, Konturen, DOM-Umschaltung und spoilerfreie Release-Prüfung für `v0.4.0` |
+| File | Responsibility |
+| --- | --- |
+| `index.html` | Entry point, local Three.js import map, CSP, engine controls, inspector, telemetry, charts and tour dialog. |
+| `styles.css` | Responsive sidebar and mobile drawer, dark/light themes, component labels, chart and tour controls, gas colour key and repair banner. |
+| `ce-variants.js` | Layouts, firing orders, crankpin and bank angles, profile-dependent torque, boost and fuel maps. |
+| `ce-data.js` | Four-stroke phase, component descriptions, telemetry, consumption contours, gearing, road load and the four live driving examples. |
+| `ce-mechanics.js` | Bank-local dimensions, cam support and outline, exact tangent/arc belt contour and pitch-length adjustment. |
+| `ce-belt.js` | Toothed wheels, tensioner, closed belt band and moving surface pattern per bank. |
+| `ce-plumbing.js` | Named world-space ports, directed gas and fuel passages, chamber interfaces and component/flange definitions for every profile. |
+| `ce-ducts.js` | Rounded centreline samples, duct cross sections, mating rims, coolers, filter, DPF, valves, turbo assembly and pump. |
+| `ce-junctions.js` | Open-port tee and collector fittings built from the actual trimmed pipe rims. |
+| `ce-volute.js` | Spiral turbine and compressor casings with an axial lip and a rectangular-to-round tangential throat. |
+| `ce-tracers.js` | Persistent parcel journeys, arc-length lookup, cylinder residence, ignition colour change and one shaded point batch. |
+| `ce-model.js` | Bank frames, cutaway block/head, slider-crank assemblies, DOHC valvetrain, ignition hardware and integration with ducts, belts and tracers. |
+| `ce-flow-guide.js` | Fuel-system and gas-path stations, engine-specific inspector entries and camera targets from named ports. |
+| `ce-explosion.js` | Internal overrev sequence, WebAudio, debris, smoke and repair reset. |
+| `ce-main.js` | Renderer, orbit controls, component selection, model switching, HUD, charts and tour playback. |
+| `tests/engine-map.test.mjs` | Baseline petrol telemetry, consumption contours, presets and release metadata. |
+| `tests/engine-gear.test.mjs` | Gear choice, speed, consumption, road load and displayed values. |
+| `tests/engine-tour.test.mjs` | Driving examples, release history, tour navigation and playback with a DOM/render-clock fixture. |
+| `tests/engine-variants.test.mjs` | Layout and combustion profiles, crank phases, boost and engine switching/repair. |
+| `tests/engine-geometry.test.mjs` | Tests with the vendored Three.js geometry classes and no WebGL context. Covers port connectivity, fitting rims, pipe clearance, belts, cam contact, stroke timing, rendered hardware, particles and tour order. |
 
-## Stellschrauben & Kennwerte (`ce-variants.js` / `ce-data.js` / `ce-model.js`)
+## 3. Model and operating parameters
 
-| Parameter | Wert | Bedeutung |
-| :--- | :--- | :--- |
-| `ENGINE_LAYOUTS` | `r4` (2,0 l, `1–3–4–2`), `boxer4` (2,0 l, 180°, `1–3–2–4`), `v6` (3,0 l, 60°, `1–2–3–4–5–6`), `v8` (4,0 l, 90° Crossplane, `1–8–4–3–6–5–7–2`) | Vier Bauformen mit exakter Hubzapfen-Beziehung `crankPinAngleDeg = (phaseDeg + bankAngleDeg) mod 360` |
-| `R_CRANK` / `L_ROD` | `0.58` / `1.92` | Kurbelradius und Pleuellänge (exakte Slider-Crank-Kinematik in Bank-Koordinaten) |
-| Otto-Sauger (`otto`) | `idleRpm 850`, `redlineRpm 6500`, `maxRpm 7000`, `Hᵤ 42,7 MJ/kg`, `ρ 745 g/l`, `finalDrive 3,2` | Klassischer Saugbenziner mit Saugrohreinspritzung und Drosselklappe (R4: 200 Nm @ 4250, 109 kW @ 5970, BSFC-Optimum 245 g/kWh) |
-| Turbodiesel (`diesel`) | `idleRpm 750`, `redlineRpm 4500`, `maxRpm 5000`, `Hᵤ 42,6 MJ/kg`, `ρ 835 g/l`, `finalDrive 2,48` | Common-Rail-Direkteinspritzung (16,5:1) + VTG-Turbolader ohne Drosselklappe (R4: ~381 Nm @ 2250, ~140 kW, BSFC-Optimum ~196–202 g/kWh, Ladedruck bis 1,65–1,85 bar) |
-| Nockenwellen-Übersetzung & Phasen | `0.5×`, `intakeLobe = +(phase − 90)/2`, `exhaustLobe = +(phase − 630)/2` | Korrigiertes Vorzeichen sorgt für synchrone Nocken-Abwärtsbewegung auf allen Zylindern und Bänken |
-| `TORQUE_NM_PER_BAR` (K) | `15.915 × (V_h / 2,0)` Nm/bar | Umrechnung von Nutzmoment in effektiven Mitteldruck proportional zum Hubraum |
-| `DRIVETRAIN_EXAMPLE`: `gearRatios` / `wheelRadiusM` | `[4.04, 2.37, 1.56, 1.16, 0.85, 0.69]` / 0,32 m | Beispielwerte für sechs Gänge und dynamischen Radius (225/45 R17); Achsantrieb passt sich an Konzept & Hubraum an |
-| `massKg` / `rollingResistance` / `dragAreaM2` / `drivetrainEfficiency` | 1500 kg / 0,011 / 0,65 m² / 0,92 | Beispielwerte für Fahrwiderstand eines Kompaktwagens |
-| Konturraster & BSFC-Stufen | 25 U/min × 2 Prozentpunkte Last; Otto `250..450`, Diesel `205..400` g/kWh | Auflösung und Isolinien der Muschelkurve je Konzept |
+| Parameter / owner | Value | Interpretation |
+| --- | --- | --- |
+| Layouts / `ce-variants.js` | R4 and 180° B4, 2.0 l. 60° V6, 3.0 l. 90° crossplane V8, 4.0 l. | Firing orders 1–3–4–2, 1–3–2–4, 1–2–3–4–5–6 and 1–8–4–3–6–5–7–2 respectively. Crankpin angle equals cycle offset plus bank angle modulo 360°. |
+| `CRANK_RADIUS`, `ROD_LENGTH` / mechanics | 0.58, 1.92 model units | Slider-crank geometry in bank coordinates. The rendered crown bounds the tracer cloud throughout the stroke. |
+| Cam and valve geometry / mechanics | Axis height 4.77, lateral offsets ±0.32, base radius 0.23, seat height 3.33 | Flat-bucket displacement and the lobe outline come from the same support function. Its angular derivative locates the contact point. Intake and exhaust peak at 90° and 630° cylinder phase. Springs shorten by the actual lift. |
+| Timing drive / mechanics and belt | 10 crank teeth, 20 per cam, 14 on the in-loop tensioner | Two external tangents meet each wheel at its wrap arc. The tensioner position sets an integral belt pitch count. The band advances by crank pitch radius × crank angle. Each bank has its own plane, with the second pulley set 0.24 units farther along the crank nose. |
+| Petrol / variants | Idle 850, redline 6500, maximum 7000 rpm. Fuel 42.7 MJ/kg, 745 g/l, final drive 3.2 on R4. | R4 reference 200 Nm at 4250 rpm, about 109 kW at peak power and 245 g/kWh at the map optimum. |
+| Diesel / variants | Idle 750, redline 4500, maximum 5000 rpm. Fuel 42.6 MJ/kg, 835 g/l, final drive 2.48 on R4. | Compression ratio 16.5, about 381 Nm on R4. Boost depends on speed, load and layout. |
+| Torque conversion / variants | 15.915 × displacement / 2 Nm/bar | Converts brake mean effective pressure to torque for the selected displacement in litres. |
+| Example drivetrain / data | Ratios 4.04, 2.37, 1.56, 1.16, 0.85, 0.69. Wheel radius 0.32 m. | Reference vehicle 1500 kg, rolling coefficient 0.011, drag area 0.65 m² and driveline efficiency 0.92. |
+| Consumption contours / data and variants | 25 rpm × 2 load-percentage-point grid | Petrol contours span 250–450 g/kWh, diesel 205–400 g/kWh. |
+| Particle budget / tracers | 6144 slots, reduced to 2304 at ≤4 logical cores or ≤4 GiB reported memory | One point draw call with preallocated position/colour buffers. Actual occupancy depends on load and time between journeys. |
 
-## Ansichtsmodi & Funktionen
+## 4. Gas paths and controls
 
-1. **00 Motor & Bauform** – Sofortige Umschaltung zwischen **Otto-Sauger** und **Turbodiesel** sowie **R4**, **Boxer**, **V6** und **V8** (auch über den Schnell-Chip im Viewport). Baut 3D-Modell, Diagramme, Zylindertakte, Presets und Tour-Texte live um.
-2. **Außenansicht (`normal`)** – Vollständig geschlossener Motor inkl. Krümmer und Ventildeckel.
-3. **01 Cutaway (`cutaway`, Standard)** – Öffnet Block, Laufbuchsen, Köpfe, Ventildeckel und Ölwanne (bei Boxer nach oben für freien Einblick in beide liegenden Bänke) und blendet den Abgaskrümmer halbtransparent zurück.
-4. **02 X-Ray (`xray`)** – Halbtransparente Blaupausen-Hülle mit `EdgesGeometry`-Konturen.
-5. **03 Explosionsansicht (`exploded`, Easter-Egg)** – Schaltet den Drehzahlbegrenzer ab, überdreht den Motor mit Zittern, Krümmerglühen und Sound bis zum Motorschaden mit 3D-Trümmerballistik, Rauchwolke und „Neuen Motor einbauen“-Reset. *(Gemäß AGENTS.md Regel 10 nicht im öffentlichen Changelog erwähnt.)*
-6. **04 Motordrehzahl & 04b Gaspedal (Last)** – Drehzahl in 50-U/min-Schritten, Last 0–100 %, Gangwahlanzeige N–6, dynamische Voreinstellungen, Zeitlupe (`Pause`, `0,06×`, `0,16×`, `0,38×`).
-7. **05 Prüfstand & 05b Muschelkurve** – Dynamisch skalierte Volllastkurven (Nm/kW) und Wirkungsgradkennfeld (g/kWh, bar, Fahrwiderstandslinien) für alle acht Motorkombinationen.
-8. **06 Schritt-für-Schritt-Tour** – Neun Stationen, angepasst an Otto (Drosselklappe, Zündkerze) bzw. Turbodiesel (hohe Verdichtung, Direkteinspritzung, VTG-Turbolader).
+The filter mouth and tailpipe mouth open to ambient. The fuel pump feeds a separate sealed supply. Each bank has an intake distributor, a cumulative exhaust collector, two inlet and two outlet passages per cylinder. The tube wall and tracer lookup use the same rounded centreline. At a branch, the straight tubes stop at the fitting's port rims. In cutaway and X-ray the walls become translucent.
 
-## Tests
+On petrol engines the throttle meters air. Fuel travels along the rail and enters the intake runner at a timed port injector. On diesels the pump feeds each bank's common rail, high-pressure lines and central injectors. The fuel enters the chamber just before compression TDC. The tilted glow plug assists cold starting. The ignition glow follows the spray. Petrol engines show a spark at the central electrode.
 
-`node --test games/combustion-engine/tests/*.test.mjs` prüft alle vier Testdateien: Standard-R4-Otto-Kennfeld & Konturen, Gangwahl & Verbrauch, Tour-Fahrbeispiele & simuliertes DOM sowie sämtliche Bauformen (R4, Boxer, V6, V8), Turbodiesel-Physik/Ladedruck, DOM-Umschaltung und Release-Regeln.
+On diesel the exhaust collector feeds the turbine tangentially. The axial outlet feeds the downpipe, DPF and tailpipe. Fresh air enters the compressor axially and leaves tangentially for the finned intercooler and intake distributor. Both wheels turn on one shaft. The short high-pressure EGR branch taps upstream of the turbine and rejoins after the intercooler. The low-pressure branch takes filtered exhaust downstream of the DPF and returns it before the compressor. Each branch has its own cooler and metering valve.
+
+Parcel admission and discharge times lie inside the associated valve windows. Particles fan out from the valve or injector into a cloud bounded by the moving piston and converge on the exhaust port before discharge. Blue denotes air, red fuel and brown spent charge, including filtered and recirculated gas. One parcel may pass through EGR and the cylinder again before reaching the tailpipe. Load and boost set new parcel counts, fuel share and route choice at birth. Passage-specific transit times illustrate pressure, cooling and expansion. These are qualitative tracers. Displayed concentrations, local speeds, dimensions and compression volumes are illustrative.
+
+## 5. Views and tour
+
+Motor/layout switches rebuild the assembly, components, gauges, charts and tour. Exterior, cutaway, X-ray and the internal overrev/repair mode share the model. Cutaway opens the viewing side of each bank and the upper side of a boxer. Speed, load, gear indication, presets, pause and slow motion are available alongside the dyno and efficiency maps.
+
+The petrol tour has 11 stations. The diesel tour has 16. Both introduce the colour key and fuel supply, then follow the four strokes. Diesel continues through the turbocharger, intercooler, DPF and both EGR routes. The timing drive and the existing pedal, road-load, gearbox and consumption-map examples finish both tours. Gas-path steps use the corresponding hardware coordinates and material highlights. Finishing the tour restores the user's flow setting and operating point.
+
+## 6. Verification and open checks
+
+Run `node --test games/combustion-engine/tests/*.test.mjs` with a current Node 22 or newer. The geometry suite constructs and updates all eight assemblies without a renderer. Browser review covers actual WebGL shader output, transparent-surface sorting, touch interaction and mobile frame rate. Release entry reviewed in `shared/releases.js` under rule 10.
 
 ## Changelog
 
@@ -58,4 +73,5 @@ Interaktiver Three.js-3D-Explainer für Viertakt-Verbrennungsmotoren in vier Bau
 - **2026-11-27** (`codex/combustion-load-map`, SHA: `0add518`) – Feature v0.3.0: Gangwahlanzeige, Momentanverbrauch bei Beschleunigung und Schub sowie geführte Tour mit animierten Fahrbeispielen.
 - **2026-11-27** (`codex/combustion-load-map`, SHA: `66a8667`) – Patch v0.3.1: Beispielkennfeld eines 2,0-l-Saugbenziners mit Saugrohreinspritzung, dazu passende Voreinstellungen und Tour sowie Einspritzventile und Kraftstoffleiste im 3D-Modell.
 - **2026-11-27** (`upstream/main`, Merge `84636bc`, [PR #12](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/12)) – v0.3.1 live auf https://hunterjoeing.github.io/games/combustion-engine/.
-- **2026-11-27** (`main`, `9ed0fd1`) – Feature `v0.4.0`: Common-Rail-Turbodiesel mit 3D-VTG-Turbolader, Direkteinspritzkegel und Ladedruck-Telemetrie; vier parametrische Bauformen (R4, 180°-Boxer B4, 60°-V6, 90°-Crossplane-V8); Überdrehzahl-Explosions-Easter-Egg; korrigierte Nockenwellen-Phasen und isolierte Baugruppen-Hervorhebung.
+- **2026-11-27** (`main`, `9ed0fd1`) – Feature `v0.4.0`: Common-Rail-Turbodiesel mit 3D-VTG-Turbolader, Direkteinspritzkegel und Ladedruck-Telemetrie; vier parametrische Bauformen (R4, 180°-Boxer B4, 60°-V6, 90°-Crossplane-V8); Überdrehzahl-Explosions-Easter-Egg; korrigierte Nockenwellen-Phasen und isolierte Baugruppen-Hervorhebung (später ersetzt: Steuertrieb, Einspritzdarstellung und Gasführung in v0.5.0).
+- **2026-11-27** (`codex/combustion-3d-v0.5`, SHA: `3eed89e`, fork only) – v0.5.0 adds per-bank toothed belts, matched cams and buckets, connected gas and fuel paths with timed tracers, and guided diesel charge-air and EGR circuits.

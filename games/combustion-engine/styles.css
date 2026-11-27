@@ -373,6 +373,25 @@ html[data-theme="dark"] .ce-tour-card {
   color: var(--text-main);
 }
 
+.ce-flow-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.8rem;
+}
+.ce-flow-key span::before {
+  content: '';
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.35em;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: #389cff;
+}
+.ce-flow-key span:nth-child(2)::before { background: #f03137; }
+.ce-flow-key span:nth-child(3)::before { background: #75422c; }
+
 .ce-tour-footer {
   display: flex;
   flex-wrap: wrap;
@@ -383,6 +402,7 @@ html[data-theme="dark"] .ce-tour-card {
 
 .ce-tour-dots {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 6px;
 }

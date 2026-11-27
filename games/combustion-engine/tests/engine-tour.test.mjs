@@ -136,10 +136,10 @@ test('Bei 130 km/h sinken Drehzahl, BSFC und Streckenverbrauch mit höherem Gang
   assert.equal(constantSpeedPoint(130, 1), null);
 });
 
-test('Die Tour hat neun Schritte und die Fahrbeispiele beziehen ihre Zahlen aus dem Modell', () => {
-  assert.deepEqual(ENGINE_TOUR_STEPS.map(step => step.step), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+test('Die Otto-Tour hat elf Schritte und die Fahrbeispiele beziehen ihre Zahlen aus dem Modell', () => {
+  assert.deepEqual(ENGINE_TOUR_STEPS.map(step => step.step), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
   assert.ok(ENGINE_TOUR_STEPS.every(step => step.viewMode !== 'exploded' && !/Explosionsansicht/.test(step.title)));
-  assert.deepEqual(ENGINE_TOUR_STEPS.slice(5).map(step => step.title), [
+  assert.deepEqual(ENGINE_TOUR_STEPS.filter(step => step.demo).map(step => step.title), [
     'Gas geben: Drosselklappe auf', 'Fahrwiderstand und Gleichgewicht', 'Warum ein Getriebe?', 'Die Muschelkurve lesen'
   ]);
   const ramp = demos.pedal.frames.find(frame => frame.t >= DRIVE_SEQUENCE_EXAMPLE.loadRampS);
@@ -296,7 +296,7 @@ function explainerUI() {
     MutationObserver: Observer, ResizeObserver: Observer,
     DOMPoint: class extends Vector { matrixTransform() { return this; } },
     createCombustionEngineModel: () => ({
-      root: new SceneNode(), applyTheme() {}, setSelectedPart() {}, setViewMode() {},
+      root: new SceneNode(), applyTheme() {}, setFlowVisible() {}, setSelectedPart() {}, setViewMode() {},
       update: () => ({ strokes: [0, 1, 2, 3].map(i => engine.getCylinderStroke(0, i)) })
     }),
     performance: { now: () => now },
@@ -389,8 +389,9 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
     assert.equal(byId('ce-tel-gear').textContent, '1. Gang');
   };
 
+  const demoStep = id => ENGINE_TOUR_STEPS.find(step => step.demo === id).step;
   tour.emit('click');
-  dot(6).emit('click');
+  dot(demoStep('pedal')).emit('click');
   const startMarker = marker.getAttribute('transform');
   advance(1200);
   assert.equal(load.value, '75');
@@ -414,7 +415,7 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   byId('ce-tour-prev').emit('click');
   assert.equal(load.value, '38');
 
-  dot(8).emit('click');
+  dot(demoStep('gearing')).emit('click');
   assert.equal(byId('ce-tel-gear').textContent, '3. Gang');
   advance(2100);
   assert.equal(byId('ce-tel-gear').textContent, '4. Gang');
@@ -424,7 +425,7 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   advance(8000);
   assert.equal(load.value, '100');
 
-  dot(9).emit('click');
+  dot(demoStep('map')).emit('click');
   advance(2200);
   assert.equal(byId('ce-tel-speed').textContent, '50 km/h');
   byId('ce-bsfc-map').emit('pointerdown', { isPrimary: true, button: 0, pointerId: 1, clientX: 90, clientY: 130 });
@@ -432,17 +433,17 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   advance(10000);
   assert.equal(rpm.value, manualRpm);
   assert.notEqual(byId('ce-tel-speed').textContent, '50 km/h');
-  dot(7).emit('click');
+  dot(demoStep('equilibrium')).emit('click');
   preset(850).emit('click');
   advance(10000);
   assert.equal(byId('ce-tel-gear').textContent, 'N');
-  dot(7).emit('click');
+  dot(demoStep('equilibrium')).emit('click');
   byId('ce-mobile-panel-toggle').emit('click');
   window.emit('keydown', { key: 'Escape' });
   assert.ok(!byId('ce-side-panel').classList.contains('mobile-open'));
   checkRestored();
 
-  for (const [step, closeId] of [[7, 'ce-tour-end'], [9, 'ce-tour-next']]) {
+  for (const [step, closeId] of [[demoStep('equilibrium'), 'ce-tour-end'], [demoStep('map'), 'ce-tour-next']]) {
     tour.emit('click');
     dot(step).emit('click');
     byId(closeId).emit('click');
@@ -451,7 +452,10 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
 });
 
 test('Der Patch v0.4.1 und das Feature v0.4.0 stehen vor den unveränderten Einträgen für v0.3.1, v0.3.0 und v0.2.0', () => {
-  const [patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  const [flow, patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  assert.deepEqual([flow.version, flow.type, flow.date, flow.author, flow.model], ['0.5.0', 'feature', '2026-11-27', 'Michi', 'Astra 6.2']);
+  assert.notEqual(flow.banner, false);
+  assert.ok(flow.highlights.length >= 3 && flow.highlights.length <= 5);
   assert.equal(patch41.version, '0.4.1');
   assert.equal(patch41.date, '2026-11-27');
   assert.equal(patch41.type, 'patch');
@@ -464,9 +468,9 @@ test('Der Patch v0.4.1 und das Feature v0.4.0 stehen vor den unveränderten Eint
   assert.equal(latest.author, 'Joe');
   assert.equal(latest.model, 'Neon');
   assert.ok(latest.highlights.length >= 3 && latest.highlights.length <= 5);
-  assert.doesNotMatch([patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
+  assert.doesNotMatch([flow.title, ...flow.highlights, patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
     /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?|easter|motorschaden|explodier|überdreh)\b/i);
-  assert.match(html, /id="ce-version-btn"[^>]*>v0\.4\.1</);
+  assert.match(html, /id="ce-version-btn"[^>]*>v0\.5\.0</);
 
   assert.equal(patch31.version, '0.3.1');
   assert.equal(patch31.date, '2026-11-27');

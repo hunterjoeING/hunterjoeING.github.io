@@ -122,6 +122,16 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.5.0", date: "2026-11-27", type: "feature", title: "Den Weg der Gase verfolgen",
+      author: "Michi", model: "Astra 6.2",
+      highlights: [
+        "Verfolge Luft, Kraftstoff und Abgas als farbige Kügelchen vom Luftfilter bis zum Auspuff.",
+        "Sieh, wie Zahnriemen, Nocken und Tassenstößel die Ventile in allen vier Bauformen öffnen.",
+        "Vergleiche die Gemischbildung im Saugrohr des Benziners mit der Direkteinspritzung und Selbstzündung beim Diesel.",
+        "Entdecke in der Tour den Turbolader, den Ladeluftkühler und beide Wege der Abgasrückführung.",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.4.1", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
       author: "Joe", model: "Neon",
       highlights: [
