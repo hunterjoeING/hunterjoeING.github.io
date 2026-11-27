@@ -23,13 +23,21 @@
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
 | 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity · Neon high | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
 | E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` (`0ddbc5e`, Upstream-Merge `5e751d6`) · [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) (Merge `2aebc51`) | ✅ Gemerged, Worker deployt und live (e-Roadtrip v0.6.0, Arcade v0.4.1) |
-| Verbrennungsmotor 3D v0.2.0–v0.3.1 · Gaspedal, interaktives Lastkennfeld mit Fahrwiderstand, Voreinstellungen und Beispielautomatik. Gangwahlanzeige, Momentanverbrauch und Tour mit Live-Fahrbeispielen. v0.3.1: Sauger-Kennfeld und sichtbare Saugrohreinspritzung | Michi / Codex CLI · gpt-6.2-sol xhigh · Orchestrator | `codex/combustion-load-map` ab `upstream/main` (`a70eacc`) · Fork-Stand `ce28826` (v0.3.0) · `66a8667` (v0.3.1, + Doku-Commit) · kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Upstream unveröffentlicht. Browser-Test für v0.3.1 und Michis Go für Upstream offen |
+| Verbrennungsmotor 3D v0.2.0–v0.3.1 · Gaspedal, interaktives Lastkennfeld mit Fahrwiderstand, Voreinstellungen und Beispielautomatik. Gangwahlanzeige, Momentanverbrauch und Tour mit Live-Fahrbeispielen. v0.3.1: Sauger-Kennfeld und sichtbare Saugrohreinspritzung | Michi / Codex CLI · gpt-6.2-sol xhigh · Orchestrator | `codex/combustion-load-map` · [Upstream-PR #12](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/12) (Merge `84636bc`) | ✅ Gemerged und live (Verbrennungsmotor v0.3.1) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.3.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live Verbrennungsmotor 3D v0.3.1
+
+- **Branch / PR** · `upstream/main` war unverändert bei `a70eacc`. [Upstream-PR #12](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/12) aus dem Fork-Branch `codex/combustion-load-map` (`ff917ae`), gemergt von `mic4rd` (Merge `84636bc`, 08:35 Uhr Europe/Berlin). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-27`).
+- **Konflikte** · Keine. Upstream/main ist seit `a70eacc` nicht weitergelaufen, kein Rebase nötig.
+- **Geprüft** · Vor dem Merge: Explainer-Tests 32/32, `node --check`, `git diff --check`, `node scripts/check-release-bump.mjs upstream/main` (combustion_engine), e-Roadtrip Typecheck, Build (Bundle unverändert) und `npm test` (167/167). CI auf PR #12: `check-versioning` grün. Nach dem Merge: Workflow „pages build and deployment“ auf `84636bc` grün. Live-Seite https://hunterjoeing.github.io/games/combustion-engine/ zeigt v0.3.1 und „Saugbenziner“. Hub und e-Roadtrip v0.6.0 bleiben erreichbar. Headless-Chrome-Stichprobe ohne Konsolenfehler, 0 POSTs. Screenshot `/home/box/projects/shot/ce-live-v031.png`.
+- **Offen** · Der Hilfsbranch `audit/upstream-main-a70eacc` auf dem Fork bleibt. Issue-/PR-Check nach dem Merge: Upstream 0 offene Issues und PRs (dieser Doku-PR ausgenommen), Fork 0 offene PRs.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol xhigh – Verbrennungsmotor 3D v0.3.1
 
@@ -69,12 +77,5 @@
 - **Orchestrator** · Seitentitel und `og:title` wieder auf „Verbrennungsmotor 3D – Interaktiver Explainer“ gesetzt, Beschreibung um Gaspedal und Muschelkurve ergänzt. Headless-Chrome-Test lokal und auf Fork-Pages (1280, 390 und 320 px, hell und dunkel, alle vier Voreinstellungen, Regler 2800 U/min / 85 %): keine JS-Fehler, kein horizontales Scrollen, 0 POSTs. Screenshots `/home/box/projects/shot/ce-map-*.png`.
 - **Offen** · Fork-Test durch Michi. Joe sieht den Stand vor einem Upstream-PR. Kein Upstream-PR ohne Michis ausdrückliches Go. Die Voreinstellung „Max kW“ (6.200 U/min) liegt über dem Leistungsmaximum der bestehenden Volllastkurve (135 kW bei ca. 5.550 U/min, 128 kW bei 6.200); bewusst unverändert.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
-
-### 2026-11-26 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live e-Roadtrip v0.6.0
-
-- **Branch / PR** · `upstream/main` (`0e73752`, Joes 3D-Explainer und Arcade v0.4.0) per Merge-Commit `5e751d6` in `codex/eroadtrip-v0.6` eingeholt, dann [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) aus dem Fork, gemergt von `mic4rd` (Merge `2aebc51`, 23:33 Uhr Berlin). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-26`).
-- **Konflikte** · `shared/releases.js`: Unser Arcade-Patch (vorher v0.3.1) ist jetzt v0.4.1 über Joes v0.4.0; Joes Einträge für Arcade, Windkraftanlage und Verbrennungsmotor bleiben unverändert. `index.html`: `arcade.js`/`releases.js` auf `?v=0.4.1`, `update-banner.js` auf Joes `?v=0.4.0`; `changelogs.html` und die e-Roadtrip-Seite ebenfalls auf `arcade.js?v=0.4.1`. `HANDOFF.md`: Joes Statuszeile und Session-Eintrag übernommen, ein doppelter Archiv-Eintrag entfernt.
-- **Geprüft** · Vor dem Merge `npm run typecheck`, `npm run build` (Bundle bytegleich, rev 16), `node --check dist/e-roadtrip.js`, `npm test` (167/167), `node scripts/check-release-bump.mjs upstream/main` (arcade, eroadtrip). Workflows auf `2aebc51` grün: `check-versioning` (PR #10), „Rebuild e-Roadtrip bundle“ (kein Bot-Commit), „Deploy Cloudflare Worker“, „pages build and deployment“. Worker: `/api/health` ok, DB verbunden; `GET /api/scores` liefert für `eroadtrip_l3` den neuen Titel „Level 3: Winter-Alpenüberquerung“. Die Levelziele L2 1882 und L3 564 stehen im deployten Stand von `cloudflare-worker/worker.js`; der Worker hat dafür keinen GET-Endpunkt. Live-Seite zeigt v0.6.0, den Hinweis „Neues Update v0.6“ auf der Hub-Karte und den Changelog „Winterfahrt an den Gardasee“ (Michi · Sol 6.2). Headless-Chrome-Stichprobe L1–L3 (Planung und Start), Aachen-Vorschau und 390 px ohne JS-Fehler, 0 POSTs (alle abgefangen).
-- **Offen** · Handy-Test durch Michi. Punkt 2 (`legacyMaxMinutes` in L2) bleibt offen. Issue-/PR-Check (26.11., gh): Upstream 0 offene Issues und PRs, Fork 0 offene PRs.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
