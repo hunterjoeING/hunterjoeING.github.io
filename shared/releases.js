@@ -83,7 +83,8 @@ const arcadeReleases = {
       author: "Michi", model: "Sol 6.2",
       highlights: [
         "Mit dem Gaspedal stellst du die Motorlast ein.",
-        "Ein Beispielkennfeld liefert Wirkungsgrad und spezifischen Verbrauch für den gewählten Betriebspunkt. Im Leerlauf bei 0 % Last zeigt die Anzeige 0 % Wirkungsgrad.",
+        "Ein Beispielkennfeld liefert Wirkungsgrad und spezifischen Verbrauch für den gewählten Betriebspunkt.",
+        "Drehzahl und Gaspedal bestimmen Gang, Geschwindigkeit und Verbrauch eines Beispielautos.",
         "In der interaktiven Muschelkurve siehst und verschiebst du den aktuellen Betriebspunkt.",
         "Die Voreinstellungen setzen Drehzahl und Last gemeinsam.",
       ],

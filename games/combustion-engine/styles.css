@@ -658,10 +658,6 @@ html[data-theme="dark"] .ce-cyl-pill[data-stroke="power"] .ce-cyl-stroke {
   border: 1px solid var(--border-hairline);
 }
 
-.ce-metric-wide {
-  grid-column: 1 / -1;
-}
-
 .ce-metric-label {
   font-size: 10.5px;
   color: var(--text-subtle);
@@ -844,8 +840,13 @@ html[data-theme="dark"] .chart-unit-text.torque {
 
 .chart-road-load {
   stroke: var(--text-muted);
-  stroke-width: 1.2;
+  stroke-width: 1.1;
   stroke-dasharray: 3 3;
+}
+
+.is-active > .chart-road-load {
+  stroke: var(--text-main);
+  stroke-width: 1.7;
 }
 
 .chart-map-label {
@@ -855,6 +856,14 @@ html[data-theme="dark"] .chart-unit-text.torque {
   paint-order: stroke;
   font-family: var(--font-ui);
   font-weight: 700;
+}
+
+.chart-road-label {
+  fill: var(--text-muted);
+}
+
+.is-active > .chart-road-label {
+  fill: var(--text-main);
 }
 
 .chart-map-optimum {
@@ -915,6 +924,11 @@ html[data-theme="dark"] .chart-unit-text.torque {
   color: var(--text-muted);
   font-size: 11px;
   line-height: 1.45;
+}
+
+.ce-drivetrain-note {
+  grid-column: 1 / -1;
+  margin-top: 0;
 }
 
 .ce-map-readout {

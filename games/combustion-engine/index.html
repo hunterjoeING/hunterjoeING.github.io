@@ -26,7 +26,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Verbrennungsmotor 3D – Interaktiver Explainer",
-    "description": "Interaktiver 3D-Explainer eines 2,0-Liter-Viertakt-Ottomotors mit Schnittansicht und geführter Tour. Drehzahlregler und Gaspedal steuern den Betriebspunkt in der Muschelkurve. Das Prüfstandsdiagramm zeigt Drehmoment und Leistung bei Volllast.",
+    "description": "Interaktiver 3D-Explainer eines 2,0-Liter-Viertakt-Ottomotors mit Schnittansicht und geführter Tour. Drehzahlregler und Gaspedal steuern den Betriebspunkt in der Muschelkurve sowie Gang, Geschwindigkeit und Verbrauch eines Beispielautos. Das Prüfstandsdiagramm zeigt Drehmoment und Leistung bei Volllast.",
     "url": "https://hunterjoeing.github.io/games/combustion-engine/",
     "inLanguage": "de",
     "isAccessibleForFree": true,
@@ -45,7 +45,7 @@
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.2.0" />
+  <link rel="stylesheet" href="./styles.css?v=0.2.0&amp;rev=2" />
 </head>
 <body>
   <header class="arcade-topbar ce-topbar">
@@ -165,10 +165,25 @@
           <div class="ce-metric-val" id="ce-tel-eff">27 %</div>
           <div class="ce-metric-label" id="ce-tel-eff-note" hidden>keine Nutzleistung</div>
         </div>
-        <div class="ce-metric ce-metric-wide">
+        <div class="ce-metric">
+          <div class="ce-metric-label">Gang</div>
+          <div class="ce-metric-val" id="ce-tel-gear">5. Gang</div>
+          <div class="ce-metric-label" id="ce-tel-gear-note">Konstantfahrt</div>
+        </div>
+        <div class="ce-metric">
+          <div class="ce-metric-label">Geschwindigkeit</div>
+          <div class="ce-metric-val" id="ce-tel-speed">106 km/h</div>
+        </div>
+        <div class="ce-metric">
           <div class="ce-metric-label">Spez. Verbrauch</div>
           <div class="ce-metric-val" id="ce-tel-bsfc">317 g/kWh</div>
         </div>
+        <div class="ce-metric">
+          <div class="ce-metric-label">Verbrauch</div>
+          <div class="ce-metric-val" id="ce-tel-fuel">6,3 l/100km</div>
+          <div class="ce-metric-label" id="ce-tel-fuel-note">6,7 l/h</div>
+        </div>
+        <p class="ce-map-help ce-drivetrain-note">Beispielwerte: 6-Gang-Automatik (4,04 … 0,69), Achsantrieb 3,2, Reifen 225/45 R17, Kompaktklasse 1500 kg, cw·A 0,65 m².</p>
       </div>
 
       <!-- 05 Torque & Power Curve Chart -->
@@ -195,7 +210,7 @@
         </div>
         <div class="ce-chart-legend ce-map-legend">
           <span class="ce-map-legend-item"><i class="ce-map-key" aria-hidden="true"></i> Volllast</span>
-          <span class="ce-map-legend-item"><i class="ce-map-key road" aria-hidden="true"></i> Fahrwiderstand (hoher Gang, konstante Fahrt)</span>
+          <span class="ce-map-legend-item"><i class="ce-map-key road" aria-hidden="true"></i> Fahrwiderstand je Gang (konstante Fahrt)</span>
         </div>
         <p class="ce-map-help" id="ce-map-help">Muschellinien in g/kWh. Tippen oder Ziehen setzt Drehzahl und Last.</p>
         <div class="ce-map-readout">
@@ -211,9 +226,9 @@
   </main>
 
   <script src="../../shared/arcade.js?v=0.4.0"></script>
-  <script src="../../shared/releases.js?v=0.4.1&amp;rev=2"></script>
+  <script src="../../shared/releases.js?v=0.4.1&amp;rev=3"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
   <script src="../../shared/burger-menu.js?v=0.4.0"></script>
-  <script type="module" src="./ce-main.js?v=0.2.0"></script>
+  <script type="module" src="./ce-main.js?v=0.2.0&amp;rev=2"></script>
 </body>
 </html>

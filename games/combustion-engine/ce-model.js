@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ENGINE_PARTS, CYLINDER_PHASE_OFFSETS, getCylinderStroke } from './ce-data.js?v=0.2.0';
+import { ENGINE_PARTS, CYLINDER_PHASE_OFFSETS, getCylinderStroke } from './ce-data.js?v=0.2.0&rev=2';
 
 const CYL_X = [-2.1, -0.7, 0.7, 2.1];
 const Y_CRANK = -1.45;

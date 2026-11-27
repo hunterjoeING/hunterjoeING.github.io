@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {
+  DRIVETRAIN_EXAMPLE,
   ENGINE_SPECS,
   ENGINE_PARTS,
   ENGINE_TOUR_STEPS,
@@ -9,9 +10,10 @@ import {
   computeEngineTelemetry,
   computeBsfcContours,
   fullTorqueNm,
-  roadLoadTorqueNm
-} from './ce-data.js?v=0.2.0';
-import { createCombustionEngineModel } from './ce-model.js?v=0.2.0';
+  roadLoadTorqueNm,
+  speedKmh
+} from './ce-data.js?v=0.2.0&rev=2';
+import { createCombustionEngineModel } from './ce-model.js?v=0.2.0&rev=2';
 
 const DEFAULT_CAMERA = {
   normal: { pos: [7.8, 2.5, 8.6], target: [0.0, 0.5, 0.0] },
@@ -332,6 +334,7 @@ function init() {
   const mapPlotH = mapBottom - mapTop;
   const mapTorqueMax = 300;
   let mapMarker;
+  let mapRoadLoads = [];
 
   function yForMapTorque(torqueNm) {
     return mapBottom - torqueNm / mapTorqueMax * mapPlotH;
@@ -343,27 +346,47 @@ function init() {
     }).join(' ');
   }
 
+  function mapRoadLoadCurve(gear, rpmStep) {
+    const { minCruiseKmh, maxSpeedKmh } = DRIVETRAIN_EXAMPLE;
+    const speedPerRpm = speedKmh(1, gear);
+    const start = Math.max(ENGINE_SPECS.minRunningRpm, minCruiseKmh / speedPerRpm);
+    const end = Math.min(ENGINE_SPECS.maxRpm, maxSpeedKmh / speedPerRpm);
+    const torqueAt = rpm => roadLoadTorqueNm(rpm, gear);
+    if (start >= end || torqueAt(start) > fullTorqueNm(start)) return '';
+
+    const points = [{ rpm: start, torqueNm: torqueAt(start) }];
+    let lastRpm = start;
+    while (lastRpm < end) {
+      let nextRpm = Math.min(lastRpm + rpmStep, end);
+      if (torqueAt(nextRpm) > fullTorqueNm(nextRpm)) {
+        // Schnittpunkt der Fahrwiderstandskurve mit der Volllastgrenze verfeinern.
+        while (nextRpm - lastRpm > 0.01) {
+          const middle = (lastRpm + nextRpm) / 2;
+          if (torqueAt(middle) <= fullTorqueNm(middle)) lastRpm = middle;
+          else nextRpm = middle;
+        }
+        points.push({ rpm: lastRpm, torqueNm: torqueAt(lastRpm) });
+        break;
+      }
+      lastRpm = nextRpm;
+      points.push({ rpm: lastRpm, torqueNm: torqueAt(lastRpm) });
+    }
+    const { rpm, torqueNm } = points.at(-1);
+    return `<g data-road-gear="${gear}">
+      <path d="${mapPath(points)}" class="chart-road-load" clip-path="url(#ce-map-limits)" />
+      <text x="${xForRpm(rpm) + 4}" y="${yForMapTorque(torqueNm) - 3}" class="chart-map-label chart-road-label">${gear}.</text>
+    </g>`;
+  }
+
   function buildBsfcMap() {
     if (!mapSvg) return;
     const { maxRpm, minRunningRpm, redlineRpm } = ENGINE_SPECS;
     const { contours, optimum } = computeBsfcContours();
     const fullLoad = [{ rpm: minRunningRpm, torqueNm: 0 }];
-    const roadLoad = [];
     const rpmStep = 50;
     for (let rpm = minRunningRpm; rpm <= maxRpm; rpm += rpmStep) {
-      const torqueNm = fullTorqueNm(rpm);
-      fullLoad.push({ rpm, torqueNm });
-      const roadTorqueNm = roadLoadTorqueNm(rpm);
-      if (roadTorqueNm <= torqueNm) roadLoad.push({ rpm, torqueNm: roadTorqueNm });
+      fullLoad.push({ rpm, torqueNm: fullTorqueNm(rpm) });
     }
-    let roadEnd = roadLoad.at(-1).rpm;
-    let aboveLimit = roadEnd + rpmStep;
-    while (aboveLimit - roadEnd > 0.01) {
-      const rpm = (roadEnd + aboveLimit) / 2;
-      if (roadLoadTorqueNm(rpm) <= fullTorqueNm(rpm)) roadEnd = rpm;
-      else aboveLimit = rpm;
-    }
-    roadLoad.push({ rpm: roadEnd, torqueNm: roadLoadTorqueNm(roadEnd) });
 
     const fullLoadPath = mapPath(fullLoad);
     const right = xForRpm(maxRpm);
@@ -409,7 +432,7 @@ function init() {
       <text x="${right + 6}" y="13" class="chart-axis-text">bar</text>
       <g clip-path="url(#ce-map-limits)">${contourPaths}</g>
       <path d="${fullLoadPath}" class="chart-map-limit" />
-      <path d="${mapPath(roadLoad)}" class="chart-road-load" />
+      ${[4, 5, 6].map(gear => mapRoadLoadCurve(gear, rpmStep)).join('')}
       ${labels.join('')}
       <path d="M${optimumX},${optimumY - 4} l4,7 h-8 Z" class="chart-map-optimum" />
       <text x="${optimumX - 43}" y="${optimumY - 17}" text-anchor="middle" class="chart-map-label">Optimum ~${contours[0].level}</text>
@@ -419,6 +442,7 @@ function init() {
       </g>
     `;
     mapMarker = mapSvg.querySelector('#ce-map-marker');
+    mapRoadLoads = mapSvg.querySelectorAll('[data-road-gear]');
 
     function scrubMap(e) {
       const matrix = mapSvg.getScreenCTM();
@@ -455,6 +479,12 @@ function init() {
   const elTelEff = document.getElementById('ce-tel-eff');
   const elTelEffNote = document.getElementById('ce-tel-eff-note');
   const elTelBsfc = document.getElementById('ce-tel-bsfc');
+  const elTelGear = document.getElementById('ce-tel-gear');
+  const elTelGearNote = document.getElementById('ce-tel-gear-note');
+  const elTelSpeed = document.getElementById('ce-tel-speed');
+  const elTelFuel = document.getElementById('ce-tel-fuel');
+  const elTelFuelNote = document.getElementById('ce-tel-fuel-note');
+  const fuelFormat = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   const elMapEff = document.getElementById('ce-map-eff');
   const elMapBsfc = document.getElementById('ce-map-bsfc');
   const elInspector = document.getElementById('ce-inspector');
@@ -491,6 +521,17 @@ function init() {
     if (elTelEff) elTelEff.textContent = effText;
     if (elTelEffNote) elTelEffNote.hidden = !telemetry.noUsefulPower;
     if (elTelBsfc) elTelBsfc.textContent = bsfcText;
+    if (elTelGear) elTelGear.textContent = telemetry.gearLabel;
+    if (elTelGearNote) elTelGearNote.textContent = telemetry.driveModeLabel;
+    if (elTelSpeed) elTelSpeed.textContent = `${Math.round(telemetry.speedKmh).toLocaleString('de-DE')} km/h`;
+    const hourlyFuel = `${fuelFormat.format(telemetry.fuelLph)} l/h`;
+    const fuelL100 = telemetry.fuelL100;
+    if (elTelFuel) elTelFuel.textContent = fuelL100 === null ? hourlyFuel : `${fuelFormat.format(fuelL100)} l/100km`;
+    if (elTelFuelNote) {
+      const neutralLabel = telemetry.status === 'off' ? telemetry.statusLabel : 'Leerlauf';
+      const fuelModeLabel = telemetry.gear ? telemetry.driveModeLabel : neutralLabel;
+      elTelFuelNote.textContent = fuelL100 === null ? fuelModeLabel : hourlyFuel;
+    }
     if (elMapEff) elMapEff.textContent = effText;
     if (elMapBsfc) elMapBsfc.textContent = bsfcText;
 
@@ -502,6 +543,9 @@ function init() {
     });
     updateDynoMarkers();
     mapMarker?.setAttribute('transform', `translate(${xForRpm(telemetry.rpm)} ${yForMapTorque(telemetry.torqueNm)})`);
+    for (const curve of mapRoadLoads) {
+      curve.classList.toggle('is-active', telemetry.driveMode === 'cruise' && Number(curve.dataset.roadGear) === telemetry.gear);
+    }
   }
 
   function setRpm(val, load = appState.load) {

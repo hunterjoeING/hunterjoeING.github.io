@@ -23,13 +23,22 @@
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
 | 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity · Neon high | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
 | E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` (`0ddbc5e`, Upstream-Merge `5e751d6`) · [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) (Merge `2aebc51`) | ✅ Gemerged, Worker deployt und live (e-Roadtrip v0.6.0, Arcade v0.4.1) |
-| Verbrennungsmotor 3D v0.2.0 · Gaspedal, lastabhängige Telemetrie, Muschelkurve und gekoppelte Voreinstellungen | Michi / Codex CLI · gpt-6.2-sol high | `codex/combustion-load-map` ab `upstream/main` (`a70eacc`) · Fork-Stand `cf28b8d` (+ Doku-Commit) · kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Fork-Test läuft, Upstream-Merge wartet auf Michis Go und Joes Ansicht |
+| Verbrennungsmotor 3D v0.2.0 · Gaspedal, Lastkennfeld und gekoppelte Voreinstellungen, Beispielautomatik mit Gang, Tempo und Verbrauch, Muschelkurve mit Fahrwiderstand je Gang | Michi / Codex CLI · gpt-6.2-sol high | `codex/combustion-load-map` ab `upstream/main` (`a70eacc`) · bisheriger Fork-Stand `50639be` · SHA: (folgt) · kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Lokal geprüft, Push und Browsertest der Erweiterung folgen. Upstream-Merge wartet auf Michis Go und Joes Ansicht. |
 
 **Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Gang, Geschwindigkeit und Verbrauch für Verbrennungsmotor 3D v0.2.0
+
+- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `50639be`. SHA: (folgt). Push folgt in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages nach dem Push · https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
+- **Erledigt** · Beispielautomatik, Kacheln für Gang, Geschwindigkeit und Verbrauch, markierte Fahrwiderstandslinien für die Gänge 4 bis 6 und Release-Text in v0.2.0. Cruise startet im 5. Gang mit 106 km/h, 6,3 l/100km und 6,7 l/h. Die zusätzliche Toleranz im 6. Gang ermöglicht Konstantfahrt bei 2800 U/min und 85 % Last.
+- **Geprüft** · `node --check` für alle `ce-*.js`, `shared/releases.js` und beide Testdateien. Explainer-Tests 18/18, HTML-Tags, IDs, JSON-LD, Importmap, Inline-JavaScript und Asset-Revisionen geprüft. SVG-Gangkurven auf Beschriftung und Grenzen geprüft. Alle vier Voreinstellungen und die Kurvenhervorhebung mit simuliertem DOM geprüft. Alle 14.241 BSFC-Rasterwerte exakt wie in `HEAD`. `node scripts/check-release-bump.mjs upstream/main` bestanden für `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich. `git diff --check` bestanden.
+- **GitHub** · Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen. Alle vier `gh`-Abfragen für Upstream und Fork scheiterten an der Verbindung zu `api.github.com`.
+- **Offen** · Commit, Push und Browsertest durch den Orchestrator, einschließlich 390 px, Preset-Wechsel und Kurvenhervorhebung.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Verbrennungsmotor 3D v0.2.0
 
@@ -60,10 +69,5 @@
 
 - **Erledigt** · Der Verbrauch auf der Planungs-Etappenkarte (und in Banner, Garage, HUD, Auswertung und Live-Briefing) wird fest mit einer Nachkommastelle und Punkt angezeigt, z. B. `25.7 kWh/100km`. Zentraler Formatter: `formatConsumption()` in `src/ui/DrivingStatus.ts`. Ursache war der ungerundete Wert `legEnergyKwh / edge.distanceKm * 100` auf Gefälle-Etappen. Keine Wh/km-Anzeige vorhanden. Euro (2 Stellen), geladene kWh (1 Stelle) sowie km, Minuten und SoC (ganze Zahlen) waren bereits gerundet. Test in `tests/formatting.test.mjs`. Bundle `rev=15`. Fix vom Orchestrator, ohne Codex.
 - **Doku** · `Architecture.md` §3.3 und Tuning-Tabelle. `3d5f243`.
-
-### 2026-11-26 – Michi / Codex CLI · gpt-6.2-sol high · Orchestrator – v0.6.0 · Lokale Anbieter und Preislogik
-
-- **Erledigt** · Autobrennero (3 Säulen) und Neogy (4 Säulen) bleiben in Level 3, mit sichtbarem Filter und Säulen auf jeder Route. Ein Filter erscheint nur noch, wenn das Level eine Säule des Anbieters hat (Level 3 zeigt keinen EWE-Go-Filter mehr). Das Tesla-Abo gilt nur noch an Tesla-Säulen. Anbieter ohne eigenes Abo (Autobrennero, Neogy, Fastned, TotalEnergies, AC-Dorfladen) berechnen den eigenen Ad-hoc-Preis: Autobrennero 0,75, Neogy 0,76 €/kWh an den Schnellladern. Ladezeiten, Referenzpläne (402/504/480 Min.) und Ziel 564 bleiben gleich, nur die Kosten ändern sich. Der Satz „Die vorgeschlagenen Ladestopps kannst du ändern.“ im Level-3-Briefing ist entfernt. Beim Öffnen der Planung steht in allen Levels kein „Eingeplant“.
-- **Doku** · `Architecture.md` (Filter, Preislogik, Changelog) ergänzt. Branch `codex/eroadtrip-v0.6`, `036d0ef`.
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

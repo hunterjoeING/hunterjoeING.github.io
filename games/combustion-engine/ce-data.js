@@ -13,6 +13,27 @@ export const ENGINE_SPECS = {
   maxPowerKW: 150
 };
 
+// Beispielwerte einer 6-Gang-Wandlerautomatik und eines Kompaktwagens.
+// Wandlerschlupf bleibt unberücksichtigt.
+export const DRIVETRAIN_EXAMPLE = {
+  gearRatios: [4.04, 2.37, 1.56, 1.16, 0.85, 0.69],
+  finalDrive: 3.2,
+  wheelRadiusM: 0.32, // Dynamischer Radius für 225/45 R17
+  massKg: 1500,
+  gravityMps2: 9.81,
+  rollingResistance: 0.011,
+  dragAreaM2: 0.65,
+  airDensityKgM3: 1.2,
+  drivetrainEfficiency: 0.92,
+  fuelDensityGL: 745,
+  maxSpeedKmh: 240,
+  minCruiseKmh: 10,
+  minAccelerationKmh: 20,
+  minCruiseRatio: 0.77,
+  maxCruiseRatio: 1.3,
+  topGearCruiseRatio: 1.45
+};
+
 // Kurbelwellen-Phasenversatz (in Grad von 0..720) für Zündfolge 1-3-4-2:
 // Zyklus pro Zylinder: 0-180° Ansaugen, 180-360° Verdichten, 360-540° Arbeiten, 540-720° Ausstoßen.
 // Zyl 1 & 4 laufen im Gleichtakt (0°/360°), Zyl 2 & 3 um 180° versetzt (180°/540°).
@@ -49,6 +70,16 @@ export function fullTorqueNm(rpmInput) {
   return torqueNm;
 }
 
+function fuelModel(rpm, load, bmep) {
+  const x = rpm / 1000;
+  const fmep = 0.7 + 0.10 * x + 0.010 * x ** 2;
+  const pmep = 1.7 * (1 - load) ** 1.6;
+  const etaI = 0.398 - 0.030 * ((x - 2.6) / 3.2) ** 2;
+  const knock = 1 - 0.07 * smoothstep(0.82, 1, load)
+    - 0.012 * smoothstep(4.8, 6.4, x) * smoothstep(0.6, 1, load);
+  return { totalPressureBar: bmep + fmep + pmep, indicatedEfficiency: etaI * knock };
+}
+
 // BSFC für einen 2,0-Liter-Turbo-Benziner: vereinfachtes Beispielkennfeld, keine Messdaten.
 export function bsfcMap(rpmInput, loadInput) {
   const rpm = clamp(rpmInput, ENGINE_SPECS.maxRpm);
@@ -56,13 +87,8 @@ export function bsfcMap(rpmInput, loadInput) {
   const bmep = load * fullTorqueNm(rpm) / TORQUE_NM_PER_BAR;
   if (bmep <= 0) return null;
 
-  const x = rpm / 1000;
-  const fmep = 0.7 + 0.10 * x + 0.010 * x ** 2;
-  const pmep = 1.7 * (1 - load) ** 1.6;
-  const etaI = 0.398 - 0.030 * ((x - 2.6) / 3.2) ** 2;
-  const knock = 1 - 0.07 * smoothstep(0.82, 1, load)
-    - 0.012 * smoothstep(4.8, 6.4, x) * smoothstep(0.6, 1, load);
-  const eta = etaI * knock * bmep / (bmep + fmep + pmep);
+  const { totalPressureBar, indicatedEfficiency } = fuelModel(rpm, load, bmep);
+  const eta = indicatedEfficiency * bmep / totalPressureBar;
   return 3600 / (eta * FUEL_HEATING_VALUE);
 }
 
@@ -104,12 +130,101 @@ export function computeEngineTelemetry(rpmInput, loadInput = 1) {
     thermalEff: thermalEfficiencyFromBsfc(bsfc),
     noUsefulPower: powerKW === 0,
     status,
-    statusLabel
+    statusLabel,
+    ...computeDrivetrain(rpm, load, powerKW)
   };
 }
 
-export function roadLoadTorqueNm(rpm) {
-  return 28 + 7.3 * (rpm / 1000) ** 2;
+export function speedKmh(rpm, gear) {
+  const { gearRatios, finalDrive, wheelRadiusM } = DRIVETRAIN_EXAMPLE;
+  const ratio = gearRatios[gear - 1];
+  return ratio ? rpm / 60 * 2 * Math.PI * wheelRadiusM / (ratio * finalDrive) * 3.6 : 0;
+}
+
+export function roadLoadPowerKw(speedMps) {
+  const { massKg, gravityMps2, rollingResistance, airDensityKgM3, dragAreaM2,
+    drivetrainEfficiency } = DRIVETRAIN_EXAMPLE;
+  const rollingPowerW = massKg * gravityMps2 * rollingResistance * speedMps;
+  const dragPowerW = 0.5 * airDensityKgM3 * dragAreaM2 * speedMps ** 3;
+  return (rollingPowerW + dragPowerW) / drivetrainEfficiency / 1000;
+}
+
+export function roadLoadTorqueNm(rpm, gear) {
+  return rpm > 0 ? roadLoadPowerKw(speedKmh(rpm, gear) / 3.6) * 60000 / (2 * Math.PI * rpm) : 0;
+}
+
+function fuelLitersPerHour(rpm, load, powerKw) {
+  // Derselbe Nm/bar-Faktor wie im BSFC-Kennfeld hält beide Verbrauchsrechnungen konsistent.
+  const kwPerBar = TORQUE_NM_PER_BAR * 2 * Math.PI * rpm / 60000;
+  const { totalPressureBar, indicatedEfficiency } = fuelModel(rpm, load, powerKw / kwPerBar);
+  const fuelPowerKw = totalPressureBar * kwPerBar / indicatedEfficiency;
+  return fuelPowerKw * 3600 / FUEL_HEATING_VALUE / DRIVETRAIN_EXAMPLE.fuelDensityGL;
+}
+
+const DRIVE_MODE_LABELS = {
+  neutral: 'Stillstand',
+  cruise: 'Konstantfahrt',
+  accelerate: 'beschleunigt',
+  coast: 'Schub'
+};
+
+function drivetrainPoint(gear, rpm, driveMode, fuelLph) {
+  const speed = speedKmh(rpm, gear);
+  return {
+    gear,
+    gearLabel: gear ? `${gear}. Gang` : 'N',
+    speedKmh: speed,
+    driveMode,
+    driveModeLabel: DRIVE_MODE_LABELS[driveMode],
+    fuelLph,
+    fuelL100: driveMode === 'cruise' && speed > 0 ? fuelLph * 100 / speed : null,
+    roadLoadKw: gear ? roadLoadPowerKw(speed / 3.6) : null
+  };
+}
+
+// Erwartet die begrenzten Eingaben und die Nutzleistung aus computeEngineTelemetry.
+export function computeDrivetrain(rpm, load, powerKw) {
+  if (rpm < ENGINE_SPECS.minRunningRpm) return drivetrainPoint(0, rpm, 'neutral', 0);
+
+  const lowLoad = load < 0.03;
+  const fuelCut = lowLoad && rpm >= 1200;
+  const fuelLph = fuelCut ? 0 : fuelLitersPerHour(rpm, load, powerKw);
+  if (lowLoad && !fuelCut) return drivetrainPoint(0, rpm, 'neutral', fuelLph);
+
+  const { gearRatios, minCruiseKmh, minAccelerationKmh, maxSpeedKmh,
+    minCruiseRatio, maxCruiseRatio, topGearCruiseRatio } = DRIVETRAIN_EXAMPLE;
+  const candidates = gearRatios.map((_, i) => ({ gear: i + 1, speed: speedKmh(rpm, i + 1) }))
+    .filter(({ speed }) => speed >= minCruiseKmh && speed <= maxSpeedKmh);
+  const highest = candidates.at(-1);
+  if (fuelCut) return drivetrainPoint(highest.gear, rpm, 'coast', 0);
+
+  if (load < 0.9) {
+    let closest;
+    let closestDistance = Infinity;
+    let allBelowCruise = true;
+    for (const { gear, speed } of candidates) {
+      const ratio = powerKw / roadLoadPowerKw(speed / 3.6);
+      if (ratio < minCruiseRatio) continue;
+      allBelowCruise = false;
+      if (ratio > maxCruiseRatio) continue;
+      const distance = Math.abs(Math.log(ratio));
+      if (distance < closestDistance) {
+        closest = gear;
+        closestDistance = distance;
+      }
+    }
+    if (closest) return drivetrainPoint(closest, rpm, 'cruise', fuelLph);
+    if (allBelowCruise) return drivetrainPoint(highest.gear, rpm, 'coast', fuelLph);
+
+    // Im längsten Gang vor dem Kickdown etwas mehr Leistungsreserve zulassen.
+    const highestRatio = powerKw / roadLoadPowerKw(highest.speed / 3.6);
+    if (highest.gear === gearRatios.length && highestRatio > maxCruiseRatio && highestRatio <= topGearCruiseRatio) {
+      return drivetrainPoint(highest.gear, rpm, 'cruise', fuelLph);
+    }
+  }
+
+  const kickdown = candidates.find(({ speed }) => speed >= minAccelerationKmh);
+  return drivetrainPoint(kickdown?.gear ?? 1, rpm, 'accelerate', fuelLph);
 }
 
 function traceContourLines(nodes) {
