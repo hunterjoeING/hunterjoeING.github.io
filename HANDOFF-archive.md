@@ -2,6 +2,14 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Verbrennungsmotor 3D v0.2.0
+
+- **Branch / PR** · `codex/combustion-load-map` ab `upstream/main` (`a70eacc`), Commit `cf28b8d`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`, später über PR #12 (`84636bc`) gemergt.
+- **Erledigt** · Gaspedal, lastabhängiges Nutzmoment und Beispielkennfeld für Wirkungsgrad und spezifischen Verbrauch. Die Muschelkurve zeigt den verschiebbaren Betriebspunkt, sechs Isolinien, die Volllastgrenze und den Fahrwiderstand. Das Prüfstandsdiagramm zeigt weiterhin Volllast. Voreinstellungen und Tour setzen Drehzahl und Last gemeinsam.
+- **Geprüft** · `node --check` für Daten-, UI-, Modell-, Release- und Testdatei, HTML-Tags, Label-Verweise, JSON-LD, Importmap, Inline-JavaScript und `git diff --check`. Alle 8 Kennfeldtests bestanden. `node scripts/check-release-bump.mjs upstream/main` bestätigt `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich.
+- **GitHub** · Issue-/PR-Check (Orchestrator, 27.11., gh): Upstream 0 offene Issues und PRs, Fork 0 offene PRs.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
+
 ### 2026-11-26 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live e-Roadtrip v0.6.0
 
 - **Branch / PR** · `upstream/main` (`0e73752`, Joes 3D-Explainer und Arcade v0.4.0) per Merge-Commit `5e751d6` in `codex/eroadtrip-v0.6` eingeholt, dann [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) aus dem Fork, gemergt von `mic4rd` (Merge `2aebc51`, 23:33 Uhr Berlin). Diese Doku per Folge-PR `[no-release]` (Branch `codex/docs-golive-2026-11-26`).

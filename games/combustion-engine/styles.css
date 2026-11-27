@@ -1248,3 +1248,204 @@ html[data-theme="dark"] .ce-inspector-stage {
     overflow-wrap: anywhere;
   }
 }
+
+/* 00 Motor-Konzept & Bauform Selector */
+.ce-engine-spec-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: #c2410c;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(194, 65, 12, 0.11);
+}
+
+html[data-theme="dark"] .ce-engine-spec-tag {
+  color: #fb923c;
+  background: rgba(251, 146, 60, 0.16);
+}
+
+.ce-concept-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.ce-layout-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+}
+
+.ce-variant-btn {
+  padding: 7px 6px;
+  border-radius: 9px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-family: var(--font-ui);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.ce-variant-btn:hover {
+  border-color: #c2410c;
+  color: var(--text-main);
+}
+
+.ce-variant-btn.active {
+  border-color: #c2410c;
+  background: #c2410c;
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(194, 65, 12, 0.28);
+}
+
+.ce-variant-btn[data-concept="diesel"].active {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  box-shadow: 0 3px 10px rgba(29, 78, 216, 0.30);
+}
+
+.ce-engine-subtitle {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.ce-engine-chip {
+  background: rgba(194, 65, 12, 0.10);
+  border-color: rgba(194, 65, 12, 0.28);
+  color: #c2410c;
+}
+
+html[data-theme="dark"] .ce-engine-chip {
+  color: #fb923c;
+}
+
+.ce-engine-chip.is-diesel {
+  background: rgba(29, 78, 216, 0.12);
+  border-color: rgba(37, 99, 235, 0.35);
+  color: #1d4ed8;
+}
+
+html[data-theme="dark"] .ce-engine-chip.is-diesel {
+  color: #60a5fa;
+}
+
+/* 6-Zylinder (3x2) & 8-Zylinder (4x2) Raster */
+.ce-cyl-grid[data-cyls="6"] {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.ce-cyl-grid[data-cyls="8"] {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Ladedruck-Kachel (Turbodiesel) */
+.ce-metric-boost {
+  grid-column: 1 / -1;
+  border-color: rgba(37, 99, 235, 0.32);
+  background: rgba(37, 99, 235, 0.06);
+}
+
+html[data-theme="dark"] .ce-metric-boost {
+  background: rgba(37, 99, 235, 0.12);
+}
+
+.ce-metric-val.boost {
+  color: #0284c7;
+}
+
+html[data-theme="dark"] .ce-metric-val.boost {
+  color: #38bdf8;
+}
+
+/* Overrev / Motorschaden Banner */
+.ce-explosion-banner {
+  position: absolute;
+  left: 50%;
+  bottom: 66px;
+  transform: translateX(-50%);
+  width: min(470px, calc(100% - 28px));
+  padding: 14px 16px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #dc2626;
+  box-shadow: 0 14px 36px rgba(220, 38, 38, 0.28);
+  backdrop-filter: blur(12px);
+  z-index: 23;
+  text-align: center;
+}
+
+html[data-theme="dark"] .ce-explosion-banner {
+  background: rgba(17, 24, 39, 0.94);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+.ce-explosion-banner.hidden {
+  display: none;
+}
+
+.ce-explosion-banner.is-overrev {
+  animation: ce-overrev-pulse 0.22s ease-in-out infinite alternate;
+}
+
+@keyframes ce-overrev-pulse {
+  from { border-color: #dc2626; box-shadow: 0 10px 28px rgba(220, 38, 38, 0.28); }
+  to { border-color: #f97316; box-shadow: 0 12px 36px rgba(249, 115, 22, 0.52); }
+}
+
+.ce-explosion-title {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: #dc2626;
+}
+
+html[data-theme="dark"] .ce-explosion-title {
+  color: #f87171;
+}
+
+.ce-explosion-sub {
+  margin: 0 0 11px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.ce-explosion-repair {
+  padding: 8px 15px;
+  border-radius: 10px;
+  border: 1px solid #c2410c;
+  background: #c2410c;
+  color: #ffffff;
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ce-explosion-repair:hover {
+  background: #9a3412;
+}
+
+.ce-status-pill[data-status="blown"] {
+  background: rgba(220, 38, 38, 0.20);
+  color: #dc2626;
+  font-weight: 700;
+}
+
+html[data-theme="dark"] .ce-status-pill[data-status="blown"] {
+  color: #f87171;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ce-explosion-banner.is-overrev {
+    animation: none;
+  }
+}

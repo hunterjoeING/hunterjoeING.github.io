@@ -450,16 +450,24 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   }
 });
 
-test('Der öffentliche Patch v0.3.1 steht vor den unveränderten Einträgen für v0.3.0 und v0.2.0', () => {
-  const [release, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
-  assert.equal(release.version, '0.3.1');
-  assert.equal(release.date, '2026-11-27');
-  assert.equal(release.type, 'patch');
-  assert.equal(release.author, 'Michi');
-  assert.equal(release.model, 'Sol 6.2');
-  assert.ok(release.highlights.length >= 2 && release.highlights.length <= 3);
-  assert.doesNotMatch([release.title, release.author, release.model, ...release.highlights].join(' '),
-    /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?)\b/i);
+test('Das öffentliche Feature v0.4.0 steht vor den unveränderten Einträgen für v0.3.1, v0.3.0 und v0.2.0', () => {
+  const [latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  assert.equal(latest.version, '0.4.0');
+  assert.equal(latest.date, '2026-11-27');
+  assert.equal(latest.type, 'feature');
+  assert.equal(latest.author, 'Joe');
+  assert.equal(latest.model, 'Neon');
+  assert.ok(latest.highlights.length >= 3 && latest.highlights.length <= 5);
+  assert.doesNotMatch([latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
+    /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?|easter|motorschaden|explodier|überdreh)\b/i);
+  assert.match(html, /id="ce-version-btn"[^>]*>v0\.4\.0</);
+
+  assert.equal(patch31.version, '0.3.1');
+  assert.equal(patch31.date, '2026-11-27');
+  assert.equal(patch31.type, 'patch');
+  assert.equal(patch31.author, 'Michi');
+  assert.equal(patch31.model, 'Sol 6.2');
+  assert.ok(patch31.highlights.length >= 2 && patch31.highlights.length <= 3);
   assert.deepEqual(feature, {
     app: 'combustion_engine', version: '0.3.0', date: '2026-11-27', type: 'feature', title: 'Getriebe und Tour zur Fahrlogik',
     author: 'Michi', model: 'Sol 6.2',
@@ -470,7 +478,6 @@ test('Der öffentliche Patch v0.3.1 steht vor den unveränderten Einträgen für
       'Vergleiche verschiedene Gänge bei gleichem Tempo und lerne, die Muschelkurve zu lesen.'
     ]
   });
-  assert.match(html, /id="ce-version-btn"[^>]*>v0\.3\.1</);
   assert.equal(previous.version, '0.2.0');
   assert.deepEqual(previous.highlights, [
     'Mit dem Gaspedal stellst du die Motorlast ein.',

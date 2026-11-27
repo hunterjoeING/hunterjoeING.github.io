@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade</title>
-  <meta name="description" content="Interaktiver 3D-Explainer eines 2,0-l-Saugbenziners mit Saugrohreinspritzung (DOHC 16V): Cutaway, X-Ray, Explosionsansicht, Drehzahlregler, Gaspedal, Gangwahlanzeige, Drehmoment-/Leistungskurve, Muschelkurve und geführte Tour." />
+  <meta name="description" content="Interaktiver 3D-Explainer für Verbrennungsmotoren (R4, Boxer, V6, V8) als Saugbenziner mit Saugrohreinspritzung oder Turbodiesel mit Common-Rail-Direkteinspritzung: Cutaway, X-Ray, Drehzahl, Gaspedal, Gangwahlanzeige, Muschelkurve und geführte Tour." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/combustion-engine/" />
@@ -18,7 +18,7 @@
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
   <meta property="og:title" content="Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade" />
-  <meta property="og:description" content="Erkunde den Viertaktmotor in der 3D-Schnittansicht und in der geführten Tour. Entdecke mit Drehzahlregler, Gaspedal und Muschelkurve, wie sich die Last auf den Wirkungsgrad auswirkt." />
+  <meta property="og:description" content="Erkunde R4-, Boxer-, V6- und V8-Motoren als Otto-Sauger oder Turbodiesel in 3D-Schnittansicht, Muschelkurve und geführter Tour." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/combustion-engine/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
@@ -26,7 +26,7 @@
     "@context": "https://schema.org",
     "@type": "WebApplication",
     "name": "Verbrennungsmotor 3D – Interaktiver Explainer",
-    "description": "Interaktiver 3D-Explainer eines 2,0-Liter-Saugbenziners mit Saugrohreinspritzung, Schnittansicht und geführter Tour. Drehzahlregler und Gaspedal steuern den Betriebspunkt in der Muschelkurve sowie Gang, Geschwindigkeit und Verbrauch eines Beispielautos. Das Prüfstandsdiagramm zeigt Drehmoment und Leistung bei Volllast.",
+    "description": "Interaktiver 3D-Explainer für Viertaktmotoren in vier Bauformen (R4, Boxer, V6, V8) als klassischer Saugbenziner mit Saugrohreinspritzung oder Turbodiesel mit Direkteinspritzung und VTG-Turbolader. Mit Schnittansicht, Gaspedal, Muschelkurve, Getriebe und geführter Tour.",
     "url": "https://hunterjoeing.github.io/games/combustion-engine/",
     "inLanguage": "de",
     "isAccessibleForFree": true,
@@ -45,14 +45,14 @@
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.3.1" />
+  <link rel="stylesheet" href="./styles.css?v=0.4.0" />
 </head>
 <body>
   <header class="arcade-topbar ce-topbar">
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
       <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
-      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.3.1</button>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.4.0</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
@@ -65,27 +65,31 @@
       <canvas id="ce-canvas"></canvas>
       <div class="ce-label-layer" id="ce-label-layer" aria-label="Bauteil-Beschriftungen"></div>
 
-      <!-- 01 Cutaway · 02 X-Ray · 03 Exploded -->
+      <!-- 01 Cutaway · 02 X-Ray · 03 Explosionsansicht -->
       <div class="ce-mode-dock" role="toolbar" aria-label="3D-Ansichtsmodus">
         <div class="ce-dock-group">
           <button type="button" class="ce-mode-btn" data-view-mode="normal">Außenansicht</button>
           <button type="button" class="ce-mode-btn active" data-view-mode="cutaway"><span class="ce-mode-num">01</span> Cutaway</button>
           <button type="button" class="ce-mode-btn" data-view-mode="xray"><span class="ce-mode-num">02</span> X-Ray</button>
-          <button type="button" class="ce-mode-btn" data-view-mode="exploded"><span class="ce-mode-num">03</span> Exploded</button>
+          <button type="button" class="ce-mode-btn" data-view-mode="exploded"><span class="ce-mode-num">03</span> Explosionsansicht</button>
         </div>
         <div class="ce-dock-group">
+          <button type="button" class="ce-chip-btn ce-engine-chip" id="ce-engine-chip" title="Aktiven Motor wechseln">R4 · Otto-Sauger</button>
           <button type="button" class="ce-chip-btn" id="ce-btn-labels" title="Alle 12 Baugruppen beschriften">🏷️ Labels</button>
           <button type="button" class="ce-chip-btn active" id="ce-btn-flow" title="Gaswechsel-Partikel anzeigen">💨 Gasfluss</button>
           <button type="button" class="ce-chip-btn" id="ce-btn-reset" title="Kamera zurücksetzen">↺ Reset</button>
         </div>
       </div>
 
+      <!-- Explosion Warning / Recovery Banner -->
+      <div class="ce-explosion-banner hidden" id="ce-explosion-banner" role="alert"></div>
+
       <!-- 06 Step-by-Step Tour Card -->
       <div class="ce-tour-card hidden" id="ce-tour-card" role="dialog" aria-label="Schritt-für-Schritt-Tour"></div>
 
       <div class="ce-bottom-bar">
         <button type="button" class="ce-tour-launcher" id="ce-btn-tour">🧭 06 Schritt-für-Schritt-Tour</button>
-        <button type="button" class="ce-mobile-toggle" id="ce-mobile-panel-toggle" aria-expanded="false">⚙️ Drehzahl, Last &amp; Diagramme</button>
+        <button type="button" class="ce-mobile-toggle" id="ce-mobile-panel-toggle" aria-expanded="false">⚙️ Motor, Last &amp; Diagramme</button>
         <div class="ce-orbit-hint">Ziehen: Drehen · Scroll/Pinch: Zoom · Klick: Bauteil prüfen</div>
       </div>
     </section>
@@ -93,13 +97,32 @@
     <div class="ce-drawer-backdrop" id="ce-drawer-backdrop" aria-hidden="true"></div>
 
     <!-- Right Engineering Sidebar -->
-    <aside class="ce-side-panel" id="ce-side-panel" aria-label="Drehzahl, Last, Diagramme und Bauteil-Inspektor">
+    <aside class="ce-side-panel" id="ce-side-panel" aria-label="Motorauswahl, Drehzahl, Last, Diagramme und Bauteil-Inspektor">
       <div class="ce-drawer-header">
         <span class="ce-drawer-handle" aria-hidden="true"></span>
         <div class="ce-drawer-header-row">
-          <span class="ce-drawer-title">⚙️ Drehzahl, Last &amp; Diagramme</span>
+          <span class="ce-drawer-title">⚙️ Motor, Last &amp; Diagramme</span>
           <button type="button" class="ce-drawer-close" id="ce-drawer-close" aria-label="Zurück zur 3D-Ansicht">✕ Zurück zu 3D</button>
         </div>
+      </div>
+
+      <!-- 00 Motor-Konzept & Bauform -->
+      <div class="ce-panel-section ce-engine-picker">
+        <div class="ce-section-head">
+          <span class="ce-section-label">00 · Motor &amp; Bauform</span>
+          <span class="ce-engine-spec-tag" id="ce-engine-spec-tag">2,0 l · 16V</span>
+        </div>
+        <div class="ce-concept-row" role="group" aria-label="Antriebskonzept">
+          <button type="button" class="ce-variant-btn active" data-concept="otto" aria-pressed="true">⛽ Otto-Sauger</button>
+          <button type="button" class="ce-variant-btn" data-concept="diesel" aria-pressed="false">🛢️ Turbodiesel</button>
+        </div>
+        <div class="ce-layout-row" role="group" aria-label="Motor-Bauform">
+          <button type="button" class="ce-variant-btn active" data-layout="r4" aria-pressed="true">R4</button>
+          <button type="button" class="ce-variant-btn" data-layout="boxer4" aria-pressed="false">Boxer</button>
+          <button type="button" class="ce-variant-btn" data-layout="v6" aria-pressed="false">V6</button>
+          <button type="button" class="ce-variant-btn" data-layout="v8" aria-pressed="false">V8</button>
+        </div>
+        <p class="ce-engine-subtitle" id="ce-engine-subtitle">2,0 l · 0° Reihe · DOHC 16V · Saugrohreinspritzung</p>
       </div>
 
       <!-- 04 RPM Slider + Slow-Mo -->
@@ -143,13 +166,13 @@
         <div class="ce-status-pill" id="ce-status-badge" data-status="cruise">Teillast</div>
       </div>
 
-      <!-- Live 4-Cylinder Firing Order (1-3-4-2) -->
+      <!-- Live Cylinder Firing Order -->
       <div class="ce-panel-section">
         <div class="ce-section-head">
-          <span class="ce-section-label">4-Takt Live · Zündfolge 1–3–4–2</span>
-          <span style="font-size:11px;color:var(--text-subtle);">2,0 l · DOHC 16V</span>
+          <span class="ce-section-label" id="ce-cyl-title">4-Takt Live · Zündfolge 1–3–4–2</span>
+          <span id="ce-cyl-spec" style="font-size:11px;color:var(--text-subtle);">2,0 l · DOHC 16V</span>
         </div>
-        <div class="ce-cyl-grid" aria-label="Aktueller Takt pro Zylinder">
+        <div class="ce-cyl-grid" id="ce-cyl-grid" aria-label="Aktueller Takt pro Zylinder">
           <div class="ce-cyl-pill" id="ce-cyl-badge-0" data-stroke="intake"><span class="ce-cyl-num">Zyl 1</span><span class="ce-cyl-stroke">Ansaugen</span></div>
           <div class="ce-cyl-pill" id="ce-cyl-badge-1" data-stroke="compression"><span class="ce-cyl-num">Zyl 2</span><span class="ce-cyl-stroke">Verdichten</span></div>
           <div class="ce-cyl-pill" id="ce-cyl-badge-2" data-stroke="exhaust"><span class="ce-cyl-num">Zyl 3</span><span class="ce-cyl-stroke">Ausstoßen</span></div>
@@ -194,7 +217,12 @@
           <div class="ce-metric-val" id="ce-tel-fuel">6,7 l/100km</div>
           <div class="ce-metric-label" id="ce-tel-fuel-note">7,1 l/h</div>
         </div>
-        <p class="ce-map-help ce-drivetrain-note">Beispielwerte: 6-Gang-Automatik (4,04 … 0,69), Achsantrieb 3,2, Reifen 225/45 R17, Kompaktklasse 1500 kg, cw·A 0,65 m².</p>
+        <div class="ce-metric ce-metric-boost" id="ce-metric-boost" hidden>
+          <div class="ce-metric-label">Ladedruck (VTG-Turbo)</div>
+          <div class="ce-metric-val boost" id="ce-tel-boost">0,00 bar</div>
+          <div class="ce-metric-label" id="ce-tel-boost-note">Überdruck · Common-Rail DI</div>
+        </div>
+        <p class="ce-map-help ce-drivetrain-note" id="ce-drivetrain-note">Beispielwerte: 6-Gang-Automatik (4,04 … 0,69), Achsantrieb 3,2, Reifen 225/45 R17, Kompaktklasse 1500 kg, cw·A 0,65 m².</p>
       </div>
 
       <!-- 05 Torque & Power Curve Chart -->
@@ -236,10 +264,10 @@
     </aside>
   </main>
 
-  <script src="../../shared/arcade.js?v=0.4.0"></script>
-  <script src="../../shared/releases.js?v=0.4.1&amp;rev=5"></script>
+  <script src="../../shared/arcade.js?v=0.4.1"></script>
+  <script src="../../shared/releases.js?v=0.4.1&amp;rev=6"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
   <script src="../../shared/burger-menu.js?v=0.4.0"></script>
-  <script type="module" src="./ce-main.js?v=0.3.1"></script>
+  <script type="module" src="./ce-main.js?v=0.4.0"></script>
 </body>
 </html>

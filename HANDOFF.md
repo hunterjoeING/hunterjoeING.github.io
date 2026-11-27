@@ -24,12 +24,22 @@
 | 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity · Neon high | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
 | E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` (`0ddbc5e`, Upstream-Merge `5e751d6`) · [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) (Merge `2aebc51`) | ✅ Gemerged, Worker deployt und live (e-Roadtrip v0.6.0, Arcade v0.4.1) |
 | Verbrennungsmotor 3D v0.2.0–v0.3.1 · Gaspedal, interaktives Lastkennfeld mit Fahrwiderstand, Voreinstellungen und Beispielautomatik. Gangwahlanzeige, Momentanverbrauch und Tour mit Live-Fahrbeispielen. v0.3.1: Sauger-Kennfeld und sichtbare Saugrohreinspritzung | Michi / Codex CLI · gpt-6.2-sol xhigh · Orchestrator | `codex/combustion-load-map` · [Upstream-PR #12](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/12) (Merge `84636bc`) | ✅ Gemerged und live (Verbrennungsmotor v0.3.1) |
+| Verbrennungsmotor 3D v0.4.0 · Common-Rail-Turbodiesel mit 3D-VTG-Turbolader, vier Bauformen (R4, Boxer B4, V6, V8), Explosions-Easter-Egg, Nockenwellen- & Highlight-Fix | Joe / Antigravity · Neon | `main` (Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Verbrennungsmotor v0.4.0) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.3.1
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.4.0
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Joe / Antigravity · Neon – Verbrennungsmotor 3D v0.4.0 (Turbodiesel, Bauformen & Explosions-Easter-Egg)
+
+- **Branch / PR** · `main` ab `093f55e` (nach Merge von Upstream-PR #12 & #13), kein PR, Push auf Upstream `hunterjoeING/hunterjoeING.github.io` (`main`). Live: https://hunterjoeing.github.io/games/combustion-engine/
+- **Erledigt** · Motor-Auswahl in `00 · Motor & Bauform` sowie Viewport-Chip ergänzt: Umschaltung zwischen **Otto-Saugmotor** (Saugrohreinspritzung) und **Common-Rail-Turbodiesel** (Direkteinspritzung + animierter 3D-VTG-Turbolader mit drehendem Verdichter-/Turbinenrad, Ladeluftrohr, Einspritzkegel, eigenem BSFC-Kennfeld ~198 g/kWh und Ladedruck-Kachel). Parametrischer Multi-Bank-3D-Generator in `ce-model.js` und `ce-variants.js` für **R4** (`1–3–4–2`), **180°-Boxer B4** (`1–3–2–4`, echte gegenläufige Box-Bewegung mit getrennten 180°-Hubzapfen), **60°-V6** (`1–2–3–4–5–6`) und **90°-Crossplane-V8** (`1–8–4–3–6–5–7–2`) mit dynamischen SVG-Diagrammen, Presets, Zylinder-Taktanzeigen und Tour-Texten. Modus `03 Explosionsansicht` als Überdrehzahl-/Motorschaden-Easter-Egg (`ce-explosion.js`, 3D-Trümmerballistik, Rauch, WebAudio & Reparatur-Reset; gemäß Regel 10 nicht im öffentlichen Changelog erwähnt). Nockenwellen-Phasen auf Zylinder 2 & 3 sowie isolierte Baugruppen-Materialien für Highlighting korrigiert.
+- **Geprüft** · `node --check` auf alle `ce-*.js`, `shared/releases.js` und `shared/update-banner.js`; alle 38/38 Explainer-Unit-Tests (`node --test games/combustion-engine/tests/*.test.mjs`, inkl. neuer `tests/engine-variants.test.mjs`); vollständige 3D-Build-/Update-/Explosions-Prüfung aller 8 Motorkombinationen in Node; `node scripts/check-release-bump.mjs origin/main` für `combustion_engine`.
+- **GitHub** · Issue-/PR-Check (`gh pr list`, `gh issue list`): 0 offene Issues und 0 offene PRs in Upstream nach Merge von PR #12 & #13 (`093f55e`).
+- **Offen** · Live-Spieltest auf Handy & Desktop (u. a. Boxer/V6/V8, Turbolader-Animation und Explosions-Easter-Egg).
+- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `v0.4.0` spoilerfrei)
 
 ### 2026-11-27 – Michi / Orchestrator (direkt, ohne Codex-Lauf) – Go-live Verbrennungsmotor 3D v0.3.1
 
@@ -65,17 +75,6 @@
 - **GitHub** · Issue-/PR-Check (Orchestrator, 27.11., gh): Upstream 0 offene Issues und PRs, Fork 0 offene PRs.
 - **Orchestrator** · Headless-Chrome-Test lokal (1280 und 390 px, hell und dunkel, alle vier Voreinstellungen sowie 2800 U/min / 85 %): keine JS-Fehler, kein horizontales Scrollen, 0 POSTs. Screenshots `/home/box/projects/shot/ce-gear-*.png`. Cruise liegt im 5. Gang bei 106 km/h mit 6,3 l/100km.
 - **Offen** · Fork-Test durch Michi. Joe sieht den Stand vor einem Upstream-PR. Kein Upstream-PR ohne Michis ausdrückliches Go.
-- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
-
-### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Verbrennungsmotor 3D v0.2.0
-
-- **Branch / PR** · `codex/combustion-load-map` ab `upstream/main` (`a70eacc`), Commit `cf28b8d`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages (Quelle auf diesen Branch umgestellt): https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
-- **Erledigt** · Gaspedal, lastabhängiges Nutzmoment und Beispielkennfeld für Wirkungsgrad und spezifischen Verbrauch. Die Muschelkurve zeigt den verschiebbaren Betriebspunkt, sechs Isolinien, die Volllastgrenze und den Fahrwiderstand. Das Prüfstandsdiagramm zeigt weiterhin Volllast. Voreinstellungen und Tour setzen Drehzahl und Last gemeinsam.
-- **Geprüft** · `node --check` für Daten-, UI-, Modell-, Release- und Testdatei, HTML-Tags, Label-Verweise, JSON-LD, Importmap, Inline-JavaScript und `git diff --check`. Alle 8 Kennfeldtests bestanden mit Dateiglob und `--test-isolation=none`. Node 24 behandelt das direkt übergebene Testverzeichnis als Einstiegspunkt und beendet den Verzeichnisaufruf mit `MODULE_NOT_FOUND`. `node scripts/check-release-bump.mjs upstream/main` lief ohne releasepflichtigen Commit-Diff. Die ergänzende Prüfung desselben Skripts gegen den Arbeitsbaum bestätigt `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich.
-- **Diagramme** · Volllastmoment und Leistung bei 7.101 Drehzahlen exakt wie auf `upstream/main`. SVG-Erzeugung, Lastwechsel, Marker und Diagrammsteuerung mit simulierten Pointer-Events geprüft.
-- **GitHub** · Issue-/PR-Check (Orchestrator, 27.11., gh): Upstream 0 offene Issues und PRs, Fork 0 offene PRs.
-- **Orchestrator** · Seitentitel und `og:title` wieder auf „Verbrennungsmotor 3D – Interaktiver Explainer“ gesetzt, Beschreibung um Gaspedal und Muschelkurve ergänzt. Headless-Chrome-Test lokal und auf Fork-Pages (1280, 390 und 320 px, hell und dunkel, alle vier Voreinstellungen, Regler 2800 U/min / 85 %): keine JS-Fehler, kein horizontales Scrollen, 0 POSTs. Screenshots `/home/box/projects/shot/ce-map-*.png`.
-- **Offen** · Fork-Test durch Michi. Joe sieht den Stand vor einem Upstream-PR. Kein Upstream-PR ohne Michis ausdrückliches Go. Die Voreinstellung „Max kW“ (6.200 U/min) liegt über dem Leistungsmaximum der bestehenden Volllastkurve (135 kW bei ca. 5.550 U/min, 128 kW bei 6.200); bewusst unverändert.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

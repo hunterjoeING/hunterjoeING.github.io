@@ -79,6 +79,16 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.4.0", date: "2026-11-27", type: "feature", title: "Turbodiesel & vier Motor-Bauformen",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Wähle jederzeit zwischen klassischem Otto-Saugmotor (Saugrohreinspritzung) und Common-Rail-Turbodiesel mit 3D-Turbolader, Direkteinspritzung und Ladedruck-Anzeige.",
+        "Vier animierte Bauformen mit exakter Zündfolge und Kurbelwellen-Kinematik: Reihen-4, 180°-Boxer, 60°-V6 und 90°-Crossplane-V8.",
+        "Prüfstandskurve, Muschelkurve, Getriebe, Live-Zylinderanzeige und geführte Tour passen sich live an Motor und Bauform an.",
+        "Nockenwellen-Phasen auf Zylinder 2 und 3 sowie die Bauteil-Hervorhebung im 3D-Inspektor korrigiert.",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.3.1", date: "2026-11-27", type: "patch", title: "Kennfeld eines Saugmotors",
       author: "Michi", model: "Sol 6.2",
       highlights: [

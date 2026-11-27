@@ -212,11 +212,11 @@ test('Die vier HTML-Voreinstellungen setzen die vorgesehenen Paare aus Drehzahl 
   assert.match(html, /class="ce-preset-btn active" data-rpm="2400" data-load="38" aria-pressed="true">Cruise/);
 });
 
-test('HTML, Kennfeldkommentar und aktuelle Architektur beschreiben Saugrohreinspritzung', () => {
+test('HTML, Kennfeldkommentar und aktuelle Architektur beschreiben Saugrohreinspritzung und Turbodiesel', () => {
   for (const path of ['../index.html', '../ce-data.js', '../Architecture.md']) {
     const source = readFileSync(new URL(path, import.meta.url), 'utf8').split('\n## Changelog')[0];
     assert.match(source, /Saugrohreinspritzung/, path);
-    assert.doesNotMatch(source, /turbo/i, path);
+    assert.match(source, /Turbodiesel/i, path);
   }
 });
 
