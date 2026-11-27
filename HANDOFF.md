@@ -23,7 +23,7 @@
 | E-Roadtrip v0.5.0: Level-Bestenlisten (Teil b) | Michael / Codex CLI · gpt-6.2-sol high | `codex/eroadtrip-highscores` · [Upstream-PR #8](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/8) (Merge `ca2c357`) | ✅ Gemerged und live (e-Roadtrip v0.5.0) |
 | 3D-Explainer: Windkraftanlage 3D & Verbrennungsmotor 3D | Joe / Antigravity · Neon high | `main` (`8c0fce8` + Patch `v0.1.1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen (Arcade v0.4.0, Windkraftanlage v0.1.1, Verbrennungsmotor v0.1.1) |
 | E-Roadtrip v0.6.0 · Stadtfahrten mit Standblinkern und Fahrspurplatzierung, Level 2 mit Mittagsstart und Montpellier, Level 3 bis Sirmione, Europakarte, freie Ladeplanung und Spieltest-Korrekturen bei Ampeln, Verkehr und Schäden | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/eroadtrip-v0.6` (`0ddbc5e`, Upstream-Merge `5e751d6`) · [Upstream-PR #10](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/10) (Merge `2aebc51`) | ✅ Gemerged, Worker deployt und live (e-Roadtrip v0.6.0, Arcade v0.4.1) |
-| Verbrennungsmotor 3D v0.2.0 · Gaspedal, Lastkennfeld und gekoppelte Voreinstellungen, Beispielautomatik mit Gang, Tempo und Verbrauch, Muschelkurve mit Fahrwiderstand je Gang | Michi / Codex CLI · gpt-6.2-sol high | `codex/combustion-load-map` ab `upstream/main` (`a70eacc`) · bisheriger Fork-Stand `50639be` · SHA: (folgt) · kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Lokal geprüft, Push und Browsertest der Erweiterung folgen. Upstream-Merge wartet auf Michis Go und Joes Ansicht. |
+| Verbrennungsmotor 3D v0.2.0 · Gaspedal, Lastkennfeld und gekoppelte Voreinstellungen, Beispielautomatik mit Gang, Tempo und Verbrauch, Muschelkurve mit Fahrwiderstand je Gang | Michi / Codex CLI · gpt-6.2-sol high · Orchestrator | `codex/combustion-load-map` ab `upstream/main` (`a70eacc`) · Fork-Stand `add54de` (+ Doku-Commit) · kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Fork-Test läuft, Upstream-Merge wartet auf Michis Go und Joes Ansicht |
 
 **Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.1 · `wind_turbine` v0.1.1 · `combustion_engine` v0.1.1
 
@@ -33,11 +33,12 @@
 
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Gang, Geschwindigkeit und Verbrauch für Verbrennungsmotor 3D v0.2.0
 
-- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `50639be`. SHA: (folgt). Push folgt in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages nach dem Push · https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
+- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `50639be`. Commit `add54de`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages bleiben auf diesem Branch: https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
 - **Erledigt** · Beispielautomatik, Kacheln für Gang, Geschwindigkeit und Verbrauch, markierte Fahrwiderstandslinien für die Gänge 4 bis 6 und Release-Text in v0.2.0. Cruise startet im 5. Gang mit 106 km/h, 6,3 l/100km und 6,7 l/h. Die zusätzliche Toleranz im 6. Gang ermöglicht Konstantfahrt bei 2800 U/min und 85 % Last.
 - **Geprüft** · `node --check` für alle `ce-*.js`, `shared/releases.js` und beide Testdateien. Explainer-Tests 18/18, HTML-Tags, IDs, JSON-LD, Importmap, Inline-JavaScript und Asset-Revisionen geprüft. SVG-Gangkurven auf Beschriftung und Grenzen geprüft. Alle vier Voreinstellungen und die Kurvenhervorhebung mit simuliertem DOM geprüft. Alle 14.241 BSFC-Rasterwerte exakt wie in `HEAD`. `node scripts/check-release-bump.mjs upstream/main` bestanden für `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich. `git diff --check` bestanden.
-- **GitHub** · Issue-/PR-Check übersprungen (kein Netz), vom Orchestrator nachzuholen. Alle vier `gh`-Abfragen für Upstream und Fork scheiterten an der Verbindung zu `api.github.com`.
-- **Offen** · Commit, Push und Browsertest durch den Orchestrator, einschließlich 390 px, Preset-Wechsel und Kurvenhervorhebung.
+- **GitHub** · Issue-/PR-Check (Orchestrator, 27.11., gh): Upstream 0 offene Issues und PRs, Fork 0 offene PRs.
+- **Orchestrator** · Headless-Chrome-Test lokal (1280 und 390 px, hell und dunkel, alle vier Voreinstellungen sowie 2800 U/min / 85 %): keine JS-Fehler, kein horizontales Scrollen, 0 POSTs. Screenshots `/home/box/projects/shot/ce-gear-*.png`. Cruise liegt im 5. Gang bei 106 km/h mit 6,3 l/100km.
+- **Offen** · Fork-Test durch Michi. Joe sieht den Stand vor einem Upstream-PR. Kein Upstream-PR ohne Michis ausdrückliches Go.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Verbrennungsmotor 3D v0.2.0
