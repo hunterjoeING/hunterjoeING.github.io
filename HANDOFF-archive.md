@@ -2,6 +2,16 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Gang, Geschwindigkeit und Verbrauch für Verbrennungsmotor 3D v0.2.0
+
+- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `50639be`. Commit `add54de`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages bleiben auf diesem Branch: https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
+- **Erledigt** · Beispielautomatik, Kacheln für Gang, Geschwindigkeit und Verbrauch, markierte Fahrwiderstandslinien für die Gänge 4 bis 6 und Release-Text in v0.2.0. Cruise startet im 5. Gang mit 106 km/h, 6,3 l/100km und 6,7 l/h. Die zusätzliche Toleranz im 6. Gang ermöglicht Konstantfahrt bei 2800 U/min und 85 % Last.
+- **Geprüft** · `node --check` für alle `ce-*.js`, `shared/releases.js` und beide Testdateien. Explainer-Tests 18/18, HTML-Tags, IDs, JSON-LD, Importmap, Inline-JavaScript und Asset-Revisionen geprüft. SVG-Gangkurven auf Beschriftung und Grenzen geprüft. Alle vier Voreinstellungen und die Kurvenhervorhebung mit simuliertem DOM geprüft. Alle 14.241 BSFC-Rasterwerte exakt wie in `HEAD`. `node scripts/check-release-bump.mjs upstream/main` bestanden für `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich. `git diff --check` bestanden.
+- **GitHub** · Issue-/PR-Check (Orchestrator, 27.11., gh): Upstream 0 offene Issues und PRs, Fork 0 offene PRs.
+- **Orchestrator** · Headless-Chrome-Test lokal (1280 und 390 px, hell und dunkel, alle vier Voreinstellungen sowie 2800 U/min / 85 %): keine JS-Fehler, kein horizontales Scrollen, 0 POSTs. Screenshots `/home/box/projects/shot/ce-gear-*.png`. Cruise liegt im 5. Gang bei 106 km/h mit 6,3 l/100km.
+- **Offen** · Fork-Test durch Michi. Joe sieht den Stand vor einem Upstream-PR. Kein Upstream-PR ohne Michis ausdrückliches Go.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
+
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Verbrennungsmotor 3D v0.2.0
 
 - **Branch / PR** · `codex/combustion-load-map` ab `upstream/main` (`a70eacc`), Commit `cf28b8d`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`, später über PR #12 (`84636bc`) gemergt.
