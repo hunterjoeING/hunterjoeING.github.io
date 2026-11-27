@@ -285,6 +285,9 @@ html[data-theme="dark"] .ce-orbit-hint {
   bottom: 62px;
   margin: 0 auto;
   width: min(560px, calc(100% - 28px));
+  max-height: calc(100% - 76px);
+  overflow-y: auto;
+  touch-action: pan-y;
   padding: 16px 18px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.95);
@@ -344,6 +347,10 @@ html[data-theme="dark"] .ce-tour-card {
   font-size: 12px;
 }
 
+.ce-tour-close {
+  flex-shrink: 0;
+}
+
 .ce-tour-title {
   margin: 0 0 6px;
   font-family: var(--font-display);
@@ -359,8 +366,16 @@ html[data-theme="dark"] .ce-tour-card {
   color: var(--text-muted);
 }
 
+.ce-tour-live {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
 .ce-tour-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -373,18 +388,26 @@ html[data-theme="dark"] .ce-tour-card {
 }
 
 .ce-tour-dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ce-tour-dot::before {
+  content: '';
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  border: none;
-  padding: 0;
-  background: var(--border-subtle);
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: var(--text-subtle);
 }
 
-.ce-tour-dot.active {
-  width: 22px;
+.ce-tour-dot.active::before {
+  width: 14px;
   background: #c2410c;
 }
 
@@ -436,6 +459,15 @@ html[data-theme="dark"] .ce-tour-card {
   z-index: 25;
 }
 
+.ce-drive-tour .ce-driving-controls,
+.ce-drive-tour .ce-drawer-header {
+  order: -2;
+}
+
+.ce-drive-tour .ce-map-section {
+  order: -1;
+}
+
 .ce-panel-section {
   padding: 13px;
   border-radius: 14px;
@@ -475,6 +507,54 @@ html[data-theme="dark"] .ce-rpm-readout {
   accent-color: #c2410c;
   cursor: pointer;
   margin: 4px 0 9px;
+}
+
+.ce-load-slider {
+  display: block;
+  height: 32px;
+  margin: -4px 0 8px;
+}
+
+.ce-load-help,
+.ce-gear-info {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.ce-gear-selector {
+  --ce-active-gear: 5;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: center;
+  min-height: 30px;
+  margin-bottom: 4px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ce-gear-selector::before {
+  content: '';
+  position: absolute;
+  inset: 2px auto 2px 0;
+  z-index: -1;
+  width: calc(100% / 7);
+  border-radius: 6px;
+  background: #c2410c;
+  transform: translateX(calc(100% * var(--ce-active-gear)));
+  transition: transform 0.2s ease;
+}
+
+.ce-gear-selector .active {
+  color: #fff;
 }
 
 .ce-preset-row,
@@ -682,7 +762,7 @@ html[data-theme="dark"] .ce-metric-val.torque {
   color: #fb923c;
 }
 
-/* Interactive Dyno SVG Chart */
+/* Interaktive SVG-Diagramme */
 .ce-chart-wrap {
   width: 100%;
   border-radius: 10px;
@@ -692,11 +772,20 @@ html[data-theme="dark"] .ce-metric-val.torque {
   touch-action: none;
 }
 
-#ce-dyno-chart {
+#ce-dyno-chart,
+#ce-bsfc-map {
   display: block;
   width: 100%;
   height: auto;
+}
+
+#ce-dyno-chart {
   cursor: ew-resize;
+}
+
+#ce-bsfc-map {
+  cursor: crosshair;
+  user-select: none;
 }
 
 .chart-grid {
@@ -785,9 +874,149 @@ html[data-theme="dark"] .chart-unit-text.torque {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 3px 8px;
   margin-top: 6px;
   font-size: 11px;
   color: var(--text-subtle);
+}
+
+#ce-bsfc-map .chart-axis-text,
+.chart-map-label {
+  font-size: 10px;
+}
+
+#ce-bsfc-map .chart-axis-text {
+  fill: var(--text-muted);
+}
+
+.chart-map-area {
+  fill: var(--accent-primary);
+  fill-opacity: 0.08;
+}
+
+.chart-map-limit,
+.chart-contour-line,
+.chart-road-load {
+  fill: none;
+  stroke-linejoin: round;
+}
+
+.chart-map-limit {
+  stroke: var(--text-muted);
+  stroke-width: 1.4;
+}
+
+.chart-contour-line {
+  stroke: var(--accent-primary);
+  stroke-width: 1.1;
+}
+
+.chart-road-load {
+  stroke: var(--text-muted);
+  stroke-width: 1.1;
+  stroke-dasharray: 3 3;
+}
+
+.is-active > .chart-road-load {
+  stroke: var(--text-main);
+  stroke-width: 1.7;
+}
+
+.chart-map-label {
+  fill: var(--text-main);
+  stroke: var(--bg-surface);
+  stroke-width: 2.5;
+  paint-order: stroke;
+  font-family: var(--font-ui);
+  font-weight: 700;
+}
+
+.chart-road-label {
+  fill: var(--text-muted);
+}
+
+.is-active > .chart-road-label {
+  fill: var(--text-main);
+}
+
+.chart-map-optimum {
+  fill: var(--text-main);
+  stroke: var(--bg-surface);
+  stroke-width: 1;
+}
+
+.chart-map-halo,
+.chart-map-dot {
+  fill: var(--accent-gold);
+}
+
+.chart-map-halo {
+  opacity: 0.28;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ce-map-pulse 1.9s ease-out infinite;
+}
+
+.chart-map-dot {
+  stroke: var(--bg-surface);
+  stroke-width: 1.5;
+}
+
+@keyframes ce-map-pulse {
+  from { opacity: 0.45; transform: scale(0.8); }
+  to { opacity: 0; transform: scale(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ce-gear-selector::before {
+    transition: none;
+  }
+
+  .ce-tour-card,
+  .chart-map-halo {
+    animation: none;
+  }
+}
+
+.ce-map-legend {
+  justify-content: flex-start;
+}
+
+.ce-map-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ce-map-key {
+  flex: 0 0 16px;
+  border-top: 2px solid var(--text-muted);
+}
+
+.ce-map-key.road {
+  border-top-style: dashed;
+}
+
+.ce-map-help {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.ce-drivetrain-note {
+  grid-column: 1 / -1;
+  margin-top: 0;
+}
+
+.ce-map-readout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  color: var(--text-main);
+  font-size: 12px;
 }
 
 /* Part Inspector */
@@ -1002,5 +1231,20 @@ html[data-theme="dark"] .ce-inspector-stage {
   .ce-tour-card {
     bottom: 66px;
     padding: 13px 14px;
+  }
+
+  .ce-tour-dots {
+    gap: 2px;
+  }
+
+  .ce-bottom-bar {
+    gap: 6px;
+  }
+
+  .ce-tour-launcher,
+  .ce-mobile-toggle {
+    min-width: 0;
+    padding-inline: 9px;
+    overflow-wrap: anywhere;
   }
 }

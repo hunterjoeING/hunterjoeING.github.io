@@ -2,12 +2,20 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import {
+  DRIVETRAIN_EXAMPLE,
+  DRIVE_TOUR_EXAMPLE,
   ENGINE_SPECS,
   ENGINE_PARTS,
   ENGINE_TOUR_STEPS,
-  computeEngineTelemetry
-} from './ce-data.js';
-import { createCombustionEngineModel } from './ce-model.js';
+  TORQUE_NM_PER_BAR,
+  computeEngineTelemetry,
+  computeBsfcContours,
+  computeDriveTourDemos,
+  fullTorqueNm,
+  roadLoadTorqueNm,
+  speedKmh
+} from './ce-data.js?v=0.3.1';
+import { createCombustionEngineModel } from './ce-model.js?v=0.3.1';
 
 const DEFAULT_CAMERA = {
   normal: { pos: [7.8, 2.5, 8.6], target: [0.0, 0.5, 0.0] },
@@ -118,7 +126,8 @@ function init() {
   // =========================================================================
   const appState = {
     viewMode: 'cutaway',
-    rpm: 2400,
+    rpm: DRIVE_TOUR_EXAMPLE.cruiseRpm,
+    load: DRIVE_TOUR_EXAMPLE.cruiseLoad,
     timeScale: 0.16,
     labelsVisible: false,
     flowVisible: true,
@@ -127,7 +136,7 @@ function init() {
     tourIndex: 0
   };
 
-  let telemetry = computeEngineTelemetry(appState.rpm);
+  let telemetry = computeEngineTelemetry(appState.rpm, appState.load);
 
   // =========================================================================
   // 3D-LABELS (PROJEKTION)
@@ -208,15 +217,20 @@ function init() {
   const pad = { left: 34, right: 32, top: 14, bottom: 26 };
   const plotW = chartW - pad.left - pad.right;
   const plotH = chartH - pad.top - pad.bottom;
+  const powerStep = 30;
+  const powerTicks = Array.from({ length: Math.floor(ENGINE_SPECS.maxPowerKW / powerStep) + 2 }, (_, i) => i * powerStep);
+  const torqueStep = 50;
+  const torqueTicks = Array.from({ length: Math.floor(ENGINE_SPECS.maxTorqueNm / torqueStep) + 2 }, (_, i) => i * torqueStep);
+  const torqueAxisMax = torqueTicks.at(-1);
 
   function xForRpm(rpm) {
     return pad.left + (rpm / ENGINE_SPECS.maxRpm) * plotW;
   }
   function yForPower(kw) {
-    return pad.top + plotH - (kw / 165) * plotH;
+    return pad.top + plotH - (kw / powerTicks.at(-1)) * plotH;
   }
   function yForTorque(nm) {
-    return pad.top + plotH - (nm / 300) * plotH;
+    return pad.top + plotH - (nm / torqueAxisMax) * plotH;
   }
 
   function buildDynoChart() {
@@ -248,14 +262,14 @@ function init() {
       <!-- Roter Drehzahlbereich -->
       <rect x="${xRedline.toFixed(1)}" y="${pad.top}" width="${(xForRpm(7000) - xRedline).toFixed(1)}" height="${plotH}" class="chart-zone-redline" />
       <!-- Hilfslinien -->
-      ${[0, 50, 100, 150]
+      ${powerTicks
         .map(kw => {
           const y = yForPower(kw).toFixed(1);
           return `<line x1="${pad.left}" y1="${y}" x2="${chartW - pad.right}" y2="${y}" class="chart-grid" />
             <text x="${pad.left - 5}" y="${Number(y) + 3.5}" text-anchor="end" class="chart-axis-text power">${kw}</text>`;
         })
         .join('')}
-      ${[0, 100, 200, 300]
+      ${torqueTicks
         .map(nm => {
           const y = yForTorque(nm).toFixed(1);
           return `<text x="${chartW - pad.right + 5}" y="${Number(y) + 3.5}" text-anchor="start" class="chart-axis-text torque">${nm}</text>`;
@@ -299,9 +313,10 @@ function init() {
   }
 
   function updateDynoMarkers() {
-    const cx = xForRpm(telemetry.rpm).toFixed(1);
-    const yp = yForPower(telemetry.powerKW).toFixed(1);
-    const yt = yForTorque(telemetry.torqueNm).toFixed(1);
+    const fullLoad = computeEngineTelemetry(telemetry.rpm);
+    const cx = xForRpm(fullLoad.rpm).toFixed(1);
+    const yp = yForPower(fullLoad.powerKW).toFixed(1);
+    const yt = yForTorque(fullLoad.torqueNm).toFixed(1);
     const vline = document.getElementById('ce-chart-vline');
     const dotP = document.getElementById('ce-dot-power');
     const dotT = document.getElementById('ce-dot-torque');
@@ -319,19 +334,191 @@ function init() {
     }
   }
 
+  // 05b · Muschelkurve
+  const mapSvg = document.getElementById('ce-bsfc-map');
+  const mapTop = 22;
+  const mapBottom = 172;
+  const mapPlotH = mapBottom - mapTop;
+  let mapMarker;
+  let mapRoadLoads = [];
+  let mapOptimum;
+
+  function yForMapTorque(torqueNm) {
+    return mapBottom - torqueNm / torqueAxisMax * mapPlotH;
+  }
+
+  function mapPath(points) {
+    return points.map(({ rpm, torqueNm }, i) => {
+      return `${i === 0 ? 'M' : 'L'}${xForRpm(rpm).toFixed(2)},${yForMapTorque(torqueNm).toFixed(2)}`;
+    }).join(' ');
+  }
+
+  function mapRoadLoadCurve(gear, rpmStep) {
+    const { minCruiseKmh, maxSpeedKmh } = DRIVETRAIN_EXAMPLE;
+    const speedPerRpm = speedKmh(1, gear);
+    const start = Math.max(ENGINE_SPECS.minRunningRpm, minCruiseKmh / speedPerRpm);
+    const end = Math.min(ENGINE_SPECS.redlineRpm, maxSpeedKmh / speedPerRpm);
+    const torqueAt = rpm => roadLoadTorqueNm(rpm, gear);
+    const canCruise = rpm => torqueAt(rpm) <= fullTorqueNm(rpm);
+
+    // Beide Schnittpunkte mit der Volllastgrenze auf der fahrbaren Seite verfeinern.
+    function boundary(feasibleRpm, outsideRpm) {
+      while (Math.abs(outsideRpm - feasibleRpm) > 0.01) {
+        const middle = (feasibleRpm + outsideRpm) / 2;
+        if (canCruise(middle)) feasibleRpm = middle;
+        else outsideRpm = middle;
+      }
+      return feasibleRpm;
+    }
+
+    let firstRpm = start;
+    while (firstRpm < end && !canCruise(firstRpm)) firstRpm = Math.min(firstRpm + rpmStep, end);
+    if (firstRpm >= end) return '';
+    if (firstRpm > start) firstRpm = boundary(firstRpm, firstRpm - rpmStep);
+    const points = [{ rpm: firstRpm, torqueNm: torqueAt(firstRpm) }];
+    let lastRpm = firstRpm;
+    while (lastRpm < end) {
+      const nextRpm = Math.min(lastRpm + rpmStep, end);
+      if (!canCruise(nextRpm)) {
+        const finalRpm = boundary(lastRpm, nextRpm);
+        points.push({ rpm: finalRpm, torqueNm: torqueAt(finalRpm) });
+        break;
+      }
+      lastRpm = nextRpm;
+      points.push({ rpm: lastRpm, torqueNm: torqueAt(lastRpm) });
+    }
+    const { rpm, torqueNm } = points.at(-1);
+    return `<g data-road-gear="${gear}">
+      <path d="${mapPath(points)}" class="chart-road-load" clip-path="url(#ce-map-limits)" />
+      <text x="${xForRpm(rpm) + 4}" y="${yForMapTorque(torqueNm) - 3}" class="chart-map-label chart-road-label">${gear}.</text>
+    </g>`;
+  }
+
+  function buildBsfcMap() {
+    if (!mapSvg) return;
+    const { maxRpm, minRunningRpm, redlineRpm } = ENGINE_SPECS;
+    const { contours, optimum } = computeBsfcContours();
+    mapOptimum = optimum;
+    const fullLoad = [];
+    const rpmStep = 50;
+    for (let rpm = minRunningRpm; rpm <= maxRpm; rpm += rpmStep) {
+      fullLoad.push({ rpm, torqueNm: fullTorqueNm(rpm) });
+    }
+
+    const fullLoadPath = mapPath(fullLoad);
+    const right = xForRpm(maxRpm);
+    const left = xForRpm(0);
+    const redline = xForRpm(redlineRpm);
+    const areaPath = `${fullLoadPath} L${right},${mapBottom} Z`;
+    const labels = [];
+    const labelRpms = [3675, 1850, 3900, 4850, 5800, 5100];
+    const contourPaths = contours.map(({ level, polylines }, i) => {
+      const labelRpm = labelRpms[i];
+      const point = polylines.flat().reduce((closest, point) => {
+        return !closest || Math.abs(point.rpm - labelRpm) < Math.abs(closest.rpm - labelRpm) ? point : closest;
+      }, null);
+      if (point) {
+        labels.push(`<text x="${xForRpm(point.rpm)}" y="${yForMapTorque(point.torqueNm) - 3}" class="chart-map-label" text-anchor="middle">${level}</text>`);
+      }
+      return polylines.map(line => `<path d="${mapPath(line)}" class="chart-contour-line" />`).join('');
+    }).join('');
+    const optimumX = xForRpm(optimum.rpm);
+    const optimumY = yForMapTorque(optimum.torqueNm);
+    const barStep = 5;
+    const barTicks = Array.from({ length: Math.floor(torqueAxisMax / (TORQUE_NM_PER_BAR * barStep)) + 1 },
+      (_, i) => i * barStep);
+
+    mapSvg.innerHTML = `
+      <defs><clipPath id="ce-map-limits"><path d="${areaPath}" /></clipPath></defs>
+      <rect x="${redline}" y="${mapTop}" width="${right - redline}" height="${mapPlotH}" class="chart-zone-redline" />
+      <path d="${areaPath}" class="chart-map-area" />
+      ${torqueTicks.map(nm => {
+        const y = yForMapTorque(nm);
+        return `<line x1="${left}" y1="${y}" x2="${right}" y2="${y}" class="chart-grid" />
+          <text x="${left - 5}" y="${y + 3.5}" text-anchor="end" class="chart-axis-text">${nm}</text>`;
+      }).join('')}
+      ${barTicks.map(bar => {
+        const y = yForMapTorque(bar * TORQUE_NM_PER_BAR);
+        return `<line x1="${right}" x2="${right + 4}" y1="${y}" y2="${y}" class="chart-grid" />
+          <text x="${right + 6}" y="${y + 3.5}" class="chart-axis-text">${bar}</text>`;
+      }).join('')}
+      <path d="M${left},${mapTop} V${mapBottom} H${right} V${mapTop}" class="chart-grid" fill="none" />
+      <line x1="${redline}" x2="${redline}" y1="${mapTop}" y2="${mapBottom}" class="chart-marker-line danger" />
+      ${[0, 1, 2, 3, 4, 5, 6, 7].map(k =>
+        `<text x="${xForRpm(k * 1000)}" y="186" text-anchor="middle" class="chart-axis-text">${k}k</text>`
+      ).join('')}
+      <text x="${chartW / 2}" y="198" text-anchor="middle" class="chart-axis-text">Drehzahl (U/min)</text>
+      <text x="${left - 5}" y="13" text-anchor="end" class="chart-axis-text">Nm</text>
+      <text x="${right + 6}" y="13" class="chart-axis-text">bar</text>
+      <g clip-path="url(#ce-map-limits)">${contourPaths}</g>
+      <path d="${fullLoadPath}" class="chart-map-limit" />
+      ${[4, 5, 6].map(gear => mapRoadLoadCurve(gear, rpmStep)).join('')}
+      ${labels.join('')}
+      <path d="M${optimumX},${optimumY - 4} l4,7 h-8 Z" class="chart-map-optimum" />
+      <text x="${optimumX - 43}" y="${optimumY - 17}" text-anchor="middle" class="chart-map-label">Optimum ${Math.round(optimum.bsfc)}</text>
+      <g id="ce-map-marker">
+        <circle r="8" class="chart-map-halo" />
+        <circle r="4.4" class="chart-map-dot" />
+      </g>
+    `;
+    mapMarker = mapSvg.querySelector('#ce-map-marker');
+    mapRoadLoads = mapSvg.querySelectorAll('[data-road-gear]');
+
+    function scrubMap(e) {
+      const matrix = mapSvg.getScreenCTM();
+      if (!matrix) return;
+      const point = new DOMPoint(e.clientX, e.clientY).matrixTransform(matrix.inverse());
+      const ratio = THREE.MathUtils.clamp((point.x - left) / plotW, 0, 1);
+      const rpm = Math.round(ratio * maxRpm / rpmStep) * rpmStep;
+      const torqueNm = (mapBottom - point.y) / mapPlotH * torqueAxisMax;
+      const fullTorque = fullTorqueNm(rpm);
+      setRpm(rpm, fullTorque ? torqueNm / fullTorque : 0);
+    }
+
+    mapSvg.addEventListener('pointerdown', e => {
+      if (!e.isPrimary || e.button !== 0) return;
+      mapSvg.setPointerCapture(e.pointerId);
+      scrubMap(e);
+    });
+    mapSvg.addEventListener('pointermove', e => {
+      if (mapSvg.hasPointerCapture(e.pointerId)) scrubMap(e);
+    });
+  }
+
   // =========================================================================
   // UI-UPDATES & STEUERUNG
   // =========================================================================
   const elRpmSlider = document.getElementById('ce-rpm-slider');
   const elRpmVal = document.getElementById('ce-rpm-val');
+  const elLoadSlider = document.getElementById('ce-load-slider');
+  const elLoadVal = document.getElementById('ce-load-val');
+  const elGearSelector = document.getElementById('ce-gear-selector');
+  const elGearInfo = document.getElementById('ce-gear-info');
+  const gearPositions = Array.from(elGearSelector?.querySelectorAll('[data-gear]') ?? []);
+  const ratioFormat = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 2 });
   const elStatusBadge = document.getElementById('ce-status-badge');
   const elTelPower = document.getElementById('ce-tel-power');
   const elTelTorque = document.getElementById('ce-tel-torque');
   const elTelIgn = document.getElementById('ce-tel-ign');
   const elTelEff = document.getElementById('ce-tel-eff');
+  const elTelEffNote = document.getElementById('ce-tel-eff-note');
+  const elTelBsfc = document.getElementById('ce-tel-bsfc');
+  const elTelGear = document.getElementById('ce-tel-gear');
+  const elTelGearNote = document.getElementById('ce-tel-gear-note');
+  const elTelSpeed = document.getElementById('ce-tel-speed');
+  const elTelFuel = document.getElementById('ce-tel-fuel');
+  const elTelFuelNote = document.getElementById('ce-tel-fuel-note');
+  const fuelFormat = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const elMapEff = document.getElementById('ce-map-eff');
+  const elMapBsfc = document.getElementById('ce-map-bsfc');
   const elInspector = document.getElementById('ce-inspector');
   const elTourCard = document.getElementById('ce-tour-card');
   const elTourStartBtn = document.getElementById('ce-btn-tour');
+  let elTourLive;
+  let tourDemos;
+  let tourStartState;
+  let tourPlayback;
+  let tourFrame;
   const elLabelsToggle = document.getElementById('ce-btn-labels');
   const elFlowToggle = document.getElementById('ce-btn-flow');
   const elPanelDrawer = document.getElementById('ce-side-panel');
@@ -339,11 +526,20 @@ function init() {
   const cylStrokeEls = [0, 1, 2, 3].map(i => document.getElementById(`ce-cyl-badge-${i}`));
 
   function updateTelemetryUI() {
-    telemetry = computeEngineTelemetry(appState.rpm);
-    if (elRpmSlider && Number(elRpmSlider.value) !== appState.rpm) {
-      elRpmSlider.value = String(appState.rpm);
+    telemetry = computeEngineTelemetry(appState.rpm, appState.load, tourFrame);
+    if (elRpmSlider) {
+      const sliderRpm = Math.round(telemetry.rpm / Number(elRpmSlider.step)) * Number(elRpmSlider.step);
+      if (Number(elRpmSlider.value) !== sliderRpm) elRpmSlider.value = String(sliderRpm);
+      elRpmSlider.setAttribute('aria-valuetext', `${Math.round(telemetry.rpm).toLocaleString('de-DE')} U/min`);
     }
     if (elRpmVal) elRpmVal.textContent = `${Math.round(telemetry.rpm).toLocaleString('de-DE')} U/min`;
+    const loadPercent = Math.round(telemetry.load * 100);
+    const loadText = `${loadPercent} %`;
+    if (elLoadSlider) {
+      elLoadSlider.value = String(loadPercent);
+      elLoadSlider.setAttribute('aria-valuetext', loadText);
+    }
+    if (elLoadVal) elLoadVal.textContent = loadText;
     if (elStatusBadge) {
       elStatusBadge.textContent = telemetry.statusLabel;
       elStatusBadge.dataset.status = telemetry.status;
@@ -351,17 +547,65 @@ function init() {
     if (elTelPower) elTelPower.textContent = `${Math.round(telemetry.powerKW)} kW (${Math.round(telemetry.powerPS)} PS)`;
     if (elTelTorque) elTelTorque.textContent = `${Math.round(telemetry.torqueNm)} Nm`;
     if (elTelIgn) elTelIgn.textContent = `${Math.round(telemetry.ignitionsPerSec)} / s`;
-    if (elTelEff) elTelEff.textContent = `${Math.round(telemetry.thermalEff * 100)} %`;
+    const effText = `${Math.round(telemetry.thermalEff * 100)} %`;
+    const bsfcText = telemetry.noUsefulPower ? '–' : `${Math.round(telemetry.bsfc).toLocaleString('de-DE')} g/kWh`;
+    if (elTelEff) elTelEff.textContent = effText;
+    if (elTelEffNote) elTelEffNote.hidden = !telemetry.noUsefulPower;
+    if (elTelBsfc) elTelBsfc.textContent = bsfcText;
+    const { gear, gearLabel, driveMode, driveModeLabel, fuelL100Instant } = telemetry;
+    if (elGearSelector && !gearPositions[gear]?.classList.contains('active')) {
+      elGearSelector.style.setProperty('--ce-active-gear', String(gear));
+      for (const position of gearPositions) {
+        const active = Number(position.dataset.gear) === gear;
+        position.classList.toggle('active', active);
+        if (active) position.setAttribute('aria-current', 'true');
+        else position.removeAttribute('aria-current');
+      }
+    }
+    if (elGearInfo && gear) {
+      const ratio = ratioFormat.format(DRIVETRAIN_EXAMPLE.gearRatios[gear - 1]);
+      const axle = ratioFormat.format(DRIVETRAIN_EXAMPLE.finalDrive);
+      elGearInfo.textContent = `${gearLabel} · i = ${ratio} · Achse ${axle} · ${driveModeLabel}`;
+    } else if (elGearInfo) {
+      elGearInfo.textContent = `${gearLabel} · ${driveModeLabel}`;
+    }
+    if (elTelGear) elTelGear.textContent = gearLabel;
+    if (elTelGearNote) elTelGearNote.textContent = driveModeLabel;
+    const speedText = `${Math.round(telemetry.speedKmh).toLocaleString('de-DE')} km/h`;
+    if (elTelSpeed) elTelSpeed.textContent = speedText;
+    const hourlyFuel = `${fuelFormat.format(telemetry.fuelLph)} l/h`;
+    const fuelText = fuelL100Instant === null ? hourlyFuel : `${fuelFormat.format(fuelL100Instant)} l/100km`;
+    if (elTelFuel) elTelFuel.textContent = fuelText;
+    if (elTelFuelNote) {
+      const neutralLabel = telemetry.status === 'off' ? telemetry.statusLabel : 'Leerlauf';
+      elTelFuelNote.textContent = fuelL100Instant === null ? neutralLabel
+        : driveMode === 'cruise' ? hourlyFuel : `momentan, ${driveModeLabel} · ${hourlyFuel}`;
+    }
+    if (elTourLive) elTourLive.textContent = `${speedText} · ${gearLabel} · ${driveModeLabel} · ${fuelText}`;
+    if (elMapEff) elMapEff.textContent = effText;
+    if (elMapBsfc) elMapBsfc.textContent = bsfcText;
 
     document.querySelectorAll('.ce-preset-btn').forEach(b => {
-      const target = Number(b.dataset.rpm);
-      b.classList.toggle('active', Math.abs(target - telemetry.rpm) < 120);
+      const active = Math.abs(Number(b.dataset.rpm) - telemetry.rpm) <= 120
+        && Math.abs(Number(b.dataset.load) - loadPercent) <= 3;
+      b.classList.toggle('active', active);
+      b.setAttribute('aria-pressed', String(active));
     });
     updateDynoMarkers();
+    mapMarker?.setAttribute('transform', `translate(${xForRpm(telemetry.rpm)} ${yForMapTorque(telemetry.torqueNm)})`);
+    for (const curve of mapRoadLoads) {
+      curve.classList.toggle('is-active', telemetry.driveMode === 'cruise' && Number(curve.dataset.roadGear) === telemetry.gear);
+    }
   }
 
-  function setRpm(val) {
+  function setRpm(val, load = appState.load) {
     appState.rpm = Math.max(0, Math.min(ENGINE_SPECS.maxRpm, Number(val) || 0));
+    setLoad(load);
+  }
+
+  function setLoad(val) {
+    clearTourPlayback();
+    appState.load = Math.round(THREE.MathUtils.clamp(Number(val) || 0, 0, 1) * 100) / 100;
     updateTelemetryUI();
   }
 
@@ -423,14 +667,48 @@ function init() {
   // =========================================================================
   // 06 SCHRITT-FÜR-SCHRITT-TOUR
   // =========================================================================
-  function renderTourStep() {
-    if (!elTourCard) return;
-    elTourCard.classList.toggle('hidden', !appState.tourActive);
-    if (elTourStartBtn) elTourStartBtn.classList.toggle('active', appState.tourActive);
-    if (!appState.tourActive) return;
+  function clearTourPlayback() {
+    if (tourPlayback) camAnim = null;
+    tourPlayback = undefined;
+    tourFrame = undefined;
+  }
 
+  function showTourFrame(frame) {
+    tourFrame = frame;
+    appState.rpm = frame.rpm;
+    appState.load = frame.load;
+    updateTelemetryUI();
+  }
+
+  function advanceTourPlayback(now) {
+    const { demo, startMs } = tourPlayback;
+    const elapsedS = (now - startMs) / 1000 - (demo.leadInS ?? 0);
+    const progress = THREE.MathUtils.clamp(elapsedS / demo.playbackS, 0, 1) ** (demo.timeExponent ?? 1);
+    const index = Math.min(demo.frames.length - 1, Math.floor(progress * demo.frames.length));
+    if (elapsedS >= demo.playbackS + (demo.holdS ?? 0)) {
+      const frame = demo.resetOnFinish ? demo.frames[0] : demo.frames.at(-1);
+      clearTourPlayback();
+      appState.rpm = frame.rpm;
+      appState.load = frame.load;
+      updateTelemetryUI();
+    } else if (demo.frames[index] !== tourFrame) {
+      showTourFrame(demo.frames[index]);
+    }
+  }
+
+  function renderTourStep() {
+    clearTourPlayback();
     const step = ENGINE_TOUR_STEPS[appState.tourIndex];
     const total = ENGINE_TOUR_STEPS.length;
+    if (step.demo) tourDemos ??= computeDriveTourDemos(mapOptimum);
+    const demo = step.demo ? tourDemos[step.demo] : null;
+    const oldFocus = document.activeElement;
+    const focusSelector = elTourCard.contains(oldFocus)
+      ? oldFocus.dataset.tourGoto !== undefined ? `[data-tour-goto="${oldFocus.dataset.tourGoto}"]` : `#${oldFocus.id}`
+      : null;
+    elTourCard.classList.remove('hidden');
+    elPanelDrawer?.classList.toggle('ce-drive-tour', Boolean(demo));
+    if (demo && elPanelDrawer) elPanelDrawer.scrollTop = 0;
     elTourCard.innerHTML = `
       <div class="ce-tour-top">
         <span class="ce-tour-step-pill">Schritt ${step.step} / ${total}</span>
@@ -438,10 +716,11 @@ function init() {
         <button type="button" class="ce-tour-close" id="ce-tour-end" aria-label="Tour beenden">✕</button>
       </div>
       <h3 class="ce-tour-title">${step.title}</h3>
-      <p class="ce-tour-body">${step.body}</p>
+      <p class="ce-tour-body">${demo?.body ?? step.body}</p>
+      ${demo ? '<p class="ce-tour-live" id="ce-tour-live"></p>' : ''}
       <div class="ce-tour-footer">
         <div class="ce-tour-dots">
-          ${ENGINE_TOUR_STEPS.map((_, idx) => `<button type="button" class="ce-tour-dot ${idx === appState.tourIndex ? 'active' : ''}" data-tour-goto="${idx}" aria-label="Schritt ${idx + 1}"></button>`).join('')}
+          ${ENGINE_TOUR_STEPS.map((_, idx) => `<button type="button" class="ce-tour-dot ${idx === appState.tourIndex ? 'active' : ''}" data-tour-goto="${idx}" aria-label="Schritt ${idx + 1}" ${idx === appState.tourIndex ? 'aria-current="step"' : ''}></button>`).join('')}
         </div>
         <div class="ce-tour-actions">
           <button type="button" class="ce-btn-ghost" id="ce-tour-prev" ${appState.tourIndex === 0 ? 'disabled' : ''}>← Zurück</button>
@@ -450,9 +729,15 @@ function init() {
       </div>
     `;
 
+    elTourLive = document.getElementById('ce-tour-live');
     setViewMode(step.viewMode, false);
-    setRpm(step.demoRpm);
     setTimeScale(step.demoTimeScale);
+    if (demo) {
+      tourPlayback = { demo, startMs: performance.now() };
+      showTourFrame(demo.frames[0]);
+    } else {
+      setRpm(step.demoRpm, step.demoLoad ?? 0.6);
+    }
     selectPart(step.focusPart, false);
     flyCamera(step.cameraPos, step.cameraTarget, 0.95);
 
@@ -477,19 +762,45 @@ function init() {
         renderTourStep();
       });
     });
+    const focusTarget = focusSelector && elTourCard.querySelector(focusSelector);
+    (focusTarget && !focusTarget.disabled ? focusTarget : elTourCard.querySelector('#ce-tour-next'))?.focus();
   }
 
   function startTour(index = 0) {
+    if (!elTourCard) return;
+    const { rpm, load, timeScale, viewMode, labelsVisible, selectedPart } = appState;
+    tourStartState = {
+      rpm, load, timeScale, viewMode, labelsVisible, selectedPart,
+      position: camera.position.clone(), target: controls.target.clone(),
+      panelScrollTop: elPanelDrawer?.scrollTop
+    };
     appState.tourActive = true;
     appState.tourIndex = index;
+    elTourStartBtn?.classList.add('active');
     renderTourStep();
   }
 
   function stopTour() {
+    clearTourPlayback();
+    camAnim = null;
     appState.tourActive = false;
-    if (elTourCard) elTourCard.classList.add('hidden');
-    if (elTourStartBtn) elTourStartBtn.classList.remove('active');
-    if (window.ArcadeAudio) window.ArcadeAudio.click();
+    elTourCard.classList.add('hidden');
+    elTourLive = undefined;
+    elPanelDrawer?.classList.remove('ce-drive-tour');
+    const { rpm, load, timeScale, viewMode, labelsVisible, selectedPart, position, target, panelScrollTop } =
+      tourStartState;
+    tourStartState = undefined;
+    setRpm(rpm, load);
+    setTimeScale(timeScale);
+    setViewMode(viewMode, false);
+    appState.labelsVisible = labelsVisible;
+    elLabelsToggle?.classList.toggle('active', labelsVisible);
+    selectPart(selectedPart, false);
+    camera.position.copy(position);
+    controls.target.copy(target);
+    if (elPanelDrawer) elPanelDrawer.scrollTop = panelScrollTop;
+    elTourStartBtn?.classList.remove('active');
+    elTourStartBtn?.focus();
   }
 
   // Event-Bindings
@@ -498,10 +809,25 @@ function init() {
   });
 
   elRpmSlider?.addEventListener('input', e => setRpm(e.target.value));
+  elLoadSlider?.addEventListener('input', e => setLoad(Number(e.target.value) / 100));
 
-  document.querySelectorAll('.ce-preset-btn').forEach(btn => {
+  const presetButtons = document.querySelectorAll('.ce-preset-btn');
+  const takeOver = () => {
+    if (!tourPlayback) return;
+    clearTourPlayback();
+    updateTelemetryUI();
+  };
+  for (const btn of [elRpmSlider, elLoadSlider, ...presetButtons]) {
+    btn?.addEventListener('pointerdown', takeOver);
+    btn?.addEventListener('keydown', e => {
+      if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End', 'PageUp', 'PageDown', 'Enter', ' ']
+        .includes(e.key)) takeOver();
+    });
+  }
+
+  presetButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      setRpm(Number(btn.dataset.rpm));
+      setRpm(Number(btn.dataset.rpm), Number(btn.dataset.load) / 100);
       if (window.ArcadeAudio) window.ArcadeAudio.click();
     });
   });
@@ -546,7 +872,7 @@ function init() {
     elDrawerBackdrop?.classList.toggle('visible', open);
     if (elDrawerToggle) {
       elDrawerToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-      elDrawerToggle.textContent = open ? '✕ Steuerung ausblenden' : '⚙️ Drehzahl, Dyno & Details';
+      elDrawerToggle.textContent = open ? '✕ Steuerung ausblenden' : '⚙️ Drehzahl, Last & Diagramme';
     }
   }
 
@@ -563,9 +889,9 @@ function init() {
   elDrawerBackdrop?.addEventListener('click', () => setDrawerOpen(false));
 
   window.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && elPanelDrawer?.classList.contains('mobile-open')) {
-      setDrawerOpen(false);
-    }
+    if (e.key !== 'Escape') return;
+    if (elPanelDrawer?.classList.contains('mobile-open')) setDrawerOpen(false);
+    if (appState.tourActive) stopTour();
   });
 
   // Topbar Mute & Version Changelog
@@ -583,6 +909,7 @@ function init() {
 
   // Initialisieren (Standard: 01 Cutaway)
   buildDynoChart();
+  buildBsfcMap();
   updateTelemetryUI();
   setTimeScale(appState.timeScale);
   selectPart(null, false);
@@ -608,6 +935,7 @@ function init() {
     requestAnimationFrame(animate);
     const dt = Math.min(0.25, (now - lastTime) / 1000);
     lastTime = now;
+    if (tourPlayback) advanceTourPlayback(now);
 
     if (camAnim) {
       camAnim.elapsed += dt;

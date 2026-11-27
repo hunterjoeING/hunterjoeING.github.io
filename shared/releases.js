@@ -79,6 +79,36 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.3.1", date: "2026-11-27", type: "patch", title: "Kennfeld eines Saugmotors",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Das Beispielkennfeld beschreibt jetzt einen klassischen 2,0-l-Saugmotor mit Saugrohreinspritzung.",
+        "Drehmoment, Leistung, Verbrauch, Voreinstellungen und Tour-Beispiele passen zum neuen Kennfeld.",
+        "Im 3D-Modell siehst du die Kraftstoffleiste und die vier Einspritzventile am Ansaugkrümmer.",
+      ],
+    },
+    {
+      app: "combustion_engine", version: "0.3.0", date: "2026-11-27", type: "feature", title: "Getriebe und Tour zur Fahrlogik",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Die Gangwahlanzeige unter dem Gaspedal zeigt den aktiven Gang und seine Übersetzung.",
+        "Der Momentanverbrauch erscheint auch beim Beschleunigen und im Schub in l/100km.",
+        "Die Tour zeigt live, wie sich Gaspedal, Fahrwiderstand und Hochschalten auf die Fahrt auswirken.",
+        "Vergleiche verschiedene Gänge bei gleichem Tempo und lerne, die Muschelkurve zu lesen.",
+      ],
+    },
+    {
+      app: "combustion_engine", version: "0.2.0", date: "2026-11-27", type: "feature", title: "Gaspedal und Muschelkurve",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Mit dem Gaspedal stellst du die Motorlast ein.",
+        "Ein Beispielkennfeld liefert Wirkungsgrad und spezifischen Verbrauch für den gewählten Betriebspunkt.",
+        "Drehzahl und Gaspedal bestimmen Gang, Geschwindigkeit und Verbrauch eines Beispielautos.",
+        "In der interaktiven Muschelkurve siehst und verschiebst du den aktuellen Betriebspunkt.",
+        "Die Voreinstellungen setzen Drehzahl und Last gemeinsam.",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.1.1", date: "2026-11-25", type: "patch", title: "Mobiles Steuerungsmenü schließen",
       author: "Joe", model: "Neon",
       highlights: [
