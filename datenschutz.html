@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Datenschutzerklärung · HunterJoe Arcade</title>
   <meta name="description" content="Datenschutzerklärung (DSGVO) für HunterJoe Arcade: Informationen zu LocalStorage, Cloudflare Turnstile &amp; D1 sowie deinen Rechten." />
@@ -159,15 +161,13 @@
         Bitte gib als Spielernamen keinen Klarnamen oder sonstige sensible Daten ein, wenn du nicht möchtest, dass dieser Name in der öffentlichen Bestenliste erscheint. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO bzw. bei bewusster Namensangabe Art. 6 Abs. 1 lit. a DSGVO.
       </p>
 
-      <h2>4. Externe Bibliotheken, Schriftarten &amp; Medien (CDNs)</h2>
+      <h2>4. Externe Schriftarten &amp; Medien</h2>
       <p>
-        Für die Darstellung der Oberfläche, Schriften und 3D-Spiele bindet diese Website folgende externe Dienste ein. Durch den Abruf der jeweiligen Ressourcen erfährt der Anbieter technisch deine IP-Adresse sowie übliche Browser-Header (Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO – performante und einheitliche Darstellung):
+        Die 3D- und Spielbibliotheken (u. a. <code>Three.js</code> und <code>Phaser</code>) werden direkt lokal von unserem eigenen Webserver ausgeliefert (kein externer JavaScript-CDN-Abruf). Für Schriftarten und Lizenzbilder bindet diese Website folgende externe Dienste ein; durch den Abruf erfährt der Anbieter technisch deine IP-Adresse sowie übliche Browser-Header (Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO – performante und einheitliche Darstellung):
       </p>
       <ul>
         <li><strong>Google Fonts</strong> (<code>fonts.googleapis.com</code> / <code>fonts.gstatic.com</code>, Google Ireland Limited / Google LLC): Bereitstellung der Webfonts (<em>Outfit</em>, <em>Plus Jakarta Sans</em> sowie spielspezifischer Schriftarten).</li>
-        <li><strong>jsDelivr CDN</strong> (<code>cdn.jsdelivr.net</code>, ProspectOne / jsDelivr): Auslieferung von Open-Source-Grafik- und Spielbibliotheken (u. a. <code>three</code>, <code>OrbitControls</code> und <code>Phaser</code>) in den 3D-Spielen und Explainers (Windkraftanlage 3D, Verbrennungsmotor 3D, Canyon Podracer 3D, 3D Spider Solitär, Zombie Horde, Bastion Tower Defense).</li>
-        <li><strong>cdnjs</strong> (<code>cdnjs.cloudflare.com</code>, Cloudflare, Inc.): Auslieferung von <code>three.min.js</code> in den beiden 3D-Minesweeper-Modulen.</li>
-        <li><strong>Wikimedia Commons</strong> (<code>upload.wikimedia.org</code>): Auslieferung von unter freier Lizenz stehenden Fotos in den Foto-Quizzes (mit direkter Quellen- und Lizenzangabe pro Bild).</li>
+        <li><strong>Wikimedia Commons</strong> (<code>upload.wikimedia.org</code> / <code>commons.wikimedia.org</code>): Quellen- und Lizenzverlinkung sowie ggf. Abruf von unter freier Lizenz stehenden Medien in den Foto-Quizzes (mit direkter Urheber- und Lizenzangabe pro Bild).</li>
       </ul>
 
       <h2>5. Lokaler Browser-Speicher (localStorage / sessionStorage) &amp; Cookies</h2>

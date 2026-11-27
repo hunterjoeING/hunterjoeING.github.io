@@ -45,6 +45,15 @@ const arcadeReleases = {
   },
   releases: [
     {
+      app: "arcade", version: "0.4.3", date: "2026-11-27", type: "patch", title: "Sicherheits-Härtung, lokales 3D-Hosting & Schutz-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Plausibilitätsgrenzen für alle Bestenlisten, 8-KB-Anfragelimit, stärkere Passwort-Absicherung und kürzere Sitzungsdauer im Backend ergänzt.",
+        "Alle 3D-Bibliotheken werden jetzt direkt lokal statt über externe Skript-CDNs ausgeliefert.",
+        "Content-Security-Policy, Referrer-Schutz und automatischer Sitzungsabgleich auf allen Seiten ergänzt.",
+      ],
+    },
+    {
       app: "arcade", version: "0.4.2", date: "2026-11-27", type: "patch", title: "Sicherheit, Bestenlisten-Schutz & Hub-Pflege",
       author: "Joe", model: "Neon",
       highlights: [
@@ -71,6 +80,14 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "wind_turbine", version: "0.1.3", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
+      ],
+    },
+    {
       app: "wind_turbine", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Bauteil-Fokus & Sturmschutz-Physik",
       author: "Joe", model: "Neon",
       highlights: [
@@ -94,6 +111,14 @@ const arcadeReleases = {
         "Interaktive 3,6-MW-Windkraftanlage in 3D mit Cutaway-Aufschnitt, X-Ray-Röntgenblick und Explosionsansicht mit 12 beschrifteten Baugruppen",
         "Windgeschwindigkeits-Regler (0–28 m/s) mit aktiver Pitch-Blattverstellung, verzahntem Getriebe und Sturmabschaltung",
         "Interaktive Live-Leistungskurve P(v) sowie geführte 6-Schritte-Tour von Wind bis Stromnetz",
+      ],
+    },
+    {
+      app: "combustion_engine", version: "0.4.1", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
       ],
     },
     {
@@ -252,6 +277,14 @@ const arcadeReleases = {
 
     // Retrospective debut entries do not show update banners.
     {
+      app: "podracer", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
+      ],
+    },
+    {
       app: "podracer", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Kollisionsabfrage & Steuerungs-Fixes",
       author: "Joe", model: "Neon",
       highlights: [
@@ -264,6 +297,14 @@ const arcadeReleases = {
       app: "podracer", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["3D-Rennen durch einen Wüsten-Canyon mit Boost-Pads und Hindernissen"],
+    },
+    {
+      app: "solitaire3d", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
+      ],
     },
     {
       app: "solitaire3d", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Hell-Modus, Speicher-Optimierung & Touch-Fixes",
@@ -280,6 +321,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Spider Solitär mit vier Farben auf einem 3D-Kartentisch"],
     },
     {
+      app: "minesweeper_3d_prompt_test", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
+      ],
+    },
+    {
       app: "minesweeper_3d_prompt_test", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Grafikspeicher & Dialog-Scrollen",
       author: "Joe", model: "Neon",
       highlights: [
@@ -293,6 +342,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Minesweeper auf einem frei drehbaren und auffächerbaren 3D-Würfel"],
     },
     {
+      app: "minesweeper", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
+      ],
+    },
+    {
       app: "minesweeper", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Spielstand-Sicherheit & Grafikspeicher",
       author: "Joe", model: "Neon",
       highlights: [
@@ -304,6 +361,13 @@ const arcadeReleases = {
       app: "minesweeper", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Räumliches Minensuchrätsel mit 13 Geometrien und optionaler Assistenz"],
+    },
+    {
+      app: "roadster", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sicherheits-Header ergänzt",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Content-Security-Policy und Referrer-Schutz für die Spielseite ergänzt.",
+      ],
     },
     {
       app: "roadster", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Landeschwellen, Drohnenschiff & Steuerdüsen",
@@ -320,6 +384,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Landespiel mit Rampe, Stickstoffdüsen und Gyro-Hilfe"],
     },
     {
+      app: "zombie", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
+      ],
+    },
+    {
       app: "zombie", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Tore, Salven-Limit & Touch-Steuerung",
       author: "Joe", model: "Neon",
       highlights: [
@@ -332,6 +404,14 @@ const arcadeReleases = {
       app: "zombie", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Brückenspiel mit Zombie-Wellen, Energietoren und Verstärkungen"],
+    },
+    {
+      app: "tower", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Lokales 3D-Hosting & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "3D-Engine wird jetzt direkt lokal ohne externes JavaScript-CDN geladen.",
+        "Content-Security-Policy und Referrer-Schutz für die Seite ergänzt.",
+      ],
     },
     {
       app: "tower", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Wellen-Balance, Banner & Grafikspeicher",
@@ -348,6 +428,13 @@ const arcadeReleases = {
       banner: false, highlights: ["Turmverteidigung mit drei Routen, ausbaubaren Türmen und Boss-Wellen"],
     },
     {
+      app: "solitaire", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sicherheits-Header ergänzt",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Content-Security-Policy und Referrer-Schutz für die Spielseite ergänzt.",
+      ],
+    },
+    {
       app: "solitaire", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Touch-Abbruch, Spaltenhöhe & genaue Spielzeit",
       author: "Joe", model: "Neon",
       highlights: [
@@ -359,6 +446,13 @@ const arcadeReleases = {
       app: "solitaire", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Klondike mit Ein- oder Drei-Karten-Zug, Tipps und Rückgängig-Funktion"],
+    },
+    {
+      app: "p2048", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sicherheits-Header ergänzt",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Content-Security-Policy und Referrer-Schutz für die Spielseite ergänzt.",
+      ],
     },
     {
       app: "p2048", version: "0.1.1", date: "2026-11-27", type: "patch", title: "2048-Abschluss, Rückgängig & große Zahlen",
@@ -374,6 +468,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Zahlenpuzzle mit 4×4- und 5×5-Feldern, Wischgesten und Pfeiltasten"],
     },
     {
+      app: "quiz_fussball", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_fussball", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fußball-Guru-Stufe & fairer Zeitbonus",
       author: "Joe", model: "Neon",
       highlights: [
@@ -385,6 +487,14 @@ const arcadeReleases = {
       app: "quiz_fussball", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Fußballquiz mit Vereins-Special und Bestenlisten je Themenbereich"],
+    },
+    {
+      app: "quiz_american_football", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_american_football", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -399,6 +509,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Footballquiz zu Spielregeln, Ligageschichte und Fankultur"],
     },
     {
+      app: "quiz_golf", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_golf", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -409,6 +527,14 @@ const arcadeReleases = {
       app: "quiz_golf", version: "0.1.0", date: "2026-11-22", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Golfquiz zu Spielregeln, Ausrüstung, Turnieren und Plätzen"],
+    },
+    {
+      app: "quiz_mil_air", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_mil_air", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -423,6 +549,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zur Geschichte und Technik der militärischen Luftfahrt"],
     },
     {
+      app: "quiz_airliners", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_airliners", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -433,6 +567,14 @@ const arcadeReleases = {
       app: "quiz_airliners", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Verkehrsflugzeugen und der Technik an Bord"],
+    },
+    {
+      app: "quiz_etfs", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_etfs", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Profi-Filter & fairer Zeitbonus",
@@ -448,6 +590,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Indexfonds, langfristigem Sparen und Besteuerung"],
     },
     {
+      app: "quiz_bitcoin", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_bitcoin", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -458,6 +608,14 @@ const arcadeReleases = {
       app: "quiz_bitcoin", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur Geschichte und Funktionsweise digitaler Währungen"],
+    },
+    {
+      app: "quiz_porsche", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_porsche", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -472,6 +630,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zur Modellgeschichte und Technik von Sportwagen"],
     },
     {
+      app: "quiz_f1", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_f1", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -482,6 +648,14 @@ const arcadeReleases = {
       app: "quiz_f1", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Fahrern, Rennstrecken und Technik der Formel 1"],
+    },
+    {
+      app: "quiz_apple", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_apple", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Start-Fix, Fragenverlauf & fairer Zeitbonus",
@@ -498,6 +672,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zur Geschichte eines Technikunternehmens und seiner Produkte"],
     },
     {
+      app: "quiz_md11", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_md11", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -508,6 +690,14 @@ const arcadeReleases = {
       app: "quiz_md11", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Konstruktion und Einsatzgeschichte eines dreistrahligen Verkehrsflugzeugs"],
+    },
+    {
+      app: "quiz_naildesign", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_naildesign", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -522,6 +712,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Nagelpflege, Gestaltung und Materialkunde"],
     },
     {
+      app: "quiz_torten", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_torten", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -532,6 +730,14 @@ const arcadeReleases = {
       app: "quiz_torten", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Backtechniken, Tortendekoration und internationalen Klassikern"],
+    },
+    {
+      app: "quiz_geburt", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_geburt", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Timer-Stabilität, Zeitmodus & Joker-Status",
@@ -548,6 +754,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Geburtsvorbereitung und der ersten Zeit nach der Entbindung"],
     },
     {
+      app: "quiz_ai", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_ai", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -558,6 +772,14 @@ const arcadeReleases = {
       app: "quiz_ai", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur Geschichte und Funktionsweise künstlicher Intelligenz"],
+    },
+    {
+      app: "quiz_movies", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_movies", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -572,6 +794,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Filmquiz zu unterschiedlichen Genres und Kinotechnik"],
     },
     {
+      app: "quiz_egypt", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_egypt", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -582,6 +812,14 @@ const arcadeReleases = {
       app: "quiz_egypt", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur Geschichte Ägyptens von der Frühzeit bis zur Moderne"],
+    },
+    {
+      app: "quiz_diving", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_diving", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -596,9 +834,25 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Tauchpraxis, Ausrüstung und Physik unter Wasser"],
     },
     {
+      app: "quiz_cpus", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Sicherheits-Header & sichere Lizenzlinks",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Lizenzlinks werden vor der Ausgabe strikt auf HTTPS geprüft.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_cpus", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Bilderquiz zur Geschichte von Computerprozessoren"],
+    },
+    {
+      app: "quiz_gpus", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Sicherheits-Header & sichere Lizenzlinks",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Lizenzlinks werden vor der Ausgabe strikt auf HTTPS geprüft.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_gpus", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
@@ -606,9 +860,25 @@ const arcadeReleases = {
       banner: false, highlights: ["Bilderquiz zu PC-Grafikkarten aus verschiedenen Jahren"],
     },
     {
+      app: "quiz_phones", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Sicherheits-Header & sichere Lizenzlinks",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Lizenzlinks werden vor der Ausgabe strikt auf HTTPS geprüft.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_phones", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Bilderquiz zu Mobiltelefonen aus mehreren Generationen"],
+    },
+    {
+      app: "quiz_pilze_aachen", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Sicherheits-Header & sichere Lizenzlinks",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Lizenzlinks werden vor der Ausgabe strikt auf HTTPS geprüft.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_pilze_aachen", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
@@ -616,9 +886,25 @@ const arcadeReleases = {
       banner: false, highlights: ["Bilderquiz zur Bestimmung regionaler Pilzarten und ihrer Giftigkeit"],
     },
     {
+      app: "quiz_swiss_trains", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Sicherheits-Header & sichere Lizenzlinks",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Lizenzlinks werden vor der Ausgabe strikt auf HTTPS geprüft.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_swiss_trains", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Bilderquiz zu Fahrzeugen der Schweizer Eisenbahn"],
+    },
+    {
+      app: "quiz_emob", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_emob", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -633,6 +919,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Elektroautos, Batterietechnik und Schnellladen"],
     },
     {
+      app: "quiz_pol", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_pol", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -643,6 +937,14 @@ const arcadeReleases = {
       app: "quiz_pol", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu wirtschaftspolitischen Ideen und Denkschulen"],
+    },
+    {
+      app: "quiz_hist", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz_hist", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
@@ -657,6 +959,14 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu historischen Meilensteinen verschiedener Epochen"],
     },
     {
+      app: "quiz_china", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
+    },
+    {
       app: "quiz_china", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
       author: "Joe", model: "Neon",
       highlights: [
@@ -667,6 +977,14 @@ const arcadeReleases = {
       app: "quiz_china", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur neueren Geschichte Chinas"],
+    },
+    {
+      app: "quiz", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Sichere Textausgabe & Sicherheits-Header",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Antwortoptionen und Erklärtexte werden jetzt ausschließlich als sicherer Klartext gerendert.",
+        "Content-Security-Policy und Referrer-Schutz für die Quiz-Seite ergänzt.",
+      ],
     },
     {
       app: "quiz", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",

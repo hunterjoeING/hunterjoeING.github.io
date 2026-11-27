@@ -1188,7 +1188,7 @@
           return { ok: false, error: 'Bitte setze das Häkchen bei „Ich bin ein Mensch“.' };
         }
         if (!turnstileToken && num !== expected) {
-          return { ok: false, error: `Bitte löse kurz die CAPTCHA-Rechenaufgabe (${a} + ${b} = ${expected}).` };
+          return { ok: false, error: `Bitte löse kurz die CAPTCHA-Rechenaufgabe (${a} + ${b}).` };
         }
         return {
           ok: true,
@@ -1198,6 +1198,7 @@
     };
   }
 
+  let _authVerified = false;
   window.ArcadeAuth = {
     getUser: () => readAuthUser(),
     getToken: () => readAuthToken(),
@@ -1210,7 +1211,35 @@
       const u = readAuthUser();
       return !!(u && (u.role === 'admin' || u.role === 'agent'));
     },
+    verifySession: async () => {
+      const token = readAuthToken();
+      if (!token || token.startsWith('local_jwt_')) return readAuthUser();
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/me`, {
+          headers: { 'Authorization': `Bearer ${token}` },
+          cache: 'no-store'
+        });
+        if (res.status === 401) {
+          window.ArcadeAuth.logout();
+          return null;
+        }
+        if (res.ok) {
+          const data = await res.json().catch(() => null);
+          if (data && data.ok && data.user) {
+            _authVerified = true;
+            const prev = readAuthUser();
+            if (!prev || prev.role !== data.user.role || prev.displayName !== data.user.displayName) {
+              window.ArcadeAuth.saveSession(data.user, token);
+            }
+            return data.user;
+          }
+        }
+      } catch (e) {}
+      return readAuthUser();
+    },
+    isSessionVerified: () => _authVerified,
     logout: () => {
+      _authVerified = false;
       try {
         localStorage.removeItem(AUTH_USER_KEY);
         localStorage.removeItem(AUTH_TOKEN_KEY);
@@ -1236,6 +1265,9 @@
       if (!password || String(password).length < 6) {
         throw new Error('Passwort muss mindestens 6 Zeichen lang sein.');
       }
+      if (String(password).length > 128) {
+        throw new Error('Passwort darf maximal 128 Zeichen lang sein.');
+      }
 
       // 1. Versuche zuerst den Live Cloudflare Worker Endpunkt (/api/auth/register bzw. /api/auth/login)
       try {
@@ -1256,6 +1288,7 @@
             throw new Error(data.error || 'Anmeldung fehlgeschlagen.');
           }
           const user = data.user;
+          _authVerified = true;
           window.ArcadeAuth.saveSession(user, data.token);
           return user;
         }
@@ -1265,7 +1298,17 @@
         }
       }
 
-      // 2. Fallback: Lokaler Browser-Tresor (PBKDF2/SHA-256 gehasht) falls Worker-Auth-Route noch nicht deployed ist
+      // Auf der Live-Domain keinen unsicheren lokalen Browser-Tresor als Fallback nutzen
+      const isLocalOrigin = typeof location !== 'undefined' && (
+        location.protocol === 'file:' ||
+        location.hostname === 'localhost' ||
+        location.hostname === '127.0.0.1'
+      );
+      if (!isLocalOrigin) {
+        throw new Error('Login-Server momentan nicht erreichbar. Bitte versuche es gleich erneut.');
+      }
+
+      // 2. Fallback nur für lokale Entwicklung (localhost / file:)
       let localUsers = {};
       try { localUsers = JSON.parse(localStorage.getItem(LOCAL_USERS_KEY) || '{}') || {}; } catch (e) {}
       const key = cleanUser.toLowerCase();
@@ -2349,6 +2392,10 @@
     document.addEventListener('DOMContentLoaded', initSharedChrome);
   } else {
     initSharedChrome();
+  }
+
+  if (typeof fetch === 'function' && readAuthToken() && !readAuthToken().startsWith('local_jwt_')) {
+    window.ArcadeAuth.verifySession();
   }
 })();
 

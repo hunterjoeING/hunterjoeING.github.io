@@ -9,7 +9,7 @@
 - **Game:** 3D Minesweeper – Tech Demo (`id: 'minesweeper'`)
 - **Location:** `games/minesweeper/`
 - **Architecture:** Single-file HTML/CSS/JS (`index.html`, ~396 KB; logically sectioned with `// js/...` comments)
-- **3D Engine:** **Three.js r128** via CDN (`https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`)
+- **3D Engine:** **Three.js r128** lokal unter `shared/vendor/three-r128/three.min.js`
 - **Arcade Shell Integration:** `../../shared/arcade.css`, `../../shared/arcade.js`, `../../shared/burger-menu.js`
 
 ---

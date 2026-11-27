@@ -16,12 +16,17 @@ jobs:
     permissions:
       contents: read
 
+    env:
+      WRANGLER_VERSION: '4.168.0'
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
 
@@ -52,13 +57,14 @@ jobs:
             if (!accountId) {
               const acc = await cfFetch("/accounts");
               if (!acc.ok || !Array.isArray(acc.data.result) || !acc.data.result.length) {
-                console.error("ERROR: Could not list Cloudflare accounts:", JSON.stringify(acc.data));
+                console.error("ERROR: Could not list Cloudflare accounts (HTTP " + acc.status + ").");
                 process.exit(1);
               }
               accountId = acc.data.result[0].id;
             }
+            console.log("::add-mask::" + accountId);
             fs.appendFileSync(process.env.GITHUB_ENV, "CLOUDFLARE_ACCOUNT_ID=" + accountId + "\n");
-            console.log("Resolved Cloudflare Account ID:", accountId);
+            console.log("Resolved Cloudflare account:", Boolean(accountId));
 
             const tomlPath = "cloudflare-worker/wrangler.toml";
             let toml = fs.readFileSync(tomlPath, "utf8");
@@ -72,7 +78,8 @@ jobs:
                 const dbBinding = settings.data.result.bindings.find(b => b.type === "d1" && b.name === "DB");
                 if (dbBinding && dbBinding.id) {
                   dbId = dbBinding.id;
-                  console.log("Found existing DB binding on hunterjoe-scores worker:", dbId);
+                  console.log("::add-mask::" + dbId);
+                  console.log("Found existing DB binding on hunterjoe-scores worker.");
                 }
               }
 
@@ -89,7 +96,8 @@ jobs:
                 if (preferred) {
                   dbId = preferred.uuid;
                   dbName = preferred.name;
-                  console.log("Matched D1 database:", dbName, dbId);
+                  console.log("::add-mask::" + dbId);
+                  console.log("Matched D1 database:", dbName);
                 }
               }
 
@@ -114,7 +122,7 @@ jobs:
         working-directory: cloudflare-worker
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: npx --yes wrangler@latest deploy --keep-vars
+        run: npx --yes "wrangler@${WRANGLER_VERSION}" deploy --keep-vars
 
       - name: Sync & Provision Worker Secrets
         shell: bash
@@ -123,16 +131,15 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          ADMIN_SECRET: ${{ secrets.ADMIN_SECRET }}
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
           TELEGRAM_WEBHOOK_SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
         run: |
-          for name in TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID ADMIN_SECRET AGENT_API_KEY JWT_SECRET TURNSTILE_SECRET_KEY; do
+          for name in TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID AGENT_API_KEY JWT_SECRET TURNSTILE_SECRET_KEY; do
             val="${!name}"
             if [ -n "$val" ]; then
-              printf '%s' "$val" | npx --yes wrangler@latest secret put "$name"
+              printf '%s' "$val" | npx --yes "wrangler@${WRANGLER_VERSION}" secret put "$name"
               echo "Synced secret: $name"
             fi
           done
@@ -150,7 +157,7 @@ jobs:
               })();
             ')
             if [ "$HAS_JWT" != "yes" ]; then
-              node -e 'process.stdout.write(require("crypto").randomBytes(32).toString("hex"))' | npx --yes wrangler@latest secret put JWT_SECRET
+              node -e 'process.stdout.write(require("crypto").randomBytes(32).toString("hex"))' | npx --yes "wrangler@${WRANGLER_VERSION}" secret put JWT_SECRET
               echo "Provisioned new JWT_SECRET on worker"
             else
               echo "Preserved existing JWT_SECRET on worker"
@@ -159,7 +166,7 @@ jobs:
 
           # Sync or deterministically derive TELEGRAM_WEBHOOK_SECRET when Telegram is enabled
           if [ -n "$TELEGRAM_WEBHOOK_SECRET" ]; then
-            printf '%s' "$TELEGRAM_WEBHOOK_SECRET" | npx --yes wrangler@latest secret put TELEGRAM_WEBHOOK_SECRET
+            printf '%s' "$TELEGRAM_WEBHOOK_SECRET" | npx --yes "wrangler@${WRANGLER_VERSION}" secret put TELEGRAM_WEBHOOK_SECRET
             echo "Synced secret: TELEGRAM_WEBHOOK_SECRET"
           elif [ -n "$TELEGRAM_BOT_TOKEN" ]; then
             node -e '
@@ -168,7 +175,7 @@ jobs:
                 .update("hunterjoe-tg-webhook-v1:" + (process.env.TELEGRAM_CHAT_ID || ""))
                 .digest("hex");
               process.stdout.write(sig);
-            ' | npx --yes wrangler@latest secret put TELEGRAM_WEBHOOK_SECRET
+            ' | npx --yes "wrangler@${WRANGLER_VERSION}" secret put TELEGRAM_WEBHOOK_SECRET
             echo "Synced derived TELEGRAM_WEBHOOK_SECRET"
           fi
 

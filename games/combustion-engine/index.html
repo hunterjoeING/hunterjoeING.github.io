@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade</title>
   <meta name="description" content="Interaktiver 3D-Explainer für Verbrennungsmotoren (R4, Boxer, V6, V8) als Saugbenziner mit Saugrohreinspritzung oder Turbodiesel mit Common-Rail-Direkteinspritzung: Cutaway, X-Ray, Drehzahl, Gaspedal, Gangwahlanzeige, Muschelkurve und geführte Tour." />
@@ -39,8 +41,8 @@
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+      "three": "../../shared/vendor/three-0.170.0/build/three.module.min.js",
+      "three/addons/": "../../shared/vendor/three-0.170.0/examples/jsm/"
     }
   }
   </script>
@@ -52,7 +54,7 @@
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
       <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
-      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.4.0</button>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.4.1</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>

@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="utf-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Geschichte &amp; Weltereignisse Quiz · HunterJoe Arcade</title>
   <meta name="description" content="75 historische Quiz-Fragen über Epochen &amp; Weltereignisse in 3 Stufen: von Antike &amp; Mittelalter über Industrialisierung &amp; 1848 bis Währungsreform 1948 &amp; Mauerfall." />
@@ -575,12 +577,22 @@
 
       const letters = ['A', 'B', 'C', 'D'];
       const grid = document.getElementById('answers-grid');
-      grid.innerHTML = opts.map((o, i) => `
-        <button class="ans-btn" data-idx="${i}" onclick="pickAnswer(${i})">
-          <span class="ans-key">${letters[i]}</span>
-          <span>${o.txt}</span>
-        </button>
-      `).join('');
+      grid.textContent = '';
+      opts.forEach((o, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ans-btn';
+        btn.dataset.idx = String(i);
+        btn.addEventListener('click', () => pickAnswer(i));
+        const keySpan = document.createElement('span');
+        keySpan.className = 'ans-key';
+        keySpan.textContent = String(letters[i]);
+        const txtSpan = document.createElement('span');
+        txtSpan.textContent = o.txt;
+        btn.appendChild(keySpan);
+        btn.appendChild(txtSpan);
+        grid.appendChild(btn);
+      });
 
       updateTimerUI();
       if (!ArcadeQuizPrefs.isRelaxed()) startBonusTimer();
@@ -671,8 +683,12 @@
 
     function showFact(isRight, prefix = '') {
       const item = deck[qIdx];
-      document.getElementById('fact-text').innerHTML =
-        `<strong>${prefix || (isRight ? '✅ Treffer! ' : '❌ Nicht ganz: ')}</strong>${item.exp}`;
+      const factEl = document.getElementById('fact-text');
+      factEl.textContent = '';
+      const strongEl = document.createElement('strong');
+      strongEl.textContent = prefix || (isRight ? '✅ Treffer! ' : '❌ Nicht ganz: ');
+      factEl.appendChild(strongEl);
+      factEl.appendChild(document.createTextNode(item.exp || ''));
       document.getElementById('btn-next-q').textContent = qIdx + 1 >= deck.length ? 'Auswertung ▶' : 'Weiter ▶';
       document.getElementById('fact-box').classList.remove('hidden');
     }

@@ -2,6 +2,8 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070b19'/%3E%3Cpolygon points='32,8 54,20 32,32 10,20' fill='%2338bdf8'/%3E%3Cpolygon points='10,20 32,32 32,56 10,44' fill='%230284c7'/%3E%3Cpolygon points='54,20 54,44 32,56 32,32' fill='%230369a1'/%3E%3C/svg%3E" />
   <title>Minesweeper 3d prompt Version</title>
@@ -727,7 +729,7 @@
   </footer>
 
   <script src="../../shared/arcade.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="../../shared/vendor/three-r128/three.min.js"></script>
   <script>
     (function () {
       // =========================================================================

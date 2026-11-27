@@ -27,10 +27,12 @@ jobs:
     if: github.actor != 'github-actions[bot]'
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '22'
           cache: npm
@@ -45,6 +47,8 @@ jobs:
           npm run build
 
       - name: Commit rebuilt bundle when it changed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -53,5 +57,6 @@ jobs:
             echo "dist/e-roadtrip.js unchanged; nothing to commit."
           else
             git commit -m "chore(e-roadtrip): rebuild dist/e-roadtrip.js"
-            git push
+            AUTH_HEADER=$(printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w 0)
+            git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${AUTH_HEADER}" push
           fi

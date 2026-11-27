@@ -24,7 +24,9 @@ Falls du den bestehenden Worker `hunterjoe-scores` direkt im **Cloudflare Dashbo
 ### Optional: Cloudflare Turnstile Sitekey & Secrets hinterlegen
 Unter **Turnstile** im Cloudflare Dashboard kannst du kostenlos ein Widget für `hunterjoeing.github.io` (bzw. deine Domain) anlegen:
 - Den **Sitekey** trägst du in `shared/arcade.js` bei `TURNSTILE_SITE_KEY` ein (standardmäßig ist der offizielle Cloudflare-Turnstile-Key hinterlegt, sodass das Widget sofort funktioniert).
-- Den **Secret Key** sowie dein **Admin-Passwort** hinterlegst du in den Worker-Einstellungen unter **Settings → Variables and Secrets**:
+- Den **Secret Key** sowie die Worker-Secrets hinterlegst du als GitHub-Repository-Secrets (synchronisiert über `.github/workflows/deploy-worker.yml`) oder direkt in den Worker-Einstellungen unter **Settings → Variables and Secrets**:
   - `TURNSTILE_SECRET_KEY`: Dein Turnstile Secret Key
-  - `JWT_SECRET`: Beliebiger langer Zufallsstring
-  - `ADMIN_SECRET`: Dein persönlicher Admin-/Agent-Schlüssel (damit kannst du im Login-Modal oder beim Antworten den Status auf **„✅ Behoben“** setzen und als **🤖 KI-Agent** kommentieren).
+  - `JWT_SECRET`: Langer Zufallsstring (wird vom Deploy-Workflow automatisch provisioniert, falls noch nicht gesetzt)
+  - `TELEGRAM_WEBHOOK_SECRET`: Secret-Token für `X-Telegram-Bot-Api-Secret-Token` (wird automatisch gesetzt und an Telegram übergeben)
+  - `AGENT_API_KEY`: Optionaler API-Key für direkte Assistenten-Antworten per Header `X-Agent-Key`
+  - **Admin-Rolle vergeben:** Ausschließlich serverseitig per GitHub-Workflow `promote-admin.yml` (nicht mehr über öffentliche Login-/Reply-Routen).

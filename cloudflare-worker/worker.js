@@ -101,6 +101,25 @@ const GAMES_META = {
   combustion_engine: { title: 'Verbrennungsmotor 3D', lowerIsBetter: false, noLeaderboard: true }
 };
 
+const GAME_SCORE_BOUNDS = {
+  minesweeper: { min: 1, max: 86400 },
+  minesweeper_3d_prompt_test: { min: 1, max: 86400 },
+  roadster: { min: 0, max: 500000 },
+  zombie: { min: 0, max: 5000000 },
+  tower: { min: 0, max: 5000000 },
+  solitaire: { min: 0, max: 500000 },
+  solitaire3d: { min: 0, max: 500000 },
+  p2048: { min: 0, max: 5000000 },
+  podracer: { min: 0, max: 1000000 }
+};
+
+function getScoreBounds(gid) {
+  if (Object.hasOwn(GAME_SCORE_BOUNDS, gid)) return GAME_SCORE_BOUNDS[gid];
+  if (gid === 'quiz' || gid.startsWith('quiz_')) return { min: 0, max: 100000 };
+  if (isEroadtripBoard(gid)) return { min: 0, max: 1000 };
+  return { min: 0, max: 1000000 };
+}
+
 // Keep target minutes and level IDs in sync with games/e-roadtrip/src/data/levels.ts.
 const EROADTRIP_LEVEL_TARGETS = {
   eroadtrip_l1: { levelId: 'level_1_aachen_hannover', targetMinutes: 797 },
@@ -110,6 +129,15 @@ const EROADTRIP_LEVEL_TARGETS = {
 
 function isEroadtripBoard(gid) {
   return typeof gid === 'string' && (gid === 'eroadtrip' || gid.startsWith('eroadtrip_'));
+}
+
+function isModernEroadtripVersion(v) {
+  if (typeof v !== 'string') return false;
+  const m = /^(\d+)\.(\d+)\.(\d+)/.exec(v.trim());
+  if (!m) return false;
+  const maj = Number(m[1]);
+  const min = Number(m[2]);
+  return maj > 0 || min >= 6;
 }
 
 export function validateEroadtripScore(gid, body) {
@@ -127,12 +155,25 @@ export function validateEroadtripScore(gid, body) {
   if (!Number.isInteger(score) || score < 0 || score > 1000) {
     return 'E-Roadtrip score must be an integer from 0 to 1000';
   }
-  const maxMinutes = legacyMaxMinutes ?? 20 * targetMinutes;
+  const useStrictWindow = isModernEroadtripVersion(meta.version);
+  const maxMinutes = useStrictWindow ? 20 * targetMinutes : (legacyMaxMinutes ?? 20 * targetMinutes);
   if (!Number.isFinite(meta.minutes) || meta.minutes < 0.5 * targetMinutes || meta.minutes > maxMinutes) {
     return 'E-Roadtrip minutes outside the allowed range for this level';
   }
   if (!Number.isFinite(meta.costEur) || meta.costEur < 0) return 'Invalid E-Roadtrip costEur';
   if (Object.hasOwn(meta, 'levelId') && meta.levelId !== levelId) return 'E-Roadtrip levelId does not match the board';
+  if (Object.hasOwn(meta, 'subScores') && meta.subScores !== null && meta.subScores !== undefined) {
+    const subs = meta.subScores;
+    if (typeof subs !== 'object' || Array.isArray(subs)) return 'Invalid E-Roadtrip subScores';
+    const keys = ['time', 'cost', 'stress', 'efficiency', 'decisions'];
+    let maxSub = 0;
+    for (const k of keys) {
+      const val = subs[k];
+      if (!Number.isFinite(val) || val < 0 || val > 100) return 'Invalid E-Roadtrip subScores';
+      if (val > maxSub) maxSub = val;
+    }
+    if (score > maxSub * 10 + 10) return 'E-Roadtrip score inconsistent with subScores';
+  }
   return null;
 }
 
@@ -244,20 +285,63 @@ function b64urlDecode(str) {
   return decodeURIComponent(escape(atob(padded + pad)));
 }
 
-async function hashPassword(password, saltHex) {
+const PBKDF2_CURRENT_ITERATIONS = 100000;
+const PBKDF2_LEGACY_ITERATIONS = 60000;
+const PBKDF2_CURRENT_PREFIX = 'pbkdf2_100k$';
+const MAX_PASSWORD_LEN = 128;
+const JWT_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+
+async function readJsonBody(request, maxBytes = 8192) {
+  const clHeader = request.headers.get('Content-Length');
+  if (clHeader !== null) {
+    const cl = Number(clHeader);
+    if (Number.isFinite(cl) && cl > maxBytes) {
+      return { errorResponse: jsonResponse({ ok: false, error: 'Anfrage zu groß.' }, 413) };
+    }
+  }
+  const raw = await request.text().catch(() => '');
+  if (new TextEncoder().encode(raw).length > maxBytes) {
+    return { errorResponse: jsonResponse({ ok: false, error: 'Anfrage zu groß.' }, 413) };
+  }
+  if (!raw.trim()) return { body: {} };
+  try {
+    const parsed = JSON.parse(raw);
+    return { body: parsed && typeof parsed === 'object' ? parsed : {} };
+  } catch (e) {
+    return { body: {} };
+  }
+}
+
+async function derivePbkdf2Hex(password, saltHex, iterations) {
   const enc = new TextEncoder();
   const keyMat = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveBits']);
   const bits = await crypto.subtle.deriveBits(
     {
       name: 'PBKDF2',
       salt: enc.encode(saltHex),
-      iterations: 60000,
+      iterations,
       hash: 'SHA-256'
     },
     keyMat,
     256
   );
   return bufToHex(bits);
+}
+
+async function hashPassword(password, saltHex) {
+  const hex = await derivePbkdf2Hex(password, saltHex, PBKDF2_CURRENT_ITERATIONS);
+  return `${PBKDF2_CURRENT_PREFIX}${hex}`;
+}
+
+async function verifyPassword(password, saltHex, storedHash) {
+  const stored = String(storedHash || '');
+  if (stored.startsWith(PBKDF2_CURRENT_PREFIX)) {
+    const expectedHex = stored.slice(PBKDF2_CURRENT_PREFIX.length);
+    const calcHex = await derivePbkdf2Hex(password, saltHex, PBKDF2_CURRENT_ITERATIONS);
+    return { valid: await timingSafeEqualStr(calcHex, expectedHex), needsRehash: false };
+  }
+  const calcHex = await derivePbkdf2Hex(password, saltHex, PBKDF2_LEGACY_ITERATIONS);
+  return { valid: await timingSafeEqualStr(calcHex, stored), needsRehash: true };
 }
 
 async function signJwt(payload, secret) {
@@ -368,16 +452,26 @@ async function getAuthUser(request, env, db) {
 // ============================================================================
 // Cloudflare Turnstile Server-Side Verification
 // ============================================================================
+function isCloudflareTurnstileTestSecret(secret) {
+  return typeof secret === 'string' && /^[123]x0000000000000000000000000000000AA$/i.test(secret.trim());
+}
+
 async function verifyTurnstile(token, remoteIp, env) {
-  // Falls noch kein TURNSTILE_SECRET_KEY in den Worker-Secrets hinterlegt ist,
-  // erlaubt das Cloudflare offizielle Test-Secret (1x0000000000000000000000000000000AA) den sofortigen Betrieb.
-  const secret = env.TURNSTILE_SECRET_KEY || '1x0000000000000000000000000000000AA';
+  const configuredSecret = (env.TURNSTILE_SECRET_KEY || '').trim();
   if (!token) return { ok: false, error: 'Bitte bestätige zuerst das CAPTCHA.' };
 
-  // Fallback für lokale Offline-/Challenge-Tokens wenn kein Turnstile-Secret gesetzt ist
-  if (!env.TURNSTILE_SECRET_KEY && String(token).startsWith('local_guard_')) {
+  if (configuredSecret) {
+    if (isCloudflareTurnstileTestSecret(configuredSecret)) {
+      return { ok: false, error: 'CAPTCHA ist serverseitig falsch konfiguriert (Test-Secret nicht erlaubt).' };
+    }
+    if (String(token).startsWith('local_guard_')) {
+      return { ok: false, error: 'Bitte löse das Cloudflare-CAPTCHA.' };
+    }
+  } else if (String(token).startsWith('local_guard_')) {
     return { ok: true };
   }
+
+  const secret = configuredSecret || '1x0000000000000000000000000000000AA';
 
   try {
     const form = new FormData();
@@ -527,7 +621,8 @@ export default {
           return jsonResponse({ ok: false, error: 'Authentifizierung ist serverseitig nicht vollständig konfiguriert.' }, 503);
         }
 
-        const body = await request.json().catch(() => ({}));
+        const { body, errorResponse } = await readJsonBody(request, 8192);
+        if (errorResponse) return errorResponse;
         const username = cleanText(body.username, 24).replace(/[^a-zA-Z0-9_äöüÄÖÜß.-]/g, '');
         const displayName = cleanText(body.displayName || username, 24);
         const password = String(body.password || '');
@@ -538,6 +633,9 @@ export default {
         }
         if (password.length < 6) {
           return jsonResponse({ ok: false, error: 'Passwort muss mindestens 6 Zeichen lang sein.' }, 400);
+        }
+        if (password.length > MAX_PASSWORD_LEN) {
+          return jsonResponse({ ok: false, error: `Passwort darf maximal ${MAX_PASSWORD_LEN} Zeichen lang sein.` }, 400);
         }
 
         const ip = request.headers.get('CF-Connecting-IP') || '';
@@ -554,11 +652,8 @@ export default {
         const saltHex = bufToHex(saltBytes);
         const pwHash = await hashPassword(password, saltHex);
 
-        // Nur passendes Admin-Secret erhält Rolle 'admin'
-        let role = 'user';
-        if (body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET)) {
-          role = 'admin';
-        }
+        // Admin-Rechte werden ausschließlich über den GitHub-Workflow promote-admin.yml in D1 vergeben.
+        const role = 'user';
 
         const ins = await db.prepare(
           `INSERT INTO users (username, display_name, pw_salt, pw_hash, role, last_login_at)
@@ -567,7 +662,7 @@ export default {
 
         const userId = ins.meta?.last_row_id || 1;
         const userObj = { id: userId, username, displayName, role };
-        const token = await signJwt({ ...userObj, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 }, env.JWT_SECRET);
+        const token = await signJwt({ ...userObj, exp: Date.now() + JWT_TTL_MS }, env.JWT_SECRET);
 
         return jsonResponse({ ok: true, user: userObj, token });
       }
@@ -582,10 +677,15 @@ export default {
           return jsonResponse({ ok: false, error: 'Authentifizierung ist serverseitig nicht vollständig konfiguriert.' }, 503);
         }
 
-        const body = await request.json().catch(() => ({}));
+        const { body, errorResponse } = await readJsonBody(request, 8192);
+        if (errorResponse) return errorResponse;
         const username = cleanText(body.username, 24);
         const password = String(body.password || '');
         const captchaToken = body.captchaToken || '';
+
+        if (password.length > MAX_PASSWORD_LEN) {
+          return jsonResponse({ ok: false, error: 'Benutzername oder Passwort ungültig.' }, 401);
+        }
 
         const ip = request.headers.get('CF-Connecting-IP') || '';
         const cap = await verifyTurnstile(captchaToken, ip, env);
@@ -599,21 +699,21 @@ export default {
           return jsonResponse({ ok: false, error: 'Benutzername oder Passwort ungültig.' }, 401);
         }
 
-        const calcHash = await hashPassword(password, row.pw_salt);
-        if (!await timingSafeEqualStr(calcHash, row.pw_hash)) {
+        const check = await verifyPassword(password, row.pw_salt, row.pw_hash);
+        if (!check.valid) {
           return jsonResponse({ ok: false, error: 'Benutzername oder Passwort ungültig.' }, 401);
         }
 
-        let role = row.role || 'user';
-        if (body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET)) {
-          role = 'admin';
-          await db.prepare('UPDATE users SET role = ?1, last_login_at = datetime("now") WHERE id = ?2').bind(role, row.id).run();
+        const role = row.role || 'user';
+        if (check.needsRehash) {
+          const upgradedHash = await hashPassword(password, row.pw_salt);
+          await db.prepare('UPDATE users SET pw_hash = ?1, last_login_at = datetime("now") WHERE id = ?2').bind(upgradedHash, row.id).run();
         } else {
           await db.prepare('UPDATE users SET last_login_at = datetime("now") WHERE id = ?1').bind(row.id).run();
         }
 
         const userObj = { id: row.id, username: row.username, displayName: row.display_name, role };
-        const token = await signJwt({ ...userObj, exp: Date.now() + 1000 * 60 * 60 * 24 * 30 }, env.JWT_SECRET);
+        const token = await signJwt({ ...userObj, exp: Date.now() + JWT_TTL_MS }, env.JWT_SECRET);
 
         return jsonResponse({ ok: true, user: userObj, token });
       }
@@ -717,7 +817,8 @@ export default {
           return jsonResponse({ ok: false, error: 'Bitte logge dich zuerst ein, um einen Wunsch oder Kommentar zu senden.' }, 401);
         }
 
-        const body = await request.json().catch(() => ({}));
+        const { body, errorResponse } = await readJsonBody(request, 8192);
+        if (errorResponse) return errorResponse;
         const targetId = cleanText(body.targetId || 'general', 40);
         const validCats = ['wish', 'bug', 'praise', 'question'];
         const category = validCats.includes(body.category) ? body.category : 'wish';
@@ -753,6 +854,11 @@ export default {
         ).run();
 
         const newId = ins.meta?.last_row_id;
+        if (newId && user.id) {
+          await db.prepare(
+            'INSERT OR IGNORE INTO feedback_votes (post_id, user_id) VALUES (?1, ?2)'
+          ).bind(newId, user.id).run();
+        }
         if (user.role !== 'agent') {
           const catLabels = { wish: '💡 Wunsch', bug: '🐞 Bug', praise: '🙌 Lob', question: '❓ Frage' };
           const targetTitle = GAMES_META[targetId]?.title || (targetId === 'general' ? 'Allgemein / Hub' : targetId);
@@ -809,16 +915,16 @@ export default {
           return jsonResponse({ ok: false, error: 'Beitrag nicht gefunden.' }, 404);
         }
 
-        const body = await request.json().catch(() => ({}));
+        const { body, errorResponse } = await readJsonBody(request, 8192);
+        if (errorResponse) return errorResponse;
         const text = cleanText(body.body, 1500);
         if (text.length < 2) {
           return jsonResponse({ ok: false, error: 'Bitte gib einen Antworttext ein.' }, 400);
         }
 
-        // Wenn ein Admin oder KI-Assistent antwortet (oder asAgent gewählt wurde), darf auch der Status geändert werden
-        const hasAdminSecret = Boolean(body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET));
-        const isPrivileged = user.role === 'admin' || user.role === 'agent' || hasAdminSecret;
-        const authorRole = (isPrivileged && body.asAgent) ? 'agent' : (isPrivileged && user.role === 'user' ? 'admin' : (user.role || 'user'));
+        // Wenn ein Admin oder KI-Assistent antwortet, darf auch der Status geändert werden
+        const isPrivileged = user.role === 'admin' || user.role === 'agent';
+        const authorRole = (isPrivileged && body.asAgent) ? 'agent' : (user.role || 'user');
         const authorName = authorRole === 'agent'
           ? (cleanText(body.authorName, 40) || '🤖 KI-Assistent')
           : (user.displayName || user.username || 'Spieler');
@@ -881,11 +987,11 @@ export default {
         if (!user) {
           return jsonResponse({ ok: false, error: 'Bitte logge dich ein.' }, 401);
         }
-        const body = await request.json().catch(() => ({}));
-        const hasAdminSecret = Boolean(body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET));
-        if (user.role !== 'admin' && user.role !== 'agent' && !hasAdminSecret) {
+        if (user.role !== 'admin' && user.role !== 'agent') {
           return jsonResponse({ ok: false, error: 'Nur Administratoren dürfen den Status ändern.' }, 403);
         }
+        const { body, errorResponse } = await readJsonBody(request, 8192);
+        if (errorResponse) return errorResponse;
         const validStatuses = ['open', 'in_progress', 'fixed'];
         if (!validStatuses.includes(body.status)) {
           return jsonResponse({ ok: false, error: 'Ungültiger Status.' }, 400);
@@ -1032,7 +1138,8 @@ export default {
         const limited = checkRateLimit(request, 'scores_post', 60, 60 * 1000);
         if (limited) return limited;
 
-        const body = await request.json().catch(() => ({}));
+        const { body, errorResponse } = await readJsonBody(request, 8192);
+        if (errorResponse) return errorResponse;
         const gid = cleanText(body.gameId, 40);
         if (!gid) return jsonResponse({ ok: false, error: 'Missing gameId' }, 400);
         const validationError = validateEroadtripScore(gid, body);
@@ -1043,8 +1150,18 @@ export default {
 
         const cfg = GAMES_META[gid];
         const playerName = cleanText(body.playerName || 'Spieler', 24) || 'Spieler';
-        const score = Math.round(Number(body.score) || 0);
-        if (!Number.isFinite(score)) return jsonResponse({ ok: false, error: 'Invalid score' }, 400);
+        const rawScoreVal = body.score;
+        const parsedScore = (typeof rawScoreVal === 'number' || (typeof rawScoreVal === 'string' && rawScoreVal.trim() !== ''))
+          ? Number(rawScoreVal)
+          : NaN;
+        if (!Number.isFinite(parsedScore)) {
+          return jsonResponse({ ok: false, error: 'Invalid score' }, 400);
+        }
+        const score = Math.round(parsedScore);
+        const bounds = getScoreBounds(gid);
+        if (score < bounds.min || score > bounds.max) {
+          return jsonResponse({ ok: false, error: 'Score outside allowed range' }, 400);
+        }
         const label = cleanText(body.label || String(score), 80);
         const runId = body.runId ? cleanText(body.runId, 64) : null;
         const metaStr = body.meta ? JSON.stringify(body.meta) : null;
@@ -1147,7 +1264,8 @@ export default {
           return jsonResponse({ ok: false, error: 'Unauthorized webhook' }, 401);
         }
 
-        const update = await request.json().catch(() => ({}));
+        const { body: update, errorResponse } = await readJsonBody(request, 32768);
+        if (errorResponse) return errorResponse;
         const msg = update?.message || update?.edited_message;
         if (!msg || !msg.text) {
           return jsonResponse({ ok: true, ignored: true });
@@ -1274,7 +1392,7 @@ export default {
         return jsonResponse({ ok: true, postId, newStatus });
       }
 
-      return jsonResponse({ ok: false, error: 'Route not found: ' + path }, 404);
+      return jsonResponse({ ok: false, error: 'Route not found' }, 404);
     } catch (err) {
       console.error('Worker error:', err);
       return jsonResponse({ ok: false, error: 'Interner Serverfehler' }, 500);

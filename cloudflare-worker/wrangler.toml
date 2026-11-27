@@ -10,8 +10,8 @@ database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
 
 # Optionale Umgebungsvariablen / Secrets (am besten via `npx wrangler secret put <NAME>` setzen):
 # - TURNSTILE_SECRET_KEY : Cloudflare Turnstile Secret Key (ohne Key greift das offizielle Turnstile Test-Secret)
-# - JWT_SECRET           : Zufälliger geheimer Schlüssel für Login-Tokens
-# - ADMIN_SECRET         : Dein Admin-Schlüssel (damit du & der KI-Agent direkt Antworten + Status „Behoben“ posten können)
-# - AGENT_API_KEY        : Optionaler API-Key für direkte Antworten des KI-Agenten per Header X-Agent-Key
-# - TELEGRAM_BOT_TOKEN   : Bot-Token von @BotFather für automatische Benachrichtigungen bei neuem Feedback
-# - TELEGRAM_CHAT_ID     : Deine numerische Telegram Chat-ID für die Push-Benachrichtigungen
+# - JWT_SECRET              : Zufälliger geheimer Schlüssel für Login-Tokens (fail-closed)
+# - AGENT_API_KEY           : Optionaler API-Key für direkte Antworten per Header X-Agent-Key
+# - TELEGRAM_BOT_TOKEN      : Bot-Token von @BotFather für automatische Benachrichtigungen bei neuem Feedback
+# - TELEGRAM_CHAT_ID        : Deine numerische Telegram Chat-ID für die Push-Benachrichtigungen
+# - TELEGRAM_WEBHOOK_SECRET : Secret-Token für X-Telegram-Bot-Api-Secret-Token am Telegram-Webhook

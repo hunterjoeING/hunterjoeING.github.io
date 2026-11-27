@@ -9,7 +9,7 @@
 - **Game:** Minesweeper 3D Prompt-Test (`id: 'minesweeper_3d_prompt_test'`)
 - **Location:** `games/minesweeper-3d-prompt-test/`
 - **Architecture:** Single-file self-contained HTML/CSS/JS (`index.html`, ~72 KB)
-- **3D Engine:** **Three.js r128** via CDN (`https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`)
+- **3D Engine:** **Three.js r128** lokal unter `shared/vendor/three-r128/three.min.js`
 - **Arcade Shell Integration:** `../../shared/arcade.css`, `../../shared/arcade.js`, `../../shared/burger-menu.js`
 
 ---

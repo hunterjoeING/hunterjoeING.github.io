@@ -450,17 +450,23 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   }
 });
 
-test('Das öffentliche Feature v0.4.0 steht vor den unveränderten Einträgen für v0.3.1, v0.3.0 und v0.2.0', () => {
-  const [latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+test('Der Patch v0.4.1 und das Feature v0.4.0 stehen vor den unveränderten Einträgen für v0.3.1, v0.3.0 und v0.2.0', () => {
+  const [patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  assert.equal(patch41.version, '0.4.1');
+  assert.equal(patch41.date, '2026-11-27');
+  assert.equal(patch41.type, 'patch');
+  assert.equal(patch41.author, 'Joe');
+  assert.equal(patch41.model, 'Neon');
+  assert.ok(patch41.highlights.length >= 1 && patch41.highlights.length <= 3);
   assert.equal(latest.version, '0.4.0');
   assert.equal(latest.date, '2026-11-27');
   assert.equal(latest.type, 'feature');
   assert.equal(latest.author, 'Joe');
   assert.equal(latest.model, 'Neon');
   assert.ok(latest.highlights.length >= 3 && latest.highlights.length <= 5);
-  assert.doesNotMatch([latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
+  assert.doesNotMatch([patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
     /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?|easter|motorschaden|explodier|überdreh)\b/i);
-  assert.match(html, /id="ce-version-btn"[^>]*>v0\.4\.0</);
+  assert.match(html, /id="ce-version-btn"[^>]*>v0\.4\.1</);
 
   assert.equal(patch31.version, '0.3.1');
   assert.equal(patch31.date, '2026-11-27');
