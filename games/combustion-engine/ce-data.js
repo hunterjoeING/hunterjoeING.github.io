@@ -752,9 +752,9 @@ export const ENGINE_PARTS = [
     shortLabel: 'Schwungrad & Öl',
     category: 'Antrieb & Schmierung',
     energyStage: 'Drehimpuls-Glättung & Ölreservoir',
-    spec: 'Verzahnte Schwungscheibe · Verrippte Alu-Ölwanne',
+    spec: 'Verzahnte Schwungscheibe · Ölwanne mit Motoröl',
     description:
-      'Das schwere Schwungrad speichert Rotationsenergie und glättet die einzelnen Verbrennungsstöße für ruhigen Rundlauf. Unten sammelt die verrippte Ölwanne das Schmieröl und kühlt es ab.',
+      'Das schwere Schwungrad speichert Rotationsenergie und glättet die einzelnen Verbrennungsstöße für ruhigen Rundlauf. In der Ölwanne sammelt sich das Motoröl unterhalb der Kurbelwelle. In der Schnittansicht siehst du, wie die Oberfläche mit steigender Drehzahl stärker vibriert.',
     anchor: [3.2, -1.5, 0.0],
     explodeOffset: [1.8, -3.3, 0],
     cameraPos: [8.8, -0.5, 6.2],

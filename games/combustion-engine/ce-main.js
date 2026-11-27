@@ -22,6 +22,7 @@ import {
   speedKmh
 } from './ce-data.js?v=0.5.2';
 import { createEngineRenderer } from './ce-ao.js?v=0.5.2';
+import { createGraphicsSettings } from './ce-settings.js?v=0.5.2';
 import { createCombustionEngineModel } from './ce-model.js?v=0.5.2';
 
 const DEFAULT_CAMERA = {
@@ -115,9 +116,10 @@ function init() {
   let activeParts = getEnginePartsForProfile(activeProfile);
   let activeTourSteps = getTourStepsForProfile(activeProfile);
 
-  const engine = createCombustionEngineModel(activeProfile);
+  const engine = createCombustionEngineModel(activeProfile, scene.environment);
   scene.add(engine.root);
-  const engineRenderer = createEngineRenderer(renderer, scene, camera);
+  const engineRenderer = createEngineRenderer(renderer, scene, camera, keyLight);
+  const graphics = createGraphicsSettings(document, window, engineRenderer, engine);
 
   // =========================================================================
   // THEME SYNC (DARK / LIGHT)
@@ -1037,6 +1039,7 @@ function init() {
 
   function startTour(index = 0) {
     if (!elTourCard) return;
+    graphics.close();
     if (appState.explosionPhase !== 'idle') repairEngine(false);
     const { rpm, load, timeScale, viewMode, labelsVisible, selectedPart } = appState;
     tourStartState = {
@@ -1185,6 +1188,7 @@ function init() {
 
   window.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
+    if (graphics.close(true)) return;
     if (elPanelDrawer?.classList.contains('mobile-open')) setDrawerOpen(false);
     if (appState.tourActive) stopTour();
     if (appState.explosionPhase !== 'idle') repairEngine(true);
@@ -1217,6 +1221,7 @@ function init() {
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     engineRenderer.resize(w, h);
+    engine.setGasDensity();
   }
   handleResize();
   const initialView = cameraForLayout('cutaway', activeProfile, camera.aspect);
@@ -1284,6 +1289,7 @@ function init() {
     }
 
     engineRenderer.render(frameSeconds);
+    graphics.frame(now);
     updateLabels();
   }
   requestAnimationFrame(animate);

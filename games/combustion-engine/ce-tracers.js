@@ -4,6 +4,7 @@ import { SEAT_Y } from './ce-mechanics.js?v=0.5.2';
 import { TRACER_SIZE, passThrottle, setThrottleOpening } from './ce-throttle.js?v=0.5.2';
 
 import { buildLanes, LANE_RADIUS, sampleLane } from './ce-lanes.js?v=0.5.2';
+import { gasDensityPercent } from './ce-settings.js?v=0.5.2';
 
 const AIR = 0, FUEL = 1, BURNT = 2;
 const colors = [0x389cff, 0xf03137, 0x75422c].map(c => new THREE.Color(c));
@@ -136,16 +137,17 @@ export function sampleJourney(p, graph, t, crown, out) {
   return t >= p.burn ? BURNT : p.fuel ? FUEL : AIR;
 }
 
-export function createTracers(graph, budget = tracerBudget(globalThis.navigator)) {
-  const positions = new THREE.BufferAttribute(new Float32Array(budget * 3), 3).setUsage(THREE.DynamicDrawUsage);
-  const rgb = new THREE.BufferAttribute(new Float32Array(budget * 3), 3).setUsage(THREE.DynamicDrawUsage);
+export function createTracers(graph, budget = tracerBudget(globalThis.navigator), density = 100) {
+  const capacity = 2 * budget;
+  const positions = new THREE.BufferAttribute(new Float32Array(capacity * 3), 3).setUsage(THREE.DynamicDrawUsage);
+  const rgb = new THREE.BufferAttribute(new Float32Array(capacity * 3), 3).setUsage(THREE.DynamicDrawUsage);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', positions);
   geometry.setAttribute('color', rgb);
   // A shaded circular point sprite reads as a bead even at medium zoom.
   const mat = new THREE.PointsMaterial({ size: TRACER_SIZE, vertexColors: true, toneMapped: false });
   const sizes = graph.throttle
-    ? new THREE.BufferAttribute(new Float32Array(budget), 1).setUsage(THREE.DynamicDrawUsage)
+    ? new THREE.BufferAttribute(new Float32Array(capacity), 1).setUsage(THREE.DynamicDrawUsage)
     : null;
   if (sizes) geometry.setAttribute('throttleScale', sizes);
   mat.customProgramCacheKey = () => sizes ? 'petrol-tracers' : 'diesel-tracers';
@@ -170,7 +172,7 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
   const particles = [];
   const residuals = [];
   const out = new THREE.Vector3();
-  for (let i = 0; i < budget; i++) {
+  function addSlot(i) {
     const n = i % graph.cylinders.length, cyl = graph.cylinders[n];
     const lane = Math.floor(i / graph.cylinders.length);
     const rank = fract((lane + 0.5) * 0.61803398875);
@@ -184,11 +186,8 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
     // A small, evenly distributed charge stays in each chamber across cycles.
     // Its fixed slots precede the metered flow and never enter the intake.
     if (lane % 32 === 0) {
-      const slot = residuals.length, burnt = colors[BURNT];
-      rgb.setXYZ(slot, burnt.r, burnt.g, burnt.b);
-      if (sizes) sizes.setX(slot, 1);
       residuals.push(parcel);
-      continue;
+      return;
     }
     particles.push(Object.assign(parcel, {
       seed: fract((i + 0.5) * 0.414213562), trip: 0, initialized: false,
@@ -198,21 +197,45 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
       laneX: LANE_RADIUS * radius * Math.cos(angle), laneZ: LANE_RADIUS * radius * Math.sin(angle)
     }));
   }
+  let activeParcels = 0, activeResiduals = 0, dirty = false;
+  function setDensity(percent) {
+    const cap = Math.round(budget * gasDensityPercent(percent) / 100);
+    if (cap === activeParcels + activeResiduals) return;
+    for (let i = particles.length + residuals.length; i < cap; i++) addSlot(i);
+    // Each block starts with one residual per cylinder, followed by 31 travelling lanes.
+    const cylinders = graph.cylinders.length, block = 32 * cylinders;
+    const retained = Math.floor(cap / block) * cylinders + Math.min(cap % block, cylinders);
+    for (let i = activeResiduals; i < retained; i++) {
+      rgb.setXYZ(i, colors[BURNT].r, colors[BURNT].g, colors[BURNT].b);
+      if (sizes) sizes.setX(i, 1);
+    }
+    activeResiduals = retained;
+    for (let i = activeParcels; i < cap - retained; i++) particles[i].initialized = false;
+    activeParcels = cap - retained;
+    dirty = true;
+  }
+  setDensity(density);
+  geometry.setDrawRange(0, 0);
+  const triples = { start: 0, count: 0 }, singles = { start: 0, count: 0 };
   let lastClock = -Infinity;
   return {
-    cloud,
+    cloud, setDensity,
+    get activeBudget() { return activeResiduals + activeParcels; },
     update(crankClock, crowns, load, boostBar) {
-      if (crankClock === lastClock && (!graph.throttle || load === graph.throttle.load)) return;
+      if (!dirty && crankClock === lastClock && (!graph.throttle || load === graph.throttle.load)) return;
+      dirty = false;
       if (graph.throttle) setThrottleOpening(graph.throttle, load);
       const refill = crankClock - lastClock > 1440;
       lastClock = crankClock;
       let count = 0;
-      for (const p of residuals) {
+      for (let i = 0; i < activeResiduals; i++) {
+        const p = residuals[i];
         chamberPosition(p, crowns[p.n], out);
         positions.setXYZ(count++, out.x, out.y, out.z);
       }
       const boost = clamp(boostBar / 1.85);
-      for (const p of particles) {
+      for (let i = 0; i < activeParcels; i++) {
+        const p = particles[i];
         const local = crankClock + p.cyl.spec.phaseDeg;
         if (!p.initialized || refill) {
           beginJourney(p, graph, load, boost);
@@ -240,8 +263,14 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
         rgb.setXYZ(count++, color.r, color.g, color.b);
       }
       geometry.setDrawRange(0, count);
+      triples.count = count * 3;
+      positions.updateRanges[0] = rgb.updateRanges[0] = triples;
       positions.needsUpdate = rgb.needsUpdate = true;
-      if (sizes) sizes.needsUpdate = true;
+      if (sizes) {
+        singles.count = count;
+        sizes.updateRanges[0] = singles;
+        sizes.needsUpdate = true;
+      }
     }
   };
 }

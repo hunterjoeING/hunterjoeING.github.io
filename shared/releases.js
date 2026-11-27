@@ -125,9 +125,9 @@ const arcadeReleases = {
       app: "combustion_engine", version: "0.5.2", date: "2026-11-27", type: "patch", title: "Vom Zündfunken zur Flammenfront",
       author: "Michi", model: "Astra 6.2", banner: false,
       highlights: [
-        "An Rohrverzweigungen kannst du verfolgen, wie sich ein breiter Gasstrom auf die einzelnen Rohre verteilt.",
+        "An Rohrverzweigungen bleibt der Gasstrom breit. Im rauchgrauen Röntgenblick siehst du auch das Motoröl, dessen Oberfläche mit der Drehzahl vibriert.",
         "Beim Otto springt ein weißblauer Funke über. Beim Diesel entzünden sich mehrere Einspritzstrahlen. In beiden Motoren breitet sich die Flamme bis zur Kolbenkrone aus.",
-        "Dezente Kontaktschatten machen auf leistungsfähigen Geräten die Abstände zwischen den Bauteilen besser sichtbar.",
+        "Im Zahnradmenü wählst du die Stärke der Kontaktschatten, schaltest Schatten ein oder aus und regelst die Gasdichte. Dort siehst du auch die Bildrate (FPS).",
       ],
     },
     {

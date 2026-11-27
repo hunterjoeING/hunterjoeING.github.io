@@ -425,10 +425,13 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
       assert.ok(detonation);
       model.update(0.05, telemetry);
       assert.ok([...ignition, ...arcs, cloud].every(o => !o.visible));
+      const oil = model.root.getObjectByName('engineOil');
+      assert.equal(oil.visible, false);
       assert.equal(model.root.getObjectByName('ignitionLight').intensity, 0);
       model.setViewMode('xray'); // Leaving the damaged view repairs the moving assembly.
       assert.equal(model.update(0.05, telemetry).explosion.phase, 'idle');
       assert.ok(cloud.visible);
+      assert.ok(oil.visible);
       let relit = false;
       for (let i = 0; i < 32; i++) {
         model.update(0.05, telemetry);
@@ -589,7 +592,7 @@ test('The larger budgets increase the actual visible parcel density at idle and 
         const batch = createTracers(graph, cap);
         const { geometry } = batch.cloud;
         const buffers = geometry.attributes;
-        assert.ok(batch.cloud.isPoints && buffers.position.count === cap);
+        assert.ok(batch.cloud.isPoints && buffers.position.count === 2 * cap);
         let sum = 0;
         for (let clock = 0; clock < 720 * 24; clock += 90) {
           batch.update(clock, crowns, load, 0);
@@ -601,6 +604,65 @@ test('The larger budgets increase the actual visible parcel density at idle and 
       const ratio = counts[1] / counts[0];
       assert.ok(ratio >= 1.60 && ratio <= 1.80, `visible density ratio ${ratio}`);
     }
+  }
+});
+
+test('Gas density scales the active cap on both hardware tiers, including while paused, using the same buffers', () => {
+  const graph = buildPlumbing(buildEngineProfile('r4', 'otto'));
+  preparePassages(graph);
+  const crowns = new Float32Array(4).fill(2);
+  for (const cap of [tracerBudget({}, 390), tracerBudget({}, 1280)]) {
+    const batch = createTracers(graph, cap);
+    const geometry = batch.cloud.geometry, buffer = geometry.attributes.position;
+    batch.update(720, crowns, 1, 0);
+    const standard = geometry.drawRange.count;
+    const retained = n => 4 * Math.floor(n / 128) + Math.min(n % 128, 4);
+    const moving = buffer.array.slice(retained(cap) * 3, retained(cap) * 3 + 60);
+    for (const [input, factor] of [[-50, 0.25], [75, 0.75], [100, 1], [250, 2]]) {
+      batch.setDensity(input);
+      batch.update(720, crowns, 1, 0);
+      const slots = cap * factor, count = geometry.drawRange.count;
+      assert.equal(batch.activeBudget, slots);
+      assert.ok(count <= slots && Math.abs(count / standard - factor) < 0.06);
+      assert.deepEqual(buffer.array.slice(retained(slots) * 3, retained(slots) * 3 + 60), moving);
+      assert.equal(batch.cloud.geometry.attributes.position, buffer);
+      assert.equal(buffer.updateRanges[0].count, count * 3);
+      const version = buffer.version;
+      batch.update(720, crowns, 1, 0);
+      assert.equal(buffer.version, version);
+    }
+  }
+});
+
+test('A viewport tier or engine change preserves the selected gas density and the flow toggle', () => {
+  const previousWidth = globalThis.innerWidth, previousDocument = globalThis.document;
+  globalThis.document = { createElement: () => ({ getContext: () => ({ fillRect() {} }) }) };
+  try {
+    globalThis.innerWidth = 390;
+    const petrol = buildEngineProfile('r4', 'otto'), diesel = buildEngineProfile('v8', 'diesel');
+    const model = createCombustionEngineModel(petrol);
+    const points = () => model.root.getObjectByProperty('isPoints', true);
+    model.setGasDensity(50);
+    const initial = points();
+    assert.equal(initial.geometry.attributes.position.count, 8064);
+    model.setFlowVisible(false);
+    globalThis.innerWidth = 1280;
+    model.setGasDensity();
+    assert.equal(points().visible, false);
+    const desktopCap = tracerBudget(globalThis.navigator, 1280);
+    assert.equal(points().geometry.attributes.position.count, 2 * desktopCap);
+    model.setProfile(diesel);
+    assert.equal(points().visible, false);
+    model.setFlowVisible(true);
+    const telemetry = computeEngineTelemetry(2400, 1, undefined, diesel);
+    model.update(0, telemetry, 0);
+    const count = points().geometry.drawRange.count;
+    model.setGasDensity(100);
+    model.update(0, telemetry, 0);
+    assert.ok(points().geometry.drawRange.count > count * 1.8);
+  } finally {
+    if (previousWidth === undefined) delete globalThis.innerWidth; else globalThis.innerWidth = previousWidth;
+    if (previousDocument === undefined) delete globalThis.document; else globalThis.document = previousDocument;
   }
 });
 

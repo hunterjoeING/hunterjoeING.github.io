@@ -23,7 +23,7 @@ function fixture({ width = 1200, cores = 8, memory = 8, search = '', capable = t
   globalThis.document = { hidden: false, addEventListener() {} };
   const scene = new T.Scene(), camera = new T.PerspectiveCamera(), draws = [];
   const solid = new T.Mesh(), shell = new T.Mesh(), fire = new T.Mesh(), beads = new T.Points();
-  const light = new T.PointLight(), hidden = new T.Group();
+  const light = new T.DirectionalLight(), hidden = new T.Group();
   solid.name = 'solid'; shell.name = 'shell'; fire.name = 'fire'; beads.name = 'beads'; light.name = 'light';
   hidden.visible = false;
   hidden.add(new T.Mesh());
@@ -48,14 +48,14 @@ function fixture({ width = 1200, cores = 8, memory = 8, search = '', capable = t
         target: this.target, material: object.material, shadows: this.shadowMap.autoUpdate });
     }
   };
-  const pipe = createEngineRenderer(renderer, scene, camera);
+  const pipe = createEngineRenderer(renderer, scene, camera, light);
   pipe.resize(width, 800);
   function frame(dt = 1/60) {
     draws.length = 0;
     pipe.render(dt);
     return draws.filter(d => d.scene);
   }
-  return { scene, camera, shell, renderer, pipe, draws, frame };
+  return { scene, camera, shell, light, renderer, pipe, draws, frame };
 }
 
 test.describe('Ambient occlusion', () => {
@@ -78,7 +78,7 @@ test.describe('Ambient occlusion', () => {
     assert.deepEqual(opaque.names, ['solid', 'light']);
     assert.deepEqual(normals.names, opaque.names);
     assert.equal(normals.normals, true);
-    assert.equal(normals.target.width, opaque.target.width / 2);
+    assert.equal(normals.target.width, opaque.target.width);
     assert.deepEqual(overlay.names, ['shell', 'fire', 'beads', 'light']);
     assert.equal(opaque.target, overlay.target);
     assert.ok(opaque.target.depthBuffer);
@@ -87,7 +87,8 @@ test.describe('Ambient occlusion', () => {
     const blend = middle.at(-1);
     assert.equal(blend.target, opaque.target);
     assert.equal(blend.material.depthWrite, false);
-    assert.equal(blend.material.uniforms.intensity.value, 0.35);
+    assert.equal(blend.material.uniforms.intensity.value, 0.72);
+    assert.equal(blend.material.uniforms.tDepth.value, normals.target.depthTexture);
     assert.equal(overlay.bg, null);
     assert.equal(normals.shadows || overlay.shadows, false);
     assert.equal(scene.background, background);
@@ -107,17 +108,82 @@ test.describe('Ambient occlusion', () => {
     globalThis.window.devicePixelRatio = 3;
     let [opaque, normals] = frame();
     assert.equal(opaque.target.width, 780);
-    assert.equal(normals.target.width, 390);
+    assert.equal(normals.target.width, 780);
     pipe.resize(500, 650);
     [opaque, normals] = frame();
     assert.equal(opaque.target.height, 1300);
-    assert.equal(normals.target.height, 650);
+    assert.equal(normals.target.height, 1300);
     for (let i = 0; i < 65; i++) assert.equal(frame(1/25).length, 3);
     const auto = fixture();
     auto.pipe.resize(700, 500);
     assert.equal(auto.frame().length, 1);
     auto.pipe.resize(1200, 800);
     assert.equal(auto.frame().length, 3);
+  });
+
+  test('All four presets switch live, keep low identical to the fork and release targets when off', () => {
+    const { pipe, frame, draws } = fixture({ width: 390, cores: 4, memory: 2 });
+    let previous, disposed = false;
+    for (const [level, radius, thickness, intensity] of [[1, 0.38, 0.16, 0.35], [2, 0.52, 0.22, 0.72], [3, 0.66, 0.28, 0.95]]) {
+      pipe.setAoLevel(level);
+      const [opaque, normal, overlay] = frame();
+      const post = draws.slice(draws.indexOf(normal) + 1, draws.indexOf(overlay));
+      const ao = post.find(d => d.material?.uniforms.thickness && d.material?.uniforms.radius);
+      assert.equal(ao.material.uniforms.radius.value, radius);
+      assert.equal(ao.material.uniforms.thickness.value, thickness);
+      assert.equal(post.at(-1).material.uniforms.intensity.value, intensity);
+      assert.equal(ao.target.width, Math.ceil(opaque.target.width / 2));
+      assert.equal(normal.target.width, level === 1 ? ao.target.width : opaque.target.width);
+      assert.equal(pipe.aoLevel, level);
+      assert.deepEqual(overlay.names, ['shell', 'fire', 'beads', 'light']);
+      if (previous) assert.equal(ao.target, previous);
+      previous = ao.target;
+      for (let i = 0; i < 80; i++) assert.equal(frame(1/25).length, 3);
+    }
+    pipe.setAoLevel(1);
+    assert.equal(frame()[1].target.width, 195);
+    previous.addEventListener('dispose', () => { disposed = true; });
+    pipe.setAoLevel(0);
+    assert.ok(disposed);
+    assert.equal(frame().length, 1);
+    pipe.resize(1400, 900);
+    assert.equal(pipe.aoLevel, 0);
+  });
+
+  test('URL wins over every saved level, unsupported devices report off and manual choice can revive dropped AO', () => {
+    for (const [search, expected] of [['?ao=0', 0], ['?ao=1', 2]]) {
+      const { pipe, frame } = fixture({ cores: 2, search });
+      for (const level of [0, 1, 2, 3]) {
+        pipe.setAoLevel(level);
+        assert.equal(pipe.aoLevel, expected);
+        assert.equal(frame().length, expected ? 3 : 1);
+      }
+    }
+    const unavailable = fixture({ capable: false, search: '?ao=1' });
+    unavailable.pipe.setAoLevel(3);
+    assert.equal(unavailable.pipe.aoLevel, 0);
+    const { pipe, frame } = fixture({ search: '?ao=invalid' });
+    for (let i = 0; i < 80; i++) frame(1/32);
+    assert.equal(pipe.aoLevel, 0);
+    pipe.setAoLevel(3);
+    assert.equal(pipe.aoLevel, 3);
+    pipe.resize(390, 750);
+    assert.equal(pipe.aoLevel, 3);
+  });
+
+  test('Scene shadows toggle independently of AO and across render passes', () => {
+    const { light, renderer, pipe, frame } = fixture();
+    for (const level of [0, 2, 1]) {
+      pipe.setAoLevel(level);
+      for (const on of [false, true]) {
+        pipe.setShadows(on);
+        frame();
+        assert.equal(light.castShadow, on);
+        assert.equal(renderer.shadowMap.enabled, on);
+        assert.equal(renderer.shadowMap.autoUpdate, true);
+        assert.equal(pipe.aoLevel, level);
+      }
+    }
   });
 
   test('AO tolerates brief slowdowns and drops after two consecutive low-FPS seconds', () => {

@@ -5,6 +5,12 @@ import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 const OPAQUE = 1, OVERLAY = 2;
+const AO_LEVELS = [
+  null,
+  { radius: 0.38, thickness: 0.16, intensity: 0.35 },
+  { radius: 0.52, thickness: 0.22, intensity: 0.72 },
+  { radius: 0.66, thickness: 0.28, intensity: 0.95 }
+];
 
 // Layer zero stays available for normal rendering, shadows and picking.
 function assignLayer(object) {
@@ -20,12 +26,59 @@ function assignLayer(object) {
 }
 
 class OpaqueAO extends GTAOPass {
-  constructor(scene, camera) {
+  constructor(scene, camera, level) {
     super(scene, camera, 1, 1, undefined,
-      { radius: 0.38, thickness: 0.16, samples: 8 }, { radius: 3, samples: 8 });
+      { samples: 8 }, { radius: 3, samples: 8 });
     this.output = GTAOPass.OUTPUT.Off;
-    this.blendIntensity = 0.35;
     this.needsSwap = false;
+    const uniforms = this.blendMaterial.uniforms;
+    uniforms.tDepth = this.gtaoMaterial.uniforms.tDepth;
+    uniforms.cameraNear = this.gtaoMaterial.uniforms.cameraNear;
+    uniforms.cameraFar = this.gtaoMaterial.uniforms.cameraFar;
+    uniforms.thickness = this.gtaoMaterial.uniforms.thickness;
+    // Upsample the half-resolution contact term only from the same surface.
+    // The full-resolution depth also keeps clear background pixels untouched.
+    this.originalBlend = this.blendMaterial.fragmentShader;
+    this.depthAwareBlend = `
+      #include <packing>
+      uniform sampler2D tDepth, tDiffuse;
+      uniform float cameraNear, cameraFar, thickness, intensity;
+      varying vec2 vUv;
+      void main() {
+        float depth = texture2D(tDepth, vUv).r;
+        if (depth >= 1.0) discard;
+        float z = perspectiveDepthToViewZ(depth, cameraNear, cameraFar);
+        vec2 size = vec2(textureSize(tDiffuse, 0));
+        vec2 p = vUv * size - 0.5, fraction = fract(p);
+        float shadow = 0.0, total = 0.0;
+        for (int y = 0; y < 2; y++) {
+          for (int x = 0; x < 2; x++) {
+            vec2 offset = vec2(x, y);
+            vec2 uv = (floor(p) + offset + 0.5) / size;
+            float sampleZ = perspectiveDepthToViewZ(texture2D(tDepth, uv).r, cameraNear, cameraFar);
+            vec2 w = mix(1.0 - fraction, fraction, offset);
+            float weight = w.x * w.y * (1.0 - smoothstep(0.0, thickness, abs(z - sampleZ)));
+            shadow += weight * (1.0 - texture2D(tDiffuse, uv).r);
+            total += weight;
+          }
+        }
+        gl_FragColor = vec4(vec3(1.0 - intensity * shadow / max(total, 0.25)), 1.0);
+      }`;
+    this.setLevel(level);
+  }
+
+  setLevel(level) {
+    if (this.level === level) return;
+    this.level = level;
+    const preset = AO_LEVELS[level];
+    this.updateGtaoMaterial(preset);
+    this.updatePdMaterial({ depthPhi: level === 1 ? 2 : preset.thickness });
+    this.blendIntensity = preset.intensity;
+    const shader = level === 1 ? this.originalBlend : this.depthAwareBlend;
+    if (this.blendMaterial.fragmentShader !== shader) {
+      this.blendMaterial.fragmentShader = shader;
+      this.blendMaterial.needsUpdate = true;
+    }
   }
 
   // The camera already excludes every overlay from the normal/depth render.
@@ -33,7 +86,10 @@ class OpaqueAO extends GTAOPass {
   restoreVisibility() {}
 
   setSize(width, height) {
-    super.setSize(Math.max(1, Math.ceil(width / 2)), Math.max(1, Math.ceil(height / 2)));
+    const halfWidth = Math.max(1, Math.ceil(width / 2)), halfHeight = Math.max(1, Math.ceil(height / 2));
+    if (halfWidth !== this.width || halfHeight !== this.height) super.setSize(halfWidth, halfHeight);
+    if (this.level === 1) this.normalRenderTarget.setSize(halfWidth, halfHeight);
+    else this.normalRenderTarget.setSize(Math.max(1, Math.floor(width)), Math.max(1, Math.floor(height)));
   }
 
   render(renderer, write, read) {
@@ -68,20 +124,46 @@ class OverlayPass extends RenderPass {
   }
 }
 
-export function createEngineRenderer(renderer, scene, camera) {
+export function createEngineRenderer(renderer, scene, camera, shadowLight) {
   const force = new URLSearchParams(window.location.search).get('ao');
+  const forcedLevel = force === '1' ? 2 : force === '0' ? 0 : null;
   const hardware = window.navigator;
   const capable = renderer.extensions.has('EXT_color_buffer_float');
   const weak = hardware.hardwareConcurrency <= 4 || hardware.deviceMemory <= 4;
   let composer = null, width = 1, height = 1, ratio = 0;
   let elapsed = 0, frames = 0, slowWindows = 0, dropped = false;
+  let preference = null, aoPass = null;
 
   function release() {
     if (!composer) return;
     for (const pass of composer.passes) pass.dispose();
     composer.dispose();
     composer = null;
+    aoPass = null;
     elapsed = frames = slowWindows = 0;
+  }
+
+  function updateAO() {
+    const automatic = !weak && !dropped && Math.min(window.innerWidth, width) > 768;
+    const level = forcedLevel ?? preference ?? (automatic ? 2 : 0);
+    if (!capable || !level) {
+      release();
+      return;
+    }
+    if (!composer) {
+      composer = new EffectComposer(renderer);
+      composer.addPass(new RenderPass(scene, camera));
+      aoPass = new OpaqueAO(scene, camera, level);
+      composer.addPass(aoPass);
+      const overlay = new OverlayPass(scene, camera);
+      overlay.clear = false;
+      composer.addPass(overlay);
+      composer.addPass(new OutputPass());
+    } else if (aoPass.level !== level) {
+      const changeResolution = (aoPass.level === 1) !== (level === 1);
+      aoPass.setLevel(level);
+      if (changeResolution) aoPass.setSize(width * ratio, height * ratio);
+    }
   }
 
   function resize(w, h) {
@@ -90,22 +172,23 @@ export function createEngineRenderer(renderer, scene, camera) {
     ratio = Math.min(window.devicePixelRatio || 1, 2);
     renderer.setPixelRatio(ratio);
     renderer.setSize(w, h, false);
-    const automatic = !weak && !dropped && Math.min(window.innerWidth, w) > 768;
-    if (!capable || force === '0' || (force !== '1' && !automatic)) {
-      release();
-      return;
-    }
-    if (!composer) {
-      composer = new EffectComposer(renderer);
-      composer.addPass(new RenderPass(scene, camera));
-      composer.addPass(new OpaqueAO(scene, camera));
-      const overlay = new OverlayPass(scene, camera);
-      overlay.clear = false;
-      composer.addPass(overlay);
-      composer.addPass(new OutputPass());
-    }
+    updateAO();
+    if (!composer) return;
     composer.setPixelRatio(ratio);
-    composer.setSize(w, h);
+    composer.setSize(width, height);
+  }
+
+  function setAoLevel(level) {
+    if (preference === level) return;
+    preference = level;
+    elapsed = frames = slowWindows = 0;
+    if (ratio) updateAO();
+  }
+
+  function setShadows(enabled) {
+    // Updating the light's shadow-caster count makes r170 select matching
+    // shader programs even for materials restored later by a view change.
+    renderer.shadowMap.enabled = shadowLight.castShadow = enabled;
   }
 
   let resumed = false;
@@ -116,7 +199,7 @@ export function createEngineRenderer(renderer, scene, camera) {
   document.addEventListener('visibilitychange', resetMeter);
   function render(dt) {
     if (ratio !== Math.min(window.devicePixelRatio || 1, 2)) resize(width, height);
-    if (composer && force !== '1' && !document.hidden && !resumed) {
+    if (composer && forcedLevel === null && preference === null && !document.hidden && !resumed) {
       elapsed += dt;
       frames++;
       if (elapsed >= 1) {
@@ -141,5 +224,5 @@ export function createEngineRenderer(renderer, scene, camera) {
     composer.render(dt);
     camera.layers.mask = mask;
   }
-  return { resize, render };
+  return { resize, render, setAoLevel, setShadows, forcedLevel, capable, get aoLevel() { return aoPass?.level ?? 0; } };
 }

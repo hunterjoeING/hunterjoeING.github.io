@@ -5,5 +5,6 @@ import './engine-gear.test.mjs';
 import './engine-geometry.test.mjs';
 import './engine-lanes.test.mjs';
 import './engine-map.test.mjs';
+import './engine-oil.test.mjs';
 import './engine-tour.test.mjs';
 import './engine-variants.test.mjs';
