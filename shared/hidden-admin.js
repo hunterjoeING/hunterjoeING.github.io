@@ -10,17 +10,22 @@
   ];
 
   function B() { return window.ArcadeQuizBoard; }
+  function escHtml(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
 
   function openPanel() {
     const board = B();
     if (!board) { alert('Bestenlisten-Modul nicht geladen.'); return; }
     const rows = HIDDEN_QUIZZES.map(q =>
       '<div style="border:1px solid var(--border-subtle,rgba(15,23,42,.14));border-radius:12px;padding:10px;margin-bottom:10px;">' +
-      '<div style="font-weight:800;margin-bottom:8px;">' + q.icon + ' ' + q.title + ' <span style="opacity:.6;font-weight:600;font-size:12px;">(' + board.get(q.id).length + ' Einträge)</span></div>' +
+      '<div style="font-weight:800;margin-bottom:8px;">' + escHtml(q.icon) + ' ' + escHtml(q.title) + ' <span style="opacity:.6;font-weight:600;font-size:12px;">(' + Number(board.get(q.id).length) + ' Einträge)</span></div>' +
       '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
-      '<a href="./' + q.path + '" style="' + board.btnPrimary + 'text-decoration:none;">▶ Starten</a>' +
-      '<button type="button" data-act="show" data-id="' + q.id + '" style="' + board.btnCss + '">🏆 Bestenliste</button>' +
-      '<button type="button" data-act="reset" data-id="' + q.id + '" style="' + board.btnCss + '">🗑 Zurücksetzen</button>' +
+      '<a href="./' + escHtml(q.path) + '" style="' + board.btnPrimary + 'text-decoration:none;">▶ Starten</a>' +
+      '<button type="button" data-act="show" data-id="' + escHtml(q.id) + '" style="' + board.btnCss + '">🏆 Bestenliste</button>' +
+      '<button type="button" data-act="reset" data-id="' + escHtml(q.id) + '" style="' + board.btnCss + '">🗑 Zurücksetzen</button>' +
       '</div></div>').join('');
     const m = board.modal('<h3 style="margin:0 0 12px;">🔒 Versteckte Quizzes</h3>' + rows +
       '<div style="text-align:right;"><button type="button" class="adm-close" style="' + board.btnCss + '">Schließen</button></div>');

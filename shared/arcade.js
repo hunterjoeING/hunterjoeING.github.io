@@ -488,7 +488,7 @@
       `;
     } catch (e) {
       if (bodyEl.firstElementChild !== loading) return;
-      bodyEl.innerHTML = '<div style="text-align:center;padding:28px;color:#fca5a5;">Bestenliste gerade nicht erreichbar. Bitte später erneut versuchen.</div>';
+      bodyEl.innerHTML = '<div style="text-align:center;padding:28px;color:var(--accent-rose,#e11d48);">Bestenliste gerade nicht erreichbar. Bitte später erneut versuchen.</div>';
     }
   }
 
@@ -527,12 +527,16 @@
             score: sub.score,
             label: sub.label,
             runId: sub.runId,
+            updateToken: sub.updateToken || undefined,
             meta: sub.meta
           })
         })
           .then(r => r.ok ? r.json() : null)
           .then(res => {
             if (res && res.ok) {
+              if (res.updateToken && _lastSubmission && _lastSubmission.runId === sub.runId) {
+                _lastSubmission.updateToken = res.updateToken;
+              }
               updateSummaryEntry(sub.gameId, res.best, res.plays, res.entries);
               emitScoresUpdated();
             }
@@ -800,12 +804,14 @@
 
       const playerName = window.ArcadeScores.getPlayerName();
       const runId = opts.runId || window.ArcadeScores.newRunId(gameId);
+      const storedToken = window.ArcadeScores._runTokens ? window.ArcadeScores._runTokens.get(runId) : undefined;
       const payload = {
         gameId,
         playerName,
         score: Math.round(numScore),
         label: String(label || numScore),
         runId,
+        ...(storedToken ? { updateToken: storedToken } : {}),
         meta: opts.meta || undefined
       };
       if (opts.dryRun === true) {
@@ -834,6 +840,13 @@
 
       postScore(payload)
         .then(res => {
+          if (res && res.updateToken && runId) {
+            if (!window.ArcadeScores._runTokens) window.ArcadeScores._runTokens = new Map();
+            window.ArcadeScores._runTokens.set(runId, res.updateToken);
+            if (_lastSubmission && _lastSubmission.runId === runId) {
+              _lastSubmission.updateToken = res.updateToken;
+            }
+          }
           updateSummaryEntry(gameId, res.best, res.plays, res.entries);
           emitScoresUpdated();
           const { rank, entries, plays, isGlobalRecord } = res;
@@ -1022,7 +1035,7 @@
         {
           id: 201,
           postId: 101,
-          authorName: '🤖 KI-Agent (Antigravity)',
+          authorName: '🤖 KI-Assistent',
           authorRole: 'agent',
           body: 'Behoben in Commit 107400f! Der Fächerwinkel wurde für 3× Streu auf [-0.85, 0, +0.85] und für 5× Streu auf [-1.55, -0.78, 0, +0.78, +1.55] verbreitert, Stufe 2 behält den zentralen Hauptstrahl bei, der Salven-Schaden wurde auf 1,35× / 1,70× angehoben und die orangen Plasma-Leuchtspuren folgen jetzt exakt dem Streuwinkel.',
           newStatus: 'fixed',
@@ -1045,7 +1058,7 @@
         {
           id: 202,
           postId: 102,
-          authorName: '🤖 KI-Agent (Antigravity)',
+          authorName: '🤖 KI-Assistent',
           authorRole: 'agent',
           body: 'Direkt in beiden 3D-Minesweeper-Versionen eingebaut (Commit af79b54): Über den Button „👁️‍🗨️ Verbergen“ (oder Taste H / Alt+Klick) lassen sich Blöcke einzeln ausblenden, per „👻 Geister“ (Taste G) halbtransparent prüfen und per Klick oder „👁 Alle“ jederzeit zurückholen.',
           newStatus: 'fixed',
@@ -1068,7 +1081,7 @@
         {
           id: 203,
           postId: 103,
-          authorName: '🤖 KI-Agent (Antigravity)',
+          authorName: '🤖 KI-Assistent',
           authorRole: 'agent',
           body: 'Erledigt (Commit 41932a2)! Alle Seiten besitzen oben rechts den ☀️/🌙 Theme-Schalter und die Quiz-Engine zieht standardmäßig 20 Fragen aus mittlerweile 1.252 Fragen & Foto-Motiven mit Anti-Wiederholungsschutz.',
           newStatus: 'fixed',
@@ -1262,49 +1275,24 @@
         if (localUsers[key] && localUsers[key].pwHash !== pwHash) {
           throw new Error('Dieser Benutzername ist bereits vergeben. Bitte wechsle auf „Einloggen“.');
         }
-        const role = (roleChoice === 'admin' || roleChoice === 'agent')
-          ? roleChoice
-          : (key === 'johannes' || key === 'hunterjoe' ? 'admin' : 'user');
         const newUser = {
           id: Date.now(),
           username: cleanUser,
           displayName: cleanDisp,
-          role,
+          role: 'user',
           pwHash
         };
         localUsers[key] = newUser;
         try { localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers)); } catch (e) {}
-        const sessionUser = { id: newUser.id, username: newUser.username, displayName: newUser.displayName, role: newUser.role };
+        const sessionUser = { id: newUser.id, username: newUser.username, displayName: newUser.displayName, role: 'user' };
         window.ArcadeAuth.saveSession(sessionUser, `local_jwt_${newUser.id}`);
         return sessionUser;
       } else {
         const existing = localUsers[key];
-        if (!existing) {
-          // Komfort: Falls der Nutzer sich zum ersten Mal einloggt, Konto direkt mit anlegen
-          const role = (roleChoice === 'admin' || roleChoice === 'agent')
-            ? roleChoice
-            : (key === 'johannes' || key === 'hunterjoe' ? 'admin' : 'user');
-          const created = {
-            id: Date.now(),
-            username: cleanUser,
-            displayName: cleanDisp,
-            role,
-            pwHash
-          };
-          localUsers[key] = created;
-          try { localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers)); } catch (e) {}
-          const sessionUser = { id: created.id, username: created.username, displayName: created.displayName, role: created.role };
-          window.ArcadeAuth.saveSession(sessionUser, `local_jwt_${created.id}`);
-          return sessionUser;
+        if (!existing || existing.pwHash !== pwHash) {
+          throw new Error('Benutzername oder Passwort ungültig (Offline-Modus: bitte zuerst registrieren).');
         }
-        if (existing.pwHash !== pwHash) {
-          throw new Error('Passwort stimmt nicht mit dem gespeicherten Konto überein.');
-        }
-        if (roleChoice === 'admin' || roleChoice === 'agent') {
-          existing.role = roleChoice;
-          try { localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(localUsers)); } catch (e) {}
-        }
-        const sessionUser = { id: existing.id, username: existing.username, displayName: existing.displayName, role: existing.role };
+        const sessionUser = { id: existing.id, username: existing.username, displayName: existing.displayName, role: 'user' };
         window.ArcadeAuth.saveSession(sessionUser, `local_jwt_${existing.id}`);
         return sessionUser;
       }
@@ -1345,7 +1333,7 @@
                 <input id="auth-inp-pass" class="fb-input" type="password" maxlength="64" placeholder="••••••••" autocomplete="current-password" />
               </div>
               <div id="auth-captcha-slot"></div>
-              <div id="auth-error-msg" style="display:none;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.45);color:#fda4af;font-size:12px;font-weight:700;"></div>
+              <div id="auth-error-msg" style="display:none;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.14);border:1px solid rgba(244,63,94,0.45);color:var(--accent-rose,#e11d48);font-size:12px;font-weight:700;"></div>
               <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">
                 <button type="button" class="secondary-btn" id="auth-btn-cancel">Abbrechen</button>
                 <button type="button" class="primary-btn" id="auth-btn-submit">🔐 Jetzt anmelden</button>
@@ -1595,7 +1583,7 @@
 
       const role = (asAgent && (user.role === 'admin' || user.role === 'agent')) ? 'agent' : (user.role || 'user');
       const authorName = role === 'agent'
-        ? '🤖 KI-Agent (Antigravity)'
+        ? '🤖 KI-Assistent'
         : (user.displayName || user.username || 'Spieler');
 
       let replyObj = null;
@@ -1779,7 +1767,7 @@
                 <textarea id="fb-inp-body" class="fb-textarea" maxlength="1500" placeholder="Beschreibe deinen Wunsch oder das Problem so konkret wie möglich — der KI-Agent kann es dann direkt beheben und hier drunter kommentieren!"></textarea>
               </div>
               <div id="fb-post-captcha"></div>
-              <div id="fb-post-error" style="display:none;margin-bottom:8px;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.18);border:1px solid rgba(244,63,94,0.45);color:#fda4af;font-size:12px;font-weight:700;"></div>
+              <div id="fb-post-error" style="display:none;margin-bottom:8px;padding:8px 10px;border-radius:8px;background:rgba(244,63,94,0.14);border:1px solid rgba(244,63,94,0.45);color:var(--accent-rose,#e11d48);font-size:12px;font-weight:700;"></div>
               <div style="display:flex;justify-content:flex-end;gap:8px;">
                 <button type="button" class="secondary-btn" id="fb-btn-cancel-post">Abbrechen</button>
                 <button type="button" class="primary-btn" id="fb-btn-submit-post">🚀 Wunsch absenden</button>
@@ -1927,7 +1915,7 @@
         if (!items || items.length === 0) {
           const tMeta = FEEDBACK_TARGET_MAP[activeTarget] || FEEDBACK_TARGET_MAP.general;
           listEl.innerHTML = `
-            <div style="text-align:center;padding:28px 16px;border-radius:14px;background:rgba(15,23,42,0.45);border:1px dashed rgba(148,163,184,0.28);color:var(--text-muted);">
+            <div style="text-align:center;padding:28px 16px;border-radius:14px;background:var(--bg-elevated,rgba(15,23,42,0.45));border:1px dashed var(--border-subtle,rgba(148,163,184,0.28));color:var(--text-muted);">
               Noch keine Einträge für <strong>${escapeHtml(tMeta.title)}</strong> in diesem Filter — schreib gerne den ersten Verbesserungswunsch!
             </div>
           `;
@@ -2282,7 +2270,7 @@
       return !!relaxed;
     },
     getDurationSec: (diff) => {
-      if (diff === 'pro' || diff === 'nerd') return 35;
+      if (diff === 'pro' || diff === 'hard' || diff === 'nerd') return 35;
       if (diff === 'mid') return 30;
       return 25;
     },
@@ -2295,13 +2283,16 @@
           btn.classList.toggle('active', (btn.dataset.relaxed === '1') === relaxed);
         });
       };
-      bar.addEventListener('click', (e) => {
-        const btn = e.target.closest('.time-mode-pill');
-        if (!btn) return;
-        window.ArcadeQuizPrefs.setRelaxed(btn.dataset.relaxed === '1');
-        if (window.ArcadeAudio) window.ArcadeAudio.click();
-        sync();
-      });
+      if (bar.dataset.bound !== '1') {
+        bar.dataset.bound = '1';
+        bar.addEventListener('click', (e) => {
+          const btn = e.target.closest('.time-mode-pill');
+          if (!btn) return;
+          window.ArcadeQuizPrefs.setRelaxed(btn.dataset.relaxed === '1');
+          if (window.ArcadeAudio) window.ArcadeAudio.click();
+          sync();
+        });
+      }
       sync();
     },
     updateTimerUI: ({ btnEl, fillEl, jokerTimeEl, jokerTimeAvailable, timeLeft, maxTime, answered }) => {

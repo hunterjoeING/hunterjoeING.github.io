@@ -372,7 +372,6 @@ function sendNextWave() {
   if (isOngoing) {
     const bonus = getEarlyWaveBonus();
     gold += bonus;
-    score += bonus * 3;
     addFloatText(waypoints[0].x + 1.2, waypoints[0].y, `⚡ +${bonus}💰 VORZIEH-BONUS`, '#fde047', 1.15);
     showFeedback(`⚡ Welle vorgezogen! +${bonus} Gold Bonus!`, '#fde047');
     ArcadeAudio.perkGood();
@@ -391,7 +390,12 @@ function sendNextWave() {
   let headline = `🌊 Welle ${wave}`;
   let sub = `${nextList.length} Einheiten rücken vor!`;
   let bColor = '#38bdf8';
-  if (wave % 5 === 0) {
+  if (wave === 5) {
+    headline = `🧬 Welle 5 · Hydra-Spalter & Boss!`;
+    sub = 'Spalter teilen sich beim Tod in schnelle Schwarm-Drohnen!';
+    bColor = '#e879f9';
+    triggerShake(3, 0.15);
+  } else if (wave % 5 === 0) {
     headline = `💀 Welle ${wave} · DREADNOUGHT BOSS!`;
     sub = wave >= 10 ? 'Boss mit Energieschild + Spalter im Anmarsch!' : '70% Frost-Resistenz + Hydra-Spalter!';
     bColor = '#fb7185';
@@ -400,10 +404,6 @@ function sendNextWave() {
     headline = `🛡️ Welle 6 · Aegis-Kreuzer!`;
     sub = 'Energieschilde brechen Railgun-Bursts – Puls & Mörser kontern!';
     bColor = '#22d3ee';
-  } else if (wave === 5) {
-    headline = `🧬 Welle 5 · Hydra-Spalter & Boss!`;
-    sub = 'Spalter teilen sich beim Tod in schnelle Schwarm-Drohnen!';
-    bColor = '#e879f9';
   } else if (wave === 4) {
     headline = `🔥 Welle 4 · Thermo-Sprinter!`;
     sub = '100% Frost-immun – sie stürmen durch jedes Frost-Prisma!';

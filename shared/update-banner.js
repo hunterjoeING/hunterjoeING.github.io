@@ -1,6 +1,7 @@
 (function () {
   'use strict';
 
+  if (!window.ARCADE_RELEASES) return;
   const { apps, releases } = window.ARCADE_RELEASES;
   // Resolve catalog links from the site root, including GitHub Pages project sites.
   const siteRoot = new URL('../', document.currentScript.src);
@@ -33,6 +34,16 @@
 
   function appHref(appId) {
     return new URL(apps[appId].href, siteRoot).href;
+  }
+
+  function isCurrentAppPage(appId) {
+    try {
+      const targetPath = new URL(appHref(appId)).pathname.replace(/\/index\.html$/i, '/');
+      const curPath = window.location.pathname.replace(/\/index\.html$/i, '/');
+      return targetPath === curPath;
+    } catch {
+      return false;
+    }
   }
 
   function highlightsHtml(release) {
@@ -107,6 +118,7 @@
     dialog.setAttribute('aria-labelledby', 'arcade-updates-title');
     const overview = new URL('changelogs.html', siteRoot);
     overview.hash = new URLSearchParams({ app: appId }).toString();
+    const showPlayBtn = app.kind !== 'arcade' && !isCurrentAppPage(appId);
     dialog.innerHTML = `
       <div class="arcade-modal-card">
         <div class="arcade-modal-head">
@@ -127,7 +139,7 @@
         </div>
         <div class="arcade-modal-foot">
           <a href="${escapeHtml(overview.href)}">Alle Changelogs</a>
-          ${app.kind !== 'arcade' ? `<a href="${escapeHtml(appHref(appId))}" class="primary-btn">Jetzt spielen</a>` : ''}
+          ${showPlayBtn ? `<a href="${escapeHtml(appHref(appId))}" class="primary-btn">Jetzt spielen</a>` : ''}
           <button type="button" class="secondary-btn" data-close>Schließen</button>
         </div>
       </div>`;

@@ -51,10 +51,7 @@ jobs:
             console.log("Telegram API response:", JSON.stringify({
               ok: data.ok,
               error_code: data.error_code,
-              description: data.description,
-              message_id: data.result?.message_id,
-              chat_id: data.result?.chat?.id,
-              bot_from: data.result?.from?.username
+              description: data.description
             }));
             if (!res.ok || !data.ok) {
               process.exit(1);

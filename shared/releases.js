@@ -45,6 +45,15 @@ const arcadeReleases = {
   },
   releases: [
     {
+      app: "arcade", version: "0.4.2", date: "2026-11-27", type: "patch", title: "Sicherheit, Bestenlisten-Schutz & Hub-Pflege",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Bestenlisten-API gegen unbefugte Überschreibungen abgesichert, Ladezeit der Übersicht stark beschleunigt und Ratenbegrenzung ergänzt.",
+        "Burger-Menü um American Football und Golf ergänzt sowie Modul- und Fragenzähler im Hub aktualisiert.",
+        "Kontrast im Hell-Modus für Fehlermeldungen und leere Feedback-Karten verbessert sowie Datenschutzerklärung vervollständigt.",
+      ],
+    },
+    {
       app: "arcade", version: "0.4.1", date: "2026-11-25", type: "patch", title: "Bestenlisten für kürzere Fahrten",
       author: "Michi", model: "Sol 6.2",
       highlights: [
@@ -59,6 +68,15 @@ const arcadeReleases = {
         "Neuer 3D-Explainer „Windkraftanlage 3D“ unter Games mit Cutaway, X-Ray, Explosionsansicht und Leistungskurve",
         "Neuer 3D-Explainer „Verbrennungsmotor 3D“ mit 4-Takt-Kinematik, Prüfstandskurve und Schritt-für-Schritt-Tour",
         "Beide 3D-Explainer sind im Hub, im Burger-Menü und im Feedback-System verknüpft",
+      ],
+    },
+    {
+      app: "wind_turbine", version: "0.1.2", date: "2026-11-27", type: "patch", title: "Bauteil-Fokus & Sturmschutz-Physik",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Ausgewählte Baugruppen leuchten jetzt isoliert ohne ungewolltes Mitleuchten anderer Teile.",
+        "Bei 0,0 m/s Wind steht das Anemometer still und bei aktiver Sturmbremse (> 25 m/s) stoppt der Rotor vollständig.",
+        "Diagramm-Steuerung reagiert sauber auf abgebrochene Touch-Gesten.",
       ],
     },
     {
@@ -234,9 +252,27 @@ const arcadeReleases = {
 
     // Retrospective debut entries do not show update banners.
     {
+      app: "podracer", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Kollisionsabfrage & Steuerungs-Fixes",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Durchgängige Kollisionsprüfung bei hohem Boost-Tempo verhindert Überspringen von Felsen und Energie-Pickups.",
+        "Unterboden-Leuchten richtet sich präzise nach dem aktuellen Streckenabschnitt aus.",
+        "Stumm-Anzeige beim Start, Fokusverlust beim Boost und Tastenkürzel bei geöffneten Dialogen korrigiert.",
+      ],
+    },
+    {
       app: "podracer", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["3D-Rennen durch einen Wüsten-Canyon mit Boost-Pads und Hindernissen"],
+    },
+    {
+      app: "solitaire3d", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Hell-Modus, Speicher-Optimierung & Touch-Fixes",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "HUD, Menüs und Sieges-Overlay unterstützen jetzt auch den Hell-Modus mit hohem Kontrast.",
+        "Karten-Texturen benötigen deutlich weniger Grafikspeicher für stabileres Spiel auf Mobilgeräten.",
+        "Abgebrochene Touch-Gesten lösen keine ungewollten Züge mehr aus und ein Neustart bricht laufende Sieges-Timer sauber ab.",
+      ],
     },
     {
       app: "solitaire3d", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
@@ -244,9 +280,25 @@ const arcadeReleases = {
       banner: false, highlights: ["Spider Solitär mit vier Farben auf einem 3D-Kartentisch"],
     },
     {
+      app: "minesweeper_3d_prompt_test", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Grafikspeicher & Dialog-Scrollen",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Unaufgedeckte Blöcke teilen sich ein gemeinsames Material und wechseln sauber zwischen Hell- und Dunkelmodus.",
+        "Mausrad und Touch-Scrollen funktionieren wieder ungehindert in geöffneten Menüs und Bestenlisten.",
+      ],
+    },
+    {
       app: "minesweeper_3d_prompt_test", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Minesweeper auf einem frei drehbaren und auffächerbaren 3D-Würfel"],
+    },
+    {
+      app: "minesweeper", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Spielstand-Sicherheit & Grafikspeicher",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Lokale Spielstände werden beim Anzeigen und Laden strikt bereinigt und sicher wiederhergestellt.",
+        "Geometrien von Portalen und Ikosaeder-Brettern werden beim Levelwechsel sauber freigegeben.",
+      ],
     },
     {
       app: "minesweeper", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
@@ -254,9 +306,27 @@ const arcadeReleases = {
       banner: false, highlights: ["Räumliches Minensuchrätsel mit 13 Geometrien und optionaler Assistenz"],
     },
     {
+      app: "roadster", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Landeschwellen, Drohnenschiff & Steuerdüsen",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Landewinkel nach vollen Drehungen sowie die grünen/roten Grenzwerte in HUD und Visier sind jetzt vollständig einheitlich.",
+        "Das bewegliche Drohnenschiff stoppt nach einer erfolgreichen Landung unter dem Roadster.",
+        "Kaltgas-Strahlen der seitlichen Steuerdüsen zeigen jetzt physikalisch korrekt entgegen der Schubrichtung.",
+      ],
+    },
+    {
       app: "roadster", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Landespiel mit Rampe, Stickstoffdüsen und Gyro-Hilfe"],
+    },
+    {
+      app: "zombie", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Tore, Salven-Limit & Touch-Steuerung",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Die Lücke zwischen linkem und rechtem Tor in der Fahrbahnmitte wurde geschlossen.",
+        "Schuss-Limit auf 320 Projektile erhöht und Spielende durch rote Tore beendet den Frame sofort sauber.",
+        "Touch-Steuerung hält den Fingerkontakt zuverlässiger und Namensänderungen aktualisieren den letzten Lauf.",
+      ],
     },
     {
       app: "zombie", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
@@ -264,9 +334,26 @@ const arcadeReleases = {
       banner: false, highlights: ["Brückenspiel mit Zombie-Wellen, Energietoren und Verstärkungen"],
     },
     {
+      app: "tower", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Wellen-Balance, Banner & Grafikspeicher",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Vorziehen von Wellen gewährt jetzt fair ausschließlich Gold-Bonus ohne Punkte-Farming.",
+        "Der spezielle Hydra-Spalter-Banner in Welle 5 wird nun zuverlässig angezeigt.",
+        "Kartenwechsel geben Portal- und Bastion-Ressourcen frei; abgebrochene Touch-Gesten bauen keine Türme mehr.",
+      ],
+    },
+    {
       app: "tower", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Turmverteidigung mit drei Routen, ausbaubaren Türmen und Boss-Wellen"],
+    },
+    {
+      app: "solitaire", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Touch-Abbruch, Spaltenhöhe & genaue Spielzeit",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Abgebrochene Touch-Gesten oder Fensterwechsel führen keine versehentlichen Spielzüge mehr aus.",
+        "Spaltenhöhen im Tableau und die finale Spielzeit beim Sieg werden jetzt exakt berechnet.",
+      ],
     },
     {
       app: "solitaire", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
@@ -274,9 +361,25 @@ const arcadeReleases = {
       banner: false, highlights: ["Klondike mit Ein- oder Drei-Karten-Zug, Tipps und Rückgängig-Funktion"],
     },
     {
+      app: "p2048", version: "0.1.1", date: "2026-11-27", type: "patch", title: "2048-Abschluss, Rückgängig & große Zahlen",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Wird 2048 mit dem allerletzten möglichen Zug erreicht, erkennt das Spiel den Endstand sauber ohne Hänger.",
+        "Rückgängig ist nach dem Spielende gesperrt und 5-stellige Kacheln skalieren ihre Schriftgröße automatisch.",
+      ],
+    },
+    {
       app: "p2048", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Zahlenpuzzle mit 4×4- und 5×5-Feldern, Wischgesten und Pfeiltasten"],
+    },
+    {
+      app: "quiz_fussball", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fußball-Guru-Stufe & fairer Zeitbonus",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Schwierigkeitsfilter „Fußball-Guru“ findet jetzt alle 120 kniffligen Fragen mit vollem 1,5×-Punktemultiplikator und 35 s Zeitbonus.",
+        "Umschalten des Zeitmodus während einer Frage setzt den Zeitbonus nicht mehr zurück.",
+      ],
     },
     {
       app: "quiz_fussball", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
@@ -284,9 +387,23 @@ const arcadeReleases = {
       banner: false, highlights: ["Fußballquiz mit Vereins-Special und Bestenlisten je Themenbereich"],
     },
     {
+      app: "quiz_american_football", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_american_football", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Footballquiz zu Spielregeln, Ligageschichte und Fankultur"],
+    },
+    {
+      app: "quiz_golf", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_golf", version: "0.1.0", date: "2026-11-22", type: "feature", title: "Erste Version",
@@ -294,9 +411,23 @@ const arcadeReleases = {
       banner: false, highlights: ["Golfquiz zu Spielregeln, Ausrüstung, Turnieren und Plätzen"],
     },
     {
+      app: "quiz_mil_air", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_mil_air", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur Geschichte und Technik der militärischen Luftfahrt"],
+    },
+    {
+      app: "quiz_airliners", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_airliners", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
@@ -304,9 +435,24 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Verkehrsflugzeugen und der Technik an Bord"],
     },
     {
+      app: "quiz_etfs", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Profi-Filter & fairer Zeitbonus",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Schwierigkeitsfilter „Steuer- & Quant-Profi“ berücksichtigt jetzt auch alle Expertenfragen mit 1,5×-Wertung.",
+        "Umschalten des Zeitmodus während einer Frage setzt den Zeitbonus nicht mehr zurück.",
+      ],
+    },
+    {
       app: "quiz_etfs", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Indexfonds, langfristigem Sparen und Besteuerung"],
+    },
+    {
+      app: "quiz_bitcoin", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_bitcoin", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
@@ -314,9 +460,23 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zur Geschichte und Funktionsweise digitaler Währungen"],
     },
     {
+      app: "quiz_porsche", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_porsche", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur Modellgeschichte und Technik von Sportwagen"],
+    },
+    {
+      app: "quiz_f1", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_f1", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
@@ -324,9 +484,25 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Fahrern, Rennstrecken und Technik der Formel 1"],
     },
     {
+      app: "quiz_apple", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Start-Fix, Fragenverlauf & fairer Zeitbonus",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Fehler beim Laden von Fragen und beim Umschalten zwischen Zeitbonus und Entspannt behoben.",
+        "Gespielte Fragen werden nun korrekt im Anti-Wiederholungs-Verlauf gespeichert und der Überspringen-Joker ist abgesichert.",
+        "Umschalten des Zeitmodus während einer Frage setzt den Zeitbonus nicht mehr zurück.",
+      ],
+    },
+    {
       app: "quiz_apple", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur Geschichte eines Technikunternehmens und seiner Produkte"],
+    },
+    {
+      app: "quiz_md11", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_md11", version: "0.1.0", date: "2026-11-16", type: "feature", title: "Erste Version",
@@ -334,9 +510,23 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Konstruktion und Einsatzgeschichte eines dreistrahligen Verkehrsflugzeugs"],
     },
     {
+      app: "quiz_naildesign", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_naildesign", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Nagelpflege, Gestaltung und Materialkunde"],
+    },
+    {
+      app: "quiz_torten", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_torten", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
@@ -344,9 +534,25 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu Backtechniken, Tortendekoration und internationalen Klassikern"],
     },
     {
+      app: "quiz_geburt", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Timer-Stabilität, Zeitmodus & Joker-Status",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Timer-Anzeige im Sekundentakt und Umschalten des Entspannt-Modus während der Runde repariert.",
+        "Der +10-Sekunden-Joker wird nach dem Einsatz sichtbar deaktiviert.",
+        "Umschalten des Zeitmodus während einer Frage setzt den Zeitbonus nicht mehr zurück.",
+      ],
+    },
+    {
       app: "quiz_geburt", version: "0.1.0", date: "2026-11-21", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Geburtsvorbereitung und der ersten Zeit nach der Entbindung"],
+    },
+    {
+      app: "quiz_ai", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_ai", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
@@ -354,14 +560,35 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zur Geschichte und Funktionsweise künstlicher Intelligenz"],
     },
     {
+      app: "quiz_movies", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_movies", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Filmquiz zu unterschiedlichen Genres und Kinotechnik"],
     },
     {
+      app: "quiz_egypt", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_egypt", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur Geschichte Ägyptens von der Frühzeit bis zur Moderne"],
+    },
+    {
+      app: "quiz_diving", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_diving", version: "0.1.0", date: "2026-11-15", type: "feature", title: "Erste Version",
@@ -394,9 +621,23 @@ const arcadeReleases = {
       banner: false, highlights: ["Bilderquiz zu Fahrzeugen der Schweizer Eisenbahn"],
     },
     {
+      app: "quiz_emob", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_emob", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu Elektroautos, Batterietechnik und Schnellladen"],
+    },
+    {
+      app: "quiz_pol", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz_pol", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
@@ -404,14 +645,35 @@ const arcadeReleases = {
       banner: false, highlights: ["Quiz zu wirtschaftspolitischen Ideen und Denkschulen"],
     },
     {
+      app: "quiz_hist", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_hist", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zu historischen Meilensteinen verschiedener Epochen"],
     },
     {
+      app: "quiz_china", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
+    },
+    {
       app: "quiz_china", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",
       author: "Joe", model: "Hydrogen",
       banner: false, highlights: ["Quiz zur neueren Geschichte Chinas"],
+    },
+    {
+      app: "quiz", version: "0.1.1", date: "2026-11-27", type: "patch", title: "Fairer Zeitbonus beim Moduswechsel",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Umschalten zwischen „Ohne Zeitlimit“ und Zeitbonus während einer laufenden Frage füllt den Zeitbonus nicht mehr neu auf.",
+      ],
     },
     {
       app: "quiz", version: "0.1.0", date: "2026-11-14", type: "feature", title: "Erste Version",

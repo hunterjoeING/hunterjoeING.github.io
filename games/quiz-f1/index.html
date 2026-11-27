@@ -885,15 +885,17 @@
 
     function toggleTimerModeInPlay() {
       ArcadeQuizPrefs.setRelaxed(!ArcadeQuizPrefs.isRelaxed());
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      clearInterval(timerId);
+      timerId = null;
       if (ArcadeQuizPrefs.isRelaxed()) {
-        clearInterval(timerId);
         timeLeft = 0;
         updateTimerUI();
       } else if (!answered) {
-        questionMaxTime = ArcadeQuizPrefs.getDurationSec(deck[qIdx].diff);
-        timeLeft = questionMaxTime;
         updateTimerUI();
-        startBonusTimer();
+        if (timeLeft > 0) startBonusTimer();
+      } else {
+        updateTimerUI();
       }
     }
 

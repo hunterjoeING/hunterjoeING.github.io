@@ -236,7 +236,8 @@ export class PodScene {
       isPlaying
     } = state;
 
-    // Place Podracer on track
+    // Place Podracer on track & sample current frame before positioning underglow
+    this.track.sampleAt(s, this._frameA);
     this.track.trackToWorld(s, u, 0.35, this._podPos, this._podQuat);
     this.craft.root.position.copy(this._podPos);
     this.craft.root.quaternion.copy(this._podQuat);
@@ -256,7 +257,6 @@ export class PodScene {
 
     // Emit pooled thruster exhaust & desert sand dust particles when racing
     if (isPlaying) {
-      this.track.sampleAt(s, this._frameA);
       for (let side = -1; side <= 1; side += 2) {
         if (Math.random() < (0.45 + boostLevel * 0.35)) {
           this._exhaustWorld

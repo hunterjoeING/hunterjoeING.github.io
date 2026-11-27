@@ -116,7 +116,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: npx --yes wrangler@latest deploy --keep-vars
 
-      - name: Sync Configured Worker Secrets
+      - name: Sync & Provision Worker Secrets
         shell: bash
         working-directory: cloudflare-worker
         env:
@@ -125,8 +125,11 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           ADMIN_SECRET: ${{ secrets.ADMIN_SECRET }}
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TURNSTILE_SECRET_KEY: ${{ secrets.TURNSTILE_SECRET_KEY }}
+          TELEGRAM_WEBHOOK_SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
         run: |
-          for name in TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID ADMIN_SECRET AGENT_API_KEY; do
+          for name in TELEGRAM_BOT_TOKEN TELEGRAM_CHAT_ID ADMIN_SECRET AGENT_API_KEY JWT_SECRET TURNSTILE_SECRET_KEY; do
             val="${!name}"
             if [ -n "$val" ]; then
               printf '%s' "$val" | npx --yes wrangler@latest secret put "$name"
@@ -134,25 +137,68 @@ jobs:
             fi
           done
 
+          # Ensure JWT_SECRET exists on the worker without rotating an already-set secret
+          if [ -z "$JWT_SECRET" ]; then
+            HAS_JWT=$(node -e '
+              (async () => {
+                const res = await fetch(`https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/workers/scripts/hunterjoe-scores/secrets`, {
+                  headers: { Authorization: "Bearer " + process.env.CLOUDFLARE_API_TOKEN }
+                });
+                const data = await res.json().catch(() => ({}));
+                const list = Array.isArray(data.result) ? data.result : [];
+                process.stdout.write(list.some(s => s.name === "JWT_SECRET") ? "yes" : "no");
+              })();
+            ')
+            if [ "$HAS_JWT" != "yes" ]; then
+              node -e 'process.stdout.write(require("crypto").randomBytes(32).toString("hex"))' | npx --yes wrangler@latest secret put JWT_SECRET
+              echo "Provisioned new JWT_SECRET on worker"
+            else
+              echo "Preserved existing JWT_SECRET on worker"
+            fi
+          fi
+
+          # Sync or deterministically derive TELEGRAM_WEBHOOK_SECRET when Telegram is enabled
+          if [ -n "$TELEGRAM_WEBHOOK_SECRET" ]; then
+            printf '%s' "$TELEGRAM_WEBHOOK_SECRET" | npx --yes wrangler@latest secret put TELEGRAM_WEBHOOK_SECRET
+            echo "Synced secret: TELEGRAM_WEBHOOK_SECRET"
+          elif [ -n "$TELEGRAM_BOT_TOKEN" ]; then
+            node -e '
+              const crypto = require("crypto");
+              const sig = crypto.createHmac("sha256", process.env.TELEGRAM_BOT_TOKEN)
+                .update("hunterjoe-tg-webhook-v1:" + (process.env.TELEGRAM_CHAT_ID || ""))
+                .digest("hex");
+              process.stdout.write(sig);
+            ' | npx --yes wrangler@latest secret put TELEGRAM_WEBHOOK_SECRET
+            echo "Synced derived TELEGRAM_WEBHOOK_SECRET"
+          fi
+
       - name: Register Telegram Webhook
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          TELEGRAM_WEBHOOK_SECRET: ${{ secrets.TELEGRAM_WEBHOOK_SECRET }}
         run: |
           if [ -n "$TELEGRAM_BOT_TOKEN" ]; then
             node -e '
+            const crypto = require("crypto");
             (async () => {
               const token = process.env.TELEGRAM_BOT_TOKEN;
+              const webhookSecret = (process.env.TELEGRAM_WEBHOOK_SECRET || "").trim()
+                || crypto.createHmac("sha256", token)
+                    .update("hunterjoe-tg-webhook-v1:" + (process.env.TELEGRAM_CHAT_ID || ""))
+                    .digest("hex");
               const url = `https://api.telegram.org/bot${token}/setWebhook`;
               const res = await fetch(url, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   url: "https://hunterjoe-scores.hunterjoeing.workers.dev/api/telegram/webhook",
+                  secret_token: webhookSecret,
                   allowed_updates: ["message", "edited_message"]
                 })
               });
               const data = await res.json().catch(() => ({}));
-              console.log("Telegram setWebhook:", res.status, JSON.stringify(data));
+              console.log("Telegram setWebhook:", res.status, JSON.stringify({ ok: data.ok, description: data.description }));
               if (!res.ok || !data.ok) {
                 throw new Error("Failed to register Telegram webhook");
               }
@@ -168,7 +214,7 @@ jobs:
             const res = await fetch("https://hunterjoe-scores.hunterjoeing.workers.dev/api/health");
             const data = await res.json();
             console.log("Health status:", res.status, JSON.stringify(data));
-            if (!res.ok || !data.ok || data.db !== "connected" || !Array.isArray(data.features) || !data.features.includes("feedback")) {
+            if (!res.ok || !data.ok || data.db !== "connected" || !data.jwtConfigured || !Array.isArray(data.features) || !data.features.includes("feedback")) {
               throw new Error("Live worker health check failed after deploy");
             }
           })();

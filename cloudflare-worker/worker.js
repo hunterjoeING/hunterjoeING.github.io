@@ -96,7 +96,9 @@ const GAMES_META = {
   quiz_apple_audio_wearables: { title: 'Apple: Audio, Wearables & Ökosystem', lowerIsBetter: false },
   quiz_apple_design_history: { title: 'Apple: Geschichte, Design & Kult', lowerIsBetter: false },
   quiz_apple_flops_curiosities: { title: 'Apple: Flops, Kurioses & Insider-Wissen', lowerIsBetter: false },
-  quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false }
+  quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false },
+  wind_turbine: { title: 'Windkraftanlage 3D (Onshore)', lowerIsBetter: false, noLeaderboard: true },
+  combustion_engine: { title: 'Verbrennungsmotor 3D', lowerIsBetter: false, noLeaderboard: true }
 };
 
 // Keep target minutes and level IDs in sync with games/e-roadtrip/src/data/levels.ts.
@@ -177,10 +179,56 @@ function notifyTelegram(env, ctx, htmlText) {
 }
 
 // ============================================================================
-// WebCrypto Helpers (PBKDF2 Password Hashing & HMAC-SHA256 JWT)
+// WebCrypto Helpers (PBKDF2 Password Hashing, Timing-Safe Compare & HMAC JWT)
 // ============================================================================
 function bufToHex(buf) {
   return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function timingSafeEqualStr(a, b) {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  const enc = new TextEncoder();
+  const [ha, hb] = await Promise.all([
+    crypto.subtle.digest('SHA-256', enc.encode(a)),
+    crypto.subtle.digest('SHA-256', enc.encode(b))
+  ]);
+  const ba = new Uint8Array(ha);
+  const bb = new Uint8Array(hb);
+  let diff = a.length ^ b.length;
+  for (let i = 0; i < ba.length; i++) diff |= ba[i] ^ bb[i];
+  return diff === 0;
+}
+
+const _rateBuckets = new Map();
+function checkRateLimit(request, bucket, maxReq, windowMs) {
+  const ip = (request.headers.get('CF-Connecting-IP') || '').trim();
+  if (!ip) return null; // Skip in local unit tests without edge IP header
+  const now = Date.now();
+  if (_rateBuckets.size > 2000) {
+    for (const [k, v] of _rateBuckets) {
+      if (v.resetAt <= now) _rateBuckets.delete(k);
+    }
+  }
+  const key = `${bucket}:${ip}`;
+  let entry = _rateBuckets.get(key);
+  if (!entry || entry.resetAt <= now) {
+    entry = { count: 1, resetAt: now + windowMs };
+    _rateBuckets.set(key, entry);
+    return null;
+  }
+  entry.count += 1;
+  if (entry.count > maxReq) {
+    const retryAfter = Math.max(1, Math.ceil((entry.resetAt - now) / 1000));
+    return new Response(JSON.stringify({ ok: false, error: 'Zu viele Anfragen. Bitte warte kurz und versuche es erneut.' }), {
+      status: 429,
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Retry-After': String(retryAfter),
+        ...CORS_HEADERS
+      }
+    });
+  }
+  return null;
 }
 
 function b64urlEncode(str) {
@@ -213,13 +261,16 @@ async function hashPassword(password, saltHex) {
 }
 
 async function signJwt(payload, secret) {
+  if (!secret || typeof secret !== 'string' || secret.length < 16) {
+    throw new Error('JWT_SECRET is not configured');
+  }
   const enc = new TextEncoder();
   const headerB64 = b64urlEncode(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
   const bodyB64 = b64urlEncode(JSON.stringify(payload));
   const data = `${headerB64}.${bodyB64}`;
   const key = await crypto.subtle.importKey(
     'raw',
-    enc.encode(secret || 'hunterjoe-default-jwt-secret-change-in-prod'),
+    enc.encode(secret),
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign']
@@ -234,14 +285,17 @@ async function signJwt(payload, secret) {
 
 async function verifyJwt(token, secret) {
   try {
+    if (!secret || typeof secret !== 'string' || secret.length < 16) return null;
     const parts = String(token || '').split('.');
     if (parts.length !== 3) return null;
     const [headerB64, bodyB64, sigB64] = parts;
+    const header = JSON.parse(b64urlDecode(headerB64));
+    if (header?.alg !== 'HS256') return null;
     const data = `${headerB64}.${bodyB64}`;
     const enc = new TextEncoder();
     const key = await crypto.subtle.importKey(
       'raw',
-      enc.encode(secret || 'hunterjoe-default-jwt-secret-change-in-prod'),
+      enc.encode(secret),
       { name: 'HMAC', hash: 'SHA-256' },
       false,
       ['verify']
@@ -259,21 +313,56 @@ async function verifyJwt(token, secret) {
   }
 }
 
-async function getAuthUser(request, env) {
-  // Check X-Agent-Key header for automated AI-Agent / Admin CLI replies
+async function signScoreUpdateToken(gid, runId, secret) {
+  if (!secret || !gid || !runId) return null;
+  const exp = Date.now() + 1000 * 60 * 30;
+  const data = `score-upd:${gid}:${runId}:${exp}`;
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
+  return `${exp}.${bufToHex(sig)}`;
+}
+
+async function verifyScoreUpdateToken(token, gid, runId, secret) {
+  if (!secret || !token || !gid || !runId) return false;
+  const parts = String(token).split('.');
+  if (parts.length !== 2) return false;
+  const exp = Number(parts[0]);
+  if (!Number.isFinite(exp) || Date.now() > exp) return false;
+  const data = `score-upd:${gid}:${runId}:${parts[0]}`;
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const expected = bufToHex(await crypto.subtle.sign('HMAC', key, enc.encode(data)));
+  return timingSafeEqualStr(parts[1], expected);
+}
+
+async function getAuthUser(request, env, db) {
+  // Check X-Agent-Key header for automated AI-Agent / Admin replies
   const agentKey = request.headers.get('X-Agent-Key');
-  if (agentKey && env.AGENT_API_KEY && agentKey === env.AGENT_API_KEY) {
+  if (agentKey && env.AGENT_API_KEY && await timingSafeEqualStr(agentKey, env.AGENT_API_KEY)) {
     return {
       id: 0,
-      username: 'antigravity_agent',
-      displayName: 'KI-Agent (Antigravity)',
+      username: 'arcade_assistant',
+      displayName: 'KI-Assistent',
       role: 'agent'
     };
   }
   const auth = request.headers.get('Authorization') || '';
   if (!auth.startsWith('Bearer ')) return null;
   const token = auth.slice(7).trim();
-  return await verifyJwt(token, env.JWT_SECRET);
+  const payload = await verifyJwt(token, env.JWT_SECRET);
+  if (!payload) return null;
+  if (db && payload.id) {
+    const row = await db.prepare('SELECT id, username, display_name, role FROM users WHERE id = ?1').bind(payload.id).first();
+    if (!row) return null;
+    return {
+      id: row.id,
+      username: row.username,
+      displayName: row.display_name,
+      role: row.role || 'user'
+    };
+  }
+  return payload;
 }
 
 // ============================================================================
@@ -413,6 +502,9 @@ export default {
           service: 'hunterjoe-scores',
           db: db ? 'connected' : 'missing',
           telegramConfigured: hasTelegram,
+          turnstileConfigured: Boolean(env.TURNSTILE_SECRET_KEY),
+          jwtConfigured: Boolean(env.JWT_SECRET),
+          webhookSecretConfigured: Boolean(env.TELEGRAM_WEBHOOK_SECRET),
           features: hasTelegram
             ? ['scores', 'auth', 'turnstile', 'feedback', 'agent-replies', 'telegram']
             : ['scores', 'auth', 'turnstile', 'feedback', 'agent-replies']
@@ -429,6 +521,12 @@ export default {
       // AUTH: POST /api/auth/register
       // ----------------------------------------------------------------------
       if (path === '/api/auth/register' && request.method === 'POST') {
+        const limited = checkRateLimit(request, 'auth_register', 10, 10 * 60 * 1000);
+        if (limited) return limited;
+        if (!env.JWT_SECRET) {
+          return jsonResponse({ ok: false, error: 'Authentifizierung ist serverseitig nicht vollständig konfiguriert.' }, 503);
+        }
+
         const body = await request.json().catch(() => ({}));
         const username = cleanText(body.username, 24).replace(/[^a-zA-Z0-9_äöüÄÖÜß.-]/g, '');
         const displayName = cleanText(body.displayName || username, 24);
@@ -456,9 +554,9 @@ export default {
         const saltHex = bufToHex(saltBytes);
         const pwHash = await hashPassword(password, saltHex);
 
-        // Erster registrierter Admin-Name oder passendes Admin-Secret erhält Rolle 'admin'
+        // Nur passendes Admin-Secret erhält Rolle 'admin'
         let role = 'user';
-        if (body.adminSecret && env.ADMIN_SECRET && body.adminSecret === env.ADMIN_SECRET) {
+        if (body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET)) {
           role = 'admin';
         }
 
@@ -478,6 +576,12 @@ export default {
       // AUTH: POST /api/auth/login
       // ----------------------------------------------------------------------
       if (path === '/api/auth/login' && request.method === 'POST') {
+        const limited = checkRateLimit(request, 'auth_login', 20, 10 * 60 * 1000);
+        if (limited) return limited;
+        if (!env.JWT_SECRET) {
+          return jsonResponse({ ok: false, error: 'Authentifizierung ist serverseitig nicht vollständig konfiguriert.' }, 503);
+        }
+
         const body = await request.json().catch(() => ({}));
         const username = cleanText(body.username, 24);
         const password = String(body.password || '');
@@ -496,12 +600,12 @@ export default {
         }
 
         const calcHash = await hashPassword(password, row.pw_salt);
-        if (calcHash !== row.pw_hash) {
+        if (!await timingSafeEqualStr(calcHash, row.pw_hash)) {
           return jsonResponse({ ok: false, error: 'Benutzername oder Passwort ungültig.' }, 401);
         }
 
         let role = row.role || 'user';
-        if (body.adminSecret && env.ADMIN_SECRET && body.adminSecret === env.ADMIN_SECRET) {
+        if (body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET)) {
           role = 'admin';
           await db.prepare('UPDATE users SET role = ?1, last_login_at = datetime("now") WHERE id = ?2').bind(role, row.id).run();
         } else {
@@ -518,7 +622,7 @@ export default {
       // AUTH: GET /api/auth/me
       // ----------------------------------------------------------------------
       if (path === '/api/auth/me' && request.method === 'GET') {
-        const user = await getAuthUser(request, env);
+        const user = await getAuthUser(request, env, db);
         if (!user) return jsonResponse({ ok: false, error: 'Nicht eingeloggt.' }, 401);
         return jsonResponse({ ok: true, user });
       }
@@ -605,7 +709,10 @@ export default {
       // FEEDBACK: POST /api/feedback (Neuen Wunsch/Kommentar anlegen)
       // ----------------------------------------------------------------------
       if (path === '/api/feedback' && request.method === 'POST') {
-        const user = await getAuthUser(request, env);
+        const limited = checkRateLimit(request, 'feedback_post', 12, 10 * 60 * 1000);
+        if (limited) return limited;
+
+        const user = await getAuthUser(request, env, db);
         if (!user) {
           return jsonResponse({ ok: false, error: 'Bitte logge dich zuerst ein, um einen Wunsch oder Kommentar zu senden.' }, 401);
         }
@@ -625,7 +732,7 @@ export default {
           return jsonResponse({ ok: false, error: 'Bitte beschreibe deinen Wunsch oder Kommentar etwas genauer.' }, 400);
         }
 
-        // CAPTCHA prüfen (außer für verifizierten KI-Agenten-Key)
+        // CAPTCHA prüfen (außer für verifizierten API-Key)
         if (user.role !== 'agent') {
           const ip = request.headers.get('CF-Connecting-IP') || '';
           const cap = await verifyTurnstile(captchaToken, ip, env);
@@ -682,14 +789,24 @@ export default {
       }
 
       // ----------------------------------------------------------------------
-      // FEEDBACK: POST /api/feedback/:id/reply (Antwort / Agent-Kommentar)
+      // FEEDBACK: POST /api/feedback/:id/reply (Antwort / Admin-Kommentar)
       // ----------------------------------------------------------------------
       const replyMatch = /^\/api\/feedback\/(\d+)\/reply$/.exec(path);
       if (replyMatch && request.method === 'POST') {
+        const limited = checkRateLimit(request, 'feedback_reply', 20, 10 * 60 * 1000);
+        if (limited) return limited;
+
         const postId = parseInt(replyMatch[1], 10);
-        const user = await getAuthUser(request, env);
+        const user = await getAuthUser(request, env, db);
         if (!user) {
           return jsonResponse({ ok: false, error: 'Bitte logge dich ein, um zu antworten.' }, 401);
+        }
+
+        const postRow = await db.prepare(
+          'SELECT id, title, target_id FROM feedback_posts WHERE id = ?1'
+        ).bind(postId).first();
+        if (!postRow) {
+          return jsonResponse({ ok: false, error: 'Beitrag nicht gefunden.' }, 404);
         }
 
         const body = await request.json().catch(() => ({}));
@@ -698,11 +815,12 @@ export default {
           return jsonResponse({ ok: false, error: 'Bitte gib einen Antworttext ein.' }, 400);
         }
 
-        // Wenn ein Admin oder KI-Agent antwortet (oder asAgent gewählt wurde), darf auch der Status geändert werden
-        const isPrivileged = user.role === 'admin' || user.role === 'agent' || (body.adminSecret && env.ADMIN_SECRET && body.adminSecret === env.ADMIN_SECRET);
+        // Wenn ein Admin oder KI-Assistent antwortet (oder asAgent gewählt wurde), darf auch der Status geändert werden
+        const hasAdminSecret = Boolean(body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET));
+        const isPrivileged = user.role === 'admin' || user.role === 'agent' || hasAdminSecret;
         const authorRole = (isPrivileged && body.asAgent) ? 'agent' : (isPrivileged && user.role === 'user' ? 'admin' : (user.role || 'user'));
         const authorName = authorRole === 'agent'
-          ? (body.authorName || '🤖 KI-Agent (Antigravity)')
+          ? (cleanText(body.authorName, 40) || '🤖 KI-Assistent')
           : (user.displayName || user.username || 'Spieler');
 
         const validStatuses = ['open', 'in_progress', 'fixed'];
@@ -724,10 +842,7 @@ export default {
         }
 
         if (authorRole !== 'admin' && authorRole !== 'agent') {
-          const postRow = await db.prepare(
-            'SELECT title, target_id FROM feedback_posts WHERE id = ?1'
-          ).bind(postId).first().catch(() => null);
-          const targetId = postRow?.target_id || 'general';
+          const targetId = postRow.target_id || 'general';
           const targetTitle = GAMES_META[targetId]?.title || (targetId === 'general' ? 'Allgemein / Hub' : targetId);
           const preview = text.length > 500 ? text.slice(0, 500) + '…' : text;
           notifyTelegram(
@@ -735,7 +850,7 @@ export default {
             ctx,
             `↩️ <b>Neue Antwort im Community Board</b> (Beitrag #${escapeTelegramHtml(postId)})\n`
             + `<b>Bereich:</b> ${escapeTelegramHtml(targetTitle)}\n`
-            + (postRow?.title ? `<b>Zu:</b> ${escapeTelegramHtml(postRow.title)}\n` : '')
+            + (postRow.title ? `<b>Zu:</b> ${escapeTelegramHtml(postRow.title)}\n` : '')
             + `<b>Von:</b> ${escapeTelegramHtml(authorName)}\n\n`
             + `${escapeTelegramHtml(preview)}\n\n`
             + `🔗 https://hunterjoeing.github.io/`
@@ -757,14 +872,48 @@ export default {
       }
 
       // ----------------------------------------------------------------------
+      // FEEDBACK: PATCH /api/feedback/:id/status (Status ändern · Admin / Agent)
+      // ----------------------------------------------------------------------
+      const statusMatch = /^\/api\/feedback\/(\d+)\/status$/.exec(path);
+      if (statusMatch && request.method === 'PATCH') {
+        const postId = parseInt(statusMatch[1], 10);
+        const user = await getAuthUser(request, env, db);
+        if (!user) {
+          return jsonResponse({ ok: false, error: 'Bitte logge dich ein.' }, 401);
+        }
+        const body = await request.json().catch(() => ({}));
+        const hasAdminSecret = Boolean(body.adminSecret && env.ADMIN_SECRET && await timingSafeEqualStr(String(body.adminSecret), env.ADMIN_SECRET));
+        if (user.role !== 'admin' && user.role !== 'agent' && !hasAdminSecret) {
+          return jsonResponse({ ok: false, error: 'Nur Administratoren dürfen den Status ändern.' }, 403);
+        }
+        const validStatuses = ['open', 'in_progress', 'fixed'];
+        if (!validStatuses.includes(body.status)) {
+          return jsonResponse({ ok: false, error: 'Ungültiger Status.' }, 400);
+        }
+        const postRow = await db.prepare('SELECT id FROM feedback_posts WHERE id = ?1').bind(postId).first();
+        if (!postRow) {
+          return jsonResponse({ ok: false, error: 'Beitrag nicht gefunden.' }, 404);
+        }
+        await db.prepare(
+          `UPDATE feedback_posts SET status = ?1, updated_at = datetime('now') WHERE id = ?2`
+        ).bind(body.status, postId).run();
+        return jsonResponse({ ok: true, id: postId, status: body.status });
+      }
+
+      // ----------------------------------------------------------------------
       // FEEDBACK: POST /api/feedback/:id/vote (Upvote)
       // ----------------------------------------------------------------------
       const voteMatch = /^\/api\/feedback\/(\d+)\/vote$/.exec(path);
       if (voteMatch && request.method === 'POST') {
         const postId = parseInt(voteMatch[1], 10);
-        const user = await getAuthUser(request, env);
+        const user = await getAuthUser(request, env, db);
         if (!user || !user.id) {
           return jsonResponse({ ok: false, error: 'Bitte logge dich ein, um abzustimmen.' }, 401);
+        }
+
+        const postRow = await db.prepare('SELECT id FROM feedback_posts WHERE id = ?1').bind(postId).first();
+        if (!postRow) {
+          return jsonResponse({ ok: false, error: 'Beitrag nicht gefunden.' }, 404);
         }
 
         const exists = await db.prepare(
@@ -792,26 +941,46 @@ export default {
         let totalRecords = 0;
         let totalPlays = 0;
 
-        const statsRes = await db.prepare('SELECT game_id, plays FROM game_stats').all();
+        const [statsRes, countsRes, bestRes] = await Promise.all([
+          db.prepare('SELECT game_id, plays FROM game_stats').all(),
+          db.prepare('SELECT game_id, COUNT(*) AS entries FROM scores GROUP BY game_id').all(),
+          db.prepare(
+            `SELECT game_id, id, player_name AS playerName, score, lower_is_better AS lowerIsBetter, label, meta, created_at AS createdAt
+             FROM (
+               SELECT *, ROW_NUMBER() OVER (
+                 PARTITION BY game_id
+                 ORDER BY CASE WHEN lower_is_better = 1 THEN score ELSE -score END ASC, id ASC
+               ) AS rn
+               FROM scores
+             ) WHERE rn = 1`
+          ).all()
+        ]);
+
         const playsMap = {};
         (statsRes.results || []).forEach(r => { playsMap[r.game_id] = Number(r.plays || 0); });
+        const entriesMap = {};
+        (countsRes.results || []).forEach(r => { entriesMap[r.game_id] = Number(r.entries || 0); });
+        const bestMap = {};
+        (bestRes.results || []).forEach(r => {
+          const best = {
+            id: r.id,
+            playerName: r.playerName,
+            score: r.score,
+            lowerIsBetter: !!r.lowerIsBetter,
+            label: r.label,
+            meta: null,
+            createdAt: r.createdAt
+          };
+          try { best.meta = r.meta ? JSON.parse(r.meta) : null; } catch (e) { best.meta = null; }
+          bestMap[r.game_id] = best;
+        });
 
         for (const [gid, cfg] of Object.entries(GAMES_META)) {
-          const order = cfg.lowerIsBetter ? 'ASC' : 'DESC';
-          const best = await db.prepare(
-            `SELECT id, run_id as runId, player_name as playerName, score, lower_is_better as lowerIsBetter, label, meta, created_at as createdAt
-             FROM scores WHERE game_id = ?1 ORDER BY score ${order}, id ASC LIMIT 1`
-          ).bind(gid).first();
-
-          const cntRow = await db.prepare('SELECT COUNT(*) as c FROM scores WHERE game_id = ?1').bind(gid).first();
-          const entries = Number(cntRow?.c || 0);
+          if (cfg.noLeaderboard) continue;
+          const best = bestMap[gid] || null;
+          const entries = entriesMap[gid] || 0;
           const plays = Math.max(entries, playsMap[gid] || 0);
-
-          if (best) {
-            totalRecords++;
-            try { best.meta = best.meta ? JSON.parse(best.meta) : null; } catch (e) { best.meta = null; }
-            best.lowerIsBetter = !!best.lowerIsBetter;
-          }
+          if (best) totalRecords++;
           totalPlays += plays;
           gamesOut[gid] = {
             gameId: gid,
@@ -819,7 +988,7 @@ export default {
             lowerIsBetter: cfg.lowerIsBetter,
             plays,
             entries,
-            best: best || null
+            best
           };
         }
 
@@ -833,7 +1002,7 @@ export default {
         const order = cfg.lowerIsBetter ? 'ASC' : 'DESC';
 
         const rows = await db.prepare(
-          `SELECT id, run_id as runId, player_name as playerName, score, label, meta, created_at as createdAt
+          `SELECT id, player_name as playerName, score, label, meta, created_at as createdAt
            FROM scores WHERE game_id = ?1 ORDER BY score ${order}, id ASC LIMIT ?2`
         ).bind(gid, limit).all();
 
@@ -860,27 +1029,42 @@ export default {
       }
 
       if (path === '/api/scores' && request.method === 'POST') {
+        const limited = checkRateLimit(request, 'scores_post', 60, 60 * 1000);
+        if (limited) return limited;
+
         const body = await request.json().catch(() => ({}));
         const gid = cleanText(body.gameId, 40);
         if (!gid) return jsonResponse({ ok: false, error: 'Missing gameId' }, 400);
         const validationError = validateEroadtripScore(gid, body);
         if (validationError) return jsonResponse({ ok: false, error: validationError }, 400);
+        if (!Object.hasOwn(GAMES_META, gid) || GAMES_META[gid].noLeaderboard) {
+          return jsonResponse({ ok: false, error: 'Unknown gameId' }, 400);
+        }
 
-        const cfg = GAMES_META[gid] || { title: gid, lowerIsBetter: false };
+        const cfg = GAMES_META[gid];
         const playerName = cleanText(body.playerName || 'Spieler', 24) || 'Spieler';
         const score = Math.round(Number(body.score) || 0);
+        if (!Number.isFinite(score)) return jsonResponse({ ok: false, error: 'Invalid score' }, 400);
         const label = cleanText(body.label || String(score), 80);
         const runId = body.runId ? cleanText(body.runId, 64) : null;
         const metaStr = body.meta ? JSON.stringify(body.meta) : null;
+        if (metaStr && metaStr.length > 2048) {
+          return jsonResponse({ ok: false, error: 'Score metadata too large' }, 400);
+        }
 
         let existingIsBetter = true;
         let existingScoreVal = score;
+        let updateToken = null;
 
         if (runId) {
           const existing = await db.prepare('SELECT id, game_id AS gameId, score FROM scores WHERE run_id = ?1').bind(runId).first();
           if (existing) {
-            if (existing.gameId !== gid && (isEroadtripBoard(gid) || isEroadtripBoard(existing.gameId))) {
+            if (existing.gameId !== gid) {
               return jsonResponse({ ok: false, error: 'runId belongs to a different board' }, 400);
+            }
+            const tokenOk = await verifyScoreUpdateToken(body.updateToken, gid, runId, env.JWT_SECRET);
+            if (!tokenOk) {
+              return jsonResponse({ ok: false, error: 'Unauthorized run update' }, 403);
             }
             existingScoreVal = Number(existing.score);
             existingIsBetter = cfg.lowerIsBetter ? score < existingScoreVal : score > existingScoreVal;
@@ -891,6 +1075,7 @@ export default {
             } else {
               await db.prepare('UPDATE scores SET player_name = ?1 WHERE id = ?2').bind(playerName, existing.id).run();
             }
+            updateToken = body.updateToken;
           } else {
             await db.batch([
               db.prepare(
@@ -902,6 +1087,7 @@ export default {
                  ON CONFLICT(game_id) DO UPDATE SET plays = plays + 1, updated_at = datetime('now')`
               ).bind(gid)
             ]);
+            updateToken = await signScoreUpdateToken(gid, runId, env.JWT_SECRET);
           }
         } else {
           await db.batch([
@@ -923,7 +1109,7 @@ export default {
           `SELECT COUNT(*) + 1 as rk FROM scores WHERE game_id = ?1 AND score ${compOp} ?2`
         ).bind(gid, effectiveScore).first();
         const bestRaw = await db.prepare(
-          `SELECT id, run_id as runId, player_name as playerName, score, label, meta, created_at as createdAt
+          `SELECT id, player_name as playerName, score, label, meta, created_at as createdAt
            FROM scores WHERE game_id = ?1 ORDER BY score ${order}, id ASC LIMIT 1`
         ).bind(gid).first();
         let best = null;
@@ -946,15 +1132,21 @@ export default {
           isGlobalRecord: rank === 1,
           plays,
           entries,
-          best
+          best,
+          ...(updateToken ? { updateToken } : {})
         });
       }
 
       // ----------------------------------------------------------------------
       // TELEGRAM WEBHOOK: POST /api/telegram/webhook
-      // Ermöglicht direkte Antworten aus Telegram als KI-Agent auf Community-Beiträge
+      // Ermöglicht direkte Antworten aus Telegram als KI-Assistent auf Community-Beiträge
       // ----------------------------------------------------------------------
       if (path === '/api/telegram/webhook' && request.method === 'POST') {
+        const providedSecret = request.headers.get('X-Telegram-Bot-Api-Secret-Token') || '';
+        if (!env.TELEGRAM_WEBHOOK_SECRET || !await timingSafeEqualStr(providedSecret, env.TELEGRAM_WEBHOOK_SECRET)) {
+          return jsonResponse({ ok: false, error: 'Unauthorized webhook' }, 401);
+        }
+
         const update = await request.json().catch(() => ({}));
         const msg = update?.message || update?.edited_message;
         if (!msg || !msg.text) {
@@ -972,8 +1164,8 @@ export default {
             env,
             ctx,
             `🤖 <b>HunterJoe Telegram-Bridge aktiv</b>\n\n`
-            + `• Antworte direkt auf eine Meldung (oder nutze <code>/fix &lt;Text&gt;</code> bzw. <code>/reply &lt;Text&gt;</code>), um als <b>KI-Agent (Antigravity)</b> zu antworten.\n`
-            + `• Mit <code>/delete</code> (oder <code>/delete &lt;Beitrag-ID&gt;</code>) löschst du die letzte Agent-Antwort wieder.`
+            + `• Antworte direkt auf eine Meldung (oder nutze <code>/fix &lt;Text&gt;</code> bzw. <code>/reply &lt;Text&gt;</code>), um als <b>KI-Assistent</b> zu antworten.\n`
+            + `• Mit <code>/delete</code> (oder <code>/delete &lt;Beitrag-ID&gt;</code>) löschst du die letzte Assistenten-Antwort wieder.`
           );
           return jsonResponse({ ok: true });
         }
@@ -996,19 +1188,19 @@ export default {
             if (latestPost?.post_id) postId = Number(latestPost.post_id);
           }
           if (!postId) {
-            notifyTelegram(env, ctx, '⚠️ Keine Agent-Antwort zum Löschen gefunden.');
+            notifyTelegram(env, ctx, '⚠️ Keine Assistenten-Antwort zum Löschen gefunden.');
             return jsonResponse({ ok: true });
           }
           const lastReply = await db.prepare(
             `SELECT id FROM feedback_replies WHERE post_id = ?1 AND author_role = 'agent' ORDER BY id DESC LIMIT 1`
           ).bind(postId).first().catch(() => null);
           if (!lastReply?.id) {
-            notifyTelegram(env, ctx, `⚠️ Keine Agent-Antwort unter Beitrag #${escapeTelegramHtml(postId)} gefunden.`);
+            notifyTelegram(env, ctx, `⚠️ Keine Assistenten-Antwort unter Beitrag #${escapeTelegramHtml(postId)} gefunden.`);
             return jsonResponse({ ok: true });
           }
           await db.prepare(`DELETE FROM feedback_replies WHERE id = ?1`).bind(lastReply.id).run();
           await db.prepare(`UPDATE feedback_posts SET status = 'open', updated_at = datetime('now') WHERE id = ?1`).bind(postId).run();
-          notifyTelegram(env, ctx, `🗑️ Letzte Agent-Antwort unter Beitrag #${escapeTelegramHtml(postId)} gelöscht (Status wieder <b>Offen</b>).`);
+          notifyTelegram(env, ctx, `🗑️ Letzte Assistenten-Antwort unter Beitrag #${escapeTelegramHtml(postId)} gelöscht (Status wieder <b>Offen</b>).`);
           return jsonResponse({ ok: true, deletedReplyId: lastReply.id, postId });
         }
 
@@ -1063,7 +1255,7 @@ export default {
 
         await db.prepare(
           `INSERT INTO feedback_replies (post_id, author_id, author_name, author_role, body, new_status)
-           VALUES (?1, 0, '🤖 KI-Agent (Antigravity)', 'agent', ?2, ?3)`
+           VALUES (?1, 0, '🤖 KI-Assistent', 'agent', ?2, ?3)`
         ).bind(postId, finalText, newStatus).run();
 
         await db.prepare(
@@ -1084,7 +1276,8 @@ export default {
 
       return jsonResponse({ ok: false, error: 'Route not found: ' + path }, 404);
     } catch (err) {
-      return jsonResponse({ ok: false, error: String(err?.message || err) }, 500);
+      console.error('Worker error:', err);
+      return jsonResponse({ ok: false, error: 'Interner Serverfehler' }, 500);
     }
   }
 };

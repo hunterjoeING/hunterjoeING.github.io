@@ -57,7 +57,7 @@ export function computeTurbineTelemetry(windSpeed) {
     status = 'cutout';
     statusLabel = 'Sturmabschaltung (> 25 m/s)';
     powerMW = 0;
-    rotorRpm = 0.25; // langsames Trudeln / Bremse aktiv
+    rotorRpm = 0; // Mechanische Bremse hält Rotor fest
     pitchDeg = 86; // volle Fahnenstellung
     brakeActive = true;
   }

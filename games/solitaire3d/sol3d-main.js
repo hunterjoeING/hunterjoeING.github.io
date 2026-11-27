@@ -227,7 +227,11 @@ function initSolitaire3D() {
     timerInterval = null;
   }
 
+  let winTimer = null;
+
   function startNewGame({ seed = null } = {}) {
+    clearTimeout(winTimer);
+    winTimer = null;
     stopTimer();
     elapsedSec = 0;
     timerStarted = false;
@@ -251,6 +255,8 @@ function initSolitaire3D() {
   }
 
   function handleWin() {
+    winTimer = null;
+    if (!engine.won) return;
     stopTimer();
     const timeBonus = Math.max(100, Math.round(60000 / Math.max(30, elapsedSec)));
     const finalScore = engine.score + timeBonus;
@@ -305,7 +311,8 @@ function initSolitaire3D() {
     }
 
     if (moveRes.won) {
-      setTimeout(() => handleWin(), 420);
+      clearTimeout(winTimer);
+      winTimer = setTimeout(() => handleWin(), 420);
     }
   }
 
@@ -334,7 +341,8 @@ function initSolitaire3D() {
       notifyClearedSequences(res.clearedSequences);
     }
     if (res.won) {
-      setTimeout(() => handleWin(), 450);
+      clearTimeout(winTimer);
+      winTimer = setTimeout(() => handleWin(), 450);
     }
   }
 
@@ -498,11 +506,12 @@ function initSolitaire3D() {
 
   function finishPointer(e) {
     clearTimeout(longPressTimer);
+    const isCancel = e.type === 'pointercancel';
 
     if (pendingStockClick && e.pointerId === pendingStockClick.pointerId) {
       const dist = Math.hypot(e.clientX - pendingStockClick.x, e.clientY - pendingStockClick.y);
       pendingStockClick = null;
-      if (dist < 18) {
+      if (!isCancel && dist < 18) {
         handleDrawStock();
       }
       return;
@@ -514,6 +523,13 @@ function initSolitaire3D() {
     try {
       canvas.releasePointerCapture(e.pointerId);
     } catch (_) {}
+
+    if (isCancel) {
+      if (sess.dragging) scene.endDrag();
+      scene.setValidDropTargets(null, null);
+      scene.syncState(engine);
+      return;
+    }
 
     if (sess.dragging) {
       const pt = scene.raycastDragPlane(e.clientX, e.clientY);
@@ -670,14 +686,22 @@ function initSolitaire3D() {
   });
 
   if (customColorInput) {
-    const handleCustomColor = (e) => {
-      currentColor = e.target.value;
+    let colorDebounceTimer = null;
+    const applyCustomColor = (val) => {
+      currentColor = val;
       savePref(PREF_TABLE_COLOR_KEY, currentColor);
       scene.setTableTheme(currentSurface, currentColor);
       syncTableThemeUI();
     };
-    customColorInput.addEventListener('input', handleCustomColor);
-    customColorInput.addEventListener('change', handleCustomColor);
+    customColorInput.addEventListener('input', (e) => {
+      const val = e.target.value;
+      clearTimeout(colorDebounceTimer);
+      colorDebounceTimer = setTimeout(() => applyCustomColor(val), 150);
+    });
+    customColorInput.addEventListener('change', (e) => {
+      clearTimeout(colorDebounceTimer);
+      applyCustomColor(e.target.value);
+    });
   }
 
   if (btnFullscreen) {
@@ -762,6 +786,9 @@ function initSolitaire3D() {
     new ResizeObserver(() => scene.resize()).observe(stageEl);
   }
 
+  if (window.ArcadeAudio) {
+    window.ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+  }
   startNewGame();
 
   let lastTime = performance.now();

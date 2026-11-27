@@ -37,6 +37,7 @@ let waveSpawnTimer = 0.6;
 let bossCooldown = 16;
 let sfxShotCd = 0;
 let shakeAmt = 0;
+let currentRunId = ArcadeScores.newRunId('zombie');
 
 let bullets = [];
 let zombies = [];
@@ -109,6 +110,7 @@ function startGame() {
   barrels = [];
   fx = [];
   floaters = [];
+  currentRunId = ArcadeScores.newRunId('zombie');
   spawnZombiePack(2);
   updateHUD();
 }
@@ -187,8 +189,8 @@ function makeRandomGatePair() {
     const val = Math.random() < 0.78 ? startNeg : 1;
     return {
       side,
-      uMin: side < 0 ? -0.94 : 0.05,
-      uMax: side < 0 ? -0.05 : 0.94,
+      uMin: side < 0 ? -0.94 : 0,
+      uMax: side < 0 ? 0 : 0.94,
       z: 1.0,
       kind: 'add',
       val,
@@ -212,8 +214,8 @@ function makeRandomGatePair() {
     const h = hazards[Math.floor(Math.random() * hazards.length)];
     return {
       side,
-      uMin: side < 0 ? -0.94 : 0.05,
-      uMax: side < 0 ? -0.05 : 0.94,
+      uMin: side < 0 ? -0.94 : 0,
+      uMax: side < 0 ? 0 : 0.94,
       z: 1.0,
       kind: h.op,
       val: h.val,
@@ -227,8 +229,8 @@ function makeRandomGatePair() {
     if (wave >= 2 && squad <= 18 && Math.random() < 0.22) {
       return {
         side,
-        uMin: side < 0 ? -0.94 : 0.05,
-        uMax: side < 0 ? -0.05 : 0.94,
+        uMin: side < 0 ? -0.94 : 0,
+        uMax: side < 0 ? 0 : 0.94,
         z: 1.0,
         kind: 'mult',
         val: 2,
@@ -248,8 +250,8 @@ function makeRandomGatePair() {
     const wp = available[Math.floor(Math.random() * available.length)];
     return {
       side,
-      uMin: side < 0 ? -0.94 : 0.05,
-      uMax: side < 0 ? -0.05 : 0.94,
+      uMin: side < 0 ? -0.94 : 0,
+      uMax: side < 0 ? 0 : 0.94,
       z: 1.0,
       kind: wp.op,
       val: wp.val,
@@ -357,7 +359,7 @@ function triggerGameOver(reason) {
   running = false;
   gameOver = true;
   ArcadeAudio.fail();
-  const isNew = ArcadeScores.record('zombie', score, `${score} Pkt (Welle ${wave})`, false);
+  const isNew = ArcadeScores.record('zombie', score, `${score} Pkt (Welle ${wave})`, false, { runId: currentRunId });
   refreshTopBest();
   document.getElementById('ov-emoji').textContent = isNew ? '🏆' : '💀';
   document.getElementById('ov-title').textContent = isNew ? 'Neuer Zombie-Rekord!' : 'Überrannt!';
@@ -451,6 +453,7 @@ function step(dt) {
       const hit = playerU >= g.uMin && playerU <= g.uMax;
       if (hit) applyGate(g);
       gates.splice(i, 1);
+      if (gameOver) return;
     }
   }
 
@@ -672,6 +675,7 @@ stage.addEventListener('pointerdown', (e) => {
   pointerActive = true;
   dragStartX = e.clientX;
   dragStartU = targetU;
+  try { stage.setPointerCapture(e.pointerId); } catch (_) {}
 });
 stage.addEventListener('pointermove', (e) => {
   if (pointerActive && running) updateDragU(e.clientX);

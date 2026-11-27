@@ -80,8 +80,11 @@ function init() {
   // =========================================================================
   // THEME SYNC (DARK / LIGHT)
   // =========================================================================
+  let lastTheme = null;
   function syncSceneTheme() {
     const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+    if (theme === lastTheme) return;
+    lastTheme = theme;
     const isDark = theme === 'dark';
     scene.background = new THREE.Color(isDark ? 0x0b1220 : 0xeef3fa);
     scene.fog = new THREE.Fog(isDark ? 0x0b1220 : 0xeef3fa, 34, 78);
@@ -288,6 +291,12 @@ function init() {
       if (dragging) scrub(e);
     });
     chartSvg.addEventListener('pointerup', () => {
+      dragging = false;
+    });
+    chartSvg.addEventListener('pointercancel', () => {
+      dragging = false;
+    });
+    chartSvg.addEventListener('lostpointercapture', () => {
       dragging = false;
     });
   }

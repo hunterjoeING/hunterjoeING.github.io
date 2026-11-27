@@ -2217,7 +2217,7 @@ html[data-theme="light"] .hb-close-btn:hover {
           <option value="5">Level 5 · 8³</option>
           <option value="6">Level 6 · 🛸 Enterprise</option>
           <option value="7" data-i18n="lvl_custom">✦ Deine Geometrie!</option>
-          <option value="8" id="hs-community-opt">🏆 AgentCore 3D – Antigravity</option>
+          <option value="8" id="hs-community-opt">🏆 AgentCore 3D – KI-Agent</option>
           <option value="9" data-i18n="lvl_penrose">📐 Level 9 · Penrose-Escher (Unmöglich)</option>
           <option value="10" data-i18n="lvl_moebius">♾️ Level 10 · Möbius-Tesserakt (Unendlich)</option>
           <option value="11" data-i18n="lvl_elmo">🚗 Level 11 · Elmo (Tesla Model Y)</option>
@@ -3161,9 +3161,9 @@ const MODERN_BACKGROUNDS = [
   {
     id: 'blueprint-grid',
     title: {
-      de: '8/8 · Antigravity Agent Blueprint',
-      en: '8/8 · Antigravity Agent Blueprint',
-      es: '8/8 · Plano de Agente Antigravity'
+      de: '8/8 · KI-Agent Blueprint',
+      en: '8/8 · AI Agent Blueprint',
+      es: '8/8 · Plano de Agente IA'
     },
     hint: {
       de: 'Blaupause der Zukunft: Chatbots waren gestern – autonome KI-Agenten gestalten heute.',
@@ -3211,7 +3211,8 @@ function initBackgroundCanvas() {
   try {
     const saved = localStorage.getItem('ms3d_bg_index');
     if (saved !== null && !isNaN(parseInt(saved, 10))) {
-      currentBgIndex = parseInt(saved, 10) % MODERN_BACKGROUNDS.length;
+      const len = MODERN_BACKGROUNDS.length;
+      currentBgIndex = ((parseInt(saved, 10) % len) + len) % len;
     }
   } catch (e) {}
 
@@ -4403,6 +4404,13 @@ let currentVoxelPartColors = new Map();
 
 function clearImpossiblePortals() {
   if (impossiblePortalGroup) {
+    impossiblePortalGroup.traverse(obj => {
+      if (obj.geometry && typeof obj.geometry.dispose === 'function') obj.geometry.dispose();
+      if (obj.material) {
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach(m => { if (m && typeof m.dispose === 'function') m.dispose(); });
+      }
+    });
     scene.remove(impossiblePortalGroup);
     impossiblePortalGroup = null;
   }
@@ -8059,7 +8067,12 @@ function initGame() {
   currentBoardVoxelScale = 1.0;
 
   grid.forEach(c => {
-    if (c.mesh) scene.remove(c.mesh);
+    if (c.mesh) {
+      scene.remove(c.mesh);
+      if (c.isoData && c.mesh.geometry && typeof c.mesh.geometry.dispose === 'function') {
+        c.mesh.geometry.dispose();
+      }
+    }
     if (c.overlayMesh) scene.remove(c.overlayMesh);
   });
   grid = [];
@@ -10896,7 +10909,7 @@ function buildHighscoreRowsHTML(globalRows) {
 
   const benchmarkRows = [
     ...mappedUserRows,
-    { rank: '🤖 A1', name: '⚡ Antigravity_KI_Agent', level: 'L9 · 📐 Penrose', time: '006s', note: 'Referenz: Löst nicht-euklidische Nachbarschaften' },
+    { rank: '🤖 A1', name: '⚡ KI_Agent_Ref', level: 'L9 · 📐 Penrose', time: '006s', note: 'Referenz: Löst nicht-euklidische Nachbarschaften' },
     { rank: '🤖 A2', name: '🛠️ Autonomous_Tool_Agent', level: 'L10 · ♾️ Möbius', time: '015s', note: 'Referenz: 4D-Tesserakt & Möbius mit 0 Fehltritten' },
     { rank: '💤 999', name: '💬 Reiner_Text_Chatbot_v1', level: 'L1 · 4³', time: '∞', note: 'Schreibt noch eine 500-Wörter-Antwort darüber, dass er keine Maus bedienen kann.' }
   ];
@@ -10969,6 +10982,15 @@ function renderHighscoreModalHTML() {
   `;
 }
 
+function escapeMsHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // 5. Savegame Modal (3 Local Storage Slots)
 function renderSavegameModalHTML() {
   const slots = [1, 2, 3].map(slotId => {
@@ -10991,7 +11013,7 @@ function renderSavegameModalHTML() {
           <div>
             <strong style="color:var(--neon-cyan)">Slot #${s.slotId}</strong><br>
             <span style="font-size:12px;color:var(--text-muted)">
-              ${s.data ? `Level ${s.data.level} (${s.data.geoMode}) · ⏱ ${s.data.timer}s · 📅 ${s.data.savedAt}` : 'Leer – bereit zum Speichern'}
+              ${s.data ? `Level ${escapeMsHtml(s.data.level)} (${escapeMsHtml(s.data.geoMode)}) · ⏱ ${escapeMsHtml(s.data.timer)}s · 📅 ${escapeMsHtml(s.data.savedAt)}` : 'Leer – bereit zum Speichern'}
             </span>
           </div>
           <div style="display:flex;gap:8px;">
@@ -11045,20 +11067,26 @@ function loadGameFromSlot(slotId) {
     level = data.level || 1;
     density = data.density || 0.06;
     initGame();
-    timer = data.timer || 0;
+    timer = Number.isFinite(Number(data.timer)) ? Number(data.timer) : 0;
     firstClick = !!data.firstClick;
-    revealed = data.revealed || 0;
-    flags = data.flags || 0;
+    revealed = Number.isFinite(Number(data.revealed)) ? Number(data.revealed) : 0;
+    flags = Number.isFinite(Number(data.flags)) ? Number(data.flags) : 0;
     usedAutopilot = !!data.usedAutopilot;
     if (Array.isArray(data.cells) && data.cells.length === grid.length) {
       data.cells.forEach((sc, idx) => {
-        Object.assign(grid[idx], sc);
-        grid[idx].userHidden = !!sc.userHidden;
-        if (grid[idx].userHidden) {
+        if (!sc || typeof sc !== 'object') return;
+        const cell = grid[idx];
+        cell.mine = !!sc.mine;
+        cell.mines = Number.isFinite(Number(sc.mines)) ? Number(sc.mines) : 0;
+        cell.revealed = !!sc.revealed;
+        cell.flagged = !!sc.flagged;
+        cell.question = !!sc.question;
+        cell.userHidden = !!sc.userHidden;
+        if (cell.userHidden) {
           _userHiddenCount++;
-          userHiddenHistory.push([grid[idx]]);
+          userHiddenHistory.push([cell]);
         }
-        updateCellVisual(grid[idx], true);
+        updateCellVisual(cell, true);
       });
       if (isInstancedBoard && boardInstancedMesh) {
         boardInstancedMesh.instanceMatrix.needsUpdate = true;
@@ -11070,7 +11098,7 @@ function loadGameFromSlot(slotId) {
     if (data.gameOver) {
       gameOver = true;
       gameLost = !!data.gameLost;
-      if (typeof stopTimer === 'function') stopTimer();
+      if (timerInt) { clearInterval(timerInt); timerInt = null; }
     } else if (!firstClick) {
       startTimerIfNeeded();
     }

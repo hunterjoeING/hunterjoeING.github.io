@@ -1229,7 +1229,7 @@
               const cellGroup = new THREE.Group();
               cellGroup.position.set(bx * currentSpread, by * currentSpread, bz * currentSpread);
 
-              const mesh = new THREE.Mesh(boxGeo, matUnrevealed.clone());
+              const mesh = new THREE.Mesh(boxGeo, matUnrevealed);
               const wireframe = new THREE.LineSegments(edgesGeo, lineMatDefault);
               mesh.add(wireframe);
               cellGroup.add(mesh);
@@ -1491,7 +1491,7 @@
             }
           } else {
             cell.wireframe.material = lineMatDefault;
-            cell.mesh.material = matUnrevealed.clone();
+            cell.mesh.material = matUnrevealed;
           }
           return;
         }
@@ -1918,8 +1918,14 @@
         }
       }, { passive: false });
 
+      function isOverlayOpen(target) {
+        if (target && target.closest && target.closest('.arcade-modal-backdrop, #abm-drawer, dialog[open]')) return true;
+        return Boolean(document.querySelector('.arcade-modal-backdrop, #abm-drawer.open, dialog[open]'));
+      }
+
       // Handle 2-finger pinch anywhere on screen & block browser page-zoom completely
       document.addEventListener('touchstart', (e) => {
+        if (isOverlayOpen(e.target)) return;
         if (e.touches.length >= 2) {
           e.preventDefault();
           touchMode = 'pinch';
@@ -1929,6 +1935,7 @@
       }, { passive: false });
 
       document.addEventListener('touchmove', (e) => {
+        if (isOverlayOpen(e.target)) return;
         if (e.touches.length >= 2) {
           e.preventDefault();
           touchMode = 'pinch';
@@ -1964,7 +1971,9 @@
       }, { passive: false });
 
       ['gesturestart', 'gesturechange', 'gestureend'].forEach((evtName) => {
-        document.addEventListener(evtName, (e) => e.preventDefault(), { passive: false });
+        document.addEventListener(evtName, (e) => {
+          if (!isOverlayOpen(e.target)) e.preventDefault();
+        }, { passive: false });
       });
 
       container.addEventListener('contextmenu', (e) => e.preventDefault());
@@ -1977,6 +1986,7 @@
       }
 
       window.addEventListener('wheel', (e) => {
+        if (isOverlayOpen(e.target)) return;
         if (e.target && e.target.tagName === 'SELECT') return;
         e.preventDefault();
         let dy = e.deltaY;

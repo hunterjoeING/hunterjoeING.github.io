@@ -254,11 +254,26 @@ export class TDScene {
 
   rebuildMap(pathCells, waypoints) {
     this.waypoints = waypoints;
+    const sharedMats = new Set([this.tileEvenMat, this.tileOddMat, this.pathMat, this._mapGeos?.tipMat]);
     while (this.mapGroup.children.length > 0) {
       const ch = this.mapGroup.children[0];
       this.mapGroup.remove(ch);
-      if (ch.geometry && !ch.userData.sharedGeo) ch.geometry.dispose();
+      ch.traverse(obj => {
+        if (obj.geometry && !obj.userData?.sharedGeo && typeof obj.geometry.dispose === 'function') {
+          obj.geometry.dispose();
+        }
+        if (obj.material) {
+          const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+          mats.forEach(m => {
+            if (m && !sharedMats.has(m) && !m.userData?.sharedMat && typeof m.dispose === 'function') {
+              m.dispose();
+            }
+          });
+        }
+      });
     }
+    this.spawnGate = null;
+    this.bastionCore = null;
     this.pathDashes = [];
 
     if (!this._mapGeos) {
@@ -521,7 +536,7 @@ export class TDScene {
 
     const onUp = (e) => {
       const p = pointers.get(e.pointerId);
-      const wasTap = p && mode === 'down' && Math.hypot(p.x - p.startX, p.y - p.startY) <= 9 && p.btn === 0;
+      const wasTap = e.type !== 'pointercancel' && p && mode === 'down' && Math.hypot(p.x - p.startX, p.y - p.startY) <= 9 && p.btn === 0;
       pointers.delete(e.pointerId);
       if (pointers.size === 0) {
         if (wasTap) {

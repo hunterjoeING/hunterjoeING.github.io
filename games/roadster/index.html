@@ -618,11 +618,18 @@
     }
     resize();
 
+    function normalizeAngle(rad) {
+      return Math.atan2(Math.sin(rad), Math.cos(rad));
+    }
+
+    const SAFE_SINK_MPS = 5.2;
+    const SAFE_ANGLE_DEG = 26;
+
     function stepPhysics(dt) {
       const cfg = LEVELS[lvlIdx];
       phaseTime += dt;
 
-      if (cfg.moving) {
+      if (cfg.moving && state !== 'landed') {
         padCurrentX = cfg.padX + Math.sin(performance.now() * 0.0014) * 85;
       }
 
@@ -686,29 +693,29 @@
           }
         }
 
-        // Attitude + horizontal Cold-Gas RCS Thrusters
+        // Attitude + horizontal Cold-Gas RCS Thrusters (exhaust opposite to thrust vector)
         const tiltForce = autoAssist ? 4.2 : 5.4;
         if (keys.left) {
           car.angVel += tiltForce * dt;
           if (hasGas) {
             car.vx -= 140 * dt;
             car.gas = Math.max(0, car.gas - 5 * dt);
-            spawnColdGas(car.x + 24 * cos, car.y + 24 * sin, sin, cos, 0.28, 130, 1);
+            spawnColdGas(car.x + 24 * cos, car.y + 24 * sin, cos, sin, 0.28, 130, 1);
           }
         } else if (keys.right) {
           car.angVel -= tiltForce * dt;
           if (hasGas) {
             car.vx += 140 * dt;
             car.gas = Math.max(0, car.gas - 5 * dt);
-            spawnColdGas(car.x - 24 * cos, car.y - 24 * sin, -sin, -cos, 0.28, 130, 1);
+            spawnColdGas(car.x - 24 * cos, car.y - 24 * sin, -cos, -sin, 0.28, 130, 1);
           }
         } else if (autoAssist) {
           // Gentle gyro assist returns Roadster toward level flight automatically
-          car.angVel += (-car.angle * 5.2 - car.angVel * 3.8) * dt;
+          car.angVel += (-normalizeAngle(car.angle) * 5.2 - car.angVel * 3.8) * dt;
         }
 
         if (!autoAssist) car.angVel *= Math.pow(0.88, dt * 60);
-        car.angle += car.angVel * dt;
+        car.angle = normalizeAngle(car.angle + car.angVel * dt);
         if (autoAssist) {
           car.angle = Math.max(-0.62, Math.min(0.62, car.angle));
         }
@@ -745,8 +752,8 @@
 
         if (car.x >= padLeft - 10 && car.x <= padRight + 10 && car.y <= padSurfaceY && car.vy <= 0 && car.y >= cfg.padY - 22) {
           const sinkSpeedMps = Math.abs(car.vy) / 28; // Scaled to readable m/s
-          const deg = Math.abs((car.angle * 180) / Math.PI);
-          if (sinkSpeedMps <= 5.2 && deg <= 26) {
+          const deg = Math.abs((normalizeAngle(car.angle) * 180) / Math.PI);
+          if (sinkSpeedMps <= SAFE_SINK_MPS && deg <= SAFE_ANGLE_DEG) {
             // Safe landing!
             car.y = padSurfaceY;
             car.vy = 0;
@@ -782,16 +789,16 @@
 
       // Update HUD
       const sinkMps = state === 'air' ? Math.max(0, -car.vy / 28) : 0;
-      const deg = Math.round((car.angle * 180) / Math.PI);
+      const deg = Math.round((normalizeAngle(car.angle) * 180) / Math.PI);
       const isLightHud = window.ArcadeTheme && ArcadeTheme.isLight();
       const vyEl = document.getElementById('hud-vy');
       vyEl.textContent = sinkMps.toFixed(1);
-      vyEl.style.color = sinkMps > 5.0
+      vyEl.style.color = sinkMps > SAFE_SINK_MPS
         ? (isLightHud ? '#be123c' : '#fb7185')
         : (sinkMps > 3.5 ? (isLightHud ? '#b45309' : '#fbbf24') : (isLightHud ? '#15803d' : '#4ade80'));
       const angEl = document.getElementById('hud-ang');
       angEl.textContent = deg + '°';
-      angEl.style.color = Math.abs(deg) > 22
+      angEl.style.color = Math.abs(deg) > SAFE_ANGLE_DEG
         ? (isLightHud ? '#be123c' : '#fb7185')
         : (isLightHud ? '#15803d' : '#4ade80');
       document.getElementById('hud-gas').style.width = Math.round(car.gas) + '%';
@@ -804,8 +811,8 @@
       }
       ArcadeAudio.win();
 
-      const precisionBonus = Math.max(0, Math.round((5.2 - sinkMps) * 90));
-      const angleBonus = Math.max(0, Math.round((25 - deg) * 12));
+      const precisionBonus = Math.max(0, Math.round((SAFE_SINK_MPS - sinkMps) * 90));
+      const angleBonus = Math.max(0, Math.round((SAFE_ANGLE_DEG - deg) * 12));
       const gasBonus = Math.round(car.gas * 6);
       const pts = 300 + precisionBonus + angleBonus + gasBonus;
       totalScore += pts;
@@ -1329,7 +1336,7 @@
       if (state === 'air' || state === 'ramp') {
         const dxMeters = Math.round((padCurrentX - car.x) / 10);
         const vSpd = Math.round(Math.hypot(car.vx, car.vy) / 10);
-        const safeRate = Math.abs(car.vy) < 175 && Math.abs(((car.angle + Math.PI) % (Math.PI * 2)) - Math.PI) < 0.32;
+        const safeRate = (Math.max(0, -car.vy / 28) <= SAFE_SINK_MPS) && (Math.abs((normalizeAngle(car.angle) * 180) / Math.PI) <= SAFE_ANGLE_DEG);
 
         ctx.fillStyle = isLight ? 'rgba(255, 255, 255, 0.90)' : 'rgba(2, 6, 23, 0.72)';
         ctx.strokeStyle = isLight

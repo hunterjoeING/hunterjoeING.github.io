@@ -264,10 +264,13 @@ function drawCourtCardArt(ctx, w, h, rank, suitKey, suitColor, isRed) {
 function createCardFaceTexture(card, maxAnisotropy) {
   const w = 768;
   const h = 1075;
+  const texW = 512;
+  const texH = 716;
   const canvas = document.createElement('canvas');
-  canvas.width = w;
-  canvas.height = h;
+  canvas.width = texW;
+  canvas.height = texH;
   const ctx = canvas.getContext('2d');
+  ctx.scale(texW / w, texH / h);
 
   drawPaperBase(ctx, w, h);
 
@@ -343,10 +346,13 @@ function createCardFaceTexture(card, maxAnisotropy) {
 function createCardBackTexture(maxAnisotropy) {
   const w = 768;
   const h = 1075;
+  const texW = 512;
+  const texH = 716;
   const canvas = document.createElement('canvas');
-  canvas.width = w;
-  canvas.height = h;
+  canvas.width = texW;
+  canvas.height = texH;
   const ctx = canvas.getContext('2d');
+  ctx.scale(texW / w, texH / h);
 
   // Crisp bright edge for clear separation between stacked face-down cards
   ctx.fillStyle = '#eff2f5';

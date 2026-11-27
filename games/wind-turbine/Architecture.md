@@ -38,3 +38,4 @@ Interaktiver Three.js-3D-Explainer einer 3,6-MW-Horizontalachsen-Windkraftanlage
 
 - **2026-11-25** (`main`, `8c0fce8`) – Erstversion `v0.1.0`: Vollständiger 3D-Explainer einer 3,6-MW-Windkraftanlage mit Cutaway, X-Ray, Exploded View (12 Labels), Wind-Regler, interaktiver Leistungskurve und 6-Schritte-Tour.
 - **2026-11-25** (`main`) – Patch `v0.1.1`: Rotationsachse von Bremsscheibe, schneller Welle & Kupplung (`rotateX(Math.PI / 2)` in Geometrie vorgekippt), Getriebe-Achsabstände (24:13 / 22:11) und Blattausrichtung korrigiert; mobiles Steuerungsmenü mit festem „Zurück zu 3D“-Knopf & Backdrop-Tap-Close ergänzt.
+- **2026-11-27** (`main`) – Patch `v0.1.2`: Bauteil-Highlight per geklontem Gruppenmaterial isoliert, Anemometer bei `0,0 m/s` gestoppt, Sturmschutz-Drehzahl (`> 25 m/s`) bei geschlossener Bremse auf `0 U/min` gesetzt sowie `pointercancel`/`lostpointercapture` am Diagramm-Scrubbing und Theme-Sync-Deduplizierung ergänzt.

@@ -849,7 +849,7 @@
       document.getElementById('fact-box').classList.add('hidden');
       document.getElementById('fact-text').textContent = '';
 
-      const isRelaxed = ArcadeQuizPrefs.getRelaxed();
+      const isRelaxed = ArcadeQuizPrefs.isRelaxed();
       const secBtn = document.getElementById('btn-timer-mode');
       if (isRelaxed) {
         questionMaxTime = 0;
@@ -880,27 +880,25 @@
     }
 
     function toggleTimerModeInPlay() {
-      const cur = ArcadeQuizPrefs.getRelaxed();
+      const cur = ArcadeQuizPrefs.isRelaxed();
       ArcadeQuizPrefs.setRelaxed(!cur);
-      ArcadeQuizPrefs.syncMenuBar('time-mode-bar');
-      const isRelaxed = ArcadeQuizPrefs.getRelaxed();
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      const isRelaxed = ArcadeQuizPrefs.isRelaxed();
       const secBtn = document.getElementById('btn-timer-mode');
+      if (timerId) clearInterval(timerId);
+      timerId = null;
 
       if (isRelaxed) {
-        if (timerId) clearInterval(timerId);
-        timerId = null;
         questionMaxTime = 0;
         timeLeft = 0;
         secBtn.textContent = '☕ Entspannt';
         document.getElementById('timer-fill').style.width = '100%';
       } else if (!answered) {
-        const q = deck[qIdx];
-        questionMaxTime = q.diff === 'pro' ? 35 : (q.diff === 'mid' ? 28 : 22);
-        timeLeft = questionMaxTime;
-        secBtn.innerHTML = `⏱ <strong id="q-sec">${timeLeft}</strong>s`;
-        document.getElementById('timer-fill').style.width = '100%';
-        if (timerId) clearInterval(timerId);
-        timerId = setInterval(tickTimer, 1000);
+        // Prevent speed-bonus refill after switching away from Relaxed mid-question
+        questionMaxTime = 0;
+        timeLeft = 0;
+        secBtn.innerHTML = '☕ <span>In Ruhe (Bonus 0)</span>';
+        document.getElementById('timer-fill').style.width = '0%';
       }
     }
 
@@ -919,6 +917,8 @@
       });
 
       const q = deck[qIdx];
+      const activeCatObj = CAT_BY_ID[activeCat] || ALL_CATS[0];
+      ArcadeQuizEngine.markSeen(activeCatObj.boardId, q);
       const diffCfg = DIFF_INFO[q.diff] || DIFF_INFO.mid;
 
       if (isCorrect) {
@@ -962,6 +962,8 @@
       });
 
       const q = deck[qIdx];
+      const activeCatObj = CAT_BY_ID[activeCat] || ALL_CATS[0];
+      ArcadeQuizEngine.markSeen(activeCatObj.boardId, q);
       showFact(false, q, true);
     }
 
@@ -1019,13 +1021,19 @@
       clearInterval(timerId);
 
       const q = deck[qIdx];
+      const activeCatObj = CAT_BY_ID[activeCat] || ALL_CATS[0];
+      if (q) ArcadeQuizEngine.markSeen(activeCatObj.boardId, q);
       deck.splice(qIdx, 1);
       const pool = getMatchingPool(activeCat).filter(item => !deck.includes(item) && item !== q);
       if (pool.length) {
         const replacement = shuffle(pool)[0];
         deck.splice(qIdx, 0, replacement);
       }
-      showQuestion();
+      if (qIdx >= deck.length) {
+        finishQuiz();
+      } else {
+        showQuestion();
+      }
     }
 
     function finishQuiz() {

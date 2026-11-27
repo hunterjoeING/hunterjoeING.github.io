@@ -964,6 +964,10 @@
         clearTimeout(autoTimerId);
         autoTimerId = null;
         clearInterval(timerId);
+        if (state.startTs) {
+          state.elapsed = Math.max(0, Math.floor((Date.now() - state.startTs) / 1000));
+          elTime.textContent = '⏱ ' + fmtTime(state.elapsed);
+        }
         const timeBonus = Math.max(0, Math.round(18000 / Math.max(15, state.elapsed || 15)));
         const finalScore = state.score + timeBonus;
         state.score = finalScore;
@@ -1120,7 +1124,9 @@
             y += card.faceUp ? steps.up : steps.down;
           });
 
-          const totalH = Math.max(baseSlot.offsetHeight || 110, y + 110);
+          const refCardH = elStockSlot.offsetHeight || 110;
+          const lastCardOffset = col.length > 0 ? Math.max(0, y - (col[col.length - 1].faceUp ? steps.up : steps.down)) : 0;
+          const totalH = Math.max(refCardH, lastCardOffset + refCardH + 12);
           colWrap.style.height = totalH + 'px';
           elTableau.appendChild(colWrap);
         }
@@ -1231,7 +1237,7 @@
             return bestArea > 80 ? best : null;
           };
 
-          const onUp = () => {
+          const onUp = (ev) => {
             window.removeEventListener('pointermove', onMove);
             window.removeEventListener('pointerup', onUp);
             window.removeEventListener('pointercancel', onUp);
@@ -1239,6 +1245,12 @@
 
             validTargets.forEach(t => (t.slot || t.el).classList.remove('drop-valid'));
             originEls.forEach(oe => oe.classList.remove('drag-origin-hidden'));
+
+            if (ev && (ev.type === 'pointercancel' || ev.type === 'blur')) {
+              elDragLayer.innerHTML = '';
+              elDragLayer.style.transform = '';
+              return;
+            }
 
             if (dragging) {
               const match = findBestTarget();

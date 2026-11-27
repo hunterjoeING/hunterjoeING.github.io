@@ -582,21 +582,9 @@
         else ArcadeAudio.cardFlip();
 
         const isLightTheme = () => window.ArcadeTheme && ArcadeTheme.isLight();
-        if (!reached2048 && maxTileVal() >= 2048) {
-          reached2048 = true;
-          ArcadeAudio.win();
-          ArcadeScores.record('p2048', score, score + ' Pkt (2048!)', false, { runId: currentRunId });
-          elOvTitle.textContent = '🎉 2048 erreicht!';
-          elOvTitle.dataset.kind = 'win';
-          elOvTitle.style.color = isLightTheme() ? '#b45309' : '#fbbf24';
-          elOvDesc.textContent = 'Du kannst endlos weiterspielen oder eine neue Runde starten.';
-          elOvContinue.style.display = 'inline-flex';
-          elOverlay.classList.add('open');
-          return;
-        }
-
-        if (!hasMoves()) {
+        function triggerGameOverOverlay() {
           gameOver = true;
+          elUndo.disabled = true;
           ArcadeAudio.fail();
           ArcadeScores.record('p2048', score, score + ' Pkt (' + maxTileVal() + ')', false, { runId: currentRunId });
           elOvTitle.textContent = '💥 Keine Züge mehr';
@@ -605,6 +593,30 @@
           elOvDesc.textContent = `Endstand: ${score} Punkte · Höchstes Prisma: ${maxTileVal()}`;
           elOvContinue.style.display = 'none';
           elOverlay.classList.add('open');
+        }
+
+        if (!reached2048 && maxTileVal() >= 2048) {
+          reached2048 = true;
+          ArcadeAudio.win();
+          ArcadeScores.record('p2048', score, score + ' Pkt (2048!)', false, { runId: currentRunId });
+          const canContinue = hasMoves();
+          if (!canContinue) {
+            gameOver = true;
+            elUndo.disabled = true;
+          }
+          elOvTitle.textContent = '🎉 2048 erreicht!';
+          elOvTitle.dataset.kind = 'win';
+          elOvTitle.style.color = isLightTheme() ? '#b45309' : '#fbbf24';
+          elOvDesc.textContent = canContinue
+            ? 'Du kannst endlos weiterspielen oder eine neue Runde starten.'
+            : `Fantastisch – 2048 auf dem letzten Zug! Endstand: ${score} Punkte.`;
+          elOvContinue.style.display = canContinue ? 'inline-flex' : 'none';
+          elOverlay.classList.add('open');
+          return;
+        }
+
+        if (!hasMoves()) {
+          triggerGameOverOverlay();
         }
       }
 
@@ -722,7 +734,8 @@
             const inner = tileEl.querySelector('.tile-inner');
             inner.textContent = cell.val;
             const digits = String(cell.val).length;
-            const baseFont = cellSize * (digits <= 2 ? 0.44 : digits === 3 ? 0.36 : 0.28);
+            const scale = digits <= 2 ? 0.44 : digits === 3 ? 0.36 : digits === 4 ? 0.28 : digits === 5 ? 0.22 : 0.18;
+            const baseFont = cellSize * scale;
             inner.style.fontSize = Math.round(baseFont) + 'px';
 
             if (cell.isMerged) {
@@ -740,11 +753,10 @@
       }
 
       function undo() {
-        if (!undoStack.length) return;
+        if (gameOver || !undoStack.length) return;
         const snap = undoStack.pop();
         grid = snap.grid;
         score = snap.score;
-        gameOver = false;
         elOverlay.classList.remove('open');
         elUndo.disabled = undoStack.length === 0;
         updateBest();

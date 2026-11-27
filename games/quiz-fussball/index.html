@@ -643,7 +643,8 @@
     const DIFF_INFO = {
       easy: { label: '🟢 Tribünengast', cls: 'easy', mult: 1.0 },
       mid:  { label: '🟡 Stammspieler',  cls: 'mid',  mult: 1.2 },
-      pro:  { label: '🔴 Fußball-Guru',  cls: 'pro',  mult: 1.5 }
+      pro:  { label: '🔴 Fußball-Guru',  cls: 'pro',  mult: 1.5 },
+      hard: { label: '🔴 Fußball-Guru',  cls: 'pro',  mult: 1.5 }
     };
 
     let selectedDiff = 'all';
@@ -822,9 +823,8 @@
         timeLeft = 0;
         updateTimerUI();
       } else if (!answered) {
-        if (timeLeft <= 0) timeLeft = questionMaxTime;
         updateTimerUI();
-        startBonusTimer();
+        if (timeLeft > 0) startBonusTimer();
       } else {
         updateTimerUI();
       }

@@ -171,9 +171,13 @@
       return len;
     },
 
-    resolveRoundCount: (requested, poolLen, defaultLen = 20) => {
+    resolveRoundCount: (requested, poolLen, defaultLen = ROUND_SIZE) => {
       if (!poolLen || poolLen <= 0) return 0;
-      return Math.min(ROUND_SIZE, poolLen);
+      if (requested === 'all') return poolLen;
+      const n = parseInt(requested, 10);
+      if (Number.isFinite(n) && n > 0) return Math.min(n, poolLen);
+      const def = parseInt(defaultLen, 10);
+      return Math.min(Number.isFinite(def) && def > 0 ? def : ROUND_SIZE, poolLen);
     },
 
     getSeenStats: (quizId, pool) => {
@@ -313,15 +317,9 @@
         lenBar.insertAdjacentElement('afterend', statusBar);
       }
 
-      let currentLen = window.ArcadeQuizEngine.getRoundLength(lengths, defaultLen, storageKey);
+      let currentLen = ROUND_SIZE;
 
       function renderLenPills() {
-        const pills = lengths.map(val => {
-          const isAll = val === 'all';
-          const label = isAll ? showAllLabel : (val === 20 ? '20 ★' : String(val));
-          return `<button type="button" class="round-len-pill ${String(currentLen) === String(val) ? 'active' : ''}" data-len="${val}">${label}</button>`;
-        }).join('');
-        void pills;
         lenBar.innerHTML = `<span style="font-size:12px;color:var(--text-muted);font-weight:700;">Fragen/Runde: ${ROUND_SIZE}</span>`;
       }
 

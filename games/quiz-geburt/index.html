@@ -388,6 +388,8 @@
       document.getElementById('q-text').textContent = item.q;
       document.getElementById('fact-box').classList.add('hidden');
       document.getElementById('joker-50').disabled = !jokers.f50;
+      const jtInit = document.getElementById('joker-time');
+      if (jtInit) jtInit.disabled = !jokers.time;
       document.getElementById('joker-skip').disabled = !jokers.skip;
 
       const opts = shuffle(item.a.map((txt, idx) => ({ txt, isRight: idx === 0 })));
@@ -423,34 +425,38 @@
     }
 
     function updateTimerUI() {
-      const secEl = document.getElementById('q-sec');
       const fillEl = document.getElementById('timer-fill');
       const speedBtn = document.getElementById('btn-timer-mode');
       if (ArcadeQuizPrefs.isRelaxed()) {
-        secEl.textContent = '∞';
-        speedBtn.innerHTML = '⏱ <strong>∞</strong> (Entspannt)';
-        fillEl.style.width = '100%';
-        fillEl.className = 'timer-fill';
+        if (speedBtn) speedBtn.innerHTML = '⏱ <strong id="q-sec">∞</strong> (Entspannt)';
+        if (fillEl) {
+          fillEl.style.width = '100%';
+          fillEl.className = 'timer-fill';
+        }
         return;
       }
       const s = Math.ceil(timeLeft);
-      secEl.textContent = s;
-      speedBtn.innerHTML = `⏱ <strong>${s}</strong>s`;
+      if (speedBtn) {
+        speedBtn.innerHTML = timeLeft <= 0
+          ? '☕ <strong id="q-sec">0</strong>s (In Ruhe)'
+          : `⏱ <strong id="q-sec">${s}</strong>s`;
+      }
       const pct = Math.max(0, Math.min(100, (timeLeft / questionMaxTime) * 100));
-      fillEl.style.width = pct + '%';
-      fillEl.className = 'timer-fill' + (pct < 25 ? ' crit' : (pct < 50 ? ' warn' : ''));
+      if (fillEl) {
+        fillEl.style.width = pct + '%';
+        fillEl.className = 'timer-fill' + (pct < 25 ? ' crit' : (pct < 50 ? ' warn' : ''));
+      }
     }
 
     function toggleTimerModeInPlay() {
-      const nowRelaxed = ArcadeQuizPrefs.toggleRelaxed();
+      const nowRelaxed = ArcadeQuizPrefs.setRelaxed(!ArcadeQuizPrefs.isRelaxed());
+      ArcadeQuizPrefs.initMenuBar('time-mode-bar');
+      clearInterval(timerId);
+      timerId = null;
       if (nowRelaxed) {
-        clearInterval(timerId);
-        timerId = null;
         timeLeft = 0;
-      } else {
-        questionMaxTime = ArcadeQuizPrefs.getDurationSec(deck[qIdx] ? deck[qIdx].diff : 'mid');
-        timeLeft = questionMaxTime;
-        if (!answered) startBonusTimer();
+      } else if (!answered && timeLeft > 0) {
+        startBonusTimer();
       }
       updateTimerUI();
       ArcadeAudio.click();
@@ -540,6 +546,8 @@
     function useJokerTime() {
       if (!jokers.time || answered || ArcadeQuizPrefs.isRelaxed()) return;
       jokers.time = false;
+      const jtBtn = document.getElementById('joker-time');
+      if (jtBtn) jtBtn.disabled = true;
       timeLeft = Math.min(questionMaxTime + 10, timeLeft + 10);
       updateTimerUI();
       startBonusTimer();

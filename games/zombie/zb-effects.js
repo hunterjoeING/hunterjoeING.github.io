@@ -10,7 +10,7 @@ export const Z_SPAN = 44.0;
 export const toWorldX = (u) => u * BRIDGE_HALF_W;
 export const toWorldZ = (z) => Z_NEAR - z * Z_SPAN;
 
-const MAX_BULLETS = 220;
+const MAX_BULLETS = 320;
 const MAX_RINGS = 28;
 const MAX_SPARKS = 240;
 const MAX_FLOATS = 20;

@@ -827,9 +827,8 @@
         timeLeft = 0;
         updateTimerUI();
       } else if (!answered) {
-        if (timeLeft <= 0) timeLeft = questionMaxTime;
         updateTimerUI();
-        startBonusTimer();
+        if (timeLeft > 0) startBonusTimer();
       } else {
         updateTimerUI();
       }

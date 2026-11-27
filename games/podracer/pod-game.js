@@ -87,6 +87,9 @@ class PodracerGame {
     this._bindEvents();
     this._renderBoard();
     this._updateHud();
+    if (window.ArcadeAudio) {
+      window.ArcadeAudio.syncButton(document.getElementById('btn-mute'));
+    }
 
     this._lastTime = performance.now();
     this._loop = this._loop.bind(this);
@@ -215,7 +218,7 @@ class PodracerGame {
     const board = readBoard();
     if (board.length === 0) {
       this.elBoardBody.innerHTML =
-        '<tr><td colspan="4" class="board-empty">Noch keine lokalen Zeiten — starte deinen ersten Canyon-Lauf!</td></tr>';
+        '<tr><td colspan="4" class="board-empty">Noch keine lokalen Einträge — starte deinen ersten Canyon-Lauf!</td></tr>';
       return;
     }
     this.elBoardBody.innerHTML = board
@@ -244,7 +247,8 @@ class PodracerGame {
 
     window.addEventListener('keydown', (e) => {
       const tag = e.target && e.target.tagName;
-      if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+      if (document.querySelector('.arcade-modal-backdrop, #abm-drawer.open')) return;
       if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'Space'].includes(e.code)) {
         e.preventDefault();
       }
@@ -252,9 +256,7 @@ class PodracerGame {
       if (e.code === 'KeyR' && this.mode === 'playing') {
         this.startGame();
       } else if ((e.code === 'Enter' || e.code === 'Space') && this.mode !== 'playing') {
-        if (!document.querySelector('.arcade-modal-backdrop')) {
-          this.startGame();
-        }
+        this.startGame();
       }
     });
 
@@ -262,9 +264,14 @@ class PodracerGame {
       this.keys.delete(e.code);
     });
 
+    const boostEl = document.getElementById('touch-boost');
+    const activeBoostIds = new Set();
+
     window.addEventListener('blur', () => {
       this.keys.clear();
       this.touchBoost = false;
+      activeBoostIds.clear();
+      if (boostEl) boostEl.classList.remove('active');
       this.pointerActive = false;
       this.steerPointerId = null;
     });
@@ -302,9 +309,7 @@ class PodracerGame {
     window.addEventListener('pointercancel', releaseSteer);
 
     // Multi-touch responsive Boost button on left edge
-    const boostEl = document.getElementById('touch-boost');
     if (boostEl) {
-      const activeBoostIds = new Set();
       const syncBoost = () => {
         this.touchBoost = activeBoostIds.size > 0;
         boostEl.classList.toggle('active', this.touchBoost);
@@ -433,8 +438,10 @@ class PodracerGame {
 
     // Check Lap crossing
     const trackLen = this.sceneCtrl.track.totalLength;
+    let wrappedLap = false;
     if (this.s >= trackLen) {
       this.s -= trackLen;
+      wrappedLap = true;
       this.lap += 1;
       const lapBonus = 1000 * (this.lap - 1);
       this.score += lapBonus;
@@ -444,11 +451,16 @@ class PodracerGame {
       this._showToast(`🔥 RUNDE ${this.lap}! +${lapBonus.toLocaleString('de-DE')} Pkt`, 2.2);
     }
 
+    const sInSweep = (targetS, margin) => {
+      if (wrappedLap) return targetS <= this.s + margin;
+      return targetS >= prevS - margin && targetS <= this.s + margin;
+    };
+
     // Check Boost Pads
     const pads = this.sceneCtrl.track.boostPads;
     for (let i = 0; i < pads.length; i++) {
       const pad = pads[i];
-      if (Math.abs(this.s - pad.s) < pad.halfL && Math.abs(this.u - pad.u) < pad.halfW) {
+      if (sInSweep(pad.s, pad.halfL) && Math.abs(this.u - pad.u) < pad.halfW) {
         if (this.padBoostTimer < 1.2) {
           this.padBoostTimer = 1.65;
           this.boostEnergy = Math.min(100, this.boostEnergy + 18);
@@ -459,12 +471,12 @@ class PodracerGame {
       }
     }
 
-    // Check Energy Pickups
+    // Check Energy Pickups (swept along [prevS, this.s] to prevent high-speed tunneling)
     const pickups = this.sceneCtrl.track.pickups;
     for (let i = 0; i < pickups.length; i++) {
       const p = pickups[i];
       if (p.collected) continue;
-      if (Math.abs(this.s - p.s) < 3.5 && Math.abs(this.u - p.u) < 2.6) {
+      if (sInSweep(p.s, 3.5) && Math.abs(this.u - p.u) < 2.6) {
         p.collected = true;
         this.boostEnergy = Math.min(100, this.boostEnergy + 28);
         this.shield = Math.min(100, this.shield + 10);
@@ -476,13 +488,13 @@ class PodracerGame {
       }
     }
 
-    // Check Boulder / Obstacle Collisions
+    // Check Boulder / Obstacle Collisions (swept along [prevS, this.s])
     if (this.invulnTimer > 0) this.invulnTimer = Math.max(0, this.invulnTimer - dt);
-    if (prevS <= this.s) {
+    if (!wrappedLap) {
       const boulders = this.sceneCtrl.track.boulders;
       for (let i = 0; i < boulders.length; i++) {
         const b = boulders[i];
-        if (Math.abs(this.s - b.s) < 2.4 && Math.abs(this.u - b.u) < b.radius + 1.45) {
+        if (sInSweep(b.s, 2.4) && Math.abs(this.u - b.u) < b.radius + 1.45) {
           if (this.invulnTimer <= 0) {
             this.invulnTimer = 1.25;
             this.shield = Math.max(0, this.shield - 34);

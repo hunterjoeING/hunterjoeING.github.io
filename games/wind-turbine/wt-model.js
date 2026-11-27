@@ -886,19 +886,45 @@ export function createWindTurbineModel() {
     state.xrayTarget = mode === 'xray' ? 1 : 0;
   }
 
+  const animatedMats = new Set([mats.generatorRotor, mats.copper, mats.brakeRed, mats.beaconRed, mats.xrayShell]);
+
+  for (const [id, meshes] of allPartMeshes.entries()) {
+    const clonedForPart = new Map();
+    for (const m of meshes) {
+      if (!m.material || !m.material.emissive || animatedMats.has(m.material)) continue;
+      if (m === beaconLightMesh || m === genRotorCore || m === brakeCaliper) continue;
+      if (!m.material.userData?._isolatedPartId) {
+        let clone = clonedForPart.get(m.material);
+        if (!clone) {
+          clone = m.material.clone();
+          clone.userData = {
+            ...(m.material.userData || {}),
+            _isolatedPartId: id,
+            _baseEmissiveHex: clone.emissive.getHex(),
+            _baseEmissiveIntensity: clone.emissiveIntensity || 0
+          };
+          clonedForPart.set(m.material, clone);
+        }
+        m.material = clone;
+      }
+    }
+  }
+
   function setSelectedPart(partId) {
     state.selectedPart = partId;
     for (const [id, meshes] of allPartMeshes.entries()) {
-      const active = partId && id === partId;
+      const active = Boolean(partId && id === partId);
       for (const m of meshes) {
-        if (!m.material || !m.material.emissive) continue;
+        if (!m.material || !m.material.emissive || animatedMats.has(m.material)) continue;
         if (m === beaconLightMesh || m === genRotorCore || m === brakeCaliper) continue;
         if (active) {
           m.material.emissive.setHex(0x2563eb);
           m.material.emissiveIntensity = 0.38;
         } else {
-          m.material.emissive.setHex(0x000000);
-          m.material.emissiveIntensity = 0;
+          const baseHex = m.material.userData?._baseEmissiveHex ?? 0x000000;
+          const baseInt = m.material.userData?._baseEmissiveIntensity ?? 0;
+          m.material.emissive.setHex(baseHex);
+          m.material.emissiveIntensity = baseInt;
         }
       }
     }
@@ -1007,8 +1033,10 @@ export function createWindTurbineModel() {
       pivot.rotation.y = state.currentPitchRad;
     }
 
-    // 6) Anemometer rotiert proportional zum Wind
-    state.anemoAngle += (0.4 + telemetry.windSpeed * 0.65) * clampedDt;
+    // 6) Anemometer rotiert proportional zum Wind (steht bei 0,0 m/s still)
+    if (telemetry.windSpeed > 0.05) {
+      state.anemoAngle += (0.2 + telemetry.windSpeed * 0.65) * clampedDt;
+    }
     anemoSpinner.rotation.y = state.anemoAngle;
 
     // 7) Generator-Induktionsglühen & Bremsen-Status

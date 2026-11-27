@@ -195,8 +195,9 @@ function auditPool(poolObj) {
         findings.structureErrors.push(`Frage #${idx}: Enthält doppelte Antwortoptionen.`);
       }
 
-      // Korrekte Antwort (Standard: Index 0 oder q.correct)
-      const correctIdx = (typeof q.correct === 'number' && q.correct >= 0 && q.correct <= 3) ? q.correct : 0;
+      // Korrekte Antwort (Standard: Index 0, q.correct oder q.correctIndex)
+      const rawCorrect = typeof q.correct === 'number' ? q.correct : q.correctIndex;
+      const correctIdx = (typeof rawCorrect === 'number' && rawCorrect >= 0 && rawCorrect <= 3) ? rawCorrect : 0;
       const correctText = trimmedOptions[correctIdx] || '';
       const wrongTexts = trimmedOptions.filter((_, i) => i !== correctIdx);
 

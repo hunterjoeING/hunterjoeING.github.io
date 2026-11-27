@@ -53,6 +53,8 @@
     { id: 'quiz_torten', icon: '🎂', title: 'Torten & Patisserie', meta: '75 Fr.', path: 'games/quiz-torten/index.html' },
     { id: 'quiz_geburt', icon: '🌸', title: 'Schwangerschaft & Geburt', meta: '75 Fr.', path: 'games/quiz-geburt/index.html' },
     { id: 'quiz_fussball', icon: '⚽', title: 'Fußball – Das große Quiz', meta: '375 Fr.', path: 'games/quiz-fussball/index.html' },
+    { id: 'quiz_american_football', icon: '🏈', title: 'American Football (NFL)', meta: '375 Fr.', path: 'games/quiz-american-football/index.html' },
+    { id: 'quiz_golf', icon: '⛳', title: 'Golf – Das große Quiz', meta: '300 Fr.', path: 'games/quiz-golf/index.html' },
     { id: 'quiz_ai', icon: '🤖', title: 'KI: Entstehung & Technik', meta: '75 Fr.', path: 'games/quiz-ai/index.html' },
     { id: 'quiz_movies', icon: '🎬', title: 'Kino & Filme (o. RomComs)', meta: '75 Fr.', path: 'games/quiz-movies/index.html' },
     { id: 'quiz_egypt', icon: '🏺', title: 'Ägyptische Geschichte', meta: '75 Fr.', path: 'games/quiz-egypt/index.html' },
@@ -224,11 +226,14 @@
   function renderSections() {
     const q = drawerState.filter.trim().toLowerCase();
     const isAdmin = !!(window.ArcadeAuth && ((typeof window.ArcadeAuth.isAdmin === 'function' && window.ArcadeAuth.isAdmin()) || (window.ArcadeAuth.getUser && window.ArcadeAuth.getUser()?.role === 'admin')));
+    const pub1000 = QUIZZES_1000_NAV.filter(it => !it.unlisted);
+    const pubThemen = QUIZZES_THEMEN_NAV.filter(it => !it.unlisted);
+    const pubFoto = QUIZZES_FOTO_NAV.filter(it => !it.unlisted);
     const groups = [
-      { label: '🎮 Games (10)', items: GAMES_NAV },
-      { label: '🌟 Flagship-Quizzes & Mega-Mix (5)', items: QUIZZES_1000_NAV },
-      { label: '🧠 Themen-Quizzes (12)', items: QUIZZES_THEMEN_NAV },
-      { label: '📷 Foto- & Exkursions-Quizzes (5)', items: QUIZZES_FOTO_NAV }
+      { label: `🎮 Games & 3D (${GAMES_NAV.length})`, items: GAMES_NAV },
+      { label: `🌟 Flagship-Quizzes & Mega-Mix (${pub1000.length})`, items: QUIZZES_1000_NAV },
+      { label: `🧠 Themen-Quizzes (${pubThemen.length})`, items: QUIZZES_THEMEN_NAV },
+      { label: `📷 Foto- & Exkursions-Quizzes (${pubFoto.length})`, items: QUIZZES_FOTO_NAV }
     ];
     if (isAdmin) {
       const hiddenItems = [
@@ -327,12 +332,15 @@
     const fbTarget = (drawerState.currentId === 'hub' || drawerState.currentId === 'impressum' || drawerState.currentId === 'datenschutz' || drawerState.currentId === 'changelogs')
       ? 'all'
       : drawerState.currentId;
+    const publicQuizCount = QUIZZES_1000_NAV.filter(it => !it.unlisted).length
+      + QUIZZES_THEMEN_NAV.filter(it => !it.unlisted).length
+      + QUIZZES_FOTO_NAV.filter(it => !it.unlisted).length;
 
     drawer.innerHTML = `
       <div class="abm-head">
         <div class="abm-brand">
           <strong>🕹️ HunterJoe Arcade</strong>
-          <span>10 Games · 20 Quiz-Welten (1.371 Pool)</span>
+          <span>${GAMES_NAV.length} Games &amp; 3D · ${publicQuizCount} Quiz-Welten (2.646 Pool)</span>
         </div>
         <button type="button" class="abm-close" id="abm-btn-close" aria-label="Menü schließen">✕</button>
       </div>

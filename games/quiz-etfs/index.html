@@ -470,7 +470,8 @@
     const DIFF_INFO = {
       easy: { label: '🟢 Depot-Starter',        cls: 'easy', mult: 1.0 },
       mid:  { label: '🟡 Weltportfolio-Kenner', cls: 'mid',  mult: 1.2 },
-      pro:  { label: '🔴 Steuer- & Quant-Profi', cls: 'pro', mult: 1.5 }
+      pro:  { label: '🔴 Steuer- & Quant-Profi', cls: 'pro', mult: 1.5 },
+      nerd: { label: '🔴 Steuer- & Quant-Profi', cls: 'pro', mult: 1.5 }
     };
 
     const QUESTIONS = ArcadeQuizEngine.getBank('etfs');
@@ -507,7 +508,9 @@
     function getMatchingPool(catId) {
       return QUESTIONS.filter(q => {
         const catOk = catId === 'mix' ? true : q.cat === catId;
-        const diffOk = selectedDiff === 'all' ? true : q.diff === selectedDiff;
+        const diffOk = selectedDiff === 'all'
+          ? true
+          : (selectedDiff === 'pro' ? (q.diff === 'pro' || q.diff === 'nerd') : q.diff === selectedDiff);
         return catOk && diffOk;
       });
     }
@@ -644,9 +647,8 @@
         timeLeft = 0;
         updateTimerUI();
       } else if (!answered) {
-        if (timeLeft <= 0) timeLeft = questionMaxTime;
         updateTimerUI();
-        startBonusTimer();
+        if (timeLeft > 0) startBonusTimer();
       } else {
         updateTimerUI();
       }

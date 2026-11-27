@@ -3,6 +3,15 @@
 (function () {
   'use strict';
 
+  function escHtml(str) {
+    return String(str == null ? '' : str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   window.ArcadeQuizSubcategories = {
     /**
      * Renders category cards into a container element.
@@ -23,14 +32,14 @@
           ? window.ArcadeQuizEngine.resolveRoundCount(12, stats.total, 12)
           : Math.min(12, stats.total);
 
-        return '<div class="cat-card ' + (c.cls || '') + '" data-cat-id="' + c.id + '">' +
+        return '<div class="cat-card ' + escHtml(c.cls || '') + '" data-cat-id="' + escHtml(c.id) + '">' +
           '<div class="cat-header">' +
-            '<span class="cat-icon">' + c.icon + '</span>' +
-            '<button type="button" class="cat-board-btn" data-board-id="' + c.boardId + '" data-cat-name="' + c.name + '" title="Bestenliste für ' + c.name + ' ansehen">🏆 Bestenliste</button>' +
+            '<span class="cat-icon">' + escHtml(c.icon) + '</span>' +
+            '<button type="button" class="cat-board-btn" data-board-id="' + escHtml(c.boardId) + '" data-cat-name="' + escHtml(c.name) + '" title="Bestenliste für ' + escHtml(c.name) + ' ansehen">🏆 Bestenliste</button>' +
           '</div>' +
-          '<div class="cat-name">' + c.name + '</div>' +
-          '<div class="cat-desc">' + c.desc + '</div>' +
-          '<div class="cat-meta">' + stats.total + ' Fragen (' + stats.unseen + ' neu) · Runde: ' + roundLen + '</div>' +
+          '<div class="cat-name">' + escHtml(c.name) + '</div>' +
+          '<div class="cat-desc">' + escHtml(c.desc) + '</div>' +
+          '<div class="cat-meta">' + Number(stats.total) + ' Fragen (' + Number(stats.unseen) + ' neu) · Runde: ' + Number(roundLen) + '</div>' +
         '</div>';
       }).join('');
 
@@ -114,6 +123,9 @@
 
       if (selectedDiff === 'all') return full;
       return full.filter(function (q) {
+        if (selectedDiff === 'pro') {
+          return q.diff === 'pro' || q.diff === 'hard' || q.diff === 'nerd';
+        }
         return q.diff === selectedDiff;
       });
     },
@@ -145,17 +157,17 @@
         return categories.map(function (c) {
           const count = board.get(c.boardId).length;
           return '<div style="border:1px solid var(--border-subtle,rgba(15,23,42,.14));border-radius:12px;padding:10px;margin-bottom:10px;">' +
-            '<div style="font-weight:800;margin-bottom:6px;">' + c.icon + ' ' + c.name + ' <span style="opacity:.6;font-size:12px;">(' + count + ' Einträge)</span></div>' +
+            '<div style="font-weight:800;margin-bottom:6px;">' + escHtml(c.icon) + ' ' + escHtml(c.name) + ' <span style="opacity:.6;font-size:12px;">(' + Number(count) + ' Einträge)</span></div>' +
             '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
-              '<button type="button" data-act="show" data-bid="' + c.boardId + '" data-title="' + c.name + '" style="' + board.btnCss + '">🏆 Anzeigen</button>' +
-              '<button type="button" data-act="reset" data-bid="' + c.boardId + '" data-title="' + c.name + '" style="' + board.btnCss + 'color:#ef4444;">🗑 Zurücksetzen</button>' +
+              '<button type="button" data-act="show" data-bid="' + escHtml(c.boardId) + '" data-title="' + escHtml(c.name) + '" style="' + board.btnCss + '">🏆 Anzeigen</button>' +
+              '<button type="button" data-act="reset" data-bid="' + escHtml(c.boardId) + '" data-title="' + escHtml(c.name) + '" style="' + board.btnCss + 'color:#ef4444;">🗑 Zurücksetzen</button>' +
             '</div>' +
           '</div>';
         }).join('');
       }
 
-      const modalHtml = '<h3 style="margin:0 0 12px;">🔒 ' + title + '</h3>' +
-        '<p style="margin:0 0 12px;font-size:13px;opacity:.75;">' + subtitle + '</p>' +
+      const modalHtml = '<h3 style="margin:0 0 12px;">🔒 ' + escHtml(title) + '</h3>' +
+        '<p style="margin:0 0 12px;font-size:13px;opacity:.75;">' + escHtml(subtitle) + '</p>' +
         '<div id="subcat-adm-rows">' + renderRows() + '</div>' +
         '<div style="text-align:right;margin-top:14px;"><button type="button" class="adm-close" style="' + board.btnCss + '">Schließen</button></div>';
 
