@@ -1,4 +1,5 @@
-import { CAM_Z, SEAT_Y, intakeSign } from './ce-mechanics.js?v=0.5.0';
+import { CAM_Z, SEAT_Y, intakeSign } from './ce-mechanics.js?v=0.5.1';
+import { INTAKE_RADIUS, setThrottleOpening } from './ce-throttle.js?v=0.5.1';
 
 export function bankPoint(angle, crankY, x, y, z) {
   const a = angle * Math.PI / 180;
@@ -11,6 +12,7 @@ export function buildPlumbing(profile) {
   const y0 = layout.id === 'boxer4' ? -0.35 : -1.45;
   const fx = layout.flywheelX;
   const nodes = {}, edges = [], devices = [], cylinders = [];
+  let throttle = null;
   function node(id, xyz) {
     nodes[id] = xyz;
     return id;
@@ -96,10 +98,12 @@ export function buildPlumbing(profile) {
     node('filterBack', [fx + 0.95, headerY, -2.55]);
     node('throttle', [fx + 0.95, headerY, -1.62]);
     edge('filterMouth', 'filterBack', inlet, 0.23, 1);
-    edge('filterBack', 'throttle', inlet, 0.21, 1);
-    edge('throttle', 'distribution', inlet, 0.21, 0.9, [[fx + 0.95, headerY, -0.55]]);
+    throttle = { center: nodes.throttle };
+    setThrottleOpening(throttle, 0);
+    edge('filterBack', 'throttle', inlet, INTAKE_RADIUS, 1).throttle = throttle;
+    edge('throttle', 'distribution', inlet, INTAKE_RADIUS, 0.9, [[fx + 0.95, headerY, -0.55]]).throttle = throttle;
     device('filter', inlet, 'filterMouth', 'filterBack', 0.32);
-    device('throttle', inlet, 'filterBack', 'throttle', 0.19);
+    device('throttle', inlet, 'filterBack', 'throttle', INTAKE_RADIUS);
     edge('collector', 'tail', exhaust, 0.21, 1.45,
       [[hx, 0.63, 2.88], [hx + 0.75, -0.6, 2.88], [hx + 0.75, -2.30, tz]]);
   }
@@ -149,7 +153,7 @@ export function buildPlumbing(profile) {
       cylinders[c] = { spec, nozzle, seats, sign };
     }
   });
-  return { nodes, edges, devices, cylinders, diesel, y0 };
+  return { nodes, edges, devices, cylinders, diesel, throttle, y0 };
 }
 
 // Directed passages are selected once per build. Reaching a valve terminates

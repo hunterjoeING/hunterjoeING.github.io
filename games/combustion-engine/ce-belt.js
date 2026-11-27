@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import { beltPoint, timingDrive } from './ce-mechanics.js?v=0.5.0';
+import { BELT_WIDTH, DRIVE_BORE, NOSE_RADIUS, WHEEL_WIDTH, beltPoint, timingDrive } from './ce-mechanics.js?v=0.5.1';
 
 function bandGeometry(drive) {
   const positions = [], uvs = [], indices = [];
   // Inner face, two edges and fabric back share the same running coordinate.
-  const section = [[-0.072, 0], [0.072, 0], [0.072, 0.024], [-0.072, 0.024], [-0.072, 0]];
+  const half = BELT_WIDTH / 2;
+  const section = [[-half, 0], [half, 0], [half, 0.024], [-half, 0.024], [-half, 0]];
   for (const seg of drive.segments) {
     const count = seg.kind === 'arc' ? Math.ceil(seg.sweep * 24) : 1;
     for (let i = 0; i <= count; i++) {
@@ -26,7 +27,7 @@ function bandGeometry(drive) {
   return geo;
 }
 
-export function installBelts(frames, layout, material, sprocket) {
+export function installBelts(frames, mounts, material, sprocket) {
   const drive = timingDrive();
   const wheels = [];
   const pixels = new Uint8Array(32 * 4);
@@ -45,24 +46,29 @@ export function installBelts(frames, layout, material, sprocket) {
   rubber.side = THREE.DoubleSide;
   const band = bandGeometry(drive);
   for (const [bank, frame] of frames.entries()) {
-    const x = layout.timingX - bank * 0.24;
+    const { x, blockFace, camFace } = mounts[bank];
     const belt = new THREE.Mesh(band, rubber);
+    belt.name = 'timingBelt';
     belt.position.x = x;
     frame.add(belt);
     for (const [i, w] of drive.wheels.entries()) {
       const mat = material(w.id.startsWith('cam') ? 'machinedSteel' : 'chainGold');
-      const geo = sprocket(w.teeth, w.radius, w.radius - 0.019, 0.13, 0.045, false);
+      const geo = sprocket(w.teeth, w.radius, w.radius - 0.019, WHEEL_WIDTH, DRIVE_BORE, false);
       geo.rotateY(Math.PI / 2);
       const wheel = new THREE.Mesh(geo, mat);
+      wheel.name = w.id + 'Sprocket';
       wheel.position.set(x, w.y, w.z);
       frame.add(wheel);
       const arc = drive.segments[2 * i];
       const phase = arc.angle + Math.PI / 2 - arc.start / w.radius;
       wheels.push({ wheel, ratio: drive.wheels[0].radius / w.radius, phase });
-      // Both stacked crank pulleys and the offset bank cams have visible shaft extensions.
-      const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.067, 0.067, 1.15, 12), mat);
+      // The stacked crank wheels share the single nose on the crankshaft.
+      if (w.id === 'crank') continue;
+      const start = x - WHEEL_WIDTH / 2;
+      const end = w.id === 'tensioner' ? blockFace : camFace;
+      const hub = new THREE.Mesh(new THREE.CylinderGeometry(NOSE_RADIUS, NOSE_RADIUS, end - start, 16), mat);
       hub.rotation.z = Math.PI / 2;
-      hub.position.set(x + 0.53, w.y, w.z);
+      hub.position.set((start + end) / 2, w.y, w.z);
       frame.add(hub);
     }
   }

@@ -4,28 +4,16 @@ import {
   ENGINE_CONCEPTS,
   DEFAULT_ENGINE_CONFIG,
   buildEngineProfile
-} from './ce-variants.js';
+} from './ce-variants.js?v=0.5.1';
 
-import { MAX_LIFT, camLift } from './ce-mechanics.js?v=0.5.0';
-import { flowParts, flowTour } from './ce-flow-guide.js?v=0.5.0';
+import { MAX_LIFT, camLift } from './ce-mechanics.js?v=0.5.1';
+import { flowParts, flowTour } from './ce-flow-guide.js?v=0.5.1';
 
 export { ENGINE_LAYOUTS, ENGINE_CONCEPTS, DEFAULT_ENGINE_CONFIG, buildEngineProfile };
 
 export const DEFAULT_PROFILE = buildEngineProfile(DEFAULT_ENGINE_CONFIG.layout, DEFAULT_ENGINE_CONFIG.concept);
 
-export const ENGINE_SPECS = {
-  displacementL: 2.0,
-  cylinders: 4,
-  valves: 16,
-  compressionRatio: '11,0 : 1',
-  firingOrder: '1 – 3 – 4 – 2',
-  idleRpm: 850,
-  minRunningRpm: 200,
-  redlineRpm: 6500,
-  maxRpm: 7000,
-  maxTorqueNm: 200,
-  maxPowerKW: 109
-};
+export const ENGINE_SPECS = DEFAULT_PROFILE.specs;
 
 // Beispielwerte einer 6-Gang-Wandlerautomatik und eines Kompaktwagens.
 // Wandlerschlupf bleibt unberücksichtigt.
@@ -88,6 +76,10 @@ function clamp(value, max) {
   return Math.max(0, Math.min(max, Number(value) || 0));
 }
 
+export function clampOperatingRpm(value, profile = DEFAULT_PROFILE) {
+  return Math.max(profile.specs.idleRpm, clamp(value, profile.specs.maxRpm));
+}
+
 export function fullTorqueNm(rpmInput, profile = DEFAULT_PROFILE) {
   return profile.fullTorqueNm(rpmInput);
 }
@@ -96,6 +88,7 @@ export function fullTorqueNm(rpmInput, profile = DEFAULT_PROFILE) {
 // vereinfachtes Beispielkennfeld, keine Messdaten.
 export function bsfcMap(rpmInput, loadInput, profile = DEFAULT_PROFILE) {
   const rpm = clamp(rpmInput, profile.specs.maxRpm);
+  if (rpm < profile.specs.idleRpm) return null;
   const load = clamp(loadInput, 1);
   const bmep = load * profile.fullTorqueNm(rpm) / profile.torqueNmPerBar;
   if (bmep <= 0) return null;
@@ -112,15 +105,13 @@ export function thermalEfficiencyFromBsfc(bsfc, profile = DEFAULT_PROFILE) {
 }
 
 function operatingStatus(rpm, load, profile = DEFAULT_PROFILE) {
-  const { minRunningRpm, redlineRpm } = profile.specs;
+  const { redlineRpm } = profile.specs;
   const [peakLo, peakHi] = profile.peakTorqueBand;
   const redlineFmt = redlineRpm.toLocaleString('de-DE');
-  if (rpm < minRunningRpm) return ['off', 'Motor aus'];
   if (rpm > redlineRpm) return ['redline', `Drehzahlbegrenzer (> ${redlineFmt})`];
-  if (load < 0.03) {
-    return ['idle', rpm < 1200 ? 'Leerlauf · keine Nutzleistung' : 'Schubbetrieb · keine Nutzleistung'];
-  }
-  if (rpm < 1200) return ['idle', 'Niedrige Drehzahl'];
+  if (load < 0.03 && rpm < 1200) return ['idle', load === 0 ? 'Leerlauf · keine Nutzleistung' : 'Leerlauf'];
+  if (load < 0.03) return ['coast', 'Schubbetrieb'];
+  if (rpm < 1200) return ['lowRpm', 'Niedrige Drehzahl'];
   if (load < 0.9) return ['cruise', 'Teillast'];
   if (rpm >= peakLo && rpm <= peakHi) return ['peakTorque', 'Volllast · max. Drehmoment-Bereich'];
   if (rpm >= profile.peakPowerMinRpm) return ['peakPower', 'Volllast · Nennleistungs-Bereich'];
@@ -128,7 +119,7 @@ function operatingStatus(rpm, load, profile = DEFAULT_PROFILE) {
 }
 
 export function computeEngineTelemetry(rpmInput, loadInput = 1, driveFrame, profile = DEFAULT_PROFILE) {
-  const rpm = clamp(rpmInput, profile.specs.maxRpm);
+  const rpm = clampOperatingRpm(rpmInput, profile);
   const load = clamp(loadInput, 1);
   const torqueNm = load * profile.fullTorqueNm(rpm);
   const powerKW = (torqueNm * 2 * Math.PI * rpm) / 60000;
@@ -143,7 +134,7 @@ export function computeEngineTelemetry(rpmInput, loadInput = 1, driveFrame, prof
     powerKW,
     powerPS: powerKW * 1.35962,
     // 4-Takt: (Zylinderzahl / 2) Zündungen pro Kurbelwellenumdrehung.
-    ignitionsPerSec: status === 'off' ? 0 : (rpm / 60) * (profile.specs.cylinders / 2),
+    ignitionsPerSec: (rpm / 60) * (profile.specs.cylinders / 2),
     bmepBar: torqueNm / profile.torqueNmPerBar,
     bsfc,
     thermalEff: thermalEfficiencyFromBsfc(bsfc, profile),
@@ -179,7 +170,7 @@ export function roadLoadTorqueNm(rpm, gear, profile = DEFAULT_PROFILE) {
 }
 
 function fuelLitersPerHour(rpm, load, powerKw, profile = DEFAULT_PROFILE) {
-  if (rpm < profile.specs.minRunningRpm || (load < 0.03 && rpm >= 1200)) return 0;
+  if (load < 0.03 && rpm >= 1200) return 0;
   // Derselbe Nm/bar-Faktor wie im BSFC-Kennfeld hält beide Verbrauchsrechnungen konsistent.
   const kwPerBar = profile.torqueNmPerBar * 2 * Math.PI * rpm / 60000;
   const { totalPressureBar, indicatedEfficiency } = profile.fuelModel(rpm, load, powerKw / kwPerBar);
@@ -212,8 +203,7 @@ function drivetrainPoint(gear, rpm, driveMode, fuelLph, speed, profile = DEFAULT
 
 // Erwartet die begrenzten Eingaben und die Nutzleistung aus computeEngineTelemetry.
 export function computeDrivetrain(rpm, load, powerKw, profile = DEFAULT_PROFILE) {
-  if (rpm < profile.specs.minRunningRpm) return drivetrainPoint(0, rpm, 'neutral', 0, undefined, profile);
-
+  if (rpm <= 0) return drivetrainPoint(0, 0, 'neutral', 0, undefined, profile);
   const lowLoad = load < 0.03;
   const fuelCut = lowLoad && rpm >= 1200;
   const fuelLph = fuelLitersPerHour(rpm, load, powerKw, profile);
@@ -308,9 +298,9 @@ export function simulateDriveSequence({ startSpeedKmh, startGear, startLoad, tar
 }
 
 export function constantSpeedPoint(speed, gear, profile = DEFAULT_PROFILE) {
-  const { minRunningRpm, redlineRpm } = profile.specs;
+  const { idleRpm, redlineRpm } = profile.specs;
   const rpm = speed / speedKmh(1, gear, profile);
-  if (!Number.isFinite(rpm) || rpm < minRunningRpm || rpm > redlineRpm || speed > DRIVETRAIN_EXAMPLE.maxSpeedKmh) return null;
+  if (!Number.isFinite(rpm) || rpm < idleRpm || rpm > redlineRpm || speed > DRIVETRAIN_EXAMPLE.maxSpeedKmh) return null;
   const roadLoadKw = roadLoadPowerKw(speed / 3.6);
   const fullT = fullTorqueNm(rpm, profile);
   if (fullT <= 0) return null;
@@ -350,11 +340,11 @@ export function computeBsfcContours(levels, profile = DEFAULT_PROFILE) {
   const activeLevels = levels ?? profile.contourLevels;
   const rpmStep = 25;
   const loadCells = 50;
-  const { minRunningRpm, maxRpm } = profile.specs;
-  const rpmCells = Math.round((maxRpm - minRunningRpm) / rpmStep);
+  const { idleRpm, maxRpm } = profile.specs;
+  const rpmCells = Math.round((maxRpm - idleRpm) / rpmStep);
   let optimum = { bsfc: Infinity };
   const grid = Array.from({ length: rpmCells + 1 }, (_, i) => {
-    const rpm = minRunningRpm + i * rpmStep;
+    const rpm = idleRpm + i * rpmStep;
     return Array.from({ length: loadCells + 1 }, (_, j) => {
       const load = j / loadCells;
       const bsfc = bsfcMap(rpm, load, profile);
@@ -488,10 +478,17 @@ export function computeDriveTourDemos(optimum, profile = DEFAULT_PROFILE) {
   };
 }
 
+export const IGNITION_WINDOW_DEG = 54;
+export const MIN_IGNITION_SECONDS = 0.19;
+
+export function ignitionWindow(speed, normalSpeed) {
+  return Math.max(IGNITION_WINDOW_DEG, MIN_IGNITION_SECONDS * Math.max(speed, normalSpeed));
+}
+
 /**
  * Liefert den exakten 4-Takt-Zustand für einen Zylinder bei Kurbelwinkel crankDeg.
  */
-export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE, out = {}) {
+export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE, out = {}, windowDeg = IGNITION_WINDOW_DEG, advanceDeg) {
   const spec = profile.layout.cylinderSpecs[cylIndex];
   const offset = spec ? spec.phaseDeg : (CYLINDER_PHASE_OFFSETS[cylIndex] || 0);
   const cycle = (((crankDeg + offset) % 720) + 720) % 720;
@@ -529,9 +526,9 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE,
       if (cycle > 344) {
         injectionIntensity = (cycle - 344) / 16;
       }
-    } else if (cycle > 348) {
+    } else if (cycle > profile.concept.ignitionStartDeg) {
       // Otto-Frühzündung kurz vor OT (ca. 350°–360°)
-      sparkIntensity = (cycle - 348) / 12;
+      sparkIntensity = (cycle - profile.concept.ignitionStartDeg) / (360 - profile.concept.ignitionStartDeg);
     }
   } else if (cycle < 540) {
     index = 2;
@@ -568,6 +565,15 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE,
   out.exhaustLift = exhaustLift;
   out.sparkIntensity = sparkIntensity;
   out.injectionIntensity = injectionIntensity;
+  const sinceIgnition = (cycle - profile.concept.ignitionStartDeg + 720) % 720;
+  // Interpolate the frame that crosses ignition. During an ongoing burn integrate
+  // from its previous progress, so a speed change cannot restart it or a pause age it.
+  const burn = advanceDeg === undefined || out.burnProgress === undefined || sinceIgnition <= advanceDeg
+    ? Math.min(1, sinceIgnition / windowDeg)
+    : Math.min(1, out.burnProgress + advanceDeg / windowDeg);
+  out.burnProgress = burn;
+  const rise = Math.min(1, burn / 0.12), fade = Math.min(1, (1 - burn) / 0.40);
+  out.flashIntensity = rise * rise * (3 - 2 * rise) * fade * fade * (3 - 2 * fade);
   out.flameIntensity = flameIntensity;
   out.intakeMist = intakeMist;
   out.exhaustGas = exhaustGas;
@@ -792,8 +798,6 @@ const STROKE_AND_DRIVE_STEPS = [
     focusPart: 'sparkPlugs',
     demoRpm: 2400,
     demoTimeScale: 0.10,
-    cameraPos: [4.8, 2.3, 6.0],
-    cameraTarget: [0.0, 1.1, 0.0],
     body:
       'Kurz vor dem oberen Totpunkt feuert die Zündkerze einen 30.000-Volt-Funken. Die Flamme breitet sich im Gemisch aus. Der steigende Gasdruck drückt den Kolben nach unten.'
   },
@@ -977,7 +981,7 @@ export function getTourStepsForProfile(profile = DEFAULT_PROFILE) {
   const scaledCam = pos => pos.map(v => Number((v * scale).toFixed(2)));
 
   const steps = STROKE_AND_DRIVE_STEPS.map(step => {
-    const s = { ...step, cameraPos: scaledCam(step.cameraPos) };
+    const s = { ...step, cameraPos: step.cameraPos && scaledCam(step.cameraPos) };
     if (isDiesel) {
       if (step.step === 1) {
         s.badge = '0°–180° · Vorverdichtete Frischluft';

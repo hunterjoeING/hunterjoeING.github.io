@@ -58,8 +58,8 @@ test('Hohe Teillast bleibt mit Leistungsreserve im sechsten Gang', () => {
   assert.equal(computeEngineTelemetry(2350, 0.89).driveMode, 'accelerate');
 });
 
-test('Leerlauf verbraucht Kraftstoff im Stand, der ausgeschaltete Motor verbraucht nichts', () => {
-  for (const point of [computeEngineTelemetry(850, 0), computeEngineTelemetry(199, 1)]) {
+test('Leerlauf verbraucht Kraftstoff im Stand, auch bei einer Eingabe unter dem Minimum', () => {
+  for (const point of [computeEngineTelemetry(800, 0), computeEngineTelemetry(199, 0)]) {
     assert.equal(point.gear, 0);
     assert.equal(point.gearLabel, 'N');
     assert.equal(point.speedKmh, 0);
@@ -68,14 +68,14 @@ test('Leerlauf verbraucht Kraftstoff im Stand, der ausgeschaltete Motor verbrauc
     assert.equal(point.fuelL100, null);
     assert.equal(point.roadLoadKw, null);
   }
-  const idleFuel = computeEngineTelemetry(850, 0).fuelLph;
+  const idleFuel = computeEngineTelemetry(800, 0).fuelLph;
   assert.ok(idleFuel >= 0.8 && idleFuel <= 1.0);
-  assert.equal(computeEngineTelemetry(199, 1).fuelLph, 0);
+  assert.equal(computeEngineTelemetry(199, 0).fuelLph, idleFuel);
   assert.equal(computeEngineTelemetry(1199, 0.029).driveMode, 'neutral');
   assert.equal(computeEngineTelemetry(1200, 0.029).driveMode, 'coast');
 });
 
-test('Volllast wählt den niedrigsten geeigneten Gang, beim Anfahren auch unter 10 km/h', () => {
+test('Volllast wählt den niedrigsten für das Beschleunigungsbeispiel geeigneten Gang', () => {
   for (const [rpm, speed, fuel] of [[4250, 40, 30.8], [5950, 56, 43.0]]) {
     const point = computeEngineTelemetry(rpm, 1);
     assert.equal(point.driveMode, 'accelerate');
@@ -87,8 +87,9 @@ test('Volllast wählt den niedrigsten geeigneten Gang, beim Anfahren auch unter 
   }
   const launch = computeEngineTelemetry(350, 1);
   assert.equal(launch.driveMode, 'accelerate');
-  assert.equal(launch.gear, 1);
-  assert.ok(launch.speedKmh < 10);
+  assert.equal(launch.rpm, 800);
+  assert.ok(launch.speedKmh >= DRIVETRAIN_EXAMPLE.minAccelerationKmh);
+  assert.ok(speedKmh(launch.rpm, launch.gear - 1) < DRIVETRAIN_EXAMPLE.minAccelerationKmh);
   const second = computeEngineTelemetry(1700, 1);
   assert.equal(second.driveMode, 'accelerate');
   assert.equal(second.gear, 2);

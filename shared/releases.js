@@ -122,6 +122,15 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.5.1", date: "2026-11-27", type: "patch", title: "Kurbeltrieb, Luftstrom und Zündung",
+      author: "Michi", model: "Astra 6.2",
+      highlights: [
+        "Die Pleuel laufen auf den versetzten Hubzapfen. Das Zahnriemenrad sitzt mit Abstand vor der ersten Kurbelwange.",
+        "Jeder Motor läuft mit passendem Leerlauf. Dichtere Gaspartikel zeigen beim Otto, wie die Drosselklappe den Luftstrom dosiert.",
+        "Bei jeder Zündung leuchtet der Brennraum kurz auf. In der Tour siehst du, wie sich die Flamme von der Zündkerze oder vom Dieselstrahl bis zur Kolbenkrone ausbreitet.",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.5.0", date: "2026-11-27", type: "feature", title: "Den Weg der Gase verfolgen",
       author: "Michi", model: "Astra 6.2",
       highlights: [

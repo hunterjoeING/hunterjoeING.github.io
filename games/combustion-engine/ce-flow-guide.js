@@ -1,4 +1,5 @@
-import { buildPlumbing } from './ce-plumbing.js?v=0.5.0';
+import { bankPoint, buildPlumbing } from './ce-plumbing.js?v=0.5.1';
+import { SEAT_Y } from './ce-mechanics.js?v=0.5.1';
 
 const topics = {
   legend: {
@@ -7,7 +8,7 @@ const topics = {
   },
   portInjectors: {
     name: 'Saugrohreinspritzung', shortLabel: 'Einspritzleiste', port: 'nozzle0', spec: 'Eine Düse je Zylinder',
-    description: 'Die Drosselklappe regelt die Luftmenge. Kurz vor dem Einlassventil spritzt die Düse Benzin in den Luftstrom. Beim Öffnen des Ventils strömt das Gemisch ein. Bei Volllast steigt hier der Kraftstoffanteil.'
+    description: 'Im Leerlauf strömt wenig Luft am Rand der Drosselklappe vorbei. Mit dem Gaspedal öffnest du den Durchlass. Kurz vor dem Einlassventil spritzt die Düse Benzin in den Luftstrom. Beim Öffnen des Ventils strömt das Gemisch ein. Bei Volllast steigt hier der Kraftstoffanteil.'
   },
   commonRail: {
     name: 'Vom Common Rail in den Brennraum', port: 'rail0', spec: 'Hochdruckpumpe · Speicher · Injektor',
@@ -64,6 +65,17 @@ export function flowTour(profile, strokesAndDrive) {
     station('turbocharger', 0.76), station('intercooler', 0.82),
     station('dpf', 0.6), station('hpEgr', 0.18), station('lpEgr', 0.72)
   ] : [];
-  return [...intro, ...strokesAndDrive.slice(0, 4), ...exhaust, ...strokesAndDrive.slice(4)]
+  // Look into the open near bank, from above on the flat boxer.
+  const angle = Math.max(...profile.layout.bankAnglesDeg);
+  const spec = profile.layout.cylinderSpecs.find(c => c.bankAngleDeg === angle);
+  const [x, y, z] = bankPoint(angle, graph.y0, spec.x, SEAT_Y - 0.14, 0);
+  const boxer = profile.layout.id === 'boxer4';
+  const strokes = strokesAndDrive.slice(0, 4);
+  strokes[2] = {
+    ...strokes[2],
+    cameraPos: [x + 0.8, y + (boxer ? 5.1 : 0.55), z + (boxer ? 2.0 : 5.3)],
+    cameraTarget: [x, y - 0.52, z + (boxer ? 0.66 : 0)]
+  };
+  return [...intro, ...strokes, ...exhaust, ...strokesAndDrive.slice(4)]
     .map((s, i) => ({ ...s, step: i + 1 }));
 }

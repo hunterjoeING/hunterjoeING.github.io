@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- 🔒 in Arbeit: games/combustion-engine (v0.5.1 Patch) · Codex Astra 6.2 / Website Wolfgang · codex/combustion-v0.5.1 · 2026-11-27
+- (keine)
 
 ---
 
@@ -41,13 +41,31 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 | Website-weites Security-Hardening & Bugfix-Release (Worker, Workflows, Hub, 24 Quizzes, 10 Games, Doku) | Joe / Antigravity · Neon | `main` (`bcd6deb`, `0d963b1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.2, Windkraftanlage v0.1.2, 32 weitere Apps v0.1.1) |
 | Abschluss Security-Audit ARC-01..22 (Score-Grenzen, `adminSecret` raus, `wrangler` & Action-SHAs gepinnt, lokales Three.js-Vendoring, Meta-CSP, Quiz-`textContent`, `callback.html`, Server-CAPTCHA) | Joe / Antigravity · Neon | `main` (`231d7c3`, `1888b52`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.4, Verbrennungsmotor v0.4.1, Windkraftanlage v0.1.3, 37 weitere Apps gepatcht) |
 | Lock-Hinweis in `HANDOFF.md` gegen paralleles Arbeiten (AGENTS.md Regel 4 und 7) | Michi / Grok Bot (Orchestrator) | `docs/handoff-lock-rule` · [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14) | ✅ Gemergt in Upstream (`3c566dc`) |
-| Verbrennungsmotor 3D v0.5.0 · Steuertrieb, Ventile, Zündung, Gas- und Kraftstoffwege, Turbolader, Ladeluftkühler, DPF, HD-/ND-AGR und Tour für Otto/Diesel in vier Bauformen | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-3d-v0.5` ab `upstream/main` (`046ea4d`), `3eed89e` + Doku-Commit, im Fork, kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Im Fork zum Test, kein Upstream-Merge ohne Go |
+| Verbrennungsmotor 3D v0.5.0 · Steuertrieb, Ventile, Zündung, Gas- und Kraftstoffwege, Turbolader, Ladeluftkühler, DPF, HD-/ND-AGR und Tour für Otto/Diesel in vier Bauformen | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-3d-v0.5` · [Upstream-PR #15](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/15) | ✅ Gemergt (`d577d49`, 2026-11-27 14:42 Uhr) und live |
+| Verbrennungsmotor 3D v0.5.1 · Gekröpfte Kurbelwelle mit freigängigen Pleueln und Zahnriemenrad, Leerlauf je Variante, dichtere Gaspartikel, Luftdosierung am Otto-Klappenspalt und sichtbare Zündung | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.1` ab `upstream/main` (`776ba1a`), `21167a2` + Doku `d6eb685`, Nachbesserung `d8a7660` + Doku-Commit, im Fork, kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Nach Michis Fork-Test nachgebessert, im Fork zum Test, kein Upstream-Merge ohne Go |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.4 · `wind_turbine` v0.1.3 · `combustion_engine` v0.4.1 live, v0.5.0 auf dem Arbeitsbranch
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.4 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.0 live, v0.5.1 auf dem Arbeitsbranch
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Michi / Codex CLI · Astra 6.2 xhigh (Fast) – Verbrennungsmotor 3D v0.5.1
+
+- **Branch** · `codex/combustion-v0.5.1` ab `upstream/main` (`776ba1a`, Lock-Commit auf `main`). Code `21167a2` und Doku `d6eb685` (Orchestrator) auf Fork `mic4rd/hunterjoeING.github.io`, Fork-Pages-Quelle auf diesen Branch umgestellt, kein PR. [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/).
+- **Nachbesserung nach Michis Test** · Zündung und Gasdichte auf dem getesteten Fork-Stand überarbeitet. Commit `d8a7660` (+ Doku-Commit des Orchestrators), in den Fork gepusht, Fork-Pages gebaut. Version bleibt 0.5.1.
+- **Steuertrieb** · Beide Nockenräder und die Spannrolle fluchten je Bank mit dem Kurbelrad. Nur der abgesetzte Stumpf reicht durch die Radbohrung. Der innere Riemenrand hält mindestens 0,14 Modelleinheiten Abstand zu Kurbelwelle und Nockenwellen. Lock auf diesem Branch entfernt.
+- **Kurbelwelle und Pleuel** · Hauptlagerzapfen und gebohrte Lagerböcke sitzen zwischen den Kröpfungen und an den Wellenenden. Die Pleuelaugen umfassen Hubzapfen und Kolbenbolzen. R4 und Boxer haben je vier einzelne Hubzapfen, der V6 drei Split-Pin-Paare mit je einer Mittelwange und der Crossplane-V8 vier gemeinsame Zapfen für je zwei Pleuel. Gegengewichte sind in die äußeren Wangen integriert. Der Kurbelradius von 0,58 entspricht dem halben Kolbenhub.
+- **Leerlauf** · R4 / Boxer / V6 / V8 beim Otto mit 800 / 750 / 700 / 650 U/min, beim Diesel mit 750 / 750 / 700 / 600 U/min. Die Grenze gilt für Regler, Kennfelder, Presets, Tour und Telemetrie. Ein Variantenwechsel übernimmt das Pedal und begrenzt die Drehzahl auf den gültigen Bereich. Das Leerlauf-Preset folgt der neuen Variante.
+- **Gaspartikel** · Obergrenze regulär 6.144 → 10.752 und reduziert 2.304 → 4.032 Plätze gegenüber v0.5.0 (je +75 %). Bis vier logische Kerne, bis 4 GiB gemeldeter Speicher oder bis 768 CSS-Pixel Fensterbreite gilt der kleine Puffer. Eine kleine feste Restgasfüllung folgt jedem Kolben. Sie nutzt denselben Points-Draw-Call wie Frischluft, Kraftstoff und Abgas.
+- **Zündung** · Jeder Zylinder hat einen eigenen hellen Flammenkern. Er wächst von der Elektrode bzw. vom Dieselstrahl bis nahe an Laufbuchse und Kolbenkrone. Die Darstellung hält ihn mindestens 190 ms sichtbar und lässt bei hoher Drehzahl Überlappungen zu. Ein gemeinsames, kurzreichweitiges Punktlicht hellt die umliegenden Flächen kurz auf. Pause hält Flamme und Licht an, Zeitlupe dehnt die Brenndauer. Die Tour blickt auf den offenen Brennraum.
+- **Drosselklappe** · Bei allen vier Otto-Bauformen bestimmt der Öffnungswinkel die durchgelassene Luftmenge. Im Leerlauf laufen kleinere Kügelchen beschleunigt durch den schmalen Randspalt, bei geöffnetem Pedal verteilen sie sich auf beide Seiten der Scheibe. Bereits eingelassene Luft erreicht weiter den Zylinder. Der Diesel hat im Modell und in der Tour einen freien Ansaugweg mit separaten AGR-Ventilen.
+- **Geprüft** · 106/106 Explainer-Tests und 167/167 E-Roadtrip-Tests. Alle geänderten JS-/MJS-Dateien bestehen `node --check`, `git diff --check` ist sauber. `node scripts/check-release-bump.mjs upstream/main` bestätigt `combustion_engine`. Geprüft sind unter anderem die Geometrie über 720°, Leerlaufgrenzen, Klappenspalt und Zündfolge aller acht Varianten. Neue Tests messen überlappende V8-Flammen bei Otto und Diesel, die helle Phase, den Abstand zur Kolbenkrone, den lokalen Lichtimpuls, Pause, Zeitlupe und die Restgasfüllung am Beispiel des mobilen V8. Im Otto-V8 stieg die mittlere sichtbare Füllung je Zylinder im Leerlauf von 9,4 auf 28,0 Partikel (reduzierter Cap, zwölf Zyklen je Stand). Bei geöffnetem Pedal waren es 101,0.
+- **Orchestrator** · Den Fork-Stand vor der Nachbesserung in Headless-Chrome mit WebGL bei 1280 und 390 px geprüft. Otto und Diesel liefen ohne Konsolenfehler und ohne POST-Anfragen. Screenshots zeigten Zündflamme, Kurbelwelle, Kurbelrad und Klappenspalt.
+- **GitHub** · Issue-/PR-Check (Orchestrator): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs.
+- **Orchestrator (Nachbesserung)** · Headless-Chrome mit WebGL bei 1280 und 390 px für Otto und Diesel: 0 Konsolenfehler, 0 POSTs; größere Zündflamme mit Lichtimpuls und dichtere Füllung im Leerlauf per Screenshot (`/home/box/projects/shot/ce-v051b-*.png`) geprüft. `node scripts/check-release-bump.mjs upstream/main`: „Versionsprüfung bestanden: combustion_engine“.
+- **Offen** · Bildrate auf einem echten Mobilgerät. Kein Upstream-PR/Merge ohne ausdrückliches Go; der Lock auf `main` bleibt bis zum Merge oder Abbruch.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 
 ### 2026-11-27 – Michi / Codex CLI · Astra 6.2 xhigh (Fast) – Verbrennungsmotor 3D v0.5.0
 
@@ -93,14 +111,5 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 - **GitHub** · Issue-/PR-Check (`gh pr list`, `gh issue list`): 0 offene Issues und 0 offene PRs in Upstream.
 - **Offen** · (1) Echten Cloudflare-Turnstile-Sitekey + `TURNSTILE_SECRET_KEY` im Cloudflare Dashboard/GitHub Secrets hinterlegen; (2) 4 offene Review-Punkte in `games/e-roadtrip/src/` im nächsten e-Roadtrip-Branch mit installiertem `node_modules` (`npm ci`) nachziehen (hier bewusst nicht angefasst, da `node_modules` offline nicht verfügbar).
 - Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, 34 Patch-Einträge spoilerfrei)
-
-### 2026-11-27 – Joe / Antigravity · Neon – Verbrennungsmotor 3D v0.4.0 (Turbodiesel, Bauformen & Explosions-Easter-Egg)
-
-- **Branch / PR** · `main` ab `093f55e` (nach Merge von Upstream-PR #12 & #13), Commit `9ed0fd1`, kein PR, Push auf Upstream `hunterjoeING/hunterjoeING.github.io` (`main`). Live: https://hunterjoeing.github.io/games/combustion-engine/
-- **Erledigt** · Motor-Auswahl in `00 · Motor & Bauform` sowie Viewport-Chip ergänzt: Umschaltung zwischen **Otto-Saugmotor** (Saugrohreinspritzung) und **Common-Rail-Turbodiesel** (Direkteinspritzung + animierter 3D-VTG-Turbolader mit drehendem Verdichter-/Turbinenrad, Ladeluftrohr, Einspritzkegel, eigenem BSFC-Kennfeld ~198 g/kWh und Ladedruck-Kachel). Parametrischer Multi-Bank-3D-Generator in `ce-model.js` und `ce-variants.js` für **R4** (`1–3–4–2`), **180°-Boxer B4** (`1–3–2–4`, echte gegenläufige Box-Bewegung mit getrennten 180°-Hubzapfen), **60°-V6** (`1–2–3–4–5–6`) und **90°-Crossplane-V8** (`1–8–4–3–6–5–7–2`) mit dynamischen SVG-Diagrammen, Presets, Zylinder-Taktanzeigen und Tour-Texten. Modus `03 Explosionsansicht` als Überdrehzahl-/Motorschaden-Easter-Egg (`ce-explosion.js`, 3D-Trümmerballistik, Rauch, WebAudio & Reparatur-Reset; gemäß Regel 10 nicht im öffentlichen Changelog erwähnt). Nockenwellen-Phasen auf Zylinder 2 & 3 sowie isolierte Baugruppen-Materialien für Highlighting korrigiert.
-- **Geprüft** · `node --check` auf alle `ce-*.js`, `shared/releases.js` und `shared/update-banner.js`; alle 38/38 Explainer-Unit-Tests (`node --test games/combustion-engine/tests/*.test.mjs`, inkl. neuer `tests/engine-variants.test.mjs`); vollständige 3D-Build-/Update-/Explosions-Prüfung aller 8 Motorkombinationen in Node; `node scripts/check-release-bump.mjs origin/main` für `combustion_engine`.
-- **GitHub** · Issue-/PR-Check (`gh pr list`, `gh issue list`): 0 offene Issues und 0 offene PRs in Upstream nach Merge von PR #12 & #13 (`093f55e`).
-- **Offen** · Live-Spieltest auf Handy & Desktop (u. a. Boxer/V6/V8, Turbolader-Animation und Explosions-Easter-Egg).
-- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `v0.4.0` spoilerfrei)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
