@@ -2,6 +2,15 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol xhigh – Verbrennungsmotor 3D v0.3.1
+
+- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand und Fork-Stand `ce28826`. Commit `66a8667` (+ Doku-Commit), gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/)
+- **Erledigt** · Kennfeld, Telemetrie und Tour für einen 2,0-l-DOHC-16V-Saugbenziner mit Saugrohreinspritzung kalibriert. 200 Nm bei 4250 U/min, 108,8 kW bei 5972 U/min und 245 g/kWh im Optimum. Der offene Punkt „135 vs. 150 kW“ ist erledigt. Die Motorspezifikation übernimmt das gerundete Kurvenmaximum von 109 kW, die Voreinstellung liegt bei 5950 U/min. Die Drosselklappe, Kraftstoffleiste und vier Einspritzventile liegen im Ansaugtrakt. Cruise hält im 5. Gang rund 106 km/h, die Tour endet nach dem Hochschalten bei 152 km/h im 6. Gang. Die bestehende Automatik erreicht simuliert 214 km/h bei Volllast.
+- **Geprüft** · Explainer-Tests 32/32, `node --check` für alle `ce-*.js`, `shared/releases.js` und die drei Testdateien. Eckwertskript und zusätzliche Modellmessungen, HTML-Tags, 45 IDs und zugehörige Verweise, Seitentitel, JSON-LD, Importmap, Asset-Versionen, Banner-Logik und `git diff --check` geprüft. `node scripts/check-release-bump.mjs upstream/main` meldet bestanden für `combustion_engine` anhand des Branch-Diffs bis HEAD und des Release-Katalogs aus dem Arbeitsbaum. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich.
+- **GitHub** · Issue-/PR-Check durch den Orchestrator: 0 offene Issues und PRs in Upstream, 0 PRs im Fork.
+- **Offen** · Fork-Test durch Michi. Kein Upstream-Merge ohne ausdrückliches Go; Joe soll den Explainer vorher sehen. Browser-Test durch den Orchestrator: 1280 und 390 px, Kennfeld bei Cruise, Tour-Schritte 6–9 live, Escape stellt den Zustand vor der Tour wieder her, 0 POSTs, keine Konsolenfehler (Screenshots `/home/box/projects/shot/ce-v031-*.png`).
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
+
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol xhigh – Verbrennungsmotor 3D v0.3.0
 
 - **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `83f03bd`. Commit `0add518` (+ Doku-Commit), gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages-Test-URL für v0.3.0 nach dem Push: https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/

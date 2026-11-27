@@ -15,6 +15,7 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
    * Jedes Spiel und jedes Quiz lebt isoliert in seinem eigenen Verzeichnis unter `games/<slug>/`.
 4. **Branching & sofort committen/pushen:**
    * **Parallele Arbeit / Feature-Branches:** Bei parallelen Änderungen (z. B. durch Collaborators oder externe Cloud-Agents) immer auf einem eigenen Feature-Branch arbeiten und per **Pull Request** in `main` mergen – niemals unkoordiniert direkt auf `main` pushen.
+   * **Ausnahme Lock-Hinweis:** Ein Commit, der ausschließlich die 🔒-Zeile in `HANDOFF.md` setzt oder entfernt (Regel 7), darf direkt auf `main` gehen.
    * **Auf dem Arbeits-Branch:** Fertige Änderungen zeitnah nach abgeschlossenen Dateien/Arbeitsschritten committen und auf den jeweiligen Branch pushen.
    * **Generierte Bundles (`dist/e-roadtrip.js`):** Merge-Konflikte in gebauten Bundles niemals manuell auflösen, sondern nach dem Merge/Rebase einfach `npm run build` im jeweiligen Spieleordner neu ausführen.
 5. **Syntax-Check vor jedem Commit:** Führe vor jedem Commit `node --check` auf alle geänderten JS-Dateien aus, damit `main` jederzeit fehlerfrei bleibt.
@@ -23,8 +24,9 @@ Diese Datei ist die verbindliche „Projekt-Verfassung“ für alle KI-Agenten u
    * Nutze gezielte Zeilen-Ersetzungen anstatt große Dateien komplett neu zu schreiben.
    * Prüfe nach jeder JS-Änderung die Syntax mit `node --check <datei.js>`.
 7. **Agent-Koordination (`HANDOFF.md`, Issues & PR-Kommentare):**
-   * **Vor jeder Session:** `AGENTS.md`, `HANDOFF.md` und die Architektur-Doku nach Regel 9 lesen. Im Upstream und Fork offene GitHub Issues (`gh issue list`) und Pull Requests (`gh pr list`) prüfen, um Doppelarbeit zu vermeiden.
-   * **Aufgaben & Rückfragen:** Aufgaben, Bugs und „Wer macht was“ über **GitHub Issues** koordinieren; Code-Rückfragen und Reviews direkt als **Pull-Request-Kommentare** schreiben.
+   * **Vor jeder Session:** `AGENTS.md`, `HANDOFF.md` und die Architektur-Doku nach Regel 9 lesen. Im Upstream und Fork offene GitHub Issues (`gh issue list`) und Pull Requests (`gh pr list`) prüfen, um Doppelarbeit zu vermeiden. Steht in `HANDOFF.md` ein 🔒-Hinweis für dieselben Dateien oder Bereiche, diese nicht parallel ändern.
+   * **Arbeits-Hinweis (Lock) in `HANDOFF.md`:** Vor Arbeitsbeginn eine Zeile `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJJ-MM-TT>` in den vorgesehenen Abschnitt eintragen und als eigenen kleinen Doku-Commit direkt auf `main` pushen (nur so sehen andere Agenten ihn; Ausnahme zu Regel 4). Nach Merge oder Abbruch die Zeile wieder entfernen (im selben PR oder als Doku-Commit). Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden. Kollidiert der Lock-Commit beim Push, hat jemand anderes zeitgleich begonnen: erst abstimmen. GitHub Issues nur für größere Vorhaben über mehrere Sessions; kleine Aufgaben brauchen nur den Lock-Hinweis.
+   * **Aufgaben & Rückfragen:** Größere Vorhaben über mehrere Sessions sowie Bugs über **GitHub Issues** koordinieren; Code-Rückfragen und Reviews direkt als **Pull-Request-Kommentare** schreiben.
    * **Zum Abschluss in `HANDOFF.md` prüfen:**
      - In §1 eine Zeile für den Arbeitsbranch anlegen oder aktualisieren. Branch, PR-/Upstream-Status und Status-Emoji angeben. Erledigte oder gemergte Zeilen auf ✅ setzen.
      - In §2 oben den Session-Eintrag mit Datum, Verantwortlichen, Agent und Modell ergänzen. Branch, Commit-SHAs, Push ja/nein und Ziel (Fork/Upstream), PR-Nummer oder „kein PR“ und ggf. die Fork-Pages-Test-URL angeben.

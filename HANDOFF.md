@@ -1,8 +1,21 @@
 # HANDOFF.md – Agent- & Entwickler-Übergabe (HunterJoe Arcade)
 
 > **Regel:** Jeder KI-Agent und Entwickler liest diese Datei **vor Beginn** einer Session (zusammen mit `gh issue list` und `gh pr list`) und aktualisiert sie **am Ende** einer Session, um Doppelarbeit zu vermeiden.
-> * Aufgaben, Bugs & „Wer macht was“ $\rightarrow$ **GitHub Issues**
+> * Laufende Arbeit an Dateien $\rightarrow$ **🔒-Hinweis** im Abschnitt „Aktive Arbeits-Hinweise“ (AGENTS.md Regel 7)
+> * Größere Vorhaben über mehrere Sessions sowie Bugs $\rightarrow$ **GitHub Issues**
 > * Code-Rückfragen & Reviews $\rightarrow$ **Pull-Request-Kommentare**
+
+---
+
+## Aktive Arbeits-Hinweise (🔒)
+
+Vor Arbeitsbeginn diesen Abschnitt auf `main` prüfen (AGENTS.md Regel 7). Steht hier ein Hinweis für dieselben Dateien oder Bereiche, diese nicht parallel ändern.
+
+Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJJ-MM-TT>`
+
+Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
+
+- (keine)
 
 ---
 
@@ -27,12 +40,22 @@
 | Verbrennungsmotor 3D v0.4.0 · Common-Rail-Turbodiesel mit 3D-VTG-Turbolader, vier Bauformen (R4, Boxer B4, V6, V8), Explosions-Easter-Egg, Nockenwellen- & Highlight-Fix | Joe / Antigravity · Neon | `main` (`9ed0fd1`, `0f4f5f1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Verbrennungsmotor v0.4.0) |
 | Website-weites Security-Hardening & Bugfix-Release (Worker, Workflows, Hub, 24 Quizzes, 10 Games, Doku) | Joe / Antigravity · Neon | `main` (`bcd6deb`, `0d963b1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.2, Windkraftanlage v0.1.2, 32 weitere Apps v0.1.1) |
 | Abschluss Security-Audit ARC-01..22 (Score-Grenzen, `adminSecret` raus, `wrangler` & Action-SHAs gepinnt, lokales Three.js-Vendoring, Meta-CSP, Quiz-`textContent`, `callback.html`, Server-CAPTCHA) | Joe / Antigravity · Neon | `main` (`231d7c3`, `1888b52`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.4, Verbrennungsmotor v0.4.1, Windkraftanlage v0.1.3, 37 weitere Apps gepatcht) |
+| Lock-Hinweis in `HANDOFF.md` gegen paralleles Arbeiten (AGENTS.md Regel 4 und 7) | Michi / Grok Bot (Orchestrator) | `docs/handoff-lock-rule` · Upstream-PR (folgt) | 🟡 Offen, kein Merge ohne Go |
 
 **Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.4 · `wind_turbine` v0.1.3 · `combustion_engine` v0.4.1
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Michi / Grok Bot (Orchestrator) · kein Codex-Lauf / manuell – Lock-Hinweis in HANDOFF.md
+
+- **Branch / PR** · `docs/handoff-lock-rule` ab `upstream/main` (`7415dd3`). SHA: (folgt). Push auf Fork `mic4rd/hunterjoeING.github.io`. Upstream-PR: (folgt). Kein Lock-Hinweis gesetzt (reine Doku, sehr klein; diese PR führt die Regel erst ein).
+- **Erledigt** · Regel 7 um Arbeits-Hinweis (Lock) in `HANDOFF.md` ergänzt, Ausnahme in Regel 4, Abschnitt „Aktive Arbeits-Hinweise (🔒)“ in `HANDOFF.md` angelegt. Intro und Bullet „Aufgaben & Rückfragen“ an die neue Aufteilung angepasst (Issues nur für größere Vorhaben). Ältesten Session-Eintrag (Verbrennungsmotor 3D v0.3.1) nach `HANDOFF-archive.md` verschoben, damit §2 bei fünf Einträgen bleibt.
+- **Geprüft** · `git diff --check`. `node scripts/check-release-bump.mjs upstream/main`: „Keine releasepflichtigen Dateien geändert.“ E-Roadtrip `npm test` 167/167 (keine Codeänderung; der CI-Workflow führt die Suite trotzdem aus). Keine JS- oder Release-Änderung (reine Doku, `[no-release]`).
+- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues und 0 offene PRs in Upstream, 0 PRs im Fork (vor dem Öffnen dieser PR).
+- **Offen** · Kein Upstream-Merge ohne ausdrückliches Go.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10) — keine Versionserhöhung (reine Doku, `[no-release]`).
 
 ### 2026-11-27 – Joe / Antigravity · Neon – Security-Audit-Abschluss ARC-01..22 & Server-CAPTCHA (Arcade v0.4.4)
 
@@ -75,15 +98,6 @@
 - **Konflikte** · Keine. Upstream/main ist seit `a70eacc` nicht weitergelaufen, kein Rebase nötig.
 - **Geprüft** · Vor dem Merge: Explainer-Tests 32/32, `node --check`, `git diff --check`, `node scripts/check-release-bump.mjs upstream/main` (combustion_engine), e-Roadtrip Typecheck, Build (Bundle unverändert) und `npm test` (167/167). CI auf PR #12: `check-versioning` grün. Nach dem Merge: Workflow „pages build and deployment“ auf `84636bc` grün. Live-Seite https://hunterjoeing.github.io/games/combustion-engine/ zeigt v0.3.1 und „Saugbenziner“. Hub und e-Roadtrip v0.6.0 bleiben erreichbar. Headless-Chrome-Stichprobe ohne Konsolenfehler, 0 POSTs. Screenshot `/home/box/projects/shot/ce-live-v031.png`.
 - **Offen** · Der Hilfsbranch `audit/upstream-main-a70eacc` auf dem Fork bleibt. Issue-/PR-Check nach dem Merge: Upstream 0 offene Issues und PRs (dieser Doku-PR ausgenommen), Fork 0 offene PRs.
-- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
-
-### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol xhigh – Verbrennungsmotor 3D v0.3.1
-
-- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand und Fork-Stand `ce28826`. Commit `66a8667` (+ Doku-Commit), gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. [Fork-Pages-Test nach dem Push](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/)
-- **Erledigt** · Kennfeld, Telemetrie und Tour für einen 2,0-l-DOHC-16V-Saugbenziner mit Saugrohreinspritzung kalibriert. 200 Nm bei 4250 U/min, 108,8 kW bei 5972 U/min und 245 g/kWh im Optimum. Der offene Punkt „135 vs. 150 kW“ ist erledigt. Die Motorspezifikation übernimmt das gerundete Kurvenmaximum von 109 kW, die Voreinstellung liegt bei 5950 U/min. Die Drosselklappe, Kraftstoffleiste und vier Einspritzventile liegen im Ansaugtrakt. Cruise hält im 5. Gang rund 106 km/h, die Tour endet nach dem Hochschalten bei 152 km/h im 6. Gang. Die bestehende Automatik erreicht simuliert 214 km/h bei Volllast.
-- **Geprüft** · Explainer-Tests 32/32, `node --check` für alle `ce-*.js`, `shared/releases.js` und die drei Testdateien. Eckwertskript und zusätzliche Modellmessungen, HTML-Tags, 45 IDs und zugehörige Verweise, Seitentitel, JSON-LD, Importmap, Asset-Versionen, Banner-Logik und `git diff --check` geprüft. `node scripts/check-release-bump.mjs upstream/main` meldet bestanden für `combustion_engine` anhand des Branch-Diffs bis HEAD und des Release-Katalogs aus dem Arbeitsbaum. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js`, `npm test` (167/167), Bundle bytegleich.
-- **GitHub** · Issue-/PR-Check durch den Orchestrator: 0 offene Issues und PRs in Upstream, 0 PRs im Fork.
-- **Offen** · Fork-Test durch Michi. Kein Upstream-Merge ohne ausdrückliches Go; Joe soll den Explainer vorher sehen. Browser-Test durch den Orchestrator: 1280 und 390 px, Kennfeld bei Cruise, Tour-Schritte 6–9 live, Escape stellt den Zustand vor der Tour wieder her, 0 POSTs, keine Konsolenfehler (Screenshots `/home/box/projects/shot/ce-v031-*.png`).
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
