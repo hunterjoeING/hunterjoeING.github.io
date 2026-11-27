@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Verbrennungsmotor 3D – Interaktiver Explainer · HunterJoe Arcade</title>
-  <meta name="description" content="Interaktiver 3D-Explainer eines 4-Takt-Reihenvierzylinder-Ottomotors (DOHC 16V): Cutaway, X-Ray, Explosionsansicht, Drehzahl-Regler, Gaspedal (Last), Drehmoment-/Leistungskurve, Muschelkurve &amp; 6-Schritte-Tour." />
+  <meta name="description" content="Interaktiver 3D-Explainer eines 4-Takt-Reihenvierzylinder-Ottomotors (DOHC 16V): Cutaway, X-Ray, Explosionsansicht, Drehzahlregler, Gaspedal, Gangwahlanzeige, Drehmoment-/Leistungskurve, Muschelkurve und geführte Tour." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#F6F8FC" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/combustion-engine/" />
@@ -45,14 +45,14 @@
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.2.0&amp;rev=2" />
+  <link rel="stylesheet" href="./styles.css?v=0.3.0" />
 </head>
 <body>
   <header class="arcade-topbar ce-topbar">
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
       <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
-      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.2.0</button>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.3.0</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
@@ -103,7 +103,7 @@
       </div>
 
       <!-- 04 RPM Slider + Slow-Mo -->
-      <div class="ce-panel-section">
+      <div class="ce-panel-section ce-driving-controls">
         <div class="ce-section-head">
           <label class="ce-section-label" for="ce-rpm-slider">04 · Motordrehzahl (RPM)</label>
           <span class="ce-rpm-readout" id="ce-rpm-val">2.400 U/min</span>
@@ -113,7 +113,18 @@
           <label class="ce-section-label" for="ce-load-slider">04b · Gaspedal (Last)</label>
           <span class="ce-rpm-readout" id="ce-load-val">30 %</span>
         </div>
-        <input type="range" class="ce-slider ce-load-slider" id="ce-load-slider" min="0" max="100" step="1" value="30" aria-label="Gaspedal (Last)" aria-valuetext="30 %" />
+        <p class="ce-load-help" id="ce-load-help">Gaspedal ≈ Drosselklappenöffnung beim Ottomotor, entspricht hier der Last.</p>
+        <input type="range" class="ce-slider ce-load-slider" id="ce-load-slider" min="0" max="100" step="1" value="30" aria-describedby="ce-load-help" aria-valuetext="30 %" />
+        <div class="ce-gear-selector" id="ce-gear-selector" role="group" aria-label="Gangwahlanzeige" aria-describedby="ce-gear-info">
+          <span data-gear="0">N</span>
+          <span data-gear="1">1</span>
+          <span data-gear="2">2</span>
+          <span data-gear="3">3</span>
+          <span data-gear="4">4</span>
+          <span data-gear="5" class="active" aria-current="true">5</span>
+          <span data-gear="6">6</span>
+        </div>
+        <p class="ce-gear-info" id="ce-gear-info">5. Gang · i = 0,85 · Achse 3,2 · Konstantfahrt</p>
         <div class="ce-preset-row">
           <button type="button" class="ce-preset-btn" data-rpm="850" data-load="0" aria-pressed="false">Leerlauf</button>
           <button type="button" class="ce-preset-btn active" data-rpm="2400" data-load="30" aria-pressed="true">Cruise</button>
@@ -201,7 +212,7 @@
         </div>
       </div>
 
-      <div class="ce-panel-section">
+      <div class="ce-panel-section ce-map-section">
         <div class="ce-section-head">
           <span class="ce-section-label">05b · Muschelkurve (Wirkungsgradkennfeld)</span>
         </div>
@@ -226,9 +237,9 @@
   </main>
 
   <script src="../../shared/arcade.js?v=0.4.0"></script>
-  <script src="../../shared/releases.js?v=0.4.1&amp;rev=3"></script>
+  <script src="../../shared/releases.js?v=0.4.1&amp;rev=4"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
   <script src="../../shared/burger-menu.js?v=0.4.0"></script>
-  <script type="module" src="./ce-main.js?v=0.2.0&amp;rev=2"></script>
+  <script type="module" src="./ce-main.js?v=0.3.0"></script>
 </body>
 </html>

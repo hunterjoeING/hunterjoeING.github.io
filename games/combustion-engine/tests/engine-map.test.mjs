@@ -169,7 +169,7 @@ test('Die vier HTML-Voreinstellungen setzen die vorgesehenen Paare aus Drehzahl 
 });
 
 test('Öffentlicher Release v0.2.0 enthält die vorgesehenen Metadaten und Hinweise', () => {
-  const [release] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  const release = releaseCatalog.releases.find(entry => entry.app === 'combustion_engine' && entry.version === '0.2.0');
   assert.equal(release.version, '0.2.0');
   assert.equal(release.date, '2026-11-27');
   assert.equal(release.type, 'feature');

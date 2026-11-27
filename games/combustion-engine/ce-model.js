@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { ENGINE_PARTS, CYLINDER_PHASE_OFFSETS, getCylinderStroke } from './ce-data.js?v=0.2.0&rev=2';
+import { ENGINE_PARTS, CYLINDER_PHASE_OFFSETS, getCylinderStroke } from './ce-data.js?v=0.3.0';
 
 const CYL_X = [-2.1, -0.7, 0.7, 2.1];
 const Y_CRANK = -1.45;
@@ -639,10 +639,17 @@ export function createCombustionEngineModel() {
   intakeGroup.add(plenum);
 
   // Drosselklappe am Einlassende
-  const throttleBody = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.28, 0.55, 18), mats.machinedSteel);
+  const throttleProfile = [
+    [0.23, -0.275], [0.28, -0.275], [0.28, 0.275], [0.23, 0.275], [0.23, -0.275]
+  ].map(([radius, height]) => new THREE.Vector2(radius, height));
+  const throttleBody = new THREE.Mesh(new THREE.LatheGeometry(throttleProfile, 24), mats.machinedSteel);
   throttleBody.rotation.z = Math.PI / 2;
   throttleBody.position.set(-2.72, 1.85, -1.95);
   intakeGroup.add(throttleBody);
+  const throttlePlateGeo = new THREE.CylinderGeometry(0.225, 0.225, 0.025, 24).rotateZ(Math.PI / 2);
+  const throttlePlate = new THREE.Mesh(throttlePlateGeo, mats.chainGold.clone());
+  throttlePlate.position.copy(throttleBody.position);
+  intakeGroup.add(throttlePlate);
 
   // 4 gebogene Ansaug-Schwingrohre
   CYL_X.forEach(cx => {
@@ -965,6 +972,7 @@ export function createCombustionEngineModel() {
     exhaustCamSpin.rotation.x = crankRad * 0.5;
     intakeCamGear.rotation.x = crankRad * 0.5;
     exhaustCamGear.rotation.x = crankRad * 0.5;
+    throttlePlate.rotation.y = telemetry.load * Math.PI / 2;
 
     // Abgaskrümmer glüht bei hohen Drehzahlen subtil wärmer
     const rpmNorm = telemetry.rpm / 7000;

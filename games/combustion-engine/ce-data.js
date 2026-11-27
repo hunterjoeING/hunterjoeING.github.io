@@ -34,6 +34,35 @@ export const DRIVETRAIN_EXAMPLE = {
   topGearCruiseRatio: 1.45
 };
 
+export const DRIVE_SEQUENCE_EXAMPLE = {
+  rotatingMassFactor: 1.08,
+  loadRampS: 0.5,
+  partLoadLimit: 0.8,
+  partLoadShiftRpm: 3000,
+  fullLoadShiftRpm: 5500,
+  minShiftRpm: 1300,
+  cruiseAccelerationMps2: 0.05,
+  cruisePowerTolerance: 0.03
+};
+
+export const DRIVE_TOUR_EXAMPLE = {
+  cruiseRpm: 2400,
+  cruiseLoad: 0.30,
+  targetLoad: 0.70,
+  durationS: 260,
+  dtS: 0.05,
+  pedalDriveS: 3.5,
+  pedalLeadInS: 0.6,
+  pedalHoldS: 3,
+  drivePlaybackS: 9,
+  drivePlaybackExponent: 1.55,
+  comparisonSpeedKmh: 130,
+  comparisonGears: [3, 4, 5, 6],
+  lowSpeedKmh: 50,
+  lowSpeedGear: 4,
+  comparisonPointS: 2
+};
+
 // Kurbelwellen-Phasenversatz (in Grad von 0..720) für Zündfolge 1-3-4-2:
 // Zyklus pro Zylinder: 0-180° Ansaugen, 180-360° Verdichten, 360-540° Arbeiten, 540-720° Ausstoßen.
 // Zyl 1 & 4 laufen im Gleichtakt (0°/360°), Zyl 2 & 3 um 180° versetzt (180°/540°).
@@ -109,7 +138,7 @@ function operatingStatus(rpm, load) {
   return ['cruise', 'Volllast'];
 }
 
-export function computeEngineTelemetry(rpmInput, loadInput = 1) {
+export function computeEngineTelemetry(rpmInput, loadInput = 1, driveFrame) {
   const rpm = clamp(rpmInput, ENGINE_SPECS.maxRpm);
   const load = clamp(loadInput, 1);
   const torqueNm = load * fullTorqueNm(rpm);
@@ -131,7 +160,10 @@ export function computeEngineTelemetry(rpmInput, loadInput = 1) {
     noUsefulPower: powerKW === 0,
     status,
     statusLabel,
-    ...computeDrivetrain(rpm, load, powerKW)
+    ...(driveFrame
+      ? drivetrainPoint(driveFrame.gear, rpm, driveFrame.driveMode,
+        fuelLitersPerHour(rpm, load, powerKW), driveFrame.speedKmh)
+      : computeDrivetrain(rpm, load, powerKW))
   };
 }
 
@@ -154,6 +186,7 @@ export function roadLoadTorqueNm(rpm, gear) {
 }
 
 function fuelLitersPerHour(rpm, load, powerKw) {
+  if (rpm < ENGINE_SPECS.minRunningRpm || (load < 0.03 && rpm >= 1200)) return 0;
   // Derselbe Nm/bar-Faktor wie im BSFC-Kennfeld hält beide Verbrauchsrechnungen konsistent.
   const kwPerBar = TORQUE_NM_PER_BAR * 2 * Math.PI * rpm / 60000;
   const { totalPressureBar, indicatedEfficiency } = fuelModel(rpm, load, powerKw / kwPerBar);
@@ -168,8 +201,8 @@ const DRIVE_MODE_LABELS = {
   coast: 'Schub'
 };
 
-function drivetrainPoint(gear, rpm, driveMode, fuelLph) {
-  const speed = speedKmh(rpm, gear);
+function drivetrainPoint(gear, rpm, driveMode, fuelLph, speed = speedKmh(rpm, gear)) {
+  const fuelL100Instant = driveMode !== 'neutral' && speed > 0 ? fuelLph * 100 / speed : null;
   return {
     gear,
     gearLabel: gear ? `${gear}. Gang` : 'N',
@@ -177,7 +210,8 @@ function drivetrainPoint(gear, rpm, driveMode, fuelLph) {
     driveMode,
     driveModeLabel: DRIVE_MODE_LABELS[driveMode],
     fuelLph,
-    fuelL100: driveMode === 'cruise' && speed > 0 ? fuelLph * 100 / speed : null,
+    fuelL100: driveMode === 'cruise' ? fuelL100Instant : null,
+    fuelL100Instant,
     roadLoadKw: gear ? roadLoadPowerKw(speed / 3.6) : null
   };
 }
@@ -188,7 +222,7 @@ export function computeDrivetrain(rpm, load, powerKw) {
 
   const lowLoad = load < 0.03;
   const fuelCut = lowLoad && rpm >= 1200;
-  const fuelLph = fuelCut ? 0 : fuelLitersPerHour(rpm, load, powerKw);
+  const fuelLph = fuelLitersPerHour(rpm, load, powerKw);
   if (lowLoad && !fuelCut) return drivetrainPoint(0, rpm, 'neutral', fuelLph);
 
   const { gearRatios, minCruiseKmh, minAccelerationKmh, maxSpeedKmh,
@@ -225,6 +259,72 @@ export function computeDrivetrain(rpm, load, powerKw) {
 
   const kickdown = candidates.find(({ speed }) => speed >= minAccelerationKmh);
   return drivetrainPoint(kickdown?.gear ?? 1, rpm, 'accelerate', fuelLph);
+}
+
+export function simulateDriveSequence({ startSpeedKmh, startGear, startLoad, targetLoad, durationS, dtS }) {
+  const { gearRatios, finalDrive, wheelRadiusM, drivetrainEfficiency, massKg, gravityMps2,
+    rollingResistance, airDensityKgM3, dragAreaM2, maxSpeedKmh } = DRIVETRAIN_EXAMPLE;
+  const { redlineRpm } = ENGINE_SPECS;
+  const { rotatingMassFactor, loadRampS, partLoadLimit, partLoadShiftRpm, fullLoadShiftRpm,
+    minShiftRpm, cruiseAccelerationMps2, cruisePowerTolerance } = DRIVE_SEQUENCE_EXAMPLE;
+  if (!Number.isInteger(startGear) || !gearRatios[startGear - 1] ||
+      !Number.isFinite(durationS) || durationS < 0 || !Number.isFinite(dtS) || dtS <= 0) {
+    throw new RangeError('Ungültige Fahrsequenz');
+  }
+
+  let gear = startGear;
+  const speedLimit = () => Math.min(maxSpeedKmh, speedKmh(redlineRpm, gear));
+  let speed = clamp(startSpeedKmh, speedLimit());
+  const initialLoad = clamp(startLoad, 1);
+  const finalLoad = clamp(targetLoad, 1);
+  const loadAt = t => initialLoad + (finalLoad - initialLoad) * Math.min(t / loadRampS, 1);
+  const effectiveMass = massKg * rotatingMassFactor;
+  const rollingForceN = massKg * gravityMps2 * rollingResistance;
+  const frames = [];
+  const steps = Math.ceil(durationS / dtS);
+
+  for (let step = 0; step <= steps; step++) {
+    const t = Math.min(step * dtS, durationS);
+    const load = loadAt(t);
+    const shiftRpm = load < partLoadLimit ? partLoadShiftRpm : fullLoadShiftRpm;
+    if (gear < gearRatios.length && speed > speedKmh(shiftRpm, gear) &&
+        speed >= speedKmh(minShiftRpm, gear + 1)) gear++;
+
+    const v = speed / 3.6;
+    const rpm = Math.min(redlineRpm, speed / speedKmh(1, gear));
+    const fullTorque = fullTorqueNm(rpm);
+    const forcePerLoad = fullTorque * gearRatios[gear - 1] * finalDrive * drivetrainEfficiency / wheelRadiusM;
+    const resistanceN = rollingForceN + 0.5 * airDensityKgM3 * dragAreaM2 * v ** 2;
+    const acceleration = (load * forcePerLoad - resistanceN) / effectiveMass;
+    const powerKw = load * fullTorque * 2 * Math.PI * rpm / 60000;
+    const roadLoadKw = roadLoadPowerKw(v);
+    const balanced = Math.abs(acceleration) <= cruiseAccelerationMps2 &&
+      Math.abs(powerKw - roadLoadKw) < cruisePowerTolerance * roadLoadKw;
+    const driveMode = balanced ? 'cruise' : acceleration > 0 ? 'accelerate' : 'coast';
+    frames.push({ t, rpm, load, gear, speedKmh: speed, driveMode, powerKw, roadLoadKw });
+
+    // Mittlere Last des Zeitschritts verwenden, damit die Pedalrampe direkt in die Kraft eingeht.
+    const dt = Math.min(dtS, durationS - t);
+    const meanLoad = loadAt(t + dt / 2);
+    const stepAcceleration = (meanLoad * forcePerLoad - resistanceN) / effectiveMass;
+    speed = clamp(speed + stepAcceleration * dt * 3.6, speedLimit());
+  }
+  return frames;
+}
+
+export function constantSpeedPoint(speed, gear) {
+  const { minRunningRpm, redlineRpm } = ENGINE_SPECS;
+  const rpm = speed / speedKmh(1, gear);
+  if (!Number.isFinite(rpm) || rpm < minRunningRpm || rpm > redlineRpm || speed > DRIVETRAIN_EXAMPLE.maxSpeedKmh) return null;
+  const roadLoadKw = roadLoadPowerKw(speed / 3.6);
+  const load = roadLoadTorqueNm(rpm, gear) / fullTorqueNm(rpm);
+  if (load > 1) return null;
+
+  const driveMode = 'cruise';
+  const { torqueNm, powerKW, bsfc, thermalEff, fuelLph, fuelL100 } =
+    computeEngineTelemetry(rpm, load, { gear, speedKmh: speed, driveMode });
+  return { rpm, load, gear, speedKmh: speed, driveMode, torqueNm, powerKw: powerKW, roadLoadKw,
+    bsfc, thermalEff, fuelLph, fuelL100 };
 }
 
 function traceContourLines(nodes) {
@@ -315,6 +415,63 @@ export function computeBsfcContours(levels = [235, 250, 270, 300, 350, 450]) {
     return { level, polylines: traceContourLines([...nodes.values()]) };
   });
   return { contours, optimum };
+}
+
+export function computeDriveTourDemos(optimum = computeBsfcContours([]).optimum) {
+  const { cruiseRpm, cruiseLoad, targetLoad, durationS, dtS, pedalDriveS, pedalLeadInS,
+    pedalHoldS, drivePlaybackS, drivePlaybackExponent, comparisonSpeedKmh, comparisonGears,
+    lowSpeedKmh, lowSpeedGear, comparisonPointS } = DRIVE_TOUR_EXAMPLE;
+  const start = computeEngineTelemetry(cruiseRpm, cruiseLoad);
+  const frames = simulateDriveSequence({
+    startSpeedKmh: start.speedKmh, startGear: start.gear, startLoad: start.load,
+    targetLoad, durationS, dtS
+  });
+  const pedalFrames = frames.filter(frame => frame.t <= pedalDriveS);
+  const rampEnd = pedalFrames.find(frame => frame.t >= DRIVE_SEQUENCE_EXAMPLE.loadRampS);
+  const end = frames.at(-1);
+  const comparisons = comparisonGears.map(gear => constantSpeedPoint(comparisonSpeedKmh, gear));
+  const lowSpeed = constantSpeedPoint(lowSpeedKmh, lowSpeedGear);
+  const optimumPoint = computeEngineTelemetry(optimum.rpm, optimum.load);
+  const optimumMode = optimumPoint.powerKW > optimumPoint.roadLoadKw ? 'accelerate' : optimumPoint.driveMode;
+  const optimumFrame = {
+    rpm: optimum.rpm, load: optimum.load, gear: optimumPoint.gear, speedKmh: optimumPoint.speedKmh,
+    driveMode: optimumMode, powerKw: optimumPoint.powerKW, roadLoadKw: optimumPoint.roadLoadKw
+  };
+
+  const whole = new Intl.NumberFormat('de-DE', { maximumFractionDigits: 0 });
+  const decimal = new Intl.NumberFormat('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const speed = value => `${whole.format(value)} km/h`;
+  const torque = value => `${whole.format(value)} Nm`;
+  const load = value => `${whole.format(value * 100)} %`;
+  const power = value => `${decimal.format(value)} kW`;
+  const fuel = value => `${decimal.format(value)} l/100km`;
+  const bsfc = value => `${whole.format(value)} g/kWh`;
+  const metrics = ({ bsfc: specific, thermalEff, powerKW, fuelL100Instant }) =>
+    `${bsfc(specific)}, η ${load(thermalEff)}, ${power(powerKW)}, ${fuel(fuelL100Instant)}`;
+  const endPoint = computeEngineTelemetry(end.rpm, end.load, end);
+  const lowPoint = computeEngineTelemetry(lowSpeed.rpm, lowSpeed.load, lowSpeed);
+  const first = comparisons[0];
+  const last = comparisons.at(-1);
+
+  return {
+    pedal: {
+      frames: pedalFrames, playbackS: pedalDriveS, leadInS: pedalLeadInS, holdS: pedalHoldS,
+      resetOnFinish: true,
+      body: `Das Pedal geht von ${load(start.load)} auf ${load(rampEnd.load)}. Die Drosselklappe öffnet, mehr Luft und Kraftstoff gelangen in die Zylinder. Das Nutzmoment steigt von ${torque(start.torqueNm)} auf ${torque(rampEnd.load * fullTorqueNm(rampEnd.rpm))}. Bei ${power(rampEnd.powerKw)} Nutzleistung und ${power(rampEnd.roadLoadKw)} Fahrwiderstand beschleunigt das Auto.`
+    },
+    equilibrium: {
+      frames, playbackS: drivePlaybackS, timeExponent: drivePlaybackExponent,
+      body: `Die Luftwiderstandskraft wächst mit v². Ihr Leistungsbedarf wächst mit v³, jener fürs Rollen mit v. Die Automatik schaltet hoch. Bei ${speed(end.speedKmh)} im ${end.gear}. Gang sind Nutzleistung (${power(end.powerKw)}) und Fahrwiderstandsleistung (${power(end.roadLoadKw)}) fast gleich. Das Auto fährt konstant weiter, bis du das Pedal verstellst.`
+    },
+    gearing: {
+      frames: comparisons, playbackS: comparisons.length * comparisonPointS,
+      body: `Am Drehzahlbegrenzer schafft der 1. Gang ${speed(speedKmh(ENGINE_SPECS.redlineRpm, 1))}. Bei ${speed(comparisonSpeedKmh)} senken längere Gänge die Drehzahl und erhöhen die Last. Vom ${first.gear}. zum ${last.gear}. Gang sinkt der spezifische Verbrauch von ${bsfc(first.bsfc)} auf ${bsfc(last.bsfc)} und der Streckenverbrauch von ${fuel(first.fuelL100)} auf ${fuel(last.fuelL100)}.`
+    },
+    map: {
+      frames: [optimumFrame, lowSpeed, end], playbackS: 3 * comparisonPointS,
+      body: `Im Optimum ist die Last hoch und der spezifische Verbrauch gering (${metrics(optimumPoint)} momentan). Bei ${speed(lowSpeed.speedKmh)} ist der Wirkungsgrad geringer (${metrics(lowPoint)}). Weil nur wenig Leistung nötig ist, sinkt der Streckenverbrauch. Zum Vergleich die Konstantfahrt bei ${speed(end.speedKmh)} (${metrics(endPoint)}).`
+    }
+  };
 }
 
 /**
@@ -642,16 +799,46 @@ export const ENGINE_TOUR_STEPS = [
   },
   {
     step: 6,
-    title: 'Explosionsansicht: Alle 12 Baugruppen',
-    badge: 'Zündfolge 1-3-4-2 · 204 PS',
-    viewMode: 'exploded',
+    title: 'Gas geben: Drosselklappe auf',
+    badge: 'Last und Nutzmoment',
+    viewMode: 'cutaway',
+    focusPart: 'intakeManifold',
+    demo: 'pedal',
+    demoTimeScale: 0.16,
+    cameraPos: [-7.4, 2.9, -5.0],
+    cameraTarget: [-2.15, 1.95, -1.65]
+  },
+  {
+    step: 7,
+    title: 'Fahrwiderstand und Gleichgewicht',
+    badge: 'Beschleunigung und Konstantfahrt',
+    viewMode: 'cutaway',
     focusPart: 'crankshaft',
-    demoRpm: 4200,
-    demoLoad: 1.0,
-    demoTimeScale: 0.18,
-    cameraPos: [10.8, 3.2, 11.8],
-    cameraTarget: [0.0, 0.8, 0.0],
-    body:
-      'Alle 12 Baugruppen schweben beschriftet im Raum – und laufen trotzdem synchron weiter! Durch die Zündfolge 1-3-4-2 zündet alle 180° ein anderer Zylinder, sodass Kurbelwelle und Schwungrad ein rundes Drehmoment liefern.'
+    demo: 'equilibrium',
+    demoTimeScale: 0.16,
+    cameraPos: [5.5, -0.8, 7.2],
+    cameraTarget: [0, -1.4, 0]
+  },
+  {
+    step: 8,
+    title: 'Warum ein Getriebe?',
+    badge: 'Übersetzung und Verbrauch',
+    viewMode: 'cutaway',
+    focusPart: 'flywheelOilpan',
+    demo: 'gearing',
+    demoTimeScale: 0.16,
+    cameraPos: [8.8, -0.5, 6.2],
+    cameraTarget: [1.8, -1.5, 0]
+  },
+  {
+    step: 9,
+    title: 'Die Muschelkurve lesen',
+    badge: 'Wirkungsgrad und Leistungsbedarf',
+    viewMode: 'cutaway',
+    focusPart: 'block',
+    demo: 'map',
+    demoTimeScale: 0.16,
+    cameraPos: [6.2, 2.0, 7.6],
+    cameraTarget: [0, 0.7, 0]
   }
 ];

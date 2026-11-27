@@ -79,6 +79,16 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.3.0", date: "2026-11-27", type: "feature", title: "Getriebe und Tour zur Fahrlogik",
+      author: "Michi", model: "Sol 6.2",
+      highlights: [
+        "Die Gangwahlanzeige unter dem Gaspedal zeigt den aktiven Gang und seine Übersetzung.",
+        "Der Momentanverbrauch erscheint auch beim Beschleunigen und im Schub in l/100km.",
+        "Die Tour zeigt live, wie sich Gaspedal, Fahrwiderstand und Hochschalten auf die Fahrt auswirken.",
+        "Vergleiche verschiedene Gänge bei gleichem Tempo und lerne, die Muschelkurve zu lesen.",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.2.0", date: "2026-11-27", type: "feature", title: "Gaspedal und Muschelkurve",
       author: "Michi", model: "Sol 6.2",
       highlights: [

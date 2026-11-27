@@ -285,6 +285,9 @@ html[data-theme="dark"] .ce-orbit-hint {
   bottom: 62px;
   margin: 0 auto;
   width: min(560px, calc(100% - 28px));
+  max-height: calc(100% - 76px);
+  overflow-y: auto;
+  touch-action: pan-y;
   padding: 16px 18px;
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.95);
@@ -344,6 +347,10 @@ html[data-theme="dark"] .ce-tour-card {
   font-size: 12px;
 }
 
+.ce-tour-close {
+  flex-shrink: 0;
+}
+
 .ce-tour-title {
   margin: 0 0 6px;
   font-family: var(--font-display);
@@ -359,8 +366,16 @@ html[data-theme="dark"] .ce-tour-card {
   color: var(--text-muted);
 }
 
+.ce-tour-live {
+  margin: 0 0 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
 .ce-tour-footer {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
@@ -373,18 +388,26 @@ html[data-theme="dark"] .ce-tour-card {
 }
 
 .ce-tour-dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.ce-tour-dot::before {
+  content: '';
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  border: none;
-  padding: 0;
-  background: var(--border-subtle);
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: var(--text-subtle);
 }
 
-.ce-tour-dot.active {
-  width: 22px;
+.ce-tour-dot.active::before {
+  width: 14px;
   background: #c2410c;
 }
 
@@ -436,6 +459,15 @@ html[data-theme="dark"] .ce-tour-card {
   z-index: 25;
 }
 
+.ce-drive-tour .ce-driving-controls,
+.ce-drive-tour .ce-drawer-header {
+  order: -2;
+}
+
+.ce-drive-tour .ce-map-section {
+  order: -1;
+}
+
 .ce-panel-section {
   padding: 13px;
   border-radius: 14px;
@@ -481,6 +513,48 @@ html[data-theme="dark"] .ce-rpm-readout {
   display: block;
   height: 32px;
   margin: -4px 0 8px;
+}
+
+.ce-load-help,
+.ce-gear-info {
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.ce-gear-selector {
+  --ce-active-gear: 5;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: center;
+  min-height: 30px;
+  margin-bottom: 4px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ce-gear-selector::before {
+  content: '';
+  position: absolute;
+  inset: 2px auto 2px 0;
+  z-index: -1;
+  width: calc(100% / 7);
+  border-radius: 6px;
+  background: #c2410c;
+  transform: translateX(calc(100% * var(--ce-active-gear)));
+  transition: transform 0.2s ease;
+}
+
+.ce-gear-selector .active {
+  color: #fff;
 }
 
 .ce-preset-row,
@@ -895,6 +969,11 @@ html[data-theme="dark"] .chart-unit-text.torque {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .ce-gear-selector::before {
+    transition: none;
+  }
+
+  .ce-tour-card,
   .chart-map-halo {
     animation: none;
   }
@@ -1152,5 +1231,20 @@ html[data-theme="dark"] .ce-inspector-stage {
   .ce-tour-card {
     bottom: 66px;
     padding: 13px 14px;
+  }
+
+  .ce-tour-dots {
+    gap: 2px;
+  }
+
+  .ce-bottom-bar {
+    gap: 6px;
+  }
+
+  .ce-tour-launcher,
+  .ce-mobile-toggle {
+    min-width: 0;
+    padding-inline: 9px;
+    overflow-wrap: anywhere;
   }
 }
