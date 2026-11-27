@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- (keine)
+- 🔒 in Arbeit: games/combustion-engine/ (3D-Modell, Gasströmung, Tour) · Michi / Codex (Astra 6.2) · codex/combustion-3d-v0.5 · 2026-11-27
 
 ---
 
