@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- 🔒 in Arbeit: 2-Etagen-Gondelstation v0.2.0 (Funitel-Doppelseil & 4 Vertikal-Riesenräder) · Joe / Antigravity · `feat/gondola-funitel-v0.2` · 2026-11-27
+- (keine)
 
 ---
 
@@ -46,13 +46,22 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 | Verbrennungsmotor 3D v0.5.2 · Breite Partikelströme an Verzweigungen, Flammenfront für Otto und Diesel, Otto-Funken, Grafikmenü für Kontaktschatten, Schatten, Gasdichte und FPS, rauchgrauer Röntgenblick und bewegtes Motoröl | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.2` · [Upstream-PR #17](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/17) | ✅ Gemergt (`d1ec7cd`) und live |
 | 3D-Explainer: Union Pacific Big Boy 4014 (`games/big-boy/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/big-boy-3d`, `913f4a3`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Big Boy v0.1.0, Arcade v0.5.0) |
 | 3D-Explainer: Kässbohrer PistenBully 800 W (`games/pistenbully-800w/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/pistenbully-800w`, `080e08b`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (PistenBully 800 W v0.1.0, Arcade v0.6.0) |
-| 3D-Explainer: 2-Etagen-Gondelstation (`games/gondola-station/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/gondola-station-3d`, `b29e4e8`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (2-Etagen-Gondelstation v0.1.0, Arcade v0.7.0) |
+| 3D-Explainer: 2-Etagen-Gondelstation (`games/gondola-station/`) v0.1.0 → v0.2.0 (Galzigbahn-Funitel: Doppelseil & 4 Riesenräder) + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/gondola-funitel-v0.2`, `4e7d03e`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (2-Etagen-Funitel v0.2.0, Arcade v0.7.1) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.7.0 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.2 · `big_boy` v0.1.0 · `pistenbully_800w` v0.1.0 · `gondola_station` v0.1.0
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.7.1 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.2 · `big_boy` v0.1.0 · `pistenbully_800w` v0.1.0 · `gondola_station` v0.2.0
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Joe / Antigravity · Neon – 2-Etagen-Funitel 3D v0.2.0 (Galzigbahn Doppelseil & 4 Riesenräder, Arcade v0.7.1)
+
+- **Branch / PR** · `feat/gondola-funitel-v0.2` ab `main` (`a5f12e7`, Lock-Commit), Code-Commit `4e7d03e` (+ dieser Doku-/Merge-Commit), direkt in `main` gemergt und auf Upstream `hunterjoeING/hunterjoeING.github.io` gepusht (kein PR). Live: https://hunterjoeing.github.io/games/gondola-station/
+- **Erledigt** · Nach Fach-Feedback (Galzigbahn St. Anton ist ein Doppelseil-Funitel mit 4 Riesenrädern!) kompletter technischer Umbau von `games/gondola-station/` auf authentische Funitel-Technik: **4 parallele 54-mm-Stahlseile** (`±2,95 m` & `±4,85 m`, `1,90 m` Doppelseil-Spurweite) mit koaxialer **Doppel-Antriebsscheibe (Ø 5,90 m)** und 4 roten Ablenkscheiben; **4 gigantische Vertikal-Riesenräder** (2 Zwillingspaare Ø `8,56 m` links und rechts jeder Kabine auf koaxialer Stahlwelle mit 16 parallel geführten Mitnehmer-Gabeln); **kobaltblaue 24er-Galzigbahn-Funitel-Kabinen** mit breitem Doppelgehänge und **4 kuppelbaren Federklemmen pro Kabine (`2×2 = 112 kN`)**; 80 gestufte Reifenförderer; 4 parallele Kuppelrampen + breites Doppel-Prüfportal; breite Funitel-Stütze 1 mit **4×12 = 48 Tragrollen**; DirectDrive auf `1.350 kW / 540 kNm / 640 kN` Doppelseil-Spannung sowie alle 8 Tour-Stationen, 10 Hotspots, Diagnostik, Hub-Karte/Icon (`index.html`) und `Architecture.md` aktualisiert. Lock-Hinweis entfernt; ältester Session-Eintrag (`Verbrennungsmotor 3D v0.5.1`) nach `HANDOFF-archive.md` verschoben.
+- **Geprüft** · `node --check` auf allen geänderten JS-/MJS-Dateien; `node --test games/gondola-station/tests/gondola-station.test.mjs` (8/8 PASS inkl. neuem Funitel-Test für 4-Riesenrad-Freigang, Doppelseil-Symmetrie & `4×28 kN = 112 kN`); `releases.test.mjs` (PASS); `node scripts/check-release-bump.mjs origin/main` („Versionsprüfung bestanden: gondola_station, arcade“); `git diff --check`; 7-stufige Headless-Chrome-WebGL-Sichtprüfung (0 Page-/Console-Errors, Desktop Blaue Stunde, Alpiner Tag/4 Riesenräder, Klemmen-Schnitt auf äußerem Doppelseil, DirectDrive-X-Ray + Ablenkscheiben + Zonen, Tour/Nothalt, Mobile 390×844 & Hub-Karte).
+- **GitHub** · Issue-/PR-Check: 0 offene Issues und 0 offene PRs in Upstream.
+- **Offen** · Praxis-Performance- und Bedienprobe auf echtem Mobilgerät.
+- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `gondola_station` `v0.2.0` & `arcade` `v0.7.1`, Autor `Joe · Neon`, spoilerfrei).
 
 ### 2026-11-27 – Joe / Antigravity · Neon – 2-Etagen-Gondelstation 3D v0.1.0 (Arcade v0.7.0)
 
@@ -92,23 +101,6 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 - **Versionsprüfung** · Der Vergleich des vollständigen Arbeitsbaums mit `upstream/main` einschließlich der neuen Vendor-Dateien besteht. Einzige betroffene App ist `combustion_engine` (0.5.1 → 0.5.2).
 - **Sichtprüfung** · Der **Orchestrator** bestätigte für den Fork-Stand Flammenfront, Dieselstrahlen, AO-Vergleich, Verzweigungen und den weißen Funken in der Standardansicht. Bei 1280 und 390 px waren es null Konsolenfehler und null POST-Anfragen. Beim folgenden Headless-Chrome-Test mit 1280 und 390 px bestätigte der **Orchestrator** das Menü, die Kontaktschattenstufen, die Gasdichte und das neutrale X-Ray bei null Konsolenfehlern. Nach der letzten Korrektur zeigen lokale Mesa/EGL-Aufnahmen der seitlichen Kamera den wandernden Reflex in beiden Themes. Mit der Spielschrift ergibt die Breitenmessung am 1280-px-Fenster höchstens 785 von 878 verfügbaren Pixeln für beide Bediengruppen. Browser-Gegenprobe des **Orchestrators** nach der letzten Korrektur: Öl dunkelbraun glänzend mit sichtbaren Wellen bei 6.500 U/min, Desktop-Leiste bei 1280 px einzeilig, Menü bei 1280 und 390 px (Popover im Bild), Escape schließt, Einstellungen in `combustion_engine_settings` gespeichert, 0 Konsolenfehler, 0 POST-Anfragen (Screenshots `/home/box/projects/shot/ce-v052b-*.png`). Offen ist die Bildrate auf einem echten Mobilgerät.
 - **GitHub** · Issue-/PR-Check (Orchestrator, nach der Nachbesserung): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs. `node scripts/check-release-bump.mjs upstream/main` nach dem Commit: „Versionsprüfung bestanden: combustion_engine“.
-- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-
-### 2026-11-27 – Michi / Codex CLI · Astra 6.2 xhigh (Fast) – Verbrennungsmotor 3D v0.5.1
-
-- **Branch** · `codex/combustion-v0.5.1` ab `upstream/main` (`776ba1a`, Lock-Commit auf `main`). Code `21167a2` und Doku `d6eb685` (Orchestrator) auf Fork `mic4rd/hunterjoeING.github.io`, Fork-Pages-Quelle auf diesen Branch umgestellt, kein PR. [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/).
-- **Nachbesserung nach Michis Test** · Zündung und Gasdichte auf dem getesteten Fork-Stand überarbeitet. Commit `d8a7660` (+ Doku-Commit des Orchestrators), in den Fork gepusht, Fork-Pages gebaut. Version bleibt 0.5.1.
-- **Steuertrieb** · Beide Nockenräder und die Spannrolle fluchten je Bank mit dem Kurbelrad. Nur der abgesetzte Stumpf reicht durch die Radbohrung. Der innere Riemenrand hält mindestens 0,14 Modelleinheiten Abstand zu Kurbelwelle und Nockenwellen. Lock auf diesem Branch entfernt.
-- **Kurbelwelle und Pleuel** · Hauptlagerzapfen und gebohrte Lagerböcke sitzen zwischen den Kröpfungen und an den Wellenenden. Die Pleuelaugen umfassen Hubzapfen und Kolbenbolzen. R4 und Boxer haben je vier einzelne Hubzapfen, der V6 drei Split-Pin-Paare mit je einer Mittelwange und der Crossplane-V8 vier gemeinsame Zapfen für je zwei Pleuel. Gegengewichte sind in die äußeren Wangen integriert. Der Kurbelradius von 0,58 entspricht dem halben Kolbenhub.
-- **Leerlauf** · R4 / Boxer / V6 / V8 beim Otto mit 800 / 750 / 700 / 650 U/min, beim Diesel mit 750 / 750 / 700 / 600 U/min. Die Grenze gilt für Regler, Kennfelder, Presets, Tour und Telemetrie. Ein Variantenwechsel übernimmt das Pedal und begrenzt die Drehzahl auf den gültigen Bereich. Das Leerlauf-Preset folgt der neuen Variante.
-- **Gaspartikel** · Obergrenze regulär 6.144 → 10.752 und reduziert 2.304 → 4.032 Plätze gegenüber v0.5.0 (je +75 %). Bis vier logische Kerne, bis 4 GiB gemeldeter Speicher oder bis 768 CSS-Pixel Fensterbreite gilt der kleine Puffer. Eine kleine feste Restgasfüllung folgt jedem Kolben. Sie nutzt denselben Points-Draw-Call wie Frischluft, Kraftstoff und Abgas.
-- **Zündung** · Jeder Zylinder hat einen eigenen hellen Flammenkern. Er wächst von der Elektrode bzw. vom Dieselstrahl bis nahe an Laufbuchse und Kolbenkrone. Die Darstellung hält ihn mindestens 190 ms sichtbar und lässt bei hoher Drehzahl Überlappungen zu. Ein gemeinsames, kurzreichweitiges Punktlicht hellt die umliegenden Flächen kurz auf. Pause hält Flamme und Licht an, Zeitlupe dehnt die Brenndauer. Die Tour blickt auf den offenen Brennraum.
-- **Drosselklappe** · Bei allen vier Otto-Bauformen bestimmt der Öffnungswinkel die durchgelassene Luftmenge. Im Leerlauf laufen kleinere Kügelchen beschleunigt durch den schmalen Randspalt, bei geöffnetem Pedal verteilen sie sich auf beide Seiten der Scheibe. Bereits eingelassene Luft erreicht weiter den Zylinder. Der Diesel hat im Modell und in der Tour einen freien Ansaugweg mit separaten AGR-Ventilen.
-- **Geprüft** · 106/106 Explainer-Tests und 167/167 E-Roadtrip-Tests. Alle geänderten JS-/MJS-Dateien bestehen `node --check`, `git diff --check` ist sauber. `node scripts/check-release-bump.mjs upstream/main` bestätigt `combustion_engine`. Geprüft sind unter anderem die Geometrie über 720°, Leerlaufgrenzen, Klappenspalt und Zündfolge aller acht Varianten. Neue Tests messen überlappende V8-Flammen bei Otto und Diesel, die helle Phase, den Abstand zur Kolbenkrone, den lokalen Lichtimpuls, Pause, Zeitlupe und die Restgasfüllung am Beispiel des mobilen V8. Im Otto-V8 stieg die mittlere sichtbare Füllung je Zylinder im Leerlauf von 9,4 auf 28,0 Partikel (reduzierter Cap, zwölf Zyklen je Stand). Bei geöffnetem Pedal waren es 101,0.
-- **Orchestrator** · Den Fork-Stand vor der Nachbesserung in Headless-Chrome mit WebGL bei 1280 und 390 px geprüft. Otto und Diesel liefen ohne Konsolenfehler und ohne POST-Anfragen. Screenshots zeigten Zündflamme, Kurbelwelle, Kurbelrad und Klappenspalt.
-- **GitHub** · Issue-/PR-Check (Orchestrator): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs.
-- **Orchestrator (Nachbesserung)** · Headless-Chrome mit WebGL bei 1280 und 390 px für Otto und Diesel: 0 Konsolenfehler, 0 POSTs; größere Zündflamme mit Lichtimpuls und dichtere Füllung im Leerlauf per Screenshot (`/home/box/projects/shot/ce-v051b-*.png`) geprüft. `node scripts/check-release-bump.mjs upstream/main`: „Versionsprüfung bestanden: combustion_engine“.
-- **Offen** · Bildrate auf einem echten Mobilgerät. Kein Upstream-PR/Merge ohne ausdrückliches Go; der Lock auf `main` bleibt bis zum Merge oder Abbruch.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).
