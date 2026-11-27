@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- (keine)
+- 🔒 in Arbeit: games/combustion-engine (v0.5.2 Patch) · Codex Astra 6.2 / Website Wolfgang · codex/combustion-v0.5.2 · 2026-11-27
 
 ---
 
