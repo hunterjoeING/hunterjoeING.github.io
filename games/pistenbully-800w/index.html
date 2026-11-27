@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>PistenBully 800 W – 3D-Steilhang-Simulation &amp; Technik-Explainer · HunterJoe Arcade</title>
+  <meta name="description" content="Interaktive 3D-Simulation &amp; Technik-Visualisierung des Kässbohrer PistenBully 800 W am Steilhang: MAN D3876 540 PS, 450-bar-Hydrostatik-X-Ray, 4,7-t-Seilwinde, 12-Wege-Räumschild, AlpinFlexFräse, gelber Finisher (Cord-Rillen &amp; Sintern), SNOWsat-Heatmap &amp; 8-Stationen-Tour." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#071226" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/pistenbully-800w/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="PistenBully 800 W – Interaktiver 3D-Steilhang-Explainer · HunterJoe Arcade" />
+  <meta property="og:description" content="Erlebe den Kässbohrer PistenBully 800 W am bis zu 45° steilen Hang in Echtzeit-3D: 450-bar-Hydrostatik-X-Ray, 4,7-t-Winde, 12-Wege-Schild, AlpinFlexFräse mit gelbem Finisher, SNOWsat-Heatmap &amp; 8-Stationen-Tour." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/pistenbully-800w/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "PistenBully 800 W – 3D-Technik-Explainer",
+    "description": "Interaktive 3D-Simulation und Technik-Visualisierung des Kässbohrer PistenBully 800 W am Steilhang mit MAN D3876, 450-bar-Hydrostatik-X-Ray, 4,7-t-Seilwinde, 12-Wege-Räumschild, AlpinFlexFräse, gelbem Finisher (Sintern), SNOWsat-Heatmap und 8-Stationen-Tour.",
+    "url": "https://hunterjoeing.github.io/games/pistenbully-800w/",
+    "inLanguage": "de",
+    "isAccessibleForFree": true,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any (Webbrowser)",
+    "author": { "@type": "Person", "name": "Johannes Rudolph" }
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "../../shared/vendor/three-0.170.0/build/three.module.min.js",
+      "three/addons/": "../../shared/vendor/three-0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <link rel="stylesheet" href="./styles.css?v=0.1.0" />
+</head>
+<body>
+  <header class="arcade-topbar pb-topbar">
+    <div class="topbar-left">
+      <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
+      <h1 class="topbar-title">❄️ PistenBully 800 W · 3D</h1>
+      <button type="button" class="pb-version-pill" id="pb-version-btn" title="Änderungen dieser Version anzeigen">v0.1.0</button>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="pb-light-top-btn active" id="pb-btn-lighting" title="Zwischen Nachtpräparierung (Blaue Stunde) und Alpinem Sonnentag umschalten">🌙 Blaue Stunde</button>
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="UI Hell-/Dunkel-Modus wechseln">☀️</button>
+      <button type="button" class="icon-btn" id="btn-mute" title="Diesel- &amp; Hydraulik-Audio aktivieren">🔇</button>
+    </div>
+  </header>
+
+  <main class="pb-workspace">
+    <section class="pb-viewport" id="pb-viewport" aria-label="Interaktive 3D-Ansicht Kässbohrer PistenBully 800 W">
+      <canvas id="pb-canvas"></canvas>
+      <div class="pb-label-layer" id="pb-label-layer" aria-label="3D-Baugruppen-Hotspots"></div>
+      <div class="pb-force-label-layer" id="pb-force-label-layer" aria-label="3D-Kraftvektor-Beschriftungen"></div>
+
+      <!-- Top View Mode & Cutaway Dock -->
+      <div class="pb-mode-dock" role="toolbar" aria-label="Schnittansichten und Overlays">
+        <div class="pb-dock-group">
+          <button type="button" class="pb-mode-btn active" data-pb-toggle="exterior">Außen</button>
+          <button type="button" class="pb-mode-btn" data-pb-toggle="hydraulicsXray"><span class="pb-mode-num">01</span> Hydraulik-X-Ray</button>
+          <button type="button" class="pb-mode-btn" data-pb-toggle="sinterCutaway"><span class="pb-mode-num">02</span> Fräsen-/Sinter-Schnitt</button>
+          <button type="button" class="pb-mode-btn" data-pb-toggle="showForces">↗ Kräfte</button>
+          <button type="button" class="pb-mode-btn" data-pb-toggle="snowsatHeatmap">📡 SNOWsat</button>
+        </div>
+        <div class="pb-dock-group">
+          <button type="button" class="pb-chip-btn" data-pb-toggle="showLabels" title="Klickbare 3D-Hotspots ein-/ausblenden">🏷️ Hotspots</button>
+          <button type="button" class="pb-chip-btn" id="pb-btn-reset" title="Kamera zurücksetzen">↺ Reset</button>
+          <button type="button" class="pb-chip-btn pb-collapse-btn" id="pb-btn-collapse" title="Steuerungspult ein-/ausklappen">◨ Vollbild</button>
+        </div>
+        <div class="pb-mode-legend hidden" id="pb-mode-legend" aria-label="Farblegende der aktiven Ansicht"></div>
+      </div>
+
+      <!-- 8-Station Guided Engineering Tour Card -->
+      <div class="pb-tour-card hidden" id="pb-tour-card" role="dialog" aria-label="Geführte Technik-Tour"></div>
+
+      <div class="pb-bottom-bar">
+        <button type="button" class="pb-tour-launcher" id="pb-btn-tour">🧭 Technik-Tour (8 Stationen)</button>
+        <button type="button" class="pb-mobile-toggle" id="pb-mobile-panel-toggle" aria-expanded="false">🎛️ Cockpit &amp; Diagnostik</button>
+        <div class="pb-orbit-hint">Ziehen: Drehen · Scroll/Pinch: Zoom · Leertaste: Pause · Klick: Baugruppe</div>
+      </div>
+    </section>
+
+    <div class="pb-drawer-backdrop" id="pb-drawer-backdrop" aria-hidden="true"></div>
+
+    <!-- Collapsible Right Engineering Control, Diagnostics & Telemetry Panel -->
+    <aside class="pb-side-panel" id="pb-side-panel" aria-label="PistenBully 800 W Cockpit-Steuerung, Live-Diagnostik und Telemetrie">
+      <div class="pb-drawer-header">
+        <span class="pb-drawer-handle" aria-hidden="true"></span>
+        <div class="pb-drawer-header-row">
+          <span class="pb-drawer-title">🎛️ Cockpit 800 W &amp; Diagnostik</span>
+          <button type="button" class="pb-drawer-close" id="pb-drawer-close" aria-label="Zurück zur 3D-Ansicht">✕ Zurück zu 3D</button>
+        </div>
+      </div>
+
+      <!-- 01 Steilhang, Fahrgeschwindigkeit & Zeitlupe -->
+      <div class="pb-panel-section">
+        <div class="pb-section-head">
+          <label class="pb-section-label" for="pb-slope-slider">Hangneigung (0–45° / 0–100 %)</label>
+          <span class="pb-val-readout accent" id="pb-slope-val">28° (53 %)</span>
+        </div>
+        <input type="range" class="pb-slider" id="pb-slope-slider" min="0" max="45" step="1" value="28" />
+
+        <div class="pb-section-head" style="margin-top:9px;">
+          <label class="pb-section-label" for="pb-speed-slider">Fahrgeschwindigkeit</label>
+          <span class="pb-val-readout" id="pb-speed-val">+10,5 km/h</span>
+        </div>
+        <input type="range" class="pb-slider" id="pb-speed-slider" min="-10" max="20" step="0.5" value="10.5" />
+
+        <div class="pb-speed-wrap">
+          <div class="pb-sub-head">
+            <span class="pb-sub-label">Simulations-Zeitlupe</span>
+            <button type="button" class="pb-mini-audio-btn" id="pb-btn-audio">🔇 Sound Aus</button>
+          </div>
+          <div class="pb-speed-row">
+            <button type="button" class="pb-speed-btn" data-pb-speed="0">⏸</button>
+            <button type="button" class="pb-speed-btn" data-pb-speed="0.05">0,05×</button>
+            <button type="button" class="pb-speed-btn" data-pb-speed="0.25">0,25×</button>
+            <button type="button" class="pb-speed-btn active" data-pb-speed="0.85">0,85×</button>
+            <button type="button" class="pb-speed-btn" data-pb-speed="1.5">1,5×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 4,7-t-Steilhang-Seilwinde -->
+      <div class="pb-panel-section">
+        <div class="pb-section-head">
+          <span class="pb-section-label">4,7-t-Seilwinde (360°)</span>
+          <span class="pb-val-readout gold" id="pb-winch-val">Auto (3,2 t)</span>
+        </div>
+        <div class="pb-seg-row">
+          <button type="button" class="pb-seg-btn active" data-pb-winch="auto">Automatik</button>
+          <button type="button" class="pb-seg-btn" data-pb-winch="manual">Manuell</button>
+          <button type="button" class="pb-seg-btn danger-btn" data-pb-winch="off">Aus (Schlupf!)</button>
+        </div>
+        <input type="range" class="pb-slider pb-winch-slider" id="pb-winch-slider" min="0" max="4.7" step="0.1" value="3.2" disabled />
+      </div>
+
+      <!-- 03 Arbeitsgeräte: 12-Wege-Räumschild & AlpinFlexFräse / Gelber Finisher -->
+      <div class="pb-panel-section">
+        <div class="pb-impl-tabs" role="tablist">
+          <button type="button" class="pb-impl-tab active" data-pb-impl-tab="blade">12-Wege-Schild</button>
+          <button type="button" class="pb-impl-tab" data-pb-impl-tab="tiller">AlpinFlexFräse &amp; Finisher</button>
+        </div>
+
+        <!-- Blade Controls -->
+        <div id="pb-impl-blade">
+          <div class="pb-seg-row" style="margin-bottom:8px;">
+            <button type="button" class="pb-seg-btn active" data-pb-blade-preset="grade">Planieren</button>
+            <button type="button" class="pb-seg-btn" data-pb-blade-preset="push">Schnee schieben</button>
+            <button type="button" class="pb-seg-btn" data-pb-blade-preset="transport">Transport</button>
+          </div>
+          <div class="pb-mini-grid">
+            <div class="pb-mini-ctrl">
+              <div class="pb-mini-head"><span>Höhe</span><strong id="pb-blade-lift-val">6 %</strong></div>
+              <input type="range" class="pb-slider" id="pb-blade-lift" min="-15" max="95" step="1" value="6" />
+            </div>
+            <div class="pb-mini-ctrl">
+              <div class="pb-mini-head"><span>Schwenken</span><strong id="pb-blade-angle-val">0°</strong></div>
+              <input type="range" class="pb-slider" id="pb-blade-angle" min="-24" max="24" step="1" value="0" />
+            </div>
+            <div class="pb-mini-ctrl">
+              <div class="pb-mini-head"><span>Klappohren</span><strong id="pb-blade-wing-val">14°</strong></div>
+              <input type="range" class="pb-slider" id="pb-blade-wing" min="-35" max="45" step="1" value="14" />
+            </div>
+            <div class="pb-mini-ctrl">
+              <div class="pb-mini-head"><span>Schnittwinkel</span><strong id="pb-blade-pitch-val">4°</strong></div>
+              <input type="range" class="pb-slider" id="pb-blade-pitch" min="-16" max="22" step="1" value="4" />
+            </div>
+          </div>
+        </div>
+
+        <!-- AlpinFlexFräse & Yellow Finisher Controls -->
+        <div id="pb-impl-tiller" class="hidden">
+          <div class="pb-seg-row" style="margin-bottom:8px;">
+            <button type="button" class="pb-seg-btn active" id="pb-tiller-toggle">● Fräse Aktiv</button>
+            <button type="button" class="pb-seg-btn active" id="pb-wings-toggle">Flügel: 6,3 m Breit</button>
+          </div>
+          <div class="pb-section-head">
+            <label class="pb-section-label" for="pb-tiller-press">Anpressdruck Fräse &amp; Finisher</label>
+            <span class="pb-val-readout gold" id="pb-tiller-press-val">68 %</span>
+          </div>
+          <input type="range" class="pb-slider" id="pb-tiller-press" min="10" max="100" step="1" value="68" />
+        </div>
+      </div>
+
+      <!-- 04 Live-Diagnostik-Panel (3-Tab SVG) -->
+      <div class="pb-panel-section">
+        <div class="pb-diag-tabs" role="tablist">
+          <button type="button" class="pb-diag-tab active" data-pb-diag="slope">Hangphysik</button>
+          <button type="button" class="pb-diag-tab" data-pb-diag="hydraulics">Hydraulik 400 kW</button>
+          <button type="button" class="pb-diag-tab" data-pb-diag="pressure">Bodendruck</button>
+        </div>
+        <div class="pb-chart-wrap">
+          <svg id="pb-diag-svg" viewBox="0 0 320 174" role="img" aria-label="Live-Diagnostik Hangphysik, Hydraulik und Bodendruck"></svg>
+        </div>
+      </div>
+
+      <!-- 05 Live-Telemetrie-Grid -->
+      <div class="pb-telemetry-grid" aria-label="Live-Telemetrie PistenBully 800 W">
+        <div class="pb-metric">
+          <div class="pb-metric-label">Hangneigung</div>
+          <div class="pb-metric-val accent" id="pb-tel-slope">28° / 53 %</div>
+          <div class="pb-metric-sub" id="pb-tel-slope-sub">FH 64,5 kN Hangabtrieb</div>
+        </div>
+        <div class="pb-metric">
+          <div class="pb-metric-label">Tempo &amp; Fläche</div>
+          <div class="pb-metric-val" id="pb-tel-speed">10,1 km/h</div>
+          <div class="pb-metric-sub" id="pb-tel-speed-sub">Fläche 6,36 ha/h</div>
+        </div>
+        <div class="pb-metric">
+          <div class="pb-metric-label">MAN D3876 Motor</div>
+          <div class="pb-metric-val" id="pb-tel-engine">1.420 U/min</div>
+          <div class="pb-metric-sub" id="pb-tel-engine-sub">285 kW · 71 % Last</div>
+        </div>
+        <div class="pb-metric">
+          <div class="pb-metric-label">Hydraulikdruck</div>
+          <div class="pb-metric-val red" id="pb-tel-hydro">310 / 285 bar</div>
+          <div class="pb-metric-sub" id="pb-tel-hydro-sub">Fahrantrieb / Fräse</div>
+        </div>
+        <div class="pb-metric">
+          <div class="pb-metric-label">Seilwinde (4,7 t)</div>
+          <div class="pb-metric-val gold" id="pb-tel-winch">47,0 kN</div>
+          <div class="pb-metric-sub" id="pb-tel-winch-sub">4,70 t (max. 4,7 t)</div>
+        </div>
+        <div class="pb-metric">
+          <div class="pb-metric-label">Kettenschlupf</div>
+          <div class="pb-metric-val" id="pb-tel-slip">4,2 %</div>
+          <div class="pb-metric-sub" id="pb-tel-slip-sub">Sauberer Griff im Schnee</div>
+        </div>
+        <div class="pb-metric">
+          <div class="pb-metric-label">AlpinFlexFräse</div>
+          <div class="pb-metric-val" id="pb-tel-tiller">1.150 U/min</div>
+          <div class="pb-metric-sub" id="pb-tel-tiller-sub">Sintern 92 % · 6,3 m</div>
+        </div>
+        <div class="pb-metric">
+          <div class="pb-metric-label">Bodendruck</div>
+          <div class="pb-metric-val green" id="pb-tel-ground">62 g/cm²</div>
+          <div class="pb-metric-sub" id="pb-tel-ground-sub">Skischuh ~250 g/cm²</div>
+        </div>
+      </div>
+
+      <!-- 06 Clickable Part Inspector -->
+      <div class="pb-panel-section" id="pb-inspector" aria-live="polite"></div>
+    </aside>
+  </main>
+
+  <script src="../../shared/arcade.js?v=0.6.0"></script>
+  <script src="../../shared/releases.js?v=0.6.0"></script>
+  <script src="../../shared/update-banner.js?v=0.4.0"></script>
+  <script src="../../shared/burger-menu.js?v=0.6.0"></script>
+  <script type="module" src="./pb-main.js?v=0.1.0"></script>
+</body>
+</html>
