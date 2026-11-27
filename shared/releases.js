@@ -45,6 +45,14 @@ const arcadeReleases = {
   },
   releases: [
     {
+      app: "arcade", version: "0.4.4", date: "2026-11-27", type: "patch", title: "Serverseitig signierte Sicherheitsprüfung",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Anmeldung, Registrierung und Community-Beiträge nutzen jetzt eine serverseitig signierte Einmal-Sicherheitsaufgabe statt eines öffentlichen Demo-Schlüssels.",
+        "Fehlgeschlagene Anmeldeversuche laden automatisch eine neue Aufgabe nach.",
+      ],
+    },
+    {
       app: "arcade", version: "0.4.3", date: "2026-11-27", type: "patch", title: "Sicherheits-Härtung, lokales 3D-Hosting & Schutz-Header",
       author: "Joe", model: "Neon",
       highlights: [

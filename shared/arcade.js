@@ -965,9 +965,8 @@
   const LOCAL_USERS_KEY = 'arcade_local_users_v1';
   const FB_STORE_KEY = 'arcade_feedback_items_v1';
   const FB_VOTES_KEY = 'arcade_feedback_votes_v1';
-  // Cloudflare Turnstile Sitekey (Standard: offizieller Cloudflare Turnstile Test/Demo-Key;
-  // kann jederzeit durch deinen Domain-spezifischen Turnstile Sitekey ersetzt werden)
-  const TURNSTILE_SITE_KEY = '1x00000000000000000000AA';
+  // Optionaler Cloudflare Turnstile Sitekey (leer = serverseitig HMAC-signierte Bot-Challenge via /api/captcha/challenge)
+  const TURNSTILE_SITE_KEY = '';
 
   const FEEDBACK_TARGETS = [
     { id: 'all', title: '✨ Alle Module & Allgemein', icon: '🌐' },
@@ -1138,9 +1137,9 @@
   }
 
   function createCaptchaController(containerEl) {
-    const a = 2 + Math.floor(Math.random() * 7);
-    const b = 2 + Math.floor(Math.random() * 7);
-    const expected = a + b;
+    let serverChallenge = '';
+    let serverPrompt = '…';
+    let localExpected = null;
     let turnstileToken = '';
     const uid = 'cap_' + Math.random().toString(36).slice(2, 8);
 
@@ -1151,49 +1150,101 @@
           <span>🛡️ Ich bin ein Mensch (Anti-Spam-Schutz)</span>
         </label>
         <div class="fb-captcha-math">
-          <span>Aufgabe: <strong>${a} + ${b} =</strong></span>
-          <input type="number" id="${uid}_ans" inputmode="numeric" placeholder="?" aria-label="Rechenaufgabe ${a} plus ${b}" />
+          <span>Aufgabe: <strong id="${uid}_prompt">wird geladen…</strong> =</span>
+          <input type="number" id="${uid}_ans" inputmode="numeric" placeholder="?" aria-label="Sicherheits-Rechenaufgabe" />
+          <button type="button" class="icon-btn" id="${uid}_reload" title="Neue Aufgabe laden" aria-label="Neue Aufgabe laden" style="width:28px;height:28px;font-size:13px;padding:0;">🔄</button>
         </div>
         <div id="${uid}_cf" style="width:100%;display:none;margin-top:6px;"></div>
-        <span class="fb-captcha-badge">🔒 Cloudflare Turnstile &amp; Bot-Guard</span>
+        <span class="fb-captcha-badge">🔒 ${TURNSTILE_SITE_KEY ? 'Cloudflare Turnstile &amp; ' : ''}Serverseitige Sicherheitsprüfung</span>
       </div>
     `;
 
-    loadTurnstileScript().then(ts => {
-      const cfBox = document.getElementById(`${uid}_cf`);
-      if (ts && cfBox) {
-        try {
-          cfBox.style.display = 'block';
-          ts.render(cfBox, {
-            sitekey: TURNSTILE_SITE_KEY,
-            theme: window.ArcadeTheme && window.ArcadeTheme.isLight() ? 'light' : 'dark',
-            callback: (tok) => {
-              turnstileToken = tok;
-              const chk = document.getElementById(`${uid}_chk`);
-              const ans = document.getElementById(`${uid}_ans`);
-              if (chk) chk.checked = true;
-              if (ans && !ans.value) ans.value = String(expected);
-            }
-          });
-        } catch (e) {}
+    async function loadChallenge() {
+      const promptEl = document.getElementById(`${uid}_prompt`);
+      const ansEl = document.getElementById(`${uid}_ans`);
+      serverChallenge = '';
+      localExpected = null;
+      if (ansEl) ansEl.value = '';
+      if (promptEl) promptEl.textContent = 'wird geladen…';
+      try {
+        const res = await fetch(`${API_BASE}/api/captcha/challenge`, { cache: 'no-store' });
+        const data = await res.json().catch(() => null);
+        if (res.ok && data && data.ok && data.challenge && data.prompt) {
+          serverChallenge = String(data.challenge);
+          serverPrompt = String(data.prompt);
+          if (promptEl) promptEl.textContent = serverPrompt;
+          return;
+        }
+      } catch (e) {}
+      const isLocal = typeof location !== 'undefined' && (
+        location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+      );
+      if (isLocal) {
+        const a = 2 + Math.floor(Math.random() * 7);
+        const b = 2 + Math.floor(Math.random() * 7);
+        localExpected = a + b;
+        serverPrompt = `${a} + ${b}`;
+        if (promptEl) promptEl.textContent = serverPrompt;
+      } else if (promptEl) {
+        promptEl.textContent = 'Fehler – bitte 🔄 klicken';
       }
-    });
+    }
+
+    const reloadBtn = document.getElementById(`${uid}_reload`);
+    if (reloadBtn) reloadBtn.addEventListener('click', loadChallenge);
+
+    if (TURNSTILE_SITE_KEY) {
+      loadTurnstileScript().then(ts => {
+        const cfBox = document.getElementById(`${uid}_cf`);
+        if (ts && cfBox) {
+          try {
+            cfBox.style.display = 'block';
+            ts.render(cfBox, {
+              sitekey: TURNSTILE_SITE_KEY,
+              theme: window.ArcadeTheme && window.ArcadeTheme.isLight() ? 'light' : 'dark',
+              callback: (tok) => {
+                turnstileToken = tok;
+                const chk = document.getElementById(`${uid}_chk`);
+                if (chk) chk.checked = true;
+              }
+            });
+          } catch (e) {}
+        }
+      });
+    } else {
+      loadChallenge();
+    }
 
     return {
+      refresh: () => {
+        if (!TURNSTILE_SITE_KEY) loadChallenge();
+      },
       verify: () => {
         const chk = document.getElementById(`${uid}_chk`);
         const ans = document.getElementById(`${uid}_ans`);
-        const num = parseInt(ans ? ans.value : '', 10);
-        if (!turnstileToken && (!chk || !chk.checked)) {
+        const rawAns = ans ? String(ans.value).trim() : '';
+        if (TURNSTILE_SITE_KEY) {
+          if (!turnstileToken) {
+            return { ok: false, error: 'Bitte bestätige zuerst das Cloudflare-CAPTCHA.' };
+          }
+          return { ok: true, token: turnstileToken };
+        }
+        if (!chk || !chk.checked) {
           return { ok: false, error: 'Bitte setze das Häkchen bei „Ich bin ein Mensch“.' };
         }
-        if (!turnstileToken && num !== expected) {
-          return { ok: false, error: `Bitte löse kurz die CAPTCHA-Rechenaufgabe (${a} + ${b}).` };
+        if (!/^-?\d{1,4}$/.test(rawAns)) {
+          return { ok: false, error: `Bitte löse kurz die Sicherheitsaufgabe (${serverPrompt}).` };
         }
-        return {
-          ok: true,
-          token: turnstileToken || `local_guard_${Date.now()}_${expected}`
-        };
+        if (serverChallenge) {
+          return { ok: true, token: `srv:${serverChallenge}:${rawAns}` };
+        }
+        if (localExpected !== null) {
+          if (parseInt(rawAns, 10) !== localExpected) {
+            return { ok: false, error: `Bitte löse kurz die Sicherheitsaufgabe (${serverPrompt}).` };
+          }
+          return { ok: true, token: `local_dev_${Date.now()}` };
+        }
+        return { ok: false, error: 'Sicherheitsaufgabe konnte nicht geladen werden. Bitte auf 🔄 klicken.' };
       }
     };
   }
@@ -1436,6 +1487,7 @@
         } catch (err) {
           errEl.textContent = err.message || 'Fehler bei der Anmeldung.';
           errEl.style.display = 'block';
+          if (capCtrl && typeof capCtrl.refresh === 'function') capCtrl.refresh();
           if (window.ArcadeAudio) window.ArcadeAudio.perkBad();
         } finally {
           submitBtn.disabled = false;
@@ -1919,6 +1971,7 @@
             } catch (err) {
               errBox.textContent = err.message || 'Fehler beim Speichern.';
               errBox.style.display = 'block';
+              if (postCapCtrl && typeof postCapCtrl.refresh === 'function') postCapCtrl.refresh();
             } finally {
               submitPostBtn.disabled = false;
             }

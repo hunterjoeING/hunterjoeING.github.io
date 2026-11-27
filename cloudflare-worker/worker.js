@@ -450,47 +450,112 @@ async function getAuthUser(request, env, db) {
 }
 
 // ============================================================================
-// Cloudflare Turnstile Server-Side Verification
+// Server-Side Bot-Protection: Turnstile or HMAC-Signed Server Challenge (ARC-04)
 // ============================================================================
 function isCloudflareTurnstileTestSecret(secret) {
   return typeof secret === 'string' && /^[123]x0000000000000000000000000000000AA$/i.test(secret.trim());
 }
 
+const _usedCaptchaNonces = new Map();
+const CAPTCHA_CHALLENGE_TTL_MS = 5 * 60 * 1000;
+
+async function signCaptchaChallenge(nonce, exp, answer, secret) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(`cap-v1:${nonce}:${exp}:${answer}`));
+  return bufToHex(sig);
+}
+
+async function createServerCaptchaChallenge(secret) {
+  const rand = new Uint8Array(15);
+  crypto.getRandomValues(rand);
+  const a = 3 + (rand[0] % 13);
+  const b = 2 + (rand[1] % 11);
+  const useSub = (rand[2] & 1) === 1 && a > b;
+  const prompt = useSub ? `${a} − ${b}` : `${a} + ${b}`;
+  const answer = useSub ? (a - b) : (a + b);
+  const nonce = bufToHex(rand.slice(3));
+  const exp = Date.now() + CAPTCHA_CHALLENGE_TTL_MS;
+  const sig = await signCaptchaChallenge(nonce, exp, answer, secret);
+  return { prompt, challenge: `${nonce}.${exp}.${sig}` };
+}
+
+async function verifyServerCaptchaToken(token, secret) {
+  if (!secret || typeof token !== 'string' || !token.startsWith('srv:')) {
+    return { ok: false, error: 'Bitte löse zuerst die Sicherheitsaufgabe.' };
+  }
+  const rest = token.slice(4);
+  const lastColon = rest.lastIndexOf(':');
+  if (lastColon === -1) {
+    return { ok: false, error: 'Ungültiges Sicherheits-Token. Bitte neu laden.' };
+  }
+  const challengePart = rest.slice(0, lastColon);
+  const answerStr = rest.slice(lastColon + 1).trim();
+  if (!/^-?\d{1,4}$/.test(answerStr)) {
+    return { ok: false, error: 'Bitte gib das Ergebnis der Rechenaufgabe als Zahl ein.' };
+  }
+  const parts = challengePart.split('.');
+  if (parts.length !== 3) {
+    return { ok: false, error: 'Ungültige Sicherheitsaufgabe. Bitte neu laden.' };
+  }
+  const [nonce, expStr, sig] = parts;
+  const exp = Number(expStr);
+  const now = Date.now();
+  if (!nonce || !Number.isFinite(exp) || now > exp || exp > now + CAPTCHA_CHALLENGE_TTL_MS + 60000) {
+    return { ok: false, error: 'Sicherheitsaufgabe abgelaufen. Bitte kurz neu lösen.' };
+  }
+  if (_usedCaptchaNonces.size > 4000) {
+    for (const [k, v] of _usedCaptchaNonces) {
+      if (v <= now) _usedCaptchaNonces.delete(k);
+    }
+  }
+  if (_usedCaptchaNonces.has(nonce)) {
+    return { ok: false, error: 'Diese Sicherheitsaufgabe wurde bereits verwendet. Bitte kurz neu lösen.' };
+  }
+  const expectedSig = await signCaptchaChallenge(nonce, exp, Number(answerStr), secret);
+  if (!await timingSafeEqualStr(sig, expectedSig)) {
+    return { ok: false, error: 'Das Ergebnis der Rechenaufgabe stimmt leider nicht.' };
+  }
+  _usedCaptchaNonces.set(nonce, exp);
+  return { ok: true };
+}
+
 async function verifyTurnstile(token, remoteIp, env) {
   const configuredSecret = (env.TURNSTILE_SECRET_KEY || '').trim();
-  if (!token) return { ok: false, error: 'Bitte bestätige zuerst das CAPTCHA.' };
+  if (!token) return { ok: false, error: 'Bitte bestätige zuerst die Sicherheitsprüfung.' };
 
   if (configuredSecret) {
     if (isCloudflareTurnstileTestSecret(configuredSecret)) {
       return { ok: false, error: 'CAPTCHA ist serverseitig falsch konfiguriert (Test-Secret nicht erlaubt).' };
     }
-    if (String(token).startsWith('local_guard_')) {
+    if (String(token).startsWith('local_guard_') || String(token).startsWith('srv:')) {
       return { ok: false, error: 'Bitte löse das Cloudflare-CAPTCHA.' };
     }
-  } else if (String(token).startsWith('local_guard_')) {
-    return { ok: true };
-  }
+    try {
+      const form = new FormData();
+      form.append('secret', configuredSecret);
+      form.append('response', token);
+      if (remoteIp) form.append('remoteip', remoteIp);
 
-  const secret = configuredSecret || '1x0000000000000000000000000000000AA';
-
-  try {
-    const form = new FormData();
-    form.append('secret', secret);
-    form.append('response', token);
-    if (remoteIp) form.append('remoteip', remoteIp);
-
-    const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      body: form
-    });
-    const outcome = await res.json();
-    if (!outcome.success) {
-      return { ok: false, error: 'CAPTCHA-Überprüfung fehlgeschlagen oder abgelaufen.' };
+      const res = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        body: form
+      });
+      const outcome = await res.json();
+      if (!outcome.success) {
+        return { ok: false, error: 'CAPTCHA-Überprüfung fehlgeschlagen oder abgelaufen.' };
+      }
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: 'CAPTCHA-Dienst momentan nicht erreichbar.' };
     }
-    return { ok: true };
-  } catch (e) {
-    return { ok: false, error: 'CAPTCHA-Dienst momentan nicht erreichbar.' };
   }
+
+  // Kein Cloudflare-Turnstile-Secret gesetzt: fail-closed über HMAC-signierte Server-Challenge prüfen
+  if (!env.JWT_SECRET) {
+    return { ok: false, error: 'Sicherheitsprüfung ist serverseitig nicht konfiguriert.' };
+  }
+  return verifyServerCaptchaToken(String(token), env.JWT_SECRET);
 }
 
 // ============================================================================
@@ -597,12 +662,23 @@ export default {
           db: db ? 'connected' : 'missing',
           telegramConfigured: hasTelegram,
           turnstileConfigured: Boolean(env.TURNSTILE_SECRET_KEY),
+          captchaMode: env.TURNSTILE_SECRET_KEY ? 'turnstile' : 'server-challenge',
           jwtConfigured: Boolean(env.JWT_SECRET),
           webhookSecretConfigured: Boolean(env.TELEGRAM_WEBHOOK_SECRET),
           features: hasTelegram
-            ? ['scores', 'auth', 'turnstile', 'feedback', 'agent-replies', 'telegram']
-            : ['scores', 'auth', 'turnstile', 'feedback', 'agent-replies']
+            ? ['scores', 'auth', 'captcha', 'feedback', 'agent-replies', 'telegram']
+            : ['scores', 'auth', 'captcha', 'feedback', 'agent-replies']
         });
+      }
+
+      if (path === '/api/captcha/challenge' && request.method === 'GET') {
+        const limited = checkRateLimit(request, 'captcha_challenge', 60, 60 * 1000);
+        if (limited) return limited;
+        if (!env.JWT_SECRET) {
+          return jsonResponse({ ok: false, error: 'Sicherheitsprüfung ist serverseitig nicht konfiguriert.' }, 503);
+        }
+        const ch = await createServerCaptchaChallenge(env.JWT_SECRET);
+        return jsonResponse({ ok: true, prompt: ch.prompt, challenge: ch.challenge });
       }
 
       if (!db) {
