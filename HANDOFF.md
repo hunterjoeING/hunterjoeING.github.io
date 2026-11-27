@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- 🔒 in Arbeit: `games/big-boy/`, Hub/Navigation/Releases (`index.html`, `shared/arcade.js`, `shared/burger-menu.js`, `shared/releases.js`, `cloudflare-worker/worker.js`, `sitemap.xml`) · Joe / Antigravity · `feat/big-boy-3d` · 2026-11-27
+- (keine)
 
 ---
 
@@ -43,13 +43,23 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 | Lock-Hinweis in `HANDOFF.md` gegen paralleles Arbeiten (AGENTS.md Regel 4 und 7) | Michi / Grok Bot (Orchestrator) | `docs/handoff-lock-rule` · [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14) | ✅ Gemergt in Upstream (`3c566dc`) |
 | Verbrennungsmotor 3D v0.5.0 · Steuertrieb, Ventile, Zündung, Gas- und Kraftstoffwege, Turbolader, Ladeluftkühler, DPF, HD-/ND-AGR und Tour für Otto/Diesel in vier Bauformen | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-3d-v0.5` · [Upstream-PR #15](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/15) | ✅ Gemergt (`d577d49`, 2026-11-27 14:42 Uhr) und live |
 | Verbrennungsmotor 3D v0.5.1 · Gekröpfte Kurbelwelle mit freigängigen Pleueln und Zahnriemenrad, Leerlauf je Variante, dichtere Gaspartikel, Luftdosierung am Otto-Klappenspalt und sichtbare Zündung | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.1` · [Upstream-PR #16](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/16) | ✅ Gemergt (`36cf0a4`, 2026-11-27 17:16 Uhr) und live |
-| Verbrennungsmotor 3D v0.5.2 · Breite Partikelströme an Verzweigungen, Flammenfront für Otto und Diesel, Otto-Funken, Grafikmenü für Kontaktschatten, Schatten, Gasdichte und FPS, rauchgrauer Röntgenblick und bewegtes Motoröl | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.2` ab `11577f4`, `24d9c71` + Doku `ceabecf`, Nachbesserung `c56ecc2` + Doku-Commit, im Fork, kein PR · [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/) | 🟡 Im Fork zum Test, kein Upstream-Merge ohne Go |
+| Verbrennungsmotor 3D v0.5.2 · Breite Partikelströme an Verzweigungen, Flammenfront für Otto und Diesel, Otto-Funken, Grafikmenü für Kontaktschatten, Schatten, Gasdichte und FPS, rauchgrauer Röntgenblick und bewegtes Motoröl | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.2` · [Upstream-PR #17](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/17) | ✅ Gemergt (`d1ec7cd`) und live |
+| 3D-Explainer: Union Pacific Big Boy 4014 (`games/big-boy/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/big-boy-3d`, `913f4a3`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Big Boy v0.1.0, Arcade v0.5.0) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.4 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.1 live, v0.5.2 auf dem Arbeitsbranch
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.5.0 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.2 · `big_boy` v0.1.0
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Joe / Antigravity · Neon – Union Pacific Big Boy 4014 3D v0.1.0 (Arcade v0.5.0)
+
+- **Branch / PR** · `feat/big-boy-3d` ab `main` (`ad63144`, Lock-Commit), Code-Commit `913f4a3` (+ Doku-/Merge-Commit), direkt in `main` gemergt und auf Upstream `hunterjoeING/hunterjoeING.github.io` gepusht (nach ausdrücklicher Freigabe von Joe, kein PR). Live: https://hunterjoeing.github.io/games/big-boy/
+- **Erledigt** · Komplett prozedurale Three.js-0.170.0-3D-Simulation der **Union Pacific Big Boy 4014** (`4-8-8-4`, `(2'D)D2' h4`, „Simple Articulated“) unter `games/big-boy/` (`specs.js`, `bb-kinematics.js`, `bb-physics.js`, `bb-textures.js`, `bb-model-chassis.js`, `bb-model-boiler.js`, `bb-particles.js`, `bb-pv-chart.js`, `bb-audio.js`, `bb-data.js`, `bb-main.js`, `index.html`, `styles.css`, `Architecture.md`, `tests/big-boy.test.mjs`). Prozedurale Offscreen-Canvas-PBR-Texturen (UP-Tiefschwarz, Graphit-Rauchkammer, gebürsteter Blankstahl, Messing/Kupfer, `4014`-Beschriftung & Kreideschrift „Big Boy“, Holzschwellen, Schotter, Glutbett), 16 Boxpok-Treibräder (68"), 4 identische 603×813-mm-Frischdampfzylinder, exakte Walschaerts-Steuerung an beiden Triebwerken mit 90°-Versatz und unabhängiger Front-/Heck-Phase (asynchroner 8-Schlag-Auspuff), 20°-Kurvenfahrt-Demo (`R = 87,3 m`) inkl. beweglichen Kugel-/Schiebegelenk-Dampfrohren, Kessel- & Zylinderschnitt (Stoker-Förderschnecke, Wasserbad, Heizrohre, Elesco-Überhitzer, Doppel-Blasrohr, Kolbenschieber), Thermodynamik-Overlay, Live-p-V-Indikatordiagramm (inkl. 75-%-/25-%-Referenzkurven), Web-Audio (synchronisierte Doppelschläge + 5-Klang-Pfeife) und geführte 8-Stationen-Tour. Nahtlos integriert in `index.html`, `shared/arcade.js`, `shared/burger-menu.js`, `shared/releases.js`, `cloudflare-worker/worker.js` und `sitemap.xml`. Lock-Hinweis entfernt; ältester Session-Eintrag (`ARC-01..22`) nach `HANDOFF-archive.md` verschoben.
+- **Geprüft** · `node --check` auf allen 16 geänderten/neuen `.js`/`.mjs`-Dateien; `node --test games/big-boy/tests/big-boy.test.mjs` (7/7 PASS: Z-Ebenen, Stangenlängen-Invarianz über 360° & alle Cut-Offs, 90°-Versatz, 190-mm-Walschaerts-Steuerzeiten, 87,3-m-Kurven-Artikulation, p-V-Thermodynamik); `releases.test.mjs` + `arcade-scores.test.mjs` (14/14 PASS); `games/combustion-engine/tests/index.js` (141/141 PASS); `node scripts/check-release-bump.mjs origin/main` („Versionsprüfung bestanden: big_boy, arcade“); JSON-LD & Importmaps validiert; `git diff --check`; Headless-Chrome/Playwright-WebGL-Sichtprüfung (Desktop 1280×780 Dark & Light, Kessel-/Zylinderschnitt, Kurvenfahrt, Tour, Mobile 390×844) mit 0 JS-/Page-Fehlern und anschließender Nachbesserung (Bloom-Schwelle, Weißwandbreite, Wasser-Querschnittsebene, Numberboard-Winkel, Theme-Wechsel-Transition, Kamera-Framing).
+- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues und 0 offene PRs in Upstream.
+- **Offen** · Sicht- und Performance-Probe auf echtem Mobilgerät sowie ggf. Feinschliff nach erstem Live-Feedback.
+- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `big_boy` `v0.1.0` & `arcade` `v0.5.0`, Autor `Joe · Neon`, spoilerfrei).
 
 ### 2026-11-27 – Michi / Codex CLI · Astra 6.2 xhigh (Fast) – Verbrennungsmotor 3D v0.5.2
 
@@ -99,18 +109,5 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 - **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues in Upstream, dieser Doku-PR #14, 0 weitere offene PRs in Upstream, 0 PRs im Fork (außer dem Head dieses PRs).
 - **Offen** · Kein Upstream-Merge ohne ausdrückliches Go.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10) — keine Versionserhöhung (reine Doku, `[no-release]`).
-
-### 2026-11-27 – Joe / Antigravity · Neon – Security-Audit-Abschluss ARC-01..22 & Server-CAPTCHA (Arcade v0.4.4)
-
-- **Branch / PR** · `main` ab `0d963b1`, Commits `231d7c3`, `2eb9e2a`, `1888b52` (+ Doku-Commit), kein PR, Push auf Upstream `hunterjoeING/hunterjoeING.github.io` (`main`). Live: https://hunterjoeing.github.io/
-- **Erledigt** ·
-  - **Worker (`cloudflare-worker/worker.js`):** Spielspezifische Score-Plausibilitätsgrenzen (`GAME_SCORE_BOUNDS` / `getScoreBounds`, ARC-01); `body.adminSecret` komplett von Register, Login, Reply und Status entfernt (ARC-06, Admin-Vergabe nur noch über `promote-admin.yml`); `validateEroadtripScore` um `subScores`-Konsistenz und strenges Zeitfenster für `version >= 0.6.0` erweitert (ARC-08, abwärtskompatibel); `readJsonBody()` erzwingt 8-KB-Limit (`413`) bzw. 32 KB am Telegram-Webhook und 128-Zeichen-Passwortlimit (ARC-09/16); PBKDF2 auf `100.000` Iterationen (`pbkdf2_100k$`) mit transparentem Rehash für 60k-Althashes angehoben (ARC-16); JWT-Laufzeit auf 7 Tage verkürzt (ARC-15); Always-Pass-Turnstile-Testsecret und `local_guard_*`-Bypass komplett entfernt und durch **HMAC-signierte Einmal-Server-Challenge (`GET /api/captcha/challenge`)** mit 5-Min-TTL & Replay-Schutz ersetzt (ARC-04; `CLOUDFLARE_API_TOKEN` hat kein `Turnstile:Edit`, daher kein manuelles Dashboard-Setup nötig); 404 ohne Pfad-Echo (ARC-17); `POST /api/feedback` legt initiale `feedback_votes`-Zeile für den Autor an (ARC-22).
-  - **Workflows (`.github/workflows/`):** `wrangler@4.168.0` fest gepinnt (ARC-07), `actions/checkout` und `actions/setup-node` in allen Workflows auf volle 40-Zeichen-Commit-SHAs gepinnt, `persist-credentials: false` auch im `rebuild-e-roadtrip.yml`-Build (ARC-12), `accountId`/`dbId` per `::add-mask::` geschützt und Zonennamen in `check-traffic.yml` aus Logs entfernt (ARC-20).
-  - **Lokales Three.js-Vendoring & CSP:** Three.js `0.170.0` (14 Dateien) und `r128` (SHA-512-verifiziert) lokal unter `shared/vendor/` eingecheckt und in allen 8 3D-Modulen umgestellt (ARC-10; `datenschutz.html` & `Architecture.md` angepasst). Einheitliche `<meta http-equiv="Content-Security-Policy">` und `Referrer-Policy` auf allen 46 HTML-Seiten ergänzt (ARC-11, `games/e-roadtrip/index.html` ausgenommen).
-  - **Auth, Quizzes & Callback:** `shared/arcade.js` nutzt `/api/captcha/challenge` ohne öffentlichen Demo-Sitekey (inkl. Auto-Refresh bei Fehler), synct aktive Sessions gegen `/api/auth/me` (`verifySession`), schaltet den lokalen Browser-Tresor auf `hunterjoeing.github.io` ab (ARC-04/13/15). Alle 24 Text-Quizzes rendern Antworten & Erklärungen per `textContent` statt `innerHTML` (ARC-14); alle 5 Foto-Quizzes prüfen `licenseUrl` auf `https://` (ARC-19); `callback.html` setzt `no-referrer`, strikte CSP und bereinigt die URL per `history.replaceState` (ARC-18).
-- **Geprüft** · `node --check` auf `worker.js`, `arcade.js`, `releases.js` und alle vendorten Three.js-Dateien; Worker-Security- & Server-CAPTCHA-E2E-Tests (`local_guard_` abgelehnt, Replay abgelehnt, korrekte Challenge 200); `releases.test.mjs` + `arcade-scores.test.mjs` (14/14 PASS); `games/combustion-engine/tests/*.test.mjs` (38/38 PASS); 87 Inline-`<script>`-Blöcke & JSON-LD/Importmaps in allen 48 HTML-Dateien geparst; `node scripts/audit_quizzes.mjs`; `node scripts/check-release-bump.mjs origin/main` (bestanden); `git diff --check`.
-- **GitHub** · Issue-/PR-Check (`gh pr list`, `gh issue list`): 0 offene Issues und 0 offene PRs in Upstream.
-- **Offen** · 4 kleine Review-Punkte + Meta-CSP in `games/e-roadtrip/` beim nächsten `e-roadtrip`-Branch mit `npm ci`.
-- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `arcade` `v0.4.4` spoilerfrei)
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

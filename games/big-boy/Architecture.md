@@ -37,4 +37,4 @@ Interaktive Three.js-3D-Simulation und Technik-Visualisierung der **Union Pacifi
 
 ## Changelog
 
-- **2026-11-27** (`feat/big-boy-3d`) – Erstversion `v0.1.0`: Vollständige interaktive 3D-Simulation & Technik-Visualisierung der Union Pacific Big Boy 4014 (4-8-8-4 Simple Articulated) mit prozeduralen PBR-Texturen, Kessel- & Zylinderschnitt, exakter Walschaerts-Steuerung an beiden Triebwerken, 20°-Kurvenfahrt-Artikulation, Kugelgelenk-Dampfrohren, Live-p-V-Diagramm, Thermodynamik-Overlay, Web-Audio und 8-Stationen-Tour.
+- **2026-11-27** (`main`, `913f4a3`) – Erstversion `v0.1.0`: Vollständige interaktive 3D-Simulation & Technik-Visualisierung der Union Pacific Big Boy 4014 (4-8-8-4 Simple Articulated) mit prozeduralen PBR-Texturen, Kessel- & Zylinderschnitt, exakter Walschaerts-Steuerung an beiden Triebwerken, 20°-Kurvenfahrt-Artikulation, Kugelgelenk-Dampfrohren, Live-p-V-Diagramm, Thermodynamik-Overlay, Web-Audio und 8-Stationen-Tour.
