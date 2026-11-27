@@ -100,7 +100,8 @@ const GAMES_META = {
   wind_turbine: { title: 'Windkraftanlage 3D (Onshore)', lowerIsBetter: false, noLeaderboard: true },
   combustion_engine: { title: 'Verbrennungsmotor 3D', lowerIsBetter: false, noLeaderboard: true },
   big_boy: { title: 'Union Pacific Big Boy 4014 (3D)', lowerIsBetter: false, noLeaderboard: true },
-  pistenbully_800w: { title: 'PistenBully 800 W (3D)', lowerIsBetter: false, noLeaderboard: true }
+  pistenbully_800w: { title: 'PistenBully 800 W (3D)', lowerIsBetter: false, noLeaderboard: true },
+  gondola_station: { title: '2-Etagen-Gondelstation (3D)', lowerIsBetter: false, noLeaderboard: true }
 };
 
 const GAME_SCORE_BOUNDS = {

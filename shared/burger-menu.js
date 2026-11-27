@@ -23,6 +23,7 @@
     { id: 'combustion_engine', icon: '🔥', title: 'Verbrennungsmotor 3D', meta: '3D Explainer', path: 'games/combustion-engine/index.html' },
     { id: 'big_boy', icon: '🚂', title: 'Big Boy 4014 · 3D', meta: '3D Explainer', path: 'games/big-boy/index.html' },
     { id: 'pistenbully_800w', icon: '❄️', title: 'PistenBully 800 W · 3D', meta: '3D Explainer', path: 'games/pistenbully-800w/index.html' },
+    { id: 'gondola_station', icon: '🚡', title: '2-Etagen-Gondelstation · 3D', meta: '3D Explainer', path: 'games/gondola-station/index.html' },
     { id: 'podracer', icon: '🏎️', title: 'Canyon Podracer 3D', meta: 'Three.js', path: 'games/podracer/index.html' },
     { id: 'eroadtrip', icon: '⚡', title: 'e-Roadtrip: Pixel Europe', meta: 'Phaser 3', path: 'games/e-roadtrip/index.html' },
     { id: 'minesweeper', icon: '💣', title: '3D Minesweeper', meta: 'Tech Demo', path: 'games/minesweeper/index.html' },

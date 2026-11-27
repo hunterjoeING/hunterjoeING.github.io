@@ -245,6 +245,7 @@
       if (p.includes('/games/combustion-engine')) return 'combustion_engine';
       if (p.includes('/games/big-boy')) return 'big_boy';
       if (p.includes('/games/pistenbully-800w')) return 'pistenbully_800w';
+      if (p.includes('/games/gondola-station')) return 'gondola_station';
       if (p.includes('/games/podracer')) return 'podracer';
       if (p.includes('/games/e-roadtrip')) return 'eroadtrip';
       if (p.includes('/games/2048')) return 'p2048';
@@ -977,6 +978,7 @@
     { id: 'combustion_engine', title: 'Verbrennungsmotor 3D – Interaktiver Explainer', icon: '🔥' },
     { id: 'big_boy', title: 'Union Pacific Big Boy 4014 – 3D-Technik-Explainer', icon: '🚂' },
     { id: 'pistenbully_800w', title: 'PistenBully 800 W – 3D-Technik-Explainer', icon: '❄️' },
+    { id: 'gondola_station', title: '2-Etagen-Gondelstation – 3D-Technik-Explainer', icon: '🚡' },
     { id: 'podracer', title: 'Canyon Podracer 3D', icon: '🏎️' },
     { id: 'eroadtrip', title: 'e-Roadtrip: Pixel Europe', icon: '⚡' },
     { id: 'minesweeper_3d_prompt_test', title: 'Minesweeper 3d prompt Version', icon: '🧊' },

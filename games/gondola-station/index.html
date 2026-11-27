@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>2-Etagen-Gondelstation – Riesenrad-Förderung &amp; D-Line 3D · HunterJoe Arcade</title>
+  <meta name="description" content="Interaktive 3D-Simulation &amp; Technik-Visualisierung einer hochmodernen 2-Etagen-Gondelstation nach dem Galzigbahn-Riesenrad-Prinzip &amp; D-Line-Technik: Level Walk-In EG, 8,5-m-Vertikal-Riesenräder, DirectDrive-X-Ray, Federklemmen-Schnitt (28 kN), Reifenförderer, Klemmfehler-Nothalt &amp; 8-Stationen-Tour." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#09162d" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/gondola-station/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="2-Etagen-Gondelstation – Interaktiver 3D-Technik-Explainer · HunterJoe Arcade" />
+  <meta property="og:description" content="Erlebe Riesenrad-Förderung (Level Walk-In), D-Line-Federklemme (28 kN), DirectDrive-X-Ray (900 kW / 400.000 Nm), Reifenförderer, Stütze 1 und Klemmfehler-Sicherheitsbremse in Echtzeit-3D." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/gondola-station/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "2-Etagen-Gondelstation – Riesenrad-Förderung & D-Line 3D",
+    "description": "Interaktive 3D-Simulation einer modernen 2-Etagen-Gondelstation mit Vertikal-Riesenrädern, Level Walk-In EG, DirectDrive-X-Ray, kuppelbarer 28-kN-Federklemme, Reifenförderern, hydraulischer Seilspannung, Sicherheits-Nothalt und 8-Stationen-Tour.",
+    "url": "https://hunterjoeing.github.io/games/gondola-station/",
+    "inLanguage": "de",
+    "isAccessibleForFree": true,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any (Webbrowser)",
+    "author": { "@type": "Person", "name": "Johannes Rudolph" }
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "../../shared/vendor/three-0.170.0/build/three.module.min.js",
+      "three/addons/": "../../shared/vendor/three-0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <link rel="stylesheet" href="./styles.css?v=0.1.0" />
+</head>
+<body>
+  <header class="arcade-topbar gs-topbar">
+    <div class="topbar-left">
+      <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
+      <h1 class="topbar-title">🚡 2-Etagen-Gondelstation · 3D</h1>
+      <button type="button" class="gs-version-pill" id="gs-version-btn" title="Änderungen dieser Version anzeigen">v0.1.0</button>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="gs-light-top-btn active" id="gs-btn-lighting" title="Zwischen Blauer Stunde (Flutlichtbetrieb) und Alpinem Sonnentag umschalten">🌙 Blaue Stunde</button>
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="UI Hell-/Dunkel-Modus wechseln">☀️</button>
+      <button type="button" class="icon-btn" id="btn-mute" title="DirectDrive- &amp; Klemmen-Audio aktivieren">🔇</button>
+    </div>
+  </header>
+
+  <main class="gs-workspace">
+    <section class="gs-viewport" id="gs-viewport" aria-label="Interaktive 3D-Ansicht 2-Etagen-Gondelstation">
+      <canvas id="gs-canvas"></canvas>
+      <div class="gs-label-layer" id="gs-label-layer" aria-label="Klickbare 3D-Baugruppen-Hotspots"></div>
+
+      <!-- Top View Mode & Cutaway Dock -->
+      <div class="gs-mode-dock" role="toolbar" aria-label="Schnittansichten und Overlays">
+        <div class="gs-dock-group">
+          <button type="button" class="gs-mode-btn active" data-gs-toggle="shell">🏛️ Glas-Station</button>
+          <button type="button" class="gs-mode-btn" data-gs-toggle="clampCutaway"><span class="gs-mode-num">01</span> Klemmen-Schnitt</button>
+          <button type="button" class="gs-mode-btn" data-gs-toggle="driveXray"><span class="gs-mode-num">02</span> DirectDrive-X-Ray</button>
+          <button type="button" class="gs-mode-btn" data-gs-toggle="showZones"><span class="gs-mode-num">03</span> Zonen v(s)</button>
+          <button type="button" class="gs-mode-btn" data-gs-toggle="followCabin">🚡 Gondel folgen</button>
+        </div>
+        <div class="gs-dock-group">
+          <button type="button" class="gs-chip-btn" data-gs-toggle="showLabels" title="Klickbare 3D-Hotspots ein-/ausblenden">🏷️ Hotspots</button>
+          <button type="button" class="gs-chip-btn" id="gs-btn-reset" title="Kamera &amp; Ansicht zurücksetzen (R)">↺ Reset</button>
+          <button type="button" class="gs-chip-btn gs-collapse-btn" id="gs-btn-collapse" title="Steuerungspult ein-/ausklappen">◨ Vollbild</button>
+        </div>
+        <div class="gs-mode-legend hidden" id="gs-mode-legend" aria-label="Farblegende der aktiven Ansicht"></div>
+        <div class="gs-fault-banner hidden" id="gs-fault-banner" role="alert"></div>
+      </div>
+
+      <!-- 8-Station Guided Engineering Tour / Hotspot Card -->
+      <div class="gs-tour-card hidden" id="gs-tour-card" role="dialog" aria-label="Geführte Technik-Tour"></div>
+
+      <div class="gs-bottom-bar">
+        <button type="button" class="gs-tour-launcher" id="gs-btn-tour">🧭 Technik-Tour (8 Stationen)</button>
+        <button type="button" class="gs-mobile-toggle" id="gs-mobile-panel-toggle" aria-expanded="false">🎛️ Leitstand &amp; Diagnostik</button>
+        <div class="gs-orbit-hint">Ziehen: Drehen · Scroll/Pinch: Zoom · Space: Pause · Punkt (.): Einzelschritt · F: Gondel folgen</div>
+      </div>
+    </section>
+
+    <div class="gs-drawer-backdrop" id="gs-drawer-backdrop" aria-hidden="true"></div>
+
+    <!-- Collapsible Right Engineering Control, Diagnostics & Telemetry Panel -->
+    <aside class="gs-side-panel" id="gs-side-panel" aria-label="Leitstand, Sicherheits-Demo, Live-Diagnostik und Telemetrie">
+      <div class="gs-drawer-header">
+        <span class="gs-drawer-handle" aria-hidden="true"></span>
+        <div class="gs-drawer-header-row">
+          <span class="gs-drawer-title">🎛️ D-Line Leitstand &amp; Diagnostik</span>
+          <button type="button" class="gs-drawer-close" id="gs-drawer-close" aria-label="Zurück zur 3D-Ansicht">✕ Zurück zu 3D</button>
+        </div>
+      </div>
+
+      <!-- 01 Seilgeschwindigkeit & Zeitlupe -->
+      <div class="gs-panel-section">
+        <div class="gs-section-head">
+          <label class="gs-section-label" for="gs-speed-slider">Fahrgeschwindigkeit (0–7,0 m/s)</label>
+          <span class="gs-val-readout accent" id="gs-speed-val">6,0 m/s (21,6 km/h)</span>
+        </div>
+        <input type="range" class="gs-slider" id="gs-speed-slider" min="0" max="7.0" step="0.1" value="6.0" />
+        <div class="gs-seg-row" style="margin-top:8px;">
+          <button type="button" class="gs-seg-btn" id="gs-btn-stop">⏹ Sanft-Stopp</button>
+          <button type="button" class="gs-seg-btn active" id="gs-btn-nom">▶ Nennbetrieb (6,0 m/s)</button>
+        </div>
+
+        <div class="gs-speed-wrap">
+          <div class="gs-sub-head">
+            <span class="gs-sub-label">Zeitlupe &amp; Einzelschritt</span>
+            <button type="button" class="gs-mini-audio-btn" id="gs-btn-audio">🔇 Sound Aus</button>
+          </div>
+          <div class="gs-speed-row">
+            <button type="button" class="gs-speed-btn" data-gs-speed="0" title="Pause (Space)">⏸</button>
+            <button type="button" class="gs-speed-btn" id="gs-btn-step" title="Einzelschritt +40 ms (.)">⏭</button>
+            <button type="button" class="gs-speed-btn" data-gs-speed="0.02" title="Super-Zeitlupe 0,02× für Klemmen-Detail">0,02×</button>
+            <button type="button" class="gs-speed-btn" data-gs-speed="0.15">0,15×</button>
+            <button type="button" class="gs-speed-btn active" data-gs-speed="1">1,0×</button>
+            <button type="button" class="gs-speed-btn" data-gs-speed="1.5">1,5×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 Interaktive Sicherheits- & Störungs-Simulation -->
+      <div class="gs-panel-section">
+        <div class="gs-section-head">
+          <span class="gs-section-label">Prüfstrecke &amp; Sicherheitsbremse</span>
+          <span class="gs-val-readout gold">AURO Safety</span>
+        </div>
+        <button type="button" class="gs-fault-btn" id="gs-btn-fault">⚠️ Klemmfehler simulieren</button>
+        <p class="gs-help-note">Lässt die nächste Kabine mit zu geringer Klemmkraft (11,4 kN &lt; 24 kN) einlaufen → Prüfstrecke löst sofort die Bullwheel-Sicherheitsbremse aus.</p>
+      </div>
+
+      <!-- 03 Live-Diagnostik-Panel (3-Tab SVG) -->
+      <div class="gs-panel-section">
+        <div class="gs-diag-tabs" role="tablist">
+          <button type="button" class="gs-diag-tab active" data-gs-diag="velocity">v(s) Profil</button>
+          <button type="button" class="gs-diag-tab" data-gs-diag="clamp">Klemmkraft</button>
+          <button type="button" class="gs-diag-tab" data-gs-diag="drive">Antrieb &amp; Bilanz</button>
+        </div>
+        <div class="gs-chart-wrap">
+          <svg id="gs-diag-svg" viewBox="0 0 320 176" role="img" aria-label="Live-Diagnostik Geschwindigkeitsprofil, Klemmkraft und DirectDrive-Leistungsbilanz"></svg>
+        </div>
+      </div>
+
+      <!-- 04 Live-Telemetrie-Grid -->
+      <div class="gs-telemetry-grid" aria-label="Live-Telemetrie 2-Etagen-Gondelstation">
+        <div class="gs-metric">
+          <div class="gs-metric-label">Seil &amp; EG-Tempo</div>
+          <div class="gs-metric-val accent" id="gs-tel-speed">6,00 m/s</div>
+          <div class="gs-metric-sub" id="gs-tel-speed-sub">21,6 km/h · EG 0,30 m/s</div>
+        </div>
+        <div class="gs-metric">
+          <div class="gs-metric-label">DirectDrive (900 kW)</div>
+          <div class="gs-metric-val" id="gs-tel-drive">684 kW</div>
+          <div class="gs-metric-sub" id="gs-tel-drive-sub">319 kNm · 20,5 U/min</div>
+        </div>
+        <div class="gs-metric">
+          <div class="gs-metric-label">Hydraulik-Spannung</div>
+          <div class="gs-metric-val gold" id="gs-tel-tension">420 kN</div>
+          <div class="gs-metric-sub" id="gs-tel-tension-sub">165 bar · Hub 0 mm</div>
+        </div>
+        <div class="gs-metric">
+          <div class="gs-metric-label">Federklemme (28 kN)</div>
+          <div class="gs-metric-val green" id="gs-tel-clamp">28,0 kN</div>
+          <div class="gs-metric-sub" id="gs-tel-clamp-sub">Kabine #01 · Δv 0,00 m/s</div>
+        </div>
+        <div class="gs-metric">
+          <div class="gs-metric-label">Förderleistung</div>
+          <div class="gs-metric-val" id="gs-tel-cap">1.964 P/h</div>
+          <div class="gs-metric-sub" id="gs-tel-cap-sub">10er-Kabinen · Folge 18,3 s</div>
+        </div>
+        <div class="gs-metric">
+          <div class="gs-metric-label">Sicherheitsbremse</div>
+          <div class="gs-metric-val" id="gs-tel-brake">Frei / Bereit</div>
+          <div class="gs-metric-sub" id="gs-tel-brake-sub">Bullwheel-Scheibenbremse</div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script src="../../shared/arcade.js?v=0.7.0"></script>
+  <script src="../../shared/releases.js?v=0.7.0"></script>
+  <script src="../../shared/update-banner.js?v=0.4.0"></script>
+  <script src="../../shared/burger-menu.js?v=0.7.0"></script>
+  <script type="module" src="./gs-main.js?v=0.1.0"></script>
+</body>
+</html>
