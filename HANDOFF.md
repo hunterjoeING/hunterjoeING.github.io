@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- 🔒 in Arbeit: 3D-Explainer 2-Etagen-Gondelstation (`games/gondola-station/`, Hub/Catalog/Releases) · Joe / Antigravity · `feat/gondola-station-3d` · 2026-11-27
+- (keine)
 
 ---
 
@@ -46,12 +46,22 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 | Verbrennungsmotor 3D v0.5.2 · Breite Partikelströme an Verzweigungen, Flammenfront für Otto und Diesel, Otto-Funken, Grafikmenü für Kontaktschatten, Schatten, Gasdichte und FPS, rauchgrauer Röntgenblick und bewegtes Motoröl | Michi / Codex CLI · Astra 6.2 xhigh (Fast) | `codex/combustion-v0.5.2` · [Upstream-PR #17](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/17) | ✅ Gemergt (`d1ec7cd`) und live |
 | 3D-Explainer: Union Pacific Big Boy 4014 (`games/big-boy/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/big-boy-3d`, `913f4a3`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Big Boy v0.1.0, Arcade v0.5.0) |
 | 3D-Explainer: Kässbohrer PistenBully 800 W (`games/pistenbully-800w/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/pistenbully-800w`, `080e08b`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (PistenBully 800 W v0.1.0, Arcade v0.6.0) |
+| 3D-Explainer: 2-Etagen-Gondelstation (`games/gondola-station/`) v0.1.0 + Hub-/Nav-/Worker-Integration | Joe / Antigravity · Neon | `main` (via `feat/gondola-station-3d`, `b29e4e8`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (2-Etagen-Gondelstation v0.1.0, Arcade v0.7.0) |
 
-**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.6.0 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.2 · `big_boy` v0.1.0 · `pistenbully_800w` v0.1.0
+**Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.7.0 · `wind_turbine` v0.1.3 · `combustion_engine` v0.5.2 · `big_boy` v0.1.0 · `pistenbully_800w` v0.1.0 · `gondola_station` v0.1.0
 
 ---
 
 ## 2. Session-Log (Neueste Einträge oben)
+
+### 2026-11-27 – Joe / Antigravity · Neon – 2-Etagen-Gondelstation 3D v0.1.0 (Arcade v0.7.0)
+
+- **Branch / PR** · `feat/gondola-station-3d` ab `main` (`05de1e8`, Lock-Commit), Code-Commit `b29e4e8` (+ dieser Doku-/Merge-Commit), nach ausdrücklicher Freigabe von Joe direkt in `main` gemergt und auf Upstream `hunterjoeING/hunterjoeING.github.io` gepusht (kein PR). Live: https://hunterjoeing.github.io/games/gondola-station/
+- **Erledigt** · Komplett prozedurale Three.js-0.170.0-3D-Simulation einer hochmodernen **2-Etagen-Gondel-Talstation** (Galzigbahn-Riesenrad-Konzept & D-Line / DirectDrive / AURO) unter `games/gondola-station/` (`specs.js`, `gs-kinematics.js`, `gs-physics.js`, `gs-textures.js`, `gs-model-station.js`, `gs-model-machinery.js`, `gs-diagnostics.js`, `gs-audio.js`, `gs-data.js`, `gs-main.js`, `index.html`, `styles.css`, `Architecture.md`, `tests/gondola-station.test.mjs`). Prozedurale Offscreen-Canvas-PBR-Texturen (UV-scrollendes 54-mm-6×36-Stahlseil, Sichtbeton mit Schalungsfugen, gelb-schwarze Sicherheitsmarkierungen, Gitterroste, Reifenprofil, Kupfer-Statorwicklungen, N/S-Permanentmagnet-Rotor, beleuchtete Kabinennummern `01–10`, klares Architekturglas ohne redundanten Transmission-Pass, alpiner Schnee), durchgehender $C^1$-stetiger 10-Kabinen-Kreislauf mit exaktem Phasen-Gleichlauf beider Ø-8,56-m-Vertikal-Riesenräder (waagerechte Parallelführung über 7 Höhenmeter), EG Level Walk-In (`0,30 m/s`) mit automatischen Schiebetüren und Glas-Zugangsschranken, 40 exakt synchronisierte Keilriemen-Reifenförderer (`Δv = 0,00 m/s` beim Einkuppeln), Makro-Federklemmen-Schnitt (Tellerfederpaket, gelbe Kuppelrampe, 28-kN-Kraftpfeile), DirectDrive- & Hydraulik-X-Ray (`900 kW / 400.000 Nm / 420 kN` Spannwagen + Scheibenbremsen), Zonen-Overlay `v(s)`, Stütze 1 mit gewippten 12er-Rollenbatterien, Beleuchtungswechsel (Blaue Stunde vs. Alpiner Tag), interaktive Klemmfehler-Sicherheitsdemo (Prüfstrecke + Bullwheel-Nothalt + Reset), Gondel-Folgekamera, Super-Zeitlupe (`0,02×`) & Einzelschritt, 3-Tab-SVG-Diagnostik, optionales Web-Audio sowie geführte 8-Stationen-Tour & 10 klickbare 3D-Hotspots. Nahtlos integriert in `index.html` (43 Module / 15 Spiele), `shared/arcade.js`, `shared/burger-menu.js`, `shared/releases.js`, `cloudflare-worker/worker.js` und `sitemap.xml`. Lock-Hinweis entfernt; ältester Session-Eintrag (`Verbrennungsmotor 3D v0.5.0`) nach `HANDOFF-archive.md` verschoben.
+- **Geprüft** · `node --check` auf allen neuen/geänderten JS-/MJS-Dateien; `node --test games/gondola-station/tests/gondola-station.test.mjs` (7/7 PASS: Riesenrad-Phasengleichlauf, $C^0/C^1$-Stetigkeit, `< 0,015 m` Tragarm-Genauigkeit auf beiden Rädern, `Δv = 0` beim Einkuppeln & Reifen-Synchronität, 28-kN-Federklemme auf Rampe, strikt waagerechte Parallelführung & EG-Türen, Klemmfehler-Prüfstrecke → Sicherheitsbremse → Stillstand + Reset); `releases.test.mjs` + `arcade-scores.test.mjs` + `worker-validation.test.mjs` + `pistenbully.test.mjs` + `big-boy.test.mjs` (24/24 PASS); `games/combustion-engine/tests/index.js` (141/141 PASS); `node scripts/audit_quizzes.mjs` (PASS); JSON-LD & Importmap-Validierung; `node scripts/check-release-bump.mjs origin/main` („Versionsprüfung bestanden: gondola_station, arcade“); `git diff --check`; 7-stufige Headless-Chrome-WebGL-Sichtprüfung (Desktop 1280×780 Blaue Stunde, Alpiner Tag/Dach Offen, Makro-Klemmen-Schnitt auf Kuppelrampe, DirectDrive-X-Ray + Zonen-Overlay, 8-Stationen-Tour + Nothalt-Banner, Mobile 390×844 & Hub-Karte mit 0 Page-/Console-Errors) inkl. Nachbesserung von Fassaden-Signage-Schriftgröße, Bergpanorama, Vordergrund-Tannen, Clearcoat-Glas-Performance, Frame-0-SVG-Render und sofortigem Diagnostik-Tab-Wechsel im Pause-Modus.
+- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues und 0 offene PRs in Upstream.
+- **Offen** · Praxis-Performance- und Bedienprobe auf echtem Mobilgerät sowie ggf. Feinschliff nach erstem Live-Feedback.
+- Version/Release-Eintrag geprüft (`shared/releases.js`, Regel 10, `gondola_station` `v0.1.0` & `arcade` `v0.7.0`, Autor `Joe · Neon`, spoilerfrei).
 
 ### 2026-11-27 – Joe / Antigravity · Neon – Kässbohrer PistenBully 800 W 3D v0.1.0 (Arcade v0.6.0)
 
@@ -99,16 +109,6 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 - **GitHub** · Issue-/PR-Check (Orchestrator): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs.
 - **Orchestrator (Nachbesserung)** · Headless-Chrome mit WebGL bei 1280 und 390 px für Otto und Diesel: 0 Konsolenfehler, 0 POSTs; größere Zündflamme mit Lichtimpuls und dichtere Füllung im Leerlauf per Screenshot (`/home/box/projects/shot/ce-v051b-*.png`) geprüft. `node scripts/check-release-bump.mjs upstream/main`: „Versionsprüfung bestanden: combustion_engine“.
 - **Offen** · Bildrate auf einem echten Mobilgerät. Kein Upstream-PR/Merge ohne ausdrückliches Go; der Lock auf `main` bleibt bis zum Merge oder Abbruch.
-- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
-
-### 2026-11-27 – Michi / Codex CLI · Astra 6.2 xhigh (Fast) – Verbrennungsmotor 3D v0.5.0
-
-- **Branch** · `codex/combustion-3d-v0.5`, Basis `upstream/main` bei `046ea4d` (Lock-Hinweis-Commit). Code-Commit `3eed89e` + Doku-Commit (Fork-HEAD), gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Fork-Pages zeigt diesen Branch: [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/).
-- **Erledigt** · Otto-Saugrohreinspritzung und Diesel-Direkteinspritzung mit geneigter Glühkerze. Zahnriemen je Bank mit Spannrolle, synchronen Nocken, Ventiltellern und Tassenstößeln. Gemeinsame Rohr- und Partikelpfade bis zum Auspuff mit Turboflanschen, Ladeluftkühler, DPF und beiden AGR-Strecken. Tour mit 11 Otto- bzw. 16 Diesel-Stationen. Arbeits-Hinweis auf diesem Branch entfernt (der 🔒-Hinweis auf Upstream-`main` verschwindet mit dem Merge).
-- **Orchestrator** · Kamera der Diesel-Tour-Stationen hinter dem Motor (Turbolader, Ladeluftkühler, DPF, HD-/ND-AGR) in `ce-flow-guide.js` weiter und tiefer ausgerichtet, damit die Bauteile nicht hinter der Tour-Karte liegen. Codex-Sitzung hing einmal (> 15 min) und wurde fortgesetzt; der Lauf endete wegen erschöpfter Codex-Credits direkt nach der Doku, die Abschlussprüfung lag beim Orchestrator.
-- **Geprüft** · Explainer 74/74 Node-Tests (alle acht Motorkombinationen, u. a. Port- und Flanschanschlüsse, Verzweigungen, Rohrabstände, Riemenschluss, Nockenkontakt, Kolbenfreigang, Partikelübergänge, Farben, Tour). `node --check` für alle JS-Dateien, `git diff --check`, `node scripts/check-release-bump.mjs upstream/main`: „Versionsprüfung bestanden: combustion_engine“. E-Roadtrip `npm test` 167/167 (keine Änderung dort). Headless-Chrome (WebGL/SwiftShader) 1280 px und 390 px für Otto und Diesel inkl. Boxer/V6/V8 und Tour: 0 Konsolenfehler, 0 POSTs. Screenshots `/home/box/projects/shot/ce-v05-*.png`.
-- **GitHub** · Issue-/PR-Check (Orchestrator): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs (Issues im Fork deaktiviert).
-- **Offen** · Sichtprüfung auf echten Geräten (Bildrate mobil, Transparenz-Sortierung). Kein Upstream-Merge ohne Go.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
 
 Ältere Einträge stehen im [Handoff-Archiv](HANDOFF-archive.md).

@@ -2,6 +2,16 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Michi / Codex CLI · Astra 6.2 xhigh (Fast) – Verbrennungsmotor 3D v0.5.0
+
+- **Branch** · `codex/combustion-3d-v0.5`, Basis `upstream/main` bei `046ea4d` (Lock-Hinweis-Commit). Code-Commit `3eed89e` + Doku-Commit (Fork-HEAD), gepusht in den Fork `mic4rd/hunterjoeING.github.io`. Kein PR. Fork-Pages zeigt diesen Branch: [Fork-Test](https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/).
+- **Erledigt** · Otto-Saugrohreinspritzung und Diesel-Direkteinspritzung mit geneigter Glühkerze. Zahnriemen je Bank mit Spannrolle, synchronen Nocken, Ventiltellern und Tassenstößeln. Gemeinsame Rohr- und Partikelpfade bis zum Auspuff mit Turboflanschen, Ladeluftkühler, DPF und beiden AGR-Strecken. Tour mit 11 Otto- bzw. 16 Diesel-Stationen. Arbeits-Hinweis auf diesem Branch entfernt (der 🔒-Hinweis auf Upstream-`main` verschwindet mit dem Merge).
+- **Orchestrator** · Kamera der Diesel-Tour-Stationen hinter dem Motor (Turbolader, Ladeluftkühler, DPF, HD-/ND-AGR) in `ce-flow-guide.js` weiter und tiefer ausgerichtet, damit die Bauteile nicht hinter der Tour-Karte liegen. Codex-Sitzung hing einmal (> 15 min) und wurde fortgesetzt; der Lauf endete wegen erschöpfter Codex-Credits direkt nach der Doku, die Abschlussprüfung lag beim Orchestrator.
+- **Geprüft** · Explainer 74/74 Node-Tests (alle acht Motorkombinationen, u. a. Port- und Flanschanschlüsse, Verzweigungen, Rohrabstände, Riemenschluss, Nockenkontakt, Kolbenfreigang, Partikelübergänge, Farben, Tour). `node --check` für alle JS-Dateien, `git diff --check`, `node scripts/check-release-bump.mjs upstream/main`: „Versionsprüfung bestanden: combustion_engine“. E-Roadtrip `npm test` 167/167 (keine Änderung dort). Headless-Chrome (WebGL/SwiftShader) 1280 px und 390 px für Otto und Diesel inkl. Boxer/V6/V8 und Tour: 0 Konsolenfehler, 0 POSTs. Screenshots `/home/box/projects/shot/ce-v05-*.png`.
+- **GitHub** · Issue-/PR-Check (Orchestrator): Upstream 0 offene Issues, 0 offene PRs; Fork 0 offene PRs (Issues im Fork deaktiviert).
+- **Offen** · Sichtprüfung auf echten Geräten (Bildrate mobil, Transparenz-Sortierung). Kein Upstream-Merge ohne Go.
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10).
+
 ### 2026-11-27 – Michi / Grok Bot (Orchestrator) · kein Codex-Lauf / manuell – Lock-Hinweis in HANDOFF.md
 
 - **Branch / PR** · `docs/handoff-lock-rule` ab `upstream/main` (`7415dd3`). Commit `38096b2` (+ dieser Doku-Commit). Push auf Fork `mic4rd/hunterjoeING.github.io`. [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14). Kein Lock-Hinweis gesetzt (reine Doku, sehr klein; diese PR führt die Regel erst ein).

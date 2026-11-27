@@ -33,4 +33,4 @@ Interaktive, komplett prozedurale Three.js-0.170.0-3D-Simulation einer hochmoder
 ## 3. Offene Punkte & Changelog
 
 - **Offen:** Praxis-Performance- und Bedientest auf echtem Mobilgerät sowie ggf. Feinschliff nach erstem Live-Feedback.
-- **2026-11-27 (`feat/gondola-station-3d`, v0.1.0):** Erstveröffentlichung der prozeduralen 3D-Simulation `games/gondola-station/` inkl. Hub-/Nav-/Worker-/Sitemap-Integration und 7 bestandenen Kinematik-/Physik-Tests.
+- **2026-11-27 (`feat/gondola-station-3d`, `b29e4e8`, v0.1.0):** Erstveröffentlichung der prozeduralen 3D-Simulation `games/gondola-station/` inkl. Hub-/Nav-/Worker-/Sitemap-Integration, 7 bestandenen Kinematik-/Physik-Tests sowie 7-stufiger Headless-Chrome-WebGL-Sichtprüfung (0 Fehler).
