@@ -1,12 +1,15 @@
 import * as THREE from 'three';
-import { passage } from './ce-plumbing.js?v=0.5.1';
-import { SEAT_Y } from './ce-mechanics.js?v=0.5.1';
-import { TRACER_SIZE, passThrottle, setThrottleOpening } from './ce-throttle.js?v=0.5.1';
+import { passage } from './ce-plumbing.js?v=0.5.2';
+import { SEAT_Y } from './ce-mechanics.js?v=0.5.2';
+import { TRACER_SIZE, passThrottle, setThrottleOpening } from './ce-throttle.js?v=0.5.2';
+
+import { buildLanes, LANE_RADIUS, sampleLane } from './ce-lanes.js?v=0.5.2';
+import { gasDensityPercent } from './ce-settings.js?v=0.5.2';
 
 const AIR = 0, FUEL = 1, BURNT = 2;
 const colors = [0x389cff, 0xf03137, 0x75422c].map(c => new THREE.Color(c));
 
-function timedRoute(edges, boost) {
+function timedRoute({ edges, lanes }, boost) {
   let duration = 0;
   let throttleTime = 0;
   const stops = edges.map(e => {
@@ -16,35 +19,43 @@ function timedRoute(edges, boost) {
     if (e.to === 'throttle') throttleTime = duration;
     return duration;
   });
-  return { edges, stops, duration, throttleFraction: throttleTime / duration };
+  return { edges, lanes, stops, duration, throttleFraction: throttleTime / duration };
 }
 
-function trace(route, fraction, p, out) {
+export function trace(route, fraction, p, out) {
   const time = Math.min(1, Math.max(0, fraction)) * route.duration;
   let i = 0;
   while (i < route.stops.length - 1 && time > route.stops[i]) i++;
   const e = route.edges[i];
   const start = i ? route.stops[i - 1] : 0;
   const u = (time - start) / (route.stops[i] - start);
-  const scaled = u * e.count, j = Math.min(e.count - 1, Math.floor(scaled));
-  const t = scaled - j;
-  out.lerpVectors(e.centers[j], e.centers[j + 1], t);
-  // Narrow the strand inside fittings. Shared nodes meet exactly, including
-  // branches whose cylindrical coordinate frames differ.
-  const width = e.radius * Math.min(1, u * e.length * 6, (1 - u) * e.length * 6);
-  out.addScaledVector(e.normals[j], p.laneX * width * (1 - t));
-  out.addScaledVector(e.normals[j + 1], p.laneX * width * t);
-  out.addScaledVector(e.binormals[j], p.laneZ * width * (1 - t));
-  out.addScaledVector(e.binormals[j + 1], p.laneZ * width * t);
+  sampleLane(route.lanes[i], Math.max(0, Math.min(1, u)) * e.count, p, out);
   if (e.throttle) passThrottle(e.throttle, p, out);
 }
 
+// Boost changes transit times only. Reuse the geometric lookup for every
+// parcel, load band and seat that follows the same passage.
+const preparedPaths = new WeakMap();
 export function routesForSeat(g, cyl, seat, boost) {
-  const run = (from, to, branch) => timedRoute(passage(g, from, to, branch), boost);
+  if (!preparedPaths.has(g)) preparedPaths.set(g, new Map());
+  const cache = preparedPaths.get(g);
+  function path(from, to, branch = '') {
+    const key = from + '>' + to + '/' + branch;
+    if (!cache.has(key)) {
+      const edges = passage(g, from, to, branch);
+      cache.set(key, { edges, lanes: buildLanes(edges) });
+    }
+    return cache.get(key);
+  }
+  // Petrol is metered at the nozzle. Keep the same transported lane across
+  // that timing boundary, from the rail through the fitting into the runner.
+  const fuel = path('pump', g.diesel ? cyl.nozzle : seat.enter);
+  const split = g.diesel ? fuel.edges.length : fuel.edges.findIndex(e => e.from === cyl.nozzle);
+  const run = (from, to, branch) => timedRoute(path(from, to, branch), boost);
   return {
     air: run('filterMouth', seat.enter),
-    fuel: run('pump', cyl.nozzle),
-    port: g.diesel ? null : run(cyl.nozzle, seat.enter),
+    fuel: timedRoute({ edges: fuel.edges.slice(0, split), lanes: fuel.lanes.slice(0, split) }, boost),
+    port: g.diesel ? null : timedRoute({ edges: fuel.edges.slice(split), lanes: fuel.lanes.slice(split) }, boost),
     tail: run(seat.leave, 'tail'),
     hp: g.diesel ? run(seat.leave, seat.enter, 'hpEgr') : null,
     lp: g.diesel ? run(seat.leave, seat.enter, 'lpEgr') : null,
@@ -126,16 +137,17 @@ export function sampleJourney(p, graph, t, crown, out) {
   return t >= p.burn ? BURNT : p.fuel ? FUEL : AIR;
 }
 
-export function createTracers(graph, budget = tracerBudget(globalThis.navigator)) {
-  const positions = new THREE.BufferAttribute(new Float32Array(budget * 3), 3).setUsage(THREE.DynamicDrawUsage);
-  const rgb = new THREE.BufferAttribute(new Float32Array(budget * 3), 3).setUsage(THREE.DynamicDrawUsage);
+export function createTracers(graph, budget = tracerBudget(globalThis.navigator), density = 100) {
+  const capacity = 2 * budget;
+  const positions = new THREE.BufferAttribute(new Float32Array(capacity * 3), 3).setUsage(THREE.DynamicDrawUsage);
+  const rgb = new THREE.BufferAttribute(new Float32Array(capacity * 3), 3).setUsage(THREE.DynamicDrawUsage);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', positions);
   geometry.setAttribute('color', rgb);
   // A shaded circular point sprite reads as a bead even at medium zoom.
   const mat = new THREE.PointsMaterial({ size: TRACER_SIZE, vertexColors: true, toneMapped: false });
   const sizes = graph.throttle
-    ? new THREE.BufferAttribute(new Float32Array(budget), 1).setUsage(THREE.DynamicDrawUsage)
+    ? new THREE.BufferAttribute(new Float32Array(capacity), 1).setUsage(THREE.DynamicDrawUsage)
     : null;
   if (sizes) geometry.setAttribute('throttleScale', sizes);
   mat.customProgramCacheKey = () => sizes ? 'petrol-tracers' : 'diesel-tracers';
@@ -160,7 +172,7 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
   const particles = [];
   const residuals = [];
   const out = new THREE.Vector3();
-  for (let i = 0; i < budget; i++) {
+  function addSlot(i) {
     const n = i % graph.cylinders.length, cyl = graph.cylinders[n];
     const lane = Math.floor(i / graph.cylinders.length);
     const rank = fract((lane + 0.5) * 0.61803398875);
@@ -174,35 +186,56 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
     // A small, evenly distributed charge stays in each chamber across cycles.
     // Its fixed slots precede the metered flow and never enter the intake.
     if (lane % 32 === 0) {
-      const slot = residuals.length, burnt = colors[BURNT];
-      rgb.setXYZ(slot, burnt.r, burnt.g, burnt.b);
-      if (sizes) sizes.setX(slot, 1);
       residuals.push(parcel);
-      continue;
+      return;
     }
     particles.push(Object.assign(parcel, {
       seed: fract((i + 0.5) * 0.414213562), trip: 0, initialized: false,
       meterRank: 0, metered: false, gate: 0, pointScale: 1,
       options: options[n][lane % 2], admit: 12 + rank * 152, release: 552 + rank * 153,
       burn: 360 + radius * 15,
-      laneX: 0.74 * radius * Math.cos(angle), laneZ: 0.74 * radius * Math.sin(angle)
+      laneX: LANE_RADIUS * radius * Math.cos(angle), laneZ: LANE_RADIUS * radius * Math.sin(angle)
     }));
   }
+  let activeParcels = 0, activeResiduals = 0, dirty = false;
+  function setDensity(percent) {
+    const cap = Math.round(budget * gasDensityPercent(percent) / 100);
+    if (cap === activeParcels + activeResiduals) return;
+    for (let i = particles.length + residuals.length; i < cap; i++) addSlot(i);
+    // Each block starts with one residual per cylinder, followed by 31 travelling lanes.
+    const cylinders = graph.cylinders.length, block = 32 * cylinders;
+    const retained = Math.floor(cap / block) * cylinders + Math.min(cap % block, cylinders);
+    for (let i = activeResiduals; i < retained; i++) {
+      rgb.setXYZ(i, colors[BURNT].r, colors[BURNT].g, colors[BURNT].b);
+      if (sizes) sizes.setX(i, 1);
+    }
+    activeResiduals = retained;
+    for (let i = activeParcels; i < cap - retained; i++) particles[i].initialized = false;
+    activeParcels = cap - retained;
+    dirty = true;
+  }
+  setDensity(density);
+  geometry.setDrawRange(0, 0);
+  const triples = { start: 0, count: 0 }, singles = { start: 0, count: 0 };
   let lastClock = -Infinity;
   return {
-    cloud,
+    cloud, setDensity,
+    get activeBudget() { return activeResiduals + activeParcels; },
     update(crankClock, crowns, load, boostBar) {
-      if (crankClock === lastClock && (!graph.throttle || load === graph.throttle.load)) return;
+      if (!dirty && crankClock === lastClock && (!graph.throttle || load === graph.throttle.load)) return;
+      dirty = false;
       if (graph.throttle) setThrottleOpening(graph.throttle, load);
       const refill = crankClock - lastClock > 1440;
       lastClock = crankClock;
       let count = 0;
-      for (const p of residuals) {
+      for (let i = 0; i < activeResiduals; i++) {
+        const p = residuals[i];
         chamberPosition(p, crowns[p.n], out);
         positions.setXYZ(count++, out.x, out.y, out.z);
       }
       const boost = clamp(boostBar / 1.85);
-      for (const p of particles) {
+      for (let i = 0; i < activeParcels; i++) {
+        const p = particles[i];
         const local = crankClock + p.cyl.spec.phaseDeg;
         if (!p.initialized || refill) {
           beginJourney(p, graph, load, boost);
@@ -230,8 +263,14 @@ export function createTracers(graph, budget = tracerBudget(globalThis.navigator)
         rgb.setXYZ(count++, color.r, color.g, color.b);
       }
       geometry.setDrawRange(0, count);
+      triples.count = count * 3;
+      positions.updateRanges[0] = rgb.updateRanges[0] = triples;
       positions.needsUpdate = rgb.needsUpdate = true;
-      if (sizes) sizes.needsUpdate = true;
+      if (sizes) {
+        singles.count = count;
+        sizes.updateRanges[0] = singles;
+        sizes.needsUpdate = true;
+      }
     }
   };
 }

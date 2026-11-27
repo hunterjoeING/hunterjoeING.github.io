@@ -42,19 +42,20 @@
   {
     "imports": {
       "three": "../../shared/vendor/three-0.170.0/build/three.module.min.js",
+      "three/addons/postprocessing/GTAOPass.js": "./vendor/three-0.170.0-addons/postprocessing/GTAOPass.js?v=0.5.2",
       "three/addons/": "../../shared/vendor/three-0.170.0/examples/jsm/"
     }
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.5.1" />
+  <link rel="stylesheet" href="./styles.css?v=0.5.2" />
 </head>
 <body>
   <header class="arcade-topbar ce-topbar">
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
       <h1 class="topbar-title">🔥 Verbrennungsmotor 3D</h1>
-      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.5.1</button>
+      <button type="button" class="ce-version-pill" id="ce-version-btn" title="Änderungen dieser Version anzeigen">v0.5.2</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
@@ -68,19 +69,39 @@
       <div class="ce-label-layer" id="ce-label-layer" aria-label="Bauteil-Beschriftungen"></div>
 
       <!-- 01 Cutaway · 02 X-Ray · 03 Explosionsansicht -->
-      <div class="ce-mode-dock" role="toolbar" aria-label="3D-Ansichtsmodus">
+      <div class="ce-mode-dock" role="toolbar" aria-label="3D-Ansicht und Einstellungen">
         <div class="ce-dock-group">
           <button type="button" class="ce-mode-btn" data-view-mode="normal">Außenansicht</button>
           <button type="button" class="ce-mode-btn active" data-view-mode="cutaway"><span class="ce-mode-num">01</span> Cutaway</button>
           <button type="button" class="ce-mode-btn" data-view-mode="xray"><span class="ce-mode-num">02</span> X-Ray</button>
           <button type="button" class="ce-mode-btn" data-view-mode="exploded"><span class="ce-mode-num">03</span> Explosionsansicht</button>
         </div>
-        <div class="ce-dock-group">
+        <div class="ce-dock-group ce-dock-actions">
           <button type="button" class="ce-chip-btn ce-engine-chip" id="ce-engine-chip" title="Aktiven Motor wechseln">R4 · Otto-Sauger</button>
           <button type="button" class="ce-chip-btn" id="ce-btn-labels" title="Baugruppen beschriften">🏷️ Labels</button>
           <button type="button" class="ce-chip-btn active" id="ce-btn-flow" title="Gaswechsel-Partikel anzeigen">💨 Gasfluss</button>
           <button type="button" class="ce-chip-btn" id="ce-btn-reset" title="Kamera zurücksetzen">↺ Reset</button>
+          <button type="button" class="ce-chip-btn" id="ce-btn-settings" aria-label="Einstellungen" title="Einstellungen" aria-expanded="false" aria-controls="ce-settings"><span aria-hidden="true">⚙︎</span></button>
         </div>
+        <section id="ce-settings" class="ce-settings-panel" aria-labelledby="ce-settings-heading" hidden>
+          <h2 id="ce-settings-heading">Einstellungen</h2>
+          <fieldset id="ce-ao-options" aria-describedby="ce-ao-status">
+            <legend>Ambient Occlusion</legend>
+            <small id="ce-ao-status">Kontaktschatten · automatisch</small>
+            <div class="ce-ao-options">
+              <label><input type="radio" name="ce-ao" value="0"><span>Aus</span></label>
+              <label><input type="radio" name="ce-ao" value="1"><span>Niedrig</span></label>
+              <label><input type="radio" name="ce-ao" value="2"><span>Mittel</span></label>
+              <label><input type="radio" name="ce-ao" value="3"><span>Stark</span></label>
+            </div>
+          </fieldset>
+          <label class="ce-setting-row">Schatten <input type="checkbox" id="ce-shadows" checked></label>
+          <div>
+            <div class="ce-setting-row"><label for="ce-gas-density">Gasdichte</label><output for="ce-gas-density" id="ce-density-value">100 %</output></div>
+            <input type="range" id="ce-gas-density" min="25" max="200" step="5" value="100" aria-valuetext="100 %">
+          </div>
+          <div class="ce-setting-row ce-fps">FPS <span id="ce-settings-fps">–</span></div>
+        </section>
       </div>
 
       <!-- Explosion Warning / Recovery Banner -->
@@ -267,9 +288,9 @@
   </main>
 
   <script src="../../shared/arcade.js?v=0.4.1"></script>
-  <script src="../../shared/releases.js?v=0.5.1"></script>
+  <script src="../../shared/releases.js?v=0.5.2"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
   <script src="../../shared/burger-menu.js?v=0.4.0"></script>
-  <script type="module" src="./ce-main.js?v=0.5.1"></script>
+  <script type="module" src="./ce-main.js?v=0.5.2"></script>
 </body>
 </html>

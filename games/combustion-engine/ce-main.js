@@ -20,8 +20,10 @@ import {
   getTourStepsForProfile,
   roadLoadTorqueNm,
   speedKmh
-} from './ce-data.js?v=0.5.1';
-import { createCombustionEngineModel } from './ce-model.js?v=0.5.1';
+} from './ce-data.js?v=0.5.2';
+import { createEngineRenderer } from './ce-ao.js?v=0.5.2';
+import { createGraphicsSettings } from './ce-settings.js?v=0.5.2';
+import { createCombustionEngineModel } from './ce-model.js?v=0.5.2';
 
 const DEFAULT_CAMERA = {
   normal: { pos: [-8.2, 4.5, 9.6], target: [0.85, 0.55, 0.30] },
@@ -67,7 +69,6 @@ function init() {
     antialias: true,
     powerPreference: 'high-performance'
   });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
   renderer.shadowMap.enabled = true;
@@ -115,8 +116,10 @@ function init() {
   let activeParts = getEnginePartsForProfile(activeProfile);
   let activeTourSteps = getTourStepsForProfile(activeProfile);
 
-  const engine = createCombustionEngineModel(activeProfile);
+  const engine = createCombustionEngineModel(activeProfile, scene.environment);
   scene.add(engine.root);
+  const engineRenderer = createEngineRenderer(renderer, scene, camera, keyLight);
+  const graphics = createGraphicsSettings(document, window, engineRenderer, engine);
 
   // =========================================================================
   // THEME SYNC (DARK / LIGHT)
@@ -1036,6 +1039,7 @@ function init() {
 
   function startTour(index = 0) {
     if (!elTourCard) return;
+    graphics.close();
     if (appState.explosionPhase !== 'idle') repairEngine(false);
     const { rpm, load, timeScale, viewMode, labelsVisible, selectedPart } = appState;
     tourStartState = {
@@ -1184,6 +1188,7 @@ function init() {
 
   window.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
+    if (graphics.close(true)) return;
     if (elPanelDrawer?.classList.contains('mobile-open')) setDrawerOpen(false);
     if (appState.tourActive) stopTour();
     if (appState.explosionPhase !== 'idle') repairEngine(true);
@@ -1215,7 +1220,8 @@ function init() {
     const h = Math.max(1, viewport.clientHeight);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h, false);
+    engineRenderer.resize(w, h);
+    engine.setGasDensity();
   }
   handleResize();
   const initialView = cameraForLayout('cutaway', activeProfile, camera.aspect);
@@ -1231,7 +1237,8 @@ function init() {
 
   function animate(now) {
     requestAnimationFrame(animate);
-    const dt = Math.min(0.25, (now - lastTime) / 1000);
+    const frameSeconds = (now - lastTime) / 1000;
+    const dt = Math.min(0.25, frameSeconds);
     lastTime = now;
     if (tourPlayback) advanceTourPlayback(now);
 
@@ -1281,7 +1288,8 @@ function init() {
       }
     }
 
-    renderer.render(scene, camera);
+    engineRenderer.render(frameSeconds);
+    graphics.frame(now);
     updateLabels();
   }
   requestAnimationFrame(animate);

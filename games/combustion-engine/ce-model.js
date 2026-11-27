@@ -3,22 +3,23 @@ import {
   DEFAULT_PROFILE,
   getEnginePartsForProfile,
   getCylinderStroke,
-  ignitionWindow,
+  ignitionWindow, SPARK_SECONDS,
   IGNITION_WINDOW_DEG
-} from './ce-data.js?v=0.5.1';
-import { createExplosionSystem } from './ce-explosion.js?v=0.5.1';
+} from './ce-data.js?v=0.5.2';
+import { createExplosionSystem } from './ce-explosion.js?v=0.5.2';
 
 import { BASE_RADIUS, BUCKET_TOP, CAM_Y, CAM_Z, MAX_LIFT, SEAT_Y as LOCAL_Y_ROOF,
   CRANK_RADIUS as R_CRANK, ROD_LENGTH as L_ROD, CROWN_OFFSET as PISTON_CROWN_OFFSET,
   BLOCK_END_MARGIN, CAM_OVERHANG, END_WALL_WIDTH, NOSE_RADIUS, WHEEL_WIDTH,
-  WRIST_PIN_RADIUS, camOutline, displayCrankSpeed, intakeSign, timingMounts } from './ce-mechanics.js?v=0.5.1';
-import { buildConrods, installCrankshaft } from './ce-crankshaft.js?v=0.5.1';
-import { createIgnitionKernel, updateIgnition } from './ce-ignition.js?v=0.5.1';
-import { installBelts } from './ce-belt.js?v=0.5.1';
-import { buildPlumbing } from './ce-plumbing.js?v=0.5.1';
-import { installDucts } from './ce-ducts.js?v=0.5.1';
-import { createTracers } from './ce-tracers.js?v=0.5.1';
-import { throttleAngle } from './ce-throttle.js?v=0.5.1';
+  WRIST_PIN_RADIUS, camOutline, displayCrankSpeed, intakeSign, timingMounts } from './ce-mechanics.js?v=0.5.2';
+import { buildConrods, installCrankshaft } from './ce-crankshaft.js?v=0.5.2';
+import { createFlame, createSpark, PLUG_TIP_Y, updateIgnition, updateSpark } from './ce-ignition.js?v=0.5.2';
+import { installBelts } from './ce-belt.js?v=0.5.2';
+import { installOilPan } from './ce-oil-pan.js?v=0.5.2';
+import { buildPlumbing, DIESEL_NOZZLE_Y } from './ce-plumbing.js?v=0.5.2';
+import { installDucts } from './ce-ducts.js?v=0.5.2';
+import { createTracers, tracerBudget } from './ce-tracers.js?v=0.5.2';
+import { throttleAngle } from './ce-throttle.js?v=0.5.2';
 
 const R_BORE = 0.54;
 const BOWL_EDGE_RADIUS = 0.055;
@@ -160,7 +161,7 @@ function disposeObjectTree(group) {
   materials.forEach(m => m.dispose());
 }
 
-export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
+export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE, environment = null) {
   const root = new THREE.Group();
   const engineHolder = new THREE.Group();
   root.add(engineHolder);
@@ -199,6 +200,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     turboSpinRad: 0,
     selectedPart: null,
     showFlow: true,
+    gasDensity: 100,
     theme: 'light'
   };
 
@@ -208,6 +210,10 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     if (built) {
       explosionSys.reset(built.partGroups, built.basePositions);
       built.belts.texture.dispose();
+      // Dispose the original skins even if the outgoing assembly is in X-ray.
+      for (const rec of built.xrayRecords) rec.mesh.material = rec.normalMat;
+      built.xrayShellMat.dispose();
+      built.xrayFocusMat.dispose();
       disposeObjectTree(built.assemblyRoot);
       engineHolder.remove(built.assemblyRoot);
     }
@@ -230,7 +236,6 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const cutawayMeshes = [];
     const cutawayGhostMeshes = [];
     const xrayRecords = [];
-    const xrayWireframes = [];
     const highlightableByPart = new Map();
 
     // Basismaterialien (werden pro Baugruppe geklont, sodass Highlighting nie über Teile leckt!)
@@ -275,17 +280,21 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       emissive: new THREE.Color(0xf97316),
       emissiveIntensity: 0.22,
       transparent: true,
+      depthWrite: false,
       opacity: 0
     });
 
-    const xrayShellMat = new THREE.MeshPhysicalMaterial({
-      color: 0x38bdf8,
-      transparent: true,
-      opacity: 0.13,
-      roughness: 0.14,
-      metalness: 0.05,
-      depthWrite: false,
-      side: THREE.DoubleSide
+    // The built-in grayscale matcap gradient keeps curved housings readable
+    // without picking up the warm rim light or the cool studio hemisphere.
+    const xrayShellMat = new THREE.MeshMatcapMaterial({
+      name: 'xraySmoke', color: 0x555555, transparent: true, opacity: 0.13,
+      side: THREE.DoubleSide, forceSinglePass: true, depthWrite: false, fog: false
+    });
+    const xrayFocusMat = xrayShellMat.clone();
+    xrayFocusMat.name = 'xrayFocus';
+    const xrayEdgeMat = new THREE.LineBasicMaterial({
+      name: 'xrayEdges', color: 0x727272, transparent: true, opacity: 0,
+      depthWrite: false, fog: false
     });
 
     // Pro Baugruppe eigener Material-Pool (verhindert Cross-Part-Highlight-Leaks!)
@@ -314,18 +323,14 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       return group;
     }
 
-    function registerXrayShell(mesh) {
-      xrayRecords.push({ mesh, normalMat: mesh.material });
-      const edges = new THREE.EdgesGeometry(mesh.geometry, 26);
-      const lineMat = new THREE.LineBasicMaterial({
-        color: 0x38bdf8,
-        transparent: true,
-        opacity: 0,
-        depthWrite: false
-      });
-      const line = new THREE.LineSegments(edges, lineMat);
-      mesh.add(line);
-      xrayWireframes.push(lineMat);
+    function registerXrayShell(mesh, outline = true) {
+      let line = null;
+      if (outline) {
+        line = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 26), xrayEdgeMat);
+        line.visible = false;
+        mesh.add(line);
+      }
+      xrayRecords.push({ mesh, normalMat: mesh.material, line });
     }
 
     // Hilfsfunktion: Erzeugt pro Bank eine lokale Transformationsgruppe bei (0, yCrank, 0) rotiert um X
@@ -397,6 +402,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         rib.position.set(bCenter, 1.25 + r * 0.52, cutSign * 0.94);
         bf.add(rib);
         cutawayMeshes.push(rib);
+        registerXrayShell(rib, false);
       }
 
       // Schnittkanten-Akzent
@@ -418,6 +424,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         linerBack.material.side = THREE.DoubleSide;
         linerBack.position.set(c.x, 2.17, 0);
         bf.add(linerBack);
+        registerXrayShell(linerBack, false);
 
         const linerFront = new THREE.Mesh(
           new THREE.CylinderGeometry(R_BORE + 0.05, R_BORE + 0.05, 2.15, 26, 1, true, frontStart, Math.PI),
@@ -440,14 +447,14 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     const pistonNodes = [];
     const gasMeshes = [];
-    const ignition = [];
+    const ignition = [], sparks = [];
 
     const chamberGeo = new THREE.CylinderGeometry(R_BORE - 0.03, R_BORE - 0.03, 1.0, 22);
     const pistonBodyGeo = new THREE.CylinderGeometry(R_BORE - 0.025, R_BORE - 0.03, 0.76, 26);
     const pistonRingGeo = new THREE.TorusGeometry(R_BORE - 0.015, 0.018, 8, 24);
     const pistonPinGeo = new THREE.CylinderGeometry(WRIST_PIN_RADIUS, WRIST_PIN_RADIUS, 0.82, 14);
-    const kernelGeometry = new THREE.SphereGeometry(1, 24, 14);
-    const ignitionLight = new THREE.PointLight(isDiesel ? 0xffce74 : 0xffab52, 0, 1.2, 1);
+    const flameGeometry = new THREE.CylinderGeometry(1, 1, 2, 32);
+    const ignitionLight = new THREE.PointLight(0xffffff, 0, 1.2, 1);
     ignitionLight.name = 'ignitionLight';
     assemblyRoot.add(ignitionLight);
 
@@ -500,10 +507,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       gf.add(gasMesh);
       gasMeshes.push({ mesh: gasMesh, mat: gasMat, spec });
 
-      const flash = createIgnitionKernel(kernelGeometry, isDiesel);
+      const flash = createFlame(flameGeometry, isDiesel);
       flash.position.x = spec.x;
       flash.renderOrder = 1;
-      flash.name = isDiesel ? 'sprayIgnition' : 'spark';
+      flash.name = isDiesel ? 'sprayIgnition' : 'petrolFlame';
+      flash.material.uniforms.seed.value = spec.index * 1.67;
       flash.visible = false;
       gf.add(flash);
       ignition.push(flash);
@@ -681,6 +689,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const ignitionPart = isDiesel ? 'commonRail' : 'sparkPlugs';
     const plugsGroup = registerPartGroup(ignitionPart, new THREE.Group(), plugAnchor);
     const plugBankFrames = createBankFrames(plugsGroup);
+    const sparkTemplate = isDiesel ? null : createSpark(getPartMat(ignitionPart, 'machinedSteel'));
 
     cylSpecs.forEach(spec => {
       const bf = plugBankFrames[spec.bankIndex];
@@ -701,7 +710,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
         const nozzle = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.032, 0.56, 12), getPartMat(ignitionPart, 'chainGold', true));
         cutawayGhostMeshes.push(nozzle);
-        nozzle.position.y = -0.60;
+        nozzle.position.y = DIESEL_NOZZLE_Y - unit.position.y + 0.28;
         unit.add(nozzle);
 
         // Glühkerze leicht schräg daneben
@@ -725,8 +734,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         unit.add(thread);
 
         const tip = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.16, 8), getPartMat(ignitionPart, 'chainGold'));
-        tip.position.y = -0.80;
-        unit.add(tip);
+        tip.position.y = PLUG_TIP_Y - unit.position.y + 0.08;
+        const electrode = sparkTemplate.clone();
+        electrode.position.y = PLUG_TIP_Y - unit.position.y;
+        sparks.push(electrode.getObjectByName('spark'));
+        unit.add(tip, electrode);
       }
       bf.add(unit);
     });
@@ -769,33 +781,23 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     }
     flywheelOilGroup.add(flywheelSpin);
 
-    // Ölwanne unter dem Kurbelgehäuse
-    const panW = blockSpanX + 0.12;
-    const panY = yCrank - 0.96;
-    const panBack = new THREE.Mesh(new THREE.BoxGeometry(panW, 1.05, 0.86), getPartMat('flywheelOilpan', 'darkMetal').clone());
-    panBack.position.set(0, panY, -0.43);
-    flywheelOilGroup.add(panBack);
-    registerXrayShell(panBack);
-
-    const panBottom = new THREE.Mesh(new THREE.BoxGeometry(panW, 0.18, 1.72), getPartMat('flywheelOilpan', 'darkMetal').clone());
-    panBottom.position.set(0, panY - 0.48, 0);
-    flywheelOilGroup.add(panBottom);
-
-    const panFront = new THREE.Mesh(new THREE.BoxGeometry(panW, 1.05, 0.86), getPartMat('flywheelOilpan', 'darkMetalCut').clone());
-    panFront.position.set(0, panY, 0.43);
-    flywheelOilGroup.add(panFront);
-    cutawayMeshes.push(panFront);
-    registerXrayShell(panFront);
+    const updateOil = installOilPan(flywheelOilGroup, blockSpanX + 0.12, yCrank, getPartMat, registerXrayShell, cutawayMeshes, environment);
+    for (const mesh of cutawayGhostMeshes) registerXrayShell(mesh, false);
 
     // =========================================================================
-    const tracers = createTracers(plumbing);
-    const flowGroup = tracers.cloud;
-    assemblyRoot.add(flowGroup);
+    const baseBudget = tracerBudget(globalThis.navigator);
+    const tracers = createTracers(plumbing, baseBudget, state.gasDensity);
+    assemblyRoot.add(tracers.cloud);
 
     // Tagging & Basispositionen
     for (const [id, group] of partGroups.entries()) {
       basePositions.set(id, group.position.clone());
       tagPart(group, id);
+    }
+
+    for (const spark of sparks) for (const effect of spark.children) {
+      effect.castShadow = false;
+      effect.raycast = () => {};
     }
 
     built = {
@@ -807,7 +809,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       cutawayMeshes,
       cutawayGhostMeshes,
       xrayRecords,
-      xrayWireframes,
+      xrayEdgeMat, xrayFocusMat, useXray: false,
       highlightableByPart,
       exhaustMat: getPartMat('exhaustManifold', 'exhaustPipe', true),
       cutEdgeMat,
@@ -816,14 +818,16 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       conrodNodes,
       crankSpin,
       flywheelSpin,
+      updateOil,
       belts,
       camSpins,
       valveAssemblies,
       gasMeshes,
       ignition,
       ignitionLight,
+      sparks,
       moving,
-      flowGroup,
+      plumbing, baseBudget,
       tracers,
       crowns: new Float32Array(cylSpecs.length),
       strokes: cylSpecs.map(() => ({})),
@@ -876,9 +880,19 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     return explosionSys.state;
   }
 
+  function syncXrayMaterials() {
+    for (const { mesh, normalMat, line } of built.xrayRecords) {
+      const focused = mesh.userData.partId === state.selectedPart;
+      mesh.material = built.useXray ? (focused ? built.xrayFocusMat : built.xrayShellMat) : normalMat;
+      mesh.castShadow = !built.useXray;
+      if (line) line.visible = built.useXray;
+    }
+  }
+
   function setSelectedPart(partId) {
     state.selectedPart = partId;
     if (!built) return;
+    if (built.useXray) syncXrayMaterials();
     for (const [id, entries] of built.highlightableByPart.entries()) {
       const active = Boolean(partId && id === partId);
       for (const rec of entries) {
@@ -896,7 +910,25 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
   function setFlowVisible(visible) {
     state.showFlow = visible;
-    if (built) built.flowGroup.visible = visible;
+    if (built) built.tracers.cloud.visible = visible;
+  }
+
+  function setGasDensity(percent = state.gasDensity) {
+    state.gasDensity = percent;
+    const budget = tracerBudget(globalThis.navigator);
+    if (budget === built.baseBudget) {
+      built.tracers.setDensity(percent);
+      return;
+    }
+    // Crossing the compact viewport threshold replaces only the point batch.
+    const previous = built.tracers.cloud;
+    built.tracers = createTracers(built.plumbing, budget, percent);
+    built.baseBudget = budget;
+    built.tracers.cloud.visible = previous.visible;
+    built.assemblyRoot.add(built.tracers.cloud);
+    previous.removeFromParent();
+    previous.geometry.dispose();
+    previous.material.dispose();
   }
 
   function applyTheme(theme) {
@@ -905,8 +937,9 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     basePlate.material.color.setHex(isDark ? 0x162033 : 0xdbe3ee);
     ringAccent.material.color.setHex(isDark ? 0xf97316 : 0xc2410c);
     if (built) {
-      built.xrayShellMat.color.setHex(isDark ? 0x38bdf8 : 0x1d4ed8);
-      built.xrayWireframes.forEach(m => m.color.setHex(isDark ? 0x38bdf8 : 0x1e40af));
+      built.xrayShellMat.color.setHex(isDark ? 0x808080 : 0x555555);
+      built.xrayFocusMat.color.setHex(isDark ? 0xd4d4d4 : 0x989898);
+      built.xrayEdgeMat.color.setHex(isDark ? 0xbcbcbc : 0x727272);
     }
   }
 
@@ -946,12 +979,12 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     if (Math.abs(state.xrayTarget - state.xrayCurrent) < 0.015) state.xrayCurrent = state.xrayTarget;
 
     const useXray = state.xrayCurrent > 0.18;
-    built.xrayShellMat.opacity = 0.06 + state.xrayCurrent * 0.12;
-    for (const rec of built.xrayRecords) {
-      rec.mesh.material = useXray ? built.xrayShellMat : rec.normalMat;
-    }
-    for (const lineMat of built.xrayWireframes) {
-      lineMat.opacity = state.xrayCurrent * 0.62;
+    built.xrayShellMat.opacity = 0.04 + state.xrayCurrent * 0.09;
+    built.xrayFocusMat.opacity = built.xrayShellMat.opacity * 1.35;
+    built.xrayEdgeMat.opacity = state.xrayCurrent * 0.48;
+    if (useXray !== built.useXray) {
+      built.useXray = useXray;
+      syncXrayMaterials();
     }
 
     const cutAlpha = 1 - state.cutawayCurrent;
@@ -960,7 +993,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         mesh.visible = true;
       } else {
         mesh.visible = cutAlpha > 0.04;
-        if (mesh.material && mesh.material !== built.xrayShellMat) {
+        if (mesh.material) {
           const wantTrans = state.cutawayCurrent > 0.01;
           if (mesh.material.transparent !== wantTrans) {
             mesh.material.transparent = wantTrans;
@@ -973,14 +1006,14 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     }
 
     const exhaustCutOpacity = 1 - state.cutawayCurrent * 0.84;
-    for (const mesh of built.cutawayGhostMeshes) {
-      if (mesh.material !== built.xrayShellMat) {
-        const wantTrans = useXray || state.cutawayCurrent > 0.02;
+    if (!useXray) {
+      const wantTrans = state.cutawayCurrent > 0.02;
+      for (const mesh of built.cutawayGhostMeshes) {
         if (mesh.material.transparent !== wantTrans) {
           mesh.material.transparent = wantTrans;
           mesh.material.needsUpdate = true;
         }
-        mesh.material.opacity = useXray ? 0.16 : exhaustCutOpacity;
+        mesh.material.opacity = exhaustCutOpacity;
         mesh.material.depthWrite = !wantTrans;
       }
     }
@@ -996,10 +1029,13 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         : telemetry.rpm;
 
     const effectiveScale = isOverrev ? Math.max(0.42, timeScale * 2.6) : timeScale;
+    const internalView = state.viewMode === 'cutaway' || state.viewMode === 'xray';
+    built.updateOil(internalView && !isBlown, clampedDt * effectiveScale / 0.16, effectiveRpm, state.profile.specs);
     const normalDegPerSec = effectiveRpm * 6 * 0.045;
     const visualDegPerSec = normalDegPerSec * (effectiveScale / 0.16);
     const crankSpeed = isOverrev ? visualDegPerSec : displayCrankSpeed(visualDegPerSec);
     const windowDeg = isOverrev ? IGNITION_WINDOW_DEG : ignitionWindow(crankSpeed, displayCrankSpeed(normalDegPerSec));
+    const sparkWindowDeg = SPARK_SECONDS * Math.max(crankSpeed, displayCrankSpeed(normalDegPerSec));
     const advanceDeg = crankSpeed * clampedDt;
     state.crankClock += advanceDeg;
     state.crankDeg = state.crankClock % 720;
@@ -1033,7 +1069,8 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     built.ignitionLight.intensity = 0;
     for (let i = 0; i < built.cylSpecs.length; i++) {
       const spec = built.cylSpecs[i];
-      const stroke = getCylinderStroke(state.crankDeg, i, state.profile, strokes[i], windowDeg, advanceDeg);
+      const stroke = getCylinderStroke(state.crankDeg, i, state.profile, strokes[i], windowDeg, advanceDeg, sparkWindowDeg);
+      if (!built.isDiesel) updateSpark(built.sparks[i], isBlown ? 0 : stroke.sparkIntensity, internalView, built.ignitionLight);
 
       const thetaLocal = THREE.MathUtils.degToRad(state.crankDeg + spec.crankPinAngleDeg - spec.bankAngleDeg);
       const localZc = R_CRANK * Math.sin(thetaLocal);
@@ -1074,7 +1111,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
           gm.mat.color.copy(tmpColor);
           gm.mat.opacity = 0.045 + t * 0.065;
         } else if (stroke.key === 'power') {
-          tmpColor.copy(built.isDiesel ? colorDieselFlame : colorFlame).lerp(colorCompress, 0.24);
+          tmpColor.copy(colorExhaust).lerp(built.isDiesel ? colorDieselFlame : colorFlame, stroke.flameIntensity);
           gm.mat.color.copy(tmpColor);
           gm.mat.opacity = 0.055 + stroke.flameIntensity * 0.24;
         } else {
@@ -1084,11 +1121,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       }
 
       const crownTop = built.isDiesel ? localYp + BOWL_EDGE_TOP : crownY;
-      updateIgnition(built.ignition[i], stroke, crownTop, R_BORE, !isBlown, built.ignitionLight);
+      updateIgnition(built.ignition[i], stroke, crownTop, R_BORE, built.isDiesel, !isBlown, built.ignitionLight);
     }
 
-    built.flowGroup.visible = state.showFlow && !isBlown;
-    if (built.flowGroup.visible) {
+    built.tracers.cloud.visible = state.showFlow && !isBlown;
+    if (built.tracers.cloud.visible) {
       built.tracers.update(state.crankClock, built.crowns, telemetry.load, telemetry.boostBar || 0);
     }
 
@@ -1107,6 +1144,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     getExplosionState,
     setSelectedPart,
     setFlowVisible,
+    setGasDensity,
     applyTheme,
     getPartWorldAnchor,
     update

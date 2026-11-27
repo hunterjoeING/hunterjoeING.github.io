@@ -1,5 +1,7 @@
-import { CAM_Z, SEAT_Y, intakeSign } from './ce-mechanics.js?v=0.5.1';
-import { INTAKE_RADIUS, setThrottleOpening } from './ce-throttle.js?v=0.5.1';
+import { CAM_Z, SEAT_Y, intakeSign } from './ce-mechanics.js?v=0.5.2';
+import { INTAKE_RADIUS, setThrottleOpening } from './ce-throttle.js?v=0.5.2';
+
+export const DIESEL_NOZZLE_Y = SEAT_Y - 0.018;
 
 export function bankPoint(angle, crankY, x, y, z) {
   const a = angle * Math.PI / 180;
@@ -126,7 +128,7 @@ export function buildPlumbing(profile) {
       supply = intake;
       returnNode = out;
       rail = feed;
-      const nozzle = node('nozzle' + c, diesel ? local(x, SEAT_Y - 0.018, 0) : local(x, 3.68, 1.11));
+      const nozzle = node('nozzle' + c, diesel ? local(x, DIESEL_NOZZLE_Y, 0) : local(x, 3.68, 1.11));
       const fork = node('fork' + c, local(x, 3.60, 0.65));
       const merge = node('merge' + c, local(x, 3.60, -0.65));
       if (diesel) {

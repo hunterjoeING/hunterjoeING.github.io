@@ -92,7 +92,7 @@ test('Turbodiesel liefert Ladedruck, Direkteinspritzung, mehr Drehmoment und bes
   const strokeDiesel = getCylinderStroke(355, 0, r4Diesel);
   assert.equal(strokeDiesel.sparkIntensity, 0);
   assert.ok(strokeDiesel.injectionIntensity > 0.5);
-  const strokeOtto = getCylinderStroke(355, 0, r4Otto);
+  const strokeOtto = getCylinderStroke(342, 0, r4Otto);
   assert.ok(strokeOtto.sparkIntensity > 0.5);
   assert.equal(strokeOtto.injectionIntensity, 0);
 });
@@ -245,11 +245,14 @@ test('UI schaltet auf Turbodiesel, Boxer/V6/V8 um und steuert das Explosions-Eas
 
   let mockBlowNext = false;
   runInNewContext(read('../ce-main.js').replace(/^import [\s\S]*?;\n/gm, ''), {
+    createEngineRenderer: () => ({ render() {}, resize() {} }),
+    createGraphicsSettings: () => ({ close() {}, frame() {} }),
     ...engine, document, window, THREE, OrbitControls: Controls, RoomEnvironment: SceneNode,
     MutationObserver: Observer, ResizeObserver: Observer,
     DOMPoint: class extends Vector { matrixTransform() { return this; } },
     createCombustionEngineModel: () => ({
       root: new SceneNode(),
+      setGasDensity() {},
       applyTheme() {},
       setSelectedPart() {},
       setViewMode() {},

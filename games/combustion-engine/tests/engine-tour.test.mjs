@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import test from 'node:test';
 import { runInNewContext } from 'node:vm';
 import * as engine from '../ce-data.js';
+import { createGraphicsSettings, loadSettings } from '../ce-settings.js';
 import releaseCatalog from '../../../shared/releases.js';
 
 const {
@@ -183,7 +184,7 @@ test('Der Betriebspunkt bei 50 km/h braucht am wenigsten Kraftstoff pro Strecke 
 });
 
 // Kleines DOM mit Ereignissen und einer steuerbaren Render-Uhr für die echte ce-main.js.
-function explainerUI() {
+function explainerUI(storage) {
   let now = 0;
   let pendingFrame;
   let activeElement;
@@ -194,6 +195,7 @@ function explainerUI() {
       this.value = attributes.value;
       this.step = attributes.step;
       this.disabled = 'disabled' in attributes;
+      this.hidden = 'hidden' in attributes;
       this.dataset = {};
       for (const [key, value] of Object.entries(attributes)) {
         if (key.startsWith('data-')) {
@@ -219,7 +221,7 @@ function explainerUI() {
     removeAttribute(name) { delete this.attributes[name]; }
     getAttribute(name) { return this.attributes[name]; }
     focus() { activeElement = this; }
-    contains(element) { return this.children.includes(element); }
+    contains(element) { return this === element || this.children.includes(element); }
     setPointerCapture(id) { this.capturedPointer = id; }
     hasPointerCapture(id) { return this.capturedPointer === id; }
     getScreenCTM() { return { inverse: () => null }; }
@@ -236,6 +238,7 @@ function explainerUI() {
       const attributes = Object.fromEntries([...source.matchAll(/([\w-]+)="([^"]*)"/g)]
         .map(([, name, value]) => [name, value]));
       if (/\bdisabled\b/.test(source)) attributes.disabled = '';
+      if (/\shidden(?:\s|$)/.test(source)) attributes.hidden = '';
       return new Element(attributes);
     });
   }
@@ -248,6 +251,7 @@ function explainerUI() {
   const page = new Element();
   page.innerHTML = html;
   const document = {
+    addEventListener: (type, listener) => page.addEventListener(type, listener),
     documentElement: new Element(),
     get activeElement() { return activeElement; },
     querySelectorAll: selector => page.querySelectorAll(selector),
@@ -259,6 +263,12 @@ function explainerUI() {
   const positions = page.querySelectorAll('[data-gear]');
   byId('ce-gear-selector').children = positions;
   const window = new Element();
+  window.localStorage = storage;
+  const levels = page.querySelectorAll('[name="ce-ao"]');
+  byId('ce-settings').children = [...levels, byId('ce-shadows'), byId('ce-gas-density')];
+  const pipe = { capable: true, forcedLevel: null, aoLevel: 2, render() {}, resize() {},
+    setAoLevel(level) { this.aoLevel = level ?? 2; }, setShadows(on) { this.shadows = on; } };
+  let gasDensity;
 
   class Vector {
     constructor(x, y, z) { this.set(x, y, z); }
@@ -292,11 +302,13 @@ function explainerUI() {
     MathUtils: { clamp: (value, min, max) => Math.max(min, Math.min(max, value)) }
   };
   runInNewContext(read('../ce-main.js').replace(/^import [\s\S]*?;\n/gm, ''), {
+    createEngineRenderer: () => pipe, createGraphicsSettings,
     ...engine, document, window, THREE, OrbitControls: Controls, RoomEnvironment: SceneNode,
     MutationObserver: Observer, ResizeObserver: Observer,
     DOMPoint: class extends Vector { matrixTransform() { return this; } },
     createCombustionEngineModel: () => ({
       root: new SceneNode(), applyTheme() {}, setFlowVisible() {}, setSelectedPart() {}, setViewMode() {},
+      setGasDensity(percent = gasDensity) { gasDensity = percent; },
       update: () => ({ strokes: [0, 1, 2, 3].map(i => engine.getCylinderStroke(0, i)) })
     }),
     performance: { now: () => now },
@@ -307,7 +319,7 @@ function explainerUI() {
   });
 
   return {
-    window, byId, positions,
+    window, byId, positions, pipe, levels, page, document, get gasDensity() { return gasDensity; },
     preset: rpm => page.querySelectorAll('.ce-preset-btn').find(el => el.dataset.rpm === String(rpm)),
     view: mode => page.querySelector(`[data-view-mode="${mode}"]`),
     scale: scale => page.querySelector(`[data-scale="${scale}"]`),
@@ -320,6 +332,93 @@ function explainerUI() {
     }
   };
 }
+
+test('Graphics settings tolerate missing, blocked, malformed and out-of-range saved values', () => {
+  const defaults = { aoLevel: null, shadows: true, density: 100 };
+  for (const win of [{}, { get localStorage() { throw Error('blocked'); } },
+    ...['null', '5', '{', '{"aoLevel":"3","shadows":0,"density":null}'].map(s => ({ localStorage: { getItem: () => s } }))]) {
+    assert.deepEqual(loadSettings(win), defaults);
+  }
+  for (const [value, expected] of [[1, 25], [113, 115], [900, 200]]) {
+    const saved = { localStorage: { getItem: () => JSON.stringify({ aoLevel: 0, shadows: false, density: value }) } };
+    assert.deepEqual(loadSettings(saved), { aoLevel: 0, shadows: false, density: expected });
+  }
+});
+
+test('Gear beside Reset controls the popup, keyboard focus, outside dismissal, tour and sampled FPS', () => {
+  assert.match(html, /id="ce-btn-reset"[^>]*>[^<]*<\/button>\s*<button[^>]+class="ce-chip-btn"[^>]+id="ce-btn-settings"/);
+  const ui = explainerUI(), toggle = ui.byId('ce-btn-settings'), panel = ui.byId('ce-settings');
+  assert.equal(toggle.getAttribute('aria-label'), 'Einstellungen');
+  assert.equal(toggle.getAttribute('aria-controls'), panel.id);
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  toggle.emit('click');
+  assert.equal(panel.hidden, false);
+  assert.equal(toggle.getAttribute('aria-expanded'), 'true');
+  assert.equal(ui.document.activeElement, ui.levels[2]);
+  ui.advance(10);
+  for (let i = 0; i < 25; i++) ui.advance(20);
+  assert.equal(ui.byId('ce-settings-fps').textContent, '50');
+  ui.page.emit('click', { target: ui.byId('ce-gas-density') });
+  assert.equal(panel.hidden, false);
+  ui.window.emit('keydown', { key: 'Escape' });
+  assert.equal(toggle.getAttribute('aria-expanded'), 'false');
+  assert.equal(ui.document.activeElement, toggle);
+  toggle.emit('click');
+  ui.page.emit('click', { target: ui.byId('ce-canvas') });
+  assert.ok(panel.hidden);
+  toggle.emit('click');
+  ui.byId('ce-btn-tour').emit('click');
+  assert.ok(panel.hidden);
+});
+
+test('AO, shadows and density apply live and persist together across page loads', () => {
+  const items = new Map();
+  const storage = { getItem: k => items.get(k), setItem: (k,v) => items.set(k,v) };
+  const ui = explainerUI(storage);
+  ui.byId('ce-btn-settings').emit('click');
+  assert.match(ui.byId('ce-ao-status').textContent, /automatisch/);
+  ui.levels[2].emit('click');
+  assert.match(ui.byId('ce-ao-status').textContent, /manuell/);
+  ui.levels[3].emit('change');
+  const shadows = ui.byId('ce-shadows'), slider = ui.byId('ce-gas-density');
+  assert.equal(shadows.checked, true);
+  shadows.checked = false;
+  shadows.emit('change');
+  slider.value = '175';
+  slider.emit('input');
+  assert.equal(ui.gasDensity, 175);
+  assert.equal(ui.byId('ce-density-value').value, '175 %');
+  assert.equal(slider.getAttribute('aria-valuetext'), '175 %');
+  slider.emit('change');
+  assert.deepEqual([...items.keys()], ['combustion_engine_settings']);
+  const next = explainerUI(storage);
+  assert.equal(next.pipe.aoLevel, 3);
+  assert.equal(next.pipe.shadows, false);
+  assert.equal(next.gasDensity, 175);
+  storage.setItem = () => { throw Error('quota'); };
+  next.byId('ce-btn-settings').emit('click');
+  next.levels[0].emit('click');
+  assert.equal(next.pipe.aoLevel, 0);
+});
+
+test('The popup reports URL-locked and unavailable AO without changing the saved choice', () => {
+  const saved = '{"aoLevel":3,"shadows":true,"density":50}';
+  const ui = explainerUI({ getItem: () => saved, setItem() { assert.fail('Unexpected write'); } });
+  ui.pipe.forcedLevel = ui.pipe.aoLevel = 2;
+  const toggle = ui.byId('ce-btn-settings'), group = ui.byId('ce-ao-options');
+  toggle.emit('click');
+  assert.ok(group.disabled && ui.levels[2].checked);
+  assert.match(ui.byId('ce-ao-status').textContent, /URL/);
+  assert.equal(ui.document.activeElement, ui.byId('ce-shadows'));
+  ui.levels[0].emit('click');
+  assert.equal(ui.pipe.aoLevel, 2);
+  toggle.emit('click');
+  ui.pipe.capable = false;
+  ui.pipe.aoLevel = 0;
+  toggle.emit('click');
+  assert.ok(group.disabled && ui.levels[0].checked);
+  assert.match(ui.byId('ce-ao-status').textContent, /nicht verfügbar/);
+});
 
 test('Die Muschelkurve beschriftet das Modelloptimum und zeichnet die Fahrwiderstandslinien im fahrbaren Bereich', () => {
   const svg = explainerUI().byId('ce-bsfc-map').innerHTML;
@@ -453,8 +552,11 @@ test('Die Tour wechselt die Live-Daten und gibt bei Reglern, Kennfeld, Navigatio
   }
 });
 
-test('v0.5.1 ist als Patch vor den bisherigen Releases eingetragen', () => {
-  const [patch51, flow, patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+test('v0.5.2 ist als Patch vor den bisherigen Releases eingetragen', () => {
+  const [patch52, patch51, flow, patch41, latest, patch31, feature, previous] = releaseCatalog.releases.filter(entry => entry.app === 'combustion_engine');
+  assert.deepEqual([patch52.version, patch52.type, patch52.date, patch52.author, patch52.model, patch52.banner],
+    ['0.5.2', 'patch', '2026-11-27', 'Michi', 'Astra 6.2', false]);
+  assert.ok(patch52.highlights.length >= 1 && patch52.highlights.length <= 3);
   assert.deepEqual([patch51.version, patch51.type, patch51.date, patch51.author, patch51.model],
     ['0.5.1', 'patch', '2026-11-27', 'Michi', 'Astra 6.2']);
   assert.ok(patch51.highlights.length >= 1 && patch51.highlights.length <= 3);
@@ -473,9 +575,9 @@ test('v0.5.1 ist als Patch vor den bisherigen Releases eingetragen', () => {
   assert.equal(latest.author, 'Joe');
   assert.equal(latest.model, 'Neon');
   assert.ok(latest.highlights.length >= 3 && latest.highlights.length <= 5);
-  assert.doesNotMatch([patch51.title, ...patch51.highlights, flow.title, ...flow.highlights, patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
+  assert.doesNotMatch([patch52.title, ...patch52.highlights, patch51.title, ...patch51.highlights, flow.title, ...flow.highlights, patch41.title, ...patch41.highlights, latest.title, latest.author, latest.model, ...latest.highlights].join(' '),
     /\b(?:codex|cursor|antigravity|cli|gta(?:-?2)?|easter|motorschaden|explodier|überdreh)\b/i);
-  assert.match(html, /id="ce-version-btn"[^>]*>v0\.5\.1</);
+  assert.match(html, /id="ce-version-btn"[^>]*>v0\.5\.2</);
 
   assert.equal(patch31.version, '0.3.1');
   assert.equal(patch31.date, '2026-11-27');

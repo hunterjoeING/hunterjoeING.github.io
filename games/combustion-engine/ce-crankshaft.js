@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { CRANKPIN_RADIUS, MAIN_JOURNAL_RADIUS, ROD_GEOMETRY, ROD_LENGTH,
-  crankshaftSections } from './ce-mechanics.js?v=0.5.1';
+  crankshaftSections } from './ce-mechanics.js?v=0.5.2';
 
 // Profiles are drawn face-on and extruded along the engine's X axis.
 function axialGeometry(profile, width) {

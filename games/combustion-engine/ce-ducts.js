@@ -1,7 +1,7 @@
 import * as THREE from 'three';
-import { volute } from './ce-volute.js?v=0.5.1';
-import { junctionGeometry } from './ce-junctions.js?v=0.5.1';
-import { DISC_RADIUS, DISC_THICKNESS, DUCT_SIDES as SIDES } from './ce-throttle.js?v=0.5.1';
+import { volute } from './ce-volute.js?v=0.5.2';
+import { junctionGeometry } from './ce-junctions.js?v=0.5.2';
+import { DISC_RADIUS, DISC_THICKNESS, DUCT_SIDES as SIDES } from './ce-throttle.js?v=0.5.2';
 
 // Fillet the design polyline without spline overshoot. Both the wall and the
 // tracer lookup use these same equally spaced cross sections.
@@ -74,7 +74,7 @@ export function preparePassages(graph) {
     Object.assign(edge, sections(edge));
     for (const [key, t] of [[edge.from, 0], [edge.to, edge.count]]) {
       if (!ports.has(key)) ports.set(key, []);
-      ports.get(key).push({ edge, tangent: edge.tangents[t] });
+      ports.get(key).push({ edge, tangent: edge.tangents[t], atStart: t === 0 });
     }
   }
   const joints = new Map();
@@ -91,7 +91,7 @@ export function preparePassages(graph) {
         const index = edge.from === key ? (edge.first = trim) : (edge.last = edge.count - trim);
         return ringPoints(edge, index);
       });
-      joints.set(key, { rings });
+      joints.set(key, { rings, geometry: junctionGeometry(rings, ends) });
       continue;
     }
     if (ends.length !== 2) continue;
@@ -101,7 +101,9 @@ export function preparePassages(graph) {
     const normal = a.edge.normals[0].clone();
     if (Math.abs(normal.dot(axis)) > 0.95) normal.copy(a.edge.binormals[0]);
     normal.addScaledVector(axis, -normal.dot(axis)).normalize();
-    joints.set(key, { axis, normal, radius: a.edge.kind === 'housing' ? b.edge.radius : b.edge.kind === 'housing' ? a.edge.radius : Math.min(a.edge.radius, b.edge.radius) });
+    const joint = { axis, normal, radius: a.edge.kind === 'housing' ? b.edge.radius : b.edge.kind === 'housing' ? a.edge.radius : Math.min(a.edge.radius, b.edge.radius) };
+    joints.set(key, joint);
+    for (const { edge, atStart } of ends) edge[atStart ? 'startJoint' : 'endJoint'] = joint;
   }
   return { ports, joints };
 }
@@ -144,7 +146,7 @@ export function installDucts(graph, getGroup, getMat, ghost, impeller) {
     if (ends.length < 3) continue;
     const largest = ends.reduce((a, b) => a.edge.radius >= b.edge.radius ? a : b).edge;
     const key = largest.part === 'exhaustManifold' ? 'exhaustPipe' : metal;
-    mesh(largest.part, junctionGeometry(joints.get(name).rings), key, new THREE.Vector3(), null, true);
+    mesh(largest.part, joints.get(name).geometry, key, new THREE.Vector3(), null, true);
   }
   mesh(graph.diesel ? 'commonRail' : 'portInjectors', new THREE.BoxGeometry(0.38, 0.34, 0.38),
     'darkMetal', pos('pump'));

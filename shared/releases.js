@@ -122,6 +122,15 @@ const arcadeReleases = {
       ],
     },
     {
+      app: "combustion_engine", version: "0.5.2", date: "2026-11-27", type: "patch", title: "Vom Zündfunken zur Flammenfront",
+      author: "Michi", model: "Astra 6.2", banner: false,
+      highlights: [
+        "An Rohrverzweigungen bleibt der Gasstrom breit. Im rauchgrauen Röntgenblick siehst du auch das Motoröl, dessen Oberfläche mit der Drehzahl vibriert.",
+        "Beim Otto springt ein weißblauer Funke über. Beim Diesel entzünden sich mehrere Einspritzstrahlen. In beiden Motoren breitet sich die Flamme bis zur Kolbenkrone aus.",
+        "Im Zahnradmenü wählst du die Stärke der Kontaktschatten, schaltest Schatten ein oder aus und regelst die Gasdichte. Dort siehst du auch die Bildrate (FPS).",
+      ],
+    },
+    {
       app: "combustion_engine", version: "0.5.1", date: "2026-11-27", type: "patch", title: "Kurbeltrieb, Luftstrom und Zündung",
       author: "Michi", model: "Astra 6.2",
       highlights: [

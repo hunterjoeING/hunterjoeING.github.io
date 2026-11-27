@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { BELT_WIDTH, DRIVE_BORE, NOSE_RADIUS, WHEEL_WIDTH, beltPoint, timingDrive } from './ce-mechanics.js?v=0.5.1';
+import { BELT_WIDTH, DRIVE_BORE, NOSE_RADIUS, WHEEL_WIDTH, beltPoint, timingDrive } from './ce-mechanics.js?v=0.5.2';
 
 function bandGeometry(drive) {
   const positions = [], uvs = [], indices = [];

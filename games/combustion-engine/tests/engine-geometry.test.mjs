@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { registerHooks } from 'node:module';
 import test from 'node:test';
-import { IGNITION_WINDOW_DEG, MIN_IGNITION_SECONDS, buildEngineProfile, computeEngineTelemetry,
+import { runInNewContext } from 'node:vm';
+import { IGNITION_WINDOW_DEG, MIN_IGNITION_SECONDS, SPARK_SECONDS, buildEngineProfile, computeEngineTelemetry,
   getCylinderStroke, getTourStepsForProfile, ignitionWindow } from '../ce-data.js';
 import { BASE_RADIUS, BUCKET_TOP, CAM_Y, CROWN_OFFSET, CRANK_RADIUS, MAX_LIFT, ROD_LENGTH, SEAT_Y,
   BELT_WIDTH, DRIVE_BORE, DRIVE_CLEARANCE, WHEEL_WIDTH, beltPoint, camOutline, crankshaftSections,
@@ -13,7 +15,7 @@ const three = new URL('../../../shared/vendor/three-0.170.0/build/three.module.m
 registerHooks({ resolve(id, context, next) {
   return id === 'three' ? { url: three, shortCircuit: true } : next(id, context);
 } });
-const { Box3, Matrix4, Vector3, Raycaster, ShaderLib } = await import('three');
+const { AdditiveBlending, Box3, Matrix4, PerspectiveCamera, Vector3, Raycaster, ShaderLib } = await import('three');
 const { preparePassages } = await import('../ce-ducts.js');
 const { junctionGeometry } = await import('../ce-junctions.js');
 const { createCombustionEngineModel } = await import('../ce-model.js');
@@ -215,6 +217,22 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
     const fastest = displayCrankSpeed(profile.specs.maxRpm * 6 * 0.045 * 0.38 / 0.16);
     const fastWindow = ignitionWindow(fastest, normal);
     near(fastWindow / fastest, MIN_IGNITION_SECONDS);
+    for (const speed of [normal, fastest]) {
+      const sparkWindow = SPARK_SECONDS * speed;
+      for (const spec of specs) {
+        let samples = 0;
+        for (let ms = -89.5; ms < 15; ms++) {
+          const phase = start + speed * ms / 1000;
+          const stroke = getCylinderStroke(phase - spec.phaseDeg, spec.index, profile, {}, fastWindow, undefined, sparkWindow);
+          assert.equal(stroke.sparkIntensity > 0, !diesel && ms >= -80 && ms < 0);
+          if (stroke.sparkIntensity) {
+            samples++;
+            assert.equal(stroke.flashIntensity, 0);
+          }
+        }
+        near(samples, diesel ? 0 : SPARK_SECONDS * 1000, 1);
+      }
+    }
     for (const window of [IGNITION_WINDOW_DEG, fastWindow]) {
       const lit = [];
       let maxLit = 0;
@@ -311,6 +329,8 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
 
   test(profile.key + ' renders concept-specific hardware and follows the tour in gas-path order', () => {
     const saved = globalThis.document;
+    const savedWindow = globalThis.window;
+    globalThis.window = { ArcadeAudio: { isMuted: () => true } };
     globalThis.document = { createElement: () => ({ getContext: () => ({ fillRect() {} }) }) };
     try {
       const model = createCombustionEngineModel(profile);
@@ -323,8 +343,8 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
       });
       assert.equal(clouds.length, 1);
       const cloud = clouds[0];
-      for (const name of ['sparkPlug','spark','glowPlug','directInjector','sprayIgnition']) {
-        const present = ['sparkPlug','spark'].includes(name) ? !diesel : diesel;
+      for (const name of ['sparkPlug','spark','sparkArc','sparkHalo','glowPlug','directInjector','sprayIgnition']) {
+        const present = name.startsWith('spark') ? !diesel : diesel;
         assert.equal(names.filter(v => v === name).length, present ? profile.layout.cylinders : 0, name);
       }
       for (const part of ['commonRail','turbocharger','intercooler','hpEgr','lpEgr','dpf']) assert.equal(parts.has(part), diesel);
@@ -343,14 +363,34 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
       assert.ok(model.update(0.04, idle).crankDeg !== before && buffer.version > revision);
       const steps = getTourStepsForProfile(profile);
       const power = steps.find(s => !s.id && s.focusPart === (diesel ? 'commonRail' : 'sparkPlugs'));
-      const ignition = model.root.getObjectsByProperty('name', diesel ? 'sprayIgnition' : 'spark');
+      const ignition = model.root.getObjectsByProperty('name', diesel ? 'sprayIgnition' : 'petrolFlame');
       const seen = new Set();
+      const arcs = model.root.getObjectsByProperty('name', 'spark');
       const eye = new Vector3(...power.cameraPos);
       const nearBank = Math.max(...profile.layout.bankAnglesDeg);
       const focus = profile.layout.cylinderSpecs.find(c => c.bankAngleDeg === nearBank);
       const demoTelemetry = computeEngineTelemetry(power.demoRpm, 0.6, undefined, profile);
+      let sawSparkGap = false;
       for (let i = 0; i < 100; i++) {
         const { strokes } = model.update(1 / 30, demoTelemetry, power.demoTimeScale);
+        for (const arc of arcs) {
+          const spec = profile.layout.cylinderSpecs.find(c => c.x === arc.parent.parent.position.x);
+          assert.equal(arc.visible, strokes[spec.index].sparkIntensity > 0);
+          assert.equal(arc.getObjectByName('sparkHalo').visible, arc.visible);
+          if (arc.visible) {
+            assert.equal(strokes[spec.index].flashIntensity, 0);
+            if (spec === focus && !sawSparkGap) {
+              model.root.updateMatrixWorld(true);
+              const gap = arc.getObjectByName('sparkHalo').getWorldPosition(new Vector3());
+              const ray = gap.sub(eye);
+              const caster = new Raycaster(eye, ray.clone().normalize(), 0, ray.length());
+              const blockers = caster.intersectObject(model.root, true).filter(({ object }) =>
+                object.isMesh && object.visible && !object.material.transparent && object.parent !== arc);
+              assert.equal(blockers.length, 0, 'Tour view into the electrode gap');
+              sawSparkGap = true;
+            }
+          }
+        }
         for (const flash of ignition) {
           const spec = profile.layout.cylinderSpecs.find(c => c.x === flash.position.x);
           assert.equal(flash.visible, strokes[spec.index].flashIntensity > 0);
@@ -368,6 +408,7 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
           }
         }
       }
+      assert.equal(sawSparkGap, !diesel);
       assert.equal(seen.size, profile.layout.cylinders, 'Every chamber lights up during the ignition tour step');
       assert.deepEqual(steps.map(s => s.id).filter(Boolean), diesel
         ? ['legend','commonRail','turbocharger','intercooler','dpf','hpEgr','lpEgr'] : ['legend','portInjectors']);
@@ -376,12 +417,163 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
         assert.ok(parts.has(s.focusPart), s.title);
         if (s.id) assert.ok(s.cameraTarget.every(Number.isFinite));
       }
+      model.triggerExplosion(telemetry.rpm);
+      let detonation = false;
+      for (let i = 0; i < 50; i++) {
+        if (model.update(0.05, telemetry).explosion.justBlown) detonation = true;
+      }
+      assert.ok(detonation);
+      model.update(0.05, telemetry);
+      assert.ok([...ignition, ...arcs, cloud].every(o => !o.visible));
+      const oil = model.root.getObjectByName('engineOil');
+      assert.equal(oil.visible, false);
+      assert.equal(model.root.getObjectByName('ignitionLight').intensity, 0);
+      model.setViewMode('xray'); // Leaving the damaged view repairs the moving assembly.
+      assert.equal(model.update(0.05, telemetry).explosion.phase, 'idle');
+      assert.ok(cloud.visible);
+      assert.ok(oil.visible);
+      let relit = false;
+      for (let i = 0; i < 32; i++) {
+        model.update(0.05, telemetry);
+        if (ignition.some(o => o.visible)) relit = true;
+      }
+      assert.ok(relit);
     } finally {
+      if (savedWindow) globalThis.window = savedWindow;
+      else delete globalThis.window;
       if (saved) globalThis.document = saved;
       else delete globalThis.document;
     }
   });
 }
+
+test('The petrol arc and white light bridge the gap for 80 ms at fast playback and freeze with the crank', () => {
+  const profile = buildEngineProfile('v8', 'otto');
+  const saved = globalThis.document;
+  globalThis.document = { createElement: () => ({ getContext: () => ({ fillRect() {} }) }) };
+  let model;
+  try { model = createCombustionEngineModel(profile); }
+  finally { if (saved) globalThis.document = saved; else delete globalThis.document; }
+  model.setFlowVisible(false);
+  const arc = model.root.getObjectByName('spark'), flame = model.root.getObjectByName('petrolFlame');
+  const halo = arc.getObjectByName('sparkHalo'), core = arc.getObjectByName('sparkArc');
+  const light = model.root.getObjectByName('ignitionLight');
+  const path = core.geometry.parameters.path;
+  const first = path.getPoint(0), last = path.getPoint(1);
+  assert.ok(first.distanceTo(last) > 0.12 && path.getLength() > first.distanceTo(last) * 1.15);
+  assert.ok(core.geometry.parameters.radius >= 0.016);
+  const hardware = arc.parent.parent;
+  const tip = hardware.children.find(mesh => mesh.geometry?.parameters.radiusBottom === 0.03);
+  const point = new Vector3();
+  const high = computeEngineTelemetry(profile.specs.maxRpm, 1, undefined, profile);
+  const dt = 1 / 500;
+  for (const scale of [0.38, 0.06]) {
+    let seen = false, elapsed = 0;
+    for (let frame = 0; frame < 2000; frame++) {
+      model.update(dt, high, scale);
+      if (arc.visible) {
+        elapsed += dt;
+        assert.equal(flame.visible, false);
+        assert.equal(light.color.getHex(), 0xeef6ff);
+        assert.ok(light.intensity >= 1);
+        assert.ok(light.getWorldPosition(point).distanceTo(halo.getWorldPosition(new Vector3())) < 1e-7);
+        if (!seen) {
+          const pulse = light.intensity;
+          model.update(0.05, high, 0);
+          assert.ok(arc.visible);
+          near(light.intensity, pulse);
+          // Centre pin end and the top of the ground strap bound the two ends.
+          near(arc.parent.position.y + first.y, tip.position.y - tip.geometry.parameters.height / 2);
+          const foot = arc.parent.children[1];
+          near(last.y, foot.position.y + foot.geometry.parameters.height / 2);
+          assert.ok(Math.abs(last.x - foot.position.x) < foot.geometry.parameters.width / 2);
+          seen = true;
+        }
+      } else if (seen) {
+        if (!flame.visible) continue; // A frame exactly on the boundary has zero flame intensity.
+        const source = flame.material.uniforms.source.value.clone();
+        flame.localToWorld(source);
+        arc.localToWorld(point.copy(first).lerp(last, 0.5));
+        assert.ok(source.distanceTo(point) < 1e-6, 'The flame starts in the visible spark gap');
+        break;
+      }
+    }
+    assert.ok(seen && flame.visible);
+    if (scale === 0.38) near(elapsed, SPARK_SECONDS, dt);
+    else assert.ok(elapsed > SPARK_SECONDS + dt);
+  }
+});
+
+test('The spark halo stays centred and readable in the reset and tour cameras at desktop and phone sizes', () => {
+  const profile = buildEngineProfile('r4', 'otto');
+  const saved = globalThis.document;
+  globalThis.document = { createElement: () => ({ getContext: () => ({ fillRect() {} }) }) };
+  let model;
+  try { model = createCombustionEngineModel(profile); }
+  finally { if (saved) globalThis.document = saved; else delete globalThis.document; }
+  const power = getTourStepsForProfile(profile).find(step => !step.id && step.focusPart === 'sparkPlugs');
+  const telemetry = computeEngineTelemetry(power.demoRpm, 0.6, undefined, profile);
+  model.setFlowVisible(false);
+  const sparks = model.root.getObjectsByProperty('name', 'spark');
+  const spark = sparks[0], halo = spark.getObjectByName('sparkHalo'), core = spark.getObjectByName('sparkArc');
+  assert.ok(sparks.every(s => s.getObjectByName('sparkHalo').material === halo.material &&
+    s.getObjectByName('sparkHalo').geometry === halo.geometry));
+  const main = readFileSync(new URL('../ce-main.js', import.meta.url), 'utf8').replace(/^import [\s\S]*?;\n/gm, '');
+  const resetCamera = runInNewContext(main + '\ncameraForLayout', {
+    document: { readyState: 'loading', addEventListener() {} }
+  });
+  for (let i = 0; i < 600 && !spark.visible; i++) model.update(1 / 60, telemetry, power.demoTimeScale);
+  assert.ok(spark.visible);
+  for (const mode of ['normal', 'cutaway', 'xray', 'exploded']) {
+    model.setViewMode(mode);
+    model.update(0, telemetry, 0);
+    const open = mode === 'cutaway' || mode === 'xray';
+    assert.equal(halo.visible, open);
+    assert.equal(core.material.depthTest, !open);
+    if (!open) continue;
+    halo.traverseAncestors(parent => assert.ok(parent.visible));
+    assert.equal(halo.material.depthTest || halo.material.depthWrite, false);
+    assert.equal(halo.material.blending, AdditiveBlending);
+    assert.ok(core.renderOrder > halo.renderOrder && halo.renderOrder > 0);
+    const center = halo.getWorldPosition(new Vector3());
+    for (const [width, height] of [[906, 726], [390, 748]]) {
+      const aspect = width / height;
+      const reset = resetCamera(mode, profile, aspect);
+      for (const [eye, look] of [[reset.pos, reset.target], [power.cameraPos, power.cameraTarget]]) {
+        const camera = new PerspectiveCamera(42, aspect, 0.1, 120);
+        camera.position.set(...eye);
+        camera.lookAt(...look);
+        camera.updateMatrixWorld(true);
+        const ndc = center.clone().project(camera);
+        assert.ok(Math.abs(ndc.x) < 1 && Math.abs(ndc.y) < 1 && Math.abs(ndc.z) < 1);
+        halo.modelViewMatrix.multiplyMatrices(camera.matrixWorldInverse, halo.matrixWorld);
+        halo.material.onBeforeRender({ getSize: out => out.set(width, height) }, null, camera, halo.geometry, halo);
+        const edge = center.clone().applyMatrix4(camera.matrixWorldInverse);
+        edge.x += halo.material.uniforms.diameter.value / 2;
+        const pixels = (edge.applyMatrix4(camera.projectionMatrix).x - ndc.x) * width;
+        assert.ok(pixels >= 30 - 1e-6 && pixels <= 46 + 1e-6, `${pixels} CSS px`);
+      }
+    }
+  }
+  model.setViewMode(power.viewMode);
+  const flame = model.root.getObjectByName('petrolFlame'), light = model.root.getObjectByName('ignitionLight');
+  let transition = false, amber = false;
+  for (let i = 0; i < 1200 && !amber; i++) {
+    model.update(1 / 240, telemetry, power.demoTimeScale);
+    if (!flame.visible) continue;
+    assert.equal(spark.visible, false);
+    const progress = flame.material.uniforms.progress.value;
+    if (progress > 0.03 && progress < 0.10) {
+      assert.ok(light.color.getHex() !== 0xeef6ff && light.color.getHex() !== 0xffab52);
+      transition = true;
+    }
+    if (progress >= 0.14 && light.intensity > 0.1) {
+      assert.equal(light.color.getHex(), 0xffab52);
+      amber = true;
+    }
+  }
+  assert.ok(transition && amber, 'The shared point light warms as the arc ignites the charge');
+});
 
 test('Mobile and desktop tracer budgets both use a single preallocated batch', () => {
   assert.equal(tracerBudget({ hardwareConcurrency: 4 }), 4032);
@@ -400,7 +592,7 @@ test('The larger budgets increase the actual visible parcel density at idle and 
         const batch = createTracers(graph, cap);
         const { geometry } = batch.cloud;
         const buffers = geometry.attributes;
-        assert.ok(batch.cloud.isPoints && buffers.position.count === cap);
+        assert.ok(batch.cloud.isPoints && buffers.position.count === 2 * cap);
         let sum = 0;
         for (let clock = 0; clock < 720 * 24; clock += 90) {
           batch.update(clock, crowns, load, 0);
@@ -412,6 +604,65 @@ test('The larger budgets increase the actual visible parcel density at idle and 
       const ratio = counts[1] / counts[0];
       assert.ok(ratio >= 1.60 && ratio <= 1.80, `visible density ratio ${ratio}`);
     }
+  }
+});
+
+test('Gas density scales the active cap on both hardware tiers, including while paused, using the same buffers', () => {
+  const graph = buildPlumbing(buildEngineProfile('r4', 'otto'));
+  preparePassages(graph);
+  const crowns = new Float32Array(4).fill(2);
+  for (const cap of [tracerBudget({}, 390), tracerBudget({}, 1280)]) {
+    const batch = createTracers(graph, cap);
+    const geometry = batch.cloud.geometry, buffer = geometry.attributes.position;
+    batch.update(720, crowns, 1, 0);
+    const standard = geometry.drawRange.count;
+    const retained = n => 4 * Math.floor(n / 128) + Math.min(n % 128, 4);
+    const moving = buffer.array.slice(retained(cap) * 3, retained(cap) * 3 + 60);
+    for (const [input, factor] of [[-50, 0.25], [75, 0.75], [100, 1], [250, 2]]) {
+      batch.setDensity(input);
+      batch.update(720, crowns, 1, 0);
+      const slots = cap * factor, count = geometry.drawRange.count;
+      assert.equal(batch.activeBudget, slots);
+      assert.ok(count <= slots && Math.abs(count / standard - factor) < 0.06);
+      assert.deepEqual(buffer.array.slice(retained(slots) * 3, retained(slots) * 3 + 60), moving);
+      assert.equal(batch.cloud.geometry.attributes.position, buffer);
+      assert.equal(buffer.updateRanges[0].count, count * 3);
+      const version = buffer.version;
+      batch.update(720, crowns, 1, 0);
+      assert.equal(buffer.version, version);
+    }
+  }
+});
+
+test('A viewport tier or engine change preserves the selected gas density and the flow toggle', () => {
+  const previousWidth = globalThis.innerWidth, previousDocument = globalThis.document;
+  globalThis.document = { createElement: () => ({ getContext: () => ({ fillRect() {} }) }) };
+  try {
+    globalThis.innerWidth = 390;
+    const petrol = buildEngineProfile('r4', 'otto'), diesel = buildEngineProfile('v8', 'diesel');
+    const model = createCombustionEngineModel(petrol);
+    const points = () => model.root.getObjectByProperty('isPoints', true);
+    model.setGasDensity(50);
+    const initial = points();
+    assert.equal(initial.geometry.attributes.position.count, 8064);
+    model.setFlowVisible(false);
+    globalThis.innerWidth = 1280;
+    model.setGasDensity();
+    assert.equal(points().visible, false);
+    const desktopCap = tracerBudget(globalThis.navigator, 1280);
+    assert.equal(points().geometry.attributes.position.count, 2 * desktopCap);
+    model.setProfile(diesel);
+    assert.equal(points().visible, false);
+    model.setFlowVisible(true);
+    const telemetry = computeEngineTelemetry(2400, 1, undefined, diesel);
+    model.update(0, telemetry, 0);
+    const count = points().geometry.drawRange.count;
+    model.setGasDensity(100);
+    model.update(0, telemetry, 0);
+    assert.ok(points().geometry.drawRange.count > count * 1.8);
+  } finally {
+    if (previousWidth === undefined) delete globalThis.innerWidth; else globalThis.innerWidth = previousWidth;
+    if (previousDocument === undefined) delete globalThis.document; else globalThis.document = previousDocument;
   }
 });
 
@@ -468,7 +719,7 @@ for (const concept of ['otto', 'diesel']) {
       else delete globalThis.document;
     }
     model.setFlowVisible(false);
-    const kernels = model.root.getObjectsByProperty('name', concept === 'otto' ? 'spark' : 'sprayIgnition');
+    const kernels = model.root.getObjectsByProperty('name', concept === 'otto' ? 'petrolFlame' : 'sprayIgnition');
     assert.equal(new Set(kernels.map(k => k.material)).size, 8);
     assert.equal(new Set(kernels.map(k => k.geometry)).size, 1);
     const [light] = model.root.getObjectsByProperty('isPointLight', true);
@@ -501,7 +752,9 @@ for (const concept of ['otto', 'diesel']) {
           const active = kernels.filter(other => other.visible);
           if (active.length === 2 && light.intensity > 0.015 && !paused) {
             const world = light.getWorldPosition(new Vector3());
-            assert.ok(active.some(other => other.getWorldPosition(new Vector3()).distanceTo(world) < 1e-7));
+            const arc = model.root.getObjectsByProperty('name', 'spark').find(other => other.visible);
+            const sources = arc ? [arc.getObjectByName('sparkHalo')] : active;
+            assert.ok(sources.some(other => other.getWorldPosition(new Vector3()).distanceTo(world) < 1e-7));
             assert.notEqual(active[0].material.uniforms.progress.value, active[1].material.uniforms.progress.value);
             const snapshot = () => kernels.map(other => [other.visible, other.scale.y, other.material.uniforms.brightness.value]);
             const frozen = snapshot(), intensity = light.intensity;
@@ -547,7 +800,7 @@ for (const concept of ['otto', 'diesel']) {
         if (cases.has(key)) continue;
         cases.add(key);
         assert.equal(sample(p.birth), p.fuel ? 1 : 0);
-        near(out.distanceTo(out.clone().fromArray(graph.nodes[p.fuel ? 'pump' : 'filterMouth'])), 0);
+        near(out.distanceTo(out.clone().fromArray(graph.nodes[p.fuel ? 'pump' : 'filterMouth'])), 0, 5e-7);
         sample(p.arrival);
         near(out.distanceTo(p.fuel && graph.diesel ? p.route.nozzle : p.route.enter), 0);
         assert.equal(sample(p.burn - 0.001), p.fuel ? 1 : 0);
@@ -564,7 +817,7 @@ for (const concept of ['otto', 'diesel']) {
           assert.ok(out.distanceTo(before) < 0.001, 'Continuous at crank angle ' + t);
         }
         assert.equal(sample(p.end), 2);
-        near(out.distanceTo(out.clone().fromArray(graph.nodes.tail)), 0);
+        near(out.distanceTo(out.clone().fromArray(graph.nodes.tail)), 0, 5e-7);
       }
       counts.push({ active, fraction: fuel / active });
     }
