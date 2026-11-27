@@ -384,23 +384,43 @@ export function createStationSignTexture() {
   ctx.fillRect(0, 150, 1024, 10);
 
   // Left badge
-  ctx.fillStyle = '#c8102e';
-  ctx.fillRect(28, 34, 148, 92);
+  ctx.fillStyle = '#1d4ed8';
+  ctx.fillRect(26, 32, 168, 96);
   ctx.fillStyle = '#ffffff';
-  ctx.font = '800 36px "Outfit", sans-serif';
+  ctx.font = '800 34px "Outfit", sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('D-LINE', 102, 82);
+  ctx.fillText('FUNITEL', 110, 82);
 
   // Main title (sized to fit comfortably inside 1024 px with clean right margin)
   ctx.fillStyle = '#f8fafc';
-  ctx.font = '700 35px "Outfit", sans-serif';
+  ctx.font = '700 34px "Outfit", sans-serif';
   ctx.textAlign = 'left';
-  ctx.fillText('ALPIN-EXPRESS · 2-ETAGEN-TALSTATION', 202, 66);
+  ctx.fillText('GALZIG-FUNITEL · 2-ETAGEN-TALSTATION', 216, 66);
   ctx.fillStyle = '#94a3b8';
-  ctx.font = '600 19px "Plus Jakarta Sans", sans-serif';
-  ctx.fillText('RIESENRAD-FÖRDERUNG · LEVEL WALK-IN · DIRECTDRIVE 900 kW · AURO', 202, 110);
+  ctx.font = '600 18.5px "Plus Jakarta Sans", sans-serif';
+  ctx.fillText('4× VERTIKAL-RIESENRÄDER · DOPPELSEIL · LEVEL WALK-IN · DIRECTDRIVE', 216, 110);
 
+  return toTexture(canvas, { repeatX: 1, repeatY: 1, srgb: true });
+}
+
+export function createGalzigHullTexture() {
+  const { canvas, ctx } = makeCanvas(512, 160);
+  const grad = ctx.createLinearGradient(0, 0, 0, 160);
+  grad.addColorStop(0, '#2563eb');
+  grad.addColorStop(0.55, '#1d4ed8');
+  grad.addColorStop(1, '#1e3a8a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 512, 160);
+
+  // Crisp silver-white alpine accent stripe
+  ctx.fillStyle = 'rgba(226, 232, 240, 0.92)';
+  ctx.fillRect(0, 12, 512, 10);
+  ctx.fillStyle = '#f8fafc';
+  ctx.font = '800 32px "Outfit", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('GALZIGBAHN · FUNITEL 24', 256, 86);
   return toTexture(canvas, { repeatX: 1, repeatY: 1, srgb: true });
 }
 
@@ -594,20 +614,20 @@ export function createStationMaterials() {
       metalness: 0.86
     }),
 
-    // --- 10er Panorama Cabin Materials ---
+    // --- 24er Galzigbahn Funitel Panorama Cabin Materials ---
     cabinBodySilver: new THREE.MeshPhysicalMaterial({
-      color: 0xdce4ee,
-      roughness: 0.20,
-      metalness: 0.62,
+      map: createGalzigHullTexture(),
+      roughness: 0.22,
+      metalness: 0.42,
       clearcoat: 0.85,
-      clearcoatRoughness: 0.12
+      clearcoatRoughness: 0.14
     }),
     cabinAccentRed: new THREE.MeshPhysicalMaterial({
-      color: 0xb91c1c,
+      color: 0x1e40af,
       roughness: 0.22,
       metalness: 0.48,
-      clearcoat: 0.75,
-      clearcoatRoughness: 0.16
+      clearcoat: 0.82,
+      clearcoatRoughness: 0.14
     }),
     cabinFrameDark: new THREE.MeshStandardMaterial({
       color: 0x111827,

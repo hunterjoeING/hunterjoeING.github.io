@@ -1,6 +1,6 @@
-// Master C1-Continuous Kinematics Solver for 2-Etagen-Gondelstation
+// Master C1-Continuous Kinematics Solver for 2-Etagen-Funitel-Gondelstation
 // Guarantees zero teleports, C1 smooth tangents & velocities, exact phase lock
-// between all 10 cabins and both vertical Ferris wheels, and Δv = 0 at coupling!
+// between all 10 Funitel 24er cabins and ALL FOUR vertical Ferris wheels, and Δv = 0 at coupling!
 
 import { GS_SPECS } from './specs.js';
 
@@ -13,39 +13,12 @@ function smoothstep(u) {
   return t * t * (3 - 2 * t);
 }
 
-// Quintic smootherstep (C2 continuous: f'(0)=f'(1)=f''(0)=f''(1)=0)
-function smootherstep(u) {
-  const t = clamp(u, 0, 1);
-  return t * t * t * (t * (t * 6 - 15) + 10);
-}
-
-function smootherstepDeriv(u) {
-  const t = clamp(u, 0, 1);
-  return 30 * t * t * (t - 1) * (t - 1);
-}
-
-// Evaluate lateral S-curve Z(x) and dZ/dx between station rail |Z|=3.90 and rope |Z|=2.80
-function evalSCurveZ(x, sideSign) {
-  const { ropeHalfGaugeZ, stationRailZ, sCurveStartX, sCurveEndX } = GS_SPECS.track;
-  if (x <= sCurveStartX) return { z: sideSign * stationRailZ, dzdx: 0 };
-  if (x >= sCurveEndX) return { z: sideSign * ropeHalfGaugeZ, dzdx: 0 };
-  const span = sCurveEndX - sCurveStartX;
-  const u = (x - sCurveStartX) / span;
-  const s = smootherstep(u);
-  const ds = smootherstepDeriv(u) / span;
-  return {
-    z: sideSign * (stationRailZ + (ropeHalfGaugeZ - stationRailZ) * s),
-    dzdx: sideSign * (ropeHalfGaugeZ - stationRailZ) * ds
-  };
-}
-
 // Catenary-like vertical profile from Station Portal (X=15.0, Y=10.10, slope=0)
 // through Tower 1 (X=36.0, Y=15.65) up to Mountain Turnaround (X=xTop, Y=26.8, slope=0)
 function evalMountainY(x, xTop, dynamicSagOffset = 0) {
   const { ogRailY } = GS_SPECS.floors;
   const { portalDeflectorX, tower1X, tower1SheaveY, mountainTopY, catenarySagM } = GS_SPECS.track;
 
-  // Tangent slope at Tower 1 sheave battery (smoothly matching chord slope)
   const mTower = 0.295;
   const sag = catenarySagM + dynamicSagOffset;
 
@@ -55,7 +28,6 @@ function evalMountainY(x, xTop, dynamicSagOffset = 0) {
   if (x <= tower1X) {
     const L = tower1X - portalDeflectorX;
     const u = (x - portalDeflectorX) / L;
-    // Cubic Hermite with y(0)=ogRailY, y'(0)=0, y(1)=tower1SheaveY, y'(1)=mTower
     const h00 = 2 * u * u * u - 3 * u * u + 1;
     const h10 = u * u * u - 2 * u * u + u;
     const h01 = -2 * u * u * u + 3 * u * u;
@@ -65,7 +37,6 @@ function evalMountainY(x, xTop, dynamicSagOffset = 0) {
     const dh01 = (-6 * u * u + 6 * u) / L;
     const dh11 = (3 * u * u - 2 * u) / L;
 
-    // Static + dynamic catenary sag vanishing quadratically at endpoints (C1 preserved!)
     const sagShape = 16 * u * u * (1 - u) * (1 - u);
     const dsagShape = (32 * u * (1 - u) * (1 - 2 * u)) / L;
 
@@ -95,7 +66,9 @@ function evalMountainY(x, xTop, dynamicSagOffset = 0) {
   return { y: mountainTopY, dydx: 0 };
 }
 
-// Build discrete dense polyline of one complete closed loop for a given mountain top X
+// Build discrete dense polyline of one complete closed Funitel cabin-centerline loop
+// Notice: Because Funitel twin ropes sit symmetrically at Z_center ± 0.95 m (inner ±2.95 m, outer ±4.85 m),
+// the cabin centerline runs straight at Z = ±3.90 m throughout OG, Ferris wheels, EG straights & mountain line!
 function buildLoopSamples(xTop, dynamicSagOffset = 0) {
   const { ogRailY, egRailY } = GS_SPECS.floors;
   const W = GS_SPECS.wheels;
@@ -103,35 +76,32 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
   const V = GS_SPECS.speeds;
 
   const pts = [];
-  const pushPt = (x, y, z, vNom, zone, yawMode, yawFixed, wheelAngle = null, wheelSide = 0) => {
-    pts.push({ x, y, z, vNom, zone, yawMode, yawFixed, wheelAngle, wheelSide });
+  const pushPt = (x, y, z, vNom, zone, yawFixed, wheelAngle = null, wheelSide = 0) => {
+    pts.push({ x, y, z, vNom, zone, yawFixed, wheelAngle, wheelSide });
   };
 
-  // --- SEG A: Incoming OG straight (X = 15.0 -> 10.5, Z = -2.80, fast 6.0 m/s) ---
-  // Note: We start arc-length s = 0 right at the incoming station portal (X = +15.0 m, Z = -2.80 m)
+  // --- SEG A: Incoming OG straight (X = 15.0 -> 10.5, Z = -3.90, fast 6.0 m/s) ---
   {
     const n = 45;
     for (let i = 0; i < n; i++) {
       const x = T.portalDeflectorX + (T.conveyorOuterX - T.portalDeflectorX) * (i / n);
       const zone = (x <= T.rampEndX && x >= T.rampStartX) ? 'detach' : 'rope_in';
-      pushPt(x, ogRailY, -T.ropeHalfGaugeZ, V.nominalRopeMs, zone, 'fixed', Math.PI);
+      pushPt(x, ogRailY, -T.stationRailZ, V.nominalRopeMs, zone, Math.PI);
     }
   }
 
-  // --- SEG B: Deceleration Tire Conveyor (X = 10.5 -> -3.0, Z = -2.80 -> -3.90, v: 6.0 -> 0.30 m/s) ---
+  // --- SEG B: Deceleration Tire Conveyor (X = 10.5 -> -3.0, Z = -3.90, v: 6.0 -> 0.30 m/s) ---
   {
     const n = 135;
     for (let i = 0; i < n; i++) {
       const u = i / n;
       const x = T.conveyorOuterX + (T.conveyorInnerX - T.conveyorOuterX) * u;
-      const { z } = evalSCurveZ(x, -1);
-      // C1 smoothstep velocity deceleration (zero jerk at endpoints -> exact 6.0 and 0.30)
       const vNom = V.nominalRopeMs + (V.slowStationMs - V.nominalRopeMs) * smoothstep(u);
-      pushPt(x, ogRailY, z, vNom, 'decel', 'fixed', Math.PI);
+      pushPt(x, ogRailY, -T.stationRailZ, vNom, 'decel', Math.PI);
     }
   }
 
-  // --- SEG C: Downward Vertical Ferris Wheel (θ = π/2 -> 3π/2, Z = -3.90, v = 0.30 m/s) ---
+  // --- SEG C: Downward Twin Vertical Ferris Wheel Pair (Wheels #1 & #2, θ = π/2 -> 3π/2, Z = -3.90) ---
   {
     const n = 120;
     for (let i = 0; i < n; i++) {
@@ -139,18 +109,17 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
       const theta = Math.PI * 0.5 + Math.PI * u;
       const x = W.centerX + W.carrierRadius * Math.cos(theta);
       const y = W.centerY + W.carrierRadius * Math.sin(theta);
-      // Cabin stays strictly upright and keeps yaw = π (no twist during vertical drop)
-      pushPt(x, y, W.downRailZ, V.slowStationMs, 'wheel_down', 'fixed', Math.PI, theta, -1);
+      pushPt(x, y, W.downRailZ, V.slowStationMs, 'wheel_down', Math.PI, theta, -1);
     }
   }
 
-  // --- SEG D: EG Disembarkation Straight (X = -3.0 -> +2.35, Y = 3.10, Z = -3.90, v = 0.30 m/s) ---
+  // --- SEG D: EG Disembarkation Straight (X = -3.0 -> +1.05, Y = 3.10, Z = -3.90, v = 0.30 m/s) ---
   {
-    const n = 54;
+    const n = 42;
     for (let i = 0; i < n; i++) {
       const u = i / n;
       const x = W.centerX + (T.egTurnCenterX - W.centerX) * u;
-      pushPt(x, egRailY, W.downRailZ, V.slowStationMs, 'eg_disembark', 'fixed', Math.PI);
+      pushPt(x, egRailY, W.downRailZ, V.slowStationMs, 'eg_disembark', Math.PI);
     }
   }
 
@@ -162,25 +131,22 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
       const psi = -Math.PI * 0.5 + Math.PI * u;
       const x = T.egTurnCenterX + T.egTurnRadius * Math.cos(psi);
       const z = T.egTurnRadius * Math.sin(psi);
-      // Smoothly rotate yaw from π (at Z=-3.90, local +right = -Z outboard)
-      // through π/2 (at X=+6.25, Z=0, local +right = +X outboard!)
-      // to 0 (at Z=+3.90, local +right = +Z outboard!)
       const yaw = Math.PI * (1 - u);
-      pushPt(x, egRailY, z, V.slowStationMs, 'eg_turn', 'fixed', yaw);
+      pushPt(x, egRailY, z, V.slowStationMs, 'eg_turn', yaw);
     }
   }
 
-  // --- SEG F: EG Boarding Straight (X = +2.35 -> -3.0, Y = 3.10, Z = +3.90, v = 0.30 m/s) ---
+  // --- SEG F: EG Boarding Straight (X = +1.05 -> -3.0, Y = 3.10, Z = +3.90, v = 0.30 m/s) ---
   {
-    const n = 54;
+    const n = 42;
     for (let i = 0; i < n; i++) {
       const u = i / n;
       const x = T.egTurnCenterX + (W.centerX - T.egTurnCenterX) * u;
-      pushPt(x, egRailY, W.upRailZ, V.slowStationMs, 'eg_board', 'fixed', 0);
+      pushPt(x, egRailY, W.upRailZ, V.slowStationMs, 'eg_board', 0);
     }
   }
 
-  // --- SEG G: Upward Vertical Ferris Wheel (θ = 3π/2 -> π/2, Z = +3.90, v = 0.30 m/s) ---
+  // --- SEG G: Upward Twin Vertical Ferris Wheel Pair (Wheels #3 & #4, θ = 3π/2 -> π/2, Z = +3.90) ---
   {
     const n = 120;
     for (let i = 0; i < n; i++) {
@@ -188,24 +154,22 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
       const theta = Math.PI * 1.5 - Math.PI * u;
       const x = W.centerX + W.carrierRadius * Math.cos(theta);
       const y = W.centerY + W.carrierRadius * Math.sin(theta);
-      // Strictly horizontal, yaw = 0 (local +right = +Z outboard)
-      pushPt(x, y, W.upRailZ, V.slowStationMs, 'wheel_up', 'fixed', 0, theta, +1);
+      pushPt(x, y, W.upRailZ, V.slowStationMs, 'wheel_up', 0, theta, +1);
     }
   }
 
-  // --- SEG H: Acceleration Tire Conveyor (X = -3.0 -> +10.5, Z = +3.90 -> +2.80, v: 0.30 -> 6.0 m/s) ---
+  // --- SEG H: Acceleration Tire Conveyor (X = -3.0 -> +10.5, Z = +3.90, v: 0.30 -> 6.0 m/s) ---
   {
     const n = 135;
     for (let i = 0; i < n; i++) {
       const u = i / n;
       const x = T.conveyorInnerX + (T.conveyorOuterX - T.conveyorInnerX) * u;
-      const { z } = evalSCurveZ(x, +1);
       const vNom = V.slowStationMs + (V.nominalRopeMs - V.slowStationMs) * smoothstep(u);
-      pushPt(x, ogRailY, z, vNom, 'accel', 'fixed', 0);
+      pushPt(x, ogRailY, T.stationRailZ, vNom, 'accel', 0);
     }
   }
 
-  // --- SEG I: Attach Ramp + Check Zone + Portal (X = 10.5 -> 15.0, Z = +2.80, v = 6.0 m/s EXACT!) ---
+  // --- SEG I: Dual-Rope Attach Ramp + Check Zone + Portal (X = 10.5 -> 15.0, Z = +3.90, v = 6.0 m/s EXACT!) ---
   {
     const n = 45;
     for (let i = 0; i < n; i++) {
@@ -213,44 +177,44 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
       let zone = 'rope_out';
       if (x >= T.rampStartX && x <= T.rampEndX) zone = 'attach';
       else if (x >= T.checkStartX && x <= T.checkEndX) zone = 'check';
-      pushPt(x, ogRailY, T.ropeHalfGaugeZ, V.nominalRopeMs, zone, 'fixed', 0);
+      pushPt(x, ogRailY, T.stationRailZ, V.nominalRopeMs, zone, 0);
     }
   }
 
-  // --- SEG J: Outgoing Mountain Rope (X = 15.0 -> xTop, Z = +2.80, v = 6.0 m/s) ---
+  // --- SEG J: Outgoing Funitel Mountain Line (X = 15.0 -> xTop, Z = +3.90, v = 6.0 m/s) ---
   {
     const n = 160;
     for (let i = 0; i < n; i++) {
       const x = T.portalDeflectorX + (xTop - T.portalDeflectorX) * (i / n);
       const { y } = evalMountainY(x, xTop, dynamicSagOffset);
-      pushPt(x, y, T.ropeHalfGaugeZ, V.nominalRopeMs, 'rope_out', 'fixed', 0);
+      pushPt(x, y, T.stationRailZ, V.nominalRopeMs, 'rope_out', 0);
     }
   }
 
-  // --- SEG K: Mountain Top 180° Return Sheave (X_c = xTop, Y = mountainTopY, R = 2.80 m) ---
+  // --- SEG K: Mountain Top 180° Funitel Return Turnaround (X_c = xTop, Y = mountainTopY, R = 3.90 m) ---
   {
     const n = 48;
     for (let i = 0; i < n; i++) {
       const u = i / n;
-      const psi = Math.PI * 0.5 - Math.PI * u; // +π/2 (Z=+2.80) -> 0 (X=xTop+2.80) -> -π/2 (Z=-2.80)
-      const x = xTop + T.ropeHalfGaugeZ * Math.cos(psi);
-      const z = T.ropeHalfGaugeZ * Math.sin(psi);
-      const yaw = Math.PI * u; // 0 -> π smoothly
-      pushPt(x, T.mountainTopY, z, V.nominalRopeMs, 'rope_out', 'fixed', yaw);
+      const psi = Math.PI * 0.5 - Math.PI * u;
+      const x = xTop + T.stationRailZ * Math.cos(psi);
+      const z = T.stationRailZ * Math.sin(psi);
+      const yaw = Math.PI * u;
+      pushPt(x, T.mountainTopY, z, V.nominalRopeMs, 'rope_out', yaw);
     }
   }
 
-  // --- SEG L: Incoming Mountain Rope (X = xTop -> 15.0, Z = -2.80, v = 6.0 m/s) ---
+  // --- SEG L: Incoming Funitel Mountain Line (X = xTop -> 15.0, Z = -3.90, v = 6.0 m/s) ---
   {
     const n = 160;
     for (let i = 0; i < n; i++) {
       const x = xTop + (T.portalDeflectorX - xTop) * (i / n);
       const { y } = evalMountainY(x, xTop, dynamicSagOffset);
-      pushPt(x, y, -T.ropeHalfGaugeZ, V.nominalRopeMs, 'rope_in', 'fixed', Math.PI);
+      pushPt(x, y, -T.stationRailZ, V.nominalRopeMs, 'rope_in', Math.PI);
     }
   }
 
-  // Compute cumulative arc length s and cumulative nominal travel time tau
+  // Cumulative arc length s and nominal travel time tau
   const N = pts.length;
   const sArr = new Float64Array(N + 1);
   const tauArr = new Float64Array(N + 1);
@@ -262,10 +226,7 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
     tauArr[i] = tauAcc;
     const a = pts[i];
     const b = pts[(i + 1) % N];
-    const dx = b.x - a.x;
-    const dy = b.y - a.y;
-    const dz = b.z - a.z;
-    const ds = Math.hypot(dx, dy, dz);
+    const ds = Math.hypot(b.x - a.x, b.y - a.y, b.z - a.z);
     const vMid = 0.5 * (a.vNom + b.vNom);
     sAcc += ds;
     tauAcc += ds / Math.max(0.05, vMid);
@@ -273,7 +234,6 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
   sArr[N] = sAcc;
   tauArr[N] = tauAcc;
 
-  // Locate exact start/end nominal times of key zones
   let tauDownStart = 0;
   let tauDownEnd = 0;
   let tauUpStart = 0;
@@ -325,12 +285,11 @@ function buildLoopSamples(xTop, dynamicSagOffset = 0) {
   };
 }
 
-// Compute exact cam ramp profile & spring grip state for a given X in coupling zone
+// Compute exact cam ramp profile & spring grip state (per grip; 4 grips per Funitel cabin = 4 × 28 kN = 112 kN!)
 export function evalGripCouplingState(x, zone, isFaulted = false) {
   const { rampStartX, rampEndX } = GS_SPECS.track;
   const { gripNominalForceKN, gripFaultForceKN } = GS_SPECS.cabin;
 
-  // Outside detach/attach zones:
   if (zone === 'rope_in' || zone === 'rope_out' || zone === 'check') {
     const forceKN = (isFaulted && (zone === 'check' || zone === 'rope_out'))
       ? gripFaultForceKN
@@ -340,59 +299,42 @@ export function evalGripCouplingState(x, zone, isFaulted = false) {
       jawOpen: 0,
       springCompression: 0,
       clampingForceKN: forceKN,
+      totalCabinForceKN: forceKN * GS_SPECS.cabin.gripsPerCabin,
       onRope: true,
       onRamp: false
     };
   }
 
   if (zone !== 'attach' && zone !== 'detach') {
-    // Inside station on rail: grip is closed (fail-safe spring closed while riding rail rollers!)
-    // Wait: on real D-Line detachable grips, the spring ALWAYS closes after leaving the ramp
-    // (empty jaw closed on rail, then opens again on attach ramp to receive the rope!).
     return {
       rollerLift: 0,
       jawOpen: 0,
       springCompression: 0,
-      clampingForceKN: 0, // Not clamped onto rope while on station rail
+      clampingForceKN: 0,
+      totalCabinForceKN: 0,
       onRope: false,
       onRamp: false
     };
   }
 
-  // On Coupling Cam Ramp (X in [rampStartX, rampEndX]):
-  // Smooth bell-shaped cam profile:
-  //   0.00 -> 0.28 : ramp rises -> roller lifts -> Belleville springs compress -> jaw opens
-  //   0.28 -> 0.72 : plateau -> jaw fully open while rope enters/exits jaw mouth
-  //   0.72 -> 1.00 : ramp drops -> roller descends -> springs snap jaw closed onto rope!
   const uRaw = clamp((x - rampStartX) / (rampEndX - rampStartX), 0, 1);
-  // For detach (moving -X), mirror progress so opening happens cleanly as it enters from +X
   const u = zone === 'attach' ? uRaw : (1 - uRaw);
 
   let lift = 0;
-  if (u < 0.28) {
-    lift = smoothstep(u / 0.28);
-  } else if (u <= 0.72) {
-    lift = 1.0;
-  } else {
-    lift = 1.0 - smoothstep((u - 0.72) / 0.28);
-  }
+  if (u < 0.28) lift = smoothstep(u / 0.28);
+  else if (u <= 0.72) lift = 1.0;
+  else lift = 1.0 - smoothstep((u - 0.72) / 0.28);
 
-  // On attach: rope is inside jaw after u >= 0.50; force builds as lift drops from 1 -> 0
-  // On detach: rope is inside jaw until u <= 0.50; force drops as lift rises from 0 -> 1
   let onRope = false;
   let forceKN = 0;
   const targetClosedForce = isFaulted ? gripFaultForceKN : gripNominalForceKN;
 
   if (zone === 'attach') {
     onRope = u >= 0.48;
-    if (u > 0.72) {
-      forceKN = targetClosedForce * (1 - lift);
-    }
+    if (u > 0.72) forceKN = targetClosedForce * (1 - lift);
   } else {
     onRope = u <= 0.52;
-    if (u < 0.28) {
-      forceKN = gripNominalForceKN * (1 - lift);
-    }
+    if (u < 0.28) forceKN = gripNominalForceKN * (1 - lift);
   }
 
   return {
@@ -400,12 +342,12 @@ export function evalGripCouplingState(x, zone, isFaulted = false) {
     jawOpen: lift,
     springCompression: lift,
     clampingForceKN: forceKN,
+    totalCabinForceKN: forceKN * GS_SPECS.cabin.gripsPerCabin,
     onRope,
     onRamp: lift > 0.01
   };
 }
 
-// Compute automatic EG Level Walk-In cabin door opening [0..1]
 export function evalCabinDoorOpen(zone, x) {
   const { centerX } = GS_SPECS.wheels;
   const { egTurnCenterX } = GS_SPECS.track;
@@ -413,12 +355,10 @@ export function evalCabinDoorOpen(zone, x) {
 
   if (zone === 'eg_turn') return 1.0;
   if (zone === 'eg_disembark') {
-    // Open smoothly shortly after leaving downward Ferris wheel
     const u = (x - centerX) / straightLen;
     return smoothstep((u - 0.14) / 0.26);
   }
   if (zone === 'eg_board') {
-    // Close smoothly before reaching upward Ferris wheel
     const u = (egTurnCenterX - x) / straightLen;
     return 1.0 - smoothstep((u - 0.58) / 0.26);
   }
@@ -431,15 +371,12 @@ export class GondolaKinematics {
     const V = GS_SPECS.speeds;
     const N = GS_SPECS.cabin.count;
 
-    // Exact Ferris wheel nominal angular speed & headway
     this.wheelOmegaNom = V.slowStationMs / W.carrierRadius;
     this.wheelPeriodNom = (2 * Math.PI) / this.wheelOmegaNom;
     this.armHeadwayNom = this.wheelPeriodNom / W.armCount;
     this.targetCycleTime = N * this.armHeadwayNom;
 
-    // Solve exact mountain turnaround X_TOP by binary search so
-    // totalCycleTime === N_cabins * armHeadwayNom to < 1e-9 s!
-    let lo = 46.0;
+    let lo = 44.0;
     let hi = 130.0;
     let bestLoop = null;
     for (let iter = 0; iter < 48; iter++) {
@@ -468,37 +405,32 @@ export class GondolaKinematics {
     const count = T.tireCountPerSide;
     for (let i = 0; i < count; i++) {
       const u = (i + 0.5) / count;
-      // For decel (sideSign = -1): u=0 is outer (+10.5, fast 6.0), u=1 is inner (-3.0, slow 0.30)
-      // For accel (sideSign = +1): u=0 is inner (-3.0, slow 0.30), u=1 is outer (+10.5, fast 6.0)
       const x = sideSign < 0
         ? T.conveyorOuterX + (T.conveyorInnerX - T.conveyorOuterX) * u
         : T.conveyorInnerX + (T.conveyorOuterX - T.conveyorInnerX) * u;
-      const { z, dzdx } = evalSCurveZ(x, sideSign);
       const vNom = sideSign < 0
         ? V.nominalRopeMs + (V.slowStationMs - V.nominalRopeMs) * smoothstep(u)
         : V.slowStationMs + (V.nominalRopeMs - V.slowStationMs) * smoothstep(u);
-      const yaw = Math.atan2(-dzdx, 1);
       tires.push({
         index: i,
         sideSign,
         x,
-        y: ogRailY + 0.12,
-        z,
-        yaw,
+        y: ogRailY + 0.14,
+        z: sideSign * T.stationRailZ,
+        innerRopeZ: sideSign * T.innerRopeZ,
+        outerRopeZ: sideSign * T.outerRopeZ,
         vNom,
         omegaNom: vNom / T.tireRadius,
-        stageGroup: Math.floor(i / 4) // 5 V-belt pulley stages
+        stageGroup: Math.floor(i / 4)
       });
     }
     return tires;
   }
 
-  // Sample exact mountain rope height (with dynamic hydraulic tension sag)
   sampleMountainY(x, dynamicSagOffset = 0) {
     return evalMountainY(x, this.xTop, dynamicSagOffset);
   }
 
-  // Binary search in tauArr -> exact C1 interpolated cabin state at nominal phase tau
   sampleByTau(tauRaw, speedFactor = 1.0, dynamicSagOffset = 0, isFaulted = false) {
     const { pts, sArr, tauArr, totalCycleTime, totalLength } = this.loop;
     const N = pts.length;
@@ -520,7 +452,6 @@ export class GondolaKinematics {
     const a = pts[i0];
     const b = pts[i1];
 
-    // Exact circle interpolation on Ferris wheels & EG U-turn for ZERO chord error!
     let x = a.x + (b.x - a.x) * frac;
     let y = a.y + (b.y - a.y) * frac;
     let z = a.z + (b.z - a.z) * frac;
@@ -550,7 +481,6 @@ export class GondolaKinematics {
       y = evalMountainY(x, this.xTop, dynamicSagOffset).y;
     }
 
-    // Shortest-angle yaw interpolation
     let dyaw = b.yawFixed - a.yawFixed;
     if (dyaw > Math.PI) dyaw -= 2 * Math.PI;
     if (dyaw < -Math.PI) dyaw += 2 * Math.PI;
@@ -560,7 +490,6 @@ export class GondolaKinematics {
     const vNom = a.vNom + (b.vNom - a.vNom) * frac;
     const vActual = vNom * speedFactor;
 
-    // Approximate tangential vector from neighbor samples
     const pPrev = pts[(i0 - 1 + N) % N];
     const pNext = pts[(i1 + 1) % N];
     let tx = pNext.x - pPrev.x;
@@ -571,7 +500,6 @@ export class GondolaKinematics {
     ty /= tLen;
     tz /= tLen;
 
-    // Acceleration dv/dt = v * dv/ds (at actual speed)
     const dsStep = Math.max(1e-4, sArr[lo + 1] - sArr[lo]);
     const dvds = (b.vNom - a.vNom) / dsStep;
     const accelActual = vActual * dvds * speedFactor;
@@ -598,39 +526,37 @@ export class GondolaKinematics {
       doorOpen,
       grip,
       wheelAngle,
-      // Strictly horizontal on both Ferris wheels!
       onFerrisWheel: zone === 'wheel_down' || zone === 'wheel_up'
     };
   }
 
-  // Exact Ferris wheel angles for master clock Phi (nominal seconds)
+  // Exact angles for ALL FOUR Vertical Ferris Wheels (2 synced twin pairs) + Coaxial Twin Bullwheels!
   getWheelAngles(phi) {
-    // Downward wheel rotates CCW (theta increasing from π/2 at top to 3π/2 at bottom)
     const downTheta = Math.PI * 0.5 + this.wheelOmegaNom * (phi - this.loop.tauDownStart);
-    // Upward wheel rotates CW (theta decreasing from 3π/2 at bottom to π/2 at top)
     const upTheta = Math.PI * 1.5 - this.wheelOmegaNom * (phi - this.loop.tauUpStart);
-    // Bullwheel rotation (rope moves at 6.0 m/s -> omega = 6.0 / 2.80 rad/s)
-    // Incoming rope on Z = -2.80 moves in -X, wraps around X = +4.4, exits on Z = +2.80 in +X -> CCW viewed from +Y!
     const bullwheelTheta = (GS_SPECS.speeds.nominalRopeMs / GS_SPECS.bullwheel.radius) * phi;
     const ropeDistance = GS_SPECS.speeds.nominalRopeMs * phi;
     return { downTheta, upTheta, bullwheelTheta, ropeDistance };
   }
 
-  // Compute exact 3D tip position of Ferris wheel arm m at global phase phi
-  getWheelArmTip(side, armIndex, phi) {
+  // Compute exact 3D cradle tip position for BOTH inner & outer Ferris wheels of a pair!
+  getWheelArmTip(side, armIndex, phi, wheelRole = 'center') {
     const W = GS_SPECS.wheels;
+    const T = GS_SPECS.track;
     const { downTheta, upTheta } = this.getWheelAngles(phi);
     const base = side < 0 ? downTheta : upTheta;
     const theta = base + armIndex * ((2 * Math.PI) / W.armCount);
+    let z = side < 0 ? W.downRailZ : W.upRailZ;
+    if (wheelRole === 'inner') z = side < 0 ? -T.innerRopeZ : T.innerRopeZ;
+    else if (wheelRole === 'outer') z = side < 0 ? -T.outerRopeZ : T.outerRopeZ;
     return {
       theta,
       x: W.centerX + W.carrierRadius * Math.cos(theta),
       y: W.centerY + W.carrierRadius * Math.sin(theta),
-      z: side < 0 ? W.downRailZ : W.upRailZ
+      z
     };
   }
 
-  // Sample all 10 cabins at master clock phi
   sampleAllCabins(phi, speedFactor = 1.0, dynamicSagOffset = 0, faultCabinIndex = -1) {
     const N = GS_SPECS.cabin.count;
     const cabins = new Array(N);
@@ -644,9 +570,7 @@ export class GondolaKinematics {
     return cabins;
   }
 
-  // Pre-sampled station velocity profile curve for the v(s) SVG chart
   getStationVelocityProfile(samples = 140) {
-    // Show the complete station pass from incoming rope portal (s = 0) to outgoing rope after Tower 1
     const sMax = this.loop.sAttachEnd + 24.0;
     const out = [];
     const { pts, sArr } = this.loop;

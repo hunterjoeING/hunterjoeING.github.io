@@ -5,8 +5,8 @@
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>2-Etagen-Gondelstation – Riesenrad-Förderung &amp; D-Line 3D · HunterJoe Arcade</title>
-  <meta name="description" content="Interaktive 3D-Simulation &amp; Technik-Visualisierung einer hochmodernen 2-Etagen-Gondelstation nach dem Galzigbahn-Riesenrad-Prinzip &amp; D-Line-Technik: Level Walk-In EG, 8,5-m-Vertikal-Riesenräder, DirectDrive-X-Ray, Federklemmen-Schnitt (28 kN), Reifenförderer, Klemmfehler-Nothalt &amp; 8-Stationen-Tour." />
+  <title>2-Etagen-Funitel-Gondelstation – 4 Riesenräder &amp; Doppelseil 3D · HunterJoe Arcade</title>
+  <meta name="description" content="Interaktive 3D-Simulation &amp; Technik-Visualisierung einer hochmodernen 2-Etagen-Funitel-Talstation nach dem Vorbild der Galzigbahn St. Anton: Doppelseil-Funitel (4 parallele Seile), 4 Vertikal-Riesenräder (Ø 8,56 m), Level Walk-In EG, 24er-Kabinen mit 4× 28-kN-Federklemmen, Doppel-Bullwheel-DirectDrive-X-Ray &amp; 8-Stationen-Tour." />
   <meta name="robots" content="index, follow" />
   <meta name="theme-color" content="#09162d" />
   <link rel="canonical" href="https://hunterjoeing.github.io/games/gondola-station/" />
@@ -19,16 +19,16 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="HunterJoe Arcade" />
   <meta property="og:locale" content="de_DE" />
-  <meta property="og:title" content="2-Etagen-Gondelstation – Interaktiver 3D-Technik-Explainer · HunterJoe Arcade" />
-  <meta property="og:description" content="Erlebe Riesenrad-Förderung (Level Walk-In), D-Line-Federklemme (28 kN), DirectDrive-X-Ray (900 kW / 400.000 Nm), Reifenförderer, Stütze 1 und Klemmfehler-Sicherheitsbremse in Echtzeit-3D." />
+  <meta property="og:title" content="2-Etagen-Funitel-Gondelstation – 4 Riesenräder &amp; Doppelseil 3D · HunterJoe Arcade" />
+  <meta property="og:description" content="Erlebe das echte Galzigbahn-Funitel-Prinzip in Echtzeit-3D: Doppelseil (4 parallele Seile), 4 gigantische Vertikal-Riesenräder, Level Walk-In EG, 24er-Kabinen mit 4× 28-kN-Federklemmen, DirectDrive-X-Ray &amp; Klemmfehler-Nothalt." />
   <meta property="og:url" content="https://hunterjoeing.github.io/games/gondola-station/" />
   <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "2-Etagen-Gondelstation – Riesenrad-Förderung & D-Line 3D",
-    "description": "Interaktive 3D-Simulation einer modernen 2-Etagen-Gondelstation mit Vertikal-Riesenrädern, Level Walk-In EG, DirectDrive-X-Ray, kuppelbarer 28-kN-Federklemme, Reifenförderern, hydraulischer Seilspannung, Sicherheits-Nothalt und 8-Stationen-Tour.",
+    "name": "2-Etagen-Funitel-Gondelstation – 4 Riesenräder & Doppelseil 3D",
+    "description": "Interaktive 3D-Simulation einer modernen 2-Etagen-Funitel-Talstation nach dem Vorbild der Galzigbahn St. Anton mit Doppelseil, 4 Vertikal-Riesenrädern, Level Walk-In EG, DirectDrive-X-Ray, 4× 28-kN-Federklemmen pro 24er-Kabine, 48-Rollen-Stütze 1 und 8-Stationen-Tour.",
     "url": "https://hunterjoeing.github.io/games/gondola-station/",
     "inLanguage": "de",
     "isAccessibleForFree": true,
@@ -47,14 +47,14 @@
   }
   </script>
   <link rel="stylesheet" href="../../shared/arcade.css" />
-  <link rel="stylesheet" href="./styles.css?v=0.1.0" />
+  <link rel="stylesheet" href="./styles.css?v=0.2.0" />
 </head>
 <body>
   <header class="arcade-topbar gs-topbar">
     <div class="topbar-left">
       <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
-      <h1 class="topbar-title">🚡 2-Etagen-Gondelstation · 3D</h1>
-      <button type="button" class="gs-version-pill" id="gs-version-btn" title="Änderungen dieser Version anzeigen">v0.1.0</button>
+      <h1 class="topbar-title">🚡 2-Etagen-Funitel · 4 Riesenräder 3D</h1>
+      <button type="button" class="gs-version-pill" id="gs-version-btn" title="Änderungen dieser Version anzeigen">v0.2.0</button>
     </div>
     <div class="topbar-right">
       <button type="button" class="gs-light-top-btn active" id="gs-btn-lighting" title="Zwischen Blauer Stunde (Flutlichtbetrieb) und Alpinem Sonnentag umschalten">🌙 Blaue Stunde</button>
@@ -166,24 +166,24 @@
           <div class="gs-metric-sub" id="gs-tel-speed-sub">21,6 km/h · EG 0,30 m/s</div>
         </div>
         <div class="gs-metric">
-          <div class="gs-metric-label">DirectDrive (900 kW)</div>
-          <div class="gs-metric-val" id="gs-tel-drive">684 kW</div>
-          <div class="gs-metric-sub" id="gs-tel-drive-sub">319 kNm · 20,5 U/min</div>
+          <div class="gs-metric-label">DirectDrive (1.350 kW)</div>
+          <div class="gs-metric-val" id="gs-tel-drive">1.026 kW</div>
+          <div class="gs-metric-sub" id="gs-tel-drive-sub">504 kNm · 19,4 U/min</div>
         </div>
         <div class="gs-metric">
-          <div class="gs-metric-label">Hydraulik-Spannung</div>
-          <div class="gs-metric-val gold" id="gs-tel-tension">420 kN</div>
-          <div class="gs-metric-sub" id="gs-tel-tension-sub">165 bar · Hub 0 mm</div>
+          <div class="gs-metric-label">Doppelseil-Spannung</div>
+          <div class="gs-metric-val gold" id="gs-tel-tension">640 kN</div>
+          <div class="gs-metric-sub" id="gs-tel-tension-sub">175 bar · 2× Seilspannung</div>
         </div>
         <div class="gs-metric">
-          <div class="gs-metric-label">Federklemme (28 kN)</div>
-          <div class="gs-metric-val green" id="gs-tel-clamp">28,0 kN</div>
-          <div class="gs-metric-sub" id="gs-tel-clamp-sub">Kabine #01 · Δv 0,00 m/s</div>
+          <div class="gs-metric-label">4× Federklemmen</div>
+          <div class="gs-metric-val green" id="gs-tel-clamp">4× 28,0 kN</div>
+          <div class="gs-metric-sub" id="gs-tel-clamp-sub">Kabine #01 · Σ 112 kN · Δv 0,00</div>
         </div>
         <div class="gs-metric">
           <div class="gs-metric-label">Förderleistung</div>
-          <div class="gs-metric-val" id="gs-tel-cap">1.964 P/h</div>
-          <div class="gs-metric-sub" id="gs-tel-cap-sub">10er-Kabinen · Folge 18,3 s</div>
+          <div class="gs-metric-val" id="gs-tel-cap">4.715 P/h</div>
+          <div class="gs-metric-sub" id="gs-tel-cap-sub">24er-Funitel · Folge 18,3 s</div>
         </div>
         <div class="gs-metric">
           <div class="gs-metric-label">Sicherheitsbremse</div>
@@ -194,10 +194,10 @@
     </aside>
   </main>
 
-  <script src="../../shared/arcade.js?v=0.7.0"></script>
-  <script src="../../shared/releases.js?v=0.7.0"></script>
+  <script src="../../shared/arcade.js?v=0.7.1"></script>
+  <script src="../../shared/releases.js?v=0.7.1"></script>
   <script src="../../shared/update-banner.js?v=0.4.0"></script>
-  <script src="../../shared/burger-menu.js?v=0.7.0"></script>
-  <script type="module" src="./gs-main.js?v=0.1.0"></script>
+  <script src="../../shared/burger-menu.js?v=0.7.1"></script>
+  <script type="module" src="./gs-main.js?v=0.2.0"></script>
 </body>
 </html>

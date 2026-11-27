@@ -100,32 +100,36 @@ export function buildAlpineEnvironment(mats, kin) {
     group.add(tree);
   }
 
-  // 4. Distant Mountain Ridge Return Pylon (so cabins loop cleanly with ZERO teleports!)
+  // 4. Distant Mountain Ridge Funitel Twin-Rope Return Pylon (so cabins loop cleanly with ZERO teleports!)
   const topGroup = new THREE.Group();
   const topGround = evalTerrainY(kin.xTop, 0);
   const topY = GS_SPECS.track.mountainTopY;
   const mastH = Math.max(4, topY - topGround + 1.2);
   const topMast = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.55, 0.85, mastH, 10),
+    new THREE.CylinderGeometry(0.65, 0.95, mastH, 10),
     mats.steelAnthracite
   );
   topMast.position.set(kin.xTop, topGround + mastH * 0.5 - 0.5, 0);
   topGroup.add(topMast);
 
-  const returnWheel = new THREE.Mesh(
-    new THREE.TorusGeometry(GS_SPECS.track.ropeHalfGaugeZ, 0.16, 10, 32),
+  const returnWheel = new THREE.Group();
+  returnWheel.position.set(kin.xTop, topY, 0);
+  const rwInner = new THREE.Mesh(
+    new THREE.TorusGeometry(GS_SPECS.track.innerRopeZ, 0.16, 10, 32),
     mats.doppelmayrRed
   );
-  returnWheel.rotation.x = Math.PI / 2;
-  returnWheel.position.set(kin.xTop, topY, 0);
-  topGroup.add(returnWheel);
-
+  rwInner.rotation.x = Math.PI / 2;
+  const rwOuter = new THREE.Mesh(
+    new THREE.TorusGeometry(GS_SPECS.track.outerRopeZ, 0.14, 10, 36),
+    mats.doppelmayrRed
+  );
+  rwOuter.rotation.x = Math.PI / 2;
   const returnHub = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.75, 0.75, 0.45, 16),
+    new THREE.CylinderGeometry(0.82, 0.82, 0.55, 16),
     mats.steelAnthracite
   );
-  returnHub.position.set(kin.xTop, topY, 0);
-  topGroup.add(returnHub);
+  returnWheel.add(rwInner, rwOuter, returnHub);
+  topGroup.add(returnWheel);
   group.add(topGroup);
 
   return { group, returnWheel };
@@ -499,10 +503,10 @@ export function buildStationArchitecture(mats, kin) {
   root.add(shellGroup);
 
   // =========================================================================
-  // 4. FIRST LINE TOWER (STÜTZE 1 AT X = +36.0 m) WITH 12-ROLLER SHEAVES
+  // 4. FIRST FUNITEL LINE TOWER (STÜTZE 1 AT X = +36.0 m) — 4×12 = 48 SHEAVES!
   // =========================================================================
   const towerGroup = new THREE.Group();
-  towerGroup.name = 'Tower1_Stuetze1';
+  towerGroup.name = 'Tower1_FunitelStuetze1';
   const towerSheaves = [];
 
   const t1X = T.tower1X;
@@ -512,7 +516,7 @@ export function buildStationArchitecture(mats, kin) {
 
   // Concrete Alpine Foundation
   const t1Found = new THREE.Mesh(
-    new THREE.BoxGeometry(2.6, 1.8, 2.6),
+    new THREE.BoxGeometry(3.2, 1.9, 4.2),
     mats.concrete
   );
   t1Found.position.set(t1X, t1Ground + 0.3, 0);
@@ -520,9 +524,9 @@ export function buildStationArchitecture(mats, kin) {
   t1Found.receiveShadow = true;
   towerGroup.add(t1Found);
 
-  // Tapered Octagonal Tubular Steel Mast (Modern Doppelmayr D-Line Stütze)
+  // Heavy Tapered Funitel Tubular Steel Mast
   const t1Mast = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.46, 0.78, mastHeight, 8),
+    new THREE.CylinderGeometry(0.56, 0.94, mastHeight, 8),
     mats.steelGalvanized
   );
   t1Mast.position.set(t1X, t1Ground + mastHeight * 0.5 + 0.4, 0);
@@ -531,145 +535,211 @@ export function buildStationArchitecture(mats, kin) {
 
   // Maintenance ladder running up the mast
   const ladderRail = new THREE.Mesh(
-    new THREE.BoxGeometry(0.08, mastHeight - 1.2, 0.36),
+    new THREE.BoxGeometry(0.08, mastHeight - 1.2, 0.38),
     mats.steelAnthracite
   );
-  ladderRail.position.set(t1X - 0.65, t1Ground + mastHeight * 0.5 + 0.3, 0);
+  ladderRail.position.set(t1X - 0.78, t1Ground + mastHeight * 0.5 + 0.3, 0);
   towerGroup.add(ladderRail);
 
-  // Heavy Top Crossarm (Querhaupt) spanning ±3.2 m + Service Catwalk
+  // Extra-Wide Funitel Crossarm (Querhaupt spanning ±5.6 m for all 4 parallel haul ropes!)
   const crossarm = new THREE.Mesh(
-    new THREE.BoxGeometry(0.68, 0.56, 6.4),
+    new THREE.BoxGeometry(0.76, 0.64, 11.4),
     mats.steelGalvanized
   );
-  crossarm.position.set(t1X, t1TopY + 0.38, 0);
+  crossarm.position.set(t1X, t1TopY + 0.42, 0);
   crossarm.castShadow = true;
   towerGroup.add(crossarm);
 
+  // Diagonal under-bracing struts supporting the wide Funitel crossarm
+  for (const sgn of [-1, 1]) {
+    const brace = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.14, 0.16, 4.8, 8),
+      mats.steelGalvanized
+    );
+    brace.position.set(t1X, t1TopY - 1.1, sgn * 2.1);
+    brace.rotation.x = sgn * 0.88;
+    towerGroup.add(brace);
+  }
+
   // Yellow service platform & handrail atop Tower 1
   const t1Walk = new THREE.Mesh(
-    new THREE.BoxGeometry(0.75, 0.08, 6.1),
+    new THREE.BoxGeometry(0.78, 0.08, 11.0),
     mats.catwalkGrating
   );
-  t1Walk.position.set(t1X - 0.55, t1TopY + 0.72, 0);
+  t1Walk.position.set(t1X - 0.60, t1TopY + 0.80, 0);
   towerGroup.add(t1Walk);
 
   const t1Rail = new THREE.Mesh(
-    new THREE.BoxGeometry(0.06, 0.06, 6.1),
+    new THREE.BoxGeometry(0.06, 0.06, 11.0),
     mats.safetyYellow
   );
-  t1Rail.position.set(t1X - 0.90, t1TopY + 1.55, 0);
+  t1Rail.position.set(t1X - 0.96, t1TopY + 1.62, 0);
   towerGroup.add(t1Rail);
 
-  // Dual 12-Roller Rocking Sheave Batteries (Wippen-Rollenbatterien) at Z = ±2.80 m
-  const slopeAngle = Math.atan(0.295); // Matches evalMountainY tangent at Tower 1!
-  const sheaveGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.09, 16);
+  // FOUR 12-Roller Rocking Sheave Batteries (4 × 12 = 48 Tragrollen) at Z = -4.85, -2.95, +2.95, +4.85 m!
+  const slopeAngle = Math.atan(0.295);
+  const sheaveGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.09, 14);
   sheaveGeo.rotateX(Math.PI / 2);
-  const sheaveRimGeo = new THREE.TorusGeometry(0.22, 0.032, 8, 18);
+  const sheaveRimGeo = new THREE.TorusGeometry(0.22, 0.032, 8, 16);
 
-  for (const sgn of [-1, 1]) {
+  const ropeZPlanes = [
+    { z: -T.outerRopeZ, sideSign: -1 },
+    { z: -T.innerRopeZ, sideSign: -1 },
+    { z: T.innerRopeZ, sideSign: +1 },
+    { z: T.outerRopeZ, sideSign: +1 }
+  ];
+
+  for (const rp of ropeZPlanes) {
     const battery = new THREE.Group();
-    battery.position.set(t1X, t1TopY - 0.16, sgn * T.ropeHalfGaugeZ);
+    battery.position.set(t1X, t1TopY - 0.16, rp.z);
     battery.rotation.z = slopeAngle;
 
-    // Main articulated rocking beam (Hauptwippe)
     const mainBeam = new THREE.Mesh(
       new THREE.BoxGeometry(4.4, 0.22, 0.16),
       mats.doppelmayrRed
     );
-    mainBeam.position.set(0, -0.30, -sgn * 0.14);
+    mainBeam.position.set(0, -0.30, -rp.sideSign * 0.14);
     mainBeam.castShadow = true;
     battery.add(mainBeam);
 
-    // 12 individual grooved support sheaves (Tragrollen) aligned directly under the rope!
-    const count = T.tower1RollersPerSide;
+    const count = T.tower1RollersPerRope;
     for (let i = 0; i < count; i++) {
       const sx = -2.1 + (4.2 * i) / (count - 1);
       const wheel = new THREE.Group();
       wheel.position.set(sx, -0.08, 0);
-
       const disc = new THREE.Mesh(sheaveGeo, mats.steelGalvanized);
       const rim = new THREE.Mesh(sheaveRimGeo, mats.rubberLiner);
-      // Spoke line so rotation is visible!
       const spoke = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.04, 0.11), mats.steelAnthracite);
       wheel.add(disc, rim, spoke);
       battery.add(wheel);
-
-      towerSheaves.push({ mesh: wheel, sideSign: sgn });
+      towerSheaves.push({ mesh: wheel, sideSign: rp.sideSign });
     }
     towerGroup.add(battery);
   }
   root.add(towerGroup);
 
   // =========================================================================
-  // 5. CONTINUOUS BRAIDED 54 mm STEEL HAUL ROPE (UV-SCROLLING!)
+  // 5. FOUR PARALLEL BRAIDED 54 mm FUNITEL STEEL HAUL ROPES (2 CONTINUOUS LOOPS!)
   // =========================================================================
   const ropeGroup = new THREE.Group();
-  ropeGroup.name = 'BraidedSteelRope';
+  ropeGroup.name = 'FunitelTwinSteelRopes';
 
-  const buildRopeCurvePoints = (sagOffset = 0) => {
+  // Inner Funitel rope loop (Z = ±2.95 m -> directly wraps Lower Bullwheel at Y = 10.10 m)
+  const buildInnerRopePoints = (sagOffset = 0) => {
     const pts = [];
-    const rB = GS_SPECS.bullwheel.radius;
+    const rB = GS_SPECS.bullwheel.radius; // 2.95 m
     const xB = GS_SPECS.bullwheel.centerX;
     const yOG = F.ogRailY;
 
-    // 1. Wrap 180° around Bullwheel (from Z=-2.80 around back X=xB-rB to Z=+2.80)
     for (let i = 0; i <= 24; i++) {
       const ang = -Math.PI * 0.5 - Math.PI * (i / 24);
       pts.push(new THREE.Vector3(xB + rB * Math.cos(ang), yOG, rB * Math.sin(ang)));
     }
-    // 2. Outgoing straight inside station (Z=+2.80, X=xB -> portal 15.0)
-    for (let i = 1; i <= 14; i++) {
-      const x = xB + (T.portalDeflectorX - xB) * (i / 14);
-      pts.push(new THREE.Vector3(x, yOG, T.ropeHalfGaugeZ));
+    for (let i = 1; i <= 12; i++) {
+      const x = xB + (T.portalDeflectorX - xB) * (i / 12);
+      pts.push(new THREE.Vector3(x, yOG, T.innerRopeZ));
     }
-    // 3. Outgoing mountain catenary (X=15.0 -> xTop, Z=+2.80)
-    for (let i = 1; i <= 48; i++) {
-      const x = T.portalDeflectorX + (kin.xTop - T.portalDeflectorX) * (i / 48);
-      const { y } = kin.sampleMountainY(x, sagOffset);
-      pts.push(new THREE.Vector3(x, y, T.ropeHalfGaugeZ));
+    for (let i = 1; i <= 42; i++) {
+      const x = T.portalDeflectorX + (kin.xTop - T.portalDeflectorX) * (i / 42);
+      pts.push(new THREE.Vector3(x, kin.sampleMountainY(x, sagOffset).y, T.innerRopeZ));
     }
-    // 4. Mountain top 180° return sheave
     for (let i = 1; i <= 16; i++) {
       const psi = Math.PI * 0.5 - Math.PI * (i / 16);
-      pts.push(new THREE.Vector3(
-        kin.xTop + T.ropeHalfGaugeZ * Math.cos(psi),
-        T.mountainTopY,
-        T.ropeHalfGaugeZ * Math.sin(psi)
-      ));
+      pts.push(new THREE.Vector3(kin.xTop + T.innerRopeZ * Math.cos(psi), T.mountainTopY, T.innerRopeZ * Math.sin(psi)));
     }
-    // 5. Incoming mountain catenary (X=xTop -> 15.0, Z=-2.80)
-    for (let i = 1; i <= 48; i++) {
-      const x = kin.xTop + (T.portalDeflectorX - kin.xTop) * (i / 48);
-      const { y } = kin.sampleMountainY(x, sagOffset);
-      pts.push(new THREE.Vector3(x, y, -T.ropeHalfGaugeZ));
+    for (let i = 1; i <= 42; i++) {
+      const x = kin.xTop + (T.portalDeflectorX - kin.xTop) * (i / 42);
+      pts.push(new THREE.Vector3(x, kin.sampleMountainY(x, sagOffset).y, -T.innerRopeZ));
     }
-    // 6. Incoming straight inside station (X=15.0 -> xB, Z=-2.80)
-    for (let i = 1; i <= 14; i++) {
-      const x = T.portalDeflectorX + (xB - T.portalDeflectorX) * (i / 14);
-      pts.push(new THREE.Vector3(x, yOG, -T.ropeHalfGaugeZ));
+    for (let i = 1; i <= 12; i++) {
+      const x = T.portalDeflectorX + (xB - T.portalDeflectorX) * (i / 12);
+      pts.push(new THREE.Vector3(x, yOG, -T.innerRopeZ));
     }
     return pts;
   };
 
-  const ropeCurve = new THREE.CatmullRomCurve3(buildRopeCurvePoints(0), true);
-  // Visual rope radius 0.048 m (slightly proud of true 0.027 m radius for crisp readability at 30 m distance)
+  // Outer Funitel rope loop (Z = ±4.85 m on mountain line & coupling zones -> deflected via Ablenkscheiben onto Upper Coaxial Bullwheel Y = 10.68 m!)
+  const buildOuterRopePoints = (sagOffset = 0) => {
+    const pts = [];
+    const rB = GS_SPECS.bullwheel.radius; // 2.95 m
+    const xB = GS_SPECS.bullwheel.centerX;
+    const yUp = GS_SPECS.bullwheel.upperCenterY; // 10.68 m
+    const yOG = F.ogRailY;
+
+    // 1. Wrap 180° around Upper Coaxial Bullwheel (Z = -2.95 -> +2.95 at Y = 10.68 m)
+    for (let i = 0; i <= 24; i++) {
+      const ang = -Math.PI * 0.5 - Math.PI * (i / 24);
+      pts.push(new THREE.Vector3(xB + rB * Math.cos(ang), yUp, rB * Math.sin(ang)));
+    }
+    // 2. Deflect outward via horizontal Funitel deflector sheaves (X = 6.6 -> 9.6 m, Z = +2.95 -> +4.85 m, Y = 10.68 -> 10.10 m)
+    pts.push(new THREE.Vector3(6.6, yUp, T.innerRopeZ));
+    pts.push(new THREE.Vector3(9.6, yOG, T.outerRopeZ));
+    // 3. Outgoing Attach & Check straight (Z = +4.85 m, X = 10.4 -> 15.0 m)
+    for (let i = 1; i <= 8; i++) {
+      const x = 9.8 + (T.portalDeflectorX - 9.8) * (i / 8);
+      pts.push(new THREE.Vector3(x, yOG, T.outerRopeZ));
+    }
+    // 4. Outgoing mountain catenary (Z = +4.85 m)
+    for (let i = 1; i <= 42; i++) {
+      const x = T.portalDeflectorX + (kin.xTop - T.portalDeflectorX) * (i / 42);
+      pts.push(new THREE.Vector3(x, kin.sampleMountainY(x, sagOffset).y, T.outerRopeZ));
+    }
+    // 5. Mountain top outer 180° return sheave (R = 4.85 m)
+    for (let i = 1; i <= 16; i++) {
+      const psi = Math.PI * 0.5 - Math.PI * (i / 16);
+      pts.push(new THREE.Vector3(kin.xTop + T.outerRopeZ * Math.cos(psi), T.mountainTopY, T.outerRopeZ * Math.sin(psi)));
+    }
+    // 6. Incoming mountain catenary (Z = -4.85 m)
+    for (let i = 1; i <= 42; i++) {
+      const x = kin.xTop + (T.portalDeflectorX - kin.xTop) * (i / 42);
+      pts.push(new THREE.Vector3(x, kin.sampleMountainY(x, sagOffset).y, -T.outerRopeZ));
+    }
+    // 7. Incoming Detach straight (Z = -4.85 m, X = 15.0 -> 9.6 m)
+    for (let i = 1; i <= 8; i++) {
+      const x = T.portalDeflectorX + (9.6 - T.portalDeflectorX) * (i / 8);
+      pts.push(new THREE.Vector3(x, yOG, -T.outerRopeZ));
+    }
+    // 8. Deflect inward onto Upper Coaxial Bullwheel (-4.85 -> -2.95 m, Y = 10.10 -> 10.68 m)
+    pts.push(new THREE.Vector3(6.6, yUp, -T.innerRopeZ));
+    return pts;
+  };
+
   const ropeMesh = new THREE.Mesh(
-    new THREE.TubeGeometry(ropeCurve, 340, 0.044, 10, true),
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(buildInnerRopePoints(0), true), 300, 0.044, 8, true),
     mats.steelRope
   );
   ropeMesh.castShadow = true;
   ropeGroup.add(ropeMesh);
 
-  // Station Portal Deflector Sheaves at X = +15.0 m (Z = ±2.80 m)
-  for (const sgn of [-1, 1]) {
+  const outerRopeMesh = new THREE.Mesh(
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(buildOuterRopePoints(0), true), 320, 0.044, 8, true),
+    mats.steelRope
+  );
+  outerRopeMesh.castShadow = true;
+  ropeGroup.add(outerRopeMesh);
+
+  // Station Portal Deflector Sheaves for ALL 4 parallel ropes at X = +15.0 m!
+  for (const rp of ropeZPlanes) {
     const defl = new THREE.Group();
-    defl.position.set(T.portalDeflectorX, F.ogRailY - 0.25, sgn * T.ropeHalfGaugeZ);
+    defl.position.set(T.portalDeflectorX, F.ogRailY - 0.25, rp.z);
     const dWheel = new THREE.Mesh(sheaveGeo, mats.steelGalvanized);
     const dRim = new THREE.Mesh(sheaveRimGeo, mats.rubberLiner);
     defl.add(dWheel, dRim);
     ropeGroup.add(defl);
-    towerSheaves.push({ mesh: defl, sideSign: sgn });
+    towerSheaves.push({ mesh: defl, sideSign: rp.sideSign });
+  }
+
+  // 4 Funitel Horizontal Deflector Sheaves (Ablenkscheiben) routing outer ropes (±4.85 m) onto Upper Bullwheel (±2.95 m)!
+  const ablGeo = new THREE.CylinderGeometry(0.42, 0.42, 0.14, 18);
+  for (const sgn of [-1, 1]) {
+    for (const [ax, ay, az] of [
+      [9.6, F.ogRailY, sgn * T.outerRopeZ],
+      [6.6, GS_SPECS.bullwheel.upperCenterY, sgn * T.innerRopeZ]
+    ]) {
+      const abl = new THREE.Mesh(ablGeo, mats.doppelmayrRed);
+      abl.position.set(ax, ay, az);
+      ropeGroup.add(abl);
+    }
   }
   root.add(ropeGroup);
 
@@ -687,7 +757,6 @@ export function buildStationArchitecture(mats, kin) {
     couple: new THREE.MeshStandardMaterial({ color: 0xef4444, emissive: 0xef4444, emissiveIntensity: 1.85, roughness: 0.2 })
   };
 
-  // Group consecutive points by velocity category to form glowing track tubes
   const categoryOf = (zone) => {
     if (zone === 'attach' || zone === 'detach') return 'couple';
     if (zone === 'decel' || zone === 'accel') return 'trans';
@@ -710,7 +779,7 @@ export function buildStationArchitecture(mats, kin) {
   };
   for (let i = 0; i < loopPts.length; i++) {
     const p = loopPts[i];
-    if (p.x > 40) continue; // Keep overlay focused on station + Tower 1 approach
+    if (p.x > 40) continue;
     const cat = categoryOf(p.zone);
     const v3 = new THREE.Vector3(p.x, p.y + 0.34, p.z);
     if (cat !== runCat) {
@@ -734,6 +803,8 @@ export function buildStationArchitecture(mats, kin) {
     boardingGates,
     towerSheaves,
     ropeMesh,
-    buildRopeCurvePoints
+    outerRopeMesh,
+    buildInnerRopePoints,
+    buildOuterRopePoints
   };
 }

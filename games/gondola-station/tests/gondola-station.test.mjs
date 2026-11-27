@@ -160,3 +160,26 @@ test('Simulated clamp fault triggers Check Zone alarm, Bullwheel safety brake & 
   for (let i = 0; i < 80; i++) phys.step(0.1);
   assert.ok(phys.actualSpeedMs > 5.5, 'Expected smooth soft-start back to nominal speed');
 });
+
+test('Funitel twin-rope geometry: 4 vertical Ferris wheels flank cabins cleanly & 4x28 kN = 112 kN total grip force', () => {
+  const W = GS_SPECS.wheels;
+  const T = GS_SPECS.track;
+  const C = GS_SPECS.cabin;
+
+  assert.equal(W.totalWheelCount, 4, 'Galzigbahn Funitel must have 4 vertical Ferris wheels');
+  assert.equal(C.gripsPerCabin, 4, 'Funitel cabin must carry 4 spring grips (2 per parallel rope)');
+  assert.equal(C.capacityPersons, 24, 'Galzigbahn Funitel cabin carries 24 passengers');
+
+  // Verify positive lateral clearance between 24er cabin body and BOTH inner & outer Ferris wheels
+  const halfBodyW = C.bodyWidthZ * 0.5;
+  assert.ok(Math.abs(W.upRailZ - halfBodyW - W.upInnerWheelZ) > 0.25, 'Inner wheel must clear cabin body');
+  assert.ok(Math.abs(W.upOuterWheelZ - (W.upRailZ + halfBodyW)) > 0.25, 'Outer wheel must clear cabin body');
+
+  // Verify twin-rope symmetry around track centerline
+  assert.ok(Math.abs(0.5 * (T.innerRopeZ + T.outerRopeZ) - T.stationRailZ) < 1e-9);
+  assert.ok(Math.abs((T.outerRopeZ - T.innerRopeZ) - 2 * T.funitelRopeHalfGauge) < 1e-9);
+
+  // Verify 4x28 kN = 112 kN total clamping force per cabin
+  const closed = evalGripCouplingState(T.rampEndX + 0.5, 'check', false);
+  assert.equal(closed.totalCabinForceKN, 112.0);
+});

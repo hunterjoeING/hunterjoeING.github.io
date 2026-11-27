@@ -1,95 +1,55 @@
-// 3D Mechanical Assemblies Builder:
-// - Dual Giant Vertical Ferris Wheels (Ø 8.56 m) with Parallel-Kept Carrier Arms
-// - Horizontal Bullwheel (Ø 5.6 m) + DirectDrive (with X-Ray Cutaway) + Safety Disc Brakes + Hydraulic Tensioning
-// - Stepped V-Belt Deceleration & Acceleration Tire Conveyors (40 individually synced tires)
-// - Detach/Attach Coupling Cam Ramps, Rope Entry Trumpet & Clamping Force Check Sensor Gate
-// - 10 Futuristic 10er Panorama Cabins with Animated Sliding Doors & Cutaway D-Line Spring Grips!
+// 3D Mechanical Assemblies Builder (Authentic Galzigbahn Funitel Twin-Rope System!):
+// - FOUR Giant Vertical Ferris Wheels (2 Coaxial Twin Pairs = 4× Vertikal-Riesenräder, Ø 8.56 m)
+// - Coaxial Twin Horizontal Bullwheels (Ø 5.90 m) + DirectDrive (X-Ray) + Safety Disc Brakes + Hydraulic Tensioning
+// - Stepped V-Belt Deceleration & Acceleration Tire Conveyors (Dual-rail Funitel drive)
+// - FOUR Coupling Cam Ramps (2 per track), 4 Rope Entry Trumpets & Wide Dual-Rope Check Gantry
+// - 10 Cobalt-Blue 24er Galzigbahn Funitel Cabins with Twin-Arm Hanger & 4 Cutaway Spring Grips (2×2 = 112 kN)!
 
 import * as THREE from 'three';
 import { GS_SPECS } from './specs.js';
 import { createCabinNumberTexture } from './gs-textures.js';
 
 // =========================================================================
-// 1. TWO GIANT VERTICAL FERRIS WHEELS (VERTIKAL-RIESENRÄDER)
+// 1. FOUR GIANT VERTICAL FERRIS WHEELS (2 ZWILLINGSPAARE = 4× RIESENRÄDER!)
 // =========================================================================
 export function buildFerrisWheels(mats) {
   const group = new THREE.Group();
-  group.name = 'VerticalFerrisWheels';
+  group.name = 'FourVerticalFerrisWheels';
 
   const W = GS_SPECS.wheels;
+  const T = GS_SPECS.track;
   const wheels = {};
 
-  for (const side of [-1, 1]) {
-    const key = side < 0 ? 'down' : 'up';
-    const planeZ = side < 0 ? W.downWheelPlaneZ : W.upWheelPlaneZ;
-    const railZ = side < 0 ? W.downRailZ : W.upRailZ;
-    const cantileverZ = railZ - planeZ; // Inward reach toward cabin carriage (±1.28 m)
-
-    const sideGroup = new THREE.Group();
-    sideGroup.name = side < 0 ? 'DownwardFerrisWheel' : 'UpwardFerrisWheel';
-
-    // Heavy Outboard Support Pedestal A-Frame standing cleanly outside the wheel (ZERO cabin clipping!)
-    const pedZ = planeZ + side * 0.62;
-    const pedH = W.centerY + 0.55;
-    for (const legOffX of [-1.25, 1.25]) {
-      const legLen = Math.hypot(legOffX, pedH);
-      const leg = new THREE.Mesh(
-        new THREE.BoxGeometry(0.36, legLen, 0.38),
-        mats.steelAnthracite
-      );
-      leg.position.set(W.centerX + legOffX * 0.5, pedH * 0.5, pedZ);
-      leg.rotation.z = Math.atan2(legOffX, pedH);
-      leg.castShadow = true;
-      sideGroup.add(leg);
-    }
-    // Bearing pillow block & main horizontal axle shaft
-    const bearing = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.68, 0.74, 0.95, 20),
-      mats.steelAnthracite
-    );
-    bearing.rotation.x = Math.PI / 2;
-    bearing.position.set(W.centerX, W.centerY, pedZ);
-    bearing.castShadow = true;
-    sideGroup.add(bearing);
-
-    // Electric Ferris Wheel Gear Drive Motor mounted on pedestal
-    const driveMotor = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.42, 0.42, 1.05, 16),
-      mats.machineBlue
-    );
-    driveMotor.rotation.z = Math.PI / 2;
-    driveMotor.position.set(W.centerX - 1.35, W.centerY - 1.25, pedZ);
-    sideGroup.add(driveMotor);
-
-    // Rotating Giant Wheel Assembly centered at (centerX, centerY, planeZ)
+  const buildSingleWheelDisk = (planeZ, targetRailZ) => {
     const wheelPivot = new THREE.Group();
     wheelPivot.position.set(W.centerX, W.centerY, planeZ);
+    const cantileverZ = targetRailZ - planeZ; // Short clean reach (±0.33 m) into cabin hanger rail!
 
-    // Massive Signal-Red Outer Structural Ring (Ø 8.56 m)
+    // Signal-Red Outer Structural Steel Ring (Ø 8.56 m)
     const outerRim = new THREE.Mesh(
-      new THREE.TorusGeometry(W.outerRimRadius, 0.22, 14, 64),
+      new THREE.TorusGeometry(W.outerRimRadius, 0.21, 14, 64),
       mats.doppelmayrRed
     );
     outerRim.castShadow = true;
     wheelPivot.add(outerRim);
 
-    // Secondary Anthracite Truss Ring at carrier radius (R = 3.50 m)
+    // Anthracite Carrier Truss Ring (R = 3.50 m)
     const carrierRing = new THREE.Mesh(
-      new THREE.TorusGeometry(W.carrierRadius, 0.12, 10, 48),
+      new THREE.TorusGeometry(W.carrierRadius, 0.11, 10, 48),
       mats.steelAnthracite
     );
     wheelPivot.add(carrierRing);
 
-    // Inner Bull-Gear Ring (R = 2.45 m)
+    // Inner Bull-Gear Ring (R = 2.42 m)
     const innerRing = new THREE.Mesh(
-      new THREE.TorusGeometry(2.45, 0.14, 10, 36),
+      new THREE.TorusGeometry(2.42, 0.13, 10, 36),
       mats.steelGalvanized
     );
     wheelPivot.add(innerRing);
 
     // Central Hub Drum
     const hub = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.82, 0.82, 0.62, 24),
+      new THREE.CylinderGeometry(0.76, 0.76, 0.56, 22),
       mats.doppelmayrRed
     );
     hub.rotation.x = Math.PI / 2;
@@ -100,12 +60,12 @@ export function buildFerrisWheels(mats) {
     for (let s = 0; s < 8; s++) {
       const ang = (s * Math.PI) / 4;
       const spoke = new THREE.Mesh(
-        new THREE.BoxGeometry(W.outerRimRadius - 0.65, 0.24, 0.22),
+        new THREE.BoxGeometry(W.outerRimRadius - 0.62, 0.22, 0.20),
         s % 2 === 0 ? mats.doppelmayrRed : mats.steelAnthracite
       );
       spoke.position.set(
-        Math.cos(ang) * (W.outerRimRadius * 0.5 + 0.25),
-        Math.sin(ang) * (W.outerRimRadius * 0.5 + 0.25),
+        Math.cos(ang) * (W.outerRimRadius * 0.5 + 0.24),
+        Math.sin(ang) * (W.outerRimRadius * 0.5 + 0.24),
         0
       );
       spoke.rotation.z = ang;
@@ -113,7 +73,7 @@ export function buildFerrisWheels(mats) {
       wheelPivot.add(spoke);
     }
 
-    // 4 Parallel-Kept Articulated Carrier Arms (Mitnehmer-Gabeln) at exact R = 3.50 m!
+    // 4 Parallel-Kept Articulated Carrier Forks at exact R = 3.50 m!
     const arms = [];
     for (let m = 0; m < W.armCount; m++) {
       const armAngle = m * ((2 * Math.PI) / W.armCount);
@@ -124,42 +84,38 @@ export function buildFerrisWheels(mats) {
         0
       );
 
-      // Parallel-kept pivot bearing boss
       const boss = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.24, 0.24, 0.42, 16),
+        new THREE.CylinderGeometry(0.22, 0.22, 0.36, 14),
         mats.safetyYellow
       );
       boss.rotation.x = Math.PI / 2;
       armPivot.add(boss);
 
-      // Cantilevered Horizontal Pickup Boom reaching inward from wheel plane to cabin carriage rail Z!
       const boom = new THREE.Mesh(
-        new THREE.BoxGeometry(0.26, 0.24, Math.abs(cantileverZ)),
+        new THREE.BoxGeometry(0.24, 0.22, Math.abs(cantileverZ) + 0.18),
         mats.doppelmayrRed
       );
-      boom.position.set(0, 0.26, cantileverZ * 0.5);
-      boom.castShadow = true;
+      boom.position.set(0, 0.24, cantileverZ * 0.5);
       armPivot.add(boom);
 
-      // Vertical riser connecting boss to boom above cabin roof (guaranteed clearance!)
       const riser = new THREE.Mesh(
-        new THREE.BoxGeometry(0.24, 0.34, 0.24),
+        new THREE.BoxGeometry(0.22, 0.30, 0.22),
         mats.steelAnthracite
       );
-      riser.position.set(0, 0.14, 0);
+      riser.position.set(0, 0.12, 0);
       armPivot.add(riser);
 
-      // U-Shaped Cabin Carriage Pickup Cradle (engages the carriage exactly at local (0, 0, cantileverZ)!)
+      // U-Shaped Pickup Cradle embracing cabin hanger rail at exact (0, 0, cantileverZ)!
       const cradleTop = new THREE.Mesh(
-        new THREE.BoxGeometry(0.84, 0.14, 0.32),
+        new THREE.BoxGeometry(0.92, 0.13, 0.26),
         mats.safetyYellow
       );
-      cradleTop.position.set(0, 0.24, cantileverZ);
+      cradleTop.position.set(0, 0.22, cantileverZ);
       armPivot.add(cradleTop);
 
-      for (const fx of [-0.36, 0.36]) {
+      for (const fx of [-0.40, 0.40]) {
         const fork = new THREE.Mesh(
-          new THREE.BoxGeometry(0.11, 0.30, 0.28),
+          new THREE.BoxGeometry(0.11, 0.28, 0.24),
           mats.safetyYellow
         );
         fork.position.set(fx, 0.08, cantileverZ);
@@ -170,20 +126,86 @@ export function buildFerrisWheels(mats) {
       arms.push(armPivot);
     }
 
-    sideGroup.add(wheelPivot);
+    return { pivot: wheelPivot, arms };
+  };
+
+  for (const side of [-1, 1]) {
+    const key = side < 0 ? 'down' : 'up';
+    const innerWheelZ = side < 0 ? W.downInnerWheelZ : W.upInnerWheelZ;
+    const outerWheelZ = side < 0 ? W.downOuterWheelZ : W.upOuterWheelZ;
+    const innerRailZ = side < 0 ? -T.innerRopeZ : T.innerRopeZ;
+    const outerRailZ = side < 0 ? -T.outerRopeZ : T.outerRopeZ;
+
+    const sideGroup = new THREE.Group();
+    sideGroup.name = side < 0 ? 'DownwardTwinFerrisWheels' : 'UpwardTwinFerrisWheels';
+
+    // Massive Coaxial Horizontal Steel Drive Axle linking the Inner & Outer Ferris Wheels!
+    // (Cabin clears axle by +0.80 m in OG, -4.30 m in EG, and +2.45 m behind at 9 o'clock!)
+    const shaftLen = Math.abs(outerWheelZ - innerWheelZ) + 1.35;
+    const shaftMidZ = 0.5 * (innerWheelZ + outerWheelZ);
+    const mainAxle = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.32, 0.32, shaftLen, 18),
+      mats.steelPolishedRail
+    );
+    mainAxle.rotation.x = Math.PI / 2;
+    mainAxle.position.set(W.centerX, W.centerY, shaftMidZ);
+    mainAxle.castShadow = true;
+    sideGroup.add(mainAxle);
+
+    // Dual Structural Pedestal A-Frames supporting BOTH ends of the twin-wheel shaft!
+    const pedZs = [innerWheelZ - side * 0.52, outerWheelZ + side * 0.62];
+    const pedH = W.centerY + 0.45;
+    for (const pedZ of pedZs) {
+      for (const legOffX of [-1.15, 1.15]) {
+        const legLen = Math.hypot(legOffX, pedH);
+        const leg = new THREE.Mesh(
+          new THREE.BoxGeometry(0.32, legLen, 0.34),
+          mats.steelAnthracite
+        );
+        leg.position.set(W.centerX + legOffX * 0.5, pedH * 0.5, pedZ);
+        leg.rotation.z = Math.atan2(legOffX, pedH);
+        leg.castShadow = true;
+        sideGroup.add(leg);
+      }
+      const bearing = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.58, 0.64, 0.72, 18),
+        mats.steelAnthracite
+      );
+      bearing.rotation.x = Math.PI / 2;
+      bearing.position.set(W.centerX, W.centerY, pedZ);
+      sideGroup.add(bearing);
+    }
+
+    // Electric Twin-Wheel Drive Motor on outboard pedestal
+    const driveMotor = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.42, 0.42, 1.08, 16),
+      mats.machineBlue
+    );
+    driveMotor.rotation.z = Math.PI / 2;
+    driveMotor.position.set(W.centerX - 1.35, W.centerY - 1.25, pedZs[1]);
+    sideGroup.add(driveMotor);
+
+    // Build BOTH Wheels of the Twin Pair (2 × 2 = 4 Giant Vertical Ferris Wheels!)
+    const wheelInner = buildSingleWheelDisk(innerWheelZ, innerRailZ);
+    const wheelOuter = buildSingleWheelDisk(outerWheelZ, outerRailZ);
+    sideGroup.add(wheelInner.pivot, wheelOuter.pivot);
+
     group.add(sideGroup);
-    wheels[key] = { pivot: wheelPivot, arms };
+    wheels[key] = {
+      pivots: [wheelInner.pivot, wheelOuter.pivot],
+      arms: [...wheelInner.arms, ...wheelOuter.arms]
+    };
   }
 
   return { group, wheels };
 }
 
 // =========================================================================
-// 2. BULLWHEEL (Ø 5.6 m) + DIRECTDRIVE (X-RAY) + BRAKES + HYDRAULIC TENSION
+// 2. COAXIAL TWIN BULLWHEELS (Ø 5.9 m) + DIRECTDRIVE (X-RAY) + HYDRAULICS
 // =========================================================================
 export function buildBullwheelDirectDrive(mats) {
   const root = new THREE.Group();
-  root.name = 'BullwheelDirectDriveAssembly';
+  root.name = 'FunitelTwinBullwheelDirectDrive';
 
   const B = GS_SPECS.bullwheel;
   const F = GS_SPECS.floors;
@@ -198,7 +220,7 @@ export function buildBullwheelDirectDrive(mats) {
     root.add(slideRail);
   }
 
-  // Fixed Hydraulic Anchor Bulkhead at X = -0.35 m (rear of OG deck)
+  // Fixed Hydraulic Anchor Bulkhead at X = -0.35 m
   const bulkhead = new THREE.Mesh(
     new THREE.BoxGeometry(0.65, 1.65, 3.8),
     mats.steelAnthracite
@@ -207,16 +229,15 @@ export function buildBullwheelDirectDrive(mats) {
   bulkhead.castShadow = true;
   root.add(bulkhead);
 
-  // Two Giant Hydraulic Tensioning Cylinders (Hydraulische Seilspannung)
+  // Two Giant Hydraulic Tensioning Cylinders (640 kN Funitel Dual-Rope Tension!)
   const pistonRods = [];
   const accumulators = [];
   for (const sgn of [-1, 1]) {
     const cz = sgn * 1.15;
     const cy = F.ogFloorY + 0.92;
 
-    // Machine-blue outer hydraulic cylinder barrel
     const barrel = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.24, 0.24, 2.35, 18),
+      new THREE.CylinderGeometry(0.26, 0.26, 2.35, 18),
       mats.machineBlue
     );
     barrel.rotation.z = Math.PI / 2;
@@ -224,9 +245,8 @@ export function buildBullwheelDirectDrive(mats) {
     barrel.castShadow = true;
     root.add(barrel);
 
-    // Gleaming chrome hydraulic piston rod connecting barrel to sliding Bullwheel carriage!
     const rod = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.115, 0.115, 2.2, 16),
+      new THREE.CylinderGeometry(0.125, 0.125, 2.2, 16),
       mats.chromePiston
     );
     rod.rotation.z = Math.PI / 2;
@@ -234,17 +254,15 @@ export function buildBullwheelDirectDrive(mats) {
     root.add(rod);
     pistonRods.push(rod);
 
-    // Nitrogen-Hydraulic Pressure Accumulator Bottle (Druckspeicher) next to bulkhead
     const accOuter = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.24, 0.24, 1.45, 16),
+      new THREE.CylinderGeometry(0.25, 0.25, 1.48, 16),
       mats.machineBlue
     );
     accOuter.position.set(-0.25, F.ogFloorY + 2.15, cz * 1.35);
     root.add(accOuter);
 
-    // Glowing pressure gauge column inside accumulator (visible in DirectDrive/Hydraulic X-Ray!)
     const accGlow = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.16, 0.16, 1.1, 14),
+      new THREE.CylinderGeometry(0.16, 0.16, 1.12, 14),
       mats.ledCoolStrip
     );
     accGlow.position.set(-0.25, F.ogFloorY + 2.15, cz * 1.35);
@@ -253,76 +271,66 @@ export function buildBullwheelDirectDrive(mats) {
     accumulators.push({ outer: accOuter, glow: accGlow });
   }
 
-  // Sliding Bullwheel & DirectDrive Tension Carriage (Spannwagen)
+  // Sliding Tension Carriage (Spannwagen)
   const tensionCarriage = new THREE.Group();
   tensionCarriage.position.set(B.centerX, 0, B.centerZ);
 
-  // Heavy structural steel tension sledge base
   const sledgeBase = new THREE.Mesh(
-    new THREE.BoxGeometry(3.5, 0.42, 3.6),
+    new THREE.BoxGeometry(3.6, 0.42, 3.6),
     mats.steelAnthracite
   );
   sledgeBase.position.set(0, F.ogFloorY + 0.48, 0);
   sledgeBase.castShadow = true;
   tensionCarriage.add(sledgeBase);
 
-  // --- DirectDrive Gearless Synchronous Motor (Y = 7.4 -> 9.4 m, directly on Bullwheel shaft!) ---
+  // --- DirectDrive Gearless Synchronous Motor (1,350 kW / 540,000 Nm!) ---
   const motorGroup = new THREE.Group();
   motorGroup.position.set(0, F.ogFloorY + 1.68, 0);
 
-  // Outer finned cast-iron stator housing (turns translucent in DirectDrive X-Ray!)
   const motorOuterGroup = new THREE.Group();
   const statorShell = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.58, 1.58, 1.48, 32, 1, false),
+    new THREE.CylinderGeometry(1.62, 1.62, 1.52, 32, 1, false),
     mats.motorHousing
   );
   statorShell.castShadow = true;
   motorOuterGroup.add(statorShell);
 
-  // Cooling fins around stator housing
   for (let i = 0; i < 18; i++) {
     const a = (i / 18) * Math.PI * 2;
-    const fin = new THREE.Mesh(
-      new THREE.BoxGeometry(0.16, 1.42, 0.06),
-      mats.motorHousing
-    );
-    fin.position.set(Math.cos(a) * 1.62, 0, Math.sin(a) * 1.62);
+    const fin = new THREE.Mesh(new THREE.BoxGeometry(0.16, 1.46, 0.06), mats.motorHousing);
+    fin.position.set(Math.cos(a) * 1.66, 0, Math.sin(a) * 1.66);
     fin.rotation.y = -a;
     motorOuterGroup.add(fin);
   }
   motorGroup.add(motorOuterGroup);
 
-  // Inner Copper Stator Windings Ring (revealed clearly in DirectDrive X-Ray!)
   const copperStator = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.42, 1.42, 1.24, 32, 1, true),
+    new THREE.CylinderGeometry(1.44, 1.44, 1.26, 32, 1, true),
     mats.copperWindings
   );
   motorGroup.add(copperStator);
 
-  // Rotating Permanent-Magnet Rotor Drum (N/S poles rotating with Bullwheel!)
   const rotorGroup = new THREE.Group();
   const magnetRotor = new THREE.Mesh(
-    new THREE.CylinderGeometry(1.16, 1.16, 1.18, 32),
+    new THREE.CylinderGeometry(1.18, 1.18, 1.20, 32),
     mats.magnetPoles
   );
   rotorGroup.add(magnetRotor);
 
-  // Direct vertical forged-steel main drive shaft (no gearbox!)
   const mainShaft = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.42, 0.46, 3.1, 20),
+    new THREE.CylinderGeometry(0.45, 0.48, 3.7, 20),
     mats.chromePiston
   );
-  mainShaft.position.y = 0.72;
+  mainShaft.position.y = 1.02;
   rotorGroup.add(mainShaft);
   motorGroup.add(rotorGroup);
 
-  // Rotating Electromagnetic Flux Overlay Ring (visible in DirectDrive X-Ray!)
   const magFieldGroup = new THREE.Group();
   magFieldGroup.visible = false;
   for (let k = 0; k < 12; k++) {
     const ang = (k / 12) * Math.PI * 2;
     const arc = new THREE.Mesh(
-      new THREE.TorusGeometry(1.29, 0.045, 8, 16, Math.PI / 8),
+      new THREE.TorusGeometry(1.31, 0.045, 8, 16, Math.PI / 8),
       mats.magFieldRing
     );
     arc.rotation.x = Math.PI / 2;
@@ -331,7 +339,7 @@ export function buildBullwheelDirectDrive(mats) {
     magFieldGroup.add(arc);
   }
   const fluxRingMid = new THREE.Mesh(
-    new THREE.TorusGeometry(1.29, 0.05, 8, 48),
+    new THREE.TorusGeometry(1.31, 0.05, 8, 48),
     mats.magFieldRing
   );
   fluxRingMid.rotation.x = Math.PI / 2;
@@ -340,47 +348,52 @@ export function buildBullwheelDirectDrive(mats) {
 
   tensionCarriage.add(motorGroup);
 
-  // --- Horizontal Bullwheel (Ø 5.6 m at Y = 10.10 m) + Steel Brake Disc ---
+  // --- Coaxial Twin Horizontal Bullwheels (Lower Y = 10.10 m + Upper Y = 10.68 m, Ø 5.90 m!) ---
   const bullwheelPivot = new THREE.Group();
   bullwheelPivot.position.set(0, B.centerY, 0);
 
-  // Signal-Red Heavy Bullwheel Rim (R = 2.80 m)
-  const bullRim = new THREE.Mesh(
-    new THREE.TorusGeometry(B.radius, 0.22, 14, 64),
-    mats.doppelmayrRed
-  );
-  bullRim.rotation.x = Math.PI / 2;
-  bullRim.castShadow = true;
-  bullwheelPivot.add(bullRim);
-
-  // Matte-black grooved rubber rope liner on outer edge
-  const bullLiner = new THREE.Mesh(
-    new THREE.TorusGeometry(B.radius + 0.06, 0.10, 10, 64),
-    mats.rubberLiner
-  );
-  bullLiner.rotation.x = Math.PI / 2;
-  bullwheelPivot.add(bullLiner);
-
-  // 8 Heavy Signal-Red Radial Spokes
-  for (let s = 0; s < 8; s++) {
-    const a = (s * Math.PI) / 4;
-    const spoke = new THREE.Mesh(
-      new THREE.BoxGeometry(B.radius * 1.92, 0.26, 0.24),
+  const addBullwheelDeck = (offsetY) => {
+    const bullRim = new THREE.Mesh(
+      new THREE.TorusGeometry(B.radius, 0.21, 14, 64),
       mats.doppelmayrRed
     );
-    spoke.rotation.y = a;
-    spoke.castShadow = true;
-    bullwheelPivot.add(spoke);
-  }
+    bullRim.rotation.x = Math.PI / 2;
+    bullRim.position.y = offsetY;
+    bullRim.castShadow = true;
+    bullwheelPivot.add(bullRim);
 
-  // Central Hub Cap
+    const bullLiner = new THREE.Mesh(
+      new THREE.TorusGeometry(B.radius + 0.06, 0.095, 10, 64),
+      mats.rubberLiner
+    );
+    bullLiner.rotation.x = Math.PI / 2;
+    bullLiner.position.y = offsetY;
+    bullwheelPivot.add(bullLiner);
+
+    for (let s = 0; s < 8; s++) {
+      const a = (s * Math.PI) / 4;
+      const spoke = new THREE.Mesh(
+        new THREE.BoxGeometry(B.radius * 1.92, 0.22, 0.22),
+        mats.doppelmayrRed
+      );
+      spoke.position.y = offsetY;
+      spoke.rotation.y = a;
+      spoke.castShadow = true;
+      bullwheelPivot.add(spoke);
+    }
+  };
+
+  addBullwheelDeck(0.0);                              // Lower Bullwheel (Inner Funitel ropes)
+  addBullwheelDeck(B.upperCenterY - B.centerY);       // Upper Coaxial Bullwheel (Deflected Outer Funitel ropes)
+
   const bullHub = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.74, 0.78, 0.44, 24),
+    new THREE.CylinderGeometry(0.78, 0.82, 1.05, 24),
     mats.steelAnthracite
   );
+  bullHub.position.y = 0.28;
   bullwheelPivot.add(bullHub);
 
-  // Direct-Acting Machined Steel Brake Disc right under Bullwheel (R = 2.42 m)
+  // Direct-Acting Machined Steel Brake Disc right under Lower Bullwheel (R = 2.55 m)
   const brakeDisc = new THREE.Mesh(
     new THREE.CylinderGeometry(B.brakeDiscRadius, B.brakeDiscRadius, 0.09, 48),
     mats.brakeDiscSteel
@@ -390,7 +403,7 @@ export function buildBullwheelDirectDrive(mats) {
 
   tensionCarriage.add(bullwheelPivot);
 
-  // --- 4 Direct-Acting Service & Safety Disc Brake Calipers (Betriebs- & Sicherheitsbremsen) ---
+  // --- 4 Direct-Acting Service & Safety Disc Brake Calipers ---
   const brakeCalipers = [];
   const caliperAngles = [-Math.PI * 0.75, -Math.PI * 0.25, Math.PI * 0.25, Math.PI * 0.75];
   for (const ang of caliperAngles) {
@@ -399,22 +412,16 @@ export function buildBullwheelDirectDrive(mats) {
     calGroup.position.set(Math.cos(ang) * r, B.centerY - 0.34, Math.sin(ang) * r);
     calGroup.rotation.y = -ang;
 
-    // Fixed caliper bridge bracket
-    const bridge = new THREE.Mesh(
-      new THREE.BoxGeometry(0.54, 0.44, 0.48),
-      mats.brakeCaliperRed
-    );
+    const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.44, 0.48), mats.brakeCaliperRed);
     bridge.position.x = 0.12;
     calGroup.add(bridge);
 
-    // Upper & lower moving brake pads (visibly clamp onto disc on emergency stop!)
     const padTop = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.36), mats.steelAnthracite);
     const padBot = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.36), mats.steelAnthracite);
     padTop.position.set(-0.04, 0.12, 0);
     padBot.position.set(-0.04, -0.12, 0);
     calGroup.add(padTop, padBot);
 
-    // Support column down to tension sledge
     const postH = (B.centerY - 0.54) - (F.ogFloorY + 0.65);
     const post = new THREE.Mesh(new THREE.BoxGeometry(0.18, postH, 0.18), mats.steelAnthracite);
     post.position.set(0.24, -postH * 0.5 - 0.18, 0);
@@ -441,76 +448,60 @@ export function buildBullwheelDirectDrive(mats) {
 }
 
 // =========================================================================
-// 3. STEPPED V-BELT TIRE CONVEYORS (VERZÖGERER & BESCHLEUNIGER)
+// 3. STEPPED V-BELT FUNITEL DUAL-SIDE TIRE CONVEYORS (VERZÖGERER & BESCHLEUNIGER)
 // =========================================================================
 export function buildTireConveyors(mats, kin) {
   const group = new THREE.Group();
-  group.name = 'TireConveyors';
+  group.name = 'FunitelTireConveyors';
 
   const rTire = GS_SPECS.track.tireRadius;
-  const tireGeo = new THREE.CylinderGeometry(rTire, rTire, 0.15, 20);
-  const rimGeo = new THREE.CylinderGeometry(rTire * 0.52, rTire * 0.52, 0.17, 12);
-  const pulleyGeo = new THREE.CylinderGeometry(0.11, 0.11, 0.07, 14);
+  const tireGeo = new THREE.CylinderGeometry(rTire, rTire, 0.14, 18);
+  const rimGeo = new THREE.CylinderGeometry(rTire * 0.52, rTire * 0.52, 0.16, 12);
+  const pulleyGeo = new THREE.CylinderGeometry(0.11, 0.11, 0.07, 12);
   const allTires = [];
 
   const buildSide = (tireSpecs) => {
     for (let i = 0; i < tireSpecs.length; i++) {
       const spec = tireSpecs[i];
-      const unit = new THREE.Group();
-      // Offset tire slightly inboard so its tread engages the cabin friction plate cleanly!
-      const inboardOffset = -spec.sideSign * (rTire + 0.06);
-      unit.position.set(spec.x, spec.y, spec.z + inboardOffset);
+      // Place friction tires cleanly along BOTH inner & outer Funitel carriage beams!
+      for (const ropeZ of [spec.innerRopeZ, spec.outerRopeZ]) {
+        const unit = new THREE.Group();
+        unit.position.set(spec.x, spec.y + 0.12, ropeZ);
 
-      // Rotating tire + metallic wheel hub + stepped V-belt drive pulley on top
-      const wheelPivot = new THREE.Group();
-      const tireMesh = new THREE.Mesh(tireGeo, mats.rubberTire);
-      const rimMesh = new THREE.Mesh(rimGeo, mats.steelGalvanized);
-      const spoke = new THREE.Mesh(new THREE.BoxGeometry(rTire * 0.92, 0.18, 0.04), mats.doppelmayrRed);
+        const wheelPivot = new THREE.Group();
+        const tireMesh = new THREE.Mesh(tireGeo, mats.rubberTire);
+        const rimMesh = new THREE.Mesh(rimGeo, mats.steelGalvanized);
+        const spoke = new THREE.Mesh(new THREE.BoxGeometry(rTire * 0.92, 0.17, 0.04), mats.doppelmayrRed);
 
-      // Stepped V-belt pulley radius scales with stage group (visually authentic stepped ratios!)
-      const pulleyScale = 0.72 + spec.stageGroup * 0.13;
-      const pulley = new THREE.Mesh(pulleyGeo, mats.steelAnthracite);
-      pulley.scale.set(pulleyScale, 1, pulleyScale);
-      pulley.position.y = 0.16;
+        const pulleyScale = 0.72 + spec.stageGroup * 0.13;
+        const pulley = new THREE.Mesh(pulleyGeo, mats.steelAnthracite);
+        pulley.scale.set(pulleyScale, 1, pulleyScale);
+        pulley.position.y = 0.15;
 
-      wheelPivot.add(tireMesh, rimMesh, spoke, pulley);
-      unit.add(wheelPivot);
+        wheelPivot.add(tireMesh, rimMesh, spoke, pulley);
+        unit.add(wheelPivot);
 
-      // Overhead conveyor steel support beam bracket
-      const bracket = new THREE.Mesh(
-        new THREE.BoxGeometry(0.16, 0.32, 0.18),
-        mats.steelAnthracite
-      );
-      bracket.position.y = 0.34;
-      unit.add(bracket);
+        const bracket = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.28, 0.16), mats.steelAnthracite);
+        bracket.position.y = 0.30;
+        unit.add(bracket);
 
-      // Connect adjacent tires with visible V-belt straps!
-      if (i > 0) {
-        const prev = tireSpecs[i - 1];
-        const dx = spec.x - prev.x;
-        const dz = spec.z - prev.z;
-        const dist = Math.hypot(dx, dz);
-        const belt = new THREE.Mesh(
-          new THREE.BoxGeometry(dist, 0.032, 0.08),
-          mats.rubberLiner
-        );
-        belt.position.set(-dx * 0.5, 0.16, -dz * 0.5);
-        belt.rotation.y = -Math.atan2(dz, dx);
-        unit.add(belt);
+        if (i > 0) {
+          const prev = tireSpecs[i - 1];
+          const dx = spec.x - prev.x;
+          const belt = new THREE.Mesh(new THREE.BoxGeometry(Math.abs(dx), 0.03, 0.07), mats.rubberLiner);
+          belt.position.set(-dx * 0.5, 0.15, 0);
+          unit.add(belt);
+        }
+
+        if (i % 5 === 2 && ropeZ === spec.outerRopeZ) {
+          const stageMotor = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 0.38, 12), mats.machineBlue);
+          stageMotor.position.set(0, 0.48, 0);
+          unit.add(stageMotor);
+        }
+
+        group.add(unit);
+        allTires.push({ pivot: wheelPivot, spec, angle: 0 });
       }
-
-      // Electric motor block on every 5th tire stage
-      if (i % 5 === 2) {
-        const stageMotor = new THREE.Mesh(
-          new THREE.CylinderGeometry(0.16, 0.16, 0.42, 12),
-          mats.machineBlue
-        );
-        stageMotor.position.set(0, 0.52, -spec.sideSign * 0.24);
-        unit.add(stageMotor);
-      }
-
-      group.add(unit);
-      allTires.push({ pivot: wheelPivot, spec, angle: 0 });
     }
   };
 
@@ -521,22 +512,27 @@ export function buildTireConveyors(mats, kin) {
 }
 
 // =========================================================================
-// 4. COUPLING CAM RAMPS, ROPE TRUMPET & CLAMPING FORCE CHECK GATE
+// 4. FOUR COUPLING CAM RAMPS (2 PRO FAHRBAHN), 4 TRUMPETS & WIDE CHECK GANTRY
 // =========================================================================
 export function buildCouplingZones(mats) {
   const group = new THREE.Group();
-  group.name = 'CouplingRampsAndCheckGate';
+  group.name = 'FunitelCouplingRampsAndCheckGate';
 
   const T = GS_SPECS.track;
   const yOG = GS_SPECS.floors.ogRailY;
 
-  // Build curved steel cam rails (Kuppelrampen) at Detach (Z=-2.80) and Attach (Z=+2.80)
-  for (const sgn of [-1, 1]) {
-    const zRope = sgn * T.ropeHalfGaugeZ;
+  const rampDefs = [
+    { zRope: -T.outerRopeZ, sideSign: -1, rollerOffZ: +0.20 },
+    { zRope: -T.innerRopeZ, sideSign: -1, rollerOffZ: +0.20 },
+    { zRope: T.innerRopeZ,  sideSign: +1, rollerOffZ: -0.20 },
+    { zRope: T.outerRopeZ,  sideSign: +1, rollerOffZ: -0.20 }
+  ];
+
+  const span = T.rampEndX - T.rampStartX;
+  for (const rd of rampDefs) {
     const rampPts = [];
-    const span = T.rampEndX - T.rampStartX;
-    for (let i = 0; i <= 28; i++) {
-      const u = i / 28;
+    for (let i = 0; i <= 26; i++) {
+      const u = i / 26;
       const x = T.rampStartX + span * u;
       let lift = 0;
       if (u < 0.28) {
@@ -548,67 +544,59 @@ export function buildCouplingZones(mats) {
         const t = (u - 0.72) / 0.28;
         lift = 1.0 - t * t * (3 - 2 * t);
       }
-      // Cam rail positioned directly above the actuation roller path!
-      rampPts.push(new THREE.Vector3(x, yOG + 0.38 + lift * 0.22, zRope - sgn * 0.22));
+      rampPts.push(new THREE.Vector3(x, yOG + 0.38 + lift * 0.22, rd.zRope + rd.rollerOffZ));
     }
-    const camCurve = new THREE.CatmullRomCurve3(rampPts);
     const camRail = new THREE.Mesh(
-      new THREE.TubeGeometry(camCurve, 32, 0.048, 8, false),
+      new THREE.TubeGeometry(new THREE.CatmullRomCurve3(rampPts), 28, 0.046, 8, false),
       mats.safetyYellow
     );
     camRail.castShadow = true;
     group.add(camRail);
 
-    // Steel ramp mounting frame
-    const frameBar = new THREE.Mesh(
-      new THREE.BoxGeometry(span + 0.6, 0.14, 0.14),
-      mats.doppelmayrRed
-    );
-    frameBar.position.set(T.rampCenterX, yOG + 0.82, zRope - sgn * 0.22);
+    const frameBar = new THREE.Mesh(new THREE.BoxGeometry(span + 0.6, 0.13, 0.13), mats.doppelmayrRed);
+    frameBar.position.set(T.rampCenterX, yOG + 0.80, rd.zRope + rd.rollerOffZ);
     group.add(frameBar);
 
     for (const fx of [T.rampStartX, T.rampCenterX, T.rampEndX]) {
-      const strut = new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.42, 8), mats.steelAnthracite);
-      strut.position.set(fx, yOG + 0.62, zRope - sgn * 0.22);
+      const strut = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.40, 8), mats.steelAnthracite);
+      strut.position.set(fx, yOG + 0.60, rd.zRope + rd.rollerOffZ);
       group.add(strut);
     }
 
-    // Flared Steel Rope Entry Trumpet (Seilfangtrichter) guiding the 54 mm rope into the open grip jaw!
-    const trumpet = new THREE.Mesh(
-      new THREE.ConeGeometry(0.24, 0.62, 16, 1, true),
-      mats.steelGalvanized
-    );
-    trumpet.rotation.z = sgn > 0 ? Math.PI / 2 : -Math.PI / 2;
-    trumpet.position.set(sgn > 0 ? T.rampStartX - 0.25 : T.rampEndX + 0.25, yOG, zRope);
+    // Flared Steel Rope Entry Trumpet (Seilfangtrichter) on EACH of the 4 parallel ropes!
+    const trumpet = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.58, 14, 1, true), mats.steelGalvanized);
+    trumpet.rotation.z = rd.sideSign > 0 ? Math.PI / 2 : -Math.PI / 2;
+    trumpet.position.set(rd.sideSign > 0 ? T.rampStartX - 0.25 : T.rampEndX + 0.25, yOG, rd.zRope);
     group.add(trumpet);
   }
 
-  // --- Clamping Force & Rope Position Check Zone (Prüfstrecke at X = +13.45 m, Z = +2.80 m) ---
+  // --- Wide Funitel Dual-Rope Clamping Force & Rope Position Check Gantry (Prüfstrecke at X = +13.45 m) ---
   const checkGate = new THREE.Group();
-  checkGate.position.set(T.checkCenterX, yOG, T.ropeHalfGaugeZ);
+  checkGate.position.set(T.checkCenterX, yOG, T.stationRailZ);
 
-  // Precision sensor gantry arch
-  const archTop = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.18, 0.88), mats.steelAnthracite);
-  archTop.position.set(0, 0.68, 0);
+  const archTop = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.18, 2.75), mats.steelAnthracite);
+  archTop.position.set(0, 0.72, 0);
   checkGate.add(archTop);
 
-  for (const sz of [-0.38, 0.38]) {
-    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.86, 0.12), mats.steelAnthracite);
-    leg.position.set(0, 0.28, sz);
+  for (const sz of [-1.32, 1.32]) {
+    const leg = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.90, 0.14), mats.steelAnthracite);
+    leg.position.set(0, 0.30, sz);
     checkGate.add(leg);
   }
 
-  // Mechanical force feeler roller + laser emitter boxes
-  const feelerBox = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.22), mats.machineBlue);
-  feelerBox.position.set(0, 0.48, -0.24);
-  checkGate.add(feelerBox);
+  // Dual sensor modules checking BOTH parallel ropes (4 grips total per cabin!)
+  for (const rz of [-T.funitelRopeHalfGauge, T.funitelRopeHalfGauge]) {
+    const feelerBox = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.22, 0.22), mats.machineBlue);
+    feelerBox.position.set(0, 0.50, rz - 0.20);
+    checkGate.add(feelerBox);
+  }
 
-  // Dual High-Visibility Status Signal Lamps (flashes crisp GREEN on OK, bright RED on fault!)
+  // Dual High-Visibility Status Signal Lamps
   const sensorLampMat = mats.sensorLamp.clone();
-  const lampL = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), sensorLampMat);
-  const lampR = new THREE.Mesh(new THREE.SphereGeometry(0.16, 16, 12), sensorLampMat);
-  lampL.position.set(-0.36, 0.86, 0);
-  lampR.position.set(0.36, 0.86, 0);
+  const lampL = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 12), sensorLampMat);
+  const lampR = new THREE.Mesh(new THREE.SphereGeometry(0.17, 16, 12), sensorLampMat);
+  lampL.position.set(0, 0.92, -0.95);
+  lampR.position.set(0, 0.92, 0.95);
   checkGate.add(lampL, lampR);
 
   group.add(checkGate);
@@ -617,174 +605,176 @@ export function buildCouplingZones(mats) {
 }
 
 // =========================================================================
-// 5. 10 FUTURISTIC 10er PANORAMA CABINS WITH CUTAWAY D-LINE SPRING GRIPS
+// 5. 10 COBALT-BLUE 24er GALZIGBAHN FUNITEL CABINS + 4 CUTAWAY SPRING GRIPS!
 // =========================================================================
-function createSingleCabinMesh(num, mats) {
-  const C = GS_SPECS.cabin;
-  const root = new THREE.Group();
-  root.name = `PanoramaCabin_${num}`;
+function createSingleGripUnit(mats, springMat, coverMat, arrowMat) {
+  const g = new THREE.Group();
 
-  // --- A. OVERHEAD D-LINE DETACHABLE SPRING GRIP (AT LOCAL (0, 0, 0) = ROPE AXIS!) ---
-  const gripGroup = new THREE.Group();
-  gripGroup.name = 'DLineSpringGrip';
-
-  // Per-cabin materials for live spring glow & cutaway transparency
-  const springMat = mats.springSteel.clone();
-  const coverMat = mats.doppelmayrRed.clone();
-  const jawMat = mats.steelGalvanized;
-
-  // Fixed upper jaw saddle hugging the haul rope from above/inboard
-  const fixedJaw = new THREE.Mesh(
-    new THREE.BoxGeometry(0.46, 0.14, 0.16),
-    jawMat
-  );
+  // Fixed upper jaw saddle hugging the braided 54 mm steel rope
+  const fixedJaw = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.13, 0.15), mats.steelGalvanized);
   fixedJaw.position.set(0, 0.08, -0.02);
-  gripGroup.add(fixedJaw);
+  g.add(fixedJaw);
 
-  // Movable lower/outboard clamping jaw (pivots open when cam roller lifts!)
+  // Movable clamping jaw opening cleanly around the rope!
   const movableJawPivot = new THREE.Group();
   movableJawPivot.position.set(0, 0.02, 0.08);
-  const movableJaw = new THREE.Mesh(
-    new THREE.BoxGeometry(0.44, 0.12, 0.15),
-    mats.steelPolishedRail
-  );
+  const movableJaw = new THREE.Mesh(new THREE.BoxGeometry(0.40, 0.11, 0.14), mats.steelPolishedRail);
   movableJaw.position.set(0, -0.08, -0.06);
   movableJawPivot.add(movableJaw);
-  gripGroup.add(movableJawPivot);
+  g.add(movableJawPivot);
 
-  // Belleville Disc Spring Pack (Tellerfederpaket — 8 stacked conical spring washers!)
-  // Oriented horizontally along -Z (inboard of rope), physically compresses when jaw opens!
+  // Belleville Disc Spring Pack (Tellerfederpaket — 7 stacked disc springs!)
   const springPack = new THREE.Group();
   springPack.position.set(0, 0.14, -0.10);
-  const discGeo = new THREE.CylinderGeometry(0.085, 0.098, 0.022, 14);
+  const discGeo = new THREE.CylinderGeometry(0.08, 0.092, 0.021, 12);
   discGeo.rotateX(Math.PI / 2);
-  for (let d = 0; d < 8; d++) {
+  for (let d = 0; d < 7; d++) {
     const disc = new THREE.Mesh(discGeo, springMat);
-    disc.position.z = -d * 0.032;
+    disc.position.z = -d * 0.030;
     springPack.add(disc);
   }
-  gripGroup.add(springPack);
+  g.add(springPack);
 
-  // Actuation Lever & Cam Roller (Betätigungsrolle riding the yellow coupling ramp!)
+  // Actuation Lever & Yellow Cam Roller riding the yellow coupling ramp
   const leverPivot = new THREE.Group();
-  leverPivot.position.set(0, 0.16, -0.22);
-  const leverArm = new THREE.Mesh(
-    new THREE.BoxGeometry(0.09, 0.28, 0.08),
-    mats.steelAnthracite
-  );
-  leverArm.position.set(0, 0.14, 0);
-  leverPivot.add(leverArm);
-
-  const camRoller = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.075, 0.075, 0.07, 14),
-    mats.safetyYellow
-  );
+  leverPivot.position.set(0, 0.16, -0.20);
+  const leverArm = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.26, 0.075), mats.steelAnthracite);
+  leverArm.position.set(0, 0.13, 0);
+  const camRoller = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.065, 12), mats.safetyYellow);
   camRoller.rotation.x = Math.PI / 2;
-  camRoller.position.set(0, 0.28, 0);
-  leverPivot.add(camRoller);
-  gripGroup.add(leverPivot);
+  camRoller.position.set(0, 0.26, 0);
+  leverPivot.add(leverArm, camRoller);
+  g.add(leverPivot);
 
-  // Outer Protective Grip Housing Cover (hides cleanly in Klemmen-Schnitt mode!)
-  const gripCover = new THREE.Mesh(
-    new THREE.BoxGeometry(0.56, 0.28, 0.42),
-    coverMat
-  );
-  gripCover.position.set(0, 0.14, -0.14);
-  gripGroup.add(gripCover);
+  // Outer Protective Red Grip Housing (hides cleanly in Klemmen-Schnitt!)
+  const gripCover = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.26, 0.38), coverMat);
+  gripCover.position.set(0, 0.14, -0.13);
+  g.add(gripCover);
 
-  // 2 Station Guide Rail Running Rollers (Laufrollen riding overhead steel rail)
-  for (const rx of [-0.28, 0.28]) {
-    const roller = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.085, 0.085, 0.06, 12),
-      mats.steelPolishedRail
-    );
-    roller.rotation.x = Math.PI / 2;
-    roller.position.set(rx, 0.22, 0.04);
-    gripGroup.add(roller);
-  }
-
-  // Friction Plate for Tire Conveyors (Reibplatte engaged by the 40 rubber tires!)
-  const frictionPlate = new THREE.Mesh(
-    new THREE.BoxGeometry(0.92, 0.05, 0.18),
-    mats.steelAnthracite
-  );
-  frictionPlate.position.set(0, 0.16, 0.18);
-  gripGroup.add(frictionPlate);
-
-  // 3D Clamping Force Arrows (28 kN — visible in Klemmen-Schnitt when clamped onto rope!)
+  // 3D 28-kN Clamping Force Arrows
   const forceArrows = new THREE.Group();
   forceArrows.visible = false;
-  const arrowShaftGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.22, 8);
-  const arrowHeadGeo = new THREE.ConeGeometry(0.058, 0.12, 10);
-  const arrowMat = mats.forceArrowGreen.clone();
+  const shaftGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.20, 8);
+  const headGeo = new THREE.ConeGeometry(0.052, 0.11, 10);
   for (const dir of [-1, 1]) {
     const aGrp = new THREE.Group();
-    const shaft = new THREE.Mesh(arrowShaftGeo, arrowMat);
-    const head = new THREE.Mesh(arrowHeadGeo, arrowMat);
-    shaft.position.y = dir * 0.24;
-    head.position.y = dir * 0.11;
+    const shaft = new THREE.Mesh(shaftGeo, arrowMat);
+    const head = new THREE.Mesh(headGeo, arrowMat);
+    shaft.position.y = dir * 0.22;
+    head.position.y = dir * 0.10;
     head.rotation.z = dir > 0 ? Math.PI : 0;
     aGrp.add(shaft, head);
     forceArrows.add(aGrp);
   }
-  gripGroup.add(forceArrows);
+  g.add(forceArrows);
 
-  root.add(gripGroup);
+  return { group: g, gripCover, movableJawPivot, springPack, leverPivot, forceArrows };
+}
 
-  // --- B. SWINGING C-HANGER + 10er PANORAMA CABIN BODY ---
-  // Note: Local +X = forward, Local +Z = outboard (towards platform/away from center tower!)
+function createSingleCabinMesh(num, mats) {
+  const C = GS_SPECS.cabin;
+  const halfGauge = GS_SPECS.track.funitelRopeHalfGauge; // 0.95 m!
+  const root = new THREE.Group();
+  root.name = `FunitelCabin_${num}`;
+
+  // Shared per-cabin live animated grip materials
+  const springMat = mats.springSteel.clone();
+  const coverMat = mats.doppelmayrRed.clone();
+  const arrowMat = mats.forceArrowGreen.clone();
+
+  // --- A. AUTHENTIC FUNITEL TWIN-ROPE 4-GRIP CARRIAGE (2×2 = 4 FEDERKLEMMEN!) ---
+  // Matches Peter's real Galzigbahn photo: TWO parallel twin-clamp beams at local Z = -0.95 m & +0.95 m,
+  // each carrying a FRONT (+0.48 m) and REAR (-0.48 m) spring grip!
+  const gripUnits = [];
+  for (const ropeLocalZ of [-halfGauge, halfGauge]) {
+    // Longitudinal Funitel Twin-Grip Carrier Beam connecting front & rear grips on this rope
+    const carrierBeam = new THREE.Mesh(
+      new THREE.BoxGeometry(1.36, 0.13, 0.18),
+      mats.steelGalvanized
+    );
+    carrierBeam.position.set(0, -0.14, ropeLocalZ);
+    carrierBeam.castShadow = true;
+    root.add(carrierBeam);
+
+    // Overhead Friction Plate engaged by Funitel Tire Conveyors
+    const frictionPlate = new THREE.Mesh(
+      new THREE.BoxGeometry(1.24, 0.05, 0.16),
+      mats.steelAnthracite
+    );
+    frictionPlate.position.set(0, 0.18, ropeLocalZ);
+    root.add(frictionPlate);
+
+    // 2 Station Guide Rail Running Rollers per beam
+    for (const rx of [-0.56, 0.56]) {
+      const roller = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.08, 0.06, 12),
+        mats.steelPolishedRail
+      );
+      roller.rotation.x = Math.PI / 2;
+      roller.position.set(rx, 0.20, ropeLocalZ + 0.06);
+      root.add(roller);
+    }
+
+    // Front (+0.44 m) & Rear (-0.44 m) Spring Grips on this parallel rope!
+    for (const gx of [-0.44, 0.44]) {
+      const u = createSingleGripUnit(mats, springMat, coverMat, arrowMat);
+      u.group.position.set(gx, 0, ropeLocalZ);
+      root.add(u.group);
+      gripUnits.push(u);
+    }
+  }
+
+  // --- B. WIDE FUNITEL TWIN-ARM HANGER + 24er GALZIGBAHN COBALT-BLUE PANORAMA CABIN ---
   const swingGroup = new THREE.Group();
-  swingGroup.name = 'SwingingCabin';
+  swingGroup.name = 'SwingingFunitelCabin';
 
-  // Sleek Curved C-Hanger Arm (C-Gehänge) extending outboard then down to cabin roof
-  const hangerCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, -0.02, 0.04),
-    new THREE.Vector3(0, -0.22, 0.42),
-    new THREE.Vector3(0, -0.58, 0.36),
-    new THREE.Vector3(0, -C.pivotToRoofY, 0.0)
-  ]);
-  const hangerMesh = new THREE.Mesh(
-    new THREE.TubeGeometry(hangerCurve, 18, 0.068, 10, false),
-    mats.steelAnthracite
-  );
-  hangerMesh.castShadow = true;
-  swingGroup.add(hangerMesh);
-
-  // Cabin Suspension Shock Mount on Roof
-  const roofY = -C.pivotToRoofY; // -0.82 m
+  const roofY = -C.pivotToRoofY;   // -0.82 m
   const floorY = -C.pivotToFloorY; // -2.94 m
-  const midY = 0.5 * (roofY + floorY); // -1.88 m
-  const bodyH = C.bodyHeightY; // 2.12 m
-  const bodyL = C.bodyLengthX; // 2.26 m
-  const bodyW = C.bodyWidthZ;  // 1.64 m
+  const bodyH = C.bodyHeightY;     // 2.12 m
+  const bodyL = C.bodyLengthX;     // 2.34 m
+  const bodyW = C.bodyWidthZ;      // 1.88 m
 
-  const roofMount = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.28, 0.36, 0.14, 14),
+  // Twin-Arm Wide Funitel Suspension Struts (connecting BOTH twin-clamp beams at Z = ±0.95 m down to cabin roof!)
+  for (const sgnZ of [-1, 1]) {
+    const strutCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, -0.14, sgnZ * halfGauge),
+      new THREE.Vector3(0, -0.46, sgnZ * (halfGauge * 0.88)),
+      new THREE.Vector3(0, roofY + 0.04, sgnZ * 0.62)
+    ]);
+    const strutMesh = new THREE.Mesh(
+      new THREE.TubeGeometry(strutCurve, 12, 0.072, 10, false),
+      mats.steelGalvanized
+    );
+    strutMesh.castShadow = true;
+    swingGroup.add(strutMesh);
+  }
+  // Transverse Funitel Hanger Bridge Beam across the cabin roof
+  const roofBridge = new THREE.Mesh(
+    new THREE.BoxGeometry(0.28, 0.14, halfGauge * 1.65),
     mats.steelAnthracite
   );
-  roofMount.position.set(0, roofY + 0.06, 0);
-  swingGroup.add(roofMount);
+  roofBridge.position.set(0, roofY + 0.08, 0);
+  swingGroup.add(roofBridge);
 
-  // Futuristic Rounded Cabin Roof Cap (Signal Red Accent)
+  // Cobalt-Blue Galzigbahn Funitel Roof Cap
   const roofCap = new THREE.Mesh(
-    new THREE.BoxGeometry(bodyL * 0.96, 0.18, bodyW * 0.94),
+    new THREE.BoxGeometry(bodyL * 0.96, 0.18, bodyW * 0.95),
     mats.cabinAccentRed
   );
   roofCap.position.set(0, roofY - 0.08, 0);
   roofCap.castShadow = true;
   swingGroup.add(roofCap);
 
-  // Lower Futuristic Silver-Anthracite Cabin Hull Skirt
+  // Iconic Cobalt-Blue Galzigbahn Lower Cabin Hull with "GALZIGBAHN · FUNITEL 24" Livery!
   const lowerHull = new THREE.Mesh(
-    new THREE.BoxGeometry(bodyL, 0.56, bodyW),
+    new THREE.BoxGeometry(bodyL, 0.58, bodyW),
     mats.cabinBodySilver
   );
-  lowerHull.position.set(0, floorY + 0.28, 0);
+  lowerHull.position.set(0, floorY + 0.29, 0);
   lowerHull.castShadow = true;
   lowerHull.receiveShadow = true;
   swingGroup.add(lowerHull);
 
-  // Dark Bumper Base under Cabin Floor
   const floorBase = new THREE.Mesh(
     new THREE.BoxGeometry(bodyL * 0.94, 0.12, bodyW * 0.94),
     mats.cabinFrameDark
@@ -792,21 +782,17 @@ function createSingleCabinMesh(num, mats) {
   floorBase.position.set(0, floorY + 0.04, 0);
   swingGroup.add(floorBase);
 
-  // 4 Slim Corner Structural Pillars (leaving wide 360° panoramic glass windows!)
-  const glassH = bodyH - 0.72; // 1.40 m panoramic glass height!
-  const glassCenterY = floorY + 0.56 + glassH * 0.5;
+  // 4 Slim Corner Structural Pillars + Wide 360° Panoramic Windows
+  const glassH = bodyH - 0.74;
+  const glassCenterY = floorY + 0.58 + glassH * 0.5;
   for (const px of [-bodyL * 0.47, bodyL * 0.47]) {
     for (const pz of [-bodyW * 0.47, bodyW * 0.47]) {
-      const pillar = new THREE.Mesh(
-        new THREE.BoxGeometry(0.11, glassH, 0.11),
-        mats.cabinFrameDark
-      );
+      const pillar = new THREE.Mesh(new THREE.BoxGeometry(0.11, glassH, 0.11), mats.cabinFrameDark);
       pillar.position.set(px, glassCenterY, pz);
       swingGroup.add(pillar);
     }
   }
 
-  // Front, Back & Inboard Panoramic Tinted Glass Windows
   const frontGlass = new THREE.Mesh(new THREE.PlaneGeometry(bodyW - 0.16, glassH - 0.06), mats.cabinGlass);
   frontGlass.position.set(bodyL * 0.49, glassCenterY, 0);
   frontGlass.rotation.y = Math.PI / 2;
@@ -822,7 +808,7 @@ function createSingleCabinMesh(num, mats) {
   inboardGlass.rotation.y = Math.PI;
   swingGroup.add(inboardGlass);
 
-  // Animated Double Sliding Boarding Doors on Outboard Side (+Z = facing EG Walk-In Platform!)
+  // Animated Double Sliding Boarding Doors on Outboard Platform Side (+Z)
   const doorW = (bodyL - 0.34) * 0.5;
   const doorH = bodyH - 0.24;
   const doorY = floorY + 0.12 + doorH * 0.5;
@@ -830,10 +816,10 @@ function createSingleCabinMesh(num, mats) {
   const makeSlidingDoor = (signX) => {
     const door = new THREE.Group();
     door.position.set(signX * (doorW * 0.5), doorY, bodyW * 0.49);
-    const glassPane = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.04, doorH - 0.42, 0.035), mats.cabinGlass);
-    glassPane.position.y = 0.14;
-    const lowerPanel = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.03, 0.44, 0.045), mats.cabinAccentRed);
-    lowerPanel.position.y = -doorH * 0.5 + 0.22;
+    const glassPane = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.04, doorH - 0.44, 0.035), mats.cabinGlass);
+    glassPane.position.y = 0.15;
+    const lowerPanel = new THREE.Mesh(new THREE.BoxGeometry(doorW - 0.03, 0.46, 0.045), mats.cabinAccentRed);
+    lowerPanel.position.y = -doorH * 0.5 + 0.23;
     const frameEdge = new THREE.Mesh(new THREE.BoxGeometry(0.04, doorH, 0.05), mats.cabinFrameDark);
     frameEdge.position.x = -signX * (doorW * 0.48);
     door.add(glassPane, lowerPanel, frameEdge);
@@ -843,37 +829,26 @@ function createSingleCabinMesh(num, mats) {
   const doorRight = makeSlidingDoor(+1);
   swingGroup.add(doorLeft, doorRight);
 
-  // Exterior Ski & Snowboard Quivers (Ski-Köcher) mounted on front & back lower hull!
+  // Exterior Ski & Snowboard Quivers
   for (const sx of [-1, 1]) {
-    for (const qz of [-0.36, 0.36]) {
-      const quiver = new THREE.Mesh(
-        new THREE.BoxGeometry(0.14, 0.72, 0.26),
-        mats.cabinFrameDark
-      );
+    for (const qz of [-0.42, 0.42]) {
+      const quiver = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.72, 0.28), mats.cabinFrameDark);
       quiver.position.set(sx * (bodyL * 0.5 + 0.07), floorY + 0.44, qz);
       swingGroup.add(quiver);
     }
   }
 
-  // Interior Ergonomic Facing Benches (2 benches for 10 passengers!)
-  for (const bx of [-bodyL * 0.31, bodyL * 0.31]) {
-    const bench = new THREE.Mesh(
-      new THREE.BoxGeometry(0.42, 0.09, bodyW - 0.28),
-      mats.cabinSeatBench
-    );
+  // Interior Facing Benches + Warm Ceiling LED Dome Light
+  for (const bx of [-bodyL * 0.32, bodyL * 0.32]) {
+    const bench = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.09, bodyW - 0.28), mats.cabinSeatBench);
     bench.position.set(bx, floorY + 0.54, 0);
     swingGroup.add(bench);
   }
-
-  // Warm Interior Ceiling Dome LED (illuminates the entire panoramic cabin in Blue Hour!)
-  const interiorLed = new THREE.Mesh(
-    new THREE.BoxGeometry(1.15, 0.05, 0.36),
-    mats.cabinInteriorLight
-  );
+  const interiorLed = new THREE.Mesh(new THREE.BoxGeometry(1.25, 0.05, 0.42), mats.cabinInteriorLight);
   interiorLed.position.set(0, roofY - 0.19, 0);
   swingGroup.add(interiorLed);
 
-  // Illuminated Cabin Number Plates (01..10) on Front & Rear Roof Fascia
+  // Illuminated Cabin Number Plates (01..10)
   const numTex = createCabinNumberTexture(num);
   const numMat = new THREE.MeshStandardMaterial({
     map: numTex,
@@ -894,13 +869,8 @@ function createSingleCabinMesh(num, mats) {
   return {
     root,
     swingGroup,
-    gripGroup,
-    gripCover,
-    movableJawPivot,
-    springPack,
+    gripUnits,
     springMat,
-    leverPivot,
-    forceArrows,
     arrowMat,
     doorLeft,
     doorRight,
@@ -910,7 +880,7 @@ function createSingleCabinMesh(num, mats) {
 
 export function buildAllCabins(mats) {
   const group = new THREE.Group();
-  group.name = 'PanoramaCabinsFleet';
+  group.name = 'FunitelCabinsFleet';
   const cabins = [];
   for (let i = 0; i < GS_SPECS.cabin.count; i++) {
     const c = createSingleCabinMesh(i + 1, mats);

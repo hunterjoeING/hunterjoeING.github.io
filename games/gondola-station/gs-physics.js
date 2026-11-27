@@ -268,15 +268,15 @@ export class GondolaPhysics {
     const bullwheelOmega = v / rBull; // rad/s
     const directDriveRpm = (bullwheelOmega * 60) / (2 * Math.PI); // ~20.46 rpm at 6.0 m/s
 
-    // Realistic uphill lifting power + aerodynamic/sheave friction (~680 kW steady at 6 m/s, peaks ~900 kW on acceleration)
+    // Realistic Funitel twin-rope lifting power (~1,020 kW steady at 6 m/s, peaks ~1,350 kW on acceleration)
     const loadFactor = 0.76 + 0.04 * Math.sin(this.simTime * 0.35);
-    const accelPower = Math.max(0, (this.targetSpeedMs - v) * 95);
+    const accelPower = Math.max(0, (this.targetSpeedMs - v) * 125);
     const powerKw = v > 0.05
-      ? clamp(GS_SPECS.bullwheel.directDriveRatedPowerKw * (v / GS_SPECS.speeds.nominalRopeMs) * loadFactor + accelPower, 0, 960)
+      ? clamp(GS_SPECS.bullwheel.directDriveRatedPowerKw * (v / GS_SPECS.speeds.nominalRopeMs) * loadFactor + accelPower, 0, 1420)
       : 0;
     const torqueKNm = bullwheelOmega > 0.05
       ? clamp(powerKw / bullwheelOmega, 0, GS_SPECS.bullwheel.directDriveMaxTorqueKNm)
-      : (this.brakeEngagement > 0.1 ? 385 * this.brakeEngagement : 0);
+      : (this.brakeEngagement > 0.1 ? 520 * this.brakeEngagement : 0);
 
     // Throughput & headway
     const headwaySec = speedFactor > 0.04 ? this.kin.armHeadwayNom / speedFactor : 0;

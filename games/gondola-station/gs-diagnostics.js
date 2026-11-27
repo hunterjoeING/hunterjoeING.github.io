@@ -213,25 +213,25 @@ export class GondolaDiagnostics {
       {
         label: 'DirectDrive Leistung',
         val: `${fmt(snap.powerKw, 0)} kW`,
-        frac: Math.min(1, snap.powerKw / 950),
+        frac: Math.min(1, snap.powerKw / 1400),
         color: '#38bdf8'
       },
       {
         label: 'Antriebsmoment',
         val: `${fmt(snap.torqueKNm, 0)} kNm`,
-        frac: Math.min(1, snap.torqueKNm / 420),
+        frac: Math.min(1, snap.torqueKNm / 560),
         color: '#a855f7'
       },
       {
-        label: 'Seilzugkraft (Hydr.)',
+        label: 'Doppelseil-Zugkraft',
         val: `${fmt(snap.tensionForceKN, 0)} kN`,
-        frac: Math.min(1, snap.tensionForceKN / 520),
+        frac: Math.min(1, snap.tensionForceKN / 760),
         color: '#f59e0b'
       },
       {
-        label: 'Förderleistung',
+        label: 'Förderleistung (24er)',
         val: `${snap.capacityPph.toLocaleString('de-DE')} P/h`,
-        frac: Math.min(1, snap.capacityPph / 2600),
+        frac: Math.min(1, snap.capacityPph / 5200),
         color: '#22c55e'
       },
       {
@@ -255,7 +255,7 @@ export class GondolaDiagnostics {
 
     this.svg.innerHTML = `
       <rect x="0" y="0" width="${W}" height="${H}" rx="10" fill="rgba(15,23,42,0.72)"/>
-      <text x="12" y="17" fill="#e2e8f0" font-size="10.2" font-weight="700">DirectDrive 900 kW &amp; Leistungsbilanz</text>
+      <text x="12" y="17" fill="#e2e8f0" font-size="10.2" font-weight="700">Funitel DirectDrive 1.350 kW &amp; Bilanz</text>
       <text x="${W - 10}" y="17" text-anchor="end" fill="#94a3b8" font-size="9.0">${fmt(snap.directDriveRpm, 1)} U/min · Folgezeit ${snap.headwaySec > 0 ? fmt(snap.headwaySec, 1) + ' s' : '–'}</text>
       ${body}
     `;

@@ -6,7 +6,7 @@ const arcadeReleases = {
     combustion_engine: { title: "Verbrennungsmotor 3D – Interaktiver Explainer", href: "./games/combustion-engine/index.html", kind: "game" },
     big_boy: { title: "Union Pacific Big Boy 4014 – 3D-Technik-Explainer", href: "./games/big-boy/index.html", kind: "game" },
     pistenbully_800w: { title: "PistenBully 800 W – 3D-Steilhang-Simulation", href: "./games/pistenbully-800w/index.html", kind: "game" },
-    gondola_station: { title: "2-Etagen-Gondelstation – Riesenrad-Förderung & D-Line 3D", href: "./games/gondola-station/index.html", kind: "game" },
+    gondola_station: { title: "2-Etagen-Funitel – 4 Riesenräder & Doppelseil 3D", href: "./games/gondola-station/index.html", kind: "game" },
     podracer: { title: "Canyon Podracer 3D", href: "./games/podracer/index.html", kind: "game" },
     eroadtrip: { title: "e-Roadtrip: Pixel Europe", href: "./games/e-roadtrip/index.html", kind: "game" },
     solitaire3d: { title: "3D Spider Solitär (4 Farben)", href: "./games/solitaire3d/index.html", kind: "game" },
@@ -47,6 +47,13 @@ const arcadeReleases = {
     quiz: { title: "Quiz Arena: Klassik", href: "./games/quiz/index.html", kind: "quiz" },
   },
   releases: [
+    {
+      app: "arcade", version: "0.7.1", date: "2026-11-27", type: "patch", title: "Hub-Karte auf Funitel-Doppelseil & 4 Riesenräder aktualisiert",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Hub-Karte und Icon der 2-Etagen-Gondelstation auf das echte Galzigbahn-Funitel-Prinzip (Doppelseil & 4 Vertikal-Riesenräder) aktualisiert.",
+      ],
+    },
     {
       app: "arcade", version: "0.7.0", date: "2026-11-27", type: "feature", title: "Neuer 3D-Explainer: 2-Etagen-Gondelstation",
       author: "Joe", model: "Neon",
@@ -259,6 +266,16 @@ const arcadeReleases = {
         "Interaktive 3D-Steilhang-Simulation des Kässbohrer PistenBully 800 W (0–45° / 100 % Steigung) mit exakter X-Track-Aluketten- & 13-Zahn-Sternrad-Kinematik, 12-Wege-Räumschild (8 Hydraulikzylinder), AlpinFlexFräse, elastischem gelben Finisher (Cord-Rillen) und aktiver 4,7-t-Seilwinde.",
         "Schaltbarer 450-bar-Hydraulik-X-Ray (MAN D3876, Axialkolbenpumpen, pulsierende Hoch-/Niederdruck-Kreise), Fräsen-/Sinter-Längsschnitt („Schnee-Mikroskop“), 3D-Kraftvektoren, SNOWsat-Schneehöhen-Heatmap und Beleuchtungswechsel (Blaue Stunde vs. Alpiner Sonnentag).",
         "Live-Diagnostik für Hangphysik, 400-kW-Leistungsverteilung und Bodendruck-Vergleich, Echtzeit-Telemetrie, optionales 6-Zylinder-Diesel-/Hydraulik-Audio sowie geführte 8-Stationen-Technik-Tour.",
+      ],
+    },
+    {
+      app: "gondola_station", version: "0.2.0", date: "2026-11-27", type: "feature", title: "Echtes Galzigbahn-Funitel: Doppelseil & 4 Vertikal-Riesenräder",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Technisch korrekt auf das echte Galzigbahn-Funitel-Prinzip umgebaut: 4 parallele 54-mm-Förderseile (2 je Fahrbahn) mit koaxialer Doppel-Antriebsscheibe (Ø 5,9 m) und Ablenkscheiben.",
+        "4 gigantische Vertikal-Riesenräder (2 Zwillingspaare, Ø 8,56 m) heben und senken die Kabinen beidseitig kippfrei zwischen EG und OG.",
+        "Neue kobaltblaue 24er-Funitel-Panoramakabinen mit breitem Doppelgehänge und 4 kuppelbaren Federklemmen pro Kabine (2×2 = 112 kN Klemmkraft) sowie 4 parallelen Kuppelrampen und 48 Stützenrollen (4×12) an Stütze 1.",
+        "Alle 8 Tour-Stationen, 10 Hotspots, Telemetrie (1.350 kW / 640 kN Doppelseilspannung) und Diagnostik komplett auf Funitel-Technik aktualisiert.",
       ],
     },
     {

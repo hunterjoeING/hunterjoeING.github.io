@@ -464,8 +464,8 @@ function initGondolaStationApp() {
         if (state.clampCutaway) {
           state.showShell = false;
           state.driveXray = false;
-          // Gently focus macro close-up on Attach Ramp + switch to crisp slow-mo!
-          animateCameraTo([11.55, 10.62, 5.15], [11.55, 10.12, 2.75], 0.9);
+          // Gently focus macro close-up on Funitel Dual Attach Ramp (outer rope Z = +4.85 m) + slow-mo!
+          animateCameraTo([11.55, 10.68, 7.35], [11.55, 10.12, 4.75], 0.9);
           if (state.timeScale > 0.35) state.timeScale = 0.15;
         }
       } else if (key === 'driveXray') {
@@ -682,22 +682,18 @@ function initGondolaStationApp() {
   const followPosVec = new THREE.Vector3();
 
   function applySnapshotToScene(snap, simDt) {
-    // 1. Rotate Both Giant Vertical Ferris Wheels + Counter-Rotate All 8 Carrier Arms (Strictly Horizontal!)
+    // 1. Rotate ALL FOUR Giant Vertical Ferris Wheels (2 Twin Pairs) + Counter-Rotate All 16 Carrier Forks!
     const { downTheta, upTheta, bullwheelTheta, ropeDistance } = snap.wheels;
-    ferris.wheels.down.pivot.rotation.z = downTheta;
-    for (const arm of ferris.wheels.down.arms) {
-      arm.rotation.z = -downTheta;
-    }
-    ferris.wheels.up.pivot.rotation.z = upTheta;
-    for (const arm of ferris.wheels.up.arms) {
-      arm.rotation.z = -upTheta;
-    }
+    for (const p of ferris.wheels.down.pivots) p.rotation.z = downTheta;
+    for (const arm of ferris.wheels.down.arms) arm.rotation.z = -downTheta;
+    for (const p of ferris.wheels.up.pivots) p.rotation.z = upTheta;
+    for (const arm of ferris.wheels.up.arms) arm.rotation.z = -upTheta;
 
-    // 2. Horizontal Bullwheel + DirectDrive Rotor + Rotating Magnetic Flux Field + Mountain Return Wheel
+    // 2. Coaxial Twin Bullwheels + DirectDrive Rotor + Rotating Magnetic Flux Field + Mountain Return Wheel
     drive.bullwheelPivot.rotation.y = bullwheelTheta;
     drive.rotorGroup.rotation.y = bullwheelTheta;
     drive.magFieldGroup.rotation.y = bullwheelTheta * 4.0;
-    alpine.returnWheel.rotation.z = -bullwheelTheta;
+    alpine.returnWheel.rotation.y = bullwheelTheta;
 
     // 3. Hydraulic Tension Carriage & Chrome Piston Rods + Pressure Accumulators
     const offsetM = snap.tensionCarriageOffsetM;
@@ -706,12 +702,12 @@ function initGondolaStationApp() {
       rod.position.x = 2.45 + offsetM * 0.5;
       rod.scale.y = 1 + offsetM * 0.25;
     }
-    const pressureScale = Math.max(0.45, Math.min(1.25, snap.hydraulicBar / 165));
+    const pressureScale = Math.max(0.45, Math.min(1.25, snap.hydraulicBar / 175));
     for (const acc of drive.accumulators) {
       acc.glow.scale.y = pressureScale;
     }
 
-    // 4. Safety Disc Brake Calipers on Bullwheel (visibly clamp shut & glow red on Emergency Stop!)
+    // 4. Safety Disc Brake Calipers on Bullwheel
     const bEng = snap.brakeEngagement;
     for (const cal of drive.brakeCalipers) {
       cal.padTop.position.y = 0.12 - bEng * 0.065;
@@ -720,8 +716,7 @@ function initGondolaStationApp() {
     mats.brakeCaliperRed.emissive.setHex(bEng > 0.08 ? 0xff2200 : 0x000000);
     mats.brakeCaliperRed.emissiveIntensity = bEng * 1.4;
 
-    // 5. Braided 54 mm Steel Rope UV-Scroll (EXACTLY synced to rope travel!) + Tower 1 24 Sheaves
-    // Repeat = 280 over ~180 m total rope -> ~1.55 UV cycles per meter
+    // 5. All 4 Parallel Braided 54 mm Steel Ropes UV-Scroll + Tower 1 48 Sheaves!
     const uvScroll = -(ropeDistance * 1.55) % 1;
     mats.textures.ropeMap.offset.x = uvScroll;
     mats.textures.ropeBump.offset.x = uvScroll;
@@ -731,13 +726,13 @@ function initGondolaStationApp() {
       sh.mesh.rotation.z -= sh.sideSign * sheaveDeltaAngle;
     }
 
-    // 6. All 40 Rubber Conveyor Tires (EXACT local ω_i = v(s_i) / r_tire!)
+    // 6. All 80 Dual-Rail Rubber Conveyor Tires (EXACT local ω_i = v(s_i) / r_tire!)
     for (const t of conveyors.allTires) {
       t.angle += t.spec.omegaNom * snap.speedFactor * simDt * (t.spec.sideSign > 0 ? -1 : 1);
       t.pivot.rotation.y = t.angle;
     }
 
-    // 7. Clamping Force & Rope Position Check Zone Beacon Lamp (Green flash OK / Pulsing Red Alarm!)
+    // 7. Dual-Rope Clamping Force & Rope Position Check Zone Beacon Lamps
     if (snap.sensorFlashState === 'fault') {
       const pulse = 0.65 + 0.35 * Math.sin(performance.now() * 0.016);
       coupling.sensorLampMat.color.setHex(0xef4444);
@@ -753,7 +748,7 @@ function initGondolaStationApp() {
       coupling.sensorLampMat.emissiveIntensity = 0.45;
     }
 
-    // 8. Update All 10 Panorama Cabins (Position, Yaw, Strictly Horizontal on Ferris Wheels, Doors, Cutaway Spring Grips!)
+    // 8. Update All 10 Cobalt-Blue 24er Funitel Cabins & ALL 4 Spring Grips per Cabin!
     for (let i = 0; i < fleet.cabins.length; i++) {
       const mesh = fleet.cabins[i];
       const c = snap.cabins[i];
@@ -761,24 +756,13 @@ function initGondolaStationApp() {
 
       mesh.root.position.set(c.x, c.y, c.z);
       mesh.root.rotation.set(0, c.yaw, 0);
-
-      // Pendulum swing: strictly 0 on both Ferris wheels & EG, damped swing on rope departure / Nothalt!
       mesh.swingGroup.rotation.z = c.swingPitch || 0;
 
-      // Smooth Double Sliding Doors in EG Level Walk-In U-Turn!
       const slide = c.doorOpen * 0.46;
       mesh.doorLeft.position.x = -mesh.doorBaseX - slide;
       mesh.doorRight.position.x = mesh.doorBaseX + slide;
 
-      // D-Line Detachable Spring Grip Kinematics (Belleville Springs, Cam Roller Lever, Movable Jaw, Force Arrows!)
       const g = c.grip;
-      mesh.gripCover.visible = !state.clampCutaway;
-      // Lever lifts actuation roller up onto yellow cam ramp!
-      mesh.leverPivot.rotation.x = -g.rollerLift * 0.58;
-      // Movable jaw opens cleanly away from the 54 mm braided rope!
-      mesh.movableJawPivot.rotation.x = g.jawOpen * 0.72;
-      // Belleville disc spring pack visibly compresses along Z & glows bright amber/orange when open!
-      mesh.springPack.scale.z = 1.0 - g.springCompression * 0.34;
       if (g.springCompression > 0.05) {
         mesh.springMat.color.setHex(0xf59e0b);
         mesh.springMat.emissive.setHex(0xf97316);
@@ -789,16 +773,23 @@ function initGondolaStationApp() {
         mesh.springMat.emissiveIntensity = 0.0;
       }
 
-      // Clamping Force Arrows (28 kN Green / Fault Red) visible in Klemmen-Schnitt when clamped onto rope!
       const showArrows = state.clampCutaway && g.onRope && g.clampingForceKN > 1.0;
-      mesh.forceArrows.visible = showArrows;
       if (showArrows) {
         const badForce = isFaulted && (c.zone === 'attach' || c.zone === 'check' || c.zone === 'rope_out');
         mesh.arrowMat.color.setHex(badForce ? 0xef4444 : 0x22c55e);
         mesh.arrowMat.emissive.setHex(badForce ? 0xff2222 : 0x22c55e);
         mesh.arrowMat.emissiveIntensity = badForce ? 2.2 : 1.7;
-        const sArrow = Math.max(0.55, g.clampingForceKN / GS_SPECS.cabin.gripNominalForceKN);
-        mesh.forceArrows.scale.set(1, sArrow, 1);
+      }
+      const sArrow = Math.max(0.55, g.clampingForceKN / GS_SPECS.cabin.gripNominalForceKN);
+
+      // Animate all 4 Funitel spring grips (2 on inner rope + 2 on outer rope!)
+      for (const u of mesh.gripUnits) {
+        u.gripCover.visible = !state.clampCutaway;
+        u.leverPivot.rotation.x = -g.rollerLift * 0.58;
+        u.movableJawPivot.rotation.x = g.jawOpen * 0.72;
+        u.springPack.scale.z = 1.0 - g.springCompression * 0.34;
+        u.forceArrows.visible = showArrows;
+        if (showArrows) u.forceArrows.scale.set(1, sArrow, 1);
       }
     }
 
@@ -816,35 +807,36 @@ function initGondolaStationApp() {
       gate.wingR.position.x = 0.27 + openFrac * 0.30;
     }
 
-    // 10. Subtle dynamic rope sag update when hydraulic tension surges significantly
+    // 10. Subtle dynamic rope sag update for BOTH Funitel rope loops
     if (Math.abs(snap.dynamicSagOffsetM - lastRopeSag) > 0.04) {
       lastRopeSag = snap.dynamicSagOffsetM;
-      const newCurve = new THREE.CatmullRomCurve3(station.buildRopeCurvePoints(lastRopeSag), true);
-      const oldGeo = station.ropeMesh.geometry;
-      station.ropeMesh.geometry = new THREE.TubeGeometry(newCurve, 340, 0.044, 10, true);
-      oldGeo.dispose();
+      const oldIn = station.ropeMesh.geometry;
+      station.ropeMesh.geometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(station.buildInnerRopePoints(lastRopeSag), true), 300, 0.044, 8, true);
+      oldIn.dispose();
+      const oldOut = station.outerRopeMesh.geometry;
+      station.outerRopeMesh.geometry = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(station.buildOuterRopePoints(lastRopeSag), true), 320, 0.044, 8, true);
+      oldOut.dispose();
     }
 
     // 11. Follow-Cam ("Eine Gondel komplett begleiten" -> tracks Cabin #01 smoothly!)
     if (state.followCabin) {
       const c0 = snap.cabins[0];
       followTargetVec.set(c0.x, c0.y - 1.45, c0.z);
-      // Choose smart non-occluding outboard vantage depending on zone
       const outSign = c0.z >= 0 ? 1 : -1;
       if (c0.zone === 'wheel_down' || c0.zone === 'wheel_up') {
-        followPosVec.set(c0.x - 6.8, c0.y - 0.3, c0.z + outSign * 8.2);
+        followPosVec.set(c0.x - 7.2, c0.y - 0.2, c0.z + outSign * 8.8);
       } else if (c0.zone === 'eg_turn' || c0.zone === 'eg_board' || c0.zone === 'eg_disembark') {
-        followPosVec.set(c0.x + 5.2, 3.6, c0.z + outSign * 6.4);
+        followPosVec.set(c0.x + 5.2, 3.6, c0.z + outSign * 6.8);
       } else if (c0.zone === 'attach' || c0.zone === 'check') {
-        followPosVec.set(c0.x - 1.8, c0.y + 0.65, c0.z + 4.4);
+        followPosVec.set(c0.x - 1.8, c0.y + 0.65, c0.z + 4.8);
       } else {
-        followPosVec.set(c0.x - 4.8, c0.y + 1.4, c0.z + outSign * 7.6);
+        followPosVec.set(c0.x - 5.0, c0.y + 1.5, c0.z + outSign * 8.2);
       }
       camera.position.lerp(followPosVec, 0.065);
       controls.target.lerp(followTargetVec, 0.12);
     }
 
-    // 12. Update Telemetry DOM & Live Fault Banner + Diagnostics (throttled ~15 Hz)
+    // 12. Update Telemetry DOM & Live Fault Banner + Diagnostics
     diagThrottle++;
     if (diagThrottle % 4 === 0 || simDt === 0.04) {
       if (telEls.speed) telEls.speed.textContent = `${fmt(snap.actualSpeedMs, 2)} m/s`;
@@ -852,14 +844,14 @@ function initGondolaStationApp() {
       if (telEls.drive) telEls.drive.textContent = `${fmt(snap.powerKw, 0)} kW`;
       if (telEls.driveSub) telEls.driveSub.textContent = `${fmt(snap.torqueKNm, 0)} kNm · ${fmt(snap.directDriveRpm, 1)} U/min`;
       if (telEls.tension) telEls.tension.textContent = `${fmt(snap.tensionForceKN, 0)} kN`;
-      if (telEls.tensionSub) telEls.tensionSub.textContent = `${fmt(snap.hydraulicBar, 0)} bar · Hub ${fmt(snap.tensionCarriageOffsetM * 1000, 0)} mm`;
+      if (telEls.tensionSub) telEls.tensionSub.textContent = `${fmt(snap.hydraulicBar, 0)} bar · 2× Seilspannung`;
       if (telEls.clamp) {
-        telEls.clamp.textContent = `${fmt(snap.clampReadout.forceKN, 1)} kN`;
+        telEls.clamp.textContent = `4× ${fmt(snap.clampReadout.forceKN, 1)} kN`;
         telEls.clamp.classList.toggle('red', snap.faultState === 'alarm_braking' || snap.faultState === 'halted');
       }
-      if (telEls.clampSub) telEls.clampSub.textContent = `Kabine #${String(snap.clampReadout.cabinNumber).padStart(2, '0')} · Δv ${fmt(snap.clampReadout.deltaV, 2)} m/s`;
+      if (telEls.clampSub) telEls.clampSub.textContent = `Kabine #${String(snap.clampReadout.cabinNumber).padStart(2, '0')} · Σ ${fmt(snap.clampReadout.forceKN * 4, 0)} kN · Δv ${fmt(snap.clampReadout.deltaV, 2)}`;
       if (telEls.cap) telEls.cap.textContent = `${snap.capacityPph.toLocaleString('de-DE')} P/h`;
-      if (telEls.capSub) telEls.capSub.textContent = `10er-Kabinen · Folge ${snap.headwaySec > 0 ? fmt(snap.headwaySec, 1) + ' s' : '–'}`;
+      if (telEls.capSub) telEls.capSub.textContent = `24er-Funitel · Folge ${snap.headwaySec > 0 ? fmt(snap.headwaySec, 1) + ' s' : '–'}`;
       if (telEls.brake) {
         telEls.brake.textContent = snap.brakeEngagement > 0.05 ? 'NOTHALT AKTIV' : 'Frei / Bereit';
         telEls.brake.classList.toggle('red', snap.brakeEngagement > 0.05);
