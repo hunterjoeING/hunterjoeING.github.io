@@ -2,6 +2,15 @@
 
 Ältere Session-Einträge in ihrer damaligen Fassung. Zurück zum [aktuellen Handoff](HANDOFF.md).
 
+### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol xhigh – Verbrennungsmotor 3D v0.3.0
+
+- **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `83f03bd`. Commit `0add518` (+ Doku-Commit), gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages-Test-URL für v0.3.0 nach dem Push: https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
+- **Erledigt** · Die Gangwahlanzeige zeigt Gang, Übersetzung und Fahrmodus unter dem Gaspedal. Die Verbrauchskachel zeigt auch beim Beschleunigen und im Schub l/100km. Die neunstufige Tour ergänzt Live-Beispiele zu Drosselklappe, Fahrwiderstand, Getriebe und Muschelkurve. Die Referenzfahrt schaltet hoch und endet bei rund 176 km/h im 6. Gang. Beim Schließen kehren Regler, Zeitlupe, Ansicht und Kamera zum Ausgangszustand zurück.
+- **Geprüft** · `node --check` für alle `ce-*.js`, `shared/releases.js` und die drei Explainer-Testdateien. Explainer-Tests 27/27 einschließlich UI-Ereignissen im simulierten DOM. Die bisherigen Telemetriefelder stimmen auf 14.241 Betriebspunkten mit `HEAD` überein. HTML-Tags, ID-Verweise, Titel, JSON-LD, Importmap, Inline-Skript, Asset-Versionen, CSS und `git diff --check` geprüft. `node scripts/check-release-bump.mjs upstream/main` bestanden für `combustion_engine`. E-Roadtrip: `npm run typecheck`, `npm run build`, `node --check dist/e-roadtrip.js` und `npm test` (167/167), Bundle bytegleich.
+- **GitHub** · Issue-/PR-Check durch den Orchestrator: 0 offene Issues und PRs in Upstream, 0 PRs im Fork.
+- **Offen** · Fork-Spieltest durch Michi. Kein Upstream-Merge ohne ausdrückliches Go; Joe soll den Explainer vorher sehen. Browser-Test durch den Orchestrator: 1280 und 390 px, Tour-Schritte 6–9 live, Escape stellt den Zustand vor der Tour wieder her, 0 POSTs, keine Konsolenfehler (Screenshots `/home/box/projects/shot/ce-v03-*.png`).
+- Version/Release-Eintrag geprüft (shared/releases.js, Regel 10)
+
 ### 2026-11-27 – Michi / Codex CLI · gpt-6.2-sol high – Gang, Geschwindigkeit und Verbrauch für Verbrennungsmotor 3D v0.2.0
 
 - **Branch / PR** · `codex/combustion-load-map`, Ausgangsstand `50639be`. Commit `add54de`, gepusht in den Fork `mic4rd/hunterjoeING.github.io`, kein PR. Fork-Pages bleiben auf diesem Branch: https://mic4rd.github.io/hunterjoeING.github.io/games/combustion-engine/
