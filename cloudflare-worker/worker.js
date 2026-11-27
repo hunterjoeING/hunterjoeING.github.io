@@ -98,7 +98,8 @@ const GAMES_META = {
   quiz_apple_flops_curiosities: { title: 'Apple: Flops, Kurioses & Insider-Wissen', lowerIsBetter: false },
   quiz: { title: 'Quiz Arena: Klassik', lowerIsBetter: false },
   wind_turbine: { title: 'Windkraftanlage 3D (Onshore)', lowerIsBetter: false, noLeaderboard: true },
-  combustion_engine: { title: 'Verbrennungsmotor 3D', lowerIsBetter: false, noLeaderboard: true }
+  combustion_engine: { title: 'Verbrennungsmotor 3D', lowerIsBetter: false, noLeaderboard: true },
+  big_boy: { title: 'Union Pacific Big Boy 4014 (3D)', lowerIsBetter: false, noLeaderboard: true }
 };
 
 const GAME_SCORE_BOUNDS = {

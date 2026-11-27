@@ -4,6 +4,7 @@ const arcadeReleases = {
     arcade: { title: "HunterJoe Arcade", href: "./index.html", kind: "arcade" },
     wind_turbine: { title: "Windkraftanlage 3D – Interaktiver Explainer", href: "./games/wind-turbine/index.html", kind: "game" },
     combustion_engine: { title: "Verbrennungsmotor 3D – Interaktiver Explainer", href: "./games/combustion-engine/index.html", kind: "game" },
+    big_boy: { title: "Union Pacific Big Boy 4014 – 3D-Technik-Explainer", href: "./games/big-boy/index.html", kind: "game" },
     podracer: { title: "Canyon Podracer 3D", href: "./games/podracer/index.html", kind: "game" },
     eroadtrip: { title: "e-Roadtrip: Pixel Europe", href: "./games/e-roadtrip/index.html", kind: "game" },
     solitaire3d: { title: "3D Spider Solitär (4 Farben)", href: "./games/solitaire3d/index.html", kind: "game" },
@@ -44,6 +45,15 @@ const arcadeReleases = {
     quiz: { title: "Quiz Arena: Klassik", href: "./games/quiz/index.html", kind: "quiz" },
   },
   releases: [
+    {
+      app: "arcade", version: "0.5.0", date: "2026-11-27", type: "feature", title: "Neuer 3D-Explainer: Union Pacific Big Boy 4014",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Neuer interaktiver 3D-Technik-Explainer der Union Pacific Big Boy 4014 (4-8-8-4-Gelenkdampflok) unter Games.",
+        "Im Hub, im Burger-Menü, in der Sitemap und im Feedback-System nahtlos verknüpft.",
+        "Modul- und Spielezähler im Hub auf 41 Module (13 Spiele & 3D-Explainer) aktualisiert.",
+      ],
+    },
     {
       app: "arcade", version: "0.4.4", date: "2026-11-27", type: "patch", title: "Serverseitig signierte Sicherheitsprüfung",
       author: "Joe", model: "Neon",
@@ -211,6 +221,15 @@ const arcadeReleases = {
         "Interaktiver 2,0-Liter-4-Takt-Reihenvierzylinder (DOHC 16V, Zündfolge 1-3-4-2) mit Cutaway, X-Ray und Explosionsansicht mit 12 Baugruppen",
         "Drehzahl- und Zeitlupensteuerung mit synchronen Kolben, Pleueln, 16 Ventilen, Zündfunken und volumetrischen Brennräumen",
         "Interaktives Prüfstandsdiagramm (Drehmoment & Leistung) sowie 6-Schritte-Tour durch alle 4 Takte",
+      ],
+    },
+    {
+      app: "big_boy", version: "0.1.0", date: "2026-11-27", type: "feature", title: "Erste Version",
+      author: "Joe", model: "Neon",
+      highlights: [
+        "Interaktive 3D-Simulation der Union Pacific Big Boy 4014 (4-8-8-4 Simple Articulated) mit 16 Boxpok-Treibrädern, 4 identischen 603-mm-Frischdampfzylindern und exakter Walschaerts-Steuerung an beiden Triebwerken.",
+        "Schaltbarer Kessel- und Zylinderschnitt (Stoker-Förderschnecke, Elesco-Überhitzer, Doppel-Blasrohr, Kolbenschieber), Thermodynamik-Overlay und 20°-Kurvenfahrt-Demo mit beweglichen Kugelgelenk-Dampfrohren.",
+        "Live-p-V-Indikatordiagramm mit 75-%-/25-%-Referenzkurven, Echtzeit-Telemetrie, optionalem 8-Schlag-Dampf-Audio mit Pfeife sowie geführter 8-Stationen-Technik-Tour.",
       ],
     },
     {

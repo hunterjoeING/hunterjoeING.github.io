@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://upload.wikimedia.org; media-src 'self' data: blob:; connect-src 'self' https://hunterjoe-scores.hunterjoeing.workers.dev https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Union Pacific Big Boy 4014 – 3D-Technik-Explainer · HunterJoe Arcade</title>
+  <meta name="description" content="Interaktive 3D-Simulation &amp; Technik-Visualisierung der Union Pacific Big Boy (Class 4000 / #4014): 4-8-8-4 Gelenkfahrwerk, 4 Frischdampfzylinder, exakte Walschaerts-Steuerung, Kessel- &amp; Zylinderschnitt, Live-p-V-Indikatordiagramm und 8-Stationen-Tour." />
+  <meta name="robots" content="index, follow" />
+  <meta name="theme-color" content="#0b1018" />
+  <link rel="canonical" href="https://hunterjoeing.github.io/games/big-boy/" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="../../favicon.svg" />
+  <link rel="icon" type="image/png" sizes="48x48" href="../../favicon-48.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="../../apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="HunterJoe Arcade" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:title" content="Union Pacific Big Boy 4014 – Interaktiver 3D-Explainer · HunterJoe Arcade" />
+  <meta property="og:description" content="Erlebe die legendäre 4-8-8-4 Gelenkdampflok in Echtzeit-3D: Kessel- &amp; Zylinderschnitt, echte Walschaerts-Kinematik, Kurvenfahrt-Gelenk, Live-p-V-Diagramm &amp; 8-Stationen-Tour." />
+  <meta property="og:url" content="https://hunterjoeing.github.io/games/big-boy/" />
+  <meta property="og:image" content="https://hunterjoeing.github.io/og-cover.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Union Pacific Big Boy 4014 – 3D-Technik-Explainer",
+    "description": "Interaktive 3D-Simulation und Technik-Visualisierung der Union Pacific Big Boy 4014 (4-8-8-4 Simple Articulated) mit Kessel- und Zylinderschnitt, Walschaerts-Steuerung, Thermodynamik-Overlay, Live-p-V-Indikatordiagramm und 8-Stationen-Tour.",
+    "url": "https://hunterjoeing.github.io/games/big-boy/",
+    "inLanguage": "de",
+    "isAccessibleForFree": true,
+    "applicationCategory": "EducationalApplication",
+    "operatingSystem": "Any (Webbrowser)",
+    "author": { "@type": "Person", "name": "Johannes Rudolph" }
+  }
+  </script>
+  <script>(function(){try{document.documentElement.setAttribute('data-theme',localStorage.getItem('arcade_theme')==='dark'?'dark':'light');}catch(e){}})();</script>
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "../../shared/vendor/three-0.170.0/build/three.module.min.js",
+      "three/addons/": "../../shared/vendor/three-0.170.0/examples/jsm/"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="../../shared/arcade.css" />
+  <link rel="stylesheet" href="./styles.css?v=0.1.0" />
+</head>
+<body>
+  <header class="arcade-topbar bb-topbar">
+    <div class="topbar-left">
+      <a class="back-hub-btn" href="../../index.html" aria-label="Zurück zur HunterJoe Arcade">← Arcade</a>
+      <h1 class="topbar-title">🚂 Big Boy 4014 · 3D</h1>
+      <button type="button" class="bb-version-pill" id="bb-version-btn" title="Änderungen dieser Version anzeigen">v0.1.0</button>
+    </div>
+    <div class="topbar-right">
+      <button type="button" class="bb-whistle-top-btn" id="bb-btn-whistle" title="Big-Boy-Dampfpfeife auslösen">🎺 Pfeife</button>
+      <button type="button" class="icon-btn" id="btn-arcade-theme" title="Hell-/Dunkel-Modus wechseln">☀️</button>
+      <button type="button" class="icon-btn" id="btn-mute" title="Dampf-Audio aktivieren">🔇</button>
+    </div>
+  </header>
+
+  <main class="bb-workspace">
+    <section class="bb-viewport" id="bb-viewport" aria-label="Interaktive 3D-Ansicht Union Pacific Big Boy 4014">
+      <canvas id="bb-canvas"></canvas>
+      <div class="bb-label-layer" id="bb-label-layer" aria-label="3D-Baugruppen-Hotspots"></div>
+
+      <!-- Top View Mode & Demo Dock -->
+      <div class="bb-mode-dock" role="toolbar" aria-label="Schnittansichten und Demo-Modi">
+        <div class="bb-dock-group">
+          <button type="button" class="bb-mode-btn active" data-bb-toggle="exterior">Außen</button>
+          <button type="button" class="bb-mode-btn" data-bb-toggle="boilerCutaway"><span class="bb-mode-num">01</span> Kesselschnitt</button>
+          <button type="button" class="bb-mode-btn" data-bb-toggle="cylinderCutaway"><span class="bb-mode-num">02</span> Zylinderschnitt</button>
+          <button type="button" class="bb-mode-btn" data-bb-toggle="xray"><span class="bb-mode-num">03</span> X-Ray</button>
+          <button type="button" class="bb-mode-btn" data-bb-toggle="thermoOverlay">🔥 Thermodynamik</button>
+        </div>
+        <div class="bb-dock-group">
+          <button type="button" class="bb-chip-btn" data-bb-toggle="curveDemo" title="20°-Kurvenfahrt (R = 87,3 m) mit ausschwenkendem Vordergestell">↪ Kurve</button>
+          <button type="button" class="bb-chip-btn" data-bb-toggle="rollerStand" title="Zwischen Fahrt und Rollenprüfstand umschalten">⚙️ Prüfstand</button>
+          <button type="button" class="bb-chip-btn active" data-bb-toggle="asyncMode" title="Asynchroner Big-Boy-8-Schlag-Auspuff vs. Synchron">🥁 8-Schlag</button>
+          <button type="button" class="bb-chip-btn" data-bb-toggle="showLabels" title="Klickbare 3D-Hotspots ein-/ausblenden">🏷️ Hotspots</button>
+          <button type="button" class="bb-chip-btn" id="bb-btn-reset" title="Kamera zurücksetzen">↺ Reset</button>
+          <button type="button" class="bb-chip-btn bb-collapse-btn" id="bb-btn-collapse" title="Steuerungspult ein-/ausklappen">◨ Vollbild</button>
+        </div>
+        <!-- Thermodynamics Color Legend (flows cleanly below dock rows, zero overlap) -->
+        <div class="bb-thermo-legend hidden" id="bb-thermo-legend" aria-label="Thermodynamik-Farblegende">
+          <span><i style="background:#fef08a"></i>Feuer ~1.400 °C</span>
+          <span><i style="background:#0ea5e9"></i>Wasser/Sattdampf 216 °C</span>
+          <span><i style="background:#ef4444"></i>Heißdampf 395 °C · 20,7 bar</span>
+          <span><i style="background:#f59e0b"></i>Expansion</span>
+          <span><i style="background:#cbd5e1"></i>Abdampf 115 °C</span>
+        </div>
+      </div>
+
+      <!-- 8-Station Guided Engineering Tour Card -->
+      <div class="bb-tour-card hidden" id="bb-tour-card" role="dialog" aria-label="Geführte Technik-Tour"></div>
+
+      <div class="bb-bottom-bar">
+        <button type="button" class="bb-tour-launcher" id="bb-btn-tour">🧭 Technik-Tour (8 Stationen)</button>
+        <button type="button" class="bb-mobile-toggle" id="bb-mobile-panel-toggle" aria-expanded="false">🎛️ Pult, p-V &amp; Daten</button>
+        <div class="bb-orbit-hint">Ziehen: Drehen · Scroll/Pinch: Zoom · Leertaste: Pause · Klick: Bauteil</div>
+      </div>
+    </section>
+
+    <div class="bb-drawer-backdrop" id="bb-drawer-backdrop" aria-hidden="true"></div>
+
+    <!-- Collapsible Right Engineering Control, p-V Diagram & Telemetry Panel -->
+    <aside class="bb-side-panel" id="bb-side-panel" aria-label="Führerstand-Steuerungspult, p-V-Diagramm und Live-Telemetrie">
+      <div class="bb-drawer-header">
+        <span class="bb-drawer-handle" aria-hidden="true"></span>
+        <div class="bb-drawer-header-row">
+          <span class="bb-drawer-title">🎛️ Führerstand &amp; Diagnostik</span>
+          <button type="button" class="bb-drawer-close" id="bb-drawer-close" aria-label="Zurück zur 3D-Ansicht">✕ Zurück zu 3D</button>
+        </div>
+      </div>
+
+      <!-- 01 Führerstand: Regler (Throttle) & Steuerung (Cut-Off) -->
+      <div class="bb-panel-section">
+        <div class="bb-section-head">
+          <label class="bb-section-label" for="bb-throttle-slider">Regler (Throttle)</label>
+          <span class="bb-val-readout" id="bb-throttle-val">55 %</span>
+        </div>
+        <input type="range" class="bb-slider" id="bb-throttle-slider" min="0" max="100" step="1" value="55" />
+
+        <div class="bb-section-head" style="margin-top:10px;">
+          <label class="bb-section-label" for="bb-cutoff-slider">Steuerung (Cut-Off / Füllung)</label>
+          <span class="bb-val-readout accent" id="bb-cutoff-val">+45 % (Vorwärts)</span>
+        </div>
+        <input type="range" class="bb-slider bb-cutoff-slider" id="bb-cutoff-slider" min="-80" max="80" step="1" value="45" />
+
+        <div class="bb-preset-row">
+          <button type="button" class="bb-preset-btn" data-bb-preset="start" data-throttle="0.92" data-cutoff="0.75" data-speed-ms="4.5">Anfahrt +75%</button>
+          <button type="button" class="bb-preset-btn" data-bb-preset="cruise" data-throttle="0.78" data-cutoff="0.25" data-speed-ms="21.0">Marsch +25%</button>
+          <button type="button" class="bb-preset-btn" data-bb-preset="idle" data-throttle="0.05" data-cutoff="0.00" data-speed-ms="0.0">Leerlauf 0%</button>
+          <button type="button" class="bb-preset-btn" data-bb-preset="rev" data-throttle="0.55" data-cutoff="-0.60" data-speed-ms="-4.5">Rückwärts −60%</button>
+        </div>
+
+        <div class="bb-speed-wrap">
+          <div class="bb-sub-head">
+            <span class="bb-sub-label">Zeitlupe &amp; Einzelschritt</span>
+            <button type="button" class="bb-mini-audio-btn" id="bb-btn-audio">🔇 Sound Aus</button>
+          </div>
+          <div class="bb-speed-row">
+            <button type="button" class="bb-speed-btn" data-bb-speed="0">⏸</button>
+            <button type="button" class="bb-speed-btn" id="bb-btn-step" title="Einzelschritt">⏭</button>
+            <button type="button" class="bb-speed-btn" data-bb-speed="0.02">0,02×</button>
+            <button type="button" class="bb-speed-btn" data-bb-speed="0.12">0,12×</button>
+            <button type="button" class="bb-speed-btn active" data-bb-speed="0.65">0,65×</button>
+            <button type="button" class="bb-speed-btn" data-bb-speed="1.5">1,5×</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 Live p-V Indicator Diagram -->
+      <div class="bb-panel-section">
+        <div class="bb-section-head">
+          <span class="bb-section-label">Live p-V-Indikatordiagramm</span>
+          <label class="bb-ghost-check">
+            <input type="checkbox" id="bb-pv-ghost-toggle" checked />
+            <span>75% vs 25%</span>
+          </label>
+        </div>
+        <div class="bb-chart-wrap">
+          <svg id="bb-pv-chart" viewBox="0 0 320 164" role="img" aria-label="Live p-V-Indikatordiagramm eines 603 mm Frischdampfzylinders"></svg>
+        </div>
+        <div class="bb-pv-hint">Gestrichelt: 75 % Anfahrfüllung (rot) vs. 25 % sparsame Marschfüllung (blau, „Hooking Up“).</div>
+      </div>
+
+      <!-- 03 Live Telemetry Grid -->
+      <div class="bb-telemetry-grid" aria-label="Live-Telemetrie Big Boy 4014">
+        <div class="bb-metric">
+          <div class="bb-metric-label">Geschwindigkeit</div>
+          <div class="bb-metric-val" id="bb-tel-speed">41,4 km/h</div>
+          <div class="bb-metric-sub" id="bb-tel-speed-sub">25,7 mph · 127 U/min</div>
+        </div>
+        <div class="bb-metric">
+          <div class="bb-metric-label">Zugkraft (4 Zyl.)</div>
+          <div class="bb-metric-val highlight" id="bb-tel-te">380 kN</div>
+          <div class="bb-metric-sub">max. 602 kN Anfahrt</div>
+        </div>
+        <div class="bb-metric">
+          <div class="bb-metric-label">Indizierte Leistung</div>
+          <div class="bb-metric-val power" id="bb-tel-power">4.120 PS</div>
+          <div class="bb-metric-sub" id="bb-tel-power-sub">3.030 kW indiziert</div>
+        </div>
+        <div class="bb-metric">
+          <div class="bb-metric-label">Kesseldruck / Dampf</div>
+          <div class="bb-metric-val" id="bb-tel-boiler">20,7 bar</div>
+          <div class="bb-metric-sub">Heißdampf <strong id="bb-tel-temp">395 °C</strong></div>
+        </div>
+        <div class="bb-metric">
+          <div class="bb-metric-label">Zylinderdruck (live)</div>
+          <div class="bb-metric-val" id="bb-tel-cylp">14,2 bar</div>
+          <div class="bb-metric-sub">Saugzug <span id="bb-tel-draft">2,10 kPa</span></div>
+        </div>
+        <div class="bb-metric">
+          <div class="bb-metric-label">Dampf / Kohle</div>
+          <div class="bb-metric-val" id="bb-tel-rates">28,4 / 6,5 t/h</div>
+          <div class="bb-metric-sub">Versatz <span id="bb-tel-phase">42° (8-Schlag)</span></div>
+        </div>
+      </div>
+
+      <!-- 04 Clickable Part Inspector -->
+      <div class="bb-panel-section" id="bb-inspector" aria-live="polite"></div>
+    </aside>
+  </main>
+
+  <script src="../../shared/arcade.js?v=0.4.4"></script>
+  <script src="../../shared/releases.js?v=0.4.5"></script>
+  <script src="../../shared/update-banner.js?v=0.4.0"></script>
+  <script src="../../shared/burger-menu.js?v=0.4.5"></script>
+  <script type="module" src="./bb-main.js?v=0.1.0"></script>
+</body>
+</html>

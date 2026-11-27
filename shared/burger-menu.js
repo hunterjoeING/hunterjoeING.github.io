@@ -21,6 +21,7 @@
   const GAMES_NAV = [
     { id: 'wind_turbine', icon: '🌬️', title: 'Windkraftanlage 3D', meta: '3D Explainer', path: 'games/wind-turbine/index.html' },
     { id: 'combustion_engine', icon: '🔥', title: 'Verbrennungsmotor 3D', meta: '3D Explainer', path: 'games/combustion-engine/index.html' },
+    { id: 'big_boy', icon: '🚂', title: 'Big Boy 4014 · 3D', meta: '3D Explainer', path: 'games/big-boy/index.html' },
     { id: 'podracer', icon: '🏎️', title: 'Canyon Podracer 3D', meta: 'Three.js', path: 'games/podracer/index.html' },
     { id: 'eroadtrip', icon: '⚡', title: 'e-Roadtrip: Pixel Europe', meta: 'Phaser 3', path: 'games/e-roadtrip/index.html' },
     { id: 'minesweeper', icon: '💣', title: '3D Minesweeper', meta: 'Tech Demo', path: 'games/minesweeper/index.html' },
