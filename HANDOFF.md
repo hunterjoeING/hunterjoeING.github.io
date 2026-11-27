@@ -40,7 +40,7 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 | Verbrennungsmotor 3D v0.4.0 · Common-Rail-Turbodiesel mit 3D-VTG-Turbolader, vier Bauformen (R4, Boxer B4, V6, V8), Explosions-Easter-Egg, Nockenwellen- & Highlight-Fix | Joe / Antigravity · Neon | `main` (`9ed0fd1`, `0f4f5f1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Verbrennungsmotor v0.4.0) |
 | Website-weites Security-Hardening & Bugfix-Release (Worker, Workflows, Hub, 24 Quizzes, 10 Games, Doku) | Joe / Antigravity · Neon | `main` (`bcd6deb`, `0d963b1`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.2, Windkraftanlage v0.1.2, 32 weitere Apps v0.1.1) |
 | Abschluss Security-Audit ARC-01..22 (Score-Grenzen, `adminSecret` raus, `wrangler` & Action-SHAs gepinnt, lokales Three.js-Vendoring, Meta-CSP, Quiz-`textContent`, `callback.html`, Server-CAPTCHA) | Joe / Antigravity · Neon | `main` (`231d7c3`, `1888b52`, Push auf Upstream `main`, kein PR) | ✅ Abgeschlossen und live (Arcade v0.4.4, Verbrennungsmotor v0.4.1, Windkraftanlage v0.1.3, 37 weitere Apps gepatcht) |
-| Lock-Hinweis in `HANDOFF.md` gegen paralleles Arbeiten (AGENTS.md Regel 4 und 7) | Michi / Grok Bot (Orchestrator) | `docs/handoff-lock-rule` · Upstream-PR (folgt) | 🟡 Offen, kein Merge ohne Go |
+| Lock-Hinweis in `HANDOFF.md` gegen paralleles Arbeiten (AGENTS.md Regel 4 und 7) | Michi / Grok Bot (Orchestrator) | `docs/handoff-lock-rule` · [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14) | 🟡 Offen, kein Merge ohne Go |
 
 **Aktuelle Versionen** · `eroadtrip` v0.6.0 · `arcade` v0.4.4 · `wind_turbine` v0.1.3 · `combustion_engine` v0.4.1
 
@@ -50,10 +50,10 @@ Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrag
 
 ### 2026-11-27 – Michi / Grok Bot (Orchestrator) · kein Codex-Lauf / manuell – Lock-Hinweis in HANDOFF.md
 
-- **Branch / PR** · `docs/handoff-lock-rule` ab `upstream/main` (`7415dd3`). SHA: (folgt). Push auf Fork `mic4rd/hunterjoeING.github.io`. Upstream-PR: (folgt). Kein Lock-Hinweis gesetzt (reine Doku, sehr klein; diese PR führt die Regel erst ein).
+- **Branch / PR** · `docs/handoff-lock-rule` ab `upstream/main` (`7415dd3`). Commit `38096b2` (+ dieser Doku-Commit). Push auf Fork `mic4rd/hunterjoeING.github.io`. [Upstream-PR #14](https://github.com/hunterjoeING/hunterjoeING.github.io/pull/14). Kein Lock-Hinweis gesetzt (reine Doku, sehr klein; diese PR führt die Regel erst ein).
 - **Erledigt** · Regel 7 um Arbeits-Hinweis (Lock) in `HANDOFF.md` ergänzt, Ausnahme in Regel 4, Abschnitt „Aktive Arbeits-Hinweise (🔒)“ in `HANDOFF.md` angelegt. Intro und Bullet „Aufgaben & Rückfragen“ an die neue Aufteilung angepasst (Issues nur für größere Vorhaben). Ältesten Session-Eintrag (Verbrennungsmotor 3D v0.3.1) nach `HANDOFF-archive.md` verschoben, damit §2 bei fünf Einträgen bleibt.
 - **Geprüft** · `git diff --check`. `node scripts/check-release-bump.mjs upstream/main`: „Keine releasepflichtigen Dateien geändert.“ E-Roadtrip `npm test` 167/167 (keine Codeänderung; der CI-Workflow führt die Suite trotzdem aus). Keine JS- oder Release-Änderung (reine Doku, `[no-release]`).
-- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues und 0 offene PRs in Upstream, 0 PRs im Fork (vor dem Öffnen dieser PR).
+- **GitHub** · Issue-/PR-Check (`gh issue list`, `gh pr list`): 0 offene Issues in Upstream, dieser Doku-PR #14, 0 weitere offene PRs in Upstream, 0 PRs im Fork (außer dem Head dieses PRs).
 - **Offen** · Kein Upstream-Merge ohne ausdrückliches Go.
 - Version/Release-Eintrag geprüft (shared/releases.js, Regel 10) — keine Versionserhöhung (reine Doku, `[no-release]`).
 
