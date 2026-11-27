@@ -29,7 +29,7 @@ export const NOSE_RADIUS = 0.058;
 const TAU = 2 * Math.PI;
 
 export function displayCrankSpeed(degreesPerSecond) {
-  // Above 700°/s ease towards 900°/s: 54° stays visible for at least 60 ms.
+  // Ease the fast end of the display clock so the moving hardware stays legible.
   const excess = Math.max(0, degreesPerSecond - 700);
   return Math.min(700, degreesPerSecond) + excess / (1 + excess / 200);
 }

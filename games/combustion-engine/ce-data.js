@@ -479,11 +479,16 @@ export function computeDriveTourDemos(optimum, profile = DEFAULT_PROFILE) {
 }
 
 export const IGNITION_WINDOW_DEG = 54;
+export const MIN_IGNITION_SECONDS = 0.19;
+
+export function ignitionWindow(speed, normalSpeed) {
+  return Math.max(IGNITION_WINDOW_DEG, MIN_IGNITION_SECONDS * Math.max(speed, normalSpeed));
+}
 
 /**
  * Liefert den exakten 4-Takt-Zustand für einen Zylinder bei Kurbelwinkel crankDeg.
  */
-export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE, out = {}) {
+export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE, out = {}, windowDeg = IGNITION_WINDOW_DEG, advanceDeg) {
   const spec = profile.layout.cylinderSpecs[cylIndex];
   const offset = spec ? spec.phaseDeg : (CYLINDER_PHASE_OFFSETS[cylIndex] || 0);
   const cycle = (((crankDeg + offset) % 720) + 720) % 720;
@@ -560,10 +565,15 @@ export function getCylinderStroke(crankDeg, cylIndex, profile = DEFAULT_PROFILE,
   out.exhaustLift = exhaustLift;
   out.sparkIntensity = sparkIntensity;
   out.injectionIntensity = injectionIntensity;
-  const burn = clamp((cycle - profile.concept.ignitionStartDeg) / IGNITION_WINDOW_DEG, 1);
-  // Rapid light-off at the tip, then a growing front with a smooth fade.
+  const sinceIgnition = (cycle - profile.concept.ignitionStartDeg + 720) % 720;
+  // Interpolate the frame that crosses ignition. During an ongoing burn integrate
+  // from its previous progress, so a speed change cannot restart it or a pause age it.
+  const burn = advanceDeg === undefined || out.burnProgress === undefined || sinceIgnition <= advanceDeg
+    ? Math.min(1, sinceIgnition / windowDeg)
+    : Math.min(1, out.burnProgress + advanceDeg / windowDeg);
   out.burnProgress = burn;
-  out.flashIntensity = Math.min(1, burn * 5) * (1 - burn * burn) ** 2;
+  const rise = Math.min(1, burn / 0.12), fade = Math.min(1, (1 - burn) / 0.40);
+  out.flashIntensity = rise * rise * (3 - 2 * rise) * fade * fade * (3 - 2 * fade);
   out.flameIntensity = flameIntensity;
   out.intakeMist = intakeMist;
   out.exhaustGas = exhaustGas;

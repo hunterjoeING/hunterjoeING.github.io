@@ -2,7 +2,9 @@ import * as THREE from 'three';
 import {
   DEFAULT_PROFILE,
   getEnginePartsForProfile,
-  getCylinderStroke
+  getCylinderStroke,
+  ignitionWindow,
+  IGNITION_WINDOW_DEG
 } from './ce-data.js?v=0.5.1';
 import { createExplosionSystem } from './ce-explosion.js?v=0.5.1';
 
@@ -19,6 +21,8 @@ import { createTracers } from './ce-tracers.js?v=0.5.1';
 import { throttleAngle } from './ce-throttle.js?v=0.5.1';
 
 const R_BORE = 0.54;
+const BOWL_EDGE_RADIUS = 0.055;
+const BOWL_EDGE_TOP = 0.47 + BOWL_EDGE_RADIUS;
 
 /**
  * Erzeugt ein prozedurales Stirnrad (Zahnrad) um die Z-Achse,
@@ -442,7 +446,10 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
     const pistonBodyGeo = new THREE.CylinderGeometry(R_BORE - 0.025, R_BORE - 0.03, 0.76, 26);
     const pistonRingGeo = new THREE.TorusGeometry(R_BORE - 0.015, 0.018, 8, 24);
     const pistonPinGeo = new THREE.CylinderGeometry(WRIST_PIN_RADIUS, WRIST_PIN_RADIUS, 0.82, 14);
-    const kernel = createIgnitionKernel(isDiesel);
+    const kernelGeometry = new THREE.SphereGeometry(1, 24, 14);
+    const ignitionLight = new THREE.PointLight(isDiesel ? 0xffce74 : 0xffab52, 0, 1.2, 1);
+    ignitionLight.name = 'ignitionLight';
+    assemblyRoot.add(ignitionLight);
 
     cylSpecs.forEach(spec => {
       const bf = pistonBankFrames[spec.bankIndex];
@@ -458,11 +465,11 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       // Diesel-Muldenkolben-Akzent oben auf dem Kolbenboden
       if (isDiesel) {
         const bowl = new THREE.Mesh(
-          new THREE.TorusGeometry(0.24, 0.055, 8, 20),
+          new THREE.TorusGeometry(0.24, BOWL_EDGE_RADIUS, 8, 20),
           getPartMat('pistons', 'pistonRing')
         );
         bowl.rotation.x = Math.PI / 2;
-        bowl.position.y = 0.47;
+        bowl.position.y = BOWL_EDGE_TOP - BOWL_EDGE_RADIUS;
         pNode.add(bowl);
       }
 
@@ -493,7 +500,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       gf.add(gasMesh);
       gasMeshes.push({ mesh: gasMesh, mat: gasMat, spec });
 
-      const flash = new THREE.Mesh(kernel.geometry, kernel.material);
+      const flash = createIgnitionKernel(kernelGeometry, isDiesel);
       flash.position.x = spec.x;
       flash.renderOrder = 1;
       flash.name = isDiesel ? 'sprayIgnition' : 'spark';
@@ -814,6 +821,7 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
       valveAssemblies,
       gasMeshes,
       ignition,
+      ignitionLight,
       moving,
       flowGroup,
       tracers,
@@ -988,8 +996,12 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         : telemetry.rpm;
 
     const effectiveScale = isOverrev ? Math.max(0.42, timeScale * 2.6) : timeScale;
-    const visualDegPerSec = (effectiveRpm / 60) * 360 * 0.045 * (effectiveScale / 0.16);
-    state.crankClock += (isOverrev ? visualDegPerSec : displayCrankSpeed(visualDegPerSec)) * clampedDt;
+    const normalDegPerSec = effectiveRpm * 6 * 0.045;
+    const visualDegPerSec = normalDegPerSec * (effectiveScale / 0.16);
+    const crankSpeed = isOverrev ? visualDegPerSec : displayCrankSpeed(visualDegPerSec);
+    const windowDeg = isOverrev ? IGNITION_WINDOW_DEG : ignitionWindow(crankSpeed, displayCrankSpeed(normalDegPerSec));
+    const advanceDeg = crankSpeed * clampedDt;
+    state.crankClock += advanceDeg;
     state.crankDeg = state.crankClock % 720;
     const crankRad = THREE.MathUtils.degToRad(state.crankDeg);
 
@@ -1018,10 +1030,10 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
 
     // 3) Exakte 4-Takt-Kinematik pro Zylinder in Bank-Koordinaten
     const strokes = built.strokes;
-
+    built.ignitionLight.intensity = 0;
     for (let i = 0; i < built.cylSpecs.length; i++) {
       const spec = built.cylSpecs[i];
-      const stroke = getCylinderStroke(state.crankDeg, i, state.profile, strokes[i]);
+      const stroke = getCylinderStroke(state.crankDeg, i, state.profile, strokes[i], windowDeg, advanceDeg);
 
       const thetaLocal = THREE.MathUtils.degToRad(state.crankDeg + spec.crankPinAngleDeg - spec.bankAngleDeg);
       const localZc = R_CRANK * Math.sin(thetaLocal);
@@ -1071,7 +1083,8 @@ export function createCombustionEngineModel(initialProfile = DEFAULT_PROFILE) {
         }
       }
 
-      updateIgnition(built.ignition[i], stroke, built.isDiesel, crownY, rpmNorm, !isBlown);
+      const crownTop = built.isDiesel ? localYp + BOWL_EDGE_TOP : crownY;
+      updateIgnition(built.ignition[i], stroke, crownTop, R_BORE, !isBlown, built.ignitionLight);
     }
 
     built.flowGroup.visible = state.showFlow && !isBlown;

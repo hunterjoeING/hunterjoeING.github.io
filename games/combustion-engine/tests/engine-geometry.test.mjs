@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import test from 'node:test';
-import { IGNITION_WINDOW_DEG, buildEngineProfile, computeEngineTelemetry, getCylinderStroke, getTourStepsForProfile } from '../ce-data.js';
+import { IGNITION_WINDOW_DEG, MIN_IGNITION_SECONDS, buildEngineProfile, computeEngineTelemetry,
+  getCylinderStroke, getTourStepsForProfile, ignitionWindow } from '../ce-data.js';
 import { BASE_RADIUS, BUCKET_TOP, CAM_Y, CROWN_OFFSET, CRANK_RADIUS, MAX_LIFT, ROD_LENGTH, SEAT_Y,
   BELT_WIDTH, DRIVE_BORE, DRIVE_CLEARANCE, WHEEL_WIDTH, beltPoint, camOutline, crankshaftSections,
   displayCrankSpeed, timingDrive, timingMounts } from '../ce-mechanics.js';
@@ -160,7 +161,7 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
   const { joints } = preparePassages(graph);
 
   if (!diesel) test(profile.key + ' meters downstream air and cylinder charge as the pedal opens and closes', () => {
-    const batch = createTracers(graph, 3072);
+    const batch = createTracers(graph, tracerBudget({}, 390));
     const { geometry } = batch.cloud;
     const { position, color } = geometry.attributes;
     const [cx, cy, cz] = graph.nodes.throttle;
@@ -210,18 +211,27 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
     const start = diesel ? 356 : 348;
     const specs = profile.layout.cylinderSpecs;
     const first = start - specs[0].phaseDeg;
-    const lit = [];
-    for (let degree = first; degree < first + 720; degree++) {
-      for (const spec of specs) {
-        const stroke = getCylinderStroke(degree, spec.index, profile);
-        assert.equal(stroke.flashIntensity > 0, stroke.cycle > start && stroke.cycle < start + IGNITION_WINDOW_DEG);
-        if (stroke.cycle === start + 1 && stroke.flashIntensity > 0) lit.push(spec.number);
-        if (stroke.cycle === start + 11) assert.ok(stroke.flashIntensity > 0.9);
-      }
-    }
-    assert.deepEqual(lit, profile.layout.firingOrder.split(' – ').map(Number));
+    const normal = displayCrankSpeed(profile.specs.maxRpm * 6 * 0.045);
     const fastest = displayCrankSpeed(profile.specs.maxRpm * 6 * 0.045 * 0.38 / 0.16);
-    assert.ok(IGNITION_WINDOW_DEG / fastest >= 0.060);
+    const fastWindow = ignitionWindow(fastest, normal);
+    near(fastWindow / fastest, MIN_IGNITION_SECONDS);
+    for (const window of [IGNITION_WINDOW_DEG, fastWindow]) {
+      const lit = [];
+      let maxLit = 0;
+      for (let degree = first; degree < first + 720; degree++) {
+        let active = 0;
+        for (const spec of specs) {
+          const stroke = getCylinderStroke(degree, spec.index, profile, {}, window);
+          assert.equal(stroke.flashIntensity > 0, stroke.cycle > start && stroke.cycle < start + window);
+          if (stroke.flashIntensity > 0) active++;
+          if (stroke.cycle === start + 1 && stroke.flashIntensity > 0) lit.push(spec.number);
+          if (stroke.cycle === start + Math.round(window / 3)) assert.ok(stroke.flashIntensity > 0.9);
+        }
+        maxLit = Math.max(maxLit, active);
+      }
+      assert.deepEqual(lit, profile.layout.firingOrder.split(' – ').map(Number));
+      assert.equal(maxLit, Math.ceil(window * specs.length / 720));
+    }
   });
 
   test(profile.key + ' connects every gas/fuel passage to the intended ports', () => {
@@ -374,17 +384,17 @@ for (const layout of ['r4', 'boxer4', 'v6', 'v8']) for (const concept of ['otto'
 }
 
 test('Mobile and desktop tracer budgets both use a single preallocated batch', () => {
-  assert.equal(tracerBudget({ hardwareConcurrency: 4 }), 3072);
-  assert.equal(tracerBudget({ hardwareConcurrency: 8, deviceMemory: 2 }), 3072);
-  assert.equal(tracerBudget({ hardwareConcurrency: 8, deviceMemory: 8 }, 390), 3072);
-  assert.equal(tracerBudget({ hardwareConcurrency: 8, deviceMemory: 8 }, 1280), 8192);
+  assert.equal(tracerBudget({ hardwareConcurrency: 4 }), 4032);
+  assert.equal(tracerBudget({ hardwareConcurrency: 8, deviceMemory: 2 }), 4032);
+  assert.equal(tracerBudget({ hardwareConcurrency: 8, deviceMemory: 8 }, 390), 4032);
+  assert.equal(tracerBudget({ hardwareConcurrency: 8, deviceMemory: 8 }, 1280), 10752);
 });
 
 test('The larger budgets increase the actual visible parcel density at idle and full load', () => {
   const graph = buildPlumbing(buildEngineProfile('r4', 'otto'));
   preparePassages(graph);
   const crowns = new Float32Array(4).fill(2);
-  for (const [oldBudget, budget] of [[2304, 3072], [6144, 8192]]) {
+  for (const [oldBudget, budget] of [[2304, tracerBudget({}, 390)], [6144, tracerBudget({}, 1280)]]) {
     for (const load of [0, 1]) {
       const counts = [oldBudget, budget].map(cap => {
         const batch = createTracers(graph, cap);
@@ -400,12 +410,117 @@ test('The larger budgets increase the actual visible parcel density at idle and 
         return sum;
       });
       const ratio = counts[1] / counts[0];
-      assert.ok(ratio >= 1.30 && ratio <= 1.50, `visible density ratio ${ratio}`);
+      assert.ok(ratio >= 1.60 && ratio <= 1.80, `visible density ratio ${ratio}`);
     }
   }
 });
 
+test('Each petrol chamber retains burnt charge at idle while the throttle still meters fresh air', () => {
+  const graph = buildPlumbing(buildEngineProfile('v8', 'otto'));
+  preparePassages(graph);
+  const cap = tracerBudget({}, 390);
+  const batch = createTracers(graph, cap);
+  const { position, color } = batch.cloud.geometry.attributes;
+  const crowns = new Float32Array(graph.cylinders.length);
+  const counts = [];
+  for (const load of [0, 1]) {
+    let air = 0, total = 0;
+    for (let frame = 0; frame < 96; frame++) {
+      const clock = (frame + load * 96) * 90;
+      for (const { spec } of graph.cylinders) {
+        const phase = (clock + spec.phaseDeg) * Math.PI / 180;
+        crowns[spec.index] = CROWN_OFFSET + CRANK_RADIUS * Math.cos(phase)
+          + Math.sqrt(ROD_LENGTH ** 2 - (CRANK_RADIUS * Math.sin(phase)) ** 2);
+      }
+      batch.update(clock, crowns, load, 0);
+      if (frame < 64) continue;
+      for (const { spec } of graph.cylinders) {
+        const a = spec.bankAngleDeg * Math.PI / 180, cos = Math.cos(a), sin = Math.sin(a);
+        let spent = 0;
+        for (let i = 0; i < batch.cloud.geometry.drawRange.count; i++) {
+          const y = position.getY(i) - graph.y0, z = position.getZ(i);
+          const height = y * cos + z * sin;
+          if (height <= crowns[spec.index] || height >= SEAT_Y ||
+              Math.hypot(position.getX(i) - spec.x, z * cos - y * sin) > 0.50) continue;
+          total++;
+          if (color.getZ(i) > 0.9) air++;
+          else if (color.getX(i) < 0.5) spent++;
+        }
+        assert.ok(spent >= Math.floor(cap / (32 * graph.cylinders.length)), 'Residuals stay above every moving crown');
+      }
+    }
+    counts.push({ total, air });
+  }
+  assert.ok(counts[0].air > 0 && counts[0].air < counts[1].air / 4);
+  assert.ok(counts[0].total < counts[1].total);
+});
+
 for (const concept of ['otto', 'diesel']) {
+  test(concept + ' V8 overlaps independent flames, holds them on pause and slows their fade in slow motion', () => {
+    const profile = buildEngineProfile('v8', concept);
+    const saved = globalThis.document;
+    globalThis.document = { createElement: () => ({ getContext: () => ({ fillRect() {} }) }) };
+    let model;
+    try {
+      model = createCombustionEngineModel(profile);
+    } finally {
+      if (saved) globalThis.document = saved;
+      else delete globalThis.document;
+    }
+    model.setFlowVisible(false);
+    const kernels = model.root.getObjectsByProperty('name', concept === 'otto' ? 'spark' : 'sprayIgnition');
+    assert.equal(new Set(kernels.map(k => k.material)).size, 8);
+    assert.equal(new Set(kernels.map(k => k.geometry)).size, 1);
+    const [light] = model.root.getObjectsByProperty('isPointLight', true);
+    assert.equal(model.root.getObjectsByProperty('isPointLight', true).length, 1);
+    assert.ok(light.distance <= 1.5 && !light.castShadow);
+    const pin = model.root.getObjectsByProperty('name', 'wristPin')
+      .find(p => p.parent.position.x === kernels[0].position.x);
+    const crownHeight = Math.max(...pin.parent.children.map(mesh => {
+      mesh.updateMatrix();
+      mesh.geometry.computeBoundingBox();
+      return mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrix).max.y;
+    }));
+    const high = computeEngineTelemetry(profile.specs.maxRpm, 0.9, undefined, profile);
+    const dt = 1 / 240;
+    for (const scale of [0.38, 0.06]) {
+      model.update(0, high, scale); // Ignore a burn already underway when the model was opened.
+      let elapsed = 0, bright = 0, started = false, complete = false, paused = false;
+      let previous = kernels[0].visible, filled = false;
+      for (let frame = 0; frame < 1600 && !complete; frame++) {
+        model.update(dt, high, scale);
+        const k = kernels[0];
+        if (k.visible && !previous) started = true;
+        if (started && k.visible) {
+          elapsed += dt;
+          if (k.material.uniforms.brightness.value > 0.12) bright += dt;
+          const crown = pin.parent.position.y + crownHeight;
+          const floor = k.position.y - k.scale.y;
+          assert.ok(floor >= crown && k.position.y + k.scale.y <= SEAT_Y && k.scale.x < 0.54);
+          if (floor < crown + 0.055 && k.scale.x > 0.50 && k.material.uniforms.brightness.value > 0.60) filled = true;
+          const active = kernels.filter(other => other.visible);
+          if (active.length === 2 && light.intensity > 0.015 && !paused) {
+            const world = light.getWorldPosition(new Vector3());
+            assert.ok(active.some(other => other.getWorldPosition(new Vector3()).distanceTo(world) < 1e-7));
+            assert.notEqual(active[0].material.uniforms.progress.value, active[1].material.uniforms.progress.value);
+            const snapshot = () => kernels.map(other => [other.visible, other.scale.y, other.material.uniforms.brightness.value]);
+            const frozen = snapshot(), intensity = light.intensity;
+            model.update(0.05, high, 0);
+            assert.deepEqual(snapshot(), frozen);
+            near(light.intensity, intensity);
+            paused = true;
+          }
+        }
+        if (started && previous && !k.visible) complete = true;
+        previous = k.visible;
+      }
+      assert.ok(complete && filled && paused, 'A complete near-bore burn overlaps a separate lit chamber');
+      assert.ok(bright >= 0.150, 'Perceptible brightness persists for at least 150 ms');
+      if (scale === 0.38) near(elapsed, MIN_IGNITION_SECONDS, dt * 1.01);
+      else assert.ok(elapsed > MIN_IGNITION_SECONDS + dt);
+    }
+  });
+
   test(concept + ' parcels cross ports continuously, change colour in-cylinder and reach the tailpipe', () => {
     const graph = buildPlumbing(buildEngineProfile('r4', concept));
     preparePassages(graph);

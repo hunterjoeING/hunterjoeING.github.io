@@ -127,7 +127,7 @@ const arcadeReleases = {
       highlights: [
         "Die Pleuel laufen auf den versetzten Hubzapfen. Das Zahnriemenrad sitzt mit Abstand vor der ersten Kurbelwange.",
         "Jeder Motor läuft mit passendem Leerlauf. Dichtere Gaspartikel zeigen beim Otto, wie die Drosselklappe den Luftstrom dosiert.",
-        "Bei jeder Zündung breitet sich ein kurzer Flammenkern im Zylinder aus. Die Tour zeigt ihn an der Zündkerze oder am Dieselstrahl.",
+        "Bei jeder Zündung leuchtet der Brennraum kurz auf. In der Tour siehst du, wie sich die Flamme von der Zündkerze oder vom Dieselstrahl bis zur Kolbenkrone ausbreitet.",
       ],
     },
     {
