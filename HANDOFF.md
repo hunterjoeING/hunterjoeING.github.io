@@ -15,7 +15,7 @@ Format: `🔒 in Arbeit: <Bereich/Dateien> · <Agent/Person> · <Branch> · <JJJ
 
 Hinweise älter als 2 Tage gelten als verwaist und dürfen nach kurzer Rückfrage beim Verantwortlichen übernommen oder entfernt werden.
 
-- (keine)
+- 🔒 in Arbeit: games/wind-turbine (Windkraftanlage 3D v0.2.0 · Grafik & Wind-Partikel) · Michi / Codex CLI · gpt-6.2-astra xhigh · codex/wind-v0.2.0 · 2026-11-28
 
 ---
 
